@@ -425,6 +425,9 @@ compiler_projects/EDE/5_0_InternalCan/5_0_InternalCan_pm167.pjt -text
 compiler_projects/EDE/AutoDataCollector/AutoDataCollector_esx.pjt -text
 compiler_projects/EDE/AutoDataCollector/AutoDataCollector_imi.pjt -text
 compiler_projects/EDE/AutoDataCollector/AutoDataCollector_pm167.pjt -text
+compiler_projects/EDE/imi_iso/imi_iso_esx.pjt -text
+compiler_projects/EDE/imi_iso/imi_iso_imi.pjt -text
+compiler_projects/EDE/imi_iso/imi_iso_pm167.pjt -text
 compiler_projects/EDE/tractor/tractor_esx.pjt -text
 compiler_projects/EDE/tractor/tractor_imi.pjt -text
 compiler_projects/EDE/tractor/tractor_pm167.pjt -text

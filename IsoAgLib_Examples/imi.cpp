@@ -112,6 +112,7 @@
 #include <IsoAgLib/comm/Base/ibase_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+
 #ifdef USE_DIN_9684
   #include <IsoAgLib/comm/SystemMgmt/DIN9684/idinmonitor_c.h>
 #endif
@@ -331,9 +332,6 @@ int main()
   iProcDataRemote_c c_remoteEhr(0, c_autodatacollectorGtp, 0x4, 0x0, 0xFF, 2, c_autodatacollectorGtp, &myGtp);
   int8_t c_ehrStartProgCnt = 10;
 
-  // configure the base data for receive
-  getIBaseInstance().config(&myGtp, false, false, false);
-
 
   // timestamps: first begin of this main loop
   int32_t i32_loopTime = iSystem_c::getTime(),
@@ -363,7 +361,9 @@ int main()
         { // first time with claimed address -> do some initial actions
           // send request for member names of other systems
           // (and send own name as demanded by standard)
+					#ifdef USE_DIN_9684
           getIdinMonitorInstance().requestDinMemberNames();
+					#endif
           // get the i32_distanceOffset to calculate distance from address claim on
           i32_distanceOffset = getIBaseInstance().distTheor();
           // set the i32_lastDist for getting the working dist to the actual base dist
@@ -374,12 +374,14 @@ int main()
         }
 
         // test if name should be sent (send name after 5, 7 and 9 sec
-        if ( (getIdinMonitorInstance().existDinMemberGtp(myGtp, true))
+        if ( (getISystemMgmtInstance().existMemberGtp(myGtp, true))
           && ((i32_loopTime / 1000) == b_sendNameTime) )
         { // inkrement b_sendNameTime to send every 2 sec
           if (b_sendNameTime < 9) b_sendNameTime += 2;
           else b_sendNameTime = 0;
+					#ifdef USE_DIN_9684
           getIdinMonitorInstance().dinMemberGtp(myGtp).sendName();
+					#endif
         }
 
         if (getISystemMgmtInstance().existMemberGtp(c_autodatacollectorGtp, true))

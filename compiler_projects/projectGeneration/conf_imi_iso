@@ -27,7 +27,7 @@ REL_APP_PATH="IsoAgLib_Examples"
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
 # seperate files by whitespace
-APP_SRC_FILE="imiIsoMaskupload.cpp"
+APP_SRC_FILE="imi.cpp"
 # define the file extensions to include for the
 # application source file search ( default: *.c *.cc *.cpp *.h *.hpp )
 # APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
@@ -130,20 +130,20 @@ fi
 # set value of feature to 1 if wanted
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
-PRJ_ISO_TERMINAL=1
+# PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
-# PRJ_BASE=0
+PRJ_BASE=1
 
 # ###############################################################
 # Process Data Communication Setup
 # ###############################################################
 
 # activate globally the use of process data
-# PRJ_PROCESS=0
+PRJ_PROCESS=1
 
 # for DIN 9684 the process data system can be used
 # to decode GPS information from Fieldstar or LBS+ extension
@@ -152,7 +152,7 @@ PRJ_ISO_TERMINAL=1
 # PRJ_GPS=0
 
 # decide if local process data are wanted
-# PROC_LOCAL=0
+PROC_LOCAL=1
 
 # select the feature set of the wanted local process data
 
@@ -170,7 +170,7 @@ PRJ_ISO_TERMINAL=1
 # local process data without selective reaction on received setpoints
 # ( simply store received setpoints and automatically ACK the receive of
 #   a setpoint )
-# PROC_LOCAL_SIMPLE_SETPOINT=0
+PROC_LOCAL_SIMPLE_SETPOINT=1
 
 # select iProcDataLocalSimpleSetpointSimpleMeasure_c for
 # local process data with smallest resource needs - and most
@@ -178,7 +178,7 @@ PRJ_ISO_TERMINAL=1
 # PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=0
 
 # decide if remote process data are wanted
-# PROC_REMOTE=0
+PROC_REMOTE=1
 
 # select the feature set of the wanted remote process data
 
@@ -191,7 +191,7 @@ PRJ_ISO_TERMINAL=1
 # - this can happen if intersection between ACKed setpoint request and
 # own setpoint request is _not_ empty, so that commanded implement can
 # satisfy both )
-# PROC_REMOTE_STD=0
+PROC_REMOTE_STD=1
 
 # select iProcDataRemoteSimpleMeasure_c if capable setpoint management
 # is needed, but simple one shot measurement value request is enough

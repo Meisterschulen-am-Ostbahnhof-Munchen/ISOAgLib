@@ -1183,7 +1183,8 @@ function create_EdePrj()
 
 	sed -e 's#=_=_#\\#g' $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
 	echo "Convert UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
-	awk '{ gsub("$", "\r"); print $0;}' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
+	cat $PROJECT_FILE_NAME | gawk '{ sub("\r", ""); print $0;}' > $PROJECT_FILE_NAME
+	cat $PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $PROJECT_FILE_NAME
 	rm -f $PROJECT_FILE_NAME.1
 }
 
@@ -1320,8 +1321,9 @@ function create_VCPrj()
 	echo "# End Project" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 	echo "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-	awk '{ gsub("$", "\r"); print $0;}' $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
-	mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+
+	cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME | gawk '{ sub("\r", ""); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+	cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
   cd $DEV_PRJ_DIR
   # org test
 }

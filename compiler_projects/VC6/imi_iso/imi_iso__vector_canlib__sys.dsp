@@ -145,159 +145,87 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\liberr_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminalpkg_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procdatabase_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectarchedbargraph_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processpkg_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlinearbargraph_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processelementbase_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlineattributes_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procident_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputstring_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\process_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectalarmmask_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\impl\procdatalocalbase_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectsoftkeymask_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpointElements\impl\simplemanagesetpointlocal_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputnumber_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\impl\managemeasureproglocal_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectobjectpointer_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\impl\measureproglocal_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectellipse_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpoint\impl\procdatalocalsimplesetpoint_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectcontainer_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointbase_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmacro_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointregister_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectworkingset_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\Std\impl\procdataremote_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectbutton_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\impl\procdataremotebase_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputstring_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\impl\setpointremote_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputlist_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdMeasureElements\impl\measureprogremote_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpicturegraphic_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdMeasureElements\impl\measureprogbase_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputboolean_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdMeasureElements\impl\measuresubprog_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinput_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\processdatachangehandler_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfillattributes_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\base_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstringvariable_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstring_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryfunction_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmeter_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfontattributes_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobject_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectline_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputattributes_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputnumber_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectkey_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryinput_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectrectangle_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectnumbervariable_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectdatamask_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminal_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpolygon_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobject_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\basepkg_c.cpp
 # End Source File
 
 # Begin Source File
@@ -346,6 +274,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\eeprom\impl\eepromio_c.cpp
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\IsoAgLib_Examples\imi.cpp
 # End Source File
 
 # Begin Source File
@@ -498,6 +430,122 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processelementbase_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procident_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\process_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procdatabase_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processpkg_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\proc_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\impl\procdatalocalbase_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpointElements\impl\simplemanagesetpointlocal_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpointElements\isimplemanagesetpointlocal_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\impl\managemeasureproglocal_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\impl\measureproglocal_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\imeasureproglocal_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpoint\impl\procdatalocalsimplesetpoint_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpoint\iprocdatalocalsimplesetpoint_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointbase_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointregister_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\isetpointregister_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\Std\impl\procdataremote_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\Std\iprocdataremote_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\impl\procdataremotebase_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\impl\setpointremote_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\isetpointremote_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdMeasureElements\impl\measureprogremote_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdMeasureElements\imeasureprogremote_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdMeasureElements\impl\measuresubprog_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdMeasureElements\impl\measureprogbase_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\processdatachangehandler_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\proc_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\iprocess_c.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\Application_Config\isoaglib_config.h
 # End Source File
 
@@ -510,323 +558,19 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\config.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectbutton_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\basepkg_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectsoftkeymask_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\base_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstringvariable_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\ibase_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinput_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectcontainer_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputattributes_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstring_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminal_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlineattributes_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectellipse_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectbutton_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputlist_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpolygon_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vttypes.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpicturegraphic_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryinput_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectline_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectkey_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmeter_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminalpkg_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectdatamask_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfillattributes_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobject_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputstring_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectnumbervariable_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputnumber_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryfunction_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectrectangle_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlinearbargraph_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectarchedbargraph_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmacro_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputboolean_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectalarmmask_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputstring_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputnumber_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectobjectpointer_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectworkingset_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfontattributes_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectauxiliaryfunction_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobject_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectobjectpointer_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectrectangle_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectmask_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectstringvariable_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectmeter_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectalarmmask_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectworkingset_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectlineattributes_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtincludes.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectpicturegraphic_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectdatamask_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectauxiliaryinput_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectmacro_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectfillattributes_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\iisoterminalobjectpool_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectnumbervariable_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectline_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectcontainer_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectlinearbargraph_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputstring_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectarchedbargraph_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectoutputstring_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputnumber_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputattributes_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\iisoterminal_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectoutputnumber_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputlist_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectkey_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectstring_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivttypes.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectsoftkeymask_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputboolean_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectfontattributes_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectellipse_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinput_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectpolygon_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendstreamer_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\imultisend_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\ibasetypes.h
 # End Source File
 
 # Begin Source File

@@ -6808,6 +6808,12 @@ PRJ_ISO11783=1
 /// set increment for automatic buffer increase after overload ( 0 == no increase )
 // #define CONFIG_CAN_BUF_INCREASE_ON_OVERLOAD 5
 
+/// define list of CAN filters where large buffers are needed due to high load
+// #define CONFIG_CAN_HIGH_LOAD_IDENT_LIST { 0x100, 0x200, 0x500 }
+
+/// define amount of list entries in CONFIG_CAN_HIGH_LOAD_IDENT_LIST
+// #define CONFIG_CAN_HIGH_LOAD_IDENT_CNT 3
+
 /// Max amount of Filters which can be connected to a CAN MsgObj for ISO
 // #define CONFIG_CAN_ISO_FILTER_BOX_PER_MSG_OBJ 15
 
@@ -6913,13 +6919,6 @@ PRJ_ISO11783=1
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
-
-
-/// define list of CAN filters where large buffers are needed due to high load
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_LIST { 0x100, 0x200, 0x500, 0x1 }
-
-/// define amount of list entries in CONFIG_CAN_HIGH_LOAD_IDENT_LIST
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_CNT 4
 \endcode
 
 
