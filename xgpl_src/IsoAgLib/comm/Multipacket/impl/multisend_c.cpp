@@ -435,7 +435,7 @@ bool MultiSend_c::timeEvent( void )
           data().setData(4, static_cast<uint8_t>(0xFF));
         }
         en_sendState = AwaitCts;
-//        ui32_lastNextPacketNumberToSend = 0; // not valid, so we can check later if a CTS was resent...
+        ui32_lastNextPacketNumberToSend = 0xFFFFFFFF; // so the first coming CTS is definitively NO repeated burst!
         i32_timestamp = i32_time;
         ui32_offset = 0;
         b_pkgSent = 0;
@@ -701,10 +701,10 @@ bool MultiSend_c::timeEvent( void )
 
   possible errors:
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
-	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool MultiSend_c::processMsg(){
-  // don't process if no response from target of mulit packet send
+  // don't process if no response from target of multi packet send
   // give DINMaskUpload_c a try
   if ( (en_sendState == Idle) || (data().empf() != b_send) || (data().send() != b_empf)) {
     #ifdef USE_DIN_TERMINAL
@@ -761,10 +761,15 @@ bool MultiSend_c::processMsg(){
           en_sendState = SendPauseTillCts;
         }
         else {
+          // check if the same data as the last CTS is wanted?
+          uint32_t ui32_pkgCTSd = uint32_t(constData().data(2));
+          if (b_ext) {
+             ui32_pkgCTSd += (uint32_t(constData().data(3)) << 8) + (uint32_t(constData().data(4)) << 16);
+          }
+          
           if ( pc_mss != NULL )
           {
-            // check if the same data as the last CTS is wanted?
-            if ((uint32_t(constData().data(2)) + ((uint32_t)(constData().data(3)) << 8) + (uint32_t(constData().data(4)) << 16)) == ui32_lastNextPacketNumberToSend) {
+            if (ui32_pkgCTSd == ui32_lastNextPacketNumberToSend) {
               pc_mss->restoreDataNextStreamPart ();
             } else {
               // we're streaming on, so save this position if it should happen we resend from here...
@@ -773,25 +778,28 @@ bool MultiSend_c::processMsg(){
                 ui32_offset += b_pkgSent;
               }
             }
+          }
+          else
+          {
+            /** @todo to implement for uint8[] sending case! -achim says this should be handled somewhere? */
+          }
+          // update NextPacketNumberToSend!
+          ui32_lastNextPacketNumberToSend = ui32_pkgCTSd;
 
-            // update NextPacketNumberToSend!
-            ui32_lastNextPacketNumberToSend = uint32_t(constData().data(2)) + (uint32_t(constData().data(3)) << 8) + (uint32_t(constData().data(4)) << 16);
-
-            // send out Extended Connection Mode Data Packet Offset
-            if (b_ext) {
-              data().setData(0, static_cast<uint8_t>(eCM_DPO));
-              data().setData(1, b_pkgToSend);
-              data().setData(2, static_cast<uint8_t>(ui32_offset & 0xFF));
-              data().setData(3, static_cast<uint8_t>((ui32_offset >> 8) & 0xFF));
-              data().setData(4, static_cast<uint8_t>(ui32_offset >> 16));
-              data().setData(5, static_cast<uint8_t>(i32_pgn & 0xFF));
-              data().setData(6, static_cast<uint8_t>((i32_pgn >> 8) & 0xFF));
-              data().setData(7, static_cast<uint8_t>(i32_pgn >> 16));
-              ui32_sequenceNr = 0;
-              b_pkgSent = 0;
-              sendIntern();
-            }
-          } // end ( pc_mss != NULL )
+          // send out Extended Connection Mode Data Packet Offset
+          if (b_ext) {
+            data().setData(0, static_cast<uint8_t>(eCM_DPO));
+            data().setData(1, b_pkgToSend);
+            data().setData(2, static_cast<uint8_t>(ui32_offset & 0xFF));
+            data().setData(3, static_cast<uint8_t>((ui32_offset >> 8) & 0xFF));
+            data().setData(4, static_cast<uint8_t>(ui32_offset >> 16));
+            data().setData(5, static_cast<uint8_t>(i32_pgn & 0xFF));
+            data().setData(6, static_cast<uint8_t>((i32_pgn >> 8) & 0xFF));
+            data().setData(7, static_cast<uint8_t>(i32_pgn >> 16));
+            ui32_sequenceNr = 0;
+            b_pkgSent = 0;
+            sendIntern();
+          }
           // now receiver wants to receive new data
           #if defined( DEBUG )
           IsoAgLib::getIrs232Instance() << "Start To Send Next Data Block\n";
@@ -862,7 +870,7 @@ bool MultiSend_c::processMsg(){
       #endif
       setSendStateIdle();
       *pen_sendSuccessNotify = en_sendSuccess = SendAborted;
-      break;
+      return false; // in case a MultiSend & MultiReceive are running parallel, then this ConnAbort should be for both!
     default:
       #ifdef USE_DIN_TERMINAL
       // give DINMaskUpload_c a try

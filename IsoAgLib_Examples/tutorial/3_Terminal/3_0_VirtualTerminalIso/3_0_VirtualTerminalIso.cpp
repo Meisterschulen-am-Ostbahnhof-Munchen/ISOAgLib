@@ -367,12 +367,12 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
       case vtKeyCodeKeyMoreAccel:
         updateAccel (valAccel + 1);
         x+=10; // ### REMOVE for RELEASE! ###
-        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, x,0); // ### REMOVE for RELEASE! ###
+        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, -20,-20); // ### REMOVE for RELEASE! ###
         break;
 
       case vtKeyCodeKeyLessAccel:
         updateAccel (valAccel - 1);
-        iVtObjectcontainerInAllMasks.moveChildLocation (&iVtObjectBigLogo, -10,0); // ### REMOVE for RELEASE! ###
+        iVtObjectcontainerInAllMasks.moveChildLocation (&iVtObjectBigLogo, -20,-20); // ### REMOVE for RELEASE! ###
         break;
 
       // Use b_updateObject here to save and access the hidden state directly via the object!

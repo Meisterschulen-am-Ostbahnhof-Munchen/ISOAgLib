@@ -146,17 +146,23 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
 
   /// Use BUFFER - NOT MultiSendStreamer!
   mssObjectString=NULL;
-  vec_uploadBuffer.reserve (5+strLen);
+  vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
 
   vec_uploadBuffer.push_back (179 /* 0xB3 */); /* Command: Command --- Parameter: Change String Value (TP) */
   vec_uploadBuffer.push_back (rui16_objId & 0xFF);
   vec_uploadBuffer.push_back (rui16_objId >> 8);
   vec_uploadBuffer.push_back (strLen & 0xFF);
   vec_uploadBuffer.push_back (strLen >> 8);
-  for (int i=0; i<strLen; i++) {
+  int i=0;
+  for (; i < strLen; i++) {
     vec_uploadBuffer.push_back (*rpc_string);
     rpc_string++;
   }
+  for (; i < 3; i++) {
+    // at least 3 bytes from the string have to be written, if not, fill with 0xFF, so the pkg-len is 8!
+    vec_uploadBuffer.push_back (0xFF);
+  }
+  
   if ((5+strLen) < 9)
     ui8_retryCount = DEF_Retries_NormalCommands;
   else
@@ -173,6 +179,8 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
   #endif
 }
 
+
+
 SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
 {
   mssObjectString = rpc_objectString;
@@ -184,6 +192,8 @@ SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
 
   ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
 }
+
+
 
 /**
   Constructor used for "normal" 8-byte CAN-Pkgs!
@@ -206,6 +216,7 @@ SendUpload_c::SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   ui8_retryCount = DEF_Retries_NormalCommands;
   ui32_uploadTimeout = rui32_timeout;
 }
+
 
 
 /**
@@ -234,6 +245,7 @@ SendUpload_c::SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
 }
 
 
+
 const SendUpload_c& SendUpload_c::operator= (const SendUpload_c& ref_source)
 {
   vec_uploadBuffer = ref_source.vec_uploadBuffer;
@@ -242,6 +254,8 @@ const SendUpload_c& SendUpload_c::operator= (const SendUpload_c& ref_source)
   ui32_uploadTimeout = ref_source.ui32_uploadTimeout;
   return ref_source;
 }
+
+
 
 SendUpload_c::SendUpload_c (const SendUpload_c& ref_source)
   : mssObjectString (ref_source.mssObjectString)
@@ -252,10 +266,10 @@ SendUpload_c::SendUpload_c (const SendUpload_c& ref_source)
 }
 
 
+  
   /*************************************/
  /**** Iso Terminal Implementation ****/
 /*************************************/
-
 
 void ISOTerminal_c::finishUploadCommand ()
 {
@@ -277,6 +291,8 @@ void ISOTerminal_c::finishUploadCommand ()
   std::cout << q_sendUpload.size() << ".\n";
   #endif
 }
+
+
 
 // only being called if there IS a q_sendUpload.front()
 bool ISOTerminal_c::startUploadCommand ()
@@ -313,9 +329,11 @@ bool ISOTerminal_c::startUploadCommand ()
     /// Fits into a single CAN-Pkg!
     uint8_t ui8_len = actSend->mssObjectString->getStreamer()->getStreamSize();
 
-    c_data.setExtCanPkg (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), ui8_len);
+    c_data.setExtCanPkg (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
     actSend->mssObjectString->getStreamer()->set5ByteCommandHeader (c_data.pb_data);
-    for (int i=5; i < ui8_len; i++) c_data.pb_data[i] = actSend->mssObjectString->getStreamer()->getStringToStream() [i-5];
+    int i=5;
+    for (; i < ui8_len; i++) c_data.pb_data[i] = actSend->mssObjectString->getStreamer()->getStringToStream() [i-5];
+    for (; i < 8;       i++) c_data.pb_data[i] = 0xFF; // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
     getCanInstance4Comm() << c_data;
 
     // Save first byte for Response-Checking!
@@ -349,6 +367,8 @@ bool ISOTerminal_c::startUploadCommand ()
 ISOTerminal_c::ISOTerminal_c():en_uploadType(UploadIdle)
 {
 }
+
+
 
 /**
   default destructor, which initiate sending address release for all own identities
@@ -830,8 +850,22 @@ void ISOTerminalStreamer_c::resetDataNextStreamPart ()
   uploadBufferPosition = 0;
   uploadBufferFilled = 1;
   uploadBuffer [0] = 17;
+  
+  // ! ui32_streamSize is constant and is initialized in "StartObjectPoolUploading"
+  // ! pc_pool         is constant and is initialized in "StartObjectPoolUploading"
+  
+  // following should not be needed to be reset, as this set by "saveDataNextStreamPart"
+  // ? ui32_objectStreamPositionStored 
+  // ? pc_iterObjectsStored;
+  // ? uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
+  // ? uploadBufferFilledStored;
+  // ? uploadBufferPositionStored;
 }
+  
 
+
+  
+  
 /** place next data to send direct into send puffer of pointed
     stream send package - MultiSendStreamer_c will send this
     puffer afterwards
@@ -851,7 +885,6 @@ void ISOTerminalStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint
 
     // stream some more bytes into internal ISO_VT_UPLOAD_BUFFER_SIZE byte buffer...
     uint16_t bytes2Buffer;
-    /** @todo somethimes pc_iterObjects is wrong herre (e.g. 0x13) */
     while ((bytes2Buffer = ((vtObject_c*)(*pc_iterObjects))->stream (uploadBuffer+uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-uploadBufferFilled, ui32_objectStreamPosition)) == 0) {
       pc_iterObjects++;
       ui32_objectStreamPosition = 0;
@@ -875,7 +908,7 @@ void ISOTerminal_c::startObjectPoolUploading ()
   }
 
   c_data.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                       192, 0xff, (c_streamer.ui32_streamSize-1) & 0xFF, ((c_streamer.ui32_streamSize-1) >>  8) & 0xFF, ((c_streamer.ui32_streamSize-1) >> 16) & 0xFF, (c_streamer.ui32_streamSize-1) >> 24, 0xff, 0xff);
+                       192 /* 0xC0 */, 0xff, (c_streamer.ui32_streamSize-1) & 0xFF, ((c_streamer.ui32_streamSize-1) >>  8) & 0xFF, ((c_streamer.ui32_streamSize-1) >> 16) & 0xFF, (c_streamer.ui32_streamSize-1) >> 24, 0xff, 0xff);
   getCanInstance4Comm() << c_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
 
   // Now proceed to uploading
