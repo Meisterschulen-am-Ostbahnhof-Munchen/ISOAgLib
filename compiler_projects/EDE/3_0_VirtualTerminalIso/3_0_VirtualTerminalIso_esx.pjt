@@ -140,7 +140,6 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlinearbargraph_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlineattributes_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputstring_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryinput_c.cc
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectalarmmask_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectsoftkeymask_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputnumber_c.cpp
@@ -158,14 +157,15 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfillattributes_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstringvariable_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstring_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryfunction_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmeter_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfontattributes_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobject_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectline_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryfunction_c.cc
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputattributes_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputnumber_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectkey_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryinput_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectrectangle_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectnumbervariable_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectdatamask_c.cpp

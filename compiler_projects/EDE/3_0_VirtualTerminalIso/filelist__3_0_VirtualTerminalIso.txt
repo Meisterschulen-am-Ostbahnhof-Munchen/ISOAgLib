@@ -18,7 +18,6 @@
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectlinearbargraph_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectlineattributes_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputstring_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectauxiliaryinput_c.cc
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectalarmmask_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectsoftkeymask_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectoutputnumber_c.cpp
@@ -36,14 +35,15 @@
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectfillattributes_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectstringvariable_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectstring_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectauxiliaryfunction_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectmeter_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectfontattributes_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobject_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectline_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectauxiliaryfunction_c.cc
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputattributes_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputnumber_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectkey_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectauxiliaryinput_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectrectangle_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectnumbervariable_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectdatamask_c.cpp
