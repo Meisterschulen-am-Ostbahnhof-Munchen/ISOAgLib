@@ -355,6 +355,14 @@
 #include <string>
 #include <set>
 #include <iostream>
+#include <vector>
+
+
+
+#define MACRO_16bitToLE(value) (value & 0xFF), ((value >> 8) & 0xFF)
+#define MACRO_32bitToLE(value) (value & 0xFF), ((value >> 8) & 0xFF), ((value >> 16) & 0xFF), ((value >> 24) & 0xFF)
+
+
 
 
 // ### GLOBALS ###
@@ -677,6 +685,19 @@ unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wi
  // else { take ID found }
  return (foundID);
 }
+
+
+unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro)
+{
+  if (rpc_string [0] == 0x00) clean_exit (-1, "empty attribute!");
+
+/** @todo check if all chars in the string are numbers, not only the first! */
+		if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
+
+		// Starting with a letter, so look up id!
+		return getID (rpc_string, rb_isMacro, false, 0);
+}
+
 
 void getKeyCode ()
 {
@@ -1293,6 +1314,22 @@ bool is_objName;
 unsigned int objID;
 bool is_objID;
 
+/* sets the passed attribute if name matches id */
+void setAttributeValue(int attrID)
+{
+ if (strncmp (attr_name, attrNameTable[attrID], stringLength) == 0)
+ {
+  strncpy (attrString [attrID], attr_value, stringLength);
+  attrIsGiven [attrID] = true;
+ }
+}
+
+/* cleans the passed attribute value */
+void cleanAttribute(int attrID)
+{
+ attrString [attrID] [stringLength+1-1] = 0x00;
+ attrIsGiven [attrID] = false;
+}
 
 
 void utf16convert (char* source, char* destin, int count)
@@ -1510,20 +1547,20 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
  char *node_name = XMLString::transcode(n->getNodeName());
 
 // all possible values of the objects
- unsigned int objChildID; bool is_objChildID;
- unsigned int objChildX; bool is_objChildX;
- unsigned int objChildY; bool is_objChildY;
- unsigned int objBlockRow;
- unsigned int objBlockCol;
- unsigned int objType;
- unsigned int commandType;
- unsigned int objChildObjects;
+ unsigned int objChildID=0; bool is_objChildID=false; //init for happy compiler
+ unsigned int objChildX=0; bool is_objChildX=false; //init for happy compiler
+ unsigned int objChildY=0; bool is_objChildY=false; //init for happy compiler
+ unsigned int objBlockRow=0; //init for happy compiler
+ unsigned int objBlockCol=0; //init for happy compiler
+ unsigned int objType=0; //init for happy compiler
+ unsigned int commandType=0; //init for happy compiler
+ unsigned int objChildObjects=0; //init for happy compiler
 
- unsigned int deXactualWidth;
- unsigned int deXactualHeight;
- unsigned int deXwidth;
- unsigned int deXcolorDepth;
- unsigned int deXtransCol;
+ unsigned int deXactualWidth=0; //init for happy compiler
+ unsigned int deXactualHeight=0; //init for happy compiler
+ unsigned int deXwidth=0; //init for happy compiler
+ unsigned int deXcolorDepth=0; //init for happy compiler
+ unsigned int deXtransCol=0; //init for happy compiler
  unsigned int stdRawBitmapBytes [3];
 
 #define maxFixedBitmaps 1000
@@ -1533,17 +1570,17 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 //unsigned int deXtransCol [maxFixedBitmaps];
  unsigned int fixRawBitmapBytes [maxFixedBitmaps] [3];
  unsigned int fixBitmapOptions [maxFixedBitmaps];
- unsigned int fixNr;
+ unsigned int fixNr=0; //init for happy compiler
 
- unsigned int objChildMacros;
- unsigned int objChildCommands;
- unsigned int objChildPoints;
- unsigned int objChildLanguages;
+ unsigned int objChildMacros=0; //init for happy compiler
+ unsigned int objChildCommands=0; //init for happy compiler
+ unsigned int objChildPoints=0; //init for happy compiler
+ unsigned int objChildLanguages=0; //init for happy compiler
 
  unsigned int objBitmapOptions;
 
  char commandMessage[stringLength+1];
- char objChildName [stringLength+1]; bool is_objChildName;
+ char objChildName [stringLength+1]; bool is_objChildName=false; //init for happy compiler
  char tempString [stringLength+1]; tempString [stringLength+1-1] = 0x00;
  char tempString2 [stringLength+1]; tempString2 [stringLength+1-1] = 0x00;
  char objBlockFont [stringLength+1];
@@ -2052,7 +2089,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     {
      char *command_name = XMLString::transcode(child->getNodeName());
                     commandType = commandIsType (command_name);
-
+     commandMessage [stringLength+1-1] = 0x00;
      switch (commandType)
      {
       case ctHideShowObject:
@@ -2062,11 +2099,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrHideShow] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrHideShow] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrHideShow);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2074,34 +2108,23 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "hide_show", stringLength) == 0)
-         {
-          strncpy (attrString [attrHideShow], attr_value, stringLength);
-          attrIsGiven [attrHideShow] = true;
-         }
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrHideShow);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", (atoi(attrString [attrObjectID]) & 0xFF),  (atoi(attrString [attrObjectID]) >> 8), booltoi(attrString[attrHideShow]));
+        sprintf(commandMessage, "0xA0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), booltoi(attrString[attrHideShow]));
         objChildCommands++;
        }
        break;
       case ctEnableDisableObject:
-       if(child->hasAttributes())
+							if(child->hasAttributes())
        {
         // parse through all attributes
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrDisable_enable] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrDisable_enable] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrDisable_enable);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2109,19 +2132,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "enable_disable", stringLength) == 0)
-         {
-          strncpy (attrString [attrDisable_enable], attr_value, stringLength);
-          attrIsGiven [attrDisable_enable] = true;
-         }
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrDisable_enable);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA1, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", (atoi(attrString [attrObjectID]) & 0xFF),  (atoi(attrString [attrObjectID]) >> 8), booltoi(attrString[attrDisable_enable]));
+        sprintf(commandMessage, "0xA1, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), booltoi(attrString[attrDisable_enable]));
         objChildCommands++;
        }
        break;
@@ -2132,9 +2147,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2142,14 +2155,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
+         setAttributeValue(attrObjectID);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", (atoi(attrString [attrObjectID]) & 0xFF),  (atoi(attrString [attrObjectID]) >> 8));
+        sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)));
         objChildCommands++;
        }
        break;
@@ -2160,17 +2169,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrNumber_of_repetitions] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNumber_of_repetitions] = false;
-        attrString [attrFrequency] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrFrequency] = false;
-        attrString [attrOnTime_duration] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrOnTime_duration] = false;
-        attrString [attrOffTime_duration] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrOffTime_duration] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrNumber_of_repetitions);
+        cleanAttribute(attrFrequency);
+        cleanAttribute(attrOnTime_duration);
+        cleanAttribute(attrOffTime_duration);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2178,30 +2181,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "number_of_repetitions", stringLength) == 0)
-         {
-          strncpy (attrString [attrNumber_of_repetitions], attr_value, stringLength);
-          attrIsGiven [attrNumber_of_repetitions] = true;
-         }
-         if (strncmp (attr_name, "frequency", stringLength) == 0)
-         {
-          strncpy (attrString [attrFrequency], attr_value, stringLength);
-          attrIsGiven [attrFrequency] = true;
-         }
-         if (strncmp (attr_name, "on_time_duration", stringLength) == 0)
-         {
-          strncpy (attrString [attrOnTime_duration], attr_value, stringLength);
-          attrIsGiven [attrOnTime_duration] = true;
-         }
-         if (strncmp (attr_name, "off_time_duration", stringLength) == 0)
-         {
-          strncpy (attrString [attrOffTime_duration], attr_value, stringLength);
-          attrIsGiven [attrOffTime_duration] = true;
-         }
-
+         setAttributeValue(attrNumber_of_repetitions);
+         setAttributeValue(attrFrequency);
+         setAttributeValue(attrOnTime_duration);
+         setAttributeValue(attrOffTime_duration);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA3, %d, %d,%d, %d,%d, %d,%d", atoi(attrString [attrNumber_of_repetitions]),  atoi(attrString [attrFrequency]) & 0xFF, atoi(attrString [attrFrequency]) >> 8, (atoi(attrString [attrOnTime_duration]) & 0xFF), (atoi(attrString [attrOnTime_duration]) >> 8),(atoi(attrString [attrOffTime_duration]) & 0xFF), (atoi(attrString [attrOffTime_duration]) >> 8));
+        sprintf(commandMessage, "0xA3, %d, %d,%d, %d,%d, %d,%d", atoi(attrString [attrNumber_of_repetitions]),  MACRO_16bitToLE(idOrName_toi(attrString [attrFrequency], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrOnTime_duration], /*macro?*/false)),MACRO_16bitToLE(idOrName_toi(attrString [attrOffTime_duration], /*macro?*/false)));
         objChildCommands++;
        }
        break;
@@ -2212,9 +2198,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrPercentage] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrPercentage] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrPercentage);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2222,11 +2206,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "percentage", stringLength) == 0)
-         {
-          strncpy (attrString [attrPercentage], attr_value, stringLength);
-          attrIsGiven [attrPercentage] = true;
-         }
+         setAttributeValue(attrPercentage);
         }
         // Need check for all attributes being present for this command -bac
         sprintf(commandMessage, "0xA4, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", atoi(attrString [attrPercentage]));
@@ -2240,15 +2220,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrParent_objectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrParent_objectID] = false;
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrX_change] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrX_change] = false;
-        attrString [attrY_change] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrY_change] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrParent_objectID);
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrX_change);
+        cleanAttribute(attrY_change);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2256,31 +2231,14 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "parent_object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrParent_objectID], attr_value, stringLength);
-          attrIsGiven [attrParent_objectID] = true;
-         }
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "x_pos_change", stringLength) == 0)
-         {
-          strncpy (attrString [attrX_change], attr_value, stringLength);
-          attrIsGiven [attrX_change] = true;
-         }
-         if (strncmp (attr_name, "y_pos_change", stringLength) == 0)
-         {
-          strncpy (attrString [attrY_change], attr_value, stringLength);
-          attrIsGiven [attrY_change] = true;
-         }
-
+         setAttributeValue(attrParent_objectID);
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrX_change);
+         setAttributeValue(attrY_change);
         }
         // Need check for all attributes being present for this command -bac
         // add 127 to relative x,y
-        sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", atoi(attrString [attrParent_objectID]) & 0xFF,  atoi(attrString [attrParent_objectID]) >> 8, atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
+        sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
         objChildCommands++;
        }
        break;
@@ -2291,15 +2249,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrParent_objectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrParent_objectID] = false;
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrX_pos] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrX_pos] = false;
-        attrString [attrY_pos] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrY_pos] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrParent_objectID);
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrX_pos);
+        cleanAttribute(attrY_pos);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2307,30 +2260,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "parent_object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrParent_objectID], attr_value, stringLength);
-          attrIsGiven [attrParent_objectID] = true;
-         }
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "x_pos", stringLength) == 0)
-         {
-          strncpy (attrString [attrX_pos], attr_value, stringLength);
-          attrIsGiven [attrX_change] = true;
-         }
-         if (strncmp (attr_name, "y_pos", stringLength) == 0)
-         {
-          strncpy (attrString [attrY_pos], attr_value, stringLength);
-          attrIsGiven [attrY_change] = true;
-         }
-
+         setAttributeValue(attrParent_objectID);
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrX_change);
+         setAttributeValue(attrY_change);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", atoi(attrString [attrParent_objectID]) & 0xFF,  atoi(attrString [attrParent_objectID]) >> 8, atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrX_pos]) & 0xFF, atoi(attrString [attrX_pos]) >> 8, atoi(attrString [attrY_pos]) & 0xFF, atoi(attrString [attrY_pos]) >> 8);
+        sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrX_pos], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrY_pos], /*macro?*/false)));
         objChildCommands++;
        }
        break;
@@ -2341,13 +2277,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrNew_width] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_width] = false;
-        attrString [attrNew_height] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_height] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrNew_width);
+        cleanAttribute(attrNew_height);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2355,25 +2287,12 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "new_width", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_width], attr_value, stringLength);
-          attrIsGiven [attrNew_width] = true;
-         }
-         if (strncmp (attr_name, "new_height", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_height], attr_value, stringLength);
-          attrIsGiven [attrNew_height] = true;
-         }
-
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrNew_width);
+         setAttributeValue(attrNew_height);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrNew_width]) & 0xFF, atoi(attrString [attrNew_width]) >> 8, atoi(attrString [attrNew_height]) & 0xFF, atoi(attrString [attrNew_height]) >> 8);
+        sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_width], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_height], /*macro?*/false)));
         objChildCommands++;
        }
        break;
@@ -2384,11 +2303,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrNew_background_colour] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_background_colour] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrNew_background_colour);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2396,19 +2312,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "new_background_colour", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_background_colour], attr_value, stringLength);
-          attrIsGiven [attrNew_background_colour] = true;
-         }
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrNew_background_colour);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrNew_background_colour]));
+        sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrNew_background_colour]));
         objChildCommands++;
        }
        break;
@@ -2419,11 +2327,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrNew_value] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_value] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrNew_value);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2431,19 +2336,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "new_value", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_value], attr_value, stringLength);
-          attrIsGiven [attrNew_value] = true;
-         }
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrNew_value);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA8, %d, %d, 0xFF, %d, %d, %d, %d", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrNew_value]) & 0xFF, atoi(attrString [attrNew_value]) >> 8, atoi(attrString [attrNew_value]) >> 16, atoi(attrString [attrNew_value]) >> 24);
+        sprintf(commandMessage, "0xA8, %d, %d, 0x00, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false)));
         objChildCommands++;
        }
        break;
@@ -2454,13 +2351,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrNumber_of_bytes] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNumber_of_bytes] = false;
-        attrString [attrNew_value] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_value] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrNumber_of_bytes);
+        cleanAttribute(attrNew_value);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2468,21 +2361,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "bytes_in_string", stringLength) == 0)
-         {
-          strncpy (attrString [attrBytes_in_string], attr_value, stringLength);
-          attrIsGiven [attrBytes_in_string] = true;
-         }
-         if (strncmp (attr_name, "new_value", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_value], attr_value, stringLength);
-          attrIsGiven [attrNew_value] = true;
-         }
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrBytes_in_string);
+         setAttributeValue(attrNew_value);
         }
         // Need check for all attributes being present for this command -bac
         int strLength;
@@ -2499,7 +2380,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          strcat(tempString2, tempString);
         }
         //sprintf (attrString [attrValue], "%s", tempString2);
-        sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrBytes_in_string]) & 0xFF, atoi(attrString [attrBytes_in_string]) >> 8, tempString2);
+        sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false)), tempString2);
 
         objChildCommands++;
        }
@@ -2511,15 +2392,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrNew_width] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_width] = false;
-        attrString [attrNew_height] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_height] = false;
-        attrString [attrLine_direction] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrLine_direction] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrNew_width);
+        cleanAttribute(attrNew_height);
+        cleanAttribute(attrLine_direction);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2527,29 +2403,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "new_width", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_width], attr_value, stringLength);
-          attrIsGiven [attrNew_width] = true;
-         }
-         if (strncmp (attr_name, "new_height", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_height], attr_value, stringLength);
-          attrIsGiven [attrNew_height] = true;
-         }
-         if (strncmp (attr_name, "line_direction", stringLength) == 0)
-         {
-          strncpy (attrString [attrLine_direction], attr_value, stringLength);
-          attrIsGiven [attrLine_direction] = true;
-         }
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrNew_width);
+         setAttributeValue(attrNew_height);
+         setAttributeValue(attrLine_direction);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrNew_width]) & 0xFF, atoi(attrString [attrNew_width]) >> 8, atoi(attrString [attrNew_height]) & 0xFF, atoi(attrString [attrNew_height]) >> 8, atoi(attrString [attrLine_direction]));
+        sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_width], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_height], /*macro?*/false)), atoi(attrString [attrLine_direction]));
 
         objChildCommands++;
        }
@@ -2561,17 +2421,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrFont_colour] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrFont_colour] = false;
-        attrString [attrFont_size] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrFont_size] = false;
-        attrString [attrFont_type] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrFont_type] = false;
-        attrString [attrFont_style] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrFont_style] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrFont_colour);
+        cleanAttribute(attrFont_size);
+        cleanAttribute(attrFont_type);
+        cleanAttribute(attrFont_style);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2579,34 +2433,14 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "font_colour", stringLength) == 0)
-         {
-          strncpy (attrString [attrFont_colour], attr_value, stringLength);
-          attrIsGiven [attrFont_colour] = true;
-         }
-         if (strncmp (attr_name, "font_size", stringLength) == 0)
-         {
-          strncpy (attrString [attrFont_size], attr_value, stringLength);
-          attrIsGiven [attrFont_size] = true;
-         }
-         if (strncmp (attr_name, "font_type", stringLength) == 0)
-         {
-          strncpy (attrString [attrFont_type], attr_value, stringLength);
-          attrIsGiven [attrFont_type] = true;
-         }
-         if (strncmp (attr_name, "font_style", stringLength) == 0)
-         {
-          strncpy (attrString [attrFont_style], attr_value, stringLength);
-          attrIsGiven [attrFont_style] = true;
-         }
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrFont_colour);
+         setAttributeValue(attrFont_size);
+         setAttributeValue(attrFont_type);
+         setAttributeValue(attrFont_style);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrFont_colour]), atoi(attrString [attrFont_size]), atoi(attrString [attrFont_type]), atoi(attrString [attrFont_style]));
+        sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFont_colour]), atoi(attrString [attrFont_size]), atoi(attrString [attrFont_type]), atoi(attrString [attrFont_style]));
 
         objChildCommands++;
        }
@@ -2618,15 +2452,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrLine_colour] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrLine_colour] = false;
-        attrString [attrLine_width] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrLine_width] = false;
-        attrString [attrLine_art] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrLine_art] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrLine_colour);
+        cleanAttribute(attrLine_width);
+        cleanAttribute(attrLine_art);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2634,30 +2463,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "line_colour", stringLength) == 0)
-         {
-          strncpy (attrString [attrLine_colour], attr_value, stringLength);
-          attrIsGiven [attrLine_colour] = true;
-         }
-         if (strncmp (attr_name, "line_width", stringLength) == 0)
-         {
-          strncpy (attrString [attrLine_width], attr_value, stringLength);
-          attrIsGiven [attrLine_width] = true;
-         }
-         if (strncmp (attr_name, "line_art", stringLength) == 0)
-         {
-          strncpy (attrString [attrLine_art], attr_value, stringLength);
-          attrIsGiven [attrLine_art] = true;
-         }
-
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrLine_colour);
+         setAttributeValue(attrLine_width);
+         setAttributeValue(attrLine_art);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), atoi(attrString [attrLine_art]) & 0xFF, atoi(attrString [attrLine_art]) >> 8);
+        sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(idOrName_toi(attrString [attrLine_art], /*macro?*/false)));
 
         objChildCommands++;
        }
@@ -2669,17 +2481,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrFill_colour] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrFill_colour] = false;
-        attrString [attrFill_type] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrFill_type] = false;
-        attrString [attrFill_colour] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrFill_colour] = false;
-        attrString [attrFill_pattern] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrFill_pattern] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrFill_colour);
+        cleanAttribute(attrFill_type);
+        cleanAttribute(attrFill_colour);
+        cleanAttribute(attrFill_pattern);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2687,31 +2493,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "fill_type", stringLength) == 0)
-         {
-          strncpy (attrString [attrFill_type], attr_value, stringLength);
-          attrIsGiven [attrFill_type] = true;
-         }
-         if (strncmp (attr_name, "fill_colour", stringLength) == 0)
-         {
-          strncpy (attrString [attrFill_colour], attr_value, stringLength);
-          attrIsGiven [attrFill_colour] = true;
-         }
-
-         if (strncmp (attr_name, "fill_pattern", stringLength) == 0)
-         {
-          strncpy (attrString [attrFill_pattern], attr_value, stringLength);
-          attrIsGiven [attrFill_pattern] = true;
-         }
-
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrFill_type);
+         setAttributeValue(attrFill_colour);
+         setAttributeValue(attrFill_pattern);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrFill_type]), atoi(attrString [attrFill_colour]), atoi(attrString [attrFill_pattern]) & 0xFF, atoi(attrString [attrFill_pattern]) >> 8);
+        sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFill_type]), atoi(attrString [attrFill_colour]), MACRO_16bitToLE(idOrName_toi(attrString [attrFill_pattern], /*macro?*/false)));
 
         objChildCommands++;
        }
@@ -2723,11 +2511,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrWorking_setID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrWorking_setID] = false;
-        attrString [attrNew_active_mask] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_active_mask] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrWorking_setID);
+        cleanAttribute(attrNew_active_mask);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2735,20 +2520,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "working_set_object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrWorking_setID], attr_value, stringLength);
-          attrIsGiven [attrWorking_setID] = true;
-         }
-         if (strncmp (attr_name, "new_active_mask_object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_active_mask], attr_value, stringLength);
-          attrIsGiven [attrNew_active_mask] = true;
-         }
-
+         setAttributeValue(attrWorking_setID);
+         setAttributeValue(attrNew_active_mask);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAD, %d, %d, %d, %d, 0xFF, 0xFF, 0xFF", atoi(attrString [attrWorking_setID]) & 0xFF, atoi(attrString [attrWorking_setID]) >> 8, atoi(attrString [attrNew_active_mask]) & 0xFF, atoi(attrString [attrNew_active_mask]) >> 8);
+        sprintf(commandMessage, "0xAD, %d, %d, %d, %d, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrWorking_setID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_active_mask], /*macro?*/false)));
 
         objChildCommands++;
        }
@@ -2760,13 +2536,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrMask_type] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrMask_type] = false;
-        attrString [attrMaskID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrMaskID] = false;
-        attrString [attrNew_softkey_mask] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_softkey_mask] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrMask_type);
+        cleanAttribute(attrMaskID);
+        cleanAttribute(attrNew_softkey_mask);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2774,25 +2546,12 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "mask_type", stringLength) == 0)
-         {
-          strncpy (attrString [attrMask_type], attr_value, stringLength);
-          attrIsGiven [attrMask_type] = true;
-         }
-         if (strncmp (attr_name, "mask_object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrMaskID], attr_value, stringLength);
-          attrIsGiven [attrMaskID] = true;
-         }
-         if (strncmp (attr_name, "new_softkey_mask_object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_softkey_mask], attr_value, stringLength);
-          attrIsGiven [attrNew_softkey_mask] = true;
-         }
-
+         setAttributeValue(attrMask_type);
+         setAttributeValue(attrMaskID);
+         setAttributeValue(attrNew_softkey_mask);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAD, %d, %d, %d, %d, %d, 0xFF, 0xFF", atoi(attrString [attrMask_type]), atoi(attrString [attrMaskID]) & 0xFF, atoi(attrString [attrMaskID]) >> 8, atoi(attrString [attrNew_softkey_mask]) & 0xFF, atoi(attrString [attrNew_softkey_mask]) >> 8);
+        sprintf(commandMessage, "0xAD, %d, %d, %d, %d, %d, 0xFF, 0xFF", atoi(attrString [attrMask_type]), MACRO_16bitToLE(idOrName_toi(attrString [attrMaskID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false)));
 
         objChildCommands++;
        }
@@ -2804,13 +2563,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrAttributeID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrAttributeID] = false;
-        attrString [attrNew_value] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_value] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrAttributeID);
+        cleanAttribute(attrNew_value);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2818,25 +2573,12 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "attribute_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrAttributeID], attr_value, stringLength);
-          attrIsGiven [attrAttributeID] = true;
-         }
-         if (strncmp (attr_name, "new_value", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_value], attr_value, stringLength);
-          attrIsGiven [attrNew_value] = true;
-         }
-
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrAttributeID);
+         setAttributeValue(attrNew_value);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAF, %d, %d, %d, %d, %d, %d, %d", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrAttributeID]), atoi(attrString [attrNew_value]) & 0xFF, atoi(attrString [attrNew_value]) >> 8, atoi(attrString [attrNew_value]) >> 16, atoi(attrString [attrNew_value]) >> 24);
+        sprintf(commandMessage, "0xAF, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrAttributeID]), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false)));
 
         objChildCommands++;
        }
@@ -2848,11 +2590,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrNew_priority] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_priority] = false;
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrNew_priority);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2860,19 +2599,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "new_priority", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_priority], attr_value, stringLength);
-          attrIsGiven [attrNew_priority] = true;
-         }
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrNew_priority);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrNew_priority]));
+        sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrNew_priority]));
 
         objChildCommands++;
        }
@@ -2884,14 +2615,9 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        attrString [attrObjectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrObjectID] = false;
-        attrString [attrList_index] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrList_index] = false;
-        attrString [attrNew_objectID] [stringLength+1-1] = 0x00;
-        attrIsGiven [attrNew_objectID] = false;
-
-        commandMessage [stringLength+1-1] = 0x00;
+        cleanAttribute(attrObjectID);
+        cleanAttribute(attrList_index);
+        cleanAttribute(attrNew_objectID);
 
         for(int i=0;i<nSize;++i)
         {
@@ -2899,24 +2625,12 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-         if (strncmp (attr_name, "object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrObjectID], attr_value, stringLength);
-          attrIsGiven [attrObjectID] = true;
-         }
-         if (strncmp (attr_name, "list_index", stringLength) == 0)
-         {
-          strncpy (attrString [attrList_index], attr_value, stringLength);
-          attrIsGiven [attrList_index] = true;
-         }
-         if (strncmp (attr_name, "new_object_id", stringLength) == 0)
-         {
-          strncpy (attrString [attrNew_objectID], attr_value, stringLength);
-          attrIsGiven [attrNew_objectID] = true;
-         }
+         setAttributeValue(attrObjectID);
+         setAttributeValue(attrList_index);
+         setAttributeValue(attrNew_objectID);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xB1, %d, %d, %d, %d, %d, 0xFF, 0xFF", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrList_index]), atoi(attrString [attrNew_objectID]) & 0xFF, atoi(attrString [attrNew_objectID]) >> 8);
+        sprintf(commandMessage, "0xB1, %d, %d, %d, %d, %d, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrList_index]), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_objectID], /*macro?*/false)));
 
         objChildCommands++;
        }
