@@ -113,7 +113,7 @@ namespace __IsoAgLib {
 class MsgObj_c {
 private:
   // private typedef alias names
-  typedef std::list<FilterBox_c>::iterator FilterRef;
+  typedef std::list<FilterBox_c,std::__allocator<FilterBox_c,std::__malloc_alloc_template<0> > >::iterator FilterRef;
 public:
   /**
     default constructor for MsgObj_c which only init all member values defined start state

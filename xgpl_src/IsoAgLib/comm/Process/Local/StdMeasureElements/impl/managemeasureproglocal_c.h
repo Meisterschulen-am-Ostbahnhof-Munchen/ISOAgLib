@@ -112,8 +112,8 @@ namespace __IsoAgLib {
 class ManageMeasureProgLocal_c : public ProcessElementBase_c
 {
 private:
-  typedef std::slist<MeasureProgLocal_c> Vec_MeasureProgLocal;
-  typedef std::slist<MeasureProgLocal_c>::iterator Vec_MeasureProgLocalIterator;
+  typedef std::slist<MeasureProgLocal_c,std::__allocator<MeasureProgLocal_c,std::__malloc_alloc_template<0> > > Vec_MeasureProgLocal;
+  typedef std::slist<MeasureProgLocal_c,std::__allocator<MeasureProgLocal_c,std::__malloc_alloc_template<0> > >::iterator Vec_MeasureProgLocalIterator;
  public:
   /**
     constructor which initialse both pointers if given

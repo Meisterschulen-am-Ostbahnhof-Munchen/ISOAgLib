@@ -87,6 +87,10 @@
 #include "managemeasureproglocal_c.h"
 #include "../../../impl/process_c.h"
 
+#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#endif
+
 namespace __IsoAgLib {
 /**
   initialise this ManageMeasureProgLocal_c instance to a well defined initial state
@@ -117,6 +121,19 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const rpc_processData )
   if (vec_prog().size() < 1)
   { // first element added without success
     getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+  }
+  else
+  {
+    // this debug message produces too much output on RS232, if a lot of local process
+    // data instances are used -> only activate it for special debug tasks
+		//#ifdef DEBUG_HEAP_USEAGE
+    #if 0
+		getRs232Instance()
+			<< "ManageMeasureProgLocal_c at " << uint32_t(this) << ", " << vec_prog().size()
+      << " items, " 
+			<< ( vec_prog().size() * ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) )
+      << " Bytes\r\n";
+		#endif
   }
   // point cache initially to default first element
   pc_progCache = c_vec_prog.begin();

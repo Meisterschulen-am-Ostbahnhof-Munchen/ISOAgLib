@@ -659,9 +659,9 @@
 /// set puffer size for CAN send
 #define SEND_PUFFER_SIZE 20
 /// set default puffer size for CAN receive
-#define RECEIVE_PUFFER_SIZE 10
+#define RECEIVE_PUFFER_SIZE 25
 /** DIN target msgs are sent with high rate -> need greater buffer */
-#define RECEIVE_DIN_TARGET_PUFFER_SIZE 20
+#define RECEIVE_DIN_TARGET_PUFFER_SIZE 25
 /** DIN partner msgs are sent with high rate -> need greater buffer */
 #define RECEIVE_DIN_PARTNER_PUFFER_SIZE 20
 

@@ -138,13 +138,13 @@ class CANIO_c : public SingletonCANIO_c {
     define dynamic array of MsgObj_c instances for each hardware
     MsgObj_c one object instances in array
   */
-  typedef std::list<MsgObj_c> ArrMsgObj;
+  typedef std::list<MsgObj_c,std::__allocator<MsgObj_c,std::__malloc_alloc_template<0> > > ArrMsgObj;
   /**
     define dynamic array of FilterBox_c instances;
     if a __IsoAgLib::CANCustomer_c creates one FilterBox_c definitions,
     one object instance is inserted in array
   */
-  typedef std::list<FilterBox_c> ArrFilterBox;
+  typedef std::list<FilterBox_c,std::__allocator<FilterBox_c,std::__malloc_alloc_template<0> > > ArrFilterBox;
 
  public:
 

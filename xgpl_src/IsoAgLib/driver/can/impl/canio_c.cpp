@@ -118,7 +118,8 @@ namespace __IsoAgLib {
 /** global array for pointers to dynamic MsgObj_c array of CANIO_c objects for each BUS
   -> by BUS Nr parameter in interrupt function,
      the appropriate dynamic MsgObj_c array can be found */
-std::list<MsgObj_c>* irqMsgObjVec[CAN_BUS_CNT];
+//std::list<MsgObj_c>* irqMsgObjVec[CAN_BUS_CNT];
+std::list<MsgObj_c,std::__allocator<MsgObj_c,std::__malloc_alloc_template<0> > >* irqMsgObjVec[CAN_BUS_CNT];
 
 uint8_t b_irqCanReceiveOffset[CAN_BUS_CNT];
 
@@ -286,11 +287,26 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
   */
 void CANIO_c::close( void )
 {
+  if ( ui8_busNumber == 0xFF )
+  { // CAN already closed -> don't call HAL close again
+    return;
+  }
+
   // call BIOS CAN close function - set error state if BIOS function cause error
-  if (HAL::can_configGlobalClose(ui8_busNumber) != HAL_NO_ERR)
+  switch (HAL::can_configGlobalClose(ui8_busNumber) )
   {
-    getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call\r\n";
-    getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+    case HAL_NO_ERR:
+      break;
+    case HAL_CONFIG_ERR:
+      // ignore this type also, as this is only the indication of try to close an already closed channel
+      #ifdef DEBUG
+      getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call\r\n";
+      #endif
+      break;
+    default:
+      // wrong channel
+      getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+      break;
   }
   arrFilterBox.clear();
   arrMsgObj.clear();

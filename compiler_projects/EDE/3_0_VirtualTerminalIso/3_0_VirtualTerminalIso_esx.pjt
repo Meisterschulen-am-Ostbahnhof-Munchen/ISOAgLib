@@ -1,13 +1,14 @@
 ;Codewright Project File (do not remove or modify this line)
 [State]
-SysSetCwd='..\..\..'
-SrchSetFlags=0x0418680a
-SrchSetAgainFlags=0x00006002,0
+SysSetCwd='D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx'
+SrchSetFlags=0x041a680a
+SrchSetAgainFlags=0x04036004,0
 SrchSetAgainFlags=0x0200600a,1
 FileSortMode=0x0
-_StateView=
-_StateBuffer=
-_StateHistory=
+_StateHistory=FILELIST,'D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\Application_Config\isoaglib_config.h','D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20go.asm','D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20lcs.ilo','C:\Programme\Tasking\7.56\c166\include.cpp\stl_function.h','D:\Fritzmeier\MiniVegN\IsoAgLib\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso\3_0_VirtualTerminalIso.cpp','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.cpp','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system.h','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp'
+_StateHistory=SEARCH,'set_relais','setRelais'
+_StateHistory=EDITFILE,'D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20lcs.ilo'
+_StateHistory=DOCUMENTVISIT,'369         1           D:\Fritzmeier\MiniVegN\IsoAgLib\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso\3_0_VirtualTerminalIso.cpp','139         49          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp','670         1           D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\Application_Config\isoaglib_config.h','71          3           D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20go.asm','31          1           D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20lcs.ilo','505         1           C:\Programme\Tasking\7.56\c166\include.cpp\stl_function.h','369         1           D:\Fritzmeier\MiniVegN\IsoAgLib\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso\3_0_VirtualTerminalIso.cpp','117         15          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.cpp','200         24          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system.h','139         49          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp'
 _StateDocumentVisit=10
 
 [ProjInit]
@@ -331,7 +332,7 @@ Libraries=c:\programme\tasking\7.56\c166\lib;..\..\..\commercial_BIOS\bios_esx
 [Ede]
 Toolchain=c:\programme\tasking\7.56\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\spangler\Fritzmeier\MiniVegN\IsoAgLib\compiler_projects\EDE\\3_0_VirtualTerminalIso
+ProjectDir=d:\fritzmeier\minivegn\isoaglib\compiler_projects\ede\3_0_virtualterminaliso
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b
@@ -379,12 +380,10 @@ COptim=CAdvOptim
 COptimAliasTypeChk=0
 OutIHex=1
 OutIHexType=OutIHexType32
-OutIHexAdditionalOpt="-r -O -P"
+OutIHexAdditionalOpt=-r -O -P
 LocMyIlo=..\..\..\commercial_BIOS\bios_esx\Xos20lcs.ilo
 LocSmartlink=1
 LnkLocTrapFPLib=0
 LnkLocSupprWarn=118
-LnkLocAddOptions= -Wo ..\..\..\commercial_BIOS\bios_esx\C756\Xos20l.lib -Wo ..\..\..\commercial_BIOS\bios_esx\Module\Xma20l.lib
+LnkLocAddOptions=-Wo ..\..\..\commercial_BIOS\bios_esx\C756\Xos20l.lib -Wo ..\..\..\commercial_BIOS\bios_esx\Module\Xma20l.lib
 OptionList=CppCompGlobal,CCompGlobal,CpuType,CompAlternativeTokens,CompRtti,CppDefine,CppKeepOutput,CMemModel,CEstimateUsk,COutKeepSrc,CFragment,CDispAllWarn,CSupprSomeWarn,CSupprWarn,CDebug,CDefine,COptim,COptimAliasTypeChk,OutIHex,OutIHexType,OutIHexAdditionalOpt,LocMyIlo,LocSmartlink,LnkLocTrapFPLib,LnkLocSupprWarn,LnkLocAddOptions
-
-

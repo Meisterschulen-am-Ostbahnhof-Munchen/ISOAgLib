@@ -397,8 +397,9 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
 		if ( HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr()) > sui16_maxBufferUseage[rui8_busNumber] )
 		{ // new MAX detected -> update and print
 			sui16_maxBufferUseage[rui8_busNumber] = HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr());
-			getRs232Instance() << "\r\nNew Max buffer filling: "
-				<< uint16_t(msgObjNr()) << " at BUS: " << uint16_t(rui8_busNumber)
+			getRs232Instance() << "\r\nNew Max buffer filling: " << sui16_maxBufferUseage[rui8_busNumber]
+        << " at MsgObj: " << uint16_t(msgObjNr())
+        << " at BUS: " << uint16_t(rui8_busNumber)
 				<< "\r\n";
 		}
 	#endif
