@@ -132,9 +132,9 @@ namespace __IsoAgLib {
 #define DEF_TimeOut_LoadVersion 10000
 #define DEF_TimeOut_StoreVersion 10000
 #define DEF_TimeOut_EndOfObjectPool 10000
-#define DEF_TimeOut_ChangeStringValue 1000
-#define DEF_TimeOut_ChangeChildPosition 1000
-#define DEF_TimeOut_NormalCommand 1000
+#define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
+#define DEF_TimeOut_ChangeChildPosition 1500 /* 1,5 seconds are stated in F.1 (page 96) */
+#define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
 #define DEF_Retries_TPCommands 2
 #define DEF_Retries_NormalCommands 2
 
