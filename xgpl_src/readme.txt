@@ -27,57 +27,57 @@
     edge     [fontname=ARIALN, fontsize=10];
 		ordering="out";
 
-	  root        [label="IsoAgLib\n/\npartly obligatory", color="green4",width=15];
-		xgpl_src    [label="LGPL Licensed\npartly obligatory", color="green4",width=15];
+	  root        [label="IsoAgLib\n/\npartly obligatory", color="green",width=15];
+		xgpl_src    [label="LGPL Licensed\npartly obligatory", color="green",width=15];
 		subgraph cluster_level1 {
 			style="invis";
 			rank=same;
-			app_conf    [label="Application Configuration\nobligatory", color="darkgreen", URL="\ref isoaglib_config.h",width=5];
-			main_lib    [label="Main Library Parts\npartly obligatory", color="green4",width=5];
-			suppl       [label="Supplementary Driver Extensions\ncomplete optional", color="green", URL="\ref LgplSupplStructure",width=5];
+			app_conf    [label="Application Configuration\nobligatory", color="green2", URL="\ref isoaglib_config.h",width=5];
+			main_lib    [label="Main Library Parts\npartly obligatory", color="green",width=5];
+			suppl       [label="Supplementary Driver Extensions\ncomplete optional", color="yellow", URL="\ref LgplSupplStructure",width=5];
 		}
 		subgraph cluster_level2 {
 			style="invis";
 			rank=same;
-			m_comm      [label="Communication Protocol\npartly obligatory", color="green4", URL="\ref CommOverPage",width=3];
-			m_driver    [label="Enhanced Drivers for main library parts\npartly obligatory", color="green4",width=3];
-			m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green4",width=3];
-			m_util      [label="Utilities for main library parts\nobligatory", color="darkgreen",width=3];
-			m_type      [label="Platform Independend Typedefs\nobligatory", color="darkgreen", shape="ellipse", URL="\ref IsoAgLib/typedef.h",width=3];
+			m_comm      [label="Communication Protocol\npartly obligatory", color="green", URL="\ref CommOverPage",width=3];
+			m_driver    [label="Enhanced Drivers for main library parts\npartly obligatory", color="green",width=3];
+			m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green",width=3];
+			m_util      [label="Utilities for main library parts\nobligatory", color="green2",width=3];
+			m_type      [label="Platform Independend Typedefs\nobligatory", color="green2", shape="ellipse", URL="\ref IsoAgLib/typedef.h",width=3];
 		}
 
 		subgraph cluster_level311 {
 			style="invis";
 			rank=same;
-			system_mgmt [label="System Management\npartly obligatory", color="green4", URL="\ref SystemMgmtPage",width=2 ];
-			base        [label="Base Data\ncomplete optional", color="green", URL="\ref BaseDataPage",width=2 ];
-			multi_msg   [label="Data Stream\nneeded for ISO or DIN Terminal", color="green2", URL="\ref MultiMsgPage",width=2 ];
-			din_term    [label="LBS+ Terminal\ncomplete optional", color="green", URL="\ref DinTerminalPage",width=2 ];
-			iso_term    [label="ISO Virtual\ncomplete optional", color="green", URL="\ref XMLspec",width=2 ];
-			process     [label="Process Data\noptional", color="green", URL="\ref ProcDataPage",width=2 ];
+			system_mgmt [label="System Management\npartly obligatory", color="green", URL="\ref SystemMgmtPage",width=2 ];
+			base        [label="Base Data\ncomplete optional", color="yellow", URL="\ref BaseDataPage",width=2 ];
+			multi_msg   [label="Data Stream\nneeded for ISO or DIN Terminal", color="greenyellow", URL="\ref MultiMsgPage",width=2 ];
+			din_term    [label="LBS+ Terminal\ncomplete optional", color="yellow", URL="\ref DinTerminalPage",width=2 ];
+			iso_term    [label="ISO Virtual\ncomplete optional", color="yellow", URL="\ref XMLspec",width=2 ];
+			process     [label="Process Data\noptional", color="yellow", URL="\ref ProcDataPage",width=2 ];
 			}
 		subgraph cluster_level312 {
 			style="invis";
 			rank=same;
-			can         [label="Extended CAN driver\nobligatory", color="darkgreen", URL="\ref IsoAgLib::iCANIO_c"];
-			eeprom      [label="Extended EEPROM driver\noptional; needed for features of process data and ISO 11783", color="green2", URL="\ref IsoAgLib::iEEPROMIO_c"];
-			system      [label="Extended Access to System Information\nobligatory", color="darkgreen", URL="\ref IsoAgLib::iSystem_c"];
+			can         [label="Extended CAN driver\nobligatory", color="green2", URL="\ref IsoAgLib::iCANIO_c"];
+			eeprom      [label="Extended EEPROM driver\noptional; needed for features of process data and ISO 11783", color="greenyellow", URL="\ref IsoAgLib::iEEPROMIO_c"];
+			system      [label="Extended Access to System Information\nobligatory", color="green2", URL="\ref IsoAgLib::iSystem_c"];
 		}
 		subgraph cluster_level32 {
 		style="invis";
 			rank=same;
-			hal_config  [label="Central Header for Platform Configuration\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/config.h"];
-			hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/system.h"];
-			hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/can.h"];
-			hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="green2", shape="ellipse", URL="\ref hal/eeprom.h"];
+			hal_config  [label="Central Header for Platform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
+			hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+			hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
+			hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
 		}
 		subgraph cluster_level33 {
 			style="invis";
 			rank=same;
-			hal_esx     [label="HAL for ESX of STW\nobligatory for this platform", color="darkgreen", URL="\ref MainHalEsx"];
-			hal_imi     [label="HAL for IMI of STW\nobligatory for this platform", color="darkgreen", URL="\ref MainHalImi"];
-			hal_pc      [label="Example HAL for PC\nobligatory for this platform", color="darkgreen", URL="\ref MainHalPc"];
-			hal_pm167   [label="HAL for PM167 of STW\nobligatory for this platform", color="darkgreen", URL="\ref MainHalPm167"];
+			hal_esx     [label="HAL for ESX of STW\nobligatory for this platform", color="green2", URL="\ref MainHalEsx"];
+			hal_imi     [label="HAL for IMI of STW\nobligatory for this platform", color="green2", URL="\ref MainHalImi"];
+			hal_pc      [label="Example HAL for PC\nobligatory for this platform", color="green2", URL="\ref MainHalPc"];
+			hal_pm167   [label="HAL for PM167 of STW\nobligatory for this platform", color="green2", URL="\ref MainHalPm167"];
 		}
 
 		root     -> xgpl_src  [label="xgpl_src"];
@@ -126,35 +126,35 @@
     node     [shape=record, fontname=ARIALN, fontsize=10, fontcolor=blue, style=filled];
     edge     [fontname=ARIALN, fontsize=10];
 
-		suppl       [label="Supplementary Driver Extensions\nsupplementary_driver\ncomplete optional", color="green",width=15];
+		suppl       [label="Supplementary Driver Extensions\nsupplementary_driver\ncomplete optional", color="yellow",width=15];
 
 		subgraph cluster_LgplSupplStructure_level1 {
 			style="invis";
 			rank=same;
-			sup_driver  [label="Supplementary Extended Drivers\noptional", color="green",width=5];
-			sup_hal     [label="HAL for Supplementary Extended Drivers\noptional", color="green",width=10];
+			sup_driver  [label="Supplementary Extended Drivers\noptional", color="yellow",width=5];
+			sup_hal     [label="HAL for Supplementary Extended Drivers\noptional", color="yellow",width=10];
 		}
 		subgraph cluster_level21 {
 			style="invis";
 			rank=same;
-			sup_actor   [label="Extended Digital/PWM Output\noptional", color="green", URL="\ref iDigitalO_c"];
-			sup_rs232   [label="Extended RS232 IO\noptional", color="green", URL="\ref iRS232IO_c"];
-			sup_sensor  [label="Extended Sensor Input\noptional", color="green", URL="\ref iAnalogIRangeCheck_c"];
+			sup_actor   [label="Extended Digital/PWM Output\noptional", color="yellow", URL="\ref iDigitalO_c"];
+			sup_rs232   [label="Extended RS232 IO\noptional", color="yellow", URL="\ref iRS232IO_c"];
+			sup_sensor  [label="Extended Sensor Input\noptional", color="yellow", URL="\ref iAnalogIRangeCheck_c"];
 		}
 		subgraph cluster_level22 {
 			style="invis";
 			rank=same;
-			sup_h_actor [label="Central HAL Header for Supplementary Actor Driver\noptional", color="green", shape="ellipse", URL="\ref hal/actor.h"];
-			sup_h_rs232 [label="Central HAL Header for Supplementary RS232 Driver\noptional", color="green", shape="ellipse", URL="\ref hal/rs232.h"];
-			sup_h_sens  [label="Central HAL Header for Supplementary Sensor Driver\noptional", color="green", shape="ellipse", URL="\ref hal/sensor.h"];
+			sup_h_actor [label="Central HAL Header for Supplementary Actor Driver\noptional", color="yellow", shape="ellipse", URL="\ref hal/actor.h"];
+			sup_h_rs232 [label="Central HAL Header for Supplementary RS232 Driver\noptional", color="yellow", shape="ellipse", URL="\ref hal/rs232.h"];
+			sup_h_sens  [label="Central HAL Header for Supplementary Sensor Driver\noptional", color="yellow", shape="ellipse", URL="\ref hal/sensor.h"];
 		}
 		subgraph cluster_level3 {
 			style="invis";
 			rank=same;
-			sup_hal_esx [label="HAL for Supplementary Drivers on ESX of STW\noptional", color="green", URL="\ref SupplHalEsx"];
-			sup_hal_imi [label="HAL for Supplementary Drivers on IMI of STW\noptional", color="green", URL="\ref SupplHalImi"];
-			sup_hal_pc  [label="HAL for Supplementary Drivers on PC\noptional", color="green", URL="\ref SupplHalPc"];
-			sup_hal_pm167 [label="HAL for Supplementary Drivers on PM167 of STW\noptional", color="green", URL="\ref SupplHalPm167"];
+			sup_hal_esx [label="HAL for Supplementary Drivers on ESX of STW\noptional", color="yellow", URL="\ref SupplHalEsx"];
+			sup_hal_imi [label="HAL for Supplementary Drivers on IMI of STW\noptional", color="yellow", URL="\ref SupplHalImi"];
+			sup_hal_pc  [label="HAL for Supplementary Drivers on PC\noptional", color="yellow", URL="\ref SupplHalPc"];
+			sup_hal_pm167 [label="HAL for Supplementary Drivers on PM167 of STW\noptional", color="yellow", URL="\ref SupplHalPm167"];
 		}
 		suppl    -> sup_driver [label="driver"];
 		suppl    -> sup_hal [label="hal"];

@@ -30,18 +30,18 @@
 
 		m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green4"];
 
-		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/config.h"];
-		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/system.h"];
-		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/can.h"];
-		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="green2", shape="ellipse", URL="\ref hal/eeprom.h"];
-		hal_esx     [label="HAL for ESX of STW\nobligatory for this platform", color="darkgreen"];
+		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
+		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
+		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
+		hal_esx     [label="HAL for ESX of STW\nobligatory for this platform", color="green2"];
 
-		h_esx_system [label="Target Adpotion of Base System Calls\nobligatory for this platform", color="darkgreen", URL="\ref esx/system/system.h"];
-		h_esx_can   [label="Target Adoption of CAN IO\nobligatory for this platform", color="darkgreen", URL="\ref esx/can/can.h"];
-		h_esx_eeprom [label="Target Adoption of EEPROM\noptional;needed from other features", color="green2", URL="\ref esx/eeprom/eeprom.h"];
-		h_esx_conf  [label="ESX specific Configuration Settings\nobligatory", color="darkgreen", shape="ellipse", URL="\ref esx/config.h"];
-		h_esx_type  [label="ESX specific Typedefs\nobligatory", color="darkgreen", shape="ellipse", URL="\ref esx/typedef.h"];
-		h_esx_err   [label="ESX specific Errcode Mapping\nobligatory", color="darkgreen", shape="ellipse", URL="\ref esx/errcodes.h"];
+		h_esx_system [label="Target Adpotion of Base System Calls\nobligatory for this platform", color="green2", URL="\ref esx/system/system.h"];
+		h_esx_can   [label="Target Adoption of CAN IO\nobligatory for this platform", color="green2", URL="\ref esx/can/can.h"];
+		h_esx_eeprom [label="Target Adoption of EEPROM\noptional;needed from other features", color="greenyellow", URL="\ref esx/eeprom/eeprom.h"];
+		h_esx_conf  [label="ESX specific Configuration Settings\nobligatory", color="green2", shape="ellipse", URL="\ref esx/config.h"];
+		h_esx_type  [label="ESX specific Typedefs\nobligatory", color="green2", shape="ellipse", URL="\ref esx/typedef.h"];
+		h_esx_err   [label="ESX specific Errcode Mapping\nobligatory", color="green2", shape="ellipse", URL="\ref esx/errcodes.h"];
 
 		m_hal    -> hal_config [label="config.h"];
 		m_hal    -> hal_system [label="system.h"];
@@ -71,18 +71,18 @@
 
 		m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green4"];
 
-		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/config.h"];
-		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/system.h"];
-		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/can.h"];
-		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="green2", shape="ellipse", URL="\ref hal/eeprom.h"];
-		hal_imi     [label="HAL for IMI of STW\nobligatory for this platform", color="darkgreen"];
+		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
+		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
+		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
+		hal_imi     [label="HAL for IMI of STW\nobligatory for this platform", color="green2"];
 
-		h_imi_system [label="system", color="darkgreen", URL="\ref imi/system/system.h"];
-		h_imi_can   [label="can", color="darkgreen", URL="\ref imi/can/can.h"];
-		h_imi_eeprom [label="eeprom", color="green2", URL="\ref imi/eeprom/eeprom.h"];
-		h_imi_conf  [label="config.h", color="darkgreen", shape="ellipse", URL="\ref imi/config.h"];
-		h_imi_type  [label="typedef.h", color="darkgreen", shape="ellipse", URL="\ref imi/typedef.h"];
-		h_imi_err   [label="errcodes.h", color="darkgreen", shape="ellipse", URL="\ref imi/errcodes.h"];
+		h_imi_system [label="system", color="green2", URL="\ref imi/system/system.h"];
+		h_imi_can   [label="can", color="green2", URL="\ref imi/can/can.h"];
+		h_imi_eeprom [label="eeprom", color="greenyellow", URL="\ref imi/eeprom/eeprom.h"];
+		h_imi_conf  [label="config.h", color="green2", shape="ellipse", URL="\ref imi/config.h"];
+		h_imi_type  [label="typedef.h", color="green2", shape="ellipse", URL="\ref imi/typedef.h"];
+		h_imi_err   [label="errcodes.h", color="green2", shape="ellipse", URL="\ref imi/errcodes.h"];
 
 		m_hal    -> hal_config [label="config.h"];
 		m_hal    -> hal_system [label="system.h"];
@@ -113,18 +113,18 @@
 
 		m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green4"];
 
-		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/config.h"];
-		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/system.h"];
-		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/can.h"];
-		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="green2", shape="ellipse", URL="\ref hal/eeprom.h"];
-		hal_pm167   [label="HAL for PM167 of STW\nobligatory for this platform", color="darkgreen"];
+		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
+		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
+		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
+		hal_pm167   [label="HAL for PM167 of STW\nobligatory for this platform", color="green2"];
 
-		h_pm167_system [label="system", color="darkgreen", URL="\ref pm167/system/system.h"];
-		h_pm167_can   [label="can", color="darkgreen", URL="\ref pm167/can/can.h"];
-		h_pm167_eeprom [label="eeprom", color="green2", URL="\ref pm167/eeprom/eeprom.h"];
-		h_pm167_conf  [label="config.h", color="darkgreen", shape="ellipse", URL="\ref pm167/config.h"];
-		h_pm167_type  [label="typedef.h", color="darkgreen", shape="ellipse", URL="\ref pm167/typedef.h"];
-		h_pm167_err   [label="errcodes.h", color="darkgreen", shape="ellipse", URL="\ref pm167/errcodes.h"];
+		h_pm167_system [label="system", color="green2", URL="\ref pm167/system/system.h"];
+		h_pm167_can   [label="can", color="green2", URL="\ref pm167/can/can.h"];
+		h_pm167_eeprom [label="eeprom", color="greenyellow", URL="\ref pm167/eeprom/eeprom.h"];
+		h_pm167_conf  [label="config.h", color="green2", shape="ellipse", URL="\ref pm167/config.h"];
+		h_pm167_type  [label="typedef.h", color="green2", shape="ellipse", URL="\ref pm167/typedef.h"];
+		h_pm167_err   [label="errcodes.h", color="green2", shape="ellipse", URL="\ref pm167/errcodes.h"];
 
 		m_hal    -> hal_config [label="config.h"];
 		m_hal    -> hal_system [label="system.h"];
@@ -155,18 +155,18 @@
 
 		m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green4"];
 
-		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/config.h"];
-		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/system.h"];
-		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="darkgreen", shape="ellipse", URL="\ref hal/can.h"];
-		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="green2", shape="ellipse", URL="\ref hal/eeprom.h"];
-		hal_pc      [label="Example HAL for PC\nobligatory for this platform", color="darkgreen"];
+		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
+		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
+		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
+		hal_pc      [label="Example HAL for PC\nobligatory for this platform", color="green2"];
 
-		h_pc_system [label="system", color="darkgreen", URL="\ref pc/system/system.h"];
-		h_pc_can    [label="can", color="darkgreen", URL="\ref pc/can/can.h"];
-		h_pc_eeprom [label="eeprom", color="green2", URL="\ref pc/eeprom/eeprom.h"];
-		h_pc_conf   [label="config.h", color="darkgreen", shape="ellipse", URL="\ref pc/config.h"];
-		h_pc_type   [label="typedef.h", color="darkgreen", shape="ellipse", URL="\ref pc/typedef.h"];
-		h_pc_err    [label="errcodes.h", color="darkgreen", shape="ellipse", URL="\ref pc/errcodes.h"];
+		h_pc_system [label="system", color="green2", URL="\ref pc/system/system.h"];
+		h_pc_can    [label="can", color="green2", URL="\ref pc/can/can.h"];
+		h_pc_eeprom [label="eeprom", color="greenyellow", URL="\ref pc/eeprom/eeprom.h"];
+		h_pc_conf   [label="config.h", color="green2", shape="ellipse", URL="\ref pc/config.h"];
+		h_pc_type   [label="typedef.h", color="green2", shape="ellipse", URL="\ref pc/typedef.h"];
+		h_pc_err    [label="errcodes.h", color="green2", shape="ellipse", URL="\ref pc/errcodes.h"];
 
 		m_hal    -> hal_config [label="config.h"];
 		m_hal    -> hal_system [label="system.h"];

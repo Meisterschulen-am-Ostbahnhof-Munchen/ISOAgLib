@@ -10,7 +10,7 @@
   digraph CommServDepend {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
-    node     [shape=record, fontname=ARIALN, fontsize=10, style=filled, fontcolor=blue];
+    node     [shape=record, fontname=ARIALN, fontsize=10, style=filled, fontcolor=blue, color=greenyellow];
     edge     [fontname=ARIALN, fontsize=10, dir="back"];
 
 		can        [ label="CAN Communication" ];
