@@ -1,86 +1,169 @@
-# Microsoft Developer Studio Project File - Name="Taskcontroller" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="AutoDataCollector" - Package Owner=<4>
+
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
+
 # ** NICHT BEARBEITEN **
+
+
 
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
 
-CFG=Taskcontroller - Win32 Debug
+
+
+CFG=AutoDataCollector - Win32 Debug
+
 !MESSAGE Dies ist kein gültiges Makefile. Zum Erstellen dieses Projekts mit NMAKE
+
 !MESSAGE verwenden Sie den Befehl "Makefile exportieren" und führen Sie den Befehl
+
 !MESSAGE
-!MESSAGE NMAKE /f "Taskcontroller.mak".
+
+!MESSAGE NMAKE /f "AutoDataCollector.mak".
+
 !MESSAGE
+
 !MESSAGE Sie können beim Ausführen von NMAKE eine Konfiguration angeben
+
 !MESSAGE durch Definieren des Makros CFG in der Befehlszeile. Zum Beispiel:
+
 !MESSAGE
-!MESSAGE NMAKE /f "Taskcontroller.mak" CFG="Taskcontroller - Win32 Debug"
+
+!MESSAGE NMAKE /f "AutoDataCollector.mak" CFG="AutoDataCollector - Win32 Debug"
+
 !MESSAGE
+
 !MESSAGE Für die Konfiguration stehen zur Auswahl:
+
 !MESSAGE
-!MESSAGE "Taskcontroller - Win32 Release" (basierend auf  "Win32 (x86) Console Application")
-!MESSAGE "Taskcontroller - Win32 Debug" (basierend auf  "Win32 (x86) Console Application")
+
+!MESSAGE "AutoDataCollector - Win32 Release" (basierend auf  "Win32 (x86) Console Application")
+
+!MESSAGE "AutoDataCollector - Win32 Debug" (basierend auf  "Win32 (x86) Console Application")
+
 !MESSAGE
+
+
 
 # Begin Project
+
 # PROP AllowPerConfigDependencies 0
+
 # PROP Scc_ProjName ""
+
 # PROP Scc_LocalPath ""
+
 CPP=cl.exe
+
 RSC=rc.exe
 
-!IF  "$(CFG)" == "Taskcontroller - Win32 Release"
+
+
+!IF  "$(CFG)" == "AutoDataCollector - Win32 Release"
+
+
 
 # PROP BASE Use_MFC 0
+
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "Release"
-# PROP BASE Intermediate_Dir "Release"
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release"
-# PROP Intermediate_Dir "Release"
-# PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "..\..\..\IsoAgLib_Examples" /I "D:\Development\VectorInformatik\CANLIB\dll" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_Taskcontroller.h" /D "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /D USE_FLOAT_DATA_TYPE /YX /FD /TP /c
-# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_Taskcontroller.h" /d "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /D USE_FLOAT_DATA_TYPE
-# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_Taskcontroller.h" /d "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /D USE_FLOAT_DATA_TYPE
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386 /libpath:"D:\Development\VectorInformatik\CANLIB\dll"
 
-!ELSEIF  "$(CFG)" == "Taskcontroller - Win32 Debug"
+# PROP BASE Output_Dir "Release"
+
+# PROP BASE Intermediate_Dir "Release"
+
+# PROP BASE Target_Dir ""
+
+# PROP Use_MFC 0
+
+# PROP Use_Debug_Libraries 0
+
+# PROP Output_Dir "Release"
+
+# PROP Intermediate_Dir "Release"
+
+# PROP Target_Dir ""
+
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
+
+# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "..\..\..\IsoAgLib_Examples" /I "D:\Development\CANLIB\dll" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /D "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /YX /FD /TP /c
+
+# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /d "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR
+
+# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /d "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR
+
+BSC32=bscmake.exe
+
+# ADD BASE BSC32 /nologo
+
+# ADD BSC32 /nologo
+
+LINK32=link.exe
+
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
+
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /machine:I386 /libpath:"D:\Development\CANLIB\dll"
+
+
+
+!ELSEIF  "$(CFG)" == "AutoDataCollector - Win32 Debug"
+
+
 
 # PROP BASE Use_MFC 0
+
 # PROP BASE Use_Debug_Libraries 1
+
 # PROP BASE Output_Dir "Debug"
+
 # PROP BASE Intermediate_Dir "Debug"
+
 # PROP BASE Target_Dir ""
+
 # PROP Use_MFC 0
+
 # PROP Use_Debug_Libraries 1
+
 # PROP Output_Dir "Debug"
+
 # PROP Intermediate_Dir "Debug"
+
 # PROP Ignore_Export_Lib 0
+
 # PROP Target_Dir ""
+
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "..\..\..\IsoAgLib_Examples" /I "D:\Development\VectorInformatik\CANLIB\dll" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_Taskcontroller.h" /D "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /D USE_FLOAT_DATA_TYPE /YX /FD /TP /GZ /c
-# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_Taskcontroller.h" /d "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /D USE_FLOAT_DATA_TYPE
-# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_Taskcontroller.h" /d "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /D USE_FLOAT_DATA_TYPE
+
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "..\..\..\IsoAgLib_Examples" /I "D:\Development\CANLIB\dll" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /D "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /YX /FD /TP /GZ /c
+
+# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /d "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR
+
+# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /d "HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR
+
 BSC32=bscmake.exe
+
 # ADD BASE BSC32 /nologo
+
 # ADD BSC32 /nologo
+
 LINK32=link.exe
+
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"D:\Development\VectorInformatik\CANLIB\dll"
+
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"D:\Development\CANLIB\dll"
+
+
 
 !ENDIF
 
+
+
 # Begin Target
 
-# Name "Taskcontroller - Win32 Release"
-# Name "Taskcontroller - Win32 Debug"
+
+
+# Name "AutoDataCollector - Win32 Release"
+
+# Name "AutoDataCollector - Win32 Debug"
+
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -166,6 +249,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.cpp
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
 # End Source File
 
 # Begin Source File
@@ -297,35 +384,31 @@ SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\taskcontroller.cpp
+SOURCE=..\..\..\IsoAgLib_Examples\autodatacollector.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\test_hal.cpp
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\gpsmanager_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\gpsmanager_c.cpp
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\procdatamanager_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\procdatamanager_c.cpp
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\defaultrecordconfig_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\defaultrecordconfig_c.cpp
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\specificrecordconfig_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\specificrecordconfig_c.cpp
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\getyflexmanager_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\getyflexmanager_c.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=D:\Development\VectorInformatik\CANLIB\dll\vcandm32.lib
+SOURCE=D:\Development\CANLIB\dll\vcandm32.lib
 # End Source File
 
 # End Group
@@ -510,7 +593,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\symbol_shortening.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\compiler_adoption.h
 # End Source File
 
 # Begin Source File
@@ -750,14 +833,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\driver\system\isystem_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\rs232.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\rs232_target_extensions.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\rs232.h
 # End Source File
 
@@ -770,43 +845,35 @@ SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\rs232\irs232io_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\config_Taskcontroller.h
+SOURCE=..\..\..\IsoAgLib_Examples\config_tractor.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\config_imi_iso_w32.h
+SOURCE=..\..\..\IsoAgLib_Examples\config_AutoDataCollector.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\config_imi_iso_rte.h
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\procdatamanager_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\config_imi_iso_sim.h
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\specificrecordconfig_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\procdatamanager_c.h
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\getyflexmanager_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\specificrecordconfig_c.h
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\defaultrecordconfig_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\getyflexmanager_c.h
+SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\gpsmanager_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\defaultrecordconfig_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\gpsmanager_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=D:\Development\VectorInformatik\CANLIB\dll\VCanD.h
+SOURCE=D:\Development\CANLIB\dll\VCanD.h
 # End Source File
 
 # End Group
