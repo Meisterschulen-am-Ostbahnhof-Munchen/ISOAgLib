@@ -26,6 +26,7 @@
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
 \ref HowtoSetupCompilerTools<br>
@@ -82,6 +83,12 @@ like ISOTerminal_c . The use of this Template guarantees that event the first ac
 service class depends of the previous initialisation of one or more other classes, the correct order of initialisation is realized.<br>
 Please contact the maintainers <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> and <a href="mailto:Martin.Wodok@osb-ag:de">Martin Wodok</a> if you don't understand
 some parts, even after reading the presented documentation.
+
+\subsection IndexGettingHelp Getting Help
+Please send any questions you can really not solve based on the present documentation to the <a href="http://linux90.idvnet.de/pipermail/isoaglib/">email list of ISO<i><sub>AgLib</sub></i> </a> ,
+as there not only the maintainers can try to help you out. Please <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">subscribe to the email list</a> before you start to
+<a href="mailto:isoaglib@linux90.idvnet.de">send emails</a> .
+
 
 
 \section IndexNews News
@@ -688,6 +695,7 @@ management of such interactions. This list can then help to identify well suppor
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
 \ref HowtoSetupCompilerTools<br>
@@ -794,6 +802,17 @@ Each user who wants to contribute enhancements should please do the following:
 - Send the patch to <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 	for inclusion ( evaluation of the change is then a lot easier )
 
+\section HowtoGetHelp HOWTO get help
+As this is an Open Source project, not only the maintainers of the project can provide sufficient help for all users <b>free of charge</b>.
+So either you sign a support contract to get personal support.<br>
+Or you direct your help requests to the community of ISO<i><sub>AgLib</sub></i> users and developers, who can be reached by the <a href="http://linux90.idvnet.de/pipermail/isoaglib/">email list</a>
+( subscribe <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">here</a> and send mail <a href="mailto:isoaglib@linux90.idvnet.de">there</a> ). This way all users can help each other
+without the dependency on the maintainers. New feature wishes, bug reports and other change suggestions can be discussed there, too.<br>
+Please keep in mind, that you might be one time the helping party, while you could need help from another user the other time.<br>
+Please keep this also in mind, if the company name in the email address of the asking user is not one of your best friends - maybe he can help you another time also.<br>
+This works really fine in several other Open Source projects.
+
+
 \section HowtoCreateDoc HOWTO Recreate Documentation with Doxygen
 
 If you don't want to download the big archive with the generated documentation
@@ -840,6 +859,7 @@ source and the contained informative text files.
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
 \ref HowtoSetupCompilerTools<br>
@@ -1810,6 +1830,7 @@ PRJ_ISO11783=1
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
 \ref HowtoSetupCompilerTools<br>
@@ -2061,6 +2082,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
 \ref HowtoSetupCompilerTools<br>
@@ -2174,6 +2196,7 @@ This is possible, if some basic strategies are used by all devices:
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
 \ref HowtoSetupCompilerTools<br>
