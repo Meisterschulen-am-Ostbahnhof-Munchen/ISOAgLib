@@ -76,8 +76,8 @@
 #define c_EICAN    6
 #define c_ECAN_PCI 7
 #define c_CANLpt   8
-#define c_PowerCANPCI       10  
-#define c_CANUSB_Std_Api    11  
+#define c_PowerCANPCI       10
+#define c_CANUSB_Std_Api    11
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -392,14 +392,24 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 		channel = bBusNumber + 1;
 	}
 
-  canlogDat[bBusNumber] = fopen("can_send.txt", "w+");
+  // Added by M.Wodok 6.12.04
+  canlogDat[bBusNumber] = fopen("..\\..\\..\\..\\simulated_io\\can_send.txt", "w+");
   if(canlogDat[bBusNumber])
   {
-	printf("canlogDat file opened\n");
+    printf("canlogDat file opened: '..\\..\\..\\..\\simulated_io\\can_send.txt'\n");
   }
   else
   {
-	printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat[bBusNumber]);
+    // try in current directory...
+    canlogDat[bBusNumber] = fopen("can_send.txt", "w+");
+    if(canlogDat[bBusNumber])
+    {
+      printf("canlogDat file opened: 'can_send.txt'\n");
+    }
+    else
+    {
+      printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat[bBusNumber]);
+    }
   }
 
 	for ( int fdata_ind = 0; fdata_ind < 15; fdata_ind++ ) fdata[fdata_ind] = 0;

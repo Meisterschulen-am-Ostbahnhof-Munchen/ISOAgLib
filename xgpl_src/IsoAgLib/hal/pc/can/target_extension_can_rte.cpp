@@ -577,10 +577,24 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   if ( firstOpenLog[bBusNumber] ) {
     firstOpenLog[bBusNumber] = false;
     canlogDat[bBusNumber] = fopen( logName, "w");
+    // BEGIN: Added by M.Wodok 6.12.04
+    if (canlogDat [bBusNumber] == NULL) {
+      // failed opening? Try in current directory then...
+      sprintf( logName, "can_send_%1hd.txt", bBusNumber );
+      canlogDat[bBusNumber] = fopen( logName, "w");
+    }
+    // END: Added by M.Wodok 6.12.04
   }
   else {
     // use appending open on succeding can inits during one program run
     canlogDat[bBusNumber] = fopen( logName, "a+");
+    // BEGIN: Added by M.Wodok 6.12.04
+    if (canlogDat [bBusNumber] == NULL) {
+      // failed opening? Try in current directory then...
+      sprintf( logName, "can_send_%1hd.txt", bBusNumber );
+      canlogDat[bBusNumber] = fopen( logName, "a+");
+    }
+    // END: Added by M.Wodok 6.12.04
   }
 
 

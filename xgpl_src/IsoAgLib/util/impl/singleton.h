@@ -1,6 +1,8 @@
 #ifndef SINGLETON_H_
 #define SINGLETON_H_
 
+#include <Application_Config/isoaglib_config.h>
+
 #include "../compiler_adoption.h"
 
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )

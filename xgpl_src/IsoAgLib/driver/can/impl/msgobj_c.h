@@ -86,6 +86,7 @@
 #define MSG_OBJ_H
 
 #include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/hal/can.h>
 
 #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC)

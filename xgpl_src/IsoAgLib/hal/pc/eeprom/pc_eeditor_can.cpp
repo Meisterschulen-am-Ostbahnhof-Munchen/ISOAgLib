@@ -82,6 +82,12 @@ int16_t iInitEEEditor(  uint8_t bBus,
 
  printf("Funktion zum Start des EEPROM Editors aufgerufen - lese Daten in EEPROM Datei\n");
  eeditor = fopen("../../../simulated_io/eeditor.dat", "r+");
+ // BEGIN: Added by M.Wodok 6.12.04
+ if (eeditor == NULL) {
+   // try again with current path...
+   fopen("eeditor.dat", "r+");
+ }
+ // END: Added by M.Wodok 6.12.04
 
  while (fgets(pcZeile, 49, eeditor) != NULL)
  {

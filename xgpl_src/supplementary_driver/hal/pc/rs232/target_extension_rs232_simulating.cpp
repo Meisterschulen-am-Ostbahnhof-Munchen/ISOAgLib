@@ -98,15 +98,28 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
 	strcpy(sendName, "../../../simulated_io/rs232_send");
 	#endif
   rs232_output = fopen(sendName, "w"); // "a+"
+  // BEGIN: Added by M.Wodok 6.12.04
+  if (rs232_output == NULL) {
+    // try opening in current directory...
+    strcpy(sendName, "rs232_send");
+    rs232_output = fopen(sendName, "w"); // "a+"
+  }  
+  // END: Added by M.Wodok 6.12.04
 
-	#ifdef WRITE_LOG_FILE
+  #ifdef WRITE_LOG_FILE
 	#ifdef WIN32
   strcpy(name, "rs232_log");
 	#else
 	strcpy(sendName, "../../../simulated_io/rs232_log");
 	#endif
   rs232_log = fopen(name, "w"); // "a+"
-	#endif
+  // BEGIN: Added by M.Wodok 6.12.04
+  if (rs232_log == NULL) {
+    // try opening in current directory...
+    strcpy(name, "rs232_log");
+    rs232_log = fopen(name, "w"); // "a+"
+  }  
+  #endif
 
   printf("Versuch Datei mit Name %s zum schreiben zu oeffnen\n", name);
 	#ifdef USE_REAL_RS232

@@ -262,6 +262,13 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   {
 	printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat[bBusNumber]);
   }
+  
+  // BEGIN: Added by M.Wodok 6.12.04
+  if (canlogDat == NULL) {
+    // if file couldn't be opened, try it in the current directory!
+    canlogDat = fopen("can_send.txt", "a+");
+  }
+  // END: Added by M.Wodok 6.12.04
 
   if (b_busOpened[bBusNumber] == false)
   { // Select channel
