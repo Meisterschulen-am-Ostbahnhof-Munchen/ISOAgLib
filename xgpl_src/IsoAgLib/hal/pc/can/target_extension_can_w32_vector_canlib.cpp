@@ -271,6 +271,7 @@ int32_t can_lastReceiveTime()
 
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
+	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
 	#ifndef USE_THREAD
   checkMsg();
 	#endif
@@ -280,6 +281,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {
+	if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
   int i,n;
   int32_t i32_busInd = -1, i32_virtualBusInd = -1;
   Vstatus vErr;
@@ -397,6 +399,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 
 int16_t closeCan ( uint8_t bBusNumber )
 {
+	if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
   if (canlogDat[bBusNumber] != NULL){
     fclose(canlogDat[bBusNumber]);
     canlogDat[bBusNumber] = NULL;
@@ -425,6 +428,7 @@ int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus)
 
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 {
+	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
   if (rec_bufCnt[bBusNumber][bMsgObj] == -1)
   { // it's a send object -> call native clear transmit
     ncdFlushTransmitQueue(gPortHandle[bBusNumber], gChannelMask[bBusNumber]);
@@ -440,6 +444,7 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig )
 {
+	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
 	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (ptConfig->bMsgType == TX)
   { /* Sendeobjekt */
@@ -460,6 +465,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
 
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd )
 {
+	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
 	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] > -1)
   { // active receive object
@@ -479,12 +485,15 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 	*/
 int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 { // first get waiting messages
+	if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > 14 ) ) return HAL_RANGE_ERR;
 	checkMsg();
 	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+	return HAL_NO_ERR;
 }
 
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
+	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
 	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] == -1)
   { /* Sendeobjekt */
@@ -503,6 +512,7 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 
 int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 {
+	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
   VportHandle lPortHandle = gPortHandle[bBusNumber];
   Vaccess lChannelMask = gChannelMask[bBusNumber];
   Vaccess lPermissionMask = gPermissionMask[bBusNumber];
@@ -549,6 +559,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 {
+	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
 	#ifdef USE_THREAD
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
