@@ -56,7 +56,7 @@
  ***************************************************************************/
 #define _GNU_SOURCE
 #include "can_target_extensions.h"
-#include <IsoAgLib/hal/a1/system/system.h>
+#include <IsoAgLib/hal/pc/system/system.h>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
