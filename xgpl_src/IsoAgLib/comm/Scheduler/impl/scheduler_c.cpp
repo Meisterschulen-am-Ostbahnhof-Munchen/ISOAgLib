@@ -317,6 +317,10 @@ int16_t Scheduler_c::getAvailableExecTime( int16_t ri16_awaitedExecTime )
   if ( i32_demandedExecEnd >= 0 )
   {
     int16_t i16_result = int32_t( i32_demandedExecEnd - System_c::getTime() );
+    if ( ( i32_demandedExecEnd > System_c::getTime() ) && ( i16_result < 0 ) )
+    { // overflow as we have TOOO much time to execute -> set to biggest possible time
+      i16_result = 0x7FFF;
+    }
     // if awaited time for next planned step is longer than available time
     // answer 0 to indicate need for immediate return from timeEvent
     if ( i16_result < ri16_awaitedExecTime ) return 0;
@@ -339,7 +343,8 @@ int16_t Scheduler_c::getAvailableExecTime( int16_t ri16_awaitedExecTime )
 bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
 { // first check if demanded exec time allows execution
   // update last trigger time
-  int32_t i32_stepStartTime = i32_lastTimeEventTime = System_c::getTime();
+  int32_t i32_now = System_c::getTime();
+  int32_t i32_stepStartTime = i32_lastTimeEventTime = i32_now;
 
 	i32_demandedExecEnd = ri32_demandedExecEnd;
 	#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
