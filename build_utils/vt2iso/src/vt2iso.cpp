@@ -445,7 +445,7 @@ void clean_exit (int return_value, char* error_message=NULL)
  }
 
  if (partFileD) {
-   fprintf (partFileD, "\n#define vtKeyCodeESC 0\n");
+   fprintf (partFileD, "\n#define vtKeyCodeACK 0\n");
 // OLD:  fprintf (partFileD, "\n#define vtObjectCount %d\n", objCount);
   fclose (partFileD);
  }

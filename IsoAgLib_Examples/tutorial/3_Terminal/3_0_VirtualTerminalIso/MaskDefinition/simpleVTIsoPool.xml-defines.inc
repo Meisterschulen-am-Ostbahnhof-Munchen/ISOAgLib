@@ -93,4 +93,4 @@
 #define iVtObjectIDUnnamed26 65455
 #define iVtObjectIDsoftkeysAlarm 65454
 
-#define vtKeyCodeESC 0
+#define vtKeyCodeACK 0

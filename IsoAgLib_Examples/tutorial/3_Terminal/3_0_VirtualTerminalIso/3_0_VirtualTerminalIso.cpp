@@ -388,7 +388,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectForbiddenAlarmMask);
         break;
 
-      case vtKeyCodeESC:
+      case vtKeyCodeACK:
         iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
         break;
     }
