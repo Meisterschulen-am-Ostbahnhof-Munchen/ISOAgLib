@@ -1,3 +1,4 @@
 * text=auto !eol
 /AUTHORS -text
 /COPYING -text
+/ChangeLog -text
