@@ -724,7 +724,7 @@ function create_autogen_project_config()
 	if [ $PLATFORM = "Linux" ] ; then
 		ENDLINE="\n"
 	else
-		ENDLINE="\n\r"
+		ENDLINE="\r\n"
 	fi
 	# CONFIG_NAME=../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/.config_$PROJECT.h
 	CONFIG_NAME=../$ISO_AG_LIB_PATH/$REL_APP_PATH/config_$PROJECT.h
@@ -765,19 +765,29 @@ function create_autogen_project_config()
 	echo "// Strong Advice: Don't activate this, as long your target has not too tight memory restrictions" >> $CONFIG_NAME
 	echo "// Initialization of CAN filters and of local process data might get too slow under worst case conditions" >> $CONFIG_NAME
 	if [ $OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED -gt 0 ] ; then
-		echo -e "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED\n" >> $CONFIG_NAME
+		echo -e "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED$ENDLINE" >> $CONFIG_NAME
 	else
-		echo -e "// #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED\n" >> $CONFIG_NAME
+		echo -e "// #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED$ENDLINE" >> $CONFIG_NAME
 	fi
+
+	echo "/** allow configuration by parameter value YES */" >> $CONFIG_NAME
+	echo "#ifndef YES" >> $CONFIG_NAME
+	echo "  #define YES 1" >> $CONFIG_NAME
+	echo "#endif" >> $CONFIG_NAME
+	echo "/** allow configuration by parameter value NO */" >> $CONFIG_NAME
+	echo "#ifndef NO" >> $CONFIG_NAME
+	echo "  #define NO 0" >> $CONFIG_NAME
+	echo "#endif" >> $CONFIG_NAME
+
 
 	if [ $USE_FLOAT_DATA_TYPE -gt 0 ] ; then
 		echo "// Decide if float shall be used for the project" >> $CONFIG_NAME
-		echo -e "#define USE_FLOAT_DATA_TYPE\n" >> $CONFIG_NAME
+		echo -e "#define USE_FLOAT_DATA_TYPE$ENDLINE" >> $CONFIG_NAME
 	fi
 
 
 	if [ $PRJ_PROCESS -gt 0 ] ; then
-		echo -e "#ifndef USE_PROCESS $ENDLINE\t#define USE_PROCESS $ENDLINE#endif" >> $CONFIG_NAME
+		echo -e "#ifndef USE_PROCESS $ENDLINE  #define USE_PROCESS $ENDLINE#endif" >> $CONFIG_NAME
   else
   	# the default in isoaglib_config.h is to activate
     # PROCESS as long as USE_PROCESS_YN unset
@@ -813,10 +823,10 @@ function create_autogen_project_config()
 	fi
 
 	# write overwriteable parts of isoaglib_config.h
-	echo -e "\n// The following configuration values can be overwritten." >> $CONFIG_NAME
+	echo -e "$ENDLINE// The following configuration values can be overwritten." >> $CONFIG_NAME
 	echo "// These settings are initially defined in isoaglib_config.h ." >> $CONFIG_NAME
 	echo "// These settings are in commented-out, so that you can activate and adopt them by" >> $CONFIG_NAME
-	echo -e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG\n"  >> $CONFIG_NAME
+	echo -e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG$ENDLINE"  >> $CONFIG_NAME
 
 	for conf_line in `grep "#define CONFIG_" ../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/isoaglib_config.h | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g'` ; do
 		conf_name=`echo $conf_line | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g'`
@@ -826,10 +836,10 @@ function create_autogen_project_config()
 			CMDLINE=`echo "sed -e 's|#define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $CONFIG_NAME.1"`
 			echo $CMDLINE | sh
 			mv $CONFIG_NAME.1 $CONFIG_NAME
-			echo -e -n "\n" >> $CONFIG_NAME
+			echo -e -n "$ENDLINE" >> $CONFIG_NAME
 		fi
 	done
-	echo -e "\n// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!" >> $CONFIG_NAME
+	echo -e "$ENDLINE// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!" >> $CONFIG_NAME
 	FRESH=`grep -c "// START_INDIVIDUAL_PROJECT_CONFIG" $CONFIG_NAME.bak`
 	if [ $FRESH -lt 1 ] ; then
 		echo "// START_INDIVIDUAL_PROJECT_CONFIG" >> $CONFIG_NAME
@@ -855,7 +865,7 @@ function create_autogen_project_config()
 	#cat $CONFIG_NAME >> $CONFIG_HEADER_DOXYGEN_READY
 	#echo "/*@}*/" >> $CONFIG_HEADER_DOXYGEN_READY
 
-	echo -e "\n\n \section PrjConfig$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_HEADER_DOXYGEN_READY
+	echo -e "$ENDLINE$ENDLINE \section PrjConfig$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_HEADER_DOXYGEN_READY
 	echo " This is only a copy with doxygen ready comment blocks from the original file $CONFIG_NAME " >> $CONFIG_HEADER_DOXYGEN_READY
 	echo " This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the" >> $CONFIG_HEADER_DOXYGEN_READY
 	echo " project define #define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h" >> $CONFIG_HEADER_DOXYGEN_READY
@@ -1185,6 +1195,7 @@ function create_EdePrj()
 	sed -e 's#=_=_#\\#g' $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
 	echo "Convert UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
 	awk '{ gsub("$", "\r"); print $0;}' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
+	rm -f $PROJECT_FILE_NAME.1
 }
 
 function create_VCPrj()
@@ -1685,7 +1696,7 @@ if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
 	#rm -f /tmp/$CONF_BASE
 	#echo "/*@}*/" >> $CONFIG_SPEC_DOXYGEN_READY
 
-	echo -e "\n\n \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
+	echo -e "$ENDLINE$ENDLINE \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
 	echo " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ " >> $CONFIG_SPEC_DOXYGEN_READY
 	echo " Use the file $CONF_FILE in this directory as inout file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
 	echo "\code" >> $CONFIG_SPEC_DOXYGEN_READY
