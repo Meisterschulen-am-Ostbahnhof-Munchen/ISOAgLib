@@ -18,6 +18,7 @@ IsoAgLib_Examples/config_Taskcontroller.h -text
 IsoAgLib_Examples/imi.cpp -text
 IsoAgLib_Examples/taskcontroller.cpp -text
 IsoAgLib_Examples/test_hal.cpp -text
+IsoAgLib_Examples/tractor.cpp -text
 IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/0_0_AddressClaimIso.cpp -text
 IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/TutPrjDesc0_0_AddressClaimIso.txt -text
 IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/config_0_0_AddressClaimIso.h -text
@@ -405,6 +406,15 @@ compiler_projects/Dev-C++/5_0_InternalCan/5_0_InternalCan__vector_canlib__sys.de
 compiler_projects/Dev-C++/5_0_InternalCan/5_0_InternalCan__vector_xl__simulating.dev -text
 compiler_projects/Dev-C++/5_0_InternalCan/5_0_InternalCan__vector_xl__sys.dev -text
 compiler_projects/Dev-C++/5_0_InternalCan/filelist__5_0_InternalCan.txt -text
+compiler_projects/Dev-C++/tractor/filelist__tractor.txt -text
+compiler_projects/Dev-C++/tractor/tractor__simulating__simulating.dev -text
+compiler_projects/Dev-C++/tractor/tractor__simulating__sys.dev -text
+compiler_projects/Dev-C++/tractor/tractor__sontheim__simulating.dev -text
+compiler_projects/Dev-C++/tractor/tractor__sontheim__sys.dev -text
+compiler_projects/Dev-C++/tractor/tractor__vector_canlib__simulating.dev -text
+compiler_projects/Dev-C++/tractor/tractor__vector_canlib__sys.dev -text
+compiler_projects/Dev-C++/tractor/tractor__vector_xl__simulating.dev -text
+compiler_projects/Dev-C++/tractor/tractor__vector_xl__sys.dev -text
 compiler_projects/EDE/0_0_AddressClaimIso/0_0_AddressClaimIso_esx.pjt -text
 compiler_projects/EDE/0_0_AddressClaimIso/0_0_AddressClaimIso_imi.pjt -text
 compiler_projects/EDE/0_0_AddressClaimIso/0_0_AddressClaimIso_pm167.pjt -text
@@ -574,6 +584,10 @@ compiler_projects/EDE/taskcontroller_esx_betacompiler/taskcontroller_rs232.pjt -
 compiler_projects/EDE/taskcontroller_esx_betacompiler/taskcontroller_rs232.smp -text
 compiler_projects/EDE/taskcontroller_esx_betacompiler/taskcontroller_rs232_float.pjt -text
 compiler_projects/EDE/taskcontroller_esx_betacompiler/taskcontroller_rs232_iso.pjt -text
+compiler_projects/EDE/tractor/filelist__tractor.txt -text
+compiler_projects/EDE/tractor/tractor_esx.pjt -text
+compiler_projects/EDE/tractor/tractor_imi.pjt -text
+compiler_projects/EDE/tractor/tractor_pm167.pjt -text
 compiler_projects/EDE/traktor_esx/traktor.opm -text
 compiler_projects/EDE/traktor_esx/traktor.pjt -text
 compiler_projects/EDE/traktor_esx/traktor.psp -text
@@ -829,6 +843,14 @@ compiler_projects/VC6/imi_iso_sim/imi_iso_sim__vector_canlib__simulating.dsp -te
 compiler_projects/VC6/imi_iso_sim/imi_iso_sim__vector_xl__simulating.dsp -text svneol=unset#unset
 compiler_projects/VC6/imi_iso_w32/imi_iso_w32__vector_canlib__sys.dsp -text
 compiler_projects/VC6/imi_iso_w32/imi_iso_w32__vector_xl__sys.dsp -text svneol=unset#unset
+compiler_projects/VC6/tractor/tractor__simulating__simulating.dsp -text
+compiler_projects/VC6/tractor/tractor__simulating__sys.dsp -text
+compiler_projects/VC6/tractor/tractor__sontheim__simulating.dsp -text
+compiler_projects/VC6/tractor/tractor__sontheim__sys.dsp -text
+compiler_projects/VC6/tractor/tractor__vector_canlib__simulating.dsp -text
+compiler_projects/VC6/tractor/tractor__vector_canlib__sys.dsp -text
+compiler_projects/VC6/tractor/tractor__vector_xl__simulating.dsp -text
+compiler_projects/VC6/tractor/tractor__vector_xl__sys.dsp -text
 compiler_projects/kdevelop_qmake/0_0_AddressClaimIso/0_0_AddressClaimIso.kdevelop -text
 compiler_projects/kdevelop_qmake/0_0_AddressClaimIso/0_0_AddressClaimIso.kdevelop.filelist -text
 compiler_projects/kdevelop_qmake/0_0_AddressClaimIso/0_0_AddressClaimIso.pro -text
@@ -1014,6 +1036,12 @@ compiler_projects/kdevelop_qmake/imi_iso_rte/imi_iso_rte.pro -text
 compiler_projects/kdevelop_qmake/imi_iso_sim/Makefile -text
 compiler_projects/kdevelop_qmake/imi_iso_sim/filelist.txt -text
 compiler_projects/kdevelop_qmake/imi_iso_sim/imi_iso_sim.pro -text
+compiler_projects/kdevelop_qmake/tractor/Makefile -text
+compiler_projects/kdevelop_qmake/tractor/filelist__tractor.qmake -text
+compiler_projects/kdevelop_qmake/tractor/filelist__tractor.txt -text
+compiler_projects/kdevelop_qmake/tractor/tractor.kdevelop -text
+compiler_projects/kdevelop_qmake/tractor/tractor.kdevelop.filelist -text
+compiler_projects/kdevelop_qmake/tractor/tractor.pro -text
 compiler_projects/projectGeneration/CreateDoxygenForTutorial.sh -text
 compiler_projects/projectGeneration/EDE.part1.pjt -text
 compiler_projects/projectGeneration/EDE.part2.pjt -text
@@ -1049,6 +1077,7 @@ compiler_projects/projectGeneration/conf_Taskcontroller -text
 compiler_projects/projectGeneration/conf_imi_iso_rte -text
 compiler_projects/projectGeneration/conf_imi_iso_sim -text
 compiler_projects/projectGeneration/conf_imi_iso_w32 -text
+compiler_projects/projectGeneration/conf_tractor -text
 compiler_projects/projectGeneration/kdevelop3Generic.kdevelop -text
 compiler_projects/projectGeneration/qmake_stub.pro -text
 compiler_projects/projectGeneration/update_makefile.sh -text

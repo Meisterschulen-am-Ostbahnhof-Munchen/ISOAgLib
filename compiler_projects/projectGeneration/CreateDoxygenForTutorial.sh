@@ -1,7 +1,7 @@
 #!/bin/sh
 DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | grep -e "conf_[0-9]" | sed -e 's/[ \t\n]+/:/g'`
-# EXAMPLE_LIST="conf_2_8_RemoteReadDataSimpleMeasureIso"
+# EXAMPLE_LIST="conf_tractor"
 TARGET_LIST="pc_linux:pc_win32:esx:imi:pm167"
 CAN_LIST="simulating:sys:vector_canlib:vector_xl:sontheim"
 RS232_LIST="simulating:sys:rte"
