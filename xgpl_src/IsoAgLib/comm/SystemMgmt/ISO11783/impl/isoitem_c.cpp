@@ -689,7 +689,7 @@ uint8_t ISOItem_c::calc_randomWait()
   ui16_result *= ((outputString()[6] + 1) / (outputString()[7] + 1));
   // divide by last uint8_t of name till offset in limit
   for (;ui16_result > 153; ui16_result /= (outputString()[7] + 1));
-  return ui16_result;
+  return uint8_t(ui16_result & 0xFF );
 }
 
 /**

@@ -96,6 +96,31 @@ CANPkgExt_c::~CANPkgExt_c(){
 }
 
 /**
+  abstract function to transform the string data into flag values
+  => derived class must implement suitable data conversion function
+
+  needed for assigning informations from another CANPkg_c or CANPkgExt
+  @see CANPkgExt_c::operator=
+*/
+void CANPkgExt_c::string2Flags()
+{ // dummy body - normally NOT called
+};
+
+/**
+  abstract transform flag values to data string
+  => derived class must implement suitable data converting function
+
+  needed for sending informations from this object via CANIO_c on CAN BUS,
+  because CANIO_c doesn't know anything about the data format of this type of msg
+  so that it can only use an unformated data string from CANPkg
+  @see CANPkgExt_c::getData
+  @see __IsoAgLib::CANIO_c::operator<<
+*/
+void CANPkgExt_c::flags2String()
+{ // dummy body - normally NOT called
+};
+
+/**
   put data into given reference to BIOS related data structure with data, len
   @param reft_ident     reference where the ident is placed for send
   @param refui8_identType reference to the ident type val: 0==std, 1==ext
@@ -121,7 +146,7 @@ void CANPkgExt_c::setIsoPgn(uint32_t rui32_val)
   setIdent( (ui16_val >> 8), 2, Ident_c::ExtendedIdent);
   ui16_val = (rui32_val >> 16) & 0x1;
   ui16_val |= (ident(3) & 0x1E);
-  setIdent( ui16_val, 3, Ident_c::ExtendedIdent);
+  setIdent( uint8_t(ui16_val & 0xFF), 3, Ident_c::ExtendedIdent);
 }
 #endif
 } // end of namespace __IsoAgLib

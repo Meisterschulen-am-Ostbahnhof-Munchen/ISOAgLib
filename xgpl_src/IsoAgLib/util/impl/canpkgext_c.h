@@ -292,7 +292,7 @@ public:
     needed for assigning informations from another CANPkg_c or CANPkgExt
     @see CANPkgExt_c::operator=
   */
-  virtual void string2Flags() = 0;
+  virtual void string2Flags();
 
 private:
 // Private methods
@@ -307,7 +307,7 @@ private:
     @see CANPkgExt_c::getData
     @see __IsoAgLib::CANIO_c::operator<<
   */
-  virtual void flags2String() = 0;
+  virtual void flags2String();
 };
 
 }

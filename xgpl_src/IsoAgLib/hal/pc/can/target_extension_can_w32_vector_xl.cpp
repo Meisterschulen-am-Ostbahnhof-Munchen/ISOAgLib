@@ -324,7 +324,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   int32_t i32_busInd = -1, i32_virtualBusInd = -1;
 	XLstatus xlStatus;
 	XLaccess virtualChannelMask = 0;
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
@@ -456,7 +456,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 int16_t closeCan ( uint8_t bBusNumber )
 {
 	if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
@@ -476,7 +476,7 @@ int16_t closeCan ( uint8_t bBusNumber )
 		g_xlPortHandle[bBusNumber] = XL_INVALID_PORTHANDLE;
 		b_busOpened[bBusNumber] = false;
 	}
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	b_blockThread = false;
 	#endif
   return HAL_NO_ERR;
@@ -500,7 +500,7 @@ int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus)
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 {
 	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
@@ -519,7 +519,7 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
     rec_bufOut[bBusNumber][bMsgObj] = 0;
     rec_bufIn[bBusNumber][bMsgObj] = 0;
   }
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	b_blockThread = false;
 	#endif
   return HAL_NO_ERR;
@@ -528,7 +528,7 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig )
 {
 	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
@@ -552,7 +552,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
     rec_bufIn[bBusNumber][bMsgObj] = 0;
     rec_bufFilter[bBusNumber][bMsgObj] = ptConfig->dwId;
   }
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	b_blockThread = false;
 	#endif
   return HAL_NO_ERR;
@@ -561,7 +561,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd )
 {
 	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
@@ -576,7 +576,7 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
     rec_bufFilter[bBusNumber][bMsgObj] = dwId;
     rec_bufXtd[bBusNumber][bMsgObj] = bXtd;
   }
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	b_blockThread = false;
 	#endif
   return HAL_NO_ERR;
@@ -605,7 +605,7 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 	checkMsg();
 	#endif
 	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	b_blockThread = false;
 	#endif
   return HAL_NO_ERR;
@@ -614,7 +614,7 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
 	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
@@ -636,7 +636,7 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
     rec_bufOut[bBusNumber][bMsgObj] = 0;
     rec_bufIn[bBusNumber][bMsgObj] = 0;
   }
-	#ifndef USE_THREAD
+	#ifdef USE_THREAD
 	b_blockThread = false;
 	#endif
   return HAL_NO_ERR;

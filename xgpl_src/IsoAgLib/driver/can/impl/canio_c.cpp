@@ -371,7 +371,7 @@ bool CANIO_c::timeEvent( void ){
   #endif
 
   // start process of all received msg
-  return (processMsg() > 0);
+  return (processMsg() >= 0)?true:false;
 }
 
 /**
@@ -412,7 +412,9 @@ uint8_t CANIO_c::sendCanFreecnt(Ident_c::identType_t ren_identType)
   {
     ui8_sendObjNr += 1;
   }
-  return HAL::can_stateMsgobjFreecnt(ui8_busNumber, ui8_sendObjNr);
+  const int16_t i16_result = HAL::can_stateMsgobjFreecnt(ui8_busNumber, ui8_sendObjNr);
+	if ( i16_result >= 0 ) return uint8_t(i16_result);
+	else return 0;
 }
 
 
@@ -429,6 +431,11 @@ void CANIO_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
   {
     ui8_sendObjNr += 1;
   }
+	#ifdef DEBUG
+  getRs232Instance()
+   << "CANIO_c::sendCanClearbuf for MsgObj: " << uint16_t(ui8_sendObjNr) << "\r\n";
+	#endif
+	 
   HAL::can_useMsgobjClear(ui8_busNumber, ui8_sendObjNr);
 }
 
@@ -650,9 +657,11 @@ bool CANIO_c::verifyBusMsgobjNr(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
   initiate processing of all received msg
   check all active MsgObj_c for received CAN msg and
   initiate their processing
-  @return true -> all active CAN buffers are processed in time
+  @return <0 --> not enough time to process all messages.
+	       ==0 --> no messages were received.
+				 >0  --> all messages are processed, number of messages
 */
-bool CANIO_c::processMsg(){
+int16_t CANIO_c::processMsg(){
   ui8_processedMsgCnt = 0;
 
 	// first check if last Message Object is open,
@@ -663,19 +672,19 @@ bool CANIO_c::processMsg(){
 	{ // process all messages which where placed during the reconfig in the last message object
     // trigger watchdog
     HAL::wdTriggern();
-		c_lastMsgObj.processMsg( ui8_busNumber, true );
+		ui8_processedMsgCnt += c_lastMsgObj.processMsg( ui8_busNumber, true );
 		c_lastMsgObj.close();
 	}
 
 	for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
   { // stop processing of message buffers, if not enough time
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    if ( Scheduler_c::getAvailableExecTime() == 0 ) return -1;
 		System_c::triggerWd();
     ui8_processedMsgCnt += pc_iter->processMsg(ui8_busNumber);
   }
 
   // return the number of received telegrams
-  return true;
+  return ui8_processedMsgCnt;
 }
 
 
@@ -726,6 +735,11 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
     // exit loop, if CAN BUS is blocked and exit function
     if (HAL::can_stateGlobalBlocked(ui8_busNumber))
     {  // clear MsgObj CAN queue
+		  #ifdef DEBUG
+			getRs232Instance()
+		   << "CANIO_c::operator<< Blocked BUS Nr: " << uint16_t(ui8_busNumber) << "\r\n";
+		  #endif
+						 
       HAL::can_useMsgobjClear(ui8_busNumber,ui8_sendObjNr);
       return *this;
     }
@@ -734,8 +748,57 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
   HAL::wdTriggern();
 
   // Msg can be placed in MsgObj
+  #ifdef DEBUG
+  bool b_bit1err = HAL::can_stateGlobalBit1err(ui8_busNumber);
+  bool b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, ui8_sendObjNr);
+	bool b_warnState = HAL::can_stateGlobalWarn(ui8_busNumber);
+
+	if ( b_bit1err )
+	{	
+			getRs232Instance()
+			<< "BITERR VOR HAL::can_useMsgobjSend BUS: " 
+			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+			<< "\r\n";
+	}
+	if ( b_sendproblem )
+	{
+		getRs232Instance() << "SENDPROBLEM VOR HAL::can_useMsgobjSend BUS: " 
+			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+			<< "\r\n";
+	}
+	if ( b_warnState )
+	{	getRs232Instance()
+			<< "CAN_WARN VOR HAL::can_useMsgobjSend BUS: " 
+			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+			<< "\r\n";
+	}
+	#endif
   int16_t i16_sendFuncState = HAL::can_useMsgobjSend(ui8_busNumber, ui8_sendObjNr, &refc_src);
 
+  #ifdef DEBUG
+  b_bit1err = HAL::can_stateGlobalBit1err(ui8_busNumber);
+  b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, ui8_sendObjNr);
+	b_warnState = HAL::can_stateGlobalWarn(ui8_busNumber);
+
+	if ( b_bit1err )
+	{	getRs232Instance()
+			<< "BITERR NACH HAL::can_useMsgobjSend BUS: " 
+			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+			<< "\r\n";
+	}
+	if ( b_sendproblem )
+	{
+		getRs232Instance() << "SENDPROBLEM NACH HAL::can_useMsgobjSend BUS: " 
+			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+			<< "\r\n";
+	}
+	if ( b_warnState )
+	{	getRs232Instance()
+			<< "CAN_WARN NACH HAL::can_useMsgobjSend BUS: " 
+			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+			<< "\r\n";
+	}
+	#endif
   // it's time to trigger the watchdog
   HAL::wdTriggern();
   // BIOS CAN send function with lowest configured msg-obj, which was
@@ -768,6 +831,9 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       break;
     case HAL_WARN_ERR:
       // signal for BUS-WARN problem
+			#if defined(DEBUG)
+      getRs232Instance() << "BUS " << uint16_t(ui8_busNumber) << " in WARN STATE\r\n";
+			#endif
       getLbsErrInstance().registerError( LibErr_c::CanWarn, LibErr_c::Can );
       break;
   } //switch
@@ -1306,18 +1372,31 @@ bool CANIO_c::stopSendRetryOnErr()
   bool b_result = false;
 
   bool b_bit1err = HAL::can_stateGlobalBit1err(ui8_busNumber);
-  bool b_sendproblem_1 = HAL::can_stateMsgobjSendproblem(ui8_busNumber, minMsgObjNr());
+  bool b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, minMsgObjNr());
 
-  if (b_bit1err && b_sendproblem_1)
+  if (b_bit1err && b_sendproblem)
   { // only send 1 has bit1 err -> clear msg obj
-    HAL::can_useMsgobjClear(ui8_busNumber, 1);
+	  #ifdef DEBUG
+	  getRs232Instance()
+	   << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
+		 << ", ObjNr: " << minMsgObjNr()
+		 << "\r\n";
+		#endif
+    HAL::can_useMsgobjClear(ui8_busNumber, minMsgObjNr());
     b_result = true;
   }
-  else
+  else if ( en_identType == Ident_c::BothIdent )
   {
-    if (b_bit1err && b_sendproblem_1)
+	  b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, (minMsgObjNr()+1));
+    if (b_bit1err && b_sendproblem)
     { // only send 1 has bit1 err -> clear msg obj
-      HAL::can_useMsgobjClear(ui8_busNumber, 2);
+		  #ifdef DEBUG
+		  getRs232Instance()
+		   << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
+			 << ", ObjNr: " << (minMsgObjNr()+1)
+			 << "\r\n";
+			#endif
+      HAL::can_useMsgobjClear(ui8_busNumber, (minMsgObjNr()+1));
       b_result = true;
     }
   }

@@ -347,9 +347,11 @@ class CANIO_c : public SingletonCANIO_c {
     initiate processing of all received msg
     check all active MsgObj_c for received CAN msg and
     initiate their processing
-    @return true -> all active CAN buffers are processed in time
+    @return <0 --> not enough time to process all messages.
+		       ==0 --> no messages were received.
+					 >0  --> all messages are processed, number of messages
   */
-  bool processMsg();
+  int16_t processMsg();
   /** deliver count of CAN messages which were processed during last timeEvent() / processMsg() call
     * this helps Scheduler_c to decide about needed double retrigger of CANIO_c::processMsg()
     * at high CAN BUS load (important to avoid overflow of CAN buffers in HAL

@@ -123,9 +123,10 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
     initiate processing of all received msg
     check all active MsgObj_c for received CAN msg and
     initiate their processing
-    @return true -> all active CAN buffers are processed in time
-  */
-  bool processMsg() { return CANIO_c::processMsg();};
+    @return <0 --> not enough time to process all messages.
+		       ==0 --> no messages were received.
+					 >0  --> all messages are processed, number of messages  */
+  int16_t processMsg() { return CANIO_c::processMsg();};
   /**
     deliver actual BUS load in baud
     @return baudrate in [baud] on used CAN BUS

@@ -184,7 +184,7 @@ void updateSuccSendTimestamp(uint8_t rui8_busNr)
     { // since last send call at least one msg sent
       i32_cinterfMsgobjSuccSend[rui8_busNr][ui8_ind] = i32_now;
       i32_cinterfLastSuccSend[rui8_busNr] = i32_now;
-      ui8_cinterfLastSendBufCnt[rui8_busNr][ui8_ind] = i16_actCnt;
+      ui8_cinterfLastSendBufCnt[rui8_busNr][ui8_ind] = uint8_t(i16_actCnt);
     }
   }
 }
@@ -465,7 +465,7 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
     pt_config->bMsgType = TX;
     pt_config->wNumberMsgs = CONFIG_CAN_SEND_BUFFER_SIZE;
   }
-	ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr] = pt_config->wNumberMsgs;
+	ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr] = uint8_t(pt_config->wNumberMsgs);
   pt_config->bTimeStamped = true;
   pt_config->wPause = 0;
   pt_config->pfIrqFunction = 0;

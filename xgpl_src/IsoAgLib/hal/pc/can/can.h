@@ -221,7 +221,7 @@ namespace HAL
             C_RANGE == wrong BUS nr or wrong baudrate;
             C_WARN == BUS previously initialised - no problem if only masks had to be changed
   */
-  inline bool can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t rb_maskStd,
+  inline int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t rb_maskStd,
         uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg)
     {return __HAL::can_configGlobalInit(rui8_busNr, rb_baudrate, rb_maskStd,
         rui32_maskExt, rui32_maskLastmsg);};
@@ -236,7 +236,7 @@ namespace HAL
     @return HAL_NO_ERR == no error;
             C_RANGE == wrong BUS nr
   */
-  inline bool can_configGlobalMask(uint8_t rui8_busNr, uint16_t rb_maskStd, uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg)
+  inline int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rb_maskStd, uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg)
     {return __HAL::can_configGlobalMask(rui8_busNr, rb_maskStd, rui32_maskExt, rui32_maskLastmsg);};
 
   /**
@@ -247,7 +247,7 @@ namespace HAL
             C_RANGE == wrong BUS nr;
             C_CONFIG == BUS previously not initialised
   */
-  inline bool can_configGlobalClose(uint8_t rui8_busNr)
+  inline int16_t can_configGlobalClose(uint8_t rui8_busNr)
     {return __HAL::can_configGlobalClose(rui8_busNr);};
 
   /*@}*/
