@@ -129,8 +129,36 @@ namespace HAL
     @param wPWMValue Value to set; depends on configured PWM freq; [0..0xFFFF]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
-  inline int16_t setDigout(uint8_t bOutputNo, uint16_t wPWMValue)
+  inline int16_t setDigout(uint8_t /* bOutputNo */, uint16_t wPWMValue)
     {__HAL::set_out_UD(wPWMValue);return HAL_NO_ERR;};
+
+	/** deliver the actual current of the digital output.
+		* This is UNDEFINED for ADIS - IMI
+    * @param rui8_channel channel to check
+    * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
+    */
+  inline int16_t getDigoutCurrent( uint8_t /* rui8_channel */ )
+  {
+    return -1;
+  }
+  /** deliver the state of a digital output.
+		* This is UNDEFINED for ADIS - IMI
+    * @param rui8_channel channel to check
+    * @param rui16_minCurrent minimal allowed current in [mA]
+    * @param rui16_maxCurrent maximum allowed current in [mA]
+    * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
+              HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
+    */
+  inline int16_t getDigoutDiagnose(uint8_t /* rui8_channel */, uint16_t /* rui16_minCurrent */, uint16_t /* rui16_maxCurrent */ )
+	{ return HAL_NO_ERR;};
+
+	/** deliver the measure voltage at the PWM output.
+		Use this for application specific state evaluation for cases, where the standard
+		getDigoutDiagnose function can go wrong.
+		ADIS uses ADC channel ANA9 for this purpose.
+		@return voltage at PWM channel [mV]
+	*/
+	int16_t getDigoutAdc( uint8_t /* rui8_channel */ ) { return __HAL::get_analogin_mean(ANA9);};
 
   /*@}*/
 }

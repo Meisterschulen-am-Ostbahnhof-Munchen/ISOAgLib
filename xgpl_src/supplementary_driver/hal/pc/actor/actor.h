@@ -148,6 +148,13 @@ namespace HAL
   {
     return HAL_NO_ERR;
   };
+
+	/** deliver the measure voltage at the PWM output.
+		Use this for application specific state evaluation for cases, where the standard
+		getDigoutDiagnose function can go wrong.
+		@return voltage at PWM channel [mV]
+	*/
+	inline int16_t getDigoutAdc( uint8_t /* rui8_channel */ ) { return 1000;};
   /*@}*/
 }
 #endif
