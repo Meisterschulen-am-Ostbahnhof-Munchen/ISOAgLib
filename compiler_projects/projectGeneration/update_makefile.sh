@@ -814,6 +814,10 @@ function create_autogen_project_config()
   	if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
 			echo -e "#ifndef USE_ISO_TERMINAL $ENDLINE\t#define USE_ISO_TERMINAL $ENDLINE#endif" >> $CONFIG_NAME
     fi
+  	if [ $PRJ_ISO_TERMINAL_SERVER -gt 0 ] ; then
+			echo -e "#ifndef USE_ISO_TERMINAL_SERVER $ENDLINE\t#define USE_ISO_TERMINAL_SERVER $ENDLINE#endif" >> $CONFIG_NAME
+			echo "with ISO_TERMINAL_SERVER!"
+    fi
   fi
   if [ $PRJ_DIN9684 -gt 0 ] ; then
 		echo -e "#ifndef USE_DIN_9684 $ENDLINE\t#define USE_DIN_9684 $ENDLINE#endif" >> $CONFIG_NAME
