@@ -107,6 +107,7 @@
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -236,19 +237,21 @@ bool Process_c::timeEvent( void ){
     sui16_remoteProcPointerTotal = c_arrClientC2.capacity();
 
     getRs232Instance()
-	    << c_arrClientC1.size() 
+	    << c_arrClientC1.size()
       << "(" << c_arrClientC1.capacity()
       << ") x LocalProcData Pointer: Mal-Alloc: "
-      << ( ( c_arrClientC1.capacity()+2) * sizeof(void*) )
+      << sizeVectorTWithMalloc( sizeof(void*), c_arrClientC1.capacity() )
+      << "/" << sizeof(void*)
       << ", Chunk-Alloc: "
-      << ( ( ( c_arrClientC1.capacity() / 40 ) + 1 ) * 40 * ( sizeof(void*) ) )
+      << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
       << "\r\n"
 	    << c_arrClientC2.size()
-      << "(" << c_arrClientC1.capacity()
+      << "(" << c_arrClientC2.capacity()
       << ") x RemoteProcData Pointer: Mal-Alloc: "
-      << ( ( c_arrClientC2.capacity()+2) * sizeof(void*) )
+      << sizeVectorTWithMalloc( sizeof(uint16_t), c_arrClientC2.capacity() )
+      << "/" << sizeof(void*)
       << ", Chunk-Alloc: "
-      << ( ( ( c_arrClientC2.capacity() / 40 ) + 1 ) * 40 * ( sizeof(void*) ) )
+      << sizeVectorTWithChunk( sizeof(uint16_t), c_arrClientC2.capacity() )
       #if 0
       << "\r\n\r\n";
       #else

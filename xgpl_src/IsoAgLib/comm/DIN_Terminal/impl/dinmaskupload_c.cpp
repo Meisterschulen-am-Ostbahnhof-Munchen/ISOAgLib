@@ -99,6 +99,7 @@
 // #define DEBUG_RS232
 #if defined(DEBUG_RS232) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -489,10 +490,11 @@ void DINMaskUpload_c::createLbsplusProcdata()
   sui16_syncProcTotal += ( activeMask().ui8_syncCnt + 1 );
   
   getRs232Instance()
-	  << sui16_syncProcTotal << " x DINMaskUpload_c(syncproc_t): Mal-Alloc: "
-    << ( ( sizeof(syncproc_t) + 3 * sizeof(syncproc_t*) ) * sui16_syncProcTotal )
+    << sui16_syncProcTotal << " x DINMaskUpload_c(syncproc_t): Mal-Alloc: "
+    <<  sizeSlistTWithMalloc( sizeof(syncproc_t), sui16_syncProcTotal )
+    << "/" << sizeSlistTWithMalloc( sizeof(syncproc_t), 1 )
     << ", Chunk-Alloc: "
-    << ( ( ( sui16_syncProcTotal / 40 ) + 1 ) * 40 * ( sizeof(syncproc_t)+sizeof(syncproc_t*) ) )
+    << sizeSlistTWithChunk( sizeof(syncproc_t), sui16_syncProcTotal )
     << "\r\n\r\n";
 	#endif
 }
@@ -548,10 +550,11 @@ void DINMaskUpload_c::createFieldstarProcdata()
   sui16_syncProcTotal += ( activeMask().ui8_syncCnt + 1 );
   
   getRs232Instance()
-	  << sui16_syncProcTotal << " x DINMaskUpload_c(syncproc_t): Mal-Alloc: "
-    << ( ( sizeof(syncproc_t) + 3 * sizeof(syncproc_t*) ) * sui16_syncProcTotal )
+    << sui16_syncProcTotal << " x DINMaskUpload_c(syncproc_t): Mal-Alloc: "
+    <<  sizeSlistTWithMalloc( sizeof(syncproc_t), sui16_syncProcTotal )
+    << "/" << sizeSlistTWithMalloc( sizeof(syncproc_t), 1 )
     << ", Chunk-Alloc: "
-    << ( ( ( sui16_syncProcTotal / 40 ) + 1 ) * 40 * ( sizeof(syncproc_t)+sizeof(syncproc_t*) ) )
+    << sizeSlistTWithChunk( sizeof(syncproc_t), sui16_syncProcTotal )
     << "\r\n\r\n";
 	#endif
 }

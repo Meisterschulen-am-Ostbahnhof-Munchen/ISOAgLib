@@ -93,6 +93,7 @@
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -232,9 +233,10 @@ bool ISOMonitor_c::timeEvent( void ){
 
         getRs232Instance()
 	        << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
-          << ( ( sizeof(ISOItem_c) + 3 * sizeof(ISOItem_c*) ) * sui16_isoItemTotal )
+          <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
+          << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
           << ", Chunk-Alloc: "
-          << ( ( ( sui16_isoItemTotal / 40 ) + 1 ) * 40 * ( sizeof(ISOItem_c)+sizeof(ISOItem_c*) ) )
+          << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
           << "\r\n\r\n";
         #endif
         pc_iter = vec_isoMember.begin();
@@ -447,9 +449,10 @@ bool ISOMonitor_c::insertIsoMember(GetyPos_c rc_gtp, const uint8_t* rpui8_name,
 
       getRs232Instance()
 	      << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
-        << ( ( sizeof(ISOItem_c) + 3 * sizeof(ISOItem_c*) ) * sui16_isoItemTotal )
+        <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
+        << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
         << ", Chunk-Alloc: "
-        << ( ( ( sui16_isoItemTotal / 40 ) + 1 ) * 40 * ( sizeof(ISOItem_c)+sizeof(ISOItem_c*) ) )
+        << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
         << "\r\n\r\n";
     }
     #endif
@@ -556,9 +559,10 @@ bool ISOMonitor_c::deleteIsoMemberGtp(GetyPos_c rc_gtp)
 
     getRs232Instance()
 	    << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
-      << ( ( sizeof(ISOItem_c) + 3 * sizeof(ISOItem_c*) ) * sui16_isoItemTotal )
+      <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
       << ", Chunk-Alloc: "
-      << ( ( ( sui16_isoItemTotal / 40 ) + 1 ) * 40 * ( sizeof(ISOItem_c)+sizeof(ISOItem_c*) ) )
+      << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
       << "\r\n\r\n";
     #endif
     pc_isoMemberCache = vec_isoMember.begin();

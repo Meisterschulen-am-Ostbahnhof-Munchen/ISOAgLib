@@ -89,6 +89,7 @@
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -185,11 +186,12 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
       sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
       sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
       getRs232Instance()
-	      << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
-        << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+        << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+        <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
+        << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
         << ", Chunk-Alloc: "
-        << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
-        << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
+        << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
+	      << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
       #if 0
         << "\r\n\r\n";
       #else
@@ -226,10 +228,11 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
     sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
     sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
     getRs232Instance()
-	    << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
-      << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+      << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
       << ", Chunk-Alloc: "
-      << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+      << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
     #if 0
       << "\r\n\r\n";
@@ -261,10 +264,11 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
     sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
     sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
     getRs232Instance()
-	    << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
-      << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+      << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
       << ", Chunk-Alloc: "
-      << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+      << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
     #if 0
       << "\r\n\r\n";
@@ -329,11 +333,12 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
             {
               sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
               sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
-              getRs232Instance()
-	              << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
-                << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
-                << ", Chunk-Alloc: "
-                << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+				      getRs232Instance()
+				        << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+				        <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
+				        << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
+				        << ", Chunk-Alloc: "
+				        << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
                 << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
               #if 0
                 << "\r\n\r\n";
@@ -383,10 +388,11 @@ void ManageMeasureProgLocal_c::processProg(){
   {
     sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
     getRs232Instance()
-	    << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
-      << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+      << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
       << ", Chunk-Alloc: "
-      << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+      << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
     #if 0
       << "\r\n\r\n";
@@ -500,10 +506,11 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, GetyPos_c rc
       sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
       sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
       getRs232Instance()
-	      << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
-        << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+        << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+        <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
+        << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
         << ", Chunk-Alloc: "
-        << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+        << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
         << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
       #if 0
         << "\r\n\r\n";

@@ -92,6 +92,7 @@
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -602,11 +603,12 @@ bool CANIO_c::deleteFilter(MASK_TYPE rt_mask, MASK_TYPE rt_filter,
     sui16_filterBoxTotal--;
 
     getRs232Instance()
-	    << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
-      << ( ( sizeof(FilterBox_c) + 3 * sizeof(FilterBox_c*) ) * sui16_filterBoxTotal )
+      << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(FilterBox_c), sui16_filterBoxTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
       << ", Chunk-Alloc: "
-      << ( ( ( sui16_filterBoxTotal / 40 ) + 1 ) * 40 * ( sizeof(FilterBox_c)+sizeof(FilterBox_c*) ) )
-    #if 1
+      << sizeSlistTWithChunk( sizeof(FilterBox_c), sui16_filterBoxTotal )
+    #if 0
       << "\r\n__mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
       << "\r\n";
@@ -1001,11 +1003,12 @@ void CANIO_c::CheckSetCntMsgObj(){
   // now the amount of arrMsgObj is allowed
   #ifdef DEBUG_HEAP_USEAGE
   getRs232Instance()
-	  << sui16_msgObjTotal << " x MsgObj_c: Mal-Alloc: "
-    << ( ( sizeof(MsgObj_c) + 3 * sizeof(MsgObj_c*) ) * sui16_msgObjTotal )
+    << sui16_msgObjTotal << " x MsgObj_c: Mal-Alloc: "
+    <<  sizeSlistTWithMalloc( sizeof(MsgObj_c), sui16_msgObjTotal )
+    << "/" << sizeSlistTWithMalloc( sizeof(MsgObj_c), 1 )
     << ", Chunk-Alloc: "
-    << ( ( ( sui16_msgObjTotal / 40 ) + 1 ) * 40 * ( sizeof(MsgObj_c)+sizeof(MsgObj_c*) ) )
-  #if 1
+    << sizeSlistTWithChunk( sizeof(MsgObj_c), sui16_msgObjTotal )
+  #if 0
     << "\r\n__mall tot:" << AllocateHeapMalloc
     << ", _mall deal tot: " << DeallocateHeapMalloc
     << "\r\n";
@@ -1028,11 +1031,12 @@ bool CANIO_c::reconfigureMsgObj()
 
   #ifdef DEBUG_HEAP_USEAGE
   getRs232Instance()
-	  << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
-    << ( ( sizeof(FilterBox_c) + 3 * sizeof(FilterBox_c*) ) * sui16_filterBoxTotal )
+    << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
+    <<  sizeSlistTWithMalloc( sizeof(FilterBox_c), sui16_filterBoxTotal )
+    << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
     << ", Chunk-Alloc: "
-    << ( ( ( sui16_filterBoxTotal / 40 ) + 1 ) * 40 * ( sizeof(FilterBox_c)+sizeof(FilterBox_c*) ) )
-  #if 1
+    << sizeSlistTWithChunk( sizeof(FilterBox_c), sui16_filterBoxTotal )
+  #if 0
     << "\r\n__mall tot:" << AllocateHeapMalloc
     << ", _mall deal tot: " << DeallocateHeapMalloc
     << "\r\n";

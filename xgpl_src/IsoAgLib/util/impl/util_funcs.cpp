@@ -150,4 +150,127 @@ void float2Int(const float *const pf_from, void *const pvTo)
   #endif
 }
 
+/** calculate the total allocated HEAP for:
+  - slist<T> with given size of T
+  - add the overhead per node for slist<T> ( pointer to next item )
+  - add the overhead for malloc_alloc Allocator which calls malloc for each single node ( HEAP block pointer )
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_cnt amount of items ( default: 1 )
+  @return amount of corresponding byte in heap
+*/
+uint16_t sizeSlistTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt )
+{ // size calculated from: stored class size + pointer to next item + block pointers in MALLOC HEAP structure
+  const uint16_t sizeWithoutAlignment = ( ( rui16_sizeT + 3 * sizeof(void*) ) * rui16_cnt );
+  // regard alignment
+  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
+}
+
+/** calculate the total allocated HEAP for:
+  - list<T> with given size of T
+  - add the overhead per node for list<T> ( TWO pointer to next and prev item )
+  - add the overhead for malloc_alloc Allocator which calls malloc for each single node ( HEAP block pointer )
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_cnt amount of items ( default: 1 )
+  @return amount of corresponding byte in heap
+*/
+uint16_t sizeListTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt )
+{ // size calculated from: stored class size + pointer to next+prev item + block pointers in MALLOC HEAP structure
+  const uint16_t sizeWithoutAlignment = ( ( rui16_sizeT + 4 * sizeof(void*) ) * rui16_cnt );
+  // regard alignment
+  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
+}
+/** calculate the total allocated HEAP for:
+  - vector<T> with given size of T
+  - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_capacity reserved space for vector<T> ( >= amount of currently stored items )
+  @return amount of corresponding byte in heap
+*/
+uint16_t sizeVectorTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_capacity )
+{ // size calculated from: stored class size + block pointers in MALLOC HEAP structure
+  const uint16_t sizeWithoutAlignment = (rui16_capacity * rui16_sizeT) + ( 2 * sizeof(void*) );
+  // regard alignment
+  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
+}
+
+static const uint16_t targetChunkSize = 40;
+
+/** get chunked size */
+uint16_t getChunkedSize( uint16_t rui16_cnt )
+{
+  const uint16_t chunkCnt =
+     ( ( rui16_cnt % targetChunkSize ) == 0 )
+    ? rui16_cnt
+    : ( ( ( rui16_cnt / targetChunkSize ) + 1 ) * targetChunkSize );
+  return chunkCnt;
+}
+
+
+/** calculate the total allocated HEAP for:
+  - slist<T> with given size of T
+  - add the overhead per node for slist<T> ( pointer to next item )
+  - add the overhead caused by allocation large chunks of each 40 items
+  - add overhead for linking the HEAP block by the lowloevel malloc
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_cnt amount of items ( default: 1 )
+  @return amount of corresponding byte in heap
+*/
+uint16_t sizeSlistTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt )
+{ // amount of allocated items - multiple of targetChunkSize
+  const unsigned int chunkCnt = getChunkedSize(rui16_cnt);
+  // size calculated from: chunkCnt of nodes with element T and the next-pointer
+  const uint16_t sizeWithoutAlignment
+    = ( ( ( rui16_sizeT + sizeof(void*) ) * chunkCnt ) + ( 2 * sizeof(void*) ) );
+  // regard alignment
+  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
+}
+
+/** calculate the total allocated HEAP for:
+  - list<T> with given size of T
+  - add the overhead per node for slist<T> ( pointers to next+prev item )
+  - add the overhead caused by allocation large chunks of each 40 items
+  - add overhead for linking the HEAP block by the lowloevel malloc
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_cnt amount of items ( default: 1 )
+  @return amount of corresponding byte in heap
+*/
+uint16_t sizeListTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt )
+{ // amount of allocated items - multiple of targetChunkSize
+  const unsigned int chunkCnt = getChunkedSize(rui16_cnt);
+  // size calculated from: chunkCnt of nodes with element T and the next/prev-pointers
+  const uint16_t sizeWithoutAlignment
+    = ( ( ( rui16_sizeT + ( 2 * sizeof(void*) ) ) * chunkCnt ) + ( 2 * sizeof(void*) ) );
+  // regard alignment
+  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
+}
+/** calculate the total allocated HEAP for:
+  - vector<T> with given size of T
+  - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_capacity reserved space for vector<T> ( >= amount of currently stored items )
+  @return amount of corresponding byte in heap
+*/
+uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity )
+{ // amount of allocated items - multiple of targetChunkSize
+  const unsigned int chunkCnt = getChunkedSize(rui16_capacity);
+  // chunked amount of items stored in one compact vector
+  const uint16_t sizeWithoutAlignment = (chunkCnt * rui16_sizeT) + ( 2 * sizeof(void*) );
+  // regard alignment
+  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
+}
+
+
+
 } // end of namespace __IsoAgLib

@@ -92,6 +92,7 @@
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -215,14 +216,18 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 	    << sui16_clientPointerTotal
       << "(" << c_arrClientC1.capacity()
       << ") x Scheduler_c Clients: Mal-Alloc: "
-      << ( ( c_arrClientC1.capacity()+2) * sizeof(void*) )
+      << sizeVectorTWithMalloc( sizeof(void*), c_arrClientC1.capacity() )
+      << "/" << sizeof(void*)
       << ", Chunk-Alloc: "
-      << ( ( ( c_arrClientC1.capacity() / 40 ) + 1 ) * 40 * ( sizeof(void*) ) )
+      << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
       << "\r\n"
-	    << sui16_clientTimeTotal << " x Execution Times: Mal-Alloc: "
-      << ( ( arrExecTime.capacity() * sizeof(uint16_t) ) + 2 * sizeof(void*) )
+	    << sui16_clientTimeTotal
+      << "(" << arrExecTime.capacity()
+      << ") x Execution Times: Mal-Alloc: "
+      << sizeVectorTWithMalloc( sizeof(uint16_t), arrExecTime.capacity() )
+      << "/" << sizeof(uint16_t)
       << ", Chunk-Alloc: "
-      << ( ( ( arrExecTime.capacity() / 40 ) + 1 ) * 40 * ( sizeof(uint16_t) ) )
+      << sizeVectorTWithChunk( sizeof(uint16_t), arrExecTime.capacity() )
       #if 0
       << "\r\n\r\n";
       #else
@@ -268,14 +273,18 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
 	    << sui16_clientPointerTotal
       << "(" << c_arrClientC1.capacity()
       << ") x Scheduler_c Clients: Mal-Alloc: "
-      << ( ( c_arrClientC1.capacity()+2) * sizeof(void*) )
+      << sizeVectorTWithMalloc( sizeof(void*), c_arrClientC1.capacity() )
+      << "/" << sizeof(void*)
       << ", Chunk-Alloc: "
-      << ( ( ( c_arrClientC1.capacity() / 40 ) + 1 ) * 40 * ( sizeof(void*) ) )
+      << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
       << "\r\n"
-	    << sui16_clientTimeTotal << " x Execution Times: Mal-Alloc: "
-      << ( ( arrExecTime.capacity() * sizeof(uint16_t) ) + 2 * sizeof(void*) )
+	    << sui16_clientTimeTotal
+      << "(" << arrExecTime.capacity()
+      << ") x Execution Times: Mal-Alloc: "
+      << sizeVectorTWithMalloc( sizeof(uint16_t), arrExecTime.capacity() )
+      << "/" << sizeof(uint16_t)
       << ", Chunk-Alloc: "
-      << ( ( ( arrExecTime.capacity() / 40 ) + 1 ) * 40 * ( sizeof(uint16_t) ) )
+      << sizeVectorTWithChunk( sizeof(uint16_t), arrExecTime.capacity() )
       #if 0
       << "\r\n\r\n";
       #else

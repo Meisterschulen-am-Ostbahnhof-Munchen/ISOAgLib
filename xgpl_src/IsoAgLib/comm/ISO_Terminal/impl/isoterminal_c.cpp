@@ -94,10 +94,19 @@
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
-  static uint16_t sui16_lastPrintedBufferCapacity;
+  static uint16_t sui16_lastPrintedBufferCapacity = 0;
+  static uint16_t sui16_lastPrintedSendCommandQueueSize = 0;
+  static uint16_t sui16_lastPrintedSendUploadQueueSize = 0;
+  static uint16_t sui16_lastPrintedMaxSendCommandQueueSize = 0;
+  static uint16_t sui16_lastPrintedMaxSendUploadQueueSize = 0;
+  static uint16_t sui16_sendCommandQueueSize = 0;
+  static uint16_t sui16_sendUploadQueueSize = 0;
+  static uint16_t sui16_maxSendCommandQueueSize = 0;
+  static uint16_t sui16_maxSendUploadQueueSize = 0;
 #endif
 
 // #define LOESCHE_POOL
@@ -353,6 +362,37 @@ bool ISOTerminal_c::timeEvent( void )
   ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  #ifdef DEBUG_HEAP_USEAGE
+  if ( ( sui16_lastPrintedSendCommandQueueSize < sui16_sendCommandQueueSize )
+    || ( sui16_lastPrintedMaxSendCommandQueueSize < sui16_maxSendCommandQueueSize ) )
+  { // MAX amount of sui16_sendCommandQueueSize or sui16_maxSendCommandQueueSize
+    sui16_lastPrintedSendCommandQueueSize = sui16_sendCommandQueueSize;
+    sui16_lastPrintedMaxSendCommandQueueSize = sui16_maxSendCommandQueueSize;
+    getRs232Instance()
+      << "Max: " << sui16_maxSendCommandQueueSize << " Items in FIFO, "
+	    << sui16_sendCommandQueueSize << " x SendCommand_c: Mal-Alloc: "
+      << sizeSlistTWithMalloc( sizeof(SendCommand_c), sui16_sendCommandQueueSize )
+      << "/" << sizeSlistTWithMalloc( sizeof(SendCommand_c), 1 )
+      << ", Chunk-Alloc: "
+      << sizeSlistTWithChunk( sizeof(SendCommand_c), sui16_sendCommandQueueSize )
+      << "\r\n\r\n";
+  }
+
+  if ( ( sui16_lastPrintedSendUploadQueueSize < sui16_sendUploadQueueSize )
+    || ( sui16_lastPrintedMaxSendUploadQueueSize < sui16_maxSendUploadQueueSize ) )
+  { // MAX amount of sui16_sendCommandQueueSize or sui16_maxSendCommandQueueSize
+    sui16_lastPrintedSendUploadQueueSize = sui16_sendUploadQueueSize;
+    sui16_lastPrintedMaxSendUploadQueueSize = sui16_maxSendUploadQueueSize;
+    getRs232Instance()
+      << "Max: " << sui16_sendUploadQueueSize << " Items in FIFO, "
+	    << sui16_sendUploadQueueSize << " x SendUpload_c: Mal-Alloc: "
+      << sizeSlistTWithMalloc( sizeof(SendUpload_c), sui16_sendUploadQueueSize )
+      << "/" << sizeSlistTWithMalloc( sizeof(SendUpload_c), 1 )
+      << ", Chunk-Alloc: "
+      << sizeSlistTWithChunk( sizeof(SendUpload_c), sui16_sendUploadQueueSize )
+      << "\r\n\r\n";
+  }
+  #endif
 
 /*** Filter Registration Start ***/
   // register Filter if at least one active ( claimed address )
@@ -411,6 +451,10 @@ bool ISOTerminal_c::timeEvent( void )
     } else {
       vtSourceAddress = 254;
       // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
+      #ifdef DEBUG_HEAP_USEAGE
+      sui16_sendCommandQueueSize -= q_sendCommand.size();
+      sui16_sendUploadQueueSize -= q_sendUpload.size();
+      #endif
       #ifdef USE_LIST_FOR_FIFO
       // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
       q_sendCommand.clear();
@@ -498,6 +542,9 @@ bool ISOTerminal_c::timeEvent( void )
             q_sendUpload.pop_front();
             #else
             q_sendUpload.pop();
+            #endif
+            #ifdef DEBUG_HEAP_USEAGE
+            sui16_sendUploadQueueSize--;
             #endif
             break;
         }
@@ -606,6 +653,9 @@ bool ISOTerminal_c::timeEvent( void )
       q_sendCommand.pop_front();
       #else
       q_sendCommand.pop();
+      #endif
+      #ifdef DEBUG_HEAP_USEAGE
+      sui16_sendCommandQueueSize--;
       #endif
     }
   }
@@ -1040,6 +1090,11 @@ bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, ui
   #else
   q_sendCommand.push (SendCommand_c (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout));
   #endif
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_sendCommandQueueSize++;
+  if ( sui16_sendCommandQueueSize > sui16_maxSendCommandQueueSize )
+    sui16_maxSendCommandQueueSize = sui16_sendCommandQueueSize;
+  #endif
   return true;  // return false somewhen???????? buffer tooo full??
 }
 
@@ -1166,6 +1221,11 @@ bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_obj
   #else
   q_sendUpload.push (SendUpload_c (rpc_object->getID(), rpc_newValue, overrideSendLength, 2));
   #endif
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_sendUploadQueueSize++;
+  if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
+    sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
+  #endif
   /** push(...) has no return value */
   return true;
 }
@@ -1178,6 +1238,11 @@ bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* r
   q_sendUpload.push_back (SendUpload_c (rpc_objectString, 2));
   #else
   q_sendUpload.push (SendUpload_c (rpc_objectString, 2));
+  #endif
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_sendUploadQueueSize++;
+  if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
+    sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
   #endif
   /** push(...) has no return value */
   return true;

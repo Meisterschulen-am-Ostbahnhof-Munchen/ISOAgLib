@@ -145,7 +145,10 @@ public:
   const SendUpload_c& operator= (const SendUpload_c& ref_source);
 
   __IsoAgLib::vtObjectString_c* mssObjectString;
-  std::vector<uint8_t,std::__malloc_alloc_template<0> > vec_uploadBuffer;
+	// don't use malloc_alloc for uint8_t values
+	// - here the 8byte overhead per malloc item are VERY big
+	// ==> chunk allocation which can be shared among instances is alot better
+  std::vector<uint8_t> vec_uploadBuffer;
   uint8_t ui8_retryCount;
 };
 
@@ -424,7 +427,14 @@ private:
   uint8_t ui8_commandParameter;
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  std::list<SendCommand_c,std::__malloc_alloc_template<0> > q_sendCommand;
+	// as each SendCommand_c item is just 16Byte large, and an application
+	// can require a lot of items in the list ( examples need up to 150 items especially
+	// during init ), CHUNK Allocation is the strategy of choice
+	// Malloc_Alloc would cause too much overhead
+	// Numbers for 145 items: Malloc_Alloc: 3480Bytes; Chunk_Alloc: 2568Byte -> 912Byte fewer with Chunk Alloc
+	// ( single instance allocation can also cause time problems and could result in heavy
+	//   memory fragmentation ==>> here CHUNK Alloc is the only choice )
+  std::list<SendCommand_c> q_sendCommand;
   #else
   std::queue<SendCommand_c, std::deque<SendCommand_c,std::__malloc_alloc_template<0> > > q_sendCommand;
   #endif
@@ -473,6 +483,7 @@ private:
   MultiSend_c::sendSuccess_t en_sendSuccess;
   #ifdef USE_LIST_FOR_FIFO
   std::list<SendUpload_c,std::__malloc_alloc_template<0> >  q_sendUpload;
+//  std::list<SendUpload_c>  q_sendUpload;
   #else
   std::queue<SendUpload_c, std::deque<SendUpload_c,std::__malloc_alloc_template<0> > > q_sendUpload;
   #endif

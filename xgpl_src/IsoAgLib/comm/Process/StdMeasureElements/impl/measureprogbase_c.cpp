@@ -92,6 +92,7 @@
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -190,12 +191,17 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
   #ifdef DEBUG_HEAP_USEAGE
   else
   {
-    sui16_MeasureProgBaseTotal += ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+    sui16_MeasureProgBaseTotal += vec_measureSubprog.size();
   
 	  if ( vec_measureSubprog.size() > 0 )
     {
       getRs232Instance()
-		    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+	      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
+        <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+        << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
+        << ", Chunk-Alloc: "
+        << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+        << "\r\n\r\n";
     }
   }
   #endif
@@ -207,7 +213,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   if ( vec_measureSubprog.size() > 0 ) 
   {
 	  sui16_deconstructMeasureProgBaseTotal++;
-    sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+    sui16_MeasureProgBaseTotal -= vec_measureSubprog.size();
   }
 	#endif
 }
@@ -242,10 +248,15 @@ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increme
     #ifdef DEBUG_HEAP_USEAGE
     else
     {
-      sui16_MeasureProgBaseTotal += ( 1 * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+      sui16_MeasureProgBaseTotal++;
   
-	    getRs232Instance()
-		    << "MeasureSubprog_c T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+      getRs232Instance()
+	      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
+        <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+        << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
+        << ", Chunk-Alloc: "
+        << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+        << "\r\n\r\n";
     }
     #endif
   }
@@ -296,7 +307,7 @@ bool MeasureProgBase_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t re
 bool MeasureProgBase_c::stop(){
   // clear the array with all subprogs -> no trigger test is done on value set
 	#ifdef DEBUG_HEAP_USEAGE
-  sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+  sui16_MeasureProgBaseTotal -= vec_measureSubprog.size();
 
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
   || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
@@ -304,9 +315,12 @@ bool MeasureProgBase_c::stop(){
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
     sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
     getRs232Instance()
-    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) )
-    << ", Deconstruct: " << sui16_deconstructMeasureProgBaseTotal
-    << "\r\n";
+      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
+      << ", Chunk-Alloc: "
+      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << "\r\n\r\n";
   }
   #endif
   vec_measureSubprog.clear();
@@ -373,9 +387,12 @@ void MeasureProgBase_c::initVal(int32_t ri32_val){
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
     sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
     getRs232Instance()
-    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) )
-    << ", Deconstruct: " << sui16_deconstructMeasureProgBaseTotal
-    << "\r\n";
+      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
+      << ", Chunk-Alloc: "
+      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << "\r\n\r\n";
   }
   #endif
   i32_val = i32_min = i32_max = i32_integ = ri32_val;
@@ -482,9 +499,12 @@ void MeasureProgBase_c::initVal(float rf_val){
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
     sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
     getRs232Instance()
-    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) )
-    << ", Deconstruct: " << sui16_deconstructMeasureProgBaseTotal
-    << "\r\n";
+      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
+      << ", Chunk-Alloc: "
+      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << "\r\n\r\n";
   }
   #endif
   f_val = f_min = f_max = f_integ = rf_val;
@@ -510,9 +530,12 @@ bool MeasureProgBase_c::processMsg(){
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
     sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
     getRs232Instance()
-    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) )
-    << ", Deconstruct: " << sui16_deconstructMeasureProgBaseTotal
-    << "\r\n";
+      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
+      << ", Chunk-Alloc: "
+      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << "\r\n\r\n";
   }
   #endif
   bool b_edited = false;

@@ -78,5 +78,73 @@ inline void int2Float(const void *const pvFrom, float *const pf_to) { __IsoAgLib
 */
 inline void float2Int(const float *const pf_from, void *const pvTo) { __IsoAgLib::float2Int( pf_from, pvTo );};
 
+
+/** calculate the total allocated HEAP for:
+  - slist<T> with given size of T
+  - add the overhead per node for slist<T> ( pointer to next item )
+  - add the overhead for malloc_alloc Allocator which calls malloc for each single node ( HEAP block pointer )
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_cnt amount of items ( default: 1 )
+  @return amount of corresponding byte in heap
+*/
+inline uint16_t sizeSlistTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 )
+	{ return __IsoAgLib::sizeSlistTWithMalloc( rui16_sizeT, rui16_cnt );};
+/** calculate the total allocated HEAP for:
+  - list<T> with given size of T
+  - add the overhead per node for list<T> ( TWO pointer to next and prev item )
+  - add the overhead for malloc_alloc Allocator which calls malloc for each single node ( HEAP block pointer )
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_cnt amount of items ( default: 1 )
+  @return amount of corresponding byte in heap
+*/
+inline uint16_t sizeListTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 )
+	{ return __IsoAgLib::sizeListTWithMalloc( rui16_sizeT, rui16_cnt );};
+/** calculate the total allocated HEAP for:
+  - vector<T> with given size of T
+  - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_capacity reserved space for vector<T> ( >= amount of currently stored items )
+  @return amount of corresponding byte in heap
+*/
+inline uint16_t sizeVectorTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_capacity )
+	{ return __IsoAgLib::sizeVectorTWithMalloc( rui16_sizeT, rui16_capacity );};
+/** calculate the total allocated HEAP for:
+  - slist<T> with given size of T
+  - add the overhead per node for slist<T> ( pointer to next item )
+  - add the overhead caused by allocation large chunks of each 40 items
+  - add overhead for linking the HEAP block by the lowloevel malloc
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_cnt amount of items ( default: 1 )
+  @return amount of corresponding byte in heap
+*/
+inline uint16_t sizeSlistTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 )
+	{ return __IsoAgLib::sizeSlistTWithChunk( rui16_sizeT, rui16_cnt );};
+/** calculate the total allocated HEAP for:
+  - list<T> with given size of T
+  - add the overhead per node for slist<T> ( pointers to next+prev item )
+  - add the overhead caused by allocation large chunks of each 40 items
+  - add overhead for linking the HEAP block by the lowloevel malloc
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_cnt amount of items ( default: 1 )
+  @return amount of corresponding byte in heap
+*/
+inline uint16_t sizeListTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 )
+	{ return __IsoAgLib::sizeListTWithChunk( rui16_sizeT, rui16_cnt );};
+/** calculate the total allocated HEAP for:
+  - vector<T> with given size of T
+  - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
+  - add the overhead for alignment based on sizeof(int)
+  @param rui16_sizeT sizeof(T) -> size of the stored class
+  @param rui16_capacity reserved space for vector<T> ( >= amount of currently stored items )
+  @return amount of corresponding byte in heap
+*/
+inline uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity )
+	{ return __IsoAgLib::sizeVectorTWithChunk( rui16_sizeT, rui16_capacity );};
+
 }
 #endif

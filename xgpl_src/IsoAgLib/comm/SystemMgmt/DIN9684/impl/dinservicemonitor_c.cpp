@@ -89,6 +89,7 @@
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -284,10 +285,11 @@ bool DINServiceMonitor_c::insertDinService(GetyPos_c rc_gtp){
       sui16_dinServiceItemTotal++;
 
       getRs232Instance()
-	      << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
-        << ( ( sizeof(DINServiceItem_c) + 3 * sizeof(DINServiceItem_c*) ) * sui16_dinServiceItemTotal )
+        << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
+        <<  sizeSlistTWithMalloc( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
+        << "/" << sizeSlistTWithMalloc( sizeof(DINServiceItem_c), 1 )
         << ", Chunk-Alloc: "
-        << ( ( ( sui16_dinServiceItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINServiceItem_c)+sizeof(DINServiceItem_c*) ) )
+        << sizeSlistTWithChunk( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
         << "\r\n\r\n";
       #endif
     }
@@ -323,10 +325,11 @@ bool DINServiceMonitor_c::deleteDinServiceGtp(GetyPos_c rc_gtp)
     sui16_dinServiceItemTotal--;
 
     getRs232Instance()
-	    << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
-      << ( ( sizeof(DINServiceItem_c) + 3 * sizeof(DINServiceItem_c*) ) * sui16_dinServiceItemTotal )
+      << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(DINServiceItem_c), 1 )
       << ", Chunk-Alloc: "
-      << ( ( ( sui16_dinServiceItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINServiceItem_c)+sizeof(DINServiceItem_c*) ) )
+      << sizeSlistTWithChunk( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
       << "\r\n\r\n";
     #endif
     // set cache to begin of the list
@@ -365,12 +368,13 @@ bool DINServiceMonitor_c::timeEvent( void ){
           #ifdef DEBUG_HEAP_USEAGE
           sui16_dinServiceItemTotal--;
 
-          getRs232Instance()
-	          << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
-            << ( ( sizeof(DINServiceItem_c) + 3 * sizeof(DINServiceItem_c*) ) * sui16_dinServiceItemTotal )
-            << ", Chunk-Alloc: "
-            << ( ( ( sui16_dinServiceItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINServiceItem_c)+sizeof(DINServiceItem_c*) ) )
-            << "\r\n\r\n";
+		      getRs232Instance()
+		        << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
+		        <<  sizeSlistTWithMalloc( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
+		        << "/" << sizeSlistTWithMalloc( sizeof(DINServiceItem_c), 1 )
+		        << ", Chunk-Alloc: "
+		        << sizeSlistTWithChunk( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
+		        << "\r\n\r\n";
           #endif
           b_repeat = true;
           break;

@@ -94,6 +94,7 @@
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -260,9 +261,10 @@ bool DINMonitor_c::timeEvent( void ){
 
           getRs232Instance()
 	          << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
-            << ( ( sizeof(DINItem_c) + 3 * sizeof(DINItem_c*) ) * sui16_dinItemTotal )
+            <<  sizeSlistTWithMalloc( sizeof(DINItem_c), sui16_dinItemTotal )
+            << "/" << sizeSlistTWithMalloc( sizeof(DINItem_c), 1 )
             << ", Chunk-Alloc: "
-            << ( ( ( sui16_dinItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINItem_c)+sizeof(DINItem_c*) ) )
+            << sizeSlistTWithChunk( sizeof(DINItem_c), sui16_dinItemTotal )
             << "\r\n\r\n";
           #endif
           b_repeat = true;
@@ -608,12 +610,12 @@ bool DINMonitor_c::insertDinMember(GetyPos_c rc_gtp, const uint8_t* rpb_name, ui
     else
     {
       sui16_dinItemTotal++;
-
       getRs232Instance()
 	      << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
-        << ( ( sizeof(DINItem_c) + 3 * sizeof(DINItem_c*) ) * sui16_dinItemTotal )
+        <<  sizeSlistTWithMalloc( sizeof(DINItem_c), sui16_dinItemTotal )
+        << "/" << sizeSlistTWithMalloc( sizeof(DINItem_c), 1 )
         << ", Chunk-Alloc: "
-        << ( ( ( sui16_dinItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINItem_c)+sizeof(DINItem_c*) ) )
+        << sizeSlistTWithChunk( sizeof(DINItem_c), sui16_dinItemTotal )
         << "\r\n\r\n";
     }
     #endif
@@ -736,9 +738,10 @@ bool DINMonitor_c::deleteDinMemberGtp(GetyPos_c rc_gtp, bool rb_sendRelease)
 
     getRs232Instance()
 	    << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
-      << ( ( sizeof(DINItem_c) + 3 * sizeof(DINItem_c*) ) * sui16_dinItemTotal )
+      <<  sizeSlistTWithMalloc( sizeof(DINItem_c), sui16_dinItemTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(DINItem_c), 1 )
       << ", Chunk-Alloc: "
-      << ( ( ( sui16_dinItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINItem_c)+sizeof(DINItem_c*) ) )
+      << sizeSlistTWithChunk( sizeof(DINItem_c), sui16_dinItemTotal )
       << "\r\n\r\n";
     #endif
 
