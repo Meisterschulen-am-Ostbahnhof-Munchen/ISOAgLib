@@ -98,7 +98,7 @@ namespace HAL
 
   /**
     init the RS232 interface
-    @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200} 
+    @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
           as configured in <Application_Config/isoaglib_config.h>
     @param bMode one of (DATA_7_BITS_EVENPARITY = 1, DATA_8_BITS_EVENPARITY = 2,
             DATA_7_BITS_ODDPARITY = 3, DATA_8_BITS_ODDPARITY = 4, DATA_8_BITS_NOPARITY = 5)
@@ -106,27 +106,27 @@ namespace HAL
     @param bitSoftwarehandshake true -> use xon/xoff software handshake
     @return HAL_NO_ERR -> o.k. else one of settings incorrect
   */
-  inline int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake)
-    {return __HAL::init_rs232(CONSOLE,wBaudrate,bMode,bStoppbits,bitSoftwarehandshake) ;};
+  inline int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t rui8_channel)
+    {return __HAL::init_rs232(rui8_channel,wBaudrate,bMode,bStoppbits,bitSoftwarehandshake) ;};
   /**
     set the RS232 Baudrate
     @param wBaudrate wanted baudrate
     @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
   */
-  inline int16_t setRs232Baudrate(uint16_t wBaudrate)
-    {return __HAL::set_rs232_baudrate(CONSOLE,wBaudrate) ;};
+  inline int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t rui8_channel)
+    {return __HAL::set_rs232_baudrate(rui8_channel,wBaudrate) ;};
   /**
     get the amount of data [uint8_t] in receive puffer
     @return receive puffer data byte
   */
-  inline int16_t getRs232RxBufCount(void)
-    {return __HAL::get_rs232_rx_buf_count(CONSOLE);};
+  inline int16_t getRs232RxBufCount(uint8_t rui8_channel)
+    {return __HAL::get_rs232_rx_buf_count(rui8_channel);};
   /**
     get the amount of data [uint8_t] in send puffer
     @return send puffer data byte
   */
-  inline int16_t getRs232TxBufCount(void)
-    {return __HAL::get_rs232_tx_buf_count(CONSOLE);};
+  inline int16_t getRs232TxBufCount(uint8_t rui8_channel)
+    {return __HAL::get_rs232_tx_buf_count(rui8_channel);};
   /**
     configure a receive puffer and set optional irq function pointer for receive
     @param wBuffersize wanted puffer size
@@ -136,8 +136,8 @@ namespace HAL
   inline int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(byte _huge *bByte))
     {return __HAL::config_rs232_rx_obj(CONSOLE,wBuffersize,pFunction) ;};
   #else
-  inline int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(byte *bByte))
-    {return __HAL::config_rs232_rx_obj(CONSOLE,wBuffersize,pFunction) ;};
+  inline int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(byte *bByte), uint8_t rui8_channel)
+    {return __HAL::config_rs232_rx_obj(rui8_channel,wBuffersize,pFunction) ;};
   #endif
   /**
     configure a send puffer and set optional irq function pointer for send
@@ -151,65 +151,65 @@ namespace HAL
     {return __HAL::config_rs232_tx_obj(CONSOLE,wBuffersize,funktionAfterTransmit,funktionBeforTransmit);};
   #else
   inline int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(byte *bByte),
-                                  void (*funktionBeforTransmit)(byte *bByte))
-    {return __HAL::config_rs232_tx_obj(CONSOLE,wBuffersize,funktionAfterTransmit,funktionBeforTransmit);};
+                                  void (*funktionBeforTransmit)(byte *bByte), uint8_t rui8_channel)
+    {return __HAL::config_rs232_tx_obj(rui8_channel,wBuffersize,funktionAfterTransmit,funktionBeforTransmit);};
   #endif
   /**
     get errr code of BIOS
     @return 0=parity, 1=stopbit framing error, 2=overflow
   */
-  inline int16_t getRs232Error(uint8_t *Errorcode)
-    {return __HAL::get_rs232_error(CONSOLE,Errorcode);};
+  inline int16_t getRs232Error(uint8_t *Errorcode, uint8_t rui8_channel)
+    {return __HAL::get_rs232_error(rui8_channel,Errorcode);};
 
   /**
     read single int8_t from receive puffer
     @param pbRead pointer to target data
     @return HAL_NO_ERR -> o.k. else puffer underflow
   */
-  inline int16_t getRs232Char(uint8_t *pbRead)
-    {return __HAL::get_rs232_char(CONSOLE,pbRead);};
+  inline int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
+    {return __HAL::get_rs232_char(rui8_channel,pbRead);};
   /**
     read bLastChar terminated string from receive puffer
     @param pbRead pointer to target data
     @param bLastChar terminating char
     @return HAL_NO_ERR -> o.k. else puffer underflow
   */
-  inline int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar)
-    {return __HAL::get_rs232_string(CONSOLE,pbRead,bLastChar);};
+  inline int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t rui8_channel)
+    {return __HAL::get_rs232_string(rui8_channel,pbRead,bLastChar);};
 
   /**
     send single uint8_t on RS232
     @param bByte data uint8_t to send
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
-  inline int16_t put_rs232Char(uint8_t bByte)
-    {return __HAL::put_rs232_char(CONSOLE,bByte);};
+  inline int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
+    {return __HAL::put_rs232_char(rui8_channel,bByte);};
   /**
     send string of n uint8_t on RS232
     @param bpWrite pointer to source data string
     @param wNumber number of data uint8_t to send
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
-  inline int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber)
-    {return __HAL::put_rs232_n_char(CONSOLE,(uint8_t*)bpWrite,wNumber);};
+  inline int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_channel)
+    {return __HAL::put_rs232_n_char(rui8_channel,(uint8_t*)bpWrite,wNumber);};
   /**
     send '\0' terminated string on RS232
     @param pbString pointer to '\0' terminated (!) source data string
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
-  inline int16_t put_rs232String(const uint8_t *pbString)
-    {return __HAL::put_rs232_string(CONSOLE,(uint8_t*)pbString);};
-    
+  inline int16_t put_rs232String(const uint8_t *pbString, uint8_t rui8_channel)
+    {return __HAL::put_rs232_string(rui8_channel,(uint8_t*)pbString);};
+
   /**
     clear receive puffer
   */
-  inline void clearRs232RxBuffer(void)
-    {__HAL::clear_rs232_rx_buffer(CONSOLE);};
+  inline void clearRs232RxBuffer(uint8_t rui8_channel)
+    {__HAL::clear_rs232_rx_buffer(rui8_channel);};
   /**
     clear send puffer
   */
-  inline void clearRs232TxBuffer(void)
-    {__HAL::clear_rs232_tx_buffer(CONSOLE);};
+  inline void clearRs232TxBuffer(uint8_t rui8_channel)
+    {__HAL::clear_rs232_tx_buffer(rui8_channel);};
   /*@}*/
 }
 #endif

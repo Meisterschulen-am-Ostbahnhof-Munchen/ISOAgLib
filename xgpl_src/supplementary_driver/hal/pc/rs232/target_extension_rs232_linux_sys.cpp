@@ -5,8 +5,8 @@
 #include <ctime>
 #include <cstring>
 
-struct T_BAUD { uint32_t rate; uint32_t flag; } t_baud[] = { 
-  {    600L, B600    }, {   1200L, B1200   }, {   2400L, B2400   }, 
+struct T_BAUD { uint32_t rate; uint32_t flag; } t_baud[] = {
+  {    600L, B600    }, {   1200L, B1200   }, {   2400L, B2400   },
   {   4800L, B4800   }, {   9600L, B9600   }, {  19200L, B19200  },
   {  38400L, B38400  }, {  57600L, B57600  }, { 115200L, B115200 } };
 
@@ -14,7 +14,7 @@ struct T_BAUD { uint32_t rate; uint32_t flag; } t_baud[] = {
 
 struct termios t_0;
 struct termios t_com;
-int16_t f_com;
+int16_t f_com[RS232_INSTANCE_CNT];
 
 #define false 0
 #define true 1
@@ -25,16 +25,17 @@ int8_t pc_readPuff[300];
 int16_t i16_readPuffCnt;
 
 
-void SioExit(void)
+void SioExit(uint32_t comport)
 {
   tcsetattr(0, TCSANOW, &t_0);
   tcsetattr(0, TCSANOW, &t_com);
-  close(f_com);
+  close(f_com[comport]);
 }
 
-int16_t SioInit(uint32_t comport, uint32_t baudrate) 
+int16_t SioInit(uint32_t comport, uint32_t baudrate)
 {
-  int32_t i32_time = 0,
+  if ( comport >= RS232_INSTANCE_CNT ) return 0;
+	int32_t i32_time = 0,
       i32_time_2 = 0;
   static char com[] = "/dev/ttySx";
   struct termios t;
@@ -49,11 +50,11 @@ int16_t SioInit(uint32_t comport, uint32_t baudrate)
   } while (++b < t_baud + sizeof t_baud/sizeof *t_baud);
 
   com[9] = comport-1+'0';
-  if ((f_com = open(com, O_RDWR|O_NDELAY)) < 0) return 0;
+  if ((f_com[comport] = open(com, O_RDWR|O_NDELAY)) < 0) return 0;
   if (tcgetattr(0, &t_0)) return 0;
   if (tcgetattr(0, &t_com)) return 0;
   atexit(SioExit);
-  
+
   t = t_0;
   t.c_iflag = 0;
   t.c_oflag = OPOST|ONLCR;
@@ -61,7 +62,7 @@ int16_t SioInit(uint32_t comport, uint32_t baudrate)
   t.c_cc[VMIN] = 0;
   t.c_cc[VTIME] = 0;
   tcsetattr(0, TCSANOW, &t);
-  
+
   t = t_com;
   t.c_iflag = 0;
   t.c_oflag = 0;
@@ -69,7 +70,7 @@ int16_t SioInit(uint32_t comport, uint32_t baudrate)
   t.c_cflag = CREAD|CS8|CLOCAL|baudflag;
   t.c_cc[VMIN] = 0;
   t.c_cc[VTIME] = 0;
-  tcsetattr(f_com, TCSANOW, &t);
+  tcsetattr(f_com[comport], TCSANOW, &t);
 
   // wait some time to avoid buffer error
   i32_time = (clock()/(CLOCKS_PER_SEC/1000));
@@ -79,17 +80,19 @@ int16_t SioInit(uint32_t comport, uint32_t baudrate)
   return 1;
 }
 
-int16_t SioPutBuffer(uint8_t *p, int16_t n) 
+int16_t SioPutBuffer(uint32_t comport, uint8_t *p, int16_t n)
 {
-  n = write(f_com, p, n) == n;
-  tcdrain(f_com);
+  if ( comport >= RS232_INSTANCE_CNT ) return 0;
+  n = write(f_com[comport], p, n) == n;
+  tcdrain(f_com[comport]);
   return n;
 }
 
-int16_t SioRecPuffCnt()
+int16_t SioRecPuffCnt(uint32_t comport)
 {
+  if ( comport >= RS232_INSTANCE_CNT ) return 0;
   int8_t c_temp[300];
-  int16_t tempLen = read(f_com, c_temp, (299));
+  int16_t tempLen = read(f_com[comport], c_temp, (299));
 
   memcpy((pc_readPuff+i16_readPuffCnt), c_temp, tempLen);
   i16_readPuffCnt += tempLen;
@@ -97,9 +100,10 @@ int16_t SioRecPuffCnt()
   return i16_readPuffCnt;
 }
 
-int16_t SioGetString(uint8_t *p, uint8_t len)
+int16_t SioGetString(uint32_t comport, uint8_t *p, uint8_t len)
 {
-  SioRecPuffCnt();
+  if ( comport >= RS232_INSTANCE_CNT ) return 0;
+  SioRecPuffCnt(comport);
   if (i16_readPuffCnt >= len)
   {
     memcpy(p, pc_readPuff, len);
@@ -113,9 +117,9 @@ int16_t SioGetString(uint8_t *p, uint8_t len)
   }
 }
 
-int16_t SioGetByte(uint8_t *p)
+int16_t SioGetByte(uint32_t comport, uint8_t *p)
 {
-  return SioGetString(p, 1);
+  return SioGetString(comport, p, 1);
 }
 
 int8_t *KeyGetString(char *buffer, int16_t len)

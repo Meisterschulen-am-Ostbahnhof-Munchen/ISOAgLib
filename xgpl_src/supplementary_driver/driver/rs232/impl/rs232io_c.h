@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef RS232_IO_H
@@ -99,9 +99,22 @@
 #endif
 #include <supplementary_driver/hal/rs232.h>
 
+/** define based on system type the support of several RS232 channels */
+#if  defined(SYSTEM_C2C) || defined(SYSTEM_PC)
+	#define USE_RS232_CHANNEL
+	#define RS232_CHANNEL_PARAM_SINGLE ui8_channel
+	#define RS232_CHANNEL_PARAM_LAST , ui8_channel
+#else
+	#define RS232_CHANNEL_PARAM_SINGLE
+	#define RS232_CHANNEL_PARAM_LAST
+#endif
+
+
 namespace IsoAgLib { class iRS232IO_c;};
 
 namespace __IsoAgLib {
+class RS232IO_c;
+typedef RS232_SINGLETON(RS232IO_c) SingletonRS232_c;
 /**
   object for serial communication via RS232 device;
   the interface is initialized during constructor call;
@@ -110,7 +123,7 @@ namespace __IsoAgLib {
   @short object for serial communication via RS232 device.
   @author Dipl.-Inform. Achim Spangler
 */
-class RS232IO_c : public Singleton<RS232IO_c> {
+class RS232IO_c : public SingletonRS232_c {
 public:
 
   /**
@@ -142,7 +155,11 @@ public:
   bool init(uint16_t rui16_baudrate = CONFIG_RS232_DEFAULT_BAUDRATE,
           t_dataMode ren_dataMode = CONFIG_RS232_DEFAULT_DATA_MODE,
           bool rb_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
-          uint16_t rui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE);
+          uint16_t rui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
+					#ifdef USE_RS232_CHANNEL
+					,uint8_t rui8_channel = 0
+					#endif
+					);
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
   void close( void ){};
@@ -180,7 +197,7 @@ public:
   /**
     clear the send puffer without send of actual data in puffer
   */
-  void clearSndPuffer()const{HAL::clearRs232TxBuffer();};
+  void clearSndPuffer()const{HAL::clearRs232TxBuffer(RS232_CHANNEL_PARAM_SINGLE);};
   /**
     set receive puffer size
     @param rui16_recPuf receiving puffer size
@@ -195,20 +212,25 @@ public:
     @return receive puffer size
   */
   uint16_t rec_pufferSize()const{return ui16_recPuf;};
+
+	#ifdef USE_RS232_CHANNEL
+	/** get the channel */
+	uint8_t getChannel() const { return ui8_channel;};
+	#endif
   /**
     clear the receive puffer without reading of actual data in puffer
   */
-  void clearRecPuffer()const{HAL::clearRs232RxBuffer();};
+  void clearRecPuffer()const{HAL::clearRs232RxBuffer(RS232_CHANNEL_PARAM_SINGLE);};
   /**
     check if the receive puffer is empty
     @return true -> receive puffer is empty
   */
-  bool eof()const{return (HAL::getRs232RxBufCount() == 0)?true:false;};
+  bool eof()const{return (HAL::getRs232RxBufCount(RS232_CHANNEL_PARAM_SINGLE) == 0)?true:false;};
   /**
     deliver the count of data uint8_t in receive puffer
     @return amount of data bytes in receive puffer
   */
-  uint16_t rec_pufferCnt()const{return HAL::getRs232RxBufCount();};
+  uint16_t rec_pufferCnt()const{return HAL::getRs232RxBufCount(RS232_CHANNEL_PARAM_SINGLE);};
 
   /* ******************************** */
   /* iostream related output operator */
@@ -223,7 +245,7 @@ public:
     @param rpb_data pointer to data string
     @param rui8_len length of data string
   */
-  static void send(const uint8_t* rpData, uint8_t rui8_len);
+  void send(const uint8_t* rpData, uint8_t rui8_len);
   /**
     send string on RS232
 
@@ -404,8 +426,9 @@ public:
   */
   RS232IO_c& operator>>(float& f_data);
   #endif
+
 private: //Private methods
-  friend class Singleton<RS232IO_c>;
+  friend class RS232_SINGLETON( RS232IO_c );
   friend class IsoAgLib::iRS232IO_c;
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of RS232IO_c within application
@@ -424,11 +447,22 @@ private:
   uint16_t ui16_sndPuf;
   uint16_t ui16_recPuf;
   char pc_token[15];
+	#ifdef USE_RS232_CHANNEL
+	/** new: define channel to use for RS232 */
+	uint8_t ui8_channel;
+	#endif
 };
 
 
-/** C-style function, to get access to the unique RS232IO_c singleton instance */
-RS232IO_c& getRs232Instance( void );
+#if defined( RS232_INSTANCE_CNT ) && ( RS232_INSTANCE_CNT > 1 )
+  /** C-style function, to get access to the unique RS232IO_c singleton instance
+    * if more than one RS232 channel is used for IsoAgLib, an index must be given to select the wanted channel
+    */
+  RS232IO_c& getRs232Instance( uint8_t rui8_instance = 0 );
+#else
+  /** C-style function, to get access to the unique RS232IO_c singleton instance */
+  RS232IO_c& getRs232Instance( void );
+#endif
 
 }
 

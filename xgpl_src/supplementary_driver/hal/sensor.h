@@ -76,6 +76,8 @@
 	#include "imi/sensor/sensor.h"
 #elif defined(SYSTEM_PM167)
 	#include "pm167/sensor/sensor.h"
+#elif defined(SYSTEM_C2C)
+	#include "c2c/sensor/sensor.h"
 #endif
 
 

@@ -99,8 +99,16 @@ public:
   bool init(uint16_t rui16_baudrate = CONFIG_RS232_DEFAULT_BAUDRATE,
           t_dataMode ren_dataMode = iRS232IO_c::t_dataMode(CONFIG_RS232_DEFAULT_DATA_MODE),
           bool rb_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
-          uint16_t rui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE)
-  {return RS232IO_c::init(rui16_baudrate, RS232IO_c::t_dataMode(ren_dataMode), rb_xonXoff, rui16_sndPuf, rui16_recPuf);};
+          uint16_t rui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
+					#ifdef USE_RS232_CHANNEL
+					,uint8_t rui8_channel = 0
+					#endif
+					)
+  {return RS232IO_c::init(rui16_baudrate, RS232IO_c::t_dataMode(ren_dataMode), rb_xonXoff, rui16_sndPuf, rui16_recPuf
+				#ifdef USE_RS232_CHANNEL
+				,rui8_channel
+				#endif
+	);};
   /**
     set the baudrate to a new value
     @param rui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
@@ -380,19 +388,35 @@ public:
     {return static_cast<iRS232IO_c&>(RS232IO_c::operator>>(f_data));};
   #endif
 private: //Private methods
-  /** allow getIrs232Instance() access to shielded base class.
+  #if defined( RS232_INSTANCE_CNT ) && ( RS232_INSTANCE_CNT > 1 )
+	/** allow getIrs232Instance() access to shielded base class.
+      otherwise __IsoAgLib::getRs232Instance() wouldn't be accepted by compiler
+    */
+  friend iRS232IO_c& getIrs232Instance( uint8_t rui8_instance );
+  #else
+	/** allow getIrs232Instance() access to shielded base class.
       otherwise __IsoAgLib::getRs232Instance() wouldn't be accepted by compiler
     */
   friend iRS232IO_c& getIrs232Instance( void );
+  #endif
+
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of iRS232IO_c within application
     */
   iRS232IO_c( void ) { init();};
 
 };
-
-/** C-style function, to get access to the unique iRS232IO_c singleton instance */
-inline iRS232IO_c& getIrs232Instance( void ) { return static_cast<iRS232IO_c&>(__IsoAgLib::getRs232Instance());};
+#if defined( RS232_INSTANCE_CNT ) && ( RS232_INSTANCE_CNT > 1 )
+  /** C-style function, to get access to the unique iRS232IO_c singleton instance
+    * if more than one RS232 BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+    */
+  inline iRS232IO_c& getIrs232Instance( uint8_t rui8_instance = 0 )
+  { return static_cast<iRS232IO_c&>(__IsoAgLib::getRs232Instance(rui8_instance));};
+#else
+  /** C-style function, to get access to the unique DINMonitor_c singleton instance */
+  inline iRS232IO_c& getIrs232Instance( void )
+  { return static_cast<iRS232IO_c&>(__IsoAgLib::getRs232Instance());};
+#endif
 }
 
 #endif

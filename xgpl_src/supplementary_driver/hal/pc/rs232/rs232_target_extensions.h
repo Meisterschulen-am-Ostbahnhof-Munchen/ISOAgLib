@@ -73,29 +73,29 @@ namespace __HAL {
   @param bitSoftwarehandshake true -> use xon/xoff software handshake
   @return HAL_NO_ERR -> o.k. else one of settings incorrect
 */
-int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake);
+int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t rui8_channel = 0);
 /**
   set the RS232 Baudrate
   @param wBaudrate wanted baudrate
   @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
 */
-int16_t setRs232Baudrate(uint16_t wBaudrate);
+int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t rui8_channel = 0);
 /**
   get the amount of data [uint8_t] in receive puffer
   @return receive puffer data uint8_t
 */
-int16_t getRs232RxBufCount(void);
+int16_t getRs232RxBufCount(uint8_t rui8_channel = 0);
 /**
   get the amount of data [uint8_t] in send puffer
   @return send puffer data uint8_t
 */
-int16_t getRs232TxBufCount(void);
+int16_t getRs232TxBufCount(uint8_t rui8_channel = 0);
 /**
   configure a receive puffer and set optional irq function pointer for receive
   @param wBuffersize wanted puffer size
   @param pFunction pointer to irq function or NULL if not wanted
 */
-int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte));
+int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t rui8_channel = 0);
 /**
   configure a send puffer and set optional irq function pointer for send
   @param wBuffersize wanted puffer size
@@ -103,55 +103,55 @@ int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte))
   @param funktionBeforTransmit pointer to irq function or NULL if not wanted
 */
 int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint8_t *bByte),
-                                void (*funktionBeforTransmit)(uint8_t *bByte));
+                                void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t rui8_channel = 0);
 /**
   get errr code of BIOS
   @return 0=parity, 1=stopbit framing error, 2=overflow
 */
-int16_t getRs232Error(uint8_t *Errorcode);
+int16_t getRs232Error(uint8_t *Errorcode, uint8_t rui8_channel = 0);
 
 /**
   read single int8_t from receive puffer
   @param pbRead pointer to target data
   @return HAL_NO_ERR -> o.k. else puffer underflow
 */
-int16_t getRs232Char(uint8_t *pbRead);
+int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel = 0);
 /**
   read bLastChar terminated string from receive puffer
   @param pbRead pointer to target data
   @param bLastChar terminating int8_t
   @return HAL_NO_ERR -> o.k. else puffer underflow
 */
-int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar);
+int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t rui8_channel = 0);
 
 /**
   send single uint8_t on RS232
   @param bByte data uint8_t to send
   @return HAL_NO_ERR -> o.k. else send puffer overflow
 */
-int16_t put_rs232Char(uint8_t bByte);
+int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel = 0);
 /**
   send string of n uint8_t on RS232
   @param bpWrite pointer to source data string
   @param wNumber number of data uint8_t to send
   @return HAL_NO_ERR -> o.k. else send puffer overflow
 */
-int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber);
+int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_channel = 0);
 /**
   send '\0' terminated string on RS232
   @param pbString pointer to '\0' terminated (!) source data string
   @return HAL_NO_ERR -> o.k. else send puffer overflow
 */
-int16_t put_rs232String(const uint8_t *pbString);
+int16_t put_rs232String(const uint8_t *pbString, uint8_t rui8_channel = 0);
 
 /**
   clear receive puffer
 */
-void clearRs232RxBuffer(void);
+void clearRs232RxBuffer(uint8_t rui8_channel = 0);
 /**
   clear send puffer
 */
-void clearRs232TxBuffer(void);
+void clearRs232TxBuffer(uint8_t rui8_channel = 0);
 /*@}*/
 
 } // End of name space __HAL

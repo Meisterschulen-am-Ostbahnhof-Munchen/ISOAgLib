@@ -13,10 +13,10 @@
 
 
 int16_t SioInit(uint32_t comport, uint32_t baudrate);
-int16_t SioPutBuffer(uint8_t *p, int16_t n);
-int16_t SioRecPuffCnt();
-int16_t SioGetByte(uint8_t *p);
-int16_t SioGetString(uint8_t *p, uint8_t len);
+int16_t SioPutBuffer(uint32_t comport, uint8_t *p, int16_t n);
+int16_t SioRecPuffCnt(uint32_t comport);
+int16_t SioGetByte(uint32_t comport, uint8_t *p);
+int16_t SioGetString(uint32_t comport, uint8_t *p, uint8_t len);
 int8_t *KeyGetString(char *buffer, int16_t len);
 
 #endif
