@@ -69,14 +69,19 @@ namespace __HAL {
 /* **************************************** */
 /* ****** RS232 I/O BIOS functions  ******* */
 /* **************************************** */
+typedef serial_c* PointerSerial_t;
 #if RS232_INSTANCE_CNT == 1
-serial_c *pc_serial[RS232_INSTANCE_CNT] = NULL;
+#define DEF_SerialPointer(x) pc_serial
+PointerSerial_t pc_serial = NULL;
 #elif RS232_INSTANCE_CNT == 2
-serial_c *pc_serial[RS232_INSTANCE_CNT] = {NULL,NULL};
+#define DEF_SerialPointer(x) pc_serial[x]
+PointerSerial_t pc_serial[RS232_INSTANCE_CNT] = {NULL,NULL};
 #elif RS232_INSTANCE_CNT == 3
-serial_c *pc_serial[RS232_INSTANCE_CNT] = {NULL,NULL,NULL};
+#define DEF_SerialPointer(x) pc_serial[x]
+PointerSerial_t pc_serial[RS232_INSTANCE_CNT] = {NULL,NULL,NULL};
 #else
-serial_c *pc_serial[RS232_INSTANCE_CNT];
+#define DEF_SerialPointer(x) pc_serial[x]
+PointerSerial_t pc_serial[RS232_INSTANCE_CNT];
 #endif
 
 STL_NAMESPACE::vector<uint8_t> c_buffer[RS232_INSTANCE_CNT];
@@ -136,11 +141,11 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
       cout << "Connected to RTE1" << endl;
     }
   }
-  if ( pc_serial[rui8_channel] == NULL )pc_serial[rui8_channel] = new serial_c;
-	pc_serial[rui8_channel]->set_channel( 0 );
-  pc_serial[rui8_channel]->set_send_handler( rs232_send_handler, 0 );
-  pc_serial[rui8_channel]->set_line_parameters( param );
-  pc_serial[rui8_channel]->set_echo( false );
+  if ( DEF_SerialPointer(rui8_channel) == NULL ) DEF_SerialPointer(rui8_channel) = new serial_c;
+	DEF_SerialPointer(rui8_channel)->set_channel( 0 );
+  DEF_SerialPointer(rui8_channel)->set_send_handler( rs232_send_handler, 0 );
+  DEF_SerialPointer(rui8_channel)->set_line_parameters( param );
+  DEF_SerialPointer(rui8_channel)->set_echo( false );
   return HAL_NO_ERR;
 } // soll "C0,R,E0,B4800,L8n1"
 /**
@@ -151,7 +156,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
 int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t rui8_channel)
 {
 	if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  pc_serial[rui8_channel]->set_baud( wBaudrate );
+  DEF_SerialPointer(rui8_channel)->set_baud( wBaudrate );
   return HAL_NO_ERR;
 }
 /**
@@ -256,7 +261,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t rui8_channel)
 int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
 {
 	if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  pc_serial[rui8_channel]->send( 1, &bByte );
+  DEF_SerialPointer(rui8_channel)->send( 1, &bByte );
   return HAL_NO_ERR;
 }
 /**
@@ -268,7 +273,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
 int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_channel)
 {
 	if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  pc_serial[rui8_channel]->send( wNumber, bpWrite );
+  DEF_SerialPointer(rui8_channel)->send( wNumber, bpWrite );
   return HAL_NO_ERR;
 }
 /**
@@ -279,7 +284,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
 int16_t put_rs232String(const uint8_t *pbString, uint8_t rui8_channel)
 {
 	if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  pc_serial[rui8_channel]->send( (const char*)pbString );
+  DEF_SerialPointer(rui8_channel)->send( (const char*)pbString );
   return HAL_NO_ERR;
 }
 
