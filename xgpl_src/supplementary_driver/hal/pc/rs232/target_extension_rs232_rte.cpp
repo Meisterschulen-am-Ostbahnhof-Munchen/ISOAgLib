@@ -1,11 +1,11 @@
 /***************************************************************************
-                          targetExtensions.cc - source for PC specific
+                          target_extensions_rs232_rte.cpp - source for PC specific
                                                 extensions for the HAL
                                                 for RS232
-                             -------------------                                         
+                             -------------------
     begin                : Sat Jan 01 2003
     copyright            : (C) 2003 by Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de                                     
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************

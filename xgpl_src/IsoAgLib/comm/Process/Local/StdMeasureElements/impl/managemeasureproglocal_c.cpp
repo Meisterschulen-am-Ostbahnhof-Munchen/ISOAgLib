@@ -1,5 +1,5 @@
 /***************************************************************************
-                          manageMeasureprogLocal.cc  -  description
+                          managemeasureproglocal_c.cpp  -  description
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler

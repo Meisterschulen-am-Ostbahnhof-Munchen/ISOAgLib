@@ -1,5 +1,5 @@
 /***************************************************************************
-                          din_serviceMonitor.cc - object for monitoring of
+                          dinservicemonitor_c.cpp - object for monitoring of
                                                Scheduler_c services like BS, GPS
                              -------------------
     begin                : Fri Apr 07 2000

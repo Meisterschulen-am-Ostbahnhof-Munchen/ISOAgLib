@@ -1,5 +1,5 @@
 /***************************************************************************
-                          idigital_i.h - interface header file for 
+                          idigital_i.h - interface header file for
                                          DigitalI_c, an object for
                                          digital sensor input
                              -------------------
@@ -62,8 +62,8 @@
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
-// Usage of SensorEventHandler
-// 1) Derive clas from SensorEventHandler with REAL function
+// Usage of iSensorEventHandler
+// 1) Derive clas from iSensorEventHandler with REAL function
 //    void handleDigitalEvent( uint8_t rui8_channel );
 //    which overloads the function of the base class
 // 2) provide pointer to an instance of the derived class to the
@@ -80,7 +80,7 @@ namespace IsoAgLib {
   * or CounterI_c instance must be called with a pointer to the
   * handling object, which must be derived from this class
   */
-class SensorEventHandler {
+class iSensorEventHandler {
  public:
   /** function to handle a DigitalI_c event from HAL
     * @param rui8_channel channel of the input object, which received the IRQ
@@ -89,7 +89,6 @@ class SensorEventHandler {
   virtual void handleDigitalEvent( uint8_t rui8_channel );
 }
 #endif
-typedef __IsoAgLib::SensorEventHandler SensorEventHandler;
 
 /**Interface class for Analog input objects
   @author Dipl.-Inform. Achim Spangler
@@ -98,10 +97,10 @@ class iDigitalI_c : private __IsoAgLib::DigitalI_c {
 private:
   // private typedef alias names
   typedef __IsoAgLib::Sensor_c Sensor_c;
-public: 
+public:
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
-  
+
     possible errors:
         * Err_c::range wrong input number
     @see iSensorI_c::createDigital
@@ -112,7 +111,7 @@ public:
     @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
   iDigitalI_c(uint8_t rb_channel = 0xFF, iSensor_c::onoff_t ren_onoff = iSensor_c::OnHigh,
-      bool rb_static = false, __IsoAgLib::SensorEventHandler* rpc_handler = NULL )
+      bool rb_static = false, iSensorEventHandler* rpc_handler = NULL )
     : DigitalI_c(rb_channel, ren_onoff, rb_static, rpc_handler){};
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
@@ -128,7 +127,7 @@ public:
     @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
   void init(uint8_t rb_channel, iSensor_c::onoff_t ren_onoff = iSensor_c::OnHigh,
-              bool rb_static = false, SensorEventHandler* rpc_handler = NULL )
+              bool rb_static = false, iSensorEventHandler* rpc_handler = NULL )
     { DigitalI_c::init(rb_channel, ren_onoff, rb_static, rpc_handler);};
 
   /**  destructor of the input object which can close explicit the hardware input */
@@ -139,7 +138,7 @@ public:
   void setOnLow( void ) { DigitalI_c::setOnLow();};
   /**
     check for the input value
-  
+
     possible errors:
         * Err_c::range wrong input number
     @return 1 for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise 0
@@ -147,7 +146,7 @@ public:
   int16_t val()const{return DigitalI_c::val();};
   /**
     check for the input value (uses BIOS function)
-  
+
     possible errors:
         * Err_c::range wrong input number
     @return true for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise false

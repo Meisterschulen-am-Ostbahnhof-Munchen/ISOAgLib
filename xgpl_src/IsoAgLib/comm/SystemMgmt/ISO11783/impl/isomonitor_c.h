@@ -1,5 +1,5 @@
 /***************************************************************************
-                          iso_monitor.h - object for monitoring members
+                          isomonitor_c.h - object for monitoring members
                                              (list of ISOItem_c)
                              -------------------
     begin                : Fri Apr 07 2000

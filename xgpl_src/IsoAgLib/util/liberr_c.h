@@ -1,5 +1,5 @@
 /***************************************************************************
-                          isoaglib_err.h - central object for error management
+                          liberr_c.h - central object for error management
 
                              -------------------
     begin                : Thu Jan 20 2000

@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          2_10_RemoteWriteSetpointSimpleSetpointIso.cc - tutorial for pure ISO address claim
+                          2_10_RemoteWriteSetpointSimpleSetpointIso.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 2_10_RemoteWriteSetpointSimpleSetpointIso.cc
+/** \example 2_10_RemoteWriteSetpointSimpleSetpointIso.cpp
  * This tutorial shall provide a simple base program, which creates some
  * remote process data, which are used to control the remote device.
  * This example uses the simple version of setpoint control, where no explicit
@@ -177,7 +177,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_2_10_RemoteWriteSetpointSimpleSetpointIso ( see also at \ref PrjConfig2_10_RemoteWriteSetpointSimpleSetpointIso__esx__sys__sys ).
+ * config_2_10_RemoteWriteSetpointSimpleSetpointIso ( see also at \ref PrjConfig2_10_RemoteWriteSetpointSimpleSetpointIso ).
  *                                                                         */
 /* *************************************************************************/
 

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          istate.cc - object which manages state of item
+                          istate_c.cpp - object which manages state of item
                                       in monitor list
                              -------------------
     begin                : Fri Apr 07 2000

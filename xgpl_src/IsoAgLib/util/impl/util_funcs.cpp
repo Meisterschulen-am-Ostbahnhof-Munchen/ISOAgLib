@@ -1,5 +1,5 @@
 /***************************************************************************
-                          utilFuncs.cc - utils functions
+                          util_funcs.cpp - utils functions
                                           for checking time distances
                                           smaller than 1min. [msec.]
                              -------------------

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          can_pkg.cc - source for CANPkg_c, the
+                          canpkg_c.cpp - source for CANPkg_c, the
                                         encapsulation of CAN telegrams
                              -------------------
     begin                : Sun Aug 1 1999

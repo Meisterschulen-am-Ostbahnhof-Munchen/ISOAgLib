@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensions.cc - source for PC specific
+                          system_target_extensions.cpp - source for PC specific
                                                  extensions for the HAL
                                                  for central system
                              -------------------

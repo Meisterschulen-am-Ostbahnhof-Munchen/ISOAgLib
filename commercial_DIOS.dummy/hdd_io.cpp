@@ -1,5 +1,5 @@
 /***************************************************************************
-                          hddIo.cc -  source for Hdd_IO object
+                          hdd_io.cpp -  source for Hdd_IO object
                                          for access to DOS HDD drive
                              -------------------
     begin                : Mon Oct 25 1999

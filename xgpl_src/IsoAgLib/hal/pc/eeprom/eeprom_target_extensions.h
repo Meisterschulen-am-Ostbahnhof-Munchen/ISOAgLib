@@ -1,11 +1,11 @@
 /***************************************************************************
-                          target_extensions.h - header for PC specific
+                          eeprom_target_extensions.h - header for PC specific
                                                 extensions for the HAL
                                                 for EEPROM
-                             -------------------                                         
+                             -------------------
     begin                : Sat Jan 01 2003
     copyright            : (C) 2003 by Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de                                     
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          basePkg.cc - header file for CAN telgram
+                          basepkg_c.cpp - header file for CAN telgram
                                         encapsulating object, which presents
                                         the base msg informations through
                                         easy flag access; manages base msg

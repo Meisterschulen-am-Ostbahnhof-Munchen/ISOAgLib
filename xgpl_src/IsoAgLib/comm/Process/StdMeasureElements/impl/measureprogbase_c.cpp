@@ -1,5 +1,5 @@
 /***************************************************************************
-                          measureprogBase.cc - base class for measure
+                          measureprogbase_c.cpp - base class for measure
                                                  values and programs
                              -------------------
     begin                : Fri Apr 07 2000
@@ -192,7 +192,7 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
   else
   {
     sui16_MeasureProgBaseTotal += vec_measureSubprog.size();
-  
+
 	  if ( vec_measureSubprog.size() > 0 )
     {
       getRs232Instance()
@@ -210,7 +210,7 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
 /** default destructor which has nothing to do */
 MeasureProgBase_c::~MeasureProgBase_c(){
   #ifdef DEBUG_HEAP_USEAGE
-  if ( vec_measureSubprog.size() > 0 ) 
+  if ( vec_measureSubprog.size() > 0 )
   {
 	  sui16_deconstructMeasureProgBaseTotal++;
     sui16_MeasureProgBaseTotal -= vec_measureSubprog.size();
@@ -249,7 +249,7 @@ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increme
     else
     {
       sui16_MeasureProgBaseTotal++;
-  
+
       getRs232Instance()
 	      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
         <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensions.cc - source for PC specific
+                          sensor_target_extensions.cpp - source for PC specific
                                                  extensions for the HAL
                                                  for sensor
                              -------------------
@@ -173,7 +173,7 @@ int16_t  init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pf
   #endif
   if ( sensorDigitalInputOpen[bInput] ) fclose(sensorDigitalInput[ bInput]);
   char name[100], zeile[100];
-  
+
 #ifdef WIN32
   sprintf(name, "..\\..\\..\\simulated_io\\digitalInput_%hu", bInput );
 #else
@@ -182,12 +182,12 @@ int16_t  init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pf
   sensorDigitalInput[ bInput] = fopen(name, "r");
   // BEGIN: Added by M.Wodok 6.12.04
   if (sensorDigitalInput[ bInput] == NULL) {
-    // try again in current directory...  
+    // try again in current directory...
     sprintf(name, "digitalInput_%hu", bInput );
     sensorDigitalInput[ bInput] = fopen(name, "r");
   }
   // END: Added by M.Wodok 6.12.04
-  
+
   sensorDigitalInputOpen[bInput] = true;
   fgets(zeile, 99, sensorDigitalInput[bInput]);
   sscanf(zeile, "%u %u\n", &(lastSensorDigitalInputTime[bInput]), &(lastSensorDigitalInputVal[bInput]));
@@ -268,7 +268,7 @@ int16_t  init_analogin(uint8_t bNumber, uint8_t bType){
   printf("init_analogin fuer Kanal %i, Typ %i aufgerufen\n", bNumber, bType);
   if ( sensorAnalogInputOpen[bNumber] ) fclose(sensorAnalogInput[bNumber]);
   char name[100], zeile[100];
-  
+
 #ifdef WIN32
   sprintf(name, "..\\..\\..\\simulated_io\\analogInput_%hu", bNumber );
 #else

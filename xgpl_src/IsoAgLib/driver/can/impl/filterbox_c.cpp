@@ -1,12 +1,12 @@
 /***************************************************************************
-                          filterBox.cc  - FilterBox_c permits free definition
+                          filterbox_c.cpp  - FilterBox_c permits free definition
                                           of mask/filter for receiving CAN
                                           telegrams by a CANCustomer
                                           (or derived) object
-                             -------------------                                         
-    begin                : Fri Jul 30 1999                                           
-    copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+                             -------------------
+    begin                : Fri Jul 30 1999
+    copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -49,37 +49,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "filterbox_c.h"
@@ -96,8 +96,8 @@ using namespace __IsoAgLib;
 
    @exception badAlloc
 */
-FilterBox_c::FilterBox_c() 
-  : 
+FilterBox_c::FilterBox_c()
+  :
     c_filter(0, Ident_c::StandardIdent),
     c_mask(0, Ident_c::StandardIdent)
 {
@@ -108,7 +108,7 @@ FilterBox_c::FilterBox_c()
   constructor with parameter values setting specific start state with
   setting pointer to the root CANIO_c and to the according CANCustomer
   instance; even define specific mask and filter setting
-  
+
   @param rpc_customer pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
   @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
@@ -147,7 +147,7 @@ FilterBox_c::~FilterBox_c(){
 
 /**
   copy values of rrefc_src FilterBox_c object to this instance
-  
+
   possible errors:
       * badAlloc on not enough memory for copying puffed CAN msg from source
 
@@ -184,7 +184,7 @@ void FilterBox_c::clearData()
   @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
 */
-void FilterBox_c::set(const Ident_c& rrefc_mask, 
+void FilterBox_c::set(const Ident_c& rrefc_mask,
     const Ident_c& rrefc_filter, CANCustomer_c *rpc_customer)
 {
   c_filter = rrefc_filter;

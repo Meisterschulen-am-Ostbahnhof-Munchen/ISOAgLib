@@ -1,5 +1,5 @@
 /***************************************************************************
-                          hal_rs232_interface.cc - implementation of Mitron167
+                          hal_rs232_interface.cpp - implementation of Mitron167
                                                   RS232 interface
                              -------------------
     begin                : Wed Mar 15 2000
@@ -106,7 +106,7 @@ uint16_t getRs232RingBufferMaxSize( void ) {
 bool stackparm writeDataToRs232RingBuffer( uchar ruc_item, bool rb_force = false ) {
   // first check if buffer is already full and no overwrite is forced
   if ( ( isRs232RingBufferFull() ) && ( ! rb_force ) ) return false;
-  
+
   // make some minimum validation checks
   if ( ( puc_rs232BufferWrite < puc_startPuffer ) || ( puc_rs232BufferWrite > puc_endPuffer ) )
   { // pointer is wrong -> reset
@@ -119,9 +119,9 @@ bool stackparm writeDataToRs232RingBuffer( uchar ruc_item, bool rb_force = false
   // puc_rs232BufferWrite++;
   // increase size to avoid problems with combined access
   __HAL::serial.rx.ascii.count++;
-  
+
   // check if roundup is needed
-  if ( puc_rs232BufferWrite > puc_endPuffer ) puc_rs232BufferWrite = (uchar*) puc_startPuffer; 
+  if ( puc_rs232BufferWrite > puc_endPuffer ) puc_rs232BufferWrite = (uchar*) puc_startPuffer;
 
   // check if puffer is overflown
   if ( __HAL::serial.rx.ascii.count > SD_MAX_ASCII_CHARS )
@@ -130,7 +130,7 @@ bool stackparm writeDataToRs232RingBuffer( uchar ruc_item, bool rb_force = false
     _atomic( 3 );
     puc_rs232BufferRead++;
     __HAL::serial.rx.ascii.count--;
-  }  
+  }
 
   // now return true as sign for successful insert
   return true;
@@ -156,9 +156,9 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
   // puc_rs232BufferRead++;
   // decrease size to avoid problems with combined access
   __HAL::serial.rx.ascii.count--;
-  
+
   // check if roundup is needed
-  if ( puc_rs232BufferRead > puc_endPuffer ) puc_rs232BufferRead = (uchar*) puc_startPuffer; 
+  if ( puc_rs232BufferRead > puc_endPuffer ) puc_rs232BufferRead = (uchar*) puc_startPuffer;
 
   // item inserted in pointer-parameter -> successful
   return true;
@@ -318,7 +318,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     { // valid result
       return HAL_NO_ERR;
     }
-    else 
+    else
     { // something went wrong ( empty buffer or some now healed integrity )
       return HAL_RANGE_ERR;
     }
@@ -335,7 +335,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     { // check for terminating condition and increment pc_write
       // increment in any case ( terminating '\0' must be written after
       // current character even if it was finishing char
-      pc_write++; 
+      pc_write++;
       if ( *pc_write == bLastChar ) break;
     }
 
@@ -343,7 +343,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
 	  // ( as write pointer points already to position after last copied element
 	  //   the '\0' can be simply writte to current pointed position )
 	  *pc_write = '\0';
- 
+
     return HAL_NO_ERR;
   }
 
@@ -360,7 +360,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
 	#else
 	// use example code from Tasking, as Mitron Lib has problems with
 	// binary protocol -> '\0' isn't sent
-    while ( ! S0TIR ) 
+    while ( ! S0TIR )
 	  ;
 	S0TIR  = 0;
 	S0TBUF = bByte;
@@ -439,7 +439,7 @@ void handle_character(uchar ch)
 //*************************************************************************************************
 // This function is for applications
 void handle_ascii_string(schar *text)
-{ // insert string 
+{ // insert string
   schar *psc_read = text;
   while ( writeDataToRs232RingBuffer( *psc_read ) )
   { // increment write pointer in any case

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          digital_i.cc  -  implementation file for DigitalI_c,
+                          digitali_c.cpp  -  implementation file for DigitalI_c,
                                            an object for digital sensor input
                              -------------------
     begin                : Mon Oct 25 1999
@@ -48,37 +48,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "digitali_c.h"
@@ -89,14 +89,18 @@
 #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
-// Begin Namespace __IsoAgLib
-namespace __IsoAgLib {
+namespace IsoAgLib {
 /** function to handle a DigitalI_c event from HAL
   * @param rui8_channel channel of the input object, which received the IRQ
   *        from HAL
   */
-void SensorEventHandler::handleDigitalEvent( uint8_t /* rui8_channel is intentionally unused in this baseclass version */ ) {
+void iSensorEventHandler::handleDigitalEvent( uint8_t /* rui8_channel is intentionally unused in this baseclass version */ ) {
 }
+
+};
+
+// Begin Namespace __IsoAgLib
+namespace __IsoAgLib {
 
 #ifndef __TSW_CPP__
  #define IRQ_FUNC_PAR ...
@@ -130,9 +134,9 @@ static irqFuncFunction digitalInputIrqFuncArr[16] =
 
 /** array of pointers to handler for IRQ events */
 #ifdef __TSW_CPP__
-static SensorEventHandler* ppc_handler[16];
+static IsoAgLib::iSensorEventHandler* ppc_handler[16];
 #else
-SensorEventHandler* DigitalI_c::ppc_handler[16];
+IsoAgLib::iSensorEventHandler* DigitalI_c::ppc_handler[16];
 #endif
 
 /** handler function which is called from HAL */
@@ -157,7 +161,7 @@ void DigitalI_c::handleHalIrqEvent( uint8_t rui8_channel ) {
   @param rb_static default-argument for setting if hardware input should be gathered static (default false with no static)
   @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
 */
-DigitalI_c::DigitalI_c(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_static, SensorEventHandler* rpc_handler)
+DigitalI_c::DigitalI_c(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_static, IsoAgLib::iSensorEventHandler* rpc_handler)
   : SensorBase_c(rb_channel, Sensor_c::digital), b_static(rb_static), en_onoff(ren_onoff) {
   if ( rb_channel != 0xFF )init( rb_channel, ren_onoff, rb_static, rpc_handler );
 }
@@ -174,7 +178,7 @@ DigitalI_c::DigitalI_c(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_
   @param rb_static default-argument for setting if hardware input should be gathered static (default false with no static)
   @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
 */
-void DigitalI_c::init(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_static, SensorEventHandler* rpc_handler)
+void DigitalI_c::init(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff, bool rb_static, IsoAgLib::iSensorEventHandler* rpc_handler)
 { // now init the digital input
   SensorBase_c::init(rb_channel, Sensor_c::digital);
 

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          can_io.h  -  master object for CAN communication;
+                          canio_c.h  -  master object for CAN communication;
                                        owns array of FilterBox_c and
                                        MsgObj_c instances
                              -------------------

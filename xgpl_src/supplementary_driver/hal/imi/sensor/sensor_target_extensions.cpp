@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensions.cc - some extensions to the used
+                          sensor_target_extensions.cpp - some extensions to the used
                                              BIOS; for adaptions to the
                                              needed BIOS functions which
                                              can't be implemented in inline

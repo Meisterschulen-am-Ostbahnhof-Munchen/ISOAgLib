@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensions.cc - source for PC specific
+                          actor_target_extensions.cpp - source for PC specific
                                                 extensions for the HAL
                                                 for actor
                              -------------------

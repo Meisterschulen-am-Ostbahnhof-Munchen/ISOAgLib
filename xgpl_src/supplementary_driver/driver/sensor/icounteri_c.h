@@ -55,8 +55,8 @@
 #ifndef ICOUNTER_I_H
 #define ICOUNTER_I_H
 
-#include "impl/counter_i.h"
-#include "isensor.h"
+#include "impl/counteri_c.h"
+#include "isensor_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -134,7 +134,7 @@ public:
   uint16_t period(){return CounterI_c::period();};
   /**
     get frequency of counter channel
-    @return frequency calculated from time between last two signals 
+    @return frequency calculated from time between last two signals
             or 0 if time is longer than initially given timebase
   */
   uint16_t frequency(){return CounterI_c::frequency();};
@@ -143,24 +143,6 @@ public:
    @return time since last signal [msec.]
   */
   uint32_t lastSignalAge(){return CounterI_c::lastSignalAge();};
-private:
-  /**
-    HIDDEN! copy constructor for CounterI_c
-    NEVER copy a CounterI_c around!!!!
-    ONLY copy pointers to the wanted instance!!!
-    ==> the copy constructor is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
-  */
-  iCounterI_c(const iCounterI_c& rrefc_src){};
-  /**
-    HIDDEN! assignment for CounterI_c
-    NEVER assign a CounterI_c to another instance!!!!
-    ==> the asignment is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    @param rrefc_src source
-  */
-  iCounterI_c& operator=(const iCounterI_c& rrefc_src){};
 };
 }
 #endif

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          ianalog_i.h  - interface header file for iAnalog_I_c,
+                          ianalogi_c.h  - interface header file for iAnalog_I_c,
                                          an object for analog sensor input
                              -------------------
     begin                : Fri Apr 07 2000
@@ -69,10 +69,10 @@ class iAnalogI_c : private __IsoAgLib::AnalogI_c  {
 private:
   // private typedef alias names
   typedef __IsoAgLib::Sensor_c Sensor_c;
-public: 
+public:
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
-  
+
     possible errors:
         * Err_c::range wrong input number
         * Err_c::precondition wrong input type
@@ -115,7 +115,7 @@ public:
   int16_t val() const {return AnalogI_c::val();};
   /**
     check if value is greater than 0
-  
+
     possible errors:
         * Err_c::range wrong input number
     @return true if sensor value is different from 0, otherwise 0

@@ -67,16 +67,17 @@ namespace IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
 */
 class iDigitalO_c : private __IsoAgLib::DigitalO_c {
-public: 
+public:
   /** enum for error states of digital output
     * values: noDoutErr, dout_openErr, dout_shortcutErr, dout_overtempErr,
     *         dout_overvoltErr, dout_untervoltErr
     */
-  typedef __IsoAgLib::DigitalO_c::dout_err_t dout_err_t;
+  typedef enum { noDoutErr, dout_openErr, dout_shortcutErr, dout_overtempErr, dout_overvoltErr, dout_untervoltErr } dout_err_t;
+  //typedef __IsoAgLib::DigitalO_c::dout_err_t dout_err_t;
 
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
-  
+
     possible errors:
         * Err_c::range wrong input number
     @see iActorO_c::createDigital
@@ -89,7 +90,7 @@ public:
   void init(uint8_t rui8_channel) { DigitalO_c::init( rui8_channel );};
   /**  destructor of the input object which can close explicit the hardware input */
   virtual ~iDigitalO_c() {};
-  /** 
+  /**
     set the output PWM frequency
     (uses BIOS function)
 
@@ -98,9 +99,9 @@ public:
     @param rui32_val value to use as PWM frequency in [mHz]
   */
   void setFreq(uint32_t rui32_val){DigitalO_c::setFreq(rui32_val);};
-  /** 
+  /**
     set the output PWM value
-  
+
     possible errors:
         * Err_c::range wrong output channel number
     @param rui16_val value to set for the output channel
@@ -115,7 +116,7 @@ public:
     @param rb_state
   */
   void set(bool rb_state) {DigitalO_c::set(rb_state);};
-  
+
   /**
     deliver actual set value
     @return last set value [0..0xffff]
@@ -143,7 +144,7 @@ public:
   /** deliver detailed error state information for this Digital Output
     * @return dout_err_t [noDoutErr|dout_openErr|dout_shortcutErr|dout_overtempErr|dout_overvoltErr|dout_untervoltErr]
     */
-  dout_err_t getState( void ) const { return DigitalO_c::getState();};
+  iDigitalO_c::dout_err_t getState( void ) const { return iDigitalO_c::dout_err_t((uint16_t)DigitalO_c::getState());};
 private:
   /**
     HIDDEN! copy constructor for Digital_O

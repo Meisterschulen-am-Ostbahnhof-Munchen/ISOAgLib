@@ -1,5 +1,5 @@
 /***************************************************************************
-                          procdatamanager.cc  -  description
+                          procdatamanager_c.cpp  -  description
                              -------------------
     begin                : Sun Jul 16 2000
     copyright            : (C) 2000 by Dipl.-Inform. Achim Spangler

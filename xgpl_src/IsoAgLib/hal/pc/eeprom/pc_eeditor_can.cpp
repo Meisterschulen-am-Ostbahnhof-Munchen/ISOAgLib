@@ -1,11 +1,11 @@
 /***************************************************************************
-                          pc_eeditorCan.cc  - source for the PSEUDO BIOS 
-                                        CAN EEPROM Editor module for 
+                          pc_eeditor_can.cpp  - source for the PSEUDO BIOS
+                                        CAN EEPROM Editor module for
                                        development and test on a PC
-                             -------------------                                         
-    begin                : Wed Aug 4 1999                                           
-    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+                             -------------------
+    begin                : Wed Aug 4 1999
+    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -74,7 +74,7 @@ int16_t iInitEEEditor(  uint8_t bBus,
  float fVal;
  int8_t pcType;
  char pcZeile[50], pcVal[50];
-  
+
   printf("iInitEEEditor mit CAN-BUS %hu, Empfangs Objekt %hd, Sende Objekt %hd, \
     Empfangs CAN Ident_c %x, Empfangspuffer %d, Sendepuffer %d und CanType %hd aufgerufen.\n",
     bBus, iObjNrReceiveCan, iObjNrTransmitCan, dwReceiveCanId, iNumberMsgsReceive,
@@ -98,7 +98,7 @@ int16_t iInitEEEditor(  uint8_t bBus,
   /* erase '\n' at end of line */
   if (strchr(pcZeile, '\n') != 0)
     *(strchr(pcZeile, '\n')) = '\0';
-  
+
   sscanf(pcZeile, "%hd %hd %c %s", &wAddress, &wLen, &pcType, pcVal);
   switch (pcType)
   {

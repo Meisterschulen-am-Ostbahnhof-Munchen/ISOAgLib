@@ -1,5 +1,5 @@
 /***************************************************************************
-                          eepromIo.cc -  header for EEPROMIO_c object
+                          eepromio_c.cpp -  header for EEPROMIO_c object
                                           for communication with EEPROM
                              -------------------
     begin                : Mon Oct 25 1999
@@ -48,37 +48,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "eepromio_c.h"
@@ -118,7 +118,7 @@ EEPROMIO_c::~EEPROMIO_c(){
 /**
   set the write position in EEPROM (in Byte); answer if possible
   if rui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
-  
+
   possible errors:
       * range rui16_adress outer the limits of EEPROM memory
 
@@ -142,7 +142,7 @@ bool EEPROMIO_c::setp(uint16_t rui16_adress)
 /**
   set the read position in EEPROM (in Byte); answer if possible
   if rui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
-  
+
   possible errors:
       * range rui16_adress outer the limits of EEPROM memory
 
@@ -167,7 +167,7 @@ bool EEPROMIO_c::setg(uint16_t rui16_adress)
   check if write position is at end of EEPROM
   (parameter specifies needed length for operation
   -> false means that enough space is there for length bytes of data)
-  
+
   possible errors:
       * range if rb_setState == true and actual write position is nearer to end of EEPROM than rui8_length byte
 
@@ -182,7 +182,7 @@ bool EEPROMIO_c::eofp(uint8_t rui8_length, bool rb_setState)
     return true;  // means: End of EEPROM memory is reached
   }
   else
-  { 
+  {
     return false;  // means: End of EEPROM memory is NOT reached
   }
 };
@@ -191,7 +191,7 @@ bool EEPROMIO_c::eofp(uint8_t rui8_length, bool rb_setState)
   check if read position is at end of EEPROM
   (parameter specifies needed length for operation
   -> false means that enough space is there for length bytes of data)
-  
+
   possible errors:
       * range if rb_setState == true and actual read position is nearer to end of EEPROM than rui8_length byte
 
@@ -206,7 +206,7 @@ bool EEPROMIO_c::eofg(uint8_t rui8_length, bool rb_setState)
     return true; // means: End of EEPROM memory is reached
   }
   else
-  { 
+  {
     return false; // means: End of EEPROM memory is NOT reached
   }
 };
@@ -219,7 +219,7 @@ bool EEPROMIO_c::eofg(uint8_t rui8_length, bool rb_setState)
 
 /**
   write a uint8_t string value to EEPROM from actual write position on (tellp() )
-  
+
   possible errors:
       * range writing position exceeds end of EEPROM
       * busy the EEPROM was busy with another action
@@ -378,7 +378,7 @@ bool EEPROMIO_c::writeInit(){
     getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::Eeprom );
     return false;
   }
-  
+
   // set EEPROM to writable
   setState4BiosReturn(HAL::eepromWp(OFF));
 
@@ -472,7 +472,7 @@ EEPROMIO_c& EEPROMIO_c::writeIntern(const uint8_t* rpb_data, uint8_t rui8_len)
 }
 /**
   read from actual read position wanted amount of data in to pointer
-  
+
   possible errors:
       * Err_c::range writing exceeds EEPROM memory
       * Err_c::busy other task communicates with EEPROM

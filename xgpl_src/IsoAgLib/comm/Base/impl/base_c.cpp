@@ -1,5 +1,5 @@
 /***************************************************************************
-                          base.cc - working on Base Data Msg Type 1, 2
+                          base_c.cpp - working on Base Data Msg Type 1, 2
                                     and Calendar; stores, updates  and
                                     delivers all base data informations
                                     from CANCustomer_c derived for CAN

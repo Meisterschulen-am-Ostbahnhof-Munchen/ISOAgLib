@@ -1,5 +1,5 @@
 /***************************************************************************
-                          din_serviceItem.cc - object which represents an item
+                          dinserviceitem_c.cpp - object which represents an item
                                             in a service monitor list
                              -------------------
     begin                : Fri Apr 07 2000
@@ -48,37 +48,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "dinserviceitem_c.h"
@@ -127,7 +127,7 @@ DINServiceItem_c& DINServiceItem_c::operator=(const DINServiceItem_c& rrefc_src)
 DINServiceItem_c::~DINServiceItem_c(){
 }
 
-/** 
+/**
   deliver name
   @return pointer to the name uint8_t string (7byte)
 */
@@ -142,7 +142,7 @@ bool DINServiceItem_c::isEmptyName() const {
   return false;
 }
 
-/** 
+/**
   deliver name as pure ASCII string
   @param pc_name string where ASCII string is inserted
   @param rui8_maxLen max length for name
@@ -172,9 +172,9 @@ void DINServiceItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
 };
 
 
-/** 
+/**
   periodically time evented actions: send alive if needed
-  
+
   possible errors:
     * dependant error in CANIO_c during send
   @return true -> all planned time event activitie performed
@@ -183,9 +183,9 @@ bool DINServiceItem_c::timeEvent( void )
 {
   CANIO_c& c_can = getCanInstance4Comm();
   DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
-  
+
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-   
+
    uint8_t b_aliveVerw = getAliveVerw();
    // check if alive message must be sent
    if (checkUpdateTime(1000))
@@ -208,7 +208,7 @@ bool DINServiceItem_c::timeEvent( void )
 }
 
 
-/** 
+/**
   process received CAN pkg to update data and react if needed
   reacts on: member/service alive, member/service error notification,
              member stop command, state indication
@@ -270,7 +270,7 @@ bool DINServiceItem_c::processMsg(){
   return result;
 };
 
-/** 
+/**
   deliver status in STA format
   @return 0 == OFF, 1 == STANDBY, 2 == ACTIVE
 */

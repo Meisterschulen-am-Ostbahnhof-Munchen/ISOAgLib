@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          1_1_ReadDin.cc - tutorial for pure ISO address claim
+                          1_1_ReadDin.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 1_1_ReadDin.cc
+/** \example 1_1_ReadDin.cpp
  * This tutorial shall provide the simples base program, which reads some
  * regularly sent base data ( especially tractor information ).
  * Provide option to send result of lookup on RS232 - this is dependend on
@@ -178,7 +178,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_1_1_ReadDin ( see also at \ref PrjConfig1_1_ReadDin__esx__sys__sys ).
+ * config_1_1_ReadDin ( see also at \ref PrjConfig1_1_ReadDin ).
  *                                                                         */
 /* *************************************************************************/
 

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          baseItem.cc - base class for member lists;
+                          baseitem_c.cpp - base class for member lists;
                                     stores access time
                                     and pointer to root Scheduler_c object
                              -------------------

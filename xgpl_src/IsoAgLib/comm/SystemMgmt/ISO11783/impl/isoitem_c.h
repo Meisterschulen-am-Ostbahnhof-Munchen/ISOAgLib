@@ -1,5 +1,5 @@
 /***************************************************************************
-                          iso_item.h - object which represents an item
+                          isoitem_c.h - object which represents an item
                                            in a iso monitor list
                              -------------------
     begin                : Tue Jan 02 2001

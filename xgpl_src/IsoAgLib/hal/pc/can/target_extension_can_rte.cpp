@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensionCanTestserver.cc - source for the real time server
+                          target_extension_can_rte.cpp - source for the real time server
                                        with CAN communication through client-server call semantics
                              -------------------
     begin                : Tue Jul 15 2003

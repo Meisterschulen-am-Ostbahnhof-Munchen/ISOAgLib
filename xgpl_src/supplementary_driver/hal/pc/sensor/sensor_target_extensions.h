@@ -1,5 +1,5 @@
 /***************************************************************************
-                          target_extensions.h - header for PC specific
+                          sensor_target_extensions.h - header for PC specific
                                                 extensions for the HAL
                                                 for sensor
                              -------------------
@@ -55,7 +55,7 @@
 /* ********************************************************** */
 /** \file supplementary_driver/implementation/__HAL/bios_pc/HwSensor/bios_extender.h
  * A module biosExtenders should be used
- * for all methods, which can't be simply 
+ * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in map_bios_namespace.h .
@@ -114,7 +114,7 @@ int16_t  getAnaloginMean(uint8_t bInput);          /* evaluation of the mean val
 inline uint8_t getAnaloginCheckNr(uint8_t rb_channel)
   {return (95 - rb_channel);};
 /**
-  deliver channel number for checking/requesting of 
+  deliver channel number for checking/requesting of
   ADC value at digital input
   for call of __HAL:: functions (differences mostly caused
   by multiplexers)

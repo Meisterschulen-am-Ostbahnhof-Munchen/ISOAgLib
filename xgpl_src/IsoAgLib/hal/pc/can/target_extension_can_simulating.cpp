@@ -220,7 +220,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
         sprintf(name, "can_send_%hx_%hx_", bBusNumber, bMsgObj);
         if (ptConfig->bXtd) strcat(name, "ext");
         else strcat(name, "std");
-        
+
         can_output[bBusNumber][bMsgObj] = fopen(name, "a+");
       }
       // END: Added by M.Wodok 6.12.04
@@ -240,7 +240,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
 #endif
     if (ptConfig->bXtd) strcat(name, "ext");
     else strcat(name, "std");
-    
+
     can_input[bBusNumber][bMsgObj] = fopen(name, "r");
     // BEGIN: Added by M.Wodok 6.12.04
     if (can_input[bBusNumber][bMsgObj] == NULL) {
@@ -251,7 +251,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
       can_input[bBusNumber][bMsgObj] = fopen(name, "r");
     }
     // END: Added by M.Wodok 6.12.04
-    
+
     printf("Versuch Datei mit Name %s zum lesen zu oeffnen\n", name);
 
     dateiende[bBusNumber][bMsgObj] = 0;
@@ -284,13 +284,13 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 
   fclose(can_input[bBusNumber][bMsgObj]);
   can_input[bBusNumber][bMsgObj] = fopen(name, "r");
-  
+
   // BEGIN: Added by M.Wodok 6.12.04
   if (can_input[bBusNumber][bMsgObj] == NULL) {
     sprintf(name, "can_%hx_%x_", bBusNumber, dwId);
     if (bXtd) strcat(name, "ext");
     else strcat(name, "std");
-  
+
     can_input[bBusNumber][bMsgObj] = fopen(name, "r");
   }
   // END: Added by M.Wodok 6.12.04
@@ -312,6 +312,7 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 { // first get waiting messages
 	checkMsg();
 	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+  return HAL_NO_ERR;
 }
 
 int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          can_pkgExt.cc - header for extended CANPkg_c object,
+                          canpkgext_c.cpp - header for extended CANPkg_c object,
                                            which calls data flag converting
                                            functions on assign operations
                              -------------------

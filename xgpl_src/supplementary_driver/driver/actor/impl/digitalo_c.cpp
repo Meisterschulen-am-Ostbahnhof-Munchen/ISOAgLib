@@ -1,5 +1,5 @@
 /***************************************************************************
-                          digital_o.cc - implementation for DigitalO_c, an object
+                          digitalo_c.cpp - implementation for DigitalO_c, an object
                                          for digital actor output
                              -------------------
     begin                : Mon Oct 25 1999
@@ -48,37 +48,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "digitalo_c.h"
@@ -88,7 +88,7 @@
 namespace __IsoAgLib {
 
 /**
-  internal called constructor for a new digital input 
+  internal called constructor for a new digital input
   channel which performs configuration of hardware
   (configure PWM frequency to CONFIG_PWM_DEFAULT_FREQUENCY
   which is set in isoaglib_config.h)
@@ -127,7 +127,7 @@ DigitalO_c::~DigitalO_c(){
   getActorInstance().unregisterClient( this );
 }
 
-/** 
+/**
   set the output PWM frequency
   (uses BIOS function)
 
@@ -143,7 +143,7 @@ void DigitalO_c::setFreq(uint32_t rui32_val){
   }
 }
 
-/** 
+/**
   set the output PWM value
   (uses BIOS function)
 
@@ -193,11 +193,11 @@ bool DigitalO_c::good( void ) const
 DigitalO_c::dout_err_t DigitalO_c::getState( void ) const
 {
   int16_t i16_stateHal;
-  if ( get() == 0 ) 
+  if ( get() == 0 )
     i16_stateHal = HAL::getDigoutDiagnose( channelNr(), 0, 0 );
   else
     i16_stateHal = HAL::getDigoutDiagnose( channelNr(), ui16_minAllowedCurrent, ui16_maxAllowedCurrent );
-  switch ( i16_stateHal ) 
+  switch ( i16_stateHal )
   {
     case HAL_NO_ERR:            return noDoutErr;
     case HAL_DIGOUT_OPEN:       return dout_openErr;

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          LbsLibErr.cc  - central object for error management
+                          liberr_c.cpp  - central object for error management
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler

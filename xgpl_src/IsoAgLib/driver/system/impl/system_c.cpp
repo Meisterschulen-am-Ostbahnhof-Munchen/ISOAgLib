@@ -1,5 +1,5 @@
 /***************************************************************************
-                          system.cc  -  central object for encapsulation of
+                          system_c.cpp  -  central object for encapsulation of
                                        platform dependent elements (mostly BIOS)
                              -------------------
     begin                : Thu Jul 29 1999
@@ -126,7 +126,7 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
     if ( ci_err != HAL_NO_ERR)
     {
 		#ifdef DEBUG
-		__IsoAgLib::getRs232Instance() 
+		__IsoAgLib::getRs232Instance()
         << "Fehler bei Systemstart: " << ci_err << "\r\n";
 		#endif
       getLbsErrInstance().registerError( LibErr_c::SystemOpen, LibErr_c::HwSystem ); // something is still wrong

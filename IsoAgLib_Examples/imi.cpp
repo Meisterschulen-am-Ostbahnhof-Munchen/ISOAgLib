@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          imi.cc  -  example main application for IMI
+                          imi.cpp  -  example main application for IMI
                              -------------------
     begin                : Mon Okt 16 08:00:00 CEST 2000
 
@@ -63,7 +63,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example imi.cc
+/** \example imi.cpp
  * This example claims an address for an IMI on Scheduler_c, requests the member
  * names of the other systems after succeded address claim and create the
  * local process data that should be recorded. All informations including

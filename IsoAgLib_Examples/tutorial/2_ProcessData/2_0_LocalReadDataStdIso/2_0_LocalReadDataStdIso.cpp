@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          2_0_LocalReadDataStdIso.cc - tutorial for pure ISO address claim
+                          2_0_LocalReadDataStdIso.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 2_0_LocalReadDataStdIso.cc
+/** \example 2_0_LocalReadDataStdIso.cpp
  * This tutorial shall provide the simples base program, which creates some
  * local process data, which value is regularly updated.
  * Remote ECUs can request single values or can start measurement programs.
@@ -174,7 +174,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_2_0_LocalReadDataStdIso ( see also at \ref PrjConfig2_0_LocalReadDataStdIso__esx__sys__sys ).
+ * config_2_0_LocalReadDataStdIso ( see also at \ref PrjConfig2_0_LocalReadDataStdIso ).
  *                                                                         */
 /* *************************************************************************/
 

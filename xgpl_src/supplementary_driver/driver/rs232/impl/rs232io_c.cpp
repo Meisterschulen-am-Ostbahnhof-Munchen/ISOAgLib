@@ -1,5 +1,5 @@
 /***************************************************************************
-                          rs232_io.cc -  source for RS232IO_c object
+                          rs232io_c.cpp -  source for RS232IO_c object
                                          for serial communication (Rs232)
                              -------------------
     begin                : Mon Oct 25 1999
@@ -48,37 +48,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "rs232io_c.h"
@@ -94,7 +94,7 @@
   #if !defined(__TSW_CPP_756__) && !defined(SYSTEM_PC_VC)
   using std::isspace;
   #endif
-#endif  
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -131,7 +131,7 @@ RS232IO_c::~RS232IO_c(){
       * Err_c::badAlloc not enough memory for allocating the puffers
       * Err_c::range one of the configuration vals is not in allowed ranges
 */
-bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_xonXoff,  
+bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_xonXoff,
         uint16_t rui16_sndPuf, uint16_t rui16_recPuf)
 {
   bool b_result;
@@ -140,7 +140,7 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
   // check the configuration informations
   bool b_baudAllowed = false,
        b_dataModeAllowed = false;
-  
+
   // check if rui16_baudrate is one of the allowed settings
   int16_t pi16_allowed[] = HAL_RS232_BAUDRATE_LIST;
   for (uint8_t ui8_index = 0; ui8_index < HAL_RS232_BITRATE_CNT; ui8_index++)
@@ -694,7 +694,7 @@ void RS232IO_c::readToken()
     getLbsErrInstance().registerError( LibErr_c::Rs232Underflow, LibErr_c::Rs232 );
     return;
   }
-  
+
   // now b_data is a not whitespace byte
   pc_token[0] = b_data; // store it
   for (ui8_ind = 1; ((ui8_ind < 12) && (eof())); ui8_ind++)
@@ -703,7 +703,7 @@ void RS232IO_c::readToken()
     if (isspace(b_data))break; // break loop on whitespace
     pc_token[ui8_ind] = b_data;
   }
-  
+
   // set lasting positions in pc_token to '\0'
   for (;(ui8_ind < 12); ui8_ind++) pc_token[ui8_ind] = '\0';
 }

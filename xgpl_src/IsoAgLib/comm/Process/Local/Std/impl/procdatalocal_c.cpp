@@ -1,5 +1,5 @@
 /***************************************************************************
-                          lbsProcdataLocal.cc  -  description
+                          procdatalocal_c.cpp  -  description
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
@@ -47,67 +47,67 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
- * AS A RULE: Use only classes with names beginning with small letter :i:  * 
- ***************************************************************************/ 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
+ * AS A RULE: Use only classes with names beginning with small letter :i:  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Call of a (member-) function                                          * 
- * - Instantiation of a variable in a datatype from internal namespace     * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable in a datatype from interface namespace,    * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Call of a (member-) function                                          *
+ * - Instantiation of a variable in a datatype from internal namespace     *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable in a datatype from interface namespace,    *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
@@ -134,10 +134,10 @@ namespace __IsoAgLib {
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerGtp optional GETY_POS of the owner
   @param rpc_gtp pointer to updated GETY_POS variable of owner
-  @param rb_cumulativeValue 
+  @param rb_cumulativeValue
            -# for process data like distance, time, area
                the value of the measure prog data sets is updated
-               on master value update dependent on the value increment 
+               on master value update dependent on the value increment
                since the last master value update
                -> if a remote member resets his data set copy, datas of
                   other members aren't changed
@@ -148,7 +148,7 @@ namespace __IsoAgLib {
                 -> the given master value is propagated equally to all
                     measure prog data sets
                 -> if this data is saved in EEPROM, the stored value is loaded
-                   as initial master value, and is initially propagated to all 
+                   as initial master value, and is initially propagated to all
                    measure prog data sets
   @param rui16_eepromAdr optional adress where value is stored in EEPROM
   @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -188,10 +188,10 @@ ProcDataLocal_c::ProcDataLocal_c(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerGtp optional GETY_POS of the owner
   @param rpc_gtp pointer to updated GETY_POS variable of owner
-  @param rb_cumulativeValue 
+  @param rb_cumulativeValue
           -# for process data like distance, time, area
               the value of the measure prog data sets is updated
-              on master value update dependent on the value increment 
+              on master value update dependent on the value increment
               since the last master value update
               -> if a remote member resets his data set copy, datas of
                   other members aren't changed
@@ -202,7 +202,7 @@ ProcDataLocal_c::ProcDataLocal_c(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui
                 -> the given master value is propagated equally to all
                     measure prog data sets
                 -> if this data is saved in EEPROM, the stored value is loaded
-                  as initial master value, and is initially propagated to all 
+                  as initial master value, and is initially propagated to all
                   measure prog data sets
   @param rui16_eepromAdr optional adress where value is stored in EEPROM
   @param rpc_processDataChangeHandler optional pointer to handler class of application
@@ -226,7 +226,7 @@ void ProcDataLocal_c::init(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert
       ri_singletonVecKey );
   c_setpoint.init( this );
   c_measureprog.init( this );
-}      
+}
 
 /** default destructor which has nothing to do */
 ProcDataLocal_c::~ProcDataLocal_c(){
@@ -299,10 +299,10 @@ void ProcDataLocal_c::incrMasterVal(float rf_val){
 */
 bool ProcDataLocal_c::timeEvent( void ){
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  
+
   // perform time event activities for base class
   if ( ! ProcDataLocalBase_c::timeEvent() ) return false;
-  
+
   if ( ! c_measureprog.timeEvent() ) return false;
   if ( ! c_setpoint.timeEvent() ) return false;
   return true;
@@ -310,7 +310,7 @@ bool ProcDataLocal_c::timeEvent( void ){
 
 #ifdef USE_EEPROM_IO
 /**
-  called from MeasureProg item -> if this item is first in list 
+  called from MeasureProg item -> if this item is first in list
   reset eeprom val
 
   possible errors:

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          isoaglib.cc - implementation for central hardware
+                          scheduler_c.cpp - implementation for central hardware
                                    independent object which manages all
                                    functional IsoAgLib member objects
                              -------------------

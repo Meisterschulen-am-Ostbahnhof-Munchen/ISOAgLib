@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensions.cc - source for PC specific
+                          target_extensions_rs232_simulating.cpp - source for PC specific
                                                 extensions for the HAL
                                                 for RS232
                              -------------------
@@ -103,7 +103,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
     // try opening in current directory...
     strcpy(sendName, "rs232_send");
     rs232_output = fopen(sendName, "w"); // "a+"
-  }  
+  }
   // END: Added by M.Wodok 6.12.04
   #endif
 
@@ -119,7 +119,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
     // try opening in current directory...
     strcpy(name, "rs232_log");
     rs232_log = fopen(name, "w"); // "a+"
-  }  
+  }
   #endif
 
   printf("Versuch Datei mit Name %s zum schreiben zu oeffnen\n", name);

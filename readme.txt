@@ -81,7 +81,7 @@ All elements with names without "i" at the beginning and which are grouped to th
 But please be warned, that this stuff seems rather complicated if you are not familiar with object oriented design. You can be assured, that not only the authors of
 the architecture accept the high quality of design. Some parts might look strange at the first sight - but then you will detect that such elements are very helpful
 for reduction of code duplication and ease of code maintenance. One example is the Singleton Pattern, which is used for global, but well defined to core service classes
-like ISOTerminal_c . The use of this Template guarantees that event the first access is always performed at a correct initialised instance. Even if the initialisation of a core
+like IsoAgLib::ISOTerminal_c . The use of this Template guarantees that event the first access is always performed at a correct initialised instance. Even if the initialisation of a core
 service class depends of the previous initialisation of one or more other classes, the correct order of initialisation is realized.<br>
 Please contact the maintainers <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> and <a href="mailto:Martin.Wodok@osb-ag:de">Martin Wodok</a> if you don't understand
 some parts, even after reading the presented documentation.
@@ -102,17 +102,20 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		- access the archive of all emails at <a href="http://linux90.idvnet.de/pipermail/isoaglib/">http://linux90.idvnet.de/pipermail/isoaglib/</a>
 	- <b>2004-11-18:</b> Add creation of <b>Microsoft Visual C++ V6.0</b> project files to update_makefile.sh , as <b>Dev-C++</b> can't build EXE files which are running with
 		Vector-Informatik CAN cards
-	- <b>2004-11-23:</b>update_makefile.sh runs in MSYS ( Win32 shell environment ) again, as intermediate use of perl commands is stopped
-	- <b>2004-11-24:</b> Add driver for <b>Sontheim CAN cards</b> ( tested only with CANLPT, but in theory designed according general API documentation, as all card
-		differences are handled by the driver )
+	- <b>2004-11-23:</b> <i>update_makefile.sh</i> runs in MSYS ( Win32 shell environment ) again, as intermediate use of perl commands is stopped
+	- <b>2004-11-24:</b> Add driver for <b>Sontheim CAN cards</b> ( tested only with CANLPT; but as the generalized API is used, and all documented card specific differences are handled,
+			there should be at least only the need for a little bit testing and bugfixing to get everyting to work with all current Sontheim cards )
 	- <b>2004-12-03:</b> Finish heavy optimization of HEAP usage and optional exact documentation of HEAP usage during runtime via RS232, so that really needed HEAPSIZE can be derived
 		( reduction of HEAPSIZE dependend on application can vary between 4 KByte and 10 KByte )
-	- <b>2004-12-06:</b> Enable and test Win32 multithreading in Sontheim CAN driver ( as no Vector-Informatik CAN cards accessible for the author, this can't be tested -> so multithreading is only active
+	- <b>2004-12-06:</b> Enable and test Win32 multithreading in Sontheim CAN driver ( as no Vector-Informatik CAN cards are accessible for the author, this can't be tested -> so multithreading is only active
 			as default for Sontheim )
 	- <b>2004-12-09:</b> As some so called "Extended EC++" compilers like IAR don't support multiple inheritance and additionally place their individual tailored version of STL
-		<b>not</b> in the ANSI C++ conformant namespave <b>std</b> the ISO<i><sub>AgLib</sub></i> was changed to <b>not use any multiple inheritance</b> and is now
+		<b>not</b> in the ANSI C++ conformant namespace <b>std</b> the ISO<i><sub>AgLib</sub></i> was changed to <b>not use any multiple inheritance</b> and is now
 		<b>flexible to retrieve STL elements from the namespace STL_NAMESPACE, which can be defined individual for each compiler in the header <i>compiler_adoption.h</i></b><br>
-		Therefore the ISO<i><sub>AgLib</sub></i> is now usable for all compilers which use this "Extended EC++"
+		Therefore the ISO<i><sub>AgLib</sub></i> is now usable for all compilers which use this "Extended EC++" subset of ANSI C++
+	- <b>2004-12-10:</b> List of used C++ features which aren't mapped by simple <b>EC++</b> compilers which doesn't use the <b>Extended EC++</b> specification
+		is written in \ref InfReqCompiler ( there are also some general notes on compiler use )
+	- <b>2004-12-12:</b> Add tutorial examples for supplementary drivers sensor and PWM
 
 
 \subsection IndexOldNews News before 1.0.0 release
@@ -197,7 +200,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 
 	- added support for Vector Informatik CAN driver libraries <b>CANLIB</b> and <b>XL Driver Library</b>
 		( integrate it in the project generation script, so that a Dev-C++ project can be simply created )
-	- made management of Master Working Set state of a local IdentItem_c ( representing of local ISO 11783
+	- made management of Master Working Set state of a local IsoAgLib::IdentItem_c ( representing of local ISO 11783
 		node in the library ) more robust against SA and Device Type conflicts
 	- enhanced some documentation
 	- fixed some small problems in interaction with CANoe virtual terminal ( thanks to Brad Cox )
@@ -211,7 +214,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 \subsection 100rc4TO100rc5 1.0.0rc4 to 1.0.0rc5
 
 	- added trigger request for claimed address as soon as local Ident is initialized as ISO 11783
-		( avoid <DeviceType, DeviceTypeInst> clash in IsoMonitor_c )
+		( avoid <DeviceType, DeviceTypeInst> clash in IsoAgLib::IsoMonitor_c )
 	- implemented GPS decoding for ISO 11783 based on open accessible sources ( thanks to google )
 		( please test and send changes, in case a reference system reveals wrong decoding;
 			decoding of Longituge and Latitude are most probably correct, others?? )
@@ -261,7 +264,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 			pretty efficient organization structure ) and which can cause longer malloc execution time on each item creation ( can be important, if large amount
 			of monitor list entries, several measurement programs, setpoints occure, or if CAN filter setting must be reconfigured due to configuration change )
 		- <b>PREFER CHUNK ALLOCATION AS LONG AS HEAP OVERHEAD IS ACCEPTIBLE, USE OTHER METHOD ONLY FOR RESTRICTED HEAP MEM CONDITIONS</b>
-	- avoid allocation of HEAP for elements of temporal ManageMeasureProgLocal_c instances ( create default MeasureProgLocal_c instances on first real access )
+	- avoid allocation of HEAP for elements of temporal IsoAgLib::ManageMeasureProgLocal_c instances ( create default IsoAgLib::MeasureProgLocal_c instances on first real access )
 	- optimize HEAP memory item size debug messages, so that real HEAP usage is reflected ( including overhead due to memory block linking in HEAP )<br>
 			Thanks to the help of Tasking support ( information on simple integration of _malloc.c into EDE projects )
 	- change <b>update_makefile.sh</b> shell script to avoid calls to <b>perl</b> functions, as these are only part of standard LINUX systems, and are <b>not</b>
@@ -269,15 +272,15 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- change device types and CAN channels of tutorial examples, so that e.g. 1_0_ReadIso.cpp and 1_2_WriteIso.cpp can interact ( <b>a)</b> different device types
 		for both ECUs and <b>b)</b> different CAN channels so that two channels of one PC CAN card can be connected )
 	- unify number intervals of CAN HAL for BUS and MsgObj numbers to start with <b>0</b> for each type of HAL ( avoid HAL dependend offset constants ).
-	- change default path for Win32 CAN card manufacturer driver library files ( API DLLs and Headers ) to "C:\\Development" so that all users can install their
-		driver files to the corresponding location, if they want to avoid changing all default VC++ project files ( if pathes like "C:\\Development\\CANLIB" are still
+	- change default path for Win32 CAN card manufacturer driver library files ( API DLLs and Headers ) to <i>C:\\Development</i> so that all users can install their
+		driver files to the corresponding location, if they want to avoid changing all default VC++ project files ( if pathes like <i>C:\\Development\\CANLIB</i> are still
 		not acceptable, update_makefile.sh can be used to create VC++ DSP files based on adopted conf_x_y project feature setup files )
 
 
 
 \section IndexMainFeatures Main Features
 The ISO<i><sub>AgLib</sub></i> is designed to provide the following main features
-(read <a href="information.html#general_info">here</a> for more information):<img width="60%" src="Diagramme/IsoAgLib-mixed-protocols.gif" align="Right">
+(read \ref InfGeneralInformation for more information):<img width="60%" src="Diagramme/IsoAgLib-mixed-protocols.gif" align="Right">
 - perform all tasks which can be automated in the background so that the application development is simplified
 		and different interpretation of low level communication (like message formatting) is avoided
 - provide <b>complete Open Source toolchain for ISO 11783 development - including virtual terminal</b> <br>
@@ -288,7 +291,18 @@ The ISO<i><sub>AgLib</sub></i> is designed to provide the following main feature
 	layout properties like text alignment should be conserved even if no font of scaled size is available ) and finishes this process
 	by an automatic upload of the adopted pool. Already active pools can be handled with simple access functions for control,
 	and some easy handler functions for reaction on user input.<br>
-	All these actions are demonstrated in the tutorial example \ref 3_0_VirtualTerminalIso.cpp .
+	<b>Core target of ISO<i><sub>AgLib</sub></i> Virtual Terminal design:</b><br>
+	- Enable creation of one single mask pool, that fits all terminal configurations
+	- Provide attributes for project specific control of the runtim adoption
+	- Allow flexible addition of further attributes, if automatic layout control must be optimized for some terminal properties ( e.g. amount of softkeys )
+
+	All these actions are demonstrated in the tutorial example \ref 3_0_VirtualTerminalIso.cpp .<br>
+	&nbsp;<br>
+	Brad Cox developed a tool for his company, that is able to convert the project files of the WTK mask generator to the XML definition.
+	Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> if you are interested in this tool for your own use, as Brad
+	Cox indicated already, that he might be willing to provide this undest some conditions. <br>
+	But this tool would only help to start the virtual mask definition with XML, as this method provides some additional attributes to
+	control the automatic runtime adoption of the single core mask pool to the different terminal properties ( e.g. font size dependend spacing ).
 - provide flexible and capable process data implementation as backbone for all documenting and control interaction
 		(e.g. trigger dependent measurement value send, allow setpoint intervals with MIN / MAX,
 		enable N --&gt; 1 relation between user and provider of process data)
@@ -308,9 +322,9 @@ memory as possible. Thus the current ISO<i><sub>AgLib</sub></i> uses HEAP only f
 		with a STL vector<T> with as much pointers as variables are used ( you can reserve enough space at system start,
 		to avoid reallocation of the internal array );<br>
 		<b>this HEAP usage takes only place, if process data are used</b>
-	- lists of measurement programs per local process data ( only for  ProcDataLocal_c or ProcDataLocalSimpleSetpoint_c instances )
+	- lists of measurement programs per local process data ( only for  IsoAgLib::ProcDataLocal_c or IsoAgLib::ProcDataLocalSimpleSetpoint_c instances )
 	- lists for automatic CAN filter management
-	- list of entries in monitor lists ( ISOItem_c, DINItem_c , DINServiceItem - each type only if the corresponding protocol is used )
+	- list of entries in monitor lists ( IsoAgLib::ISOItem_c, IsoAgLib::DINItem_c , IsoAgLib::DINServiceItem - each type only if the corresponding protocol is used )
 	- vector for global lookup of sensor or actor I/O instances with one <b>pointer</b> per instance ( <b> only present if the corresponding I/O feaure is used </b> )
 	- list for synchronisation data of LBS+ Terminal Mask Upload ( <b>only needed if DIN 9684 with LBS+ Terminal is used</b> )
 
@@ -362,21 +376,21 @@ The following table present some exact numbers for the needed HEAP memory, so th
 <tr><td>Scheduler Entry</td><td>12 x scheduled items -> 56</td><td>160</td><td>104</td><td>Vector of pointers to 12 scheduled part tasks</td></tr>
 <tr><td>Scheduled Times</td><td>12 x scheduled items -> 32</td><td>80</td><td>48</td><td>Vector of uint16_t execution times of scheduled part tasks</td></tr>
 
-<tr><td>DIN 9684 Monitor List Entry ( DINItem_c )</td><td>10 x 42 DIN -> 420</td><td>1360</td><td>940</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
-<tr><td>ISO 11783 Monitor List Entry ( ISOItem_c )</td><td>10 x 52 ISO -> 520</td><td>1768</td><td>1248</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
+<tr><td>DIN 9684 Monitor List Entry ( IsoAgLib::DINItem_c )</td><td>10 x 42 DIN -> 420</td><td>1360</td><td>940</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
+<tr><td>ISO 11783 Monitor List Entry ( IsoAgLib::ISOItem_c )</td><td>10 x 52 ISO -> 520</td><td>1768</td><td>1248</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
 
-<tr><td>CAN Filter MsgObj_c</td><td>10 x 82 -> 820</td><td>2960</td><td>2140</td><td>Depends on used protocol parts -> CAN idents to receive</td></tr>
-<tr><td>CAN Filter FilterBox_c</td><td>10 x 28 -> 280</td><td>800</td><td>520</td><td>Depends on used protocol parts -> CAN idents to receive</td></tr>
+<tr><td>CAN Filter IsoAgLib::MsgObj_c</td><td>10 x 82 -> 820</td><td>2960</td><td>2140</td><td>Depends on used protocol parts -> CAN idents to receive</td></tr>
+<tr><td>CAN Filter IsoAgLib::FilterBox_c</td><td>10 x 28 -> 280</td><td>800</td><td>520</td><td>Depends on used protocol parts -> CAN idents to receive</td></tr>
 
 <tr><td>Local Process Data Entry</td><td>10 x pointers to local process data -> 48</td><td>168</td><td>120</td>
 	<td>Only if 10 local process data instances are used</td></tr>
 <tr><td>Remote Process Data Entry</td><td>10 x pointers to remote process data -> 48</td><td>168</td><td>120</td>
 	<td>Only if 10 remote process data instances are used</td></tr>
-<tr><td>MeasureProgLocal_c</td><td>10 x 76 -> 760</td><td>2720</td><td>1960</td><td>Only if 10 measure programs are active - one default instance per used ProcDataLocal_c or ProcDataLocalSimpleSetpoint_c instance</td></tr>
+<tr><td>MeasureProgLocal_c</td><td>10 x 76 -> 760</td><td>2720</td><td>1960</td><td>Only if 10 measure programs are active - one default instance per used IsoAgLib::ProcDataLocal_c or IsoAgLib::ProcDataLocalSimpleSetpoint_c instance</td></tr>
 
 <tr><td>DIN LBS+ Mask Synchronisation data</td><td>13 x 66 -> 858</td><td>2320</td><td>1462</td><td>Only if a LBS+ mask project shall be used.</td></tr>
-<tr><td>ISO Buffer of SendCommand_c</td><td> (only chunk allocation) </td><td>1284 ( chunk of 80 commands )</td><td>--</td><td>For buffer of SendCommand_c the malloc alloc is for most conditions not more efficient in HEAP use.</td></tr>
-<tr><td>ISO Buffer of SendUpload_c</td><td>2 x 32 -> 64</td><td>888</td><td>824</td><td>For buffer of SendUpload_c the malloc alloc is for most conditions more efficient in HEAP use.</td></tr>
+<tr><td>ISO Buffer of IsoAgLib::SendCommand_c</td><td> (only chunk allocation) </td><td>1284 ( chunk of 80 commands )</td><td>--</td><td>For buffer of IsoAgLib::SendCommand_c the malloc alloc is for most conditions not more efficient in HEAP use.</td></tr>
+<tr><td>ISO Buffer of IsoAgLib::SendUpload_c</td><td>2 x 32 -> 64</td><td>888</td><td>824</td><td>For buffer of IsoAgLib::SendUpload_c the malloc alloc is for most conditions more efficient in HEAP use.</td></tr>
 
 <tr><td><b>SUM DIN 9684</b></td><td><b>3322</b></td><td><b>10736</b></td><td><b>7414</b></td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
 
@@ -437,7 +451,14 @@ for integration.
 The following table shows the needed ROM without the program ROM amount, which is used by the STW BIOS ( tested with the Demo1_20 -> 50 KByte ).
 As the virtual terminal example 3_0_VirtualTerminalIso contains two bitmaps, its memory size is presented in additional column.<br>
 The 3_0_VirtualTerminalIso contains several mask objects, defines some handlers and imeplements one main mask and one alarm mask. Thus the size of the
-total project is caused by the mask elements to some degree.
+total project is caused by the mask elements to some degree.<br>
+Additionally the project contained the source files for all Virtual Terminal objects,
+even if only a few types are used and demonstrated. Thus you can reduce the ROM requirements by removing all unneeded graphic objects from your source file
+list ( all source files in <i>xgpl_src/IsoAgLib/comm/ISO_Terminal</i> are named corresponding to their name in the ISO 11783 standard ).<br>
+But please make shure, that you remove only files with the pattern (i)vtobject\<VtObject-Name\>_c.[cpp|h] where VtObject-Name is a VtObject that you don't need.
+Please also have a look at the <a href="inherits.html">graphic inheritance diagram</a> to avoid removal of classes, which are needed by classes which you
+use in your project ( e.g. don't remove vtobjectstring_c if you use vtobjectinputstring_c as the former is it's base class ).
+<br>
 <b>Important:</b><br>
 All values are are retrieved from LARGE memory modell project, which is compiled with Tasking EDE 7.56.<br>
 The real values might differ to some degree, as only the MAP file of the complete project was analysed. So if anybody has more exact measures, then please send them
@@ -488,7 +509,7 @@ The layered structure is described by the following diagram:
 			process			[label="Process Data\noptional", color="white", URL="\ref ProcDataPage",width=1.75 ];
 			system_mgmt	[label="System Management\npartly obligatory", color="cyan", URL="\ref SystemMgmtPage",width=1.75 ];
 			base				[label="Base Data\ncomplete optional", color="white", URL="\ref BaseDataPage",width=1.75 ];
-			comm_doc		[label="Communication Services for ISO 11783\nand/or DIN 9684",width=3.5];
+			comm_doc		[label="Communication Services for ISO 11783\nand/or DIN 9684",URL="\ref CommOverPage",width=3.5];
 		}
 
 		subgraph cluster_DriverExtensions {
@@ -497,9 +518,9 @@ The layered structure is described by the following diagram:
 			bgcolor=grey;
 			color="grey";
 			rank=same;
-			rs232_drv			[label="RS232\nSupplementary Driver\nwith IOSTREAMS Like\nRead/Write Access", color="white", URL="\ref iRS232IO_c"];
-			sensor_drv		[label="Sensor\nSupplementary Driver\nwith Scaling and Range-Check", color="white", URL="\ref iAnalogIRangeCheck_c"];
-			actor_drv			[label="Actor\nSupplementary Driver\nwith State Monitoring Functions", color="white", URL="\ref iDigitalO_c"];
+			rs232_drv			[label="RS232\nSupplementary Driver\nwith IOSTREAMS Like\nRead/Write Access", color="white", URL="\ref IsoAgLib::iRS232IO_c"];
+			sensor_drv		[label="Sensor\nSupplementary Driver\nwith Scaling and Range-Check", color="white", URL="\ref IsoAgLib::iAnalogIRangeCheck_c"];
+			actor_drv			[label="Actor\nSupplementary Driver\nwith State Monitoring Functions", color="white", URL="\ref IsoAgLib::iDigitalO_c"];
 			can_drv				[label="CAN\nIndividual Mask/Filter Settings\nfor Each Filterbox", color="yellow", URL="\ref IsoAgLib::iCANIO_c"];
 			eeprom_drv		[label="EEPROM\nIOSTREAMS Like Read/Write Access", color="yellow", URL="\ref IsoAgLib::iEEPROMIO_c"];
 			common_drv		[label="Common System Access\nGlobally Used", color="yellow", URL="\ref IsoAgLib::iSystem_c"];
@@ -517,7 +538,7 @@ The layered structure is described by the following diagram:
 			can_hal				[label="CAN", color="blue", URL="\ref hal/can.h",width=1.5];
 			eeprom_hal		[label="EEPROM\nStore Process Data, SelfConf SA, ...", color="blue", URL="\ref hal/eeprom.h",width=1.5];
 			common_hal		[label="Common System Access\nWatchdog, Time, ...", color="blue", URL="\ref hal/system.h",width=1.5];
-			hal_doc				[label="Map Platform Specific API\nto Unique API for IsoAgLib\n(Mapping during compile-time - no runtime-overhead)",width=3.5];
+			hal_doc				[label="Map Platform Specific API\nto Unique API for IsoAgLib\n(Mapping during compile-time - no runtime-overhead)",URL="\ref MainHalPage",width=3.5];
 		}
 		subgraph cluster_Hardware {
 			style="filled";
@@ -1148,7 +1169,7 @@ It is used by commercial IDEs like Borland C++ Builder 6 and Tasking EDE ( since
 
 Installation Steps:
 -# Download STLport from http://www.stlport.org/archive/STLport-4.6.2.tar.gz ( other versions at http://www.stlport.org/download.html )
--# extract to location like C:\\ ( or use other directory - then change the following examples according to your individual path )
+-# extract to location like <i>C:\\</i> ( or use other directory - then change the following examples according to your individual path )
 -# <b>rename directory C:\\STLport-4.6.2 to C:\\STLport , so that the scripts and automatically created paths needn't be adopted to new versions of STLport</b>
 -# Configure and install STLport
 	- with native IOSTREAMS of VC6 ( <b>recommended</b> ):<br>
@@ -1348,7 +1369,7 @@ Both modules support the usage of a thread based CAN receive, which can be activ
 setting of the #define USE_THREAD ( if it's undef -> no threading is used ).
 The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as follows:<ol>
 <li>Download either the current <b>CANLIB</b> or <b>XL Driver Library</b> driver
-<li>Install the driver with the <i>SETUP.EXE</i> to the directory C:\\Development ( <b>don't rename the contained
+<li>Install the driver with the <i>SETUP.EXE</i> to the directory <i>C:\\Development\\CANLIB</i> ( <b>don't rename the contained
 		root directories <i>CANLIB</i> resp. <i>XL Driver Library</i> as the ISO<i><sub>AgLib</sub></i>
 		uses them </b> ; you can install to another location - but then you have to adopt the conf_* feature setup files
 		to your individual path before you execute the update_makefile.sh )
@@ -1357,8 +1378,8 @@ The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as fol
 			installation root ( <b>don't include the directory name part <i>CANLIB</i> resp. <i>XL Driver Library</i> </b> ) <br>
 			Example: <ul>
 			<li>You selected "C:/Development" during the execution of <i>SETUP.EXE</i>.
-			<li><i>SETUP.EXE</i> placed everything in the directory "C:/Development/CANLIB"
-					resp. "C:/Development/XL Driver Library"
+			<li><i>SETUP.EXE</i> placed everything in the directory <i>C:/Development/CANLIB</i>
+					resp. <i>C:/Development/XL Driver Library</i>
 			<li>Set both above mentioned variables to "C:/Development"
 			</ul>
 	<li>set the variable USE_CAN_DRIVER to either "vector_canlib" or "vector_xl"
@@ -1375,7 +1396,7 @@ The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as fol
 
 The integration of the Sontheim CAN card driver target_extension_can_w32_sontheim_canlpt.cpp is comparable to the Vector Informatik case. But here, Sontheim placed
 the API simply into a ZIP file which doesn't define a folder and doesn't provide a SETUP.EXE. Thus you should manually place the ZIP contents
-to the path <b>C:\\Development\\Sontheim</b> , if you want to use the provided tutorial example project files without the need to call update_makefile.sh
+to the path <b><i>C:\\Development\\Sontheim</i></b> , if you want to use the provided tutorial example project files without the need to call update_makefile.sh
 for creation of adopted project files.
 
 This strategy can be mapped to other Win32 or LINUX CAN cards as well. Please contact the
@@ -1471,8 +1492,8 @@ The following basic settings can be specified independend from hardware and feat
 		- <i>DEBUG_CAN_BUFFER_FILLING</i> for RS232 output of MAX amount of buffered CAN messages
 		                                  ( important to decide on amount of items in the BIOS/OS CAN receive buffer )
 		- <i>DEBUG_HEAP_USEAGE</i> for RS232 output of amount of bytes which are needed of one
-		                           item in the different types of dynamic lists: MsgObj_c , FilterBox_c , IsoItem_c , DinItem_c ,
-		                           MeasureSubprog_c , SetpointRegister ;
+		                           item in the different types of dynamic lists: IsoAgLib::MsgObj_c , IsoAgLib::FilterBox_c , IsoAgLib::IsoItem_c , IsoAgLib::DinItem_c ,
+		                           IsoAgLib::MeasureSubprog_c , SetpointRegister ;
 		                           additionally print calculated amount of HEAP memory which is used by the several types of
 		                           dynamic lists ( output on each list change )
 	- <b>PRJ_SEND_DEBUG</b> activate several IsoAgLib internal debugging on RS232
@@ -1595,7 +1616,7 @@ But the driver DLLs for Vector-Informatik CAN cards don't interact with Dev-C++ 
 So update_makefile.sh was extended to write DSP project files, which are meant for VC6 and can be imported
 into newer version of Microsoft Visual Studio VC++.<br>
 As VC6 version of the <b>S</b>tandard <b>T</b>emplate <b>L</b>ibrary is really not standard conformant, you need
-to install STLport as described in \ref Vc6StlPort. Please specify the path to STLport, if you didn't place it into C:\\ and rename STLport-3.6.2 to STLport:
+to install STLport as described in \ref Vc6StlPort. Please specify the path to STLport, if you didn't place it into <i>C:\\</i> and rename STLport-3.6.2 to STLport:
 	- <b>USE_STLPORT_HEADER_DIRECTORY</b> directory to the <i>stlport</i> directory within the STLport package - the C++ headers are located there
 	- <b>USE_STLPORT_LIBRARY_DIRECTORY</b> path to STLport libraries in case you selected the option to use the STLport version of IOSTREAMS ( and not the native version as advised by the doc at \ref Vc6StlPort )
 	    let empty if native IOSTREAMS library is used
@@ -1606,10 +1627,10 @@ ISO<i><sub>AgLib</sub></i> reflects this option. To ease directory management, I
 awaits the potentially parallel installed versions rooted in the same parent directory.<br>
 E.g when you selected "C:/Development" as base directory during the SETUP of both CAN program linbraries,
 you will get
-	- the CANLIB driver in "C:/Development/CANLIB"
-	- the XL Driver Library in "C:/Development/XL Driver Library"
+	- the CANLIB driver in <i>C:/Development/CANLIB</i>
+	- the XL Driver Library in <i>C:/Development/XL Driver Library</i>
 
-Manually extract the Sontheim API files to "C:/Development/Sontheim".
+Manually extract the Sontheim API files to <i>C:/Development/Sontheim</i>.
 
 Now ISO<i><sub>AgLib</sub></i> can access both of them if you specify:
 	- <b>USE_WIN32_LIB_DIRECTORY="C:/Development"</b>,
@@ -1692,8 +1713,8 @@ ISO_AG_LIB_PATH="../.."
 # - DEBUG_CAN_BUFFER_FILLING for RS232 output of MAX amount of buffered CAN messages
 #   ( important to decide on amount of items in the BIOS/OS CAN receive buffer )
 # - DEBUG_HEAP_USEAGE for RS232 output of amount of bytes which are needed of one
-#   item in the different types of dynamic lists: MsgObj_c , FilterBox_c , IsoItem_c , DinItem_c ,
-#   MeasureSubprog_c , SetpointRegister ;
+#   item in the different types of dynamic lists: IsoAgLib::MsgObj_c , IsoAgLib::FilterBox_c , IsoAgLib::IsoItem_c , IsoAgLib::DinItem_c ,
+#   IsoAgLib::MeasureSubprog_c , IsoAgLib::SetpointRegister_c ;
 #   additionally print calculated amount of HEAP memory which is used by the several types of
 #   dynamic lists ( output on each list change )
 # PRJ_DEFINES=""
@@ -1779,23 +1800,23 @@ PRJ_ISO11783=1
 
 # select the feature set of the wanted local process data
 
-# select standard local process data iProcDataLocal_c with
+# select standard local process data IsoAgLib::iProcDataLocal_c with
 # measure programs and enhanced management of received setpoints
 # PROC_LOCAL_STD=0
 
-# select iProcDataLocalSimpleMeasure_c for
+# select IsoAgLib::iProcDataLocalSimpleMeasure_c for
 # local process data without measure programs to reduce
 # HEAP useage ( all measurement programs are stored on HEAP, as
 # amount of active programs depend on remote ECUs )
 # PROC_LOCAL_SIMPLE_MEASURE=0
 
-# select iProcDataLocalSimpleSetpoint_c for
+# select IsoAgLib::iProcDataLocalSimpleSetpoint_c for
 # local process data without selective reaction on received setpoints
 # ( simply store received setpoints and automatically ACK the receive of
 #   a setpoint )
 # PROC_LOCAL_SIMPLE_SETPOINT=0
 
-# select iProcDataLocalSimpleSetpointSimpleMeasure_c for
+# select IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c for
 # local process data with smallest resource needs - and most
 # restricted feature set
 # PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=0
@@ -1805,7 +1826,7 @@ PRJ_ISO11783=1
 
 # select the feature set of the wanted remote process data
 
-# select iProcDataRemote_c for remote process data which can
+# select IsoAgLib::iProcDataRemote_c for remote process data which can
 # use measure programs to request periodic measurement value update
 # and which provides setpoint management which can detect current master
 # setpoint ( setpoint which is ACKed by commanded device ) and the self
@@ -1816,26 +1837,26 @@ PRJ_ISO11783=1
 # satisfy both )
 # PROC_REMOTE_STD=0
 
-# select iProcDataRemoteSimpleMeasure_c if capable setpoint management
+# select IsoAgLib::iProcDataRemoteSimpleMeasure_c if capable setpoint management
 # is needed, but simple one shot measurement value request is enough
 # ( reduce HEAP useage, as the potential parallel active increments are
 #   stored in dynamic lists at HEAP )
 # PROC_REMOTE_SIMPLE_MEASURE=0
 
-# select iProcDataRemoteSimpleSetpoint_c if measurement programs are needed,
+# select IsoAgLib::iProcDataRemoteSimpleSetpoint_c if measurement programs are needed,
 # but no or only simple setpoint control is wanted
 # ( reduce memory useage, as no management data is needed for detection
 #   of active setpoint in relation to own setpoint wish )
 # PROC_REMOTE_SIMPLE_SETPOINT=0
 
-# select iProcDataRemoteSimpleSetpointSimpleMeasure_c if only
+# select IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c if only
 # one shot measurement value requests and no setpoint handling is needed
-# ( in relation to iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c
+# ( in relation to IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c
 #   the single setpoint and the single measurement value can represent
 #   different values )
 # PROC_REMOTE_SIMPLE_MEASURE_SETPOINT=0
 
-# select iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c for
+# select IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c for
 # a very simple approach on remote process data.
 # This is only useful if no distinguishing between setpoint and measurement
 # value is needed
@@ -1863,18 +1884,18 @@ PRJ_ISO11783=1
 # standard C++ iostreams
 # PRJ_RS232=0
 
-# select iDigitalO_c ( one instance/variable of this class per channel )
+# select IsoAgLib::iDigitalO_c ( one instance/variable of this class per channel )
 # for digital On/Off input
 # ( provides automatic range check which uses diagnose function of HAL
 #  - BIOS/OS - to check if current is in allowed interval );
-# use iActorO_c for global access to all active iDigitalO_c instances
+# use IsoAgLib::iActorO_c for global access to all active IsoAgLib::iDigitalO_c instances
 # PRJ_SENSOR_DIGITAL=0
 
-# select iAnalogI_c for analog ( current or voltage ) sensor input.
-# or iAnalogIRangeCheck_c with enhanced automatic range check
+# select IsoAgLib::iAnalogI_c for analog ( current or voltage ) sensor input.
+# or IsoAgLib::iAnalogIRangeCheck_c with enhanced automatic range check
 # PRJ_SENSOR_ANALOG=0
 
-# select iCounterI_c for counter input.
+# select IsoAgLib::iCounterI_c for counter input.
 # the existing HAL implementations ( e.g. for ESX ) extend the BIOS/OS
 # function, as a IsoAgLib specific event counting for very low
 # event repetition rates is provided - the BIOS version is only
@@ -2230,12 +2251,49 @@ The ISO<i><sub>AgLib</sub></i> is running on the following systems (state 05 Apr
 
 \subsection InfReqCompiler Compiler
 The object oriented design of the ISO<i><sub>AgLib</sub></i> is implemented
-with C++ and uses the features namespaces and templates. The "Standard Template
-Library" (STL) is used as proven and high quality implementation of dynamic
-lists for monitor lists, process data, etc. .Therefore a modern (old versions
-often implement some parts wrong or produce bad code) C++ compiler is needed.
-Actual optimizing technologies allow program size and execution speed which
-is equivalent or better than comparable C implementations.<br>
+with C++ and uses the features <b>namespaces</b> and <b>templates</b>. The "Standard Template
+Library" (STL) is used as proven and high quality implementation of lists and corresponding standard
+algorithms, to avoid individual implementation of standard tasks which would be error prone and would
+cause a long work to find an optimal and efficient solution. Each STL element was chosen after a thorough
+analysis on runtime and RAM + ROM size overhead, so that an individual implementation would never be better.
+<br>
+The following parts of the STL are used:
+	- list ( list of nodes with <b>two</b> pointers overhead per stored data item, no reallocation needed,
+		navigation in both direction, direct access to first and last element, needed for FIFO buffer )
+	- slist ( list of nodes with <b>one</b> pointers overhead per stored data item, no reallocation needed,
+		navigation only from first to last element, direct access only to first; used for most cases as typical application is storage of
+		objects which are iterated from first to last element )
+	- vector ( array of items which must be reallocated as soon as the reserved capacity is used,
+		thus only used for storage of pointers where reallocation is relative cheap and one or two pointers per item would cause too much overhead )
+	- queue ( optional FIFO for spooling of items to ISO virtual terminal )
+	- find ( standardized and optimized algorithm for search in on of the containers list, slist, vector )
+	- distance and advance ( algorithms for efficient placement of iterators during copy actions )
+
+The ISO<i><sub>AgLib</sub></i> <b>doesn't use:</b>
+	- multiple inheritance ( as of 2004-12-09 )
+	- runtime type identification ( RTTI )
+	- exception handling
+
+Thus compilers which support the so called <b>Extended EC++</b> specification can be used, as long as they provide an adopted
+version of the STL.
+List of known <b>Extended EC++</b> aware Compilers ( please inform <a href="mailto:a.spangler@osb-ag:de">me</a> if you know other
+<b>Extended EC++</b> compilers which match these requirements ):
+	- <a href="http://www.iar.com/">IAR</a>
+	- ... ?
+
+<b>Important note on some compiler specific language extensions - anachronisms:</b><br>
+Compilers like Tasking Version 7.56 instantiate implicitly <b>static const</b> variables, so that
+the linker is disturbed by multiple definition of the corresponding symbols. This is not C++ standard conformant,
+as <b>static const</b> is the typesafe replacement of C-style #define constants.<br>
+So please make shure that you don't activate options of your compiler that would also instantiate variables/symbols for
+<b>static const</b> variables.
+<br>
+
+Optimizing technologies of modern compilers allow program size and execution speed which
+is equivalent or better than comparable C implementations. This is also true for the the several dynamic lists,
+where a constant sized array would net be flexible enough or an individual implementation of a dynamic data structure
+wouldn't be smarter than the STL counterpart.
+<br>
 Suitable compilers exists for processors with at least 16 Bit (e.g. the C16x
 series). For quick process data management (which are standardized as 32
 Bit values) and more flexible heap memory access, a 32 Bit processor is appropriate.
@@ -2251,12 +2309,7 @@ C++ front-end of <a href="http://www.edg.com">EDG</a>
  which have a customer reference list of some <a href="http://www.edg.com/customers.html">well known brands</a>
 .<br>
 As soon as a project is compiled by a C++ aware compiler, a project can integrate
-parts written in C and C++ without any problems.<br><h3>Memory</h3>
-Dependent on the intensity of process data use, the ISO<i><sub>AgLib</sub></i>
- needs in most cases less than 16 Kbytes of RAM. More detailed documentation
-has to be created with the new process data management, which doesn't occupy
-heap memory for unneeded functions like setpoint management, when only measurement
-values are communicated (new feature in 0.2.0).<br>
+parts written in C and C++ without any problems.<br>
 
 \subsection InfReqProgrammingSkills Programming Skills
 As long as the ISO<i><sub>AgLib</sub></i> should only be used as it is, without

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          target_extensions.h - header for ESX specific
+                          sensor_target_extensions.h - header for ESX specific
                                                 extensions for the HAL
                                                 for sensor input
                              -------------------
@@ -53,9 +53,9 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file IsoAgLib/hal/esx/system/system_target_extensions.h
+/** \file IsoAgLib/hal/esx/system/system_sensor_target_extensions.h
  * A module targetExtensions should be used
- * for all methods, which can't be simply 
+ * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .

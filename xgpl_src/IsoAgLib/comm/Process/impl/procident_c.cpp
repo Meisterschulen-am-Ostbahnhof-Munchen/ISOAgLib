@@ -1,5 +1,5 @@
 /***************************************************************************
-                          proc_ident.cc - identity of a process data instance
+                          procident_c.cpp - identity of a process data instance
                                           for easy search
                              -------------------
     begin                : Fri Apr 07 2000

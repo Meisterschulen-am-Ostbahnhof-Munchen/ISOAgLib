@@ -1,11 +1,11 @@
 /***************************************************************************
-                          counteri_c.cpp  -  implementation file for CounterI_c,
-                                           an object for digital sensor input
+                          cancustomer_c.cpp  -  implementation file for basic object
+                                            for customer relationship to one
+                                            or more FilterBox_c (-> CAN IO) instances
                              -------------------
-    begin                : Mon Oct 25 1999
+    begin                : Tue Aug 3 1999
     copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
-    type                 : Source
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,7 +20,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -81,125 +81,38 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include "counteri_c.h"
-#include "sensori_c.h"
 
+/* *************************************** */
+/* ********** include headers ************ */
+/* *************************************** */
+#include "cancustomer_c.h"
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
 /**
-  internal called constructor for a new digital input channel which performs configuration of hardware
-  (uses BIOS function)
-
-  possible errors:
-      * LibErr_c::Range wrong input number
-  @see SensorI_c::createCounter
-  @param rb_channel default-argument for setting hardware channel for this input
-  @param rui16_timebase default-argument for setting the timebase which should be
-          greater than max time distance between signals and should be small
-          enough to avoid overflow of signals in one timebase
-  @param rb_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-  @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
+  process a message -> the specialized/derived version of this virtual
+  function is called during processing of received CAN telegrams in CANIO_c::processMsg
+  @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
+  @see __IsoAgLib::CANIO_c::processMsg
 */
-CounterI_c::CounterI_c(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activHigh, bool rb_risingEdge)
-  : SensorBase_c(rb_channel, Sensor_c::counter){
-  if ( rb_channel != 0xFF ) init(rb_channel, rui16_timebase, rb_activHigh, rb_risingEdge);
-}
-/**
-  internal called constructor for a new digital input channel which performs configuration of hardware
-  (uses BIOS function)
-
-  possible errors:
-      * LibErr_c::Range wrong input number
-  @see SensorI_c::createCounter
-  @param rb_channel default-argument for setting hardware channel for this input
-  @param rui16_timebase default-argument for setting the timebase which should be
-          greater than max time distance between signals and should be small
-          enough to avoid overflow of signals in one timebase
-  @param rb_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-  @param rb_risingEdge true -> counter triggers on rising edge; else on falling edge
-*/
-void CounterI_c::init(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activHigh, bool rb_risingEdge )
-{
-  SensorBase_c::init(rb_channel, Sensor_c::counter);
-  // now init the digital input
-  if (HAL::init_counter(channelNr(), rui16_timebase, rb_activHigh, rb_risingEdge) == HAL_RANGE_ERR)
-  { // wrong input channel no
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
-  }
-  else
-  { // correct input channel no - now register the valid new analog input into SensorI_c
-    getSensorInstance().registerClient( this );
-  }
-}
-/**  destructor of the input object which can close explicit the hardware input */
-CounterI_c::~CounterI_c(){
-  // unregister element from SensorI_c
-  getSensorInstance().unregisterClient( this );
-}
-/**
-  check for the input value (uses BIOS function)
-  @return true for counter > 0
-*/
-bool CounterI_c::active() const {
-  return (val() > 0)?true:false;
-}
-/**
-  check for the input value (uses BIOS function)
-  @return amount of signals since initialisation or last reset
-*/
-int16_t CounterI_c::val() const {
-  return int16_t(HAL::getCounter(channelNr()));
-}
-/**
-  check for the input value (uses BIOS function)
-  @return amount of signals since initialisation or last reset
-*/
-int32_t CounterI_c::valLong(){
-  return HAL::getCounter(channelNr());
-}
-/**
-  reset the given counter
-
-  possible errors:
-      * LibErr_c::Range wrong input number
-*/
-void CounterI_c::reset()
-{
-  if (HAL::resetCounter(channelNr()))
-  { // wrong input channel no
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Sensor );
-  }
+bool CANCustomer_c::processMsg()
+{ // dummy function - just to allow classes to (inderectly) derive from
+	// CANCustomer_c without the need to implement this function
+	return false;
 }
 
 /**
-  get period of counter channel
-  @return time between last two signals or 0xFFFF if time is longer than initially
-           given timebase
+  virtual function which delivers a pointer to the CANCustomer
+  specific CANPkgExt_c instance
 */
-uint16_t CounterI_c::period()
-{
-  return HAL::getCounterPeriod(channelNr());
+CANPkgExt_c& CANCustomer_c::dataBase()
+{ // dummy function - just to allow classes to (inderectly) derive from
+	// CANCustomer_c without the need to implement this function
 }
 
-/**
-  get frequency of counter channel
-  @return frequency calculated from time between last two signals
-          or 0 if time is longer than initially given timebase
-*/
-uint16_t CounterI_c::frequency()
-{
-  return HAL::getCounterFrequency(channelNr());
-}
-
-/**
- get time since last signal
- @return time since last signal [msec.]
-*/
-uint32_t CounterI_c::lastSignalAge()
-{
-  return HAL::getCounterLastSignalAge(channelNr());
+/** virtual destructor */
+CANCustomer_c::~CANCustomer_c()
+{ // dummy function - just to allow classes to (inderectly) derive from
+	// CANCustomer_c without the need to implement this function
 }
 
 } // end of namespace __IsoAgLib

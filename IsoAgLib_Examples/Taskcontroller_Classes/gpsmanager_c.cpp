@@ -1,5 +1,5 @@
 /***************************************************************************
-                          gps_manager.cc  -  description
+                          gpsmanager_c.cpp  -  description
                              -------------------
     begin                : Tue Jul 18 2000
     copyright            : (C) 2000 by Dipl.-Inform. Achim Spangler

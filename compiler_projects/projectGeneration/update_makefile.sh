@@ -474,7 +474,7 @@ function create_filelist( )
     DRIVER_FEATURES="$DRIVER_FEATURES -o -name '*analogi*'"
   fi
   if [ $PRJ_SENSOR_COUNTER -gt 0 ] ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -name '*counteri.*'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -name '*counteri*'"
   fi
 	if test $PRJ_SENSOR_DIGITAL -gt 0 -o $PRJ_SENSOR_ANALOG -gt 0 -o $PRJ_SENSOR_COUNTER -gt 0 ; then
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/sensor/*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'"
@@ -853,29 +853,18 @@ function create_autogen_project_config()
 
 
 
-	#echo "/**" > $CONFIG_HEADER_DOXYGEN_READY
-	#echo "* \section PrjConfig$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >> $CONFIG_HEADER_DOXYGEN_READY
-	#echo "* This is only a copy with doxygen ready comment blocks from the original file $CONFIG_NAME " >> $CONFIG_HEADER_DOXYGEN_READY
-	#echo "* This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the" >> $CONFIG_HEADER_DOXYGEN_READY
-	#echo "* project define #define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h" >> $CONFIG_HEADER_DOXYGEN_READY
-	#echo "*" >> $CONFIG_HEADER_DOXYGEN_READY
-	#echo "* Use the file $CONFIG_NAME in this directory as input file for $0 to create the project generation files." >> $CONFIG_HEADER_DOXYGEN_READY
-	#echo "*/" >> $CONFIG_HEADER_DOXYGEN_READY
-	#echo "/*@{*/" >> $CONFIG_HEADER_DOXYGEN_READY
-	#cat $CONFIG_NAME >> $CONFIG_HEADER_DOXYGEN_READY
-	#echo "/*@}*/" >> $CONFIG_HEADER_DOXYGEN_READY
-
-	echo -e "$ENDLINE$ENDLINE \section PrjConfig$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_HEADER_DOXYGEN_READY
+	echo -e "$ENDLINE$ENDLINE \section PrjConfig$PROJECT List of configuration settings for $PROJECT" > $CONFIG_HEADER_DOXYGEN_READY
 	echo " This is only a copy with doxygen ready comment blocks from the original file $CONFIG_NAME " >> $CONFIG_HEADER_DOXYGEN_READY
 	echo " This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the" >> $CONFIG_HEADER_DOXYGEN_READY
-	echo " project define #define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h" >> $CONFIG_HEADER_DOXYGEN_READY
+	echo " project define #define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h ( Important: place the directory of the application source files in the include search path )" >> $CONFIG_HEADER_DOXYGEN_READY
 	echo "" >> $CONFIG_HEADER_DOXYGEN_READY
-	echo " Use the file $CONFIG_NAME in this directory as input file for $0 to create the project generation files." >> $CONFIG_HEADER_DOXYGEN_READY
+	echo " Use the file $CONF_FILE in the directory $1 as input file for $0 to create the project generation files." >> $CONFIG_HEADER_DOXYGEN_READY
 	echo "\code" >> $CONFIG_HEADER_DOXYGEN_READY
 	cat $CONFIG_NAME >> $CONFIG_HEADER_DOXYGEN_READY
 	echo "\endcode" >> $CONFIG_HEADER_DOXYGEN_READY
 
 
+  # go back to directory where config file resides
 	cd $1
 }
 
@@ -1687,7 +1676,7 @@ if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
 	#echo "/**" > $CONFIG_SPEC_DOXYGEN_READY
 	#echo "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >> $CONFIG_SPEC_DOXYGEN_READY
 	#echo "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ " >> $CONFIG_SPEC_DOXYGEN_READY
-	#echo "* Use the file $CONF_FILE in this directory as inout file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
+	#echo "* Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
 	#echo "*/" >> $CONFIG_SPEC_DOXYGEN_READY
 	#echo "/*@{*/" >> $CONFIG_SPEC_DOXYGEN_READY
 #	cat $CONF_FILE >> $CONFIG_SPEC_DOXYGEN_READY
@@ -1698,7 +1687,7 @@ if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
 
 	echo -e "$ENDLINE$ENDLINE \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
 	echo " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ " >> $CONFIG_SPEC_DOXYGEN_READY
-	echo " Use the file $CONF_FILE in this directory as inout file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
+	echo " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
 	echo "\code" >> $CONFIG_SPEC_DOXYGEN_READY
 	sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $SCRIPT_DIR/$CONF_FILE > /tmp/$CONF_BASE
 	cat /tmp/$CONF_BASE >> $CONFIG_SPEC_DOXYGEN_READY

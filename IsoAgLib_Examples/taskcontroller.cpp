@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          taskcontroller.cc - tutorial for pure ISO address claim
+                          taskcontroller.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example taskcontroller.cc
+/** \example taskcontroller.cpp
  * This tutorial shall provide a simple base program, which creates some
  * remote process data, for which a measurement program is started for
  * automatic periodic value update.
@@ -179,7 +179,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_taskcontroller ( see also at \ref PrjConfigtaskcontroller__esx__sys__sys ).
+ * config_taskcontroller ( see also at \ref PrjConfigtaskcontroller ).
  *                                                                         */
 /* *************************************************************************/
 
@@ -663,7 +663,7 @@ bool check_for_imi()
 			  c_listDeviceData.erase(pc_iter_del);
 */      pc_iter->deactivate();
         c_listDeviceData.erase(pc_iter);
-       
+
         b_repeat = true;
         break; // skip here and iterate all again!
 		  }

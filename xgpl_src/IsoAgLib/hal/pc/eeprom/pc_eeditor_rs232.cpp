@@ -1,11 +1,11 @@
 /***************************************************************************
-                          pc_eeditorRs232.cc  - source for the PSEUDO BIOS 
-                                        RS232 EEPROM Editor module for 
+                          pc_eeditor_rs232.cpp  - source for the PSEUDO BIOS
+                                        RS232 EEPROM Editor module for
                                        development and test on a PC
-                             -------------------                                         
-    begin                : Wed Aug 4 1999                                           
-    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+                             -------------------
+    begin                : Wed Aug 4 1999
+    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          ident_item.cc - object for managing identity/ies
+                          identitem_c.cpp - object for managing identity/ies
                                           of the ECU
                              -------------------
     begin                : Fri Apr 07 2000

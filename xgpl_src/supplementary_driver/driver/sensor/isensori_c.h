@@ -1,5 +1,5 @@
 /***************************************************************************
-                          isensor_i.h  -  header for the sensor input management object
+                          isensori_c.h  -  header for the sensor input management object
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
@@ -54,11 +54,11 @@
 #ifndef ISENSOR_I_H
 #define ISENSOR_I_H
 
-#include "impl/sensor_i.h"
-#include "ianalog_i.h"
-#include "idigital_i.h"
-#include "icounter_i.h"
-#include "isensor.h"
+#include "impl/sensori_c.h"
+#include "ianalogi_c.h"
+#include "idigitali_c.h"
+#include "icounteri_c.h"
+#include "isensor_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -88,7 +88,7 @@ public:
     @param rb_counterLast greatest allowed counter input channel number (COUNTER_INPUT_MAX)
     @see masterHeader
   */
-  init(uint8_t rb_digitalFirst = DIGITAL_INPUT_MIN, uint8_t rb_digitalLast = DIGITAL_INPUT_MIN,
+  void init(uint8_t rb_digitalFirst = DIGITAL_INPUT_MIN, uint8_t rb_digitalLast = DIGITAL_INPUT_MIN,
             uint8_t rb_analogFirst = ANALOG_INPUT_MIN, uint8_t rb_analogLast = ANALOG_INPUT_MAX,
            uint8_t rb_counterFirst = COUNTER_INPUT_MIN, uint8_t rb_counterLast = COUNTER_INPUT_MAX)
   { init(rb_digitalFirst, rb_digitalLast, rb_analogFirst, rb_analogLast,rb_counterFirst, rb_counterLast);};
@@ -176,7 +176,7 @@ public:
     @return reference to the wanted analog sensor input channel
     @exception containerElementNonexistant
   */
-  iAnalogI_c& analog(uint8_t rb_channel) {return static_cast<iAnalogI_c&>(SensorI_c::analog(rb_channel));};
+  iAnalogI_c& analog(uint8_t rb_channel) {return (iAnalogI_c&)(SensorI_c::analog(rb_channel));};
   /**
     deliver reference to requested digital channel object to access this sensor input;
     IMPORTANT: an digital input channel object with the wanted number must exist
@@ -194,7 +194,7 @@ public:
     @return reference to the wanted digital sensor input channel
     @exception containerElementNonexistant
   */
-  iDigitalI_c& digital(uint8_t rb_channel) {return static_cast<iDigitalI_c&>(SensorI_c::digital(rb_channel));};
+  iDigitalI_c& digital(uint8_t rb_channel) {return (iDigitalI_c&)(SensorI_c::digital(rb_channel));};
   /**
     deliver reference to requested counter channel object to access this sensor input;
     IMPORTANT: an counter input channel object with the wanted number  must exist
@@ -212,16 +212,12 @@ public:
     @return reference to the wanted counter sensor input channel
     @exception containerElementNonexistant
   */
-  iCounterI_c& counter(uint8_t rb_channel) {return static_cast<iCounterI_c&>(SensorI_c::counter(rb_channel));};
+  iCounterI_c& counter(uint8_t rb_channel) {return (iCounterI_c&)(SensorI_c::counter(rb_channel));};
 private:
   /** allow getIsensorInstance() access to shielded base class.
       otherwise __IsoAgLib::getIsensorInstance() wouldn't be accepted by compiler
     */
   friend iSensorI_c& getIsensorInstance( void );
-  /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of iSensorI_c within application
-    */
-  iSensorI_c( void ) : SensorI_c() {};
 };
 
 /** C-style function, to get access to the unique iSensorI_c singleton instance */

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          din_maskupload.cc - special class to handle GPS
+                          dinmaskupload_c.cpp - special class to handle GPS
                                        informations
                              -------------------
     begin                : Fri Sep 28 2001

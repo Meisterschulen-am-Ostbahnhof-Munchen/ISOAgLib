@@ -1,5 +1,5 @@
 /***************************************************************************
-                          filter_box.h  - Filter_Box_c permits free definition
+                          filterbox_c.h  - Filter_Box_c permits free definition
                                           of mask/filter for receiving CAN
                                           telegrams by a CANCustomer
                                           (or derived) object

@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          1_4_WriteFlexibleIso.cc - tutorial for pure ISO address claim
+                          1_4_WriteFlexibleIso.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 1_4_WriteFlexibleIso.cc
+/** \example 1_4_WriteFlexibleIso.cpp
  * This tutorial shall provide the simples base program, which checks first
  * if another ECU is sending the calendar information. If after some time
  * no ECU is sending calendar, then this ECU starts sending calendar.
@@ -177,7 +177,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_1_4_WriteFlexibleIso ( see also at \ref PrjConfig1_4_WriteFlexibleIso__esx__sys__sys ).
+ * config_1_4_WriteFlexibleIso ( see also at \ref PrjConfig1_4_WriteFlexibleIso ).
  *                                                                         */
 /* *************************************************************************/
 

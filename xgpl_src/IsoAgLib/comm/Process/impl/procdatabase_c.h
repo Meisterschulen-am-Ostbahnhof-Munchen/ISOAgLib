@@ -1,7 +1,7 @@
 /***************************************************************************
                           procdatabase_c.h  - base class for local
-                                                     or remote process data
-                                                     object
+                                              or remote process data
+                                              object
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler

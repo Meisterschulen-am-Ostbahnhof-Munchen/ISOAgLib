@@ -1,5 +1,5 @@
 /***************************************************************************
-                          eeprom_io.h  -  header for EEPROM_IO_c object
+                          eepromio_c.h  -  header for EEPROM_IO_c object
                                           for communication with EEPROM
                              -------------------
     begin                : Mon Oct 25 1999
@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef EEPROM_IO_H
@@ -97,16 +97,16 @@
 
 
 // workaround for 8.0Beta bug
-#if defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__) 
+#if defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__)
 	#include <stl/_string.h>
-#else  
+#else
 	#include <string>
-#endif  
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class GetyPos_c;
-  
+
 /**
   object for communication with the EEPROM,
   stream read/write operators for all basic types;
@@ -142,7 +142,7 @@ public:
   /**
     set the write position in EEPROM (in Byte); answer if possible
     if rui16_adress exceeds EEPROM memory ignore setting and set range
-  
+
     possible errors:
         * range rui16_adress outer the limits of EEPROM memory
 
@@ -153,7 +153,7 @@ public:
   /**
     set the read position in EEPROM (in Byte); answer if possible
     if rui16_adress exceeds EEPROM memory ignore setting and set range
-  
+
     possible errors:
         * range rui16_adress outer the limits of EEPROM memory
 
@@ -167,7 +167,7 @@ public:
     @return position of write mark [uint8_t]
   */
   inline uint16_t tellp(){return ui16_wPosition;};
-  
+
   /**
     get the read position in EEPROM (in Byte)
     @return position of read mark [uint8_t]
@@ -178,7 +178,7 @@ public:
     check if write position is at end of EEPROM
     (parameter specifies needed length for operation
     -> false means that enough space is there for length bytes of data)
-  
+
     possible errors:
         * range if rb_setState == true and actual write position is nearer to end of EEPROM than rui8_length byte
 
@@ -192,7 +192,7 @@ public:
     check if read position is at end of EEPROM
     (parameter specifies needed length for operation
     -> false means that enough space is there for length bytes of data)
-  
+
     possible errors:
         * range if rb_setState == true and actual read position is nearer to end of EEPROM than rui8_length byte
 
@@ -211,7 +211,7 @@ public:
     write a value to EEPROM from actual write position on (tellp() )
     by use of template mechanism the correct write implementation is generted
     for the given parameter type
-  
+
     possible errors:
         * range writing position exceeds end of EEPROM
         * busy the EEPROM was busy with another action
@@ -226,7 +226,7 @@ public:
     EEPROMIO_c& operator<<(const T& rTemlpateVal){return writeIntern(((uint8_t*)(&rTemlpateVal)), sizeof(T));}
   /**
     write a text string value to EEPROM from actual write position on (tellp() )
-    
+
     possible errors:
         * range writing position exceeds end of EEPROM
         * busy the EEPROM was busy with another action
@@ -240,7 +240,7 @@ public:
   inline EEPROMIO_c& operator<<(const cc_string& rrefc_val);
   /**
     write a uint8_t string value to EEPROM from actual write position on (tellp() )
-    
+
     possible errors:
         * range writing position exceeds end of EEPROM
         * busy the EEPROM was busy with another action
@@ -262,7 +262,7 @@ public:
     read a value to EEPROM from actual write position on (tellg() )
     by use of template mechanism the correct read implementation is generted
     for the given parameter type
-  
+
     possible errors:
         * range reading position exceeds end of EEPROM
         * busy the EEPROM was busy with another action
@@ -278,7 +278,7 @@ public:
 
   /**
     read operator for strings with given length; uses BIOS function
-  
+
     possible errors:
         * range reading position exceeds end of EEPROM
         * busy the EEPROM was busy with another reading action
@@ -310,7 +310,7 @@ private:
 
   /**
     init for single write operation, check if write is possible; uses BIOS function
-  
+
     possible errors:
         * busy other task communicates with EEPROM
         * unspecified low level SPI EEPROM communication doesn't work
@@ -335,7 +335,7 @@ private:
   /**
     write the template parameter value at given position to EEPROM,
     return true if successfull
-  
+
     possible errors:
         * range writing exceeds EEPROM memory
         * busy other task communicates with EEPROM
@@ -351,7 +351,7 @@ private:
 
   /**
     write the pointed data string to eeprom; uses BIOS function
-  
+
     possible errors:
         * range writing exceeds EEPROM memory
         * busy other task communicates with EEPROM
@@ -379,7 +379,7 @@ private:
   EEPROMIO_c& writeIntern(const uint8_t* rpb_data, uint8_t rui8_len);
   /**
     read from actual read position wanted amount of data in to pointer
-    
+
     possible errors:
         * range writing exceeds EEPROM memory
         * busy other task communicates with EEPROM
@@ -413,7 +413,7 @@ private:
 
 /**
   write a text string value to EEPROM from actual write position on (tellp() )
-  
+
   possible errors:
       * range writing position exceeds end of EEPROM
       * busy the EEPROM was busy with another action
@@ -439,7 +439,7 @@ inline EEPROMIO_c& EEPROMIO_c::operator<<(const cc_string& rrefc_val)
 /**
   write the template parameter value at given position to EEPROM,
   return true if successfull
-  
+
   possible errors:
       * range writing exceeds EEPROM memory
       * busy other task communicates with EEPROM

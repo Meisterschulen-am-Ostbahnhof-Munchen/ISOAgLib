@@ -1,5 +1,5 @@
 /***************************************************************************
-                          msgObj.cc  -  MsgObj_c encapsulate a hardware CAN Msg
+                          msgobj_c.cpp  -  MsgObj_c encapsulate a hardware CAN Msg
                                          Object, to present a standard interaction
                                          with CAN for all platforms
                              -------------------

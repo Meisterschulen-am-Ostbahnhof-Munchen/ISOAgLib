@@ -1,5 +1,5 @@
 /***************************************************************************
-                          target_extensions.h - header for IMI specific
+                          system_target_extensions.h - header for IMI specific
                                                 extensions for the HAL
                                                 for central system
                              -------------------
@@ -53,9 +53,9 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file IsoAgLib/hal/imi/system/system_target_extensions.h
+/** \file IsoAgLib/hal/imi/system/system_system_target_extensions.h
  * A module targetExtensions should be used
- * for all methods, which can't be simply 
+ * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
@@ -88,7 +88,7 @@ bool isSystemOpened( void );
   check if the D+ signal is active
   @return 1 (== ON) -> the CAN BUS is still active
 */
-int16_t getOn_offSwitch(void); 
+int16_t getOn_offSwitch(void);
 
 /**
   configure the watchdog of the system with the

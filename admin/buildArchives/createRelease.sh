@@ -24,7 +24,7 @@ echo $CMDLINE | sh
 
 
 # B) Create Doc
-#doxygen Doxyfile
+doxygen Doxyfile
 
 # B) Build Packages
 cd $START

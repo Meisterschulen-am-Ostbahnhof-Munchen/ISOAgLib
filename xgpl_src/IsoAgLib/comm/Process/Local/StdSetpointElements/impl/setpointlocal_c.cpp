@@ -1,5 +1,5 @@
 /***************************************************************************
-                          setpointLocal.cc - object for managing setpoints
+                          setpointlocal_c.cpp - object for managing setpoints
                                               commanded from remote to local
                                               process data objects
                              -------------------
@@ -196,7 +196,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
   else
   {
     sui16_setpointLocalTotal += ( vec_prog().size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
-  
+
 	  getRs232Instance()
 		  << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
   }
@@ -222,7 +222,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
 SetpointLocal_c::~SetpointLocal_c(){
   #ifdef DEBUG_HEAP_USEAGE
   sui16_setpointLocalTotal -= ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
-  
+
   getRs232Instance()
   << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
   #endif
@@ -346,7 +346,7 @@ void SetpointLocal_c::setMasterVal( int32_t ri32_val)
     else
     {
       sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
-  
+
 	    getRs232Instance()
 		    << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
     }
@@ -577,7 +577,7 @@ bool SetpointLocal_c::timeEvent( void ){
           vec_register.erase( pc_iter);
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
-  
+
           getRs232Instance()
  	          << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
           #endif
@@ -606,7 +606,7 @@ bool SetpointLocal_c::timeEvent( void ){
           pc_master = vec_register.end(); // register that no acive master defined
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
-  
+
           getRs232Instance()
  	          << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
           #endif
@@ -695,7 +695,7 @@ void SetpointLocal_c::processSet(){
       else
       {
         sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
-  
+
 	      getRs232Instance()
 		      << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
       }

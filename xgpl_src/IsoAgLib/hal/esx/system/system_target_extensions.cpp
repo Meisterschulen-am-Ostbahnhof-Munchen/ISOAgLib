@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensions.cc - source for ESX specific
+                          system_target_extensions.cpp - source for ESX specific
                                                  extensions for the HAL
                                                  for central system
                              -------------------
@@ -55,7 +55,7 @@
 /* ********************************************************** */
 /** \file IsoAgLib/hal/esx/system/SystemTargetExtensions.cc
  * A module targetExtensions should be used
- * for all methods, which can't be simply 
+ * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
@@ -69,7 +69,7 @@ namespace __HAL {
 extern "C" {
   /** include the BIOS specific header with the part for CAN into __HAL */
   #include <commercial_BIOS/bios_esx/Xos20esx.h>
-  
+
   #ifdef _INIT_BABYBOARD_
   #include <commercial_BIOS/bios_esx/Module/xma20.h>
   #endif
@@ -160,7 +160,7 @@ int16_t configWatchdog()
       CONFIG_RELAIS,
       CONFIG_RESET
   };
-  #endif  
+  #endif
 
   return config_wd(&t_watchdogConf);
 }

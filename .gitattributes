@@ -1355,6 +1355,7 @@ xgpl_src/IsoAgLib/util/icancustomer_c.h -text
 xgpl_src/IsoAgLib/util/icanpkg_c.h -text
 xgpl_src/IsoAgLib/util/icanpkgext_c.h -text
 xgpl_src/IsoAgLib/util/igetypos_c.h -text
+xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp -text
 xgpl_src/IsoAgLib/util/impl/cancustomer_c.h -text
 xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp -text
 xgpl_src/IsoAgLib/util/impl/canpkg_c.h -text

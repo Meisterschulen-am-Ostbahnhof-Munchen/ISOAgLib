@@ -1,5 +1,5 @@
 /***************************************************************************
-                          system_c.h  - central IsoAgLib system management
+                          systemmgmt_c.h  - central IsoAgLib system management
                                           object which manages own idents
                                           and delivers information to own
                                           and other services and members

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          gps_manager.h  -  description
+                          gpsmanager_c.h  -  description
                              -------------------
     begin                : Tue Jul 18 2000
     copyright            : (C) 2000 by Dipl.-Inform. Achim Spangler

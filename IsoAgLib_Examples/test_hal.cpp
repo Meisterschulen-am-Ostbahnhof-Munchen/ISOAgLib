@@ -1,10 +1,10 @@
 /* *************************************************************************
-                          test_hal.cc  - main application to test HAL
-                             -------------------                                         
+                          test_hal.cpp  - main application to test HAL
+                             -------------------
     begin                : Mon Okt 16 08:00:00 CEST 2000
-                                           
-    copyright            : (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+
+    copyright            : (C) 2000 - 2004 Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /* *************************************************************************
@@ -63,31 +63,13 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example imi.cc
- * This example claims an address for an IMI on Scheduler_c, requests the member
- * names of the other systems after succeded address claim and create the
- * local process data that should be recorded. All informations including
- * GETY_POS, name, transport-or-not and working width are read from EEPROM.
- * If hitch position is not available in Scheduler_c base data, the information is
- * requested as propietary process data from task controller (needed for
- * Scheduler_c retrofit system within research).
- * This leads to the solution: "one binary fits all"
- *
- * <h1>Needed Modules</h1>
- * This example needs the following source modules<ul>
- * <li>lbsLibModuleBase
- * <li>lbsLibModuleProcess
- * <li>lbsLibModuleEeprom
- * <li>lbsLibModuleVirttermDin (optional!!)
- * <li>lbsLibModuleIso11783 (optional!)
- * </ul>
- * <H1>Appropriate Config Settings in isoaglib_config.h</H1>
- * This example needs the following active config constants in the
- * Modulesection of isoaglib_config.h<ul>
- * <li>USE_PROCESS (undefine SIMPLE_SETPOINT)
- * <li>USE_EEPROM_IO
- * <li>USE_ISO_11783 (optional!)
- * </ul>.                                                                  */
+/** \example test_hal.cpp
+ * This example was written to check most of the HAL functions. It was used
+ * for the adoption of the mitron167 hal. You may use this also for test and
+ * creation of new HAL sets. Please contribute your extensions to the
+ * IsoAgLib mailing list, so that this example can get a real testsuite for
+ * HAL adoption.
+ *                                                                         */
 /* *************************************************************************/
 
 // include the central interface header for the hardware adaption layer part
@@ -124,10 +106,10 @@ int main()
   HAL::open_system();
   // init RS232
   HAL::init_rs232( 19200, 5, 1, false );
-  
+
   __IsoAgLib::Ident_c::identType_t t_initType[2] = { __IsoAgLib::Ident_c::StandardIdent,
-                                 __IsoAgLib::Ident_c::ExtendedIdent }; 
-  
+                                 __IsoAgLib::Ident_c::ExtendedIdent };
+
   for ( uint8_t ind = 0; ind < 2 ; ind++ ) {
 	  // init CAN1
 	  HAL::can_configGlobalInit( ind, ( 125 * ( ind + 1 ) ), 0, 0, 0 );
@@ -138,7 +120,7 @@ int main()
 	  HAL::can_configMsgobjInit( ind, 1, c_tempIdent, 0 );
 	  // close CAN
 	  HAL::can_configGlobalClose( ind );
-    
+
 	  // init CAN1
 	  HAL::can_configGlobalInit( ind, ( 125 * ( ind + 1 ) ), 0, 0, 0 );
 	  // send MsgObj
@@ -147,7 +129,7 @@ int main()
 	  HAL::can_configMsgobjInit( ind, 1, c_tempIdent, 0 );
 	  // close CAN
 	  HAL::can_configGlobalClose( ind );
-    
+
 	  // init again - to test masks
 	  HAL::can_configGlobalInit( ind, ( 125 * ( ind + 1 ) ), 0x7, 0x7F00000, 0 );
 	  HAL::can_configMsgobjInit( ind, 0, c_tempIdent, 1 );
@@ -188,7 +170,7 @@ int main()
 	  // 10th receive Obj
 	  c_tempIdent.set( 0x040, t_initType[ind] );
 	  HAL::can_configMsgobjInit( ind, 10, c_tempIdent, 0 );
-    
+
     // wait for 3 sec
     int32_t i32_delayEnd = HAL::getTime() + 3000;
     int32_t indTest = 0;
@@ -257,7 +239,7 @@ int main()
       i32_nextPrint = HAL::getTime() + 1000;
       ui32_t5 = T5;
       ui32_test = ( ( ( ui32_t5 << 16 ) | ( T6 ) ) / 39 );
-  	  sprintf( testString, "Test time %ld\tT5: %u\tT6: %u\t TestZeit:%ld\tLow Level Time: %ld\n\r", 
+  	  sprintf( testString, "Test time %ld\tT5: %u\tT6: %u\t TestZeit:%ld\tLow Level Time: %ld\n\r",
   	    HAL::getTime(), T5, T6, ui32_test, _time( 0 ) );
       HAL::put_rs232String( (const uint8_t*)testString );
       for ( uint8_t ind = 0; ind < 6; ind++ ) {

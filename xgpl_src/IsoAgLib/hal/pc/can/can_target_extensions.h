@@ -1,5 +1,5 @@
 /***************************************************************************
-                          target_extensions.h - header for PC specific
+                          can_target_extensions.h - header for PC specific
                                                 extensions for the HAL
                                                 for CAN
                              -------------------

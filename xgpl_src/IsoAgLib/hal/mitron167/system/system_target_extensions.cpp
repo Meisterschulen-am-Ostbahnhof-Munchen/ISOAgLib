@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensions.cc - source for ESX specific
+                          system_target_extensions.cpp - source for ESX specific
                                                  extensions for the HAL
                                                  for central system
                              -------------------

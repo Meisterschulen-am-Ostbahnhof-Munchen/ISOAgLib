@@ -1,5 +1,5 @@
 /***************************************************************************
-                          setpointRemote.cc - object for commanding remote
+                          setpointremote_c.cpp - object for commanding remote
                                                process data objects
                              -------------------
     begin                : Fri Apr 07 2000

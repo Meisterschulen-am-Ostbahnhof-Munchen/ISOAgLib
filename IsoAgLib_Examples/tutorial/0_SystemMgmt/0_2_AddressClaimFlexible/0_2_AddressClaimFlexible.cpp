@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          0_2_AddressClaimFlexible.cc
+                          0_2_AddressClaimFlexible.cpp
 														- tutorial for state dependend address claim as
 															DIN 9684 or ISO 11783 device
                              -------------------
@@ -52,7 +52,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 0_2_AddressClaimFlexible.cc
+/** \example 0_2_AddressClaimFlexible.cpp
  * This tutorial shall provide the simples base program, which
  * can decide on some logical check, if it shall be active on BUS
  * as ISO 11783 or DIN 9684 device. This could be used to
@@ -172,7 +172,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_0_2_AddressClaimFlexible ( see also at \ref PrjConfig0_2_AddressClaimFlexible__esx__sys__sys ).
+ * config_0_2_AddressClaimFlexible ( see also at \ref PrjConfig0_2_AddressClaimFlexible ).
  *                                                                         */
 /* *************************************************************************/
 

@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          0_4_LookupDin.cc - tutorial for lookup for remote DIN ECU
+                          0_4_LookupDin.cpp - tutorial for lookup for remote DIN ECU
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 0_4_LookupDin.cc
+/** \example 0_4_LookupDin.cpp
  * This tutorial presents how to check for the existance of another
  * member on the BUS. This lookup can be based independend from the
  * active protocol on the device type specification with IsoAgLib::iGetyPos_c .
@@ -180,7 +180,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_0_4_LookupDin ( see also at \ref PrjConfig0_4_LookupDin__esx__sys__sys ).
+ * config_0_4_LookupDin ( see also at \ref PrjConfig0_4_LookupDin ).
  *                                                                         */
 /* *************************************************************************/
 

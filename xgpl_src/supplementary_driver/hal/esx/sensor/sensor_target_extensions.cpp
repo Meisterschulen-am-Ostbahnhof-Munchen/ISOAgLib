@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensions.cc - some extensions to the used
+                          sensor_target_extensions.cpp - some extensions to the used
                                              BIOS; for adaptions to the
                                              needed BIOS functions which
                                              can't be implemented in inline
@@ -221,7 +221,7 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
    *  of int32_t -> avoid memory waste
    */
   if (_pulDiginCounter[(rb_channel / 4)] == NULL)
-  { /* according 4-group of uint32_t isn´t created -> allocate */
+  { /* according 4-group of uint32_t isn't created -> allocate */
     _pulDiginCounter[(rb_channel / 4)] = (uint32_t*)std::malloc(4*sizeof(uint32_t));
     /* check if allocated properly and init */
     if (_pulDiginCounter[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
@@ -242,11 +242,11 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
   }
 
   if (i32_prescale > 1024)
-  { /* standard BIOS frequency and period methods doesn´t fir for
+  { /* standard BIOS frequency and period methods doesn't fir for
      * the wanted timebase -> use extension functions -> allocate needed vars
      */
     if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL)
-    {  /* according 4-group of t_triggerNode isn´t created -> allocate */
+    {  /* according 4-group of t_triggerNode isn't created -> allocate */
       _pt_diginTriggerTime[(rb_channel / 4)] = (t_triggerNode*)std::malloc(4*sizeof(t_triggerNode));
       if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
       else CNAMESPACE::memset(_pt_diginTriggerTime[(rb_channel / 4)], 0, sizeof(t_triggerNode) * 4);
@@ -272,7 +272,7 @@ uint32_t getCounter(uint8_t rb_channel)
 /**
   reset the given counter
   @param rb_channel channel of counter
-  @return C_NO_ERR ; C_RANGE if counter for rb_channel isn´t configured properly
+  @return C_NO_ERR ; C_RANGE if counter for rb_channel isn't configured properly
 */
 int16_t resetCounter(uint8_t rb_channel)
 {

@@ -1,11 +1,11 @@
 /***************************************************************************
-                          target_extensions.h - header for PC specific
+                          actor_target_extensions.h - header for PC specific
                                                 extensions for the HAL
                                                 for actor
-                             -------------------                                         
+                             -------------------
     begin                : Sat Jan 01 2003
     copyright            : (C) 2003 by Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de                                     
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -69,7 +69,7 @@ typedef struct   {
   uint32_t dwOutputFreq;             /* pwm frequence */
   tTime TSetTime;                 /* time of output setting */
 } tOutput;
-                
+
 /* --- GLOBAL VARIABLES --- */
 /* --- PROTOTYPEN --- */
 int16_t  setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency);  /* define the frequency of the pwm signal */
@@ -77,7 +77,7 @@ int16_t  setDigout(uint8_t bOutputNo, uint16_t wPWMValue);          /* set pwm v
 
 
   /**
-    deliver channel number for checking/requesting of 
+    deliver channel number for checking/requesting of
     ADC value at pwm input
     for call of __HAL:: functions (differences mostly caused
     by multiplexers)
@@ -88,7 +88,7 @@ int16_t  setDigout(uint8_t bOutputNo, uint16_t wPWMValue);          /* set pwm v
     {return (42 - (2 * rb_channel));};
 
   /**
-    deliver channel number for checking/requesting of 
+    deliver channel number for checking/requesting of
     ADC value at pwm output
     for call of __HAL:: functions (differences mostly caused
     by multiplexers)

@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          1_3_WriteDin.cc - tutorial for pure ISO address claim
+                          1_3_WriteDin.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 1_3_WriteDin.cc
+/** \example 1_3_WriteDin.cpp
  * This tutorial shall provide the simples base program, which writes some
  * regularly sent base data, as it acts as a tractor.
  *
@@ -176,7 +176,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_1_3_WriteDin ( see also at \ref PrjConfig1_3_WriteDin__esx__sys__sys ).
+ * config_1_3_WriteDin ( see also at \ref PrjConfig1_3_WriteDin ).
  *                                                                         */
 /* *************************************************************************/
 

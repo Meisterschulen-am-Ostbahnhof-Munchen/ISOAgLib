@@ -1,4 +1,4 @@
-/** @page ProcDataLocalPage Description of subdirectory \a Local of the Process part of IsoAgLib
+/** @page ProcDataLocalPage Description of subdirectory Local of the Process Data part of IsoAgLib
   * ( <i>\<xgpl_src/IsoAgLib/comm/Process/Local\></i> )
   * All interface classes and helper elements which are dedicated to local process data
   * ( %i.e. for process data where measurement values are updated by ECU where this SW is running )

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          lbsProcdataBase.cc - base class for local
+                          procdatabase_c.cpp - base class for local
                                                      or remote process data
                                                      object
                              -------------------

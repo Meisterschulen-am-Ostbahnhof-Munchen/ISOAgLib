@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensions.cc - source for IMI specific
+                          system_target_extensions.cpp - source for IMI specific
                                                  extensions for the HAL
                                                  for central system
                              -------------------
@@ -55,7 +55,7 @@
 /* ********************************************************** */
 /** \file IsoAgLib/hal/imi/system/SystemTargetExtensions.cc
  * A module targetExtensions should be used
- * for all methods, which can't be simply 
+ * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .

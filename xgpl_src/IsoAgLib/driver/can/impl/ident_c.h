@@ -1,5 +1,5 @@
 /***************************************************************************
-                          ident.h  -  header file for Ident
+                          ident_c.h  -  header file for Ident
                              -------------------
     begin                : Sun Dec 24 2000
     copyright            : (c) 2000 - 2004 by Dipl.-Inform. Achim Spangler
@@ -49,37 +49,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef IDENT_H
@@ -99,8 +99,8 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-     
-/**class for management of CAN ident with 
+
+/**class for management of CAN ident with
   ident type dpendent compare and setting operations
   @see CAN_IO
   @see FilterBox
@@ -108,17 +108,17 @@ namespace __IsoAgLib {
   *@author Dipl.-Inform. Achim Spangler
   */
 class Ident_c {
-public: 
+public:
   /**
     enum type for defining the CAN ident length to S (11Bit)
     or extended (29Bit)
   */
   enum identType_t {StandardIdent = 0, ExtendedIdent = 1, BothIdent = 2};
-    
-  /** 
+
+  /**
     constructor which can set the values
     @param rt_ident new ident setting
-    @param ren_identType new ident type 
+    @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
         (default: DEFAULT_IDENT_TYPE set in isoaglib_config)
   */
@@ -132,7 +132,7 @@ public:
     destructor which has nothing to do
   */
   ~Ident_c();
-  
+
   /**
     compare this ident setting with another
     (use memory operation for max speed)
@@ -176,9 +176,9 @@ public:
     update the ident with bitwise AND with given ident setting
     @param refc_bitAnd Ident_c variable with ident to bit_AND
   */
-  void ident_bitAnd(const Ident_c& refc_bitAnd) 
+  void ident_bitAnd(const Ident_c& refc_bitAnd)
     {if (refc_bitAnd.data.type == data.type) t_ident &= refc_bitAnd.t_ident;data.empty = 0;};
-    
+
   /**
     deliver amount of different bits from own ident to compared ident
     @param rrefc_ident reference to compared ident
@@ -215,7 +215,7 @@ public:
   /**
     set this ident
     @param rt_ident new ident setting
-    @param ren_identType new ident type 
+    @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
         (default defined in isoaglib_config.h)
   */
@@ -226,7 +226,7 @@ public:
     CAN frame)
     @param rb_val new val for ident at wanted position
     @param rb_pos position in ident, where ident should be placed in
-    @param ren_identType new ident type 
+    @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
         (default defined in isoaglib_config.h)
   */

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          digital_i.h  -  header file for Digital_I_c, an object
+                          digitali_c.h  -  header file for Digital_I_c, an object
                                           for digital sensor input
                              -------------------
     begin                : Mon Oct 25 1999
@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef DIGITAL_I_H
@@ -88,11 +88,7 @@
 
 #include "sensorbase_c.h"
 
-// Begin Namespace __IsoAgLib
-namespace __IsoAgLib {
-//class SensorEventHandler;
-//typedef SensorEventHandler* pSensorEventHandler;
-  
+namespace IsoAgLib {
 /** virtual base class for classes in applications, which want
   * to be called on a sensor related HAL IRQ event
   * a special application class must overload the appropriate
@@ -101,7 +97,7 @@ namespace __IsoAgLib {
   * or CounterI_c instance must be called with a pointer to the
   * handling object, which must be derived from this class
   */
-class SensorEventHandler {
+class iSensorEventHandler {
  public:
   /** function to handle a DigitalI_c event from HAL
     * @param rui8_channel channel of the input object, which received the IRQ
@@ -110,6 +106,10 @@ class SensorEventHandler {
   virtual void handleDigitalEvent( uint8_t rui8_channel );
 };
 
+};
+
+// Begin Namespace __IsoAgLib
+namespace __IsoAgLib {
 /**
   Input object for simple digital input;
   has option for setting ON state to HI or LO and
@@ -124,7 +124,7 @@ public:
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
     (uses BIOS function)
-  
+
     possible errors:
         * LibErr_c::Range wrong input number
     @see SensorI_c::createDigital
@@ -135,7 +135,7 @@ public:
     @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
   DigitalI_c(uint8_t rb_channel = 0xFF, Sensor_c::onoff_t ren_onoff = Sensor_c::OnHigh,
-              bool rb_static = false, SensorEventHandler* rpc_handler = NULL );
+              bool rb_static = false, IsoAgLib::iSensorEventHandler* rpc_handler = NULL );
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
     (uses BIOS function)
@@ -150,8 +150,8 @@ public:
     @param rpc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
   void init(uint8_t rb_channel, Sensor_c::onoff_t ren_onoff = Sensor_c::OnHigh,
-              bool rb_static = false, SensorEventHandler* rpc_handler = NULL );
-              
+              bool rb_static = false, IsoAgLib::iSensorEventHandler* rpc_handler = NULL );
+
   /** change detection mode of activity to OnHigh */
   void setOnHigh( void );
   /** change detection mode of activity to OnLow */
@@ -160,7 +160,7 @@ public:
   virtual ~DigitalI_c();
   /**
     check for the input value (uses BIOS function)
-  
+
     possible errors:
         * LibErr_c::Range wrong input number
     @return 1 for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise 0
@@ -168,7 +168,7 @@ public:
   int16_t val()const;
   /**
     check for the input value (uses BIOS function)
-  
+
     possible errors:
         * LibErr_c::Range wrong input number
     @return true for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise false
@@ -205,7 +205,7 @@ private:
   Sensor_c::onoff_t en_onoff;
   /** array of pointers to handler for IRQ events */
   #ifndef __TSW_CPP__
-  static SensorEventHandler* ppc_handler[16];
+  static IsoAgLib::iSensorEventHandler* ppc_handler[16];
   #endif
 };
 }

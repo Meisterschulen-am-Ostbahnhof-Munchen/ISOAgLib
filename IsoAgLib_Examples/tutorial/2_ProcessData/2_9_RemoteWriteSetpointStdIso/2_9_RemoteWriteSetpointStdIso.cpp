@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          2_9_RemoteWriteSetpointStdIso.cc - tutorial for pure ISO address claim
+                          2_9_RemoteWriteSetpointStdIso.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 2_9_RemoteWriteSetpointStdIso.cc
+/** \example 2_9_RemoteWriteSetpointStdIso.cpp
  * This tutorial shall provide a simple base program, which creates some
  * remote process data, which are used to control the remote device.
  * Demonstrate optional usage of handler class with a method which is automatically
@@ -177,7 +177,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_2_9_RemoteWriteSetpointStdIso ( see also at \ref PrjConfig2_9_RemoteWriteSetpointStdIso__esx__sys__sys ).
+ * config_2_9_RemoteWriteSetpointStdIso ( see also at \ref PrjConfig2_9_RemoteWriteSetpointStdIso ).
  *                                                                         */
 /* *************************************************************************/
 

@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          2_3_LocalReadDataSimpleMeasureSetpointIso.cc
+                          2_3_LocalReadDataSimpleMeasureSetpointIso.cpp
 													- tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
@@ -51,7 +51,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 2_3_LocalReadDataSimpleMeasureSetpointIso.cc
+/** \example 2_3_LocalReadDataSimpleMeasureSetpointIso.cpp
  * This tutorial shall provide the simples base program, which creates some
  * local process data, which value is regularly updated.
  * Remote ECUs can only request single values, as this variant uses the
@@ -194,7 +194,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_2_3_LocalReadDataSimpleMeasureSetpointIso ( see also at \ref PrjConfig2_3_LocalReadDataSimpleMeasureSetpointIso__esx__sys__sys ).
+ * config_2_3_LocalReadDataSimpleMeasureSetpointIso ( see also at \ref PrjConfig2_3_LocalReadDataSimpleMeasureSetpointIso ).
  *                                                                         */
 /* *************************************************************************/
 

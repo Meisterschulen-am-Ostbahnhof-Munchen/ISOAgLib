@@ -1,5 +1,5 @@
 /***************************************************************************
-                          isoItem.cc - object which represents an item
+                          isoitem_c.cpp - object which represents an item
                                             in a service monitor list
                              -------------------
     begin                : Tue Jan 01 2001

@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          3_0_VirtualTerminalIso.cc - tutorial for pure ISO address claim
+                          3_0_VirtualTerminalIso.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 3_0_VirtualTerminalIso.cc
+/** \example 3_0_VirtualTerminalIso.cpp
  * This tutorial shall provide the base program, which uploads a ISO 11783
  * virtual terminal mask definition ( ObjectPool ) to the terminal.
  * Additionally some event handlers are implemented, to show their use for
@@ -177,7 +177,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_3_0_VirtualTerminalIso ( see also at \ref PrjConfig3_0_VirtualTerminalIso__esx__sys__sys ).
+ * config_3_0_VirtualTerminalIso ( see also at \ref PrjConfig3_0_VirtualTerminalIso ).
  *                                                                         */
 /* *************************************************************************/
 

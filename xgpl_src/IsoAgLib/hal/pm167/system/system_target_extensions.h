@@ -1,5 +1,5 @@
 /***************************************************************************
-                          target_extensions.h - header for PM167 specific
+                          system_target_extensions.h - header for PM167 specific
                                                 extensions for the HAL
                                                 for central system
                              -------------------
@@ -53,9 +53,9 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file IsoAgLib/hal/pm167/system/system_target_extensions.h
+/** \file IsoAgLib/hal/pm167/system/system_system_target_extensions.h
  * A module targetExtensions should be used
- * for all methods, which can't be simply 
+ * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .

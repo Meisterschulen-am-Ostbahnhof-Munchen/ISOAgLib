@@ -1,5 +1,5 @@
 /***************************************************************************
-                          measureprogRemote.cc - object for managing of
+                          measureprogremote_c.cpp - object for managing of
                                                    remote measure programs
                              -------------------
     begin                : Fri Apr 07 2000

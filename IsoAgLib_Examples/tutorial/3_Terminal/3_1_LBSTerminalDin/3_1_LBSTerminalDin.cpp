@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          3_1_LBSTerminalDin.cc - tutorial for pure ISO address claim
+                          3_1_LBSTerminalDin.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 3_1_LBSTerminalDin.cc
+/** \example 3_1_LBSTerminalDin.cpp
  * This tutorial shall provide the base program, which uploads a DIN 9684 LBS+
  * terminal mask definition ( binary ) to the terminal.
  * This example demonstrates the terminal dependend selection of the terminal
@@ -200,7 +200,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_3_1_LBSTerminalDin ( see also at \ref PrjConfig3_1_LBSTerminalDin__esx__sys__sys ).
+ * config_3_1_LBSTerminalDin ( see also at \ref PrjConfig3_1_LBSTerminalDin ).
  *                                                                         */
 
 

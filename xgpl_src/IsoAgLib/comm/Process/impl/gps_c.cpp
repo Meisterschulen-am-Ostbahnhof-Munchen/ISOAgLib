@@ -1,5 +1,5 @@
 /***************************************************************************
-                          lbsGps.cc - special class to handle GPS
+                          gps_c.cpp - special class to handle GPS
                                        informations
                              -------------------
     begin                : Mon Jul 30 2001

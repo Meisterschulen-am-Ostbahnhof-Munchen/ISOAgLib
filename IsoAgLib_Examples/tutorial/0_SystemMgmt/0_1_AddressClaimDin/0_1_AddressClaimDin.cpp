@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          0_1_AddressClaimDin.cc - tutorial for pure DIN address claim
+                          0_1_AddressClaimDin.cpp - tutorial for pure DIN address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 0_1_AddressClaimDin.cc
+/** \example 0_1_AddressClaimDin.cpp
  * This tutorial shall provide the simples base program, which claims address
  * only an DIN9684 member with fixed identity.
  *
@@ -166,7 +166,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_0_1_AddressClaimDin ( see also at \ref PrjConfig0_1_AddressClaimDin__esx__sys__sys ).
+ * config_0_1_AddressClaimDin ( see also at \ref PrjConfig0_1_AddressClaimDin ).
  *                                                                         */
 /* *************************************************************************/
 

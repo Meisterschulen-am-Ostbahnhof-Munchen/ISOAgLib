@@ -79,22 +79,22 @@ echo "Build File List for Supplementary Actor"
 rm -f $SCRIPT_DIR/supplActorList.txt
 CMDLINE=`echo "find . -type f -and $SUPPL_ACTOR_PART -and -not \( $SVN_PART \) $NEVER_WANTED_PART > $SCRIPT_DIR/supplActorList.txt"`
 echo $CMDLINE | sh
-echo "xgpl_src/supplementary_driver/hal/actor.h" >> $SCRIPT_DIR/supplActorList.txt"
-echo "xgpl_src/supplementary_driver/hal/readme.txt" >> $SCRIPT_DIR/supplActorList.txt"
+echo "xgpl_src/supplementary_driver/hal/actor.h" >> "$SCRIPT_DIR/supplActorList.txt"
+echo "xgpl_src/supplementary_driver/hal/readme.txt" >> "$SCRIPT_DIR/supplActorList.txt"
 
 echo "Build File List for Supplementary RS232"
 rm -f $SCRIPT_DIR/supplRs232List.txt
 CMDLINE=`echo "find . -type f -and $SUPPL_RS232_PART -and -not \( $SVN_PART \) $NEVER_WANTED_PART > $SCRIPT_DIR/supplRs232List.txt"`
 echo $CMDLINE | sh
-echo "xgpl_src/supplementary_driver/hal/rs232.h" >> $SCRIPT_DIR/supplRs232List.txt"
-echo "xgpl_src/supplementary_driver/hal/readme.txt" >> $SCRIPT_DIR/supplRs232List.txt"
+echo "xgpl_src/supplementary_driver/hal/rs232.h" >> "$SCRIPT_DIR/supplRs232List.txt"
+echo "xgpl_src/supplementary_driver/hal/readme.txt" >> "$SCRIPT_DIR/supplRs232List.txt"
 
 echo "Build File List for Supplementary Sensor"
 rm -f $SCRIPT_DIR/supplSensorList.txt
 CMDLINE=`echo "find . -type f -and $SUPPL_SENSOR_PART -and -not \( $SVN_PART \) $NEVER_WANTED_PART > $SCRIPT_DIR/supplSensorList.txt"`
 echo $CMDLINE | sh
-echo "xgpl_src/supplementary_driver/hal/sensor.h" >> $SCRIPT_DIR/supplSensorList.txt"
-echo "xgpl_src/supplementary_driver/hal/readme.txt" >> $SCRIPT_DIR/supplSensorList.txt"
+echo "xgpl_src/supplementary_driver/hal/sensor.h" >> "$SCRIPT_DIR/supplSensorList.txt"
+echo "xgpl_src/supplementary_driver/hal/readme.txt" >> "$SCRIPT_DIR/supplSensorList.txt"
 
 echo "Build File List for generated Docu"
 rm -f $SCRIPT_DIR/generatedHtmlDocuList.txt

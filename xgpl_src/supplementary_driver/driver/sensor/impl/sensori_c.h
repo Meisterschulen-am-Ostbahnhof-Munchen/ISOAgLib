@@ -1,5 +1,5 @@
 /***************************************************************************
-                          sensor_i.h  -  header for the sensor input management object
+                          sensori_c.h  -  header for the sensor input management object
                              -------------------
     begin                : Mon Oct 25 1999
     copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler
@@ -49,37 +49,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef SENSOR_I_H
@@ -119,8 +119,8 @@ public:
     As the constructor is often not called for static instances, the init function
     is used by the Singleton base class, to set the unique instance in a well defined
     initial state
-  
-  
+
+
     possible errors:
         * LibErr_c::Range given limits are not possible
     @param rb_digitalFirst smallest allowed digital input channel number (DIGITAL_INPUT_MIN)
@@ -142,7 +142,7 @@ public:
   ~SensorI_c();
   /**
     set the limits for digital input channels (first setting can be done by constructor parameters)
-  
+
     possible errors:
         * LibErr_c::Range given limits are not possible
     @param rb_digitalFirst number of the smallest allowed digital input channel
@@ -151,7 +151,7 @@ public:
   void setDigitalLimits(uint8_t rb_digitalFirst, uint8_t rb_digitalLast);
   /**
     set the limits for analog input channels (first setting can be done by constructor parameters)
-  
+
     possible errors:
         * LibErr_c::Range given limits are not possible
     @param rb_analogFirst number of the smallest allowed analog input channel
@@ -160,7 +160,7 @@ public:
   void setAnalogLimits(uint8_t rb_analogFirst, uint8_t rb_analogLast);
   /**
     set the limits for counter input channels (first setting can be done by constructor parameters)
-  
+
     possible errors:
         * LibErr_c::Range given limits are not possible
     @param rb_counterFirst number of the smallest allowed counter input channel
@@ -169,7 +169,7 @@ public:
   void setCounterLimits(uint8_t rb_counterFirst, uint8_t rb_counterLast);
     /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
-    */ 
+    */
   void registerAccessFlt( void );
 
   /**
@@ -207,7 +207,7 @@ public:
     IMPORTANT: an analog input channel object with the wanted number  must exist
                -> creating with createAnalog and checking with existAnalog
                (throw exception if exceptions are activated on compile time)
-    
+
     possible errors:
         * LibErr_c::elNonexistant wanted analog input with given channel no does not exist
     @see SensorI_c::createAnalog
@@ -225,7 +225,7 @@ public:
     IMPORTANT: an digital input channel object with the wanted number must exist
                -> creating with createDigital and checking with existDigital
                (throw exception if exceptions are activated on compile time)
-    
+
     possible errors:
         * LibErr_c::elNonexistant wanted digital input with given channel no does not exist
     @see SensorI_c::createDigital
@@ -243,7 +243,7 @@ public:
     IMPORTANT: an counter input channel object with the wanted number must exist
                -> creating with createCounter and checking with existCounter
                (throw exception if exceptions are activated on compile time)
-    
+
     possible errors:
         * LibErr_c::elNonexistant wanted counter input with given channel no does not exist
     @see SensorI_c::createCounter
@@ -266,7 +266,7 @@ private:
     * NEVER define instance of SensorI_c within application
     */
   SensorI_c( void ) { init();};
-  
+
   /** register a pointer to an external analog input object
     * @param rpc_object const pointer to new AnalogI_c instance,
     *        which should be registered in the vector
@@ -285,7 +285,7 @@ private:
     * @return true -> instance is now in vector, false -> memory error
     */
   void registerClient( CounterI_c* rpc_object ) { registerC3( rpc_object );};
-  
+
   /** unregister a pointer to an external analog input object
     * @param rpc_object const pointer to AnalogI_c instance,
     *        which is deconstructed, so that pointer to it shall be deleted from
@@ -307,12 +307,12 @@ private:
     * @return true -> pointer to given instance WAS in vector, and is now deleted
     */
   void unregisterClient( CounterI_c* rpc_object ) { unregisterC3( rpc_object );};
-  /** 
+  /**
     deliver number of the first analog channel
     @return number of the first analog channel
   */
   uint8_t analogFirst(){return b_min_analog;};
-  /** 
+  /**
     deliver number of the last analog channel
     @return number of the last analog channel
   */
@@ -327,12 +327,12 @@ private:
     @param rb_val wanted last analog channel
   */
   void setAnalogLast(uint8_t rb_val){b_maxAnalog = rb_val;};
-  /** 
+  /**
     deliver number of the first digital channel
     @return number of the first digital channel
   */
   uint8_t digitalFirst(){return b_min_digital;};
-  /** 
+  /**
     deliver number of the last digital channel
     @return number of the last digital channel
   */
@@ -347,12 +347,12 @@ private:
     @param rb_val wanted last digital channel
   */
   void setDigitalLast(uint8_t rb_val){b_maxDigital = rb_val;};
-  /** 
+  /**
     deliver number of the first counter channel
     @return number of the first counter channel
   */
   uint8_t counterFirst(){return b_min_counter;};
-  /** 
+  /**
     deliver number of the last counter channel
     @return number of the last counter channel
   */

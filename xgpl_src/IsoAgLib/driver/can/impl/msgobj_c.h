@@ -1,5 +1,5 @@
 /***************************************************************************
-                          msg_obj.h  -  Msg_Obj_c encapsulate a hardware CAN Msg
+                          msgobj_c.h  -  MsgObj_c encapsulate a hardware CAN Msg
                                         Object, to present a standard interaction
                                         with CAN for all platforms
                              -------------------
@@ -151,7 +151,7 @@ public:
     possible errors:
     * Err_c::range BUS or MsgObj numbers out of allowed limits
     * Err_c::can_overflow amount of FilterBox_c of merged MsgObj_c is to big to store in one
-        Msg_Obj_c (max is defined by FILTER_BOX_PER_MSG_OBJ in isoaglib_config.h)
+        MsgObj_c (max is defined by FILTER_BOX_PER_MSG_OBJ in isoaglib_config.h)
     * Err_c::hwConfig BUS not initialized or ID can't be changed
     @param rrefc_right reference to MsgObj_c which should be merged into this instance
     @return true -> successful merged; false -> too many FilterBox_c refs for one MsgObj_c
@@ -298,7 +298,7 @@ public:
 		-# Singleton_c::instance() -> Singleton_c::init()
 		-# -> partialClass_c::init()
 		-# -> CANIO_c::reconfigureMsgObj()
-		-# -> Msg_Obj_c::processMsg()
+		-# -> MsgObj_c::processMsg()
 		-# -> partialClass_c::processMsg()
 		-# -> trigger update/reaction by Singleton_c::update() !!! undefined result, as Singleton_c::instance()
 					has not yet finished, so that this type of circular access on the same Singleton_c::instance()
