@@ -958,7 +958,9 @@ Each user who wants to contribute enhancements should please do the following:
 As this is an Open Source project, not only the maintainers of the project can provide sufficient help for all users <b>free of charge</b>.
 So either you sign a support contract to get personal support.<br>
 Or you direct your help requests to the community of ISO<i><sub>AgLib</sub></i> users and developers, who can be reached by the <a href="http://linux90.idvnet.de/pipermail/isoaglib/">email list</a>
-( subscribe <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">here</a> and send mail <a href="mailto:isoaglib@linux90.idvnet.de">there</a> ). This way all users can help each other
+or <a href="https://linux90.idvnet.de/pipermail/isoaglib/">email list (HTTPS)</a>
+( subscribe <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">here</a> or <a href="https://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">there (HTTPS)</a>
+and send mail <a href="mailto:isoaglib@linux90.idvnet.de">there</a> ). This way all users can help each other
 without the dependency on the maintainers. New feature wishes, bug reports and other change suggestions can be discussed there, too.<br>
 Please keep in mind, that you might be one time the helping party, while you could need help from another user the other time.<br>
 Please keep this also in mind, if the company name in the email address of the asking user is not one of your best friends - maybe he can help you another time also.<br>
