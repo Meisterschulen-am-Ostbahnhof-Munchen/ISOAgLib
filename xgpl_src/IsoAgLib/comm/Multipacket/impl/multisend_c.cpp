@@ -96,6 +96,9 @@
 
 #ifdef DEBUG
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
+	#ifdef SYSTEM_PC
+	#include <iostream>
+	#endif
 #endif
 
 #ifdef USE_DIN_TERMINAL
@@ -402,7 +405,7 @@ bool MultiSend_c::timeEvent( void )
     #if defined( DEBUG )
     IsoAgLib::getIrs232Instance() << "MultiSend_c::timeEvent --- getAvailableExecTime() == 0;\n";
     #if defined (SYSTEM_PC)
-    std::printf ("MultiSend_c::timeEvent --- getAvailableExecTime() == 0;\n");
+    std::cout << "MultiSend_c::timeEvent --- getAvailableExecTime() == 0;" << std::endl;
     #endif
     #endif
     return false;
@@ -592,7 +595,7 @@ bool MultiSend_c::timeEvent( void )
         #if defined( DEBUG )
         IsoAgLib::getIrs232Instance() << "MultiSend_c::timeEvent --- pkgCnt == 0;\n";
         #if defined( SYSTEM_PC )
-        std::printf ("MultiSend_c::timeEvent --- pkgCnt == 0;\n");
+        std::cout << "MultiSend_c::timeEvent --- pkgCnt == 0;" << std::endl;
         #endif
         #endif
       }
@@ -641,7 +644,7 @@ bool MultiSend_c::timeEvent( void )
                   #if defined( DEBUG )
                   IsoAgLib::getIrs232Instance() << "MultiSend_c::timeEvent --- after Sending now awaiting CTS!\n";
                   #if defined( SYSTEM_PC )
-                  std::printf ("MultiSend_c::timeEvent --- after Sending now awaiting CTS!\n");
+                  std::cout << "MultiSend_c::timeEvent --- after Sending now awaiting CTS!" << std::endl;
                   #endif
                   #endif
                   break;
@@ -658,7 +661,7 @@ bool MultiSend_c::timeEvent( void )
               #if defined( DEBUG )
               IsoAgLib::getIrs232Instance() << "MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!\n";
               #if defined( SYSTEM_PC )
-              std::printf ("MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!\n");
+              std::cout << "MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!" << std::endl;
               #endif
               #endif
               en_sendState = AwaitEndofmsgack;
@@ -721,7 +724,7 @@ bool MultiSend_c::processMsg(){
       IsoAgLib::getIrs232Instance() << "MultiSend_c::processMsg --- CTS received!\nFor Date from DC: " << i32_DC
         << "\n";
       #if defined( SYSTEM_PC )
-      std::printf ("MultiSend_c::processMsg --- CTS received!\nFor Date from DC: %d", i32_DC );
+      std::cout << "MultiSend_c::processMsg --- CTS received!\nFor Date from DC: " << i32_DC << std::endl;
       #endif
       #endif
       // clear send buffer
@@ -793,7 +796,7 @@ bool MultiSend_c::processMsg(){
           #if defined( DEBUG )
           IsoAgLib::getIrs232Instance() << "Start To Send Next Data Block\n";
           #if defined( SYSTEM_PC )
-          std::printf ("Start To Send Next Data Block\n");
+          std::cout << "Start To Send Next Data Block" << std::endl;
           #endif
           #endif
           en_sendState = SendData;
@@ -806,7 +809,7 @@ bool MultiSend_c::processMsg(){
         #if defined( DEBUG )
         IsoAgLib::getIrs232Instance() << "MultiSend_c::processMsg --- EOMACK received!\n";
         #if defined( SYSTEM_PC )
-        std::printf ("MultiSend_c::processMsg --- EOMACK received!\n");
+        std::cout << "MultiSend_c::processMsg --- EOMACK received!" << std::endl;
         #endif
         #endif
         // CHECK HERE IF WE'RE AWAITING AN EOMACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -845,7 +848,7 @@ bool MultiSend_c::processMsg(){
         #if defined( DEBUG )
         IsoAgLib::getIrs232Instance() << "MultiSend_c::processMsg --- EOMACK received without expecting it!\n";
         #if defined( SYSTEM_PC )
-        std::printf ("MultiSend_c::processMsg --- EOMACK received without expecting it!\n");
+        std::cout << "MultiSend_c::processMsg --- EOMACK received without expecting it!" << std::endl;
         #endif
         #endif
       }
@@ -854,7 +857,7 @@ bool MultiSend_c::processMsg(){
       #if defined( DEBUG )
       IsoAgLib::getIrs232Instance() << "MultiSend_c::processMsg --- ConnAbort received!\n";
       #if defined( SYSTEM_PC )
-      std::printf ("MultiSend_c::processMsg --- ConnAbort received!\n");
+      std::cout << "MultiSend_c::processMsg --- ConnAbort received!" << std::endl;
       #endif
       #endif
       setSendStateIdle();
