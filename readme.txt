@@ -45,7 +45,7 @@
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>06 December 2004<br>
+Last Update: <br>08 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -878,7 +878,7 @@ management of such interactions. This list can then help to identify well suppor
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>06 December 2004<br>
+Last Update: <br>08 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -1045,7 +1045,7 @@ source and the contained informative text files.
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>06 December 2004<br>
+Last Update: <br>08 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2017,7 +2017,7 @@ PRJ_ISO11783=1
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>06 December 2004<br>
+Last Update: <br>08 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2270,7 +2270,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>06 December 2004<br>
+Last Update: <br>08 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2385,7 +2385,7 @@ This is possible, if some basic strategies are used by all devices:
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>06 December 2004<br>
+Last Update: <br>08 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
