@@ -143,8 +143,7 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
     }
     MACRO_streamPolygonPoints(14);
 
-    uint16_t tempOffset = 14+vtObjectPolygon_a->numberOfPoints * 4;
-    MACRO_streamEventMacro(tempOffset);
+    MACRO_streamEventMacro(14+vtObjectPolygon_a->numberOfPoints * 4);
     return curBytes;
 } // -X2C
 

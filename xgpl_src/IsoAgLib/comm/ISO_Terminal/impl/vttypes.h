@@ -86,7 +86,6 @@
 
 #include <IsoAgLib/typedef.h>
 
-
 #define FLAG_BIT_IN_RAM 0
 #define FLAG_BIT_ORIGIN_SKM 1
 #define FLAG_BIT_STRING_IN_RAM 2

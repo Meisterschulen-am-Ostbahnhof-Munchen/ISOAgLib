@@ -107,7 +107,7 @@ vtObjectInputBoolean_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 7; // Object Type = Input Boolean
-      destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectInputBoolean_a->backgroundColour);
+      destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectInputBoolean_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [4] = (((uint32_t) vtObjectInputBoolean_a->width*vtDimension)/opDimension) & 0xFF;
       destMemory [5] = (((uint32_t) vtObjectInputBoolean_a->width*vtDimension)/opDimension) >> 8;
       destMemory [6] = vtObjectInputBoolean_a->foregroundColour->getID() & 0xFF;

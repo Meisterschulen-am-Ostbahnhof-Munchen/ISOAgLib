@@ -118,8 +118,8 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectLinearBarGraph_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectLinearBarGraph_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectLinearBarGraph_a->colour);
-      destMemory [8] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectLinearBarGraph_a->targetLineColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectLinearBarGraph_a->colour, this, IsoAgLib::Colour);
+      destMemory [8] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectLinearBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
       destMemory [9] = vtObjectLinearBarGraph_a->options;
       destMemory [10] = vtObjectLinearBarGraph_a->numberOfTicks;
       destMemory [11] = vtObjectLinearBarGraph_a->minValue & 0xFF;

@@ -80,6 +80,13 @@ public:
   //  Operation: get_vtObjectInputAttributes_a
   iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return vtObjectInputAttributes_c::get_vtObjectInputAttributes_a(); };
 
+
+
+ //  Operation: getString
+  const char* getString(){
+      return vtObjectInputAttributes_c::getString();};
+
+
   //  Operation: setValidationStringCopy
   //! Parameter:
   //! @param newValidationString: 

@@ -56,12 +56,12 @@
       <objectpointer name="LikeageOP" pos_x='4' pos_y='160'/>
                                               
       <button name='KeyMoreAccel' background_colour='white' pos_x='120' pos_y='55' width='60' height='30' latchable='no'>
-        <outputstring pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8'
+        <outputstring pos_x='0' pos_y='7' width='60' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8'
             value='SpeedUp' horizontal_justification='middle' />
       </button>
 
       <button name='KeyLessAccel' background_colour='white' pos_x='120' pos_y='90' width='60' height='30' latchable='no'>
-        <outputstring pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8'
+        <outputstring pos_x='0' pos_y='7' width='60' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8'
             value='Brake' horizontal_justification='middle' />
       </button>
 
@@ -100,12 +100,14 @@
           value='Forbidden!' horizontal_justification='middle' />
     </key>
 
+    <!--key name='FunnyTooBigBitmap' background_colour='white'-->
+      <!--picturegraphic name="PictureGraphicTooBig" width="60" actual_width="60" actual_height="60" format="1bit" rle="auto"
+                      transparency_colour="1" options="opaque+normal" file="60x60tooBigBitmap.bmp" pos_x="0" pos_y="0" / -->
+    <!-- /key -->
+    
   </softkeymask>
 
-  
-  
-  
-  
+    
   
   
   

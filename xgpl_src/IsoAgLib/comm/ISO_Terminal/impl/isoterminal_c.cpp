@@ -1002,22 +1002,22 @@ bool ISOTerminal_c::processMsg()
         b_result = true;
         break;
       case 0xC2: // Command: "Get Technical Data", parameter "Get Number Of Soft Keys Response"
-        vtCapabilities_a.skWidth = /*60;*/data().getUint8Data (4);
-        vtCapabilities_a.skHeight = /*47; */data().getUint8Data (5);
+        vtCapabilities_a.skWidth = data().getUint8Data (4);
+        vtCapabilities_a.skHeight = data().getUint8Data (5);
         vtCapabilities_a.skVirtual = data().getUint8Data (6);
         vtCapabilities_a.skPhysical = data().getUint8Data (7);
         vtCapabilities_a.lastReceivedSoftkeys = HAL::getTime();
         b_result = true;
         break;
       case 0xC3: // Command: "Get Technical Data", parameter "Get Text Font Data Response"
-        vtCapabilities_a.fontSizes = /*1023; */(data().getUint8Data (5) << 1) | 0x01; // 'cause "6x8" is always available!
+        vtCapabilities_a.fontSizes = (data().getUint8Data (5) << 1) | 0x01; // 'cause "6x8" is always available!
         vtCapabilities_a.fontSizes += data().getUint8Data (6) << 8; // so we leave out the "Not used" bit!!
-        vtCapabilities_a.fontTypes = /*22; */data().getUint8Data (7);
+        vtCapabilities_a.fontTypes = data().getUint8Data (7);
         vtCapabilities_a.lastReceivedFont = HAL::getTime();
         b_result = true;
         break;
       case 0xC7: // Command: "Get Technical Data", parameter "Get Hardware Response"
-        vtCapabilities_a.hwGraphicType = 0; //data().getUint8Data (2);
+        vtCapabilities_a.hwGraphicType = data().getUint8Data (2);
         vtCapabilities_a.hwHardware = data().getUint8Data (3);
         vtCapabilities_a.hwWidth = data().getUint8Data (4) + (data().getUint8Data (5) << 8);
         vtCapabilities_a.hwHeight = data().getUint8Data (6) + (data().getUint8Data (7) << 8);

@@ -138,19 +138,19 @@ public:
   }
 
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), backgroundColour) : 0, sizeof(iVtObjectButton_s), 3, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), backgroundColour) : 0, sizeof(iVtObjectButton_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour));
   }
 
   void setBorderColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), borderColour) : 0, sizeof(iVtObjectButton_s), 4, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), borderColour) : 0, sizeof(iVtObjectButton_s), 4, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BorderColour));
   }
 
   void setKeyCode(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), keyCode) : 0, sizeof(iVtObjectButton_s), 5, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), keyCode) : 0, sizeof(iVtObjectButton_s), 5, newValue, newValue);
   }
 
   void setLatchable(bool newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), latchable) : 0, sizeof(iVtObjectButton_s), 6, (newValue) ? 1 : 0);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), latchable) : 0, sizeof(iVtObjectButton_s), 6, (newValue) ? 1 : 0, (newValue) ? 1 : 0);
   }
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false);

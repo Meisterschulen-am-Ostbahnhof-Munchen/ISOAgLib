@@ -107,15 +107,15 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 25; // Object Type = Fill Attributes
+      destMemory [2] = 26; // Object Type = Input Attributes
       destMemory [3] = vtObjectInputAttributes_a->validationType;
 
       destMemory [4] = vtObjectInputAttributes_a->length;
-      sourceOffset += 4;
-      curBytes += 4;
+      sourceOffset += 5;
+      curBytes += 5;
     }
 
-    while ((sourceOffset >= 4) && (sourceOffset < (4+vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
+    while ((sourceOffset >= 5) && (sourceOffset < (5+vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
     {
       if (vtObjectInputAttributes_a->validationString == NULL)
       {
@@ -123,20 +123,19 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
       }
       else
       {
-          destMemory [curBytes] = vtObjectInputAttributes_a->validationString [sourceOffset-4];
+          destMemory [curBytes] = vtObjectInputAttributes_a->validationString [sourceOffset-5];
       }
       curBytes++;
       sourceOffset++;
     }
 
-    if ((sourceOffset == (4 + vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
+    if ((sourceOffset == (5 + vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
     {
       destMemory [curBytes] = vtObjectInputAttributes_a->numberOfMacrosToFollow;
       curBytes++;
       sourceOffset++;
     }
-    uint16_t tempOffset = 5+vtObjectInputAttributes_a->length;
-    MACRO_streamEventMacro(tempOffset);
+    MACRO_streamEventMacro(6+vtObjectInputAttributes_a->length);
     return curBytes;
 } // -X2C
 
@@ -150,7 +149,7 @@ uint32_t
 vtObjectInputAttributes_c::fitTerminal()
 { // ~X2C
   MACRO_localVars;
-  return 5+vtObjectInputAttributes_a->length+vtObjectInputAttributes_a->numberOfMacrosToFollow*2;
+  return 6+vtObjectInputAttributes_a->length+vtObjectInputAttributes_a->numberOfMacrosToFollow*2;
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 250 : setValidationStringCopy
@@ -198,8 +197,15 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
 
   setStringToStream( newValidationString ); // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
-  setStrLenToSend( ui16_tempLen );
+	setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this);
 } // -X2C
 
+
+// //////////////////////////////// +X2C Operation 247 : getString
+const char*
+vtObjectInputAttributes_c::getString()
+{ // ~X2C
+  return get_vtObjectInputAttributes_a()->validationString;
+} // -X2C
 } // end namespace __IsoAgLib

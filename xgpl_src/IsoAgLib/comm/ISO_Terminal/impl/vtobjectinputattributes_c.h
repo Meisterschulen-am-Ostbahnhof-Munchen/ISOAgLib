@@ -124,6 +124,9 @@ public:
   //  Operation: size
   uint32_t fitTerminal();
   
+  //  Operation: getString
+  const char* getString();
+  
   //  Operation: setValidationStringCopy
   //! Parameter:
   //! @param newValidationString: 

@@ -111,7 +111,7 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 25; // Object Type = Fill Attributes
       destMemory [3] = vtObjectFillAttributes_a->fillType;
-      destMemory [4] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectFillAttributes_a->fillColour);
+      destMemory [4] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectFillAttributes_a->fillColour, this, IsoAgLib::FillColour);
       if (vtObjectFillAttributes_a->fillPatternObject != NULL)
       {
         destMemory [5] = vtObjectFillAttributes_a->fillPatternObject->getID() & 0xFF;
@@ -154,7 +154,7 @@ void vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, uint8_t ne
     saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), newFillColour);
     saveValueP (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s), newFillPattern);
   }    
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeFillAttributes (this, newFillType, newFillColour, newFillPattern);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newFillColour, this, IsoAgLib::FillColour), newFillPattern);
 }// -X2C
 
 } // end namespace __IsoAgLib

@@ -86,6 +86,7 @@
 
 // +X2C includes
 #include "vtobject_c.h"
+#include "isoterminal_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -131,7 +132,7 @@ public:
   // //////////////////////////////////
 	// All special Attribute-Set methods
 	void setBackgroundColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour) : 0, sizeof(iVtObjectSoftKeyMask_s), 1, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour) : 0, sizeof(iVtObjectSoftKeyMask_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour));
 	}
 
 }; // ~X2C

@@ -108,7 +108,7 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObjectAlarmMask_a->ID & 0xFF;
       destMemory [1] = vtObjectAlarmMask_a->ID >> 8;
       destMemory [2] = 2; // Object Type = Alarm Mask
-      destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectAlarmMask_a->backgroundColour);
+      destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectAlarmMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       if (vtObjectAlarmMask_a->softKeyMask != NULL) {
           destMemory [4] = vtObjectAlarmMask_a->softKeyMask->getID() & 0xFF;
           destMemory [5] = vtObjectAlarmMask_a->softKeyMask->getID() >> 8;

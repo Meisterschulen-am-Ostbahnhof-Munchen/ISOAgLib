@@ -116,9 +116,9 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
         destMemory [3] = (((uint32_t) vtObjectMeter_a->width*vtDimension)/opDimension) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectMeter_a->width*vtDimension)/opDimension) >> 8;     
       }
-      destMemory [5] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectMeter_a->needleColour);
-      destMemory [6] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectMeter_a->borderColour);
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectMeter_a->arcAndTickColour);
+      destMemory [5] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectMeter_a->needleColour, this, IsoAgLib::NeedleColour);
+      destMemory [6] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectMeter_a->borderColour, this, IsoAgLib::BorderColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectMeter_a->arcAndTickColour, this, IsoAgLib::ArcAndTickColour);
       destMemory [8] = vtObjectMeter_a->options;
       destMemory [9] = vtObjectMeter_a->numberOfTicks;
       destMemory [10] = vtObjectMeter_a->startAngle;

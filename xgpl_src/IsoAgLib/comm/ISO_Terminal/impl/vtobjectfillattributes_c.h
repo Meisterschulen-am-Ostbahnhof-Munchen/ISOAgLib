@@ -131,7 +131,7 @@ public:
   //! @param newFillType: 
   //! @param b_updateObject:  
   void setFillType(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType) : 0, sizeof(iVtObjectFillAttributes_s), 1 /* "Fill Type" */, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType) : 0, sizeof(iVtObjectFillAttributes_s), 1 /* "Fill Type" */, newValue, newValue);
   };
 
   //  Operation: setFillColour
@@ -139,7 +139,7 @@ public:
   //! @param newFillColour: 
   //! @param b_updateObject:  
   void setFillColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour) : 0, sizeof(iVtObjectFillAttributes_s), 2 /* "Fill Colour" */, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour) : 0, sizeof(iVtObjectFillAttributes_s), 2 /* "Fill Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::FillColour));
   };
 
   //  Operation: setFillPattern

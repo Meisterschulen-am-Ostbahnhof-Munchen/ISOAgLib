@@ -362,7 +362,14 @@ public:
   vtState_s*         getVtState () { return &vtState_a; };
   localSettings_s*   getLocalSettings () { return &localSettings_a; };
   uint32_t           getUploadBufferSize ();
-  uint8_t            getUserClippedColor (uint8_t colorValue) { return c_streamer.pc_pool->convertColor (colorValue, getVtCapabilities()->hwGraphicType); };
+  uint8_t            getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour) { 
+                       uint8_t colorDepth = getVtCapabilities()->hwGraphicType;
+                       if (((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16))) {
+                         return c_streamer.pc_pool->convertColour (colorValue, colorDepth, obj, whichColour);
+                       } else {
+                         return colorValue;
+                       }                         
+                     };
 
   /** sendCommand... methods */
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout);

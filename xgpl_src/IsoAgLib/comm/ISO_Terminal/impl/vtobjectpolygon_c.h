@@ -158,7 +158,7 @@ public:
   //! @param newPolygonType: 
   //! @param b_updateObject: 
   void setPolygonType(uint8_t newPolygonType, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPolygon_a(), polygonType) : 0, sizeof(iVtObjectPolygon_s), 5 /* "Polygon Type" */, newPolygonType); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPolygon_a(), polygonType) : 0, sizeof(iVtObjectPolygon_s), 5 /* "Polygon Type" */, newPolygonType, newPolygonType); };
 
   //  Operation: setOriginSKM
   //! Parameter:

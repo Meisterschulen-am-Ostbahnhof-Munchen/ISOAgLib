@@ -156,7 +156,7 @@ public:
   //! @param newEllipseType: 
   //! @param b_updateObject: 
   void setEllipseType(uint8_t newEllipseType, bool b_updateObject) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType) : 0, sizeof(iVtObjectEllipse_s), 4 /* "Ellipse Type" */, newEllipseType);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType) : 0, sizeof(iVtObjectEllipse_s), 4 /* "Ellipse Type" */, newEllipseType, newEllipseType);
   };
 
   //  Operation: setStartAngle
@@ -164,7 +164,7 @@ public:
   //! @param newStartAngle: 
   //! @param b_updateObject: 
   void setStartAngle(uint8_t newStartAngle, bool b_updateObject) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle) : 0, sizeof(iVtObjectEllipse_s), 5 /* "Start Angle" */, newStartAngle);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle) : 0, sizeof(iVtObjectEllipse_s), 5 /* "Start Angle" */, newStartAngle, newStartAngle);
   };
 
   //  Operation: setEndAngle
@@ -172,7 +172,7 @@ public:
   //! @param newEndAngle: 
   //! @param b_updateObject: 
   void setEndAngle(uint8_t newEndAngle, bool b_updateObject) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle) : 0, sizeof(iVtObjectEllipse_s), 6 /* "End Angle" */, newEndAngle);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle) : 0, sizeof(iVtObjectEllipse_s), 6 /* "End Angle" */, newEndAngle, newEndAngle);
   };
 
   //  Operation: setFillAttributes

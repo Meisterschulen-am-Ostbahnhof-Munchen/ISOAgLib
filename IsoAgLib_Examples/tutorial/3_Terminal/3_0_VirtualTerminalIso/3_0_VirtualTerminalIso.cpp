@@ -227,22 +227,51 @@ using namespace IsoAgLib;
 /**
   hook function that gets called every time a color-value
   has to be adapted to VT's color-depth.
-  --> Standard implementation will simply clip all color-values
-  greater than allowed to WHITE (Color 1)
+  --> Standard implementation will simply clip all color-values to
+  BLACK (Color 0) besides the background/transparency colors to WHITE (Color 1)
   This overloaded function will set all clipped colors to BLACK (Color 0) instead!
   @param colorValue The color-value that was originally defined in the object
   @param colorDepth 0 for 1bit-color depth (2-colored VT, black/white)
                     1 for 4bit-color depth (16-colored VT)
                     2 for 8bit-color depth (256-colored VT)
+  @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...
+  @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
 */
-uint8_t iObjectPool_simpleVTIsoPool_c::convertColor(uint8_t colorValue, uint8_t colorDepth)
+uint8_t iObjectPool_simpleVTIsoPool_c::convertColour(uint8_t colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c* /*obj*/, IsoAgLib::e_vtColour whichColour)
 {
-  // on 2-colored VTs every color other than 0..1 will be set to 0.
-  if ((colorDepth == 0) && (colorValue > 1)) return 0;
-  // on 16-colored VTs every color other than 0..15 will be set to 0.
-  if ((colorDepth == 1) && (colorValue > 16)) return 0;
-  // on 256-color VTs every color can be used as is.
-  return colorValue;
+  if (colorDepth == 0 /* 2colored b/w */) {
+    if ((whichColour == BackgroundColour) || (whichColour == TransparencyColour))
+      return 1; /* white - std. background/transparency colour */
+    else 
+      return 0; /* black - std. drawing colour */
+  } else {
+    // colorDepth == 1, as there's no color-violation in the case of colorDepth==2 !
+    // this is just for the example. convert the colors that can be converted by 100% from 16..231 to color 0..15.
+    // one also could convert using a best-match algorithm to colors 0..15 - this is just to show the principle.
+    switch (colorValue) {
+      case 16  /* 00,00,00 */: return 0;
+      case 231 /* FF,FF,FF */: return 1; 
+      case 34  /* 00,99,00 */: return 2;
+      case 37  /* 00,99,99 */: return 3;
+      case 124 /* 99,00,00 */: return 4;
+      case 127 /* 99,00,99 */: return 5;
+      case 142 /* 99,99,00 */: return 6;
+      case 188 /* CC,CC,CC */: return 7;
+      case 145 /* 99,99,99 */: return 8;
+      case 21  /* 00,00,FF */: return 9;
+      case 46  /* 00,FF,00 */: return 10;
+      case 51  /* 00,FF,FF */: return 11;
+      case 196 /* FF,00,00 */: return 12;
+      case 201 /* FF,00,FF */: return 13;
+      case 226 /* FF,FF,00 */: return 14;
+      case 19  /* 00,00,99 */: return 15;
+      /* todo: best match the rest also to 0..15 !*/
+      default: if ((whichColour == BackgroundColour) || (whichColour == TransparencyColour))
+                 return 1; /* white - std. background/transparency colour */
+               else 
+                 return 0; /* black - std. drawing colour */
+    }
+  }
 };
 
 

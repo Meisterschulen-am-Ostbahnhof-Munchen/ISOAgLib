@@ -55,6 +55,7 @@
 
 // +X2C includes
 #include "vtobject_c.h"
+#include "isoterminal_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -98,19 +99,19 @@ public:
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setFontColour(uint8_t newValue,  bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) : 0, sizeof(iVtObjectFontAttributes_s), 1, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) : 0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::FontColour));
   }
   
   void setFontSize(uint8_t newValue,  bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize) : 0, sizeof(iVtObjectFontAttributes_s), 2, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize) : 0, sizeof(iVtObjectFontAttributes_s), 2, newValue, newValue);
   }
   
   void setFontType(uint8_t newValue,  bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType) : 0, sizeof(iVtObjectFontAttributes_s), 3, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType) : 0, sizeof(iVtObjectFontAttributes_s), 3, newValue, newValue);
   }
 
   void setFontStyle(uint8_t newValue,  bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle) : 0, sizeof(iVtObjectFontAttributes_s), 4, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle) : 0, sizeof(iVtObjectFontAttributes_s), 4, newValue, newValue);
   }
 
   void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false);

@@ -196,23 +196,23 @@ public:
   
   /**
     hook function that gets called every time a color-value
-    has to be adapted to VT's color-depth.
-    --> Standard implementation will simply clip all color-values
-    greater than allowed to WHITE (Color 1)
+    has to be adapted to VT's color-depth (as it violates the color-range!).
+    --> Standard implementation will simply clip all color-values to
+    BLACK (Color 0) besides the background/transparency colors to WHITE (Color 1)
     Please overload this function if other behaviour is wanted
     @param colorValue The color-value that was originally defined in the object
     @param colorDepth 0 for 1bit-color depth (2-colored VT, black/white)
                       1 for 4bit-color depth (16-colored VT)
                       2 for 8bit-color depth (256-colored VT)
+    @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...
+    @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
   */
-  virtual uint8_t convertColor(uint8_t colorValue, uint8_t colorDepth)
+  virtual uint8_t convertColour(uint8_t /* colorValue */, uint8_t /* colorDepth */, IsoAgLib::iVtObject_c* /* obj */, IsoAgLib::e_vtColour whichColour)
   {
-    // on 2-colored VTs every color other than 0..1 will be set to 1.
-    if ((colorDepth == 0) && (colorValue > 1)) return 1;
-    // on 16-colored VTs every color other than 0..15 will be set to 1.
-    if ((colorDepth == 1) && (colorValue > 16)) return 1;
-    // on 256-color VTs every color can be used as is.
-    return colorValue;
+    if ((whichColour == BackgroundColour) || (whichColour == TransparencyColour))
+      return 1; /* white - std. background/transparency colour */
+    else 
+      return 0; /* black - std. drawing colour */
   };
 
 protected:

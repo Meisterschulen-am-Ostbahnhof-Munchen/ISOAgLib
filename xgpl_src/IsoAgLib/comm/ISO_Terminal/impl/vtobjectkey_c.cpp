@@ -106,7 +106,7 @@ vtObjectKey_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 5; // Object Type = Key
-      destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectKey_a->backgroundColour);
+      destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectKey_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [4] = vtObjectKey_a->keyCode;
       destMemory [5] = vtObjectKey_a->numberOfObjectsToFollow;
       destMemory [6] = vtObjectKey_a->numberOfMacrosToFollow;

@@ -153,7 +153,7 @@ public:
   //! @param newLineSupressionValue: 
   //! @param b_updateObject: 
   void setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression) : 0, sizeof(iVtObjectRectangle_s), 4 /* "Line Suppression" */, newLineSupressionValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression) : 0, sizeof(iVtObjectRectangle_s), 4 /* "Line Suppression" */, newLineSupressionValue, newLineSupressionValue);
   };
 
   //  Operation: setFillAttributes

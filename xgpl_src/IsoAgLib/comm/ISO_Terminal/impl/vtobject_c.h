@@ -129,7 +129,7 @@ protected:
   void saveValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint16_t ui16_newValue);
   void saveValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint32_t ui32_newValue);
   void saveValueP  (uint16_t ui16_structOffset, uint16_t ui16_structLen, IsoAgLib::iVtObject_c* p_newValue);
-  void saveValue8SetAttribute  (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue);
+  void saveValue8SetAttribute  (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t newValueSend);
   void saveValue16SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue);
   void saveValue32SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint32_t ui32_newValue);
   void saveValuePSetAttribute  (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, IsoAgLib::iVtObject_c* p_newValue);

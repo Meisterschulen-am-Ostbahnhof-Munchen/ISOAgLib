@@ -86,6 +86,7 @@
 
 // +X2C includes
 #include "vtobject_c.h"
+#include "isoterminal_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -129,10 +130,10 @@ public:
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width) : 0, sizeof(iVtObjectPictureGraphic_s), 1, newValue);
   }
   void setOptions(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options) : 0, sizeof(iVtObjectPictureGraphic_s), 2, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options) : 0, sizeof(iVtObjectPictureGraphic_s), 2, newValue, newValue);
   }
   void setTransparencyColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::TransparencyColour));
   }
 
 }; // ~X2C

@@ -140,9 +140,9 @@ vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, Iso
 
 // //////////////////////////////// saveValue(8/16/32)SetAttribute
 void
-vtObject_c::saveValue8SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue) {
+vtObject_c::saveValue8SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t ui8_newValueSend) {
   if (ui16_structOffset != 0) saveValue8 (ui16_structOffset, ui16_structLen, ui8_newValue);
-  setAttribute (ui8_ind, (uint32_t) ui8_newValue);
+  setAttribute (ui8_ind, (uint32_t) ui8_newValueSend);
 }
 void
 vtObject_c::saveValue16SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue) {

@@ -86,6 +86,7 @@
 
 // +X2C includes
 #include "vtobject_c.h"
+#include "isoterminal_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -145,13 +146,13 @@ public:
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), height) : 0, sizeof(iVtObjectOutputNumber_s), 2, newValue);
 	}
 	void setBackgroundColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), backgroundColour) : 0, sizeof(iVtObjectOutputNumber_s), 3, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), backgroundColour) : 0, sizeof(iVtObjectOutputNumber_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour));
 	}
 	void setFontAttributes(vtObject_c* newValue, bool b_updateObject=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), fontAttributes) : 0, sizeof(iVtObjectOutputNumber_s), 4, newValue);
 	}
 	void setOptions(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), options) : 0, sizeof(iVtObjectOutputNumber_s), 5, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), options) : 0, sizeof(iVtObjectOutputNumber_s), 5, newValue, newValue);
 	}
 	void setVariableReference(vtObject_c* newValue, bool b_updateObject=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), variableReference) : 0, sizeof(iVtObjectOutputNumber_s), 6, newValue);
@@ -163,13 +164,13 @@ public:
     saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), scale) : 0, sizeof(iVtObjectOutputNumber_s), 8, (uint32_t) newValue);
 	}
 	void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), numberOfDecimals) : 0, sizeof(iVtObjectOutputNumber_s), 9, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), numberOfDecimals) : 0, sizeof(iVtObjectOutputNumber_s), 9, newValue, newValue);
 	}
 	void setFormat(bool newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), format) : 0, sizeof(iVtObjectOutputNumber_s), 10, (newValue) ? 1 : 0);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), format) : 0, sizeof(iVtObjectOutputNumber_s), 10, (newValue) ? 1 : 0, (newValue) ? 1 : 0);
 	}
 	void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputNumber_s), 11, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputNumber_s), 11, newValue, newValue);
 	}
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject);

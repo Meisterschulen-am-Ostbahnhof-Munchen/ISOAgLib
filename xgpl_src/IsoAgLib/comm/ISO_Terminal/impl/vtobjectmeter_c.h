@@ -87,6 +87,7 @@
 
 // +X2C includes
 #include "vtobject_c.h"
+#include "isoterminal_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -128,25 +129,25 @@ public:
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), width) : 0, sizeof(iVtObjectMeter_s), 1 /* "Width" */, newValue); };
   
   void setNeedleColour(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour) : 0, sizeof(iVtObjectMeter_s), 2 /* "Needle Colour" */, newValue); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour) : 0, sizeof(iVtObjectMeter_s), 2 /* "Needle Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::NeedleColour)); };
   
   void setBorderColour(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour) : 0, sizeof(iVtObjectMeter_s), 3 /* "BorderColour" */, newValue); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour) : 0, sizeof(iVtObjectMeter_s), 3 /* "BorderColour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BorderColour)); };
   
   void setArcAndTickColour(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour) : 0, sizeof(iVtObjectMeter_s), 4 /* "Arc and Tick Colour" */, newValue); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour) : 0, sizeof(iVtObjectMeter_s), 4 /* "Arc and Tick Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::ArcAndTickColour)); };
   
   void setOptions(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), options) : 0, sizeof(iVtObjectMeter_s), 5 /* "Options" */, newValue); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), options) : 0, sizeof(iVtObjectMeter_s), 5 /* "Options" */, newValue, newValue); };
   
   void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks) : 0, sizeof(iVtObjectMeter_s), 6 /* "# of Ticks" */, newValue); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks) : 0, sizeof(iVtObjectMeter_s), 6 /* "# of Ticks" */, newValue, newValue); };
   
   void setStartAngle(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle) : 0, sizeof(iVtObjectMeter_s), 7 /* "Start Angle" */, newValue); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle) : 0, sizeof(iVtObjectMeter_s), 7 /* "Start Angle" */, newValue, newValue); };
   
   void setEndAngle(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle) : 0, sizeof(iVtObjectMeter_s), 8 /* "End Angle" */, newValue); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle) : 0, sizeof(iVtObjectMeter_s), 8 /* "End Angle" */, newValue, newValue); };
   
   void setMin(uint16_t newMin, bool b_updateObject= false) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), minValue) : 0, sizeof(iVtObjectMeter_s), 9 /* "Min value" */, newMin); };

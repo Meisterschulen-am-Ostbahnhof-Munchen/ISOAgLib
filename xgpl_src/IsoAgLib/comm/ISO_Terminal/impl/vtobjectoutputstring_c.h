@@ -87,6 +87,7 @@
 // +X2C includes
 #include "../ivtobjectstring_c.h"
 #include "../ivtobjectstringvariable_c.h"
+#include "isoterminal_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -155,19 +156,19 @@ public:
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), height) : 0, sizeof(iVtObjectOutputString_s), 2, newValue);
   }
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour) : 0, sizeof(iVtObjectOutputString_s), 3, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour) : 0, sizeof(iVtObjectOutputString_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour));
   }
   void setFontAttributes(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes) : 0, sizeof(iVtObjectOutputString_s), 4, newValue);
   }
   void setOptions(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), options) : 0, sizeof(iVtObjectOutputString_s), 5, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), options) : 0, sizeof(iVtObjectOutputString_s), 5, newValue, newValue);
   }
   
   void setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newVariable, bool b_updateObject= false);
 
   void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputString_s), 7, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputString_s), 7, newValue, newValue);
   }
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject);

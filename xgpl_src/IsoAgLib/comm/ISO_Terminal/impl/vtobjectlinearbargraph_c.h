@@ -85,6 +85,7 @@
 
 // +X2C includes
 #include "vtobject_c.h"
+#include "isoterminal_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -131,16 +132,16 @@ public:
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), height) : 0, sizeof(iVtObjectLinearBarGraph_s), 2, newValue);
   }
   void setColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), colour) : 0, sizeof(iVtObjectLinearBarGraph_s), 3, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), colour) : 0, sizeof(iVtObjectLinearBarGraph_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::Colour));
   }
   void setTargetLineColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectLinearBarGraph_s), 4, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectLinearBarGraph_s), 4, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::TargetLineColour));
   }
   void setOptions(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), options) : 0, sizeof(iVtObjectLinearBarGraph_s), 5, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), options) : 0, sizeof(iVtObjectLinearBarGraph_s), 5, newValue, newValue);
   }
   void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), numberOfTicks) : 0, sizeof(iVtObjectLinearBarGraph_s), 6, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), numberOfTicks) : 0, sizeof(iVtObjectLinearBarGraph_s), 6, newValue, newValue);
   }
   void setMinValue(uint16_t newValue, bool b_updateObject=false) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), minValue) : 0, sizeof(iVtObjectLinearBarGraph_s), 7, newValue);

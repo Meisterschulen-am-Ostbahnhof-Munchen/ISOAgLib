@@ -404,7 +404,8 @@ bool attrIsGiven [maxAttributeNames];
 
 static void usage()
 {
- std::cout << "\nUsage:\n"
+ std::cout << "\nvt2iso BUILD DATE: 14-Jan-2005\n\n"
+   "Usage:\n"
    " vt2iso [options] <XML file>\n\n"
    "This program invokes the DOMBuilder, builds the DOM tree,\n"
    "and then converts the tree to ISO Virtual Terminal cpp-files.\n\n"
@@ -446,18 +447,18 @@ void clean_exit (int return_value, char* error_message=NULL)
  if (partFileD) {
    fprintf (partFileD, "\n#define vtKeyCodeESC 0\n");
 // OLD:  fprintf (partFileD, "\n#define vtObjectCount %d\n", objCount);
-	 fclose (partFileD);
+  fclose (partFileD);
  }
 
  if (partFileE) { // -list
    fputs ("\n};\n", partFileE);
    // write implementation of handler class constructor into list
-	 // as there the list must be known
-	 // -> the handler decleration can be included from everywhere
-	 fprintf (partFileE, "\n  iObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjects, %d, %d) {};\n",
-			proName, proName, objCount, opDimension);
+  // as there the list must be known
+  // -> the handler decleration can be included from everywhere
+  fprintf (partFileE, "\n  iObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjects, %d, %d) {};\n",
+   proName, proName, objCount, opDimension);
 
-	 fclose(partFileE);
+  fclose(partFileE);
  }
  if (partFileF) { // handler class direct
 // NEW:
@@ -468,6 +469,8 @@ void clean_exit (int return_value, char* error_message=NULL)
    fprintf (partFileF, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
    fprintf (partFileF, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
    fprintf (partFileF, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
+   fprintf (partFileF, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
+   fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
    fprintf (partFileF, "\n  void initAllObjectsOnce();");
    fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName); //, objCount, opDimension);
    fprintf (partFileF, "\n};\n");
@@ -634,6 +637,12 @@ unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wi
  bool isThere = false;
  unsigned int foundID = 0;
 
+ // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL  object ID (65535) 
+ // do not assign object ids for this, and as a result count an additional object unnecessarily by incrementing objCount. -BAC 10-Jan-2004
+ if (wishID == 65535) 
+ {
+     return wishID;
+ }
  // first check if ID is there already
  for (unsigned int i=0; i<objCount; i++)
  {
@@ -723,6 +732,15 @@ void init (const char* xmlFile)
 
  strncpy (partFileName, xmlFile, 1024);
  strcat (partFileName, "-handler-direct.inc");
+// check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
+ partFileF = fopen (partFileName,"rb");
+ if (partFileF) {
+   // could open file, so it exists --> don't overwrite - create "-template" then
+   fclose (partFileF);
+   strcat (partFileName, "-template");
+ } else {
+   // file couldn't be opened, so create it, simply write to it...
+ }
  partFileF = fopen (partFileName,"wt");
 
  strncpy (partFileName, xmlFile, 1024);
@@ -1103,16 +1121,16 @@ unsigned int eventToi (char *text_eventName)
 
 unsigned int auxfunctiontyptetoi(char *text_auxFunctionType)
 {
-	int l, retval=0;
-	for (l=0; l<maxAuxFunctionTypes; l++)
+ int l, retval=0;
+ for (l=0; l<maxAuxFunctionTypes; l++)
     {
-		if (strstr (text_auxFunctionType, auxFunctionTypeTable [l]) != 0)
+  if (strstr (text_auxFunctionType, auxFunctionTypeTable [l]) != 0)
         {
-			retval = l;
-			break;
-		}
-	}
-	return retval;
+   retval = l;
+   break;
+  }
+ }
+ return retval;
 }
 
 /* ?????? ---OBSOLETE--- ??????
@@ -1381,8 +1399,6 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
      options |= rle<<2;
    }
 
-  // kill any previous loaded bitmaps was done in reset() before the call to openDecodePrintOut
-
   // generate all lower depth-bitmaps...
   for (int actDepth=0; actDepth <= colordepthtoi (attrString [attrFormat]); actDepth++) {
 
@@ -1403,7 +1419,6 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
     std::cout << std::endl; // Opening text is printed out by openBitmap
     if ( c_Bitmap.openBitmap( filename ) ) std::cout << "Loaded successfully!\n";
     else clean_exit (-1, "Loading failed!\n");
-
 
     // Decode bitmap to buffer!
     switch (actDepth) {
@@ -1928,7 +1943,16 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
       }
       fprintf (partFileB, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
      } else {
-      fprintf (partFileB, "{&iVtObject%s}", objChildName, objChildX, objChildY);
+        // Added this if statement to account for InputList objects who might have NULL Object IDs in there list of objects. (Which is legal per the standard!)
+        // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
+        if (objChildID == 65535)
+        {
+          fprintf (partFileB, "{NULL}"); 
+        }
+        else
+        {
+          fprintf (partFileB, "{&iVtObject%s}", objChildName, objChildX, objChildY);
+        }
      }
      objChildObjects++;
      firstElement = false;
@@ -1991,7 +2015,9 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
      // give him an ID, although not necessary now...
      objChildID = getID (objChildName, true, is_objChildID, objChildID);
      if (firstElement) {
-      fprintf (partFileB, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
+         // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
+         // fprintf (partFileB, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
+         fprintf (partFileB, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName);
      } else {
       fprintf (partFileB, ", ");
      }
@@ -3403,7 +3429,10 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
     if (objChildMacros == 0) {
       fprintf (partFileB, ", 0,NULL");
     } else {
-      fprintf (partFileB, ", %d,iVtObject%s_aEvent_Macro", objChildMacros, objName);
+        // Changed this line to give the correct name to the Macro object to match the naming conventions of IsoAgLib V 1.1.0. 
+        // This coincides with a change made above to the name of the Macro struct. -bac 06-Jan-2005
+        //fprintf (partFileB, ", %d,iVtObject%s_aEvent_Macro", objChildMacros, objName);
+        fprintf (partFileB, ", %d,iVtObject%s_aMacro_Object", objChildMacros, objName); 
     }
   }
 
@@ -3545,6 +3574,7 @@ int main(int argC, char* argV[])
   /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
   std::basic_string<char> c_unwantedType = ".inc";
   std::basic_string<char> c_unwantedType2 = ".h";
+  std::basic_string<char> c_unwantedType3 = ".inc-template";
   std::basic_string<char> c_directoryCompareItem;
   std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
   strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
@@ -3589,6 +3619,7 @@ int main(int argC, char* argV[])
     if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
     if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
     if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
+    if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
 
     if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
      c_directoryCompareItem.insert(0, "\\" );
@@ -3621,6 +3652,7 @@ int main(int argC, char* argV[])
    if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
    if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
    if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
+   if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
 
    if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
     c_directoryCompareItem.insert(0, "/" );

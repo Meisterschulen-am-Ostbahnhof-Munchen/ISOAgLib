@@ -171,7 +171,7 @@ public:
   //! @param colorValue: 
   //! @param b_updateObject: 
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour) : 0, sizeof(iVtObjectInputString_s), 3 /* "Background Colour" */, newValue);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour) : 0, sizeof(iVtObjectInputString_s), 3 /* "Background Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour));
   }
 
   // Operation: setFontAttributes
@@ -195,7 +195,7 @@ public:
   //! @param newOptions: 
   //! @param b_updateObject: 
   void setOptions(uint8_t newOptions, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), options) : 0, sizeof(iVtObjectInputString_s), 6 /* "Options" */, newOptions);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), options) : 0, sizeof(iVtObjectInputString_s), 6 /* "Options" */, newOptions, newOptions);
   }
 
   // Operation: setVariableReference
@@ -211,7 +211,7 @@ public:
   //! @param newHorizontalJustification: 
   //! @param b_updateObject: 
   void setHorizontalJustification(uint8_t newHorizontalJustification, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification) : 0, sizeof(iVtObjectInputString_s), 8 /* "Horizontal justification" */, newHorizontalJustification);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification) : 0, sizeof(iVtObjectInputString_s), 8 /* "Horizontal justification" */, newHorizontalJustification, newHorizontalJustification);
   }
 
 }; // ~X2C

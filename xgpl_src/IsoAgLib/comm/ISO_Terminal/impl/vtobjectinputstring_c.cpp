@@ -123,7 +123,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectInputString_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectInputString_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectInputString_a->backgroundColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectInputString_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObjectInputString_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectInputString_a->fontAttributes->getID() >> 8;
       if (vtObjectInputString_a->inputAttributes != NULL)
@@ -168,8 +168,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
       curBytes++;
       sourceOffset++;
     }
-    uint16_t tempOffset = 19+vtObjectInputString_a->length;
-    MACRO_streamEventMacro(tempOffset);
+    MACRO_streamEventMacro(19+vtObjectInputString_a->length);
     return curBytes;
 } // -X2C
 
@@ -244,7 +243,7 @@ vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject)
 
   setStringToStream( newValue );  // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length;
-  setStrLenToSend( ui16_tempLen );
+	setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this);
 } // -X2C
 

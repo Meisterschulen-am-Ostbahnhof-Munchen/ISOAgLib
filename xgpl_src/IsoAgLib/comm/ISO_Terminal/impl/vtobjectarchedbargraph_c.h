@@ -87,6 +87,7 @@
 
 // +X2C includes
 #include "vtobject_c.h"
+#include "isoterminal_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -136,23 +137,23 @@ public:
   }
 
   void setColour(uint8_t newColour, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour) : 0, sizeof(iVtObjectArchedBarGraph_s), 3 /* "Colour" */, newColour);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour) : 0, sizeof(iVtObjectArchedBarGraph_s), 3 /* "Colour" */, newColour, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newColour, this, IsoAgLib::Colour));
   }
 
   void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectArchedBarGraph_s), 4 /* "Target Line Colour" */, newTargetLineColour);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectArchedBarGraph_s), 4 /* "Target Line Colour" */, newTargetLineColour, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newTargetLineColour, this, IsoAgLib::TargetLineColour));
   }
 
   void setOptions(uint8_t newOptions, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), options) : 0, sizeof(iVtObjectArchedBarGraph_s), 5 /* "Options" */, newOptions);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), options) : 0, sizeof(iVtObjectArchedBarGraph_s), 5 /* "Options" */, newOptions, newOptions);
   }
 
   void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), startAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 6 /* "Start Angle" */, newStartAngle);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), startAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 6 /* "Start Angle" */, newStartAngle, newStartAngle);
   }
 
   void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), endAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 7 /* "End Angle" */, newEndAngle);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), endAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 7 /* "End Angle" */, newEndAngle, newEndAngle);
   }
 
   void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject=false) {
