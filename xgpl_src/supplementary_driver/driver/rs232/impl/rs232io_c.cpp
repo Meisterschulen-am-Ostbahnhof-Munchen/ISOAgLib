@@ -362,7 +362,11 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
   */
   RS232IO_c& RS232IO_c::operator<<(int8_t rc_data)
   {
+		#ifdef WIN32
+    int16_t i16_val = (rc_data >= 0)?rc_data:(-1*(abs(rc_data)));
+		#else
     int16_t i16_val = (rc_data >= 0)?rc_data:(-1*(CNAMESPACE::abs(rc_data)));
+		#endif
     char pc_data[5];
     // sprintf print value as text to uint8_t string and terminate it with '\0'
     CNAMESPACE::sprintf(pc_data, "%hi", i16_val);
