@@ -1,6 +1,6 @@
 # Filename: conf_imi_iso
-# Configuration setting for ImIsoMaskupload with
-# real CAN via RTE testserver
+# Configuration setting for tutorial example imi_iso
+# in the tutorial group 0_SystemMgmt
 
 # ###############################################################
 # Project Identification
@@ -81,6 +81,11 @@ ISO_AG_LIB_PATH="../.."
 #   GPS decode )
 # USE_FLOAT_DATA_TYPE=0
 
+# select if HEAP usage should reduce size in favour of speed
+# ( default: maximize speed, which costs about 10KByte more HEAPSIZE,
+#            but avoids slow memory allocation in too small units )
+# OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
+
 # ###############################################################
 # Basic Hardware Setup
 # ###############################################################
@@ -91,11 +96,11 @@ USE_TARGET_SYSTEM="pc_linux"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
-USE_CAN_DRIVER="rte"
+USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"
-USE_RS232_DRIVER="rte"
+USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
@@ -253,7 +258,7 @@ PRJ_EEPROM=1
 # designed for typical RPM values
 # PRJ_SENSOR_COUNTER=0
 
-# slect if the digital output driver shall be integrated into the project.
+# select if the digital output driver shall be integrated into the project.
 # you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
@@ -381,3 +386,4 @@ PRJ_EEPROM=1
 #   if the XL driver is selected --> DONT'T set the XL_ here again
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+

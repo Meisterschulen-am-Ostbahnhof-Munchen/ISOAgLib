@@ -1,6 +1,7 @@
 #!/bin/sh
 DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
-EXAMPLE_LIST=`ls conf_* | grep -v "~" | grep -e "conf_[0-9]" | sed -e 's/[ \t\n]+/:/g'`
+#EXAMPLE_LIST=`ls conf_* | grep -v "~" | grep -e "conf_[0-9]" | sed -e 's/[ \t\n]+/:/g'`
+EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 # EXAMPLE_LIST="conf_tractor"
 TARGET_LIST="pc_linux:pc_win32:esx:imi:pm167"
 CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim"
@@ -14,6 +15,7 @@ for conf_example in $EXAMPLE_LIST ; do
     conf_3*) EXAMPLE_DIR="3_Terminal" ;;
 		conf_4*) EXAMPLE_DIR="4_SupplementaryDriver" ;;
 		conf_5*) EXAMPLE_DIR="5_CanFeatures" ;;
+		*) EXAMPLE_DIR=".." ;;
   esac
   EXAMPLE=`echo $conf_example | sed -e 's/conf_//g'`
   EXAMPLE_DOXY=`echo $EXAMPLE | sed -e 's/-/__/g'`
