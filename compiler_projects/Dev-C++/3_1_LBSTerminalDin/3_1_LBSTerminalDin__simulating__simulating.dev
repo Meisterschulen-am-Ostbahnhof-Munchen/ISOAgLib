@@ -11,8 +11,8 @@ Linker=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
-Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h_@@_-DUSE_FLOAT_DATA_TYPE_@@_
-CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h_@@_-DUSE_FLOAT_DATA_TYPE_@@_
+Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h_@@_
+CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h_@@_
 IsCpp=1
 Icon=
 ExeOutput=

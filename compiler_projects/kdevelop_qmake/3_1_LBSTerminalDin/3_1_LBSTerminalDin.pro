@@ -1,4 +1,4 @@
-DEFINES = SYSTEM_PC PRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h USE_FLOAT_DATA_TYPE
+DEFINES = SYSTEM_PC PRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h
 INCLUDEPATH = ../../../xgpl_src
 INCLUDEPATH += ../../../IsoAgLib_Examples/tutorial/3_Terminal/3_1_LBSTerminalDin
 TEMPLATE = app

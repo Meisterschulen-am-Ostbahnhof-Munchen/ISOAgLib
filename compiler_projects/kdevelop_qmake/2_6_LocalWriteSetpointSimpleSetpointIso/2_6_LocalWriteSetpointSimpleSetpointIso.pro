@@ -1,4 +1,4 @@
-DEFINES = SYSTEM_PC PRJ_USE_AUTOGEN_CONFIG=config_2_6_LocalWriteSetpointSimpleSetpointIso.h USE_FLOAT_DATA_TYPE
+DEFINES = SYSTEM_PC PRJ_USE_AUTOGEN_CONFIG=config_2_6_LocalWriteSetpointSimpleSetpointIso.h
 INCLUDEPATH = ../../../xgpl_src
 INCLUDEPATH += ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso
 TEMPLATE = app

@@ -92,7 +92,7 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=1
+CAN_BUS_CNT=4
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )

@@ -222,7 +222,7 @@ using namespace IsoAgLib;
 	- simply write on channel 0, when no connection needed, or the connection is
 	  realized with another external connection
 */
-static const int32_t cui32_canChannel = 1;
+static const int32_t cui32_canChannel = 3;//1;
 
 
 /** dummy function to serve a real speed for the demonstration */

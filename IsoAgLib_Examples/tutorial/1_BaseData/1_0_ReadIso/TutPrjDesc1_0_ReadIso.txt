@@ -6548,6 +6548,18 @@ PRJ_RS232=1
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
 // Initialization of CAN filters and of local process data might get too slow under worst case conditions
 // #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+
+/** allow configuration by parameter value YES */
+#ifndef YES
+  #define YES 1
+#endif
+/** allow configuration by parameter value NO */
+#ifndef NO
+  #define NO 0
+#endif
+// Decide if float shall be used for the project
+#define USE_FLOAT_DATA_TYPE
+
 #ifndef USE_PROCESS_YN 
 	#define USE_PROCESS_YN NO 
 #endif

@@ -11,8 +11,8 @@ Linker=-lvxlapi_@@_
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
-Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h_@@_-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@__@@_-DUSE_CAN_CARD_TYPE=XL_HWTYPE_VIRTUAL_@@_-DUSE_FLOAT_DATA_TYPE_@@_
-CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h_@@_-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@__@@_-DUSE_CAN_CARD_TYPE=XL_HWTYPE_VIRTUAL_@@_-DUSE_FLOAT_DATA_TYPE_@@_
+Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h_@@_-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@__@@_-DUSE_CAN_CARD_TYPE=XL_HWTYPE_VIRTUAL_@@_
+CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_3_1_LBSTerminalDin.h_@@_-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@__@@_-DUSE_CAN_CARD_TYPE=XL_HWTYPE_VIRTUAL_@@_
 IsCpp=1
 Icon=
 ExeOutput=

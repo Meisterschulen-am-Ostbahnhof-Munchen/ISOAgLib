@@ -6,7 +6,7 @@
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_1_2_WriteIso" call,
 //                    if the corresponding value in isoaglib_config.h changed
-#define CAN_BUS_CNT 1 
+#define CAN_BUS_CNT 4 
 
 #define CAN_INSTANCE_CNT 1 
 
@@ -19,6 +19,15 @@
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
 // Initialization of CAN filters and of local process data might get too slow under worst case conditions
 // #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+
+/** allow configuration by parameter value YES */
+#ifndef YES
+  #define YES 1
+#endif
+/** allow configuration by parameter value NO */
+#ifndef NO
+  #define NO 0
+#endif
 #ifndef USE_PROCESS_YN 
 	#define USE_PROCESS_YN NO 
 #endif
