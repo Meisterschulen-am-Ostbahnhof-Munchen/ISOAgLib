@@ -420,8 +420,8 @@ int16_t checkMsg()
   int16_t result = 0;
   int16_t empfangen = 0;
   int16_t flag = 1;
-  bool b_received[2][15] = { {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-                             {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}};
+  bool b_received[2][15] = { {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
+                             {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}};
   while (flag == 1)
   {
     result = i = j = 0;

@@ -78,7 +78,12 @@
 #include <iostream>
 
 #ifdef WIN32
-	#include <MMSYSTEM.H>
+	#if defined( _MSC_VER )
+		#include <windows.h>
+		#include <MMSYSTEM.H>
+	#else
+		#include <time.h>
+	#endif
 #else
 	#include <sys/time.h>
 #endif
@@ -155,13 +160,25 @@ int16_t configWatchdog()
 }
 
 #ifdef WIN32
-	#include <MMSYSTEM.H>
-int32_t getTime()
-{ // returns time in msec
-  return timeGetTime();
-}
+	#if defined( _MSC_VER )
+	// VC++ with native Win32 API provides very accurate
+	// msec timer - use that
+	int32_t getTime()
+	{ // returns time in msec
+  	return timeGetTime();
+	}
+	#else
+	// MinGW has neither simple access to timeGetTime()
+	// nor to gettimeofday()
+	// - but beware: at least in LINUX clock() measures
+	//   only the times of the EXE in CPU core
+	int32_t getTime()
+	{ // returns time in msec
+	  return (clock()/(CLOCKS_PER_SEC/1000));
+	}
+  #endif
 #else
-	#include <sys/time.h>
+// use gettimeofday for native LINUX system
 static struct timeval startUpTime = {0,0};
 int32_t getTime()
 {
