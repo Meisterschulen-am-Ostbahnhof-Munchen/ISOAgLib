@@ -249,7 +249,7 @@ bool ISOTerminal_c::registerIsoObjectPool (IdentItem_c* rpc_wsMasterIdentItem, I
 
   pc_wsMasterIdentItem = rpc_wsMasterIdentItem;
   c_streamer.pc_pool = rpc_pool;
-	// the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
+  // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   c_streamer.pc_pool->initAllObjectsOnce();
 
   if (rpc_versionLabel != NULL) {
@@ -1017,7 +1017,7 @@ bool ISOTerminal_c::processMsg()
         b_result = true;
         break;
       case 0xC7: // Command: "Get Technical Data", parameter "Get Hardware Response"
-        vtCapabilities_a.hwGraphicType = /*0; */data().getUint8Data (2);
+        vtCapabilities_a.hwGraphicType = 0; //data().getUint8Data (2);
         vtCapabilities_a.hwHardware = data().getUint8Data (3);
         vtCapabilities_a.hwWidth = data().getUint8Data (4) + (data().getUint8Data (5) << 8);
         vtCapabilities_a.hwHeight = data().getUint8Data (6) + (data().getUint8Data (7) << 8);

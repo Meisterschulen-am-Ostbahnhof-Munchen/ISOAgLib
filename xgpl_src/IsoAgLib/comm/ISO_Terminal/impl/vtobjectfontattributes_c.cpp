@@ -106,7 +106,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 23; // Object Type = Font Attributes
-    destMemory [3] = vtObjectFontAttributes_a->fontColour;
+    destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectFontAttributes_a->fontColour);
     destMemory [4] = ui8_fontSizeScaled; // size() must have been called before to prepare!!!!
     destMemory [5] = vtObjectFontAttributes_a->fontType; // fix ISO_LATIN_1
     destMemory [6] = vtObjectFontAttributes_a->fontStyle;

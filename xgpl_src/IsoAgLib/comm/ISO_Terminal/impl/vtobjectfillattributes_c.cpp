@@ -111,17 +111,17 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 25; // Object Type = Fill Attributes
       destMemory [3] = vtObjectFillAttributes_a->fillType;
-      destMemory [4] = vtObjectFillAttributes_a->fillColour;
-	  if (vtObjectFillAttributes_a->fillPatternObject != NULL)
-	  {
-		destMemory [5] = vtObjectFillAttributes_a->fillPatternObject->getID() & 0xFF;
-		destMemory [6] = vtObjectFillAttributes_a->fillPatternObject->getID() >> 8;
-	  }
-	  else
-	  {
-		destMemory [5] = 0xFF;
-		destMemory [6] = 0xFF;
-	  }
+      destMemory [4] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectFillAttributes_a->fillColour);
+      if (vtObjectFillAttributes_a->fillPatternObject != NULL)
+      {
+        destMemory [5] = vtObjectFillAttributes_a->fillPatternObject->getID() & 0xFF;
+        destMemory [6] = vtObjectFillAttributes_a->fillPatternObject->getID() >> 8;
+      }
+      else
+      {
+        destMemory [5] = 0xFF;
+        destMemory [6] = 0xFF;
+      }
       destMemory [7] = vtObjectFillAttributes_a->numberOfMacrosToFollow;
       sourceOffset += 8;
       curBytes += 8;

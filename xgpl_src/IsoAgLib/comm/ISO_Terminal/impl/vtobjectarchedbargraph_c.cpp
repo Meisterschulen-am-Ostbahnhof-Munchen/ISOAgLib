@@ -121,8 +121,8 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectArchedBarGraph_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectArchedBarGraph_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = vtObjectArchedBarGraph_a->colour;
-      destMemory [8] = vtObjectArchedBarGraph_a->targetLineColour;
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectArchedBarGraph_a->colour);
+      destMemory [8] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectArchedBarGraph_a->targetLineColour);
       destMemory [9] = vtObjectArchedBarGraph_a->options;
       destMemory [10] = vtObjectArchedBarGraph_a->startAngle;
       destMemory [11] = vtObjectArchedBarGraph_a->endAngle;

@@ -223,8 +223,31 @@ using namespace IsoAgLib;
 /* Example Code following.... */
 /******************************/
 
+
+/**
+  hook function that gets called every time a color-value
+  has to be adapted to VT's color-depth.
+  --> Standard implementation will simply clip all color-values
+  greater than allowed to WHITE (Color 1)
+  This overloaded function will set all clipped colors to BLACK (Color 0) instead!
+  @param colorValue The color-value that was originally defined in the object
+  @param colorDepth 0 for 1bit-color depth (2-colored VT, black/white)
+                    1 for 4bit-color depth (16-colored VT)
+                    2 for 8bit-color depth (256-colored VT)
+*/
+uint8_t iObjectPool_simpleVTIsoPool_c::convertColor(uint8_t colorValue, uint8_t colorDepth)
+{
+  // on 2-colored VTs every color other than 0..1 will be set to 0.
+  if ((colorDepth == 0) && (colorValue > 1)) return 0;
+  // on 16-colored VTs every color other than 0..15 will be set to 0.
+  if ((colorDepth == 1) && (colorValue > 16)) return 0;
+  // on 256-color VTs every color can be used as is.
+  return colorValue;
+};
+
+
 // normal program variables (that are also used as source for the vt-display
-static	int16_t valSpeed=0, valMiles=0, valAccel=10, color=0, like=0;
+static int16_t valSpeed=0, valMiles=0, valAccel=10, color=0, like=0;
 
 // for changeAttribute when pressing on "Change Colour" button
 static iVtObjectStringVariable_c *colTable [9] = {&iVtObjectStrNone, &iVtObjectStrRed, &iVtObjectStrGreen, &iVtObjectStrBlue, &iVtObjectStrYellow, &iVtObjectStrCyan, &iVtObjectStrMagenta, &iVtObjectStrBlack, &iVtObjectStrWhite};

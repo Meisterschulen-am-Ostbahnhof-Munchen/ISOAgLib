@@ -123,7 +123,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectInputString_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectInputString_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = vtObjectInputString_a->backgroundColour;
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectInputString_a->backgroundColour);
       destMemory [8] = vtObjectInputString_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectInputString_a->fontAttributes->getID() >> 8;
       if (vtObjectInputString_a->inputAttributes != NULL)

@@ -81,6 +81,7 @@
  ***************************************************************************/
 
 #include "vtobjectsoftkeymask_c.h"
+#include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -104,7 +105,7 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 4; // Object Type = Soft Key Mask
-    destMemory [3] = vtObjectSoftKeyMask_a->backgroundColour;
+    destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectSoftKeyMask_a->backgroundColour);
     destMemory [4] = vtObjectSoftKeyMask_a->numberOfObjectsToFollow;
     destMemory [5] = vtObjectSoftKeyMask_a->numberOfMacrosToFollow;
     

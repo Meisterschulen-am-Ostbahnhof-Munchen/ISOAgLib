@@ -1381,10 +1381,12 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
      options |= rle<<2;
    }
 
+  // kill any previous loaded bitmaps was done in reset() before the call to openDecodePrintOut
+
   // generate all lower depth-bitmaps...
   for (int actDepth=0; actDepth <= colordepthtoi (attrString [attrFormat]); actDepth++) {
 
-    if (fixNr == -1) {
+    if (fixNr == -1) { // noFix
       // It's allowed to leave out 16-color bitmaps as there's a fallback to 2-color bitmap!!
       if ((actDepth == 1) && ((!attrIsGiven[attrFile1] && !attrIsGiven[attrFile]) || (attrIsGiven [attrFile1] && (strlen (attrString [attrFile1]) == 0)))) continue;
     } else {
@@ -1392,16 +1394,16 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
     }
 
     if (fixNr == -1) fprintf (partFileB, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%d [] = {", objName, actDepth);
-    else /* -std- */ fprintf (partFileB, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%dFixed%d [] = {", objName, actDepth, fixNr);
+    else /* -fix- */ fprintf (partFileB, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%dFixed%d [] = {", objName, actDepth, fixNr);
 
     if (attrIsGiven [attrFile0+actDepth]) sprintf (filename, "%s%s/%s", workDir, _bitmap_path, attrString [attrFile0+actDepth]);
     else /* use std file for all depth */ sprintf (filename, "%s%s/%s", workDir, _bitmap_path, attrString [attrFile]);
 
     // Open Bitmap
     std::cout << std::endl; // Opening text is printed out by openBitmap
-    for (int i=0; i<3; i++) c_Bitmap.objRawBitmapBytes [i] = 0; // kill any previous loaded bitmaps
     if ( c_Bitmap.openBitmap( filename ) ) std::cout << "Loaded successfully!\n";
     else clean_exit (-1, "Loading failed!\n");
+
 
     // Decode bitmap to buffer!
     switch (actDepth) {
@@ -1768,7 +1770,7 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
     ///////////////////////////////////////////////////////
    /// ### +BEGIN+ -- FIRST -- process "standard" bitmap
 
-   c_Bitmap.reset();
+   c_Bitmap.resetLengths();
    checkForFileOrFile148 ("picturegraphic");
 
    objBitmapOptions = picturegraphicoptionstoi (attrString [attrOptions]);
@@ -1795,7 +1797,7 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
            getAttributesFromNode(child, false); // false: DON'T read name= and id=
            // no defaultAttributes() needed here...
 
-           c_Bitmap.reset();
+           c_Bitmap.resetLengths();
            checkForFileOrFile148 ("fixedbitmap");
 
            fixBitmapOptions [fixNr] = objBitmapOptions & 0x3; // keep flashing/transparency information from <pictureobject>

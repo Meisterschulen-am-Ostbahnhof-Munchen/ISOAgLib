@@ -112,8 +112,8 @@ vtObjectButton_c::stream(uint8_t* destMemory,
       destMemory [4] = (((uint32_t) vtObjectButton_a->width*vtDimension)/opDimension) >> 8;
       destMemory [5] = (((uint32_t) vtObjectButton_a->height*vtDimension)/opDimension) & 0xFF;
       destMemory [6] = (((uint32_t) vtObjectButton_a->height*vtDimension)/opDimension) >> 8;
-      destMemory [7] = vtObjectButton_a->backgroundColour;
-      destMemory [8] = vtObjectButton_a->borderColour;
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectButton_a->backgroundColour);
+      destMemory [8] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectButton_a->borderColour);
       destMemory [9] = vtObjectButton_a->keyCode;
       destMemory [10] = vtObjectButton_a->latchable;
       destMemory [11] = vtObjectButton_a->numberOfObjectsToFollow;

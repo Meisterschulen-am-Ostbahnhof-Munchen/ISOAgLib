@@ -107,7 +107,7 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 24; // Object Type = Line Attributes
-      destMemory [3] = vtObjectLineAttributes_a->lineColour;
+      destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectLineAttributes_a->lineColour);
       if (flags & FLAG_ORIGIN_SKM) {
         destMemory [4] = (((uint32_t) vtObjectLineAttributes_a->lineWidth * factor) >> 20 ) & 0xFF;
       } else {

@@ -106,7 +106,7 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
         destMemory [0] = vtObjectWorkingSet_a->ID & 0xFF;
         destMemory [1] = vtObjectWorkingSet_a->ID >> 8;
         destMemory [2] = 0; // Object Type = Working Set
-        destMemory [3] = vtObjectWorkingSet_a->backgroundColour;
+        destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectWorkingSet_a->backgroundColour);
         destMemory [4] = vtObjectWorkingSet_a->selectable;
 
         if (vtObjectWorkingSet_a->activeMask != NULL) {

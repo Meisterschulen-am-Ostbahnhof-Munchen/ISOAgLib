@@ -193,7 +193,28 @@ public:
   
   iIsoTerminalObjectPool_c(iVtObject_c** r_iVtObjects, uint16_t r_numObjects, uint16_t r_dimension) :
     iVtObjects (r_iVtObjects), numObjects (r_numObjects), dimension (r_dimension), b_initAllObjects (false) {};
-    
+  
+  /**
+    hook function that gets called every time a color-value
+    has to be adapted to VT's color-depth.
+    --> Standard implementation will simply clip all color-values
+    greater than allowed to WHITE (Color 1)
+    Please overload this function if other behaviour is wanted
+    @param colorValue The color-value that was originally defined in the object
+    @param colorDepth 0 for 1bit-color depth (2-colored VT, black/white)
+                      1 for 4bit-color depth (16-colored VT)
+                      2 for 8bit-color depth (256-colored VT)
+  */
+  virtual uint8_t convertColor(uint8_t colorValue, uint8_t colorDepth)
+  {
+    // on 2-colored VTs every color other than 0..1 will be set to 1.
+    if ((colorDepth == 0) && (colorValue > 1)) return 1;
+    // on 16-colored VTs every color other than 0..15 will be set to 1.
+    if ((colorDepth == 1) && (colorValue > 16)) return 1;
+    // on 256-color VTs every color can be used as is.
+    return colorValue;
+  };
+
 protected:
   iVtObject_c** iVtObjects;
   uint16_t numObjects;

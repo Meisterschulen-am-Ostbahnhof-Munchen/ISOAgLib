@@ -51,12 +51,17 @@ void Vt2IsoImageBase_c::close( void )
 
 void Vt2IsoImageBase_c::reset( void )
 {
-  objRawBitmapBytes [0] = 0;
-  objRawBitmapBytes [1] = 0;
-  objRawBitmapBytes [2] = 0;
   i_currentThreshold = -1;
   ui_width = 0;
   ui_height = 0;
+}
+
+
+void Vt2IsoImageBase_c::resetLengths( void )
+{
+  objRawBitmapBytes[0] = 0;
+  objRawBitmapBytes[1] = 0;
+  objRawBitmapBytes[2] = 0;
 }
 
 
@@ -87,6 +92,7 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int rui_x, unsigned int r
 /** write the Bitmap to the given buffer and return amount of written Bytes */
 unsigned int Vt2IsoImageBase_c::write1BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize )
 {
+  objRawBitmapBytes [0] = 0;
 	if ( ( i_currentThreshold < 0 ) || ( i_currentThreshold == 128 ) ) getOptimalBwThreshold();
 
 	int roundedWidth = ( getWidth() + 7 );
@@ -118,6 +124,7 @@ unsigned int Vt2IsoImageBase_c::write1BitBitmap( unsigned char* pui_bitmap, unsi
 /** write the Bitmap to the given buffer and return amount of written Bytes */
 unsigned int Vt2IsoImageBase_c::write4BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize )
 {
+  objRawBitmapBytes [1] = 0;
 	int roundedWidth = ( getWidth() + 1 );
 	roundedWidth &= ( 0xFFFFFFFF-1 );
 
@@ -139,6 +146,7 @@ unsigned int Vt2IsoImageBase_c::write4BitBitmap( unsigned char* pui_bitmap, unsi
 /** write the Bitmap to the given buffer and return amount of written Bytes */
 unsigned int Vt2IsoImageBase_c::write8BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize )
 {
+  objRawBitmapBytes [2] = 0;
 	for ( unsigned int ui_y=0; ui_y< getHeight(); ui_y++) {
 		for ( unsigned int ui_x=0; ui_x < getWidth(); ui_x++) {
 			unsigned int pixelPaletteIndex = get8BitPixel( ui_x, ui_y );

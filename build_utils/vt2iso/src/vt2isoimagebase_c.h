@@ -69,6 +69,7 @@ class Vt2IsoImageBase_c
  	/** constructor which can directly open the corresponding file */
 	Vt2IsoImageBase_c( void );
 	void reset( void );
+	void resetLengths( void );
 	virtual void close( void );
  	/** open the given bitmap file and guarantee
 		that the pixels can be accessed by RGB

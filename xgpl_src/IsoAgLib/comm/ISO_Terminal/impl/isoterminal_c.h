@@ -362,7 +362,7 @@ public:
   vtState_s*         getVtState () { return &vtState_a; };
   localSettings_s*   getLocalSettings () { return &localSettings_a; };
   uint32_t           getUploadBufferSize ();
-
+  uint8_t            getUserClippedColor (uint8_t colorValue) { return c_streamer.pc_pool->convertColor (colorValue, getVtCapabilities()->hwGraphicType); };
 
   /** sendCommand... methods */
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout);
@@ -373,24 +373,24 @@ public:
   bool sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMaskID);
 
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE CHILD LOCATION COMMAND
-	//  Operation: sendCommandChangeChildLocation
-	//! Parameter:
-	//! @param rpc_object:
-	//! @param childObjectId:
-	//! @param dx:
-	//! @param dy:
+  //  Operation: sendCommandChangeChildLocation
+  //! Parameter:
+  //! @param rpc_object:
+  //! @param childObjectId:
+  //! @param dx:
+  //! @param dy:
   bool sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy);
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE BACKGROUND COLOUR COMMAND
-	//  Operation: sendCommandChangeBackgroundColor
-	//! Parameter:
-	//! @param objectId:
-	//! @param colorValue:
+  //  Operation: sendCommandChangeBackgroundColor
+  //! Parameter:
+  //! @param objectId:
+  //! @param colorValue:
   bool sendCommandChangeBackgroundColour(IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour);
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE PRIORITY COMMAND
-	//  Operation: sendCommandChangePriority
-	//! Parameter:
-	//! @param objectId:
-	//! @param colorValue:
+  //  Operation: sendCommandChangePriority
+  //! Parameter:
+  //! @param objectId:
+  //! @param colorValue:
   bool sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority);
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE SIZE COMMAND
   //  Operation: sendCommandChangeSize
@@ -410,17 +410,17 @@ public:
 
 
 // ADDED BY BRAD COX 17-SEP-2004 TO IMPLEMENT CHANGE FILL ATTRIBUTES COMMAND
-	//  Operation: sendCommandChangeSize
-	//! Parameter:
-	//! @param rpc_object:
-	//! @param newFillType:
-	//! @param newFillColour:
-	//! @param newFillPatternObject:
-bool ISOTerminal_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject);
+  //  Operation: sendCommandChangeSize
+  //! Parameter:
+  //! @param rpc_object:
+  //! @param newFillType:
+  //! @param newFillColour:
+  //! @param newFillPatternObject:
+  bool ISOTerminal_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject);
 
-bool ISOTerminal_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle);
+  bool ISOTerminal_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle);
 
-bool ISOTerminal_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt);
+  bool ISOTerminal_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt);
 
 private:
   friend class SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c);
@@ -455,13 +455,13 @@ private:
   uint8_t ui8_commandParameter;
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-	// as each SendCommand_c item is just 16Byte large, and an application
-	// can require a lot of items in the list ( examples need up to 150 items especially
-	// during init ), CHUNK Allocation is the strategy of choice
-	// Malloc_Alloc would cause too much overhead
-	// Numbers for 145 items: Malloc_Alloc: 3480Bytes; Chunk_Alloc: 2568Byte -> 912Byte fewer with Chunk Alloc
-	// ( single instance allocation can also cause time problems and could result in heavy
-	//   memory fragmentation ==>> here CHUNK Alloc is the only choice )
+  // as each SendCommand_c item is just 16Byte large, and an application
+  // can require a lot of items in the list ( examples need up to 150 items especially
+  // during init ), CHUNK Allocation is the strategy of choice
+  // Malloc_Alloc would cause too much overhead
+  // Numbers for 145 items: Malloc_Alloc: 3480Bytes; Chunk_Alloc: 2568Byte -> 912Byte fewer with Chunk Alloc
+  // ( single instance allocation can also cause time problems and could result in heavy
+  //   memory fragmentation ==>> here CHUNK Alloc is the only choice )
   STL_NAMESPACE::list<SendCommand_c> q_sendCommand;
   #else
   STL_NAMESPACE::queue<SendCommand_c> q_sendCommand;
@@ -503,16 +503,16 @@ private:
   uploadType_t en_uploadType;
   MultiSend_c::sendSuccess_t en_sendSuccess;
   #ifdef USE_LIST_FOR_FIFO
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >  q_sendUpload;
-	#else
+  #else
   STL_NAMESPACE::list<SendUpload_c>  q_sendUpload;
-	#endif
+  #endif
   #else
   STL_NAMESPACE::queue<SendUpload_c> q_sendUpload;
   #endif
 
-	ISOTerminalStreamer_c c_streamer;
+  ISOTerminalStreamer_c c_streamer;
 
 };
 
