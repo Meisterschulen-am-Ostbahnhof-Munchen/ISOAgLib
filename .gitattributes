@@ -807,8 +807,6 @@ compiler_projects/kdevelop_qmake/IsoAgLib/ImiIsoRte.kdevelop -text
 compiler_projects/kdevelop_qmake/IsoAgLib/ImiIsoRte.kdevelop.filelist -text
 compiler_projects/kdevelop_qmake/IsoAgLib/IsoAgLib/templates/cpp_template -text
 compiler_projects/kdevelop_qmake/IsoAgLib/IsoAgLib/templates/header_template -text
-compiler_projects/kdevelop_qmake/imi_iso_rte/imi_iso_rte.pro -text
-compiler_projects/kdevelop_qmake/imi_iso_sim/imi_iso_sim.pro -text
 compiler_projects/kdevelop_qmake/tractor/filelist__tractor.qmake -text
 compiler_projects/kdevelop_qmake/tractor/tractor.kdevelop -text
 compiler_projects/kdevelop_qmake/tractor/tractor.kdevelop.filelist -text
