@@ -175,9 +175,7 @@ void Scheduler_c::closeCommunication( void ) {
   while ( ! c_arrClientC1.empty() )
   { // call close for each registered client
     pc_searchCacheC1 = c_arrClientC1.begin();
-		if ( *pc_searchCacheC1 != NULL ) (*pc_searchCacheC1)->close();
-
-		c_arrClientC1.erase(pc_searchCacheC1);
+    if ( *pc_searchCacheC1 != NULL ) (*pc_searchCacheC1)->close();
   }
 }
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown

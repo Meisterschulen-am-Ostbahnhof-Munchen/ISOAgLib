@@ -1391,6 +1391,7 @@ if (treatSpecial) {
 
 void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &options, int fixNr=-1)
 {
+   std::cout << "Bitmappath: " << _bitmap_path << std::endl;
    if (attrIsGiven [attrRle]) {
      // set rle stuff
      unsigned int rle = picturegraphicrletoi (attrString [attrRle]);
