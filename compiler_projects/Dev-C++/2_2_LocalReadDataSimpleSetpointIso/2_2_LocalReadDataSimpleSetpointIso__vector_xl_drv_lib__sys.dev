@@ -1,5 +1,5 @@
 [Project]
-FileName=2_2_LocalReadDataSimpleSetpointIso__vector_xl__sys.dev
+FileName=2_2_LocalReadDataSimpleSetpointIso__vector_xl_drv_lib__sys.dev
 Name=2_2_LocalReadDataSimpleSetpointIso
 UnitCount=113
 Type=1
@@ -18,7 +18,7 @@ Icon=
 ExeOutput=
 ObjectOutput=objects
 OverrideOutput=0
-OverrideOutputName=2_2_LocalReadDataSimpleSetpointIso__vector_xl__sys.exe
+OverrideOutputName=2_2_LocalReadDataSimpleSetpointIso__vector_xl_drv_lib__sys.exe
 HostApplication=
 Folders=
 CommandLine=
@@ -338,7 +338,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit30]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 CompileCpp=1
 Folder=2_2_LocalReadDataSimpleSetpointIso
 Compile=1

@@ -1,5 +1,5 @@
 [Project]
-FileName=2_7_RemoteReadDataStdIso__vector_xl__simulating.dev
+FileName=2_7_RemoteReadDataStdIso__vector_xl_drv_lib__simulating.dev
 Name=2_7_RemoteReadDataStdIso
 UnitCount=116
 Type=1
@@ -18,7 +18,7 @@ Icon=
 ExeOutput=
 ObjectOutput=objects
 OverrideOutput=0
-OverrideOutputName=2_7_RemoteReadDataStdIso__vector_xl__simulating.exe
+OverrideOutputName=2_7_RemoteReadDataStdIso__vector_xl_drv_lib__simulating.exe
 HostApplication=
 Folders=
 CommandLine=
@@ -348,7 +348,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit31]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 CompileCpp=1
 Folder=2_7_RemoteReadDataStdIso
 Compile=1

@@ -1,5 +1,5 @@
 [Project]
-FileName=tractor__vector_xl__sys.dev
+FileName=tractor__vector_xl_drv_lib__sys.dev
 Name=tractor
 UnitCount=93
 Type=1
@@ -18,7 +18,7 @@ Icon=
 ExeOutput=
 ObjectOutput=objects
 OverrideOutput=0
-OverrideOutputName=tractor__vector_xl__sys.exe
+OverrideOutputName=tractor__vector_xl_drv_lib__sys.exe
 HostApplication=
 Folders=
 CommandLine=
@@ -228,7 +228,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp
+FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 CompileCpp=1
 Folder=tractor
 Compile=1
