@@ -95,6 +95,37 @@ BasePkg_c::BasePkg_c(){
 /** default destructor which has nothing to do */
 BasePkg_c::~BasePkg_c(){
 }
+/**
+	assign operator to insert informations from one CANPkg_c into another
+	@see __IsoAgLib::FilterBox_c::operator>>
+	@see CANPkgExt_c::operator=
+	@see CANPkgExt_c::getData
+	@param rrefc_right reference to the source CANPkg_c on the right
+	@return reference to the source CANPkg_c to enable assign chains like
+			"pkg1 = pkg2 = pkg3 = pkg4;"
+*/
+const CANPkg_c& BasePkg_c::operator=(const CANPkg_c& rrefc_right)
+{
+	const BasePkg_c& rrefc_mine = static_cast<const BasePkg_c&>(rrefc_right);
+  #ifdef USE_ISO_11783
+  /** int32_t value in Byte 3 to 6 */
+  i32_val36 = rrefc_mine.i32_val36;
+  i16_val45 = rrefc_mine.i16_val45;
+  #endif
+
+  /** uint8_t data string for BABO and SEND */
+  std::memcpy(pb_internalData, rrefc_mine.pb_internalData, 2);
+
+  i16_val12 = rrefc_mine.i16_val12;
+  i16_val34 = rrefc_mine.i16_val34;
+  i16_val56 = rrefc_mine.i16_val56;
+  i16_val78 = rrefc_mine.i16_val78;
+
+  /** array for uint8_t values */
+  std::memcpy(pb_val, rrefc_mine.pb_val, 9);
+
+	return CANPkg_c::operator=(rrefc_right);
+}
 
 /** overloaded virtual function to translate the string data into flag values */
 void BasePkg_c::string2Flags()

@@ -123,7 +123,7 @@ public:
     @return reference to the source CANPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
   */
-  virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right) { return CANPkg_c::operator=(rrefc_right);};
+  virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right);
 
   /* ******************** */
   /* retreiving of values */

@@ -99,6 +99,24 @@ MultiSendPkg_c::MultiSendPkg_c(){
 /** default constructor which has nothing to do */
 MultiSendPkg_c::~MultiSendPkg_c(){
 }
+/**
+	assign operator to insert informations from one CANPkg_c into another
+	@see __IsoAgLib::FilterBox_c::operator>>
+	@see CANPkgExt_c::operator=
+	@see CANPkgExt_c::getData
+	@param rrefc_right reference to the source CANPkg_c on the right
+	@return reference to the source CANPkg_c to enable assign chains like
+			"pkg1 = pkg2 = pkg3 = pkg4;"
+*/
+const CANPkg_c& MultiSendPkg_c::operator=(const CANPkg_c& rrefc_right)
+{
+	const MultiSendPkg_c& rrefc_mine = static_cast<const MultiSendPkg_c&>(rrefc_right);
+  bitfield.b_empf = rrefc_mine.bitfield.b_empf;
+  bitfield.b_send = rrefc_mine.bitfield.b_send;
+  en_byteOrder = rrefc_mine.en_byteOrder;
+
+	return CANPkg_c::operator=(rrefc_right);
+}
 
 /**
   overloaded virtual function to translate the string data into flag values;
