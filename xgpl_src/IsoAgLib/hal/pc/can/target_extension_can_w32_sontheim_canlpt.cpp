@@ -258,9 +258,13 @@ int16_t can_startDriver()
 		for ( int32_t ind = 0; ind < ci_cardTypeCnt; ind++ )
 		{
 			Sleep( 100 );
+            
 			if ( ( ci_tryCardTypes[ind] != c_CANAS ) && ( ci_tryCardTypes[ind] != c_ECAN_PCI ) )
 			{
-				apiversion = ca_InitApi_1(ci_tryCardTypes[ind], LptIsaIoAdr);
+				if (ci_tryCardTypes[ind]== c_CANUSB_Std_Api)
+                    apiversion = ca_InitApi_1(ci_tryCardTypes[ind], 0x300);  //I/O Address is 0x300 for CANUSB!
+                else
+                    apiversion = ca_InitApi_1(ci_tryCardTypes[ind], LptIsaIoAdr);
 			}
 			else
 			{
@@ -310,6 +314,33 @@ int16_t can_startDriver()
 	else   { printf("Reset CANLPT not ok\n");
 					// exit(0);
 	}
+
+    // Added this section of code to try to get the version from the CANUSB adapter.
+    if (gHwType == c_CANUSB_Std_Api)       
+    {
+        int sdata[16];
+        int k=0;
+        int erg = 0;
+        char buf[256];
+        for (k=0 ; k<16 ; k++) sdata[k]=0;
+        sdata[0]=0x25;
+        erg = ca_Instruction_1(sdata);
+        if(erg) 
+        {
+            buf[0]=0;
+            for(k=3;k<16;k++) 
+            {
+                buf[k-3] = (char)sdata[k];
+            }
+            buf[12]=0;
+            printf("\nVersion of CANUSB: %s", buf);
+        }
+        else 
+        {
+            printf("\nReading of Version failed !!!");
+           // getch();
+        }
+    }
 	// wait to be shure that CAN card is clean reset
 	Sleep(100);
 
@@ -398,6 +429,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 	int channel = 0;
 	int btr0, btr1;
 	int errcode;
+    int accMask = 0x0;
 
 	if ( ( gHwType == c_ICAN ) || ( gHwType == c_CANLpt ) )
 	{
@@ -451,6 +483,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 		case c_ICAN: // not used -> let 0
 			break;
 		case c_CANLpt:
+        case c_CANUSB_Std_Api:
 			// receive everything for CAN-LPT style
 			fdata[0]  = 0x00;
 			fdata[1]  = 0x00;
@@ -486,6 +519,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 	switch ( gHwType )
 	{
 		case c_CANLpt:
+            accMask = 0xFF;
 			switch ( wBitrate )
 			{
 				case 10: { btr0 = 0x3F; btr1 = 0x7F;} break;
@@ -497,6 +531,20 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 				case 500: { btr0 = 0x01; btr1 = 0x1C;} break;
 				case 800: { btr0 = 0x01; btr1 = 0x16;} break;
 				case 1000: { btr0 = 0x00; btr1 = 0x1C;} break;
+			}
+			break;
+        case c_CANUSB_Std_Api:
+			switch ( wBitrate )
+			{
+				case 10: { btr0 = 0xF1; btr1 = 0x3E;} break;
+				case 20: { btr0 = 0xF1; btr1 = 0x3E;} break;
+				case 50: { btr0 = 0xF1; btr1 = 0x3E;} break;
+				case 100: { btr0 = 0xD8; btr1 = 0x3E;} break;
+				case 125: { btr0 = 0xD3; btr1 = 0x3E;} break;
+				case 250: { btr0 = 0xC9; btr1 = 0x3E;} break;
+				case 500: { btr0 = 0xC3; btr1 = 0x7F;} break;
+				case 800: { btr0 = 0xC1; btr1 = 0x1C;} break;
+				case 1000: { btr0 = 0xC1; btr1 = 0x1C;} break;
 			}
 			break;
 		default:
@@ -518,7 +566,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 						channel,  // 0 for CANLPT/ICAN, else 1 for first BUS
 						0x00,  // msg-nr / 0 for CANLPT/ICAN
 						0x00,  // Acceptance Code to receive everything for ICAN
-						0xFF,  // Acceptance Mask to receive everything for ICAN
+						accMask,  // Acceptance Mask to receive everything for ICAN
 						fdata, // filter array of int[16];
 						btr0,  // BTR0
 						btr1,  // BTR1
@@ -532,7 +580,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 		// we configure also msg obj 0xF to get a safe receive of Std AND Ext
 		if (errcode)
 		{
-			printf ("CAN-LPT initialized for first MsgObj - Now configure for MsgObj 0xF to get safe receice of Std AND Ext\n");
+			printf ("CAN-LPT initialized for first MsgObj - Now configure for MsgObj 0xF to get safe receive of Std AND Ext\n");
 		}
 		else
 		{
@@ -546,7 +594,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 							channel,  // 0 for CANLPT/ICAN, else 1 for first BUS
 							0x0F,  // msg-nr
 							0x00,  // Acceptance Code to receive everything for ICAN
-							0xFF,  // Acceptance Mask to receive everything for ICAN
+							accMask,  // Acceptance Mask to receive everything for ICAN
 							fdata, // filter array of int[16];
 							btr0,  // BTR0
 							btr1,  // BTR1
@@ -788,7 +836,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 			||((ptSend->dwId & 0x700) == 0x200)
 			)
 	{
-		printf("Sende: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
+		printf("Tx: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
 			ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
 			ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
 			ptSend->abData[6], ptSend->abData[7]);
@@ -804,7 +852,11 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 			ptSend->bXtd,						   // extended Frame
 			transmitdata);			   // can object
 	if ( result ) return HAL_NO_ERR;
-	else return HAL_OVERFLOW_ERR;
+	else
+    {   
+        printf("HAL_OVERFLOW_ERROR!\n");
+        return HAL_OVERFLOW_ERR;
+    }
 };
 
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
@@ -833,13 +885,14 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
     ptReceive->bXtd = pc_data->b_xtd;
     memcpy(ptReceive->abData, pc_data->pb_data, pc_data->b_dlc);
 
-  if ( ((ptReceive->dwId & 0x700) == 0x700)
-     ||((ptReceive->dwId & 0x7FF) == 0x520)
-     ||((ptReceive->dwId & 0x700) == 0x200)
-     ||((ptReceive->dwId & 0x7FF) == 0x502)
-      )
+  //if ( ((ptReceive->dwId & 0x700) == 0x700)
+   //  ||((ptReceive->dwId & 0x7FF) == 0x520)
+   //  ||((ptReceive->dwId & 0x700) == 0x200)
+   //  ||((ptReceive->dwId & 0x7FF) == 0x502)
+   //   )
+    if( (ptReceive->dwId & 0xCB0000) == 0x00CB0000) 
     {
-      printf("Empfang: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
+      printf("Rx: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
       ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
       ptReceive->abData[3], ptReceive->abData[4], ptReceive->abData[5],
       ptReceive->abData[6], ptReceive->abData[7]);
@@ -921,6 +974,10 @@ int16_t checkMsg()
 				b_bus = 1;
 				b_xtd = 1;
 				break;
+            default:
+                b_bus = 0;
+                b_xtd = 0;
+                break;
 		}
 
 		if (ui32_id >= 0x7FFFFFFF)
