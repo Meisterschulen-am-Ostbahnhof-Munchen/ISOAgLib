@@ -105,3 +105,4 @@ IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/config_3_0_VirtualT
 IsoAgLib_Examples/tutorial/3_Terminal/3_1_LBSTerminalDin/3_1_LBSTerminalDin.cpp -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_1_LBSTerminalDin/TutPrjDesc3_1_LBSTerminalDin.txt -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_1_LBSTerminalDin/config_3_1_LBSTerminalDin.h -text
+/README_LICENSED_PARTS.txt -text
