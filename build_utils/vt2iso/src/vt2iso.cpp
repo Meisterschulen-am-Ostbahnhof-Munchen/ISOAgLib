@@ -514,7 +514,7 @@ void clean_exit (int return_value, char* error_message=NULL)
  { // only WIN32 style Backslash found
    strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
  }
- else if ( pc_lastDirectoryBackslash > pc_lastDirectorySlash == NULL )
+ else if ( pc_lastDirectoryBackslash > pc_lastDirectorySlash )
  { // last backslash is behind last slash - cas of mixed directory seperators
    strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
  }
@@ -572,11 +572,11 @@ void clean_exit (int return_value, char* error_message=NULL)
 
 
 
-void copyWithQuoteAndLength (char *dest, const char *src, int len)
+void copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
 {
   *dest++ = '"';
-  int take = (strlen(src) <= len) ? strlen(src) : len;
-  int i=0;
+  unsigned int take = (strlen(src) <= len) ? strlen(src) : len;
+  unsigned int i=0;
   for (; i<take; i++) *dest++ = *src++;
   for (; i<len; i++) *dest++ = ' '; // fill with spaces if necessary
   *dest++ = '"';
@@ -820,7 +820,7 @@ unsigned int objectIsType (char* lookup_name)
    return i;
   }
  }
- return -1;
+ return 0xFFFF;
 }
 
 unsigned int commandIsType (char* lookup_name)
@@ -830,7 +830,7 @@ unsigned int commandIsType (char* lookup_name)
         return i;
      }
   }
-  return -1;
+  return 0xFFFF;
 }
 
 unsigned int colortoi (char* text_color)
@@ -914,7 +914,7 @@ unsigned int optionstoi (char *text_options)
  int l, retval=0;
  for (l=0; l<maxOptionsTable; l++) {
   if (strstr (text_options, optionsTable [l]) != 0) {
-   retval += (1<<l);
+   retval += (uint64_t(1)<<l);
   }
  }
  return retval;
@@ -925,7 +925,7 @@ unsigned int outputnumberoptionstoi (char *text_options)
  int l, retval=0;
  for (l=0; l<maxOutputNumberOptionsTable; l++) {
   if (strstr (text_options, outputNumberOptionsTable [l]) != 0) {
-   retval += (1<<l);
+   retval += (uint64_t(1)<<l);
   }
  }
  return retval;
@@ -936,7 +936,7 @@ unsigned int picturegraphicoptionstoi (char *text_options)
  int l, retval=0;
  for (l=0; l<maxPictureGraphicOptionsTable; l++) {
   if (strstr (text_options, pictureGraphicOptionsTable [l]) != 0) {
-   retval += (1<<l);
+   retval += (uint64_t(1)<<l);
   }
  }
  return retval;
@@ -947,7 +947,7 @@ unsigned int picturegraphicrletoi (char *text_options)
  int l, retval=0;
  for (l=0; l<maxPictureGraphicRleTable; l++) {
   if (strstr (text_options, pictureGraphicRleTable [l]) != 0) {
-   retval += (1<<l);
+   retval += (uint64_t(1)<<l);
   }
  }
  return retval;
@@ -958,7 +958,7 @@ unsigned int meteroptionstoi (char *text_options)
     int l, retval=0;
     for (l=0; l<maxMeterOptionsTable; l++) {
         if (strstr (text_options, meterOptionsTable [l]) != 0) {
-            retval += (1<<l);
+            retval += (uint64_t(1)<<l);
         }
     }
     return retval;
@@ -969,7 +969,7 @@ unsigned int linearbargraphoptionstoi (char *text_options)
  int l, retval=0;
  for (l=0; l<maxLinearBarGraphOptionsTable; l++) {
   if (strstr (text_options, linearBarGraphOptionsTable [l]) != 0) {
-   retval += (1<<l);
+   retval += (uint64_t(1)<<l);
   }
  }
  return retval;
@@ -980,7 +980,7 @@ unsigned int archedbargraphoptionstoi (char *text_options)
     int l, retval=0;
     for (l=0; l<maxArchedBarGraphOptionsTable; l++) {
         if (strstr (text_options, archedBarGraphOptionsTable [l]) != 0) {
-            retval += (1<<l);
+            retval += (uint64_t(1)<<l);
         }
     }
     return retval;
@@ -1016,7 +1016,7 @@ unsigned int fontstyletoi (char *text_fontstyle)
  int l, retval=0;
  for (l=0; l<maxFontstyleTable; l++) {
   if (strstr (text_fontstyle, fontstyleTable [l]) != NULL) {
-   retval += (1<<l);
+   retval += (uint64_t(1)<<l);
   }
  }
  return retval;
@@ -1033,7 +1033,7 @@ unsigned int linedirectiontoi (char *text_linedirection)
 
 unsigned int linearttoi (char *text_lineart)
 {
- int l, retval=0;
+ int retval=0;
  char thischar;
  while ((thischar = *text_lineart) != 0x00) {
   retval <<= 1;
@@ -1052,7 +1052,7 @@ unsigned int linesuppressiontoi (char *text_linesuppression)
     int l, retval=0;
     for (l=0; l<maxLineSuppressionTable; l++) {
         if (strstr (text_linesuppression, lineSuppressionTable [l]) != 0) {
-            retval += (1<<l);
+            retval += (uint64_t(1)<<l);
         }
     }
     return retval;
@@ -1360,7 +1360,8 @@ if (treatSpecial) { // get 'name=', 'id=' and all other possible attributes
       strncpy (attrString [l], attr_value, stringLength);
       attrIsGiven [l] = true;
 // DEBUG-OUT
-//      std::cout << "FOUND ATTR: " << attrString[l] << "\n";
+//      std::cout << "FOUND ATTR: IND " << l << ":= " << attrNameTable [l] << " -> " << attrString[l] << ":" 
+//                << attrIsGiven [l] << "\n";
       break;
      }
     }
@@ -1396,13 +1397,13 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
      // set rle stuff
      unsigned int rle = picturegraphicrletoi (attrString [attrRle]);
      // replace possible rle='auto' by 'rle1+rle4+rle8'
-     if (rle & (1<<3)) rle = (1<<0) | (1<<1) | (1<<2);
+     if (rle & (uint64_t(1)<<3)) rle = (uint64_t(1)<<0) | (uint64_t(1)<<1) | (uint64_t(1)<<2);
      // and merge to options byte
      options |= rle<<2;
    }
 
   // generate all lower depth-bitmaps...
-  for (int actDepth=0; actDepth <= colordepthtoi (attrString [attrFormat]); actDepth++) {
+  for (unsigned int actDepth=0; actDepth <= colordepthtoi (attrString [attrFormat]); actDepth++) {
 
     if (fixNr == -1) { // noFix
       // It's allowed to leave out 16-color bitmaps as there's a fallback to 2-color bitmap!!
@@ -1438,9 +1439,9 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
     if (c_Bitmap.objRawBitmapBytes [actDepth] == 0) clean_exit (-1, "===> Bitmap with size 0. Terminating!\n\n");
 
     // Is RLE wanted/sensible? ("rle[actDepth]" set?)
-    if (options & (1<<(2+actDepth))) {
-      int offset=0;
-      int rleBytes=0;
+    if (options & (uint64_t(1)<<(2+actDepth))) {
+      unsigned int offset=0;
+      unsigned int rleBytes=0;
       while (offset < c_Bitmap.objRawBitmapBytes [actDepth]) {
         int cnt=1;
         while (((offset+cnt) < c_Bitmap.objRawBitmapBytes [actDepth]) && (picBuffer [offset] == picBuffer [offset+cnt]) && (cnt < 255)) cnt++;
@@ -1449,20 +1450,20 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
       }
       // If RLE-size is larger than uncompressed size, clear the RLE1/4/8 flag!
       if (rleBytes >= c_Bitmap.objRawBitmapBytes [actDepth]) {
-        options &= -1-(1<<(2+actDepth));
+        options &= -1-(uint64_t(1)<<(2+actDepth));
         std::cout << "++INFORMATION++: <picturegraphic name='" << objName << "' actDepth012='"<< actDepth <<"'... /> has RLE-compressed bitmap-size of "<< rleBytes
                   << " bytes but uncompressed bitmap-size of "<< c_Bitmap.objRawBitmapBytes [actDepth] <<" bytes. Turning RLE-Encoding off for that object!\n";
       }
     }
 
     // Print out raw data or rle_data?
-    if (options & (1<<(2+actDepth))) { // rle1, rle4 or rle8 "STILL" set?
+    if (options & (uint64_t(1)<<(2+actDepth))) { // rle1, rle4 or rle8 "STILL" set?
       //// +++ RLE-COMPRESSED OUTPUT +++
-      int offset=0;
+      unsigned int offset=0;
       int rleBytes=0;
       int PixelCount = 0;
       while (offset < c_Bitmap.objRawBitmapBytes [actDepth]) {
-        int cnt=1;
+        unsigned int cnt=1;
         while (((offset+cnt) < c_Bitmap.objRawBitmapBytes [actDepth]) && (picBuffer [offset] == picBuffer [offset+cnt]) && (cnt < 255)) cnt++;
         if (offset == 0) fprintf (partFileB, " /* RLE-Encoded Raw-Bitmap Data */ %d, %d", cnt, picBuffer [offset]);
         else /* ----- */ fprintf (partFileB, ",%d, %d", cnt, picBuffer [offset]);
@@ -1478,12 +1479,12 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
       //// +++ NORMAL UNCOMPRESSED OUTPUT +++
       if (actDepth == 1) { // nur der lesbarkeit halber!!
         fprintf (partFileB, " /* 16-Color Raw-Bitmap Data */ (%d << 4) | %d", picBuffer [0] >> 4, picBuffer [0] & 0xF);
-        for (int i=1; i<c_Bitmap.objRawBitmapBytes [actDepth]; i++) {
+        for (unsigned int i=1; i<c_Bitmap.objRawBitmapBytes [actDepth]; i++) {
           fprintf (partFileB, ", (%d << 4) | %d", picBuffer [i] >> 4, picBuffer [i] & 0xF);
         }
       } else {
         fprintf (partFileB, " /* Raw-Bitmap Data */ %d", picBuffer [0]);
-        for (int i=1; i<c_Bitmap.objRawBitmapBytes [actDepth]; i++) {
+        for (unsigned int i=1; i<c_Bitmap.objRawBitmapBytes [actDepth]; i++) {
           fprintf (partFileB, ", %d", picBuffer [i]);
         }
       }
@@ -1499,9 +1500,9 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
 //
 // ---------------------------------------------------------------------------
 #ifdef WIN32
-void processElement (DOMNode *n, unsigned long ombType, const char* rc_workDir)
+void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir)
 #else
-static void processElement (DOMNode *n, unsigned long ombType, const char* rc_workDir)
+static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir)
 #endif
 {
  DOMNode *child;
@@ -1562,7 +1563,7 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
  commandType = commandIsType (node_name);
 
  // ERROR: Wrong <TAG>
- if (objType == -1 && commandType == -1) {
+ if (objType == 0xFFFF && commandType == 0xFFFF) {
   std::cout << "\n\nUNKNOWN TAG <"<< node_name <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   clean_exit (-1);
  }
@@ -1606,18 +1607,17 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
   }
  } else {
   // normal to insert element!
-  if (( ((1L)<<objType) & ombType) == 0) {
+  if (( (uint64_t(1)<<objType) & ombType) == 0) {
    // ERROR: Unallowed <TAG> here?!
    std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << ">\nPOSSIBLE TAGS HERE WOULD BE: ";
    for (int j=0; j<maxObjectTypesToCompare; j++) {
-    if (((1L)<<j) & ombType) {
+    if ((uint64_t(1)<<j) & ombType) {
      std::cout << " <" << otCompTable [j] << ">  ";
     }
    }
    std::cout << "\n\n";
    clean_exit (-1);
   }
-
   getAttributesFromNode(n, true); // true: read name= and id=
 
   // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
@@ -1834,12 +1834,12 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
      // 1st: Print out array here now...
      fprintf (partFileB, "const IsoAgLib::repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s iVtObject%s_aFixedBitmaps [] = {", objName);
      bool firstEntry=true;
-     for (int i=0; i<fixNr; i++) {
+     for (unsigned int i=0; i<fixNr; i++) {
        for (int actDepth=0; actDepth<2; actDepth++) {
          // was this depth generated for this special bitmap?
          if (fixRawBitmapBytes[i] [actDepth] > 0) {
            if (!firstEntry) fprintf (partFileB, ", ");
-           unsigned int options = (fixBitmapOptions[i] & 0x3) | ( (fixBitmapOptions[i] & (1<<(2+actDepth))) ? (1<<2) : 0 );
+           unsigned int options = (fixBitmapOptions[i] & 0x3) | ( (fixBitmapOptions[i] & (uint64_t(1)<<(2+actDepth))) ? (uint64_t(1)<<2) : 0 );
            fprintf (partFileB, "{iVtObject%s_aRawBitmap%dFixed%d, %d, %d, %d, (%d << 6) | %d}", objName, actDepth, i, fixRawBitmapBytes[i] [actDepth], fiXactualWidth[i], fiXactualHeight[i], actDepth, options);
            firstEntry = false;
          }
@@ -2201,7 +2201,7 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
 
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA3, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", atoi(attrString [attrNumber_of_repetitions]),  atoi(attrString [attrFrequency]) & 0xFF, atoi(attrString [attrFrequency]) >> 8, (atoi(attrString [attrOnTime_duration]) & 0xFF), (atoi(attrString [attrOnTime_duration]) >> 8),(atoi(attrString [attrOffTime_duration]) & 0xFF), (atoi(attrString [attrOffTime_duration]) >> 8));
+        sprintf(commandMessage, "0xA3, %d, %d,%d, %d,%d, %d,%d", atoi(attrString [attrNumber_of_repetitions]),  atoi(attrString [attrFrequency]) & 0xFF, atoi(attrString [attrFrequency]) >> 8, (atoi(attrString [attrOnTime_duration]) & 0xFF), (atoi(attrString [attrOnTime_duration]) >> 8),(atoi(attrString [attrOffTime_duration]) & 0xFF), (atoi(attrString [attrOffTime_duration]) >> 8));
         objChildCommands++;
        }
        break;
@@ -2549,7 +2549,7 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
          }
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA9, %d, %d, %d, %d, %d, %d, 0xFF", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrNew_width]) & 0xFF, atoi(attrString [attrNew_width]) >> 8, atoi(attrString [attrNew_height]) & 0xFF, atoi(attrString [attrNew_height]) >> 8, atoi(attrString [attrLine_direction]));
+        sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrNew_width]) & 0xFF, atoi(attrString [attrNew_width]) >> 8, atoi(attrString [attrNew_height]) & 0xFF, atoi(attrString [attrNew_height]) >> 8, atoi(attrString [attrLine_direction]));
 
         objChildCommands++;
        }
@@ -3254,6 +3254,7 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
                     sprintf (attrString [attrValue], "0");
                 if (!attrIsGiven [attrOptions])
                   sprintf(attrString[attrOptions], "0");
+
                 fprintf (partFileB, ", %s, %d, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], colortoi(attrString[attrNeedle_colour]), colortoi (attrString [attrBorder_colour]), colortoi (attrString [attrArc_and_tick_colour]), meteroptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks], attrString[attrStart_angle], attrString[attrEnd_angle], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue]);
                 break;
 
@@ -3409,7 +3410,7 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
   }
 
   if (objType == otPicturegraphic) {
-    for (int actDepth=0; actDepth <= 2; actDepth++) {
+    for (unsigned int actDepth=0; actDepth <= 2; actDepth++) {
       if ( (actDepth > deXcolorDepth) || (stdRawBitmapBytes [actDepth] == 0)) {
         fprintf (partFileB, ", 0,NULL");
       } else {
@@ -3462,7 +3463,7 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
 
 
  // Add all Child-Elements recursively
- unsigned long omcType = omcTypeTable [objType];
+ uint64_t omcType = omcTypeTable [objType];
  if (objType == otContainer) omcType = ombType; // Object May Contain what the Object Is - Simple rule. more simple than the graphic in the spec. ;)
 
  for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
@@ -3494,7 +3495,7 @@ int main(int argC, char* argV[])
  char        localeStr[64];
  char        xmlFiles [256] [1024+1];
  char        xmlFileTemp [1024+1];
- int      indexXmlFile, amountXmlFiles;
+ int      indexXmlFile, amountXmlFiles=0;
 
  std_bitmap_path [0] = 0x00;
  fix_bitmap_path [0] = 0x00;
@@ -3584,7 +3585,7 @@ int main(int argC, char* argV[])
   std::basic_string<char> c_directoryCompareItem;
   std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
   strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
-  for (int i=0; i<strlen(proName); i++) if (proName[i] == '.') { proName[i] = 0x00; break; }
+  for (unsigned int i=0; i<strlen(proName); i++) if (proName[i] == '.') { proName[i] = 0x00; break; }
 
 #ifdef WIN32
  HANDLE    hList;
@@ -3652,7 +3653,7 @@ int main(int argC, char* argV[])
  if (dp != NULL)
  {
   dirent *ep;
-  while (ep = readdir (dp)) {
+  while ((ep = readdir (dp))) {
    c_directoryCompareItem = ep->d_name;
    if ( c_directoryCompareItem[0] == '.' ) continue;
    if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
@@ -3746,7 +3747,6 @@ int main(int argC, char* argV[])
   //  Get the starting time and kick off the parse of the indicated
   //  file. Catch any exceptions that might propogate out of it.
   //
-  bool more = true;
   std::ifstream fin;
 
   char fURI[1000];
@@ -3802,7 +3802,7 @@ int main(int argC, char* argV[])
   } else {
    if (doc) {
     // ### main routine starts right here!!! ###
-    processElement ((DOMNode*)doc->getDocumentElement(), (1<<otObjectpool), c_directory.c_str() ); // must all be included in an objectpool tag !
+    processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool), c_directory.c_str() ); // must all be included in an objectpool tag !
     if (!is_opDimension) {
      std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
      clean_exit (-1);
