@@ -770,10 +770,6 @@ bool ISOMonitor_c::processMsg(){
     case ADRESS_CLAIM_PGN: // adress claim
       // if local item has same SA -> let it process the msg first
       // for suitable reaction
-      std::cout << "\n\n*** Item with SA " << (uint16_t)data().isoSa() << " and Gety: " << (uint16_t)data().gtp().getGety() << " Pos: " << (uint16_t)data().gtp().getPos() << " announced!! ***\n\n";
-      if (data().isoSa() == 0x81) {
-        std::cout << "\n\n*** 0x81 ***\n\n";
-      }
       if (existIsoMemberNr(data().isoSa()))
       { // ISOItem_c with same SA exist
         pc_item = &(isoMemberNr(data().isoSa()));
