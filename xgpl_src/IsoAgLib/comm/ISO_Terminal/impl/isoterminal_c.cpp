@@ -128,9 +128,13 @@ namespace __IsoAgLib {
 
 
 /** @todo set the wanted sensemaking retries/timeout values here!!! */
-
-#define DEF_TimeOut_ChangeStringValue 500
-#define DEF_TimeOut_ChangeChildPosition 500
+#define DEF_WaitFor_Reupload 5000
+#define DEF_TimeOut_LoadVersion 10000
+#define DEF_TimeOut_StoreVersion 10000
+#define DEF_TimeOut_EndOfObjectPool 10000
+#define DEF_TimeOut_ChangeStringValue 1000
+#define DEF_TimeOut_ChangeChildPosition 1000
+#define DEF_TimeOut_NormalCommand 1000
 #define DEF_Retries_TPCommands 2
 #define DEF_Retries_NormalCommands 2
 
@@ -645,7 +649,7 @@ bool ISOTerminal_c::timeEvent( void )
       if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
         en_uploadPoolState = UploadPoolFailed;
         ui32_uploadTimestamp = HAL::getTime();
-        ui32_uploadTimeout = 5000; // wait 5 secs for possible reuploading...
+        ui32_uploadTimeout = DEF_WaitFor_Reupload; // wait 5 secs for possible reuploading...
       }
     }
     // Do TIME-OUT Checks ALWAYS!
@@ -666,7 +670,7 @@ bool ISOTerminal_c::timeEvent( void )
           // aborted sending
           en_uploadPoolState = UploadPoolFailed;
           ui32_uploadTimestamp = HAL::getTime();
-          ui32_uploadTimeout = 5000; // if it was an object pool, try reuploading in 5 secs...
+          ui32_uploadTimeout = DEF_WaitFor_Reupload; // if it was an object pool, try reuploading in 5 secs...
         } break;
         case __IsoAgLib::MultiSend_c::SendSuccess: {
           // successfully sent, so do we now have to send out the "End of Object Pool Message"?
@@ -732,7 +736,7 @@ bool ISOTerminal_c::timeEvent( void )
                                //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
           // start uploading after reception of LoadVersion Response
           en_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
-          ui32_uploadTimeout = 1000;
+          ui32_uploadTimeout = DEF_TimeOut_LoadVersion;
           ui32_uploadTimestamp = HAL::getTime();
         }
         else
@@ -913,7 +917,7 @@ void ISOTerminal_c::startObjectPoolUploading ()
 
   // Now proceed to uploading
   en_uploadPoolState = UploadPoolWaitingForMemoryResponse;
-  ui32_uploadTimeout = 1000;
+  ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
   ui32_uploadTimestamp = HAL::getTime();
 }
 
@@ -935,8 +939,8 @@ void ISOTerminal_c::indicateObjectPoolCompletion ()
   c_data.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                       18, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
   getCanInstance4Comm() << c_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
-  en_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for r esponse to set en_uploadState back to UploadIdle;
-  ui32_uploadTimeout = 10000; // wait 10 seconds for terminal to initialize pool!
+  en_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
+  ui32_uploadTimeout = DEF_TimeOut_EndOfObjectPool; // wait 10 seconds for terminal to initialize pool!
   ui32_uploadTimestamp = HAL::getTime();
 }
 
@@ -1059,7 +1063,7 @@ bool ISOTerminal_c::processMsg()
 
               // Now wait for response
               en_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
-              ui32_uploadTimeout = 3000;
+              ui32_uploadTimeout = DEF_TimeOut_StoreVersion;
               ui32_uploadTimestamp = HAL::getTime();
 
 #endif // NO_STORE_VERSION
@@ -1303,7 +1307,7 @@ bool ISOTerminal_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_o
                       rpc_childObject->getID() & 0xFF, rpc_childObject->getID() >> 8,
                       x & 0xFF, x >> 8,
                       y & 0xFF, y >> 8,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
 }
 
 
@@ -1315,7 +1319,7 @@ bool ISOTerminal_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_o
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       rpc_childObject->getID() & 0xFF, rpc_childObject->getID() >> 8,
                       dx+127, dy+127, 0xFF,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
 }
 
 // THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE SIZE COMMAND
@@ -1327,7 +1331,7 @@ bool ISOTerminal_c::sendCommandChangeSize(IsoAgLib::iVtObject_c* rpc_object,uint
                       newWidth & 0xFF, newWidth >> 8,
                       newHeight & 0xFF, newHeight >> 8,
                       0xFF,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
 }
 
 // THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE BACKGROUND COLOUR COMMAND
@@ -1337,7 +1341,7 @@ bool ISOTerminal_c::sendCommandChangeBackgroundColour(IsoAgLib::iVtObject_c* rpc
   return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       newColour, 0xFF, 0xFF, 0xFF, 0xFF,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
 }
 
 bool ISOTerminal_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4)
@@ -1345,7 +1349,7 @@ bool ISOTerminal_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_ob
   return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       0x00, byte1, byte2, byte3, byte4,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
 }
 
 bool ISOTerminal_c::sendCommandChangeEndPoint(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes)
@@ -1355,7 +1359,7 @@ bool ISOTerminal_c::sendCommandChangeEndPoint(IsoAgLib::iVtObject_c* rpc_object,
           newWidth & 0xFF, newWidth >> 8,
           newHeight & 0xFF, newHeight >> 8,
           newLineAttributes,
-          1000 /* timeout value */);
+          DEF_TimeOut_NormalCommand);
 }
 
 bool ISOTerminal_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle)
@@ -1363,7 +1367,7 @@ bool ISOTerminal_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_
   return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       newFontColour, newFontSize, newFontType, newFontStyle, 0xFF,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
 }
 
 bool ISOTerminal_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt)
@@ -1371,7 +1375,7 @@ bool ISOTerminal_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_
   return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                      newLineColour, newLineWidth, newLineArt & 0xFF, newLineArt >> 8, 0xFF,
-                     1000 /* timeout value */);
+                     DEF_TimeOut_NormalCommand);
 }
 
 // THIS FUNCTION ADDED BY BRAD COX 17-SEP-2004 TO IMPLEMENT CHANGE FILL ATTRIBUTES COMMAND
@@ -1384,7 +1388,7 @@ bool ISOTerminal_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_
                       (newFillType == 3) ? newFillPatternObject->getID() & 0xFF : 0xFF,
                       (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
                       0xFF,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
 }
 
 bool ISOTerminal_c::sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMask)
@@ -1394,7 +1398,7 @@ bool ISOTerminal_c::sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* rpc_obj
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       newSoftKeyMask & 0xFF, newSoftKeyMask >> 8,
                       0xFF, 0xFF,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
 }
 
 bool ISOTerminal_c::sendCommandChangeAttribute (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4)
@@ -1402,7 +1406,7 @@ bool ISOTerminal_c::sendCommandChangeAttribute (IsoAgLib::iVtObject_c* rpc_objec
   return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       attrId, byte1, byte2, byte3, byte4,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
 }
 
 // THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE PRIORITY COMMAND
@@ -1414,7 +1418,7 @@ bool ISOTerminal_c::sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object,
     return sendCommand (176 /* Command: Command --- Parameter: Change Priority */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       newPriority, 0xFF, 0xFF, 0xFF, 0xFF,
-                      1000 /* timeout value */);
+                      DEF_TimeOut_NormalCommand);
   } else {
     return false;
   }
