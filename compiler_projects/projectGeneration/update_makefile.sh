@@ -71,8 +71,8 @@ USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 USE_EMBED_ILO="Xos20lcs.ilo"
 USE_EMBED_COMPILER_DIR="c:/programme/tasking/7.56/c166"
 
-USE_WIN32_LIB_DIRECTORY="D:/Development"
-USE_WIN32_HEADER_DIRECTORY="D:/Development"
+USE_WIN32_LIB_DIRECTORY="C:/Development"
+USE_WIN32_HEADER_DIRECTORY="C:/Development"
 USE_WIN32_CAN_HW_TYPE="HWTYPE_VIRTUAL"
 
 USE_STLPORT_HEADER_DIRECTORY="C:/STLport/stlport"
@@ -196,6 +196,10 @@ function check_set_correct_variables()
   if [ "A$PRJ_ISO_TERMINAL" = "A" ] ; then
 		PRJ_ISO_TERMINAL=0
   fi
+  if [ "A$PRJ_ISO_TERMINAL_SERVER" = "A" ] ; then
+		PRJ_ISO_TERMINAL_SERVER=0
+  fi
+
   if test $PRJ_DIN9684 -lt 1 -a $PRJ_ISO11783 -lt 1 ; then
   	echo "Warning!! Selected PRJ_ISO11783 as none of PRJ_DIN9684 and PRJ_ISO11783 was activated!"
     PRJ_ISO11783=1
@@ -657,13 +661,13 @@ function create_filelist( )
 #  fi
 
   	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-	            for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+	            for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
 			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
                     done
 		fi
 
-        for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+        for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
 		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
         done
@@ -731,7 +735,7 @@ function create_autogen_project_config()
 		ENDLINE="\r\n"
 	fi
 
-    for FIRST_REL_APP_PATH in $REL_APP_PATH ; do 
+    for FIRST_REL_APP_PATH in $REL_APP_PATH ; do
 	# CONFIG_NAME=../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/.config_$PROJECT.h
 	CONFIG_NAME=../$ISO_AG_LIB_PATH/$FIRST_REL_APP_PATH/config_$PROJECT.h
 	break;
@@ -910,7 +914,7 @@ function create_makefile()
 	#first variable lines
   `echo DEFINES = $USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES > $PROJECT.pro`
 	`echo INCLUDEPATH = ../$ISO_AG_LIB_PATH/xgpl_src >> $PROJECT.pro`
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 	`echo INCLUDEPATH += ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH >> $PROJECT.pro`
     done
 
@@ -1016,10 +1020,10 @@ function create_DevCCPrj() {
 
 	DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
 	INCLUDE_DIR_LINE="../$ISO_AG_LIB_PATH;../$ISO_AG_LIB_PATH/xgpl_src"
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 	INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH"
     done
-	
+
 	LIB_DIR_LINE=""
 	LIB_FILE_LINE=""
 
@@ -1137,9 +1141,15 @@ function create_EdePrj()
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
 ### @todo
-#        for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
-  USE_APP_PATH=`echo "../$ISO_AG_LIB_PATH/$REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
-#        done
+  for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+	  if [ "M$USE_APP_PATH" = "M" ] ; then
+			USE_APP_PATH=`echo "../$ISO_AG_LIB_PATH/$REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+		else
+			USE_APP_PATH="$USE_APP_PATH;"`echo "../$ISO_AG_LIB_PATH/$REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+		fi
+	done
+	echo "USE_APP_PATH: $USE_APP_PATH"
+
   USE_EMBED_HEADER_DIRECTORY=`echo "../$ISO_AG_LIB_PATH/$USE_EMBED_HEADER_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
   USE_EMBED_LIB_DIRECTORY=`echo "../$ISO_AG_LIB_PATH/$USE_EMBED_LIB_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 
@@ -1219,9 +1229,7 @@ function create_VCPrj()
   DspPrjFilelist="$1/$PROJECT/$FILELIST_PURE"
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
-#    for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
-  USE_PRJ_PATH=`echo "../$ISO_AG_LIB_PATH/$REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
-#    done
+
 
 
   USE_DEFINES=`echo " /D "'"'"$USE_SYSTEM_DEFINE"'"' " /D "'"'"PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME"'"' | sed -e 's/SYSTEM_PC/SYSTEM_PC_VC/g'`
@@ -1232,7 +1240,6 @@ function create_VCPrj()
 	LIB_FILE_LINE=""
 
 	ISO_AG_LIB_PATH_WIN=`echo "../$ISO_AG_LIB_PATH" | sed -e 's#/#=_=_#g'`
-	USE_PRJ_PATH_WIN=`echo "$USE_PRJ_PATH" | sed -e 's#/#=_=_#g'`
 	USE_STLPORT_HEADER_DIRECTORY=`echo "$USE_STLPORT_HEADER_DIRECTORY" | sed -e 's#\\\#_=_=#g'`
 	USE_STLPORT_HEADER_DIRECTORY=`echo "$USE_STLPORT_HEADER_DIRECTORY" | sed -e 's#/#=_=_#g'`
 
@@ -1243,21 +1250,21 @@ function create_VCPrj()
 	USE_WIN32_LIB_DIRECTORY_WIN=`echo "$USE_WIN32_LIB_DIRECTORY_WIN" | sed -e 's#\\\#=_=_#g'`
 
 	if  [ $USE_CAN_DRIVER = "vector_canlib" ] ; then
-		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_PRJ_PATH_WIN"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_CANLIB=_=_dll"'"'
+		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_CANLIB=_=_dll"'"'
 		USE_DEFINES="$USE_DEFINES"' /D ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
 		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
 		LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll"
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_vcandm32.lib" >> $DspPrjFilelist
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_VCanD.h" >> $DspPrjFilelist
 	elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" ] ; then
-		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_PRJ_PATH_WIN"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"'"'
+		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"'"'
 		USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
 		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
 		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin\""
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.lib" >> $DspPrjFilelist
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.h" >> $DspPrjFilelist
 	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
-		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_PRJ_PATH_WIN"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim"'"'
+		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim"'"'
 		USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
 		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
 		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim\""
@@ -1270,10 +1277,15 @@ function create_VCPrj()
 	#echo "Libs=$LIB_DIR_LINE"
 	#echo "Linker=$LIB_FILE_LINE"
 
-
 	for SinglePrjDefine in $PRJ_DEFINES ; do
 		USE_DEFINES="$USE_DEFINES"' /D '"$SinglePrjDefine"
 		USE_d_DEFINES="$USE_d_DEFINES"' /D '"$SinglePrjDefine"
+	done
+
+	for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+		EACH_REL_APP_PATH_KURZ=`echo "../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+		EACH_REL_APP_PATH_WIN=`echo "$EACH_REL_APP_PATH_KURZ" | sed -e 's#/#=_=_#g'`
+		USE_INCLUDE_PATHS="$USE_INCLUDE_PATHS"' /I "'"$EACH_REL_APP_PATH_WIN"'"'
 	done
 
 
@@ -1691,7 +1703,7 @@ perform_everything $CONF_DIR $SCRIPT_DIR $START_DIR
 echo "Please set the following DEFINES for your compiler in the project settings:"
 echo "$USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES"
 echo "Please add also the main application path ";
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 echo "../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH;";
     done
 echo " to the INCLUDE search path of the compiler"

@@ -95,7 +95,7 @@ public:
     uint8_t options;
     uint8_t startAngle;
     uint8_t endAngle;
-#warning to change from uint8_t to uint16_t
+/** @todo  to change from uint8_t to uint16_t */
     uint8_t barGraphWidth;
     uint16_t minValue;
     uint16_t maxValue;
@@ -159,7 +159,7 @@ public:
     uint16_t ID;
     uint8_t fillType;
     uint8_t fillColour;
-    iVtObjectPictureGraphic_c* fillPatternObject; 
+    iVtObjectPictureGraphic_c* fillPatternObject;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   } iVtObjectFillAttributes_s;
@@ -178,7 +178,7 @@ public:
     uint16_t ID;
     uint8_t validationType;
     uint8_t length;
-    char* validationString; 
+    char* validationString;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   } iVtObjectInputAttributes_s;
