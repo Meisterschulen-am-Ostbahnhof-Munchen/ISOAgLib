@@ -2487,6 +2487,9 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
         int strLength;
         char *tempStrPtr;
 
+        // reset
+        tempString2[0]=0;
+
         tempStrPtr = attrString[attrNew_value];
         strLength = strlen(tempStrPtr);
         for(int i = 0; i < strLength; i++)
