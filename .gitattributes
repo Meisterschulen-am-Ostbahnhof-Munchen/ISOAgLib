@@ -132,4 +132,9 @@ build_utils/vt2iso/src/vt2isoimagepaintlib_c.cpp -text
 build_utils/vt2iso/src/vt2isoimagepaintlib_c.h -text
 build_utils/vt2iso/version.incl -text
 build_utils/vt2iso/xerces-c_2_5_0.dll -text
+commercial_BIOS.dummy/bios_esx/README -text
+commercial_BIOS.dummy/bios_esx/Xos20esx.h -text
+commercial_BIOS.dummy/bios_pm167/README -text
+commercial_BIOS.dummy/bios_pm167/mios1.h -text
+commercial_BIOS.dummy/bios_pm167/mios1s.lib -text
 commercial_BIOS/README_LICENSED_PARTS.txt -text
