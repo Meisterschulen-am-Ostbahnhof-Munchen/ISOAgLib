@@ -1534,6 +1534,7 @@ xgpl_src/supplementary_driver/driver/sensor/isensor_c.h -text
 xgpl_src/supplementary_driver/driver/sensor/isensori_c.h -text
 xgpl_src/supplementary_driver/hal/actor.h -text
 xgpl_src/supplementary_driver/hal/esx/actor/actor.h -text
+xgpl_src/supplementary_driver/hal/esx/actor/actor_target_extensions.cpp -text
 xgpl_src/supplementary_driver/hal/esx/rs232/rs232.h -text
 xgpl_src/supplementary_driver/hal/esx/sensor/sensor.h -text
 xgpl_src/supplementary_driver/hal/esx/sensor/sensor_target_extensions.cpp -text
