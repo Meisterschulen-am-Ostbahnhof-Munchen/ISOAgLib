@@ -100,6 +100,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
 # + PRT_INSTANCE_CNT ( specify amount of CAN channels to use for protocol; must be <= CAN_INSTANCE_CNT; default 1 )
+# + RS232_INSTANCE_CNT ( specify amount of RS232 channels; default 1 )
 # + PROJECT ( subdirectory name and executable filename defined by created Makefile )
 # + REL_APP_PATH ( specify path to application of this project - error message if not given; use relative path!! )
 # + APP_NAME ( optionally select single CC file for the main app - otherwise the whole given path is interpreted as part of this project )
@@ -169,6 +170,9 @@ function check_set_correct_variables()
   elif [ $PRT_INSTANCE_CNT -lt 1 ] ; then
   	echo "ERROR! There must be at least one protocol instance"
     exit 2
+  fi
+  if [ "A$RS232_INSTANCE_CNT" = "A" ] ; then
+  	RS232_INSTANCE_CNT=1
   fi
 
   if test "A$PROJECT" = "A" -o -z $PROJECT ; then
@@ -782,6 +786,7 @@ function create_autogen_project_config()
 	echo -e "#define CAN_BUS_USED $CAN_BUS_USED $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
+	echo -e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME
 	fi
@@ -1415,6 +1420,9 @@ function perform_everything()
   elif [ $USE_TARGET_SYSTEM == "esx" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_ESX"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
+  elif [ $USE_TARGET_SYSTEM == "c2c" ] ; then
+	USE_SYSTEM_DEFINE="SYSTEM_C2C"
+  	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
   elif [ $USE_TARGET_SYSTEM == "imi" ] ; then
 	USE_SYSTEM_DEFINE="SYSTEM_IMI"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
@@ -1469,7 +1477,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
   --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
   --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                     target which is specified in the configuration file
-                                    ( "pc_linux"|"pc_win32"|"esx"|"imi"|"pm167"|"mitron167" ).
+                                    ( "pc_linux"|"pc_win32"|"esx"|"c2c"|"imi"|"pm167"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
@@ -1571,7 +1579,7 @@ if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
 	USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
 fi
 case "$USE_TARGET_SYSTEM" in
-	pc_linux | pc_win32 | esx | imi | pm167 | mitron167)
+	pc_linux | pc_win32 | esx | c2c | imi | pm167 | mitron167)
 	;;
 	*)
 	echo "Unknown target system $USE_TARGET_SYSTEM" 1>&2

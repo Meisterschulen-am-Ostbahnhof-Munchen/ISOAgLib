@@ -118,6 +118,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
