@@ -5,8 +5,8 @@
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
     type                 : Header
-    $LastChangedDate: 2004-10-04 13:57:45 +0200 (Mon, 04 Oct 2004) $
-    $LastChangedRevision: 435 $
+    $LastChangedDate$
+    $LastChangedRevision$
  ***************************************************************************/
 
 /***************************************************************************

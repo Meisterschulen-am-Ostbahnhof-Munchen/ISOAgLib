@@ -5,8 +5,8 @@
     copyright            : (C) 2003 - 2004 by Dipl.-Inf. Martin Wodok
     email                : m.wodok@osb-ag:de
     type                 : Source File
-    $LastChangedDate: 2004-10-01 13:51:42 +0200 (Fri, 01 Oct 2004) $
-    $LastChangedRevision: 426 $
+    $LastChangedDate$
+    $LastChangedRevision$
  ***************************************************************************/
 
 /***************************************************************************
