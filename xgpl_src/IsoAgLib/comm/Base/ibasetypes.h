@@ -85,7 +85,7 @@ namespace IsoAgLib {
 	/** define the main groups of base data types */
 	typedef enum {
 		BaseDataNothing  = 0x00, ///< select no base data type
-		BaseDataGroup1   = 0x01, ///< real and gear based speed and distance
+		BaseDataGroup1   = 0x01, ///< real and gear based speed and distance; for ISO: also key_switch_state and max power time
 		BaseDataGroup2   = 0x02, ///< front and rear PTO, engine RPM, front and rear hitch information
 		BaseDataCalendar = 0x04, ///< calendar data
 		BaseDataGroup3   = 0x08, ///< Fendt Vario DIN 9684 specific detailet read link force information

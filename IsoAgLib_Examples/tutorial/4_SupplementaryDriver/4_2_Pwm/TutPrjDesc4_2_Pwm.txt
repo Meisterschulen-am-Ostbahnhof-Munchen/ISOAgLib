@@ -6867,6 +6867,7 @@ PRJ_ACTOR=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
+../../../xgpl_src/supplementary_driver/hal/esx/actor/actor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/driver/actor/impl/digitalo_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/actor/impl/actoro_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/actor/impl/actor_c.cpp

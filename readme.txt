@@ -45,7 +45,7 @@
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>08 December 2004<br>
+Last Update: <br>17 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -116,6 +116,8 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- <b>2004-12-10:</b> List of used C++ features which aren't mapped by simple <b>EC++</b> compilers which doesn't use the <b>Extended EC++</b> specification
 		is written in \ref InfReqCompiler ( there are also some general notes on compiler use )
 	- <b>2004-12-12:</b> Add tutorial examples for internal CAN, supplementary drivers eeprom, sensor and PWM
+	- <b>2004-12-17:</b> Changed releas number of next revision to 1.1.0 ( and not 1.0.1 ) as really a lot of things are corrected and extended
+			( especially PC CAN driver, DOC, tutorial examples and virtual terminal )
 
 
 \subsection IndexOldNews News before 1.0.0 release
@@ -231,7 +233,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- implemented all virtual terminal object types, which are defined in ISO 11783 ( thanks to Brad Cox )
 	- implemented simple access function for easy change control of Vt-Object attributes like colour
 
-\subsection 100TO101 1.0.0 to 1.0.1
+\subsection 100TO110 1.0.0 to 1.1.0
 
 	- now using specific LAST CAN MESSAGE OBJECT of CAN controllers to store CAN messages
 		during CAN reconfiguration process for later process ( avoid loss of messages )<br>
@@ -275,6 +277,12 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- change default path for Win32 CAN card manufacturer driver library files ( API DLLs and Headers ) to <i>C:\\Development</i> so that all users can install their
 		driver files to the corresponding location, if they want to avoid changing all default VC++ project files ( if pathes like <i>C:\\Development\\CANLIB</i> are still
 		not acceptable, update_makefile.sh can be used to create VC++ DSP files based on adopted conf_x_y project feature setup files )
+	- fix bug in handling of counter input, which prevented ESX BIOS counting functions from correct work ( these functions work only if now application IRQ handler is specified )
+	- fix bug in handling of PWM output diagnose ( the state detection didn't work right ) and move this diagnose function in new
+		ESX HAL file actor_target_extensions.cpp
+	- add note on selection of right Vector-Informatik CAN card driver ( the "XL Driver Library" is not coupled to the "XL" CAN cards;
+		you can use a XL CAN card with the CANLIB driver API also - this is the case for all users the maintainers know to date --> vector_canlib is
+		the right selection in the conf_foo feature setup files )
 
 
 
@@ -935,7 +943,7 @@ Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>08 December 2004<br>
+Last Update: <br>17 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -1013,7 +1021,25 @@ The ISO<i><sub>AgLib</sub></i> repository allows an anonymous read access with:
 	<a href="http://linux90.idvnet.de:8092/websvn">http://linux90.idvnet.de:8092/websvn</a>
 - use GUI tools like rapidsvn and TortoiseSVN ( integration in Windows File Manager for very easy
 	version management access )
-	which can be downloaded from <a href="http://subversion.tigris.org">Subversion Webiste</a>
+	which can be downloaded from <a href="http://subversion.tigris.org">Subversion Webiste</a> .<br>
+	<b>Important:</b><br>
+	Please make shure that you select the option to enable usage by all users on computer during install, as this seems to be
+	no default option. Otherwise you can't use it as ordinary user on WinXP, WinNT or Win2000.<br>
+
+<b>What to do on access problems:</b><br>
+Please look at the <a href="https://linux90.idvnet.de/pipermail/isoaglib/">email list (HTTPS)</a> to see, if your problem is known.
+In case your problem differs from already known cases, you should subscribe to the email list and post there your problem report.<br>
+Some problems might be caused by proxies where WebDAV can't pass ( only for HTTP ) and firewalls that block the special
+ports 8092 ( HTTP ) and 8093 ( HTTPS ).<br>
+If you can only access Internet through a proxy, you have to configure subversion ( or your GUI frontend like TortoiseSVN ) to use your
+proxy. See the <a href="http://svnbook.red-bean.com/en/1.0/svn-book.html">manual</a> for more information on
+the use of subversion.<br>
+We are planning to change server configuration to enable the use of the standard HTTP and HTTPS ports, so that any problems with
+firewalls and our current special ports should be avoided ( this won't happen before February 2005 - we'll indicate this change in the email
+list ).<br>
+If your company proxy blocks the needed WebDAV commands by default, and you can't use HTTPS for some reasons, you might look at
+<a href="http://subversion.tigris.org/project_faq.html%23proxy#proxy">there</a> for a description of the needed WebDAV commands. Maybe
+you can ask your proxy administrator to allow these commands to pass thru.
 
 Each user who wants to contribute enhancements should please do the following:
 - Use Subversion or one of its GUI Tools to create a local working copy
@@ -1022,7 +1048,22 @@ Each user who wants to contribute enhancements should please do the following:
 - Collect all changes with the command "svn diff" ( or one of its corresponding commands in GUI tools )
 	into one patch
 - Send the patch to <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-	for inclusion ( evaluation of the change is then a lot easier )
+	for inclusion ( evaluation of the change is then a lot easier )<br>
+
+If you perform local changes at your local "Working Copy" ( that's the result of a checkout ), subversion might
+detect <b>conflicts</b> during one of the next updates, if your local changes intersect with some changes in the
+repository. Subversion ( like CVS ) will preserve both versions of the affected <b>lines</b>, so that you can manually
+decide on the "right" merge. If you don't detect such a conflict, you might be irritated by some syntax error messages from your compiler
+or you might get some execution errors on shell scripts like update_makefile.sh . This is caused by the way Subversion presents the both
+versions within the affected file. You might look <a href="http://tortoisesvn.tigris.org/docs/TortoiseSVN_en/ch04s07.html">here</a> for more
+information on the markers which are used to show conflicts ( comparable to CVS ).<br>
+Subversion will create unchanged copies of your last base version, the current version from repository and your personal changed file,
+so that you can also simply continue to use yours ( foo.mine ) or the newest ( foo.rNN - NN the number of the current version ) version.
+Please remove the files like foo.mine and foo.rNN to indicate to subversion that you resolved the conflict.<br>
+<b>TortoiseSVN</b> helps you to detect conflicts, as it highlights the corresponding filename in its work state dialog window, where the
+process of an update is logged. It indicates also files where it was able to perform a clean merge of local and repository changes. But you might also
+have a look in these files to, to make shure, the merge was really clean ( the maintainers of ISO<i><sub>AgLib</sub></i> didn't have
+such problems so far  ).
 
 \section HowtoGetHelp HOWTO get help
 As this is an Open Source project, not only the maintainers of the project can provide sufficient help for all users <b>free of charge</b>.
@@ -1102,7 +1143,7 @@ source and the contained informative text files.
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>08 December 2004<br>
+Last Update: <br>17 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -1366,7 +1407,15 @@ The IsoAgLib provides at the moment an integration with the CAN drivers from Vec
 Both Vector Informatik driver types <b>CANLIB</b> and <b>XL Driver Library</b> are supported by the source modules
 <b>target_extension_can_w32_vector_canlib.cpp</b> and <b>target_extension_can_w32_vector_xl.cpp</b> .
 Both modules support the usage of a thread based CAN receive, which can be activated by the
-setting of the #define USE_THREAD ( if it's undef -> no threading is used ).
+setting of the #define USE_THREAD ( if it's undef -> no threading is used ).<br>
+<b>Important:<br>
+You can use one of the XL CAN cards with the <b>CANLIB</b> driver API. You can also use the <b>XL Driver Library</b>
+for some of the older CAN cards ( please look at the Vector-Informatik website for details ).<br>
+Therefore you have really to select "vector_canlib" for USE_CAN_DRIVER, if the SETUP.EXE of your driver
+extracted the files to a subdirectory <b>CANLIB</b> - as you have obviously installed the CANLIB.<br>
+Some users were already irritated by this difference, so that they weren't able to build the tutorial examples. So this is not
+just a theoretic problem.<br>
+</b>
 The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as follows:<ol>
 <li>Download either the current <b>CANLIB</b> or <b>XL Driver Library</b> driver
 <li>Install the driver with the <i>SETUP.EXE</i> to the directory <i>C:\\Development\\CANLIB</i> ( <b>don't rename the contained
@@ -1380,7 +1429,7 @@ The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as fol
 			<li>You selected "C:/Development" during the execution of <i>SETUP.EXE</i>.
 			<li><i>SETUP.EXE</i> placed everything in the directory <i>C:/Development/CANLIB</i>
 					resp. <i>C:/Development/XL Driver Library</i>
-			<li>Set both above mentioned variables to "C:/Development"
+			<li>Set <b>both above mentioned variables USE_WIN32_HEADER_DIRECTORY AND USE_WIN32_LIB_DIRECTORY</b> to <i>"C:/Development"</i>
 			</ul>
 	<li>set the variable USE_CAN_DRIVER to either "vector_canlib" or "vector_xl"
 	<li>select the CAN card type variable USE_WIN32_CAN_HW_TYPE to HWTYPE_VIRTUAL, HWTYPE_CANCARDX,
@@ -2093,7 +2142,7 @@ PRJ_ISO11783=1
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>08 December 2004<br>
+Last Update: <br>17 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2375,7 +2424,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>08 December 2004<br>
+Last Update: <br>17 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2490,7 +2539,7 @@ This is possible, if some basic strategies are used by all devices:
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>08 December 2004<br>
+Last Update: <br>17 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
