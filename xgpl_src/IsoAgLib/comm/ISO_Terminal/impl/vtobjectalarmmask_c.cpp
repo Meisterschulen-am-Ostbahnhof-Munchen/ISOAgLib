@@ -130,10 +130,13 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
 } // -X2C
 
 
+
 // //////////////////////////////// +X2C Operation 80 : vtObjectAlarmMask_c
 vtObjectAlarmMask_c::vtObjectAlarmMask_c()
 { // ~X2C
 } // -X2C
+
+
 
 // //////////////////////////////// +X2C Operation 190 : size
 uint32_t
@@ -142,6 +145,8 @@ vtObjectAlarmMask_c::fitTerminal()
   MACRO_localVars;
   return 10+vtObjectAlarmMask_a->numberOfObjectsToFollow*6+vtObjectAlarmMask_a->numberOfMacrosToFollow*2;
 } // -X2C
+
+
 
 // //////////////////////////////// +X2C Operation 262 : setSoftKeyMask
 //! Parameter:
@@ -155,6 +160,8 @@ vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKey
   
   __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSoftKeyMask (this, 2 /* "Type: Alarm Mask" */, newSoftKeyMask->getID());
 } // -X2C
+
+
 
 bool
 vtObjectAlarmMask_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject)

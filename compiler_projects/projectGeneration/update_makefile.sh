@@ -149,6 +149,9 @@ function check_set_correct_variables()
   if [ "A$CAN_BUS_CNT" = "A" ] ; then
   	CAN_BUS_CNT=1
   fi
+  if [ "A$CAN_BUS_USED" = "A" ] ; then
+  	CAN_BUS_USED=0
+  fi
   if [ "A$CAN_INSTANCE_CNT" = "A" ] ; then
   	CAN_INSTANCE_CNT=1
   fi
@@ -769,6 +772,7 @@ function create_autogen_project_config()
 	echo "//                    All commented out defines in the middle block will be upated on next \"update_makefile.sh $CONF_FILE\" call,"  >> $CONFIG_NAME
 	echo "//                    if the corresponding value in isoaglib_config.h changed" >> $CONFIG_NAME
 	echo -e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >> $CONFIG_NAME
+	echo -e "#define CAN_BUS_USED $CAN_BUS_USED $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	if [ $PRJ_BASE -gt 0 ] ; then
