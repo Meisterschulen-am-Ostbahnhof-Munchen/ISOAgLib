@@ -84,6 +84,9 @@ int16_t closeSystem( void );
 /** check if open_System() has already been called */
 bool isSystemOpened( void );
 
+/** trigger the watchdog */
+void wdTriggern(void);
+
 /**
   configure the watchdog of the system with the
   settings of configEsx

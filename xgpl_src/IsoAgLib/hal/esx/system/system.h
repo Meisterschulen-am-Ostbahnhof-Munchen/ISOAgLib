@@ -133,9 +133,10 @@ namespace HAL
   */
   inline int16_t  wdReset(void)
     {return __HAL::wd_reset();};
+
   /** trigger the watchdog */
   inline void wdTriggern(void)
-    {__HAL::wd_triggern();};
+    {__HAL::wdTriggern();};
 
   /**
     get the system time in [ms]

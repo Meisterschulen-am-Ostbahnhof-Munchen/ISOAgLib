@@ -73,6 +73,12 @@ extern "C" {
   #ifdef _INIT_BABYBOARD_
   #include <commercial_BIOS/bios_esx/Module/xma20.h>
   #endif
+
+/** task function which is called each 50msec to trigger the BIOS WD
+    if the App has called wdTriggern(void) max cui16_maxTaskTriggeredWdResets
+		rounds ago
+*/
+void taskTriggerWatchdog();
 }
 /** initialise static tSystem to complete zero, so that a call of
   * open_system can be reliable detected
@@ -83,6 +89,7 @@ static tSystem t_biosextSysdata =
     {0,0,0,0,0,0,0,0},
   0,0,0,0,0};
 
+
 /**
   open the system with system specific function call
   @return error state (C_NO_ERR == o.k.)
@@ -90,6 +97,7 @@ static tSystem t_biosextSysdata =
 int16_t open_system()
 {
   int16_t i16_result = open_esx(&t_biosextSysdata);
+	
 
   #ifdef _INIT_BABYBOARD_
    /************initialization of Babyboard at Position 1*********/
@@ -133,6 +141,41 @@ bool isSystemOpened( void )
     && ( t_biosextSysdata.bEESize != 0 ) ) return true;
   else return false;
 }
+
+/** max amount of task triggered WD resets */
+static const uint16_t cui16_maxTaskTriggeredWdResets = 20;
+
+/** counter for task triggered WD events
+    --> the application called function triggerWd()
+		    resets this count to 0;
+	  --> if the WD trigger task is activated it checks for this counter
+		  ==> on < cui16_maxTaskTriggeredWdResets -> trigger BIOS wd
+			==> else -> do nothing so that WD resets the system
+*/
+static uint16_t sui16_watchdogCounter = 0;
+
+/** task function which is called each 50msec to trigger the BIOS WD
+    if the App has called wdTriggern(void) max cui16_maxTaskTriggeredWdResets
+		rounds ago
+*/
+void taskTriggerWatchdog()
+{
+	if ( sui16_watchdogCounter < cui16_maxTaskTriggeredWdResets )
+	{ // fine - last WD call by app was not too long ago
+		wd_triggern();
+		sui16_watchdogCounter++;
+	}
+}
+
+/** trigger the watchdog */
+void wdTriggern(void)
+{
+	sui16_watchdogCounter = 0;
+}
+
+/** flag to control if WD-Task is started already */
+static bool sb_isWdTriggerTaskRunning = false;
+
 /**
   configure the watchdog of the system with the
   settings of configEsx
@@ -161,6 +204,13 @@ int16_t configWatchdog()
       CONFIG_RESET
   };
   #endif
+
+	if ( ! sb_isWdTriggerTaskRunning )
+	{
+		init_task_call( TASKLEVEL_2A, 5, 5, taskTriggerWatchdog );
+		start_task_timer( 20 );
+		sb_isWdTriggerTaskRunning = true;
+	}
 
   return config_wd(&t_watchdogConf);
 }
