@@ -2279,7 +2279,8 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
 
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", atoi(attrString [attrParent_objectID]) & 0xFF,  atoi(attrString [attrParent_objectID]) >> 8, atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrX_change]),atoi(attrString [attrY_change]));
+        // add 127 to relative x,y 
+        sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", atoi(attrString [attrParent_objectID]) & 0xFF,  atoi(attrString [attrParent_objectID]) >> 8, atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
         objChildCommands++;
        }
        break;
