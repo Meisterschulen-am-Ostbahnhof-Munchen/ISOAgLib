@@ -147,7 +147,7 @@ void MultiSend_c::init(void)
 	bool b_isReconfigNeeded = false;
 
 #ifdef USE_ISO_TERMINAL
-  // register to get VTStatus Messages
+  // register to get TP/ETP Messages
   uint32_t ui32_filter = (static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) << 8);
   if (!getCanInstance4Comm().existFilter((0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
   { // create FilterBox
