@@ -621,7 +621,7 @@ int16_t can_startDriver()
 //  		const int32_t ci_cardTypeCnt = 7;
 //  		for ( int32_t ind = 0; ind < ci_cardTypeCnt; ind++ )
 //  		{
-//  			// Sleep( 100 );
+//  			// usleep( 100 );
 //  			if ( ( ci_tryCardTypes[ind] != c_CANAS ) && ( ci_tryCardTypes[ind] != c_ECAN_PCI ) )
 //  			{
 //  				apiversion = ca_InitApi_1(ci_tryCardTypes[ind], LptIsaIoAdr);
@@ -638,7 +638,7 @@ int16_t can_startDriver()
 //  			else
 //  			{
 //  				//FreeLibrary(hCAPIDLL);
-//  				//Sleep( 10 );
+//  				//usleep( 10 );
 //  				//loadDllFunctionAddresses();
 //  			}
 //  		}
@@ -681,7 +681,7 @@ int16_t can_startDriver()
 					// exit(0);
 	}
 	// wait to be shure that CAN card is clean reset
-//	Sleep(100);
+//	usleep(100);
 
 	#ifdef USE_THREAD
 	/** flag to control running thread */
@@ -692,7 +692,7 @@ int16_t can_startDriver()
 	b_blockApp = false;
 
 	// create a thread
-	iret1 = pthread_create( &thread_canReceive, NULL, thread_canReceive_function, (void*) NULL);
+	i_createHandleThreadCanReceive = pthread_create( &thread_canReceive, NULL, thread_canReceive_function, (void*) NULL);
 	#endif
 
   for (uint8_t b_bus = 0; b_bus < cui32_maxCanBusCnt; b_bus++)
@@ -711,7 +711,7 @@ int16_t can_stopDriver()
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 1000 );
 	}
 	// set gThreadRunning to false so that the thread stops
 	gThreadRunning = false;
@@ -741,7 +741,7 @@ int32_t can_lastReceiveTime()
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	#endif
   return i32_lastReceiveTime;
@@ -756,7 +756,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	#endif
   return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
@@ -788,7 +788,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	// tell thread to wait until this function is finished
     b_blockThread = true;
@@ -976,7 +976,7 @@ int16_t closeCan ( uint8_t bBusNumber )
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;
@@ -1015,7 +1015,7 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;
@@ -1042,7 +1042,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;
@@ -1075,7 +1075,7 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;
@@ -1107,7 +1107,7 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;
@@ -1128,7 +1128,7 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;
@@ -1211,7 +1211,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep( 100 );
+		usleep( 100 );
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;
