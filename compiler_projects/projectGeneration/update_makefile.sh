@@ -1185,13 +1185,14 @@ function create_EdePrj()
 	# Build Tasking Project File by: a) first stub part; b) file list c) second stub part
 	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/EDE.part1.pjt $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
-	CMDLINE=`echo "sed -e 's#/#=_=_#g' $EdePrjFilelist > $EdePrjFilelist.1"`
+	CMDLINE=`echo "sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' $EdePrjFilelist > $EdePrjFilelist.1"`
 	echo $CMDLINE | sh
-	CMDLINE=`echo "sed -e 's#=_=_[0-9a-zA-Z_+\-]+=_=_\.\.##g'  $EdePrjFilelist.1 > $EdePrjFilelist"`
+	CMDLINE=`echo "sed -e 's#/#=_=_#g' $EdePrjFilelist.1 > $EdePrjFilelist"`
 	echo $CMDLINE | sh
 	CMDLINE=`echo "sed -e 's#=_=_[0-9a-zA-Z_+\-]+=_=_\.\.##g'  $EdePrjFilelist > $EdePrjFilelist.1"`
 	echo $CMDLINE | sh
-	mv $EdePrjFilelist.1  $EdePrjFilelist
+	CMDLINE=`echo "sed -e 's#=_=_[0-9a-zA-Z_+\-]+=_=_\.\.##g'  $EdePrjFilelist.1 > $EdePrjFilelist"`
+	echo $CMDLINE | sh
   cat $EdePrjFilelist >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 	# insert specific BIOS/OS sources
@@ -1211,11 +1212,11 @@ function create_EdePrj()
 
   rm -f $PROJECT_FILE_NAME.1
 
-	sed -e 's#=_=_#\\#g' $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+	sed -e 's#=_=_#\\#g'  $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
 	echo "Convert UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
-	cat $PROJECT_FILE_NAME | gawk '{ sub("\r", ""); print $0;}' > $PROJECT_FILE_NAME
-	cat $PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $PROJECT_FILE_NAME
-	rm -f $PROJECT_FILE_NAME.1
+	cat $PROJECT_FILE_NAME.1 | gawk '{ sub("\r", ""); print $0;}' > $PROJECT_FILE_NAME
+	cat $PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $PROJECT_FILE_NAME.1
+	mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
 }
 
 function create_VCPrj()
