@@ -91,6 +91,11 @@
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_MeasureProgLocalTotal = 0;
+static uint16_t sui16_lastPrintedMeasureProgLocalTotal = 0;
+#endif
+
 namespace __IsoAgLib {
 /**
   initialise this ManageMeasureProgLocal_c instance to a well defined initial state
@@ -101,6 +106,9 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const rpc_processData )
   ProcessElementBase_c::set( rpc_processData );
   // as init() can be also called to re-init (bring this instance to well
   // defined starting condition, clearthe measure-prog array
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_MeasureProgLocalTotal -= ( c_vec_prog.size() * ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+  #endif
   c_vec_prog.clear();
   // insert default entry
   if ( rpc_processData != NULL )
@@ -122,19 +130,12 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const rpc_processData )
   { // first element added without success
     getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
   }
+  #ifdef DEBUG_HEAP_USEAGE
   else
   {
-    // this debug message produces too much output on RS232, if a lot of local process
-    // data instances are used -> only activate it for special debug tasks
-		//#ifdef DEBUG_HEAP_USEAGE
-    #if 0
-		getRs232Instance()
-			<< "ManageMeasureProgLocal_c at " << uint32_t(this) << ", " << vec_prog().size()
-      << " items, " 
-			<< ( vec_prog().size() * ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) )
-      << " Bytes\r\n";
-		#endif
+    sui16_MeasureProgLocalTotal += ( ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
   }
+  #endif
   // point cache initially to default first element
   pc_progCache = c_vec_prog.begin();
 }
@@ -160,6 +161,19 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
   { // not all items copied
     getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
   }
+  #ifdef DEBUG_HEAP_USEAGE
+  else
+  {
+    sui16_MeasureProgLocalTotal += ( vec_prog().size() * ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+  
+	  if ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
+    {
+      sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
+      getRs232Instance()
+        << "MPL" << sui16_MeasureProgLocalTotal << "\r\n";
+    }
+  }
+  #endif
   // the pc_progCache is a pointer, which must be assignet relative to the start of c_vec_prog
   pc_progCache = vec_prog().begin();
 
@@ -172,6 +186,20 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
     // source set the cache of the copy (this instance)
     if (*pc_iter == *rrefc_src.pc_progCache) pc_progCache = pc_iter;
   }
+}
+
+ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
+{
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_MeasureProgLocalTotal -= ( vec_prog().size() * ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+  
+  if ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
+  {
+    sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
+    getRs232Instance()
+      << "MPL" << sui16_MeasureProgLocalTotal << "\r\n";
+  }
+  #endif
 }
 
 /**
@@ -225,6 +253,16 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
           if (vec_prog().size() > 1)
           {
             vec_prog().erase(pc_iter);
+            #ifdef DEBUG_HEAP_USEAGE
+            sui16_MeasureProgLocalTotal -= ( ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+  
+            if ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal )
+            {
+              sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
+	            getRs232Instance()
+		            << "MPL" << sui16_MeasureProgLocalTotal << "\r\n";
+            }
+            #endif
             b_repeat = true;
             break; // old: cause of reordering of list delete only one item per timeEvent
           }
@@ -256,6 +294,18 @@ void ManageMeasureProgLocal_c::processProg(){
     if (!updateProgCache(c_pkg.pri(),c_callerGtp, false))return;
   }
   
+  #ifdef DEBUG_HEAP_USEAGE
+  // first real access - print size now if this current size not yet printed
+  // ( this is needed, as ManageMeasureProgLocal_c::init causes too much
+  //   prints in too small time )
+  if ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal )
+  {
+    sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
+   getRs232Instance()
+    << "MeasureProgLocal_c Total: " << sui16_MeasureProgLocalTotal << ", N: " << sizeof(MeasureProgLocal_c)
+    << "\r\n";
+  }
+  #endif
   // now call process msg for cached item
   pc_progCache->processMsg();
 }
@@ -348,6 +398,16 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, GetyPos_c rc
       getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
       return; // exit function
     }
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_MeasureProgLocalTotal += ( ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+  
+    if ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal )
+    {
+      sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
+	    getRs232Instance()
+		    << "MPL" << sui16_MeasureProgLocalTotal << "\r\n";
+    }
+    #endif
 
     // set cache to new item which is inserted
     pc_progCache = vec_prog().begin();

@@ -101,6 +101,10 @@
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_syncProcTotal = 0;
+#endif
+
 
 #define LBS_PLUS_PROJECT_SIZE 12
 #define FS_OLD_PROJECT_SIZE 0xD
@@ -141,12 +145,6 @@ void DINMaskUpload_c::init( void )
 
   en_maskUploadState = none;
 
-	#ifdef DEBUG_HEAP_USEAGE
-	getRs232Instance()
-		<< "sizeof(syncproc_t) == " << sizeof(syncproc_t)	<< " Bytes\r\n";
-	#endif
-
-
   // set configure values
   pc_data = &(getMultiSendInstance4Comm().data());
 }
@@ -158,6 +156,9 @@ void DINMaskUpload_c::close( void ) {
     setAlreadyClosed();
     // clear vector of sync proc
     arrSyncproc.clear();
+  	#ifdef DEBUG_HEAP_USEAGE
+    sui16_syncProcTotal = 0;
+    #endif
     en_maskUploadState = none;
     ui8_maskDefCnt = 0;
     // unregister from Scheduler_c
@@ -195,7 +196,8 @@ bool DINMaskUpload_c::timeEvent( void )
       {
         if ( (getDinMonitorInstance4Comm().existDinMemberGtp( psMaskDef[ui8_testInd]->c_gtp, true ))
           && ( (CNAMESPACE::memcmp(getDinMonitorInstance4Comm().dinMemberGtp(psMaskDef[ui8_testInd]->c_gtp).name(), psMaskDef[ui8_testInd]->pb_termName, 7) == 0)
-            || ( ( ui8_maskDefCnt > 0 ) && ( getSystemMgmtInstance4Comm().existActiveLocalDinMember() ) ) )
+//            || ( ( ui8_maskDefCnt > 0 ) && ( getSystemMgmtInstance4Comm().existActiveLocalDinMember() ) ) 
+          )
            )
         { // registered terminal at index ui8_testInd is found
           pc_terminal = &(getDinMonitorInstance4Comm().dinMemberGtp(psMaskDef[ui8_testInd]->c_gtp));
@@ -272,6 +274,9 @@ bool DINMaskUpload_c::timeEvent( void )
     // -> clear array of process data, reset terminal pointer
     if ( ! arrSyncproc.empty() ) {
       arrSyncproc.clear();
+  	  #ifdef DEBUG_HEAP_USEAGE
+      sui16_syncProcTotal = 0;
+      #endif
 			#ifdef DEBUG_RS232
       getRs232Instance() << "loesche zuvor aktiven Eintrag\n\r";
 			#endif
@@ -476,12 +481,11 @@ void DINMaskUpload_c::createLbsplusProcdata()
     }
   }
 	#ifdef DEBUG_HEAP_USEAGE
+  sui16_syncProcTotal += ( ( activeMask().ui8_syncCnt + 1 ) * ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) );
+  
 	getRs232Instance()
-		<< "DINMaskUpload_c Mem: "
-		<< ( arrSyncproc.size() * ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) ) << " Byte for sync\r\n"
-    << arrSyncproc.size() << " elements\r\n";
+		<< "DINMaskUpload_c Mem-T: " << sui16_syncProcTotal << ", Mem-Node: " << ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) << "\r\n";
 	#endif
-
 }
 
 /**
@@ -532,11 +536,10 @@ void DINMaskUpload_c::createFieldstarProcdata()
   }
 #endif
 	#ifdef DEBUG_HEAP_USEAGE
+  sui16_syncProcTotal += ( ( activeMask().ui8_syncCnt + 1 ) * ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) );
+  
 	getRs232Instance()
-		<< "DINMaskUpload_c uses at the moment a calculated amount \r\n"
-		<< "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-		<< ( arrSyncproc.size() * ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) ) << " Byte for list of all syncronisation values for DIN Terminal project\r\n"
-		<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
+		<< "DINMaskUpload_c Mem-T: " << sui16_syncProcTotal << ", Mem-Node: " << ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) << "\r\n";
 	#endif
 }
 

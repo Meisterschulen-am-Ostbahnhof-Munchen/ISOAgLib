@@ -124,6 +124,10 @@
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_setpointLocalTotal = 0;
+#endif
+
 namespace __IsoAgLib {
 /**
   initialise this SetpointLocal_c to a well defined starting condition
@@ -134,6 +138,9 @@ void SetpointLocal_c::init( ProcDataBase_c *const rpc_processData )
   SetpointBase_c::init( rpc_processData );
   // set pc_registerCache to a well defined value
   pc_registerCache = vec_register.begin();
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_setpointLocalTotal -= ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+  #endif
   vec_register.clear();
   pc_master = vec_register.end();
 
@@ -142,8 +149,8 @@ void SetpointLocal_c::init( ProcDataBase_c *const rpc_processData )
 
 	#ifdef DEBUG_HEAP_USEAGE
 	getRs232Instance()
-		<< "Each registered SetpointRegister_c instance will require " << sizeof(SetpointRegister_c)
-		<< " Bytes on this platform\n";
+		<< "sizeof(SetpointRegister_c) = " << sizeof(SetpointRegister_c)
+		<< " Bytes\r\n";
 	#endif
 
 }
@@ -180,6 +187,22 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
   b_staticMaster = rrefc_src.b_staticMaster;
   vec_register = rrefc_src.vec_register;
 
+
+  if (vec_register.size() < rrefc_src.vec_register.size())
+  { // not all items copied
+    getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+  }
+  #ifdef DEBUG_HEAP_USEAGE
+  else
+  {
+    sui16_setpointLocalTotal += ( vec_prog().size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+  
+	  getRs232Instance()
+		  << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+  }
+  #endif
+
+
   // pc_registerCache is a pointer, which must be copied relative to vec_register.begin()
   // the distance operator needs a const_iterator
   Vec_SetpointRegister::const_iterator pc_iter = rrefc_src.pc_registerCache;
@@ -197,6 +220,12 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
 
 /** default destructor which has nothing to do */
 SetpointLocal_c::~SetpointLocal_c(){
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_setpointLocalTotal -= ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+  
+  getRs232Instance()
+  << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+  #endif
 }
 
 /**
@@ -269,7 +298,16 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
       { // accept
         // erase old master entry if this is handled
         // (e.g. different from new received unhandled one)
-        if (pc_master->handled()) vec_register.erase( pc_master);
+        if (pc_master->handled())
+        {
+          vec_register.erase( pc_master);
+          #ifdef DEBUG_HEAP_USEAGE
+          sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+
+	        getRs232Instance()
+		        << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+          #endif
+        }
         // pc_registerCache points to new master entry (set in existUnhandledMaster)
         pc_master = pc_registerCache;
         pc_master->setValid( true);
@@ -297,7 +335,22 @@ void SetpointLocal_c::setMasterVal( int32_t ri32_val)
 {
   if (!existMaster())
   { // create register entry for master value
+    const uint16_t cui16_oldSize = vec_register.size();
     vec_register.push_front();
+    if ( uint16_t cui16_oldSize >= vec_register.size() )
+    { // out-of-memory
+      getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+    }
+    #ifdef DEBUG_HEAP_USEAGE
+    else
+    {
+      sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+  
+	    getRs232Instance()
+		    << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+    }
+    #endif
+    
     pc_master = vec_register.begin();
   }
   master().setExact( ri32_val);
@@ -522,14 +575,12 @@ bool SetpointLocal_c::timeEvent( void ){
         { // pc_iter points to old handled (>3sec) item which is NOT the master -> delete it
           // and it was already handled (default time 0 after creation)
           vec_register.erase( pc_iter);
-				  #ifdef DEBUG_HEAP_USEAGE
-				  getRs232Instance()
-					 << "SetpointLocal_c uses at the moment a calculated amount \r\n"
-					 << "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-					 << ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) ) << " Byte for list of all received setpoints for local process data at "
-					 << this << "\r\n"
-					 << "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
-				  #endif
+          #ifdef DEBUG_HEAP_USEAGE
+          sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+  
+          getRs232Instance()
+ 	          << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+          #endif
           b_repeat = true;
           break; // old was: delete max one item per timeEvent, cause of reordering of list
         }
@@ -553,14 +604,12 @@ bool SetpointLocal_c::timeEvent( void ){
         { // gtp of caller not in Monitor-List or inactive since >3sec -> delete entry
           vec_register.erase( pc_iter);
           pc_master = vec_register.end(); // register that no acive master defined
-				  #ifdef DEBUG_HEAP_USEAGE
-				  getRs232Instance()
-					 << "SetpointLocal_c uses at the moment a calculated amount \r\n"
-					 << "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-					 << ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) ) << " Byte for list of all received setpoints for local process data at "
-					 << this << "\r\n"
-					 << "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
-				  #endif
+          #ifdef DEBUG_HEAP_USEAGE
+          sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+  
+          getRs232Instance()
+ 	          << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+          #endif
           b_repeat = true;
           break; // delete no more entry during this run
         }
@@ -635,16 +684,22 @@ void SetpointLocal_c::processSet(){
   { // caller didn't set setpoint previous to this -> create item
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     {
+      const uint16_t cui16_oldSize = vec_register.size();
       vec_register.push_front( SetpointRegister_c( c_callerGtp));
+      if ( uint16_t cui16_oldSize >= vec_register.size() )
+      { // out-of-memory
+        getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+      }
+      #ifdef DEBUG_HEAP_USEAGE
+      else
+      {
+        sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+  
+	      getRs232Instance()
+		      << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+      }
+      #endif
       pc_callerIter = vec_register.begin();
-			#ifdef DEBUG_HEAP_USEAGE
-			getRs232Instance()
-				<< "SetpointLocal_c uses at the moment a calculated amount \r\n"
-				<< "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-				<< ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) ) << " Byte for list of all received setpoints for local process data at "
-				<< this << "\r\n"
-				<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
-			#endif
       b_change = true;
     }
     else
@@ -666,14 +721,12 @@ void SetpointLocal_c::processSet(){
     }
     // delete the SetpointRegister_c item
     vec_register.erase( pc_callerIter);
-		#ifdef DEBUG_HEAP_USEAGE
-		getRs232Instance()
-			<< "SetpointLocal_c uses at the moment a calculated amount \r\n"
-			<< "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-			<< ( vec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) ) << " Byte for list of all received setpoints for local process data at "
-			<< this << "\r\n"
-			<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
-		#endif
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+
+	  getRs232Instance()
+		  << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
+    #endif
 
     // notify the caller
     b_modNotify = c_pkg.mod();

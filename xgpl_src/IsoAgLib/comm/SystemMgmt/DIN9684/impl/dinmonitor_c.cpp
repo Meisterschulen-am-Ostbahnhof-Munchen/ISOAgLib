@@ -96,6 +96,10 @@
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_dinItemTotal = 0;
+#endif
+
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique DINMonitor_c singleton instance
@@ -121,13 +125,12 @@ void DINMonitor_c::init( void )
 {
   c_tempDinMemberItem.set(0, GetyPos_c(0xF, 0xF), 0xFF, IState_c::Active, 0, NULL, getSingletonVecKey() );
   c_data.setSingletonKey( getSingletonVecKey() );
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_dinItemTotal -= ( vec_dinMember.size() * ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) );
+  #endif
+  vec_dinMember.clear();
   pc_dinMemberCache = vec_dinMember.end();
   i32_lastTrusted = 0;
-
-	#ifdef DEBUG_HEAP_USEAGE
-	getRs232Instance()
-		<< "sizeof(DinItem_c) == " << sizeof(DINItem_c)	<< " Bytes\r\n";
-	#endif
 
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
@@ -252,7 +255,12 @@ bool DINMonitor_c::timeEvent( void ){
           #endif
           //erase delivers iterator to item after erased item
           pc_iterItem = vec_dinMember.erase(pc_iterDelete);
-          
+          #ifdef DEBUG_HEAP_USEAGE
+          sui16_dinItemTotal -= ( ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) );
+
+          getRs232Instance()
+	          << "DINItem_c T: " << sui16_dinItemTotal << ", Node: " << ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) << "\r\n";
+          #endif
           b_repeat = true;
           break;
   // Old version:      
@@ -585,20 +593,23 @@ bool DINMonitor_c::insertDinMember(GetyPos_c rc_gtp, const uint8_t* rpb_name, ui
     }
 
     // now insert element
-    uint8_t b_oldSize = vec_dinMember.size();
+    const uint8_t b_oldSize = vec_dinMember.size();
     vec_dinMember.push_front(c_tempDinMemberItem);
     if (vec_dinMember.size() <= b_oldSize)
     { // array didn't grow
       getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsSystem );
       b_result = false;
     }
-    vec_dinMember.sort(); // resort the list
-		#ifdef DEBUG_HEAP_USEAGE
-		getRs232Instance()
-			<< "DINMonitor_c mem usage: " 
-			<< ( vec_dinMember.size() * ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) ) << " Byte for DINItem_c list\r\n";
-		#endif
+    #ifdef DEBUG_HEAP_USEAGE
+    else
+    {
+      sui16_dinItemTotal += ( ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) );
 
+      getRs232Instance()
+	      << "DINItem_c T: " << sui16_dinItemTotal << ", Node: " << ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) << "\r\n";
+    }
+    #endif
+    vec_dinMember.sort(); // resort the list
   }
   return b_result;
 };
@@ -712,12 +723,12 @@ bool DINMonitor_c::deleteDinMemberGtp(GetyPos_c rc_gtp, bool rb_sendRelease)
     // erase it from list (existDinMemberGtp sets pc_dinMemberCache to the wanted item)
     vec_dinMember.erase(pc_dinMemberCache);
     pc_dinMemberCache = vec_dinMember.begin();
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_dinItemTotal -= ( ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) );
 
-		#ifdef DEBUG_HEAP_USEAGE
-		getRs232Instance()
-			<< "DINMonitor_c mem usage: " 
-			<< ( vec_dinMember.size() * ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) ) << " Byte for DINItem_c list\r\n";
-		#endif
+    getRs232Instance()
+	    << "DINItem_c T: " << sui16_dinItemTotal << ", Node: " << ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) << "\r\n";
+    #endif
 
 		return true;
   }

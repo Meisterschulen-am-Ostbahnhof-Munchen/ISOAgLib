@@ -122,6 +122,7 @@ private:
   ManageMeasureProgLocal_c( ProcDataBase_c *const rpc_processData = NULL )
   : ProcessElementBase_c( rpc_processData )
   { init( rpc_processData );}; 
+  virtual ~ManageMeasureProgLocal_c();
   /**
     initialise this ManageMeasureProgLocal_c instance to a well defined initial state
     @param rpc_processData optional pointer to containing ProcessData instance

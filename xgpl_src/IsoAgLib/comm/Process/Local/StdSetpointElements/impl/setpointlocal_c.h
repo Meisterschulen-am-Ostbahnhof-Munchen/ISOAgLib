@@ -157,6 +157,7 @@ public:
   SetpointLocal_c(
     ProcDataBase_c *const rpc_processData = NULL ) : SetpointBase_c( rpc_processData )
     {init( rpc_processData );};
+
   /**
     initialise this SetpointLocal_c to a well defined starting condition
     @param rpc_processData pointer to containing ProcessData instance

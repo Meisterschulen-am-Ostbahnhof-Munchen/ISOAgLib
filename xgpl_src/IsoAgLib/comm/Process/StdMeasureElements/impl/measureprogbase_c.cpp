@@ -94,6 +94,11 @@
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_MeasureProgBaseTotal = 0;
+static uint16_t sui16_printedMeasureProgBaseTotal = 0;
+#endif
+
 namespace __IsoAgLib {
 /**
   initialise the measure prog instance, to set this instance to a well defined starting condition
@@ -115,7 +120,11 @@ void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
 	  	<< "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
 	  	<< " Bytes\r\n";
   }
-	#endif
+  if ( sui16_MeasureProgBaseTotal > 0 )
+  {
+    sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+  }
+  #endif
 
 	vec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
@@ -171,10 +180,30 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
   i32_min = rrefc_src.i32_min;
   i32_val = rrefc_src.i32_val;
   vec_measureSubprog = rrefc_src.vec_measureSubprog;
+
+  if (vec_measureSubprog.size() < rrefc_src.vec_measureSubprog.size())
+  { // not all items copied
+    getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+  }
+  #ifdef DEBUG_HEAP_USEAGE
+  else
+  {
+    sui16_MeasureProgBaseTotal += ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+  
+	  if ( vec_measureSubprog.size() > 0 )
+    {
+      getRs232Instance()
+		    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+    }
+  }
+  #endif
 }
 
 /** default destructor which has nothing to do */
 MeasureProgBase_c::~MeasureProgBase_c(){
+	#ifdef DEBUG_HEAP_USEAGE
+  sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+	#endif
 }
 
 /**
@@ -198,17 +227,21 @@ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increme
   }
   else
   { // no subprog with same type exist -> insert new one
-    uint8_t b_oldSize = vec_measureSubprog.size();
+    const uint8_t b_oldSize = vec_measureSubprog.size();
     vec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ri32_increment));
     if (b_oldSize >= vec_measureSubprog.size())
     { // array didn't grow
       getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
     }
-		#ifdef DEBUG_HEAP_USEAGE
-		getRs232Instance()
-			<< "MeasureProgBase_c INSTANCE at position " << uint32_t(this) << " uses approx.\r\n"
-			<< ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) ) << " Byte for meausre sub-programs\r\n";
-		#endif
+    #ifdef DEBUG_HEAP_USEAGE
+    else
+    {
+      sui16_MeasureProgBaseTotal += ( 1 * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+  
+	    getRs232Instance()
+		    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+    }
+    #endif
   }
   return true;
 }
@@ -256,13 +289,18 @@ bool MeasureProgBase_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t re
 */
 bool MeasureProgBase_c::stop(){
   // clear the array with all subprogs -> no trigger test is done on value set
+	#ifdef DEBUG_HEAP_USEAGE
+  sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+
+  if ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal )
+  {
+    sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
+    getRs232Instance()
+    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+  }
+  #endif
   vec_measureSubprog.clear();
   en_doSend = Proc_c::DoNone;
-	#ifdef DEBUG_HEAP_USEAGE
-		getRs232Instance()
-			<< "MeasureProgBase_c INSTANCE at position " << uint32_t(this) << " uses approx.\r\n"
-			<< ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) ) << " Byte for meausre sub-programs\r\n";
-	#endif
   return true;
 }
 
@@ -318,6 +356,14 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
   @param ri32_val initial measure val
 */
 void MeasureProgBase_c::initVal(int32_t ri32_val){
+	#ifdef DEBUG_HEAP_USEAGE
+  if ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal )
+  {
+    sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
+    getRs232Instance()
+    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+  }
+  #endif
   i32_val = i32_min = i32_max = i32_integ = ri32_val;
 }
 
@@ -335,14 +381,6 @@ void MeasureProgBase_c::init(
   float rf_val,
   GetyPos_c rc_gtp)
 { // set the dynamic list to a well defined cleared starting condition
-  vec_measureSubprog.clear();
-  // set the pointers in the baseClass ProcessElementBase
-  set(rpc_processData);
-  // store the parameter init vals
-  c_gtp = rc_gtp;
-  f_val = rf_val;
-  en_progType = ren_progType;
-
 	#ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
   if ( b_doPrint )
@@ -352,7 +390,17 @@ void MeasureProgBase_c::init(
 	  	<< "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
 	  	<< " Bytes\r\n";
   }
+
+  sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
 	#endif
+
+  vec_measureSubprog.clear();
+  // set the pointers in the baseClass ProcessElementBase
+  set(rpc_processData);
+  // store the parameter init vals
+  c_gtp = rc_gtp;
+  f_val = rf_val;
+  en_progType = ren_progType;
 
 	// set the rest of element vals to defined init
   en_accumProp = Proc_c::AccumNone;
@@ -413,6 +461,14 @@ float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
   @param rf_val initial measure val
 */
 void MeasureProgBase_c::initVal(float rf_val){
+	#ifdef DEBUG_HEAP_USEAGE
+  if ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal )
+  {
+    sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
+    getRs232Instance()
+    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+  }
+  #endif
   f_val = f_min = f_max = f_integ = rf_val;
 }
 #endif
@@ -429,6 +485,14 @@ bool MeasureProgBase_c::processMsg(){
   uint8_t b_mod = c_pkg.mod(),
       b_pd = c_pkg.pd();
 
+	#ifdef DEBUG_HEAP_USEAGE
+  if ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal )
+  {
+    sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
+    getRs232Instance()
+    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+  }
+  #endif
   bool b_edited = false;
 
   // check if PD==0 -> SET increment message

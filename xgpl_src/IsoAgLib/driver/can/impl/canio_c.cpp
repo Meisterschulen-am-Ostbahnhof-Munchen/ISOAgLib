@@ -94,6 +94,11 @@
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_msgObjTotal = 0;
+static uint16_t sui16_filterBoxTotal = 0;
+#endif
+
 namespace __IsoAgLib {
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique CANIO_c singleton instance
@@ -271,13 +276,6 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
       << "Ende CANIO_c::init()\n";
   #endif
 
-	#ifdef DEBUG_HEAP_USEAGE
-	getRs232Instance()
-		<< "sizeof(FilterBox_c) == " << sizeof(FilterBox_c)	<< " Bytes\r\n"
-		<< "sizeof(MsgObj_c) == " << sizeof(MsgObj_c)	<< " Bytes\r\n";
-	#endif
-
-
   // even for call of init without parameter the base can init
   // should be repeated
   // check and store bitrate, config CAN and send object(s)
@@ -308,6 +306,10 @@ void CANIO_c::close( void )
       getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
       break;
   }
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_filterBoxTotal -= ( arrFilterBox.size() * ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) );
+  sui16_msgObjTotal -= ( arrMsgObj.size() * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) );
+  #endif
   arrFilterBox.clear();
   arrMsgObj.clear();
   ui8_busNumber = 0xFF;
@@ -545,16 +547,20 @@ bool CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   c_tempFilterBox.set(c_newMask, c_newFilter, &rref_customer);
 
   // insert new FilterBox_c and exit function if no dyn array growth is reported
-  uint8_t b_oldSize = arrFilterBox.size();
+  const uint8_t b_oldSize = arrFilterBox.size();
   // insert temp object in vector arrFilterBox -> can cause badAlloc exception
   arrFilterBox.push_back(c_tempFilterBox);
   if (b_oldSize >= arrFilterBox.size())
   { // dynamic array didn't grow -> alloc error
-		#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
     getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Can );
-		#endif
     return false; // exit the function
   }
+  #ifdef DEBUG_HEAP_USEAGE
+  else
+  {
+    sui16_filterBoxTotal += ( 1 * ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) );
+  }
+  #endif
 
   // if wanted, configure everything, to set CAN hardware MsgObj_c as wanted
   // for sequence of arrFilterBox insertions only configure after the last insert
@@ -587,6 +593,12 @@ bool CANIO_c::deleteFilter(MASK_TYPE rt_mask, MASK_TYPE rt_filter,
   if (existFilter(c_deleteMask, c_deleteFilter, &pc_iter))
   { // filter found -> delete element where pc_iter points to
     arrFilterBox.erase(pc_iter);
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_filterBoxTotal -= ( 1 * ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) );
+
+    getRs232Instance()
+	    << "FilterBox_c T: " << sui16_filterBoxTotal << ", Node: " << ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) << "\r\n";
+    #endif
     reconfigureMsgObj();
     b_result = true;
   }
@@ -848,14 +860,19 @@ int16_t CANIO_c::FilterBox2MsgObj(){
         c_tempObj.setFilter(c_tempIdent);
         c_tempObj.insertFilterBox(pc_iterFilterBox);
         // check if insertion try result in growed dyn array
-        uint16_t ui16_oldSize = arrMsgObj.size();
-
+        const uint16_t ui16_oldSize = arrMsgObj.size();
         // insert obj in vector
         arrMsgObj.push_back(c_tempObj);
         if (ui16_oldSize >= arrMsgObj.size())
         { // dyn array didn't grow -> set badAlloc error state
           getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Can );
         }
+        #ifdef DEBUG_HEAP_USEAGE
+        else
+        {
+          sui16_msgObjTotal += ( 1 * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) );
+        }
+        #endif
         pc_searchEnd = arrMsgObj.end();
       }
     }
@@ -871,10 +888,20 @@ int16_t CANIO_c::FilterBox2MsgObj(){
   // -> behind the last instance is NOT the list end
   if (pc_searchEnd!= arrMsgObj.end())
   {
+    #ifdef DEBUG_HEAP_USEAGE
+    const uint16_t cui16_oldSize = arrMsgObj.size();
+    #endif
     HAL::wdTriggern();
     arrMsgObj.erase(pc_searchEnd, arrMsgObj.end());
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_msgObjTotal -= ( (cui16_oldSize - arrMsgObj.size() ) * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) );
+    #endif
   }
   if ( i16_result >= 0) i16_result = arrMsgObj.size();
+  #ifdef DEBUG_HEAP_USEAGE
+  getRs232Instance()
+	  << "MsgObj: " << sui16_msgObjTotal << " -> ";
+  #endif
   return i16_result;
 }
 
@@ -935,11 +962,18 @@ void CANIO_c::CheckSetCntMsgObj(){
     // merge right filter into the left
     pc_minLeft->merge(*pc_minRight);
     arrMsgObj.erase(pc_minRight);
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_msgObjTotal -= ( 1 * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) );
+    #endif
     // reset search arguments for posible next search
     pc_minRight = pc_minLeft = arrMsgObj.begin();
     i16_minDistance = sizeof(MASK_TYPE)*8;
   }
   // now the amount of arrMsgObj is allowed
+  #ifdef DEBUG_HEAP_USEAGE
+  getRs232Instance()
+   << sui16_msgObjTotal << "/" << ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) << "\r\n";
+  #endif
 }
 
 /* *************************************** */
@@ -952,6 +986,11 @@ void CANIO_c::CheckSetCntMsgObj(){
 bool CANIO_c::reconfigureMsgObj()
 { // verify that this instance i yet initialised complete (CAN BUS is dedicated)
   if ( ui8_busNumber > HAL_CAN_MAX_BUS_NR ) return false;
+
+  #ifdef DEBUG_HEAP_USEAGE
+  getRs232Instance()
+	    << "FiltBox" << sui16_filterBoxTotal << "/" << ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) << "\r\n";
+  #endif
 
   bool b_result = true;
   b_irqCanReceiveOffset[ui8_busNumber] = 1;
@@ -1016,16 +1055,6 @@ bool CANIO_c::reconfigureMsgObj()
   // clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object
   getLbsErrInstance().clear( LibErr_c::CanOverflow, LibErr_c::Can );
-
-	#ifdef DEBUG_HEAP_USEAGE
-	getRs232Instance()
-		<< "CANIO_c mem usage:\r\n"
-		<< ( arrMsgObj.size() * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) ) << " Byte for CAN MsgObj\r\n"
-		<< ( arrFilterBox.size() * ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) ) << " Byte for FilterBox_c\r\n"
-    << "at BUS " << uint16_t(ui8_busNumber) << "\r\n";
-//		<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
-	#endif
-
 
   HAL::wdTriggern();
   return b_result;

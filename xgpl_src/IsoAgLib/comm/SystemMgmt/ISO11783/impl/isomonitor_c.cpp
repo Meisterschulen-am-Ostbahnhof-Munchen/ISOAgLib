@@ -95,6 +95,10 @@
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_isoItemTotal = 0;
+#endif
+
 #ifdef SYSTEM_PC
   #include <iostream>
 #endif
@@ -131,6 +135,10 @@ ISOMonitor_c::ISOMonitor_c()
 void ISOMonitor_c::init( void )
 {
   c_data.setSingletonKey( getSingletonVecKey() );
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_isoItemTotal -= ( vec_isoMember.size() * ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) );
+  #endif
+  vec_isoMember.clear();
   pc_isoMemberCache = vec_isoMember.end();
   i32_lastSaRequest = 0;
   c_tempIsoMemberItem.set( 0, GetyPos_c(0xF, 0xF), 0xFE, IState_c::Active,
@@ -224,6 +232,12 @@ bool ISOMonitor_c::timeEvent( void ){
       {
         Vec_ISOIterator pc_iterDelete = pc_iter;
         vec_isoMember.erase(pc_iterDelete);
+        #ifdef DEBUG_HEAP_USEAGE
+        sui16_isoItemTotal -= ( ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) );
+
+        getRs232Instance()
+	        << "ISOItem_c T: " << sui16_isoItemTotal << ", Node: " << ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) << "\r\n";
+        #endif
         pc_iter = vec_isoMember.begin();
         b_repeat = true;
         // break and start it all over again (because of pc_iter changed to begin(), which won't go with the following pc_iter++ if empty!
@@ -419,7 +433,7 @@ bool ISOMonitor_c::insertIsoMember(GetyPos_c rc_gtp, const uint8_t* rpui8_name,
         rui16_saEepromAdr, rpui8_name, getSingletonVecKey() );
 
     // now insert element
-    uint8_t b_oldSize = vec_isoMember.size();
+    const uint8_t b_oldSize = vec_isoMember.size();
     vec_isoMember.push_front(c_tempIsoMemberItem);
     pc_isoMemberCache = vec_isoMember.begin();
     if (vec_isoMember.size() <= b_oldSize)
@@ -427,15 +441,16 @@ bool ISOMonitor_c::insertIsoMember(GetyPos_c rc_gtp, const uint8_t* rpui8_name,
       getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsSystem );
       b_result = false;
     }
-    vec_isoMember.sort(); // resort the list
+    #ifdef DEBUG_HEAP_USEAGE
+    else
+    {
+      sui16_isoItemTotal += ( ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) );
 
-		#ifdef DEBUG_HEAP_USEAGE
-		getRs232Instance()
-			<< "ISOMonitor_c uses at the moment a calculated amount \r\n"
-			<< "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-			<< ( vec_isoMember.size() * ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) ) << " Byte for monitor list of all ISO devices\r\n"
-			<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
-		#endif
+      getRs232Instance()
+	      << "ISOItem_c T: " << sui16_isoItemTotal << ", Node: " << ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) << "\r\n";
+    }
+    #endif
+    vec_isoMember.sort(); // resort the list
 
   }
   return b_result;
@@ -533,15 +548,13 @@ bool ISOMonitor_c::deleteIsoMemberGtp(GetyPos_c rc_gtp)
 
     // erase it from list (existIsoMemberGtp sets pc_isoMemberCache to the wanted item)
     vec_isoMember.erase(pc_isoMemberCache);
-    pc_isoMemberCache = vec_isoMember.begin();
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_isoItemTotal -= ( ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) );
 
-		#ifdef DEBUG_HEAP_USEAGE
-		getRs232Instance()
-			<< "ISOMonitor_c uses at the moment a calculated amount \r\n"
-			<< "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-			<< ( vec_isoMember.size() * ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) ) << " Byte for monitor list of all ISO devices\r\n"
-			<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
-		#endif
+    getRs232Instance()
+	    << "ISOItem_c T: " << sui16_isoItemTotal << ", Node: " << ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) << "\r\n";
+    #endif
+    pc_isoMemberCache = vec_isoMember.begin();
 
 		return true;
   }
