@@ -116,7 +116,6 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
   if ( b_firstCall )
   #endif
   { // open the system with the configured BIOS call - as not yet called
-    b_firstCall = false;
     if (HAL::open_system() != HAL_NO_ERR)
     {
       getLbsErrInstance().registerError( LibErr_c::SystemOpen, LibErr_c::HwSystem ); // something is still wrong
@@ -137,6 +136,8 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
     // set Relais to ON
     HAL::setRelais(ON);
   }
+  // avoid second call of sensible ECU functions
+  b_firstCall = false;
   return b_result;
 }
 /**

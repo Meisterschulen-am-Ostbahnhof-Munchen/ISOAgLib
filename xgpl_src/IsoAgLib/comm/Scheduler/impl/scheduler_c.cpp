@@ -134,6 +134,14 @@ void Scheduler_c::init( void )
   pc_ctlDinMaskupload = NULL;
   b_din_memberNameReceived = false;
   #endif
+
+  // reserver enough space for clients to avoid too often reallocation
+  // of the pointer lists
+  #if defined(USE_DIN_9684) && defined(USE_ISO_11783)
+  c_arrClientC1.reserve(10);
+  #else
+  c_arrClientC1.reserve(9);
+  #endif
 }
 
 /** simply close communicating clients */

@@ -194,6 +194,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
     if (HAL::can_configMsgobjChgid(busNumber(), msgObjNr(), c_filter)
       == HAL_CONFIG_ERR)
     { // BUS not initialized or ID can'tbe chenged
+      getRs232Instance() << "\r\nBUS not initialized or ID can't be changed\r\n";
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
     }
     right.setIsOpen(false); // now left is correlated to the open obj
@@ -420,6 +421,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
         getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
         return (b_count-1);
       case HAL_CONFIG_ERR:
+        getRs232Instance() << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(rui8_busNumber) << "\r\n";
         getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
         return (b_count-1);
       case HAL_NOACT_ERR:
@@ -436,6 +438,12 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
         getLbsErrInstance().registerError( LibErr_c::CanOverflow, LibErr_c::Can );
         b_toProcess = false;
         b_processed = true;
+      	#ifdef DEBUG_CAN_BUFFER_FILLING
+			  getRs232Instance() << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
+				  << uint16_t(msgObjNr()) << " at BUS: " << uint16_t(rui8_busNumber)
+          << " with Ident: " << c_filter.ident()
+				  << "\r\n";
+        #endif
         break;
     }
 
@@ -529,6 +537,7 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
       break;
     case HAL_CONFIG_ERR:
       /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
+      getRs232Instance() << "\r\nALARM Not enough memory for CAN buffer\r\n";
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
       break;
     case HAL_RANGE_ERR:

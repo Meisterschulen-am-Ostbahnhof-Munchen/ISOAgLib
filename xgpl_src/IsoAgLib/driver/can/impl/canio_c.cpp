@@ -287,7 +287,11 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
 void CANIO_c::close( void )
 {
   // call BIOS CAN close function - set error state if BIOS function cause error
-  if (HAL::can_configGlobalClose(ui8_busNumber) != HAL_NO_ERR) getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+  if (HAL::can_configGlobalClose(ui8_busNumber) != HAL_NO_ERR)
+  {
+    getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call\r\n";
+    getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+  }
   arrFilterBox.clear();
   arrMsgObj.clear();
   ui8_busNumber = 0xFF;
@@ -689,6 +693,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       // no send obj or BUS not initialized -> should not happen, cause this is done
       // on init of this object
       // (and is done if timeEvent notices that CAN wasn't configured by init)
+      getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj\r\n";
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
       break;
     case HAL_NOACT_ERR:
@@ -996,7 +1001,8 @@ bool CANIO_c::reconfigureMsgObj()
 	getRs232Instance()
 		<< "CANIO_c mem usage:\r\n"
 		<< ( arrMsgObj.size() * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) ) << " Byte for CAN MsgObj\r\n"
-		<< ( arrFilterBox.size() * ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) ) << " Byte for FilterBox_c\r\n";
+		<< ( arrFilterBox.size() * ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) ) << " Byte for FilterBox_c\r\n"
+    << "at BUS " << uint16_t(ui8_busNumber) << "\r\n";
 //		<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
 	#endif
 

@@ -206,10 +206,8 @@ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increme
     }
 		#ifdef DEBUG_HEAP_USEAGE
 		getRs232Instance()
-			<< "THIS INSTANCE OF MeasureProgBase_c at position " << uint32_t(this) << " uses at the moment a calculated amount \r\n"
-			<< "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-			<< ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) ) << " Byte for meausre sub-programs ( for each increment setting one instance )\r\n"
-			<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
+			<< "MeasureProgBase_c INSTANCE at position " << uint32_t(this) << " uses approx.\r\n"
+			<< ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) ) << " Byte for meausre sub-programs\r\n";
 		#endif
   }
   return true;
@@ -261,11 +259,9 @@ bool MeasureProgBase_c::stop(){
   vec_measureSubprog.clear();
   en_doSend = Proc_c::DoNone;
 	#ifdef DEBUG_HEAP_USEAGE
-	getRs232Instance()
-		<< "THIS INSTANCE OF MeasureProgBase_c at position " << uint32_t(this) << " uses at the moment a calculated amount \r\n"
-		<< "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-		<< ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) ) << " Byte for meausre sub-programs ( for each increment setting one instance )\r\n"
-		<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
+		getRs232Instance()
+			<< "MeasureProgBase_c INSTANCE at position " << uint32_t(this) << " uses approx.\r\n"
+			<< ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) ) << " Byte for meausre sub-programs\r\n";
 	#endif
   return true;
 }
