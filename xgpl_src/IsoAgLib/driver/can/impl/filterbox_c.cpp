@@ -221,8 +221,7 @@ bool FilterBox_c::processMsg(){
     // call customer's processMsg function, to let it
     // process the received CAN msg
     pc_customer->dataBase().string2Flags();
-    pc_customer->processMsg();
-    return true;
+    return pc_customer->processMsg();
   }
   else
   { // pointer to CANCustomer_c wasn't set
