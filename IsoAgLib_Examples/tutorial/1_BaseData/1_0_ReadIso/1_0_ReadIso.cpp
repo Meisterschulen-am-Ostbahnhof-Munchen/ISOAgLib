@@ -56,7 +56,7 @@
  * Demonstrate also the use of GPS data - which migth be wrong decoded
  * at the moment, as only open accessible sources ( Google ) were used
  * to retrieve the format of these few NMEA 2000 strings.
- * Provide option to send result of lookup on RS232 - this is dependend on
+ * Provide option to send result of lookup on RS232 - this is dependent on
  * define USE_RS232_FOR_DEBUG .
  *
  * <H1>What is demonstrated</H1>

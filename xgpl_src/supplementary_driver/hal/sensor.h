@@ -1,5 +1,5 @@
 /***************************************************************************
-                          sensor.h - include dependend on used target (defined
+                          sensor.h - include dependent on used target (defined
 													           in Application_Config/isoaglib_config.h)
 																		 the suitable HAL specific header for
 																		 sensor data input
@@ -55,7 +55,7 @@
 
 /* ************************************************************ */
 /** \file supplementary_driver/hal/sensor.h
-  * include dependend on used target (defined in
+  * include dependent on used target (defined in
 	  Application_Config/isoaglib_config.h) the suitable HAL
 		specific header for sensor data input.
 */
@@ -67,7 +67,7 @@
 // #include <Application_Config/isoaglib_config.h>
 #include <IsoAgLib/hal/config.h>
 
-// now include dependend on used target the suitable header
+// now include dependent on used target the suitable header
 #if defined(SYSTEM_PC)
 	#include "pc/sensor/sensor.h"
 #elif defined(SYSTEM_ESX)

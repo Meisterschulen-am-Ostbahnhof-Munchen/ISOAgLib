@@ -266,7 +266,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -656,7 +656,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -1046,7 +1046,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -1436,7 +1436,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -1826,7 +1826,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -2216,7 +2216,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -2606,7 +2606,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -2996,7 +2996,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -3386,7 +3386,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -3776,7 +3776,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -4166,7 +4166,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -4556,7 +4556,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -4946,7 +4946,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -5336,7 +5336,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -5726,7 +5726,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -6116,7 +6116,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -6506,7 +6506,7 @@ PROC_LOCAL_SIMPLE_MEASURE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects

@@ -53,7 +53,7 @@
 /** \example 3_1_LBSTerminalDin.cpp
  * This tutorial shall provide the base program, which uploads a DIN 9684 LBS+
  * terminal mask definition ( binary ) to the terminal.
- * This example demonstrates the terminal dependend selection of the terminal
+ * This example demonstrates the terminal dependent selection of the terminal
  * definition to upload. This is important, as terminals like Varioterminal and
  * Fieldstar Terminal requires different terminal types.
  *

@@ -56,7 +56,7 @@
   * - Answer request for 7-char names for local DIN 9684 identities
   * - Update data strucutres in IsoAgLib::iBase_c where several important base data are stored
   * - Update current value for remote process data instances, so that the application can retrieve
-  *   them at independend time ( @ref EnhancedUseWithHandlerCall "optionally: value change handler of application can be called " )
+  *   them at independent time ( @ref EnhancedUseWithHandlerCall "optionally: value change handler of application can be called " )
   * - Answer process data value requests for local process data ( therefore the measurement value must be
   *   update by application by call of the setMasterVal() member function of the process data instances )
   * - React on command for multi message protocol ( send first data after CTS, update send state on EndofMsgACK

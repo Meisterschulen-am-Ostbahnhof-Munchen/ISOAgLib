@@ -52,9 +52,9 @@
 /* *********************************************************************** */
 /** \example 0_4_LookupDin.cpp
  * This tutorial presents how to check for the existance of another
- * member on the BUS. This lookup can be based independend from the
+ * member on the BUS. This lookup can be based independent from the
  * active protocol on the device type specification with IsoAgLib::iGetyPos_c .
- * Provide option to send result of lookup on RS232 - this is dependend on
+ * Provide option to send result of lookup on RS232 - this is dependent on
  * define USE_RS232_FOR_DEBUG .
  *
  * <H1>What is demonstrated</H1>

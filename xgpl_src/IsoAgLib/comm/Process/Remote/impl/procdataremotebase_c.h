@@ -94,10 +94,10 @@
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 /**
-  Common base class for all remote process data independend from the
+  Common base class for all remote process data independent from the
   individual feature set.
   This class is responsible for deduction of dynamic member adresses ( %i.e. SA for ISO 11783 )
-  dependend on device type of managing ECU and this local ECU ( which interacts with the remote ECU )
+  dependent on device type of managing ECU and this local ECU ( which interacts with the remote ECU )
   ( \sa ProcDataRemoteBase_c::var2empfSend ).
  */
 class ProcDataRemoteBase_c : public ProcDataBase_c

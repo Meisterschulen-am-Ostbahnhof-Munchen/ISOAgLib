@@ -62,7 +62,7 @@
  * <ul>
  *	<li>Standard remote process data class IsoAgLib::iProcDataRemote_c
  *	<li>Use constructor IsoAgLib::iProcDataRemote_c::iProcDataRemote_c to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataRemote_c::init to define process data properties independend from instantiation ( needed especially for arrays of process data )
+ *	<li>Use IsoAgLib::iProcDataRemote_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
  *	<li>USe IsoAgLib::iProcDataRemote_c::masterVal to access current measurement value
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>

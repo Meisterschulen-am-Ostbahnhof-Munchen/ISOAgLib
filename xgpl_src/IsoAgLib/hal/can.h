@@ -1,5 +1,5 @@
 /***************************************************************************
-                          can.h - include dependend on used target (defined
+                          can.h - include dependent on used target (defined
 													           in Application_Config/isoaglib_config.h)
 																		 the suitable HAL specific header for
 																		 CAN communication
@@ -55,7 +55,7 @@
 
 /* ************************************************************ */
 /** \file IsoAgLib/hal/can.h
-  * include dependend on used target (defined in
+  * include dependent on used target (defined in
 	  Application_Config/isoaglib_config.h) the suitable HAL
 		specific header for CAN communication.
 */
@@ -88,7 +88,7 @@ typedef enum
 } C16xCtrlStatusReg_t;
 
 
-// now include dependend on used target the suitable header
+// now include dependent on used target the suitable header
 #if defined(SYSTEM_PC)
 	#include "pc/can/can.h"
 #elif defined(SYSTEM_ESX)

@@ -62,7 +62,7 @@
  * <ul>
  *	<li>Standard remote process data class IsoAgLib::iProcDataRemote_c
  *	<li>Use constructor IsoAgLib::iProcDataRemote_c::iProcDataRemote_c to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataRemote_c::init to define process data properties independend from instantiation ( needed especially for arrays of process data )
+ *	<li>Use IsoAgLib::iProcDataRemote_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
  *	<li>Use IsoAgLib::iProcDataRemote_c::setpoint to retrive setpoint handling class IsoAgLib::iSetpointRemote_c
  *	<li>Use IsoAgLib::iProcDataRemote_c::setSetpointMasterVal to send setpoint
  *	<li>Use IsoAgLib::iSetpointRemote_c::accepted to check if last received response indicated acceptance ( which is indicated by IsoAgLib::iSetpointRemote_c::answered )

@@ -57,7 +57,7 @@
  * <H1>What is demonstrated</H1>
  * <ol>
  * <li>Send periodically some base data, where application can set
- *		data independend from required timing -> ISO<i><sub>AgLib</sub></i>
+ *		data independent from required timing -> ISO<i><sub>AgLib</sub></i>
  *		guarantees to send all data in demanded time period
  * <ul>
  *	<li>Data storage class IsoAgLib::iBase_c

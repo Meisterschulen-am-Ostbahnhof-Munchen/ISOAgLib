@@ -230,7 +230,7 @@ private: // Private attributes
       receive FilterBox'es
     */
   bool b_switch2AddressClaim;
-  /** pointer to DINMaskupload_c with type ElementBase_c, to be independend from type definition */
+  /** pointer to DINMaskupload_c with type ElementBase_c, to be independent from type definition */
   ElementBase_c* pc_ctlDinMaskupload;
   /** flag to detect receive of DIN member name -> call after receive DINMaskupload_c::timeEvent(I) to
       react on potential name of DIN Terminal

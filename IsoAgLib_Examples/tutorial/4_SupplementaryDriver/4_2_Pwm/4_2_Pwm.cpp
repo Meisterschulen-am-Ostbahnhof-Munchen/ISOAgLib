@@ -63,7 +63,7 @@
  * <H1>What is demonstrated</H1>
  * <ol>
  * <li>Use PWM output with standardized diagnose check
- * <li>Set correct current limits independend from later diagnose check ( set limit during channel init )
+ * <li>Set correct current limits independent from later diagnose check ( set limit during channel init )
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
  * 	<ul>
  *	<li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities

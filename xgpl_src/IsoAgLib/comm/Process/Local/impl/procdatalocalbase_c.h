@@ -127,7 +127,7 @@
 namespace __IsoAgLib {
 
 /**
-  common base class for all local process data independend from the
+  common base class for all local process data independent from the
   individual feature set.
   the central accessible singletong instance of Process_c
   manages a list of pointers to ProcDataLocalBase_c

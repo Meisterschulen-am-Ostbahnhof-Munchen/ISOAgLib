@@ -61,7 +61,7 @@
  * <H1>What is demonstrated</H1>
  * <ol>
  * <li>Perform direct EEPROM data read into variables with automatic value conversion
- *     and update of read position dependend on sizeof(read data type)
+ *     and update of read position dependent on sizeof(read data type)
  * <li>Write variable values from write start position to succeeding positions
  *     based on the sizeof( write variable )
  * <li>Check EEPROM state like other C++ iostreams

@@ -20,9 +20,9 @@
   * - \a impl -> base class for all local Process Data -> always include in project, if local Process Data are used
   * - \a StdMeasureElements -> helper classes for capable measurement ( %i.e. meausrement programs ) in IsoAgLib::iProcDataLocal_c and
   *      IsoAgLib::iProcDataLocalSimpleSetpoint_c
-  * - \a StdSetpointElements -> helper classes for capable setpoint management ( %i.e. decide dependend on commanding ECU if setpoint
+  * - \a StdSetpointElements -> helper classes for capable setpoint management ( %i.e. decide dependent on commanding ECU if setpoint
   *      is accepted or not, etc. ) in IsoAgLib::iProcDataLocal_c and IsoAgLib::iProcDataLocalSimpleMeasure_c
-  * - \a SimpleSetpointElements -> helper classes for simple setpoint management ( %i.e. simply accept received setpoint independend
+  * - \a SimpleSetpointElements -> helper classes for simple setpoint management ( %i.e. simply accept received setpoint independent
   *      from commanding ECU ) in IsoAgLib::iProcDataLocalSimpleSetpoint_c and IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c
   * \n
   * A closer description can be found in \ref ProcDataPage .

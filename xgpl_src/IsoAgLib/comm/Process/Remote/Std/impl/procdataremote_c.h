@@ -149,7 +149,7 @@ namespace __IsoAgLib {
   if ( c_workState.setpoint().valid() )
   { // happy! - even if we're not master, our wished value is delivered at the moment
   }
-  // independend of the current master setpoint ( local or other remote ECU )
+  // independent of the current master setpoint ( local or other remote ECU )
   // - check if current master setpoint is exact mapped by real measurement data
   if ( c_workState.setpoint().masterValid() )
   { // the master setpoint value is currently mapped

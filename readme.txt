@@ -107,7 +107,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- <b>2004-11-24:</b> Add driver for <b>Sontheim CAN cards</b> ( tested only with CANLPT; but as the generalized API is used, and all documented card specific differences are handled,
 			there should be at least only the need for a little bit testing and bugfixing to get everyting to work with all current Sontheim cards )
 	- <b>2004-12-03:</b> Finish heavy optimization of HEAP usage and optional exact documentation of HEAP usage during runtime via RS232, so that really needed HEAPSIZE can be derived
-		( reduction of HEAPSIZE dependend on application can vary between 4 KByte and 10 KByte )
+		( reduction of HEAPSIZE dependent on application can vary between 4 KByte and 10 KByte )
 	- <b>2004-12-06:</b> Enable and test Win32 multithreading in Sontheim CAN driver ( as no Vector-Informatik CAN cards are accessible for the author, this can't be tested -> so multithreading is only active
 			as default for Sontheim )
 	- <b>2004-12-09:</b> As some so called "Extended EC++" compilers like IAR don't support multiple inheritance and additionally place their individual tailored version of STL
@@ -277,7 +277,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		part of <b>MSYS</b> system ; additionally replace UNIX style directory seperation from slash to backslash for Win32 compilers and use Windows stly newline
 	- change device types and CAN channels of tutorial examples, so that e.g. 1_0_ReadIso.cpp and 1_2_WriteIso.cpp can interact ( <b>a)</b> different device types
 		for both ECUs and <b>b)</b> different CAN channels so that two channels of one PC CAN card can be connected )
-	- unify number intervals of CAN HAL for BUS and MsgObj numbers to start with <b>0</b> for each type of HAL ( avoid HAL dependend offset constants ).
+	- unify number intervals of CAN HAL for BUS and MsgObj numbers to start with <b>0</b> for each type of HAL ( avoid HAL dependent offset constants ).
 	- change default path for Win32 CAN card manufacturer driver library files ( API DLLs and Headers ) to <i>C:\\Development</i> so that all users can install their
 		driver files to the corresponding location, if they want to avoid changing all default VC++ project files ( if pathes like <i>C:\\Development\\CANLIB</i> are still
 		not acceptable, update_makefile.sh can be used to create VC++ DSP files based on adopted conf_x_y project feature setup files )
@@ -314,7 +314,7 @@ The ISO<i><sub>AgLib</sub></i> is designed to provide the following main feature
 	Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> if you are interested in this tool for your own use, as Brad
 	Cox indicated already, that he might be willing to provide this undest some conditions. <br>
 	But this tool would only help to start the virtual mask definition with XML, as this method provides some additional attributes to
-	control the automatic runtime adoption of the single core mask pool to the different terminal properties ( e.g. font size dependend spacing ).
+	control the automatic runtime adoption of the single core mask pool to the different terminal properties ( e.g. font size dependent spacing ).
 - provide flexible and capable process data implementation as backbone for all documenting and control interaction
 		(e.g. trigger dependent measurement value send, allow setpoint intervals with MIN / MAX,
 		enable N --&gt; 1 relation between user and provider of process data)
@@ -669,7 +669,7 @@ You can identify the license protected parts by:<ul>
 <li>README_LICENSED_PARTS.txt in each of the root directories where the license conditions of their contents is described
 </ul>
 
-<b>Important note on distinction between extensions of ISO<i><sub>AgLib</sub></i> ( which are covered by the license ) and independend
+<b>Important note on distinction between extensions of ISO<i><sub>AgLib</sub></i> ( which are covered by the license ) and independent
 Application development:</b>
 The ISO<i><sub>AgLib</sub></i> uses <b>C++</b> namespaces to group internal classes, functions, types, ... in units  <i>__IsoAgLib</i> and <i>__HAL</i>,
 which can be clearly seperated from their interface counterparts <i>IsoAgLib</i> and <i>HAL</i>.
@@ -767,7 +767,7 @@ management of such interactions. This list can then help to identify well suppor
 <tr><td><b>Project</b></td><td><b>Organization</b></td><td><b>Contribution</b></td></td>
 <tr>
 	<td>Automated process data recording system "Task-Controller" which detects all connected implements and starts the recording of
-		device type dependend process data ( e.g. application rate for spreaders ). It combines this information with some tractor information
+		device type dependent process data ( e.g. application rate for spreaders ). It combines this information with some tractor information
 		( e.g. fuel consumption, speed, hitch position ) and GPS positioning data. All data sets are stored at a PCMCIA memory card.
 		The recorded data set can be configured by EEPROM settings, so that the firmware itself needn't be changed.
 	</td>
@@ -795,7 +795,7 @@ management of such interactions. This list can then help to identify well suppor
 The ISO<i><sub>AgLib</sub></i> will be actively maintained by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
 as long as the invested time is affordable in relation to corresponding projects and support contracts.<br>
 Even in case the active maintenance by <a href="http://www.osb-ag.de">OSB AG</a> might be stopped some day, the GPL license and
-the independend website at the
+the independent website at the
 <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
 assure that any interested party can step in and continue the maintenance of the project. This guarantees, like in other Open Source projects, the
 open access for every user. <br>
@@ -831,7 +831,7 @@ where all members can learn:
 		- colour depth selection during runtime, so that a unique global mask pool can be defined.
 	- integration of <b>IDE</b> of choice ( some project file format types are automatically supported )
 	- integration of <b>ISO 11783</b> communication with existing application code ( ways to define interface modules )
-	- integration of process data management to allow terminal independend control and monitoring access to an implement
+	- integration of process data management to allow terminal independent control and monitoring access to an implement
 	- adoption to individual target platform ( creation of corresponding <b>H</b>ardware <b>A</b>bstraction <b>L</b>ayer - HAL )
 	- test of application with the <b>R</b>ealtime <b>T</b>est <b>E</b>nvironment ( RTE ), which is another also Open Source
 		project of <a href="http://www.osb-ag.de">OSB AG</a> for test of embedded applications ( not only useable for ISO 11783 networks )
@@ -870,7 +870,7 @@ Some examples:
 	- extension of the font size relative positioning to map different font sizes for different
 		language versions ( languages where all labels a longer than the corresponding strings in other
 		languages might need a smaller font size to allow placement on the common layout;
-		therefore font size dependend position alignment should be enhanced )
+		therefore font size dependent position alignment should be enhanced )
 	- language specific bitmaps ( especially if some text is displayed in the bitmap )
 
 \section IndexMaintainers Some information on the maintainers
@@ -1562,7 +1562,7 @@ This can be achived by the following settings.
 			- <b>APP_SRC_EXCLUDE</b> files to exclude from search - you can use joker "*" to exclude all files which match to a specific pattern ( e.g. "test*.cpp" )
 
 \subsubsection ConfBaseSetting Basic Project Settings
-The following basic settings can be specified independend from hardware and feature setup:
+The following basic settings can be specified independent from hardware and feature setup:
 	- <b>ISO_AG_LIB_PATH</b> relative path from directory where the feature setup file is located to the root directory of IsoAgLib ( "../.." for the tutorial examples )
 	- <b>PRJ_DEFINES</b> individual #defines which are integrated into the project file - some examples for special debug purposes:
 		- <i>DEBUG_CAN_BUFFER_FILLING</i> for RS232 output of MAX amount of buffered CAN messages
@@ -1580,7 +1580,7 @@ The basic hardware setup of your target ( including CAN hardware/driver ) can be
 	- <b>USE_TARGET_SYSTEM</b> type of target system from list <i>{ "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167" }</i> or other coming supported HALs
 	- <b>USE_CAN_DRIVER</b> CAN driver to use from list <i>{ "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" }</i>,<br>
 			- where type "simulating" uses file based CAN simulation on each PC system target,
-			- target "pc_win32" allows additionally <i>{ "vector_canlib"|"vector_xl_drv_lib"|"sontheim" }</i> ( <b>again: use vector_canlib if your drivers were installed to a CANLIB directrory - this is independend of the name of the card!! </b>),
+			- target "pc_win32" allows additionally <i>{ "vector_canlib"|"vector_xl_drv_lib"|"sontheim" }</i> ( <b>again: use vector_canlib if your drivers were installed to a CANLIB directrory - this is independent of the name of the card!! </b>),
 			- and target "pc_linux" allows additionally <i>{ "rte" }</i>.
 			- The other embedded targets allow only the system specific CAN driver - identified by "sys"
 			- update_makefile.sh automatically selects the "sys" CAN driver, if no PC target is selected
@@ -1604,7 +1604,7 @@ Setup of most important communication features:
 	- <b>PRJ_DIN9684</b> selection of DIN 9684 protocol in the project
 	                     ( both ISO and DIN can be used in a project in parallel - e.g. decide on system init on used protocol )
 	- <b>PRJ_DIN_TERMINAL</b> selection of LBS+ Terminal support ( like Fendt Varioterminal ) ( only available if PRJ_DIN9684 is activated )
-	- <b>PRJ_BASE</b> gather base data like tractor speed, distance, ISO GPS, PTO RPM from BUS and make them available independend of receive time
+	- <b>PRJ_BASE</b> gather base data like tractor speed, distance, ISO GPS, PTO RPM from BUS and make them available independent of receive time
 
 \subsubsection ConProcData Process Data Communication Setup
 Setup of process data support:
@@ -1655,7 +1655,7 @@ provided - and can be selected by the following configuration variables.
 	- <b>PRJ_SENSOR_COUNTER</b> select IsoAgLib::iCounterI_c for counter input. the existing HAL implementations ( e.g. for ESX ) extend the BIOS/OS
 	     function, as a IsoAgLib specific event counting for very low event repetition rates is provided - the BIOS version is only
 	     designed for typical RPM values
-	- <b>PRJ_ACTOR</b> select if the digital output driver shall be integrated into the project. you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+	- <b>PRJ_ACTOR</b> select if the digital output driver shall be integrated into the project. you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 	     access on PWM output. This is completely independent from communication tasks, but was created during research and is actively used by OSB AG for its own
 	     projects
 
@@ -1984,7 +1984,7 @@ PRJ_ISO11783=1
 # PRJ_SENSOR_COUNTER=0
 
 # select if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects

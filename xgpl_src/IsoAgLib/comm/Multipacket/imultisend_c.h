@@ -97,7 +97,7 @@ public:
     @param rpc_mss allow active build of data stream parts for upload by deriving data source class
                   from MultiSendStreamer_c, which defines virtual functions to control the
                   retrieve of data to send. This is especially important for ISO_Terminal,
-                  which assembles the data pool dependend on the terminal capabilities during upload
+                  which assembles the data pool dependent on the terminal capabilities during upload
                   ( e.g. bitmap variants )
     @param ri32_pgn PGN to use for the upload
     @param rpen_sendSuccessNotify -> pointer to send state var, where the current state

@@ -168,7 +168,7 @@ void Scheduler_c::closeCommunication( void ) {
   getCanInstance4Comm().close();
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
-  { // process msg of other BUS ( other CAN is always at position 1 (independend from CAN BUS at controller!!)
+  { // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
     getCanInstance( ind ).close();
   }
   #endif
@@ -187,7 +187,7 @@ void Scheduler_c::close( void )
   getCanInstance4Comm().close();
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
-  { // process msg of other BUS ( other CAN is always at position 1 (independend from CAN BUS at controller!!)
+  { // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
     getCanInstance( ind ).close();
   }
   #endif
@@ -387,7 +387,7 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
 
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
-  { // process msg of other BUS ( other CAN is always at position 1 (independend from CAN BUS at controller!!)
+  { // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
     getCanInstance( ind ).timeEvent();
   }
   #endif
@@ -477,7 +477,7 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
     #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
     if ( getAvailableExecTime() != 0 )
     { // simply call processMsg and don't update statistic
-      // process msg of other BUS ( other CAN is always at position 1 (independend from CAN BUS at controller!!)
+      // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
       getCanInstance( 1 ).processMsg();
     }
     #endif

@@ -615,7 +615,7 @@
 /**
   * @def USE_BASE_YN
   * activate module for base data ( periodic sent main tractor data like speed, PTO, Hitch )
-  * ( even if IsoAgLib is mainly independend from this setting, the IsoItem_c::processMsg()
+  * ( even if IsoAgLib is mainly independent from this setting, the IsoItem_c::processMsg()
 	*   requires this setting, to detect if a call to Base_c:processMsg() is defined -
 	*   this call is performed if a REQUEST_PGN_MSG_PGN is processed by IsoItem_c and
 	*   the requested PGN is TIME_DATE_PGN )
@@ -667,7 +667,7 @@
 
 /* ******************************************************** */
 /**
- * \name Definition of IsoAgLib managed CAN ports and dependend access macros
+ * \name Definition of IsoAgLib managed CAN ports and dependent access macros
  * The several modules of the IsoAgLib have only one instance, as long
  * as only one CAN port is managed with IsoAgLib (DIN and/or ISO) protocol.
  * Even in case of two or more CAN ports, the so called "singleton" pattern
@@ -700,7 +700,7 @@
 		- but if the ECU shall be used as gateway between two ISO 11783 or DIN 9684 subnets
 		- or if it should translate between a DIN 9684 devices and ISO 11783 network
 		- then select 2 ( or more )
-		( all communication classes are designed to allow independend control of
+		( all communication classes are designed to allow independent control of
 		  individual CAN instances per protocol instance set )
 	*/
 #ifndef PRT_INSTANCE_CNT

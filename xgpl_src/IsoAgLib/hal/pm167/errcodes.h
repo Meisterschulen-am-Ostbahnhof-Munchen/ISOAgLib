@@ -57,7 +57,7 @@ namespace HAL {
   extern "C" {
     #include <commercial_BIOS/bios_pm167/Xos20err.h>
   }
-  /* --- map BIOS error codes to target independend HAL codes --- */
+  /* --- map BIOS error codes to target independent HAL codes --- */
   #define HAL_NO_ERR            C_NO_ERR
   #define HAL_BUSY_ERR          C_BUSY
   #define HAL_CONFIG_ERR        C_CONFIG

@@ -63,7 +63,7 @@
  * <ol>
  * <li>Use digital input with polling evaluation and handler function/class
  * <li>Evaluate analog input signales with their [mV] and [mA] dimension
- * <li>Use possibility to configure the ranges of analog input independend from their monitoring
+ * <li>Use possibility to configure the ranges of analog input independent from their monitoring
  * <li>Use central access to sensor inputs bases on their input channel
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
  * 	<ul>

@@ -19,9 +19,9 @@
   * - \a impl -> base class for all remote Process Data -> always include in project, if remote Process Data are used
   * - \a StdMeasureElements -> helper classes for capable measurement ( %i.e. meausrement programs ) in IsoAgLib::iProcDataRemote_c and
   *      IsoAgLib::iProcDataRemoteSimpleSetpoint_c
-  * - \a StdSetpointElements -> helper classes for capable setpoint management ( %i.e. decide dependend on commanding ECU if setpoint is accepted or not, etc. )
+  * - \a StdSetpointElements -> helper classes for capable setpoint management ( %i.e. decide dependent on commanding ECU if setpoint is accepted or not, etc. )
   *      in IsoAgLib::iProcDataRemote_c and IsoAgLib::iProcDataRemoteSimpleMeasure_c
-  * - \a SimpleSetpointElements -> helper classes for simple setpoint management ( %i.e. simply accept received setpoint independend from commanding ECU )
+  * - \a SimpleSetpointElements -> helper classes for simple setpoint management ( %i.e. simply accept received setpoint independent from commanding ECU )
   *      in IsoAgLib::iProcDataRemoteSimpleSetpoint_c and IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c
   * - \a SimpleMeasureElements -> helper classes for simple measurement value management ( %i.e. simply use single shot value requests )
   *      in IsoAgLib::iProcDataRemoteSimpleMeasure_c, IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c and

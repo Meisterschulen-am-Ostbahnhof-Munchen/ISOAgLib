@@ -69,7 +69,7 @@
  * <ul>
  *	<li>Standard local process data class IsoAgLib::iProcDataLocalSimpleMeasure_c
  *	<li>Use constructor IsoAgLib::iProcDataLocalSimpleMeasure_c::iProcDataLocalSimpleMeasure_c to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataLocalSimpleMeasure_c::init to define process data properties independend from instantiation ( needed especially for arrays of process data )
+ *	<li>Use IsoAgLib::iProcDataLocalSimpleMeasure_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
  *	<li>Use IsoAgLib::iProcDataLocalSimpleMeasure_c::setMasterVal() to set current measurement data
  *	<li>Use IsoAgLib::iProcDataLocalSimpleMeasure_c::setpoint to get access to the setpoint handling part of the process data of type IsoAgLib::iSetpointLocal_c
  *	<li>Use IsoAgLib::iSetpointLocal_c::existUnhandledMaster , IsoAgLib::iSetpointLocal_c::master , IsoAgLib::iSetpointLocal_c::unhandledMaster ,
@@ -297,7 +297,7 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 		//! instance the corresponding variable and reacte then specific for this type.
 		//! Parameter:
 		//! @param rc_src encapsulated pointer to triggered process data variable
-		//! @param ri32_val new received setpoint value ( raw from CAN msg; independend interpretation on Exact/Min/Max needed )
+		//! @param ri32_val new received setpoint value ( raw from CAN msg; independent interpretation on Exact/Min/Max needed )
 		//! @param rc_setpointSender device type of setpoint sender
 		//! @param rb_change display if value change or if just new msg arrived, which could be important for handling
 		virtual bool processSetpointSet(IsoAgLib::EventSource_c rc_src,

@@ -43,7 +43,7 @@
 			m_driver    [label="Enhanced Drivers for main library parts\npartly obligatory", color="green",width=3];
 			m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green",width=3];
 			m_util      [label="Utilities for main library parts\nobligatory", color="green2",width=3];
-			m_type      [label="Platform Independend Typedefs\nobligatory", color="green2", shape="ellipse", URL="\ref IsoAgLib/typedef.h",width=3];
+			m_type      [label="Platform Independent Typedefs\nobligatory", color="green2", shape="ellipse", URL="\ref IsoAgLib/typedef.h",width=3];
 		}
 
 		subgraph cluster_level311 {
@@ -186,7 +186,7 @@
 	 digital and analog input sensors.
 
 	 Thus the ISO<i><sub>AgLib</sub></i> had not only the target to implement the DIN 9684 and ISO 11783 protocol, but also
-	 to provide a platform hardware independend API for capable hardware access.
+	 to provide a platform hardware independent API for capable hardware access.
 	 A ruling target of ISO<i><sub>AgLib</sub></i> is to server <b>optionally</b> as a complete hardware extension layer, which
 	 allows the application developer to use driver services which are not included in the standard platform libraries and which
 	 introduce no platform dependency on the main project. This principle is used for the actively used research systems and for the
@@ -214,7 +214,7 @@
 	 are implemented - %e.%g. for impelmentation of extensions and bug-fixes.
 
 	 \subsection StructureHal Structure of the HAL
-	 The platform dependend variants of the HAL are grouped by the name of the respective plateform. This name is defined in the central
+	 The platform dependent variants of the HAL are grouped by the name of the respective plateform. This name is defined in the central
 	 configuration file isoaglib_config.h , where either the corresponding #define like SYSTEM_ESX can be constantly defined or can be
 	 provided as runtime Defines during the Make-Process ( as compiler option ). The conditional #ifdef rules in isoaglib_config.h
 	 allow the headers of the ISO<i><sub>AgLib</sub></i> to fetch the corresponding headers from the central headers in the

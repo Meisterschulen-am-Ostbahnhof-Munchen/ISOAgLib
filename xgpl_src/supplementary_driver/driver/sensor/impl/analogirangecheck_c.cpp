@@ -142,8 +142,8 @@ void AnalogIRangeCheck_c::setRange( uint16_t rui16_minValid, uint16_t rui16_maxV
 }
 
 /** get validate val
-  @param refb_tooLow  reference to bool value which is set dependend on ( value < minLimit )
-  @param refb_tooHigh reference to bool value which is set dependend on ( value > maxLimit )
+  @param refb_tooLow  reference to bool value which is set dependent on ( value < minLimit )
+  @param refb_tooHigh reference to bool value which is set dependent on ( value > maxLimit )
   @return sensor value
 */
 int16_t AnalogIRangeCheck_c::validatedVal( bool &refb_tooLow, bool &refb_tooHigh ) const {

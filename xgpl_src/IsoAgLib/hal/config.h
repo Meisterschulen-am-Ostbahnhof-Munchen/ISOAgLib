@@ -1,5 +1,5 @@
 /***************************************************************************
-                          config.h - include dependend on used target (defined
+                          config.h - include dependent on used target (defined
 													           in Application_Config/isoaglib_config.h)
 																		 the suitable HAL specific header for
 																		 central configuration settings
@@ -55,7 +55,7 @@
 
 /* ************************************************************ */
 /** \file IsoAgLib/hal/config.h
-  * include dependend on used target (defined in
+  * include dependent on used target (defined in
 	  Application_Config/isoaglib_config.h) the suitable HAL
 		specific header for central configuration settings.
 */
@@ -82,7 +82,7 @@
 #define HAL_RS232_BAUDRATE_LIST {75, 600, 1200, 2400, 4800, 9600, 19200}
 #define HAL_RS232_BITRATE_CNT 7
 
-// now include dependend on used target the suitable header
+// now include dependent on used target the suitable header
 #if defined(SYSTEM_PC)
 	#include "pc/config.h"
 #elif defined(SYSTEM_ESX)

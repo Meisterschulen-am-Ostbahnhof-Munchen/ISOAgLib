@@ -53,7 +53,7 @@
 /** \example 1_1_ReadDin.cpp
  * This tutorial shall provide the simples base program, which reads some
  * regularly sent base data ( especially tractor information ).
- * Provide option to send result of lookup on RS232 - this is dependend on
+ * Provide option to send result of lookup on RS232 - this is dependent on
  * define USE_RS232_FOR_DEBUG .
  *
  * <H1>What is demonstrated</H1>

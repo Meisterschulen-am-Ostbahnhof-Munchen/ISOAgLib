@@ -51,7 +51,7 @@
 #ifndef _HAL_ESX_CONFIG_H_
 #define _HAL_ESX_CONFIG_H_
 
-// include target independend configs
+// include target independent configs
 #include <Application_Config/isoaglib_config.h>
 #include <IsoAgLib/util/compiler_adoption.h>
 

@@ -92,7 +92,7 @@
 namespace __IsoAgLib {
 /**
   Extend AnalogI_c by range check for input signal
-  -> store [minValid..maxValid] and answer state dependend
+  -> store [minValid..maxValid] and answer state dependent
   @see AnalogI_c
   @see SensorI_c
   @see DigitalI_c
@@ -140,8 +140,8 @@ public:
              bool rb_fastAdc = false, uint16_t rui16_minValid = 0, uint16_t rui16_maxValid = 0xFFFF);
 
   /** get validate val
-    @param refb_tooLow  reference to bool value which is set dependend on ( value < minLimit )
-    @param refb_tooHigh reference to bool value which is set dependend on ( value > maxLimit )
+    @param refb_tooLow  reference to bool value which is set dependent on ( value < minLimit )
+    @param refb_tooHigh reference to bool value which is set dependent on ( value > maxLimit )
     @return sensor value
   */
   int16_t validatedVal( bool &refb_tooLow, bool &refb_tooHigh ) const;

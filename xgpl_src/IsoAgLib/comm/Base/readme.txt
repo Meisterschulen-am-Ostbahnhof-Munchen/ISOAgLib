@@ -4,7 +4,7 @@
   * from the time relation between CAN-receive time and access time.
   * Additionally the Base_c class can be configured to send
   * these data types. In this case the application can update the
-  * data for send independend from the individual send time on BUS.
+  * data for send independent from the individual send time on BUS.
   * Thus the afford for implementation of the correct send intervals
   * is completely taken away from application to the ISO<i><sub>AgLib</sub></i>.
   *
@@ -40,7 +40,7 @@
   *    - implement in work
   *
   * Some exemplary data requests are presented below.
-  * All information can be read independend from the send time on the
+  * All information can be read independent from the send time on the
   * BUS. Thus the application can access the values when it needs the information,
   * and is not forced to read and interprete when received.
   * \code
@@ -87,7 +87,7 @@
   * The application can configure the send mode in the following groups:
   * - base information type 1: real and gear based speed and distance
   * - base information type 2: front and rear PTO, engine RPM, front and rear hitch state
-  * - calendar data ( ISO<i><sub>AgLib</sub></i> increments the time after first time setting independend from further data update of application )
+  * - calendar data ( ISO<i><sub>AgLib</sub></i> increments the time after first time setting independent from further data update of application )
   *
   * The base information group 2 includes in case of an ISO 11783 system all additional information like draft force.
   * The default state for all groups is read only, so that a system that likes to send some base data types,

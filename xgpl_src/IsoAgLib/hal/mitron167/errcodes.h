@@ -53,7 +53,7 @@
 #define __MITRON167_ERRCODES_H__
 
 namespace HAL {
-  /* --- map BIOS error codes to target independend HAL codes --- */
+  /* --- map BIOS error codes to target independent HAL codes --- */
    #define HAL_NO_ERR         (int16_t)( (0 * 0x0001))
    #define HAL_UNKNOWN_ERR    (int16_t)(-(1 * 0x0001))
    #define HAL_WARN_ERR       (int16_t)(-(2 * 0x0001))

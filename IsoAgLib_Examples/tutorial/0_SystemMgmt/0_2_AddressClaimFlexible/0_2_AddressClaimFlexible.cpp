@@ -1,6 +1,6 @@
 /* *************************************************************************
                           0_2_AddressClaimFlexible.cpp
-														- tutorial for state dependend address claim as
+														- tutorial for state dependent address claim as
 															DIN 9684 or ISO 11783 device
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004

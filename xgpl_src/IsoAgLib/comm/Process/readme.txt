@@ -113,7 +113,7 @@
   *    - simply store each received setpoint and automatically send confirmation reply back to commanding
   *      ECU - this way NO differentiation by commanding ECU \n -> <b>NOT usable if</b>
   *      - specific setpoint values should by denied
-  *      - setpoint can't be accepted dependend on internal state
+  *      - setpoint can't be accepted dependent on internal state
   *      - more than one ECU could try to control the behaviour of this ECU with setpoint commands
   * - \a IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c
   *    - reduce feature set of both measurement and setpoint data
@@ -254,7 +254,7 @@
   * This allows to write applications, which concentrate only on the data communication part without
   * the overhead of protocol specific details.
   * This is achieved by the CAN data formating and low-level processing class __IsoAgLib::ProcessPkg_c, which
-  * detects dependend on the receiver ( for send of msg ) and/or sender ( for receive of msg )
+  * detects dependent on the receiver ( for send of msg ) and/or sender ( for receive of msg )
   * and its protocol state, which protocol format to use. This is achieved by IsoAgLib::iSystemMgmt_c
   * which provides functions to derive the protocol type of a ECU based on it GetyPos == device_type/_instance setting.
   *
@@ -349,7 +349,7 @@
   * class MyProcessDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c {
   *   public:
   *     // react on new received setpoint for local process data
-  *     // (remote system which wants to control the local system dependend on the setpoint
+  *     // (remote system which wants to control the local system dependent on the setpoint
   *     // sent a new setpoint value)
   *     // rc_src general event source class, which provides conversion functions to get needed event source class
   *     // ri32_val new value, which caused the event (for immediate access)

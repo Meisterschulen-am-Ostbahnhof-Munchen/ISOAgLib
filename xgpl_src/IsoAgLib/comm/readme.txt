@@ -3,7 +3,7 @@
 	* <i>\<xgpl_src/IsoAgLib/comm/\></i> and its subdirectories.
 	*
 	* @section ServiceDependency Dependencies of Protocol Services
-	* Most of the protocol features can be selected independend from other functions for
+	* Most of the protocol features can be selected independent from other functions for
 	* a specific project. The depdendencies are described in the following overview diagram, which also
 	* shows the distribution of services on the different subdirectories.
   \dot
@@ -86,7 +86,7 @@
 	* the application developer to access the data at the time, where the local controlled
 	* execution flow needs input.
 	* All information which is defined in DIN 9684 and ISO 11783 can be accessed with the same function,
-	* as the information is stored internally with one variable for both protocols - API is independend from active protocol.
+	* as the information is stored internally with one variable for both protocols - API is independent from active protocol.
 	*
 	* @subsection CommOverIsoBase Overview on ISO 11783 Data
 	* <b>Detailed Description:</b> \ref BaseDataIsoType
@@ -132,7 +132,7 @@
 	* This allows to set not only an exact setpoint, but also to define an intervall,
 	* so that the commanded ECU has more flexibility to combine this request with
 	* environmental and mechanical constraints or with other direct or indirect
-	* dependend setpoints ( example: PTO speed and driving speed are indirect dependend for most tractors ).
+	* dependent setpoints ( example: PTO speed and driving speed are indirect dependent for most tractors ).
 	* In addition to flexible control with setpoints, measurement programs can be used to retrieve
 	* specific information like MIN/MAX/AVG... measured value. This helps to avoid sending of a fine grained
 	* chain of single measurement values which are only used by the receiver to get the MIN/MAX/AVG... .
@@ -142,7 +142,7 @@
 	* <b>Detailed Description:</b> \ref ProcDataDinIsoSec
 	* The IsoAgLib can automatically detect based on the active protocol, how the
 	* process data messages must be formatted. As ISO 11783 Process Data was at least till
-	* Mid 2003 compatible to DIN 9684, the API is 100% independend from the protocol.<br>
+	* Mid 2003 compatible to DIN 9684, the API is 100% independent from the protocol.<br>
 	* <b>Possible Problems of Current ISO Activities:<br>
 	* As the process data part of ISO 11783 is under heavy change, the IsoAgLib can't guarantee
 	* the compatibility for the final - whenever it comes - ISO 11783 release.<br>

@@ -80,12 +80,12 @@ namespace __HAL {
     #if defined(USE_CAN_EEPROM_EDITOR)
       /** include the BIOS specific header for CAN EEPROM editor
         * into __HAL if this function is activated in the central target
-        * independend config file */
+        * independent config file */
       #include <../commercial_BIOS/bios_esx/Xos20eec.h>
     #elif defined(USE_RS232_EEPROM_EDITOR)
       /** include the BIOS specific header for RS232 EEPROM editor
         * into __HAL if this function is activated in the central target
-        * independend config file */
+        * independent config file */
       #include <../commercial_BIOS/bios_esx/Xos20ees.h>
     #endif
   }

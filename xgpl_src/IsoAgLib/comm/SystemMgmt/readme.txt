@@ -38,7 +38,7 @@
   * - everything in subdirectory <i>\<xgpl_src/IsoAgLib/comm/System<b>/ISO11783</b>\></i>
   * <br>
   * @subsection SystemMgmtDefines Project configuration for DIN 9684 and/or ISO 11783
-  * As some parts in the IsoAgLib are dependend on the supported protocols, it is <b>very</b>
+  * As some parts in the IsoAgLib are dependent on the supported protocols, it is <b>very</b>
   * important to define the individual protocols to implement by some #define's. This can
   * be achieved by the default settings in the central project configuration file
   * <i>\<xgpl_src/Application_Config/isoaglib_config.h\></i> and by the compiler-defines in the Makefile.
@@ -153,7 +153,7 @@
   * @subsection SystemMgmtLaterSelection Select Protocol on AddressClaim
   * The IsoAgLib allows you to delay the decision on the protocol to use
   * to the time of address claim. This can be useful if the implement shall
-  * start as DIN or ISO system dependend on state of digital input.
+  * start as DIN or ISO system dependent on state of digital input.
   * \code
   * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h\>
   * // define device type := 2, device instance := 0

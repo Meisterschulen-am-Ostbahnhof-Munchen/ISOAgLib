@@ -121,7 +121,7 @@ class EventSource_c {
 class ProcessDataChangeHandler_c {
  public:
  /** react on new received setpoint for local process data
-   * (remote system which wants to control the local system dependend on the setpoint
+   * (remote system which wants to control the local system dependent on the setpoint
    *  sent a new setpoint value)
    * @param rc_src general event source class, which provides conversion functions to get needed event source class
    * @param ri32_val new value, which caused the event (for immediate access)

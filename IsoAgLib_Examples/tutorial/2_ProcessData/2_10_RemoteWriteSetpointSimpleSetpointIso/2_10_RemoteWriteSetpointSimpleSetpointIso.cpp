@@ -64,7 +64,7 @@
  * <ul>
  *	<li>Standard remote process data class IsoAgLib::iProcDataRemoteSimpleSetpoint_c
  *	<li>Use constructor IsoAgLib::iProcDataRemoteSimpleSetpoint_c::iProcDataRemoteSimpleSetpoint_c to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataRemoteSimpleSetpoint_c::init to define process data properties independend from instantiation ( needed especially for arrays of process data )
+ *	<li>Use IsoAgLib::iProcDataRemoteSimpleSetpoint_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
  *	<li>Use IsoAgLib::iProcDataRemoteSimpleSetpoint_c::setSetpointMasterVal to send setpoint
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>

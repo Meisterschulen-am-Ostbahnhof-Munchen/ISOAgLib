@@ -57,7 +57,7 @@
   *
   * @section DinTerminalRegistration Registrate Terminal Definition
   * The definition structure of type IsoAgLib::t_maskDefinition can be registered
-  * into IsoAgLib with a simple function call. This call is independend from
+  * into IsoAgLib with a simple function call. This call is independent from
   * immediate availability of terminal or completed address claim of local ident.
   * As soon as both the registered terminal is ready and the corresponding local
   * ident has completely claimed address, the terminal mask definition will be activated for

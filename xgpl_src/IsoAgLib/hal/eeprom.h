@@ -1,5 +1,5 @@
 /***************************************************************************
-                          eeprom.h - include dependend on used target (defined
+                          eeprom.h - include dependent on used target (defined
 													           in Application_Config/isoaglib_config.h)
 																		 the suitable HAL specific header for
 																		 EEPROM data storage
@@ -55,7 +55,7 @@
 
 /* ************************************************************ */
 /** \file IsoAgLib/hal/eeprom.h
-  * include dependend on used target (defined in
+  * include dependent on used target (defined in
 	  Application_Config/isoaglib_config.h) the suitable HAL
 		specific header for EEPROM data storage.
 */
@@ -67,7 +67,7 @@
 // #include <Application_Config/isoaglib_config.h>
 #include "config.h"
 
-// now include dependend on used target the suitable header
+// now include dependent on used target the suitable header
 #if defined(SYSTEM_PC)
 	#include "pc/eeprom/eeprom.h"
 #elif defined(SYSTEM_ESX)

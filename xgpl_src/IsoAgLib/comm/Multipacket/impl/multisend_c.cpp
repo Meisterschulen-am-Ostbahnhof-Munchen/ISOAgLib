@@ -265,7 +265,7 @@ bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rh
   @param rpc_mss allow active build of data stream parts for upload by deriving data source class
                  from IsoAgLib::MultiSendStreamer_c, which defines virtual functions to control the
                  retrieve of data to send. This is especially important for ISO_Terminal,
-                 which assembles the data pool dependend on the terminal capabilities during upload
+                 which assembles the data pool dependent on the terminal capabilities during upload
                  ( e.g. bitmap variants )
   @param ri32_pgn PGN to use for the upload
   @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
@@ -306,7 +306,7 @@ int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t* rpen_sendSuccessNotify)
   @param rpc_mss allow active build of data stream parts for upload by deriving data source class
                  from IsoAgLib::MultiSendStreamer_c, which defines virtual functions to control the
                  retrieve of data to send. This is especially important for ISO_Terminal,
-                 which assembles the data pool dependend on the terminal capabilities during upload
+                 which assembles the data pool dependent on the terminal capabilities during upload
                  ( e.g. bitmap variants )
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
