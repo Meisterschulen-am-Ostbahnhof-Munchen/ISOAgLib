@@ -60,7 +60,10 @@
 #include <ctype.h>
 #include <IsoAgLib/hal/system.h>
 
-#define USE_THREAD
+/** @todo Thanks for any user who has this card type, and can try to compile
+		and run with USE_THREAD defined, so that USE_THREAD can be changed to default
+	*/
+// #define USE_THREAD
 
 #include "string.h"
 #include "stdio.h"
@@ -818,7 +821,7 @@ int16_t checkMsg()
 				} // if fit
 			} // for objNr
 			#ifdef USE_THREAD
-			// un-block access from application on the buffers, as 
+			// un-block access from application on the buffers, as
 			// the current buffers are again free for access
 			b_blockApp = false;
 			#endif

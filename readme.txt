@@ -106,6 +106,8 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		differences are handled by the driver )
 	- <b>2004-12-03:</b> Finish heavy optimization of HEAP usage and optional exact documentation of HEAP usage during runtime via RS232, so that really needed HEAPSIZE can be derived
 		( reduction of HEAPSIZE dependend on application can vary between 4 KByte and 10 KByte )
+	- <b>2004-12-06:</b> Enable and test Win32 multithreading in Sontheim CAN driver ( as not Vector-Informatik CAN cards accessible, this can't be tested -> so multithreading is only active
+			as default for Sontheim )
 
 
 \subsection IndexOldNews News before 1.0.0 release
@@ -261,6 +263,9 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- change device types and CAN channels of tutorial examples, so that e.g. 1_0_ReadIso.cpp and 1_2_WriteIso.cpp can interact ( <b>a)</b> different device types
 		for both ECUs and <b>b)</b> different CAN channels so that two channels of one PC CAN card can be connected )
 	- unify number intervals of CAN HAL for BUS and MsgObj numbers to start with <b>0</b> for each type of HAL ( avoid HAL dependend offset constants ).
+	- change default path for Win32 CAN card manufacturer driver library files ( API DLLs and Headers ) to "C:\Development" so that all users can install their
+		driver files to the corresponding location, if they want to avoid changing all default VC++ project files ( if pathes like "C:\Development\CANLIB" are still
+		not acceptable, update_makefile.sh can be used to create VC++ DSP files based on adopted conf_x_y project feature setup files )
 
 
 
@@ -641,9 +646,12 @@ first users like <b>Brad Cox</b> started to try ISO<i><sub>AgLib</sub></i> in co
 			the complete framework
 	- Virtual Terminal Expert: <a href="mailto:M.Wodok@osb-ag:de">Martin Wodok</a> implemented
 			the tool <b>vt2iso</b> and the virtual terminal handling
-	- Pioneer Win32 User and Contributor of missing VT Objects: <b>Brad Cox</b> who helped to find several optimization needs for documentation,
+	- Pioneer Win32 User and <b>First External Contributor</b>: <a href="mailto:Brad.Cox@agcocorp.com">Brad Cox</a> who helped to find several optimization needs for documentation,
 			tutorial and project generation support. The resulting documentation helped him finally to implement all missing VT Object types, which
-			weren't needed for the MiniVeg project.
+			weren't needed for the MiniVeg project. He is already using ISO<i><sub>AgLib</sub></i> for some interesting test applications, and
+			contributed all missing VT Objects, so that ISO<i><sub>AgLib</sub></i> imeplements also VT Objects like Macro and AuxiliaryInput.
+			Some other extension from him are moveChildLocation and setOriginSKM functions for VT Objects, where appropriate.
+			Last but not least, he started with us to integrate multi language support.
 
 
 \section IndexMaintainingCompany Some information on the maintaining company OSB AG
@@ -676,29 +684,31 @@ normal for Open Source projects like ISO<i><sub>AgLib</sub></i> to fork the proj
 can't or doesn't want to change the style of maintenance as requested. As far as possible, <a href="http://www.osb-ag.de">OSB AG</a>
 will do everything to avoid such a fork.<br>
 A comparable fork was performed by users and developers of the X11R6 server project for UNIX style operating systems - <b>XFree86</b>.
-Caused by some licensing issues, a fork of the <a href="http://www.xfree86.org/">XFree86</a> was created by the <a href="http://freedesktop.org/XOrg">X.Org Foundation</a>.
+Caused by some licensing issues, a fork of the <a href="http://www.xfree86.org/">XFree86</a> was created by the <a href="http://freedesktop.org/XOrg">X.Org Foundation</a>,
+which also appreciated by several graphic card manufacturers, as they can integrate their drivers with the new management method in a better way.
 <br>
 &nbsp;<br>
 &nbsp;<br>
 <b>
-This way it is assured under all conditions, that the development time and money which is invested in an application that uses the ISO<i><sub>AgLib</sub></i> can't be affected by
-the style and quality of future project maintenance.
+This way it is assured under all conditions, that the development time and money, which is invested in an application that uses the ISO<i><sub>AgLib</sub></i>
+can't be affected by the style and quality of future project maintenance.
 </b><br>
 
 \section IndexSupport Support Possibilities
-Even if the ISO<i><sub>AgLib</sub></i> provides very detaild documentation including several <b>HOWTO</b> chapters with
+Even if the ISO<i><sub>AgLib</sub></i> provides very detailed documentation including several <b>HOWTO</b> chapters with
 important starting information, the learning afford to get a running tutorial example is not completly neglectible ( reading the documentation
 requires at least some time ). Additionally the <b>object oriented</b> development style might be new to most of the potential users.<br>
 
 \subsection IndexWorkshop Tutorial Workshops for Development with IsoAgLib
-The <a href="http://www.osb-ag.de">OSB AG</a> can offer workshops where all members can learn:
+<a href="http://www.osb-ag.de">OSB AG</a> can offer workshops in co-operation with
+<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
+where all members can learn:
 	- <b>XML</b> design and definition of <b>ISO 11783 Virtual Terminal</b> mask pools
 	- possibilities to create flexible mask definitions which can be automatically adopted by the ISO<i><sub>AgLib</sub></i> to the properties of the connected terminal:
 		- multi-language string handling
 		- scaling to screen size
 		- selection of available font size that is corresponding to the scaling factor of the complete layout
-		- colour depth selection
-		during runtime, so that a unique global mask pool can be defined.
+		- colour depth selection during runtime, so that a unique global mask pool can be defined.
 	- integration of <b>IDE</b> of choice ( some project file format types are automatically supported )
 	- integration of <b>ISO 11783</b> communication with existing application code ( ways to define interface modules )
 	- integration of process data management to allow terminal independend control and monitoring access to an implement
@@ -707,7 +717,7 @@ The <a href="http://www.osb-ag.de">OSB AG</a> can offer workshops where all memb
 		project of <a href="http://www.osb-ag.de">OSB AG</a> for test of embedded applications ( not only useable for ISO 11783 networks )
 	- ...
 
-The exact definition of a tutorial workshop can be defined corresponding to the request of
+The exact topics of a tutorial workshop can be defined corresponding to the request of
 interested developers. These workshops can be performed at the
 <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
  location, or at any location of choice. <a href="http://www.osb-ag.de">OSB AG</a> can also offer closed workshops for the developers of one
@@ -726,7 +736,7 @@ for individual service contracts.
 
 \subsection IndexFeaturesOnRequest Integration of Requested Features
 As long as <a href="http://www.osb-ag.de">OSB AG</a> maintains the ISO<i><sub>AgLib</sub></i>, all received
-patched will be reviewed and merged into the reference version of the software. Additionally all feature
+patches will be reviewed and merged into the reference version of the software. Additionally all feature
 extensions, which are needed for projects of <a href="http://www.osb-ag.de">OSB AG</a> will also be merged.<br>
 
 But as the ISO 11783 standard definition contains a lot of functions, which are not needed for the own
@@ -747,7 +757,7 @@ Some examples:
 
 \section IndexTodo Main TODO items
 The following items are at the TODO list. You are encouraged to
-help contributing for their implementation with source code or financial donation.
+help contributing for their implementation with source code.
 
 	- Write some tutorial examples for use of supplementary IO drivers<br>
 		<b>Integrated as soon as there's some time</b>
@@ -763,13 +773,15 @@ help contributing for their implementation with source code or financial donatio
 	- Extend tutorial examples<br>
 		<b>Ongoing process when need for some more practical demonstration is detected<br>
 			( Please have a close look on all <a href="examples.html">tutorial examples</a> before requesting further examples )</b>
+	- Test Threading Mode for Vector-Informatik CAN card drivers: target_extension_can_w32_vector_canlib.cpp and target_extension_can_w32_vector_xl.cpp<br>
+		<b>Need help by users, who have one of these cards - maintainers have only Sontheim CAN cards, where multithreaded CAN receive is working already</b>
 
 
 <b>Important</b>
 <table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="aqua">
 <tr><td>
 Each email adress in this project is intentionally corrupted, to make SPAMMING a little bit more complicated. Each human reader will easily detect how to
-"fix" the email adress - this "manupulation" might change if the maintainers detect that SPAM tools are able to derive automatically a
+"fix" the email adress - this "manupulation" might change, if the maintainers detect that SPAM tools are able to derive automatically a
 working domain.
 </td></tr></table>
 
@@ -1302,10 +1314,10 @@ The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as fol
 	<li>set the variables <i>USE_WIN32_HEADER_DIRECTORY</i> and <i>USE_WIN32_LIB_DIRECTORY</i> to your
 			installation root ( <b>don't include the directory name part <i>CANLIB</i> resp. <i>XL Driver Library</i> </b> ) <br>
 			Example: <ul>
-			<li>You selected "D:/Development" during the execution of <i>SETUP.EXE</i>.
-			<li><i>SETUP.EXE</i> placed everything in the directory "D:/Development/CANLIB"
-					resp. "D:/Development/XL Driver Library"
-			<li>Set both above mentioned variables to "D:/Development"
+			<li>You selected "C:/Development" during the execution of <i>SETUP.EXE</i>.
+			<li><i>SETUP.EXE</i> placed everything in the directory "C:/Development/CANLIB"
+					resp. "C:/Development/XL Driver Library"
+			<li>Set both above mentioned variables to "C:/Development"
 			</ul>
 	<li>set the variable USE_CAN_DRIVER to either "vector_canlib" or "vector_xl"
 	<li>select the CAN card type variable USE_WIN32_CAN_HW_TYPE to HWTYPE_VIRTUAL, HWTYPE_CANCARDX,
@@ -1543,13 +1555,13 @@ The next configuration variables are needed for Vector-Informatik CAN cards.
 As Vector-Informatik provides two types of programming libraries which can be used for the same cards, the
 ISO<i><sub>AgLib</sub></i> reflects this option. To ease directory management, ISO<i><sub>AgLib</sub></i>
 awaits the potentially parallel installed versions rooted in the same parent directory.<br>
-E.g when you selected "D:/Development" as base directory during the SETUP of both CAN program linbraries,
+E.g when you selected "C:/Development" as base directory during the SETUP of both CAN program linbraries,
 you will get
-	- the CANLIB driver in "D:/Development/CANLIB"
-	- the XL Driver Library in "D:/Development/XL Driver Library"
+	- the CANLIB driver in "C:/Development/CANLIB"
+	- the XL Driver Library in "C:/Development/XL Driver Library"
 Now ISO<i><sub>AgLib</sub></i> can access both of them if you specify:
-	- <b>USE_WIN32_LIB_DIRECTORY="D:/Development"</b>,
-	- <b>USE_WIN32_HEADER_DIRECTORY="D:/Development"</b>
+	- <b>USE_WIN32_LIB_DIRECTORY="C:/Development"</b>,
+	- <b>USE_WIN32_HEADER_DIRECTORY="C:/Development"</b>
 which is the default setting. The script <i>update_makefile.sh</i> will find both versions of the driver.
 
 The ISO<i><sub>AgLib</sub></i> HAL adoption to the Vector-Informatik CAN driver can be configured by the configuration file
@@ -1918,7 +1930,7 @@ PRJ_ISO11783=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1933,7 +1945,7 @@ PRJ_ISO11783=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several

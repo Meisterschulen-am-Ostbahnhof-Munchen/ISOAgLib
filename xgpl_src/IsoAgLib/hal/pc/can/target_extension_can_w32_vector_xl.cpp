@@ -60,7 +60,10 @@
 #include <ctype.h>
 #include <IsoAgLib/hal/system.h>
 
-#define USE_THREAD
+/** @todo Thanks for any user who has this card type, and can try to compile
+		and run with USE_THREAD defined, so that USE_THREAD can be changed to default
+	*/
+// #define USE_THREAD
 
 #include "string.h"
 #include "stdio.h"
@@ -177,7 +180,7 @@ static void printDriverConfig( void )
 
   for (i=0; i < g_xlDrvConfig.channelCount; i++) {
 
-    printf("- Ch.: %02d, CM:0x%3I64x,", 
+    printf("- Ch.: %02d, CM:0x%3I64x,",
       g_xlDrvConfig.channel[i].channelIndex, g_xlDrvConfig.channel[i].channelMask);
     printf(" %20s ", g_xlDrvConfig.channel[i].name);
     if (g_xlDrvConfig.channel[i].transceiverType != XL_TRANSCEIVER_TYPE_NONE) {
@@ -185,12 +188,12 @@ static void printDriverConfig( void )
       printf(" %3s -\n", str);
     }
     else printf(" no Cab!       -\n", str);
-  
+
   }
   //0x%I64x
 
   printf("----------------------------------------------------------\n\n");
- 
+
 }
 
 int16_t can_startDriver()
@@ -834,7 +837,7 @@ int16_t checkMsg()
 				} // if fit
 			} // for objNr
 			#ifdef USE_THREAD
-			// un-block access from application on the buffers, as 
+			// un-block access from application on the buffers, as
 			// the current buffers are again free for access
 			b_blockApp = false;
 			#endif
