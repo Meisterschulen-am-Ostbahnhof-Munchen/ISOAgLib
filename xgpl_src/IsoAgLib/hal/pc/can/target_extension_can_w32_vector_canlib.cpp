@@ -60,7 +60,7 @@
 #include <ctype.h>
 #include <IsoAgLib/hal/system.h>
 
-// #define USE_THREAD
+#define USE_THREAD
 
 #include "string.h"
 #include "stdio.h"
@@ -150,12 +150,11 @@ DWORD WINAPI thread( PVOID par )
 			// this thread
 			continue;
 		}
-		WaitForSingleObject( gEventHandle, INFINITE );
-		// now check for received messages
-		b_blockApp = true;
+		// checkMsg() sets the b_blockApp
+		// flag as soon as the buffers are written
 		checkMsg();
-		b_blockApp = false;
 	}
+	return 0;
 }
 
 #endif
@@ -188,8 +187,8 @@ int16_t can_startDriver()
   Vstatus vErr;
 	vErr = ncdOpenDriver();
   if (vErr) return HAL_CONFIG_ERR;
-
-	for ( uint32_t ind = 0; ind < cui32_maxCanBusCnt; ind++ )
+	uint32_t ind;
+	for ( ind = 0; ind < cui32_maxCanBusCnt; ind++ )
 	{
 		gPortHandle[ind] = INVALID_PORTHANDLE;
 		gChannelMask[ind]    = 0;
@@ -224,7 +223,10 @@ int16_t can_startDriver()
 
   // create a synchronisation object
   gEventHandle = CreateEvent(NULL, FALSE, FALSE, NULL);
-  vErr = ncdSetNotification(gPortHandle[bBusNumber], (unsigned long*)&gEventHandle, 1);
+	for ( ind = 0; ind < cui32_maxCanBusCnt; ind++ )
+	{
+	  vErr = ncdSetNotification(gPortHandle[ind], (unsigned long*)&gEventHandle, 1);
+	}
   if (vErr) return HAL_CONFIG_ERR;
 
 	// create a thread
@@ -243,6 +245,11 @@ int16_t can_startDriver()
 int16_t can_stopDriver()
 {
 	#ifdef USE_THREAD
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
 	// set gThreadRunning to false so that the thread stops
 	gThreadRunning = false;
 	b_blockThread = true;
@@ -264,6 +271,12 @@ int32_t can_lastReceiveTime()
 {
 	#ifndef USE_THREAD
   checkMsg();
+	#else
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
 	#endif
   return i32_lastReceiveTime;
 }
@@ -274,6 +287,12 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
 	#ifndef USE_THREAD
   checkMsg();
+	#else
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
 	#endif
   return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
@@ -285,17 +304,34 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   int i,n;
   int32_t i32_busInd = -1, i32_virtualBusInd = -1;
   Vstatus vErr;
-
 	Vaccess virtualChannelMask = 0;
-
-	canlogDat[bBusNumber] = fopen("can_send.txt", "w+");
+	#ifndef USE_THREAD
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
+	// tell thread to wait until this function is finished
+  b_blockThread = true;
+	#endif
+  // Added by M.Wodok 6.12.04
+  canlogDat[bBusNumber] = fopen("..\\..\\..\\..\\simulated_io\\can_send.txt", "w+");
   if(canlogDat[bBusNumber])
   {
-    printf("canlogDat file opened: 'can_send.txt'\n");
+    printf("canlogDat file opened: '..\\..\\..\\..\\simulated_io\\can_send.txt'\n");
   }
   else
   {
-    printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat[bBusNumber]);
+    // try in current directory...
+    canlogDat[bBusNumber] = fopen("can_send.txt", "w+");
+    if(canlogDat[bBusNumber])
+    {
+      printf("canlogDat file opened: 'can_send.txt'\n");
+    }
+    else
+    {
+      printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat[bBusNumber]);
+    }
   }
 
   // select the wanted channels
@@ -394,12 +430,24 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
     }
 
     b_busOpened[bBusNumber] = false;
+		#ifdef USE_THREAD
+		b_blockThread = false;
+		#endif
     return HAL_RANGE_ERR;
 };
 
 int16_t closeCan ( uint8_t bBusNumber )
 {
 	if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
+	#ifndef USE_THREAD
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
+	// tell thread to wait until this function is finished
+	b_blockThread = true;
+	#endif
   if (canlogDat[bBusNumber] != NULL){
     fclose(canlogDat[bBusNumber]);
     canlogDat[bBusNumber] = NULL;
@@ -408,6 +456,9 @@ int16_t closeCan ( uint8_t bBusNumber )
   ncdClosePort(gPortHandle[bBusNumber]);
   gPortHandle[bBusNumber] = INVALID_PORTHANDLE;
   b_busOpened[bBusNumber] = false;
+	#ifndef USE_THREAD
+	b_blockThread = false;
+	#endif
   return HAL_NO_ERR;
 };
 
@@ -429,6 +480,15 @@ int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus)
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 {
 	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
+	#ifndef USE_THREAD
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
+	// tell thread to wait until this function is finished
+	b_blockThread = true;
+	#endif
   if (rec_bufCnt[bBusNumber][bMsgObj] == -1)
   { // it's a send object -> call native clear transmit
     ncdFlushTransmitQueue(gPortHandle[bBusNumber], gChannelMask[bBusNumber]);
@@ -439,12 +499,24 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
     rec_bufOut[bBusNumber][bMsgObj] = 0;
     rec_bufIn[bBusNumber][bMsgObj] = 0;
   }
+	#ifndef USE_THREAD
+	b_blockThread = false;
+	#endif
   return HAL_NO_ERR;
 }
 
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig )
 {
 	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
+	#ifndef USE_THREAD
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
+	// tell thread to wait until this function is finished
+	b_blockThread = true;
+	#endif
 	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (ptConfig->bMsgType == TX)
   { /* Sendeobjekt */
@@ -460,18 +532,33 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
     rec_bufIn[bBusNumber][bMsgObj] = 0;
     rec_bufFilter[bBusNumber][bMsgObj] = ptConfig->dwId;
   }
+	#ifndef USE_THREAD
+	b_blockThread = false;
+	#endif
   return HAL_NO_ERR;
 };
 
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd )
 {
 	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
+	#ifndef USE_THREAD
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
+	// tell thread to wait until this function is finished
+	b_blockThread = true;
+	#endif
 	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] > -1)
   { // active receive object
     rec_bufFilter[bBusNumber][bMsgObj] = dwId;
     rec_bufXtd[bBusNumber][bMsgObj] = bXtd;
   }
+	#ifndef USE_THREAD
+	b_blockThread = false;
+	#endif
   return HAL_NO_ERR;
 }
 /**
@@ -486,14 +573,36 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 { // first get waiting messages
 	if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > 14 ) ) return HAL_RANGE_ERR;
+	#ifdef USE_THREAD
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
+	// tell thread to wait until this function is finished
+	b_blockThread = true;
+	#else
 	checkMsg();
+	#endif
 	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
-	return HAL_NO_ERR;
+	#ifndef USE_THREAD
+	b_blockThread = false;
+	#endif
+  return HAL_NO_ERR;
 }
 
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
 	if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > 14 ) ) return HAL_RANGE_ERR;
+	#ifndef USE_THREAD
+	// wait until the receive thread allows access to buffer
+	while ( b_blockApp )
+	{ // do something for 1msec - just to take time
+		Sleep( 100 );
+	}
+	// tell thread to wait until this function is finished
+	b_blockThread = true;
+	#endif
 	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] == -1)
   { /* Sendeobjekt */
@@ -507,6 +616,9 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
     rec_bufOut[bBusNumber][bMsgObj] = 0;
     rec_bufIn[bBusNumber][bMsgObj] = 0;
   }
+	#ifndef USE_THREAD
+	b_blockThread = false;
+	#endif
   return HAL_NO_ERR;
 };
 
@@ -516,10 +628,10 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
   VportHandle lPortHandle = gPortHandle[bBusNumber];
   Vaccess lChannelMask = gChannelMask[bBusNumber];
   Vaccess lPermissionMask = gPermissionMask[bBusNumber];
+
   Vevent  lEvent = gEvent;
-
-
   Vstatus vErr;
+
   lEvent.tag = V_TRANSMIT_MSG;
   lEvent.tagData.msg.id = ptSend->dwId;
 
@@ -564,7 +676,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		Sleep(100);
+		Sleep( 100 );
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;
@@ -639,6 +751,11 @@ int16_t checkMsg()
 				fprintf(canlogDat[b_bus], "!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
 				continue;
 			}
+			#ifdef USE_THREAD
+			// block access from application on the buffers, as long as
+			// the current CAN message is placed into one of the buffers
+			b_blockApp = true;
+			#endif
 			// now search for MsgObj queue on this b_bus, where new message from b_bus maps
 			for (int32_t i32_obj = 1; i32_obj < 15; i32_obj++)
 			{ // compare received msg with filter
@@ -700,6 +817,11 @@ int16_t checkMsg()
 					memcpy(pc_data->pb_data, gpEvent->tagData.msg.data,pc_data->b_dlc);
 				} // if fit
 			} // for objNr
+			#ifdef USE_THREAD
+			// un-block access from application on the buffers, as 
+			// the current buffers are again free for access
+			b_blockApp = false;
+			#endif
     } // for bus
   } // for receive msg from CANcardX
   return result;
