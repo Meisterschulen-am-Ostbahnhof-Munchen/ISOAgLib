@@ -170,6 +170,7 @@ void ISOMonitor_c::init( void )
 
 /** default destructor which has nothing to do */
 ISOMonitor_c::~ISOMonitor_c(){
+	close();
 }
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */

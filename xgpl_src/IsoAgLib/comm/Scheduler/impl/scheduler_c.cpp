@@ -105,8 +105,6 @@ extern unsigned int DeallocateHeapMalloc;
 #endif
 #endif
 
-
-
 /* ************************************** */
 /* import some namespaces for easy access */
 /* ************************************** */
@@ -175,7 +173,7 @@ void Scheduler_c::closeCommunication( void ) {
   while ( ! c_arrClientC1.empty() )
   { // call close for each registered client
     pc_searchCacheC1 = c_arrClientC1.begin();
-    if ( *pc_searchCacheC1 != NULL ) (*pc_searchCacheC1)->close();
+		if ( *pc_searchCacheC1 != NULL ) (*pc_searchCacheC1)->close();
   }
 }
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
@@ -267,7 +265,7 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
   // bring time array and client array in sync
   while ( c_arrClientC1.size() < arrExecTime.size() )
   { // delete last element
-    #ifdef DEBUG_HEAP_USEAGE
+		#ifdef DEBUG_HEAP_USEAGE
     sui16_clientPointerTotal--;
     sui16_clientTimeTotal--;
 
