@@ -162,3 +162,7 @@
 ..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_AutoDataCollector_Classes=_=_getyflexmanager_c.h
 ..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_AutoDataCollector_Classes=_=_defaultrecordconfig_c.h
 ..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_AutoDataCollector_Classes=_=_gpsmanager_c.h
+..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_config_imi_iso.h
+..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_config_imi_iso_w32.h
+..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_config_imi_iso_rte.h
+..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_config_imi_iso_sim.h

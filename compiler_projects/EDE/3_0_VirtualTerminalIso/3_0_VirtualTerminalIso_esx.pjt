@@ -1,391 +1,391 @@
-;Codewright Project File (do not remove or modify this line)
-[State]
-SysSetCwd='..\..\..'
-SrchSetFlags=0x0418680a
-SrchSetAgainFlags=0x00006002,0
-SrchSetAgainFlags=0x0200600a,1
-FileSortMode=0x0
-_StateView=
-_StateBuffer=
-_StateHistory=
-_StateDocumentVisit=10
-
-[ProjInit]
-ConfigSetExtMode=2
-ProjSetConfigFlags=0x04110940
-
-[Editor]
-_RestoreSysFlags=0x4b0d7fca, 0xfffffffc, 0
-_RestoreSysFlags=0x00410001, 0xffffffff, 1
-CollapseMode=0x13080610
-FilterProjDeleteList
-FilterProjAdd='Source Files','*.c;*.cc;*.cpp;*.cxx;*.ic;*.c96;*.fle;*.cmp;*.asm;*.src;*.s;*.a96;*.i;*.pcp',-1
-FilterProjAdd='Header Files','*.h;*.inc;*.sfr',-1
-FilterProjAdd='Resources','*.rc;*.bmp;*.ico;*.cur;*.dlg',-1
-FilterProjAdd='Other Files','*.*',-1
-VCSProject=''
-VCSProjectPath=''
-VCSProjectLocalPath=''
-ScrapSetCount=1
-ClipboardSetCount=1
-ClipboardEnableSepStr=1
-ClipboardSetSepStr='\r\n',0
-ClipboardEnableTermStr=1
-ClipboardSetTermStr='\r\n',0
-
-[Tools]
-ToolDeleteList
-ToolAddCmd='$_custom_tool_$_1','API Database Editor',1342177312,'cwtedit.exe'
-
-[Compiler]
-TagSetCmd='"${HOME}${WTAGS}" -oc -d -t"${TAGFILE}.tag" -p"${TAGFILE}.ptg"',0x8000060
-BrowseSetFile='3_0_VirtualTerminalIso.ptg'
-TagSetFile='3_0_VirtualTerminalIso.tag'
-CompilerAddCmdEx='TASKING src','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING src',
-CompilerAddCmdEx='TASKING fle','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING fle',
-CompilerAddCmdEx='TASKING cc','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING cc',
-CompilerAddCmdEx='TASKING cxx','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING cxx',
-CompilerAddCmdEx='TASKING asm','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING asm',
-CompilerAddCmdEx='TASKING cmp','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING cmp',
-CompilerAddCmdEx='$_cw_proj_hash_$','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\programme\tasking\7.56\c166\bin\xfw166.exe 3_0_VirtualTerminalIso.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='$_cw_proj_hash_$',
-CompilerAddCmdEx='TASKING ic','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING ic',
-CompilerAddCmdEx='TASKING cpp','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING cpp',
-CompilerAddCmdEx='TASKING c','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING c',
-CompilerNewExt=.htm
-CompilerAssign='TASKING src','.src'
-CompilerNewExt=.v
-CompilerNewExt=.awk
-CompilerNewExt=.bas
-CompilerAssign='TASKING c','.c'
-CompilerNewExt=.adb
-CompilerNewExt=.cfml
-CompilerNewExt=.jsp
-CompilerNewExt=.pl
-CompilerNewExt=.vhd
-CompilerNewExt=.pas
-CompilerNewExt=.tk
-CompilerNewExt=.asp
-CompilerNewExt=.rul
-CompilerNewExt=.cob
-CompilerNewExt=.js
-CompilerAssign='TASKING cmp','.cmp'
-CompilerNewExt=.php
-CompilerNewExt=.rc
-CompilerNewExt=.tcl
-CompilerAssign='TASKING fle','.fle'
-CompilerNewExt=.ini
-CompilerAssign='TASKING cc','.cc'
-CompilerAssign='TASKING ic','.ic'
-CompilerNewExt=.cs
-CompilerNewExt=.bat
-CompilerNewExt=.html
-CompilerAssign='TASKING cpp','.cpp'
-CompilerAssign='TASKING cxx','.cxx'
-CompilerAssign='TASKING asm','.asm'
-CompilerNewExt=.txt
-CompilerNewExt=.nrx
-CompilerNewExt=.java
-CompilerNewExt=.sqlj
-CompilerNewExt=.xml
-
-[VersionControl:PVCS]
-VCSSetCmd=VCS_CHECKIN_ID,'put -n -T@"%Q" -M@"%Q" "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKINLOCK_ID,'put -n -T@"%Q" -M@"%Q" -l "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKOUT_ID,'get -y "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKOUTLOCK_ID,'get -y -l "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKLOCK_ID,'vcs -y -l "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKUNLOCK_ID,'vcs -y -u "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKLABEL_ID,'vcs -y -v"${VCSLABEL}" "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKLOG_ID,'vlog "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKPROP_ID,'vlog -b "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKDIFF_ID,'vdiff -r "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKMENU_ID,'pvcsvmwn',0x8000000
-VCSSetCmd=VCS_ADD_ID,'vcs -i -t@"%Q" "%b%e"',0x8000040
-VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
-
-[Project]
-ConfigSetLinkDBFilename='c:\programme\tasking\7.56\c166\bin\cwright.ldb'
-ConfigSetMarkDBFilename='c:\programme\tasking\7.56\c166\bin\cwright.mrk'
-ConfigSetSymbolDBFilename='3_0_VirtualTerminalIso.sbl'
-EditSetPath=''
-
-[Files]
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\monitoritem_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\systemmgmt_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoitem_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp
-..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.cpp
-..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.cpp
-..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.cpp
-..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
-..\..\..\xgpl_src\IsoAgLib\util\liberr_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminalpkg_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectarchedbargraph_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlinearbargraph_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlineattributes_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputstring_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectalarmmask_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectsoftkeymask_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputnumber_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectobjectpointer_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectellipse_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectcontainer_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmacro_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectworkingset_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectbutton_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputstring_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputlist_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpicturegraphic_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputboolean_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinput_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfillattributes_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstringvariable_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstring_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryfunction_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmeter_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfontattributes_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobject_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectline_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputattributes_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputnumber_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectkey_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryinput_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectrectangle_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectnumbervariable_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectdatamask_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminal_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpolygon_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobject_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.cpp
-..\..\..\xgpl_src\IsoAgLib\hal\esx\can\hal_can_interface.cpp
-..\..\..\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.cpp
-..\..\..\xgpl_src\IsoAgLib\driver\can\impl\ident_c.cpp
-..\..\..\xgpl_src\IsoAgLib\driver\can\impl\msgobj_c.cpp
-..\..\..\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.cpp
-..\..\..\xgpl_src\IsoAgLib\driver\can\impl\canio_c.cpp
-..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
-..\..\..\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso\3_0_VirtualTerminalIso.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\monitoritem_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\systemmgmt_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoitem_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisoitem_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisomonitor_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisoname_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\istate_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\imonitoritem_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\isystemmgmt_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\iidentitem_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\ischeduler_c.h
-..\..\..\xgpl_src\IsoAgLib\util\icanpkgext_c.h
-..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.h
-..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container.h
-..\..\..\xgpl_src\IsoAgLib\util\impl\elementbase_c.h
-..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
-..\..\..\xgpl_src\IsoAgLib\util\impl\getypos_c.h
-..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
-..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.h
-..\..\..\xgpl_src\IsoAgLib\util\impl\singleton.h
-..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.h
-..\..\..\xgpl_src\IsoAgLib\util\liberr_c.h
-..\..\..\xgpl_src\IsoAgLib\util\config.h
-..\..\..\xgpl_src\IsoAgLib\util\icancustomer_c.h
-..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
-..\..\..\xgpl_src\IsoAgLib\util\compiler_adoption.h
-..\..\..\xgpl_src\IsoAgLib\util\igetypos_c.h
-..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
-..\..\..\xgpl_src\Application_Config\isoaglib_config.h
-..\..\..\xgpl_src\IsoAgLib\hal\esx\typedef.h
-..\..\..\xgpl_src\IsoAgLib\hal\config.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectbutton_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectsoftkeymask_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstringvariable_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinput_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectcontainer_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputattributes_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstring_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminal_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlineattributes_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectellipse_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectbutton_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputlist_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpolygon_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vttypes.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpicturegraphic_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryinput_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectline_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectkey_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmeter_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminalpkg_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectdatamask_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfillattributes_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobject_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputstring_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectnumbervariable_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputnumber_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectauxiliaryfunction_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectrectangle_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectlinearbargraph_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectarchedbargraph_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectmacro_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputboolean_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectalarmmask_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputstring_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputnumber_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectobjectpointer_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectworkingset_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectfontattributes_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectauxiliaryfunction_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobject_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectobjectpointer_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectrectangle_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectmask_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectstringvariable_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectmeter_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectalarmmask_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectworkingset_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectlineattributes_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtincludes.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectpicturegraphic_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectdatamask_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectauxiliaryinput_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectmacro_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectfillattributes_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\iisoterminalobjectpool_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectnumbervariable_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectline_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectcontainer_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectlinearbargraph_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputstring_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectarchedbargraph_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectoutputstring_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputnumber_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputattributes_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\iisoterminal_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectoutputnumber_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputlist_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectkey_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectstring_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivttypes.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectsoftkeymask_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinputboolean_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectfontattributes_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectellipse_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectinput_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectpolygon_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendstreamer_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\imultisend_c.h
-..\..\..\xgpl_src\IsoAgLib\typedef.h
-..\..\..\xgpl_src\IsoAgLib\hal\esx\can\can.h
-..\..\..\xgpl_src\IsoAgLib\hal\esx\can\hal_can_interface.h
-..\..\..\xgpl_src\IsoAgLib\hal\esx\config.h
-..\..\..\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.h
-..\..\..\xgpl_src\IsoAgLib\hal\esx\system\system.h
-..\..\..\xgpl_src\IsoAgLib\hal\esx\errcodes.h
-..\..\..\xgpl_src\IsoAgLib\hal\can.h
-..\..\..\xgpl_src\IsoAgLib\hal\system.h
-..\..\..\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.h
-..\..\..\xgpl_src\IsoAgLib\driver\can\impl\msgobj_c.h
-..\..\..\xgpl_src\IsoAgLib\driver\can\impl\ident_c.h
-..\..\..\xgpl_src\IsoAgLib\driver\can\impl\canio_c.h
-..\..\..\xgpl_src\IsoAgLib\driver\can\iident_c.h
-..\..\..\xgpl_src\IsoAgLib\driver\can\icanio_c.h
-..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.h
-..\..\..\xgpl_src\IsoAgLib\driver\system\isystem_c.h
-..\..\..\commercial_BIOS\bios_esx/Xos20go.asm
-..\..\..\commercial_BIOS\bios_esx/Xos20err.c
-..\..\..\commercial_BIOS\bios_esx/xos20esx.h
-..\..\..\commercial_BIOS\bios_esx/XOS20EEC.H
-..\..\..\commercial_BIOS\bios_esx/XOS20EEC.OBJ
-
-
-[Directories]
-Executables=c:\programme\tasking\7.56\c166\bin
-Includes=c:\programme\tasking\7.56\c166\include.cpp;..\..\..\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esx
-Libraries=c:\programme\tasking\7.56\c166\lib;..\..\..\commercial_BIOS\bios_esx
-
-[Ede]
-Toolchain=c:\programme\tasking\7.56\c166\etc\c166.dol
-ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\spangler\Fritzmeier\MiniVegN\IsoAgLib\compiler_projects\EDE\\3_0_VirtualTerminalIso
-UserMode=Expert
-EdeVersion=2.7r5 (094)
-CodeWrightVersion=6.5b
-DefBuildSettings=True
-SaveFiles=True
-ScanDependencies=False
-StopAfterError=True
-KeepTmpFiles=False
-ExtMakefile=False
-ExtMakefileName=
-UseMakeOptions=False
-MakeOptions=
-ShowOptions=False
-ExtDebugger=False
-ExtDebuggerName=
-UseDOSShell=False
-SaveOptionMethod=0
-SaveOptionFileName=
-LoadOptionFileName=
-LoadOptionStartup=False
-GroupMisraC=0
-GroupList=GroupMisraC
-
-[Options]
-FileList=
-
-[DefaultOptions]
-CppCompGlobal=1
-CCompGlobal=0
-CpuType=CpuC167CS
-CompAlternativeTokens=1
-CompRtti=0
-CppDefine=__TSW_CPP_756__,SYSTEM_ESX,PRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
-CppKeepOutput=0
-CMemModel=CModelLarge
-CEstimateUsk=0
-COutKeepSrc=0
-CFragment=1
-CDispAllWarn=0
-CSupprSomeWarn=1
-CSupprWarn=91,68,135,144
-CDebug=0
-CDefine=__TSW_CPP_756__,SYSTEM_ESX,PRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
-COptim=CAdvOptim
-COptimAliasTypeChk=0
-OutIHex=1
-OutIHexType=OutIHexType32
-OutIHexAdditionalOpt="-r -O -P"
-LocMyIlo=..\..\..\commercial_BIOS\bios_esx\Xos20lcs.ilo
-LocSmartlink=1
-LnkLocTrapFPLib=0
-LnkLocSupprWarn=118
-LnkLocAddOptions= -Wo ..\..\..\commercial_BIOS\bios_esx\C756\Xos20l.lib -Wo ..\..\..\commercial_BIOS\bios_esx\Module\Xma20l.lib
-OptionList=CppCompGlobal,CCompGlobal,CpuType,CompAlternativeTokens,CompRtti,CppDefine,CppKeepOutput,CMemModel,CEstimateUsk,COutKeepSrc,CFragment,CDispAllWarn,CSupprSomeWarn,CSupprWarn,CDebug,CDefine,COptim,COptimAliasTypeChk,OutIHex,OutIHexType,OutIHexAdditionalOpt,LocMyIlo,LocSmartlink,LnkLocTrapFPLib,LnkLocSupprWarn,LnkLocAddOptions
-
-
+;Codewright Project File (do not remove or modify this line)
+[State]
+SysSetCwd='..=_=_..=_=_..'
+SrchSetFlags=0x0418680a
+SrchSetAgainFlags=0x00006002,0
+SrchSetAgainFlags=0x0200600a,1
+FileSortMode=0x0
+_StateView=
+_StateBuffer=
+_StateHistory=
+_StateDocumentVisit=10
+
+[ProjInit]
+ConfigSetExtMode=2
+ProjSetConfigFlags=0x04110940
+
+[Editor]
+_RestoreSysFlags=0x4b0d7fca, 0xfffffffc, 0
+_RestoreSysFlags=0x00410001, 0xffffffff, 1
+CollapseMode=0x13080610
+FilterProjDeleteList
+FilterProjAdd='Source Files','*.c;*.cc;*.cpp;*.cxx;*.ic;*.c96;*.fle;*.cmp;*.asm;*.src;*.s;*.a96;*.i;*.pcp',-1
+FilterProjAdd='Header Files','*.h;*.inc;*.sfr',-1
+FilterProjAdd='Resources','*.rc;*.bmp;*.ico;*.cur;*.dlg',-1
+FilterProjAdd='Other Files','*.*',-1
+VCSProject=''
+VCSProjectPath=''
+VCSProjectLocalPath=''
+ScrapSetCount=1
+ClipboardSetCount=1
+ClipboardEnableSepStr=1
+ClipboardSetSepStr='\r\n',0
+ClipboardEnableTermStr=1
+ClipboardSetTermStr='\r\n',0
+
+[Tools]
+ToolDeleteList
+ToolAddCmd='$_custom_tool_$_1','API Database Editor',1342177312,'cwtedit.exe'
+
+[Compiler]
+TagSetCmd='"${HOME}${WTAGS}" -oc -d -t"${TAGFILE}.tag" -p"${TAGFILE}.ptg"',0x8000060
+BrowseSetFile='3_0_VirtualTerminalIso.ptg'
+TagSetFile='3_0_VirtualTerminalIso.tag'
+CompilerAddCmdEx='TASKING src','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING src',
+CompilerAddCmdEx='TASKING fle','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING fle',
+CompilerAddCmdEx='TASKING cc','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING cc',
+CompilerAddCmdEx='TASKING cxx','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING cxx',
+CompilerAddCmdEx='TASKING asm','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING asm',
+CompilerAddCmdEx='TASKING cmp','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING cmp',
+CompilerAddCmdEx='$_cw_proj_hash_$','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\xfw166.exe 3_0_VirtualTerminalIso.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='$_cw_proj_hash_$',
+CompilerAddCmdEx='TASKING ic','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING ic',
+CompilerAddCmdEx='TASKING cpp','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING cpp',
+CompilerAddCmdEx='TASKING c','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING c',
+CompilerNewExt=.htm
+CompilerAssign='TASKING src','.src'
+CompilerNewExt=.v
+CompilerNewExt=.awk
+CompilerNewExt=.bas
+CompilerAssign='TASKING c','.c'
+CompilerNewExt=.adb
+CompilerNewExt=.cfml
+CompilerNewExt=.jsp
+CompilerNewExt=.pl
+CompilerNewExt=.vhd
+CompilerNewExt=.pas
+CompilerNewExt=.tk
+CompilerNewExt=.asp
+CompilerNewExt=.rul
+CompilerNewExt=.cob
+CompilerNewExt=.js
+CompilerAssign='TASKING cmp','.cmp'
+CompilerNewExt=.php
+CompilerNewExt=.rc
+CompilerNewExt=.tcl
+CompilerAssign='TASKING fle','.fle'
+CompilerNewExt=.ini
+CompilerAssign='TASKING cc','.cc'
+CompilerAssign='TASKING ic','.ic'
+CompilerNewExt=.cs
+CompilerNewExt=.bat
+CompilerNewExt=.html
+CompilerAssign='TASKING cpp','.cpp'
+CompilerAssign='TASKING cxx','.cxx'
+CompilerAssign='TASKING asm','.asm'
+CompilerNewExt=.txt
+CompilerNewExt=.nrx
+CompilerNewExt=.java
+CompilerNewExt=.sqlj
+CompilerNewExt=.xml
+
+[VersionControl:PVCS]
+VCSSetCmd=VCS_CHECKIN_ID,'put -n -T@"%Q" -M@"%Q" "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKINLOCK_ID,'put -n -T@"%Q" -M@"%Q" -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKOUT_ID,'get -y "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKOUTLOCK_ID,'get -y -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLOCK_ID,'vcs -y -l "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKUNLOCK_ID,'vcs -y -u "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLABEL_ID,'vcs -y -v"${VCSLABEL}" "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLOG_ID,'vlog "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKPROP_ID,'vlog -b "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKDIFF_ID,'vdiff -r "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKMENU_ID,'pvcsvmwn',0x8000000
+VCSSetCmd=VCS_ADD_ID,'vcs -i -t@"%Q" "%b%e"',0x8000040
+VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
+
+[Project]
+ConfigSetLinkDBFilename='c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\cwright.ldb'
+ConfigSetMarkDBFilename='c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\cwright.mrk'
+ConfigSetSymbolDBFilename='3_0_VirtualTerminalIso.sbl'
+EditSetPath=''
+
+[Files]
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_monitoritem_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_baseitem_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_systemmgmt_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_istate_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_identitem_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isoname_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isoitem_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isomonitor_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isosystempkg_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Scheduler=_=_impl=_=_scheduler_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkgext_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_util_funcs.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkg_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_cancustomer_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_liberr_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_isoterminalpkg_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectarchedbargraph_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectlinearbargraph_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectlineattributes_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputstring_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectalarmmask_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectsoftkeymask_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectoutputnumber_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectobjectpointer_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectellipse_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectcontainer_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectmacro_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectworkingset_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectbutton_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectoutputstring_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputlist_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectpicturegraphic_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputboolean_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinput_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectfillattributes_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectstringvariable_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectstring_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectauxiliaryfunction_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectmeter_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectfontattributes_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobject_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectline_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputattributes_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputnumber_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectkey_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectauxiliaryinput_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectrectangle_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectnumbervariable_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectdatamask_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_isoterminal_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectpolygon_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobject_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multisendpkg_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multisend_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_esx=_=_can=_=_hal_can_interface.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_esx=_=_system=_=_system_target_extensions.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_ident_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_msgobj_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_filterbox_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_canio_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_system=_=_impl=_=_system_c.cpp
+..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_tutorial=_=_3_Terminal=_=_3_0_VirtualTerminalIso=_=_3_0_VirtualTerminalIso.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_monitoritem_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_identitem_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_baseitem_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_istate_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_systemmgmt_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isoitem_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isomonitor_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isoname_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isosystempkg_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_iisoitem_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_iisomonitor_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_iisoname_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_istate_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_imonitoritem_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_isystemmgmt_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_iidentitem_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Scheduler=_=_impl=_=_scheduler_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Scheduler=_=_ischeduler_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_icanpkgext_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_cancustomer_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_singleton_container.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_elementbase_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_singleton_container_decl.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_getypos_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_util_funcs.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkgext_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_singleton.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkg_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_liberr_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_config.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_icancustomer_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_icanpkg_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_compiler_adoption.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_igetypos_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_iutil_funcs.h
+..=_=_..=_=_..=_=_xgpl_src=_=_Application_Config=_=_isoaglib_config.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_esx=_=_typedef.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_config.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectbutton_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectsoftkeymask_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectstringvariable_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinput_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectcontainer_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputattributes_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectstring_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_isoterminal_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectlineattributes_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectellipse_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectbutton_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputlist_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectpolygon_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vttypes.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectpicturegraphic_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectauxiliaryinput_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectline_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectkey_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectmeter_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_isoterminalpkg_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectdatamask_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectfillattributes_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobject_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectoutputstring_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectnumbervariable_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectoutputnumber_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectauxiliaryfunction_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectrectangle_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectlinearbargraph_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectarchedbargraph_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectmacro_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputboolean_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectalarmmask_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputstring_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectinputnumber_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectobjectpointer_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectworkingset_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_impl=_=_vtobjectfontattributes_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectauxiliaryfunction_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobject_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectobjectpointer_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectrectangle_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectmask_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectstringvariable_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectmeter_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectalarmmask_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectworkingset_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectlineattributes_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtincludes.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectpicturegraphic_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectdatamask_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectauxiliaryinput_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectmacro_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectfillattributes_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_iisoterminalobjectpool_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectnumbervariable_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectline_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectcontainer_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectlinearbargraph_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectinputstring_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectarchedbargraph_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectoutputstring_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectinputnumber_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectinputattributes_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_iisoterminal_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectoutputnumber_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectinputlist_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectkey_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectstring_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivttypes.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectsoftkeymask_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectinputboolean_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectfontattributes_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectellipse_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectinput_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_ISO_Terminal=_=_ivtobjectpolygon_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multisend_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multisendstreamer_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multisendpkg_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_imultisend_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_typedef.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_esx=_=_can=_=_can.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_esx=_=_can=_=_hal_can_interface.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_esx=_=_config.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_esx=_=_system=_=_system_target_extensions.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_esx=_=_system=_=_system.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_esx=_=_errcodes.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_can.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_system.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_filterbox_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_msgobj_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_ident_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_canio_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_iident_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_icanio_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_system=_=_impl=_=_system_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_system=_=_isystem_c.h
+..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/Xos20go.asm
+..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/Xos20err.c
+..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/xos20esx.h
+..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/XOS20EEC.H
+..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/XOS20EEC.OBJ
+
+
+[Directories]
+Executables=c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin
+Includes=c:=_=_programme=_=_tasking=_=_7.56=_=_c166\include.cpp;..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_tutorial=_=_3_Terminal=_=_3_0_VirtualTerminalIso;..=_=_..=_=_..;..=_=_..=_=_../xgpl_src;..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx
+Libraries=c:=_=_programme=_=_tasking=_=_7.56=_=_c166\lib;..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx
+
+[Ede]
+Toolchain=c:=_=_programme=_=_tasking=_=_7.56=_=_c166\etc\c166.dol
+ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
+ProjectDir==_=_home=_=_spangler=_=_Fritzmeier=_=_MiniVegN=_=_IsoAgLib=_=_compiler_projects=_=_EDE=_=_=_=_3_0_VirtualTerminalIso
+UserMode=Expert
+EdeVersion=2.7r5 (094)
+CodeWrightVersion=6.5b
+DefBuildSettings=True
+SaveFiles=True
+ScanDependencies=False
+StopAfterError=True
+KeepTmpFiles=False
+ExtMakefile=False
+ExtMakefileName=
+UseMakeOptions=False
+MakeOptions=
+ShowOptions=False
+ExtDebugger=False
+ExtDebuggerName=
+UseDOSShell=False
+SaveOptionMethod=0
+SaveOptionFileName=
+LoadOptionFileName=
+LoadOptionStartup=False
+GroupMisraC=0
+GroupList=GroupMisraC
+
+[Options]
+FileList=
+
+[DefaultOptions]
+CppCompGlobal=1
+CCompGlobal=0
+CpuType=CpuC167CS
+CompAlternativeTokens=1
+CompRtti=0
+CppDefine=__TSW_CPP_756__,SYSTEM_ESX,PRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
+CppKeepOutput=0
+CMemModel=CModelLarge
+CEstimateUsk=0
+COutKeepSrc=0
+CFragment=1
+CDispAllWarn=0
+CSupprSomeWarn=1
+CSupprWarn=91,68,135,144
+CDebug=0
+CDefine=__TSW_CPP_756__,SYSTEM_ESX,PRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
+COptim=CAdvOptim
+COptimAliasTypeChk=0
+OutIHex=1
+OutIHexType=OutIHexType32
+OutIHexAdditionalOpt="-r -O -P"
+LocMyIlo=..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx=_=_Xos20lcs.ilo
+LocSmartlink=1
+LnkLocTrapFPLib=0
+LnkLocSupprWarn=118
+LnkLocAddOptions= -Wo ..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx=_=_C756=_=_Xos20l.lib -Wo ..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx=_=_Module=_=_Xma20l.lib
+OptionList=CppCompGlobal,CCompGlobal,CpuType,CompAlternativeTokens,CompRtti,CppDefine,CppKeepOutput,CMemModel,CEstimateUsk,COutKeepSrc,CFragment,CDispAllWarn,CSupprSomeWarn,CSupprWarn,CDebug,CDefine,COptim,COptimAliasTypeChk,OutIHex,OutIHexType,OutIHexAdditionalOpt,LocMyIlo,LocSmartlink,LnkLocTrapFPLib,LnkLocSupprWarn,LnkLocAddOptions
+
+
