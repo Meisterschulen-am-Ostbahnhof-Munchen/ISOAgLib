@@ -105,6 +105,17 @@ public:
   /** virtual default destructor, which has nothing to do */
   virtual ~CANPkgExt_c();
   /**
+    assign operator to insert informations from one CANPkg_c into another
+    @see __IsoAgLib::FilterBox_c::operator>>
+    @see CANPkgExt_c::operator=
+    @see CANPkgExt_c::getData
+    @param rrefc_right reference to the source CANPkg_c on the right
+    @return reference to the source CANPkg_c to enable assign chains like
+        "pkg1 = pkg2 = pkg3 = pkg4;"
+  */
+  virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right);
+
+	/**
     simply deliver a uint8_t from a specific position with operator[]
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos

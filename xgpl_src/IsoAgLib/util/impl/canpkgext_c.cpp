@@ -94,6 +94,19 @@ CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey ) : CANPkg_c( ri_singletonVecKe
 /** virtual default destructor, which has nothing to do */
 CANPkgExt_c::~CANPkgExt_c(){
 }
+/**
+	assign operator to insert informations from one CANPkg_c into another
+	@see __IsoAgLib::FilterBox_c::operator>>
+	@see CANPkgExt_c::operator=
+	@see CANPkgExt_c::getData
+	@param rrefc_right reference to the source CANPkg_c on the right
+	@return reference to the source CANPkg_c to enable assign chains like
+			"pkg1 = pkg2 = pkg3 = pkg4;"
+*/
+const CANPkg_c& CANPkgExt_c::operator=(const CANPkg_c& rrefc_right)
+{
+	return CANPkg_c::operator =( rrefc_right );
+}
 
 /**
   abstract function to transform the string data into flag values

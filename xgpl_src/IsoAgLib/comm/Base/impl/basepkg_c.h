@@ -5,10 +5,10 @@
                                         easy flag access; manages base msg
                                         type 1,2 and lower priority
                                         msg like calendar
-                             -------------------                                         
+                             -------------------
     begin                : Fri Apr 07 2000
-    copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+    copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -51,37 +51,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef BASE_PKG_H
@@ -114,6 +114,16 @@ public:
   BasePkg_c();
   /** default destructor which has nothing to do */
   ~BasePkg_c();
+  /**
+    assign operator to insert informations from one CANPkg_c into another
+    @see __IsoAgLib::FilterBox_c::operator>>
+    @see CANPkgExt_c::operator=
+    @see CANPkgExt_c::getData
+    @param rrefc_right reference to the source CANPkg_c on the right
+    @return reference to the source CANPkg_c to enable assign chains like
+        "pkg1 = pkg2 = pkg3 = pkg4;"
+  */
+  virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right) { return CANPkg_c::operator=(rrefc_right);};
 
   /* ******************** */
   /* retreiving of values */
@@ -293,7 +303,7 @@ public:
   virtual void string2Flags();
 private:
 // Private methods
-  
+
   /**
     overloaded virtual function to translate flag values to data string;
     needed for sending informations from this object via CANIO_c on CAN BUS,
@@ -325,7 +335,7 @@ private:
 
   /** uint8_t data string for BABO and SEND */
   uint8_t pb_internalData[2];
-  
+
   /** integer values in Byte 1 and 2 */
   int16_t i16_val12;
   /** integer values in Byte 3 and 4 */
@@ -334,7 +344,7 @@ private:
   int16_t i16_val56;
   /** integer values in Byte 7 and 8 */
   int16_t i16_val78;
-  
+
   /** array for uint8_t values */
   uint8_t pb_val[9];
 };
