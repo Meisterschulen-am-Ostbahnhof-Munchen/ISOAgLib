@@ -65,12 +65,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define USE_THREAD
+
+#ifdef USE_THREAD
+	#include <pthread.h>
+#endif
+
 namespace __HAL {
 #define HWTYPE_AUTO 1000
 #define c_ICAN     1
 #define c_PowerCAN 2
 #define c_CANAS    3
-#define c_CANA1ASCII    4 
+#define c_CANA1ASCII    4
 #define c_EICAN    6
 #define c_ECAN_PCI 7
 #define c_CANLpt   8
@@ -142,10 +148,10 @@ static bool b_blockThread;
 static bool b_blockApp;
 
 /** handle for threading */
-HANDLE threadHandle;
-DWORD threadId               = 0;
+static pthread_t thread_canReceive;
+static int  i_createHandleThreadCanReceive;
 
-DWORD WINAPI thread( PVOID par )
+static void *thread_canReceive_function( void *ptr )
 {
 	while( gThreadRunning )
 	{
@@ -159,7 +165,7 @@ DWORD WINAPI thread( PVOID par )
 		// flag as soon as the buffers are written
 		checkMsg();
 	}
-	return 0;
+	return;
 }
 
 #endif
@@ -376,7 +382,7 @@ int ca_GetData_1 (can_recv_data* receivedata)
         struct timeval tv;
         int retval;
 	int maxfd = can_device+1;
-	
+
 	for( int channel=0; channel<cui32_maxCanBusCnt; channel++ )
 	{
 		if( canBusIsOpen[channel])
@@ -402,7 +408,7 @@ int ca_GetData_1 (can_recv_data* receivedata)
 				{
 					printf("Not selecting right thing\n");
 					return 0;
-				}	
+				}
 			}
 			//printf("before getline\n");
 			read = getline(&line, &len, canBusFp[channel]);
@@ -534,7 +540,7 @@ int16_t can_startDriver()
 	// ----------------------------------------------------------------------------
 	// do the reset
 	int i = ca_ResetCanCard_1();
-	if (i) { //printf("Reset CANLPT ok\n"); 
+	if (i) { //printf("Reset CANLPT ok\n");
 	}
 	else   { printf("Reset CANLPT not ok\n");
 					// exit(0);
@@ -550,12 +556,8 @@ int16_t can_startDriver()
 	/** the app must wait until this var is false, before it can safely take a message from buffer */
 	b_blockApp = false;
 
-  // create a synchronisation object
-  gEventHandle = CreateEvent(NULL, false, false, NULL);
-
 	// create a thread
-  threadHandle = CreateThread(0,0x1000,thread,0,0,&threadId);
-  SetThreadPriority(threadHandle,THREAD_PRIORITY_NORMAL/*THREAD_PRIORITY_TIME_CRITICAL*/);
+	iret1 = pthread_create( &thread_canReceive, NULL, thread_canReceive_function, (void*) NULL);
 	#endif
 
   for (uint8_t b_bus = 0; b_bus < cui32_maxCanBusCnt; b_bus++)
@@ -579,12 +581,15 @@ int16_t can_stopDriver()
 	// set gThreadRunning to false so that the thread stops
 	gThreadRunning = false;
 	b_blockThread = true;
+
+	// wait until thread finishes
+	pthread_join( thread_canReceive, NULL);
 	#endif
 	for ( uint32_t ind = 0; ind < cui32_maxCanBusCnt; ind++ )
 	{
 		if (canlogDat[ind] != NULL)
 		{
-		
+
 		    	fclose(canlogDat[ind]);
 		    	canlogDat[ind] = NULL;
 		}
@@ -1201,7 +1206,7 @@ int16_t checkMsg()
 			} // if fit
 		} // for objNr
 		#ifdef USE_THREAD
-		// un-block access from application on the buffers, as 
+		// un-block access from application on the buffers, as
 		// the current buffers are again free for access
 		b_blockApp = false;
 		#endif
