@@ -3111,12 +3111,12 @@ static void processElement (DOMNode *n, unsigned long ombType, const char* rc_wo
     if ( (!attrIsGiven [attrInput_attributes]) || (strcmp( attrString[attrInput_attributes], "65535")==0) )
     {
      sprintf (attrString [attrInput_attributes], "NULL");
+     fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
     }
     else
     {
-     sprintf (attrString [attrInput_attributes], "iVtObject%s", attrString[attrInput_attributes]);
+     fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
     }
-    fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
 
     break;
 
