@@ -27,6 +27,7 @@
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoContribute<br>
 \ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
@@ -45,7 +46,7 @@
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>17 December 2004<br>
+Last Update: <br>11 January 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -118,6 +119,9 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- <b>2004-12-12:</b> Add tutorial examples for internal CAN, supplementary drivers eeprom, sensor and PWM
 	- <b>2004-12-17:</b> Changed release number of next revision to 1.1.0 ( and not 1.0.1 ) as really a lot of things are corrected and extended
 			( especially PC CAN driver, DOC, tutorial examples and virtual terminal )
+	- <b>2005-01-11:</b> Preperation for 1.1.1 release:
+			- rename driver for Vector-Informatik "XL Driver Library" from "vector_xl" to "vector_xl_drv_lib", to make difference between XL CAN cards and "XL Driver Library" clear
+			- rename example program Taskcontroller to AutoDataCollector, to avoid misleading interpretation as ISO 11783 conformant Task-Controller which it is <b>clearly NOT</b>
 
 
 \subsection IndexOldNews News before 1.0.0 release
@@ -921,6 +925,7 @@ Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoContribute<br>
 \ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
@@ -939,7 +944,7 @@ Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>17 December 2004<br>
+Last Update: <br>11 January 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -1002,25 +1007,38 @@ All archives should be extracted from the same directory.
 \section HowtoAccessRepository HOWTO Access the Version Management Repository
 The sources of the ISO<i><sub>AgLib</sub></i> managed by the version management system
 <a href="http://subversion.tigris.org">Subversion</a> which is developed as a replacement for CVS.
-The ISO<i><sub>AgLib</sub></i> repository allows an anonymous read access with:
-- subversion command line tools with URL
-	<a href="http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/IsoAgLib">http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/IsoAgLib</a> for HTTP access to HEAD development<br>
-	or<br>
-	<a href="https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/IsoAgLib">https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/IsoAgLib</a> for HTTPS access ( safe against caching PROXY ) HEAD development<br>
-	( you can also browse through the repository with a normal WWW Browser )
-- subversion command line tools with URL
-	<a href="http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/releases">http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/releases</a> for HTTP access to releases<br>
-	or<br>
-	<a href="https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/releases">https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/releases</a> for HTTPS access ( safe against caching PROXY ) to releases<br>
-	( you can also browse through the repository with a normal WWW Browser )
-- access different versions, including the possibility to trace changes with the URL
-	<a href="http://linux90.idvnet.de:8092/websvn">http://linux90.idvnet.de:8092/websvn</a>
-- use GUI tools like rapidsvn and TortoiseSVN ( integration in Windows File Manager for very easy
-	version management access )
-	which can be downloaded from <a href="http://subversion.tigris.org">Subversion Webiste</a> .<br>
-	<b>Important:</b><br>
-	Please make shure that you select the option to enable usage by all users on computer during install, as this seems to be
-	no default option. Otherwise you can't use it as ordinary user on WinXP, WinNT or Win2000.<br>
+The ISO<i><sub>AgLib</sub></i> repository can be accessed in read-only mode with anonymous access, so that no
+registration is needed. Due to the server configuration, the direct Subversion repository access is only
+possible with the following special ports:
+	- HTTP:
+		- HEAD: <a href="http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/IsoAgLib">http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/IsoAgLib</a>
+		- Releases: <a href="http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/releases">http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/releases</a>
+	- HTTPS:
+		- HEAD: <a href="https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/IsoAgLib">https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/IsoAgLib</a>
+		- Releases: <a href="https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/releases">https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/releases</a>
+
+For users who sit behind a firewall, that blocks the ports 8092 and/or 8093, the following URLs can be used.
+
+But please keep in mind, that this access implicates server side internal forwarding, so that the access might be somewhat slower:
+	- HTTP:
+		- HEAD: <a href="http://linux90.idvnet.de/svn/OSB/IsoAgLib/IsoAgLib">http://linux90.idvnet.de/svn/OSB/IsoAgLib/IsoAgLib</a>
+		- Releases: <a href="http://linux90.idvnet.de/svn/OSB/IsoAgLib/releases">http://linux90.idvnet.de/svn/OSB/IsoAgLib/releases</a>
+	- HTTPS:
+		- HEAD: <a href="https://linux90.idvnet.de/svn/OSB/IsoAgLib/IsoAgLib">https://linux90.idvnet.de/svn/OSB/IsoAgLib/IsoAgLib</a>
+		- Releases: <a href="https://linux90.idvnet.de/svn/OSB/IsoAgLib/releases">https://linux90.idvnet.de/svn/OSB/IsoAgLib/releases</a>
+
+You can access the repository by:
+	- normal Browser ( use the URL <a href="http://linux90.idvnet.de:8092/websvn">http://linux90.idvnet.de:8092/websvn</a>
+		or <a href="http://linux90.idvnet.de/websvn">http://linux90.idvnet.de/websvn</a>
+		for a capable Browser access including option to compare different versions of a file )
+	- with command line tools of Subversion
+	- with GUI tools like rapidsvn and TortoiseSVN ( integration in Windows File Manager for very easy
+		version management access )
+		which can be downloaded from <a href="http://subversion.tigris.org">Subversion Webiste</a> .<br>
+		<b>Important:</b><br>
+		Please make shure that you select the option to enable usage by all users on computer during install, as this seems to be
+		no default option. Otherwise you can't use it as ordinary user on WinXP, WinNT or Win2000.<br>
+
 
 <b>What to do on access problems:</b><br>
 Please look at the <a href="https://linux90.idvnet.de/pipermail/isoaglib/">email list (HTTPS)</a> to see, if your problem is known.
@@ -1037,11 +1055,23 @@ If your company proxy blocks the needed WebDAV commands by default, and you can'
 <a href="http://subversion.tigris.org/project_faq.html%23proxy#proxy">there</a> for a description of the needed WebDAV commands. Maybe
 you can ask your proxy administrator to allow these commands to pass thru.
 
-Each user who wants to contribute enhancements should please do the following:
-- Use Subversion or one of its GUI Tools to create a local working copy
+\section HowtoContribute HOWTO contribute to the project
+Each Open Source project needs the input of an active user community to get optimal results.
+Herby not only source code contributions are needed. For example tutorial examples and documentation text
+could be enhanced, corrected and extended by users who don't feell familiar engough to contribute code.
+
+All authors will be listed in the file(s) where they contributed ( please prepare this in your patches ), and at the main page ( this page )
+of ISO<i><sub>AgLib</sub></i> <a href="index.html#IndexAuthors">HERE</a>.
+Each fundamental change like a licensing change will be only performed, if none of the source code authors and contributors
+raise their veto. Licensing changes might be needed, if some projects or users would be prevented from the us of ISO<i><sub>AgLib</sub></i>.
+But also fundamental changes in the design and structure of ISO<i><sub>AgLib</sub></i> will be discussed with the authors (as far as they are still active and
+reachable).
+
+Your contributions can be integrated into the repository if you work as described:
+- Use Subversion or one of its GUI Tools (e.g. TortoiseSVN) to create a local working copy
 - Update your repository ( especially important for creation of diffs ) with
 	the command "svn update" ( or one of the corresponding commands in GUI tools )
-- Collect all changes with the command "svn diff" ( or one of its corresponding commands in GUI tools )
+- Collect all changes with the command "svn diff" ( or one of its corresponding commands in GUI tools; e.g. TortoiseSVN provides a command "Create Patch..." )
 	into one patch
 - Send the patch to <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 	for inclusion ( evaluation of the change is then a lot easier )<br>
@@ -1121,6 +1151,7 @@ source and the contained informative text files.
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoContribute<br>
 \ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
@@ -1139,7 +1170,7 @@ source and the contained informative text files.
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>17 December 2004<br>
+Last Update: <br>11 January 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2125,6 +2156,7 @@ PRJ_ISO11783=1
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoContribute<br>
 \ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
@@ -2143,7 +2175,7 @@ PRJ_ISO11783=1
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>17 December 2004<br>
+Last Update: <br>11 January 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2407,6 +2439,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoContribute<br>
 \ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
@@ -2425,7 +2458,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>17 December 2004<br>
+Last Update: <br>11 January 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2522,6 +2555,7 @@ This is possible, if some basic strategies are used by all devices:
 \ref IndexUsingProjects<br>
 \ref HowtoDownload<br>
 \ref HowtoAccessRepository<br>
+\ref HowtoContribute<br>
 \ref HowtoGetHelp<br>
 \ref HowtoCreateDoc<br>
 \ref HowtoLearnIsoAgLib<br>
@@ -2540,7 +2574,7 @@ This is possible, if some basic strategies are used by all devices:
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>17 December 2004<br>
+Last Update: <br>11 January 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
