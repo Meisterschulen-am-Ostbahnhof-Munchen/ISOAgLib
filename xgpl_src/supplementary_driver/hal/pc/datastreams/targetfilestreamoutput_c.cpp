@@ -93,9 +93,10 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 
 	std::ios_base::openmode mode = std::ios_base::out;
 
-	if ( ( rt_mode & StreamAte   ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::ate   );
-	if ( ( rt_mode & StreamApp   ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::app   );
-	if ( ( rt_mode & StreamTrunc ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::trunc );
+	if ( ( rt_mode & StreamAte    ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::ate    );
+	if ( ( rt_mode & StreamApp    ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::app    );
+	if ( ( rt_mode & StreamTrunc  ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::trunc  );
+	if ( ( rt_mode & StreamBinary ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::binary );
 
 	static_cast<std::ofstream*>(this)->open( filename, mode );
 

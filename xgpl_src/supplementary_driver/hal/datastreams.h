@@ -69,11 +69,12 @@
 
 typedef enum
 {
-	StreamAte   = 0x01,
-	StreamApp   = 0x02,
-	StreamTrunc = 0x04,
-	StreamIn    = 0x08,
-	StreamOut   = 0x10
+	StreamAte    = 0x01,
+	StreamApp    = 0x02,
+	StreamTrunc  = 0x04,
+	StreamIn     = 0x08,
+	StreamOut    = 0x10,
+	StreamBinary = 0x20
 } FileMode_t;
 
 
