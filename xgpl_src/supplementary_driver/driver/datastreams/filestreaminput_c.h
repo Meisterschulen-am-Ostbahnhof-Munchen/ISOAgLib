@@ -113,7 +113,7 @@ public:
 	//  Operation: operator>>
   //! Parameter:
   //! @param ui8_data:
-  virtual FileStreamInput_c& operator>>(uint8_t& ui8_data);
+  virtual StreamInput_c& operator>>(uint8_t& ui8_data);
 
   //  Operation: eof
   virtual bool eof() const { return c_targetHandle.eof();};

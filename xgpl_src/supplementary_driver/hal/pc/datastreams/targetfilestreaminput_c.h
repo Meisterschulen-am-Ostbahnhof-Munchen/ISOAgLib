@@ -93,6 +93,7 @@
 #include "IsoAgLib/typedef.h"
 #include <fstream>
 #include <supplementary_driver/hal/datastreams.h>
+#include <string>
 
 // +X2C includes
 // ~X2C
@@ -103,11 +104,12 @@ class TargetFileStreamInput_c : public std::ifstream
 
 public:
 	//! open a input stream
-	bool open( std::string& filename, FileMode_t rt_mode ){ return open( filename.c_str(), rt_mode );};
+	bool open( std::string& filename, FileMode_t rt_mode )
+		{ return open( filename.c_str(), rt_mode );};
 	//! open a input stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a input stream
-	void close() { std::ifstream::close();};
+	void close() { static_cast<std::ifstream*>(this)->close();};
 
 	//  Operation: operator>>
   //! Parameter:
@@ -115,7 +117,7 @@ public:
   virtual TargetFileStreamInput_c& operator>>(uint8_t &ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const { return std::ifstream::eof();};
+  virtual bool eof() const { return static_cast<const std::ifstream*>(this)->eof();};
 }; // ~X2C
 
 // TargetFileStreamInput_c & operator>> (TargetFileStreamInput_c &, uint8_t &ui8_data);

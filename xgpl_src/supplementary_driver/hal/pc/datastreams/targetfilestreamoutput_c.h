@@ -93,6 +93,7 @@
 #include "IsoAgLib/typedef.h"
 #include <fstream>
 #include <supplementary_driver/hal/datastreams.h>
+#include <string>
 
 // +X2C includes
 // ~X2C
@@ -107,7 +108,7 @@ public:
 	//! open a output stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a output stream
-	void close() { std::ofstream::close();};
+	void close() { static_cast<std::ofstream*>(this)->close();};
 
   //  Operation: operator<<
   //! Parameter:
@@ -115,7 +116,7 @@ public:
   virtual TargetFileStreamOutput_c& operator<<(uint8_t ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const { return std::ofstream::eof();};
+  virtual bool eof() const { return static_cast<const std::ofstream*>(this)->eof();};
 }; // ~X2C
 
 

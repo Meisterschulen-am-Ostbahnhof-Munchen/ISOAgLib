@@ -89,7 +89,7 @@
 //  Operation: operator<<
 //! Parameter:
 //! @param ui8_data:
-FileStreamOutput_c& FileStreamOutput_c::operator<<(uint8_t ui8_data)
+StreamOutput_c& FileStreamOutput_c::operator<<(uint8_t ui8_data)
 {
 	c_targetHandle.operator<<( ui8_data );
 	return *this;

@@ -97,9 +97,10 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 	if ( ( rt_mode & StreamApp   ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::app   );
 	if ( ( rt_mode & StreamTrunc ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::trunc );
 
-	std::ofstream::open( filename, mode );
+	static_cast<std::ofstream*>(this)->open( filename, mode );
 
-	if ( ( std::ofstream::good() ) && ( std::ofstream::is_open() ) ) return true;
+	if ( ( static_cast<std::ofstream*>(this)->good() )
+		&& ( static_cast<std::ofstream*>(this)->is_open() ) ) return true;
 	else return false;
 }
 
@@ -108,6 +109,6 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 {
-	std::operator<<( static_cast<std::ofstream&>(*this), ui8_data );
+	*(static_cast<std::ofstream*>(this)) << ui8_data;
 	return *this;
 }
