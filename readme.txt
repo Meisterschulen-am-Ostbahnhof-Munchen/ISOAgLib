@@ -86,6 +86,14 @@ some parts, even after reading the presented documentation.
 
 \section IndexNews News
 
+\subsection IndexNewNews News after the 1.0.0 release
+	- <b>2004-11-15:</b> Create new email list for email exchange within user community so that users can help each other, and
+		can discuss changes there, before somebody starts implementing the change<br>
+		- subscribe at <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib</a>
+		- access the archive of all emails at <a href="http://linux90.idvnet.de/pipermail/isoaglib/">http://linux90.idvnet.de/pipermail/isoaglib/</a>
+
+
+\subsection IndexOldNews News before 1.0.0 release
 	- Complete Toolchain for ISO 11783 Virtual Terminal is integrated.
 	- <a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor <b>MiniVeg N</b></a> -
 	    the first commercial application of <a href="www.fritzmeier.de">Fritzmeier</a>
@@ -217,6 +225,10 @@ some parts, even after reading the presented documentation.
 	- enhance documentation for feature setup files for individual projects and reorganize the existing files, to make them easier to understand
 	- enable HTTPS access to the subversion repository, as some proxies might hinder WebDAV access, which is needed by Subversion/Apache2<br>
 		so please try HTTPS access in case you have problems with accessing the repository, before you contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+	- some cleanup of workarounds which are needed due to Tasking compiler faults - the STL of versions up to 7.56 have wrong includes
+		( see file "include.cpp/algorithm" which includes "include.cpp/stl_algobase.h" which includes "string.h" into global namespace;
+		  a C++ system header shall include C-Library functions into the "std::" namespace -> it should include <string> instead;
+			other compilers do this correct )
 
 \section IndexMainFeatures Main Features
 The ISO<i><sub>AgLib</sub></i> is designed to provide the following main features
@@ -758,9 +770,14 @@ The sources of the ISO<i><sub>AgLib</sub></i> managed by the version management 
 <a href="http://subversion.tigris.org">Subversion</a> which is developed as a replacement for CVS.
 The ISO<i><sub>AgLib</sub></i> repository allows an anonymous read access with:
 - subversion command line tools with URL
-	<a href="http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib">http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib</a> <br>
+	<a href="http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/IsoAgLib">http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/IsoAgLib</a> for HTTP access to HEAD development<br>
 	or<br>
-	<a href="https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib">https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib</a> <br>
+	<a href="https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/IsoAgLib">https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/IsoAgLib</a> for HTTPS access ( safe against caching PROXY ) HEAD development<br>
+	( you can also browse through the repository with a normal WWW Browser )
+- subversion command line tools with URL
+	<a href="http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/releases">http://linux90.idvnet.de:8092/svn/OSB/IsoAgLib/releases</a> for HTTP access to releases<br>
+	or<br>
+	<a href="https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/releases">https://linux90.idvnet.de:8093/svn/OSB/IsoAgLib/releases</a> for HTTPS access ( safe against caching PROXY ) to releases<br>
 	( you can also browse through the repository with a normal WWW Browser )
 - access different versions, including the possibility to trace changes with the URL
 	<a href="http://linux90.idvnet.de:8092/websvn">http://linux90.idvnet.de:8092/websvn</a>

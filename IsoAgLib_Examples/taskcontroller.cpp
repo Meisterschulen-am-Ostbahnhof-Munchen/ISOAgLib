@@ -192,6 +192,8 @@
 	#define PRJ_USE_AUTOGEN_CONFIG config_taskcontroller.h
 #endif
 
+#include <list>
+
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"
 
@@ -649,7 +651,7 @@ bool check_for_imi()
 	}
 
 	bool b_repeat = true;
-  while (b_repeat && (!c_listDeviceData.empty()) {
+  while (b_repeat && (!c_listDeviceData.empty())) {
     b_repeat = false; // if none found/erased, don't repeat...
     for (pc_iter = c_listDeviceData.begin(); pc_iter != c_listDeviceData.end(); pc_iter++)
 	  { // test all device data  sets if according member is still active
