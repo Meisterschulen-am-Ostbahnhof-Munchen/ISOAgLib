@@ -3331,15 +3331,16 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if (!(attrIsGiven [attrFill_colour])) clean_exit (-1, "YOU NEED TO SPECIFY THE fill_colour= ATTRIBUTE FOR THE <fillattributes> OBJECT! STOPPING PARSER! bye.\n\n");
                 if (!attrIsGiven [attrFill_type])
                     sprintf (attrString [attrFill_type], "0");
-																if(!attrIsGiven [attrFill_pattern])
-																	sprintf (attrString [attrFill_pattern], "NULL");
-																if (strcmp ("NULL", attrString [attrFill_pattern]) != 0)
-																{ // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-																	sprintf (tempString, "&iVtObject%s", attrString [attrFill_pattern]);
-																	sprintf (attrString [attrFill_pattern], "%s", tempString);
-																}
-																fprintf (partFileB, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
-																break;
+                if(!attrIsGiven [attrFill_pattern])
+                {
+                    sprintf (attrString [attrFill_pattern], "NULL");
+                    fprintf (partFileB, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
+                }
+                else
+                {
+                    fprintf (partFileB, ",%d, %d, &iVtObject%s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
+                }
+                break;
 
             case otInputattributes:
                 //clean_exit (-1, "<inputattribute> OBJECT NOT YET IMPLEMENTED. STOPPING PARSER! bye.\n\n");
