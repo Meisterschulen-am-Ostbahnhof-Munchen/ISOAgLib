@@ -224,7 +224,7 @@ bool DINServiceMonitor_c::existDinServiceGtp(GetyPos_c rc_gtp)
      {
       if (pc_dinServiceCache->gtp() == rc_gtp) return true;
      }
-     pc_dinServiceCache = std::find(vec_dinService.begin(), vec_dinService.end(), rc_gtp);
+     pc_dinServiceCache = STL_NAMESPACE::find(vec_dinService.begin(), vec_dinService.end(), rc_gtp);
      b_result = ((pc_dinServiceCache != vec_dinService.end())&&(pc_dinServiceCache->gtp() == rc_gtp))?true:false;
    }
    return b_result;

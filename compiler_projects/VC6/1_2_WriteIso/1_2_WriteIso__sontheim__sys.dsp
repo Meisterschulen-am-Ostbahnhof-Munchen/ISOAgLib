@@ -137,6 +137,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.cpp
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\util\liberr_c.cpp
 # End Source File
 

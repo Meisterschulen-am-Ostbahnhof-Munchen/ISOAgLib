@@ -361,7 +361,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -376,7 +376,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -747,7 +747,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -762,7 +762,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -1133,7 +1133,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1148,7 +1148,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -1519,7 +1519,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1534,7 +1534,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -1905,7 +1905,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1920,7 +1920,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -2291,7 +2291,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -2306,7 +2306,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -2677,7 +2677,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -2692,7 +2692,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -3063,7 +3063,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -3078,7 +3078,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -3449,7 +3449,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -3464,7 +3464,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -3835,7 +3835,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -3850,7 +3850,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -4221,7 +4221,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -4236,7 +4236,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -4607,7 +4607,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -4622,7 +4622,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -4993,7 +4993,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -5008,7 +5008,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -5379,7 +5379,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -5394,7 +5394,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -5765,7 +5765,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -5780,7 +5780,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -6151,7 +6151,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -6166,7 +6166,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -6537,7 +6537,7 @@ PRJ_DIN9684=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -6552,7 +6552,7 @@ PRJ_DIN9684=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -6777,6 +6777,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/esx/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/esx/system/system_target_extensions.cpp
@@ -6877,6 +6878,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/imi/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/imi/system/system_target_extensions.cpp
@@ -6977,6 +6979,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
@@ -7080,6 +7083,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
@@ -7183,6 +7187,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
@@ -7286,6 +7291,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -7389,6 +7395,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -7492,6 +7499,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -7595,6 +7603,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -7698,6 +7707,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -7801,6 +7811,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
@@ -7904,6 +7915,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
@@ -8007,6 +8019,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
@@ -8110,6 +8123,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
@@ -8213,6 +8227,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp
@@ -8316,6 +8331,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp
@@ -8419,6 +8435,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pm167/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pm167/system/system_target_extensions.cpp

@@ -204,9 +204,11 @@ SendUpload_c::SendUpload_c (const SendUpload_c& ref_source) : mssObjectString (r
 
 bool ISOTerminal_c::startUpload (SendUpload_c* actSend) {
   if (actSend->mssObjectString == NULL) {
-    return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, &en_sendSuccess);
+    return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
+			&actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, &en_sendSuccess);
   } else {
-    return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, (MultiSendStreamer_c*)actSend->mssObjectString, ECU_TO_VT_PGN, &en_sendSuccess);
+    return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
+			(MultiSendStreamer_c*)actSend->mssObjectString->getStreamer(), ECU_TO_VT_PGN, &en_sendSuccess);
   }
 }
 
@@ -236,7 +238,7 @@ bool ISOTerminal_c::registerIsoObjectPool (IdentItem_c* rpc_wsMasterIdentItem, I
 {
   // No support for double initialization or ObjectPool change (yet)!
   if (en_objectPoolState != OPNoneRegistered) return false;
-  
+
   if (!((en_uploadState == UIdle) || (en_uploadState == UFailed))) {
     // could not start bacause uploader is busy, so we can't set the variables, but this shouldn't really
     // happen, as the pool should be registered right after initializing the terminal...
@@ -245,8 +247,9 @@ bool ISOTerminal_c::registerIsoObjectPool (IdentItem_c* rpc_wsMasterIdentItem, I
   }
 
   pc_wsMasterIdentItem = rpc_wsMasterIdentItem;
-  pc_pool = rpc_pool;
-  pc_pool->initAllObjectsOnce(); // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
+  c_streamer.pc_pool = rpc_pool;
+	// the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
+  c_streamer.pc_pool->initAllObjectsOnce();
 
   if (rpc_versionLabel != NULL) {
     pc_versionLabel = new (char [7+1]);
@@ -257,7 +260,7 @@ bool ISOTerminal_c::registerIsoObjectPool (IdentItem_c* rpc_wsMasterIdentItem, I
     for (; i<7; i++) pc_versionLabel [i] = 0x20; // ASCII: Space
     pc_versionLabel[i] = 0x00; // terminate with a 0x00 although not needed...
   }
-  
+
   en_objectPoolState = OPRegistered; // try to upload until state == UploadedSuccessfully || CannotBeUploaded
   return true;
 }
@@ -269,13 +272,13 @@ bool ISOTerminal_c::deregisterIsoObjectPool ()
 {
   // If none registered deregistering is not possible
   if (en_objectPoolState == OPNoneRegistered) return false;
-  
+
   // Stop all activities!
   /** @todo: has anything to be done here? can there still be activities running that would interfere when pc_poll == NULL then?
    * I think all has been done now to prevent any problems, so it should do! ... */
-  
+
   // Deregister Pool and Name, IdentItem stays...
-  pc_pool = NULL;
+  c_streamer.pc_pool = NULL;
   en_objectPoolState = OPNoneRegistered;
   if (pc_versionLabel != NULL) {
     delete (pc_versionLabel);
@@ -301,14 +304,14 @@ void ISOTerminal_c::init()
 
     vtState_a.lastReceived = 0; // no vt_statusMessage received yet
     vtSourceAddress = 254; // shouldn't be read anyway before vt_statusMessage arrived....
-    
+
     pc_wsMasterIdentItem = NULL;
-    pc_pool = NULL;
+    c_streamer.pc_pool = NULL;
     pc_versionLabel = NULL;
 
     en_objectPoolState = OPNoneRegistered;
     b_receiveFilterCreated = false;
-    
+
     vtAliveNew = false;
 
     // so init() only gets executed once!
@@ -420,19 +423,19 @@ bool ISOTerminal_c::timeEvent( void )
   if ( pc_wsMasterIdentItem->getIsoItem() == NULL ) return true;
   //if ( !c_isoMonitor.existIsoMemberGtp (pc_wsMasterIdentItem->gtp (), true)) return true;
 
-  
-  
- /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
-/*******************************************************************************************************/  
 
-  
+
+ /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
+/*******************************************************************************************************/
+
+
   // #######################
   // ### VT Alive checks ###
   // #######################
 
   bool vtAliveOld=vtAliveNew;
   vtAliveNew=isVtActive();
-  
+
   if (vtAliveOld != vtAliveNew) {
     // react on vt alive change
     if (vtAliveNew == true) {
@@ -469,7 +472,7 @@ bool ISOTerminal_c::timeEvent( void )
   // ### Do nothing if there's no VT active ###
   if (!isVtActive()) return true;
 
-  
+
   // be kind and wait until "COMPLETE AddressClaim" is finished (WSMaster/Slaves Announce)
   if ( !pc_wsMasterIdentItem->getIsoItem()->isClaimedAddress() ) return true;
 
@@ -556,7 +559,7 @@ bool ISOTerminal_c::timeEvent( void )
   // #############################################
   // ### Initiate new Actions (Command/Upload) ###
   // #############################################
-  
+
   // use IsoMonitor's dataPkg for this reason
   ISOSystemPkg_c& c_pkg = c_isoMonitor.data();
 
@@ -601,7 +604,7 @@ bool ISOTerminal_c::timeEvent( void )
         // Do we want to try to "Load Version" or go directly to uploading?
         if (pc_versionLabel != NULL) {
           // send out "Non Volatile Memory - Load Version"
-          c_pkg.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 
+          c_pkg.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                #ifdef LOESCHE_POOL
                                210, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
                                #else
@@ -645,7 +648,7 @@ bool ISOTerminal_c::timeEvent( void )
       ui32_sendCommandTimestamp = HAL::getTime();
       ui8_commandParameter = actSend->arr_commandBuffer [0];
 
-      c_pkg.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 
+      c_pkg.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                            actSend->arr_commandBuffer [0], actSend->arr_commandBuffer [1], actSend->arr_commandBuffer [2], actSend->arr_commandBuffer [3], actSend->arr_commandBuffer [4], actSend->arr_commandBuffer [5], actSend->arr_commandBuffer [6], actSend->arr_commandBuffer [7]);
       c_can << c_pkg;      // Command: actSend->arr_commandBuffer [0]
       #ifdef USE_LIST_FOR_FIFO
@@ -686,7 +689,7 @@ bool ISOTerminal_c::isVtActive ()
 /** save current send position in data source - neeed for resend on send problem
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
   */
-void ISOTerminal_c::saveDataNextStreamPart ()
+void ISOTerminalStreamer_c::saveDataNextStreamPart ()
 {
   pc_iterObjectsStored = pc_iterObjects;
   ui32_objectStreamPositionStored = ui32_objectStreamPosition;
@@ -700,7 +703,7 @@ void ISOTerminal_c::saveDataNextStreamPart ()
 /** reactivate previously stored data source position - used for resend on problem
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
   */
-void ISOTerminal_c::restoreDataNextStreamPart ()
+void ISOTerminalStreamer_c::restoreDataNextStreamPart ()
 {
   pc_iterObjects = pc_iterObjectsStored;
   ui32_objectStreamPosition = ui32_objectStreamPositionStored;
@@ -714,7 +717,7 @@ void ISOTerminal_c::restoreDataNextStreamPart ()
 /** set cache for data source to stream start
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
   */
-void ISOTerminal_c::resetDataNextStreamPart ()
+void ISOTerminalStreamer_c::resetDataNextStreamPart ()
 {
   pc_iterObjects = pc_pool->getIVtObjects();
   ui32_objectStreamPosition = 0;
@@ -728,7 +731,7 @@ void ISOTerminal_c::resetDataNextStreamPart ()
     puffer afterwards
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
   */
-void ISOTerminal_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes)
+void ISOTerminalStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes)
 {
   while ((uploadBufferFilled-uploadBufferPosition) < bytes) {
     // copy down the rest of the buffer (we have no ring buffer here!)
@@ -763,13 +766,13 @@ void ISOTerminal_c::startObjectPoolUploading ()
 
   // calculate mask_stream size NOW (added 1 byte for "Object Pool Upload Start" Command Byte)
   // because we can't do before we get the color-depth information (0xC7)
-  ui32_streamSize = 1;
-  for (uint32_t curObject=0; curObject < pc_pool->getNumObjects(); curObject++) {
-    ui32_streamSize += ((vtObject_c*)pc_pool->getIVtObjects()[curObject])->fitTerminal ();
+  c_streamer.ui32_streamSize = 1;
+  for (uint32_t curObject=0; curObject < c_streamer.pc_pool->getNumObjects(); curObject++) {
+    c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.pc_pool->getIVtObjects()[curObject])->fitTerminal ();
   }
 
-  c_pkg.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 
-                      192, 0xff, (ui32_streamSize-1) & 0xFF, ((ui32_streamSize-1) >>  8) & 0xFF, ((ui32_streamSize-1) >> 16) & 0xFF, (ui32_streamSize-1) >> 24, 0xff, 0xff);
+  c_pkg.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                      192, 0xff, (c_streamer.ui32_streamSize-1) & 0xFF, ((c_streamer.ui32_streamSize-1) >>  8) & 0xFF, ((c_streamer.ui32_streamSize-1) >> 16) & 0xFF, (c_streamer.ui32_streamSize-1) >> 24, 0xff, 0xff);
   c_can << c_pkg;     // Command: Get Technical Data --- Parameter: Get Memory Size
 
   // Now start uploading
@@ -784,8 +787,8 @@ void ISOTerminal_c::finalizeUploading ()
 {
   en_uploadState = UIdle; // == uploaded (successfully)
   en_objectPoolState = OPUploadedSuccessfully;
-  if (pc_pool != NULL) {
-    pc_pool->eventObjectPoolUploadedSuccessfully ();
+  if (c_streamer.pc_pool != NULL) {
+    c_streamer.pc_pool->eventObjectPoolUploadedSuccessfully ();
   }
 }
 
@@ -797,7 +800,7 @@ void ISOTerminal_c::indicateObjectPoolCompletion ()
   ISOSystemPkg_c& c_pkg = c_isoMonitor.data(); // same data as in processMsg here!!
 
   // successfully sent, so now send out the "End of Object Pool Message" and wait for response!
-  c_pkg.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 
+  c_pkg.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                       18, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
   c_can << c_pkg;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
   en_uploadState = UWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
@@ -828,7 +831,7 @@ bool ISOTerminal_c::processMsg()
   }
 
   // VT_TO_GLOBAL is the only PGN we accept without VT being active, because it marks the VT active!!
-        
+
         //////////////////////////////////////////
        // vt to global? -->VT_TO_GLOBAL_PGN<-- //
       //////////////////////////////////////////
@@ -849,14 +852,14 @@ bool ISOTerminal_c::processMsg()
     }
     return true;
   }
-        
-        
+
+
   // If VT is not active, don't react on PKGs addressed to us, as VG's not active ;)
   if (!isVtActive()) return true;
 
   // If no pool registered, do nothing!
   if (en_objectPoolState == OPNoneRegistered) return true;
-  
+
         ////////////////////////
        // -->LANGUAGE_PGN<-- //
       ////////////////////////
@@ -873,19 +876,19 @@ bool ISOTerminal_c::processMsg()
     // The other fields are reserved.
     return true;
   }
-  
+
         //////////////////////////////////////////
        // VT to this ECU? -->VT_TO_ECU_PGN<-- ///
       //////////////////////////////////////////
   if ( pc_wsMasterIdentItem->getIsoItem() && ((data().isoPgn() & 0x1FFFF) == (uint32_t) (VT_TO_ECU_PGN + pc_wsMasterIdentItem->getIsoItem()->nr())) ) {
-    
-    
+
+
     switch (data().getUint8Data (0)) {
     /*** ### VT Initiated Messages ### ***/
       case 0x00: // Command: "Control Element Function", parameter "Soft Key"
       case 0x01: // Command: "Control Element Function", parameter "Button"
-        if (pc_pool) {
-          pc_pool->eventKeyCode (data().getUint8Data (1) /* key activation code (pressed, released, held) */,
+        if (c_streamer.pc_pool) {
+          c_streamer.pc_pool->eventKeyCode (data().getUint8Data (1) /* key activation code (pressed, released, held) */,
                                  data().getUint8Data (2) | (data().getUint8Data (3) << 8) /* objID of key object */,
                                  data().getUint8Data (4) | (data().getUint8Data (5) << 8) /* objID of visible mask */,
                                  data().getUint8Data (6) /* key code */,
@@ -894,8 +897,8 @@ bool ISOTerminal_c::processMsg()
         b_result = true;
         break;
       case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
-        if (pc_pool) {
-          pc_pool->eventNumericValue (uint16_t( data().getUint8Data (1) ) | (uint16_t( data().getUint8Data (2) ) << 8) /* objID */,
+        if (c_streamer.pc_pool) {
+          c_streamer.pc_pool->eventNumericValue (uint16_t( data().getUint8Data (1) ) | (uint16_t( data().getUint8Data (2) ) << 8) /* objID */,
                                       data().getUint8Data (4) /* 1 byte value */,
                                       uint32_t( data().getUint8Data (4) ) | (uint32_t( data().getUint8Data (5) ) << 8) | (uint32_t( data().getUint8Data (6) ) << 16)| (uint32_t( data().getUint8Data (7) ) << 24) /* 4 byte value */ );
         }
@@ -909,7 +912,7 @@ bool ISOTerminal_c::processMsg()
           if (data().getUint8Data (1) == 0) {
             if (pc_versionLabel != NULL) {
               // Store Version and finalize after "Store Version Response"
-              c_pkg.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 
+              c_pkg.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                   208 /* D0 */, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
               c_can << c_pkg;     // Command: Non Volatile Memory --- Parameter: Store Version
 
@@ -975,7 +978,7 @@ bool ISOTerminal_c::processMsg()
           if (data().getUint8Data (2) == 0) {
             // start uploading, there MAY BE enough memory
             en_uploadState = UUploading;
-            getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, this, ECU_TO_VT_PGN, &en_sendSuccess);
+            getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, &en_sendSuccess);
           } else {
             // definitely NOT enough memory
             getLbsErrInstance().registerError( LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal );

@@ -108,7 +108,7 @@ namespace __IsoAgLib {
 
 
 class Base_c;
-typedef SINGLETON(Base_c) SingletonBase_c;
+typedef SINGLETON_DERIVED(Base_c,ElementBase_c) SingletonBase_c;
 /**
   working on Base Data Msg Type 1, 2 and Calendar;
   stores, updates  and delivers all base data informations;
@@ -118,7 +118,7 @@ typedef SINGLETON(Base_c) SingletonBase_c;
    per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   *@author Dipl.-Inform. Achim Spangler
 */
-class Base_c : public ElementBase_c, public CANCustomer_c, public SingletonBase_c {
+class Base_c : public SingletonBase_c {
 public: // Public methods
 	/* ********************************************* */
   /** \name Management Functions for class Base_c  */
@@ -624,7 +624,7 @@ public: // Public methods
 
 private:
   // Private methods
-  friend class SINGLETON(Base_c);
+  friend class SINGLETON_DERIVED(Base_c,ElementBase_c);
   /**
     HIDDEN constructor for a Base_c object instance which can optional
     set the configuration for send/receive for base msg type 1,2

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          memberMonitor.cc - object for monitoring members
+                          dinmonitor.cpp - object for monitoring members
                                               (list of DINItem_c)
                              -------------------
     begin                : Fri Apr 07 2000
@@ -345,9 +345,9 @@ bool DINMonitor_c::timeEvent( void ){
     System_c::triggerWd();
 
     // set result to trusted
-    setTrusted(result);
+    c_adrVectTrusted.setTrusted(result);
     // store the bits of trusted AdrVect_c additional with Bit-OR in std. AdrVect
-    AdrVect_c::operator|=(adrvect());
+    c_adrVectTrusted |= adrvect();
     // adrVect is now actual -> update time
     i32_lastTrusted = i32_now;
   }
@@ -812,7 +812,7 @@ bool DINMonitor_c::canClaimNr(GetyPos_c rc_gtp)
 */
 bool DINMonitor_c::freeNrAvailable(bool rb_eraseInactiveItem)
 {
-  bool b_result = AdrVect_c::freeNrAvailable();
+  bool b_result = c_adrVectTrusted.freeNrAvailable();
 
   // if no number is free search for item with claimed address,
   // which didn't sent alive for min 3 sec
@@ -943,12 +943,12 @@ bool DINMonitor_c::setUsedAdr(GetyPos_c rc_gtp, uint8_t rui8_nr){
   bool b_result = false;
   if ((canClaimNr(rc_gtp)) || (System_c::getTime() < 3000))
   { // claim is allowed -> update trusted (it updates internal too)
-    b_result = setUsedAdrTrusted(rui8_nr);
+    b_result = c_adrVectTrusted.setUsedAdrTrusted(rui8_nr);
   }
   else
   { // only update the internal, which is used too avoid using insecure or used numbers
     // for internal identities
-    b_result = AdrVect_c::setUsedAdr(rui8_nr);
+    b_result = c_adrVectTrusted.setUsedAdr(rui8_nr);
   }
   #if 0
   // too sensible
@@ -1056,9 +1056,9 @@ bool DINMonitor_c::processMsg(){
           b_result = true;
         }
       }
-			else if ( ( isAdrUsedTrusted( data().send() ) ) || ( isAdrUsed( data().send() ) ) )
+			else if ( ( c_adrVectTrusted.isAdrUsedTrusted( data().send() ) ) || ( c_adrVectTrusted.isAdrUsed( data().send() ) ) )
 			{ // given number is marked as used in AdrVect_c -> clear it there
-				clearUsedAdr( data().send() );
+				c_adrVectTrusted.clearUsedAdr( data().send() );
 				b_result = true;
 			}
       break;

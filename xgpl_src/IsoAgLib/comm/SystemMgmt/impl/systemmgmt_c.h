@@ -49,37 +49,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef SYSTEM_MGMT_H
@@ -109,7 +109,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class SystemMgmt_c;
-typedef SINGLETON_CLIENT1(SystemMgmt_c, IdentItem_c, GetyPos_c) SingletonSystemMgmt_c;
+typedef SINGLETON_DERIVED_CLIENT1(SystemMgmt_c, ElementBase_c, IdentItem_c, GetyPos_c) SingletonSystemMgmt_c;
 /**
   Central IsoAgLib system management object, which provides information retrieval
   from devices independen of their protocol type. This is achieved by requesting
@@ -118,7 +118,7 @@ typedef SINGLETON_CLIENT1(SystemMgmt_c, IdentItem_c, GetyPos_c) SingletonSystemM
   corresponding monitor list should be accessed instead of this global interface class.
   *@author Dipl.-Inform. Achim Spangler
   */
-class SystemMgmt_c : public SingletonSystemMgmt_c, public ElementBase_c  {
+class SystemMgmt_c : public SingletonSystemMgmt_c  {
 public:
 
   /**
@@ -640,7 +640,7 @@ private:
     */
   void registerAccessFlt( void ) {getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );};
 
-  friend class SINGLETON(SystemMgmt_c);
+  friend class SINGLETON_DERIVED(SystemMgmt_c,ElementBase_c);
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of SystemMgmt_c within application
     */

@@ -117,15 +117,15 @@ namespace __IsoAgLib {
   @see MemberMonitor
   @author Dipl.-Inform. Achim Spangler
 */
-class DINServiceMonitor_c : public ElementBase_c, public SINGLETON(DINServiceMonitor_c)
+class DINServiceMonitor_c : public SINGLETON_DERIVED(DINServiceMonitor_c, ElementBase_c)
 {
 private:
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef std::slist<DINServiceItem_c,std::__malloc_alloc_template<0> > ArrService;
-  typedef std::slist<DINServiceItem_c,std::__malloc_alloc_template<0> >::iterator ArrServiceIterator;
+  typedef STL_NAMESPACE::slist<DINServiceItem_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrService;
+  typedef STL_NAMESPACE::slist<DINServiceItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator ArrServiceIterator;
 	#else
-  typedef std::slist<DINServiceItem_c> ArrService;
-  typedef std::slist<DINServiceItem_c>::iterator ArrServiceIterator;
+  typedef STL_NAMESPACE::slist<DINServiceItem_c> ArrService;
+  typedef STL_NAMESPACE::slist<DINServiceItem_c>::iterator ArrServiceIterator;
 	#endif
 
 public:
@@ -275,7 +275,7 @@ public:
   bool processMsg();
 private:
 // private methods
-  friend class SINGLETON(DINServiceMonitor_c);
+  friend class SINGLETON_DERIVED(DINServiceMonitor_c, ElementBase_c);
   /**
     HIDDEN constructor
     NEVER instantiate a variable of type DINServiceMonitor_c within application

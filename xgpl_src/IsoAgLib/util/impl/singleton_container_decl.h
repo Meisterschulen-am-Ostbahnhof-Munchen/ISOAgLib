@@ -25,11 +25,11 @@
 
   /** vector with pointers to registered client instances */
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  std::vector<GET_CL_DECL()*,std::__malloc_alloc_template<0> > gluemacs( c_arrClient, GET_CL_DECL() );
-  typedef typename std::vector<GET_CL_DECL()*,std::__malloc_alloc_template<0> >::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
+  STL_NAMESPACE::vector<GET_CL_DECL()*,STL_NAMESPACE::__malloc_alloc_template<0> > gluemacs( c_arrClient, GET_CL_DECL() );
+  typedef typename STL_NAMESPACE::vector<GET_CL_DECL()*,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
 	#else
-  std::vector<GET_CL_DECL()*> gluemacs( c_arrClient, GET_CL_DECL() );
-  typedef typename std::vector<GET_CL_DECL()*>::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
+  STL_NAMESPACE::vector<GET_CL_DECL()*> gluemacs( c_arrClient, GET_CL_DECL() );
+  typedef typename STL_NAMESPACE::vector<GET_CL_DECL()*>::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
 	#endif
 
   gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t) gluemacs( pc_searchCache, GET_CL_DECL() );

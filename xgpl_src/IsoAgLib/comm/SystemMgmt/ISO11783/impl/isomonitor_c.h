@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef ISO_MONITOR_H
@@ -110,7 +110,7 @@ namespace IsoAgLib { class iISOMonitor_c;}
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class ISOMonitor_c;
-typedef SINGLETON(ISOMonitor_c) SingletonISOMonitor_c;
+typedef SINGLETON_DERIVED(ISOMonitor_c, ElementBase_c) SingletonISOMonitor_c;
 /**
   this object manages a monitor list of all
   ISO members including inserting and administration of local own members.
@@ -118,16 +118,16 @@ typedef SINGLETON(ISOMonitor_c) SingletonISOMonitor_c;
   @see ISOItem
   @author Dipl.-Inform. Achim Spangler
 */
-class ISOMonitor_c : public ElementBase_c, public CANCustomer_c, public SingletonISOMonitor_c
+class ISOMonitor_c : public SingletonISOMonitor_c
 {
 private:
   // private typedef alias names
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef std::slist<ISOItem_c,std::__malloc_alloc_template<0> > Vec_ISO;
-  typedef std::slist<ISOItem_c,std::__malloc_alloc_template<0> >::iterator Vec_ISOIterator;
+  typedef STL_NAMESPACE::slist<ISOItem_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_ISO;
+  typedef STL_NAMESPACE::slist<ISOItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_ISOIterator;
 	#else
-  typedef std::slist<ISOItem_c> Vec_ISO;
-  typedef std::slist<ISOItem_c>::iterator Vec_ISOIterator;
+  typedef STL_NAMESPACE::slist<ISOItem_c> Vec_ISO;
+  typedef STL_NAMESPACE::slist<ISOItem_c>::iterator Vec_ISOIterator;
 	#endif
 
 public:
@@ -381,7 +381,7 @@ protected: // Protected methods
 
 private: // Private attributes
   friend class IsoAgLib::iISOMonitor_c;
-  friend class SINGLETON(ISOMonitor_c);
+  friend class SINGLETON_DERIVED(ISOMonitor_c,ElementBase_c);
   /**
     constructor for ISOMonitor_c which can store optional pointer to central Scheduler_c instance
   */

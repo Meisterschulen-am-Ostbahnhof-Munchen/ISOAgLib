@@ -127,7 +127,7 @@ namespace __IsoAgLib {
   @param rpc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)
 */
 ISOMonitor_c::ISOMonitor_c()
-  : ElementBase_c(), vec_isoMember() {
+  : SingletonISOMonitor_c(), vec_isoMember() {
   init();
 }
 

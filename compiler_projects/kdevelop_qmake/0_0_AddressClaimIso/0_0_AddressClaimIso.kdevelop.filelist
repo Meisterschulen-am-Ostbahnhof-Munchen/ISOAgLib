@@ -12,6 +12,7 @@
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp

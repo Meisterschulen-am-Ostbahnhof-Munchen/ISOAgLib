@@ -25,6 +25,7 @@ SOURCES += ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 SOURCES += ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 SOURCES += ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 SOURCES += ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+SOURCES += ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 SOURCES += ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 HEADERS += ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h

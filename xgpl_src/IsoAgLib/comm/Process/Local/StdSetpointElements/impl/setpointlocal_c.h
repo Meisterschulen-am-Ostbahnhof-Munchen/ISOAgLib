@@ -145,9 +145,9 @@ class ProcDataLocalBase_c;
 */
 class SetpointLocal_c : public SetpointBase_c  {
 private:
-  typedef std::slist<SetpointRegister_c> Vec_SetpointRegister;
-  typedef std::slist<SetpointRegister_c>::iterator Vec_SetpointRegisterIterator;
-  typedef std::slist<SetpointRegister_c>::const_iterator Vec_SetpointRegisterConstIterator;
+  typedef STL_NAMESPACE::slist<SetpointRegister_c> Vec_SetpointRegister;
+  typedef STL_NAMESPACE::slist<SetpointRegister_c>::iterator Vec_SetpointRegisterIterator;
+  typedef STL_NAMESPACE::slist<SetpointRegister_c>::const_iterator Vec_SetpointRegisterConstIterator;
 
 public:
   /**

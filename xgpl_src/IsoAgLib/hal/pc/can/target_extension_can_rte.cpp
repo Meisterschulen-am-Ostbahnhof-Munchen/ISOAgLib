@@ -122,7 +122,7 @@ class RteCanPkg {
       { id = rrefc_src.id; b_xtd = rrefc_src.b_xtd; size = rrefc_src.size; memcpy( data, rrefc_src.data, size ); return *this;};
 };
 
-static std::list<RteCanPkg> arr_canQueue[cui32_maxCanBusCnt];
+static STL_NAMESPACE::list<RteCanPkg> arr_canQueue[cui32_maxCanBusCnt];
 
 
 

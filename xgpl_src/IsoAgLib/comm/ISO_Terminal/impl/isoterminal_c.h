@@ -118,6 +118,57 @@ namespace __IsoAgLib {
 class vtObjectString_c;
 
 
+/** helper class for low level streaming.
+	This function was excluded from ISOTerminal_c,
+	as some STL aware compilers don't support multiple inheritance
+	( e.g. IAR ). So this helper construction was defined.
+*/
+class ISOTerminalStreamer_c : public MultiSendStreamer_c
+{
+ public:
+  /** place next data to send direct into send puffer of pointed
+      stream send package - MultiSendStreamer_c will send this
+      puffer afterwards
+      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
+    */
+  void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
+  /** set cache for data source to stream start
+      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
+    */
+  void resetDataNextStreamPart ();
+  /** save current send position in data source - neeed for resend on send problem
+      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
+    */
+  void saveDataNextStreamPart ();
+  /** reactivate previously stored data source position - used for resend on problem
+      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
+    */
+  void restoreDataNextStreamPart ();
+  /** calculate the size of the data source
+      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
+    */
+  uint32_t getStreamSize () { return ui32_streamSize; };
+
+	uint32_t ui32_objectStreamPosition;
+  uint32_t ui32_objectStreamPositionStored;
+  uint32_t ui32_streamSize;
+
+  /** pointers needed by Scheduler_cMultiSendStreamer */
+  IsoAgLib::iVtObject_c** pc_iterObjects;
+  IsoAgLib::iVtObject_c** pc_iterObjectsStored;
+
+  // the values of registerIsoObjectPool gets stored here
+  IsoAgLib::iIsoTerminalObjectPool_c* pc_pool;
+#define ISO_VT_UPLOAD_BUFFER_SIZE 128
+  uint8_t uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
+  uint8_t uploadBufferFilled;
+  uint8_t uploadBufferPosition;
+
+  uint8_t uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
+  uint8_t uploadBufferFilledStored;
+  uint8_t uploadBufferPositionStored;
+};
+
 /**
   class that stores an 8-byte command message along with its timeout
 */
@@ -148,18 +199,18 @@ public:
 	// don't use malloc_alloc for uint8_t values
 	// - here the 8byte overhead per malloc item are VERY big
 	// ==> chunk allocation which can be shared among instances is alot better
-  std::vector<uint8_t> vec_uploadBuffer;
+  STL_NAMESPACE::vector<uint8_t> vec_uploadBuffer;
   uint8_t ui8_retryCount;
 };
 
 
 
 class ISOTerminal_c;
-typedef SINGLETON(ISOTerminal_c) SingletonISOTerminal_c;
+typedef SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c) SingletonISOTerminal_c;
 /**
   central IsoAgLib terminal management object
   */
-class ISOTerminal_c : public SingletonISOTerminal_c, public ElementBase_c, public CANCustomer_c, public MultiSendStreamer_c {
+class ISOTerminal_c : public SingletonISOTerminal_c {
 public:
 
   enum objectPoolState_t { OPNoneRegistered, OPRegistered, OPUploadedSuccessfully, OPCannotBeUploaded };
@@ -304,7 +355,7 @@ public:
     @return uint8_t source address of virtual terminal
   */
   uint8_t            getVtSourceAddress () { return vtSourceAddress; };
-  uint16_t           getVtObjectPoolDimension () { return pc_pool->getDimension(); };
+  uint16_t           getVtObjectPoolDimension () { return c_streamer.pc_pool->getDimension(); };
   uint32_t           getVtHardwareDimension () { return (uint32_t) vtCapabilities_a.hwWidth; };
   sendCommandState_t getVtSendCommandState () { return en_sendCommandState; };
   vtCapabilities_s*  getVtCapabilities () { return &vtCapabilities_a; };
@@ -312,29 +363,6 @@ public:
   localSettings_s*   getLocalSettings () { return &localSettings_a; };
   uint32_t           getUploadBufferSize ();
 
-
-  /** place next data to send direct into send puffer of pointed
-      stream send package - MultiSendStreamer_c will send this
-      puffer afterwards
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
-  void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
-  /** set cache for data source to stream start
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
-  void resetDataNextStreamPart ();
-  /** save current send position in data source - neeed for resend on send problem
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
-  void saveDataNextStreamPart ();
-  /** reactivate previously stored data source position - used for resend on problem
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
-  void restoreDataNextStreamPart ();
-  /** calculate the size of the data source
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
-  uint32_t getStreamSize () { return ui32_streamSize; };
 
   /** sendCommand... methods */
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout);
@@ -395,7 +423,7 @@ bool ISOTerminal_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_
 bool ISOTerminal_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt);
 
 private:
-  friend class SINGLETON(ISOTerminal_c);
+  friend class SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c);
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of ISOTerminal_c within application
     */
@@ -434,9 +462,9 @@ private:
 	// Numbers for 145 items: Malloc_Alloc: 3480Bytes; Chunk_Alloc: 2568Byte -> 912Byte fewer with Chunk Alloc
 	// ( single instance allocation can also cause time problems and could result in heavy
 	//   memory fragmentation ==>> here CHUNK Alloc is the only choice )
-  std::list<SendCommand_c> q_sendCommand;
+  STL_NAMESPACE::list<SendCommand_c> q_sendCommand;
   #else
-  std::queue<SendCommand_c> q_sendCommand;
+  STL_NAMESPACE::queue<SendCommand_c> q_sendCommand;
   #endif
 
   bool vtAliveNew;
@@ -460,13 +488,6 @@ private:
   */
   uint8_t iso11783version; // defaults to 0xFE for not yet initialized
 
-  /** pointers needed by Scheduler_cMultiSendStreamer */
-  IsoAgLib::iVtObject_c** pc_iterObjects;
-  IsoAgLib::iVtObject_c** pc_iterObjectsStored;
-
-  // the values of registerIsoObjectPool gets stored here
-  IsoAgLib::iIsoTerminalObjectPool_c* pc_pool;
-
   char* pc_versionLabel; // NULL if no Version Name is given
 
 
@@ -483,26 +504,16 @@ private:
   MultiSend_c::sendSuccess_t en_sendSuccess;
   #ifdef USE_LIST_FOR_FIFO
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  std::list<SendUpload_c,std::__malloc_alloc_template<0> >  q_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >  q_sendUpload;
 	#else
-  std::list<SendUpload_c>  q_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c>  q_sendUpload;
 	#endif
   #else
-  std::queue<SendUpload_c> q_sendUpload;
+  STL_NAMESPACE::queue<SendUpload_c> q_sendUpload;
   #endif
 
-  uint32_t ui32_objectStreamPosition;
-  uint32_t ui32_objectStreamPositionStored;
-  uint32_t ui32_streamSize;
+	ISOTerminalStreamer_c c_streamer;
 
-#define ISO_VT_UPLOAD_BUFFER_SIZE 128
-  uint8_t uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
-  uint8_t uploadBufferFilled;
-  uint8_t uploadBufferPosition;
-
-  uint8_t uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
-  uint8_t uploadBufferFilledStored;
-  uint8_t uploadBufferPositionStored;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

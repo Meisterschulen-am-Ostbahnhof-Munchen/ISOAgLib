@@ -105,7 +105,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -360,7 +360,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -375,7 +375,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -489,7 +489,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -744,7 +744,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -759,7 +759,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -873,7 +873,7 @@ USE_RS232_DRIVER="rte"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -1128,7 +1128,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1143,7 +1143,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -1257,7 +1257,7 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -1512,7 +1512,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1527,7 +1527,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -1641,7 +1641,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -1896,7 +1896,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1911,7 +1911,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -2025,7 +2025,7 @@ USE_RS232_DRIVER="rte"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -2280,7 +2280,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -2295,7 +2295,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -2409,7 +2409,7 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -2664,7 +2664,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -2679,7 +2679,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -2793,7 +2793,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -3048,7 +3048,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -3063,7 +3063,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -3177,7 +3177,7 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -3432,7 +3432,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -3447,7 +3447,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -3561,7 +3561,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -3816,7 +3816,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -3831,7 +3831,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -3945,7 +3945,7 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -4200,7 +4200,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -4215,7 +4215,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -4329,7 +4329,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -4584,7 +4584,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -4599,7 +4599,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -4713,7 +4713,7 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -4968,7 +4968,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -4983,7 +4983,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -5097,7 +5097,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -5352,7 +5352,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -5367,7 +5367,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -5481,7 +5481,7 @@ USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -5736,7 +5736,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -5751,7 +5751,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -5865,7 +5865,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -6120,7 +6120,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -6135,7 +6135,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -6249,7 +6249,7 @@ USE_RS232_DRIVER="sys"
 
 # define the amount of available CAN BUSes at the ECU
 # ( default 1 )
-CAN_BUS_CNT=4
+CAN_BUS_CNT=1
 
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
@@ -6504,7 +6504,7 @@ PROC_REMOTE_STD=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -6519,7 +6519,7 @@ PROC_REMOTE_STD=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -6552,7 +6552,7 @@ PROC_REMOTE_STD=1
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_2_7_RemoteReadDataStdIso" call,
 //                    if the corresponding value in isoaglib_config.h changed
-#define CAN_BUS_CNT 4 
+#define CAN_BUS_CNT 1 
 
 #define CAN_INSTANCE_CNT 1 
 
@@ -6742,6 +6742,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -6868,6 +6869,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -6994,6 +6996,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7123,6 +7126,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7252,6 +7256,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7381,6 +7386,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7510,6 +7516,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7639,6 +7646,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7768,6 +7776,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7897,6 +7906,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8026,6 +8036,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8155,6 +8166,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8284,6 +8296,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8413,6 +8426,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8542,6 +8556,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8671,6 +8686,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8800,6 +8816,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp

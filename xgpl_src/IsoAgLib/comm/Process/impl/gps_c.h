@@ -146,7 +146,7 @@ namespace __IsoAgLib {
 
   @author Dipl.-Inform. Achim Spangler
 */
-class GPS_c : public CANCustomer_c, public ElementBase_c, public SINGLETON(GPS_c) {
+class GPS_c : public SINGLETON_DERIVED(GPS_c, ElementBase_c) {
 private:
 public:
   enum rec_mode_t { noGps = 0, gps = 1, dgps = 2, rtkgps = 3};
@@ -212,7 +212,7 @@ private: // Private methods
     */
   GPS_c() { init(); };
 private: // Private attributes
-  friend class SINGLETON(GPS_c);
+  friend class SINGLETON_DERIVED(GPS_c, ElementBase_c);
   friend class IsoAgLib::iGPS_c;
   /** msg object for CAN I/O */
   ProcessPkg_c* pc_data;

@@ -232,7 +232,7 @@ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increme
   else if (ren_type == Proc_c::DistProp) en_accumProp = Proc_c::AccumDist;
 
   // if subprog with this type exist, update only value
-  Vec_MeasureSubprog::iterator pc_subprog = std::find(vec_measureSubprog.begin(), vec_measureSubprog.begin(), ren_type);
+  Vec_MeasureSubprog::iterator pc_subprog = STL_NAMESPACE::find(vec_measureSubprog.begin(), vec_measureSubprog.begin(), ren_type);
   if (pc_subprog != vec_measureSubprog.end())
   { // subprog with same type found -> update val
     pc_subprog->setIncrement(ri32_increment);

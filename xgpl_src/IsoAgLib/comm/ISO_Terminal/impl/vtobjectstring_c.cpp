@@ -46,37 +46,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
@@ -92,7 +92,7 @@ namespace __IsoAgLib {
 //! @param mspData:
 //! @param bytes:
 void
-vtObjectString_c::setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes)
+vtObjectStringStreamer_c::setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes)
 { // ~X2C
   uint8_t bytesDone=0;
   if (streamPosition == 0) {
@@ -118,7 +118,7 @@ vtObjectString_c::setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspData, uin
 
 // //////////////////////////////// +X2C Operation 249 : resetDataNextStreamPart
 void
-vtObjectString_c::resetDataNextStreamPart()
+vtObjectStringStreamer_c::resetDataNextStreamPart()
 { // ~X2C
   streamPosition = 0;
 } // -X2C
@@ -126,7 +126,7 @@ vtObjectString_c::resetDataNextStreamPart()
 
 // //////////////////////////////// +X2C Operation 254 : saveDataNextStreamPart
 void
-vtObjectString_c::saveDataNextStreamPart()
+vtObjectStringStreamer_c::saveDataNextStreamPart()
 { // ~X2C
   streamPositionStored = streamPosition;
 } // -X2C
@@ -134,16 +134,28 @@ vtObjectString_c::saveDataNextStreamPart()
 
 // //////////////////////////////// +X2C Operation 255 : restoreDataNextStreamPart
 void
-vtObjectString_c::restoreDataNextStreamPart()
+vtObjectStringStreamer_c::restoreDataNextStreamPart()
 { // ~X2C
   streamPosition = streamPositionStored;
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 267 : getStreamSize
 uint32_t
-vtObjectString_c::getStreamSize()
+vtObjectStringStreamer_c::getStreamSize()
 { // ~X2C
   return 5+ui16_strLenToSend;
 } // -X2C
+
+void vtObjectString_c::setStringToStream( const char* rpc_stringToStream )
+{
+	c_streamer.setStringToStream( rpc_stringToStream );
+	// additionally set the ID
+	c_streamer.setID( getID() );
+}
+void vtObjectString_c::setStrLenToSend( uint16_t rui16_strLenToSend )
+{
+	c_streamer.setStrLenToSend( rui16_strLenToSend );
+}
+
 
 } // end namespace __IsoAgLib

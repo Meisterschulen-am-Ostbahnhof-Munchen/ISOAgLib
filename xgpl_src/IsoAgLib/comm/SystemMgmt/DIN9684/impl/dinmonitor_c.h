@@ -113,7 +113,8 @@ namespace IsoAgLib { class iDINMonitor_c;}
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class DINMonitor_c;
-typedef SINGLETON(DINMonitor_c) SingletonDINMonitor_c;
+typedef SINGLETON_DERIVED(DINMonitor_c,ElementBase_c) SingletonDINMonitor_c;
+
 /**
   this object manages a monitor list of all
   members including inserting and administration of local own members.
@@ -126,32 +127,28 @@ typedef SINGLETON(DINMonitor_c) SingletonDINMonitor_c;
   @see ServiceMonitor
   @author Dipl.-Inform. Achim Spangler
 */
-class DINMonitor_c
-: public ElementBase_c,
-  public CANCustomer_c,
-  public SingletonDINMonitor_c,
-  public AdrVectTrusted_c
+class DINMonitor_c : public SingletonDINMonitor_c
 {
 private:
   #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
 		#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-		typedef std::slist<DINStopManager_c,std::__malloc_alloc_template<0> > ArrStop;
-		typedef std::slist<DINStopManager_c,std::__malloc_alloc_template<0> >::iterator ArrStopIterator;
+		typedef STL_NAMESPACE::slist<DINStopManager_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrStop;
+		typedef STL_NAMESPACE::slist<DINStopManager_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator ArrStopIterator;
 		#else
-		typedef std::slist<DINStopManager_c> ArrStop;
-		typedef std::slist<DINStopManager_c>::iterator ArrStopIterator;
+		typedef STL_NAMESPACE::slist<DINStopManager_c> ArrStop;
+		typedef STL_NAMESPACE::slist<DINStopManager_c>::iterator ArrStopIterator;
 		#endif
 	#endif
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef std::slist<DINItem_c,std::__malloc_alloc_template<0> > Vec_Member;
+  typedef STL_NAMESPACE::slist<DINItem_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_Member;
 	#else
-  typedef std::slist<DINItem_c> Vec_Member;
+  typedef STL_NAMESPACE::slist<DINItem_c> Vec_Member;
 	#endif
 protected:
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef std::slist<DINItem_c,std::__malloc_alloc_template<0> >::iterator Vec_MemberIterator;
+  typedef STL_NAMESPACE::slist<DINItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_MemberIterator;
 	#else
-  typedef std::slist<DINItem_c>::iterator Vec_MemberIterator;
+  typedef STL_NAMESPACE::slist<DINItem_c>::iterator Vec_MemberIterator;
 	#endif
 
 public:
@@ -176,7 +173,33 @@ public:
   /** default destructor which has nothing to do */
   virtual ~DINMonitor_c() { close();};
 
+   /**
+     delivers value of the trusted adrvect
+     (this function is mainly called of internal identities,
+      which should use the trusted version)
+      @return value of the trusted adress vector as uint16
+   */
+   uint16_t adrvect() const {return c_adrVectTrusted.adrvect();};
+   /**
+     search for the first adress which is free in the untrusted version,
+     reserve it in both adress vector versions and answer the free value
+     @return free adress number (0xFF means nothing free)
+   */
+   inline uint8_t reserveFreeAdress() { return c_adrVectTrusted.reserveFreeAdress();};
+   /**
+     check if one special adress is free in the trusted vector
+     @param rui8_nr adress number to check for free state in trusted vector
+     @return true -> number is free in trusted vector
+   */
+   bool isAdrUsedTrusted(uint8_t rui8_nr) const {return c_adrVectTrusted.isAdrUsedTrusted(rui8_nr);};
   /**
+    clear an adress for trusted and public
+    @param rui8_nr adress number to clear in both vector versions
+    @return true -> adress was used and was cleared with this method call
+  */
+  bool clearUsedAdr(uint8_t rui8_nr) { return c_adrVectTrusted.clearUsedAdr(rui8_nr);};
+
+	/**
     sends system message, which requests all active
     members to send their names (send own name too, as protocol demands)
 
@@ -452,7 +475,7 @@ public:
   /*\@}*/
 #endif
 private:
-  friend class SINGLETON(DINMonitor_c);
+  friend class SINGLETON_DERIVED(DINMonitor_c,ElementBase_c);
   friend class IsoAgLib::iDINMonitor_c;
   /**
     HIDDEN constructor for a DINMonitor_c object instance which can optional
@@ -504,6 +527,8 @@ private: // Private attributes
   /** system global state */
   bool b_globalSystemState;
   #endif
+	/** ADRBELVECT for DIN cmds */
+	AdrVectTrusted_c c_adrVectTrusted;
   /** temp data where received and to be sent data is put */
   DINSystemPkg_c c_data;
   /** temporary memberItem instance for better inserting of new elements */

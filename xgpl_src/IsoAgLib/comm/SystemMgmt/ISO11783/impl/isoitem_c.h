@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef ISO_ITEM_H
@@ -104,7 +104,7 @@ namespace __IsoAgLib {
   @see MonitorItem
   @see ISOName
 */
-class ISOItem_c : public MonitorItem_c, public ISOName_c  {
+class ISOItem_c : public MonitorItem_c  {
 private:
   // private typedef alias names
 public:
@@ -174,6 +174,114 @@ public:
   ~ISOItem_c();
 
   /**
+    deliver the data NAME string as pointer to 8byte string
+    @return const pointer to 8 uint8_t string with NAME
+  */
+  const uint8_t* outputString() const {return c_isoName.outputString();};
+
+  /**
+    get self config mode
+    @return self configuration adress state
+  */
+  uint8_t selfConf() const {return c_isoName.selfConf();};
+  /**
+    get industry group code
+    @return industry group of device
+  */
+  uint8_t indGroup() const {return c_isoName.indGroup();};
+  /**
+    get device class instance number
+    @return:device class instance number
+  */
+  uint8_t devClassInst() const {return c_isoName.devClassInst();};
+  /**
+    get device class code
+    @return:device class
+  */
+  uint8_t devClass() const {return c_isoName.devClass();};
+  /**
+    get function code
+    @return function code
+  */
+  uint8_t func() const {return c_isoName.func();};
+  /**
+    get function instance code
+    @return function instance code
+  */
+  uint8_t funcInst() const {return c_isoName.funcInst();};
+  /**
+    get ECU instance code
+    @return ECU instance code
+  */
+  uint8_t ecuInst() const {return c_isoName.ecuInst();};
+  /**
+    get manufactor code
+    @return manufactor code
+  */
+  uint16_t manufCode() const {return c_isoName.manufCode();};
+
+  /**
+    get serial number
+    @return serial number
+  */
+  uint32_t serNo() const {return c_isoName.serNo();};
+  /**
+    set the NAME data from 8 uint8_t string
+    @param rpb_src pointer to 8byte source string
+  */
+  void inputString(const uint8_t* rpb_src) {c_isoName.inputString(rpb_src);};
+
+  /**
+    set self config mode
+    @param rb_selfConf true -> indicate sefl configuring ECU
+  */
+  void setSelfConf(bool rb_selfConf) {c_isoName.setSelfConf(rb_selfConf);};
+  /**
+    set industry group code
+    @param rui8_indGroup industry group of device (2 for agriculture)
+  */
+  void setIndGroup(uint8_t rui8_indGroup) {c_isoName.setIndGroup(rui8_indGroup);};
+  /**
+    set device class instance number
+    @param rb_devClassInst instance number of ECU with same devClass
+          in the network (comparable to POS in DIN9684)
+  */
+  void setDevClassInst(uint8_t rb_devClassInst) {c_isoName.setDevClassInst(rb_devClassInst);};
+  /**
+    set device class code
+    @param rb_devClass device class of ECU (equivalent to GETY in DIN)
+  */
+  void setDevClass(uint8_t rb_devClass) {c_isoName.setDevClass(rb_devClass);};
+  /**
+    set function code
+    @param rb_func function of the ECU (usual 25 for network interconnect)
+  */
+  void setFunc(uint8_t rb_func) {c_isoName.setFunc(rb_func);};
+  /**
+    set function instance code
+    @param rb_funcInst instance number of ECU with same function and device class
+        (default 0 - normally)
+  */
+  void setFuncInst(uint8_t rb_funcInst) {c_isoName.setFuncInst(rb_funcInst);};
+  /**
+    set ECU instance code
+    @param rb_funcInst instance number of ECU with same function, device class and function instance
+        (default 0 - normally)
+  */
+  void setEcuInst(uint8_t rb_ecuInst) {c_isoName.setEcuInst(rb_ecuInst);};
+  /**
+    set manufactor code
+    @param rui16_manufCode code of manufactor (11bit)
+  */
+  void setManufCode(uint16_t rui16_manufCode) {c_isoName.setManufCode(rui16_manufCode);};
+
+  /**
+    set serial number (Identity Number)
+    @param rui32_serNo serial no of specific device (21bit)
+  */
+  void setSerNo(uint32_t rui32_serNo) {c_isoName.setSerNo(rui32_serNo);};
+
+	/**
     set all element data with one call
     @param ri32_time creation time of this item instance
     @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
@@ -229,7 +337,7 @@ public:
     @param rc_gtp GETY_POS
   */
   void setGtp(GetyPos_c rc_gtp)
-  {MonitorItem_c::setGtp(rc_gtp); ISOName_c::setGtp(rc_gtp);};
+  {MonitorItem_c::setGtp(rc_gtp); c_isoName.setGtp(rc_gtp);};
   /**
     deliver GETY_POS code of this item
     @return GETY_POS
@@ -301,6 +409,9 @@ private: // private methods
   uint8_t calc_randomWait();
 
 private:
+	/** ISO Name field 64 Bit */
+	ISOName_c c_isoName;
+
   /** EEPROM adress to store actual SA to use for next run */
   uint16_t ui16_saEepromAdr;
 
@@ -315,7 +426,7 @@ private:
 
   bool b_oldVtState;
 #endif
-  
+
 protected:
   bool wsClaimedAddress;
 };

@@ -360,7 +360,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -375,7 +375,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -744,7 +744,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -759,7 +759,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -1128,7 +1128,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1143,7 +1143,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -1512,7 +1512,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1527,7 +1527,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -1896,7 +1896,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1911,7 +1911,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -2280,7 +2280,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -2295,7 +2295,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -2664,7 +2664,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -2679,7 +2679,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -3048,7 +3048,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -3063,7 +3063,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -3432,7 +3432,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -3447,7 +3447,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -3816,7 +3816,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -3831,7 +3831,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -4200,7 +4200,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -4215,7 +4215,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -4584,7 +4584,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -4599,7 +4599,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -4968,7 +4968,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -4983,7 +4983,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -5352,7 +5352,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -5367,7 +5367,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -5736,7 +5736,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -5751,7 +5751,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -6120,7 +6120,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -6135,7 +6135,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -6504,7 +6504,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development"
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -6519,7 +6519,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development"
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -6742,6 +6742,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -6865,6 +6866,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -6988,6 +6990,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7114,6 +7117,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7240,6 +7244,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7366,6 +7371,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7492,6 +7498,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7618,6 +7625,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7744,6 +7752,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7870,6 +7879,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -7996,6 +8006,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8122,6 +8133,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8248,6 +8260,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8374,6 +8387,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8500,6 +8514,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8626,6 +8641,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -8752,6 +8768,7 @@ PROC_LOCAL_SIMPLE_SETPOINT=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp

@@ -207,7 +207,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& rrefc_src )
   // the distance operator needs a const_iterator
   Vec_SetpointRegister::const_iterator pc_iter = rrefc_src.pc_registerCache;
   pc_registerCache = vec_register.begin();
-  std::advance( pc_registerCache, std::distance( rrefc_src.vec_register.begin(), pc_iter));
+  STL_NAMESPACE::advance( pc_registerCache, STL_NAMESPACE::distance( rrefc_src.vec_register.begin(), pc_iter));
 
   // copy master element vars
   for (pc_master = vec_register.begin(); pc_master != vec_register.end();pc_master++)

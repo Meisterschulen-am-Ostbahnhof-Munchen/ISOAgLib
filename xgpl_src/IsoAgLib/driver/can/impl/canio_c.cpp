@@ -132,9 +132,9 @@ namespace __IsoAgLib {
   -> by BUS Nr parameter in interrupt function,
      the appropriate dynamic MsgObj_c array can be found */
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-std::slist<MsgObj_c,std::__malloc_alloc_template<0> >* irqMsgObjVec[CAN_BUS_CNT];
+STL_NAMESPACE::slist<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> >* irqMsgObjVec[CAN_BUS_CNT];
 #else
-std::slist<MsgObj_c>* irqMsgObjVec[CAN_BUS_CNT];
+STL_NAMESPACE::slist<MsgObj_c>* irqMsgObjVec[CAN_BUS_CNT];
 #endif
 
 uint8_t b_irqCanReceiveOffset[CAN_BUS_CNT];

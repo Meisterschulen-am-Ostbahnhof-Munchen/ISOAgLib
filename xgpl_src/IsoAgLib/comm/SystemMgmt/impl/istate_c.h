@@ -50,52 +50,53 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef ISTATE_H
 #define ISTATE_H
 
 #include <IsoAgLib/typedef.h>
+#include <IsoAgLib/util/impl/singleton.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-/** 
+/**
   object which manages state of item in monitor list
   @author Dipl.-Inform. Achim Spangler
 */
-class IState_c {
+class IState_c : public ClientBase {
 public:
   /* *************************************** */
   /* ************* typedefs **************** */
@@ -113,48 +114,48 @@ public:
          CausedConflict = 0x200, AffectedConflict = 0x400,
          Error = 0x800, Member = 0x1000, Service = 0x2000, Local = 0x4000
   };
-  
+
   /**
-    enum for function parameters selcting Single Member type or type order; 
+    enum for function parameters selcting Single Member type or type order;
     the bits are so defined, that (protoOrder_t & itemState_t & 0x3) != 0
     only if an IState_c itemState and a searched proto protoOrder_t
     are fIffing for at least one protocol type
   */
   enum protoOrder_t { DinOnly = 0x1, IsoOnly = 0x2, DinIso = 0x13, IsoDin = 0x23 };
-  
+
   /**
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default Active value)
   */
-  IState_c(itemState_t ren_itemState = Active);
+  IState_c(itemState_t ren_itemState = Active, int ri_singletonVecKey = 0);
   /**
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default <empty> value)
   */
-  IState_c(uint8_t rb_state);
-  
+  IState_c(uint8_t rb_state, int ri_singletonVecKey = 0);
+
   /**
-    copy constructor for IState_c 
+    copy constructor for IState_c
     @param rrefc_src source for this new instance
   */
   IState_c(const IState_c& rrefc_src);
-  
+
   /**
     set the state of an monitor list item and
     return the resulting state value
 
     set state to Active, and reset Off and Standby on
     Active, PreAddressClaim, AddressClaim, ClaimedAddress, FalseAlive;
-    
+
     set: PreAddressClaim, AddressClaim and ClaimedAddress exclusive
-    
+
     set: Off, Standby, Active exclusive
     @param ren_itemState state information
     @param rb_clearOld optional clear old value for complete new set (default no clear)
     @return resulting state information
   */
   itemState_t setItemState(itemState_t ren_itemState, bool rb_clearOld = false);
-  
+
   /**
     check if specific state is exactly set
     @param ren_itemState state information to check
@@ -162,14 +163,14 @@ public:
   */
   bool itemState(itemState_t ren_itemState) const
     {return ((en_itemState & ren_itemState) == ren_itemState)?true:false;};
-    
+
   /**
     deliver the state information
     @return state information of type itemState_t (with state informations coded by OR in enum)
   */
   const itemState_t itemState() const
     {return en_itemState;};
-    
+
   /**
     clear whole state or some specific flags
     @param ren_itemState optional flags to clear (default clear all)
@@ -190,7 +191,7 @@ private:
 
 };
 
-/** 
+/**
   extended state managing object, which stores additional information for Members
   @author Dipl.-Inform. Achim Spangler
 */
@@ -198,21 +199,21 @@ class IStateExt_c : public IState_c {
 public:
   /** enum type for special command arguments */
   enum specialParameter_t { Request = -1, Incr = -2, Decr = -3};
-  
+
   /**
     constructor of IStateExt_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default Off value)
   */
-  IStateExt_c(itemState_t ren_itemState = Off);
+  IStateExt_c(itemState_t ren_itemState = Off, int ri_singletonVecKey = 0);
 
   /**
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default <empty> value)
   */
-  IStateExt_c(uint8_t rb_state);
+  IStateExt_c(uint8_t rb_state, int ri_singletonVecKey = 0);
 
   /**
-    copy constructor for IState_c 
+    copy constructor for IState_c
     @param rrefc_src source for this new instance
   */
   IStateExt_c(const IStateExt_c& rrefc_src);
@@ -223,20 +224,20 @@ public:
     @return actual or resulting AddressClaim cnt
   */
   uint8_t addressClaimCnt(int8_t rc_cnt = Request);
-  
+
   /**
-    retreive the counter of false alive msgs 
+    retreive the counter of false alive msgs
     @return actual false alive cnt
   */
   uint8_t falseAliveCnt() const {return counter.b_falseAliveCnt;};
-  
+
   /**
     set the counter of false alive msgs
     @param rc_cnt new false alive counter  (default only Request)
     @return actual or resulting false alive cnt
   */
   uint8_t falseAliveCnt(int8_t rc_cnt);
-  
+
   /**
     retreive the counter of caused conflicts
     @return actual count of caused conflict
@@ -249,7 +250,7 @@ public:
     @return actual or resulting false alive cnt
   */
   uint8_t causedConflictCnt(int8_t rc_cnt, int32_t ri32_time = -1);
-  
+
   /**
     retreive the counter of Affected conflicts
     @return actual count of Affected conflict
@@ -262,7 +263,7 @@ public:
     @return actual or resulting false alive cnt
   */
   uint8_t affectedConflictCnt(int8_t rc_cnt, int32_t ri32_time = -1);
-  
+
 private:
   /** last timestamp (in seconds) of caused conflict */
   int16_t i16_lastCausedConflictTime;

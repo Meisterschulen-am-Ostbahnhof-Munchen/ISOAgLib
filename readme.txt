@@ -21,7 +21,7 @@
 \ref IndexIsoVtExtension<br>
 \ref IndexFirstWin32Users<br>
 \ref IndexAuthors<br>
-\ref IndexMaintainingCompany<br>
+\ref IndexMaintainers<br>
 \ref IndexSupport<br>
 \ref IndexTodo<br>
 \ref IndexUsingProjects<br>
@@ -64,10 +64,11 @@ Please have a close look at all HOWTO chapters which are presented in the naviga
 		- Nr. 0 for simple applications which demonstrate management of ECU as device node at the network
 		- Nr. 1 for simple applications which demonstrate usage of base data like tractor speed and distance
 		- Nr. 2 for several levels of applications which demonstrate use of process data value exchange ( measurement data for monitoring and setpoint setting for control )
-		- Nr. 3 for two examples of terminal handling: LBS+ style and virtual terminal style
+		- Nr. 3 for two examples of terminal handling: <b>ISO 11783 virtual terminal</b> and LBS+ style
 	- check for modules which you should download to get the features you want at \ref HowtoDownload
 	- check for pointers at documentation overview pages of the core features of ISO<i><sub>AgLib</sub></i> at \ref HowtoLearnIsoAgLib
 	- check for installation instructions of vt2iso , a tool to convert XML mask definition to ROM-eable constant variable definition modules at \ref InstallIsoToolVt2Iso
+		( <b>you don't have to compile it at Win32, as an EXE is also part of the archive</b> )
 	- check for instructions to create IDE project files for applications at \ref HowtoCreateProjectFiles ( the presented shell script does the very important and
 		rather complicated job of selecting the needed source files for the wanted features of ISO<i><sub>AgLib</sub></i> )
 
@@ -106,8 +107,12 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		differences are handled by the driver )
 	- <b>2004-12-03:</b> Finish heavy optimization of HEAP usage and optional exact documentation of HEAP usage during runtime via RS232, so that really needed HEAPSIZE can be derived
 		( reduction of HEAPSIZE dependend on application can vary between 4 KByte and 10 KByte )
-	- <b>2004-12-06:</b> Enable and test Win32 multithreading in Sontheim CAN driver ( as not Vector-Informatik CAN cards accessible, this can't be tested -> so multithreading is only active
+	- <b>2004-12-06:</b> Enable and test Win32 multithreading in Sontheim CAN driver ( as no Vector-Informatik CAN cards accessible for the author, this can't be tested -> so multithreading is only active
 			as default for Sontheim )
+	- <b>2004-12-09:</b> As some so called "Extended EC++" compilers like IAR don't support multiple inheritance and additionally place their individual tailored version of STL
+		<b>not</b> in the ANSI C++ conformant namespave <b>std</b> the ISO<i><sub>AgLib</sub></i> was changed to <b>not use any multiple inheritance</b> and is now
+		<b>flexible to retrieve STL elements from the namespace STL_NAMESPACE, which can be defined individual for each compiler in the header <i>compiler_adoption.h</i></b><br>
+		Therefore the ISO<i><sub>AgLib</sub></i> is now usable for all compilers which use this "Extended EC++"
 
 
 \subsection IndexOldNews News before 1.0.0 release
@@ -235,9 +240,9 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		- either all CAN channels of real CAN cards can be counted
 		- or just the CAN channels of the special virtual CAN device can be counted ( if no real CAN card is connected )
 	- add driver for <b>Sontheim CAN cards</b> ( tested only with CANLPT, but in theory designed according general API documentation, as all card
-		differences are handled by the driver, <b>extract the files from the Sontheim API ZIP in the directory <i>C:\Development\Sontheim</i> if you want to
+		differences are handled by the driver, <b>extract the files from the Sontheim API ZIP in the directory <i>C:\\Development\\Sontheim</i> if you want to
 		use the tutorial project files without changes</b> )
-	- adopted the check for new messages in CAN CARD to RTE style
+	- adopted the check for new messages in Win32 CAN cards to RTE style
 	- added basic language handling and AUX functions handling into ISO Terminal
 	- added <b>ISO 11783 Virtual Terminal</b> connection management, so that the pool is automatically
 		reloaded on reconnection ( changed terminal properties are regarded )
@@ -247,11 +252,11 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		so please try HTTPS access in case you have problems with accessing the repository, before you contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 	- some cleanup of workarounds which are needed due to Tasking compiler faults - the STL of versions up to 7.56 have wrong includes
 		( see file "include.cpp/algorithm" which includes "include.cpp/stl_algobase.h" which includes "string.h" into global namespace;
-		  a C++ system header shall include C-Library functions into the "std::" namespace -> it should include <string> instead;
+		  a C++ system header shall include C-Library functions into the "std::" namespace -> it should include <cstring> instead;
 			other compilers do this correct )
 	- introduce config setting for project config to select HEAP allocation strategy:
 		- either allocate chunks of items ( for Tasking: 40 items per chunk ) to avoid HEAP defragmentation and to avoid memory allocation runtime as long as no new chunk is
-			needed, which doesn't happen for most use cases, as the chunk size is pretty big in relation to the awaited numbers of mostly smaller than 10
+			needed, which doesn't happen for most use cases, as the chunk size is pretty big in relation to the awaited numbers of mostly smaller than 10 items
 		- or directly call malloc on each item creation, which causes greater overhead per item ( linkage of all malloced blocks in HEAP, whereas the chunks have a
 			pretty efficient organization structure ) and which can cause longer malloc execution time on each item creation ( can be important, if large amount
 			of monitor list entries, several measurement programs, setpoints occure, or if CAN filter setting must be reconfigured due to configuration change )
@@ -259,13 +264,13 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- avoid allocation of HEAP for elements of temporal ManageMeasureProgLocal_c instances ( create default MeasureProgLocal_c instances on first real access )
 	- optimize HEAP memory item size debug messages, so that real HEAP usage is reflected ( including overhead due to memory block linking in HEAP )<br>
 			Thanks to the help of Tasking support ( information on simple integration of _malloc.c into EDE projects )
-	- change update_makefile.sh shell script to avoid calls to <b>perl</b> functions, as these are only part of standard LINUX systems, and are <b>not</b>
+	- change <b>update_makefile.sh</b> shell script to avoid calls to <b>perl</b> functions, as these are only part of standard LINUX systems, and are <b>not</b>
 		part of <b>MSYS</b> system ; additionally replace UNIX style directory seperation from slash to backslash for Win32 compilers and use Windows stly newline
 	- change device types and CAN channels of tutorial examples, so that e.g. 1_0_ReadIso.cpp and 1_2_WriteIso.cpp can interact ( <b>a)</b> different device types
 		for both ECUs and <b>b)</b> different CAN channels so that two channels of one PC CAN card can be connected )
 	- unify number intervals of CAN HAL for BUS and MsgObj numbers to start with <b>0</b> for each type of HAL ( avoid HAL dependend offset constants ).
-	- change default path for Win32 CAN card manufacturer driver library files ( API DLLs and Headers ) to "C:\Development" so that all users can install their
-		driver files to the corresponding location, if they want to avoid changing all default VC++ project files ( if pathes like "C:\Development\CANLIB" are still
+	- change default path for Win32 CAN card manufacturer driver library files ( API DLLs and Headers ) to "C:\\Development" so that all users can install their
+		driver files to the corresponding location, if they want to avoid changing all default VC++ project files ( if pathes like "C:\\Development\\CANLIB" are still
 		not acceptable, update_makefile.sh can be used to create VC++ DSP files based on adopted conf_x_y project feature setup files )
 
 
@@ -301,13 +306,13 @@ memory as possible. Thus the current ISO<i><sub>AgLib</sub></i> uses HEAP only f
 		( <b> ISO<i><sub>AgLib</sub></i> enables the presentation of more than one node at the BUS</b> )
 	- vector of <b>pointers</b> to forward CAN data processing to process data instances, which are located somewhere in the application scope
 		with a STL vector<T> with as much pointers as variables are used ( you can reserve enough space at system start,
-		to avoid reallocation of the internal array )<br>
-		this HEAP usage takes only place, if process data are used
+		to avoid reallocation of the internal array );<br>
+		<b>this HEAP usage takes only place, if process data are used</b>
 	- lists of measurement programs per local process data ( only for  ProcDataLocal_c or ProcDataLocalSimpleSetpoint_c instances )
 	- lists for automatic CAN filter management
 	- list of entries in monitor lists ( ISOItem_c, DINItem_c , DINServiceItem - each type only if the corresponding protocol is used )
 	- vector for global lookup of sensor or actor I/O instances with one <b>pointer</b> per instance ( <b> only present if the corresponding I/O feaure is used </b> )
-	- list for synchronisation data for LBS+ Terminal Mask Upload ( <b>only needed if DIN 9684 with LBS+ Terminal is used</b> )
+	- list for synchronisation data of LBS+ Terminal Mask Upload ( <b>only needed if DIN 9684 with LBS+ Terminal is used</b> )
 
 \subsection IndexHeapDerive Derive Needed HEAPSIZE
 The HEAP allocation strategy results in the need of <b>11 KByte</b> HEAPSIZE for the complete <b>MiniVeg N</b> system, which provides
@@ -315,7 +320,7 @@ The HEAP allocation strategy results in the need of <b>11 KByte</b> HEAPSIZE for
 terminal types and is able to directly control fertilizer spreaders which are accessible by process data.<br>
 <b>===>></b> Probability for need of more than 20 - 30 KByte is really low for other production systems<br>
 
-ISO<i><sub>AgLib</sub></i> provides some debugging methods to collect information on needed HEAPSIZE for the monitored runtime conditions:
+ISO<i><sub>AgLib</sub></i> provides some debugging #define settings to collect information on needed HEAPSIZE for the monitored runtime conditions:
 	- <b>DEBUG_HEAP_USEAGE</b> causes output of used HEAP amount for each change of HEAP-placed items ( see above for information on items which are placed at HEAP )
 		on RS232 ( please activate RS232 output in project settings for your project )<br>
 		-->> direct derive of needed HEAPSIZE, if appropriate worst case load conditions are tested
@@ -342,7 +347,7 @@ The <b>S</b>tandard <b>T</b>emplate <b>L</b>ibrary ( STL ) default allocation st
 		- typical ISO<i><sub>AgLib</sub></i> applications will use less than 10 instances of the corresponding data types, so that each chunk will be used just for a low
 			percentage ( STL uses one chunk per data type like monitor list item; several lists, which hold same data type as node can share space of one chunk )
 
-Thus the ISO<i><sub>AgLib</sub></i> prints always the following size information:
+Thus the ISO<i><sub>AgLib</sub></i> prints always the following size information ( if DEBUG_HEAP_USEAGE is defined ):
 	- HEAP memory size for malloc_alloc STL allocation handler ( set "OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=1" in project feature setup file )
 	- HEAP memory size for default chunk allocation strategy of STL ( <b>default</b> value "OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0" in project feature setup file )
 
@@ -371,11 +376,11 @@ The following table present some exact numbers for the needed HEAP memory, so th
 
 <tr><td>DIN LBS+ Mask Synchronisation data</td><td>13 x 66 -> 858</td><td>2320</td><td>1462</td><td>Only if a LBS+ mask project shall be used.</td></tr>
 <tr><td>ISO Buffer of SendCommand_c</td><td> (only chunk allocation) </td><td>1284 ( chunk of 80 commands )</td><td>--</td><td>For buffer of SendCommand_c the malloc alloc is for most conditions not more efficient in HEAP use.</td></tr>
-<tr><td>ISO Buffer of SendUpload_c</td><td>2 x 32 -> 64</td><td>888</td><td>824</td><td>For buffer of SendCommand_c the malloc alloc is for most conditions not more efficient in HEAP use.</td></tr>
+<tr><td>ISO Buffer of SendUpload_c</td><td>2 x 32 -> 64</td><td>888</td><td>824</td><td>For buffer of SendUpload_c the malloc alloc is for most conditions more efficient in HEAP use.</td></tr>
 
-<tr><td><b>SUM DIN 9684</b></td><td>3322</td><td>10736</td><td>7414</td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
+<tr><td><b>SUM DIN 9684</b></td><td><b>3322</b></td><td><b>10736</b></td><td><b>7414</b></td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
 
-<tr><td><b>SUM ISO 11783</b></td><td>3912</td><td>10996</td><td>7084</td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
+<tr><td><b>SUM ISO 11783</b></td><td><b>3912</b></td><td><b>10996</b></td><td><b>7084</b></td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
 </table>
 
 <b>IMPORTANT:<br>
@@ -412,7 +417,37 @@ Thus you should set the BIOS/OS internal buffer to approximate <b>7 KByte</b> fo
 The greatest part of the ISO<i><sub>AgLib</sub></i> components is created as static variables in RAM,
 so that the linker/locator can place everyting at fixed addresses, so that no memory lookup must be performed
 during firmware execution.<br>
+The following table shows the needed RAM without any HEAP, user or system stack and internal BIOS/OS buffer.
+Additionally the approximate 5 KByte which are used by the STW BIOS ( tested with the Demo1_20 ) are subtracted, to show the
+real needed RAM amount by an ISO<i><sub>AgLib</sub></i> application. Please add the appropriate amount of RAM for the subtracted
+memory types for your individual project estimation.<br>
+<b>Important:</b><br>
+All values are are retrieved from LARGE memory modell project, which is compiled with Tasking EDE 7.56.<br>
+The real values might differ to some degree, as only the MAP file of the complete project was analysed. So if anybody has more exact measures, then please send them
+for integration.
 
+<table>
+<tr><td><b>Tutorial Example</b></td> <td><b>RAM usage ISO<i><sub>AgLib</sub></i> and application ( KByte )</b></td> </tr>
+<tr><td>0_0_AddressClaimIso</td> <td>6</td> </tr>
+<tr><td>3_0_VirtualTerminalIso</td> <td>12</td> </tr>
+</table>
+
+
+\subsection IndexRom Flash ROM
+The following table shows the needed ROM without the program ROM amount, which is used by the STW BIOS ( tested with the Demo1_20 -> 50 KByte ).
+As the virtual terminal example 3_0_VirtualTerminalIso contains two bitmaps, its memory size is presented in additional column.<br>
+The 3_0_VirtualTerminalIso contains several mask objects, defines some handlers and imeplements one main mask and one alarm mask. Thus the size of the
+total project is caused by the mask elements to some degree.
+<b>Important:</b><br>
+All values are are retrieved from LARGE memory modell project, which is compiled with Tasking EDE 7.56.<br>
+The real values might differ to some degree, as only the MAP file of the complete project was analysed. So if anybody has more exact measures, then please send them
+for integration.
+
+<table>
+<tr><td><b>Tutorial Example</b></td> <td><b>ROM usage ISO<i><sub>AgLib</sub></i> and application ( KByte )</b></td> <td><b>ROM usage Bitmaps ( KByte )</b></td> </tr>
+<tr><td>0_0_AddressClaimIso</td>     <td>89</td>                                                             <td>--</td></tr>
+<tr><td>3_0_VirtualTerminalIso</td>  <td>180</td>                                                            <td> 3</td></tr>
+</table>
 
 
 \section IndexStructuralOverview Structural Overview
@@ -647,112 +682,12 @@ first users like <b>Brad Cox</b> started to try ISO<i><sub>AgLib</sub></i> in co
 			the complete framework
 	- Virtual Terminal Expert: <a href="mailto:M.Wodok@osb-ag:de">Martin Wodok</a> implemented
 			the tool <b>vt2iso</b> and the virtual terminal handling
-	- Pioneer Win32 User and <b>First External Contributor</b>: <a href="mailto:Brad.Cox@agcocorp.com">Brad Cox</a> who helped to find several optimization needs for documentation,
+	- Pioneer Win32 User and <b>First External Contributor</b>: <a href="mailto:Brad.Cox@agcocorp:com">Brad Cox</a> who helped to find several optimization needs for documentation,
 			tutorial and project generation support. The resulting documentation helped him finally to implement all missing VT Object types, which
 			weren't needed for the MiniVeg project. He is already using ISO<i><sub>AgLib</sub></i> for some interesting test applications, and
 			contributed all missing VT Objects, so that ISO<i><sub>AgLib</sub></i> imeplements also VT Objects like Macro and AuxiliaryInput.
 			Some other extension from him are moveChildLocation and setOriginSKM functions for VT Objects, where appropriate.
 			Last but not least, he started with us to integrate multi language support.
-
-
-\section IndexMaintainingCompany Some information on the maintaining company OSB AG
-The ISO<i><sub>AgLib</sub></i> was initially created by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> who is now
-working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
-already about 60 engineers working in the three locations Munich, Stuttgart and Krefeld ( all in Germany; <b>state November 2004</b> ).<br>
-The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
-Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
-	- AOA
-	- Avery Dennison
-	- EMAG
-	- FIDUCIA IT
-	- Fritzmeier
-	- Infineon
-	- MTU
-	- Porsche
-	- Siemens
-	- ThyssenKrupp
-	- Valeo
-
-The ISO<i><sub>AgLib</sub></i> will be actively maintained by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
-as long as the invested time is affordable in relation to corresponding projects and support contracts.<br>
-Even in case the active maintenance by <a href="http://www.osb-ag.de">OSB AG</a> might be stopped some day, the GPL license and
-the independend website at the
-<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
-assure that any interested party can step in and continue the maintenance of the project. This guarantees, like in other Open Source projects, the
-open access for every user. <br>
-Also, in case the major part of the user community is unsatisfied with the maintenance by <a href="http://www.osb-ag.de">OSB AG</a>, it is
-normal for Open Source projects like ISO<i><sub>AgLib</sub></i> to fork the project as a last resort, if <a href="http://www.osb-ag.de">OSB AG</a>
-can't or doesn't want to change the style of maintenance as requested. As far as possible, <a href="http://www.osb-ag.de">OSB AG</a>
-will do everything to avoid such a fork.<br>
-A comparable fork was performed by users and developers of the X11R6 server project for UNIX style operating systems - <b>XFree86</b>.
-Caused by some licensing issues, a fork of the <a href="http://www.xfree86.org/">XFree86</a> was created by the <a href="http://freedesktop.org/XOrg">X.Org Foundation</a>,
-which also appreciated by several graphic card manufacturers, as they can integrate their drivers with the new management method in a better way.
-<br>
-&nbsp;<br>
-&nbsp;<br>
-<b>
-This way it is assured under all conditions, that the development time and money, which is invested in an application that uses the ISO<i><sub>AgLib</sub></i>
-can't be affected by the style and quality of future project maintenance.
-</b><br>
-
-\section IndexSupport Support Possibilities
-Even if the ISO<i><sub>AgLib</sub></i> provides very detailed documentation including several <b>HOWTO</b> chapters with
-important starting information, the learning afford to get a running tutorial example is not completly neglectible ( reading the documentation
-requires at least some time ). Additionally the <b>object oriented</b> development style might be new to most of the potential users.<br>
-
-\subsection IndexWorkshop Tutorial Workshops for Development with IsoAgLib
-<a href="http://www.osb-ag.de">OSB AG</a> can offer workshops in co-operation with
-<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
-where all members can learn:
-	- <b>XML</b> design and definition of <b>ISO 11783 Virtual Terminal</b> mask pools
-	- possibilities to create flexible mask definitions which can be automatically adopted by the ISO<i><sub>AgLib</sub></i> to the properties of the connected terminal:
-		- multi-language string handling
-		- scaling to screen size
-		- selection of available font size that is corresponding to the scaling factor of the complete layout
-		- colour depth selection during runtime, so that a unique global mask pool can be defined.
-	- integration of <b>IDE</b> of choice ( some project file format types are automatically supported )
-	- integration of <b>ISO 11783</b> communication with existing application code ( ways to define interface modules )
-	- integration of process data management to allow terminal independend control and monitoring access to an implement
-	- adoption to individual target platform ( creation of corresponding <b>H</b>ardware <b>A</b>bstraction <b>L</b>ayer - HAL )
-	- test of application with the <b>R</b>ealtime <b>T</b>est <b>E</b>nvironment ( RTE ), which is another also Open Source
-		project of <a href="http://www.osb-ag.de">OSB AG</a> for test of embedded applications ( not only useable for ISO 11783 networks )
-	- ...
-
-The exact topics of a tutorial workshop can be defined corresponding to the request of
-interested developers. These workshops can be performed at the
-<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
- location, or at any location of choice. <a href="http://www.osb-ag.de">OSB AG</a> can also offer closed workshops for the developers of one
-company.
-
-\subsection IndexHalAdoption Support for Adoption to Individual Target Platform
-Even if the adoption of the ISO<i><sub>AgLib</sub></i> to an individual target platform ( OS or BIOS ) is eased
-by the compact HAL definition, <a href="http://www.osb-ag.de">OSB AG</a> can offer support for this adoption or can perform the
-complete adoption. Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for details.
-
-\subsection IndexSupportContract Support Contract
-Like other Open Source projects, the maintainers can provide some free support, which is restricted by
-the spare free time of the developers and other experts in the user community. For commercial users, who need a predefined
-reaction time for each issue ( question or bug report ), might contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-for individual service contracts.
-
-\subsection IndexFeaturesOnRequest Integration of Requested Features
-As long as <a href="http://www.osb-ag.de">OSB AG</a> maintains the ISO<i><sub>AgLib</sub></i>, all received
-patches will be reviewed and merged into the reference version of the software. Additionally all feature
-extensions, which are needed for projects of <a href="http://www.osb-ag.de">OSB AG</a> will also be merged.<br>
-
-But as the ISO 11783 standard definition contains a lot of functions, which are not needed for the own
-projects of the ISO<i><sub>AgLib</sub></i> maintainers, <a href="http://www.osb-ag.de">OSB AG</a> can offer to
-develop them on request. This is also true for several enhancements of ISO Virtual Terminal mask definitions, which
-would enable a more capable and more flexible adoption to the features of the connected terminal. <br>
-Some examples:
-	- GUI tool to define the XML mask definition ( easier than edit of pure ASCII )
-	- individual rules for selection of bitmap version in relation to size and color depth of connected
-		terminal
-	- extension of the font size relative positioning to map different font sizes for different
-		language versions ( languages where all labels a longer than the corresponding strings in other
-		languages might need a smaller font size to allow placement on the common layout;
-		therefore font size dependend position alignment should be enhanced )
-	- language specific bitmaps ( especially if some text is displayed in the bitmap )
 
 
 
@@ -792,8 +727,9 @@ As the used license <i>GPL with exception</i> requires from each user to accompa
 ( or a work based on it - see GPL §3 ) with some information on the used library, it would be quite kind to
 inform additionally the authors of your project, so that each using project can be listed here.
 This list can also serve as a prominent place for showing all contributing ( by money and/or code ) users.<br>
+
 Last but not least, projects which use features like process data communication based on ISO<i><sub>AgLib</sub></i> will
-probably have less compatibility problems then in other combinations. This gets the more important, the more implements,
+probably have less compatibility problems than in other combinations. This gets the more important, the more implements,
 sensors, task controllers, core control units ( expert system ) and tractor builds more and more complex
 interaction networks with all sorts of dependencies. Here ISO<i><sub>AgLib</sub></i> can provide common patterns for the
 management of such interactions. This list can then help to identify well supported device combinations.<br>
@@ -827,6 +763,106 @@ management of such interactions. This list can then help to identify well suppor
 </tr>
 </table>
 
+The ISO<i><sub>AgLib</sub></i> will be actively maintained by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
+as long as the invested time is affordable in relation to corresponding projects and support contracts.<br>
+Even in case the active maintenance by <a href="http://www.osb-ag.de">OSB AG</a> might be stopped some day, the GPL license and
+the independend website at the
+<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
+assure that any interested party can step in and continue the maintenance of the project. This guarantees, like in other Open Source projects, the
+open access for every user. <br>
+Also, in case the major part of the user community is unsatisfied with the maintenance by <a href="http://www.osb-ag.de">OSB AG</a>, it is
+normal for Open Source projects like ISO<i><sub>AgLib</sub></i> to fork the project as a last resort, if <a href="http://www.osb-ag.de">OSB AG</a>
+can't or doesn't want to change the style of maintenance as requested. As far as possible, <a href="http://www.osb-ag.de">OSB AG</a>
+will do everything to avoid such a fork.<br>
+A comparable fork was performed by users and developers of the X11R6 server project for UNIX style operating systems - <b>XFree86</b>.
+Caused by some licensing issues, a fork of the <a href="http://www.xfree86.org/">XFree86</a> was created by the <a href="http://freedesktop.org/XOrg">X.Org Foundation</a>,
+which also appreciated by several graphic card manufacturers, as they can integrate their drivers with the new management method in a better way.
+<br>
+&nbsp;<br>
+&nbsp;<br>
+<b>
+This way it is assured under all conditions, that the development time and money, which is invested in an application that uses the ISO<i><sub>AgLib</sub></i>
+can't be affected by the style and quality of future project maintenance.
+</b><br>
+
+\section IndexSupport Support Possibilities
+Even if the ISO<i><sub>AgLib</sub></i> provides very detailed documentation including several <b>HOWTO</b> chapters with
+important starting information, the learning afford to get a running tutorial example is not completly neglectible ( reading the documentation
+requires at least some time ). Additionally the <b>object oriented</b> development style might be new to most of the potential users.<br>
+
+\subsection IndexWorkshop Tutorial Workshops for Development with IsoAgLib
+The <a href="mailto:a.spangler@osb-ag.de">maintainers</a> can offer workshops in co-operation with
+<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
+where all members can learn:
+	- <b>XML</b> design and definition of <b>ISO 11783 Virtual Terminal</b> mask pools
+	- possibilities to create flexible mask definitions which can be automatically adopted by the ISO<i><sub>AgLib</sub></i> to the properties of the connected terminal:
+		- multi-language string handling
+		- scaling to screen size
+		- selection of available font size that is corresponding to the scaling factor of the complete layout
+		- colour depth selection during runtime, so that a unique global mask pool can be defined.
+	- integration of <b>IDE</b> of choice ( some project file format types are automatically supported )
+	- integration of <b>ISO 11783</b> communication with existing application code ( ways to define interface modules )
+	- integration of process data management to allow terminal independend control and monitoring access to an implement
+	- adoption to individual target platform ( creation of corresponding <b>H</b>ardware <b>A</b>bstraction <b>L</b>ayer - HAL )
+	- test of application with the <b>R</b>ealtime <b>T</b>est <b>E</b>nvironment ( RTE ), which is another also Open Source
+		project of <a href="http://www.osb-ag.de">OSB AG</a> for test of embedded applications ( not only useable for ISO 11783 networks )
+	- ...
+
+The exact topics of a tutorial workshop can be defined corresponding to the request of
+interested developers. These workshops can be performed at the
+<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
+ location, or at any location of choice. <a href="http://www.osb-ag.de">OSB AG</a> can also offer closed workshops for the developers of one
+company.
+
+\subsection IndexHalAdoption Support for Adoption to Individual Target Platform
+Even if the adoption of the ISO<i><sub>AgLib</sub></i> to an individual target platform ( OS or BIOS ) is eased
+by the compact HAL definition, <a href="http://www.osb-ag.de">OSB AG</a> can offer support for this adoption or can perform the
+complete adoption. Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for details.
+
+\subsection IndexSupportContract Support Contract
+Like other Open Source projects, the maintainers can provide some free support, which is restricted by
+the spare free time of the developers and other experts in the user community. For commercial users, who need a predefined
+reaction time for each issue ( question or bug report ), might contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+for individual service contracts.
+
+\subsection IndexFeaturesOnRequest Integration of Requested Features
+As long as <a href="http://www.osb-ag.de">OSB AG</a> maintains the ISO<i><sub>AgLib</sub></i>, all received
+patches will be reviewed and merged into the reference version of the software. Additionally all feature
+extensions, which are needed for projects of <a href="http://www.osb-ag.de">OSB AG</a> will also be merged.<br>
+
+But as the ISO 11783 standard definition contains a lot of functions, which are not needed for the own
+projects of the ISO<i><sub>AgLib</sub></i> maintainers, they will be only integrated if other users contribute them, or if
+<a href="http://www.osb-ag.de">OSB AG</a> is asked to develop them. This is also true for several enhancements of ISO Virtual Terminal mask definitions, which
+would enable a more capable and more flexible adoption to the features of the connected terminal. <br>
+Some examples:
+	- GUI tool to define the XML mask definition ( easier than edit of pure ASCII )
+	- individual rules for selection of bitmap version in relation to size and color depth of connected
+		terminal
+	- extension of the font size relative positioning to map different font sizes for different
+		language versions ( languages where all labels a longer than the corresponding strings in other
+		languages might need a smaller font size to allow placement on the common layout;
+		therefore font size dependend position alignment should be enhanced )
+	- language specific bitmaps ( especially if some text is displayed in the bitmap )
+
+\section IndexMaintainers Some information on the maintainers
+The ISO<i><sub>AgLib</sub></i> was initially created by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> who is now
+working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
+already about 60 engineers working in the three locations Munich, Stuttgart and Krefeld ( all in Germany; <b>state November 2004</b> ).<br>
+The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
+Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
+	- AOA
+	- Avery Dennison
+	- EMAG
+	- FIDUCIA IT
+	- Fritzmeier
+	- Infineon
+	- MTU
+	- Porsche
+	- Siemens
+	- ThyssenKrupp
+	- Valeo
+
+
 </td></tr>
   </table>
 */
@@ -854,7 +890,7 @@ management of such interactions. This list can then help to identify well suppor
 \ref IndexIsoVtExtension<br>
 \ref IndexFirstWin32Users<br>
 \ref IndexAuthors<br>
-\ref IndexMaintainingCompany<br>
+\ref IndexMaintainers<br>
 \ref IndexSupport<br>
 \ref IndexTodo<br>
 \ref IndexUsingProjects<br>
@@ -1021,7 +1057,7 @@ source and the contained informative text files.
 \ref IndexIsoVtExtension<br>
 \ref IndexFirstWin32Users<br>
 \ref IndexAuthors<br>
-\ref IndexMaintainingCompany<br>
+\ref IndexMaintainers<br>
 \ref IndexSupport<br>
 \ref IndexTodo<br>
 \ref IndexUsingProjects<br>
@@ -1112,21 +1148,21 @@ It is used by commercial IDEs like Borland C++ Builder 6 and Tasking EDE ( since
 
 Installation Steps:
 -# Download STLport from http://www.stlport.org/archive/STLport-4.6.2.tar.gz ( other versions at http://www.stlport.org/download.html )
--# extract to location like C:\ ( or use other directory - then change the following examples according to your individual path )
--# <b>rename directory C:\STLport-4.6.2 to C:\STLport , so that the scripts and automatically created paths needn't be adopted to new versions of STLport</b>
+-# extract to location like C:\\ ( or use other directory - then change the following examples according to your individual path )
+-# <b>rename directory C:\\STLport-4.6.2 to C:\\STLport , so that the scripts and automatically created paths needn't be adopted to new versions of STLport</b>
 -# Configure and install STLport
 	- with native IOSTREAMS of VC6 ( <b>recommended</b> ):<br>
-		- simply uncomment the #define _STLP_NO_OWN_IOSTREAMS in the config header C:\STLport\stlport\stl_user_config.h
-		- edit C:\Program Files\Microsoft Visual Studio\VC98\Bin\vcvars32.bat
-			- FROM: set INCLUDE=%MSVCDir%\ATL\INCLUDE; %MSVCDir%\INCLUDE;%MSVCDir%\MFC\INCLUDE;%INCLUDE%
-			- TO:   set INCLUDE=C:\STLport\stlport;%MSVCDir%\ATL\INCLUDE; %MSVCDir%\INCLUDE;%MSVCDir%\MFC\INCLUDE;\%INCLUDE%
-		- add C:\STLport\stlport <b>in FRONT of the include path of your projects - this is already done for automatically created DSP files</b>
+		- simply uncomment the #define _STLP_NO_OWN_IOSTREAMS in the config header C:\\STLport\\stlport\\stl_user_config.h
+		- edit C:\\Program Files\\Microsoft Visual Studio\\VC98\\Bin\\vcvars32.bat
+			- FROM: set INCLUDE=%MSVCDir%\\ATL\\INCLUDE; %MSVCDir%\\INCLUDE;%MSVCDir%\\MFC\\INCLUDE;%INCLUDE%
+			- TO:   set INCLUDE=C:\\STLport\\stlport;%MSVCDir%\\ATL\\INCLUDE; %MSVCDir%\\INCLUDE;%MSVCDir%\\MFC\\INCLUDE;\\%INCLUDE%
+		- add C:\\STLport\\stlport <b>in FRONT of the include path of your projects - this is already done for automatically created DSP files</b>
 		- you are finshed! ( no compile or install of sources needed )
 	- with IOSTREAMS version of STLport:<br>
 		use installation overview from http://doc.ece.uci.edu/~mlai/notes/stlport_in_vc.html
-		( the BAT vcvars32.bat is not located at C:\Program Files\Microsoft Visual Studio\VC98 but in C:\Program Files\Microsoft Visual Studio\VC98\Bin )
+		( the BAT vcvars32.bat is not located at C:\\Program Files\Microsoft Visual Studio\VC98 but in C:\\Program Files\\Microsoft Visual Studio\\VC98\\Bin )
 -# look at STLport own documentation from local installation file://C:/STLport/doc/install.html and file://C:/STLport/doc/select_io.html for further information
--# make shure that you adopt the feature setup files to reflect a differing path to your STLport installation ( C:\STLport is default setting )
+-# make shure that you adopt the feature setup files to reflect a differing path to your STLport installation ( C:\\STLport is default setting )
 
 
 
@@ -1174,13 +1210,13 @@ This IDE has some important features:<ul>
 \subsection CompTasking Tasking for Embedded Targets
 
 The Tasking Compiler of version >= 7.56 is handling C++ in a sufficient manner and provides
-a conformant STL ( important: the STL version of 8.0 is consuming tooo muuuch memory - contact
-Tasking Support to get alternative like in version 7.56 where the resource requirements are fine; maybe some of the newer
-Tasking Compiler versions than 8.0 manage the size overhead of STL better; the overhead is caused by the change from
-and adopted SGI STL to the STLport system; while SGI STL uses templates only, the STLport defines several functions
+a conformant STL ( important: the STL version 8.0 consumed too much memory - try one of the newer versions, as Tasking
+introduced some compiler switches to avoid code bloat by STLport - just ask Tasking for the 7.56 STL version, if the ROM overhead
+is still too big; the overhead was caused by the change from
+and adopted SGI STL to the STLport system; while SGI STL uses templates only, the STLport defines several STL functions
 as functions which can be compiled to a linkeable library; this approach is fine, as long as the target linker is able
 to select just the needed functions from the STLport libraries; at least Tasking Compiler Version 8.0 included a lot too much
-object code into the firmware, so that the overhead is not acceptible ).
+object code into the firmware, so that the overhead was not acceptible ).
 
 ISO<i><sub>AgLib</sub></i> also provides some project files for the tutorials which can be used by the
 Tasking compiler.
@@ -1204,6 +1240,10 @@ configuration call with iRS232IO_c::setSndPufferSize and iRS232IO_c::setRecPuffe
 \section InstallIsoToolVt2Iso HOWTO Install vt2iso - Tool for Creation of ISO 11783 Virtual Terminal Masks
 
 The ISO<i><sub>AgLib</sub></i> provides a complete Open Source Tool Chain for ISO 11783 virtual terminals.
+<b>First of all, you don't have to build vt2iso, as an EXE file is also part of the downloaded archive.</b><br>
+But if you like to test some changes, or simply want to rebuild from the current repository version, you need to perform
+the following build process.<br>
+
 A very important part is the tool <b>vt2iso</b> which parses the XML mask definition files and creates
 ROMable constant declarations for all used virtual terminal objects, which can be easily uploaded to the terminal
 ( see at the corresponding tutorial for more information on this ).
@@ -1294,23 +1334,24 @@ Call the script like this:<ul>
 
 
 \subsection UseMSYS Use MSYS to run script on Win32
-As scripts can only natively executed in UNIX or LINUX, the tool MSYS ( http://www.mingw.org )
+As scripts can only be natively executed in UNIX or LINUX, the tool MSYS ( http://www.mingw.org )
 is needed as a minimal POSIX layer to call bash scripts within Win32.
-This project is simply to install. You don't need the other tools on this side, as the
+This project is simply to install. You don't need the other tools from this website, as the
 MinGW compiler is also integrated into the Dev-C++ tool.
 
 
 \subsection ScriptIntegrateWin32Can Integrate Win32 CAN card drivers
-The IsoAgLib provides at the moment an integration with the CAN drivers from Vector Informatik.
-Both driver types <b>CANLIB</b> and <b>XL Driver Library</b> are supported by the source modules
+The IsoAgLib provides at the moment an integration with the CAN drivers from Vector Informatik and Sontheim.
+Both Vector Informatik driver types <b>CANLIB</b> and <b>XL Driver Library</b> are supported by the source modules
 <b>target_extension_can_w32_vector_canlib.cpp</b> and <b>target_extension_can_w32_vector_xl.cpp</b> .
 Both modules support the usage of a thread based CAN receive, which can be activated by the
 setting of the #define USE_THREAD ( if it's undef -> no threading is used ).
 The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as follows:<ol>
 <li>Download either the current <b>CANLIB</b> or <b>XL Driver Library</b> driver
-<li>Install the driver with the <i>SETUP.EXE</i> ( <b>don't rename the contained
+<li>Install the driver with the <i>SETUP.EXE</i> to the directory C:\\Development ( <b>don't rename the contained
 		root directories <i>CANLIB</i> resp. <i>XL Driver Library</i> as the ISO<i><sub>AgLib</sub></i>
-		uses them </b> )
+		uses them </b> ; you can install to another location - but then you have to adopt the conf_* feature setup files
+		to your individual path before you execute the update_makefile.sh )
 <li>Set the project configuration file conf_* ( e.g. conf_0_0_AddressClaimIso ) as follows:<ol>
 	<li>set the variables <i>USE_WIN32_HEADER_DIRECTORY</i> and <i>USE_WIN32_LIB_DIRECTORY</i> to your
 			installation root ( <b>don't include the directory name part <i>CANLIB</i> resp. <i>XL Driver Library</i> </b> ) <br>
@@ -1331,6 +1372,11 @@ The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as fol
 <li>install the .dll of the used CAN driver library ( file from Vector Informatik ) into the
 		DLL-Search-Path of your system ( or into the directory of your resulting EXE )
 </ol>
+
+The integration of the Sontheim CAN card driver target_extension_can_w32_sontheim_canlpt.cpp is comparable to the Vector Informatik case. But here, Sontheim placed
+the API simply into a ZIP file which doesn't define a folder and doesn't provide a SETUP.EXE. Thus you should manually place the ZIP contents
+to the path <b>C:\\Development\\Sontheim</b> , if you want to use the provided tutorial example project files without the need to call update_makefile.sh
+for creation of adopted project files.
 
 This strategy can be mapped to other Win32 or LINUX CAN cards as well. Please contact the
 <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for help on adoption and please
@@ -1435,15 +1481,17 @@ The following basic settings can be specified independend from hardware and feat
 \subsubsection ConfBasicHwSetup Basic Hardware Setup
 The basic hardware setup of your target ( including CAN hardware/driver ) can be defined in this group.
 	- <b>USE_TARGET_SYSTEM</b> type of target system from list <i>{ "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167" }</i> or other coming supported HALs
-	- <b>USE_CAN_DRIVER</b> CAN driver to use from list <i>{ "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl" }</i>,<br>
+	- <b>USE_CAN_DRIVER</b> CAN driver to use from list <i>{ "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim" }</i>,<br>
 			- where type "simulating" uses file based CAN simulation on each PC system target,
-			- target "pc_win32" allows additionally <i>{ "vector_canlib"|"vector_xl" }</i>,
+			- target "pc_win32" allows additionally <i>{ "vector_canlib"|"vector_xl"|"sontheim" }</i>,
 			- and target "pc_linux" allows additionally <i>{ "rte" }</i>.
 			- The other embedded targets allow only the system specific CAN driver - identified by "sys"
+			- update_makefile.sh automatically selects the "sys" CAN driver, if no PC target is selected
 	- <b>USE_RS232_DRIVER</b> RS232 driver to use from list <i>{ "simulating"|"sys"|"rte" }</i>
 			- where type "simulating" uses file based RS232 simulation on each PC system target,
 			- "sys" uses the native RS232 of every target
 			- and "rte" uses the RS232 interface of the RTE system
+			- update_makefile.sh automatically selects the "sys" RS232 driver, if no PC target is selected
 	- <b>CAN_BUS_CNT</b> count of available CAN BUSes at target - default 1
 	- <b>CAN_INSTANCE_CNT</b> count of CAN channels which shall be supported by IsoAgLib ( the application can also use the extended CAN
 	                          features of IsoAgLib so that e.g. channel 0 can be used for protocol and channel 1 for internal CAN communication )<br>
@@ -1466,27 +1514,27 @@ Setup of process data support:
 	- <b>PRJ_PROCESS</b> overall activation of process data support
 	- <b>PRJ_GPS</b> activation of DIN 9684 GPS data communication as used by DIN 9684 Fieldstar Terminals
 	- <b>PROC_LOCAL</b> overall activation of local process data - local means that the corresponding ECU measures the data which can be requested by remote ECUs
-		- <b>PROC_LOCAL_STD</b> select standard local process data iProcDataLocal_c with measure programs and enhanced management of received setpoints
-		- <b>PROC_LOCAL_SIMPLE_MEASURE</b> select iProcDataLocalSimpleMeasure_c for local process data without measure programs to reduce
+		- <b>PROC_LOCAL_STD</b> select standard local process data IsoAgLib::iProcDataLocal_c with measure programs and enhanced management of received setpoints
+		- <b>PROC_LOCAL_SIMPLE_MEASURE</b> select IsoAgLib::iProcDataLocalSimpleMeasure_c for local process data without measure programs to reduce
 		     HEAP useage ( all measurement programs are stored on HEAP, as amount of active programs depend on remote ECUs )
-		- <b>PROC_LOCAL_SIMPLE_SETPOINT</b> select iProcDataLocalSimpleSetpoint_c for local process data without selective reaction on received setpoints
+		- <b>PROC_LOCAL_SIMPLE_SETPOINT</b> select IsoAgLib::iProcDataLocalSimpleSetpoint_c for local process data without selective reaction on received setpoints
 		     ( simply store received setpoints and automatically ACK the receive of a setpoint )
-		- <b>PROC_LOCAL_SIMPLE_MEASURE_SETPOINT</b> select iProcDataLocalSimpleSetpointSimpleMeasure_c for local process data with smallest resource needs - and most
+		- <b>PROC_LOCAL_SIMPLE_MEASURE_SETPOINT</b> select IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c for local process data with smallest resource needs - and most
 		     restricted feature set
 	- <b>PROC_REMOTE</b> overall activation of remote process data - remote means that the corresponding ECU requests measurement data from a remote ECU
-		- <b>PROC_REMOTE_STD</b> select iProcDataRemote_c for remote process data which can use measure programs to request periodic measurement value update
+		- <b>PROC_REMOTE_STD</b> select IsoAgLib::iProcDataRemote_c for remote process data which can use measure programs to request periodic measurement value update
 		     and which provides setpoint management which can detect current master setpoint ( setpoint which is ACKed by commanded device ) and the self
 		     requested value ( information if own setpoint is ACKed and if own requested setpoint interval is currently maintained by remote
 		     device - this can happen if intersection between ACKed setpoint request and own setpoint request is _not_ empty, so that commanded implement can
 		     satisfy both )
-		- <b>PROC_REMOTE_SIMPLE_MEASURE</b> select iProcDataRemoteSimpleMeasure_c if capable setpoint management is needed, but simple one shot measurement value request is enough
+		- <b>PROC_REMOTE_SIMPLE_MEASURE</b> select IsoAgLib::iProcDataRemoteSimpleMeasure_c if capable setpoint management is needed, but simple one shot measurement value request is enough
 		     ( reduce HEAP useage, as the potential parallel active increments are stored in dynamic lists at HEAP )
-		- <b>PROC_REMOTE_SIMPLE_SETPOINT</b> select iProcDataRemoteSimpleSetpoint_c if measurement programs are needed, but no or only simple setpoint control is wanted
+		- <b>PROC_REMOTE_SIMPLE_SETPOINT</b> select IsoAgLib::iProcDataRemoteSimpleSetpoint_c if measurement programs are needed, but no or only simple setpoint control is wanted
 		     ( reduce memory useage, as no management data is needed for detection of active setpoint in relation to own setpoint wish )
-		- <b>PROC_REMOTE_SIMPLE_MEASURE_SETPOINT</b> select iProcDataRemoteSimpleSetpointSimpleMeasure_c if only one shot measurement value requests and no setpoint handling is needed
-		     ( in relation to iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c the single setpoint and the single measurement value can represent
+		- <b>PROC_REMOTE_SIMPLE_MEASURE_SETPOINT</b> select IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c if only one shot measurement value requests and no setpoint handling is needed
+		     ( in relation to IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c the single setpoint and the single measurement value can represent
 		     different values )
-		- <b>PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED</b> select iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c for a very simple approach on remote process data.
+		- <b>PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED</b> select IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c for a very simple approach on remote process data.
 		     This is only useful if no distinguishing between setpoint and measurement value is needed
 
 \subsubsection ConfOptDriver Optional Driver Selection
@@ -1502,12 +1550,12 @@ provided - and can be selected by the following configuration variables.
 		   --> try to reuse SA os last working session on next system start.<br>
 		   the application has only to specify to EEPROM address to handle the SA;
 		   IsoAgLib takes then care of storing and reloading the SA )
-	- <b>PRJ_RS232</b> select iRS232IO_c for RS232 output which can be used like the standard C++ iostreams
-	- <b>PRJ_SENSOR_DIGITAL</b> select iDigitalO_c ( one instance/variable of this class per channel ) for digital On/Off input
+	- <b>PRJ_RS232</b> select IsoAgLib::iRS232IO_c for RS232 output which can be used like the standard C++ iostreams
+	- <b>PRJ_SENSOR_DIGITAL</b> select IsoAgLib::iDigitalO_c ( one instance/variable of this class per channel ) for digital On/Off input
 	     ( provides automatic range check which uses diagnose function of HAL - BIOS/OS - to check if current is in allowed interval );
-	     use iActorO_c for global access to all active iDigitalO_c instances
-	- <b>PRJ_SENSOR_ANALOG</b> select iAnalogI_c for analog ( current or voltage ) sensor input or iAnalogIRangeCheck_c with enhanced automatic range check
-	- <b>PRJ_SENSOR_COUNTER</b> select iCounterI_c for counter input. the existing HAL implementations ( e.g. for ESX ) extend the BIOS/OS
+	     use IsoAgLib::iActorO_c for global access to all active IsoAgLib::iDigitalO_c instances
+	- <b>PRJ_SENSOR_ANALOG</b> select IsoAgLib::iAnalogI_c for analog ( current or voltage ) sensor input or IsoAgLib::iAnalogIRangeCheck_c with enhanced automatic range check
+	- <b>PRJ_SENSOR_COUNTER</b> select IsoAgLib::iCounterI_c for counter input. the existing HAL implementations ( e.g. for ESX ) extend the BIOS/OS
 	     function, as a IsoAgLib specific event counting for very low event repetition rates is provided - the BIOS version is only
 	     designed for typical RPM values
 	- <b>PRJ_ACTOR</b> select if the digital output driver shall be integrated into the project. you can then use the HAL of IsoAgLib to realize a mostly hardware independend
@@ -1547,12 +1595,12 @@ But the driver DLLs for Vector-Informatik CAN cards don't interact with Dev-C++ 
 So update_makefile.sh was extended to write DSP project files, which are meant for VC6 and can be imported
 into newer version of Microsoft Visual Studio VC++.<br>
 As VC6 version of the <b>S</b>tandard <b>T</b>emplate <b>L</b>ibrary is really not standard conformant, you need
-to install STLport as described in \ref Vc6StlPort. Please specify the path to STLport, if you didn't place it into C:\ and rename STLport-3.6.2 to STLport:
+to install STLport as described in \ref Vc6StlPort. Please specify the path to STLport, if you didn't place it into C:\\ and rename STLport-3.6.2 to STLport:
 	- <b>USE_STLPORT_HEADER_DIRECTORY</b> directory to the <i>stlport</i> directory within the STLport package - the C++ headers are located there
 	- <b>USE_STLPORT_LIBRARY_DIRECTORY</b> path to STLport libraries in case you selected the option to use the STLport version of IOSTREAMS ( and not the native version as advised by the doc at \ref Vc6StlPort )
 	    let empty if native IOSTREAMS library is used
 
-The next configuration variables are needed for Vector-Informatik CAN cards.
+The next configuration variables are needed for Vector-Informatik and Sontheim CAN cards.
 As Vector-Informatik provides two types of programming libraries which can be used for the same cards, the
 ISO<i><sub>AgLib</sub></i> reflects this option. To ease directory management, ISO<i><sub>AgLib</sub></i>
 awaits the potentially parallel installed versions rooted in the same parent directory.<br>
@@ -1560,16 +1608,23 @@ E.g when you selected "C:/Development" as base directory during the SETUP of bot
 you will get
 	- the CANLIB driver in "C:/Development/CANLIB"
 	- the XL Driver Library in "C:/Development/XL Driver Library"
+
+Manually extract the Sontheim API files to "C:/Development/Sontheim".
+
 Now ISO<i><sub>AgLib</sub></i> can access both of them if you specify:
 	- <b>USE_WIN32_LIB_DIRECTORY="C:/Development"</b>,
 	- <b>USE_WIN32_HEADER_DIRECTORY="C:/Development"</b>
-which is the default setting. The script <i>update_makefile.sh</i> will find both versions of the driver.
+
+which is the default setting. The script <i>update_makefile.sh</i> will find all versions of the driver.
 
 The ISO<i><sub>AgLib</sub></i> HAL adoption to the Vector-Informatik CAN driver can be configured by the configuration file
-for a specific hardware type ( list <i>{ HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI }</i> ).
+for a specific hardware type ( list <i>{ HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI }</i> - the XL driver
+places the "XL_" string in front of the card type name, so that both CANLIB and XL can be used with the same conf_* type names ).
 As a special option, ISO<i><sub>AgLib</sub></i> can use all real hardware channels it finds, so that your EXE can be flexibly
-used for different CAN card types of Vector-Informatik. Your can use this option, if you select <b>HWTYPE_AUTO</b> as hardware
-type. In case only the Vector-Informatik Virtual Channel is found, then these typically two channels are used instead.
+used for different CAN card types of Vector-Informatik. You can use this option, if you select <b>HWTYPE_AUTO</b> as hardware
+type. In case only the Vector-Informatik Virtual Channel is found, then these typically two channels are used instead.<br>
+The Sontheim CAN card driver should be used also with the automatic CAN card type detection. This is realized by testing the API init for
+a list of supported CAN card types. As soon as the API is successfully initialized for one CAN card type, that type is used.<br>
 
 
 The setup file can be derived from the following example
@@ -1660,9 +1715,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"|"sontheim"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -1993,7 +2048,7 @@ PRJ_ISO11783=1
 \ref IndexIsoVtExtension<br>
 \ref IndexFirstWin32Users<br>
 \ref IndexAuthors<br>
-\ref IndexMaintainingCompany<br>
+\ref IndexMaintainers<br>
 \ref IndexSupport<br>
 \ref IndexTodo<br>
 \ref IndexUsingProjects<br>
@@ -2202,11 +2257,8 @@ Dependent on the intensity of process data use, the ISO<i><sub>AgLib</sub></i>
 has to be created with the new process data management, which doesn't occupy
 heap memory for unneeded functions like setpoint management, when only measurement
 values are communicated (new feature in 0.2.0).<br>
-The ISO<i><sub>AgLib</sub></i> with the minimum module configuration needs
-about 66 Kbytes Flash ROM. A configuration with full featured with process
-data needs about 106 Kbytes Flash ROM.<br>
-The RAM and Flash ROM size depends heavily on the configuration of the ISO<i><sub>AgLib</sub></i> and on the optimizing capabilities of the compiler.<br>
-<h3>Programming Skills</h3>
+
+\subsection InfReqProgrammingSkills Programming Skills
 As long as the ISO<i><sub>AgLib</sub></i> should only be used as it is, without
 analysing or optimizing it, the needed additional C++ skills (in relation
 to C) are small. The <b>24</b> current <a href="examplex.html">tutorial examples</a> and the three real
@@ -2246,7 +2298,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 \ref IndexIsoVtExtension<br>
 \ref IndexFirstWin32Users<br>
 \ref IndexAuthors<br>
-\ref IndexMaintainingCompany<br>
+\ref IndexMaintainers<br>
 \ref IndexSupport<br>
 \ref IndexTodo<br>
 \ref IndexUsingProjects<br>
@@ -2280,8 +2332,8 @@ The ISO<i><sub>AgLib</sub></i> is published as Open Source according to the GPL 
 to use, to analyse and to change the source code, as long as the changes to the ISO<i><sub>AgLib</sub></i> itself are provided
 to the public with the same license conditions. Thus the ISO<i><sub>AgLib</sub></i> could be used by a lot of manufacturers
 without the fear of monopolistic control. This would allow the compatible use of all sophisticated features of
-DIN 9684 and ISO 11783 for their machines. The author <a href="mailto:Achim.Spangler@gmx:de">Achim Spangler</a>
-can arrange service contracts with a software company to provide extensions and other service for the ISO<i><sub>AgLib</sub></i>.
+DIN 9684 and ISO 11783 for their machines. The author <a href="mailto:Achim.Spangler@gmx:de">Achim Spangler</a> who is now working for
+<a href="http://www.osb-ag.de/">OSB AG</a> can arrange service contracts to provide extensions and other service for the ISO<i><sub>AgLib</sub></i>.
 \image html Diagramme/IsoAgLib-further_develop.gif
 
 \section FurtherExamples Examples
@@ -2361,7 +2413,7 @@ This is possible, if some basic strategies are used by all devices:
 \ref IndexIsoVtExtension<br>
 \ref IndexFirstWin32Users<br>
 \ref IndexAuthors<br>
-\ref IndexMaintainingCompany<br>
+\ref IndexMaintainers<br>
 \ref IndexSupport<br>
 \ref IndexTodo<br>
 \ref IndexUsingProjects<br>

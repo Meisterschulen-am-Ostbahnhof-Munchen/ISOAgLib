@@ -48,37 +48,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "isoitem_c.h"
@@ -110,7 +110,7 @@ namespace __IsoAgLib {
 ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
       const uint8_t* rpb_name, uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
   : MonitorItem_c(0, rc_gtp, rui8_nr, rb_status, ri_singletonVecKey ),
-    ISOName_c(rpb_name), ui16_saEepromAdr(rui16_saEepromAdr)
+    c_isoName(rpb_name), ui16_saEepromAdr(rui16_saEepromAdr)
 { // mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
   wsClaimedAddress = false;
@@ -127,7 +127,7 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IStat
 
   readEepromSa();
   // set give GTP in NAME field
-  ISOName_c::setGtp(rc_gtp);
+  c_isoName.setGtp(rc_gtp);
   if (itemState(IState_c::Local))
   {
     setItemState(IState_c::PreAddressClaim);
@@ -148,7 +148,7 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IStat
 ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
       const ISOName_c* rpc_name, uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
   : MonitorItem_c(0, rc_gtp, rui8_nr, rb_status, ri_singletonVecKey ),
-    ISOName_c(*rpc_name), ui16_saEepromAdr(rui16_saEepromAdr)
+    c_isoName(*rpc_name), ui16_saEepromAdr(rui16_saEepromAdr)
 { // mark this item as prepare address claim if local
 
   wsClaimedAddress = false;
@@ -165,7 +165,7 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IStat
 
   readEepromSa();
   // set give GTP in NAME field
-  ISOName_c::setGtp(rc_gtp);
+  c_isoName.setGtp(rc_gtp);
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
   if (itemState(IState_c::Local))
   {
@@ -194,7 +194,7 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IStat
         bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
         uint32_t rui32_serNo, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst, int ri_singletonVecKey )
     : MonitorItem_c(0, rc_gtp, rui8_nr, rb_status, ri_singletonVecKey ),
-      ISOName_c(rb_selfConf, rui8_indGroup, (rc_gtp.getGety()), (rc_gtp.getPos()),
+      c_isoName(rb_selfConf, rui8_indGroup, (rc_gtp.getGety()), (rc_gtp.getPos()),
         rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst), ui16_saEepromAdr(rui16_saEepromAdr)
 { // mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
@@ -227,7 +227,7 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IStat
   @param rrefc_src source ISOItem_c instance
 */
 ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
-  : MonitorItem_c(rrefc_src), ISOName_c(rrefc_src), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr)
+  : MonitorItem_c(rrefc_src), c_isoName(rrefc_src.c_isoName), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr)
 { // mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
   wsClaimedAddress = false;
@@ -261,7 +261,7 @@ ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
 ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
 {
   MonitorItem_c::operator=(rrefc_src);
-  ISOName_c::operator=(rrefc_src);
+	c_isoName = rrefc_src.c_isoName;
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
   wsClaimedAddress = false;
   updateTime(0); // state that this item didn't send an adress claim
@@ -287,7 +287,7 @@ ISOItem_c::~ISOItem_c(){
   @return pointer to the name uint8_t string (7byte)
 */
 const uint8_t* ISOItem_c::name() const {
-  return ISOName_c::outputString();
+  return c_isoName.outputString();
 }
 /**
   check if the name field is empty (no name received)
@@ -303,7 +303,7 @@ bool ISOItem_c::isEmptyName() const {
 */
 void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen){
   char c_temp[30];
-  const uint8_t* pb_src = ISOName_c::outputString();
+  const uint8_t* pb_src = c_isoName.outputString();
   CNAMESPACE::sprintf(c_temp, "0x%02x%02x%02x%02x%02x%02x%02x%02x", pb_src[0],pb_src[1],pb_src[2],pb_src[3],
       pb_src[4],pb_src[5],pb_src[6],pb_src[7]);
 
@@ -327,11 +327,11 @@ void ISOItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
         itemState_t ren_status, uint16_t rui16_saEepromAdr, const uint8_t* rpb_name, int ri_singletonVecKey )
 {
   MonitorItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, ri_singletonVecKey);
-  if (rpb_name != NULL) ISOName_c::inputString(rpb_name);
+  if (rpb_name != NULL) c_isoName.inputString(rpb_name);
   ui16_saEepromAdr = rui16_saEepromAdr;
   readEepromSa();
   // set give GTP in NAME field
-  ISOName_c::setGtp(rc_gtp);
+  c_isoName.setGtp(rc_gtp);
 };
 
 /**
@@ -348,11 +348,11 @@ void ISOItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
         itemState_t ren_status, uint16_t rui16_saEepromAdr, const ISOName_c* rpc_name, int ri_singletonVecKey )
 {
   MonitorItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, ri_singletonVecKey);
-  if (rpc_name != NULL) ISOName_c::operator=(*rpc_name);
+  if (rpc_name != NULL) c_isoName.operator=(*rpc_name);
   ui16_saEepromAdr = rui16_saEepromAdr;
   readEepromSa();
   // set give GTP in NAME field
-  ISOName_c::setGtp(rc_gtp);
+  c_isoName.setGtp(rc_gtp);
 };
 
 /**
@@ -377,12 +377,12 @@ void ISOItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
         uint8_t rb_ecuInst, int ri_singletonVecKey )
 {
   MonitorItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, ri_singletonVecKey);
-  ISOName_c::set(rb_selfConf, rui8_indGroup, (rc_gtp.getGety()), (rc_gtp.getPos()),
+  c_isoName.set(rb_selfConf, rui8_indGroup, (rc_gtp.getGety()), (rc_gtp.getPos()),
         rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
   ui16_saEepromAdr = rui16_saEepromAdr;
   readEepromSa();
   // set give GTP in NAME field
-  ISOName_c::setGtp(rc_gtp);
+  c_isoName.setGtp(rc_gtp);
 }
 
 /**
@@ -490,14 +490,14 @@ bool ISOItem_c::timeEvent( void )
         /* VT has just been turned ON */
         slavesToClaimAddress = -1; // start WS Announce/MaintenanceMsg'ing
       }
-      
+
       if ( ( slavesToClaimAddress == -1 ) && ( pc_masterItem == this ) )
       {
         slavesToClaimAddress = getIsoMonitorInstance4Comm().getSlaveCount (this); // slavesToClaimAddress will be 0..numberOfSlaves hopefully
-    
+
         c_pkg.setExtCanPkg8(7, 0, 254, 13, nr(), slavesToClaimAddress+1, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         c_can << c_pkg;     // send out "Working Set Master" message on CAN bus
-    
+
         if (slavesToClaimAddress == 0) wsClaimedAddress = true;
         updateTime();
       }
@@ -512,10 +512,10 @@ bool ISOItem_c::timeEvent( void )
         // set NAME to CANPkg
         c_pkg.setName(getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-slavesToClaimAddress, this)->outputString());
         c_can << c_pkg;
-    
+
         // claimed address for one...
         slavesToClaimAddress--;
-    
+
         if (slavesToClaimAddress == 0) wsClaimedAddress = true;
         updateTime();
       }
@@ -562,7 +562,7 @@ bool ISOItem_c::processMsg(){
         { // local item has already claimed the same adress
           // -> react suitable for this contention
           // -> check for NAME
-          if (higherPriThanPar(c_pkg.name()))
+          if (c_isoName.higherPriThanPar(c_pkg.name()))
           { // this item has higher prio (lower val) -> send adr claim
             c_pkg.setIsoSa(nr());
           }

@@ -96,6 +96,7 @@
 /* *************************************** */
 //#include <Application_Config/isoaglib_config.h>
 #include <IsoAgLib/hal/config.h>
+#include <IsoAgLib/util/impl/cancustomer_c.h>
 
 
 // Begin Namespace __IsoAgLib
@@ -106,7 +107,7 @@ namespace __IsoAgLib {
   * shall be called by Scheduler_c::timeEvent()
   *@author Dipl.-Inform. Achim Spangler
   */
-class ElementBase_c {
+class ElementBase_c : public CANCustomer_c {
  public:
   /** this function is used by IsoAgLib components
     * to perform periodic timed tasks.

@@ -67,6 +67,7 @@
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
   class LibErr_c;
+	typedef SINGLETON( LibErr_c ) SingletonLiberr_c;
   /** C-style function, to get access to the unique LibErr_c singleton instance */
   LibErr_c& getLbsErrInstance( void );
 
@@ -77,7 +78,7 @@ namespace IsoAgLib {
   All objects which Can hold their own error state are derived from Err
   *@author Dipl.-Inform. Achim Spangler
 */
-class LibErr_c : public Singleton<LibErr_c> {
+class LibErr_c : public SingletonLiberr_c {
 public:
   /** enum to identify the different error types */
   typedef enum {
@@ -137,7 +138,7 @@ public:
     * @param rt_errLocation location of error
     */
   void registerError( LbsLibErrTypes_t rt_errType, LbsLibErrLocations_t rt_errLocation );
-  
+
   /**
     clear all error information
   */
@@ -209,7 +210,7 @@ public:
 
   /** default destructor which has nothing to do */
   virtual ~LibErr_c();
-  
+
 private:
   friend class Singleton< LibErr_c >;
 
@@ -219,7 +220,7 @@ private:
   LibErr_c(const LibErr_c& rrefc_src);
 
   std::bitset<AllErrTypes> errTypeAtLoc [AllErrLocations];
-  
+
 /*
   struct errTypeBitfield {
     unsigned int Precondition : ERR_FIELD_COUNTER_SIZE;

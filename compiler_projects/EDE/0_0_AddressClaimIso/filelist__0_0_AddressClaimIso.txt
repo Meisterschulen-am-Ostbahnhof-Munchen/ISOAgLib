@@ -11,6 +11,7 @@
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkgext_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_util_funcs.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkg_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_cancustomer_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_liberr_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_can=_=_hal_can_interface.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_system=_=_system_target_extensions.cpp

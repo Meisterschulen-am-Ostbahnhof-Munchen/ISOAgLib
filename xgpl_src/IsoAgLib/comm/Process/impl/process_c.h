@@ -1,6 +1,6 @@
 /***************************************************************************
-                          process_c.h  - central managing instance for 
-                                           all process data informations in 
+                          process_c.h  - central managing instance for
+                                           all process data informations in
                                            the system
                              -------------------
     begin                : Fri Apr 07 2000
@@ -51,37 +51,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef PROCESS_H
@@ -112,6 +112,9 @@ namespace IsoAgLib { class iProcess_c;}
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
+class Process_c;
+typedef SINGLETON_DERIVED_CLIENT2(Process_c, ElementBase_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c ) SingletonProcess_c;
+
 /**
   Central managing instance for all process data
   informations in the system
@@ -140,15 +143,12 @@ namespace __IsoAgLib {
 
   An overall description of Process Data management in IsoAgLib can be found in
   \ref ProcDataPage .
-  
+
   @author Dipl.-Inform. Achim Spangler
 */
-class Process_c
-: public ElementBase_c,
-  public CANCustomer_c,
-  public SINGLETON_CLIENT2(Process_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c )
+class Process_c : public SingletonProcess_c
 {
-public: 
+public:
   /** initialisation for Process_c
   */
   void init( void );
@@ -169,7 +169,7 @@ public:
     to implement the base virtual function correct
   */
   virtual CANPkgExt_c& dataBase();
-  
+
   /**
     start processing of a process msg
     ignore all invalid messages where SEND is not of a member with claimed address,
@@ -268,7 +268,7 @@ public:
         uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2 );
 
 
-  /** 
+  /**
     delivers count of local process data entries with similar ident
     (which differs only in POS of owner)
     @param rui8_lis LIS code of searched local Process Data instance
@@ -352,7 +352,7 @@ private: // Private methods
   */
   bool updateRemoteCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
                            uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
-  
+
   /**
     insert FilterBox_c for receive from remote gtp if needed
     @param rc_ownerGtp GTP code of remote owner who sent the message
@@ -362,7 +362,7 @@ private: // Private methods
   bool createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t rui8_pri = 2);
   /**
     delete FilterBox_c for receive from remote gtp if needed
-    (important to delete old Filter Boxes after deletion of 
+    (important to delete old Filter Boxes after deletion of
      ProcDataRemoteBase_c - called from within deleteProcDataRemote
      - only delete FilterBox_c if NO other remote proc data with same
      ownerGtp exist)
@@ -372,7 +372,7 @@ private: // Private methods
   */
   bool deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t rui8_pri = 2);
 private: // Private attributes
-  friend class SINGLETON(Process_c);
+  friend class SINGLETON_DERIVED(Process_c,ElementBase_c);
   friend class IsoAgLib::iProcess_c;
   /**
     HIDDEN constructor for a Process_c object instance

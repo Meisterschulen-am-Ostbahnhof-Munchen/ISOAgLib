@@ -128,20 +128,20 @@ enum maskUploadState_t { none = 0, await_start = 1, running = 2, success = 3, ab
 
   @author Dipl.-Inform. Achim Spangler
 */
-class DINMaskUpload_c : public CANCustomer_c, public ElementBase_c, public SINGLETON(DINMaskUpload_c)
+class DINMaskUpload_c : public SINGLETON_DERIVED(DINMaskUpload_c, ElementBase_c)
 {
 private:
   typedef ProcDataLocalSimpleSetpointSimpleMeasure_c syncproc_t;
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef std::slist<syncproc_t,std::__malloc_alloc_template<0> > Vec_SyncProc;
+  typedef STL_NAMESPACE::slist<syncproc_t,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_SyncProc;
 	#else
-  typedef std::slist<syncproc_t> Vec_SyncProc;
+  typedef STL_NAMESPACE::slist<syncproc_t> Vec_SyncProc;
 	#endif
 protected:
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef std::slist<syncproc_t,std::__malloc_alloc_template<0> >::iterator Vec_SyncProcIterator;
+  typedef STL_NAMESPACE::slist<syncproc_t,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_SyncProcIterator;
 	#else
-  typedef std::slist<syncproc_t>::iterator Vec_SyncProcIterator;
+  typedef STL_NAMESPACE::slist<syncproc_t>::iterator Vec_SyncProcIterator;
 	#endif
 public:
   /** initialisation for DINMaskUpload_c
@@ -201,7 +201,7 @@ public:
   */
   bool isAborted()const{return (en_maskUploadState == abort)?true:false;};
 private: // Private methods
-  friend class SINGLETON(DINMaskUpload_c);
+  friend class SINGLETON_DERIVED(DINMaskUpload_c, ElementBase_c);
   friend class IsoAgLib::iDINMaskUpload_c;
   /**
     HIDDEN constructor for a DINMaskUpload_c object instance

@@ -725,7 +725,7 @@ void MsgObj_c::lock( bool rb_lock )
 	Ident_c c_tempIdent( 0x1FFFFFFF, c_filter.identType() );
 	HAL::can_configMsgobjChgid( busNumber(), msgObjNr(), c_tempIdent );
 	// b) use BIOS/OS lock function
-	HAL::can_configMsgobjLock( busNumber(), msgObjNr(), true );
+	HAL::can_configMsgobjLock( busNumber(), msgObjNr(), rb_lock );
 }
 
 } // end namespace __IsoAgLib

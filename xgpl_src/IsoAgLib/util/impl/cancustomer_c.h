@@ -2,10 +2,10 @@
                           cancustomer_c.h  -  header file for basic object
                                             for customer relationship to one
                                             or more FilterBox_c (-> CAN IO) instances
-                             -------------------                                         
-    begin                : Tue Aug 3 1999                                           
-    copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+                             -------------------
+    begin                : Tue Aug 3 1999
+    copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -48,37 +48,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef CAN_CUSTOMER_H
@@ -101,20 +101,22 @@ namespace __IsoAgLib {
   *@author Dipl.-Inform. Achim Spangler
   */
 class CANCustomer_c  {
-public: 
+public:
   /**
     process a message -> the specialized/derived version of this virtual
     function is called during processing of received CAN telegrams in CANIO_c::processMsg
     @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
     @see __IsoAgLib::CANIO_c::processMsg
   */
-  virtual bool processMsg() = 0;
+  virtual bool processMsg();
 
   /**
     virtual function which delivers a pointer to the CANCustomer
     specific CANPkgExt_c instance
   */
-  virtual CANPkgExt_c& dataBase() = 0;
+  virtual CANPkgExt_c& dataBase();
+	/** virtual destructor */
+	virtual ~CANCustomer_c();
 };
 
 } // end of namespace __IsoAgLib

@@ -193,26 +193,26 @@ private: //Private methods
 private: // Private attributes
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   /** vector of execution times for all registered timeEvent clients */
-  std::vector<int16_t,std::__malloc_alloc_template<0> > arrExecTime;
+  STL_NAMESPACE::vector<int16_t,STL_NAMESPACE::__malloc_alloc_template<0> > arrExecTime;
   /** iterator to continue each timeEvent after end of last timeEvent call
       -> cache in execution time vector
     */
-  std::vector<int16_t,std::__malloc_alloc_template<0> >::iterator pc_timeEventTimeIter;
+  STL_NAMESPACE::vector<int16_t,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator pc_timeEventTimeIter;
   /** iterator to continue each timeEvent after end of last timeEvent call
       -> cache in client vector
     */
-  std::vector<ElementBase_c*,std::__malloc_alloc_template<0> >::iterator pc_timeEventClientIter;
+  STL_NAMESPACE::vector<ElementBase_c*,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator pc_timeEventClientIter;
 	#else
   /** vector of execution times for all registered timeEvent clients */
-  std::vector<int16_t> arrExecTime;
+  STL_NAMESPACE::vector<int16_t> arrExecTime;
   /** iterator to continue each timeEvent after end of last timeEvent call
       -> cache in execution time vector
     */
-  std::vector<int16_t>::iterator pc_timeEventTimeIter;
+  STL_NAMESPACE::vector<int16_t>::iterator pc_timeEventTimeIter;
   /** iterator to continue each timeEvent after end of last timeEvent call
       -> cache in client vector
     */
-  std::vector<ElementBase_c*>::iterator pc_timeEventClientIter;
+  STL_NAMESPACE::vector<ElementBase_c*>::iterator pc_timeEventClientIter;
 	#endif
   /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
   static int32_t i32_lastTimeEventTime;

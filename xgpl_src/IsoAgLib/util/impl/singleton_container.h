@@ -25,38 +25,38 @@
 #endif
 
 #if USE_BASE_SINGLETON_VEC
-  #define CLASS_NAME() gluemacs( SingletonVecCont, CLIENT_TYPE_CNT() )
-  #define BASE_CLASS_NAME SingletonVec<T,SIZE>
+  #define CLASS_NAME() gluemacs3( SINGLETON_TYPE, VecCont , CLIENT_TYPE_CNT() )
+	#define BASE_CLASS_NAME gluemacs( SINGLETON_TYPE, Vec ) < TEMPLATE_QUAL_BASE ,SIZE>
 #else
-  #define CLASS_NAME() gluemacs( SingletonCont, CLIENT_TYPE_CNT() )
-  #define BASE_CLASS_NAME Singleton<T>
+  #define CLASS_NAME() gluemacs3( SINGLETON_TYPE, Cont, CLIENT_TYPE_CNT() )
+  #define BASE_CLASS_NAME SINGLETON_TYPE < TEMPLATE_QUAL_BASE >
 #endif
 
 #if ( CLIENT_TYPE_CNT() == 3 ) && USE_BASE_SINGLETON_VEC
-  #define TEMPLATE_DECL class T, int SIZE, class C1, typename K1, class C2, typename K2, class C3, typename K3
-  #define TEMPLATE_QUAL T,SIZE,C1,K1,C2,K2,C3,K3
+  #define TEMPLATE_DECL TEMPLATE_DECL_BASE, int SIZE, class C1, typename K1, class C2, typename K2, class C3, typename K3
+  #define TEMPLATE_QUAL TEMPLATE_QUAL_BASE,SIZE,C1,K1,C2,K2,C3,K3
 #endif
 #if ( CLIENT_TYPE_CNT() == 3 ) && (!USE_BASE_SINGLETON_VEC)
-    #define TEMPLATE_DECL class T, class C1, typename K1, class C2, typename K2, class C3, typename K3
-    #define TEMPLATE_QUAL T,C1,K1,C2,K2,C3,K3
+    #define TEMPLATE_DECL TEMPLATE_DECL_BASE, class C1, typename K1, class C2, typename K2, class C3, typename K3
+    #define TEMPLATE_QUAL TEMPLATE_QUAL_BASE,C1,K1,C2,K2,C3,K3
 #endif
 
 #if ( CLIENT_TYPE_CNT() == 2 ) && USE_BASE_SINGLETON_VEC
-    #define TEMPLATE_DECL class T, int SIZE, class C1, typename K1, class C2, typename K2
-    #define TEMPLATE_QUAL T,SIZE,C1,K1,C2,K2
+    #define TEMPLATE_DECL TEMPLATE_DECL_BASE, int SIZE, class C1, typename K1, class C2, typename K2
+    #define TEMPLATE_QUAL TEMPLATE_QUAL_BASE,SIZE,C1,K1,C2,K2
 #endif
 #if ( CLIENT_TYPE_CNT() == 2 ) && (!USE_BASE_SINGLETON_VEC)
-    #define TEMPLATE_DECL class T, class C1, typename K1, class C2, typename K2
-    #define TEMPLATE_QUAL T,C1,K1,C2,K2
+    #define TEMPLATE_DECL TEMPLATE_DECL_BASE, class C1, typename K1, class C2, typename K2
+    #define TEMPLATE_QUAL TEMPLATE_QUAL_BASE,C1,K1,C2,K2
 #endif
 
 #if ( CLIENT_TYPE_CNT() == 1 ) && USE_BASE_SINGLETON_VEC
-    #define TEMPLATE_DECL class T, int SIZE, class C1, typename K1
-    #define TEMPLATE_QUAL T,SIZE,C1,K1
+    #define TEMPLATE_DECL TEMPLATE_DECL_BASE, int SIZE, class C1, typename K1
+    #define TEMPLATE_QUAL TEMPLATE_QUAL_BASE,SIZE,C1,K1
 #endif
 #if ( CLIENT_TYPE_CNT() == 1 ) && (!USE_BASE_SINGLETON_VEC)
-    #define TEMPLATE_DECL class T, class C1, typename K1
-    #define TEMPLATE_QUAL T,C1,K1
+    #define TEMPLATE_DECL TEMPLATE_DECL_BASE, class C1, typename K1
+    #define TEMPLATE_QUAL TEMPLATE_QUAL_BASE,C1,K1
 #endif
 
 /** template class which enables instances of specified template client type
@@ -88,10 +88,10 @@ template<TEMPLATE_DECL> class CLASS_NAME() : public BASE_CLASS_NAME
   #undef GET_K_DECL
 #endif
 };
-  
+
 /** default constructor which ints the search cache */
 template<TEMPLATE_DECL> CLASS_NAME()<TEMPLATE_QUAL>::CLASS_NAME()( void )
-{ 
+{
   pc_searchCacheC1 = c_arrClientC1.begin();
 #if ( CLIENT_TYPE_CNT() > 1 )
   pc_searchCacheC2 = c_arrClientC2.begin();
@@ -100,7 +100,7 @@ template<TEMPLATE_DECL> CLASS_NAME()<TEMPLATE_QUAL>::CLASS_NAME()( void )
   pc_searchCacheC3 = c_arrClientC3.begin();
 #endif
 }
-  
+
   #define GET_CL_DEF() C1
   #define GET_K_DEF() K1
   #include "singleton_container_decl.h"

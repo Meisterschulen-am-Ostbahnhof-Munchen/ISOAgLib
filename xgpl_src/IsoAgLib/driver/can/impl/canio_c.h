@@ -144,9 +144,9 @@ class CANIO_c : public SingletonCANIO_c {
     MsgObj_c one object instances in array
   */
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef std::slist<MsgObj_c,std::__malloc_alloc_template<0> > ArrMsgObj;
+  typedef STL_NAMESPACE::slist<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrMsgObj;
 	#else
-  typedef std::slist<MsgObj_c> ArrMsgObj;
+  typedef STL_NAMESPACE::slist<MsgObj_c> ArrMsgObj;
 	#endif
   /**
     define dynamic array of FilterBox_c instances;
@@ -154,9 +154,9 @@ class CANIO_c : public SingletonCANIO_c {
     one object instance is inserted in array
   */
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef std::slist<FilterBox_c,std::__malloc_alloc_template<0> > ArrFilterBox;
+  typedef STL_NAMESPACE::slist<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrFilterBox;
 	#else
-  typedef std::slist<FilterBox_c> ArrFilterBox;
+  typedef STL_NAMESPACE::slist<FilterBox_c> ArrFilterBox;
 	#endif
 
  public:

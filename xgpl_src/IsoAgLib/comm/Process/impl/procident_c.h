@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef PROC_IDENT_H
@@ -91,6 +91,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -100,7 +101,7 @@ namespace __IsoAgLib {
   implements search
   @author Dipl.-Inform. Achim Spangler
 */
-class ProcIdent_c {
+class ProcIdent_c : public ClientBase {
 public:
   /**
     constructor whch can optional set all member values
@@ -119,7 +120,9 @@ public:
   */
   ProcIdent_c(uint8_t rui8_lis = 0, GetyPos_c rc_gtp = GetyPos_c(0, 0xF), uint8_t rui8_wert = 0,
           uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF, uint8_t rui8_pri = 2,
-          GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF), GetyPos_c *rpc_ownerGtp = 0);
+          GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF), GetyPos_c *rpc_ownerGtp = 0, int ri_singletonVecKey = 0);
+  /** copy constructor */
+	ProcIdent_c( const ProcIdent_c& rrefc_src );
   /**
     initialisation which can set this process data instance to a defined intial state
     @param rui8_lis LIS code of Process-Data
@@ -138,7 +141,7 @@ public:
   void init(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert,
           uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri = 2,
           GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF), GetyPos_c *rpc_ownerGtp = 0);
-  /**
+	/**
     copy constructor for class instance
     @param rrefc_src source ProcIdent_c instance
     @return reference to source for cmd like "proc1 = proc2 = proc3;"
@@ -306,15 +309,18 @@ public:
     @param rui8_wert compared WERT value
     @param rui8_inst compared INST value
     @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
-    @param rui8_pos optional compared POS 
+    @param rui8_pos optional compared POS
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerGtp optional compared GETY_POS of owner
     @return true -> this instance has same Process-Data identity
   */
-  bool match(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, 
+  bool match(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
              uint8_t rui8_zaehlnum = 0xFF, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF)) const;
 
 private: // Private attributes
+	/** internal base function for copy constructor and assignement */
+	void assignFromSource( const ProcIdent_c& rrefc_src );
+
   /** GETY code of process data identity */
   GetyPos_c* pc_ownerGtp; // only defined for own local data, otherwise NULL
   struct _data {
@@ -357,7 +363,7 @@ private: // Private methods
   @param rui8_inst compared INST value
   @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
   @param rc_ownerGtp optional compared GETY_POS of owner
-  @param rui8_pos optional compared POS 
+  @param rui8_pos optional compared POS
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return single comparison value
 */

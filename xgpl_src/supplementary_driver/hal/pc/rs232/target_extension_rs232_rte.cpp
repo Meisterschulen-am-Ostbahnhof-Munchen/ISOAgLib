@@ -58,6 +58,7 @@
 #include <rte_serial.h>
 
 #include "rs232_target_extensions.h"
+#include <IsoAgLib/util/compiler_adoption.h>
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <cstdio>
 #include <cstring>
@@ -70,7 +71,7 @@ namespace __HAL {
 /* **************************************** */
 serial_c *pc_serial = NULL;
 const uint16_t cui16_defaultChannel = 1;
-std::vector<uint8_t> c_buffer;
+STL_NAMESPACE::vector<uint8_t> c_buffer;
 
 /** send handler which is called by RTE on each new received data -> store current fertilizer amount */
 int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *data ) {

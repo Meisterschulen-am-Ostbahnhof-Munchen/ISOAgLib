@@ -113,11 +113,11 @@ class ManageMeasureProgLocal_c : public ProcessElementBase_c
 {
 private:
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef std::slist<MeasureProgLocal_c,std::__malloc_alloc_template<0> > Vec_MeasureProgLocal;
-  typedef std::slist<MeasureProgLocal_c,std::__malloc_alloc_template<0> >::iterator Vec_MeasureProgLocalIterator;
+  typedef STL_NAMESPACE::slist<MeasureProgLocal_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_MeasureProgLocal;
+  typedef STL_NAMESPACE::slist<MeasureProgLocal_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_MeasureProgLocalIterator;
 	#else
-  typedef std::slist<MeasureProgLocal_c> Vec_MeasureProgLocal;
-  typedef std::slist<MeasureProgLocal_c>::iterator Vec_MeasureProgLocalIterator;
+  typedef STL_NAMESPACE::slist<MeasureProgLocal_c> Vec_MeasureProgLocal;
+  typedef STL_NAMESPACE::slist<MeasureProgLocal_c>::iterator Vec_MeasureProgLocalIterator;
 	#endif
  public:
   /**

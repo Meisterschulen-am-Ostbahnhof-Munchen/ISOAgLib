@@ -116,3 +116,13 @@
 #else
  #define CNAMESPACE std
 #endif
+
+#ifdef IAR_COMPILER
+	#define STL_NAMESPACE
+#else
+	/** usually the STL containers and algorithms are placed in std,
+		but compilers like IAR just take the parts from ANSI C++ which they like,
+		and change the other ....
+	*/
+	#define STL_NAMESPACE std
+#endif
