@@ -84,10 +84,9 @@
 #include "isoterminal_c.h"
 //#include "../ivttypes.h"
 
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
 
 // //////////////////////////////// +X2C Operation 94 : stream
 //! Parameter:

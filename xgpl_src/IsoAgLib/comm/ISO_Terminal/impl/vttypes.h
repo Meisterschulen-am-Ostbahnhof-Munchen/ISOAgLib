@@ -167,8 +167,13 @@ class vtObjectAuxiliaryInput_c;
     uint16_t nrObject = (sourceOffset-(bytesBefore)) / 2; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+2) <= maxBytes)) { \
       /* write out an object */ \
-      destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject->getID() & 0xFF; \
-      destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject->getID() >> 8; \
+      if(MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject != NULL) { \
+        destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject->getID() & 0xFF; \
+        destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject->getID() >> 8; \
+      } else { \
+      destMemory [curBytes]   = 0xFF; \
+        destMemory [curBytes+1] = 0xFF; \
+      } \
       nrObject++; \
       curBytes += 2; \
       sourceOffset += 2; \

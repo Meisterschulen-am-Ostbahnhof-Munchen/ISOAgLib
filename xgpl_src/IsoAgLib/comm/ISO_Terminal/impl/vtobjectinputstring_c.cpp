@@ -244,7 +244,7 @@ vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject)
 
   setStringToStream( newValue );  // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length;
-	setStrLenToSend( ui16_tempLen );
+  setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this);
 } // -X2C
 

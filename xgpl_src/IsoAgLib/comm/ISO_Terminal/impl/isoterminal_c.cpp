@@ -216,7 +216,7 @@ bool ISOTerminal_c::startUpload (SendUpload_c* actSend) {
   default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
 */
-ISOTerminal_c::ISOTerminal_c()
+ISOTerminal_c::ISOTerminal_c():en_uploadState(UIdle)
 {
 }
 
@@ -242,6 +242,7 @@ bool ISOTerminal_c::registerIsoObjectPool (IdentItem_c* rpc_wsMasterIdentItem, I
   if (!((en_uploadState == UIdle) || (en_uploadState == UFailed))) {
     // could not start bacause uploader is busy, so we can't set the variables, but this shouldn't really
     // happen, as the pool should be registered right after initializing the terminal...
+
     getLbsErrInstance().registerError( LibErr_c::LbsMultiSendBusy, LibErr_c::IsoTerminal );
     return false;
   }
@@ -616,7 +617,9 @@ bool ISOTerminal_c::timeEvent( void )
           en_uploadState = UWaitingForLoadVersionResponse;
           ui32_uploadTimeout = 1000;
           ui32_uploadTimestamp = HAL::getTime();
-        } else {
+        } 
+        else
+        {
           // start uploading right now
           startObjectPoolUploading ();
         }
@@ -851,15 +854,17 @@ bool ISOTerminal_c::processMsg()
         break;
     }
     return true;
+    //b_result = true;
+    
   }
 
 
   // If VT is not active, don't react on PKGs addressed to us, as VG's not active ;)
   if (!isVtActive()) return true;
-
+  //  if (!isVtActive()) return b_result = true;
   // If no pool registered, do nothing!
   if (en_objectPoolState == OPNoneRegistered) return true;
-
+  //  if (en_objectPoolState == OPNoneRegistered) b_result = true;
         ////////////////////////
        // -->LANGUAGE_PGN<-- //
       ////////////////////////
@@ -911,6 +916,10 @@ bool ISOTerminal_c::processMsg()
         if (en_uploadState == UWaitingForEOOResponse) {
           if (data().getUint8Data (1) == 0) {
             if (pc_versionLabel != NULL) {
+// Added this preprocessor so storing of object pools can be controlled easily. Development sometimes requires that pools are not stored! -BAC
+#ifdef NO_STORE_VERSION
+                finalizeUploading();
+#else
               // Store Version and finalize after "Store Version Response"
               c_pkg.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                   208 /* D0 */, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
@@ -920,6 +929,8 @@ bool ISOTerminal_c::processMsg()
               en_uploadState = UWaitingForStoreVersionResponse;
               ui32_uploadTimeout = 3000;
               ui32_uploadTimestamp = HAL::getTime();
+
+#endif // NO_STORE_VERSION
             } else {
               // Finalize now!
               finalizeUploading ();

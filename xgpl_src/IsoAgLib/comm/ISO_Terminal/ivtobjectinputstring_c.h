@@ -81,7 +81,7 @@ public:
   iVtObjectInputString_s* get_vtObjectInputString_a() { return vtObjectInputString_c::get_vtObjectInputString_a(); };
 
   //  Operation: getString
-  const char* getString();
+  const char* getString() { return vtObjectInputString_c::getString(); };
 
 
   //  Operation: setValueRef

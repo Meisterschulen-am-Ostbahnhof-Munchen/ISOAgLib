@@ -198,7 +198,7 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
 
   setStringToStream( newValidationString ); // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
-	setStrLenToSend( ui16_tempLen );
+  setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this);
 } // -X2C
 
