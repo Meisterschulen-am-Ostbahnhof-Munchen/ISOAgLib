@@ -145,7 +145,7 @@ int main()
   // variable for working width defaultedwith 3000mm
   int32_t myWidth = 15000; //3000;
   // GTP of task controller which delivers EHR of tractor
-  iGetyPos_c c_taskcontrollerGtp( 1, 3 );
+  iGetyPos_c c_autodatacollectorGtp( 1, 3 );
   // lower limit for PTO in working state (0 == work state independent from PTO)
   uint16_t ui16_workMinPtoRear = 0;
   uint16_t ui16_workMinPtoFront = 0;
@@ -328,7 +328,7 @@ int main()
   // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of remote data (can vary from previously given GETY and POS),
   // ui8_remoteGtp tells the remote owner of the Process Data (where it is located as local),
   // the pointer to myGtp tells the local commanding member, used for target messages as SEND
-  iProcDataRemote_c c_remoteEhr(0, c_taskcontrollerGtp, 0x4, 0x0, 0xFF, 2, c_taskcontrollerGtp, &myGtp);
+  iProcDataRemote_c c_remoteEhr(0, c_autodatacollectorGtp, 0x4, 0x0, 0xFF, 2, c_autodatacollectorGtp, &myGtp);
   int8_t c_ehrStartProgCnt = 10;
 
   // configure the base data for receive
@@ -382,7 +382,7 @@ int main()
           getIdinMonitorInstance().dinMemberGtp(myGtp).sendName();
         }
 
-        if (getISystemMgmtInstance().existMemberGtp(c_taskcontrollerGtp, true))
+        if (getISystemMgmtInstance().existMemberGtp(c_autodatacollectorGtp, true))
         { // check for all progs, if they should be started or stopped
           switch (c_ehrStartProgCnt)
           {
@@ -409,7 +409,7 @@ int main()
             default:
               // count down
               // control that the EHR prog is started 10 loop runs after
-              // detection of active taskcontroller
+              // detection of active autodatacollector
               c_ehrStartProgCnt -= 1;
               break;
           }

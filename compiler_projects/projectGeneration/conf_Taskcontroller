@@ -1,5 +1,5 @@
-# Filename: conf_Taskcontroller
-# Configuration setting for example Taskcontroller
+# Filename: conf_AutoDataCollector
+# Configuration setting for example AutoDataCollector
 
 # optionally define path to qmake
 # if it can be automatically found by
@@ -19,7 +19,7 @@ REL_APP_PATH="IsoAgLib_Examples"
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
 # seperate files by whitespace
-# APP_SRC_FILE="Taskcontroller.cpp"
+# APP_SRC_FILE="AutoDataCollector.cpp"
 # define the file extensions to include for the
 # application source file search ( default: *.c *.cc *.cpp *.h *.hpp )
 # APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
@@ -204,7 +204,7 @@ else
 fi
 
 # define project name - used for directory with makefile
-PROJECT=Taskcontroller
+PROJECT=AutoDataCollector
 
 # define the project author
 # - used for IDE project file types, where the author is stored in the project file

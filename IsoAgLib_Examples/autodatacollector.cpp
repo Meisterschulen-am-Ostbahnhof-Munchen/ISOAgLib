@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          taskcontroller.cpp - tutorial for pure ISO address claim
+                          autodatacollector.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,12 +50,22 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example taskcontroller.cpp
- * This tutorial shall provide a simple base program, which creates some
- * remote process data, for which a measurement program is started for
- * automatic periodic value update.
- * Demonstrate optional usage of handler class with a method which is automatically
- * called on each measurement value receive.
+/** \example autodatacollector.cpp
+ * This example program is actively used at TUM - Weihenstephan to collect
+ * automatically without any need for task preperation the relevant process
+ * data of all connected implements. The decision on the recorded data is
+ * derived based on device type and device identification.
+ * There are some standard default rules like "record application rate
+ * in kg/ha for fertilizer spreader". Other device specific rules can be
+ * defined in EEPROM.
+ * As soon as a new implement is detected at BUS, autodatacollector checks
+ * in EEPROM and defaults for a rule to control process data recording.
+ * This base version dumps the data in CSV format at RS232.
+ * This can simply be extended by writing files of a (local) storage medium.
+ * The original name of this example was "autodatacollector" which was
+ * irritating, as it never had in mind to implement the ISO 11783 Task-Controller.
+ * The target of this program is the automatic data collection, whereas the 
+ * standard describes rules to define for each tast the data to record.
  *
  * <H1>What is demonstrated</H1>
  * <ol>
@@ -93,17 +103,17 @@
  * <H1>Howto compile this example</H1>
  * <ol>
  * <li>Call the script update_makefile.sh with the spec file
- *     conf_taskcontroller from the directory where the spec file
+ *     conf_autodatacollector from the directory where the spec file
  *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_taskcontroller</i>
+ *     <i>#> update_makefile.sh conf_autodatacollector</i>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd taskcontroller</i> to go to the subdirectory taskcontroller
+ *     <li><i>#>cd autodatacollector</i> to go to the subdirectory autodatacollector
  *     <li><i>#> make</i><br>
- *     <li>GNU make will then use the fresh created Makefile to create the executable taskcontroller in this directory
+ *     <li>GNU make will then use the fresh created Makefile to create the executable autodatacollector in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-taskcontroller.txt into the IDE of your choice
- *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_taskcontroller</i> as global project parameter
+ *     <li>import the file list in filelist-autodatacollector.txt into the IDE of your choice
+ *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_autodatacollector</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
  *   </ul>
@@ -112,74 +122,74 @@
  * <H1>Needed Project Specification</H1>
  * The project specification, which is needed as input for
  * the generation script update_makefile.sh is described in
- * \ref PrjSpectaskcontroller__pc_linux__simulating__simulating .
+ * \ref PrjSpecautodatacollector__pc_linux__simulating__simulating .
  *
  * The adopted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref PrjSpectaskcontroller__pc_linux__rte__rte
- *		<li> \ref PrjSpectaskcontroller__pc_linux__rte__simulating
- *		<li> \ref PrjSpectaskcontroller__pc_linux__rte__sys
- *		<li> \ref PrjSpectaskcontroller__pc_linux__simulating__rte
- *		<li> \ref PrjSpectaskcontroller__pc_linux__simulating__simulating
- *		<li> \ref PrjSpectaskcontroller__pc_linux__simulating__sys
+ *		<li> \ref PrjSpecautodatacollector__pc_linux__rte__rte
+ *		<li> \ref PrjSpecautodatacollector__pc_linux__rte__simulating
+ *		<li> \ref PrjSpecautodatacollector__pc_linux__rte__sys
+ *		<li> \ref PrjSpecautodatacollector__pc_linux__simulating__rte
+ *		<li> \ref PrjSpecautodatacollector__pc_linux__simulating__simulating
+ *		<li> \ref PrjSpecautodatacollector__pc_linux__simulating__sys
  *	</ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref PrjSpectaskcontroller__pc_win32__vector_canlib__simulating
- *		<li> \ref PrjSpectaskcontroller__pc_win32__vector_xl__simulating
- *		<li> \ref PrjSpectaskcontroller__pc_win32__vector_canlib__sys
- *		<li> \ref PrjSpectaskcontroller__pc_win32__vector_xl__sys
- *		<li> \ref PrjSpectaskcontroller__pc_win32__simulating__simulating
- *		<li> \ref PrjSpectaskcontroller__pc_win32__simulating__sys
+ *		<li> \ref PrjSpecautodatacollector__pc_win32__vector_canlib__simulating
+ *		<li> \ref PrjSpecautodatacollector__pc_win32__vector_xl__simulating
+ *		<li> \ref PrjSpecautodatacollector__pc_win32__vector_canlib__sys
+ *		<li> \ref PrjSpecautodatacollector__pc_win32__vector_xl__sys
+ *		<li> \ref PrjSpecautodatacollector__pc_win32__simulating__simulating
+ *		<li> \ref PrjSpecautodatacollector__pc_win32__simulating__sys
  * 	</ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref PrjSpectaskcontroller__esx__sys__sys
- *		<li> \ref PrjSpectaskcontroller__imi__sys__sys
- *		<li> \ref PrjSpectaskcontroller__pm167__sys__sys
+ *		<li> \ref PrjSpecautodatacollector__esx__sys__sys
+ *		<li> \ref PrjSpecautodatacollector__imi__sys__sys
+ *		<li> \ref PrjSpecautodatacollector__pm167__sys__sys
  *	</ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
- * See \ref FileListstaskcontroller__pc_linux__simulating__simulating for needed files
- * ( filelist-taskcontroller-doxygen_import.txt ),
- *  with \ref SrcListtaskcontroller__pc_linux__simulating__simulating containing the needed sources
- *  and with \ref HdrListtaskcontroller__pc_linux__simulating__simulating containing the needed headers.
+ * See \ref FileListsautodatacollector__pc_linux__simulating__simulating for needed files
+ * ( filelist-autodatacollector-doxygen_import.txt ),
+ *  with \ref SrcListautodatacollector__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrListautodatacollector__pc_linux__simulating__simulating containing the needed headers.
  *
  * The resulting file lists for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref FileListstaskcontroller__pc_linux__rte__rte
- *		<li> \ref FileListstaskcontroller__pc_linux__rte__simulating
- *		<li> \ref FileListstaskcontroller__pc_linux__rte__sys
- *		<li> \ref FileListstaskcontroller__pc_linux__simulating__rte
- *		<li> \ref FileListstaskcontroller__pc_linux__simulating__simulating
- *		<li> \ref FileListstaskcontroller__pc_linux__simulating__sys
+ *		<li> \ref FileListsautodatacollector__pc_linux__rte__rte
+ *		<li> \ref FileListsautodatacollector__pc_linux__rte__simulating
+ *		<li> \ref FileListsautodatacollector__pc_linux__rte__sys
+ *		<li> \ref FileListsautodatacollector__pc_linux__simulating__rte
+ *		<li> \ref FileListsautodatacollector__pc_linux__simulating__simulating
+ *		<li> \ref FileListsautodatacollector__pc_linux__simulating__sys
  *	</ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref FileListstaskcontroller__pc_win32__vector_canlib__simulating
- *		<li> \ref FileListstaskcontroller__pc_win32__vector_xl__simulating
- *		<li> \ref FileListstaskcontroller__pc_win32__vector_canlib__sys
- *		<li> \ref FileListstaskcontroller__pc_win32__vector_xl__sys
- *		<li> \ref FileListstaskcontroller__pc_win32__simulating__simulating
- *		<li> \ref FileListstaskcontroller__pc_win32__simulating__sys
+ *		<li> \ref FileListsautodatacollector__pc_win32__vector_canlib__simulating
+ *		<li> \ref FileListsautodatacollector__pc_win32__vector_xl__simulating
+ *		<li> \ref FileListsautodatacollector__pc_win32__vector_canlib__sys
+ *		<li> \ref FileListsautodatacollector__pc_win32__vector_xl__sys
+ *		<li> \ref FileListsautodatacollector__pc_win32__simulating__simulating
+ *		<li> \ref FileListsautodatacollector__pc_win32__simulating__sys
  * 	</ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref FileListstaskcontroller__esx__sys__sys
- *		<li> \ref FileListstaskcontroller__imi__sys__sys
- *		<li> \ref FileListstaskcontroller__pm167__sys__sys
+ *		<li> \ref FileListsautodatacollector__esx__sys__sys
+ *		<li> \ref FileListsautodatacollector__imi__sys__sys
+ *		<li> \ref FileListsautodatacollector__pm167__sys__sys
  *	</ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_taskcontroller ( see also at \ref PrjConfigtaskcontroller ).
+ * config_autodatacollector ( see also at \ref PrjConfigautodatacollector ).
  *                                                                         */
 /* *************************************************************************/
 
@@ -189,7 +199,7 @@
 		project, so that each source file is compiled with this setting
 	*/
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-	#define PRJ_USE_AUTOGEN_CONFIG config_taskcontroller.h
+	#define PRJ_USE_AUTOGEN_CONFIG config_autodatacollector.h
 #endif
 
 #include <list>
@@ -222,11 +232,11 @@
 // include the configuration header with addresses of some EEPROM informations
 #include <Application_Config/eeprom_adr.h>
 // include object headers for flexible management of remote data sources
-#include "Taskcontroller_Classes/getyflexmanager_c.h"
+#include "AutoDataCollector_Classes/getyflexmanager_c.h"
 // handle GPS informations of Fieldstar (tm) terminal
-#include "Taskcontroller_Classes/gpsmanager_c.h"
+#include "AutoDataCollector_Classes/gpsmanager_c.h"
 // handling of configuration data
-#include "Taskcontroller_Classes/defaultrecordconfig_c.h"
+#include "AutoDataCollector_Classes/defaultrecordconfig_c.h"
 /// specify if ident information should be read from EEPROM
 #define READ_EEPROM_IDENT_YN	YES
 
