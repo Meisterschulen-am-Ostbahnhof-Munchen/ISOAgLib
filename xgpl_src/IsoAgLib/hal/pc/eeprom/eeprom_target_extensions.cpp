@@ -100,7 +100,11 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
   int32_t i32_temp;
   uint8_t* pByte;
   printf("schreibe Daten von %i mit Daten :", wAddress);
+#ifdef WIN32
+  eepromDat = fopen("..\\..\\..\\simulated_io\\eeprom.dat", "r+b");
+#else
   eepromDat = fopen("../../../simulated_io/eeprom.dat", "r+b");
+#endif
   // BEGIN: Added by M.Wodok 6.12.04
   if (eepromDat == NULL) {
     // try again in current directory
@@ -154,7 +158,11 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
 /* write one uint8_t into the eeprom */
 int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte){
   printf("schreibe Daten von %i mit Daten %i\n", wAddress, bByte);
+#ifdef WIN32
+  eepromDat = fopen("..\\..\\..\\simulated_io\\eeprom.dat", "r+b");
+#else
   eepromDat = fopen("../../../simulated_io/eeprom.dat", "r+b");
+#endif
   // BEGIN: Added by M.Wodok 6.12.04
   if (eepromDat == NULL) {
     // try again in current directory
@@ -174,7 +182,11 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte){
   int8_t c_temp;
   int32_t i32_temp;
 //  printf("lese Daten von %i mit Daten als text:", wAddress);
+#ifdef WIN32
+  eepromDat = fopen("..\\..\\..\\simulated_io\\eeprom.dat", "r+b");
+#else
   eepromDat = fopen("../../../simulated_io/eeprom.dat", "r+b");
+#endif
   // BEGIN: Added by M.Wodok 6.12.04
   if (eepromDat == NULL) {
     // try again in current directory

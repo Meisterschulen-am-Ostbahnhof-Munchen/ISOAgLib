@@ -94,9 +94,9 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
         wBaudrate,bMode, bStoppbits, bitSoftwarehandshake);
 	#ifdef WIN32
 	strcpy(sendName, "rs232_send");
+  rs232_output = fopen(sendName, "w"); // "a+"
 	#else
 	strcpy(sendName, "../../../simulated_io/rs232_send");
-	#endif
   rs232_output = fopen(sendName, "w"); // "a+"
   // BEGIN: Added by M.Wodok 6.12.04
   if (rs232_output == NULL) {
@@ -105,6 +105,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
     rs232_output = fopen(sendName, "w"); // "a+"
   }  
   // END: Added by M.Wodok 6.12.04
+  #endif
 
   #ifdef WRITE_LOG_FILE
 	#ifdef WIN32

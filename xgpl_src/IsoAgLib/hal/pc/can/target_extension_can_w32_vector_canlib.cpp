@@ -289,19 +289,11 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 	canlogDat[bBusNumber] = fopen("can_send.txt", "w+");
   if(canlogDat[bBusNumber])
   {
-    printf("canlogDat file opened: '..\\..\\..\\..\\simulated_io\\can_send.txt'\n");
+    printf("canlogDat file opened: 'can_send.txt'\n");
   }
   else
   {
-    canlogDat[bBusNumber] = fopen("can_send.txt", "w+");
-    if (canlogDat[bBusNumber]) 
-    {
-      printf("canlogDat file opened: 'can_send.txt'\n");
-    }
-    else
-    {
-      printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat[bBusNumber]);
-    }
+    printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat[bBusNumber]);
   }
 
   // select the wanted channels

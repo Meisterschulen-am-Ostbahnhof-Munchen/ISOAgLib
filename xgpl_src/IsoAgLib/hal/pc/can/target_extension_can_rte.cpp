@@ -566,7 +566,11 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 
   rte_poll ();
   char logName[50];
+#ifdef WIN32
+  sprintf( logName, "..\\..\\..\\simulated_io\\can_send_%1hd.txt", bBusNumber );
+#else
   sprintf( logName, "../../../simulated_io/can_send_%1hd.txt", bBusNumber );
+#endif
 	static bool b_initFirstLog = true;
   static bool firstOpenLog[cui32_maxCanBusCnt];
 	if ( b_initFirstLog )

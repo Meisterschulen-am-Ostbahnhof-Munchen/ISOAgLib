@@ -174,7 +174,11 @@ int16_t  init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pf
   if ( sensorDigitalInputOpen[bInput] ) fclose(sensorDigitalInput[ bInput]);
   char name[100], zeile[100];
   
+#ifdef WIN32
+  sprintf(name, "..\\..\\..\\simulated_io\\digitalInput_%hu", bInput );
+#else
   sprintf(name, "../../../simulated_io/digitalInput_%hu", bInput );
+#endif
   sensorDigitalInput[ bInput] = fopen(name, "r");
   // BEGIN: Added by M.Wodok 6.12.04
   if (sensorDigitalInput[ bInput] == NULL) {
@@ -265,7 +269,11 @@ int16_t  init_analogin(uint8_t bNumber, uint8_t bType){
   if ( sensorAnalogInputOpen[bNumber] ) fclose(sensorAnalogInput[bNumber]);
   char name[100], zeile[100];
   
+#ifdef WIN32
+  sprintf(name, "..\\..\\..\\simulated_io\\analogInput_%hu", bNumber );
+#else
   sprintf(name, "../../../simulated_io/analogInput_%hu", bNumber );
+#endif
   sensorAnalogInput[ bNumber] = fopen(name, "r");
   // BEGIN: Added by M.Wodok 6.12.04
   if (sensorAnalogInput[ bNumber] == NULL) {

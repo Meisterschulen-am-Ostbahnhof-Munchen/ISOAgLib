@@ -81,7 +81,11 @@ int16_t iInitEEEditor(  uint8_t bBus,
     iNumberMsgsTransmit, bCanType);
 
  printf("Funktion zum Start des EEPROM Editors aufgerufen - lese Daten in EEPROM Datei\n");
+#ifdef WIN32
+ eeditor = fopen("..\\..\\..\\simulated_io\\eeditor.dat", "r+");
+#else
  eeditor = fopen("../../../simulated_io/eeditor.dat", "r+");
+#endif
  // BEGIN: Added by M.Wodok 6.12.04
  if (eeditor == NULL) {
    // try again with current path...

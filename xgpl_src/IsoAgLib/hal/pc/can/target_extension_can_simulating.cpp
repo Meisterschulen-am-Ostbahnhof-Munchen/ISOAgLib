@@ -203,7 +203,11 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
   /* test ob sendeobjekt configuriert wird */
   if (ptConfig->bMsgType == TX)
   { /* Sendeobjekt */
+#ifdef WIN32
+    sprintf(name, "..\\..\\..\\simulated_io\\can_send_%hx_%hx_", bBusNumber, bMsgObj);
+#else
     sprintf(name, "../../../simulated_io/can_send_%hx_%hx_", bBusNumber, bMsgObj);
+#endif
     if (ptConfig->bXtd) strcat(name, "ext");
     else strcat(name, "std");
 
@@ -229,7 +233,11 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
   }
   else
   { /* empfangsobjekt */
+#ifdef WIN32
+    sprintf(name, "..\\..\\..\\simulated_io\\can_%hx_%x_", bBusNumber, ptConfig->dwId);
+#else
     sprintf(name, "../../../simulated_io/can_%hx_%x_", bBusNumber, ptConfig->dwId);
+#endif
     if (ptConfig->bXtd) strcat(name, "ext");
     else strcat(name, "std");
     
@@ -266,7 +274,11 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   if (pOpen[bBusNumber][bMsgObj] != 1) return 0;
 
   pb_bXtd[bBusNumber][bMsgObj] = bXtd;
+#ifdef WIN32
+  sprintf(name, "..\\..\\..\\simulated_io\\can_%hx_%x_", bBusNumber, dwId);
+#else
   sprintf(name, "../../../simulated_io/can_%hx_%x_", bBusNumber, dwId);
+#endif
   if (bXtd) strcat(name, "ext");
   else strcat(name, "std");
 
