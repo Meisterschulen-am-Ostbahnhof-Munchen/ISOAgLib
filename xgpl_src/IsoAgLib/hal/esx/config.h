@@ -61,7 +61,7 @@
 #define HAL_CAN_MAX_BUS_NR 1
 
 /** decide if ESX has a babyboard, which should also be init at startup */
-#define _INIT_BABYBOARD_
+//#define _INIT_BABYBOARD_
 
 /** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */
 #define FLOAT_WORD_ORDER WORD_HI_LO
