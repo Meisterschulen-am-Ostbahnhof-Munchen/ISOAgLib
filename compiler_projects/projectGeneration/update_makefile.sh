@@ -694,7 +694,7 @@ function create_filelist( )
 	#echo "* \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >> $FILELIST_DOXYGEN_READY
 	#echo "*/" >> $FILELIST_DOXYGEN_READY
 	#echo "/*@{*/" >> $FILELIST_DOXYGEN_READY
-	echo -e "\n\n \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
+	echo -e "\n\n \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Headers for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
 	echo "\code" >> $FILELIST_DOXYGEN_READY
 	cat $FILELIST_HDR >> $FILELIST_DOXYGEN_READY
 	echo "\endcode" >> $FILELIST_DOXYGEN_READY

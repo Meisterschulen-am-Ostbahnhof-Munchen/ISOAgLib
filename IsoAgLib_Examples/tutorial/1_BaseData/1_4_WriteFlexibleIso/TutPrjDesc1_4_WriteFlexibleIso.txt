@@ -58,8 +58,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -441,8 +446,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -824,8 +834,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -1207,8 +1222,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -1590,8 +1610,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -1973,8 +1998,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -2356,8 +2386,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -2739,8 +2774,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -3122,8 +3162,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -3505,8 +3550,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -3888,8 +3938,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -4271,8 +4326,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -4654,8 +4714,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -5037,8 +5102,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -5420,8 +5490,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -5803,8 +5878,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -6186,8 +6266,13 @@ APP_SRC_FILE="1_4_WriteFlexibleIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -6741,7 +6826,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__esx__sys__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver sys and RS232 Driver sys
+ \section HdrList1_4_WriteFlexibleIso__esx__sys__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver sys and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -6839,7 +6924,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__imi__sys__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver sys and RS232 Driver sys
+ \section HdrList1_4_WriteFlexibleIso__imi__sys__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver sys and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -6938,7 +7023,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_linux__rte__rte List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver rte and RS232 Driver rte
+ \section HdrList1_4_WriteFlexibleIso__pc_linux__rte__rte List of Headers for 1_4_WriteFlexibleIso with CAN Driver rte and RS232 Driver rte
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7039,7 +7124,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_linux__rte__simulating List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver rte and RS232 Driver simulating
+ \section HdrList1_4_WriteFlexibleIso__pc_linux__rte__simulating List of Headers for 1_4_WriteFlexibleIso with CAN Driver rte and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7140,7 +7225,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_linux__rte__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver rte and RS232 Driver sys
+ \section HdrList1_4_WriteFlexibleIso__pc_linux__rte__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver rte and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7241,7 +7326,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_linux__simulating__rte List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver rte
+ \section HdrList1_4_WriteFlexibleIso__pc_linux__simulating__rte List of Headers for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver rte
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7342,7 +7427,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_linux__simulating__simulating List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver simulating
+ \section HdrList1_4_WriteFlexibleIso__pc_linux__simulating__simulating List of Headers for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7443,7 +7528,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_linux__simulating__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver sys
+ \section HdrList1_4_WriteFlexibleIso__pc_linux__simulating__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7544,7 +7629,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_win32__simulating__simulating List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver simulating
+ \section HdrList1_4_WriteFlexibleIso__pc_win32__simulating__simulating List of Headers for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7645,7 +7730,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_win32__simulating__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver sys
+ \section HdrList1_4_WriteFlexibleIso__pc_win32__simulating__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver simulating and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7746,7 +7831,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_win32__sontheim__simulating List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver sontheim and RS232 Driver simulating
+ \section HdrList1_4_WriteFlexibleIso__pc_win32__sontheim__simulating List of Headers for 1_4_WriteFlexibleIso with CAN Driver sontheim and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7847,7 +7932,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_win32__sontheim__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver sontheim and RS232 Driver sys
+ \section HdrList1_4_WriteFlexibleIso__pc_win32__sontheim__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver sontheim and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7948,7 +8033,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_win32__vector_canlib__simulating List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver vector_canlib and RS232 Driver simulating
+ \section HdrList1_4_WriteFlexibleIso__pc_win32__vector_canlib__simulating List of Headers for 1_4_WriteFlexibleIso with CAN Driver vector_canlib and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8049,7 +8134,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_win32__vector_canlib__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver vector_canlib and RS232 Driver sys
+ \section HdrList1_4_WriteFlexibleIso__pc_win32__vector_canlib__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver vector_canlib and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8150,7 +8235,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_win32__vector_xl__simulating List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver vector_xl and RS232 Driver simulating
+ \section HdrList1_4_WriteFlexibleIso__pc_win32__vector_xl__simulating List of Headers for 1_4_WriteFlexibleIso with CAN Driver vector_xl and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8251,7 +8336,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pc_win32__vector_xl__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver vector_xl and RS232 Driver sys
+ \section HdrList1_4_WriteFlexibleIso__pc_win32__vector_xl__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver vector_xl and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8351,7 +8436,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_4_WriteFlexibleIso__pm167__sys__sys List of Sourcefiles for 1_4_WriteFlexibleIso with CAN Driver sys and RS232 Driver sys
+ \section HdrList1_4_WriteFlexibleIso__pm167__sys__sys List of Headers for 1_4_WriteFlexibleIso with CAN Driver sys and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h

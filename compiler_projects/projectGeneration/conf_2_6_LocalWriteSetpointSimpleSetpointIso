@@ -47,8 +47,14 @@ APP_SRC_FILE="2_6_LocalWriteSetpointSimpleSetpointIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace

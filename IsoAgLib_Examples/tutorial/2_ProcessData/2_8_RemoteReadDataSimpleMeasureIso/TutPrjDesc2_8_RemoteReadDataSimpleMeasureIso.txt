@@ -59,8 +59,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -443,8 +449,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -827,8 +839,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -1211,8 +1229,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -1595,8 +1619,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -1979,8 +2009,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -2363,8 +2399,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -2747,8 +2789,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -3131,8 +3179,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -3515,8 +3569,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -3899,8 +3959,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -4283,8 +4349,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -4667,8 +4739,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -5051,8 +5129,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -5435,8 +5519,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -5819,8 +5909,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -6203,8 +6299,14 @@ APP_SRC_FILE="2_8_RemoteReadDataSimpleMeasureIso.cpp"
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
-# define path to the main directory if the IsoAgLib
+
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -6769,7 +6871,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__esx__sys__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__esx__sys__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -6895,7 +6997,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__imi__sys__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__imi__sys__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7023,7 +7125,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__rte__rte List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver rte and RS232 Driver rte
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__rte__rte List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver rte and RS232 Driver rte
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7153,7 +7255,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__rte__simulating List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver rte and RS232 Driver simulating
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__rte__simulating List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver rte and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7283,7 +7385,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__rte__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver rte and RS232 Driver sys
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__rte__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver rte and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7414,7 +7516,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__rte List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver rte
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__rte List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver rte
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7544,7 +7646,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__simulating List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver simulating
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__simulating List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7674,7 +7776,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver sys
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7805,8 +7907,43 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__simulating List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver simulating
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__simulating List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver simulating
 \code
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/imonitoritem_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
+../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
+../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.h
+../../../xgpl_src/IsoAgLib/util/impl/singleton_container.h
+../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.h
+../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
+../../../xgpl_src/IsoAgLib/util/impl/getypos_c.h
+../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
+../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.h
+../../../xgpl_src/IsoAgLib/util/impl/singleton.h
+../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.h
+../../../xgpl_src/IsoAgLib/util/liberr_c.h
+../../../xgpl_src/IsoAgLib/util/config.h
+../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
+../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
+../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/igetypos_c.h
+../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
@@ -7935,7 +8072,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver sys
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8066,7 +8203,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__simulating List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver simulating
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__simulating List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8196,7 +8333,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver sys
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8327,7 +8464,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_canlib__simulating List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_canlib and RS232 Driver simulating
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_canlib__simulating List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_canlib and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8457,7 +8594,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_canlib__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_canlib and RS232 Driver sys
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_canlib__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_canlib and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8588,7 +8725,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_xl__simulating List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_xl and RS232 Driver simulating
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_xl__simulating List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_xl and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8718,7 +8855,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_xl__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_xl and RS232 Driver sys
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_xl__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_xl and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8847,7 +8984,7 @@ PRJ_RS232=1
 
 
 
- \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pm167__sys__sys List of Sourcefiles for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
+ \section HdrList2_8_RemoteReadDataSimpleMeasureIso__pm167__sys__sys List of Headers for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h

@@ -1,4 +1,4 @@
-/*! \mainpage Overview on Documentation of ISO<i><sub>AgLib</sub></i>
+/*! \mainpage Overview on Documentation of IsoAgLib
 
 <center>
 <h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
@@ -116,7 +116,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- <b>2004-12-10:</b> List of used C++ features which aren't mapped by simple <b>EC++</b> compilers which doesn't use the <b>Extended EC++</b> specification
 		is written in \ref InfReqCompiler ( there are also some general notes on compiler use )
 	- <b>2004-12-12:</b> Add tutorial examples for internal CAN, supplementary drivers eeprom, sensor and PWM
-	- <b>2004-12-17:</b> Changed releas number of next revision to 1.1.0 ( and not 1.0.1 ) as really a lot of things are corrected and extended
+	- <b>2004-12-17:</b> Changed release number of next revision to 1.1.0 ( and not 1.0.1 ) as really a lot of things are corrected and extended
 			( especially PC CAN driver, DOC, tutorial examples and virtual terminal )
 
 
@@ -713,9 +713,9 @@ first users like <b>Brad Cox</b> started to try ISO<i><sub>AgLib</sub></i> in co
 			the tool <b>vt2iso</b> and the virtual terminal handling
 	- Pioneer Win32 User and <b>First External Contributor</b>: <a href="mailto:Brad.Cox@agcocorp:com">Brad Cox</a> who helped to find several optimization needs for documentation,
 			tutorial and project generation support. The resulting documentation helped him finally to implement all missing VT Object types, which
-			weren't needed for the MiniVeg project. He is already using ISO<i><sub>AgLib</sub></i> for some interesting test applications, and
+			weren't needed for the <b>MiniVeg N</b> project. He is already using ISO<i><sub>AgLib</sub></i> for some interesting test applications, and
 			contributed all missing VT Objects, so that ISO<i><sub>AgLib</sub></i> imeplements also VT Objects like Macro and AuxiliaryInput.
-			Some other extension from him are moveChildLocation and setOriginSKM functions for VT Objects, where appropriate.
+			Some other extensions from him are moveChildLocation and setOriginSKM functions for VT Objects, where appropriate.
 			Last but not least, he started with us to integrate multi language support.
 
 
@@ -724,10 +724,6 @@ first users like <b>Brad Cox</b> started to try ISO<i><sub>AgLib</sub></i> in co
 The following items are at the TODO list. You are encouraged to
 help contributing for their implementation with source code.
 
-	- Write some tutorial examples for use of supplementary IO drivers<br>
-		<b>Integrated as soon as there's some time</b>
-	- Write tutorial example with second ISO<i><sub>AgLib</sub></i> CAN instance for proprietary CAN protocol at internal BUS<br>
-		<b>Integrated as soon as there's some time</b>
 	- Refinement of GPS decoding<br>
 		<b>Integrated as soon as correct decoding is detected</b>
 	- Calculate the RAM + ROM resource need of the ISO<i><sub>AgLib</sub></i> tutorial example programs
@@ -1553,7 +1549,7 @@ The basic hardware setup of your target ( including CAN hardware/driver ) can be
 	- <b>USE_TARGET_SYSTEM</b> type of target system from list <i>{ "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167" }</i> or other coming supported HALs
 	- <b>USE_CAN_DRIVER</b> CAN driver to use from list <i>{ "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim" }</i>,<br>
 			- where type "simulating" uses file based CAN simulation on each PC system target,
-			- target "pc_win32" allows additionally <i>{ "vector_canlib"|"vector_xl"|"sontheim" }</i>,
+			- target "pc_win32" allows additionally <i>{ "vector_canlib"|"vector_xl"|"sontheim" }</i> ( <b>again: use vector_canlib if your drivers were installed to a CANLIB directrory - this is independend of the name of the card!! </b>),
 			- and target "pc_linux" allows additionally <i>{ "rte" }</i>.
 			- The other embedded targets allow only the system specific CAN driver - identified by "sys"
 			- update_makefile.sh automatically selects the "sys" CAN driver, if no PC target is selected
@@ -1681,7 +1677,7 @@ you will get
 
 Manually extract the Sontheim API files to <i>C:/Development/Sontheim</i>.
 
-Now ISO<i><sub>AgLib</sub></i> can access both of them if you specify:
+Now ISO<i><sub>AgLib</sub></i> can access all of them if you specify:
 	- <b>USE_WIN32_LIB_DIRECTORY="C:/Development"</b>,
 	- <b>USE_WIN32_HEADER_DIRECTORY="C:/Development"</b>
 
@@ -1748,11 +1744,16 @@ APP_SRC_FILE="0_0_AddressClaimIso.cpp"
 # APP_SRC_EXCLUDE=""
 
 # ###############################################################
-# Selection of Application Sources
+# Selection of Basic Project Settings
 # ###############################################################
 
-# define path to the main directory if the IsoAgLib
+# define relative path to the main directory of the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
 ISO_AG_LIB_PATH="../.."
 
 # optionally set individual DEFINES - seperated by whitespace
@@ -2309,13 +2310,13 @@ analysis on runtime and RAM + ROM size overhead, so that an individual implement
 The following parts of the STL are used:
 	- list ( list of nodes with <b>two</b> pointers overhead per stored data item, no reallocation needed,
 		navigation in both direction, direct access to first and last element, needed for FIFO buffer )
-	- slist ( list of nodes with <b>one</b> pointers overhead per stored data item, no reallocation needed,
+	- slist ( list of nodes with <b>one</b> pointer overhead per stored data item, no reallocation needed,
 		navigation only from first to last element, direct access only to first; used for most cases as typical application is storage of
 		objects which are iterated from first to last element )
 	- vector ( array of items which must be reallocated as soon as the reserved capacity is used,
 		thus only used for storage of pointers where reallocation is relative cheap and one or two pointers per item would cause too much overhead )
-	- queue ( optional FIFO for spooling of items to ISO virtual terminal )
-	- find ( standardized and optimized algorithm for search in on of the containers list, slist, vector )
+	- queue ( optional FIFO for spooling of items to ISO virtual terminal - could be activated at compile time by config setting )
+	- find ( standardized and optimized algorithm for search in the containers list, slist, vector )
 	- distance and advance ( algorithms for efficient placement of iterators during copy actions )
 
 The ISO<i><sub>AgLib</sub></i> <b>doesn't use:</b>
@@ -2340,7 +2341,7 @@ So please make shure that you don't activate options of your compiler that would
 
 Optimizing technologies of modern compilers allow program size and execution speed which
 is equivalent or better than comparable C implementations. This is also true for the the several dynamic lists,
-where a constant sized array would net be flexible enough or an individual implementation of a dynamic data structure
+where a constant sized array would not be flexible enough or an individual implementation of a dynamic data structure
 wouldn't be smarter than the STL counterpart.
 <br>
 Suitable compilers exists for processors with at least 16 Bit (e.g. the C16x
@@ -2363,7 +2364,7 @@ parts written in C and C++ without any problems.<br>
 \subsection InfReqProgrammingSkills Programming Skills
 As long as the ISO<i><sub>AgLib</sub></i> should only be used as it is, without
 analysing or optimizing it, the needed additional C++ skills (in relation
-to C) are small. The <b>24</b> current <a href="examplex.html">tutorial examples</a> and the three real
+to C) are small. The <b>28</b> current <a href="examplex.html">tutorial examples</a> and the three real
 research world examples provide a sufficient introduction in the usage of
 C++ and the ISO<i><sub>AgLib</sub></i>.<br>
 As soon as the internals of the ISO<i><sub>AgLib</sub></i> should be understood, the needed level of C++ skills is increased dependent on the configuration of the ISO<i><sub>AgLib</sub></i>. Companies who are interested in a reliable guarantee that needed bugfixes
