@@ -73,8 +73,11 @@
 #define c_ICAN     1
 #define c_PowerCAN 2
 #define c_CANAS    3
-#define c_EICAN   6
-#define c_CANLpt    8
+#define c_EICAN    6
+#define c_ECAN_PCI 7
+#define c_CANLpt   8
+#define c_PowerCANPCI       10  
+#define c_CANUSB_Std_Api    11  
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -91,6 +94,8 @@ int  (far __stdcall *ca_TransmitCanCard_1)
 		(int channel, int extended, int *data);
 
 int  (far __stdcall *ca_GetData_1) (int *data);
+
+int  (far __stdcall *ca_GetDataChannel_1) (int channel, int *data);
 
 // alle Identifier sperren
 int  (far __stdcall *ca_ResetSoftwareFilterMask_1) (int channel);
@@ -249,10 +254,11 @@ int16_t can_startDriver()
 
 	if ( gHwType = HWTYPE_AUTO )
 	{
-		const int32_t ci_tryCardTypes[] = { c_ICAN, c_PowerCAN, c_CANAS, c_EICAN, c_CANLpt };
-		const int32_t ci_cardTypeCnt = 5;
+		const int32_t ci_tryCardTypes[] = { c_PowerCANPCI, c_CANUSB_Std_Api, c_PowerCAN, c_CANAS, c_ICAN, c_EICAN, c_CANLpt, c_ECAN_PCI };
+		const int32_t ci_cardTypeCnt = 7;
 		for ( int32_t ind = 0; ind < ci_cardTypeCnt; ind++ )
 		{
+			Sleep( 100 );
 			if ( ( ci_tryCardTypes[ind] != c_CANAS ) && ( ci_tryCardTypes[ind] != c_ECAN_PCI ) )
 			{
 				apiversion = ca_InitApi_1(ci_tryCardTypes[ind], LptIsaIoAdr);
@@ -265,6 +271,12 @@ int16_t can_startDriver()
 			if ( apiversion != 0 ) {
 				gHwType = ci_tryCardTypes[ind]; // store used card type
 				break;
+			}
+			else
+			{
+				FreeLibrary(hCAPIDLL);
+				Sleep( 10 );
+				loadDllFunctionAddresses();
 			}
 		}
 		if ( apiversion == 0 )
@@ -294,7 +306,7 @@ int16_t can_startDriver()
 	printf("API-Ausfuehrung..: %4x\n",(apiversion & 0xFF));
 	// ----------------------------------------------------------------------------
 	// do the reset
-	i = ca_ResetCanCard_1();
+	int i = ca_ResetCanCard_1();
 	if (i) { printf("Reset CANLPT ok\n"); }
 	else   { printf("Reset CANLPT not ok\n");
 					// exit(0);
@@ -372,7 +384,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 		if ( bBusNumber > 0 )
 		{
 			printf( "ERROR - the selected CAN card has only ONE channel, so that Bus-Nr: %hd is not defined\r\n", bBusNumber );
-			retutn HAL_CONFIG_ERR;
+			return HAL_CONFIG_ERR;
 		}
 	}
 	else
@@ -390,7 +402,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 	printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat[bBusNumber]);
   }
 
-	for ( int fdata_ind = 0; fdata_ind < 15; fdata_ind++ ) fdata = 0;
+	for ( int fdata_ind = 0; fdata_ind < 15; fdata_ind++ ) fdata[fdata_ind] = 0;
 
 	// set the data array for control of filters
 	// -> let here everything IN
@@ -590,6 +602,7 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 { // first get waiting messages
 	checkMsg();
 	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+  return HAL_NO_ERR;
 }
 
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
@@ -618,7 +631,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 		if ( bBusNumber > 0 )
 		{
 			printf( "ERROR - the selected CAN card has only ONE channel, so that Bus-Nr: %hd is not defined\r\n", bBusNumber );
-			retutn HAL_CONFIG_ERR;
+			return HAL_CONFIG_ERR;
 		}
 	}
 	else
@@ -711,8 +724,6 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 
 int16_t checkMsg()
 { // first check if CANcardX buffer has received msg
-  Vstatus vErr;
-
   int32_t result = 0;
 	uint32_t DLC;
 	uint8_t b_xtd;
@@ -724,9 +735,9 @@ int16_t checkMsg()
 	{
 		if ( gHwType == c_ECAN_PCI )
 		{ // check both channels - first 1
-			if ( ( ! b_busOpened[0] ) || ( ! ca_GetData_1( 1, receivedata) ) )
+			if ( ( ! b_busOpened[0] ) || ( ! ca_GetDataChannel_1( 1, receivedata) ) )
 			{ // if 1 provides no data - then 2
-				if ( ( ! b_busOpened[1] ) || ( ! ca_GetData_1( 2, receivedata) ) )
+				if ( ( ! b_busOpened[1] ) || ( ! ca_GetDataChannel_1( 2, receivedata) ) )
 				{ // if also 2 provides no data - then break
 					break;
 				}
