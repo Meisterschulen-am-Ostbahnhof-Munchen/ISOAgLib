@@ -77,6 +77,12 @@
 #include <fcntl.h>
 #include <iostream>
 
+#ifdef WIN32
+	#include <MMSYSTEM.H>
+#else
+	#include <sys/time.h>
+#endif
+
 namespace __HAL {
 static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 
@@ -85,7 +91,8 @@ static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
   @return error state (HAL_NO_ERR == o.k.)
 */
 int16_t open_system()
-{
+{ // init system start time
+	getTime();
   t_biosextSysdata.wRAMSize = 1000;
   printf("open_esx aufgerufen\n");
 	printf("\n\nPRESS RETURN TO STOP PROGRAM!!!\n\n");
@@ -147,10 +154,34 @@ int16_t configWatchdog()
   return configWd(&t_watchdogConf);
 }
 
+#ifdef WIN32
+	#include <MMSYSTEM.H>
+int32_t getTime()
+{ // returns time in msec
+  return timeGetTime();
+}
+#else
+	#include <sys/time.h>
+static struct timeval startUpTime = {0,0};
 int32_t getTime()
 {
-  return (clock()/(CLOCKS_PER_SEC/1000));
+   struct timeval now;
+   gettimeofday(&now, 0);
+	 if ( ( startUpTime.tv_usec == 0) && ( startUpTime.tv_sec == 0) )
+	 {
+	 	startUpTime.tv_usec = now.tv_usec;
+	 	startUpTime.tv_sec = now.tv_sec;
+	 }
+   if ((now.tv_usec-= startUpTime.tv_usec) < 0)
+     {
+       now.tv_usec+= 1000000;
+       now.tv_sec-= 1;
+     }
+   now.tv_sec-= startUpTime.tv_sec;
+   return (now.tv_usec / 1000 + now.tv_sec * 1000);
 }
+#endif
+
 
 /* serial number of esx */
 int16_t getSnr(uint8_t *snrDat)
