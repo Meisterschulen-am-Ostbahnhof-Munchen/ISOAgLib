@@ -1,16 +1,18 @@
 // File: config_2_3_LocalReadDataSimpleMeasureSetpointIso.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_2_3_LocalReadDataSimpleMeasureSetpointIso" 
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_2_3_LocalReadDataSimpleMeasureSetpointIso"
 //            Perform changes direct in the feature and project setup file conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 //  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_2_3_LocalReadDataSimpleMeasureSetpointIso" call,
 //                    if the corresponding value in isoaglib_config.h changed
-#define CAN_BUS_CNT 1 
+#define CAN_BUS_CNT 1
 
-#define CAN_INSTANCE_CNT 1 
+#define CAN_INSTANCE_CNT 1
 
-#define PRT_INSTANCE_CNT 1 
+#define PRT_INSTANCE_CNT 1
+
+#define RS232_INSTANCE_CNT 1
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
@@ -28,14 +30,14 @@
 // Decide if float shall be used for the project
 #define USE_FLOAT_DATA_TYPE
 
-#ifndef USE_PROCESS 
-  #define USE_PROCESS 
+#ifndef USE_PROCESS
+  #define USE_PROCESS
 #endif
-#ifndef USE_EEPROM_IO_YN 
-	#define USE_EEPROM_IO_YN NO 
+#ifndef USE_EEPROM_IO_YN
+	#define USE_EEPROM_IO_YN NO
 #endif
-#ifndef USE_ISO_11783 
-	#define USE_ISO_11783 
+#ifndef USE_ISO_11783
+	#define USE_ISO_11783
 #endif
 
 // The following configuration values can be overwritten.

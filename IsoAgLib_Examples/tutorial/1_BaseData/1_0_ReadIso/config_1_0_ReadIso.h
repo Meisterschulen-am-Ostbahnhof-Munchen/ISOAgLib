@@ -8,9 +8,13 @@
 //                    if the corresponding value in isoaglib_config.h changed
 #define CAN_BUS_CNT 1 
 
+#define CAN_BUS_USED 0 
+
 #define CAN_INSTANCE_CNT 1 
 
 #define PRT_INSTANCE_CNT 1 
+
+#define RS232_INSTANCE_CNT 2 
 
 #ifndef USE_BASE 
 	#define USE_BASE 
@@ -36,6 +40,9 @@
 #endif
 #ifndef USE_EEPROM_IO_YN 
 	#define USE_EEPROM_IO_YN NO 
+#endif
+#ifndef USE_DATASTREAMS_IO_YN 
+	#define USE_DATASTREAMS_IO_YN NO 
 #endif
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 
