@@ -235,7 +235,8 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		- either all CAN channels of real CAN cards can be counted
 		- or just the CAN channels of the special virtual CAN device can be counted ( if no real CAN card is connected )
 	- add driver for <b>Sontheim CAN cards</b> ( tested only with CANLPT, but in theory designed according general API documentation, as all card
-		differences are handled by the driver )
+		differences are handled by the driver, <b>extract the files from the Sontheim API ZIP in the directory <i>C:\Development\Sontheim</i> if you want to
+		use the tutorial project files without changes</b> )
 	- adopted the check for new messages in CAN CARD to RTE style
 	- added basic language handling and AUX functions handling into ISO Terminal
 	- added <b>ISO 11783 Virtual Terminal</b> connection management, so that the pool is automatically
