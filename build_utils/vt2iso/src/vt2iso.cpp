@@ -638,16 +638,16 @@ unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wi
  bool isThere = false;
  unsigned int foundID = 0;
 
- // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL  object ID (65535) 
+ // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL  object ID (65535)
  // do not assign object ids for this, and as a result count an additional object unnecessarily by incrementing objCount. -BAC 10-Jan-2004
- if (wishID == 65535) 
+ if (wishID == 65535)
  {
      return wishID;
  }
  // first check if ID is there already
  for (unsigned int i=0; i<objCount; i++)
  {
-//  std::cout "comparing " << objName << " with " << &objNameTable [i*(stringLength+1)] << "\n";
+  // std::cout << "comparing " << objName << " with " << &objNameTable [i*(stringLength+1)] << "\n";
   if (strncmp (objName, &objNameTable [i*(stringLength+1)], stringLength) == 0)
   {
    foundID = objIDTable [i];
@@ -1360,7 +1360,7 @@ if (treatSpecial) { // get 'name=', 'id=' and all other possible attributes
       strncpy (attrString [l], attr_value, stringLength);
       attrIsGiven [l] = true;
 // DEBUG-OUT
-//      std::cout << "FOUND ATTR: IND " << l << ":= " << attrNameTable [l] << " -> " << attrString[l] << ":" 
+//      std::cout << "FOUND ATTR: IND " << l << ":= " << attrNameTable [l] << " -> " << attrString[l] << ":"
 //                << attrIsGiven [l] << "\n";
       break;
      }
@@ -1949,7 +1949,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
         if (objChildID == 65535)
         {
-          fprintf (partFileB, "{NULL}"); 
+          fprintf (partFileB, "{NULL}");
         }
         else
         {
@@ -2279,7 +2279,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
         }
         // Need check for all attributes being present for this command -bac
-        // add 127 to relative x,y 
+        // add 127 to relative x,y
         sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", atoi(attrString [attrParent_objectID]) & 0xFF,  atoi(attrString [attrParent_objectID]) >> 8, atoi(attrString [attrObjectID]) & 0xFF, atoi(attrString [attrObjectID]) >> 8, atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
         objChildCommands++;
        }
@@ -3331,10 +3331,15 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 if (!(attrIsGiven [attrFill_colour])) clean_exit (-1, "YOU NEED TO SPECIFY THE fill_colour= ATTRIBUTE FOR THE <fillattributes> OBJECT! STOPPING PARSER! bye.\n\n");
                 if (!attrIsGiven [attrFill_type])
                     sprintf (attrString [attrFill_type], "0");
-    if(!attrIsGiven [attrFill_pattern])
-     sprintf (attrString [attrFill_pattern], "NULL");
-    fprintf (partFileB, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
-    break;
+																if(!attrIsGiven [attrFill_pattern])
+																	sprintf (attrString [attrFill_pattern], "NULL");
+																if (strcmp ("NULL", attrString [attrFill_pattern]) != 0)
+																{ // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
+																	sprintf (tempString, "&iVtObject%s", attrString [attrFill_pattern]);
+																	sprintf (attrString [attrFill_pattern], "%s", tempString);
+																}
+																fprintf (partFileB, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
+																break;
 
             case otInputattributes:
                 //clean_exit (-1, "<inputattribute> OBJECT NOT YET IMPLEMENTED. STOPPING PARSER! bye.\n\n");
@@ -3436,10 +3441,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     if (objChildMacros == 0) {
       fprintf (partFileB, ", 0,NULL");
     } else {
-        // Changed this line to give the correct name to the Macro object to match the naming conventions of IsoAgLib V 1.1.0. 
+        // Changed this line to give the correct name to the Macro object to match the naming conventions of IsoAgLib V 1.1.0.
         // This coincides with a change made above to the name of the Macro struct. -bac 06-Jan-2005
         //fprintf (partFileB, ", %d,iVtObject%s_aEvent_Macro", objChildMacros, objName);
-        fprintf (partFileB, ", %d,iVtObject%s_aMacro_Object", objChildMacros, objName); 
+        fprintf (partFileB, ", %d,iVtObject%s_aMacro_Object", objChildMacros, objName);
     }
   }
 
