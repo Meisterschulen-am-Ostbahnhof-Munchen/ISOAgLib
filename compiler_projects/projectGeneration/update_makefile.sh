@@ -294,13 +294,6 @@ function check_set_correct_variables()
 	elif [ "A$PRJ_RS232" = "A" ] ; then
   	PRJ_RS232=0
 	fi
-	if [ $USE_FLOAT_DATA_TYPE -gt 0 ] ; then
-		if [ "A$PRJ_DEFINES" = "A" ] ; then
-			PRJ_DEFINES="USE_FLOAT_DATA_TYPE"
-		else
-			PRJ_DEFINES="$PRJ_DEFINES USE_FLOAT_DATA_TYPE"
-		fi
-	fi
 
   # preset some conditional vars
 	INC_LOC_STD_MEASURE_ELEMENTS=0
@@ -772,9 +765,14 @@ function create_autogen_project_config()
 	echo "// Strong Advice: Don't activate this, as long your target has not too tight memory restrictions" >> $CONFIG_NAME
 	echo "// Initialization of CAN filters and of local process data might get too slow under worst case conditions" >> $CONFIG_NAME
 	if [ $OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED -gt 0 ] ; then
-		echo "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" >> $CONFIG_NAME
+		echo -e "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED\n" >> $CONFIG_NAME
 	else
-		echo "// #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" >> $CONFIG_NAME
+		echo -e "// #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED\n" >> $CONFIG_NAME
+	fi
+
+	if [ $USE_FLOAT_DATA_TYPE -gt 0 ] ; then
+		echo "// Decide if float shall be used for the project" >> $CONFIG_NAME
+		echo -e "#define USE_FLOAT_DATA_TYPE\n" >> $CONFIG_NAME
 	fi
 
 

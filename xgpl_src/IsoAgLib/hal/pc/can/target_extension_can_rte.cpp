@@ -311,10 +311,11 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 	*/
 int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 { // first get waiting messages
-  if (b_busOpened[rui8_busNr])
-  {
-    rteCan_c [rui8_busNr]->poll ();
-  }
+	rte_poll();
+//	if (b_busOpened[rui8_busNr])
+//  {
+//    rteCan_c [rui8_busNr]->poll ();
+//  }
 	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
   return HAL_NO_ERR;
 }
@@ -404,13 +405,16 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 
 int16_t checkMsg()
 {
-  for (uint8_t b_bus = 0; b_bus < cui32_maxCanBusCnt; b_bus++)
+	rte_poll();
+	/*
+	for (uint8_t b_bus = 0; b_bus < cui32_maxCanBusCnt; b_bus++)
   {
     if (b_busOpened[b_bus])
     {
       rteCan_c [b_bus]->poll ();
     }
   }
+	*/
   return 0;
 }
 
