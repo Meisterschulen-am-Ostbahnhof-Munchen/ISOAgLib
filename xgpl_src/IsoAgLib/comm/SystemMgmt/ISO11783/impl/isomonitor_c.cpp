@@ -864,6 +864,8 @@ bool ISOMonitor_c::processMsg(){
       if (existIsoMemberNr(data().isoSa()))
       { // ISOItem_c with same SA exists (THE SA IS THE MASTER!)
         pc_itemMaster = &(isoMemberNr(data().isoSa()));
+				// the working set master places the NAME field of each children
+				// in the data part of this message type
         pc_item = &(isoMemberGtp(data().gtp()));
         pc_item->setMaster (pc_itemMaster); // set master on this isoItem
       }

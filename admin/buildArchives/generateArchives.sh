@@ -22,7 +22,7 @@ TEMP2_PART="-name '*.bak'"
 TEMP3_PART="-name '*.o'"
 TEMP4_PART="-name '*.tmp'"
 EXEC_PART="-and -not \( -path '*/compiler_projects/kdevelop_tmake/*' -and -perm -111 \)"
-COMM_BIOS_PART="-and -not \( -path '*/commercial_BIOS/*' -and -not -name '*.ilo' \)"
+COMM_BIOS_PART="-and -not \( -path '*/commercial_BIOS/*' -and -not -name '*.ilo' -and -not -name '*.txt' \)"
 
 NEVER_WANTED_PART=`echo "-and -not \( $TEMP1_PART -o $TEMP2_PART -o $TEMP3_PART -o $TEMP4_PART \) $EXEC_PART $COMM_BIOS_PART"`
 

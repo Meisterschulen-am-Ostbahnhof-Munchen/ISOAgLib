@@ -88,7 +88,7 @@
 
 #if defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__)
 // #if 0
-  #define	isspace(_c)	((_c)&(0x1|0x4))
+  #define	isspace(_c)	((_c)&(0x1|0x4|'\r'|'\n'))
 #else
   #include <cctype>
   #if !defined(__TSW_CPP_756__) && !defined(SYSTEM_PC_VC)
@@ -507,7 +507,7 @@ RS232IO_c& RS232IO_c::operator>>(std::basic_string<char>& refc_data)
   char pc_tempArray[50];
 
   // first eat white space (including \t,\n) - stop if puffer is empty
-  for (HAL::getRs232Char(&b_data); (isspace(b_data) && (eof()));
+  for (HAL::getRs232Char(&b_data); (((b_data == ' ' ) || (b_data == '\t' )) && (!eof()));
        HAL::getRs232Char(&b_data));
 
   // if buffer is empty exit
@@ -519,15 +519,15 @@ RS232IO_c& RS232IO_c::operator>>(std::basic_string<char>& refc_data)
 
   // now b_data is a not whitespace byte
 //  refc_data = b_data; // store it
-  CNAMESPACE::strncpy(pc_tempArray, (char *)&b_data, 1);
-  for (HAL::getRs232Char(&b_data); (isspace(b_data) && (eof()));
+  for (; !eof();
        HAL::getRs232Char(&b_data))
   {
-    CNAMESPACE::strncat(pc_tempArray, (char *)&b_data, 1);
+    //CNAMESPACE::strncat(pc_tempArray, (char *)&b_data, 1);
+		if ((b_data == ' ' ) || (b_data == '\t' )) break;
+		else refc_data.push_back( b_data );
 //      following line caused assertion
 //    refc_data += b_data;
   }
-  refc_data = pc_tempArray;
   return *this;
 }
 

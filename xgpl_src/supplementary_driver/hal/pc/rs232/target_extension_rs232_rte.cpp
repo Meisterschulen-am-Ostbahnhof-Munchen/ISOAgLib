@@ -70,7 +70,7 @@ namespace __HAL {
 /* ****** RS232 I/O BIOS functions  ******* */
 /* **************************************** */
 serial_c *pc_serial = NULL;
-const uint16_t cui16_defaultChannel = 1;
+const uint16_t cui16_defaultChannel = 0;
 STL_NAMESPACE::vector<uint8_t> c_buffer;
 
 /** send handler which is called by RTE on each new received data -> store current fertilizer amount */
@@ -107,16 +107,15 @@ int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *da
 */
 int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake)
 {
-  char param[20];
+  char param[30];
   uint16_t ui16_dataBit = 8;
   if ( ( bMode == 1 ) || ( bMode == 3 ) ) ui16_dataBit = 7;
   char par = 'n';
   if      ( ( bMode == 1 ) || ( bMode == 2 ) ) par = 'e';
   else if ( ( bMode == 3 ) || ( bMode == 4 ) ) par = 'o';
-  sprintf( param, "%d,%d,%c,%hd", wBaudrate, ui16_dataBit, par, bStoppbits );
+  sprintf( param, "C%d,R,E0,B%d,L%d%c%hd", cui16_defaultChannel,wBaudrate, ui16_dataBit, par, bStoppbits );
 
-
-  if ( ! rte_is_init() ) {
+	if ( ! rte_is_init() ) {
     if (rte_connect( "rte1" ) < 0) {
       cerr << "Unable to connect RTE1 server." << endl;
       exit(1);
@@ -125,13 +124,12 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
     }
   }
   if ( pc_serial == NULL )pc_serial = new serial_c;
-  pc_serial->set_channel( cui16_defaultChannel );
+	pc_serial->set_channel( 0 );
   pc_serial->set_send_handler( rs232_send_handler, 0 );
   pc_serial->set_line_parameters( param );
   pc_serial->set_echo( false );
-
   return HAL_NO_ERR;
-}
+} // soll "C0,R,E0,B4800,L8n1"
 /**
   set the RS232 Baudrate
   @param wBaudrate wanted baudrate
@@ -200,7 +198,8 @@ int16_t getRs232Char(uint8_t *pbRead)
     *pbRead = '\0';
     return HAL_RANGE_ERR;
   }
-  *pbRead = c_buffer[0];
+  pbRead[0] = c_buffer[0];
+//  pbRead[1] = '\0';
   // move rest of string one to front
   c_buffer.erase( c_buffer.begin() );
   return HAL_NO_ERR;
