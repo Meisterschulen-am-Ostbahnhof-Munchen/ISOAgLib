@@ -284,7 +284,9 @@ int ca_ResetCanCard_1(void)
 int ca_InitCanCard_1 (int channel, int msgnr, int accode, int accmask
 	, int fullcanmask[5], int btr0, int btr1, int octrl, int typ, int extended)
 {
+#ifdef DEBUG
 	fprintf(stderr,"In Init Function - can channel = %d\n", channel);
+#endif
 
 	int retval = 0;	// default to error
 
@@ -292,14 +294,20 @@ int ca_InitCanCard_1 (int channel, int msgnr, int accode, int accmask
 		{
 		if( !canBusIsOpen[channel] )
 			{
-//fprintf(stderr,"Opening CAN BUS channel=%d\n", channel);
+#ifdef DEBUG
+fprintf(stderr,"Opening CAN BUS channel=%d\n", channel);
+#endif
 			char fname[32];
 			sprintf( fname, "/dev/wecan%u", channel );
+#ifdef DEBUG
 fprintf(stderr,"open( \"%s\", O_RDRWR)\n", fname);
+#endif
 			can_device = open(fname, O_RDWR);
 			if (!can_device)
 				{
-				fprintf(stderr,"Could not open CAN bus%u\n",channel);
+#ifdef DEBUG
+				fprintf(stderr,"Could not open CAN bus%d\n",channel);
+#endif
 				return 0;
 				}
 
@@ -308,7 +316,9 @@ fprintf(stderr,"open( \"%s\", O_RDRWR)\n", fname);
             {
             char buf[16];
             sprintf( buf, "i 0x%2x%2x e\n", btr0 & 0xFF, btr1 & 0xFF );     //, (extended?" e":" ") extended is not being passed in! Don't use it!
+#ifdef DEBUG
 fprintf(stderr,"write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
+#endif
 			write(can_device, buf, strlen(buf));
             }
 
@@ -320,7 +330,9 @@ fprintf(stderr,"write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf))
 				if( can_device )
 					close(can_device);
 
-//				fprintf(stderr,"Could not fdopen CAN bus%u\n",channel);
+#ifdef DEBUG
+				fprintf(stderr,"Could not fdopen CAN bus%d\n",channel);
+#endif
 				return 0;
 				}
 
@@ -332,7 +344,9 @@ fprintf(stderr,"write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf))
 		}
 	else
 		{
-//		fprintf(stderr,"Invalid CAN bus%u\n", channel);
+#ifdef DEBUG
+		fprintf(stderr,"Invalid CAN bus%d\n", channel);
+#endif
 		return 0;
 		}
 }
@@ -391,7 +405,9 @@ int ca_TransmitCanCard_1(int channel, tSend* ptSend)
     if (ret < 0) 
         {
         /* nothing to read or interrupted system call */
+#ifdef DEBUG
         fprintf(stderr, "CAN error: \n");
+#endif
 //        fprintf(stderr, "CAN error: %s\n", strerror(errno));
         }
 //    else
@@ -452,7 +468,9 @@ int ca_GetData_1 (can_recv_data* receivedata)
 
 		if(retval == -1)
 		{
+#ifdef DEBUG
 			fprintf(stderr,"Error Occured in select\n");
+#endif
 			return 0;
 
 		} else if(retval == 0)
@@ -462,7 +480,9 @@ int ca_GetData_1 (can_recv_data* receivedata)
 		{
 			if(FD_ISSET(can_device, &rfds) != 1)
 			{
+#ifdef DEBUG
 				fprintf(stderr,"Not selecting right thing\n");
+#endif
 				return 0;
 			}	
 		}
@@ -471,7 +491,9 @@ int ca_GetData_1 (can_recv_data* receivedata)
         if (ret < 0) 
             {
             /* nothing to read or interrupted system call */
+#ifdef DEBUG
             fprintf(stderr, "CANRead error: %i\n", ret);
+#endif
     //        fprintf(stderr, "CAN error: %s\n", strerror(errno));
             return 0;
             }
@@ -631,7 +653,9 @@ int16_t can_startDriver()
 //  		}
   		if ( apiversion == 0 )
   		{ // failure - nothing found
+#ifdef DEBUG
   			fprintf(stderr, "FAILURE - No CAN card was found with automatic search with IO address %04X for manually configured cards\r\n", LptIsaIoAdr );
+#endif
   			return HAL_CONFIG_ERR;
   		}
   	}
@@ -641,9 +665,12 @@ int16_t can_startDriver()
 	// ----------------------------------------------------------------------------
 	// do the reset
 	int i = ca_ResetCanCard_1();
-	if (i) { //fprintf(stderr,"Reset CANLPT ok\n"); 
+	if (i) { //fprintf(stderr,"Reset CANLPT ok\n");
 	}
-	else   { fprintf(stderr,"Reset CANLPT not ok\n");
+	else   {
+#ifdef DEBUG
+    fprintf(stderr,"Reset CANLPT not ok\n");
+#endif
 					// exit(0);
 	}
 	// wait to be shure that CAN card is clean reset
@@ -1142,16 +1169,20 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 //			||((ptSend->dwId & 0x700) == 0x200)
 //			)
 	{
+#ifdef DEBUG
 		fprintf(stderr,"Send: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
 			ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
 			ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
 			ptSend->abData[6], ptSend->abData[7]);
+#endif
 
+#ifdef DEBUG
 		if( canlogDat[bBusNumber] )
 			fprintf(canlogDat[bBusNumber], "Sende: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
 			ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
 			ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
 			ptSend->abData[6], ptSend->abData[7]);
+#endif
 
 	}
 	int result = ca_TransmitCanCard_1(
@@ -1199,6 +1230,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 //     ||((ptReceive->dwId & 0x7FF) == 0x502)
 //      )
 	{
+#ifdef DEBUG
 	  fprintf(stderr,"Recv: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
       ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
       ptReceive->abData[3], ptReceive->abData[4], ptReceive->abData[5],
@@ -1209,6 +1241,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 	  ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
 	  ptReceive->abData[3], ptReceive->abData[4], ptReceive->abData[5],
 	  ptReceive->abData[6], ptReceive->abData[7]);
+#endif
 	}
 
 
@@ -1261,9 +1294,11 @@ int16_t checkMsg()
 
 		if (ui32_id >= 0x7FFFFFFF)
 		{
+#ifdef DEBUG
 			fprintf(stderr,"!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
 			if( canlogDat[b_bus] )
 				fprintf(canlogDat[b_bus], "!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
+#endif
 			continue;
 		}
 		#ifdef USE_THREAD
