@@ -1,0 +1,736 @@
+/***************************************************************************
+                          vt2iso-defines.hpp
+                             -------------------
+    begin                : Mon Mar 31 2003
+    copyright            : (C) 2003 - 2004 by Dipl.-Inf. Martin Wodok
+    email                : m.wodok@osb-ag:de
+    type                 : Header
+    $LastChangedDate: 2004-10-01 13:51:42 +0200 (Fri, 01 Oct 2004) $
+    $LastChangedRevision: 426 $
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ * This file is part of the "IsoAgLib", an object oriented program library *
+ * to serve as a software layer between application specific program and   *
+ * communication protocol details. By providing simple function calls for  *
+ * jobs like starting a measuring program for a process data value on a    *
+ * remote ECU, the main program has not to deal with single CAN telegram   *
+ * formatting. This way communication problems between ECU's which use     *
+ * this library should be prevented.                                       *
+ * Everybody and every company is invited to use this library to make a    *
+ * working plug and play standard out of the printed protocol standard.    *
+ *                                                                         *
+ * Copyright (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                  *
+ *                                                                         *
+ * The IsoAgLib is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU General Public License as published          *
+ * by the Free Software Foundation; either version 2 of the License, or    *
+ * (at your option) any later version.                                     *
+ *                                                                         *
+ * This library is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       *
+ * General Public License for more details.                                *
+ *                                                                         *
+ * You should have received a copy of the GNU General Public License       *
+ * along with IsoAgLib; if not, write to the Free Software Foundation,     *
+ * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
+ ***************************************************************************/
+#define stringLength 256
+
+
+// Object Types
+#define otWorkingset        (0)
+#define otDatamask          (1)
+#define otAlarmmask         (2)
+#define otContainer         (3)
+#define otSoftkeymask       (4)
+#define otKey               (5)
+#define otButton            (6)
+#define otInputboolean      (7)
+#define otInputstring       (8)
+#define otInputnumber       (9)
+#define otInputlist         (10)
+#define otOutputstring      (11)
+#define otOutputnumber      (12)
+#define otLine              (13)
+#define otRectangle         (14)
+#define otEllipse           (15)
+#define otPolygon           (16)
+#define otMeter             (17)
+#define otLinearbargraph    (18)
+#define otArchedbargraph    (19)
+#define otPicturegraphic    (20)
+#define otNumbervariable    (21)
+#define otStringvariable    (22)
+#define otFontattributes    (23)
+#define otLineattributes    (24)
+#define otFillattributes    (25)
+#define otInputattributes   (26)
+#define otObjectpointer     (27)
+#define otMacro             (28)
+#define otAuxiliaryfunction (29)
+#define otAuxiliaryinput    (30)
+#define maxObjectTypes      (31) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
+
+#define otObjectpool        (31) // for objTypeCompareTable (won't be inserted)
+#define otIncludeobject     (32) // for objTypeCompareTable (won't be inserted)
+#define otIncludemacro      (33) // for objTypeCompareTable (won't be inserted)
+#define otPoint             (34) // for Polygon Object
+#define otLanguage          (35) // for Working Set Object
+#define otFixedBitmap       (36) // for Picture Graphic Object "hack"
+
+
+// Command Types (for Macros)
+#define ctHideShowObject         (0)
+#define ctEnableDisableObject    (1)
+#define ctSelectInputObject      (2)
+#define ctControlAudioDevice     (3)
+#define ctSetAudioVolume         (4)
+#define ctChangeChildLocation    (5)
+#define ctChangeChildPosition    (6)
+#define ctChangeSize             (7)
+#define ctChangeBackgroundColour (8)
+#define ctChangeNumericValue     (9)
+#define ctChangeStringValue      (10)
+#define ctChangeEndPoint         (11)
+#define ctChangeFontAttributes   (12)
+#define ctChangeLineAttributes   (13)
+#define ctChangeFillAttributes   (14)
+#define ctChangeActiveMask       (15)
+#define ctChangeSoftKeyMask      (16)
+#define ctChangeAttribute        (17)
+#define ctChangePriority         (18)
+#define ctChangeListItem         (19)
+#define maxCommands              (20) // +++ MAX +++
+
+// Object May Be
+#define ombWorkingset        (1<<0)
+#define ombDatamask          (1<<1)
+#define ombAlarmmask         (1<<2)
+#define ombContainer         (1<<3)
+#define ombSoftkeymask       (1<<4)
+#define ombKey               (1<<5)
+#define ombButton            (1<<6)
+#define ombInputboolean      (1<<7)
+#define ombInputstring       (1<<8)
+#define ombInputnumber       (1<<9)
+#define ombInputlist         (1<<10)
+#define ombInputfield        (ombInputboolean | ombInputstring | ombInputnumber | ombInputlist)
+#define ombOutputstring      (1<<11)
+#define ombOutputnumber      (1<<12)
+#define ombOutputfield       (ombOutputstring | ombOutputnumber)
+#define ombLine              (1<<13)
+#define ombRectangle         (1<<14)
+#define ombEllipse           (1<<15)
+#define ombPolygon           (1<<16)
+#define ombOutputshape       (ombLine | ombRectangle | ombEllipse | ombPolygon)
+#define ombMeter             (1<<17)
+#define ombLinearbargraph    (1<<18)
+#define ombArchedbargraph    (1<<19)
+#define ombOutputgraphic     (ombMeter | ombLinearbargraph | ombArchedbargraph)
+#define ombPicturegraphic    (1<<20)
+#define ombNumbervariable    (1<<21)
+#define ombStringvariable    (1<<22)
+#define ombVariables         (ombNumberveriable | ombStringvariable)
+#define ombFontattributes    (1<<23)
+#define ombLineattributes    (1<<24)
+#define ombFillattributes    (1<<25)
+#define ombInputattributes   (1<<26)
+#define ombAttributes        (ombFontattributes | ombLineattributes | ombFillattributes | ombInputattributes)
+#define ombObjectpointer     (1<<27)
+#define ombMacro             (1<<28)
+#define ombAuxiliaryfunction (1<<29)
+#define ombAuxiliaryinput    (1<<30)
+
+#define ombObjectpool        (1<<31) // for objTypeCompareTable (won't be inserted)
+#define ombIncludeobject     (1<<32) // for objTypeCompareTable (won't be inserted)
+#define ombIncludemacro      (1<<33) // for objTypeCompareTable (won't be inserted)
+#define ombPoint             (1<<34) // for Polygon Object
+#define ombLanguage          (1<<35) // for Working Set Object
+#define ombFixedBitmap       (1<<36) // for Picture Graphic Object "hack"
+
+// Attributes
+#define attrBackground_colour (0)
+#define attrSelectable (1)
+#define attrActive_mask (2)
+#define attrSoft_key_mask (3)
+#define attrPriority (4)
+#define attrAcoustic_signal (5)
+#define attrWidth (6)
+#define attrHeight (7)
+#define attrHidden (8)
+#define attrKey_code (9)
+#define attrBorder_colour (10)
+#define attrLatchable (11)
+#define attrForeground_colour (12)
+#define attrVariable_reference (13)
+#define attrValue (14)
+#define attrFont_attributes (15)
+#define attrInput_attributes (16)
+#define attrOptions (17)
+#define attrHorizontal_justification (18)
+#define attrLength (19)
+#define attrMin_value (20)
+#define attrMax_value (21)
+#define attrOffset (22)
+#define attrScale (23)
+#define attrNumber_of_decimals (24)
+#define attrFormat (25)
+#define attrLine_attributes (26)
+#define attrLine_suppression (27)
+#define attrFill_attributes (28)
+#define attrEllipse_type (29)
+#define attrStart_angle (30)
+#define attrEnd_angle (31)
+#define attrPolygon_type (32)
+#define attrNeedle_colour (33)
+#define attrBorder_colour (34)
+#define attrArc_and_tick_colour (35)
+#define attrNumber_of_ticks (36)
+#define attrColour (37)
+#define attrTarget_line_colour (38)
+#define attrTarget_value_variable_reference (39)
+#define attrTarget_value (40)
+#define attrBar_graph_width (41)
+#define attrActual_width (42)
+#define attrActual_height (43)
+#define attrTransparency_colour (44)
+#define attrFont_colour (45)
+#define attrFont_size (46)
+#define attrFont_type (47)
+#define attrFont_style (48)
+#define attrLine_colour (49)
+#define attrLine_width (50)
+#define attrLine_art (51)
+#define attrFill_type (52)
+#define attrFill_colour (53)
+#define attrFill_pattern (54)
+#define attrValidation_type (55)
+#define attrValidation_string (56)
+#define attrPos_x (57)
+#define attrPos_y (58)
+#define attrEvent (59)
+#define attrFile (60)
+#define attrLine_direction (61)
+#define attrEnabled (62)
+#define attrFile0 (63)
+#define attrFile1 (64)
+#define attrFile2 (65)
+#define attrBlock_font (66)
+#define attrBlock_row (67)
+#define attrBlock_col (68)
+
+#define attrNumber_of_items (69)
+#define attrRle (70)
+#define attrNumber_of_bytes (71)
+//addtional Aux Function/Input Attributes
+#define attrFunction_type (72)
+#define attrInput_id (73)
+
+// Command Attributes:
+#define attrObjectID	(74)
+#define attrHideShow	(75)
+#define attrDisable_enable (76)
+#define attrNumber_of_repetitions (77)
+#define attrFrequency (78)
+#define attrOnTime_duration (79)
+#define attrOffTime_duration (80)
+#define attrPercentage (81)
+#define attrParent_objectID (82)
+#define attrX_change (83)
+#define attrY_change (84)
+#define attrX_pos (85)
+#define attrY_pos (86)
+#define attrNew_width (87)
+#define attrNew_height (88)
+#define attrNew_background_colour (89)
+#define attrNew_value (90)
+#define attrLine_direction (91)
+#define attrWorking_setID (92)
+#define attrNew_active_mask (93)
+#define attrMask_type (94)
+#define attrMaskID (95)
+#define attrNew_softkey_mask (96)
+#define attrAttributeID (97)
+#define attrNew_priority (98)
+#define attrList_index (99)
+#define attrNew_objectID (100)
+#define attrBytes_in_string (101)
+#define attrCode (102)
+
+#define maxAttributeNames (103)	
+
+
+#define maxObjectTypesToCompare (maxObjectTypes+6)
+char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
+    "workingset",
+    "datamask",
+    "alarmmask",
+    "container",
+    "softkeymask",
+    "key",
+    "button",
+    "inputboolean",
+    "inputstring",
+    "inputnumber",
+    "inputlist",
+    "outputstring",
+    "outputnumber",
+    "line",
+    "rectangle",
+    "ellipse",
+    "polygon",
+    "meter",
+    "linearbargraph",
+    "archedbargraph",
+    "picturegraphic",
+    "numbervariable",
+    "stringvariable",
+    "fontattributes",
+    "lineattributes",
+    "fillattributes",
+    "inputattributes",
+    "objectpointer",
+    "macro",
+    "auxiliaryfunction",
+    "auxiliaryinput",
+    "objectpool",
+    "include_object",
+    "include_macro",
+    "point",
+    "language",
+    "fixedbitmap"
+};
+
+unsigned long omcTypeTable [maxObjectTypesToCompare] = {
+    /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic,
+    /* "datamask", */       ombMacro | ombOutputfield | ombInputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombButton | ombContainer | ombObjectpointer,
+    /* "alarmmask", */      ombMacro | ombOutputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer,
+    /* "container", */      0, // same as the object that included the container
+    /* "softkeymask", */    ombMacro | ombKey | ombObjectpointer,
+    /* "key", */            ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer,
+    /* "button", */         ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer,
+    /* "inputboolean", */   ombMacro | 0,
+    /* "inputstring", */    ombMacro | 0,
+    /* "inputnumber", */    ombMacro | 0,
+    /* "inputlist", */      ombMacro | ombOutputfield | ombPicturegraphic,
+    /* "outputstring", */   ombMacro | 0,
+    /* "outputnumber", */   ombMacro | 0,
+    /* "line", */           ombMacro | 0,
+    /* "rectangle", */      ombMacro | 0,
+    /* "ellipse", */        ombMacro | 0,
+    /* "polygon", */        ombMacro | ombPoint,
+    /* "meter", */          ombMacro | 0,
+    /* "linearbargraph", */ ombMacro | 0,
+    /* "archedbargraph", */ ombMacro | 0,
+    /* "picturegraphic", */ ombMacro | ombFixedBitmap,
+    /* "numbervariable", */ 0, // really NONE
+    /* "stringvariable", */ 0, // really NONE
+    /* "fontattributes", */ ombMacro | 0,
+    /* "lineattributes", */ ombMacro | 0,
+    /* "fillattributes", */ ombMacro | 0,
+    /* "inputattributes",*/ ombMacro | 0,
+    /* "objectpointer", */  0, // really NONE
+    /* "macro", */          0, // really NONE
+    /* "auxfunction", */    ombOutputfield | ombOutputshape | ombPicturegraphic, // really NONE
+    /* "auxinput", */       ombOutputfield | ombOutputshape | ombPicturegraphic, // really NONE
+
+    /* "objectpool", */     -1, // all
+    /* "include_object", */ 0, // really NONE
+    /* "include_macro", */  0, // really NONE
+    /* "point" */           0, // really NONE
+    /* "language" */        0  // really NONE
+
+};
+
+char otClassnameTable [maxObjectTypes] [stringLength+1] = {
+    "WorkingSet",
+    "DataMask",
+    "AlarmMask",
+    "Container",
+    "SoftKeyMask",
+    "Key",
+    "Button",
+    "InputBoolean",
+    "InputString",
+    "InputNumber",
+    "InputList",
+    "OutputString",
+    "OutputNumber",
+    "Line",
+    "Rectangle",
+    "Ellipse",
+    "Polygon",
+    "Meter",
+    "LinearBarGraph",
+    "ArchedBarGraph",
+    "PictureGraphic",
+    "NumberVariable",
+    "StringVariable",
+    "FontAttributes",
+    "LineAttributes",
+    "FillAttributes",
+    "InputAttributes",
+    "ObjectPointer",
+    "Macro",
+    "AuxiliaryFunction",
+    "AuxiliaryInput"
+};
+
+
+char attrNameTable [maxAttributeNames] [stringLength+1] = {
+    "background_colour",
+    "selectable",
+    "active_mask",
+    "soft_key_mask",
+    "priority",
+    "acoustic_signal",
+    "width",
+    "height",
+    "hidden",
+    "key_code",
+    "border_colour",
+    "latchable",
+    "foreground_colour",
+    "variable_reference",
+    "value",
+    "font_attributes",
+    "input_attributes",
+    "options",
+    "horizontal_justification",
+    "length",
+    "min_value",
+    "max_value",
+    "offset",
+    "scale",
+    "number_of_decimals",
+    "format",
+    "line_attributes",
+    "line_suppression",
+    "fill_attributes",
+    "ellipse_type",
+    "start_angle",
+    "end_angle",
+    "polygon_type",
+    "needle_colour",
+    "border_colour",
+    "arc_and_tick_colour",
+    "number_of_ticks",
+    "colour",
+    "target_line_colour",
+    "target_value_variable_reference",
+    "target_value",
+    "bar_graph_width",
+    "actual_width",
+    "actual_height",
+    "transparency_colour",
+    "font_colour",
+    "font_size",
+    "font_type",
+    "font_style",
+    "line_colour",
+    "line_width",
+    "line_art",
+    "fill_type",
+    "fill_colour",
+    "fill_pattern",
+    "validation_type",
+    "validation_string",
+    "pos_x",
+    "pos_y",
+    "event",
+    "file",
+    "line_direction",
+    "enabled",
+    "file1",
+    "file4",
+    "file8",
+    "block_font",
+    "block_row",
+    "block_col",
+// new attributes from the new objects (and macros?!)
+    "number_of_items",
+    "rle",
+    "number_of_bytes",
+    "function_type",
+    "input_id",
+    "object_id",
+    "hide_show",
+    "enable_disable",
+    "number_of_repetitions",
+    "frequency",
+    "on_time_duration",
+    "off_time_duration",
+    "percentage",
+    "parent_object_id",
+    "x_pos_change",
+    "y_pos_change",
+    "x_pos",
+    "y_pos",
+    "new_width",
+    "new_height",
+    "new_background_colour",
+    "new_value",
+    "line_direction",
+    "working_set_object_id",
+    "new_active_mask_object_id",
+    "mask_type",
+    "mask_object_id",
+    "new_softkey_mask_object_id",
+    "attribute_id",
+    "new_priority",
+    "list_index",
+    "new_object_id",
+    "bytes_in_string",
+    "code"
+};
+
+// Table of possible Macro Commands
+#define maxCommandsToCompare (maxCommands)  
+char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
+    "command_hide_show_object",
+    "command_enable_disable_object",
+    "command_select_input_object",
+    "command_control_audio_device",
+    "command_set_audio_volume",
+    "command_change_child_location",
+    "command_change_child_position",
+    "command_change_size",
+    "command_change_background_color",
+    "command_change_numeric_value",
+    "command_change_string_value",
+    "command_change_end_point",
+    "command_change_font_attributes",
+    "command_change_line_attributes",
+    "command_change_fill_attributes",
+    "command_change_active_mask",
+    "command_change_soft_key_mask",
+    "command_change_attribute",
+    "command_change_priority",
+    "command_change_list_item"
+};
+
+
+char colorTable [16] [stringLength+1] = {
+    "black",
+    "white",
+    "green",
+    "teal",
+    "maroon",
+    "purple",
+    "olive",
+    "silver",
+    "grey",
+    "blue",
+    "lime",
+    "cyan",
+    "red",
+    "magenta",
+    "yellow",
+    "navy"
+};
+
+char colorDepthTable [3] = {'1', '4', '8'};
+
+#define maxFontsizeTable 15
+char fontsizeTable [maxFontsizeTable] [stringLength+1] = {
+    "6x8",
+    "8x8",
+    "8x12",
+    "12x16",
+    "16x16",
+    "16x24",
+    "24x32",
+    "32x32",
+    "32x48",
+    "48x64",
+    "64x64",
+    "64x96",
+    "96x128",
+    "128x128",
+    "128x192"
+};
+
+#define maxFontstyleTable 7
+char fontstyleTable [maxFontstyleTable] [stringLength+1] = {
+    "bold",
+    "crossed",
+    "underlined",
+    "italic",
+    "inverted",
+    "flashinginverted",
+    "flashinghidden"
+};
+
+#define maxTruthTable 5
+char truthTable [maxTruthTable] [stringLength+1] = {
+    "yes",
+    "true",
+    "on",
+    "show",
+    "enable"
+};
+
+#define maxFalseTable 5
+char falseTable [maxFalseTable] [stringLength+1] = {
+    "no",
+    "false",
+    "off",
+    "hide",
+    "disable"
+};
+
+#define maxFormatTable 2
+char formatTable [maxFormatTable] [stringLength+1] = {
+    "fixed",
+    "exponential"
+};
+
+#define maxHorizontalJustificationTable 3
+char horizontalJustificationTable [maxHorizontalJustificationTable] [stringLength+1] = {
+    "left",
+    "middle",
+    "right"
+};
+
+#define maxOptionsTable 2
+char optionsTable [maxOptionsTable] [stringLength+1] = {
+    "transparent",
+    "autowrap"
+};
+
+#define maxOutputNumberOptionsTable 3
+char outputNumberOptionsTable [maxOutputNumberOptionsTable] [stringLength+1] = {
+    "transparent",
+    "leadingzeros",
+    "blankzero"
+};
+
+#define maxLineSuppressionTable 4
+char lineSuppressionTable [maxLineSuppressionTable] [stringLength+1] = {
+   "top",
+   "right",
+   "bottom",
+   "left"
+};
+
+#define maxEllipseTypeTable 4
+char ellipseTypeTable [maxEllipseTypeTable] [stringLength+1] = {
+   "closed",
+   "open",
+   "closedsegment",
+   "closedsection"
+};
+
+#define maxPolygonTypeTable 4
+char polygonTypeTable [maxPolygonTypeTable] [stringLength+1] = {
+   "convex",
+   "nonconvex",
+   "complex",
+   "open"
+};
+
+
+#define maxValidationTypeTable 2
+char validationTypeTable [maxValidationTypeTable] [stringLength+1] = {
+   "valid_characters",
+   "invalid_characters"
+};
+
+
+#define maxFillTypeTable 4
+char fillTypeTable [maxFillTypeTable] [stringLength+1] = {
+   "no_fill",
+   "linecolour",
+   "fillcolour",
+   "pattern"
+};
+
+#define maxPictureGraphicOptionsTable 2
+char pictureGraphicOptionsTable [maxPictureGraphicOptionsTable] [stringLength+1] = {
+    "transparent",
+    "flashing",
+};
+
+#define maxPictureGraphicRleTable 4
+char pictureGraphicRleTable [maxPictureGraphicRleTable] [stringLength+1] = {
+    "1",
+    "4",
+    "8",
+    "auto"
+};
+
+#define maxLinearBarGraphOptionsTable 6
+char linearBarGraphOptionsTable [maxLinearBarGraphOptionsTable] [stringLength+1] = {
+    "border",
+    "targetline",
+    "ticks",
+    "nofill",
+    "horizontal",
+    "growpositive"
+};
+
+#define maxMeterOptionsTable 4
+char meterOptionsTable[maxMeterOptionsTable] [stringLength+1] ={
+   "arc",
+   "border",
+   "ticks",
+   "clockwise"
+};
+
+#define maxArchedBarGraphOptionsTable 5
+char archedBarGraphOptionsTable [maxArchedBarGraphOptionsTable] [stringLength+1] = {
+    "border",
+    "targetline",
+    "not_used",
+    "nofill",
+    "clockwise",
+};
+
+#define maxPriorityAcousticSignalTable 4
+char priorityAcousticSignalTable [maxPriorityAcousticSignalTable] [stringLength+1] = {
+    "high",
+    "medium",
+    "low",
+    "none"
+};
+
+//event Table for Macros:
+#define maxEventTable 26
+char eventTable [maxEventTable] [stringLength+1] = {
+    "on_activate",
+    "on_deactivate",
+    "on_show",
+    "on_hide",
+    "on_enable",
+    "on_disable",
+    "on_change_active_mask",
+    "on_change_soft_key_mask",
+    "on_change_attribute",
+    "on_change_background_colour",
+    "on_change_font_attributes",
+    "on_change_line_attributes",
+    "on_change_fill_attributes",
+    "on_change_child_location",
+    "on_change_size",
+    "on_change_value",
+    "on_change_priority",
+    "on_change_end_point",
+    "on_input_field_selection",
+    "on_input_field_deselection",
+    "on_ESC",
+    "on_entry_of_value",
+    "on_entry_of_new_value",
+    "on_key_press",
+    "on_key_release",
+    "on_change_child_position"
+};
+
+#define maxAuxFunctionTypes 3
+char auxFunctionTypeTable [maxAuxFunctionTypes] [stringLength+1] = {
+	"latchingboolean",
+	"analog",
+	"nonlatchingboolean"
+};
