@@ -1,5 +1,5 @@
 /***************************************************************************
-                          vtobjectauxiliaryfunction_c.cc
+                          vtobjectauxiliaryfunction_c.cpp
                              -------------------
     begin                : Mon Jun 30 14:41:54 2003
     copyright            : (C) 2003 by Martin Wodok/ Bradford Cox
