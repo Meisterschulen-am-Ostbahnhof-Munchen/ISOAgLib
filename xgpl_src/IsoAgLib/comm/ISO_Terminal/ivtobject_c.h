@@ -95,6 +95,7 @@ public:
     uint8_t options;
     uint8_t startAngle;
     uint8_t endAngle;
+#warning to change from uint8_t to uint16_t
     uint8_t barGraphWidth;
     uint16_t minValue;
     uint16_t maxValue;
