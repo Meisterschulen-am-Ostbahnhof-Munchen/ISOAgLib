@@ -138,3 +138,5 @@ commercial_BIOS.dummy/bios_pm167/README -text
 commercial_BIOS.dummy/bios_pm167/mios1.h -text
 commercial_BIOS.dummy/bios_pm167/mios1s.lib -text
 commercial_BIOS/README_LICENSED_PARTS.txt -text
+commercial_DIOS.dummy/hdd_io.cpp -text
+commercial_DIOS.dummy/hdd_io.h -text
