@@ -103,7 +103,7 @@ class FileStreamOutput_c : public StreamOutput_c
 public:
 
 	//! open a output stream
-	bool open( std::string& filename, FileMode_t rt_mode );
+	bool open( std::string& filename, FileMode_t rt_mode ) { return c_targetHandle.open( filename, rt_mode );};
 	//! open a output stream
 	bool open( const char* filename, FileMode_t rt_mode ) { return c_targetHandle.open( filename, rt_mode); };
 	//! close a output stream
@@ -115,7 +115,7 @@ public:
   virtual FileStreamOutput_c& operator<<(uint8_t ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const;
+  virtual bool eof() const { return c_targetHandle.eof();};
 
 private:
 	TargetFileStreamOutput_c c_targetHandle;

@@ -86,12 +86,6 @@
  ***************************************************************************/
 #include "filestreamoutput_c.h"
 
-//! open a output stream
-bool FileStreamOutput_c::open( std::string& filename, FileMode_t rt_mode )
-{
-	return c_targetHandle.open( filename, rt_mode );
-}
-
 //  Operation: operator<<
 //! Parameter:
 //! @param ui8_data:
@@ -99,10 +93,4 @@ FileStreamOutput_c& FileStreamOutput_c::operator<<(uint8_t ui8_data)
 {
 	c_targetHandle.operator<<( ui8_data );
 	return *this;
-}
-
-//  Operation: eof
-bool FileStreamOutput_c::eof() const
-{
-	return c_targetHandle.eof();
 }

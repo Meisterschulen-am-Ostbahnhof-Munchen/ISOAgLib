@@ -104,7 +104,7 @@ class FileStreamInput_c : public StreamInput_c
 public:
 
 	//! open a input stream
-	bool open( std::string& filename, FileMode_t rt_mode );
+	bool open( std::string& filename, FileMode_t rt_mode ) { return c_targetHandle.open( filename, rt_mode );};
 	//! open a input stream
 	bool open( const char* filename, FileMode_t rt_mode ) { return c_targetHandle.open( filename, rt_mode); };
 	//! close a input stream
@@ -116,7 +116,7 @@ public:
   virtual FileStreamInput_c& operator>>(uint8_t& ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const;
+  virtual bool eof() const { return c_targetHandle.eof();};
 
 private:
 	TargetFileStreamInput_c c_targetHandle;

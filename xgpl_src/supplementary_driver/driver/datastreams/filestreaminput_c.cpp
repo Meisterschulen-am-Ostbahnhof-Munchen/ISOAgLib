@@ -86,13 +86,6 @@
  ***************************************************************************/
 
 #include "filestreaminput_c.h"
-
-//! open a input stream
-bool FileStreamInput_c::open( std::string& filename, FileMode_t rt_mode )
-{
-	return c_targetHandle.open( filename, rt_mode );
-}
-
 //  Operation: operator>>
 //! Parameter:
 //! @param ui8_data:
@@ -100,10 +93,4 @@ FileStreamInput_c& FileStreamInput_c::operator>>(uint8_t& ui8_data)
 {
 	c_targetHandle.operator>>( ui8_data );
 	return *this;
-}
-
-//  Operation: eof
-bool FileStreamInput_c::eof() const
-{
-	return c_targetHandle.eof();
 }
