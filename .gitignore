@@ -174,3 +174,8 @@ compiler_projects/EDE/traktor_esx/Template.dir/*.smp
 compiler_projects/EDE/traktor_esx/Template.dir/*.src
 compiler_projects/EDE/traktor_esx/Template.dir/*.ti
 compiler_projects/EDE/traktor_esx/Template.dir/*.xvo
+doc/html/*.dot
+doc/html/*.html
+doc/html/*.map
+doc/html/*.md5
+doc/html/*.png
