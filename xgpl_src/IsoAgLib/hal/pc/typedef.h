@@ -1,9 +1,9 @@
 /***************************************************************************
                           typedef.h  -  system dependent basic typedef's
-                             -------------------                                         
-    begin                : Thu Aug 08 2002                                           
-    copyright            : (C) 2002 - 2004 Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+                             -------------------
+    begin                : Thu Aug 08 2002
+    copyright            : (C) 2002 - 2004 Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -55,8 +55,12 @@
 #define USER_WATCHDOG           0      /* Define for User-Watchdog */
 #define DATA_CHANGED            1      /* Returnvalue from config_wd */
 
-#define FALSE             0
-#define TRUE              1
+#ifndef FALSE
+	#define FALSE             0
+#endif
+#ifndef TRUE
+	#define TRUE              1
+#endif
 #define HIGH              1
 #define LOW               0
 
