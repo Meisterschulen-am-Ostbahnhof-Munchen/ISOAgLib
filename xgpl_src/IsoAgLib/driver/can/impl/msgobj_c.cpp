@@ -403,7 +403,6 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
         << " at MsgObj: " << uint16_t(msgObjNr())
         << " at BUS: " << uint16_t(rui8_busNumber)
 				<< "\r\n";
-			#endif
 		}
 	#endif
 
