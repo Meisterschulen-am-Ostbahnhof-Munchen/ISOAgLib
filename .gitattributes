@@ -107,3 +107,5 @@ IsoAgLib_Examples/tutorial/3_Terminal/3_1_LBSTerminalDin/TutPrjDesc3_1_LBSTermin
 IsoAgLib_Examples/tutorial/3_Terminal/3_1_LBSTerminalDin/config_3_1_LBSTerminalDin.h -text
 /README_LICENSED_PARTS.txt -text
 /TODO.dox -text
+admin/buildArchives/createRelease.sh -text
+admin/buildArchives/generateArchives.sh -text
