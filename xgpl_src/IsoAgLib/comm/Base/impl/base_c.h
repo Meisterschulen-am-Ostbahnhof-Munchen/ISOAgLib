@@ -596,9 +596,9 @@ public: // Public methods
 	int32_t getGpsLongitudeRaw( void ) const { return i32_longitudeRaw; };
 	#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
 	/** deliver Minute GPS Latitude */
-	float getGpsLatitudeMinute( void ) const { return ( ( float( i32_latitudeRaw ) / 1000000.0 ) - 210.0 ); };
+	float getGpsLatitudeMinute( void ) const { return ( ( float( i32_latitudeRaw ) / 1000000.0F ) - 210.0F ); };
 	/** deliver Minute GPS Longitude */
-	float getGpsLongitudeMinute( void ) const { return ( ( float( i32_longitudeRaw ) / 1000000.0 ) - 210.0 ); };
+	float getGpsLongitudeMinute( void ) const { return ( ( float( i32_longitudeRaw ) / 1000000.0F ) - 210.0F ); };
 	#endif
 	/** deliver GPS altitude - ?? [cm] ??
 		\todo check for correct altitude unit
