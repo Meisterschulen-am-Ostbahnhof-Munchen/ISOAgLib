@@ -14,7 +14,7 @@
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>Taskcontroller</mainprogram>
+      <mainprogram>AutoDataCollector</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>.</customdirectory>
       <programargs/>
