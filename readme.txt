@@ -260,6 +260,89 @@ The ISO<i><sub>AgLib</sub></i> is designed to provide the following main feature
 - facilitate development of application for both DIN 9684 and ISO 11783
 - orientate design according to requirements of networks with more then two devices
 
+\section IndexMemoryUsage Information on Memory Resource Requirements
+\subsection IndexHeapMemory Use of HEAP
+The ISO<i><sub>AgLib</sub></i> was optimized in relation to the old LBS<i><sub>Lib</sub></i> to use as less HEAP
+memory as possible. Thus the current ISO<i><sub>AgLib</sub></i> uses HEAP only for the following functions
+( <b>all Byte numbers map to 16 Bit CPU with large memory modell </b> ):
+	- vector for internal scheduling of core functional components with MAX 10 pointers stored in a compact STL vector<T> ( internal data structure: array )
+	- vector with pointers to all locally managed identities which are presented at the BUS as a node
+		( <b> ISO<i><sub>AgLib</sub></i> enables the presentation of more than one node at the BUS</b> )
+	- vector to forward CAN data processing to process data instances, which are located somewhere in the application scope
+		with a STL vector<T> with as much pointers as variables are used ( you can reserve enough space at system start,
+		to avoid reallocation of the internal array )<br>
+		this HEAP usage takes only place, if process data are used
+	- lists for automatic CAN filter management with around <b>1 KByte</b> memory per CAN channel for intensive use
+		( means: real world system like <b>MiniVeg N</b> and not only a small tutorial )<br>
+		this amount depends heavy on the amount of used features of the ISO<i><sub>AgLib</sub></i>
+	- list of entries in monitor lists with around <b>40 Byte</b> per device on the BUS ( inclusive the local own device )
+	- vector for global lookup of sensor or actor I/O instances with one pointer per instance ( <b> only present if the corresponding I/O feaure is used </b> )
+	- list for synchronisation data for LBS+ Terminal Mask Upload ( <b>only needed if DIN 9684 with LBS+ Terminal is used</b> )
+
+<b>One important note on safety of HEAP usage:</b><br>
+Most HEAP is allocated during the system init, so that the potentially too long lasting function
+allocate() is not called under work load conditions. A HEAP allocation in work state takes only place,
+if the complete system state changes ( e.g. a new device claims an address, so that around <b>40 Byte</b> for
+the corresponding device information must be allocated; the list<T> data structure avoids reallocation of the
+already existing nodes in the list <b>under all circumstances</b>, so that this function should run quick enough ).
+<br>
+As the amount of device nodes at the BUS and the amount of measuring programs for local process data
+( remote device can request periodic value update at individual rates; each of the remote device can request one
+or more such periodic updates per process data - e.g. one ECU might need value every 10meter the MIN and MAX and every
+10second the current measurement value ) are not known during implementation time, variable sized data structures are needed.
+<br>
+&nbsp;<br>
+This results in the following approximate HEAP usage numbers:
+	- simply claim address and manage terminal needs <b>less than 1 KByte</b>
+	- claim address, manage terminal, access GPS and tractor data on BUS needs <b>approximate 1 KByte</b>
+	- additionally use some process data where remote ECUs can request some sort of periodic value update
+		will need approximate 60 Byte per standard local process data instance
+		and 10 Byte per registered periodic value update ( i.e. measurement program )
+	- additionally use some process data where remote ECUs can set setpoints will need approximate
+		16 Byte per stored setpoint ( ISO<i><sub>AgLib</sub></i> can handle more than one setpoint per process
+		data, so that the application can evaluate all requests and can then decide based on some local
+		strategies on the setpoint to use for local control )
+	- real world projects like <b>MiniVeg N</b> with heavy use of most ISO<i><sub>AgLib</sub></i> features
+		needs approximate <b>15 KByte</b>
+
+<b>IMPORTANT:</b><br>
+Add enough space in HEAPSIZE so that the memory fragmentation of systems malloc doesn't lead to out-of-memory state.
+Eventual memory problems will be registered in the central error handling class LibErr_c, so that you can check for any
+memory problems there ( type: 1 BadAlloc ).<br>
+Example for <b>MiniVeg N</b> has calculated heap size of approximate 10KB, but needs 15KB to work. It will get some more emergency space
+in HEAP to avoid any problems in production release.
+<br>
+&nbsp;<br>
+The embedded compiler of Tasking uses a special linker/locator control named HEAPSIZE to define the amount of
+storage which is reserved for HEAP. This can be done in a IDE independend ILO file ( e.g. ECUs of STW ) or in one
+of the compiler setting dialogs.
+
+\subsection IndexBiosOsMemory Internal BIOS/OS Memory
+ECUs like the several products of <a href="http://www.sensor-technik.de">STW</a> provide a BIOS which implements
+core system activities like CAN and RS232 buffer handling, I/O functions like MEAN calculation and peak filtering.
+They have an internal memory buffer that holds the CAN and RS232 buffers. Its size can be controled by the setting
+<b>BUFFER_SIZE</b> in the file <b>Xos20go.asm</b>.
+The amount of needed internal buffer memory for CAN communication is controlled by the following conditions:
+	- amount of CAN channels
+	- amount of CAN messages which shall be buffered per CAN controller Message Object<br>
+		( this is defined by SEND_PUFFER_SIZE and RECEIVE_PUFFER_SIZE in the file isoaglib_config.h;
+			default setting 20 items for send and 20 items for receive;
+			therefore 408 Bytes per buffer with 20 items )
+This results in approximate <b>6 KByte</b> per CAN channel with the default values ( max 15 MsgObj with each 20 items in buffer ).<br>
+The amount of needed internal buffer memory for RS232 handling depends on the used send and receive buffer. The
+default size can be controlled by the settings DEFAULT_SND_PUF_SIZE and DEFAULT_REC_PUF_SIZE in isoaglib_config.h .
+These values can be overridden during runtime by interface functions of iRS232IO_c .
+Here a 100 char RS232 buffer needs 108 Bytes of the internal STW memory pool.
+<br>
+Thus you should set the BIOS/OS internal buffer to approximate <b>7 KByte</b> for one CAN channel and 100 char RS232 send/receive buffer.
+
+\subsection IndexLocalizedRAM Normal RAM
+The greatest part of the ISO<i><sub>AgLib</sub></i> components is created as static variables in RAM,
+so that the linker/locator can place everyting at fixed addresses, so that no memory lookup must be performed
+during firmware execution.<br>
+
+
+
 \section IndexStructuralOverview Structural Overview
 
 \subsection StructureModularity Modular Design

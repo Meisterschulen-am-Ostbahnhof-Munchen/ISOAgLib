@@ -221,14 +221,18 @@ int16_t can_stopDriver()
 /** get last timestamp of CAN receive */
 int32_t can_lastReceiveTime()
 {
+	#ifndef USE_THREAD
   checkMsg();
+	#endif
   return i32_lastReceiveTime;
 }
 
 
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
+	#ifndef USE_THREAD
   checkMsg();
+	#endif
   return ((bBusNumber < 2)&&(bMsgObj < 16))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
@@ -451,7 +455,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		WaitForSingleObject(g_hMsgEvent,100);
+		Sleep(100);
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;

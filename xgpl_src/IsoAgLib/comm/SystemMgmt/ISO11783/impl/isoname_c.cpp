@@ -82,6 +82,7 @@
  ***************************************************************************/
 #include "isoname_c.h"
 #include <IsoAgLib/typedef.h>
+#include <cstring>
 
 /* ************************************** */
 /* import some namespaces for easy access */

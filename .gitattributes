@@ -1128,6 +1128,7 @@ xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp -text
+xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp -text
 xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp -text
 xgpl_src/IsoAgLib/hal/pc/config.h -text

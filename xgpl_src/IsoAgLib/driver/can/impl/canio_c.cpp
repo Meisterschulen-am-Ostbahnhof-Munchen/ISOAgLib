@@ -299,7 +299,7 @@ void CANIO_c::close( void )
       break;
     case HAL_CONFIG_ERR:
       // ignore this type also, as this is only the indication of try to close an already closed channel
-      #ifdef DEBUG
+			#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
       getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call\r\n";
       #endif
       break;
@@ -550,7 +550,9 @@ bool CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   arrFilterBox.push_back(c_tempFilterBox);
   if (b_oldSize >= arrFilterBox.size())
   { // dynamic array didn't grow -> alloc error
+		#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
     getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Can );
+		#endif
     return false; // exit the function
   }
 
@@ -709,7 +711,9 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       // no send obj or BUS not initialized -> should not happen, cause this is done
       // on init of this object
       // (and is done if timeEvent notices that CAN wasn't configured by init)
+			#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
       getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj\r\n";
+			#endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
       break;
     case HAL_NOACT_ERR:

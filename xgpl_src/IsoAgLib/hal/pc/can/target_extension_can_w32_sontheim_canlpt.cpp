@@ -62,12 +62,57 @@
 
 // #define USE_THREAD
 
-#include "string.h"
-#include "stdio.h"
 #include <windows.h>
-#include "dos.h"
+#include <stdio.h>
+#include <conio.h>
+#include <time.h>
 
 #define HWTYPE_AUTO 1000
+
+
+#define c_ICAN     1
+#define c_PowerCAN 2
+#define c_CANAS    3
+#define c_EICAN   6
+#define c_CANLpt    8
+
+
+/////////////////////////////////////////////////////////////////////////////
+// definitions of DLL functions
+/////////////////////////////////////////////////////////////////////////////
+int (far __stdcall *ca_InitApi_1) (int typ, int IoAdr);
+
+int (far __stdcall *ca_ResetCanCard_1) (void);
+
+int (far __stdcall *ca_InitCanCard_1)
+                            (int channel, int msgnr, int accode, int accmask,
+						     int fullcanmask[5],
+						     int btr0,
+							 int btr1, int octrl,
+							 int typ, int extended);
+int  (far __stdcall *ca_TransmitCanCard_1)
+                            (int channel, int extended, int *data);
+
+int  (far __stdcall *ca_GetData_1)
+                         (int *data);
+
+// alle Identifier sperren
+int  (far __stdcall *ca_ResetSoftwareFilterMask_1)
+                         (int channel);
+
+// alle Identifier zulassen
+int  (far __stdcall *ca_SetAllId_1 )
+                         (int channel);
+
+
+int  (far __stdcall *ca_SetFilterId_1)
+                         (int channel, int identifier);
+
+int  (far __stdcall *ca_Instruction_1)
+                         (int *data);
+
+
+
 
 extern "C" {
   #include <VCanD.h>
@@ -77,24 +122,24 @@ namespace __HAL {
 /////////////////////////////////////////////////////////////////////////
 // Globals
 HANDLE       gEventHandle    = 0;
+HINSTANCE hCAPIDLL;
 
 
 // CAN Globals
-VportHandle gPortHandle = INVALID_PORTHANDLE;
 int AllCanChannelCount = 0;
-Vaccess gChannelMask = 0;
-Vaccess gPermissionMask = 0;
-Vaccess gInitMask            = 0;
-Vevent  gEvent;
-Vevent*  gpEvent;
-int32_t gChannel = 0;
-VDriverConfig *gDriverConfig = 0;
+int apiversion;
+int transmitdata[16];
+int receivedata[16];
+
+// IO address for LPT and ISA ( PCI and PCMCIA use automatic adr )
+const int32_t LptIsaIoAdr = 0x378;
+
 
 #ifdef USE_CAN_CARD_TYPE
-uint32_t gHwType = USE_CAN_CARD_TYPE;
+int32_t gHwType = USE_CAN_CARD_TYPE;
 #else
 // select the Vector CAN card type to use
-uint32_t gHwType = HWTYPE_AUTO;
+int32_t gHwType = HWTYPE_AUTO;
 #endif
 
 struct can_data {
@@ -155,20 +200,54 @@ DWORD WINAPI thread( PVOID par )
 
 #endif
 
-static void printDriverConfig( void ) {
-  int i;
-  printf("Driver Configuration:\n  ChannelCount=%u\n", gDriverConfig->channelCount);
-  for (i=0; i<gDriverConfig->channelCount; i++) {
-    printf("  Channel %u (%04X): %s, (%u,%u,%u), isOnBus=%u\n",
-      gDriverConfig->channel[i].channelIndex,
-      gDriverConfig->channel[i].channelMask,
-      gDriverConfig->channel[i].name,
-      gDriverConfig->channel[i].hwIndex,
-      gDriverConfig->channel[i].hwType,
-      gDriverConfig->channel[i].hwChannel,
-      gDriverConfig->channel[i].isOnBus
-    );
-  }
+int16_t loadDllFunctionAddresses(void)
+{
+  // if ((int) (hCAPIDLL = LoadLibrary ("C:\\Hör\\AKTUELL\\Canapi_CanLPT\\Software\\PC\\api\\Release\\CANAPI.DLL")) <=  HINSTANCE_ERROR) {
+  if ((int) (hCAPIDLL = LoadLibrary ("CANAPI.DLL")) <=  HINSTANCE_ERROR) {
+       printf ("can't open Library \n");
+		return HAL_CONFIG_ERR;
+	}
+  ca_InitApi_1 =         (int (far __stdcall*)
+				         (int typ, int IoAdr))
+                          GetProcAddress (hCAPIDLL,"ca_InitApi_1");
+
+  ca_ResetCanCard_1 =    (int (far __stdcall*) (void))
+	                           GetProcAddress (hCAPIDLL,"ca_ResetCanCard_1");
+
+  ca_InitCanCard_1 =     (int (far __stdcall*)
+	                          (int channel, int msgnr, int accode, int accmask,
+						       int fullcanmask[16],
+						       int btr0,
+							   int btr1, int octrl,
+							   int typ, int extended))
+							   GetProcAddress (hCAPIDLL,"ca_InitCanCard_1");
+
+  ca_TransmitCanCard_1 = (int (far __stdcall*)
+	                          (int channel, int extended, int *data))
+							   GetProcAddress (hCAPIDLL,"ca_TransmitCanCard_1");
+
+  ca_GetData_1 =         (int (far __stdcall*)
+	                          (int *data))
+							   GetProcAddress (hCAPIDLL,"ca_GetData_1");
+
+  ca_ResetSoftwareFilterMask_1 =
+	                     (int (far __stdcall*)
+						      (int channel))
+							  GetProcAddress (hCAPIDLL,"ca_ResetSoftwareFilterMask_1");
+
+  ca_SetAllId_1 =        (int (far __stdcall*)
+	                          (int channel))
+							  GetProcAddress (hCAPIDLL,"ca_SetAllId_1");
+
+
+  ca_SetFilterId_1 =     (int (far __stdcall*)
+	                          (int channel,int identifier))
+							  GetProcAddress (hCAPIDLL,"ca_SetFilterId_1");
+
+  ca_Instruction_1 =     (int (far __stdcall*)
+	                          (int *data))
+							  GetProcAddress (hCAPIDLL,"ca_Instruction_1");
+	return HAL_NO_ERR;
 }
 
 int16_t can_startDriver()
@@ -180,22 +259,68 @@ int16_t can_startDriver()
 	gHwType = HWTYPE_AUTO;
 	#endif
   // open the driver
-  Vstatus vErr;
   canlogDat = NULL;
-	vErr = ncdOpenDriver();
-  if (vErr) return HAL_CONFIG_ERR;
   b_busOpened[0] = false;
   b_busOpened[1] = false;
 
-  printf("ncdDriverConfig()\n");
-  vErr = ncdGetDriverConfig(&AllCanChannelCount, NULL); // get the number of channels
-  if (vErr) return HAL_CONFIG_ERR;
-  printf(" %u channels found\n",AllCanChannelCount);
-  gDriverConfig = (VDriverConfig*)malloc(AllCanChannelCount*sizeof(VDriverConfig));
-  if (!gDriverConfig) return HAL_CONFIG_ERR;
-  vErr = ncdGetDriverConfig(&AllCanChannelCount, gDriverConfig); // get information about all channels
-  if (vErr) return HAL_CONFIG_ERR;
-  printDriverConfig();
+  printf("load driver Dll\n");
+	if ( loadDllFunctionAddresses() != HAL_NO_ERR) return HAL_CONFIG_ERR;
+  printf("load driver Dll\n");
+
+	if ( gHwType = HWTYPE_AUTO )
+	{
+		const int32_t ci_tryCardTypes[] = { c_ICAN, c_PowerCAN, c_CANAS, c_EICAN, c_CANLpt };
+		const int32_t ci_cardTypeCnt = 5;
+		for ( int32_t ind = 0; ind < ci_cardTypeCnt; ind++ )
+		{
+			if ( ( ci_tryCardTypes[ind] != c_CANAS ) && ( ci_tryCardTypes[ind] != c_ECAN_PCI ) )
+			{
+				apiversion = ca_InitApi_1(ci_tryCardTypes[ind], LptIsaIoAdr);
+			}
+			else
+			{
+				apiversion = ca_InitApi_1(ci_tryCardTypes[ind], 0);
+			}
+			// break search loop if card found
+			if ( apiversion != 0 ) {
+				gHwType = ci_tryCardTypes[ind]; // store used card type
+				break;
+			}
+		}
+		if ( apiversion == 0 )
+		{ // failure - nothing found
+			printf( "FAILURE - No CAN card was found with automatic search with IO address %04X for manually configured cards\r\n", LptIsaIoAdr );
+			return HAL_CONFIG_ERR;
+		}
+	}
+	else
+	{
+		if ( ( gHwType != c_CANAS ) && ( gHwType != c_ECAN_PCI ) )
+		{
+			apiversion = ca_InitApi_1(gHwType, LptIsaIoAdr);
+		}
+		else
+		{
+			apiversion = ca_InitApi_1(gHwType, 0);
+		}
+		if ( apiversion == 0 )
+		{ // failure - nothing found
+			printf( "FAILURE - No CAN card was found with automatic search with IO address %04X for manually configured cards\r\n", LptIsaIoAdr );
+			return HAL_CONFIG_ERR;
+		}
+	}
+	printf("InitApi done\n");
+	printf("API-Version......: %4x\n",(apiversion & 0xFF00) >> 8);
+	printf("API-Ausfuehrung..: %4x\n",(apiversion & 0xFF));
+	// ----------------------------------------------------------------------------
+	// do the reset
+	i = ca_ResetCanCard_1();
+	if (i) { printf("Reset CANLPT ok\n"); }
+	else   { printf("Reset CANLPT not ok\n");
+					// exit(0);
+	}
+	// wait to be shure that CAN card is clean reset
+	Sleep(100);
 
 	#ifdef USE_THREAD
 	/** flag to control running thread */
@@ -207,8 +332,6 @@ int16_t can_startDriver()
 
   // create a synchronisation object
   gEventHandle = CreateEvent(NULL, FALSE, FALSE, NULL);
-  vErr = ncdSetNotification(gPortHandle, (unsigned long*)&gEventHandle, 1);
-  if (vErr) return HAL_CONFIG_ERR;
 
 	// create a thread
   threadHandle = CreateThread(0,0x1000,thread,0,0,&threadId);
@@ -223,13 +346,7 @@ int16_t can_startDriver()
       rec_bufCnt[b_bus][ui8_nr] = 0;
     }
   }
-  if (vErr) goto error;
-
   return HAL_NO_ERR;
-
-  error:
-    printf("ERROR: %s!\n", ncdGetErrorString(vErr));
-    return HAL_CONFIG_ERR;
 }
 int16_t can_stopDriver()
 {
@@ -238,8 +355,7 @@ int16_t can_stopDriver()
 	gThreadRunning = false;
 	b_blockThread = true;
 	#endif
-  ncdCloseDriver();
-    if (canlogDat != NULL){
+  if (canlogDat != NULL){
     fclose(canlogDat);
     canlogDat = NULL;
   }
@@ -249,33 +365,37 @@ int16_t can_stopDriver()
 /** get last timestamp of CAN receive */
 int32_t can_lastReceiveTime()
 {
-	#ifndef USE_THREAD
   checkMsg();
-	#else
   return i32_lastReceiveTime;
 }
 
 
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
-	#ifndef USE_THREAD
   checkMsg();
-	#endif
   return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 16))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
 
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {
-  int i,n;
-  int32_t i32_busInd = -1, i32_virtualBusInd = -1;
-  Vstatus vErr;
-  VportHandle* pgPortHandle = &gPortHandle;
-  Vaccess* pgChannelMask = &gChannelMask;
-  Vaccess* pgPermissionMask = &gPermissionMask;
+	int fdata[16];
+	int channel = 0;
+	int btr0, btr1;
+	int errcode;
 
-
-	Vaccess virtualChannelMask = 0;
+	if ( ( gHwType == c_ICAN ) || ( gHwType == c_CANLpt ) )
+	{
+		if ( bBusNumber > 0 )
+		{
+			printf( "ERROR - the selected CAN card has only ONE channel, so that Bus-Nr: %hd is not defined\r\n", bBusNumber );
+			retutn HAL_CONFIG_ERR;
+		}
+	}
+	else
+	{ // channel for sontheim multi BUS cards starts counting with 1
+		channel = bBusNumber + 1;
+	}
 
   canlogDat = fopen("..\\..\\..\\..\\simulated_io\\can_send.txt", "w+");
   if(canlogDat)
@@ -287,103 +407,122 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 	printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat);
   }
 
-  // select the wanted channels
-  gChannelMask = gInitMask = 0;
-  i32_busInd = -1;
-  for (i=0; i<AllCanChannelCount; i++) {
-    if ( ( gDriverConfig->channel[i].hwType==gHwType                                           )
-			|| ( ( gHwType == HWTYPE_AUTO ) && ( gDriverConfig->channel[i].hwType > HWTYPE_VIRTUAL ) ) )
-		{
-			i32_busInd++;
-			printf( "Detect Real Channel %d\n", i32_busInd );
-			if ( bBusNumber == i32_busInd )
-			{ // BUS found
-				gChannelMask |= gDriverConfig->channel[i].channelMask;
-			}
-		}
-		else if ( gDriverConfig->channel[i].hwType == HWTYPE_VIRTUAL )
-		{
-			i32_virtualBusInd++;
-			printf( "Detect Virtual Channel %d\n", i32_virtualBusInd );
-			if ( bBusNumber == i32_virtualBusInd )
-			{ // BUS found
-				virtualChannelMask |= gDriverConfig->channel[i].channelMask;
-			}
-		}
-  }
+	for ( int fdata_ind = 0; fdata_ind < 16; fdata_ind++ ) fdata = 0;
 
-	// if AUTO HW detection is wanted, and only virtual channels are found
-	// use virtualChannelMask
-	if ( ( gHwType == HWTYPE_AUTO ) && ( i32_busInd == -1 ) )
-	{ // no real CAN channels found
-		gChannelMask = virtualChannelMask;
+	// set the data array for control of filters
+	// -> let here everything IN
+	switch ( gHwType )
+	{
+		case c_ICAN: // not used -> let 0
+			break;
+		case c_CANLpt:
+			// receive everything for CAN-LPT style
+			fdata[0]  = 0x00;
+			fdata[1]  = 0x00;
+			fdata[2]  = 0x00;
+			fdata[3]  = 0x00;
+			fdata[4]  = 0xFF;
+			fdata[5]  = 0xFF;
+			fdata[6]  = 0xFF;
+			fdata[7]  = 0xFF;
+
+			fdata[8]  = 0x00;
+			fdata[9]  = 0x00;
+			fdata[10] = 0x00;
+			fdata[11] = 0x00;
+			fdata[12] = 0xFF;
+			fdata[13] = 0xFF;
+			fdata[14] = 0xFF;
+			fdata[15] = 0xFF;
+			break;
+		case c_PowerCAN:
+		case c_CANAS:
+		case c_EICAN:
+			// receive everything the other style
+			fdata[0]  = 0x00;
+			fdata[1]  = 0x00;
+			fdata[2]  = 0xFFE0;
+			fdata[3]  = 0x00;
+			fdata[4]  = 0xFF;
+			break;
 	}
 
-  gInitMask = gChannelMask;
+	// derive appropriate the bitrate setting
+	switch ( gHwType )
+	{
+		case c_CANLpt:
+			switch ( wBitrate )
+			{
+				case 10: { btr0 = 0x3F; btr1 = 0x7F;} break;
+				case 20: { btr0 = 0x31; btr1 = 0x1c;} break;
+				case 50: { btr0 = 0x13; btr1 = 0x1C;} break;
+				case 100: { btr0 = 0x09; btr1 = 0x1C;} break;
+				case 125: { btr0 = 0x07; btr1 = 0x1C;} break;
+				case 250: { btr0 = 0x03; btr1 = 0x1C;} break;
+				case 500: { btr0 = 0x01; btr1 = 0x1C;} break;
+				case 800: { btr0 = 0x01; btr1 = 0x16;} break;
+				case 1000: { btr0 = 0x00; btr1 = 0x1C;} break;
+			}
+			break;
+		default:
+			switch ( wBitrate )
+			{
+				case 10: { btr0 = 0x31; btr1 = 0x1c;} break;
+				case 20: { btr0 = 0x18; btr1 = 0x1c;} break;
+				case 50: { btr0 = 0x09; btr1 = 0x1c;} break;
+				case 100: { btr0 = 0x04; btr1 = 0x1c;} break;
+				case 125: { btr0 = 0x03; btr1 = 0x1c;} break;
+				case 250: { btr0 = 0x01; btr1 = 0x1C;} break;
+				case 500: { btr0 = 0x00; btr1 = 0x1C;} break;
+				case 800: { btr0 = 0x00; btr1 = 0x16;} break;
+				case 1000: { btr0 = 0x00; btr1 = 0x14;} break;
+			}
+			break;
+	}
+   errcode = ca_InitCanCard_1(
+						channel,  // 0 for CANLPT/ICAN, else 1 for first BUS
+						0x00,  // msg-nr / 0 for CANLPT/ICAN
+						0x00,  // Acceptance Code to receive everything for ICAN
+						0xFF,  // Acceptance Mask to receive everything for ICAN
+						fdata, // filter array of int[16];
+						btr0,  // BTR0
+						btr1,  // BTR1
+						0x00,  // reserved
+						0x00,  // typ 0 = 2 x 32 Bit, 1 = 4 x 16 Bit,
+						       // 2 = 8 x 8 Bit, 3 = kein durchlass
+						0x00); // reserved
 
-  // open a port
-  printf("ncdOpenPort(channelMask=%04X, initMask=%04X)\n", gChannelMask, gInitMask);
-  vErr = ncdOpenPort(&gPortHandle, "IsoAgLib", gChannelMask, gInitMask, &gPermissionMask, 1024);
-  if (vErr) goto error;
-  printf(" portHandle=%u\n", gPortHandle);
-  if (gPortHandle==INVALID_PORTHANDLE) goto error;
-  printf(" permissionMask=%04X\n", gPermissionMask);
+	if ( errcode && ( gHwType != c_ICAN ) )
+	{ // as the examples are not very clarifying in relation to the DOC
+		// we configure also msg obj 0xF to get a safe receive of Std AND Ext
+		if (errcode) { printf ("CAN-LPT initialized for first MsgObj - Now configure for MsgObj 0xF to get safe receice of Std AND Ext\n"); }
+		else   { printf ("can't initialize CANLPT"); return HAL_CONFIG_ERR; }
+		errcode = ca_InitCanCard_1(
+							channel,  // 0 for CANLPT/ICAN, else 1 for first BUS
+							0x0F,  // msg-nr
+							0x00,  // Acceptance Code to receive everything for ICAN
+							0xFF,  // Acceptance Mask to receive everything for ICAN
+							fdata, // filter array of int[16];
+							btr0,  // BTR0
+							btr1,  // BTR1
+							0x00,  // reserved
+							0x00,  // typ 0 = 2 x 32 Bit, 1 = 4 x 16 Bit,
+										// 2 = 8 x 8 Bit, 3 = kein durchlass
+							0x00); // reserved
+	}
+   if (errcode) { printf ("CAN-LPT initialized\n"); }
+   else   { printf ("can't initialize CANLPT"); return HAL_CONFIG_ERR; }
 
-  // if permision to init
-  if (gPermissionMask) {
-    // set BUS timing
-    vErr = ncdSetChannelBitrate(gPortHandle, gPermissionMask, (wBitrate * 1000));
-    if (vErr) goto error;
-  }
-  else if (wBitrate) {
-    printf("WARNING: No init access, bitrate ignored!\n");
-  }
-  ui32_globalMask[bBusNumber] = wGlobMask;
+	ui32_globalMask[bBusNumber] = wGlobMask;
   ui32_globalMask[bBusNumber] = dwGlobMask;
 	ui32_lastMask[bBusNumber] = dwGlobMaskLastmsg;
 
-  // Disable the TX and TXRQ notifications
-  vErr = ncdSetChannelMode(gPortHandle,gChannelMask,0,0);
-  if (vErr) goto error;
-
-
-  if (b_busOpened[bBusNumber] == false)
-  { // set global mask
-    VsetAcceptance acc;
-    acc.mask = 0x000;
-    acc.code = 0x000;
-    vErr = ncdSetChannelAcceptance(gPortHandle, gChannelMask, &acc);
-    if (vErr) goto error;
-    acc.mask = 0x80000000;
-    acc.code = 0x80000000;
-    vErr = ncdSetChannelAcceptance(gPortHandle, gChannelMask, &acc);
-    if (vErr) goto error;
-
-    // reset clock
-    vErr = ncdResetClock(gPortHandle);
-    if (vErr) goto error;
-    // Go on bus
-    vErr = ncdActivateChannel(gPortHandle,gChannelMask);
-    if (vErr) goto error;
-
-  }
   b_busOpened[bBusNumber] = true;
 	#ifdef USE_THREAD
 	b_blockThread = false;
 	#endif
 
   return HAL_NO_ERR;
-
-  error:
-    printf("ERROR: %s!\n", ncdGetErrorString(vErr));
-
-    if (gPortHandle != INVALID_PORTHANDLE) {
-      ncdClosePort(gPortHandle);
-      gPortHandle = INVALID_PORTHANDLE;
-    }
-
-    b_busOpened[bBusNumber] = false;
-    return HAL_RANGE_ERR;
 };
 
 int16_t closeCan ( uint8_t bBusNumber )
@@ -392,9 +531,6 @@ int16_t closeCan ( uint8_t bBusNumber )
     fclose(canlogDat);
     canlogDat = NULL;
   }
-  ncdDeactivateChannel(gPortHandle, gChannelMask);
-  ncdClosePort(gPortHandle);
-  gPortHandle = INVALID_PORTHANDLE;
   b_busOpened[bBusNumber] = false;
   return HAL_NO_ERR;
 };
@@ -418,7 +554,6 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 {
   if (rec_bufCnt[bBusNumber][bMsgObj] == -1)
   { // it's a send object -> call native clear transmit
-    ncdFlushTransmitQueue(gPortHandle, gChannelMask);
   }
   else
   { // set receive buffer to 0
@@ -477,50 +612,47 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 
 int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 {
-  VportHandle lPortHandle = gPortHandle;
-  Vaccess lChannelMask = gChannelMask;
-  Vaccess lPermissionMask = gPermissionMask;
-  Vevent  lEvent = gEvent;
+	int channel = 0;
+	if ( ( gHwType == c_ICAN ) || ( gHwType == c_CANLpt ) )
+	{
+		if ( bBusNumber > 0 )
+		{
+			printf( "ERROR - the selected CAN card has only ONE channel, so that Bus-Nr: %hd is not defined\r\n", bBusNumber );
+			retutn HAL_CONFIG_ERR;
+		}
+	}
+	else
+	{ // channel for sontheim multi BUS cards starts counting with 1
+		channel = bBusNumber + 1;
+	}
+	transmitdata[0] = ptSend->dwId;
+	transmitdata[1] = ptSend->bDlc;
+	for ( int32_t ind = 0; ind < ptSend->bDlc; ind++ ) transmitdata[2+ind] = ptSend->abData[ind];
+	transmitdata[11] = 0; // no remote
 
+	if ( ((ptSend->dwId & 0x700) == 0x700)
+			||((ptSend->dwId & 0x7FF) == 0x520)
+			||((ptSend->dwId & 0x7FF) == 0x502)
+			||((ptSend->dwId & 0x700) == 0x200)
+			)
+	{
+		printf("Sende: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
+			ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
+			ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
+			ptSend->abData[6], ptSend->abData[7]);
 
-  Vstatus vErr;
-  lEvent.tag = V_TRANSMIT_MSG;
-  lEvent.tagData.msg.id = ptSend->dwId;
+			fprintf(canlogDat, "Sende: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
+			ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
+			ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
+			ptSend->abData[6], ptSend->abData[7]);
 
-  // set extended type if needed by setting MSB bit
-  if (ptSend->bXtd == 1) lEvent.tagData.msg.id |= 0x80000000UL;
-  lEvent.tagData.msg.flags = 0;
-  lEvent.tagData.msg.dlc = ptSend->bDlc;
-  memmove(lEvent.tagData.msg.data, ptSend->abData, ptSend->bDlc);
-
-  if ( ((ptSend->dwId & 0x700) == 0x700)
-     ||((ptSend->dwId & 0x7FF) == 0x520)
-     ||((ptSend->dwId & 0x7FF) == 0x502)
-     ||((ptSend->dwId & 0x700) == 0x200)
-      )
-  {
-    printf("Sende: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
-      ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
-      ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
-      ptSend->abData[6], ptSend->abData[7]);
-
-      fprintf(canlogDat, "Sende: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
-      ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
-      ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
-      ptSend->abData[6], ptSend->abData[7]);
-
-    }
-
-  vErr = ncdTransmit(lPortHandle, lChannelMask, &lEvent);
-
-  if (vErr == VERR_QUEUE_IS_FULL)
-  {
-    return HAL_OVERFLOW_ERR;
-  }
-  else
-  {
-    return HAL_NO_ERR;
-  }
+	}
+	int result = ca_TransmitCanCard_1(
+			channel,						   // channel
+			ptSend->bXtd,						   // extended Frame
+			transmitdata);			   // can object
+	if ( result ) return HAL_NO_ERR;
+	else return HAL_OVERFLOW_ERR;
 };
 
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
@@ -529,7 +661,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 	// wait until the receive thread allows access to buffer
 	while ( b_blockApp )
 	{ // do something for 1msec - just to take time
-		WaitForSingleObject( gEventHandle, 100 );
+		Sleep( 100 );
 	}
 	// tell thread to wait until this function is finished
 	b_blockThread = true;
@@ -581,14 +713,26 @@ int16_t checkMsg()
 { // first check if CANcardX buffer has received msg
   Vstatus vErr;
 
+	int channel = 0;
   int32_t result = 0;
-  for(vErr = ncdReceive1(gPortHandle, &gpEvent); vErr == VSUCCESS; vErr = ncdReceive1(gPortHandle, &gpEvent))
+  while(true)
   { // msg from CANcardX buffer
-		// this functions retrurns not only received messages
-		// ACK for SENT messages is also returned!!!
-		if( ( gpEvent->tag != V_RECEIVE_MSG ) || ( gpEvent->tagData.msg.flags != 0 ) )
-		{ // don't further process this message as it is NO received message
-			continue;
+		if ( gHwType == c_ECAN_PCI )
+		{ // check both channels - first 1
+			if ( ! ca_GetData_1( 1, receivedata) )
+			{ // if 1 provides no data - then 2
+				if ( ! ca_GetData_1( 2, receivedata) )
+				{ // also no data at2
+					break;
+				}
+			}
+		}
+		else
+		{ // specify no channel on data request
+			if ( ! ca_GetData_1( receivedata) )
+			{ // no data received
+				break;
+			}
 		}
 
     result += 1;

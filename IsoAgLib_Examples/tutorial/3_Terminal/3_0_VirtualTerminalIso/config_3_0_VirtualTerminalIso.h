@@ -1,7 +1,7 @@
 // File: config_3_0_VirtualTerminalIso.h
 // IMPORTANT: Never change this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh ./conf_3_0_VirtualTerminalIso" 
-//            Perform changes direct in the feature and project setup file ./conf_3_0_VirtualTerminalIso
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_3_0_VirtualTerminalIso" 
+//            Perform changes direct in the feature and project setup file conf_3_0_VirtualTerminalIso
 #define CAN_BUS_CNT 1 
 
 #define CAN_INSTANCE_CNT 1 

@@ -236,6 +236,7 @@
 // is needed for the documentation generator
 using namespace IsoAgLib;
 
+#include <iostream>
 
 /**
 	write data column header to RS232
@@ -364,6 +365,12 @@ int main()
 	{ // run main loop
 		// IMPORTANT: call main timeEvent function for
 		// all time controlled actions of IsoAgLib
+		if ( ( IsoAgLib::iSystem_c::getTime() - i32_loopTime ) > 1000 )
+		{ 
+			std::cerr << "Letzte Schleife zur Zeit " << i32_loopTime
+				<< "Darauffolgende: " << IsoAgLib::iSystem_c::getTime()
+				<< std::endl;
+		}
 		i32_loopTime = IsoAgLib::iSystem_c::getTime();
 		IsoAgLib::getISchedulerInstance().timeEvent( i32_loopTime + 1000 );
 
