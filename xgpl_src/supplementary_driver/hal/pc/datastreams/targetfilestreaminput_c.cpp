@@ -112,6 +112,6 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
-	*(static_cast<std::ifstream*>(this)) >> ui8_data;
+	ui8_data = (static_cast<std::ifstream*>(this))->get();
 	return *this;
 }
