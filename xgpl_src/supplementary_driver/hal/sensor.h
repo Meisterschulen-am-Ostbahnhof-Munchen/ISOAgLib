@@ -72,6 +72,8 @@
 	#include "pc/sensor/sensor.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/sensor/sensor.h"
+#elif defined(SYSTEM_C2C)
+	#include "c2c/sensor/sensor.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/sensor/sensor.h"
 #elif defined(SYSTEM_PM167)

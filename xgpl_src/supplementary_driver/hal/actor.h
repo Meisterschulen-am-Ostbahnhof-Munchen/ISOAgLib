@@ -72,6 +72,8 @@
 	#include "pc/actor/actor.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/actor/actor.h"
+#elif defined(SYSTEM_C2C)
+	#include "c2c/actor/actor.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/actor/actor.h"
 #elif defined(SYSTEM_PM167)

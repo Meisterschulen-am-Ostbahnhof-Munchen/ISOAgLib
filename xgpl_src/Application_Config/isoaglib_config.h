@@ -857,6 +857,16 @@
     #define SYSTEM_ESX
   #endif
 
+/** @def SYSTEM_C2C_YN
+  * set this define to YES if IsoAgLib is used for the ECU "C2C" of STW
+  */
+  #ifndef SYSTEM_C2C_YN
+    #define SYSTEM_C2C_YN NO
+  #endif
+  #if SYSTEM_C2C_YN == YES && !defined(SYSTEM_C2C)
+    #define SYSTEM_C2C
+  #endif
+
 /** @def SYSTEM_IMI_YN
   * set this define to YES if IsoAgLib is used for the computing unit "IMI" of STW
   */
@@ -921,6 +931,9 @@
 #elif defined(SYSTEM_ESX)
   /// set subdirectory name to "esx" for ESX platform
   #define HAL_SUBDIR esx
+#elif defined(SYSTEM_C2C)
+  /// set subdirectory name to "c2c" for C2C platform
+  #define HAL_SUBDIR c2c
 #elif defined(SYSTEM_IMI)
   /// set subdirectory name to "imi" for IMI platform
   #define HAL_SUBDIR imi

@@ -72,6 +72,8 @@
 	#include "pc/eeprom/eeprom.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/eeprom/eeprom.h"
+#elif defined(SYSTEM_C2C)
+	#include "c2c/eeprom/eeprom.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/eeprom/eeprom.h"
 #elif defined(SYSTEM_PM167)

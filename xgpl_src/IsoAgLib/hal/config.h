@@ -87,6 +87,8 @@
 	#include "pc/config.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/config.h"
+#elif defined(SYSTEM_C2C)
+	#include "c2c/config.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/config.h"
 #elif defined(SYSTEM_PM167)
