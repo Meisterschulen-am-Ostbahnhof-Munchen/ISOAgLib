@@ -734,7 +734,7 @@ help contributing for their implementation with source code.
 	- Extend tutorial examples<br>
 		<b>Ongoing process when need for some more practical demonstration is detected<br>
 			( Please have a close look on all <a href="examples.html">tutorial examples</a> before requesting further examples )</b>
-	- Test Threading Mode for Vector-Informatik CAN card drivers: target_extension_can_w32_vector_canlib.cpp and target_extension_can_w32_vector_xl.cpp<br>
+	- Test Threading Mode for Vector-Informatik CAN card drivers: target_extension_can_w32_vector_canlib.cpp and target_extension_can_w32_vector_xl_drv_lib.cpp<br>
 		<b>Need help by users, who have one of these cards - maintainers have only Sontheim CAN cards, where multithreaded CAN receive is working already</b>
 
 
@@ -1401,7 +1401,7 @@ MinGW compiler is also integrated into the Dev-C++ tool.
 \subsection ScriptIntegrateWin32Can Integrate Win32 CAN card drivers
 The IsoAgLib provides at the moment an integration with the CAN drivers from Vector Informatik and Sontheim.
 Both Vector Informatik driver types <b>CANLIB</b> and <b>XL Driver Library</b> are supported by the source modules
-<b>target_extension_can_w32_vector_canlib.cpp</b> and <b>target_extension_can_w32_vector_xl.cpp</b> .
+<b>target_extension_can_w32_vector_canlib.cpp</b> and <b>target_extension_can_w32_vector_xl_drv_lib.cpp</b> .
 Both modules support the usage of a thread based CAN receive, which can be activated by the
 setting of the #define USE_THREAD ( if it's undef -> no threading is used ).<br>
 <b>Important:<br>
@@ -1427,7 +1427,7 @@ The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as fol
 					resp. <i>C:/Development/XL Driver Library</i>
 			<li>Set <b>both above mentioned variables USE_WIN32_HEADER_DIRECTORY AND USE_WIN32_LIB_DIRECTORY</b> to <i>"C:/Development"</i>
 			</ul>
-	<li>set the variable USE_CAN_DRIVER to either "vector_canlib" or "vector_xl"
+	<li>set the variable USE_CAN_DRIVER to either "vector_canlib" or "vector_xl_drv_lib"
 	<li>select the CAN card type variable USE_WIN32_CAN_HW_TYPE to HWTYPE_VIRTUAL, HWTYPE_CANCARDX,
 			HWTYPE_CANAC2, HWTYPE_CANAC2PCI, HWTYPE_CANCARDXL, HWTYPE_CANCARD2 ..... ( look at driver manual )
 	<li>Set the target platform USE_TARGET_SYSTEM vaiable to pc_win32
@@ -1468,7 +1468,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     target which is specified in the configuration file
                                     ( "pc_linux"|"pc_win32"|"esx"|"imi"|"pm167"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
-                                    ( "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl" ).
+                                    ( "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte" ).
 
@@ -1547,9 +1547,9 @@ The following basic settings can be specified independend from hardware and feat
 \subsubsection ConfBasicHwSetup Basic Hardware Setup
 The basic hardware setup of your target ( including CAN hardware/driver ) can be defined in this group.
 	- <b>USE_TARGET_SYSTEM</b> type of target system from list <i>{ "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167" }</i> or other coming supported HALs
-	- <b>USE_CAN_DRIVER</b> CAN driver to use from list <i>{ "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim" }</i>,<br>
+	- <b>USE_CAN_DRIVER</b> CAN driver to use from list <i>{ "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" }</i>,<br>
 			- where type "simulating" uses file based CAN simulation on each PC system target,
-			- target "pc_win32" allows additionally <i>{ "vector_canlib"|"vector_xl"|"sontheim" }</i> ( <b>again: use vector_canlib if your drivers were installed to a CANLIB directrory - this is independend of the name of the card!! </b>),
+			- target "pc_win32" allows additionally <i>{ "vector_canlib"|"vector_xl_drv_lib"|"sontheim" }</i> ( <b>again: use vector_canlib if your drivers were installed to a CANLIB directrory - this is independend of the name of the card!! </b>),
 			- and target "pc_linux" allows additionally <i>{ "rte" }</i>.
 			- The other embedded targets allow only the system specific CAN driver - identified by "sys"
 			- update_makefile.sh automatically selects the "sys" CAN driver, if no PC target is selected
@@ -1786,9 +1786,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"|"sontheim"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"|"sontheim"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"

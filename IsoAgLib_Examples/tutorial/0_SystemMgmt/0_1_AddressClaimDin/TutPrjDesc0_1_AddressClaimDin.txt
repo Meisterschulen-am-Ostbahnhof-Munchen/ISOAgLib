@@ -99,9 +99,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="esx"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="sys"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -490,9 +490,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="imi"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="sys"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -881,9 +881,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="rte"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -1272,9 +1272,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="rte"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -1663,9 +1663,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="rte"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -2054,9 +2054,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -2445,9 +2445,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -2836,9 +2836,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -3227,9 +3227,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -3618,9 +3618,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -4009,9 +4009,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="sontheim"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -4400,9 +4400,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="sontheim"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -4791,9 +4791,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="vector_canlib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -5182,9 +5182,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="vector_canlib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -5480,7 +5480,7 @@ PRJ_DIN9684=1
 \endcode
 
 
- \section PrjSpec0_1_AddressClaimDin__pc_win32__vector_xl__simulating List of configuration settings for 0_1_AddressClaimDin with CAN Driver vector_xl and RS232 Driver simulating
+ \section PrjSpec0_1_AddressClaimDin__pc_win32__vector_xl_drv_lib__simulating List of configuration settings for 0_1_AddressClaimDin with CAN Driver vector_xl_drv_lib and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
  Use the file conf_0_1_AddressClaimDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
@@ -5573,11 +5573,11 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
-USE_CAN_DRIVER="vector_xl"
+USE_CAN_DRIVER="vector_xl_drv_lib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"
@@ -5871,7 +5871,7 @@ PRJ_DIN9684=1
 \endcode
 
 
- \section PrjSpec0_1_AddressClaimDin__pc_win32__vector_xl__sys List of configuration settings for 0_1_AddressClaimDin with CAN Driver vector_xl and RS232 Driver sys
+ \section PrjSpec0_1_AddressClaimDin__pc_win32__vector_xl_drv_lib__sys List of configuration settings for 0_1_AddressClaimDin with CAN Driver vector_xl_drv_lib and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
  Use the file conf_0_1_AddressClaimDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
@@ -5964,11 +5964,11 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
-USE_CAN_DRIVER="vector_xl"
+USE_CAN_DRIVER="vector_xl_drv_lib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"
@@ -6355,9 +6355,9 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pm167"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
 USE_CAN_DRIVER="sys"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -8290,10 +8290,10 @@ PRJ_DIN9684=1
 \endcode
 
 
- \section FileLists0_1_AddressClaimDin__pc_win32__vector_xl__simulating List of Files for 0_1_AddressClaimDin with CAN Driver vector_xl and RS232 Driver simulating
+ \section FileLists0_1_AddressClaimDin__pc_win32__vector_xl_drv_lib__simulating List of Files for 0_1_AddressClaimDin with CAN Driver vector_xl_drv_lib and RS232 Driver simulating
 
 
- \section SrcList0_1_AddressClaimDin__pc_win32__vector_xl__simulating List of Sourcefiles for 0_1_AddressClaimDin with CAN Driver vector_xl and RS232 Driver simulating
+ \section SrcList0_1_AddressClaimDin__pc_win32__vector_xl_drv_lib__simulating List of Sourcefiles for 0_1_AddressClaimDin with CAN Driver vector_xl_drv_lib and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -8315,7 +8315,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -8327,7 +8327,7 @@ PRJ_DIN9684=1
 
 
 
- \section HdrList0_1_AddressClaimDin__pc_win32__vector_xl__simulating List of Headers for 0_1_AddressClaimDin with CAN Driver vector_xl and RS232 Driver simulating
+ \section HdrList0_1_AddressClaimDin__pc_win32__vector_xl_drv_lib__simulating List of Headers for 0_1_AddressClaimDin with CAN Driver vector_xl_drv_lib and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -8394,10 +8394,10 @@ PRJ_DIN9684=1
 \endcode
 
 
- \section FileLists0_1_AddressClaimDin__pc_win32__vector_xl__sys List of Files for 0_1_AddressClaimDin with CAN Driver vector_xl and RS232 Driver sys
+ \section FileLists0_1_AddressClaimDin__pc_win32__vector_xl_drv_lib__sys List of Files for 0_1_AddressClaimDin with CAN Driver vector_xl_drv_lib and RS232 Driver sys
 
 
- \section SrcList0_1_AddressClaimDin__pc_win32__vector_xl__sys List of Sourcefiles for 0_1_AddressClaimDin with CAN Driver vector_xl and RS232 Driver sys
+ \section SrcList0_1_AddressClaimDin__pc_win32__vector_xl_drv_lib__sys List of Sourcefiles for 0_1_AddressClaimDin with CAN Driver vector_xl_drv_lib and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -8419,7 +8419,7 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -8431,7 +8431,7 @@ PRJ_DIN9684=1
 
 
 
- \section HdrList0_1_AddressClaimDin__pc_win32__vector_xl__sys List of Headers for 0_1_AddressClaimDin with CAN Driver vector_xl and RS232 Driver sys
+ \section HdrList0_1_AddressClaimDin__pc_win32__vector_xl_drv_lib__sys List of Headers for 0_1_AddressClaimDin with CAN Driver vector_xl_drv_lib and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h

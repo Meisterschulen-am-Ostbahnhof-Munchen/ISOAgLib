@@ -95,7 +95,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # variables
 # if one of the following variables isn't set
 # the corresponding default values are used
-# + USE_CAN_DRIVER="simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim" -> select wanted driver connection for CAN
+# + USE_CAN_DRIVER="simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" -> select wanted driver connection for CAN
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
@@ -451,12 +451,12 @@ function create_filelist( )
 		fi
 	elif  [ $USE_CAN_DRIVER = "vector_canlib" ] ; then
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_vector_canlib*'"
-	elif  [ $USE_CAN_DRIVER = "vector_xl" ] ; then
-		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_vector_xl*'"
+	elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" ] ; then
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_vector_xl_drv_lib*'"
 	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_sontheim_canlpt*'"
 	else
-		echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim"'
+		echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
 		echo 'Current Setting is $USE_CAN_DRIVER'
 		exit 3
 	fi
@@ -494,7 +494,7 @@ function create_filelist( )
 				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
 			fi
 		else
-			echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim"'
+			echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
 			echo 'Current Setting is $USE_RS232_DRIVER'
 			exit 3
 		fi
@@ -1011,7 +1011,7 @@ function create_DevCCPrj() {
 		LIB_FILE_LINE="-lvcand32_@@_"
 		DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
 		DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_'
-	elif  [ $USE_CAN_DRIVER = "vector_xl" ] ; then
+	elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" ] ; then
 		INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;\"$USE_WIN32_HEADER_DIRECTORY/XL Driver Library/bin\""
 		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY/XL Driver Library/bin\""
 		LIB_FILE_LINE="-lvxlapi_@@_"
@@ -1226,7 +1226,7 @@ function create_VCPrj()
 		LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll"
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_vcandm32.lib" >> $DspPrjFilelist
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_VCanD.h" >> $DspPrjFilelist
-	elif  [ $USE_CAN_DRIVER = "vector_xl" ] ; then
+	elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" ] ; then
 		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_PRJ_PATH_WIN"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"'"'
 		USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
 		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
@@ -1412,7 +1412,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     target which is specified in the configuration file
                                     ( "pc_linux"|"pc_win32"|"esx"|"imi"|"pm167"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
-                                    ( "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim" ).
+                                    ( "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte" ).
 
@@ -1579,7 +1579,7 @@ case "$USE_CAN_DRIVER" in
 			;;
 		esac
 	;;
-	vector_xl)
+	vector_xl_drv_lib)
 		case "$USE_TARGET_SYSTEM" in
 			pc_linux)
 				echo "Vector XL Driver Library can be only used for target pc_win32" 1>&2

@@ -121,9 +121,9 @@
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
  *		<li> \ref PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_canlib__simulating
- *		<li> \ref PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_xl__simulating
+ *		<li> \ref PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_xl_drv_lib__simulating
  *		<li> \ref PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_canlib__sys
- *		<li> \ref PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_xl__sys
+ *		<li> \ref PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_xl_drv_lib__sys
  *		<li> \ref PrjSpec0_2_AddressClaimFlexible__pc_win32__simulating__simulating
  *		<li> \ref PrjSpec0_2_AddressClaimFlexible__pc_win32__simulating__sys
  * 	</ul>
@@ -155,9 +155,9 @@
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
  *		<li> \ref FileLists0_2_AddressClaimFlexible__pc_win32__vector_canlib__simulating
- *		<li> \ref FileLists0_2_AddressClaimFlexible__pc_win32__vector_xl__simulating
+ *		<li> \ref FileLists0_2_AddressClaimFlexible__pc_win32__vector_xl_drv_lib__simulating
  *		<li> \ref FileLists0_2_AddressClaimFlexible__pc_win32__vector_canlib__sys
- *		<li> \ref FileLists0_2_AddressClaimFlexible__pc_win32__vector_xl__sys
+ *		<li> \ref FileLists0_2_AddressClaimFlexible__pc_win32__vector_xl_drv_lib__sys
  *		<li> \ref FileLists0_2_AddressClaimFlexible__pc_win32__simulating__simulating
  *		<li> \ref FileLists0_2_AddressClaimFlexible__pc_win32__simulating__sys
  * 	</ul>

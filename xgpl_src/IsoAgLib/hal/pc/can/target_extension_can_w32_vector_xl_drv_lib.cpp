@@ -1,5 +1,5 @@
 /***************************************************************************
-                          target_extension_can_w32_vector_xl.cpp - source for the PSEUDO BIOS for
+                          target_extension_can_w32_vector_xl_drv_lib.cpp - source for the PSEUDO BIOS for
                                        development and test on a Win32 PC
                                        with CAN communication through Vector-Informatik
                                        CANcardX
