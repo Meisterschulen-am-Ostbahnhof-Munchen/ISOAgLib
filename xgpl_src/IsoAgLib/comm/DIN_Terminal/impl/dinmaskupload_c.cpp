@@ -349,6 +349,7 @@ bool DINMaskUpload_c::registerLbsPlusMask(IsoAgLib::t_maskDefinition* rpsMask)
 
   possible errors:
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
+	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool DINMaskUpload_c::processMsg(){
   if (pc_terminal == NULL) return false;
@@ -431,8 +432,8 @@ bool DINMaskUpload_c::processMsg(){
         getMultiSendInstance4Comm().sendDin(ui8_localNr, ui8_termNr, phb_data,
             i32_dataSize, ui16_bytePerMsg, b_uploadCmd, b_abortOnTimeout);
       }
+	    return true;
     }
-    return true;
   }
   return false;
 }

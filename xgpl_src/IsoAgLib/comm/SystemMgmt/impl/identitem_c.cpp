@@ -754,13 +754,13 @@ bool IdentItem_c::timeEventActive( void ) {
         #ifdef USE_PROCESS
         uint16_t ui16_nr = pc_memberItem->nr();
         uint16_t ui16_filter = ((ui16_nr << 4) | 0x200);
-        if (!getCanInstance4Comm().existFilter( 0x7F0, ui16_filter, Ident_c::StandardIdent))
+        if (!getCanInstance4Comm().existFilter( getProcessInstance4Comm(), 0x7F0, ui16_filter, Ident_c::StandardIdent))
         { // create FilterBox
           getCanInstance4Comm().insertFilter(getProcessInstance4Comm(), 0x7F0, ui16_filter, false);
           b_configure = true;
         }
         ui16_filter = ((ui16_nr << 4) | 0x500 );
-        if (!getCanInstance4Comm().existFilter( 0x7F0, ui16_filter, Ident_c::StandardIdent))
+        if (!getCanInstance4Comm().existFilter( getProcessInstance4Comm(), 0x7F0, ui16_filter, Ident_c::StandardIdent))
         { // create FilterBox
           getCanInstance4Comm().insertFilter(getProcessInstance4Comm(), 0x7F0, ui16_filter, false);
           b_configure = true;
@@ -825,9 +825,9 @@ bool IdentItem_c::timeEventActive( void ) {
           uint32_t ui32_nr = pc_isoItem->nr();
           // only ISO msgs with own SA in PS (destination)
           uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-          if (!getCanInstance4Comm().existFilter((0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+          if (!getCanInstance4Comm().existFilter( getProcessInstance4Comm(), (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
           { // create FilterBox
-            getCanInstance4Comm().insertFilter(getProcessInstance4Comm(), (0x1FFFF00UL), ui32_filter, false, Ident_c::ExtendedIdent);
+            getCanInstance4Comm().insertFilter( getProcessInstance4Comm(), (0x1FFFF00UL), ui32_filter, false, Ident_c::ExtendedIdent);
             b_configure = true;
           }
           #endif
@@ -836,9 +836,9 @@ bool IdentItem_c::timeEventActive( void ) {
             uint32_t ui32_nr = pc_isoItem->nr();
             // only ISO msgs with own SA in PS (destination)
             uint32_t ui32_filter = ((static_cast<MASK_TYPE>(VT_TO_ECU_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-            if (!getCanInstance4Comm().existFilter((0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+            if (!getCanInstance4Comm().existFilter( getIsoTerminalInstance(), (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
             { // create FilterBox
-              getCanInstance4Comm().insertFilter(getIsoTerminalInstance(), (0x1FFFF00UL), ui32_filter, false, Ident_c::ExtendedIdent);
+              getCanInstance4Comm().insertFilter( getIsoTerminalInstance(), (0x1FFFF00UL), ui32_filter, false, Ident_c::ExtendedIdent);
               b_configure = true;
             }
           }

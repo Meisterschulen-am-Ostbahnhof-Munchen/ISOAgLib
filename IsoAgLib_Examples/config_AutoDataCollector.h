@@ -43,8 +43,8 @@
 #ifndef USE_DIN_9684 
 	#define USE_DIN_9684 
 #endif
-#ifndef USE_GPS 
-	#define USE_GPS 
+#ifndef USE_DIN_GPS 
+	#define USE_DIN_GPS 
 #endif
 
 // The following configuration values can be overwritten.

@@ -236,7 +236,7 @@ public:
     @return data value of message
   */
   uint32_t dataUlong()const;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   /**
     deliver data value as float; the 4byte data of the message are
     accessed with the type defined by the format flags
@@ -402,7 +402,7 @@ public:
     @param ren_procValType data type for message string (default ui32_val)
   */
   void setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_procValType = i32_val);
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   /**
     set data value as with float value parameter
     and with defined send value type and set data type flag

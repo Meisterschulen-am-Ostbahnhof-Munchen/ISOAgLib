@@ -309,8 +309,30 @@ canBufferElement_t* writeDataToCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_m
   // now return pointer to CAN buffer element, where new data can be stored
   return ps_tempWrite;
 }
+
 /** low level helper function to read can data */
 canBufferElement_t* readDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return NULL;
+  // first check if buffer is empty
+  if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgObj ) ) return NULL;
+
+  // make first validate check
+  if ( ( pt_canBufferRead[rui8_busNr][rui8_msgObj] < pt_canBufferBegin[rui8_busNr][rui8_msgObj] )
+    || ( pt_canBufferRead[rui8_busNr][rui8_msgObj] > pt_canBufferEnd[rui8_busNr][rui8_msgObj]   ) )
+  { // integrity of write pointer is corrupted -> reset
+    resetCanRingBuffer( rui8_busNr, rui8_msgObj );
+    // there's nothin to read from fresh reset buffer
+    return NULL;
+  }
+  // now everything was already correct
+  // it's granted that read pointer does point to CAN-Obj in buffer of selected MsgObj
+
+  // now derive read pointer
+  return pt_canBufferRead[rui8_busNr][rui8_msgObj];
+}
+
+/** low level helper function to read can data */
+canBufferElement_t* readPopDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
   if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return NULL;
   // first check if buffer is empty
   if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgObj ) ) return NULL;
@@ -338,6 +360,34 @@ canBufferElement_t* readDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_
     pt_canBufferRead[rui8_busNr][rui8_msgObj] = pt_canBufferBegin[rui8_busNr][rui8_msgObj];
   // now return pointer to CAN buffer element, where new data can be read
   return ps_tempRead;
+}
+
+void popDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return;
+  // first check if buffer is empty
+  if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgObj ) ) return;
+
+  // make first validate check
+  if ( ( pt_canBufferRead[rui8_busNr][rui8_msgObj] < pt_canBufferBegin[rui8_busNr][rui8_msgObj] )
+    || ( pt_canBufferRead[rui8_busNr][rui8_msgObj] > pt_canBufferEnd[rui8_busNr][rui8_msgObj]   ) )
+  { // integrity of write pointer is corrupted -> reset
+    resetCanRingBuffer( rui8_busNr, rui8_msgObj );
+    // there's nothin to read from fresh reset buffer
+    return;
+  }
+  // now everything was already correct
+  // it's granted that read pointer does point to CAN-Obj in buffer of selected MsgObj
+
+  _atomic( 4 );
+  // first decrease size to avoid problems with combined access
+  ui16_canBufferSize[rui8_busNr][rui8_msgObj]--;
+  // now derive read pointer and increment pointer after read access
+  canBufferElement_t* ps_tempRead = pt_canBufferRead[rui8_busNr][rui8_msgObj]++;
+
+  // now check if read position must be reset to Begin
+  _atomic( 4 );
+  if ( pt_canBufferRead[rui8_busNr][rui8_msgObj] == pt_canBufferEnd[rui8_busNr][rui8_msgObj] )
+    pt_canBufferRead[rui8_busNr][rui8_msgObj] = pt_canBufferBegin[rui8_busNr][rui8_msgObj];
 }
 
 } // end extern "C"
@@ -1304,11 +1354,11 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
       // only retry to start send, if corresponding MsgObj is ready to send
       if ( rui8_busNr == 0 ) {
         if ( CAN1_RequestMsgObj( rui8_msgobjNr ) != 0 )
-          ps_element = readDataFromCanRingBuffer( 0, rui8_msgobjNr );
+          ps_element = readPopDataFromCanRingBuffer( 0, rui8_msgobjNr );
       }
       else {
         if ( CAN2_RequestMsgObj( rui8_msgobjNr ) != 0 )
-          ps_element = readDataFromCanRingBuffer( 1, rui8_msgobjNr );
+          ps_element = readPopDataFromCanRingBuffer( 1, rui8_msgobjNr );
       }
       if ( ps_element != NULL ) {
         // start send the first msg in buffer
@@ -1376,8 +1426,9 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
 }
 
 /**
-  get a received message from a MsgObj;
-  CANPkg_c (or derived object) must provide (virtual)
+	transfer front element in buffer into the pointed CANPkg_c;
+	DON'T clear this item from buffer.
+	@see can_useMsgobjPopFront for explicit clear of this front item
   functions:
   * void setIdent(MASK_TYPE rt_ident, Ident_c::identType_t rt_type)
     -> set ident rrefc_ident of received msg in CANPkg_c
@@ -1454,15 +1505,17 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
 }
 
 /**
-  if a received message is not configured to be processed by this ECU,
-  just ignore it (this is needed, as the message is buffered between
-  call of can_useMsgobjReceivedIdent and can_useMsgobjGet
+	Either register the currenct front item of buffer as not relevant,
+	or just pop the front item, as it was processed.
+	This explicit pop is needed, as one CAN message shall be served to
+	several CANCustomer_c instances, as long as one of them indicates a
+	succesfull process of the received message.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
 */
-void can_useMsgobjIgnore(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 { // simply increment read position without further interpretation
-  readDataFromCanRingBuffer( rui8_busNr, rui8_msgobjNr );
+  popDataFromCanRingBuffer( rui8_busNr, rui8_msgobjNr );
 }
 
 
@@ -1615,14 +1668,14 @@ interrupt (XP0INT) _using(CAN1_ISR) void CAN1_Isr(void)
             && ( ( getCanRingBufferSize(0, ui8_msgObjInd ) > 1 ) || ( b_appLock[0][ui8_msgObjInd] == false ) )
             && ( CAN1_RequestMsgObj( ui8_msgObjInd )                ) ) {
             // MsgObj in has data to send
-            pt_tempElement = readDataFromCanRingBuffer( 0, ui8_msgObjInd );
+            pt_tempElement = readPopDataFromCanRingBuffer( 0, ui8_msgObjInd );
             break;
           }
         }
       }
       else if ( CAN1_RequestMsgObj( ui8_msgObjInd ) ) {
         // retrieve for other waiting msgs in this buffer
-        pt_tempElement = readDataFromCanRingBuffer( 0, ui8_msgObjInd );
+        pt_tempElement = readPopDataFromCanRingBuffer( 0, ui8_msgObjInd );
       }
       else {
         pt_tempElement = NULL; // no continuing send is possible
@@ -1764,7 +1817,7 @@ interrupt (XP1INT) _using(CAN2_ISR) void CAN2_Isr(void)
             && ( ( getCanRingBufferSize(1, ui8_msgObjInd ) > 1 ) || ( b_appLock[1][ui8_msgObjInd] == false ) )
             && ( CAN2_RequestMsgObj( ui8_msgObjInd )                ) ) {
             // MsgObj in has data to send
-            pt_tempElement = readDataFromCanRingBuffer( 1, ui8_msgObjInd );
+            pt_tempElement = readPopDataFromCanRingBuffer( 1, ui8_msgObjInd );
             break;
           }
         }
@@ -1772,7 +1825,7 @@ interrupt (XP1INT) _using(CAN2_ISR) void CAN2_Isr(void)
       else if ( CAN2_RequestMsgObj( ui8_msgObjInd ) ) {
         // retrieve for other waiting msgs in this buffer
         CAN2_ReleaseObj( ui8_msgObjInd );
-        pt_tempElement = readDataFromCanRingBuffer( 1, ui8_msgObjInd );
+        pt_tempElement = readPopDataFromCanRingBuffer( 1, ui8_msgObjInd );
       }
       else {
         CAN2_ReleaseObj( ui8_msgObjInd );

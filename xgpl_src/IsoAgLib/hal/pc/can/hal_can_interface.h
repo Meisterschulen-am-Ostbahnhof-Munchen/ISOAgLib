@@ -323,8 +323,9 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
 int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, int32_t &reflIdent);
 
 /**
-  get a received message from a MsgObj;
-  CANPkg_c (or derived object) must provide (virtual)
+	transfer front element in buffer into the pointed CANPkg_c;
+	DON'T clear this item from buffer.
+	@see can_useMsgobjPopFront for explicit clear of this front item
   functions:
   * setIdent(Ident_c& rrefc_ident)
     -> set ident rrefc_ident of received msg in CANPkg
@@ -342,13 +343,15 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
 */
 int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CANPkg_c* rpc_data);
 /**
-  if a received message is not configured to be processed by this ECU,
-  just ignore it (this is needed, as the message is buffered between
-  call of can_useMsgobjReceivedIdent and can_useMsgobjGet
+	Either register the currenct front item of buffer as not relevant,
+	or just pop the front item, as it was processed.
+	This explicit pop is needed, as one CAN message shall be served to
+	several CANCustomer_c instances, as long as one of them indicates a
+	succesfull process of the received message.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
 */
-void can_useMsgobjIgnore(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
+void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 
 /**
   clear th buffer of a MsgObj (e.g. to stop sending retries)

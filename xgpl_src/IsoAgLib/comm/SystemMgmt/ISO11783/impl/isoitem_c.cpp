@@ -551,7 +551,8 @@ bool ISOItem_c::timeEvent( void )
   @return true -> a reaction on the received/processed msg was sent
 */
 bool ISOItem_c::processMsg(){
-  ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
+  bool b_result = false;
+	ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   int32_t i32_pkgTime = c_pkg.time(),
       i32_now = Scheduler_c::getLastTimeEventTrigger();
   if ((i32_now - i32_pkgTime) > 100) updateTime(i32_now);
@@ -611,6 +612,7 @@ bool ISOItem_c::processMsg(){
         setNr(c_pkg.isoSa());
         inputString(c_pkg.name());
       }
+			b_result = true;
     break;
     case REQUEST_PGN_MSG_PGN: // request for PGN
       int32_t i32_reqPgn = (
@@ -632,6 +634,7 @@ bool ISOItem_c::processMsg(){
 						c_pkg.setName(outputString());
 						// now ISOSystemPkg_c has right data -> send
 						getCanInstance4Comm() << c_pkg;
+						b_result = true;
 						break;
 					#ifdef USE_BASE
 					case TIME_DATE_PGN: // request for calendar
@@ -639,6 +642,7 @@ bool ISOItem_c::processMsg(){
 						// isoSendCalendar checks if this item (identified by GETY_POS)
 						// is configured to send calendar
 						getBaseInstance4Comm().isoSendCalendar(gtp());
+						b_result = true;
 						break;
 					#endif
 #ifdef USE_ISO_TERMINAL_SERVER
@@ -646,6 +650,7 @@ bool ISOItem_c::processMsg(){
           case LANGUAGE_PGN: // request for language
             // call IsoTerminalServer_c function to send Language
             getIsoTerminalServerInstance().handlePgnRequest(LANGUAGE_PGN);
+						b_result = true;
             break;
 /** @hack IsoTerminalServer END */
 #endif
@@ -654,7 +659,7 @@ bool ISOItem_c::processMsg(){
     break;
   } // end switch
 
-  return true;
+  return b_result;
 };
 
 

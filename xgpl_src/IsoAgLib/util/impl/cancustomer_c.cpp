@@ -93,6 +93,7 @@ namespace __IsoAgLib {
   function is called during processing of received CAN telegrams in CANIO_c::processMsg
   @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
   @see __IsoAgLib::CANIO_c::processMsg
+	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool CANCustomer_c::processMsg()
 { // dummy function - just to allow classes to (inderectly) derive from

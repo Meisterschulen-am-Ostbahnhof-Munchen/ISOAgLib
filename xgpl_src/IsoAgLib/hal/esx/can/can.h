@@ -358,9 +358,10 @@ namespace HAL
     {return __HAL::can_useMsgobjReceivedIdent(rui8_busNr, rui8_msgobjNr, reflIdent);};
 
   /**
-    get a received message from a MsgObj;
-    CANPkg_c (or derived object) must provide (virtual)
-    functions:
+		transfer front element in buffer into the pointed CANPkg_c;
+		DON'T clear this item from buffer.
+		@see can_useMsgobjPopFront for explicit clear of this front item
+		functions:
     * setIdent(Ident_c& rrefc_ident)
       -> set ident rrefc_ident of received msg in CANPkg
     * uint8_t setData(uint8_t rb_dlc, uint8_t* rpb_data)
@@ -379,14 +380,16 @@ namespace HAL
     {return __HAL::can_useMsgobjGet(rui8_busNr, rui8_msgobjNr, rpc_data);};
 
   /**
-    if a received message is not configured to be processed by this ECU,
-    just ignore it (this is needed, as the message is buffered between
-    call of can_useMsgobjReceivedIdent and can_useMsgobjGet
+		Either register the currenct front item of buffer as not relevant,
+		or just pop the front item, as it was processed.
+		This explicit pop is needed, as one CAN message shall be served to
+		several CANCustomer_c instances, as long as one of them indicates a
+		succesfull process of the received message.
     @param rui8_busNr number of the BUS to config
     @param rui8_msgobjNr number of the MsgObj to config
   */
-  inline void can_useMsgobjIgnore(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
-  {__HAL::can_useMsgobjIgnore(rui8_busNr, rui8_msgobjNr);};
+  inline void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+  {__HAL::can_useMsgobjPopFront(rui8_busNr, rui8_msgobjNr);};
 
 
   /**

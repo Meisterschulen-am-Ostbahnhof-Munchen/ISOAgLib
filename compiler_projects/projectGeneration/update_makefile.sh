@@ -857,7 +857,7 @@ function create_autogen_project_config()
 	fi
 
 	if [ $PRJ_GPS -gt 0 ] ; then
-		echo -e "#ifndef USE_GPS $ENDLINE\t#define USE_GPS $ENDLINE#endif" >> $CONFIG_NAME
+		echo -e "#ifndef USE_DIN_GPS $ENDLINE\t#define USE_DIN_GPS $ENDLINE#endif" >> $CONFIG_NAME
 	fi
 
 	# write overwriteable parts of isoaglib_config.h
@@ -953,7 +953,7 @@ function create_makefile()
 		`echo INCLUDEPATH += ../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/sw >> $PROJECT.pro`
 	fi
 
-  #`echo DEFINES += USE_GPS USE_EEPROM_IO >> $PROJECT.pro`
+  #`echo DEFINES += USE_DIN_GPS USE_EEPROM_IO >> $PROJECT.pro`
 
   # call the function to derive the path to qmake
   find_qmake

@@ -369,6 +369,7 @@ bool DINItem_c::processMsg()
     setItemState(IState_c::AddressClaim);
     addressClaimCnt(c_pkg.nr());
     updateTime(c_pkg.time());
+		result = true;
   }
   else
   {

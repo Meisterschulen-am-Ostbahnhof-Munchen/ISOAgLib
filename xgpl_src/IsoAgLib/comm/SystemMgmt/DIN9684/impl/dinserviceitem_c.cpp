@@ -264,7 +264,6 @@ bool DINServiceItem_c::processMsg(){
       break;
 #endif
     default:
-      result = false;
       break;
   }
   return result;

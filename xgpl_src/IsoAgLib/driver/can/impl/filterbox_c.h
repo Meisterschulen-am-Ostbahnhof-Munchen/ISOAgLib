@@ -193,8 +193,11 @@ public:
     @param rc_filter filter to use for comparison
     @return true -> given mask and filter are same as the local defs
   */
-  bool equalFilterMask(const Ident_c& rc_mask, const Ident_c& rc_filter)
+  bool equalFilterMask(const Ident_c& rc_mask, const Ident_c& rc_filter) const
     {return ((c_mask == rc_mask) && (c_filter == rc_filter));};
+
+	bool equalCustomer( const __IsoAgLib::CANCustomer_c& rref_customer )
+	{ return (&rref_customer == pc_customer)?true:false;};
   /**
     deliver the type of the FilterBox_c ident
   */

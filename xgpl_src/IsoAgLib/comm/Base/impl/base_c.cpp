@@ -239,6 +239,7 @@ void Base_c::config(GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelec
       * LibErr_c::LbsBaseSenderConflict base msg recevied from different member than before
   @see FilterBox_c::processMsg
   @see CANIO_c::processMsg
+	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool Base_c::processMsg(){
   bool b_result = false;
@@ -360,6 +361,7 @@ bool Base_c::processMsg(){
         { // there is a sender conflict
           getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
         }
+        b_result = true;
         break;
       case 0xC: // NEW!! fuel consumption
         // only take values, if i am not the regular sender
@@ -386,6 +388,7 @@ bool Base_c::processMsg(){
         { // there is a sender conflict
           getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
         }
+        b_result = true;
         break;
       case 0xF: // calendar
         // only take values, if i am not the regular sender

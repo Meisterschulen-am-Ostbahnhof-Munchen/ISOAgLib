@@ -138,9 +138,9 @@ void DINMonitor_c::init( void )
   // register in Scheduler_c to be triggered fopr timeEvent
   getSchedulerInstance4Comm().registerClient( this );
 
-  if (!getCanInstance4Comm().existFilter((uint16_t)(7 << 8),(uint16_t)0, Ident_c::StandardIdent))
+  if (!getCanInstance4Comm().existFilter( *this, (uint16_t)(7 << 8),(uint16_t)0, Ident_c::StandardIdent))
   { // set filter with PRI = 000
-    getCanInstance4Comm().insertFilter(*this, (7 << 8),0, true);
+    getCanInstance4Comm().insertFilter( *this, (7 << 8),0, true);
   }
 
   // set filter with PRI = 000
@@ -1069,6 +1069,7 @@ bool DINMonitor_c::processMsg(){
       {
         if (pc_iter->itemState(IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::Local))) pc_iter->processMsg();
       }
+			b_result = true;
       break;
      case 4: case 7:
       b_result = getDinServiceMonitorInstance4Comm().processMsg();
@@ -1080,6 +1081,7 @@ bool DINMonitor_c::processMsg(){
       {
         if (data().nae() == 1) b_globalSystemState = true; // on
         else b_globalSystemState = false; // off
+				b_result = true;
       }
       break;
       #endif

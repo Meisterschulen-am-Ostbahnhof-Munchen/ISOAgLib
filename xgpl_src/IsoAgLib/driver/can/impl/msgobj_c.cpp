@@ -529,9 +529,11 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
           #endif
           CANPkgExt_c* pc_target = arrPfilterBox[i]->customersCanPkg();
           HAL::can_useMsgobjGet(rui8_busNumber, msgObjNr(), pc_target);
-          arrPfilterBox[i]->processMsg();
-          b_processed = true;
-          break;
+          if ( arrPfilterBox[i]->processMsg() )
+					{ // customer indicated, that he processed the received data
+	          b_processed = true;
+  	        break;
+					}
         }
       }
 			if ( ! b_processed )
@@ -560,7 +562,8 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
 				}
 			}
     }
-    if (!b_processed) HAL::can_useMsgobjIgnore(rui8_busNumber, msgObjNr());
+		// now received message is either processed, or none of the registered CANCustomers is interested
+    HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
   }   // end while
   return b_count;
 }

@@ -437,7 +437,7 @@ void CANIO_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
   getRs232Instance()
    << "CANIO_c::sendCanClearbuf for MsgObj: " << uint16_t(ui8_sendObjNr) << "\r\n";
 	#endif
-	 
+
   HAL::can_useMsgobjClear(ui8_busNumber, ui8_sendObjNr);
 }
 
@@ -445,13 +445,15 @@ void CANIO_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
 /**
   test if a FilterBox_c definition already exist
   (version expecial for standard ident, chosen at compile time)
+	@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
   @param rt_mask individual mask for this filter box
   @param rt_filter individual filter
   @param ren_identType type of searched ident: standard 11bit (default) or extended 29bit
   @param rpc_iter optional pointer Iterator to result FilterBox
   @return true -> same FilterBox_c already exist
 */
-bool CANIO_c::existFilter(uint16_t rt_mask, uint16_t rt_filter,
+bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+    uint16_t rt_mask, uint16_t rt_filter,
     Ident_c::identType_t ren_identType, ArrFilterBox::iterator* rpc_iter)
 {
   // check if filter/t_mask are already inserted
@@ -461,18 +463,20 @@ bool CANIO_c::existFilter(uint16_t rt_mask, uint16_t rt_filter,
   c_compFilter.set(rt_filter, ren_identType);
   c_compMask.set(rt_mask, ren_identType);
 
-  return existFilter(c_compMask, c_compFilter, rpc_iter);
+  return existFilter(rref_customer, c_compMask, c_compFilter, rpc_iter);
 }
 /**
   test if a FilterBox_c definition already exist
   (version expecial for extended ident, chosen at compile time)
+	@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
   @param rt_mask individual mask for this filter box
   @param rt_filter individual filter
   @param ren_identType type of searched ident: standard 11bit (default) or extended 29bit
   @param rpc_iter optional pointer Iterator to result FilterBox
   @return true -> same FilterBox_c already exist
 */
-bool CANIO_c::existFilter(uint32_t rt_mask, uint32_t rt_filter,
+bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+    uint32_t rt_mask, uint32_t rt_filter,
     Ident_c::identType_t ren_identType, ArrFilterBox::iterator* rpc_iter)
 {
   // check if filter/t_mask are already inserted
@@ -482,19 +486,20 @@ bool CANIO_c::existFilter(uint32_t rt_mask, uint32_t rt_filter,
   c_compFilter.set(rt_filter, ren_identType);
   c_compMask.set(rt_mask, ren_identType);
 
-  return existFilter(c_compMask, c_compFilter, rpc_iter);
+  return existFilter(rref_customer, c_compMask, c_compFilter, rpc_iter);
 }
 
 /**
   test if a FilterBox_c definition already exist
   (version with comper items as Ident_c class instances, chosen by compiler)
+	@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
   @param rc_compMask individual mask for this filter box
   @param rc_compFilter individual filter
   @param rpc_iter optional pointer Iterator to result FilterBox
   @return true -> same FilterBox_c already exist
 */
-bool CANIO_c::existFilter(const Ident_c& rc_compMask,
-    const Ident_c& rc_compFilter, ArrFilterBox::iterator* rpc_iter)
+bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+    const Ident_c& rc_compMask, const Ident_c& rc_compFilter, ArrFilterBox::iterator* rpc_iter)
 {
   // check if filter/t_mask are already inserted
   // return false if this setting isn´t unique
@@ -506,7 +511,8 @@ bool CANIO_c::existFilter(const Ident_c& rc_compMask,
   // check if given FilterBox_c definition is not yet in array
   for (; pc_iter != arrFilterBox.end(); pc_iter++)
   {
-    if (pc_iter->equalFilterMask(rc_compMask, rc_compFilter))
+    if ( ( pc_iter->equalFilterMask(rc_compMask, rc_compFilter ) )
+		  && ( pc_iter->equalCustomer( rref_customer )               ) )
     { // FilterBox_c with equal def found
       //-> don't insert complete ident def two times
       b_identDefFound = true;
@@ -547,7 +553,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
 {
   Ident_c c_newMask = Ident_c(rt_mask, rt_identType);
   Ident_c c_newFilter = Ident_c(rt_filter, rt_identType);
-  if (existFilter(c_newMask, c_newFilter))
+  if (existFilter(rref_customer, c_newMask, c_newFilter))
   {
     // filter definition already inserted
     return NULL;
@@ -590,13 +596,15 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
 
 /**
   delete a FilerBox definition
+	@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
   @param rt_mask individual mask for this filter box
   @param rt_filter individual filter
   @param rt_identType ident type of the deleted ident: standard 11bit or extended 29bit
         (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
   @return true -> FilterBox_c found and deleted
 */
-bool CANIO_c::deleteFilter(MASK_TYPE rt_mask, MASK_TYPE rt_filter,
+bool CANIO_c::deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+    MASK_TYPE rt_mask, MASK_TYPE rt_filter,
     const Ident_c::identType_t rt_identType)
 {
   bool b_result = false;
@@ -605,7 +613,7 @@ bool CANIO_c::deleteFilter(MASK_TYPE rt_mask, MASK_TYPE rt_filter,
   // iterator for quick access to all array elements
   ArrFilterBox::iterator pc_iter;
 
-  if (existFilter(c_deleteMask, c_deleteFilter, &pc_iter))
+  if (existFilter(rref_customer, c_deleteMask, c_deleteFilter, &pc_iter))
   { // filter found -> delete element where pc_iter points to
     arrFilterBox.erase(pc_iter);
     #ifdef DEBUG_HEAP_USEAGE
@@ -741,7 +749,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
 			getRs232Instance()
 		   << "CANIO_c::operator<< Blocked BUS Nr: " << uint16_t(ui8_busNumber) << "\r\n";
 		  #endif
-						 
+
       HAL::can_useMsgobjClear(ui8_busNumber,ui8_sendObjNr);
       return *this;
     }
@@ -756,21 +764,21 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
 	bool b_warnState = HAL::can_stateGlobalWarn(ui8_busNumber);
 
 	if ( b_bit1err )
-	{	
+	{
 			getRs232Instance()
-			<< "BITERR VOR HAL::can_useMsgobjSend BUS: " 
+			<< "BITERR VOR HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}
 	if ( b_sendproblem )
 	{
-		getRs232Instance() << "SENDPROBLEM VOR HAL::can_useMsgobjSend BUS: " 
+		getRs232Instance() << "SENDPROBLEM VOR HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}
 	if ( b_warnState )
 	{	getRs232Instance()
-			<< "CAN_WARN VOR HAL::can_useMsgobjSend BUS: " 
+			<< "CAN_WARN VOR HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}
@@ -784,19 +792,19 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
 
 	if ( b_bit1err )
 	{	getRs232Instance()
-			<< "BITERR NACH HAL::can_useMsgobjSend BUS: " 
+			<< "BITERR NACH HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}
 	if ( b_sendproblem )
 	{
-		getRs232Instance() << "SENDPROBLEM NACH HAL::can_useMsgobjSend BUS: " 
+		getRs232Instance() << "SENDPROBLEM NACH HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}
 	if ( b_warnState )
 	{	getRs232Instance()
-			<< "CAN_WARN NACH HAL::can_useMsgobjSend BUS: " 
+			<< "CAN_WARN NACH HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}

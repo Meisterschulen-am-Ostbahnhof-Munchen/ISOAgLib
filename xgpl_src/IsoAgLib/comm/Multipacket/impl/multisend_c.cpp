@@ -152,23 +152,23 @@ void MultiSend_c::init(void)
 #if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
   // register to get TP/ETP Messages
   uint32_t ui32_filter = (static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) << 8);
-  if (!getCanInstance4Comm().existFilter((0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
+  if (!getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
   { // create FilterBox
-    getCanInstance4Comm().insertFilter(*this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
+    getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
 		b_isReconfigNeeded = true;
   }
   ui32_filter = (static_cast<MASK_TYPE>(ETP_CONN_MANAGE_PGN) << 8);
-  if (!getCanInstance4Comm().existFilter((0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
+  if (!getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
   { // create FilterBox
-    getCanInstance4Comm().insertFilter(*this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
+    getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
 		b_isReconfigNeeded = true;
   }
 #endif
 #ifdef USE_DIN_TERMINAL
   // create filter to receive service to broadcast member messages from LBS+
-  if (!getCanInstance4Comm().existFilter((uint16_t)0x700,(uint16_t)0x700))
+  if (!getCanInstance4Comm().existFilter( *this, (uint16_t)0x700,(uint16_t)0x700))
 	{
-    getCanInstance4Comm().insertFilter(*this, 0x700,0x700, true);
+    getCanInstance4Comm().insertFilter( *this, 0x700,0x700, true);
 		b_isReconfigNeeded = true;
 	}
 #endif
@@ -701,8 +701,8 @@ bool MultiSend_c::timeEvent( void )
 
   possible errors:
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
+	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
-
 bool MultiSend_c::processMsg(){
   // don't process if no response from target of mulit packet send
   // give DINMaskUpload_c a try

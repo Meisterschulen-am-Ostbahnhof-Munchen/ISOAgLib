@@ -623,8 +623,10 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   // only take new msg from BIOS buffer if not previously
   // buffered for detecting of the received ident
   if (!b_cinterfBufferedReceivedMsg)
+	{ // to-be-processed item is not yet buttered in pt_receive -> read from driver
     i16_retVal = getCanMsg(rui8_busNr, rui8_msgobjNr, pt_receive);
-  if ((i16_retVal == HAL_NO_ERR) || (HAL_OVERFLOW_ERR) || (HAL_WARN_ERR))
+	}
+  if ((i16_retVal == HAL_NO_ERR) || (i16_retVal == HAL_OVERFLOW_ERR) || (i16_retVal == HAL_WARN_ERR))
   {
     if (pt_receive->tReceiveTime.l1ms == 0)
       i32_cinterfLastSuccReceive[rui8_busNr] = getTime();
@@ -634,22 +636,12 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
     reflIdent = pt_receive->dwId;
   }
   return i16_retVal;
-/*
-  int16_t i16_retVal = HAL_NO_ERR;
-
-  // only take new msg from BIOS buffer if not previously
-  // buffered for detecting of the received ident
-  if (!b_cinterfBufferedReceivedMsg)
-    i16_retVal = getCanMsg(rui8_busNr, rui8_msgobjNr, &t_cinterfMsgobjReceive);
-  b_cinterfBufferedReceivedMsg = true;
-  if (i16_retVal >= 0) return t_cinterfMsgobjReceive.dwId;
-  else return i16_retVal;
-*/
 }
 
 /**
-  get a received message from a MsgObj;
-  CANPkg_c (or derived object) must provide (virtual)
+	transfer front element in buffer into the pointed CANPkg_c;
+	DON'T clear this item from buffer.
+	@see can_useMsgobjPopFront for explicit clear of this front item
   functions:
   * void setIdent(MASK_TYPE rt_ident, Ident_c::identType_t rt_type)
     -> set ident rrefc_ident of received msg in CANPkg_c
@@ -674,10 +666,10 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
   // buffered for detecting of the received ident
   if (!b_cinterfBufferedReceivedMsg)
     i16_retVal = getCanMsg(rui8_busNr, rui8_msgobjNr, pt_receive);
-  b_cinterfBufferedReceivedMsg = false;
 
   if ((i16_retVal == HAL_NO_ERR) || (HAL_OVERFLOW_ERR) || (HAL_WARN_ERR))
   {
+		b_cinterfBufferedReceivedMsg = true;
     if (pt_receive->tReceiveTime.l1ms == 0)
     {
       i32_cinterfLastSuccReceive[rui8_busNr] = getTime();
@@ -713,13 +705,15 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
 }
 
 /**
-  if a received message is not configured to be processed by this ECU,
-  just ignore it (this is needed, as the message is buffered between
-  call of can_useMsgobjReceivedIdent and can_useMsgobjGet
+	Either register the currenct front item of buffer as not relevant,
+	or just pop the front item, as it was processed.
+	This explicit pop is needed, as one CAN message shall be served to
+	several CANCustomer_c instances, as long as one of them indicates a
+	succesfull process of the received message.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
 */
-void can_useMsgobjIgnore(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
+void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
   b_cinterfBufferedReceivedMsg = ((rui8_msgobjNr < 15)&&(rui8_busNr < 4))?false:true;
 }

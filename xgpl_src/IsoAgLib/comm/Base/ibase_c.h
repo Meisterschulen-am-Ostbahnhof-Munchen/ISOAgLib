@@ -491,7 +491,7 @@ public:
 	int32_t getGpsLatitudeRaw( void ) const { return Base_c::getGpsLatitudeRaw(); };
 	/** deliver raw GPS Longitude */
 	int32_t getGpsLongitudeRaw( void ) const { return Base_c::getGpsLongitudeRaw(); };
-	#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+	#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
 	/** deliver Minute GPS Latitude */
 	float getGpsLatitudeMinute( void ) const { return Base_c::getGpsLatitudeMinute(); };
 	/** deliver Minute GPS Longitude */

@@ -89,7 +89,7 @@
 #include "process_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
-#ifdef USE_GPS
+#ifdef USE_DIN_GPS
   #include "gps_c.h"
 #endif
 #ifdef USE_DIN_9684
@@ -291,8 +291,8 @@ bool Process_c::timeEvent( void ){
 		#ifdef USE_DIN_9684
 		if ( getSystemMgmtInstance().existActiveLocalDinMember() )
 		{ // filter for base process data
-		if (!getCanInstance4Comm().existFilter((uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4)))
-			getCanInstance4Comm().insertFilter(*this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4), true);
+		if (!getCanInstance4Comm().existFilter( *this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4) ))
+			getCanInstance4Comm().insertFilter( *this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4), true);
 		}
   	#endif
 
@@ -325,9 +325,10 @@ bool Process_c::timeEvent( void ){
 
   possible errors:
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
+	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool Process_c::processMsg(){
-#if defined(USE_GPS)
+#if defined(USE_DIN_GPS)
   // check if this is a message from a service
   if (
       ( (data().pri() == 3) && (data().send() == 3) && (data().lis() == 0) && (data().gety() == 0) && (data().empf() == 0xF)  )
@@ -363,7 +364,7 @@ bool Process_c::processMsg(){
     { // msg not valid as one of SEND or EMPF isn't registered with claimed address
       // not really an error - just this received messages is of no interest
       // getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-      return true; // exit function
+      return false; // exit function
     }
     if (data().gety() == ((data().memberSend()).gtp().getGety()) )
     { // the gety of the sender is equivalent to the gety of the data
@@ -684,12 +685,12 @@ bool Process_c::createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
       uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).nr();
       t_filter = (ui8_recNr | (rui8_pri << 8));
       #ifdef USE_ISO_11783
-      if (!getCanInstance4Comm().existFilter(0x70F, t_filter, Ident_c::StandardIdent))
+      if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter, Ident_c::StandardIdent))
       #else
-      if (!getCanInstance4Comm().existFilter(0x70F, t_filter))
+      if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter))
       #endif
       { // no suitable FilterBox_c exist -> create it
-        getCanInstance4Comm().insertFilter(*this, 0x70F, t_filter, false);
+        getCanInstance4Comm().insertFilter( *this, 0x70F, t_filter, false);
         b_result = true;
       }
     }
@@ -703,9 +704,9 @@ bool Process_c::createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
       uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).nr();
       // only receive msg from ui8_recNr / rc_ownerGtp to all other devices
       t_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-      if (!getCanInstance4Comm().existFilter(0x1FF00FFUL, t_filter, Ident_c::ExtendedIdent))
+      if (!getCanInstance4Comm().existFilter( *this, 0x1FF00FFUL, t_filter, Ident_c::ExtendedIdent))
       { // no suitable FilterBox_c exist -> create it
-        getCanInstance4Comm().insertFilter(*this, 0x1FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
+        getCanInstance4Comm().insertFilter( *this, 0x1FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
         b_result = true;
       }
     }
@@ -755,9 +756,9 @@ bool Process_c::deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
       { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
         uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).nr();
         ui32_filter = (ui8_recNr | (rui8_pri << 8));
-        if (getCanInstance4Comm().existFilter(0x70F, ui32_filter))
+        if (getCanInstance4Comm().existFilter( *this, 0x70F, ui32_filter))
         { // corresponding FilterBox_c exist -> delete it
-          getCanInstance4Comm().deleteFilter(0x70F, ui32_filter);
+          getCanInstance4Comm().deleteFilter( *this, 0x70F, ui32_filter);
           b_result = true;
         }
 
@@ -771,9 +772,9 @@ bool Process_c::deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
       { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
         uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).nr();
         ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-        if (getCanInstance4Comm().existFilter(0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent))
+        if (getCanInstance4Comm().existFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent))
         { // corresponding FilterBox_c exist -> delete it
-          getCanInstance4Comm().deleteFilter(0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent);
+          getCanInstance4Comm().deleteFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent);
           b_result = true;
         }
       } // owner has claimed address

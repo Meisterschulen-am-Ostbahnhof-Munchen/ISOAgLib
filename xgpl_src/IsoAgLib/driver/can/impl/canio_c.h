@@ -252,6 +252,7 @@ class CANIO_c : public SingletonCANIO_c {
   /**
     test if a FilterBox_c definition already exist
     (version expecial for standard ident, chosen at compile time)
+		@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
     @param rui32_mask individual mask for this filter box
     @param rui32_filter individual filter
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
@@ -259,12 +260,14 @@ class CANIO_c : public SingletonCANIO_c {
     @param rpc_iter optional pointer Iterator to result FilterBox
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(uint16_t rui32_mask, uint16_t rui32_filter,
+  bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+	  uint16_t rui32_mask, uint16_t rui32_filter,
     Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
     ArrFilterBox::iterator* rpc_iter = NULL);
   /**
     test if a FilterBox_c definition already exist
     (version expecial for extended ident, chosen at compile time)
+		@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
     @param rui32_mask individual mask for this filter box
     @param rui32_filter individual filter
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
@@ -272,19 +275,22 @@ class CANIO_c : public SingletonCANIO_c {
     @param rpc_iter optional pointer Iterator to result FilterBox
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(uint32_t rui32_mask, uint32_t rui32_filter,
+  bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+	    uint32_t rui32_mask, uint32_t rui32_filter,
       Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
       ArrFilterBox::iterator* rpc_iter = NULL);
   /**
     test if a FilterBox_c definition already exist
     (version with comper items as Ident_c class instances, chosen by compiler)
+		@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
     @param rc_compMask individual mask for this filter box
     @param rc_compFilter individual filter
     @param rpc_iter optional pointer Iterator to result FilterBox
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const Ident_c& rc_compMask,
-      const Ident_c& rc_compFilter, ArrFilterBox::iterator* rpc_iter = NULL);
+  bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+	    const Ident_c& rc_compMask, const Ident_c& rc_compFilter,
+			ArrFilterBox::iterator* rpc_iter = NULL);
 
 
   /**
@@ -325,13 +331,15 @@ class CANIO_c : public SingletonCANIO_c {
 
   /**
     delete a FilerBox definition
+		@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
     @param rui32_mask individual mask for this filter box
     @param rui32_filter individual filter
     @param rt_identType ident type of the deleted ident: standard 11bit or extended 29bit
         (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
     @return true -> FilterBox_c found and deleted
   */
-  bool deleteFilter(MASK_TYPE rui32_mask, MASK_TYPE rui32_filter,
+  bool deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
+	    MASK_TYPE rui32_mask, MASK_TYPE rui32_filter,
       const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE);
 
   /**

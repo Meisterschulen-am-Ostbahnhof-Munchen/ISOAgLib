@@ -230,7 +230,7 @@ int32_t ProcessPkg_c::dataLong()const{
     case ui32_val:
       i32_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_data)));
       break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
       int2Float(pb_data, ((float*)(&i32_result)));
       break;
@@ -258,7 +258,7 @@ uint32_t ProcessPkg_c::dataUlong()const{
     case ui32_val:
       ulResult = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_data)));
       break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
       int2Float(pb_data, ((float*)(&ulResult)));
       break;
@@ -266,7 +266,7 @@ uint32_t ProcessPkg_c::dataUlong()const{
   }
   return ulResult;
 };
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
 /**
   deliver data value as float; the 4byte data of the message are
   accessed with the type defined by the format flags
@@ -317,7 +317,7 @@ void ProcessPkg_c::setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValTyp
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
       set_d(1);
       bit_data.b_valType = ren_procValType;
@@ -352,7 +352,7 @@ void ProcessPkg_c::setData(int32_t ri32_val, proc_valType_t ren_procValType)
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
       float2Int( ((float *const)(&ri32_val)), pb_data);
       set_d(1);
@@ -385,7 +385,7 @@ void ProcessPkg_c::setData(uint32_t ri32_val, proc_valType_t ren_procValType)
       *(static_cast<uint32_t*>(static_cast<void*>(pb_data))) = ri32_val;
       set_d(0);
       break;
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
       float2Int( ((float *const)(&ri32_val)), pb_data);
       set_d(1);
@@ -420,7 +420,7 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_pr
       *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = ERROR_VAL_32S;
       break;
   }
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   if (ren_procValType == float_val)  set_d(1);
   else
 #endif
@@ -429,7 +429,7 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_pr
   bit_data.b_valType = ren_procValType;
 }
 
-#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
 /**
   set data value as with float value parameter
   and with defined send value type and set data type flag
@@ -486,11 +486,11 @@ void ProcessPkg_c::string2Flags()
     setLis(CANPkg_c::pb_data[0] >> 5);
 
     set_d(CANPkg_c::pb_data[2] >> 7);
-    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     if (d()==0)
     #endif
       bit_data.b_valType = i32_val;
-    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     else bit_data.b_valType = float_val;
     #endif
     setGtp( GetyPos_c(((CANPkg_c::pb_data[2] >> 3) & 0xF), (CANPkg_c::pb_data[2] & 0x7) ) );
@@ -528,7 +528,7 @@ void ProcessPkg_c::string2Flags()
     setLis(0); // ISO doesn't support LIS code -> set to default 0
 
     bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::pb_data[0] >> 5) & 0x3);
-    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_GPS)
+    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     if (bit_data.b_valType == float_val) set_d(1);
     else
     #endif

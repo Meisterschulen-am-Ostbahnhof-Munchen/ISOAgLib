@@ -131,10 +131,10 @@ void GPS_c::init()
   pc_data = &(getProcessInstance4Comm().data());
 
   // create filter to receive service to broadcast member messages from LBS+
-  if (!getCanInstance4Comm().existFilter((uint16_t)0x7FF,(uint16_t)0x3F3))
-    getCanInstance4Comm().insertFilter(*this, 0x7FF,0x3F3, false);
-  if (!getCanInstance4Comm().existFilter((uint16_t)0x700,(uint16_t)0x500))
-    getCanInstance4Comm().insertFilter(*this, 0x700,0x500, true);
+  if (!getCanInstance4Comm().existFilter(*this, (uint16_t)0x7FF,(uint16_t)0x3F3))
+    getCanInstance4Comm().insertFilter( *this, 0x7FF,0x3F3, false);
+  if (!getCanInstance4Comm().existFilter( *this, (uint16_t)0x700,(uint16_t)0x500))
+    getCanInstance4Comm().insertFilter( *this, 0x700,0x500, true);
 }
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */
@@ -178,17 +178,17 @@ bool GPS_c::timeEvent( void )
       if (ui8_fieldstarNr != ui8_fieldstarNrTemp)
       { // fieldstar changed number -> delete first old filter
         ui16_filter = ( 0x500 | ui8_fieldstarNr);
-        if ((ui8_fieldstarNr != 0xFF) &&(c_can_io.existFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent)))
+        if ((ui8_fieldstarNr != 0xFF) &&(c_can_io.existFilter( *this, (uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent)))
         {
-          c_can_io.deleteFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent);
+          c_can_io.deleteFilter( *this, (uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent);
         }
 
         // set actual fieldstar no
         ui8_fieldstarNr = ui8_fieldstarNrTemp;
         // create receive filters to receive messages from fieldstar terminal
         ui16_filter = (0x500 | ui8_fieldstarNr);
-        if (!c_can_io.existFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent))
-            c_can_io.insertFilter(*this, (uint16_t)0x70F,ui16_filter, true, Ident_c::StandardIdent);
+        if (!c_can_io.existFilter( *this, (uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent))
+            c_can_io.insertFilter( *this, (uint16_t)0x70F,ui16_filter, true, Ident_c::StandardIdent);
       } // end of create new filter on fieldstar nr change
     } // end fieldstar exist as member
     else
@@ -196,8 +196,8 @@ bool GPS_c::timeEvent( void )
       if (ui8_fieldstarNr != 0xFF)
       {  // previously fieldstar existed -> filter was created
         ui16_filter = (0x500 | ui8_fieldstarNr);
-        if (c_can_io.existFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent))
-          c_can_io.deleteFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent);
+        if (c_can_io.existFilter( *this, (uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent))
+          c_can_io.deleteFilter( *this, (uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent);
         b_isGpsTime = 0;
         ui8_fieldstarNr = 0xFF;
       } // end delete old unused filter
@@ -215,6 +215,7 @@ bool GPS_c::timeEvent( void )
 
   possible errors:
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
+	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool GPS_c::processMsg(){
   int32_t i32_tempVal = data().dataRawCmdLong();
@@ -399,7 +400,7 @@ bool GPS_c::processMsg(){
     } // sercvice process data from GPS service
     else
     { // another type of process data -> let Process_c process it
-      getProcessInstance4Comm().processMsg();
+      return getProcessInstance4Comm().processMsg();
     }
   } // else for no partner process data from fieldstar with GPS data
   #endif // USE_DIN_9684

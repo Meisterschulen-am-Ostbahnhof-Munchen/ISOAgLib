@@ -388,7 +388,7 @@ void MyInternalCanHandler_c::init()
 	This will happen as one of the part actions, if you call getISchedulerInstance().timeEvent();
 	So as it's no IRQ, you can safely trigger direct response within this function.
 	Just plan enough time for getISchedulerInstance().timeEvent()
-	@return true -> message was processed
+	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool MyInternalCanHandler_c::processMsg()
 {

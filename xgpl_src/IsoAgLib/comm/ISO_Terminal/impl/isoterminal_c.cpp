@@ -147,7 +147,7 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
   /// Use BUFFER - NOT MultiSendStreamer!
   mssObjectString=NULL;
   vec_uploadBuffer.reserve (5+strLen);
-  
+
   vec_uploadBuffer.push_back (179 /* 0xB3 */); /* Command: Command --- Parameter: Change String Value (TP) */
   vec_uploadBuffer.push_back (rui16_objId & 0xFF);
   vec_uploadBuffer.push_back (rui16_objId >> 8);
@@ -159,9 +159,9 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
   }
   if ((5+strLen) < 9)
     ui8_retryCount = DEF_Retries_NormalCommands;
-  else 
+  else
     ui8_retryCount = DEF_Retries_TPCommands;
-  
+
   ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
 
   #ifdef DEBUG_HEAP_USEAGE
@@ -176,12 +176,12 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
 SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
 {
   mssObjectString = rpc_objectString;
-  
+
   if (mssObjectString->getStreamer()->getStreamSize() < 9)
     ui8_retryCount = DEF_Retries_NormalCommands;
-  else 
+  else
     ui8_retryCount = DEF_Retries_TPCommands;
-  
+
   ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
 }
 
@@ -193,7 +193,7 @@ SendUpload_c::SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   /// Use BUFFER - NOT MultiSendStreamer!
   mssObjectString=NULL;
   vec_uploadBuffer.reserve (8);
-  
+
   vec_uploadBuffer.push_back (byte1);
   vec_uploadBuffer.push_back (byte2);
   vec_uploadBuffer.push_back (byte3);
@@ -202,7 +202,7 @@ SendUpload_c::SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   vec_uploadBuffer.push_back (byte6);
   vec_uploadBuffer.push_back (byte7);
   vec_uploadBuffer.push_back (byte8);
- 
+
   ui8_retryCount = DEF_Retries_NormalCommands;
   ui32_uploadTimeout = rui32_timeout;
 }
@@ -228,7 +228,7 @@ SendUpload_c::SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   vec_uploadBuffer.push_back (byte7);
   vec_uploadBuffer.push_back (byte8);
   vec_uploadBuffer.push_back (byte9);
- 
+
   ui8_retryCount = DEF_Retries_TPCommands;
   ui32_uploadTimeout = rui32_timeout;
 }
@@ -262,7 +262,7 @@ void ISOTerminal_c::finishUploadCommand ()
   #ifdef DEBUG
   std::cout << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
   #endif
-  
+
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
   q_sendUpload.pop_front();
@@ -272,7 +272,7 @@ void ISOTerminal_c::finishUploadCommand ()
   #ifdef DEBUG_HEAP_USEAGE
   sui16_sendUploadQueueSize--;
   #endif
-  
+
   #ifdef DEBUG
   std::cout << q_sendUpload.size() << ".\n";
   #endif
@@ -287,52 +287,52 @@ bool ISOTerminal_c::startUploadCommand ()
 
   // Get first element from queue
   SendUpload_c* actSend = &q_sendUpload.front();
-  
+
   // Set time-out values
   ui32_uploadTimeout = actSend->ui32_uploadTimeout;
   ui32_uploadTimestamp = HAL::getTime();
-  
-  
+
+
    /// Use Multi or Single CAN-Pkgs?
   //////////////////////////////////
-  
+
   if ((actSend->mssObjectString == NULL) && (actSend->vec_uploadBuffer.size() < 9)) {
     /// Fits into a single CAN-Pkg!
     // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
     c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                           actSend->vec_uploadBuffer [0], actSend->vec_uploadBuffer [1],
                           actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
-                          actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5], 
+                          actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
                           actSend->vec_uploadBuffer [6], actSend->vec_uploadBuffer [7]);
     getCanInstance4Comm() << c_data;
-    
+
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->vec_uploadBuffer [0];
   }
   else if ((actSend->mssObjectString != NULL) && (actSend->mssObjectString->getStreamer()->getStreamSize() < 9)) {
     /// Fits into a single CAN-Pkg!
     uint8_t ui8_len = actSend->mssObjectString->getStreamer()->getStreamSize();
-    
+
     c_data.setExtCanPkg (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), ui8_len);
     actSend->mssObjectString->getStreamer()->set5ByteCommandHeader (c_data.pb_data);
     for (int i=5; i < ui8_len; i++) c_data.pb_data[i] = actSend->mssObjectString->getStreamer()->getStringToStream() [i-5];
     getCanInstance4Comm() << c_data;
-    
+
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
   }
   else if (actSend->mssObjectString == NULL) {
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    
+
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
-    
+
     return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
            &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, &en_sendSuccess);
   } else {
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
-    
+
     return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
            (MultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),        ECU_TO_VT_PGN, &en_sendSuccess);
   }
@@ -478,14 +478,14 @@ void ISOTerminal_c::close( void )
     getSchedulerInstance4Comm().unregisterClient( this );
 
     uint32_t ui32_filter = (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8);
-    if (getCanInstance4Comm().existFilter((0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
     { // delete FilterBox
-      getCanInstance4Comm().deleteFilter( (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
     }
     ui32_filter = (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8);
-    if (getCanInstance4Comm().existFilter((0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    if (getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
     { // delete FilterBox
-      getCanInstance4Comm().deleteFilter( (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
     }
     deregisterIsoObjectPool();
   }
@@ -524,14 +524,14 @@ bool ISOTerminal_c::timeEvent( void )
   { // register to get VTStatus Messages
     b_receiveFilterCreated = true;
     uint32_t ui32_filter = (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8);
-    if (!getCanInstance4Comm().existFilter((0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
     { // create FilterBox
-      getCanInstance4Comm().insertFilter(*this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
     }
     ui32_filter = (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8);
-    if (!getCanInstance4Comm().existFilter((0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
     { // create FilterBox
-      getCanInstance4Comm().insertFilter(*this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
     }
   }
 /*** Filter Registration End ***/
@@ -571,7 +571,7 @@ bool ISOTerminal_c::timeEvent( void )
       } else {
         // in case of "OP<was>Registered", "OP<was>UploadedSuccessfully", "OPCannotBeUploaded" (on the previous VT: try probably other VT now)
         en_objectPoolState = OPRegistered; // try re-uploading, not caring if it was successfully or not on the last vt!
-        
+
         en_uploadType = UploadPool;          // Start Pool Uploading sequence!!
         en_uploadPoolState = UploadPoolInit; // with "UploadInit
       }
@@ -607,11 +607,11 @@ bool ISOTerminal_c::timeEvent( void )
     || (en_objectPoolState == OPCannotBeUploaded) ) // if it couldn't be uploaded, only disconnecting/connecting VT helps!
     return true; /** @todo is this correctly assumed? "if it couldn't be uploaded, only disconnecting/connecting VT helps!" */
 
-  
+
   /// Now from here on the Pool's state is: "OPRegistered" or "OPUploadedSuccessfully"
-  
-  
-  
+
+
+
 
    ////////////////////////////////
   /// UPLOADING --> OBJECT-POOL<--
@@ -657,7 +657,7 @@ bool ISOTerminal_c::timeEvent( void )
     // Handled down below are (as they're no TIME-OUTs but INITIATIONs:
     // if (UploadPoolFailed)
     // if (UploadPoolInit)
-    
+
     // ### Do we have to request (any) vt capabilities?
     if (!(vtCapabilities_a.lastReceivedFont && vtCapabilities_a.lastReceivedHardware && vtCapabilities_a.lastReceivedSoftkeys && localSettings_a.lastReceived)) {
       /// Pool-Upload: PRE Phase (Get VT-Properties)
@@ -714,7 +714,7 @@ bool ISOTerminal_c::timeEvent( void )
           en_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
           ui32_uploadTimeout = 1000;
           ui32_uploadTimestamp = HAL::getTime();
-        } 
+        }
         else
         { // Start uploading right now, no "LoadVersion" first
           startObjectPoolUploading ();
@@ -722,18 +722,18 @@ bool ISOTerminal_c::timeEvent( void )
       }
     }
   }
-   
-   
+
+
 
    /////////////////////////////
   /// UPLOADING --> COMMAND <--
   // Can only be done if the Object-Pool is successfully uploaded!
   if (en_objectPoolState != OPUploadedSuccessfully)
-    return true;  
+    return true;
 
   /// FROM HERE ON THE OBJECT-POOL >>IS<< UPLOADED SUCCESSFULLY
   /// NOW HERE THE RUNTIME COMMANDS ARE BEING HANDLED
-    
+
 
   if (en_uploadType == UploadCommand) {
     // NO Response/timeOut for (C.2.3 Object Pool Transfer Message) "UploadObjectPool" - Only for "UploadMultiPaketCommand"
@@ -746,7 +746,7 @@ bool ISOTerminal_c::timeEvent( void )
     }
     // no ELSE here as the uploadCommandState may has changed above!
     /** @todo Check if "ConnAbort" comes in, in that case? retry?!! */
-  
+
     // Are we in "Upload Command"-State and the last Upload failed?
     if ( (en_uploadCommandState == UploadCommandTimedOut)
       || (en_uploadCommandState == UploadCommandFailed) ) {
@@ -758,16 +758,16 @@ bool ISOTerminal_c::timeEvent( void )
         en_uploadType = UploadIdle;
         finishUploadCommand(); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
       }
-    }    
+    }
   } // UploadCommand
-  
+
   // ### Is a) no Upload running and b) some Upload to do?
   if ((en_uploadType == UploadIdle) && !q_sendUpload.empty()) {
     // Set Retry & Start Uploading
     ui8_uploadRetry = (*(q_sendUpload.begin())).ui8_retryCount;
     startUploadCommand ();
   }
-  
+
   return true;
 }
 
@@ -908,7 +908,9 @@ void ISOTerminal_c::indicateObjectPoolCompletion ()
 }
 
 
-/** process received can messages */
+/** process received can messages
+	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+*/
 bool ISOTerminal_c::processMsg()
 {
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
@@ -947,21 +949,20 @@ bool ISOTerminal_c::processMsg()
         vtState_a.functionBusy = data().getUint8Data (7);
         // get source address of virtual terminal
         vtSourceAddress = data().isoSa();
-        break;
+        return true;
       default:
-        break;
+        return false;
     }
-    return true;
   }
 
 
   // If VT is not active, don't react on PKGs addressed to us, as VT's not active ;)
-  if (!isVtActive()) return true;
-  
+  if (!isVtActive()) return false;
+
   // If no pool registered, do nothing!
-  if (en_objectPoolState == OPNoneRegistered) return true;
-        
-        
+  if (en_objectPoolState == OPNoneRegistered) return false;
+
+
         ////////////////////////
        // -->LANGUAGE_PGN<-- //
       ////////////////////////
@@ -1043,7 +1044,7 @@ bool ISOTerminal_c::processMsg()
         }
         b_result = true;
         break;
-      
+
       // ### Error field is also on byte 2 (index 1)
       case 0xA3: // Command: "Command", parameter "Control Audio Device Response"
       case 0xA4: // Command: "Command", parameter "Set Audio Volume Response"
@@ -1051,7 +1052,7 @@ bool ISOTerminal_c::processMsg()
         MACRO_setStateDependantOnError(2)
         b_result = true;
         break;
-      
+
       // ### Error field is also on byte 4 (index 3)
       case 0xA6: // Command: "Command", parameter "Change Size Response"
       case 0xA8: // Command: "Command", parameter "Change Numeric Value Response"
@@ -1064,7 +1065,7 @@ bool ISOTerminal_c::processMsg()
         MACRO_setStateDependantOnError(4)
         b_result = true;
         break;
-      
+
       // ### Error field is also on byte nr. 5 (index 4)
       case 0xA0: // Command: "Command", parameter "Hide/Show Object Response" (Container)
       case 0xA1: // Command: "Command", parameter "Enable/Disable Object Response" (Input Object)
@@ -1075,7 +1076,7 @@ bool ISOTerminal_c::processMsg()
         MACRO_setStateDependantOnError(5)
         b_result = true;
         break;
-      
+
       // ### Error field is also on byte 6 (index 5)
       case 0xA5: // Command: "Command", parameter "Change Child Location Response"
       case 0xAE: // Command: "Command", parameter "Change Soft Key Mask Response"
@@ -1084,7 +1085,7 @@ bool ISOTerminal_c::processMsg()
         MACRO_setStateDependantOnError(6)
         b_result = true;
         break;
-      
+
       // ### Error field is on byte 7 (index 6)
       case 0xB1: // Command: "Command", parameter "Change List Item Response"
         MACRO_setStateDependantOnError(7)
@@ -1178,7 +1179,7 @@ bool ISOTerminal_c::processMsg()
     } // switch
 
     /** Acknowledgment of VT->ECU Initiated Messages (Soft Key, Button, VTChangeNumericValue etc.)
-       IS >>OPTIONAL<< IN THE FINAL ISO 11783, SO IT IS LEFT OUT HERE <<COMPLETELY>> 
+       IS >>OPTIONAL<< IN THE FINAL ISO 11783, SO IT IS LEFT OUT HERE <<COMPLETELY>>
      **/
      #ifdef DEBUG
      if (en_uploadCommandState == UploadCommandFailed) {
@@ -1223,7 +1224,7 @@ bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, ui
   if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
     sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
   #endif
-  
+
   #ifdef DEBUG
   std::cout << q_sendUpload.size() << ".\n";
   #endif
@@ -1238,7 +1239,7 @@ bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, ui
 bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout)
 {
   if (!isVtActive()) return false;
-  
+
   #ifdef DEBUG
   std::cout << "Enqueued 9-byter: " << q_sendUpload.size() << " -> ";
   #endif
@@ -1254,7 +1255,7 @@ bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, ui
   if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
     sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
   #endif
-  
+
   #ifdef DEBUG
   std::cout << q_sendUpload.size() << ".\n";
   #endif
@@ -1406,7 +1407,7 @@ bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_obj
   if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
     sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
   #endif
-  
+
   #ifdef DEBUG
   std::cout << q_sendUpload.size() << ".\n";
   #endif
@@ -1417,7 +1418,7 @@ bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_obj
 bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* rpc_objectString)
 {
   if (!isVtActive()) return false;
-  
+
   #ifdef DEBUG
   std::cout << "Enqueued stringObject-mss: " << q_sendUpload.size() << " -> ";
   #endif
@@ -1434,7 +1435,7 @@ bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* r
   if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
     sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
   #endif
-  
+
   #ifdef DEBUG
   std::cout << q_sendUpload.size() << ".\n";
   #endif

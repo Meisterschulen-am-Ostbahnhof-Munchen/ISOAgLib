@@ -6,6 +6,6 @@ INCPATH -= -I/usr/include
 
 OBJECTS_DIR = objects
 
-QMAKE_CFLAGS_DEBUG += -fno-builtin -Wall -Wpointer-arith -Wstrict-prototypes
+QMAKE_CFLAGS_DEBUG += -fno-builtin -Wall -Woverloaded-virtual -Wpointer-arith -Wstrict-prototypes
 
-QMAKE_CXXFLAGS_DEBUG += -fno-builtin -Wall -Wpointer-arith -Wstrict-prototypes
+QMAKE_CXXFLAGS_DEBUG += -fno-builtin -Wall -Woverloaded-virtual -Wpointer-arith -Wstrict-prototypes
