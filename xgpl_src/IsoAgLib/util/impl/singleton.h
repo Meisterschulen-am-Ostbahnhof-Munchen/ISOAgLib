@@ -248,6 +248,18 @@
   #define CAN_SINGLETON( CLASS ) Singleton<CLASS>
 #endif
 
+#if defined(RS232_INSTANCE_CNT) && (RS232_INSTANCE_CNT != 1 )
+  /** RS232_SINGLETON allows to define RS232 classes independent from the specified
+    * amount of managed RS232 BUSes.
+    */
+  #define RS232_SINGLETON( CLASS ) SingletonVec<CLASS,RS232_INSTANCE_CNT>
+#else
+  /** RS232_SINGLETON allows to define RS232 classes independent from the specified
+    * amount of managed RS232 BUSes.
+    */
+  #define RS232_SINGLETON( CLASS ) Singleton<CLASS>
+#endif
+
 /** @todo try to remove these include hacks, as soon as Tasking provides a bugfix
 		for their broken version 7.x STL headers.
     Official STL headers like "c166/include.cpp/stl_algobase.h"

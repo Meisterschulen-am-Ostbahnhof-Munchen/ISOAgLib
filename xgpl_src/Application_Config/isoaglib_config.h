@@ -695,6 +695,14 @@
   #define CAN_INSTANCE_CNT 1
 #endif
 
+/** set the amount of RS232IO_c instanes used by IsoAgLib
+  * normaly one, but if more RS232 channels should be managed
+  * IsoAgLib can manage them seperate
+*/
+#ifndef RS232_INSTANCE_CNT
+  #define RS232_INSTANCE_CNT 1
+#endif
+
 /** count of CAN ports which are managed with IsoAgLib (DIN and/or ISO)
 		- in most cases just 1
 		- but if the ECU shall be used as gateway between two ISO 11783 or DIN 9684 subnets
