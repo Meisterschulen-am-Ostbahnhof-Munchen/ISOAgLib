@@ -547,13 +547,22 @@ bool ISOMonitor_c::deleteIsoMemberGtp(GetyPos_c rc_gtp)
   if (existIsoMemberGtp(rc_gtp))
   { // set correct state
 
+    // Are we deleting a WorkingSetMaster?
+    if ((*pc_isoMemberCache).getMaster() != NULL) {
+      // Tell all WorkingSet-Slaves that they're no more Slaves but only standalones...
+      for (Vec_ISO::iterator pc_iter=vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
+      {
+        if ((*pc_iter).getMaster() == &(*pc_isoMemberCache)) (*pc_iter).setMaster(NULL);
+      }
+    }
+  
     // erase it from list (existIsoMemberGtp sets pc_isoMemberCache to the wanted item)
     vec_isoMember.erase(pc_isoMemberCache);
     #ifdef DEBUG_HEAP_USEAGE
     sui16_isoItemTotal--;
 
     getRs232Instance()
-	    << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
+      << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
       << ", Chunk-Alloc: "
@@ -562,7 +571,7 @@ bool ISOMonitor_c::deleteIsoMemberGtp(GetyPos_c rc_gtp)
     #endif
     pc_isoMemberCache = vec_isoMember.begin();
 
-		return true;
+    return true;
   }
   else
   { // to be deleted member GETY_POS does not exist
