@@ -52,7 +52,7 @@
  ***************************************************************************/
 #define  STRICT
 
-#define CVS_REV "$Revision: 1.23 $"
+#define CVS_REV "$Revision$"
 #define RTE_CLIENT
 #include <rte_client.h>		// be an RTE client
 #include <rte_serial.h>

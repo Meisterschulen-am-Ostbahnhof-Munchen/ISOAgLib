@@ -515,9 +515,9 @@ void IdentItem_c::close( void )
     )
     { // item has claimed address -> send unregister cmd
       // send an adress release for according number
-      pc_memberItem->sendAdressRelease();
-      // delete item from memberList
-      getDinMonitorInstance4Comm().deleteDinMemberGtp(gtp());
+      // pc_memberItem->sendAdressRelease();
+      // delete item from memberList - and force send of address release
+      getDinMonitorInstance4Comm().deleteDinMemberGtp(gtp(), true );
       pc_memberItem = NULL;
     }
   #endif

@@ -595,10 +595,8 @@ bool DINMonitor_c::insertDinMember(GetyPos_c rc_gtp, const uint8_t* rpb_name, ui
     vec_dinMember.sort(); // resort the list
 		#ifdef DEBUG_HEAP_USEAGE
 		getRs232Instance()
-			<< "DINMonitor_c uses at the moment a calculated amount \r\n"
-			<< "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-			<< ( vec_dinMember.size() * ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) ) << " Byte for monitor list of all DIN devices\r\n"
-			<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
+			<< "DINMonitor_c mem usage: " 
+			<< ( vec_dinMember.size() * ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) ) << " Byte for DINItem_c list\r\n";
 		#endif
 
   }
@@ -692,16 +690,17 @@ DINItem_c& DINMonitor_c::dinMemberGtp(GetyPos_c rc_gtp, bool *const pb_success, 
   @param rb_send-release true -> send adress release msg (optional, default = false)
 */
 bool DINMonitor_c::deleteDinMemberGtp(GetyPos_c rc_gtp, bool rb_sendRelease)
-{
-  if ( ( existDinMemberGtp(rc_gtp)) && ( ! pc_dinMemberCache->itemState ( IState_c::Local ) ) )
+{ // only delete local items, if send of adress release is requested - otherwise
+  // this is not triggered by local software
+  if ( ( existDinMemberGtp(rc_gtp)                                                    )
+    && ( ( rb_sendRelease ) || ( ! pc_dinMemberCache->itemState ( IState_c::Local ) ) ) )
   { // set correct state
     // check the number and delete it from AdrVect
     clearUsedAdr(pc_dinMemberCache->nr());
 
     // if release should be send - do it now
     if (rb_sendRelease && pc_dinMemberCache->itemState(IState_c::ClaimedAddress))
-    {
-      // fill data in SystemPkg
+    { // fill data in SystemPkg
       data().setGtp(rc_gtp);
       data().setVerw(2);
       data().setSend(pc_dinMemberCache->nr());
@@ -716,10 +715,8 @@ bool DINMonitor_c::deleteDinMemberGtp(GetyPos_c rc_gtp, bool rb_sendRelease)
 
 		#ifdef DEBUG_HEAP_USEAGE
 		getRs232Instance()
-			<< "DINMonitor_c uses at the moment a calculated amount \r\n"
-			<< "( padding and memory fragmentation of target causes some memory overhead ):\r\n"
-			<< ( vec_dinMember.size() * ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) ) << " Byte for monitor list of all DIN devices\r\n"
-			<< "IMPORTANT: Padding, Memory Fragmentation and some internal organizing data will cause some memory overhead - so don't draw line for HEAPSIZE to tight\r\n";
+			<< "DINMonitor_c mem usage: " 
+			<< ( vec_dinMember.size() * ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) ) << " Byte for DINItem_c list\r\n";
 		#endif
 
 		return true;

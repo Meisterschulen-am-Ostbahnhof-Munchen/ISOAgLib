@@ -140,6 +140,12 @@ void Scheduler_c::init( void )
 void Scheduler_c::closeCommunication( void ) {
   // as soon as all communicating IsoAgLib clients are closed, CANIO_c can be closed
   getCanInstance4Comm().close();
+  #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
+  for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
+  { // process msg of other BUS ( other CAN is always at position 1 (independend from CAN BUS at controller!!)
+    getCanInstance( ind ).close();
+  }
+  #endif
   while ( ! c_arrClientC1.empty() )
   { // call close for each registered client
     pc_searchCacheC1 = c_arrClientC1.begin();
@@ -153,6 +159,12 @@ void Scheduler_c::close( void )
   closeCommunication();
   // as soon as all communicating IsoAgLib clients are closed, CANIO_c can be closed
   getCanInstance4Comm().close();
+  #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
+  for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
+  { // process msg of other BUS ( other CAN is always at position 1 (independend from CAN BUS at controller!!)
+    getCanInstance( ind ).close();
+  }
+  #endif
   // last but not least close System
   getSystemInstance().close();
 }
@@ -292,8 +304,10 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   #endif
 
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-  // process msg of other BUS ( other CAN is always at position 1 (independend from CAN BUS at controller!!)
-  getCanInstance( 1 ).timeEvent();
+  for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
+  { // process msg of other BUS ( other CAN is always at position 1 (independend from CAN BUS at controller!!)
+    getCanInstance( ind ).timeEvent();
+  }
   #endif
 
   #ifdef USE_DIN_9684
