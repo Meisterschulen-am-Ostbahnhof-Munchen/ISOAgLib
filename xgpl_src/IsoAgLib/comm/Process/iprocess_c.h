@@ -113,7 +113,7 @@ public:
     @param rui16_localProcCapacity
   */
   void localProcDataReserveCnt( uint16_t rui16_localProcCapacity ) 
-  { iProcess_c::localProcDataReserveCnt( rui16_localProcCapacity );};
+  { Process_c::localProcDataReserveCnt( rui16_localProcCapacity );};
 	/**
   	if the amount of created remote process data is known, then enough capacity for the
     vector with pointers to all of them can be reserved. Otherwise the vector
@@ -123,7 +123,7 @@ public:
     @param rui16_remoteProcCapacity
   */
   void remoteProcDataReserveCnt( uint16_t rui16_remoteProcCapacity )
-  { iProcess_c::remoteProcDataReserveCnt( rui16_remoteProcCapacity );};
+  { Process_c::remoteProcDataReserveCnt( rui16_remoteProcCapacity );};
   /**
     checks if a suitable iProcessDataLocal_c item exist
     @param rui8_lis LIS code of searched local Process Data instance
@@ -136,7 +136,7 @@ public:
   */
   bool existProcDataLocal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
                              uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rb_pos = 0xFF, uint8_t rui8_pri = 2)
-    {return iProcess_c::existProcDataLocal(rui8_lis, rui8_gety, rui8_wert,
+    {return Process_c::existProcDataLocal(rui8_lis, rui8_gety, rui8_wert,
                              rui8_inst, rui8_zaehlnum, rb_pos, rui8_pri);};
   /**
     checks if a suitable iProcessDataRemote_c item exist
@@ -150,7 +150,7 @@ public:
   */
   bool existProcDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
                               uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rb_pos = 0xFF, uint8_t rui8_pri = 2)
-    {return iProcess_c::existProcDataRemote(rui8_lis, rui8_gety, rui8_wert,
+    {return Process_c::existProcDataRemote(rui8_lis, rui8_gety, rui8_wert,
                              rui8_inst, rui8_zaehlnum, rb_pos, rui8_pri);};
   /**
     delivers count of local process data entries with similar ident

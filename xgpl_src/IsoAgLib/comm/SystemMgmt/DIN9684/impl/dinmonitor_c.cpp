@@ -126,7 +126,7 @@ void DINMonitor_c::init( void )
   c_tempDinMemberItem.set(0, GetyPos_c(0xF, 0xF), 0xFF, IState_c::Active, 0, NULL, getSingletonVecKey() );
   c_data.setSingletonKey( getSingletonVecKey() );
   #ifdef DEBUG_HEAP_USEAGE
-  sui16_dinItemTotal -= ( vec_dinMember.size() * ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) );
+  sui16_dinItemTotal -= vec_dinMember.size();
   #endif
   vec_dinMember.clear();
   pc_dinMemberCache = vec_dinMember.end();
@@ -256,10 +256,14 @@ bool DINMonitor_c::timeEvent( void ){
           //erase delivers iterator to item after erased item
           pc_iterItem = vec_dinMember.erase(pc_iterDelete);
           #ifdef DEBUG_HEAP_USEAGE
-          sui16_dinItemTotal -= ( ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) );
+          sui16_dinItemTotal--;
 
           getRs232Instance()
-	          << "DINItem_c T: " << sui16_dinItemTotal << ", Node: " << ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) << "\r\n";
+	          << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
+            << ( ( sizeof(DINItem_c) + 3 * sizeof(DINItem_c*) ) * sui16_dinItemTotal )
+            << ", Chunk-Alloc: "
+            << ( ( ( sui16_dinItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINItem_c)+sizeof(DINItem_c*) ) )
+            << "\r\n\r\n";
           #endif
           b_repeat = true;
           break;
@@ -603,10 +607,14 @@ bool DINMonitor_c::insertDinMember(GetyPos_c rc_gtp, const uint8_t* rpb_name, ui
     #ifdef DEBUG_HEAP_USEAGE
     else
     {
-      sui16_dinItemTotal += ( ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) );
+      sui16_dinItemTotal++;
 
       getRs232Instance()
-	      << "DINItem_c T: " << sui16_dinItemTotal << ", Node: " << ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) << "\r\n";
+	      << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
+        << ( ( sizeof(DINItem_c) + 3 * sizeof(DINItem_c*) ) * sui16_dinItemTotal )
+        << ", Chunk-Alloc: "
+        << ( ( ( sui16_dinItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINItem_c)+sizeof(DINItem_c*) ) )
+        << "\r\n\r\n";
     }
     #endif
     vec_dinMember.sort(); // resort the list
@@ -724,10 +732,14 @@ bool DINMonitor_c::deleteDinMemberGtp(GetyPos_c rc_gtp, bool rb_sendRelease)
     vec_dinMember.erase(pc_dinMemberCache);
     pc_dinMemberCache = vec_dinMember.begin();
     #ifdef DEBUG_HEAP_USEAGE
-    sui16_dinItemTotal -= ( ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) );
+    sui16_dinItemTotal--;
 
     getRs232Instance()
-	    << "DINItem_c T: " << sui16_dinItemTotal << ", Node: " << ( sizeof(DINItem_c) + 2 * sizeof(DINItem_c*) ) << "\r\n";
+	    << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
+      << ( ( sizeof(DINItem_c) + 3 * sizeof(DINItem_c*) ) * sui16_dinItemTotal )
+      << ", Chunk-Alloc: "
+      << ( ( ( sui16_dinItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINItem_c)+sizeof(DINItem_c*) ) )
+      << "\r\n\r\n";
     #endif
 
 		return true;

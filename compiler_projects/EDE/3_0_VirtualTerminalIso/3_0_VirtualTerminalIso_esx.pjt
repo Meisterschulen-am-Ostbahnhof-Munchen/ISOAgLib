@@ -1,14 +1,14 @@
 ;Codewright Project File (do not remove or modify this line)
 [State]
-SysSetCwd='D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx'
+SysSetCwd='D:\Fritzmeier\MiniVegN\IsoAgLib\compiler_projects\EDE\3_0_VirtualTerminalIso'
 SrchSetFlags=0x041a680a
-SrchSetAgainFlags=0x04036004,0
+SrchSetAgainFlags=0x0002e002,0
 SrchSetAgainFlags=0x0200600a,1
 FileSortMode=0x0
-_StateHistory=FILELIST,'D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\Application_Config\isoaglib_config.h','D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20go.asm','D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20lcs.ilo','C:\Programme\Tasking\7.56\c166\include.cpp\stl_function.h','D:\Fritzmeier\MiniVegN\IsoAgLib\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso\3_0_VirtualTerminalIso.cpp','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.cpp','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system.h','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp'
-_StateHistory=SEARCH,'set_relais','setRelais'
-_StateHistory=EDITFILE,'D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20lcs.ilo'
-_StateHistory=DOCUMENTVISIT,'369         1           D:\Fritzmeier\MiniVegN\IsoAgLib\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso\3_0_VirtualTerminalIso.cpp','139         49          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp','670         1           D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\Application_Config\isoaglib_config.h','71          3           D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20go.asm','31          1           D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20lcs.ilo','505         1           C:\Programme\Tasking\7.56\c166\include.cpp\stl_function.h','369         1           D:\Fritzmeier\MiniVegN\IsoAgLib\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso\3_0_VirtualTerminalIso.cpp','117         15          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.cpp','200         24          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system.h','139         49          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp'
+_StateHistory=FILELIST,'D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputattributes_c.cpp','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectinputstring_c.cpp','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectoutputstring_c.cpp','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectstringvariable_c.cpp','D:\Fritzmeier\MiniVegN\IsoAgLib\compiler_projects\EDE\3_0_VirtualTerminalIso\3_0_virtualterminaliso_esx.map','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.h','D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\xos20esx.h','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\driver\system\impl\system_c.h','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\Application_Config\isoaglib_config.h'
+_StateHistory=SEARCH,'malloc','alloc','= new','pc_isoName','HEAP','rui8_busNumber','b_irqCanReceiveOffset','NO_CAN_EN_CHECK','get_on_off_switch','ON'
+_StateHistory=EDITFILE,'D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\Xos20lcs.ilo','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.h','D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp','D:\Fritzmeier\MiniVegN\IsoAgLib\compiler_projects\EDE\3_0_VirtualTerminalIso\3_0_virtualterminaliso_esx.map'
+_StateHistory=DOCUMENTVISIT,'85          1           D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\can\hal_can_interface.cpp','98          15          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\util\liberr_c.h','219         84          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp','120         1           D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\driver\system\impl\system_c.h','179         21          D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system.h','125         1           D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\util\liberr_c.cpp','1           1           D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.cpp','16          12          D:\Fritzmeier\MiniVegN\IsoAgLib\commercial_BIOS\bios_esx\xos20esx.h','76          1           D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.h','82          1           D:\Fritzmeier\MiniVegN\IsoAgLib\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp'
 _StateDocumentVisit=10
 
 [ProjInit]
@@ -46,20 +46,20 @@ CompilerAddCmdEx='TASKING src','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a 
 CompilerAddResponse='TASKING src',
 CompilerAddCmdEx='TASKING fle','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING fle',
-CompilerAddCmdEx='TASKING cc','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING cc',
-CompilerAddCmdEx='TASKING cxx','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING cxx',
 CompilerAddCmdEx='TASKING asm','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING asm',
+CompilerAddCmdEx='TASKING cxx','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING cxx',
+CompilerAddCmdEx='TASKING cc','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING cc',
 CompilerAddCmdEx='TASKING cmp','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cmp',
-CompilerAddCmdEx='$_cw_proj_hash_$','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\programme\tasking\7.56\c166\bin\xfw166.exe 3_0_VirtualTerminalIso.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='$_cw_proj_hash_$','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\programme\tasking\7.56\c166\bin\xfw166.exe d:\fritzmeier\minivegn\isoaglib\compiler_projects\ede\3_0_virtualterminaliso\3_0_virtualterminaliso_esx.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='$_cw_proj_hash_$',
-CompilerAddCmdEx='TASKING ic','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='TASKING ic',
 CompilerAddCmdEx='TASKING cpp','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cpp',
+CompilerAddCmdEx='TASKING ic','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='TASKING ic',
 CompilerAddCmdEx='TASKING c','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING c',
 CompilerNewExt=.htm
@@ -115,9 +115,9 @@ VCSSetCmd=VCS_ADD_ID,'vcs -i -t@"%Q" "%b%e"',0x8000040
 VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
 
 [Project]
-ConfigSetLinkDBFilename='c:\programme\tasking\7.56\c166\bin\cwright.ldb'
-ConfigSetMarkDBFilename='c:\programme\tasking\7.56\c166\bin\cwright.mrk'
-ConfigSetSymbolDBFilename='3_0_VirtualTerminalIso.sbl'
+ConfigSetLinkDBFilename='C:\Programme\Tasking\7.56\c166\bin\cwright.ldb'
+ConfigSetMarkDBFilename='C:\Programme\Tasking\7.56\c166\bin\cwright.mrk'
+ConfigSetSymbolDBFilename='C:\Programme\Tasking\7.56\c166\3_0_VirtualTerminalIso.sbl'
 EditSetPath=''
 
 [Files]
@@ -317,12 +317,13 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\driver\can\icanio_c.h
 ..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.h
 ..\..\..\xgpl_src\IsoAgLib\driver\system\isystem_c.h
-..\..\..\commercial_BIOS\bios_esx/Xos20go.asm
-..\..\..\commercial_BIOS\bios_esx/Xos20err.c
-..\..\..\commercial_BIOS\bios_esx/xos20esx.h
-..\..\..\commercial_BIOS\bios_esx/XOS20EEC.H
-..\..\..\commercial_BIOS\bios_esx/XOS20EEC.OBJ
-
+..\..\..\commercial_BIOS\bios_esx\Xos20go.asm
+..\..\..\commercial_BIOS\bios_esx\Xos20err.c
+..\..\..\commercial_BIOS\bios_esx\xos20esx.h
+..\..\..\commercial_BIOS\bios_esx\XOS20EEC.H
+..\..\..\commercial_BIOS\bios_esx\XOS20EEC.OBJ
+..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.h
+..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
 
 [Directories]
 Executables=c:\programme\tasking\7.56\c166\bin
@@ -365,7 +366,7 @@ CCompGlobal=0
 CpuType=CpuC167CS
 CompAlternativeTokens=1
 CompRtti=0
-CppDefine=__TSW_CPP_756__,SYSTEM_ESX,PRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
+CppDefine=__TSW_CPP_756__,SYSTEM_ESX,PRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h,DEBUG_HEAP_USEAGE,DEBUG_CAN_BUFFER_FILLING
 CppKeepOutput=0
 CMemModel=CModelLarge
 CEstimateUsk=0
@@ -375,7 +376,7 @@ CDispAllWarn=0
 CSupprSomeWarn=1
 CSupprWarn=91,68,135,144
 CDebug=0
-CDefine=__TSW_CPP_756__,SYSTEM_ESX,PRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
+CDefine=__TSW_CPP_756__,SYSTEM_ESX,PRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h,DEBUG_HEAP_USEAGE,DEBUG_CAN_BUFFER_FILLING
 COptim=CAdvOptim
 COptimAliasTypeChk=0
 OutIHex=1

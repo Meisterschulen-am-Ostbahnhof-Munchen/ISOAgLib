@@ -97,7 +97,12 @@
 #ifdef DEBUG_HEAP_USEAGE
 static uint16_t sui16_msgObjTotal = 0;
 static uint16_t sui16_filterBoxTotal = 0;
+static uint16_t sui16_deconstructMsgObjCnt = 0;
+
+extern unsigned int AllocateHeapMalloc;
+extern unsigned int DeallocateHeapMalloc;
 #endif
+
 
 namespace __IsoAgLib {
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
@@ -123,8 +128,8 @@ namespace __IsoAgLib {
 /** global array for pointers to dynamic MsgObj_c array of CANIO_c objects for each BUS
   -> by BUS Nr parameter in interrupt function,
      the appropriate dynamic MsgObj_c array can be found */
-//std::list<MsgObj_c>* irqMsgObjVec[CAN_BUS_CNT];
-std::list<MsgObj_c,std::__allocator<MsgObj_c,std::__malloc_alloc_template<0> > >* irqMsgObjVec[CAN_BUS_CNT];
+//std::slist<MsgObj_c>* irqMsgObjVec[CAN_BUS_CNT];
+std::slist<MsgObj_c,std::__malloc_alloc_template<0> >* irqMsgObjVec[CAN_BUS_CNT];
 
 uint8_t b_irqCanReceiveOffset[CAN_BUS_CNT];
 
@@ -152,14 +157,14 @@ uint8_t b_irqCanReceiveOffset[CAN_BUS_CNT];
       * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
       * Err_c::busy on already used sending Msg-Obj
   @param rui8_busNumber optional number of the CAN bus
-  @param rui16_bitrate optional bitrate (default by define in master_header.h)
+  @param rui16_bitrate optional bitrate (default by define in isoaglib_config.h)
   @param identType_t optional length of the ident
     (S (11bit), E (29bit), B
-    (send both standard and extended ident msg) (default by define in master_header.h)
+    (send both standard and extended ident msg) (default by define in isoaglib_config.h)
   @param rui8_minObjNr optional minimum number for hardware CAN message object
-    (important for sharing CAN controller with other tasks) (default by define in master_header.h)
+    (important for sharing CAN controller with other tasks) (default by define in isoaglib_config.h)
   @param rui8_maxObjNr optional maximum number for hardware CAN message object
-    (default by define in master_header.h)
+    (default by define in isoaglib_config.h)
   @return true -> correct initialisation without errors
   @see HAL::can_configGlobalInit
   @see HAL::can_configMsgobjInit
@@ -297,7 +302,7 @@ void CANIO_c::close( void )
       break;
     case HAL_CONFIG_ERR:
       // ignore this type also, as this is only the indication of try to close an already closed channel
-			#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+			#if defined(DEBUG)
       getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call\r\n";
       #endif
       break;
@@ -307,8 +312,8 @@ void CANIO_c::close( void )
       break;
   }
   #ifdef DEBUG_HEAP_USEAGE
-  sui16_filterBoxTotal -= ( arrFilterBox.size() * ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) );
-  sui16_msgObjTotal -= ( arrMsgObj.size() * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) );
+  sui16_filterBoxTotal -= arrFilterBox.size();
+  sui16_msgObjTotal -= arrMsgObj.size();
   #endif
   arrFilterBox.clear();
   arrMsgObj.clear();
@@ -549,7 +554,7 @@ bool CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   // insert new FilterBox_c and exit function if no dyn array growth is reported
   const uint8_t b_oldSize = arrFilterBox.size();
   // insert temp object in vector arrFilterBox -> can cause badAlloc exception
-  arrFilterBox.push_back(c_tempFilterBox);
+  arrFilterBox.push_front(c_tempFilterBox);
   if (b_oldSize >= arrFilterBox.size())
   { // dynamic array didn't grow -> alloc error
     getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Can );
@@ -558,7 +563,7 @@ bool CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   #ifdef DEBUG_HEAP_USEAGE
   else
   {
-    sui16_filterBoxTotal += ( 1 * ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) );
+    sui16_filterBoxTotal++;
   }
   #endif
 
@@ -594,10 +599,20 @@ bool CANIO_c::deleteFilter(MASK_TYPE rt_mask, MASK_TYPE rt_filter,
   { // filter found -> delete element where pc_iter points to
     arrFilterBox.erase(pc_iter);
     #ifdef DEBUG_HEAP_USEAGE
-    sui16_filterBoxTotal -= ( 1 * ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) );
+    sui16_filterBoxTotal--;
 
     getRs232Instance()
-	    << "FilterBox_c T: " << sui16_filterBoxTotal << ", Node: " << ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) << "\r\n";
+	    << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
+      << ( ( sizeof(FilterBox_c) + 3 * sizeof(FilterBox_c*) ) * sui16_filterBoxTotal )
+      << ", Chunk-Alloc: "
+      << ( ( ( sui16_filterBoxTotal / 40 ) + 1 ) * 40 * ( sizeof(FilterBox_c)+sizeof(FilterBox_c*) ) )
+    #if 1
+      << "\r\n__mall tot:" << AllocateHeapMalloc
+      << ", _mall deal tot: " << DeallocateHeapMalloc
+      << "\r\n";
+    #else
+      << "\r\n\r\n";
+    #endif
     #endif
     reconfigureMsgObj();
     b_result = true;
@@ -640,6 +655,18 @@ bool CANIO_c::verifyBusMsgobjNr(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 */
 bool CANIO_c::processMsg(){
   ui8_processedMsgCnt = 0;
+
+	// first check if last Message Object is open,
+	// and process these messages first
+	// - this happens, if this is first processMsg call after
+	//   reconfigureMsgObj
+	if ( c_lastMsgObj.isOpen() )
+	{ // process all messages which where placed during the reconfig in the last message object
+    // trigger watchdog
+    HAL::wdTriggern();
+		c_lastMsgObj.processMsg( ui8_busNumber, true );
+		c_lastMsgObj.close();
+	}
 
   for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
   { // stop processing of message buffers, if not enough time
@@ -723,7 +750,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       // no send obj or BUS not initialized -> should not happen, cause this is done
       // on init of this object
       // (and is done if timeEvent notices that CAN wasn't configured by init)
-			#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+			#if defined(DEBUG)
       getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj\r\n";
 			#endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
@@ -862,7 +889,7 @@ int16_t CANIO_c::FilterBox2MsgObj(){
         // check if insertion try result in growed dyn array
         const uint16_t ui16_oldSize = arrMsgObj.size();
         // insert obj in vector
-        arrMsgObj.push_back(c_tempObj);
+        arrMsgObj.push_front(c_tempObj);
         if (ui16_oldSize >= arrMsgObj.size())
         { // dyn array didn't grow -> set badAlloc error state
           getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Can );
@@ -870,7 +897,7 @@ int16_t CANIO_c::FilterBox2MsgObj(){
         #ifdef DEBUG_HEAP_USEAGE
         else
         {
-          sui16_msgObjTotal += ( 1 * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) );
+          sui16_msgObjTotal++;
         }
         #endif
         pc_searchEnd = arrMsgObj.end();
@@ -894,7 +921,8 @@ int16_t CANIO_c::FilterBox2MsgObj(){
     HAL::wdTriggern();
     arrMsgObj.erase(pc_searchEnd, arrMsgObj.end());
     #ifdef DEBUG_HEAP_USEAGE
-    sui16_msgObjTotal -= ( (cui16_oldSize - arrMsgObj.size() ) * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) );
+    sui16_msgObjTotal -= ( cui16_oldSize - arrMsgObj.size() );
+    sui16_deconstructMsgObjCnt += (cui16_oldSize - arrMsgObj.size() );
     #endif
   }
   if ( i16_result >= 0) i16_result = arrMsgObj.size();
@@ -963,7 +991,8 @@ void CANIO_c::CheckSetCntMsgObj(){
     pc_minLeft->merge(*pc_minRight);
     arrMsgObj.erase(pc_minRight);
     #ifdef DEBUG_HEAP_USEAGE
-    sui16_msgObjTotal -= ( 1 * ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) );
+    sui16_msgObjTotal--;
+    sui16_deconstructMsgObjCnt++;
     #endif
     // reset search arguments for posible next search
     pc_minRight = pc_minLeft = arrMsgObj.begin();
@@ -972,7 +1001,17 @@ void CANIO_c::CheckSetCntMsgObj(){
   // now the amount of arrMsgObj is allowed
   #ifdef DEBUG_HEAP_USEAGE
   getRs232Instance()
-   << sui16_msgObjTotal << "/" << ( sizeof(MsgObj_c) + 2 * sizeof(MsgObj_c*) ) << "\r\n";
+	  << sui16_msgObjTotal << " x MsgObj_c: Mal-Alloc: "
+    << ( ( sizeof(MsgObj_c) + 3 * sizeof(MsgObj_c*) ) * sui16_msgObjTotal )
+    << ", Chunk-Alloc: "
+    << ( ( ( sui16_msgObjTotal / 40 ) + 1 ) * 40 * ( sizeof(MsgObj_c)+sizeof(MsgObj_c*) ) )
+  #if 1
+    << "\r\n__mall tot:" << AllocateHeapMalloc
+    << ", _mall deal tot: " << DeallocateHeapMalloc
+    << "\r\n";
+  #else
+    << "\r\n\r\n";
+  #endif
   #endif
 }
 
@@ -989,7 +1028,17 @@ bool CANIO_c::reconfigureMsgObj()
 
   #ifdef DEBUG_HEAP_USEAGE
   getRs232Instance()
-	    << "FiltBox" << sui16_filterBoxTotal << "/" << ( sizeof(FilterBox_c) + 2 * sizeof(FilterBox_c*) ) << "\r\n";
+	  << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
+    << ( ( sizeof(FilterBox_c) + 3 * sizeof(FilterBox_c*) ) * sui16_filterBoxTotal )
+    << ", Chunk-Alloc: "
+    << ( ( ( sui16_filterBoxTotal / 40 ) + 1 ) * 40 * ( sizeof(FilterBox_c)+sizeof(FilterBox_c*) ) )
+  #if 1
+    << "\r\n__mall tot:" << AllocateHeapMalloc
+    << ", _mall deal tot: " << DeallocateHeapMalloc
+    << "\r\n";
+  #else
+    << "\r\n\r\n";
+  #endif
   #endif
 
   bool b_result = true;
@@ -1005,6 +1054,15 @@ bool CANIO_c::reconfigureMsgObj()
 
   // build suitable global t_mask
   getCommonFilterMask();
+
+  // if last MessageObj is still open since last config - first process stored messages
+	if ( c_lastMsgObj.isOpen() )
+	{ // process all messages which where placed during the reconfig in the last message object
+    // trigger watchdog
+    HAL::wdTriggern();
+		c_lastMsgObj.processMsg( ui8_busNumber, true );
+		c_lastMsgObj.close();
+	}
 
 	if ( (ui16_bitrate != 0xFF) && (ui16_bitrate != 0) && ( ui8_busNumber <= HAL_CAN_MAX_BUS_NR ) && ( ! arrMsgObj.empty() ) && ( arrMsgObj.begin()->isOpen() ) )
 	{ // open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
@@ -1046,11 +1104,8 @@ bool CANIO_c::reconfigureMsgObj()
   }
 
 	if ( c_lastMsgObj.isOpen() )
-	{ // process all messages which where placed during the reconfig in the last message object
-    // trigger watchdog
-    HAL::wdTriggern();
-		c_lastMsgObj.processMsg( ui8_busNumber, true );
-		c_lastMsgObj.close();
+	{ // lock the MsgObj_c to avoid receive of further messages
+		c_lastMsgObj.lock( true );
 	}
   // clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object
@@ -1070,14 +1125,14 @@ bool CANIO_c::reconfigureMsgObj()
 	@param rui32_ident Ident of received CAN message
 	@return pointer to matching FilterBox instance or NULL if no matching found
 */
-FilterBox_c* CANIO_c::canMsg2FilterBox( uint32_t rui32_ident )
+FilterBox_c* CANIO_c::canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type )
 {
   for (ArrFilterBox::iterator pc_iterFilterBox = arrFilterBox.begin();
        pc_iterFilterBox != arrFilterBox.end();
        pc_iterFilterBox++
       )
 	{
-		if ( pc_iterFilterBox->matchMsgId( rui32_ident ) )
+		if ( pc_iterFilterBox->matchMsgId( rui32_ident, rt_type ) )
 		{ // matching FilterBox_c found
 			return &(*pc_iterFilterBox);
 		}

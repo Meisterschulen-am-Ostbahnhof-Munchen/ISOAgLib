@@ -112,8 +112,8 @@ namespace __IsoAgLib {
 */
 class MeasureProgBase_c : public ProcessElementBase_c {
 private:
-  typedef std::slist<MeasureSubprog_c> Vec_MeasureSubprog;
-  typedef std::slist<MeasureSubprog_c>::iterator Vec_MeasureSubprogIterator;
+  typedef std::slist<MeasureSubprog_c,std::__malloc_alloc_template<0> > Vec_MeasureSubprog;
+  typedef std::slist<MeasureSubprog_c,std::__malloc_alloc_template<0> >::iterator Vec_MeasureSubprogIterator;
 
 public: 
   /** allow explicit MeasureProgLocal_c the access to private elements */

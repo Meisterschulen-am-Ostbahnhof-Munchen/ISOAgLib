@@ -92,6 +92,14 @@
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectstring_c.h"
 
+#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#endif
+
+#ifdef DEBUG_HEAP_USEAGE
+  static uint16_t sui16_lastPrintedBufferCapacity;
+#endif
+
 // #define LOESCHE_POOL
 
 namespace __IsoAgLib {
@@ -134,7 +142,6 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
   uint16_t strLen = (CNAMESPACE::strlen(rpc_string) < overrideSendLength) ? CNAMESPACE::strlen(rpc_string) : overrideSendLength;
 
   vec_uploadBuffer.reserve (1 +2 +2 +strLen);
-
   vec_uploadBuffer.push_back (179 /* 0xB3 */); /* Command: Command --- Parameter: Change String Value (TP) */
   vec_uploadBuffer.push_back (rui16_objId & 0xFF);
   vec_uploadBuffer.push_back (rui16_objId >> 8);
@@ -148,6 +155,15 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
 
   mssObjectString=NULL;
   ui8_retryCount = rui8_retryCount;
+
+  #ifdef DEBUG_HEAP_USEAGE
+  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
+  {
+    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
+    getRs232Instance()
+	    << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << "\r\n";
+  }
+  #endif
 }
 
 /**
@@ -395,8 +411,14 @@ bool ISOTerminal_c::timeEvent( void )
     } else {
       vtSourceAddress = 254;
       // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
+      #ifdef USE_LIST_FOR_FIFO
+      // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+      q_sendCommand.clear();
+      q_sendUpload.clear();
+      #else
       while (!q_sendCommand.empty()) q_sendCommand.pop();
       while (!q_sendUpload.empty()) q_sendUpload.pop();
+      #endif
     }
   }
 
@@ -471,7 +493,12 @@ bool ISOTerminal_c::timeEvent( void )
           case UploadChangeStringValue:
             // successfully sent and nothing to wait for so go for Idle now!
             en_uploadState = UIdle; // and wait for response to set en_uploadState back to UploadIdle;
+            #ifdef USE_LIST_FOR_FIFO
+            // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+            q_sendUpload.pop_front();
+            #else
             q_sendUpload.pop();
+            #endif
             break;
         }
         break;
@@ -574,7 +601,12 @@ bool ISOTerminal_c::timeEvent( void )
       c_pkg.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 
                            actSend->arr_commandBuffer [0], actSend->arr_commandBuffer [1], actSend->arr_commandBuffer [2], actSend->arr_commandBuffer [3], actSend->arr_commandBuffer [4], actSend->arr_commandBuffer [5], actSend->arr_commandBuffer [6], actSend->arr_commandBuffer [7]);
       c_can << c_pkg;      // Command: actSend->arr_commandBuffer [0]
+      #ifdef USE_LIST_FOR_FIFO
+      // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+      q_sendCommand.pop_front();
+      #else
       q_sendCommand.pop();
+      #endif
     }
   }
   return true;
@@ -1002,7 +1034,12 @@ CANPkgExt_c& ISOTerminal_c::dataBase()
 */
 bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout)
 {
+  #ifdef USE_LIST_FOR_FIFO
+  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+  q_sendCommand.push_back (SendCommand_c (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout));
+  #else
   q_sendCommand.push (SendCommand_c (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout));
+  #endif
   return true;  // return false somewhen???????? buffer tooo full??
 }
 
@@ -1123,7 +1160,12 @@ bool ISOTerminal_c::sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object,
 bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength)
 {
   /* The SendUpload_c constructor makes a copy of the string! */
+  #ifdef USE_LIST_FOR_FIFO
+  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+  q_sendUpload.push_back (SendUpload_c (rpc_object->getID(), rpc_newValue, overrideSendLength, 2));
+  #else
   q_sendUpload.push (SendUpload_c (rpc_object->getID(), rpc_newValue, overrideSendLength, 2));
+  #endif
   /** push(...) has no return value */
   return true;
 }
@@ -1131,7 +1173,12 @@ bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_obj
 bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* rpc_objectString)
 {
   /* The SendUpload_c constructor only takes a reference, so don't change the string in the meantime!!! */
+  #ifdef USE_LIST_FOR_FIFO
+  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+  q_sendUpload.push_back (SendUpload_c (rpc_objectString, 2));
+  #else
   q_sendUpload.push (SendUpload_c (rpc_objectString, 2));
+  #endif
   /** push(...) has no return value */
   return true;
 }

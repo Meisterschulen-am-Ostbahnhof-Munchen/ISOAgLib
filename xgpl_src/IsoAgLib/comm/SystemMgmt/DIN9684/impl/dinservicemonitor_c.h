@@ -120,8 +120,8 @@ namespace __IsoAgLib {
 class DINServiceMonitor_c : public ElementBase_c, public SINGLETON(DINServiceMonitor_c)
 {
 private:
-  typedef std::slist<DINServiceItem_c> ArrService;
-  typedef std::slist<DINServiceItem_c>::iterator ArrServiceIterator;
+  typedef std::slist<DINServiceItem_c,std::__malloc_alloc_template<0> > ArrService;
+  typedef std::slist<DINServiceItem_c,std::__malloc_alloc_template<0> >::iterator ArrServiceIterator;
 
 public:
   /** basic intialisation */

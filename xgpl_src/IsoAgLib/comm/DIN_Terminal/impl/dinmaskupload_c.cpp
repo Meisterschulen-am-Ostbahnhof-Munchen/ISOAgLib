@@ -188,6 +188,7 @@ bool DINMaskUpload_c::timeEvent( void )
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   uint8_t ui8_testInd;
+  const GetyPos_c c_oldTerminalGtp = c_gtp;
   switch(en_maskUploadState)
   {
     case none:
@@ -224,9 +225,13 @@ bool DINMaskUpload_c::timeEvent( void )
           // -> trigger terminal to start sync-procedure
           getDinMonitorInstance4Comm().requestDinMemberNames();
 
-          // now create the process data for syncronisation values
-          if ( activeMask().en_terminalType != IsoAgLib::FieldstarOld) createLbsplusProcdata();
-          else createFieldstarProcdata();
+          // only create new entries if terminal changed or if no synproc
+          // entries exist ( avoid double creation if several tries are needed )
+          if ( ( c_oldTerminalGtp !=  c_gtp ) || ( ! arrSyncproc.empty() ) )
+          { // now create the process data for syncronisation values
+            if ( activeMask().en_terminalType != IsoAgLib::FieldstarOld) createLbsplusProcdata();
+            else createFieldstarProcdata();
+          }
 //          #ifdef DEBUG_RS232
           #if 1
           getRs232Instance() << "Starte DIN Upload zu Terminal Gety: "
@@ -260,7 +265,7 @@ bool DINMaskUpload_c::timeEvent( void )
         pc_terminal = NULL;
         if (en_maskUploadState == running)
         { // abort upload
-          getMultiSendInstance4Comm().abort();
+          getMultiSendInstance4Comm().abortSend();
           en_maskUploadState = none;
         }
 				#ifdef DEBUG_RS232
@@ -481,10 +486,14 @@ void DINMaskUpload_c::createLbsplusProcdata()
     }
   }
 	#ifdef DEBUG_HEAP_USEAGE
-  sui16_syncProcTotal += ( ( activeMask().ui8_syncCnt + 1 ) * ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) );
+  sui16_syncProcTotal += ( activeMask().ui8_syncCnt + 1 );
   
-	getRs232Instance()
-		<< "DINMaskUpload_c Mem-T: " << sui16_syncProcTotal << ", Mem-Node: " << ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) << "\r\n";
+  getRs232Instance()
+	  << sui16_syncProcTotal << " x DINMaskUpload_c(syncproc_t): Mal-Alloc: "
+    << ( ( sizeof(syncproc_t) + 3 * sizeof(syncproc_t*) ) * sui16_syncProcTotal )
+    << ", Chunk-Alloc: "
+    << ( ( ( sui16_syncProcTotal / 40 ) + 1 ) * 40 * ( sizeof(syncproc_t)+sizeof(syncproc_t*) ) )
+    << "\r\n\r\n";
 	#endif
 }
 
@@ -536,10 +545,14 @@ void DINMaskUpload_c::createFieldstarProcdata()
   }
 #endif
 	#ifdef DEBUG_HEAP_USEAGE
-  sui16_syncProcTotal += ( ( activeMask().ui8_syncCnt + 1 ) * ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) );
+  sui16_syncProcTotal += ( activeMask().ui8_syncCnt + 1 );
   
-	getRs232Instance()
-		<< "DINMaskUpload_c Mem-T: " << sui16_syncProcTotal << ", Mem-Node: " << ( sizeof(syncproc_t) + 2 * sizeof(syncproc_t*) ) << "\r\n";
+  getRs232Instance()
+	  << sui16_syncProcTotal << " x DINMaskUpload_c(syncproc_t): Mal-Alloc: "
+    << ( ( sizeof(syncproc_t) + 3 * sizeof(syncproc_t*) ) * sui16_syncProcTotal )
+    << ", Chunk-Alloc: "
+    << ( ( ( sui16_syncProcTotal / 40 ) + 1 ) * 40 * ( sizeof(syncproc_t)+sizeof(syncproc_t*) ) )
+    << "\r\n\r\n";
 	#endif
 }
 

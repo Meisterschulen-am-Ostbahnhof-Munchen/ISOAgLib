@@ -87,6 +87,14 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include "dinmonitor_c.h"
 
+#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#endif
+
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_dinServiceItemTotal = 0;
+#endif
+
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique DINServiceMonitor_c singleton instance
@@ -100,7 +108,11 @@ namespace __IsoAgLib {
 
 /** basic intialisation */
 void DINServiceMonitor_c::init( void ) {
-  pc_dinServiceCache = vec_dinService.begin();
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_dinServiceItemTotal -= vec_dinService.size();
+  #endif
+  vec_dinService.clear();
+  pc_dinServiceCache = vec_dinService.end();
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
   // register in Scheduler_c to be triggered fopr timeEvent
@@ -268,6 +280,16 @@ bool DINServiceMonitor_c::insertDinService(GetyPos_c rc_gtp){
     {
       b_result = true;
       pc_dinServiceCache = (vec_dinService.begin())++;
+      #ifdef DEBUG_HEAP_USEAGE
+      sui16_dinServiceItemTotal++;
+
+      getRs232Instance()
+	      << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
+        << ( ( sizeof(DINServiceItem_c) + 3 * sizeof(DINServiceItem_c*) ) * sui16_dinServiceItemTotal )
+        << ", Chunk-Alloc: "
+        << ( ( ( sui16_dinServiceItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINServiceItem_c)+sizeof(DINServiceItem_c*) ) )
+        << "\r\n\r\n";
+      #endif
     }
     else
     { // array didn't grow -> alloc problem
@@ -297,6 +319,16 @@ bool DINServiceMonitor_c::deleteDinServiceGtp(GetyPos_c rc_gtp)
   if (existDinServiceGtp(rc_gtp))
   { // erase it from list with cpServiceCache set to be deleted item (by existDinServiceGtp)
     vec_dinService.erase(pc_dinServiceCache);
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_dinServiceItemTotal--;
+
+    getRs232Instance()
+	    << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
+      << ( ( sizeof(DINServiceItem_c) + 3 * sizeof(DINServiceItem_c*) ) * sui16_dinServiceItemTotal )
+      << ", Chunk-Alloc: "
+      << ( ( ( sui16_dinServiceItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINServiceItem_c)+sizeof(DINServiceItem_c*) ) )
+      << "\r\n\r\n";
+    #endif
     // set cache to begin of the list
     pc_dinServiceCache = vec_dinService.begin();
     return true;
@@ -330,6 +362,16 @@ bool DINServiceMonitor_c::timeEvent( void ){
         {
           ArrServiceIterator pc_iterDelete = pc_dinServiceIter;
           vec_dinService.erase(pc_iterDelete);
+          #ifdef DEBUG_HEAP_USEAGE
+          sui16_dinServiceItemTotal--;
+
+          getRs232Instance()
+	          << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
+            << ( ( sizeof(DINServiceItem_c) + 3 * sizeof(DINServiceItem_c*) ) * sui16_dinServiceItemTotal )
+            << ", Chunk-Alloc: "
+            << ( ( ( sui16_dinServiceItemTotal / 40 ) + 1 ) * 40 * ( sizeof(DINServiceItem_c)+sizeof(DINServiceItem_c*) ) )
+            << "\r\n\r\n";
+          #endif
           b_repeat = true;
           break;
 // That was the old "hacked" version

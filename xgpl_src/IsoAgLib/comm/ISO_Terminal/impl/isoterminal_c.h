@@ -94,7 +94,16 @@
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <queue>
+
+
+#define USE_LIST_FOR_FIFO
+
+#ifdef USE_LIST_FOR_FIFO
+	#include <list>
+#else
+	#include <queue>
+#endif
+
 #include <vector>
 
 
@@ -136,7 +145,7 @@ public:
   const SendUpload_c& operator= (const SendUpload_c& ref_source);
 
   __IsoAgLib::vtObjectString_c* mssObjectString;
-  std::vector<uint8_t> vec_uploadBuffer;
+  std::vector<uint8_t,std::__malloc_alloc_template<0> > vec_uploadBuffer;
   uint8_t ui8_retryCount;
 };
 
@@ -413,7 +422,12 @@ private:
   uint32_t ui32_sendCommandTimestamp;
   uint8_t ui8_sendCommandError;
   uint8_t ui8_commandParameter;
-  std::queue<SendCommand_c> q_sendCommand;
+  #ifdef USE_LIST_FOR_FIFO
+  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+  std::list<SendCommand_c,std::__malloc_alloc_template<0> > q_sendCommand;
+  #else
+  std::queue<SendCommand_c, std::deque<SendCommand_c,std::__malloc_alloc_template<0> > > q_sendCommand;
+  #endif
 
   bool vtAliveNew;
   
@@ -457,7 +471,11 @@ private:
   uint8_t ui8_uploadRetry;
   uploadType_t en_uploadType;
   MultiSend_c::sendSuccess_t en_sendSuccess;
-  std::queue<SendUpload_c> q_sendUpload;
+  #ifdef USE_LIST_FOR_FIFO
+  std::list<SendUpload_c,std::__malloc_alloc_template<0> >  q_sendUpload;
+  #else
+  std::queue<SendUpload_c, std::deque<SendUpload_c,std::__malloc_alloc_template<0> > > q_sendUpload;
+  #endif
 
   uint32_t ui32_objectStreamPosition;
   uint32_t ui32_objectStreamPositionStored;

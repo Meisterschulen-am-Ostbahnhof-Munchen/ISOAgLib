@@ -134,12 +134,12 @@ class DINMonitor_c
 {
 private:
   #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
-  typedef std::slist<DINStopManager_c,std::__allocator<DINStopManager_c,std::__malloc_alloc_template<0> > > ArrStop;
-  typedef std::slist<DINStopManager_c,std::__allocator<DINStopManager_c,std::__malloc_alloc_template<0> > >::iterator ArrStopIterator;
+  typedef std::slist<DINStopManager_c,std::__malloc_alloc_template<0> > ArrStop;
+  typedef std::slist<DINStopManager_c,std::__malloc_alloc_template<0> >::iterator ArrStopIterator;
   #endif
-  typedef std::slist<DINItem_c,std::__allocator<DINItem_c,std::__malloc_alloc_template<0> > > Vec_Member;
+  typedef std::slist<DINItem_c,std::__malloc_alloc_template<0> > Vec_Member;
 protected:
-  typedef std::slist<DINItem_c,std::__allocator<DINItem_c,std::__malloc_alloc_template<0> > >::iterator Vec_MemberIterator;
+  typedef std::slist<DINItem_c,std::__malloc_alloc_template<0> >::iterator Vec_MemberIterator;
 
 public:
   /** initialisation for DINMonitor_c

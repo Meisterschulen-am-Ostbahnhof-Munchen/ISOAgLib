@@ -90,6 +90,19 @@
   #include <IsoAgLib/hal/eeprom.h>
 #endif
 
+#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#endif
+
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_clientPointerTotal = 0;
+static uint16_t sui16_clientTimeTotal = 0;
+
+extern unsigned int AllocateHeapMalloc;
+extern unsigned int DeallocateHeapMalloc;
+#endif
+
+
 
 /* ************************************** */
 /* import some namespaces for easy access */
@@ -138,9 +151,11 @@ void Scheduler_c::init( void )
   // reserver enough space for clients to avoid too often reallocation
   // of the pointer lists
   #if defined(USE_DIN_9684) && defined(USE_ISO_11783)
-  c_arrClientC1.reserve(10);
+  c_arrClientC1.reserve(12);
+  arrExecTime.reserve(12);
   #else
-  c_arrClientC1.reserve(9);
+  c_arrClientC1.reserve(11);
+  arrExecTime.reserve(11);
   #endif
 }
 
@@ -192,7 +207,30 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 {
   if ( registerC1( pc_client ) )
   { // new entry registered
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_clientPointerTotal++;
+    sui16_clientTimeTotal++;
 
+    getRs232Instance()
+	    << sui16_clientPointerTotal
+      << "(" << c_arrClientC1.capacity()
+      << ") x Scheduler_c Clients: Mal-Alloc: "
+      << ( ( c_arrClientC1.capacity()+2) * sizeof(void*) )
+      << ", Chunk-Alloc: "
+      << ( ( ( c_arrClientC1.capacity() / 40 ) + 1 ) * 40 * ( sizeof(void*) ) )
+      << "\r\n"
+	    << sui16_clientTimeTotal << " x Execution Times: Mal-Alloc: "
+      << ( ( arrExecTime.capacity() * sizeof(uint16_t) ) + 2 * sizeof(void*) )
+      << ", Chunk-Alloc: "
+      << ( ( ( arrExecTime.capacity() / 40 ) + 1 ) * 40 * ( sizeof(uint16_t) ) )
+      #if 0
+      << "\r\n\r\n";
+      #else
+      << "\r\n__mall tot:" << AllocateHeapMalloc
+      << ", _mall deal tot: " << DeallocateHeapMalloc
+      << "\r\n\r\n";
+      #endif
+    #endif
     // bring time array and client array in sync
     while ( c_arrClientC1.size() > arrExecTime.size() )
     { // delete last element
@@ -222,6 +260,31 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
   // bring time array and client array in sync
   while ( c_arrClientC1.size() < arrExecTime.size() )
   { // delete last element
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_clientPointerTotal--;
+    sui16_clientTimeTotal--;
+
+    getRs232Instance()
+	    << sui16_clientPointerTotal
+      << "(" << c_arrClientC1.capacity()
+      << ") x Scheduler_c Clients: Mal-Alloc: "
+      << ( ( c_arrClientC1.capacity()+2) * sizeof(void*) )
+      << ", Chunk-Alloc: "
+      << ( ( ( c_arrClientC1.capacity() / 40 ) + 1 ) * 40 * ( sizeof(void*) ) )
+      << "\r\n"
+	    << sui16_clientTimeTotal << " x Execution Times: Mal-Alloc: "
+      << ( ( arrExecTime.capacity() * sizeof(uint16_t) ) + 2 * sizeof(void*) )
+      << ", Chunk-Alloc: "
+      << ( ( ( arrExecTime.capacity() / 40 ) + 1 ) * 40 * ( sizeof(uint16_t) ) )
+      #if 0
+      << "\r\n\r\n";
+      #else
+      << "\r\n__mall tot:" << AllocateHeapMalloc
+      << ", _mall deal tot: " << DeallocateHeapMalloc
+      << "\r\n\r\n";
+      #endif
+    #endif
+
     arrExecTime.pop_back();
   }
   for ( unsigned int index = 0; index < arrExecTime.size() ; index++ )

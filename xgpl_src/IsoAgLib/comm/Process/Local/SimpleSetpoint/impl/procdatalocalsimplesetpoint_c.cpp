@@ -199,10 +199,23 @@ void ProcDataLocalSimpleSetpoint_c::init(uint8_t rui8_lis, GetyPos_c rc_gtp, uin
   c_setpoint.init( this );
 }
 
+/** copy constructor */
+ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c( const ProcDataLocalSimpleSetpoint_c& rrefc_src )
+: ProcDataLocalBase_c( rrefc_src ), c_measureprog( rrefc_src.c_measureprog ), c_setpoint( rrefc_src.c_setpoint )
+{
+}
+/** assignment operator */
+const ProcDataLocalSimpleSetpoint_c& ProcDataLocalSimpleSetpoint_c::operator=( const ProcDataLocalSimpleSetpoint_c& rrefc_src )
+{
+  ProcDataLocalBase_c::operator=(rrefc_src);
+  c_measureprog = rrefc_src.c_measureprog;
+  c_setpoint = rrefc_src.c_setpoint;
+  return *this;
+}
+
 /** default destructor which has nothing to do */
 ProcDataLocalSimpleSetpoint_c::~ProcDataLocalSimpleSetpoint_c(){
 }
-
 
 #ifdef USE_EEPROM_IO
 /**

@@ -178,7 +178,7 @@ bool GPS_c::timeEvent( void )
       if (ui8_fieldstarNr != ui8_fieldstarNrTemp)
       { // fieldstar changed number -> delete first old filter
         ui16_filter = ( 0x500 | ui8_fieldstarNr);
-        if ((ui8_fieldstarNr != 0xFF) &&(!c_can_io.existFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent)))
+        if ((ui8_fieldstarNr != 0xFF) &&(c_can_io.existFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent)))
         {
           c_can_io.deleteFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent);
         }
@@ -196,7 +196,7 @@ bool GPS_c::timeEvent( void )
       if (ui8_fieldstarNr != 0xFF)
       {  // previously fieldstar existed -> filter was created
         ui16_filter = (0x500 | ui8_fieldstarNr);
-        if (!c_can_io.existFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent))
+        if (c_can_io.existFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent))
           c_can_io.deleteFilter((uint16_t)0x70F,ui16_filter, Ident_c::StandardIdent);
         b_isGpsTime = 0;
         ui8_fieldstarNr = 0xFF;

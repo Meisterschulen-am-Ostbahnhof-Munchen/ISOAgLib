@@ -111,9 +111,15 @@ void LibErr_c::registerError( LibErr_c::LbsLibErrTypes_t rt_errType, LbsLibErrLo
 
 #ifdef DEBUG
   static int32_t si32_nextDebug = 0;
-  if ( HAL::getTime() > si32_nextDebug )
+  static LibErr_c::LbsLibErrTypes_t st_lastDebugErrType;
+  static LbsLibErrLocations_t st_lastDebugErrLocation;
+  if ( ( HAL::getTime() > si32_nextDebug )
+    || ( st_lastDebugErrType != rt_errType )
+    || ( st_lastDebugErrLocation != rt_errLocation ) )
   {
     si32_nextDebug = HAL::getTime() + 500;
+    st_lastDebugErrType = rt_errType;
+    st_lastDebugErrLocation = rt_errLocation;
     __IsoAgLib::getRs232Instance() 
       << "registerError( " << rt_errType << ", " << rt_errLocation << " )\r\n";
   }

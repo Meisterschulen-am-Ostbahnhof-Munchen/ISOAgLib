@@ -479,7 +479,7 @@ bool MultiSend_c::timeEvent( void )
             }
             else
             { // terminate send
-              abort();
+              abortSend();
             }
           }
           break;
@@ -515,7 +515,7 @@ bool MultiSend_c::timeEvent( void )
             }
             else
             { // abort transfer
-              abort();
+              abortSend();
             }
           }
           break;
@@ -875,7 +875,7 @@ bool MultiSend_c::processMsg(){
   abort the multipacket send stream
   (important if original target isn't active any more)
 */
-void MultiSend_c::abort()
+void MultiSend_c::abortSend()
 {
   if (en_sendState != Idle)
   {

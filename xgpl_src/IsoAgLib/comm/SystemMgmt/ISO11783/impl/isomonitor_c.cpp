@@ -136,18 +136,13 @@ void ISOMonitor_c::init( void )
 {
   c_data.setSingletonKey( getSingletonVecKey() );
   #ifdef DEBUG_HEAP_USEAGE
-  sui16_isoItemTotal -= ( vec_isoMember.size() * ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) );
+  sui16_isoItemTotal -= vec_isoMember.size();
   #endif
   vec_isoMember.clear();
   pc_isoMemberCache = vec_isoMember.end();
   i32_lastSaRequest = 0;
   c_tempIsoMemberItem.set( 0, GetyPos_c(0xF, 0xF), 0xFE, IState_c::Active,
            0xFFFF, (ISOName_c*)NULL, getSingletonVecKey() );
-
-	#ifdef DEBUG_HEAP_USEAGE
-	getRs232Instance()
-		<< "sizeof(IsoItem_c) == " << sizeof(ISOItem_c) << " Bytes\r\n";
-	#endif
 
 	// clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
@@ -233,10 +228,14 @@ bool ISOMonitor_c::timeEvent( void ){
         Vec_ISOIterator pc_iterDelete = pc_iter;
         vec_isoMember.erase(pc_iterDelete);
         #ifdef DEBUG_HEAP_USEAGE
-        sui16_isoItemTotal -= ( ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) );
+        sui16_isoItemTotal--;
 
         getRs232Instance()
-	        << "ISOItem_c T: " << sui16_isoItemTotal << ", Node: " << ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) << "\r\n";
+	        << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
+          << ( ( sizeof(ISOItem_c) + 3 * sizeof(ISOItem_c*) ) * sui16_isoItemTotal )
+          << ", Chunk-Alloc: "
+          << ( ( ( sui16_isoItemTotal / 40 ) + 1 ) * 40 * ( sizeof(ISOItem_c)+sizeof(ISOItem_c*) ) )
+          << "\r\n\r\n";
         #endif
         pc_iter = vec_isoMember.begin();
         b_repeat = true;
@@ -444,10 +443,14 @@ bool ISOMonitor_c::insertIsoMember(GetyPos_c rc_gtp, const uint8_t* rpui8_name,
     #ifdef DEBUG_HEAP_USEAGE
     else
     {
-      sui16_isoItemTotal += ( ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) );
+      sui16_isoItemTotal++;
 
       getRs232Instance()
-	      << "ISOItem_c T: " << sui16_isoItemTotal << ", Node: " << ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) << "\r\n";
+	      << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
+        << ( ( sizeof(ISOItem_c) + 3 * sizeof(ISOItem_c*) ) * sui16_isoItemTotal )
+        << ", Chunk-Alloc: "
+        << ( ( ( sui16_isoItemTotal / 40 ) + 1 ) * 40 * ( sizeof(ISOItem_c)+sizeof(ISOItem_c*) ) )
+        << "\r\n\r\n";
     }
     #endif
     vec_isoMember.sort(); // resort the list
@@ -549,10 +552,14 @@ bool ISOMonitor_c::deleteIsoMemberGtp(GetyPos_c rc_gtp)
     // erase it from list (existIsoMemberGtp sets pc_isoMemberCache to the wanted item)
     vec_isoMember.erase(pc_isoMemberCache);
     #ifdef DEBUG_HEAP_USEAGE
-    sui16_isoItemTotal -= ( ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) );
+    sui16_isoItemTotal--;
 
     getRs232Instance()
-	    << "ISOItem_c T: " << sui16_isoItemTotal << ", Node: " << ( sizeof(ISOItem_c) + 2 * sizeof(ISOItem_c*) ) << "\r\n";
+	    << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
+      << ( ( sizeof(ISOItem_c) + 3 * sizeof(ISOItem_c*) ) * sui16_isoItemTotal )
+      << ", Chunk-Alloc: "
+      << ( ( ( sui16_isoItemTotal / 40 ) + 1 ) * 40 * ( sizeof(ISOItem_c)+sizeof(ISOItem_c*) ) )
+      << "\r\n\r\n";
     #endif
     pc_isoMemberCache = vec_isoMember.begin();
 

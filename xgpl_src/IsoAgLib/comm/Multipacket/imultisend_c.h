@@ -139,7 +139,7 @@ public:
     abort the multipacket send stream
     (important if original target isn't active any more)
   */
-  void abort(){MultiSend_c::abort();};
+  void abortSend(){MultiSend_c::abortSend();};
   /**
     check if multipacket send is running
     @return true -> multipacket is being sent at the moment

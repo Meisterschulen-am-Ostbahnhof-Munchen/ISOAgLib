@@ -254,7 +254,7 @@ public:
     abort the multipacket send stream
     (important if original target isn't active any more)
   */
-  void abort();
+  void abortSend();
   /**
     check if multipacket send is Running
     @return true -> multipacket is being sent at the moment

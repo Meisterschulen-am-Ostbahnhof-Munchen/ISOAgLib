@@ -97,6 +97,8 @@
 #ifdef DEBUG_HEAP_USEAGE
 static uint16_t sui16_MeasureProgBaseTotal = 0;
 static uint16_t sui16_printedMeasureProgBaseTotal = 0;
+static uint16_t sui16_deconstructMeasureProgBaseTotal = 0;
+static uint16_t sui16_printedDeconstructMeasureProgBaseTotal = 0;
 #endif
 
 namespace __IsoAgLib {
@@ -201,8 +203,12 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
 
 /** default destructor which has nothing to do */
 MeasureProgBase_c::~MeasureProgBase_c(){
-	#ifdef DEBUG_HEAP_USEAGE
-  sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+  #ifdef DEBUG_HEAP_USEAGE
+  if ( vec_measureSubprog.size() > 0 ) 
+  {
+	  sui16_deconstructMeasureProgBaseTotal++;
+    sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
+  }
 	#endif
 }
 
@@ -239,7 +245,7 @@ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increme
       sui16_MeasureProgBaseTotal += ( 1 * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
   
 	    getRs232Instance()
-		    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+		    << "MeasureSubprog_c T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
     }
     #endif
   }
@@ -292,11 +298,15 @@ bool MeasureProgBase_c::stop(){
 	#ifdef DEBUG_HEAP_USEAGE
   sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
 
-  if ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal )
+  if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
+  || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
   {
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
+    sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
     getRs232Instance()
-    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) )
+    << ", Deconstruct: " << sui16_deconstructMeasureProgBaseTotal
+    << "\r\n";
   }
   #endif
   vec_measureSubprog.clear();
@@ -357,11 +367,15 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
 */
 void MeasureProgBase_c::initVal(int32_t ri32_val){
 	#ifdef DEBUG_HEAP_USEAGE
-  if ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal )
+  if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
+  || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
   {
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
+    sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
     getRs232Instance()
-    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) )
+    << ", Deconstruct: " << sui16_deconstructMeasureProgBaseTotal
+    << "\r\n";
   }
   #endif
   i32_val = i32_min = i32_max = i32_integ = ri32_val;
@@ -462,11 +476,15 @@ float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
 */
 void MeasureProgBase_c::initVal(float rf_val){
 	#ifdef DEBUG_HEAP_USEAGE
-  if ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal )
+  if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
+  || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
   {
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
+    sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
     getRs232Instance()
-    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) )
+    << ", Deconstruct: " << sui16_deconstructMeasureProgBaseTotal
+    << "\r\n";
   }
   #endif
   f_val = f_min = f_max = f_integ = rf_val;
@@ -486,11 +504,15 @@ bool MeasureProgBase_c::processMsg(){
       b_pd = c_pkg.pd();
 
 	#ifdef DEBUG_HEAP_USEAGE
-  if ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal )
+  if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
+  || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
   {
     sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
+    sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
     getRs232Instance()
-    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) << "\r\n";
+    << "MPBase T: " << sui16_MeasureProgBaseTotal << ", Node: " << ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) )
+    << ", Deconstruct: " << sui16_deconstructMeasureProgBaseTotal
+    << "\r\n";
   }
   #endif
   bool b_edited = false;

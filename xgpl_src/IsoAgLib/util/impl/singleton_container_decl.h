@@ -24,9 +24,9 @@
   GET_CL_DECL()& gluemacs( get, GET_CL_DECL() ) ( GET_K_DECL() rt_key );
   
   /** vector with pointers to registered client instances */
-  std::vector<GET_CL_DECL()*> gluemacs( c_arrClient, GET_CL_DECL() );
+  std::vector<GET_CL_DECL()*,std::__malloc_alloc_template<0> > gluemacs( c_arrClient, GET_CL_DECL() );
   
-  typedef typename std::vector<GET_CL_DECL()*>::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
+  typedef typename std::vector<GET_CL_DECL()*,std::__malloc_alloc_template<0> >::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
   gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t) gluemacs( pc_searchCache, GET_CL_DECL() );
 #endif
 #if defined( GET_CL_DEF ) && defined( GET_K_DEF )

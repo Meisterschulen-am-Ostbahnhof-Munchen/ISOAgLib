@@ -94,27 +94,23 @@
 #ifdef DEBUG_HEAP_USEAGE
 static uint16_t sui16_MeasureProgLocalTotal = 0;
 static uint16_t sui16_lastPrintedMeasureProgLocalTotal = 0;
+static uint16_t sui16_deconstructMeasureProgLocalTotal = 0;
+static uint16_t sui16_printedDeconstructMeasureProgLocalTotal = 0;
+
+extern unsigned int AllocateHeapMalloc;
+extern unsigned int DeallocateHeapMalloc;
 #endif
 
 namespace __IsoAgLib {
-/**
-  initialise this ManageMeasureProgLocal_c instance to a well defined initial state
-  @param rpc_processData optional pointer to containing ProcessData instance
-*/
-void ManageMeasureProgLocal_c::init( ProcDataBase_c *const rpc_processData )
-{ // set the pointer to the corresponging process data class
-  ProcessElementBase_c::set( rpc_processData );
-  // as init() can be also called to re-init (bring this instance to well
-  // defined starting condition, clearthe measure-prog array
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_MeasureProgLocalTotal -= ( c_vec_prog.size() * ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
-  #endif
-  c_vec_prog.clear();
+/** create first default measure prog, if no measure prog in list */
+void ManageMeasureProgLocal_c::checkInitList( void )
+{
+  if ( c_vec_prog.size() > 0 ) return;
   // insert default entry
-  if ( rpc_processData != NULL )
+  if ( pprocessData() != NULL )
   {
     ProcDataLocalBase_c* pc_procdata = 
-      static_cast<ProcDataLocalBase_c*>(rpc_processData);
+      static_cast<ProcDataLocalBase_c*>(pprocessData());
     vec_prog().push_front(MeasureProgLocal_c(pc_procdata, Proc_c::UndefinedProg,
                                               pc_procdata->masterVal()
                                               #ifdef USE_EEPROM_IO
@@ -133,11 +129,28 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const rpc_processData )
   #ifdef DEBUG_HEAP_USEAGE
   else
   {
-    sui16_MeasureProgLocalTotal += ( ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+    sui16_MeasureProgLocalTotal++;
   }
   #endif
   // point cache initially to default first element
   pc_progCache = c_vec_prog.begin();
+}
+
+/**
+  initialise this ManageMeasureProgLocal_c instance to a well defined initial state
+  @param rpc_processData optional pointer to containing ProcessData instance
+*/
+void ManageMeasureProgLocal_c::init( ProcDataBase_c *const rpc_processData )
+{ // set the pointer to the corresponging process data class
+  ProcessElementBase_c::set( rpc_processData );
+  // as init() can be also called to re-init (bring this instance to well
+  // defined starting condition, clearthe measure-prog array
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_MeasureProgLocalTotal -= c_vec_prog.size();
+  sui16_deconstructMeasureProgLocalTotal += c_vec_prog.size();
+  #endif
+  c_vec_prog.clear();
+  pc_progCache = NULL;
 }
 /** copy constructor */
 ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& rrefc_src )
@@ -164,13 +177,26 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
   #ifdef DEBUG_HEAP_USEAGE
   else
   {
-    sui16_MeasureProgLocalTotal += ( vec_prog().size() * ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+    sui16_MeasureProgLocalTotal += vec_prog().size();
   
-	  if ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
+    if ( ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
+      || ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal                                  ) )
     {
       sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
+      sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
       getRs232Instance()
-        << "MPL" << sui16_MeasureProgLocalTotal << "\r\n";
+	      << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+        << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+        << ", Chunk-Alloc: "
+        << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+        << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
+      #if 0
+        << "\r\n\r\n";
+      #else
+        << ", __mall tot:" << AllocateHeapMalloc
+        << ", _mall deal tot: " << DeallocateHeapMalloc
+        << "\r\n";
+      #endif
     }
   }
   #endif
@@ -191,13 +217,27 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
 ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
 {
   #ifdef DEBUG_HEAP_USEAGE
-  sui16_MeasureProgLocalTotal -= ( vec_prog().size() * ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+  sui16_MeasureProgLocalTotal -= vec_prog().size();
+  sui16_deconstructMeasureProgLocalTotal += c_vec_prog.size();
   
-  if ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
+  if ( ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
+    || ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal                                  ) )
   {
     sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
+    sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
     getRs232Instance()
-      << "MPL" << sui16_MeasureProgLocalTotal << "\r\n";
+	    << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+      << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+      << ", Chunk-Alloc: "
+      << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+      << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
+    #if 0
+      << "\r\n\r\n";
+    #else
+      << ", __mall tot:" << AllocateHeapMalloc
+      << ", _mall deal tot: " << DeallocateHeapMalloc
+      << "\r\n";
+    #endif
   }
   #endif
 }
@@ -212,10 +252,37 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
   SystemMgmt_c& c_lbsSystem = getSystemMgmtInstance4Comm();
   
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  
   GetyPos_c c_callerGtp;
+  
+  #ifdef DEBUG_HEAP_USEAGE
+  if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
+    || ( sui16_printedDeconstructMeasureProgLocalTotal != sui16_deconstructMeasureProgLocalTotal  ) )
+  {
+    sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
+    sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
+    getRs232Instance()
+	    << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+      << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+      << ", Chunk-Alloc: "
+      << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+      << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
+    #if 0
+      << "\r\n\r\n";
+    #else
+      << ", __mall tot:" << AllocateHeapMalloc
+      << ", _mall deal tot: " << DeallocateHeapMalloc
+      << "\r\n";
+    #endif
+  }
+  #endif
+
   // delete all measure programs of >3sec inactive members
-  if (vec_prog().size() == 1)
+  const uint16_t cui16_size = vec_prog().size();
+  if ( cui16_size == 0 )
+  { // insert first default element, if list is empty
+    checkInitList();
+  }
+  else if ( cui16_size == 1)
   { // only one measure prog -> set it to undefined prog type if gtp inactive
     c_callerGtp = vec_prog().begin()->gtp();
     if ((!vec_prog().begin()->checkProgType(Proc_c::UndefinedProg))
@@ -254,13 +321,27 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
           {
             vec_prog().erase(pc_iter);
             #ifdef DEBUG_HEAP_USEAGE
-            sui16_MeasureProgLocalTotal -= ( ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+            sui16_MeasureProgLocalTotal--;
+            sui16_deconstructMeasureProgLocalTotal++;
   
-            if ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal )
+            if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
+              || ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  ) )
             {
               sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
-	            getRs232Instance()
-		            << "MPL" << sui16_MeasureProgLocalTotal << "\r\n";
+              sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
+              getRs232Instance()
+	              << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+                << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+                << ", Chunk-Alloc: "
+                << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+                << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
+              #if 0
+                << "\r\n\r\n";
+              #else
+                << ", __mall tot:" << AllocateHeapMalloc
+                << ", _mall deal tot: " << DeallocateHeapMalloc
+                << "\r\n";
+              #endif
             }
             #endif
             b_repeat = true;
@@ -301,9 +382,19 @@ void ManageMeasureProgLocal_c::processProg(){
   if ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal )
   {
     sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
-   getRs232Instance()
-    << "MeasureProgLocal_c Total: " << sui16_MeasureProgLocalTotal << ", N: " << sizeof(MeasureProgLocal_c)
-    << "\r\n";
+    getRs232Instance()
+	    << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+      << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+      << ", Chunk-Alloc: "
+      << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+      << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
+    #if 0
+      << "\r\n\r\n";
+    #else
+      << ", __mall tot:" << AllocateHeapMalloc
+      << ", _mall deal tot: " << DeallocateHeapMalloc
+      << "\r\n";
+    #endif
   }
   #endif
   // now call process msg for cached item
@@ -340,6 +431,7 @@ void ManageMeasureProgLocal_c::initGlobalVal( int32_t ri32_val )
 /** set value for all registered Measure Progs */
 void ManageMeasureProgLocal_c::setGlobalVal( int32_t ri32_val )
 {
+  checkInitList();
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
       pc_iter != vec_prog().end(); pc_iter++)pc_iter->setVal(ri32_val);
 }
@@ -353,6 +445,7 @@ void ManageMeasureProgLocal_c::initGlobalVal( float rf_val )
 /** set value for all registered Measure Progs */
 void ManageMeasureProgLocal_c::setGlobalVal( float rf_val )
 {
+  checkInitList();
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
       pc_iter != vec_prog().end(); pc_iter++)pc_iter->setVal(rf_val);
 }
@@ -371,7 +464,7 @@ void ManageMeasureProgLocal_c::setGlobalVal( float rf_val )
 */
 void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, GetyPos_c rc_gtp){
 // only create new item if first isn't undefined
-  uint8_t b_oldSize = vec_prog().size();
+  const uint8_t b_oldSize = vec_prog().size();
 
   if ((b_oldSize == 0)||(vec_prog().begin()->progType() != Proc_c::UndefinedProg))
   { // creation is forced
@@ -399,13 +492,26 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, GetyPos_c rc
       return; // exit function
     }
     #ifdef DEBUG_HEAP_USEAGE
-    sui16_MeasureProgLocalTotal += ( ( sizeof(MeasureProgLocal_c) + 2 * sizeof(MeasureProgLocal_c*) ) );
+    sui16_MeasureProgLocalTotal++;
   
-    if ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal )
+    if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
+      || ( sui16_printedDeconstructMeasureProgLocalTotal != sui16_deconstructMeasureProgLocalTotal  ) )
     {
       sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
-	    getRs232Instance()
-		    << "MPL" << sui16_MeasureProgLocalTotal << "\r\n";
+      sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
+      getRs232Instance()
+	      << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+        << ( ( sizeof(MeasureProgLocal_c) + 3 * sizeof(MeasureProgLocal_c*) ) * sui16_MeasureProgLocalTotal )
+        << ", Chunk-Alloc: "
+        << ( ( ( sui16_MeasureProgLocalTotal / 40 ) + 1 ) * 40 * ( sizeof(MeasureProgLocal_c)+sizeof(MeasureProgLocal_c*) ) )
+        << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
+      #if 0
+        << "\r\n\r\n";
+      #else
+        << ", __mall tot:" << AllocateHeapMalloc
+        << ", _mall deal tot: " << DeallocateHeapMalloc
+        << "\r\n";
+      #endif
     }
     #endif
 
@@ -446,6 +552,8 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, GetyPos_c rc
 bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, GetyPos_c rc_gtp, bool rb_createIfNotFound)
 {
   bool b_result = false;
+  // insert first default element, if list is empty
+  checkInitList();
   // list of measure prog is created/usable -> search
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   // update only if old cache isn't valid

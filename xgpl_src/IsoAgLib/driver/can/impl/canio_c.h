@@ -100,7 +100,12 @@
 #include "filterbox_c.h"
 
 // headers for string manipulation
-#include <list>
+#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC)
+  #include <ext/slist>
+  namespace std { using __gnu_cxx::slist;};
+#else
+  #include <slist>
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -138,13 +143,13 @@ class CANIO_c : public SingletonCANIO_c {
     define dynamic array of MsgObj_c instances for each hardware
     MsgObj_c one object instances in array
   */
-  typedef std::list<MsgObj_c,std::__allocator<MsgObj_c,std::__malloc_alloc_template<0> > > ArrMsgObj;
+  typedef std::slist<MsgObj_c,std::__malloc_alloc_template<0> > ArrMsgObj;
   /**
     define dynamic array of FilterBox_c instances;
     if a __IsoAgLib::CANCustomer_c creates one FilterBox_c definitions,
     one object instance is inserted in array
   */
-  typedef std::list<FilterBox_c,std::__allocator<FilterBox_c,std::__malloc_alloc_template<0> > > ArrFilterBox;
+  typedef std::slist<FilterBox_c,std::__malloc_alloc_template<0> > ArrFilterBox;
 
  public:
 
@@ -167,16 +172,16 @@ class CANIO_c : public SingletonCANIO_c {
         * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
         * Err_c::busy on already used sending Msg-Obj
     @param rui8_busNumber optional number of the CAN bus
-    @param rui16_bitrate optional bitrate (default by define in master_header.h)
+    @param rui16_bitrate optional bitrate (default by define in isoaglib_config.h)
     @param Ident_c::identType_t optional length of the ident
       (S (11bit), E (29bit), B
       (send both standard and extended ident msg)
-      (default by define in master_header.h)
+      (default by define in isoaglib_config.h)
     @param rui8_minObjNr optional minimum number for hardware CAN
            message object (important for sharing CAN controller with
-         other tasks) (default by define in master_header.h)
+         other tasks) (default by define in isoaglib_config.h)
     @param rui8_maxObjNr optional maximum number for hardware CAN
-           message object (default by define in master_header.h)
+           message object (default by define in isoaglib_config.h)
     @return true -> correct initialisation without errors
     @see HAL::init_can
     @see HAL::tCanObjConfig
@@ -208,6 +213,8 @@ class CANIO_c : public SingletonCANIO_c {
   */
   bool timeEvent( void );
 
+  /** provide BUS number */
+	uint8_t getBusNumber( void ) const { return ui8_busNumber;};
   /**
     deliver actual BUS load in baud
     @return baudrate in [kbaud] on used CAN BUS
@@ -375,7 +382,7 @@ class CANIO_c : public SingletonCANIO_c {
 		@param rui32_ident Ident of received CAN message
 		@return pointer to matching FilterBox instance or NULL if no matching found
 	*/
-	FilterBox_c* canMsg2FilterBox( uint32_t rui32_ident );
+	FilterBox_c* canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type );
 
 
  protected: // Protected methods

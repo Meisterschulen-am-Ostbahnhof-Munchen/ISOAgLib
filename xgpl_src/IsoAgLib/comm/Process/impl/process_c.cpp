@@ -105,6 +105,19 @@
 #endif
 
 
+#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#endif
+
+#ifdef DEBUG_HEAP_USEAGE
+static uint16_t sui16_localProcPointerTotal = 0;
+static uint16_t sui16_remoteProcPointerTotal = 0;
+
+extern unsigned int AllocateHeapMalloc;
+extern unsigned int DeallocateHeapMalloc;
+#endif
+
+
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Process_c singleton instance
@@ -161,6 +174,38 @@ void Process_c::registerAccessFlt( void )
 }
 
 /**
+  if the amount of created local process data is known, then enough capacity for the
+  vector with pointers to all of them can be reserved. Otherwise the vector
+  will increase with several reallocations, where each reallocation triggers
+  increase of capacity by factor 2 ( capacity is the amount of elements,
+  which can be stored before reallocation takes place ).
+  @param rui16_localProcCapacity
+*/
+void Process_c::localProcDataReserveCnt( uint16_t rui16_localProcCapacity )
+{
+  if ( c_arrClientC1.capacity() < rui16_localProcCapacity )
+  { // trigger increase of capacity
+    c_arrClientC1.reserve( rui16_localProcCapacity );
+  }
+}
+/**
+  if the amount of created remote process data is known, then enough capacity for the
+  vector with pointers to all of them can be reserved. Otherwise the vector
+  will increase with several reallocations, where each reallocation triggers
+  increase of capacity by factor 2 ( capacity is the amount of elements,
+  which can be stored before reallocation takes place ).
+  @param rui16_remoteProcCapacity
+*/
+void Process_c::remoteProcDataReserveCnt( uint16_t rui16_remoteProcCapacity )
+{ 
+  if ( c_arrClientC2.capacity() < rui16_remoteProcCapacity )
+  { // trigger increase of capacity
+    c_arrClientC2.reserve( rui16_remoteProcCapacity );
+  }
+}
+
+
+/**
   deliver reference to data pkg as reference to CANPkgExt_c
   to implement the base virtual function correct
 */
@@ -182,6 +227,37 @@ bool Process_c::timeEvent( void ){
   bool b_result = true;
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
+
+  #ifdef DEBUG_HEAP_USEAGE
+  if ( ( c_arrClientC1.capacity() != sui16_localProcPointerTotal )
+    || ( c_arrClientC2.capacity() != sui16_remoteProcPointerTotal ) )
+  {
+    sui16_localProcPointerTotal = c_arrClientC1.capacity();
+    sui16_remoteProcPointerTotal = c_arrClientC2.capacity();
+
+    getRs232Instance()
+	    << c_arrClientC1.size() 
+      << "(" << c_arrClientC1.capacity()
+      << ") x LocalProcData Pointer: Mal-Alloc: "
+      << ( ( c_arrClientC1.capacity()+2) * sizeof(void*) )
+      << ", Chunk-Alloc: "
+      << ( ( ( c_arrClientC1.capacity() / 40 ) + 1 ) * 40 * ( sizeof(void*) ) )
+      << "\r\n"
+	    << c_arrClientC2.size()
+      << "(" << c_arrClientC1.capacity()
+      << ") x RemoteProcData Pointer: Mal-Alloc: "
+      << ( ( c_arrClientC2.capacity()+2) * sizeof(void*) )
+      << ", Chunk-Alloc: "
+      << ( ( ( c_arrClientC2.capacity() / 40 ) + 1 ) * 40 * ( sizeof(void*) ) )
+      #if 0
+      << "\r\n\r\n";
+      #else
+      << "\r\n__mall tot:" << AllocateHeapMalloc
+      << ", _mall deal tot: " << DeallocateHeapMalloc
+      << "\r\n\r\n";
+      #endif
+  }
+  #endif
 
   // call the time event for all local data
   for ( pc_searchCacheC1 = c_arrClientC1.begin();

@@ -132,9 +132,9 @@ class DINMaskUpload_c : public CANCustomer_c, public ElementBase_c, public SINGL
 {
 private:
   typedef ProcDataLocalSimpleSetpointSimpleMeasure_c syncproc_t;
-  typedef std::slist<syncproc_t,std::__allocator<syncproc_t,std::__malloc_alloc_template<0> > > Vec_SyncProc;
+  typedef std::slist<syncproc_t,std::__malloc_alloc_template<0> > Vec_SyncProc;
 protected:
-  typedef std::slist<syncproc_t,std::__allocator<syncproc_t,std::__malloc_alloc_template<0> > >::iterator Vec_SyncProcIterator;
+  typedef std::slist<syncproc_t,std::__malloc_alloc_template<0> >::iterator Vec_SyncProcIterator;
 public:
   /** initialisation for DINMaskUpload_c
   */

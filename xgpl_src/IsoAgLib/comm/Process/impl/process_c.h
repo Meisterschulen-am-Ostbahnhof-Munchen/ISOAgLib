@@ -188,8 +188,7 @@ public:
     which can be stored before reallocation takes place ).
     @param rui16_localProcCapacity
   */
-  void localProcDataReserveCnt( uint16_t rui16_localProcCapacity )
-  { c_arrClientC1.reserve( rui16_localProcCapacity );};
+  void localProcDataReserveCnt( uint16_t rui16_localProcCapacity );
 	/**
   	if the amount of created remote process data is known, then enough capacity for the
     vector with pointers to all of them can be reserved. Otherwise the vector
@@ -198,8 +197,7 @@ public:
     which can be stored before reallocation takes place ).
     @param rui16_remoteProcCapacity
   */
-  void remoteProcDataReserveCnt( uint16_t rui16_remoteProcCapacity )
-  { c_arrClientC2.reserve( rui16_remoteProcCapacity );};
+  void remoteProcDataReserveCnt( uint16_t rui16_remoteProcCapacity );
 
   /**
     checks if a suitable ProcDataLocalBase_c item exist

@@ -81,6 +81,11 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "system_c.h"
+
+#ifdef DEBUG
+#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#endif
+
 namespace __IsoAgLib {
 /** C-style function, to get access to the unique System_c singleton instance */
 System_c& getSystemInstance( void ) { return System_c::instance();};
@@ -116,8 +121,14 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
   if ( b_firstCall )
   #endif
   { // open the system with the configured BIOS call - as not yet called
-    if (HAL::open_system() != HAL_NO_ERR)
+    const int16_t ci_err = HAL::open_system();
+
+    if ( ci_err != HAL_NO_ERR)
     {
+		#ifdef DEBUG
+		__IsoAgLib::getRs232Instance() 
+        << "Fehler bei Systemstart: " << ci_err << "\r\n";
+		#endif
       getLbsErrInstance().registerError( LibErr_c::SystemOpen, LibErr_c::HwSystem ); // something is still wrong
       b_result = false;
     }

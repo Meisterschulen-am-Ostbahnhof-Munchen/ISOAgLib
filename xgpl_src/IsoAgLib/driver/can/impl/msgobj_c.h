@@ -88,7 +88,12 @@
 #include <IsoAgLib/util/liberr_c.h>
 #include <IsoAgLib/hal/can.h>
 
-#include <list>
+#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC)
+  #include <ext/slist>
+  namespace std { using __gnu_cxx::slist;};
+#else
+  #include <slist>
+#endif
 
 #include "filterbox_c.h"
 #include "ident_c.h"
@@ -113,7 +118,7 @@ namespace __IsoAgLib {
 class MsgObj_c {
 private:
   // private typedef alias names
-  typedef std::list<FilterBox_c,std::__allocator<FilterBox_c,std::__malloc_alloc_template<0> > >::iterator FilterRef;
+  typedef std::slist<FilterBox_c,std::__malloc_alloc_template<0> >::iterator FilterRef;
 public:
   /**
     default constructor for MsgObj_c which only init all member values defined start state
@@ -141,7 +146,7 @@ public:
     possible errors:
     * Err_c::range BUS or MsgObj numbers out of allowed limits
     * Err_c::can_overflow amount of FilterBox_c of merged MsgObj_c is to big to store in one
-        Msg_Obj_c (max is defined by FILTER_BOX_PER_MSG_OBJ in master_header.h)
+        Msg_Obj_c (max is defined by FILTER_BOX_PER_MSG_OBJ in isoaglib_config.h)
     * Err_c::hwConfig BUS not initialized or ID can't be changed
     @param rrefc_right reference to MsgObj_c which should be merged into this instance
     @return true -> successful merged; false -> too many FilterBox_c refs for one MsgObj_c
@@ -279,6 +284,26 @@ public:
   */
   uint8_t processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll = false );
 
+	/** lock the corresponding hardware MsgObj to avoid receiving further CAN messages.
+		This important for handling of the LastMsgObj, as it should only receive messages
+		during process of CANIO_c::reconfigureMsgObj() - but as the messages shall be processed
+		within normal CANIO_c::processMsg(), nu furhter messages shall be placed in the receive queue
+		of the BIOS/OS. A immediate process wihtin execution of CANIO_c::reconfigureMsgObj() can cause
+		deadlocks when the reconfig is initiated as a result of:
+		-# Singleton_c::instance() -> Singleton_c::init()
+		-# -> partialClass_c::init()
+		-# -> CANIO_c::reconfigureMsgObj()
+		-# -> Msg_Obj_c::processMsg()
+		-# -> partialClass_c::processMsg()
+		-# -> trigger update/reaction by Singleton_c::update() !!! undefined result, as Singleton_c::instance()
+					has not yet finished, so that this type of circular access on the same Singleton_c::instance()
+					is blocked by returning the signal value 0x1
+
+		Thus CANIO_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
+		simply conserved until normal CANIO_c::processMsg() is called.
+	*/
+	void lock( bool rb_lock = true );
+
 private:
   // Private attributes
   /** array of pointer to appointed arrPfilterBox instances */
@@ -332,7 +357,7 @@ private:
 
   /**
     verify given BUS number and MsgObj number, if they are within allowed
-    limits (defined in master_header.h)
+    limits (defined in isoaglib_config.h)
     if called withoutparameter values (default -1) the actual configured are
     checked -> if these are incorrect Err_c::range is set
     (mostly used by MsgObj_c to verify itself)

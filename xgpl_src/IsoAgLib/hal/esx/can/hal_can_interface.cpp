@@ -1,5 +1,5 @@
 /***************************************************************************
-                          halCanInterface.cc - CAN interface between
+                          hal_can_interface.cpp - CAN interface between
                                         BIOS/OS and IsoAgLib to concentrate
                                         CAN handling abstraction within
                                         one module
@@ -99,6 +99,8 @@ static uint16_t gwCinterfBusLoad[CAN_BUS_CNT][10];
 static uint8_t gb_cinterfBusLoadSlice[CAN_BUS_CNT];
 __IsoAgLib::Ident_c c_cinterfIdent;
 
+/** store size of each MsgObj - needed to answer the Free Item Cnt */
+static uint8_t ui8_cinterfBufSize[CAN_BUS_CNT][16];
 
 /* ******************************************************* */
 /* ***************** Status Checking ********************* */
@@ -350,7 +352,8 @@ int16_t can_stateMsgobjBuffercnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
   int16_t i16_msgcnt = get_can_msg_buf_count(rui8_busNr, rui8_msgobjNr);
-  return ((i16_msgcnt != HAL_CONFIG_ERR) && (i16_msgcnt != HAL_RANGE_ERR))?(SEND_PUFFER_SIZE - i16_msgcnt):i16_msgcnt;
+	if ((i16_msgcnt == HAL_CONFIG_ERR) || (i16_msgcnt == HAL_RANGE_ERR)) return i16_msgcnt;
+	else return ( ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr-1] - i16_msgcnt);
 }
 
 /* ***************************************************** */
@@ -475,6 +478,7 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
     pt_config->bMsgType = TX;
     pt_config->wNumberMsgs = SEND_PUFFER_SIZE;
   }
+	ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr-1] = pt_config->wNumberMsgs;
   pt_config->bTimeStamped = true;
   pt_config->wPause = 0;
   pt_config->pfIrqFunction = 0;
@@ -494,7 +498,24 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
 */
 int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident)
 {
+	// add offset 1 to rui8_msgobjNr as ESX BIOS starts counting with 1
+	// whereas IsoAgLib starts with 0
   return chg_can_obj_id(rui8_busNr, rui8_msgobjNr, rrefc_ident.ident(), rrefc_ident.identType());
+}
+
+/**
+	lock a MsgObj to avoid further placement of messages into buffer.
+  @param rui8_busNr number of the BUS to config
+  @param rui8_msgobjNr number of the MsgObj to config
+	@param rb_doLock true==lock(default); false==unlock
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+	*/
+int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+{
+	if ( rb_doLock ) return lock_can_obj( rui8_busNr, rui8_msgobjNr );
+	else return unlock_can_obj( rui8_busNr, rui8_msgobjNr );
 }
 
 /**
