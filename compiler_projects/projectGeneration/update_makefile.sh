@@ -121,6 +121,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 #     o PROC_REMOTE_SIMPLE_SETPOINT ( specify if remote process data with restricted setpoint feature set shall be used; default 0 )
 #     o PROC_REMOTE_SIMPLE_MEASURE_SETPOINT ( specify if process daza with maximum restricted feature set shall be used; default 0 )
 #     o PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED ( specify if process daza with maximum restricted feature without any distinction between measurement and setpoint set shall be used; default 0 )
+# + PRJ_DATASTREAMS ( specify if the input and output filestream should be accessed by IsoAgLib; provides target HAL for filestream handling; default 0 )
 # + PRJ_EEPROM ( specify if the EEPROM should be accessed by IsoAgLib; provides important functions for local process data and local ISO items; default 0 )
 # + PRJ_ACTOR ( specify if IsoAgLib extension for PWM access should be used; provides several utility and diagnostic functions; default 0 )
 # + PRJ_SENSOR_DIGITAL ( specify if IsoAgLib extension for digital sensor data read should be used; provides several utility and diagnostic functions; default 0 )
@@ -282,6 +283,9 @@ function check_set_correct_variables()
 
   if [ "A$PRJ_EEPROM" = "A" ] ; then
   	PRJ_EEPROM=0
+  fi
+  if [ "A$PRJ_DATASTREAMS" = "A" ] ; then
+  	PRJ_DATASTREAMS=0
   fi
   if [ "A$PRJ_ACTOR" = "A" ] ; then
   	PRJ_ACTOR=0
@@ -473,6 +477,9 @@ function create_filelist( )
 
   if [ $PRJ_EEPROM -gt 0 ] ; then
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/eeprom/*' -o -path '*/hal/"$HAL_PATH"/eeprom/*' -o -path '*/hal/eeprom.h' -o -name 'eeprom_adr.h'"
+  fi
+  if [ $PRJ_DATASTREAMS -gt 0 ] ; then
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/datastreams/*' -o -path '*/hal/"$HAL_PATH"/datastreams/*' -o -path '*/hal/datastreams.h'"
   fi
   if [ $PRJ_ACTOR -gt 0 ] ; then
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/actor*' -o -path '*/hal/"$HAL_PATH"/actor/*' -o -path '*/hal/actor.h'"
@@ -818,6 +825,14 @@ function create_autogen_project_config()
   	# the default in isoaglib_config.h is to activate
     # EEPROM as long as USE_EEPROM_IO_YN unset
 		echo -e "#ifndef USE_EEPROM_IO_YN $ENDLINE\t#define USE_EEPROM_IO_YN NO $ENDLINE#endif" >> $CONFIG_NAME
+  fi
+
+	if [ $PRJ_DATASTREAMS -gt 0 ] ; then
+		echo -e "#ifndef USE_DATASTREAMS_IO $ENDLINE\t#define USE_DATASTREAMS_IO $ENDLINE#endif" >> $CONFIG_NAME
+  else
+  	# the default in isoaglib_config.h is to activate
+    # DATASTREAMS as long as USE_DATASTREAMS_IO_YN unset
+		echo -e "#ifndef USE_DATASTREAMS_IO_YN $ENDLINE\t#define USE_DATASTREAMS_IO_YN NO $ENDLINE#endif" >> $CONFIG_NAME
   fi
 
   if [ $PRJ_ISO11783 -gt 0 ] ; then
