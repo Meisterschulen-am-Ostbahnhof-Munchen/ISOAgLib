@@ -530,6 +530,7 @@ void IdentItem_c::close( void )
       // delete item from memberList
       getIsoMonitorInstance4Comm().deleteIsoMemberGtp(gtp());
       pc_isoItem = NULL;
+			clearItemState( IState_c::ClaimedAddress );
     }
   #endif
   // unregister in SystemMgmt_c
@@ -547,7 +548,7 @@ void IdentItem_c::close( void )
       (default 0xFFFF for NO EEPROM store)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IdentItem_c::init(GetyPos_c* rpc_gtp, const uint8_t* 
+void IdentItem_c::init(GetyPos_c* rpc_gtp, const uint8_t*
     #ifdef USE_DIN_9684
     rpb_name // ifdef'd to avoid compiler warning in DIN case where this parameter is not used!
     #endif
@@ -784,6 +785,7 @@ bool IdentItem_c::timeEventActive( void ) {
 				// --> delete it, to get fresh restart
 				getIsoMonitorInstance4Comm().deleteIsoMemberGtp(gtp());
 				pc_isoItem = NULL;
+				clearItemState( IState_c::ClaimedAddress );
 			}
 			#endif
       setItemState(IState_c::itemState_t(IState_c::PreAddressClaim | IState_c::Local));
@@ -793,7 +795,11 @@ bool IdentItem_c::timeEventActive( void ) {
     if ( pc_isoItem != NULL )
     { // if pc_isoItem points to item with different GTP
       // -> pointer is invalid -> set to NULL so that it is searched new
-      if (pc_isoItem->gtp() != gtp()) pc_isoItem = NULL;
+      if (pc_isoItem->gtp() != gtp())
+			{
+				pc_isoItem = NULL;
+				clearItemState( IState_c::ClaimedAddress );
+			}
     }
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     if (pc_isoItem == NULL) {
