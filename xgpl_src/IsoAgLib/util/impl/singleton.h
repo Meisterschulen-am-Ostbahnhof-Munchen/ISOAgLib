@@ -13,17 +13,17 @@
     * the IsoAgLib
     */
   #define SINGLETON( CLASS ) SingletonVec<CLASS,PRT_INSTANCE_CNT>
-  /** the macro SINGLETON allows to define classes independend from the value
+  /** the macro SINGLETON_DERIVED allows to define classes independend from the value
     * of PRT_INSTANCE_CNT, so that the compiler selects the appropriate base class during
     * compile time
     * this variant is used by the compiler, if more than one ISO11783 or DIN9684 BUSes have to be managed by
     * the IsoAgLib
-		* Difference to SINGLETON is the fact, that this version allows to derive the singleton pattern using class from
-		* another class. This is important to avoid multiple inheritance.
+    * Difference to SINGLETON is the fact, that this version allows to derive the singleton pattern using class from
+    * another class. This is important to avoid multiple inheritance.
     */
   #define SINGLETON_DERIVED( CLASS, BASE ) SingletonDerivedVec<CLASS,BASE,PRT_INSTANCE_CNT>
 
-	/** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
+  /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independend from

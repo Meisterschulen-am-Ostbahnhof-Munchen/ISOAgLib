@@ -94,6 +94,12 @@
 #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 #endif
 
+
+
+/** @hack IsoTerminalServer BEGIN */
+#include <isoterminalserver_c.h>
+/** @hack IsoTerminalServer END */
+
 namespace __IsoAgLib {
 
 
@@ -634,6 +640,12 @@ bool ISOItem_c::processMsg(){
 						getBaseInstance4Comm().isoSendCalendar(gtp());
 						break;
 					#endif
+/** @hack IsoTerminalServer BEGIN */
+          case LANGUAGE_PGN: // request for language
+            // call IsoTerminalServer_c function to send Language
+            getIsoTerminalServerInstance().handlePgnRequest(LANGUAGE_PGN);
+            break;
+/** @hack IsoTerminalServer END */
         }
       }
     break;

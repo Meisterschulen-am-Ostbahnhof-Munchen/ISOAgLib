@@ -310,13 +310,13 @@ class CANIO_c : public SingletonCANIO_c {
          to according CAN hardware MsgObj after creating this filter
     @param rt_identType ident type of the created ident: standard 11bit or extended 29bit
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
-    @return true -> inserting and if wanted reconfiguration are
-          performed without errors
-    @exception badAlloc
+    @return != NULL -> if inserting and wanted reconfiguration are performed without errors,
+      a reference to the created FilterBox is returned
+   @exception badAlloc
   */
-  bool insertFilter(__IsoAgLib::CANCustomer_c& rref_customer, uint32_t rui32_mask,
+  FilterBox_c* insertFilter(__IsoAgLib::CANCustomer_c& rref_customer, uint32_t rui32_mask,
                      uint32_t rui32_filter, bool rb_reconfigImmediate = true,
-                     const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE);
+                     const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE, FilterBox_c* rpc_connectedFilterBox = NULL);
 
   /**
     reconfigure the MsgObj after insert/delete of FilterBox

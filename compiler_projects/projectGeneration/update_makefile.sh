@@ -172,7 +172,7 @@ function check_set_correct_variables()
     exit 2
   fi
 
-  if test "A$REL_APP_PATH" = "A" -o -z $REL_APP_PATH ; then
+  if test "A$REL_APP_PATH" = "A" -o -z "$REL_APP_PATH" ; then
   	echo "ERROR! Please set the variable REL_APP_PATH to the directory of the application sources"
     exit 2
   fi
@@ -657,12 +657,16 @@ function create_filelist( )
 #  fi
 
   	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
-			echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+	            for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+			echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+                    done
 		fi
 
-		echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
-		echo "find ../$ISO_AG_LIB_PATH/$REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
+        for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
+		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
+        done
 
 
   sh .exec.tmp
@@ -726,8 +730,12 @@ function create_autogen_project_config()
 	else
 		ENDLINE="\r\n"
 	fi
+
+    for FIRST_REL_APP_PATH in $REL_APP_PATH ; do 
 	# CONFIG_NAME=../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/.config_$PROJECT.h
-	CONFIG_NAME=../$ISO_AG_LIB_PATH/$REL_APP_PATH/config_$PROJECT.h
+	CONFIG_NAME=../$ISO_AG_LIB_PATH/$FIRST_REL_APP_PATH/config_$PROJECT.h
+	break;
+    done
 
 	if [ "A$DOXYGEN_EXPORT_DIR" = "A" ] ; then
 		CONFIG_HEADER_DOXYGEN_READY="config_header"'__'"$PROJECT-doc.txt"
@@ -898,7 +906,9 @@ function create_makefile()
 	#first variable lines
   `echo DEFINES = $USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES > $PROJECT.pro`
 	`echo INCLUDEPATH = ../$ISO_AG_LIB_PATH/xgpl_src >> $PROJECT.pro`
-	`echo INCLUDEPATH += ../$ISO_AG_LIB_PATH/$REL_APP_PATH >> $PROJECT.pro`
+    for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+	`echo INCLUDEPATH += ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH >> $PROJECT.pro`
+    done
 
 
 	cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/qmake_stub.pro $FILELIST_QMAKE >> $PROJECT.pro
@@ -1001,7 +1011,11 @@ function create_DevCCPrj() {
 	ENDOFHEADERA
 
 	DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
-	INCLUDE_DIR_LINE="../$ISO_AG_LIB_PATH;../$ISO_AG_LIB_PATH/xgpl_src;../$ISO_AG_LIB_PATH/$REL_APP_PATH"
+	INCLUDE_DIR_LINE="../$ISO_AG_LIB_PATH;../$ISO_AG_LIB_PATH/xgpl_src"
+    for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+	INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH"
+    done
+	
 	LIB_DIR_LINE=""
 	LIB_FILE_LINE=""
 
@@ -1118,8 +1132,10 @@ function create_EdePrj()
   EdePrjFilelist="$1/$PROJECT/$FILELIST_PURE"
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
+### @todo
+#        for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
   USE_APP_PATH=`echo "../$ISO_AG_LIB_PATH/$REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
-
+#        done
   USE_EMBED_HEADER_DIRECTORY=`echo "../$ISO_AG_LIB_PATH/$USE_EMBED_HEADER_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
   USE_EMBED_LIB_DIRECTORY=`echo "../$ISO_AG_LIB_PATH/$USE_EMBED_LIB_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 
@@ -1199,7 +1215,9 @@ function create_VCPrj()
   DspPrjFilelist="$1/$PROJECT/$FILELIST_PURE"
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
+#    for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
   USE_PRJ_PATH=`echo "../$ISO_AG_LIB_PATH/$REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+#    done
 
 
   USE_DEFINES=`echo " /D "'"'"$USE_SYSTEM_DEFINE"'"' " /D "'"'"PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME"'"' | sed -e 's/SYSTEM_PC/SYSTEM_PC_VC/g'`
@@ -1668,7 +1686,11 @@ perform_everything $CONF_DIR $SCRIPT_DIR $START_DIR
 
 echo "Please set the following DEFINES for your compiler in the project settings:"
 echo "$USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES"
-echo "Please add also the main application path ../$ISO_AG_LIB_PATH/$REL_APP_PATH to the INCLUDE search path of the compiler"
+echo "Please add also the main application path ";
+    for EACH_REL_APP_PATH in $REL_APP_PATH ; do 
+echo "../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH;";
+    done
+echo " to the INCLUDE search path of the compiler"
 echo "( Note: All this is already set for Win32 Dev-C++ and Visual C++ version 6.0 and above DSP project file, LINUX make, Kdevelop3 and Tasking EDE )"
 
 if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then

@@ -152,7 +152,7 @@ void ISOMonitor_c::init( void )
 
 	bool b_configure = false;
   if (!getCanInstance4Comm().existFilter(uint32_t(static_cast<MASK_TYPE>(0x1FF) << 16), MASK_TYPE(static_cast<MASK_TYPE>(234) << 16), Ident_c::ExtendedIdent))
-  { // create FilterBox_c for PGN 59904, PF 234 - mask for DP and PF
+  { // create FilterBox_c for PGN 59904, PF 234 (EA)- mask for DP and PF
     // mask: (0x1FF << 16) filter: (234 << 16)
     getCanInstance4Comm().insertFilter(*this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FF) << 16), MASK_TYPE(static_cast<MASK_TYPE>(234) << 16), false, Ident_c::ExtendedIdent);
     b_configure = true;
@@ -871,6 +871,9 @@ bool ISOMonitor_c::processMsg(){
       {
         // shouldn't happen!
       }
+      break;
+    default:
+      b_processed=false;
       break;
   } // end switch for pgn
   return b_processed; // return if msg was processed by ISOMonitor_c

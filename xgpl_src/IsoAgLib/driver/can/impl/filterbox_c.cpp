@@ -99,7 +99,8 @@ using namespace __IsoAgLib;
 FilterBox_c::FilterBox_c()
   :
     c_filter(0, Ident_c::StandardIdent),
-    c_mask(0, Ident_c::StandardIdent)
+    c_mask(0, Ident_c::StandardIdent),
+    c_additionalMask(~0, Ident_c::StandardIdent) // additional Mask set to "all-1s", so it defaults to "no additional mask".
 {
   pc_customer = NULL;
 };
@@ -113,13 +114,16 @@ FilterBox_c::FilterBox_c()
   @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
+  @param rpc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
    @exception badAlloc
 */
 FilterBox_c::FilterBox_c(CANCustomer_c* rrpc_customer,
                                   MASK_TYPE rt_mask, MASK_TYPE rt_filter,
-                                  Ident_c::identType_t ren_identType)
+                                  Ident_c::identType_t ren_identType, FilterBox_c* rpc_filterBox)
   : c_filter(rt_filter, ren_identType),
-    c_mask(rt_mask, ren_identType) {
+    c_mask(rt_mask, ren_identType),
+    c_additionalMask( (rpc_filterBox == NULL) ? (~0) : (~(rpc_filterBox->c_filter.ident() ^ rt_filter)), ren_identType)
+{
       pc_customer = rrpc_customer;
 }
 
@@ -131,16 +135,14 @@ FilterBox_c::FilterBox_c(CANCustomer_c* rrpc_customer,
 */
 FilterBox_c::FilterBox_c(const FilterBox_c& rrefc_src)
   : c_filter(rrefc_src.c_filter),
-    c_mask(rrefc_src.c_mask)
+    c_mask(rrefc_src.c_mask),
+    c_additionalMask(rrefc_src.c_additionalMask)
 {
   pc_customer = rrefc_src.pc_customer;
 };
 
 /**
   destructor of this FilterBox_c instance
-  @param rt_ident ident of new received CAN msg
-  @param rpb_data pointer to data of received CAN msg
-  @param rb_dataSize amount of uint8_t in CAN data field of received msg
 */
 FilterBox_c::~FilterBox_c(){
 }
@@ -161,6 +163,7 @@ FilterBox_c& FilterBox_c::operator=(const FilterBox_c& rrefc_src){
     pc_customer = rrefc_src.pc_customer;
     c_filter = rrefc_src.c_filter;
     c_mask = rrefc_src.c_mask;
+    c_additionalMask = rrefc_src.c_additionalMask;
   }
   return *this;
 }
@@ -171,6 +174,7 @@ void FilterBox_c::clearData()
   pc_customer = NULL;
   c_mask.set(0, DEFAULT_IDENT_TYPE);
   c_filter.set(0, DEFAULT_IDENT_TYPE);
+  c_additionalMask.set(~0, DEFAULT_IDENT_TYPE);
 };
 
 /* *************************************** */
@@ -185,11 +189,15 @@ void FilterBox_c::clearData()
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
 */
 void FilterBox_c::set(const Ident_c& rrefc_mask,
-    const Ident_c& rrefc_filter, CANCustomer_c *rpc_customer)
+    const Ident_c& rrefc_filter, CANCustomer_c *rpc_customer, FilterBox_c* rpc_filterBox)
 {
   c_filter = rrefc_filter;
   c_mask = rrefc_mask;
   pc_customer = rpc_customer;
+  if (rpc_filterBox == NULL)
+    c_additionalMask.set (~0, c_mask.identType());
+  else
+    c_additionalMask.set (~(rpc_filterBox->c_filter.ident() ^ c_filter.ident()), c_mask.identType());
 };
 
 
@@ -210,7 +218,7 @@ void FilterBox_c::set(const Ident_c& rrefc_mask,
 bool FilterBox_c::processMsg(){
   if (pc_customer != NULL)
   { // pointer to CANCustomer_c was set
-    // call customer´s processMsg function, to let it
+    // call customer's processMsg function, to let it
     // process the received CAN msg
     pc_customer->dataBase().string2Flags();
     pc_customer->processMsg();

@@ -536,19 +536,19 @@ bool CANIO_c::existFilter(const Ident_c& rc_compMask,
   @param rb_reconfigImmediate true -> all Filter objects are reconfigured to according
       CAN hardware MsgObj after creating this filter
   @param rt_identType ident type of the created ident: standard 11bit (default) or extended 29bit
-  @return true -> inserting and if wanted reconfiguration are performed without errors
+  @return != NULL -> if inserting and wanted reconfiguration are performed without errors, a reference to the created FilterBox is returned
   @exception badAlloc
 */
-bool CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
+FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
     uint32_t rt_mask, uint32_t rt_filter, bool rb_reconfigImmediate,
-    const Ident_c::identType_t rt_identType)
+    const Ident_c::identType_t rt_identType, FilterBox_c* rpc_connectedFilterBox)
 {
   Ident_c c_newMask = Ident_c(rt_mask, rt_identType);
   Ident_c c_newFilter = Ident_c(rt_filter, rt_identType);
   if (existFilter(c_newMask, c_newFilter))
   {
     // filter definition already inserted
-    return false;
+    return NULL;
   }
   // now the filterBox def is new -> insert new FilterBox_c instance in array
 
@@ -557,7 +557,7 @@ bool CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   c_tempFilterBox.clearData();
 
   // define temp FilterBox_c with new values
-  c_tempFilterBox.set(c_newMask, c_newFilter, &rref_customer);
+  c_tempFilterBox.set(c_newMask, c_newFilter, &rref_customer, rpc_connectedFilterBox);
 
   // insert new FilterBox_c and exit function if no dyn array growth is reported
   const uint8_t b_oldSize = arrFilterBox.size();
@@ -566,7 +566,7 @@ bool CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   if (b_oldSize >= arrFilterBox.size())
   { // dynamic array didn't grow -> alloc error
     getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Can );
-    return false; // exit the function
+    return NULL; // exit the function
   }
   #ifdef DEBUG_HEAP_USEAGE
   else
@@ -583,7 +583,7 @@ bool CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   } // if (rb_configImmediate)
 
   // insertion of FilterBox_c was successfull
-  return true;
+  return &arrFilterBox.front();
 }
 
 /**
@@ -860,9 +860,14 @@ void CANIO_c::getCommonFilterMask(){
        pc_iter++
       )
       {
-        if (pc_iter->identType() == Ident_c::StandardIdent)
+        if (pc_iter->identType() == Ident_c::StandardIdent) {
           c_maskStd.ident_bitAnd(pc_iter->mask());
-        else c_maskExt.ident_bitAnd(pc_iter->mask());
+          c_maskStd.ident_bitAnd(pc_iter->additionalMask());
+        }
+        else {
+          c_maskExt.ident_bitAnd(pc_iter->mask());
+          c_maskExt.ident_bitAnd(pc_iter->additionalMask());
+        }
       }
 }
 

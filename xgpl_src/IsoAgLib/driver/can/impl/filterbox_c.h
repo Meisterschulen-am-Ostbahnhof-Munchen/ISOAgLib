@@ -133,11 +133,12 @@ public:
     @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
+    @param rpc_filterBox optional parameter for getting to filterboxes connected together into the same MsgObj!
      @exception badAlloc
   */
   FilterBox_c(CANCustomer_c* rpc_customer,
              MASK_TYPE rt_mask, MASK_TYPE rt_filter,
-             Ident_c::identType_t ren_identType = Ident_c::StandardIdent);
+             Ident_c::identType_t ren_identType = Ident_c::StandardIdent, FilterBox_c* rpc_filterBox = NULL);
 
   /**
     copy constructor which uses data of another FilterBox_c instance
@@ -176,7 +177,7 @@ public:
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
   */
   void set(const Ident_c& rrefc_mask, const Ident_c& rrefc_filter,
-             CANCustomer_c *_customer = NULL);
+             CANCustomer_c *_customer = NULL, FilterBox_c* rpc_filterBox = NULL);
 
   /**
     check if ID from a CAN msg matches this FilterBox
@@ -203,6 +204,11 @@ public:
     @return const reference to mask Ident_c instance
   */
   const Ident_c& mask() const {return c_mask;};
+  /**
+    deliver const reference to additionalMask Ident
+    @return const reference to additionalMask Ident_c instance
+  */
+  const Ident_c& additionalMask() const {return c_additionalMask;};
   /**
     deliver const reference to filter Ident
     @return const reference to filter Ident_c instance
@@ -239,6 +245,8 @@ private:
   Ident_c c_filter;
   /** c_mask for this FilterBox_c instance */
   Ident_c c_mask;
+  /** c_additionalMask for this FilterBox_c insance (used for intentionally merging objects to one MsgObj! */
+  Ident_c c_additionalMask;
   /** pointer to pc_customer CANCustomer_c which works with the received CAN data */
   CANCustomer_c* pc_customer;
 };

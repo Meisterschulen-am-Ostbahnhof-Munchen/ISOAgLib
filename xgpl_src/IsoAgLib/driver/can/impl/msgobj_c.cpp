@@ -581,6 +581,9 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
 */
 bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
   bool b_result = false;
+#ifdef DEBUG
+    std::cout << "MsgObj::configCAN (busNr="<< (uint32_t) rui8_busNumber <<", msgNr="<< (uint32_t) rui8_msgNr <<")called. Filter is: " << c_filter.ident() << ". \n";
+#endif
   if (!verifyBusMsgobjNr(rui8_busNumber, rui8_msgNr))
   { // the given values are not within allowed limits (defined in isoaglib_config.h)
     getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
