@@ -569,7 +569,7 @@ bool ISOTerminal_c::timeEvent( void )
 
  /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
 /*******************************************************************************************************/
-
+	System_c::triggerWd();
 
   // #######################
   // ### VT Alive checks ###

@@ -365,6 +365,7 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   { // all CAN_IO activities ready -> update statistic for CAN_IO
     i16_canExecTime = System_c::getTime() - i32_stepStartTime;
   }
+	System_c::triggerWd();
 
   #ifdef USE_DIN_9684
   // if names are received -> call additionally DINMaskupload, to create local
@@ -396,6 +397,7 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
     getCanInstance( ind ).timeEvent();
   }
   #endif
+	System_c::triggerWd();
 
   #ifdef USE_DIN_9684
   // if names are received -> call additionally DINMaskupload, to create local
