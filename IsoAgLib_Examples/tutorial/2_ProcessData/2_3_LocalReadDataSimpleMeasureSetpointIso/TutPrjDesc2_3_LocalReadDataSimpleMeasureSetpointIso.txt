@@ -8,7 +8,7 @@
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__esx__sys__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -392,7 +392,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__imi__sys__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -776,7 +776,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_linux__rte__rte List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver rte and RS232 Driver rte
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -1160,7 +1160,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_linux__rte__simulating List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver rte and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -1544,7 +1544,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_linux__rte__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver rte and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -1928,7 +1928,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_linux__simulating__rte List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver simulating and RS232 Driver rte
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -2312,7 +2312,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_linux__simulating__simulating List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver simulating and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -2696,7 +2696,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_linux__simulating__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver simulating and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -3080,7 +3080,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_win32__simulating__simulating List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver simulating and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -3464,7 +3464,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_win32__simulating__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver simulating and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -3848,7 +3848,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_win32__sontheim__simulating List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver sontheim and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -4232,7 +4232,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_win32__sontheim__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver sontheim and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -4616,7 +4616,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_win32__vector_canlib__simulating List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver vector_canlib and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -5000,7 +5000,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_win32__vector_canlib__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver vector_canlib and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -5384,7 +5384,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_win32__vector_xl__simulating List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver vector_xl and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -5768,7 +5768,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_win32__vector_xl__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver vector_xl and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -6152,7 +6152,7 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
  \section PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pm167__sys__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_3_LocalReadDataSimpleMeasureSetpointIso
 # Configuration setting for tutorial example 2_3_LocalReadDataSimpleMeasureSetpointIso
@@ -6537,12 +6537,12 @@ PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
 
 
 
- \section PrjConfig2_3_LocalReadDataSimpleMeasureSetpointIso__pm167__sys__sys List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso with CAN Driver sys and RS232 Driver sys
+ \section PrjConfig2_3_LocalReadDataSimpleMeasureSetpointIso List of configuration settings for 2_3_LocalReadDataSimpleMeasureSetpointIso
  This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_3_LocalReadDataSimpleMeasureSetpointIso/config_2_3_LocalReadDataSimpleMeasureSetpointIso.h 
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_2_3_LocalReadDataSimpleMeasureSetpointIso.h
+ project define #define PRJ_USE_AUTOGEN_CONFIG config_2_3_LocalReadDataSimpleMeasureSetpointIso.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_3_LocalReadDataSimpleMeasureSetpointIso/config_2_3_LocalReadDataSimpleMeasureSetpointIso.h in this directory as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_3_LocalReadDataSimpleMeasureSetpointIso in the directory /home/spangler/Fritzmeier/MiniVegN/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
 \code
 // File: config_2_3_LocalReadDataSimpleMeasureSetpointIso.h
 // IMPORTANT: Never change the first block of this header manually!!!

@@ -9,7 +9,7 @@
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
+    <description/>
     <secondaryLanguages/>
   </general>
   <kdevcustomproject>
@@ -17,7 +17,7 @@
       <mainprogram>0_2_AddressClaimFlexible</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>.</customdirectory>
-      <programargs></programargs>
+      <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
@@ -30,7 +30,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin></makebin>
+      <makebin/>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
@@ -39,12 +39,12 @@
   </kdevcustomproject>
   <kdevdebugger>
     <general>
-      <dbgshell></dbgshell>
-      <programargs></programargs>
-      <gdbpath></gdbpath>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <dbgshell/>
+      <programargs/>
+      <gdbpath/>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>

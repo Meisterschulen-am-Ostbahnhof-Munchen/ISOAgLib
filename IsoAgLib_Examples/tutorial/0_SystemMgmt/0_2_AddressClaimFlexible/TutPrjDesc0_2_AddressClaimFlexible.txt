@@ -8,7 +8,7 @@
 
  \section PrjSpec0_2_AddressClaimFlexible__esx__sys__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -393,7 +393,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__imi__sys__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -778,7 +778,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_linux__rte__rte List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver rte and RS232 Driver rte
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -1163,7 +1163,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_linux__rte__simulating List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver rte and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -1548,7 +1548,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_linux__rte__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver rte and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -1933,7 +1933,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_linux__simulating__rte List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver simulating and RS232 Driver rte
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -2318,7 +2318,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_linux__simulating__simulating List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver simulating and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -2703,7 +2703,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_linux__simulating__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver simulating and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -3088,7 +3088,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_win32__simulating__simulating List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver simulating and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -3473,7 +3473,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_win32__simulating__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver simulating and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -3858,7 +3858,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_win32__sontheim__simulating List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver sontheim and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -4243,7 +4243,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_win32__sontheim__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver sontheim and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -4628,7 +4628,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_canlib__simulating List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver vector_canlib and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -5013,7 +5013,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_canlib__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver vector_canlib and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -5398,7 +5398,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_xl__simulating List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver vector_xl and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -5783,7 +5783,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pc_win32__vector_xl__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver vector_xl and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -6168,7 +6168,7 @@ PRJ_DIN9684=1
 
  \section PrjSpec0_2_AddressClaimFlexible__pm167__sys__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_0_2_AddressClaimFlexible in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_0_2_AnnounceFlexible
 # Configuration setting for tutorial example 0_2_AnnounceFlexible
@@ -6554,12 +6554,12 @@ PRJ_DIN9684=1
 
 
 
- \section PrjConfig0_2_AddressClaimFlexible__pm167__sys__sys List of configuration settings for 0_2_AddressClaimFlexible with CAN Driver sys and RS232 Driver sys
+ \section PrjConfig0_2_AddressClaimFlexible List of configuration settings for 0_2_AddressClaimFlexible
  This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_2_AddressClaimFlexible/config_0_2_AddressClaimFlexible.h 
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_0_2_AddressClaimFlexible.h
+ project define #define PRJ_USE_AUTOGEN_CONFIG config_0_2_AddressClaimFlexible.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file ../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_2_AddressClaimFlexible/config_0_2_AddressClaimFlexible.h in this directory as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_0_2_AddressClaimFlexible in the directory /home/spangler/Fritzmeier/MiniVegN/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
 \code
 // File: config_0_2_AddressClaimFlexible.h
 // IMPORTANT: Never change the first block of this header manually!!!

@@ -20,6 +20,7 @@
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
@@ -162,8 +163,6 @@
 ../../../xgpl_src/IsoAgLib/driver/eeprom/ieepromio_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
-../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
 ../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h

@@ -7,8 +7,8 @@
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__esx__sys__sys List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -391,8 +391,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__imi__sys__sys List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -775,8 +775,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_linux__rte__rte List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver rte and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -1159,8 +1159,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_linux__rte__simulating List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver rte and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -1543,8 +1543,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_linux__rte__sys List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver rte and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -1927,8 +1927,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__rte List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -2311,8 +2311,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__simulating List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -2695,8 +2695,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__sys List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -3079,8 +3079,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__simulating List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -3463,8 +3463,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__sys List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -3847,8 +3847,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__simulating List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -4231,8 +4231,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__sontheim__sys List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sontheim and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -4615,8 +4615,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_canlib__simulating List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_canlib and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -4999,8 +4999,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_canlib__sys List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_canlib and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -5383,8 +5383,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_xl__simulating List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_xl and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -5767,8 +5767,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__vector_xl__sys List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver vector_xl and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -6151,8 +6151,8 @@ PRJ_RS232=1
 
 
  \section PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pm167__sys__sys List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
- Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_8_RemoteReadDataSimpleMeasureIso
 # Configuration setting for tutorial example 2_8_RemoteReadDataSimpleMeasureIso
@@ -6537,26 +6537,26 @@ PRJ_RS232=1
 
 
 
- \section PrjConfig2_8_RemoteReadDataSimpleMeasureIso List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_8_RemoteReadDataSimpleMeasureIso/config_2_8_RemoteReadDataSimpleMeasureIso.h
+ \section PrjConfig2_8_RemoteReadDataSimpleMeasureIso List of configuration settings for 2_8_RemoteReadDataSimpleMeasureIso
+ This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_8_RemoteReadDataSimpleMeasureIso/config_2_8_RemoteReadDataSimpleMeasureIso.h 
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_2_8_RemoteReadDataSimpleMeasureIso.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_8_RemoteReadDataSimpleMeasureIso/config_2_8_RemoteReadDataSimpleMeasureIso.h in this directory as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_2_8_RemoteReadDataSimpleMeasureIso in the directory /home/spangler/Fritzmeier/MiniVegN/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
 \code
 // File: config_2_8_RemoteReadDataSimpleMeasureIso.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_2_8_RemoteReadDataSimpleMeasureIso"
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_2_8_RemoteReadDataSimpleMeasureIso" 
 //            Perform changes direct in the feature and project setup file conf_2_8_RemoteReadDataSimpleMeasureIso
 //  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_2_8_RemoteReadDataSimpleMeasureIso" call,
 //                    if the corresponding value in isoaglib_config.h changed
-#define CAN_BUS_CNT 1
+#define CAN_BUS_CNT 1 
 
-#define CAN_INSTANCE_CNT 1
+#define CAN_INSTANCE_CNT 1 
 
-#define PRT_INSTANCE_CNT 1
+#define PRT_INSTANCE_CNT 1 
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
@@ -6574,14 +6574,14 @@ PRJ_RS232=1
 // Decide if float shall be used for the project
 #define USE_FLOAT_DATA_TYPE
 
-#ifndef USE_PROCESS
-  #define USE_PROCESS
+#ifndef USE_PROCESS 
+  #define USE_PROCESS 
 #endif
-#ifndef USE_EEPROM_IO_YN
-	#define USE_EEPROM_IO_YN NO
+#ifndef USE_EEPROM_IO_YN 
+	#define USE_EEPROM_IO_YN NO 
 #endif
-#ifndef USE_ISO_11783
-	#define USE_ISO_11783
+#ifndef USE_ISO_11783 
+	#define USE_ISO_11783 
 #endif
 
 // The following configuration values can be overwritten.

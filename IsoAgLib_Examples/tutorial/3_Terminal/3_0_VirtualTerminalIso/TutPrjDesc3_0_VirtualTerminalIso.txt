@@ -8,7 +8,7 @@
 
  \section PrjSpec3_0_VirtualTerminalIso__esx__sys__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -394,7 +394,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__imi__sys__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -780,7 +780,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_linux__rte__rte List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver rte and RS232 Driver rte
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -1166,7 +1166,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_linux__rte__simulating List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver rte and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -1552,7 +1552,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_linux__rte__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver rte and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -1938,7 +1938,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_linux__simulating__rte List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver simulating and RS232 Driver rte
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -2324,7 +2324,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_linux__simulating__simulating List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver simulating and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -2710,7 +2710,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_linux__simulating__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver simulating and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -3096,7 +3096,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_win32__simulating__simulating List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver simulating and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -3482,7 +3482,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_win32__simulating__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver simulating and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -3868,7 +3868,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_win32__sontheim__simulating List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver sontheim and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -4254,7 +4254,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_win32__sontheim__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver sontheim and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -4640,7 +4640,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_win32__vector_canlib__simulating List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver vector_canlib and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -5026,7 +5026,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_win32__vector_canlib__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver vector_canlib and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -5412,7 +5412,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_win32__vector_xl__simulating List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver vector_xl and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -5798,7 +5798,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pc_win32__vector_xl__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver vector_xl and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -6184,7 +6184,7 @@ PRJ_ISO_TERMINAL=1
 
  \section PrjSpec3_0_VirtualTerminalIso__pm167__sys__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_3_0_VirtualTerminalIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_3_0_VirtualTerminalIso
 # Configuration setting for tutorial example 3_0_VirtualTerminalIso
@@ -6571,12 +6571,12 @@ PRJ_ISO_TERMINAL=1
 
 
 
- \section PrjConfig3_0_VirtualTerminalIso__pm167__sys__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver sys and RS232 Driver sys
+ \section PrjConfig3_0_VirtualTerminalIso List of configuration settings for 3_0_VirtualTerminalIso
  This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/config_3_0_VirtualTerminalIso.h 
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_3_0_VirtualTerminalIso.h
+ project define #define PRJ_USE_AUTOGEN_CONFIG config_3_0_VirtualTerminalIso.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file ../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/config_3_0_VirtualTerminalIso.h in this directory as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_3_0_VirtualTerminalIso in the directory /home/spangler/Fritzmeier/MiniVegN/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
 \code
 // File: config_3_0_VirtualTerminalIso.h
 // IMPORTANT: Never change the first block of this header manually!!!

@@ -8,7 +8,7 @@
 
  \section PrjSpec1_2_WriteIso__esx__sys__sys List of configuration settings for 1_2_WriteIso with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -391,7 +391,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__imi__sys__sys List of configuration settings for 1_2_WriteIso with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -774,7 +774,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_linux__rte__rte List of configuration settings for 1_2_WriteIso with CAN Driver rte and RS232 Driver rte
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -1157,7 +1157,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_linux__rte__simulating List of configuration settings for 1_2_WriteIso with CAN Driver rte and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -1540,7 +1540,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_linux__rte__sys List of configuration settings for 1_2_WriteIso with CAN Driver rte and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -1923,7 +1923,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_linux__simulating__rte List of configuration settings for 1_2_WriteIso with CAN Driver simulating and RS232 Driver rte
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -2306,7 +2306,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_linux__simulating__simulating List of configuration settings for 1_2_WriteIso with CAN Driver simulating and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -2689,7 +2689,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_linux__simulating__sys List of configuration settings for 1_2_WriteIso with CAN Driver simulating and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -3072,7 +3072,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_win32__simulating__simulating List of configuration settings for 1_2_WriteIso with CAN Driver simulating and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -3455,7 +3455,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_win32__simulating__sys List of configuration settings for 1_2_WriteIso with CAN Driver simulating and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -3838,7 +3838,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_win32__sontheim__simulating List of configuration settings for 1_2_WriteIso with CAN Driver sontheim and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -4221,7 +4221,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_win32__sontheim__sys List of configuration settings for 1_2_WriteIso with CAN Driver sontheim and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -4604,7 +4604,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_win32__vector_canlib__simulating List of configuration settings for 1_2_WriteIso with CAN Driver vector_canlib and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -4987,7 +4987,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_win32__vector_canlib__sys List of configuration settings for 1_2_WriteIso with CAN Driver vector_canlib and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -5370,7 +5370,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_win32__vector_xl__simulating List of configuration settings for 1_2_WriteIso with CAN Driver vector_xl and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -5753,7 +5753,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pc_win32__vector_xl__sys List of configuration settings for 1_2_WriteIso with CAN Driver vector_xl and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -6136,7 +6136,7 @@ PRJ_BASE=1
 
  \section PrjSpec1_2_WriteIso__pm167__sys__sys List of configuration settings for 1_2_WriteIso with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
- Use the file conf_1_2_WriteIso in this directory as inout file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_2_WriteIso
 # Configuration setting for tutorial example 1_2_WriteIso
@@ -6520,12 +6520,12 @@ PRJ_BASE=1
 
 
 
- \section PrjConfig1_2_WriteIso__pm167__sys__sys List of configuration settings for 1_2_WriteIso with CAN Driver sys and RS232 Driver sys
+ \section PrjConfig1_2_WriteIso List of configuration settings for 1_2_WriteIso
  This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/1_BaseData/1_2_WriteIso/config_1_2_WriteIso.h 
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_1_2_WriteIso.h
+ project define #define PRJ_USE_AUTOGEN_CONFIG config_1_2_WriteIso.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file ../../../IsoAgLib_Examples/tutorial/1_BaseData/1_2_WriteIso/config_1_2_WriteIso.h in this directory as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in the directory /home/spangler/Fritzmeier/MiniVegN/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
 \code
 // File: config_1_2_WriteIso.h
 // IMPORTANT: Never change the first block of this header manually!!!

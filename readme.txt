@@ -115,7 +115,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		Therefore the ISO<i><sub>AgLib</sub></i> is now usable for all compilers which use this "Extended EC++" subset of ANSI C++
 	- <b>2004-12-10:</b> List of used C++ features which aren't mapped by simple <b>EC++</b> compilers which doesn't use the <b>Extended EC++</b> specification
 		is written in \ref InfReqCompiler ( there are also some general notes on compiler use )
-	- <b>2004-12-12:</b> Add tutorial examples for supplementary drivers sensor and PWM
+	- <b>2004-12-12:</b> Add tutorial examples for internal CAN, supplementary drivers eeprom, sensor and PWM
 
 
 \subsection IndexOldNews News before 1.0.0 release
