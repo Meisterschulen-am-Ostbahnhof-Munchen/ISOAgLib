@@ -426,6 +426,9 @@ function create_filelist( )
   if [ $PRJ_BASE -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
   fi
+  if [ $PRJ_ISO_TERMINAL_SERVER -gt 0 ] ; then
+    PRJ_MULTIPACKET=1
+  fi
   if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*'"
     PRJ_MULTIPACKET=1

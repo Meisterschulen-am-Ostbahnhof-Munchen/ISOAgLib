@@ -146,7 +146,7 @@ void MultiSend_c::init(void)
 	// must be done at the end of this function
 	bool b_isReconfigNeeded = false;
 
-#ifdef USE_ISO_TERMINAL
+#if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
   // register to get TP/ETP Messages
   uint32_t ui32_filter = (static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) << 8);
   if (!getCanInstance4Comm().existFilter((0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
@@ -257,7 +257,7 @@ bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rh
   return true;
 }
 #endif
-#ifdef USE_ISO_TERMINAL
+#if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
 /**
   send a ISO target multipacket message with active retrieve of data-parts to send
   @param rb_send dynamic member no of sender
@@ -890,7 +890,7 @@ void MultiSend_c::abortSend()
       b_performAbort = true;
     }
     #endif
-    #ifdef USE_ISO_TERMINAL
+    #if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
     if ( en_msgType != Din )
     { // send ISO abort message
       data().setData(5, static_cast<uint8_t>(i32_pgn & 0xFF));
@@ -926,7 +926,7 @@ void MultiSend_c::sendIntern()
     b_performSend = true;
   }
   #endif
-  #ifdef USE_ISO_TERMINAL
+  #if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
   if ( en_msgType != Din )
   { // ISO
     data().setIsoPri(6);

@@ -160,8 +160,8 @@ public:
   */
   bool sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, uint16_t rb_fileCmd, bool rb_abortOnTimeout = false);
   #endif
-  #ifdef USE_ISO_TERMINAL
-  /**
+  #if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
+   /**
     send a ISO target multipacket message with active retrieve of data-parts to send
     @param rb_send dynamic member no of sender
     @param rb_empf dynamic member no of receiver
