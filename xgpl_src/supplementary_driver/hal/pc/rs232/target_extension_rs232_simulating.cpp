@@ -120,9 +120,9 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
     strcpy(name, "rs232_log");
     rs232_log = fopen(name, "w"); // "a+"
   }
+  printf("Versuch Datei mit Name %s zum schreiben zu oeffnen\n", name);
   #endif
 
-  printf("Versuch Datei mit Name %s zum schreiben zu oeffnen\n", name);
 	#ifdef USE_REAL_RS232
   SioInit(1,wBaudrate);
 	#endif
