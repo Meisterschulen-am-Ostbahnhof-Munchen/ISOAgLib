@@ -1,0 +1,188 @@
+/***************************************************************************
+                          vtobjectarchedbargraph_c.h
+                             -------------------
+    begin                : Don Sep 4 2003
+    copyright            : (C) 2003-2004 by Martin Wodok / Bradford Cox
+    email                : m.wodok@osb-ag:de
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ * This file is part of the "IsoAgLib", an object oriented program library *
+ * to serve as a software layer between application specific program and   *
+ * communication protocol details. By providing simple function calls for  *
+ * jobs like starting a measuring program for a process data value on a    *
+ * remote ECU, the main program has not to deal with single CAN telegram   *
+ * formatting. This way communication problems between ECU's which use     *
+ * this library should be prevented.                                       *
+ * Everybody and every company is invited to use this library to make a    *
+ * working plug and play standard out of the printed protocol standard.    *
+ *                                                                         *
+ * Copyright (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                  *
+ *                                                                         *
+ * The IsoAgLib is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU General Public License as published          *
+ * by the Free Software Foundation; either version 2 of the License, or    *
+ * (at your option) any later version.                                     *
+ *                                                                         *
+ * This library is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       *
+ * General Public License for more details.                                *
+ *                                                                         *
+ * You should have received a copy of the GNU General Public License       *
+ * along with IsoAgLib; if not, write to the Free Software Foundation,     *
+ * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
+ *                                                                         *
+ * As a special exception, if other files instantiate templates or use     *
+ * macros or inline functions from this file, or you compile this file and *
+ * link it with other works to produce a work based on this file, this file*
+ * does not by itself cause the resulting work to be covered by the GNU    *
+ * General Public License. However the source code for this file must still*
+ * be made available in accordance with section (3) of the                 *
+ * GNU General Public License.                                             *
+ *                                                                         *
+ * This exception does not invalidate any other reasons why a work based on*
+ * this file might be covered by the GNU General Public License.           *
+ *                                                                         *
+ * Alternative licenses for IsoAgLib may be arranged by contacting         *
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
+ ***************************************************************************/ 
+
+ /**************************************************************************
+ *                                                                         * 
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
+ * Each software module, which accesses directly elements of this file,    * 
+ * is considered to be an extension of IsoAgLib and is thus covered by the * 
+ * GPL license. Applications must use only the interface definition out-   * 
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
+ * and __HAL namespaces from applications which shouldnt be affected by    * 
+ * the license. Only access their interface counterparts in the IsoAgLib   * 
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
+ * ion really needs access to a part of an internal namespace, so that the * 
+ * interface might be extended if your request is accepted.                * 
+ *                                                                         * 
+ * Definition of direct access:                                            * 
+ * - Instantiation of a variable with a datatype from internal namespace   * 
+ * - Call of a (member-) function                                          * 
+ * Allowed is:                                                             * 
+ * - Instatiation of a variable with a datatype from interface namespace,  * 
+ *   even if this is derived from a base class inside an internal namespace* 
+ * - Call of member functions which are defined in the interface class     * 
+ *   definition ( header )                                                 * 
+ *                                                                         * 
+ * Pairing of internal and interface classes:                              * 
+ * - Internal implementation in an :impl: subdirectory                     * 
+ * - Interface in the parent directory of the corresponding internal class * 
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
+ *   __IsoAgLib::Foo_c                                                     * 
+ *                                                                         * 
+ * AS A RULE: Use only classes with names beginning with small letter :i:  *
+ ***************************************************************************/
+
+
+#ifndef VTOBJECTARCHEDBARGRAPH_C_H
+#define VTOBJECTARCHEDBARGRAPH_C_H
+
+
+// +X2C includes
+#include "vtobject_c.h"
+// ~X2C
+
+// Begin Namespace __IsoAgLib
+namespace __IsoAgLib {
+
+
+
+//  +X2C Class 119 : vtObjectArchedBarGraph_c
+//!  Stereotype: Klasse
+class vtObjectArchedBarGraph_c : public vtObject_c
+{
+
+public:
+
+  //  Operation: stream
+  //! Parameter:
+  //! @param destMemory: 
+  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
+  //! @param sourceOffset: 
+  int16_t stream(uint8_t* destMemory,
+                 uint16_t maxBytes,
+                 uint16_t sourceOffset);
+
+  //  Operation: init
+  //! Parameter:
+  //! @param vtObjectArchedBarGraphSROM: 
+  //! @param b_initPointer: 
+  void init(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM) { vtObject_c::init ((iVtObject_s*) vtObjectArchedBarGraphSROM); };
+
+  //  Operation: get_vtObjectArchedBarGraph_a
+  iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return (iVtObjectArchedBarGraph_s *)vtObject_a; }
+
+  //  Operation: vtObjectArchedBarGraph_c
+  vtObjectArchedBarGraph_c();
+
+  //  Operation: size
+  uint32_t fitTerminal();
+
+  void setValue(uint16_t newValue, bool b_updateObject=false);
+
+  void setWidth(uint16_t newWidth, bool b_updateObject=false) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width) : 0, sizeof(iVtObjectArchedBarGraph_s), 1 /* "Width" */, newWidth);
+  }
+  
+  void setHeight(uint16_t newHeight, bool b_updateObject=false) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height) : 0, sizeof(iVtObjectArchedBarGraph_s), 2 /* "Height" */, newHeight);
+  }
+
+  void setColour(uint8_t newColour, bool b_updateObject=false) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour) : 0, sizeof(iVtObjectArchedBarGraph_s), 3 /* "Colour" */, newColour);
+  }
+
+  void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject=false) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectArchedBarGraph_s), 4 /* "Target Line Colour" */, newTargetLineColour);
+  }
+
+  void setOptions(uint8_t newOptions, bool b_updateObject=false) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), options) : 0, sizeof(iVtObjectArchedBarGraph_s), 5 /* "Options" */, newOptions);
+  }
+
+  void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), startAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 6 /* "Start Angle" */, newStartAngle);
+  }
+
+  void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), endAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 7 /* "End Angle" */, newEndAngle);
+  }
+
+  void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject=false) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), barGraphWidth) : 0, sizeof(iVtObjectArchedBarGraph_s), 8 /* "Bar Graph Width" */, newBarGraphWidth);
+  }
+
+  void setMinValue(uint16_t newMin, bool b_updateObject=false) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), minValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 9 /* "Min value" */, newMin);
+  }
+
+  void setMaxValue(uint16_t newMax, bool b_updateObject=false) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), maxValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 10 /* "Max value" */, newMax);
+  }
+
+  void setVariableReference(IsoAgLib::iVtObject_c* newVariableReference, bool b_updateObject=false) {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), variableReference) : 0, sizeof(iVtObjectArchedBarGraph_s), 11 /* "Variable Reference" */, newVariableReference);
+  }
+
+  void setTargetValueVariableReference(IsoAgLib::iVtObject_c* newTargetValueVariableReference, bool b_updateObject=false) {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValueVariableReference) : 0, sizeof(iVtObjectArchedBarGraph_s), 12 /* "Target Value Variable Reference" */, newTargetValueVariableReference);
+  }
+
+  void setTargetValue(uint16_t newTargetValue, bool b_updateObject=false) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 13 /* "Target Value" */, newTargetValue);
+  }
+  
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false);
+
+}; // ~X2C
+
+} // end namespace __IsoAgLib
+
+#endif // -X2C

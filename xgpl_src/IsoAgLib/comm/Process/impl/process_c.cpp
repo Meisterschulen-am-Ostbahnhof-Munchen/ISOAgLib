@@ -1,0 +1,711 @@
+/***************************************************************************
+                          process_c.cpp - central managing instance for
+                                           all process data informations in
+                                           the system
+                             -------------------
+    begin                : Fri Apr 07 2000
+    copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
+    type                 : Source
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ * This file is part of the "IsoAgLib", an object oriented program library *
+ * to serve as a software layer between application specific program and   *
+ * communication protocol details. By providing simple function calls for  *
+ * jobs like starting a measuring program for a process data value on a    *
+ * remote ECU, the main program has not to deal with single CAN telegram   *
+ * formatting. This way communication problems between ECU's which use     *
+ * this library should be prevented.                                       *
+ * Everybody and every company is invited to use this library to make a    *
+ * working plug and play standard out of the printed protocol standard.    *
+ *                                                                         *
+ * Copyright (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                  *
+ *                                                                         *
+ * The IsoAgLib is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU General Public License as published          *
+ * by the Free Software Foundation; either version 2 of the License, or    *
+ * (at your option) any later version.                                     *
+ *                                                                         *
+ * This library is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       *
+ * General Public License for more details.                                *
+ *                                                                         *
+ * You should have received a copy of the GNU General Public License       *
+ * along with IsoAgLib; if not, write to the Free Software Foundation,     *
+ * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
+ *                                                                         *
+ * As a special exception, if other files instantiate templates or use     *
+ * macros or inline functions from this file, or you compile this file and *
+ * link it with other works to produce a work based on this file, this file*
+ * does not by itself cause the resulting work to be covered by the GNU    *
+ * General Public License. However the source code for this file must still*
+ * be made available in accordance with section (3) of the                 *
+ * GNU General Public License.                                             *
+ *                                                                         *
+ * This exception does not invalidate any other reasons why a work based on*
+ * this file might be covered by the GNU General Public License.           *
+ *                                                                         *
+ * Alternative licenses for IsoAgLib may be arranged by contacting         *
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
+ ***************************************************************************/ 
+
+ /**************************************************************************
+ *                                                                         * 
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
+ * Each software module, which accesses directly elements of this file,    * 
+ * is considered to be an extension of IsoAgLib and is thus covered by the * 
+ * GPL license. Applications must use only the interface definition out-   * 
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
+ * and __HAL namespaces from applications which shouldnt be affected by    * 
+ * the license. Only access their interface counterparts in the IsoAgLib   * 
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
+ * ion really needs access to a part of an internal namespace, so that the * 
+ * interface might be extended if your request is accepted.                * 
+ *                                                                         * 
+ * Definition of direct access:                                            * 
+ * - Instantiation of a variable with a datatype from internal namespace   * 
+ * - Call of a (member-) function                                          * 
+ * Allowed is:                                                             * 
+ * - Instatiation of a variable with a datatype from interface namespace,  * 
+ *   even if this is derived from a base class inside an internal namespace* 
+ * - Call of member functions which are defined in the interface class     * 
+ *   definition ( header )                                                 * 
+ *                                                                         * 
+ * Pairing of internal and interface classes:                              * 
+ * - Internal implementation in an :impl: subdirectory                     * 
+ * - Interface in the parent directory of the corresponding internal class * 
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
+ *   __IsoAgLib::Foo_c                                                     * 
+ *                                                                         * 
+ * AS A RULE: Use only classes with names beginning with small letter :i:  *
+ ***************************************************************************/
+
+/* *************************************** */
+/* ********** include headers ************ */
+/* *************************************** */
+#include "process_c.h"
+#include <IsoAgLib/driver/can/impl/canio_c.h>
+
+#ifdef USE_GPS
+  #include "gps_c.h"
+#endif
+#ifdef USE_DIN_9684
+  #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinitem_c.h>
+#endif
+
+#ifdef USE_ISO_11783
+  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
+#endif
+
+#ifdef DEBUG
+  #include <supplementary_driver/driver/rs232/irs232io_c.h>
+#endif
+
+
+namespace __IsoAgLib {
+#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
+  /** C-style function, to get access to the unique Process_c singleton instance
+    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+    */
+  Process_c& getProcessInstance( uint8_t rui8_instance )
+  { // if > 1 singleton instance is used, no static reference can be used
+    return Process_c::instance( rui8_instance );
+  };
+#else
+  /** C-style function, to get access to the unique Process_c singleton instance */
+  Process_c& getProcessInstance( void )
+  {
+    static Process_c& c_process = Process_c::instance();
+    return c_process;
+  };
+#endif
+
+/** initialise element which can't be done during construct */
+void Process_c::init()
+{ // clear state of b_alreadyClosed, so that close() is called one time
+  clearAlreadyClosed();
+  // first register in Scheduler_c
+  getSchedulerInstance4Comm().registerClient( this );
+  i32_lastFilterBoxTime = 0;
+
+  c_data.setSingletonKey( getSingletonVecKey() );
+
+}
+/** every subsystem of IsoAgLib has explicit function for controlled shutdown
+  */
+void Process_c::close( void ) {
+  if ( ! checkAlreadyClosed() ) {
+    // avoid another call
+    setAlreadyClosed();
+    // unregister from Scheduler_c
+    getSchedulerInstance4Comm().unregisterClient( this );
+  }
+};
+
+/** default destructor which has nothing to do */
+Process_c::~Process_c(){
+  close();
+}
+
+
+/** handler function for access to undefined client.
+  * the base Singleton calls this function, if it detects an error
+  */
+void Process_c::registerAccessFlt( void )
+{
+
+  getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+}
+
+/**
+  deliver reference to data pkg as reference to CANPkgExt_c
+  to implement the base virtual function correct
+*/
+CANPkgExt_c& Process_c::dataBase()
+{
+  return c_data;
+}
+
+/**
+  performs periodically actions,
+  here: update trusted adrVect and resort array if needed every 3sec;
+
+  possible errors:
+    * pertial error caused by one of the memberItems
+
+  @return true -> all planned activities performed in allowed time
+*/
+bool Process_c::timeEvent( void ){
+  bool b_result = true;
+  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
+
+  // call the time event for all local data
+  for ( pc_searchCacheC1 = c_arrClientC1.begin();
+       ( pc_searchCacheC1 != c_arrClientC1.end() );
+       pc_searchCacheC1++ )
+  { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
+    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    if ( !(*pc_searchCacheC1)->timeEvent() ) b_result = false;
+  }
+  // call the time event for all remote data
+  for ( pc_searchCacheC2 = c_arrClientC2.begin();
+       ( pc_searchCacheC2 != c_arrClientC2.end() );
+       pc_searchCacheC2++ )
+  { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
+    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    if ( !(*pc_searchCacheC2)->timeEvent() ) b_result = false;
+  }
+  // if local active member exist - check every second if
+  // filters for targeted or partner process data should be created
+  if ((i32_time - i32_lastFilterBoxTime) > 1000)  {
+    i32_lastFilterBoxTime = i32_time;
+    GetyPos_c c_lastFilterGtp = 0xFF, c_actGtp;
+    uint8_t ui8_lastFilterPri = 0, ui8_actPri = 2;
+
+		// create local Base-Proc Filter in case DIN member is active
+		#ifdef USE_DIN_9684
+		if ( getSystemMgmtInstance().existActiveLocalDinMember() )
+		{ // filter for base process data
+		if (!getCanInstance4Comm().existFilter((uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4)))
+			getCanInstance4Comm().insertFilter(*this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4), true);
+		}
+  	#endif
+
+
+    // create FilterBoxes for remote ProcessData if needed
+    for ( pc_searchCacheC2 = c_arrClientC2.begin();
+        ( pc_searchCacheC2 != c_arrClientC2.end() );
+        pc_searchCacheC2++ )
+    { // delete item at pc_timeIter, if pc_searchCacheC2 points to pc_client
+      if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+      c_actGtp = (*pc_searchCacheC2)->ownerGtp();
+      ui8_actPri = (*pc_searchCacheC2)->pri();
+      if ((c_actGtp != c_lastFilterGtp) && (ui8_actPri != ui8_lastFilterPri) && (c_actGtp != 0xFF))
+      { // last FilterBox_c call with other gtp
+        // -> avoid unneccessary calls with search
+        c_lastFilterGtp = c_actGtp;
+        ui8_lastFilterPri = ui8_actPri;
+        createRemoteFilter(c_actGtp, ui8_actPri);
+      }
+    }
+  }
+  // the other list elements doesn't need periodic actions
+  return b_result;
+};
+
+/**
+  start processing of a process msg
+  ignore all invalid messages where SEND is not of a member with claimed address,
+  or where EMPF isn't valid
+
+  possible errors:
+    * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
+*/
+bool Process_c::processMsg(){
+#if defined(USE_GPS)
+  // check if this is a message from a service
+  if (
+      ( (data().pri() == 3) && (data().send() == 3) && (data().lis() == 0) && (data().gety() == 0) && (data().empf() == 0xF)  )
+    ||( (data().pri() == 5) && (data().lis() == 3) && (data().wert() == 5) && (data().gety() <= 1) )
+     )
+  { // messages from a GPS service are processed by GPS_c::processMsg
+    return getGpsInstance4Comm().processMsg();
+  }
+#endif
+
+  uint8_t b_posData;
+  bool b_result = false;
+
+  #ifdef DEBUG
+  if ( ( data().wert() == 0 ) && ( data().inst() == 0 ) ) {
+    IsoAgLib::getIrs232Instance()
+
+        << "Process_c::processMsg() mit Alarm ACK\n";
+  }
+  #endif
+
+  // try to aquire exact GETY_POS code for the suitable Process Data Item
+  // -> check for POS of the owner of the handled Process Data
+  if ((data().pri() == 0x2) || (data().pri() == 0x5))
+  { // target and partner process data
+    b_result = true;
+    bool b_sendOwner = false,
+         b_empfOwner = false;
+    // first check if both SEND and EMPF are valid according Monitor-List
+    if (!(data().existMemberSend())
+      ||!(data().existMemberEmpf())
+       )
+    { // msg not valid as one of SEND or EMPF isn't registered with claimed address
+      // not really an error - just this received messages is of no interest
+      // getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+      return true; // exit function
+    }
+    if (data().gety() == ((data().memberSend()).gtp().getGety()) )
+    { // the gety of the sender is equivalent to the gety of the data
+      b_sendOwner = true;
+    }
+    if (data().gety() == ((data().memberEmpf()).gtp().getGety()) )
+    { // the gety of the receiver is equivalent to the gety of the data
+      b_empfOwner = true;
+    }
+    if (b_sendOwner == b_empfOwner)
+    { // both could be or could be not the owner of the data -> use POS of the msg
+      if (!getSystemMgmtInstance4Comm().existMemberGtp( GetyPos_c( data().gety(), data().pos() ) ) )
+      { // no member with msg gety/pos exist -> ignore pos for search
+        b_posData = 0XFF;
+      }
+      else
+      {
+        b_posData = data().pos();
+      }
+    }
+    else
+    { // only one could be the owner -> use its pos
+      b_posData = (b_sendOwner)? ((data().memberSend()).gtp().getPos())
+                                 : ((data().memberEmpf()).gtp().getPos());
+    }
+  }// if target msg
+  // only check for base process data if DIN 9684 is used
+  #ifdef USE_DIN_9684
+  else
+  { // for base msg the first try must be the gety/pos of msg
+    // first check if SEND is valid according Monitor-List
+    if (!(data().existMemberSend()))
+    { // msg not valid as SEND isn't registered with claimed address
+      // not really an error - just this received messages is of no interest
+      // getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+      return false; // exit function
+    }
+    b_result = true;
+    DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
+    // - only if no member with this combination exist, try pos of sender
+    if (!c_din_monitor.existDinMemberGtp( data().gtp() ) )
+    { // no member with get/pos of msg exist -> try gety/pos of sender, if sender.gety is equiv to msg.gety
+      if (data().gety() == (c_din_monitor.dinMemberNr(data().send()).gtp().getGety()) )
+      { // the gety of the sender is equivalent to the gety of the data
+        b_posData = ((data().memberSend()).gtp().getPos());
+      }
+      else
+      { // ignore pos for searching process data item
+        b_posData = 0xFF;
+      }
+    } // if gety/pos of msg does not exist as member
+    else
+    { // use gety/pos of msg
+      b_posData = data().pos();
+    }
+  }
+  #endif
+  // now b_posData is the best guess for searching the appropriate prcess data item
+  // check first for local Process Data
+  if (existProcDataLocal(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()))
+  { // there exists an appropriate process data item -> let the item process the msg
+    procDataLocal(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()).processMsg();
+    b_result = true;
+  }
+//  else
+//  {
+    // now check for remote Process Data
+    if (existProcDataRemote(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()))
+    { // there exists an appropriate process data item -> let the item process the msg
+      procDataRemote(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()).processMsg();
+      b_result = true;
+    }
+// }
+ return b_result;
+}
+
+/**
+  checks if a suitable ProcDataLocal_c item exist
+  @param rui8_lis LIS code of searched local Process Data instance
+  @param rui8_gety GETY code of searched local Process Data instance
+  @param rui8_wert WERT code of searched local Process Data instance
+  @param rui8_inst INST code of searched local Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+  @param rui8_pos optional POS code of searched local Process Data instance
+                (only important if more GETY type members are active)
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @return true -> suitable instance found
+*/
+bool Process_c::existProcDataLocal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri){
+  return updateLocalCache(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
+}
+
+/**
+  checks if a suitable ProcDataRemote_c item exist
+  @param rui8_lis LIS code of searched remote Process Data instance
+
+  @param rui8_gety GETY code of searched remote Process Data instance
+  @param rui8_wert WERT code of searched remote Process Data instance
+  @param rui8_inst INST code of searched remote Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
+  @param rui8_pos optional POS code of searched remote Process Data instance
+                (only important if more GETY type members are active)
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @return true -> suitable instance found
+*/
+bool Process_c::existProcDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri){
+  return updateRemoteCache(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
+}
+
+/**
+  search for suitable ProcDataLocal_c item; create on if not found AND if wanted
+
+  possible errors:
+      * Err_c::badAlloc not enough memory to add new ProcDataLocal_c
+        (can cause badAlloc exception)
+      * Err_c::elNonexistent if element not found and rb_doCreate == false
+  @param rui8_lis LIS code of searched local Process Data instance
+  @param rui8_gety GETY code of searched local Process Data instance
+  @param rui8_wert WERT code of searched local Process Data instance
+  @param rui8_inst INST code of searched local Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+  @param rui8_pos POS code of searched local Process Data instance
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @return reference to searched/created ProcDataLocal_c instance
+*/
+ProcDataLocalBase_c& Process_c::procDataLocal(uint8_t rui8_lis, uint8_t rui8_gety,
+      uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri ){
+  bool b_found = updateLocalCache( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
+  if (!b_found)
+  { // not found and no creation wanted -> error
+    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+  }
+  return **pc_searchCacheC1;
+}
+
+/**
+  search for suitable ProcDataRemote_c item; create on if not found AND if wanted
+
+  possible errors:
+      * Err_c::badAlloc not enough memory to add new ProcDataRemote_c
+        (can cause badAlloc exception)
+      * Err_c::elNonexistent if element not found and rb_doCreate == false
+
+  @param rui8_lis LIS code of searched remote Process Data instance
+  @param rui8_gety GETY code of searched remote Process Data instance
+  @param rui8_wert WERT code of searched remote Process Data instance
+  @param rui8_inst INST code of searched remote Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
+  @param rui8_pos POS code of searched remote Process Data instance
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @return reference to searched/created ProcDataRemote_c instance
+  @exception badAlloc
+*/
+ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
+         uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri ){
+  bool b_found = updateRemoteCache( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
+  if (!b_found)
+  { // not found and no creation wanted -> error
+    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+  }
+  return **pc_searchCacheC2;
+}
+
+/**
+  delivers count of local process data entries with similar ident
+  (which differs only in POS of owner)
+  @param rui8_lis LIS code of searched local Process Data instance
+  @param rui8_gety GETY code of searched local Process Data instance
+  @param rui8_wert WERT code of searched local Process Data instance
+  @param rui8_inst INST code of searched local Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @return count of similar local process data entries
+*/
+uint8_t Process_c::procDataLocalCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
+                                      uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri){
+  uint8_t ui8_cnt=0;
+  for ( pc_searchCacheC1 = c_arrClientC1.begin();
+       ( pc_searchCacheC1 != c_arrClientC1.end() );
+       pc_searchCacheC1++ )
+  { // search for all local items which match the searched identity
+    if ((*pc_searchCacheC1)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
+  }
+  return ui8_cnt;
+}
+
+/**
+  delivers count of remote process data entries with similar ident
+  (which differs only in POS of owner)
+  @param rui8_lis LIS code of searched remote Process Data instance
+  @param rui8_gety GETY code of searched remote Process Data instance
+  @param rui8_wert WERT code of searched remote Process Data instance
+  @param rui8_inst INST code of searched remote Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @return count of similar remote process data entries
+*/
+uint8_t Process_c::procDataRemoteCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
+                                       uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri){
+  uint8_t ui8_cnt=0;
+  for ( pc_searchCacheC2 = c_arrClientC2.begin();
+       ( pc_searchCacheC2 != c_arrClientC2.end() );
+       pc_searchCacheC2++ )
+  { // search for all local items which match the searched identity
+    if ((*pc_searchCacheC2)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
+  }
+  return ui8_cnt;
+}
+
+/**
+  update the cache with search for according ProcDataLocal_c item
+  @param rui8_lis LIS code of created local Process Data instance
+  @param rui8_gety GETY code of created local Process Data instance
+  @param rui8_wert WERT code of created local Process Data instance
+  @param rui8_inst INST code of created local Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of created local Process Data instance
+  @param rui8_pos optinal POS code of created local Process Data instance
+    (default not used for search)
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+*/
+bool Process_c::updateLocalCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri){
+  bool b_foundLazy = false;
+  if (!c_arrClientC1.empty())
+  {
+    if ( pc_searchCacheC1 != c_arrClientC1.end() )
+    {
+      if ((*pc_searchCacheC1)->match(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos, rui8_pri)) return true;
+    }
+    //old cache doesn't match any more -> search new
+    for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
+        ( pc_iter != c_arrClientC1.end() );
+        pc_iter++ )
+    { // check for lazy match with POS == 0xFF (==joker)
+      if ((*pc_iter)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri))
+      { // matches at least lazy
+        if ((*pc_iter)->pos() == rui8_pos)
+        { //exact match
+          b_foundLazy = true;
+          pc_searchCacheC1 = pc_iter;
+          // stop search
+          break;
+        } // exact match
+        else if (b_foundLazy == false)
+        { // no other lazy match before this was found
+          b_foundLazy = true;
+          pc_searchCacheC1 = pc_iter;
+        } //first lazy match for this search
+      } // check lazy match
+    }// for
+  }
+  return b_foundLazy;
+}
+
+/**
+  update the cache with search for according ProcDataRemote_c item
+  @param rui8_lis LIS code of created remote Process Data instance
+  @param rui8_gety GETY code of created remote Process Data instance
+  @param rui8_wert WERT code of created remote Process Data instance
+  @param rui8_inst INST code of created remote Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of created remote Process Data instance
+  @param rui8_pos POS code of created remote Process Data instance
+    (default not used for search)
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+*/
+bool Process_c::updateRemoteCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri)
+{
+  bool b_foundLazy = false;
+  if (!c_arrClientC2.empty())
+  {
+    if ( pc_searchCacheC2 != c_arrClientC2.end() )
+    {
+      if ((*pc_searchCacheC2)->match(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos, rui8_pri)) return true;
+    }
+    //old cache doesn't match any more -> search new
+    for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
+        ( pc_iter != c_arrClientC2.end() );
+        pc_iter++ )
+    { // check for lazy match with POS == 0xFF (==joker)
+      if ((*pc_iter)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri))
+      { // matches at least lazy
+        if ((*pc_iter)->pos() == rui8_pos)
+        { //exact match
+          b_foundLazy = true;
+          pc_searchCacheC2 = pc_iter;
+          // stop search
+          break;
+        } // exact match
+        else if (b_foundLazy == false)
+        { // no other lazy match before this was found
+          b_foundLazy = true;
+          pc_searchCacheC2 = pc_iter;
+        } //first lazy match for this search
+      } // check lazy match
+    }// for
+  }
+  return b_foundLazy;
+}
+
+/**
+  insert FilterBox_c for receive from remote gtp if needed
+  @param rc_ownerGtp GTP code of remote owner who sent the message
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @return true -> member exist and Filter Box created
+*/
+bool Process_c::createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t 
+	#ifdef USE_DIN_9684
+	rui8_pri
+	#endif
+	)
+{
+  bool b_result = false;
+  MASK_TYPE t_filter;
+  #ifdef USE_DIN_9684
+  if (getDinMonitorInstance4Comm().existDinMemberGtp(rc_ownerGtp))
+  {
+    if (getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).itemState(IState_c::ClaimedAddress))
+    { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
+      uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).nr();
+      t_filter = (ui8_recNr | (rui8_pri << 8));
+      #ifdef USE_ISO_11783
+      if (!getCanInstance4Comm().existFilter(0x70F, t_filter, Ident_c::StandardIdent))
+      #else
+      if (!getCanInstance4Comm().existFilter(0x70F, t_filter))
+      #endif
+      { // no suitable FilterBox_c exist -> create it
+        getCanInstance4Comm().insertFilter(*this, 0x70F, t_filter, false);
+        b_result = true;
+      }
+    }
+  }
+  #endif
+  #ifdef USE_ISO_11783
+  if (getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_ownerGtp))
+  {
+    if (getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).itemState(IState_c::ClaimedAddress))
+    { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
+      uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).nr();
+      // only receive msg from ui8_recNr / rc_ownerGtp to all other devices
+      t_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
+      if (!getCanInstance4Comm().existFilter(0x1FF00FFUL, t_filter, Ident_c::ExtendedIdent))
+      { // no suitable FilterBox_c exist -> create it
+        getCanInstance4Comm().insertFilter(*this, 0x1FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
+        b_result = true;
+      }
+    }
+  }
+  #endif
+  // only reconfigure if new FilterBox_c created -> signalled by b_result == true
+  if (b_result)
+  {
+    getCanInstance4Comm().reconfigureMsgObj();
+  }
+
+  return b_result;
+}
+/**
+  delete FilterBox_c for receive from remote gtp if needed
+  (important to delete old Filter Boxes after deletion of
+   ProcDataRemote_c - called from within deleteProcDataRemote
+   - only delete FilterBox_c if NO other remote proc data with same
+   ownerGtp exist)
+  @param rc_ownerGtp GTP code of remote owner who sent the message
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @return true -> member exist and Filter Box deleted
+*/
+bool Process_c::deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t 
+	#ifdef USE_DIN_9684
+	rui8_pri
+	#endif
+	)
+{
+  bool b_result = false,
+       b_found = false;
+  MASK_TYPE ui32_filter;
+  // create FilterBoxes for remote ProcessData if needed
+  for ( pc_searchCacheC2 = c_arrClientC2.begin();
+      ( pc_searchCacheC2 != c_arrClientC2.end() );
+      pc_searchCacheC2++ )
+  {
+    if ((*pc_searchCacheC2)->ownerGtp() == rc_ownerGtp) b_found = true;
+  }
+  if (!b_found)
+  { // no other remote proc data has given onwerGtp
+    // -> delete according FilterBox
+    #ifdef USE_DIN_9684
+    if (getDinMonitorInstance4Comm().existDinMemberGtp(rc_ownerGtp))
+    {
+      if (getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).itemState(IState_c::ClaimedAddress))
+      { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
+        uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).nr();
+        ui32_filter = (ui8_recNr | (rui8_pri << 8));
+        if (getCanInstance4Comm().existFilter(0x70F, ui32_filter))
+        { // corresponding FilterBox_c exist -> delete it
+          getCanInstance4Comm().deleteFilter(0x70F, ui32_filter);
+          b_result = true;
+        }
+
+      } // owner has claimed address
+    } // owner exist in memberMonitor
+    #endif
+    #ifdef USE_ISO_11783
+    if (getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_ownerGtp))
+    {
+      if (getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).itemState(IState_c::ClaimedAddress))
+      { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
+        uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).nr();
+        ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
+        if (getCanInstance4Comm().existFilter(0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent))
+        { // corresponding FilterBox_c exist -> delete it
+          getCanInstance4Comm().deleteFilter(0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent);
+          b_result = true;
+        }
+      } // owner has claimed address
+    } // owner exist in isoMonitor
+    #endif
+  } // not other remote proc data with ownerGtp found
+  // only reconfigure if new FilterBox_c created -> signalled by b_result == true
+
+  if (b_result)
+  {
+    getCanInstance4Comm().reconfigureMsgObj();
+  }
+  return b_result;
+}
+
+} // end of namespace __IsoAgLib
