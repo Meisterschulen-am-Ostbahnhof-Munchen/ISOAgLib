@@ -125,31 +125,39 @@ class vtObjectString_c;
 */
 class ISOTerminalStreamer_c : public MultiSendStreamer_c
 {
- public:
+
+public:
+  
   /** place next data to send direct into send puffer of pointed
       stream send package - MultiSendStreamer_c will send this
       puffer afterwards
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
+  
   /** set cache for data source to stream start
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   void resetDataNextStreamPart ();
+  
   /** save current send position in data source - neeed for resend on send problem
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   void saveDataNextStreamPart ();
+  
   /** reactivate previously stored data source position - used for resend on problem
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   void restoreDataNextStreamPart ();
+  
   /** calculate the size of the data source
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   uint32_t getStreamSize () { return ui32_streamSize; };
 
-	uint32_t ui32_objectStreamPosition;
+  uint8_t getFirstByte () { return 0x11; } // If ISOTerminal streams out, it's because of an Annex C. Object Pool Upload, so 0x11 can be returned ALWAYS!
+  
+  uint32_t ui32_objectStreamPosition;
   uint32_t ui32_objectStreamPositionStored;
   uint32_t ui32_streamSize;
 
@@ -169,8 +177,9 @@ class ISOTerminalStreamer_c : public MultiSendStreamer_c
   uint8_t uploadBufferPositionStored;
 };
 
+#if 0
 /**
-  class that stores an 8-byte command message along with its timeout
+  obsolete class that stores an 8-byte command message along with its timeout
 */
 class SendCommand_c {
 public:
@@ -182,25 +191,31 @@ public:
   SendCommand_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout);
 
   uint8_t arr_commandBuffer [8];
-  uint32_t ui32_commandTimeout;
 };
+#endif
 
 class SendUpload_c {
 public:
   /**
     StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands)
   */
-  SendUpload_c (__IsoAgLib::vtObjectString_c* rpc_objectString, uint8_t rui8_retryCount);
-  SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t rui8_retryCount);
+  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout);
+  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout);
+  SendUpload_c (__IsoAgLib::vtObjectString_c* rpc_objectString);
+  SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength);
   SendUpload_c (const SendUpload_c& ref_source);
   const SendUpload_c& operator= (const SendUpload_c& ref_source);
 
+  /// Use either an MultiSendStreamer or a direct ui8-Buffer
   __IsoAgLib::vtObjectString_c* mssObjectString;
-	// don't use malloc_alloc for uint8_t values
-	// - here the 8byte overhead per malloc item are VERY big
-	// ==> chunk allocation which can be shared among instances is alot better
-  STL_NAMESPACE::vector<uint8_t> vec_uploadBuffer;
+  STL_NAMESPACE::vector<uint8_t> vec_uploadBuffer;  // don't use malloc_alloc for uint8_t values - here the 8byte overhead per malloc item are VERY big
+  // ==> chunk allocation which can be shared among instances is alot better
+  
+  /// Retry some times?
   uint8_t ui8_retryCount;
+  
+  /// TimeOut value (relative to the time the Upload was started!
+  uint32_t ui32_uploadTimeout;
 };
 
 
@@ -214,9 +229,10 @@ class ISOTerminal_c : public SingletonISOTerminal_c {
 public:
 
   enum objectPoolState_t { OPNoneRegistered, OPRegistered, OPUploadedSuccessfully, OPCannotBeUploaded };
-  enum uploadState_t { UIdle, UWaitingForLoadVersionResponse, UWaitingForMemoryResponse, UUploading, UWaitingForEOOResponse, UWaitingForStoreVersionResponse, UFailed }; /* completely uploaded == idle */
-  enum sendCommandState_t { SendCommandIdle, WaitingForCommandResponse, SendCommandTimedOut, SendCommandFailed };
-  enum uploadType_t { UploadObjectPool, UploadChangeStringValue };
+  
+  enum uploadType_t { UploadIdle, UploadPool, UploadCommand };
+  enum uploadPoolState_t { UploadPoolInit, UploadPoolWaitingForLoadVersionResponse, UploadPoolWaitingForMemoryResponse, UploadPoolUploading, UploadPoolWaitingForEOOResponse, UploadPoolWaitingForStoreVersionResponse, UploadPoolFailed}; /* completely uploaded is now detected by "OPUploadedSuccessfully" */
+  enum uploadCommandState_t { UploadCommandWaitingForCommandResponse, UploadCommandTimedOut, UploadCommandFailed };
 
   /** struct of the data contained in the "VT Status Message" */
   typedef struct vtState_s {
@@ -357,7 +373,7 @@ public:
   uint8_t            getVtSourceAddress () { return vtSourceAddress; };
   uint16_t           getVtObjectPoolDimension () { return c_streamer.pc_pool->getDimension(); };
   uint32_t           getVtHardwareDimension () { return (uint32_t) vtCapabilities_a.hwWidth; };
-  sendCommandState_t getVtSendCommandState () { return en_sendCommandState; };
+//sendCommandState_t getVtSendCommandState () { return en_sendCommandState; };
   vtCapabilities_s*  getVtCapabilities () { return &vtCapabilities_a; };
   vtState_s*         getVtState () { return &vtState_a; };
   localSettings_s*   getLocalSettings () { return &localSettings_a; };
@@ -372,12 +388,22 @@ public:
                      };
 
   /** sendCommand... methods */
+  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout);
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout);
+  
   bool sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
-  bool sendCommandChangeAttribute (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
-  bool sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength); // no response, no timeout... it's that simple...
-  bool sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* rpc_objectstring); // no response, no timeout... it's that simple...
-  bool sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMaskID);
+  bool sendCommandChangeAttribute    (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
+  bool sendCommandChangeSoftKeyMask  (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMaskID);
+  bool sendCommandChangeStringValue  (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength); // no response, no timeout... it's that simple...
+  bool sendCommandChangeStringValue  (IsoAgLib::iVtObjectString_c* rpc_objectstring); // no response, no timeout... it's that simple...
+  
+  //  Operation: sendCommandChangeChildLocation
+  //! Parameter:
+  //! @param rpc_object:
+  //! @param childObjectId:
+  //! @param dx:
+  //! @param dy:
+  bool sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y);
 
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE CHILD LOCATION COMMAND
   //  Operation: sendCommandChangeChildLocation
@@ -450,29 +476,14 @@ private:
   /** send "End of Object Pool" message */
   void indicateObjectPoolCompletion ();
 
-  bool startUpload (SendUpload_c* actSend);
+  bool startUploadCommand ();
 
+  void finishUploadCommand ();
+  
+  
   /**
     Command sending stuff...
   */
-  sendCommandState_t en_sendCommandState;
-  uint32_t ui32_sendCommandTimeout;
-  uint32_t ui32_sendCommandTimestamp;
-  uint8_t ui8_sendCommandError;
-  uint8_t ui8_commandParameter;
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  // as each SendCommand_c item is just 16Byte large, and an application
-  // can require a lot of items in the list ( examples need up to 150 items especially
-  // during init ), CHUNK Allocation is the strategy of choice
-  // Malloc_Alloc would cause too much overhead
-  // Numbers for 145 items: Malloc_Alloc: 3480Bytes; Chunk_Alloc: 2568Byte -> 912Byte fewer with Chunk Alloc
-  // ( single instance allocation can also cause time problems and could result in heavy
-  //   memory fragmentation ==>> here CHUNK Alloc is the only choice )
-  STL_NAMESPACE::list<SendCommand_c> q_sendCommand;
-  #else
-  STL_NAMESPACE::queue<SendCommand_c> q_sendCommand;
-  #endif
 
   bool vtAliveNew;
 
@@ -498,18 +509,34 @@ private:
   char* pc_versionLabel; // NULL if no Version Name is given
 
 
+  /// General Object-Pool state (empty, loaded, etc.)
+  objectPoolState_t en_objectPoolState;
+  
   /**
     Upload-State & Variables
   */
+  uploadType_t en_uploadType;
+  uploadCommandState_t en_uploadCommandState; // state only used if en_uploadType == "UploadCommand"
+  uploadPoolState_t en_uploadPoolState;       // state only used if en_uploadType == "UploadPool"
+   
   uint32_t ui32_uploadTimestamp;
   uint32_t ui32_uploadTimeout;
-  objectPoolState_t en_objectPoolState;
-  uploadState_t en_uploadState;
+  
+  uint8_t ui8_commandParameter; // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
+
+  
   uint8_t ui8_uploadError;
   uint8_t ui8_uploadRetry;
-  uploadType_t en_uploadType;
   MultiSend_c::sendSuccess_t en_sendSuccess;
   #ifdef USE_LIST_FOR_FIFO
+  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+  // as each SendCommand_c item is just 16Byte large, and an application
+  // can require a lot of items in the list ( examples need up to 150 items especially
+  // during init ), CHUNK Allocation is the strategy of choice
+  // Malloc_Alloc would cause too much overhead
+  // Numbers for 145 items: Malloc_Alloc: 3480Bytes; Chunk_Alloc: 2568Byte -> 912Byte fewer with Chunk Alloc
+  // ( single instance allocation can also cause time problems and could result in heavy
+  //   memory fragmentation ==>> here CHUNK Alloc is the only choice )
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   STL_NAMESPACE::list<SendUpload_c,STL_NAMESPACE::__malloc_alloc_template<0> >  q_sendUpload;
   #else

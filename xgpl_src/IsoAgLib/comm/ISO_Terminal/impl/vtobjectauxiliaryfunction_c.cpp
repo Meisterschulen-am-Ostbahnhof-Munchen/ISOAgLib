@@ -135,6 +135,13 @@ vtObjectAuxiliaryFunction_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childO
   return genericChangeChildLocation (rpc_childObject, dx, dy, b_updateObject, vtObjectAuxiliaryFunction_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAuxiliaryFunction_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAuxiliaryFunction_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryFunction_s));
 }
 
+bool
+vtObjectAuxiliaryFunction_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_updateObject)
+{
+  MACRO_localVars;
+  return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectAuxiliaryFunction_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAuxiliaryFunction_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAuxiliaryFunction_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryFunction_s));
+}
+
 // //////////////////////////////// +X2C Operation 232 : setOriginSKM
 //! Parameter:
 //! @param b_SKM: 

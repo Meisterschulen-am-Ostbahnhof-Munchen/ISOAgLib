@@ -84,7 +84,7 @@ public:
   //! Parameter:
   //! @param newWidth: 
   //! @param b_updateObject: 
-  void setWidth(uint16_t newWidth, bool b_updateObject) {
+  void setWidth(uint16_t newWidth, bool b_updateObject=false) {
     vtObjectRectangle_c::setWidth (newWidth, b_updateObject);
   };
 
@@ -92,7 +92,7 @@ public:
   //! Parameter:
   //! @param newHeight: 
   //! @param b_updateObject: 
-  void setHeight(uint16_t newHeight, bool b_updateObject) {
+  void setHeight(uint16_t newHeight, bool b_updateObject=false) {
     vtObjectRectangle_c::setHeight (newHeight, b_updateObject);
   };
 
@@ -100,7 +100,7 @@ public:
   //! Parameter:
   //! @param newLineAttribute: 
   //! @param b_updateObject: 
-  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject) {
+  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false) {
     vtObjectRectangle_c::setLineAttributes (newLineAttributes, b_updateObject);
   };
 
@@ -108,7 +108,7 @@ public:
   //! Parameter:
   //! @param newLineSupressionValue: 
   //! @param b_updateObject: 
-  void setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject) {
+  void setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject=false) {
     vtObjectRectangle_c::setLineSuppression (newLineSupressionValue, b_updateObject);
   };
 
@@ -116,7 +116,7 @@ public:
   //! Parameter:
   //! @param newFillAttribute: 
   //! @param b_updateObject: 
-  void setFillAttributes(iVtObjectFillAttributes_c* newFillAttribute, bool b_updateObject) {
+  void setFillAttributes(iVtObjectFillAttributes_c* newFillAttribute, bool b_updateObject=false) {
     vtObjectRectangle_c::setFillAttributes (newFillAttribute, b_updateObject);
   };
  

@@ -171,7 +171,7 @@ public:
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputString_s), 7, newValue, newValue);
   }
 
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false);
 
 }; // ~X2C
 

@@ -95,8 +95,7 @@ public:
     uint8_t options;
     uint8_t startAngle;
     uint8_t endAngle;
-/** @todo  to change from uint8_t to uint16_t */
-    uint8_t barGraphWidth;
+    uint16_t barGraphWidth;
     uint16_t minValue;
     uint16_t maxValue;
     iVtObject_c* variableReference;
@@ -251,7 +250,7 @@ public:
     uint8_t backgroundColour;
     uint8_t keyCode;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow; // no ChangeChildLocation possible
+    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   } iVtObjectKey_s;
@@ -425,7 +424,7 @@ public:
     uint8_t selectable;
     iVtObjectMask_c* activeMask; // data or alarm mask
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow; // no ChangeChildLocation possible
+    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     uint8_t numberOfLanguagesToFollow;
@@ -439,7 +438,7 @@ public:
     uint8_t functionType;
     uint8_t inputId;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow; // no ChangeChildLocation possible
+    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   } iVtObjectAuxiliaryInput_s;
 
 // Added by  Brad Cox Oct 25 2004
@@ -448,7 +447,7 @@ public:
     uint8_t backgroundColour;
     uint8_t functionType;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow; // no ChangeChildLocation possible
+    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   } iVtObjectAuxiliaryFunction_s;
 
 // METHODS

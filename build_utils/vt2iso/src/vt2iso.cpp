@@ -469,6 +469,7 @@ void clean_exit (int return_value, char* error_message=NULL)
    fprintf (partFileF, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
    fprintf (partFileF, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
    fprintf (partFileF, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
+   fprintf (partFileF, "\n  virtual void eventEnterSafeState ();");
    fprintf (partFileF, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
    fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
    fprintf (partFileF, "\n  void initAllObjectsOnce();");

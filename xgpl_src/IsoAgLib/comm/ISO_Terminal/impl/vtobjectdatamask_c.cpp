@@ -161,5 +161,12 @@ vtObjectDataMask_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, in
 }
 
 
+bool
+vtObjectDataMask_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_updateObject)
+{
+  MACRO_localVars;
+  return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectDataMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectDataMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectDataMask_a(), objectsToFollow), sizeof(iVtObjectDataMask_s));
+}
+
 
 } // end of namespace __IsoAgLib

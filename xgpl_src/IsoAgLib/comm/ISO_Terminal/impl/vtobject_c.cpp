@@ -161,9 +161,9 @@ vtObject_c::saveValuePSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_st
 }
 
 bool
-vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int8_t dx, int8_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
+vtObject_c::genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
 { // ~X2C
-    // Find the child object in question
+  // Find the child object in question
   for(int8_t i = 0; i < numObjectsToFollow; i++) {  
     if (childObject->getID() == objectsToFollow[i].vtObject->getID()) {
       if (b_updateObject) {
@@ -178,14 +178,34 @@ vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int8
           saveValueP(ui16_structOffset, ui16_structLen, (IsoAgLib::iVtObject_c *)objectsToFollow);
           flags |= FLAG_OBJECTS2FOLLOW_IN_RAM;
         } 
-        int8_t x = objectsToFollow[i].x; objectsToFollow[i].x = x + dx + 127;
-        int8_t y = objectsToFollow[i].y; objectsToFollow[i].y = y + dy + 127;
+        if (rb_isLocation) {
+          objectsToFollow[i].x = objectsToFollow[i].x + dx;
+          objectsToFollow[i].y = objectsToFollow[i].y + dy;
+        } else {
+          objectsToFollow[i].x = dx;
+          objectsToFollow[i].y = dy;
+        }
       }
-      __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildLocation (this, childObject, dx, dy);
       return true; // Object was child object, so its position could be changed --> return TRUE!
     }
   }
   return false; // Object was not child object --> return FALSE!
 } // -X2C
+
+bool
+vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int8_t dx, int8_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
+{
+  bool b_result = genericChangeChildLocationPosition (true, childObject, dx, dy, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
+  if (b_result) __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildLocation (this, childObject, dx, dy);
+  return b_result;
+}
+
+bool
+vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t x, int16_t y, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
+{
+  bool b_result = genericChangeChildLocationPosition (false, childObject, x, y, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
+  if (b_result) __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildPosition (this, childObject, x, y);
+  return b_result;
+}
 
 } // end of namespace __IsoAgLib

@@ -170,4 +170,11 @@ vtObjectAlarmMask_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, i
   return genericChangeChildLocation (rpc_childObject, dx, dy, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAlarmMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s));
 }
 
+bool
+vtObjectAlarmMask_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_updateObject)
+{
+  MACRO_localVars;
+  return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAlarmMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s));
+}
+
 } // end of namespace __IsoAgLib

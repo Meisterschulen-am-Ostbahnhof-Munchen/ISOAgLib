@@ -96,11 +96,7 @@ vtObjectStringStreamer_c::setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspD
 { // ~X2C
   uint8_t bytesDone=0;
   if (streamPosition == 0) {
-    uploadBuffer [0] = 179; // Command: "Command" --- Parameter: "Change String Value"
-    uploadBuffer [1] = getID () & 0xFF;
-    uploadBuffer [2] = getID () >> 8;
-    uploadBuffer [3] = ui16_strLenToSend & 0xFF;
-    uploadBuffer [4] = ui16_strLenToSend >> 8;
+    set5ByteCommandHeader(uploadBuffer);
     bytesDone = 5;
 
     streamPosition += 5;
@@ -115,6 +111,16 @@ vtObjectStringStreamer_c::setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspD
   mspData->setDataPart (uploadBuffer, 0, bytes);
 } // -X2C
 
+
+void
+vtObjectStringStreamer_c::set5ByteCommandHeader(uint8_t* destinBuffer)
+{
+  destinBuffer [0] = getFirstByte(); // 179 == Command: "Command" --- Parameter: "Change String Value"
+  destinBuffer [1] = getID () & 0xFF;
+  destinBuffer [2] = getID () >> 8;
+  destinBuffer [3] = ui16_strLenToSend & 0xFF;
+  destinBuffer [4] = ui16_strLenToSend >> 8;
+}
 
 // //////////////////////////////// +X2C Operation 249 : resetDataNextStreamPart
 void

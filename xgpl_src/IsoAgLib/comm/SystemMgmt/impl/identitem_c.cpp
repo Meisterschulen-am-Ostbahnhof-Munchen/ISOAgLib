@@ -547,7 +547,10 @@ void IdentItem_c::close( void )
       (default 0xFFFF for NO EEPROM store)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IdentItem_c::init(GetyPos_c* rpc_gtp, const uint8_t* rpb_name
+void IdentItem_c::init(GetyPos_c* rpc_gtp, const uint8_t* 
+    #ifdef USE_DIN_9684
+    rpb_name // ifdef'd to avoid compiler warning in DIN case where this parameter is not used!
+    #endif
     #ifdef USE_ISO_11783
     , const uint8_t* rpb_isoName, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr
     #endif

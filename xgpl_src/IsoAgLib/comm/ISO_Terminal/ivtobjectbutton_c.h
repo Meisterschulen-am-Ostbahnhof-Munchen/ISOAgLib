@@ -142,8 +142,17 @@ public:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
-  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject) {
+  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
     return vtObjectButton_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject);
+  }
+
+  //  Operation: setChildPosition
+  //! Parameter:
+  //! @param rpc_childObject:
+  //! @param dx:
+  //! @param dy:
+  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false) {
+    return vtObjectButton_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject);
   }
 
 }; // ~X2C

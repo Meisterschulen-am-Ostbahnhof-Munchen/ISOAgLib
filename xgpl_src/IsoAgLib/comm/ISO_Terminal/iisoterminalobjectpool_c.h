@@ -187,6 +187,12 @@ public:
   virtual void eventObjectPoolUploadedSuccessfully()=0;
 
   /**
+    hook function that gets called immediately after recognizing
+    the loss of the VT (VT Status Msg not coming for >= 3secs.)
+  */
+  virtual void eventEnterSafeState ()=0;
+  
+  /**
     this init function has to be idempotent!
   */
   virtual void initAllObjectsOnce()=0;

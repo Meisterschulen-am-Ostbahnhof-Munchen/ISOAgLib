@@ -328,6 +328,8 @@ void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t 
   }
 }
 
+static int x=0; // ### REMOVE for RELEASE! ###
+
 // incoming key-events
 void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/ )
 {
@@ -352,20 +354,25 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         updateAccel (10);
         updateMiles (0);
         iVtObjectValSpeed.setValue (valSpeed);
+        iVtObjectColLabel.setValueCopy ("cp", true); // ### REMOVE for RELEASE! ###
         break;
 
       case vtKeyCodeKeyMove:
         valSpeed += valAccel;
         updateMiles(valMiles + valSpeed);
         iVtObjectValSpeed.setValue (valSpeed);
+        iVtObjectColLabel.setValueRef ("r", true);   // ### REMOVE for RELEASE! ###
         break;
 
       case vtKeyCodeKeyMoreAccel:
         updateAccel (valAccel + 1);
+        x+=10; // ### REMOVE for RELEASE! ###
+        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, x,0); // ### REMOVE for RELEASE! ###
         break;
 
       case vtKeyCodeKeyLessAccel:
         updateAccel (valAccel - 1);
+        iVtObjectcontainerInAllMasks.moveChildLocation (&iVtObjectBigLogo, -10,0); // ### REMOVE for RELEASE! ###
         break;
 
       // Use b_updateObject here to save and access the hidden state directly via the object!
@@ -398,7 +405,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
 void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully ()
 {
-  iVtObjectColLabel.setValueRef ("Color:", true);
+  iVtObjectColLabel.setValueRef ("Color:", true); // this is done so the initial state is up again if VT lost and reconnected!
   iVtObjectColOS.setVariableReference (colTable [color]);
   iVtObjectFontAttributesNormal6x8.setFontColour (fgcolTable [color]);
   if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden) iVtObjectcontainerInAllMasks.hide ();
@@ -406,6 +413,15 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully ()
   updateMiles(valMiles);
   iVtObjectValSpeed.setValue (valSpeed);
 }
+
+void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
+{
+  // Nothing done here for now. (Commands being sent out to the VT are ignored by IsoTerminalServer_c)
+  // As it's a simple Tutorial example there's nothing in real danger!
+  // But take care of this function if using for real!!!
+}
+
+
 
 static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
 
@@ -419,7 +435,7 @@ static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
 int main()
 { // simply call startImi
 
-  getIcanInstance().init( 0, 250 );
+  getIcanInstance().init( CAN_BUS_USED, 250 );
 
   // variable for GETY_POS
   // default with primary cultivation mounted back

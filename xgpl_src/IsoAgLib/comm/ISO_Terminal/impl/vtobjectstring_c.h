@@ -117,25 +117,31 @@ class vtObjectStringStreamer_c : public MultiSendStreamer_c
   //  Operation: getStreamSize
   uint32_t getStreamSize();
 
-	void setStringToStream( const char* rpc_stringToStream ) { pc_stringToStream = rpc_stringToStream;};
-	void setStrLenToSend( uint16_t rui16_strLenToSend ) { ui16_strLenToSend = rui16_strLenToSend;};
+  uint8_t getFirstByte () { return 179; /* Command: "Command" --- Parameter: "Change String Value"; */ };
+
+  const char* getStringToStream() { return pc_stringToStream; };
+
+  void set5ByteCommandHeader(uint8_t* destinBuffer);
+
+  void setStringToStream( const char* rpc_stringToStream ) { pc_stringToStream = rpc_stringToStream;};
+  void setStrLenToSend( uint16_t rui16_strLenToSend ) { ui16_strLenToSend = rui16_strLenToSend;};
 
   //  Operation: getID
   uint16_t getID() { return vtObject_a_ID; };
   //  Operation: setID
   void setID( uint16_t rui16_id ) { vtObject_a_ID = rui16_id; };
  private:
-	// ID from the connected __IsoAgLib::vtObject_c
-	uint16_t vtObject_a_ID;
-	// those both will be set before multisending is getting started.
+  // ID from the connected __IsoAgLib::vtObject_c
+  uint16_t vtObject_a_ID;
+  // those both will be set before multisending is getting started.
   const char* pc_stringToStream;
   uint16_t ui16_strLenToSend;
 
   //  Attribute: streamPosition
   uint32_t streamPosition;
 
-  //  Attribute: uploadBuffer [16]
-  uint8_t /* for safety only */ uploadBuffer [16];
+  //  Attribute: uploadBuffer [7+1]
+  uint8_t uploadBuffer [7+1]; /* "+1" for safety only */ 
 
   //  Attribute: streamPositionStored
   uint32_t streamPositionStored;

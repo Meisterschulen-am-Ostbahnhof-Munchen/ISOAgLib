@@ -128,7 +128,7 @@ public:
   //! Parameter:
   //! @param newLineAttribute: 
   //! @param b_updateObject: 
-  void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject) {
+  void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes) : 0, sizeof(iVtObjectRectangle_s), 1 /* "Line Attribute" */, (IsoAgLib::iVtObject_c*) newLineAttributes);
   };
   
@@ -136,7 +136,7 @@ public:
   //! Parameter:
   //! @param newWidth: 
   //! @param b_updateObject: 
-  void setWidth(uint16_t newWidth, bool b_updateObject) {
+  void setWidth(uint16_t newWidth, bool b_updateObject=false) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), width) : 0, sizeof(iVtObjectRectangle_s), 2 /* "Width" */, newWidth);
   };
 
@@ -144,7 +144,7 @@ public:
   //! Parameter:
   //! @param newHeight: 
   //! @param b_updateObject: 
-  void setHeight(uint16_t newHeight, bool b_updateObject) {
+  void setHeight(uint16_t newHeight, bool b_updateObject=false) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), height) : 0, sizeof(iVtObjectRectangle_s), 3 /* "Height" */, newHeight);
   };
 
@@ -152,7 +152,7 @@ public:
   //! Parameter:
   //! @param newLineSupressionValue: 
   //! @param b_updateObject: 
-  void setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject) {
+  void setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression) : 0, sizeof(iVtObjectRectangle_s), 4 /* "Line Suppression" */, newLineSupressionValue, newLineSupressionValue);
   };
 
@@ -160,7 +160,7 @@ public:
   //! Parameter:
   //! @param newFillAttribute: 
   //! @param b_updateObject: 
-  void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject) {
+  void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes) : 0, sizeof(iVtObjectRectangle_s), 5 /* "Fill Attributes" */, (IsoAgLib::iVtObject_c*) newFillAttributes);
   };
 

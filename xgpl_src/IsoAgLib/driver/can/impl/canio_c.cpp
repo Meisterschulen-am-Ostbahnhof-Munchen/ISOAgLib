@@ -245,10 +245,12 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     /* ****************************** */
     // check rui8_minObjNr, rui8_maxObjNr and rui8_busNumber
     if (
-        (rui8_minObjNr < HAL_CAN_MIN_SEND_OBJ)
-      ||(rui8_minObjNr > HAL_CAN_MAX_SEND_OBJ)
-      ||(rui8_maxObjNr < HAL_CAN_MIN_SEND_OBJ)
+        (rui8_minObjNr > HAL_CAN_MAX_SEND_OBJ)
       ||(rui8_maxObjNr > HAL_CAN_MAX_SEND_OBJ)
+    #if HAL_CAN_MIN_SEND_OBJ > 0
+      ||(rui8_minObjNr < HAL_CAN_MIN_SEND_OBJ) // use this comparison only for (HAL_CAN_MIN_SEND_OBJ > 0), else it gives a warning!
+      ||(rui8_maxObjNr < HAL_CAN_MIN_SEND_OBJ) // use this comparison only for (HAL_CAN_MIN_SEND_OBJ > 0), else it gives a warning!
+    #endif
       ||(rui8_busNumber > HAL_CAN_MAX_BUS_NR)
         )
     { // one of the range tests not passed

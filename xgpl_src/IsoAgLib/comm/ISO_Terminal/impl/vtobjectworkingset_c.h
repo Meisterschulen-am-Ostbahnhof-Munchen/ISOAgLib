@@ -140,6 +140,8 @@ public:
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false);
 
+  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false);
+
 }; // ~X2C
 
 } // end of namespace __IsoAgLib

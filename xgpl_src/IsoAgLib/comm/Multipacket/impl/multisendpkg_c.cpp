@@ -189,20 +189,25 @@ void MultiSendPkg_c::setData_2ByteInteger(uint8_t rb_pos, uint16_t rui16_val)
   set the 7 uint8_t data part of transfer message
   @param rpb_source source data pointer
   @param ri32_pos uint8_t position in data string to start
-  @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+  @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7) {Anyway MAX 7 bytes!!}
 */
 void MultiSendPkg_c::setDataPart( HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize)
 {
   #ifdef USE_HUGE_MEM
   HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
-  for (uint8_t ui8_ind = 0; ui8_ind < rb_partSize; ui8_ind++)
+  uint8_t ui8_ind=0;
+  for (; ui8_ind < rb_partSize; ui8_ind++)
   {
     pb_data[ui8_ind+1] = pb_source[ui8_ind];
   }
+  for (; ui8_ind < 7; ui8_ind++)
+  {
+    pb_data[ui8_ind+1] = 0xFF;
+  }
   #else
   CNAMESPACE::memcpy(pb_data+1, rpb_source + ri32_pos, rb_partSize);
-  #endif
   CNAMESPACE::memset(pb_data+1+rb_partSize,0xFF, (7-rb_partSize));
+  #endif
 }
 
 } // end of namespace __IsoAgLib

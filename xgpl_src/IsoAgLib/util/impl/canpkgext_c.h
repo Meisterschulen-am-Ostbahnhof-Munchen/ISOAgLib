@@ -263,6 +263,29 @@ public:
   */
   void setIsoPri(uint8_t rb_val){setIdent( ((ident(3)&1) | (rb_val << 2)), 3, Ident_c::ExtendedIdent);};
 
+  void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
+    CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
+    setIsoPri(pri);
+    setIsoDp(dp);
+    setIsoPf(pf);
+    setIsoPs(ps);
+    setIsoSa(sa);
+    setLen (len);
+  }
+  
+  void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2) {
+    CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
+    setIsoPri(pri);
+    setIsoDp(dp);
+    setIsoPf(pf);
+    setIsoPs(ps);
+    setIsoSa(sa);
+    setUint8Data (0, d0);
+    setUint8Data (1, d1);
+    setUint8Data (2, d2);
+    setLen (3);
+  }
+  
   void setExtCanPkg8(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7) {
     CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
@@ -279,19 +302,6 @@ public:
     setUint8Data (6, d6);
     setUint8Data (7, d7);
     setLen (8);
-  }
-
-  void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2) {
-    CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
-    setIsoPri(pri);
-    setIsoDp(dp);
-    setIsoPf(pf);
-    setIsoPs(ps);
-    setIsoSa(sa);
-    setUint8Data (0, d0);
-    setUint8Data (1, d1);
-    setUint8Data (2, d2);
-    setLen (3);
   }
   // end of block with ISO 11783 specific functions
   #endif
