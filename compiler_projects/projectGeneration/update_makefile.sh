@@ -1183,10 +1183,8 @@ function create_EdePrj()
   rm -f $PROJECT_FILE_NAME.1
 
 	sed -e 's#=_=_#\\#g' $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
-	mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
-	echo $CMDLINE | sh
-
-  # org test
+	echo "Convert UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
+	awk '{ gsub("$", "\r"); print $0;}' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
 }
 
 function create_VCPrj()
@@ -1322,7 +1320,7 @@ function create_VCPrj()
 	echo "# End Project" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 	echo "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-	sed -e 's/$/\r/' $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+	awk '{ gsub("$", "\r"); print $0;}' $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
 	mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
   cd $DEV_PRJ_DIR
   # org test
@@ -1532,8 +1530,9 @@ case "$USE_CAN_DRIVER" in
 			pc_linux | pc_win32)
 			;;
 			*)
+				echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
 				USE_CAN_DRIVER="sys"
-				echo "Override simulating CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
 	;;
@@ -1558,8 +1557,9 @@ case "$USE_CAN_DRIVER" in
 				exit 1
 			;;
 			*)
+				echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
 				USE_CAN_DRIVER="sys"
-				echo "Override rte CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
 	;;
@@ -1573,8 +1573,9 @@ case "$USE_CAN_DRIVER" in
 			pc_win32)
 			;;
 			*)
+				echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
 				USE_CAN_DRIVER="sys"
-				echo "Override Vector CANLIB CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
 	;;
@@ -1588,8 +1589,9 @@ case "$USE_CAN_DRIVER" in
 			pc_win32)
 			;;
 			*)
+				echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
 				USE_CAN_DRIVER="sys"
-				echo "Override Vector XL CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
 	;;
@@ -1604,8 +1606,9 @@ case "$USE_CAN_DRIVER" in
 				echo "The contents of the Sontheim CAN API ZIP file should be extracted in directory $USE_WIN32_HEADER_DIRECTORY/Sontheim so that CANAPI.DLL is in that directory!"
 			;;
 			*)
+				echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
 				USE_CAN_DRIVER="sys"
-				echo "Override Sontheim CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+				PARAMETER_CAN_DRIVER="sys"
 			;;
 		esac
 	;;
@@ -1626,8 +1629,9 @@ case "$USE_RS232_DRIVER" in
 			pc_linux | pc_win32)
 			;;
 			*)
+				echo "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
 				USE_RS232_DRIVER="sys"
-				echo "Override simulating RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
+				PARAMETER_RS232_DRIVER="sys"
 			;;
 		esac
 	;;
@@ -1642,8 +1646,9 @@ case "$USE_RS232_DRIVER" in
 				echo "RTE RS232 driver can only used for target pc_linux -> Override by sys"
 			;;
 			*)
+				echo "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
 				USE_RS232_DRIVER="sys"
-				echo "Override rte RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
+				PARAMETER_RS232_DRIVER="sys"
 			;;
 		esac
 	;;
