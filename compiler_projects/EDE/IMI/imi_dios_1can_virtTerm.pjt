@@ -4,7 +4,7 @@ ConfigSetExtMode=2
 ProjSetConfigFlags=0x00010140
 
 [Files]
-..\..\..\xgpl_src\__IsoAgLib\master_header.h
+..\..\..\xgpl_src\__IsoAgLib\isoaglib_config.h
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_namespace.h
 ..\..\..\xgpl_src\__IsoAgLib\HwCAN\can_io.cpp
 ..\..\..\xgpl_src\__IsoAgLib\HwCAN\can_io.h
@@ -120,7 +120,7 @@ ProjSetConfigFlags=0x00010140
 ..\..\..\xgpl_src\__IsoAgLib\Util\util_funcs.cpp
 ..\..\..\xgpl_src\Application_Config\eeprom_adr.h
 ..\..\..\xgpl_src\Application_Config\isoaglib_config.h
-..\..\..\xgpl_src\Lib\master_header.h
+..\..\..\xgpl_src\Lib\isoaglib_config.h
 ..\..\..\xgpl_src\Lib\HwCAN\ican_io.h
 ..\..\..\xgpl_src\Lib\HwEEPROM\ieeprom_io.h
 ..\..\..\xgpl_src\Lib\HwSystem\isystem.h
@@ -349,8 +349,8 @@ d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\can_pkg_ext.cpp=d:\Work
 d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\can_pkg_ext.h=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\can_pkg.h
 d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\_element_base.cpp=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\_element_base.h
 d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\_element_base.h=
-d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\master_header.h=
-d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\master_header.h=
+d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\isoaglib_config.h=
+d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\isoaglib_config.h=
 d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\hwbios\bios_namespace.h=
 d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_shared\err.cpp=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_shared\err.h
 d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_shared\err.h=
@@ -419,7 +419,7 @@ FileList7=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\adr_vect.c
 FileList8=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\ident_item.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\ident_item.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\istate.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\_system.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\_system.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\system_pkg.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\member_monitor.h,...
 FileList9=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\member_item.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\service_item.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\service_monitor.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\stop_manager.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\member_item.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\member_monitor.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\service_item.cpp,...
 FileList10=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\service_monitor.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\stop_manager.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_system\system_pkg.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\can_pkg.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\can_pkg.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\can_pkg_ext.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\can_pkg_ext.h,...
-FileList11=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\_element_base.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\_element_base.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\master_header.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\master_header.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\hwbios\bios_namespace.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_shared\err.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_shared\err.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\hweeprom\eeprom_io.h,...
+FileList11=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\_element_base.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\_element_base.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\isoaglib_config.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\isoaglib_config.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\hwbios\bios_namespace.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_shared\err.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_shared\err.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\hweeprom\eeprom_io.h,...
 FileList12=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\util\ringpuffer.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_system\istate.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_system\i_system.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_process\i_process.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_process\i_process_data_local.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_process\i_process_data_remote.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_process\imeasure_prog_local.h,...
 FileList13=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_process\imeasure_prog_remote.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_process\isetpoint_local.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_process\isetpoint_register.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_process\isetpoint_remote.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\_lib\_process\proc.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\application_config\isoaglib_config.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\hwconfig\config_pm167.h,...
 FileList14=d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\hwbios\bios_pm167\bios_namespace.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\hwbios\bios_pm167\mx1_0go.asm,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\hwbios\bios_pm167\xos20err.c,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_terminal\_terminal.cpp,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_terminal\_terminal.h,d:\Workshop_Cdrom\_library-0.2.0\isoaglib\__lbs_lib\_terminal\terminal_pkg.h,...

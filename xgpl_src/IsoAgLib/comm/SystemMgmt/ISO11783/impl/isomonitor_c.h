@@ -122,8 +122,13 @@ class ISOMonitor_c : public ElementBase_c, public CANCustomer_c, public Singleto
 {
 private:
   // private typedef alias names
+	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef std::slist<ISOItem_c,std::__malloc_alloc_template<0> > Vec_ISO;
   typedef std::slist<ISOItem_c,std::__malloc_alloc_template<0> >::iterator Vec_ISOIterator;
+	#else
+  typedef std::slist<ISOItem_c> Vec_ISO;
+  typedef std::slist<ISOItem_c>::iterator Vec_ISOIterator;
+	#endif
 
 public:
   /** initialisation for ISOMonitor_c which can store optional pointer to central Scheduler_c instance

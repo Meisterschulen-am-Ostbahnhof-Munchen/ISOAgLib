@@ -1,5 +1,5 @@
 /***************************************************************************
-                          halCanInterface.cc - CAN interface between
+                          hal_can_interface.cpp - CAN interface between
                                         BIOS/OS and IsoAgLib to concentrate
                                         CAN handling abstraction within
                                         one module
@@ -129,114 +129,123 @@ static uint32_t sui32_rxIrqCnt = 0;
 /** define one static CAN HW structure obj for direct send */
 static CAN_buf_Seed_def ss_tempSendObj;
 /** Buffer of CAN messages */
-static canBuffer_t arr_canBuffer[2][14] =
+static canBuffer_t arr_canBuffer[2][15] =
 { { (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL,
-    (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL },
+    (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL },
  { (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL,
-   (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL } };
+   (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL } };
+
+/** lock state
+	@todo directly use CAN controller register to lock a MsgObj */
+static bool b_canBufferLock[2][15] =
+{ { false, false, false, false, false, false, false,
+   false, false, false, false, false, false, false, false },
+  { false, false, false, false, false, false, false,
+   false, false, false, false, false, false, false, false } };
+
 /** standardID or extended ID */
-static uint8_t ui8_canBufferXtd[2][14] =
+static uint8_t ui8_canBufferXtd[2][15] =
 { { 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0 },
+    0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0 } };
+    0, 0, 0, 0, 0, 0, 0, 0 } };
 
 /** direction and open/close state per MSgObj: 0==RX, 1==TX, 0xFF==closed */
-static uint8_t ui8_canBufferDirectionState[2][14] =
+static uint8_t ui8_canBufferDirectionState[2][15] =
  { { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF },
+     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF },
    { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF } };
+     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF } };
 
 /** allocated size of buffer per MsgObj */
-static uint16_t ui16_canBufferMaxSize[2][14] =
+static uint16_t ui16_canBufferMaxSize[2][15] =
 { { 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0 },
+    0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0 } };
+    0, 0, 0, 0, 0, 0, 0, 0 } };
 /** amount of currently stored elements */
-static uint16_t ui16_canBufferSize[2][14] =
+static uint16_t ui16_canBufferSize[2][15] =
 { { 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0 },
+    0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0 } };
+    0, 0, 0, 0, 0, 0, 0, 0 } };
 
 /** read position in ringbuffer */
-static canBufferElement_t* pt_canBufferRead[2][14] =
+static canBufferElement_t* pt_canBufferRead[2][15] =
 { { arr_canBuffer[0][0], arr_canBuffer[0][1], arr_canBuffer[0][2], arr_canBuffer[0][3],
     arr_canBuffer[0][4], arr_canBuffer[0][5], arr_canBuffer[0][6], arr_canBuffer[0][7],
     arr_canBuffer[0][8], arr_canBuffer[0][9], arr_canBuffer[0][10], arr_canBuffer[0][11],
-    arr_canBuffer[0][12], arr_canBuffer[0][13] },
+    arr_canBuffer[0][12], arr_canBuffer[0][13], arr_canBuffer[0][14] },
   { arr_canBuffer[1][0], arr_canBuffer[1][1], arr_canBuffer[1][2], arr_canBuffer[1][3],
     arr_canBuffer[1][4], arr_canBuffer[1][5], arr_canBuffer[1][6], arr_canBuffer[1][7],
     arr_canBuffer[1][8], arr_canBuffer[1][9], arr_canBuffer[1][10], arr_canBuffer[1][11],
-    arr_canBuffer[1][12], arr_canBuffer[1][13] } };
+    arr_canBuffer[1][12], arr_canBuffer[1][13], arr_canBuffer[1][14] } };
 
 /** write position in ringbuffer */
-static canBufferElement_t* pt_canBufferWrite[2][14] =
+static canBufferElement_t* pt_canBufferWrite[2][15] =
 { { arr_canBuffer[0][0], arr_canBuffer[0][1], arr_canBuffer[0][2], arr_canBuffer[0][3],
     arr_canBuffer[0][4], arr_canBuffer[0][5], arr_canBuffer[0][6], arr_canBuffer[0][7],
     arr_canBuffer[0][8], arr_canBuffer[0][9], arr_canBuffer[0][10], arr_canBuffer[0][11],
-    arr_canBuffer[0][12], arr_canBuffer[0][13] },
+    arr_canBuffer[0][12], arr_canBuffer[0][13], arr_canBuffer[0][14] },
   { arr_canBuffer[1][0], arr_canBuffer[1][1], arr_canBuffer[1][2], arr_canBuffer[1][3],
     arr_canBuffer[1][4], arr_canBuffer[1][5], arr_canBuffer[1][6], arr_canBuffer[1][7],
     arr_canBuffer[1][8], arr_canBuffer[1][9], arr_canBuffer[1][10], arr_canBuffer[1][11],
-    arr_canBuffer[1][12], arr_canBuffer[1][13] } };
+    arr_canBuffer[1][12], arr_canBuffer[1][13], arr_canBuffer[1][14] } };
 
 /** write position in ringbuffer */
-static canBufferElement_t* pt_canBufferBegin[2][14] =
+static canBufferElement_t* pt_canBufferBegin[2][15] =
 { { arr_canBuffer[0][0], arr_canBuffer[0][1], arr_canBuffer[0][2], arr_canBuffer[0][3],
     arr_canBuffer[0][4], arr_canBuffer[0][5], arr_canBuffer[0][6], arr_canBuffer[0][7],
     arr_canBuffer[0][8], arr_canBuffer[0][9], arr_canBuffer[0][10], arr_canBuffer[0][11],
-    arr_canBuffer[0][12], arr_canBuffer[0][13] },
+    arr_canBuffer[0][12], arr_canBuffer[0][13], arr_canBuffer[0][14] },
   { arr_canBuffer[1][0], arr_canBuffer[1][1], arr_canBuffer[1][2], arr_canBuffer[1][3],
     arr_canBuffer[1][4], arr_canBuffer[1][5], arr_canBuffer[1][6], arr_canBuffer[1][7],
     arr_canBuffer[1][8], arr_canBuffer[1][9], arr_canBuffer[1][10], arr_canBuffer[1][11],
-    arr_canBuffer[1][12], arr_canBuffer[1][13] } };
+    arr_canBuffer[1][12], arr_canBuffer[1][13], arr_canBuffer[1][14] } };
 
 /** write position in ringbuffer */
-static canBufferElement_t* pt_canBufferEnd[2][14] =
+static canBufferElement_t* pt_canBufferEnd[2][15] =
 { { arr_canBuffer[0][0], arr_canBuffer[0][1], arr_canBuffer[0][2], arr_canBuffer[0][3],
     arr_canBuffer[0][4], arr_canBuffer[0][5], arr_canBuffer[0][6], arr_canBuffer[0][7],
     arr_canBuffer[0][8], arr_canBuffer[0][9], arr_canBuffer[0][10], arr_canBuffer[0][11],
-    arr_canBuffer[0][12], arr_canBuffer[0][13] },
+    arr_canBuffer[0][12], arr_canBuffer[0][13], arr_canBuffer[0][14] },
   { arr_canBuffer[1][0], arr_canBuffer[1][1], arr_canBuffer[1][2], arr_canBuffer[1][3],
     arr_canBuffer[1][4], arr_canBuffer[1][5], arr_canBuffer[1][6], arr_canBuffer[1][7],
     arr_canBuffer[1][8], arr_canBuffer[1][9], arr_canBuffer[1][10], arr_canBuffer[1][11],
-    arr_canBuffer[1][12], arr_canBuffer[1][13] } };
+    arr_canBuffer[1][12], arr_canBuffer[1][13], arr_canBuffer[1][14] } };
 
 /** if Application accesses the buffer -> set LOCK -> if IRQ a READ operation of the
     App on a receive buffer _must_ be retried as long as one process is not interrupted.
     On a send buffer, the sending IRQ can regard the buffer as empty, if
     the lock is set, and the current reported size is < 2 - avoid reading of a not
     aet complete written message */
-static bool b_appLock[2][14] =
+static bool b_appLock[2][15] =
 { { false, false, false, false, false, false, false,
-    false, false, false, false, false, false, false },
+    false, false, false, false, false, false, false, false },
  { false, false, false, false, false, false, false,
-   false, false, false, false, false, false, false } };
+   false, false, false, false, false, false, false, false } };
 
 /** store last used Baudrate */
 static uint8_t ui8_currentBaudrate[2] = { 0, 0 };
 
 /** low level helper function to check if buffer is full */
 bool isCanRingBufferFull( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj > 13 ) ) return true;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return true;
   return ( ui16_canBufferSize[rui8_busNr][rui8_msgObj] < ui16_canBufferMaxSize[rui8_busNr][rui8_msgObj] )?false:true;
 }
 /** low level helper function to check if buffer is empty */
 bool isCanRingBufferEmpty( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj > 13 ) ) return true;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return true;
   return ( ui16_canBufferSize[rui8_busNr][rui8_msgObj] == 0 )?true:false;
 }
 /** low level helper function to get current count of elements in buffer */
 uint16_t getCanRingBufferSize( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj > 13 ) ) return 0;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return 0;
   return ui16_canBufferSize[rui8_busNr][rui8_msgObj];
 }
 /** low level helper function to get current count of elements in buffer */
 uint16_t getCanRingBufferMaxSize( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj > 13 ) ) return 0;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return 0;
   return ui16_canBufferMaxSize[rui8_busNr][rui8_msgObj];
 }
 /** low level helper function to reset internal state of buffer:
@@ -244,7 +253,7 @@ uint16_t getCanRingBufferMaxSize( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
     - set size to 0
  */
 uint16_t resetCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj > 13 ) ) return 0;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return 0;
   _atomic( 4 );
   // set read and write pointer to first pointed CAN-Obj
   // in selected buffer <rui8_busNr, rui8_msgObj>
@@ -265,7 +274,7 @@ uint16_t resetCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
 
 /** low level helper function to write can data */
 canBufferElement_t* writeDataToCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj, bool rb_force = false ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj > 13 ) ) return NULL;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return NULL;
   // first check if buffer is already full and no overwrite is forced
   if ( ( isCanRingBufferFull( rui8_busNr, rui8_msgObj ) ) && ( ! rb_force ) ) return NULL;
 
@@ -302,7 +311,7 @@ canBufferElement_t* writeDataToCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_m
 }
 /** low level helper function to read can data */
 canBufferElement_t* readDataFromCanRingBuffer( uint8_t rui8_busNr, uint8_t rui8_msgObj ) {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj > 13 ) ) return NULL;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgObj> 14 ) ) return NULL;
   // first check if buffer is empty
   if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgObj ) ) return NULL;
 
@@ -406,7 +415,7 @@ bool can_stateGlobalOff(uint8_t rui8_busNr)
   this is the case if neither succesfull sent nor received msg
   is detcted AND CAN controller is in WARN or OFF state
   (the time since last succ. send/rec and the time of WARN/OFF
-   can be defined with MAX_CAN_ERR_TIME_BEFORE_CAN_SLOWERING
+   can be defined with CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
    in the application specific config file isoaglib_config
    -> should not be to short to avoid false alarm)
   @param rui8_busNr number of the BUS to check (default 0)
@@ -420,11 +429,11 @@ bool can_stateGlobalBlocked(uint8_t rui8_busNr)
   // sett b_busBlocked to false, if sign for
   // correct work was detected
   if ((i32_now - i32_cinterfLastSuccSend[rui8_busNr])
-      < MAX_SEND_WAIT_TIME)
+      < CONFIG_CAN_MAX_SEND_WAIT_TIME)
     b_busBlocked = false;
   // check if successful receive was detected
   if ((i32_now - i32_cinterfLastSuccReceive[rui8_busNr])
-      < MAX_SEND_WAIT_TIME)
+      < CONFIG_CAN_MAX_SEND_WAIT_TIME)
     b_busBlocked = false;
 
   // check if WARN or ERR was detected
@@ -432,7 +441,7 @@ bool can_stateGlobalBlocked(uint8_t rui8_busNr)
   if (
       (i32_cinterfBeginBusWarnOff[rui8_busNr] < 0)
     ||((i32_now - i32_cinterfBeginBusWarnOff[rui8_busNr])
-        < MAX_CAN_ERR_TIME_BEFORE_CAN_SLOWERING)
+        < CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING)
       )
   { // no WARN or OFF state is active for defined time
     b_busBlocked = false;
@@ -440,7 +449,7 @@ bool can_stateGlobalBlocked(uint8_t rui8_busNr)
   if (
       (i32_cinterfBeginBit1err[rui8_busNr] < 0)
     ||((i32_now - i32_cinterfBeginBit1err[rui8_busNr])
-        < MAX_CAN_ERR_TIME_BEFORE_CAN_SLOWERING)
+        < CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING)
       )
   { // no Bit1Error state is active for defined time
     b_busBlocked = false;
@@ -494,23 +503,23 @@ bool can_stateGlobalBit1err(uint8_t rui8_busNr)
 */
 int32_t can_stateMsgobjTxok(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return 0;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return 0;
   return i32_cinterfLastSuccSend[rui8_busNr];
 }
 
 /**
   check if a send MsgObj can't send msgs from buffer to the
   BUS (detecetd by comparing the inactive time with
-  MAX_SEND_WAIT_TIME (defined in isoaglib_config)
+  CONFIG_CAN_MAX_SEND_WAIT_TIME (defined in isoaglib_config)
   @param rui8_busNr number of the BUS to check  [0..1]
   @param rui8_msgobjNr number of the MsgObj to check [0..13]
-  @return true -> longer than MAX_SEND_WAIT_TIME no msg sent on BUS
+  @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
 */
 bool can_stateMsgobjSendproblem(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return true;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
   const int32_t i32_now = HAL::getTime();
-  if (((i32_now - can_stateMsgobjTxok(rui8_busNr, rui8_msgobjNr)) > MAX_SEND_WAIT_TIME)
+  if (((i32_now - can_stateMsgobjTxok(rui8_busNr, rui8_msgobjNr)) > CONFIG_CAN_MAX_SEND_WAIT_TIME)
     && ( can_stateMsgobjBuffercnt(rui8_busNr, rui8_msgobjNr) > 0 ))
     return true;
   else return false;
@@ -520,12 +529,12 @@ bool can_stateMsgobjSendproblem(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
   test if buffer of a MsgObj is full (e.g. no more
   msg can be put into buffer (important for TX objects))
   @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check   [0..13]
+  @param rui8_msgobjNr number of the MsgObj to check [0..13]
   @return true -> buffer is full -> no further can_send allowed
 */
 bool can_stateMsgobjOverflow(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return true;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
   return ( can_stateMsgobjFreecnt( rui8_busNr, rui8_msgobjNr ) == 0 )?true:false;
 }
 
@@ -540,7 +549,7 @@ bool can_stateMsgobjOverflow(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 */
 int16_t can_stateMsgobjBuffercnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return 0;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return 0;
   return getCanRingBufferSize( rui8_busNr, rui8_msgobjNr );
 }
 
@@ -555,7 +564,7 @@ int16_t can_stateMsgobjBuffercnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 */
 int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return 0;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return 0;
   if ( getCanRingBufferMaxSize( rui8_busNr, rui8_msgobjNr ) > getCanRingBufferSize( rui8_busNr, rui8_msgobjNr ) )
     return ( getCanRingBufferMaxSize( rui8_busNr, rui8_msgobjNr ) - getCanRingBufferSize( rui8_busNr, rui8_msgobjNr ) );
   else return 0;
@@ -598,7 +607,7 @@ int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t 
   i32_cinterfBeginBit1err[rui8_busNr] = -1;
   i32_cinterfLastSuccSend[rui8_busNr] = i32_now;
   i32_cinterfLastSuccReceive[rui8_busNr] = i32_now;
-  for (uint8_t ui8_ind = 0; ui8_ind < 14; ui8_ind++) {
+  for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++) {
     ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
 	  ui8_canBufferXtd[rui8_busNr][ui8_ind] = 0;
 	  ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
@@ -740,7 +749,7 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
   }
   b_runningIrqSendProcess[rui8_busNr] = false;
   // set close state for all MsgObj as base config of BUS causes invalidation of all active MsgObj
-  for (uint8_t ui8_ind = 0; ui8_ind < 14; ui8_ind++) {
+  for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++) {
     ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
     b_appLock[rui8_busNr][ui8_ind] = false;
     resetCanRingBuffer( rui8_busNr, ui8_ind);
@@ -879,7 +888,7 @@ int16_t can_configGlobalClose(uint8_t rui8_busNr)
   #if 0
   put_rs232String( "GCl\n\r" );
   #endif
-  for (uint8_t ui8_ind = 0; ui8_ind < 14; ui8_ind++) {
+  for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++) {
     if ( ui8_canBufferDirectionState[rui8_busNr][ui8_ind] == 0xFF ) continue;
     ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
     b_appLock[rui8_busNr][ui8_ind] = false;
@@ -920,7 +929,7 @@ int16_t can_configGlobalClose(uint8_t rui8_busNr)
 */
 int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, uint8_t rb_rxtx)
 { // check for input vars
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) {
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) {
     char tempString[80];
     sprintf( tempString, "\n\rVerlasse can_configMsgobjInit() wegen RangeErr durch BusNr %hd, MsgObjNr %hd\n\r", rui8_busNr, rui8_msgobjNr );
     put_rs232String( (const uint8_t *) tempString );
@@ -933,8 +942,11 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
                     ?DEFAULT_IDENT_TYPE
                     :rrefc_ident.identType();
 
-  uint8_t ui8_bufferSize = RECEIVE_PUFFER_SIZE;
-  // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
+  uint8_t ui8_bufferSize = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
+	// unlock - if previously locked
+	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
+
+	// deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
   // deactivate CAN BUS durign re-config
   if ( rui8_busNr == 0 ) {
@@ -962,19 +974,20 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
 
   if (rb_rxtx == 0)
   { // receive
-    switch ( ui32_ident )
-    {
-      case 0x200:
-        ui8_bufferSize = RECEIVE_DIN_TARGET_PUFFER_SIZE;
-        break;
-      case 0x500:
-        ui8_bufferSize = RECEIVE_DIN_PARTNER_PUFFER_SIZE;
-        break;
-    }
+		ui8_bufferSize = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
+		const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
+		for ( uint8_t ind = 0; ind < CONFIG_CAN_HIGH_LOAD_IDENT_CNT; ind++ )
+		{
+			if ( highLoadCheckList[ind] == pt_config->dwId )
+			{
+				ui8_bufferSize = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
+				break;
+			}
+		}
   }
   else
   { // send
-    ui8_bufferSize = SEND_PUFFER_SIZE;
+    ui8_bufferSize = CONFIG_CAN_SEND_BUFFER_SIZE;
   }
   // if buffer is previously of different size - but yet allocated, delete
   if ( ( arr_canBuffer[rui8_busNr][rui8_msgobjNr] != NULL               )
@@ -1030,14 +1043,13 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
 */
 int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return HAL_RANGE_ERR;
+  // check for input vars
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
   if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] == 0xFF ) return HAL_CONFIG_ERR;
   ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr] = (rrefc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
                                                 ?DEFAULT_IDENT_TYPE
                                                 :rrefc_ident.identType();
 
-  // check for input vars
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return HAL_RANGE_ERR;
   #if 0
   char tempString[80];
   sprintf( tempString, "MsgChgid B%hd M%hd X%hd, Id0x%lx\n\r",
@@ -1048,8 +1060,10 @@ int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAg
   int32_t i32_waitEnd = HAL::getTime() + 500;
   while ( i32_waitEnd > HAL::getTime() ) tempString[0] = tempString[1] + 1;
   #endif
+	// unlock - if previously locked
+	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
 
-  // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
+	// deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
   if ( rui8_busNr == 0 ) {
     CAN1TxReady = FALSE;
@@ -1078,6 +1092,20 @@ int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAg
 }
 
 /**
+	lock a MsgObj to avoid further placement of messages into buffer.
+  @param rui8_busNr number of the BUS to config
+  @param rui8_msgobjNr number of the MsgObj to config
+	@param rb_doLock true==lock(default); false==unlock
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+	*/
+int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+{
+	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+}
+
+/**
   change the the send rate for one MsgObj by setting the minimum
   pause time between two messages [msec.]
   @param rui8_busNr number of the BUS to config
@@ -1103,7 +1131,9 @@ int16_t can_configMsgobjSendpause(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, uin
 int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
   // check for input vars
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return HAL_RANGE_ERR;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
+	// unlock - if previously locked
+	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
   #if 0
   char tempString[80];
   sprintf( tempString, "MsgClose B%hd M%hd\n\r",
@@ -1185,7 +1215,7 @@ void updateCanBusLoad(uint8_t rui8_busNr, uint8_t rb_dlc)
 */
 int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CANPkg_c* rpc_data)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return HAL_RANGE_ERR;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
   // a receive MsgObj is registered with 0xFF in corresponding ui8_cinterfLastSendBufCnt
   if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] != 1 ) return HAL_CONFIG_ERR;
   CAN_buf_Seed_def* p_tempSend = NULL;
@@ -1327,7 +1357,7 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
 */
 int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, int32_t &reflIdent)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return HAL_RANGE_ERR;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
   if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgobjNr ) ) return HAL_WARN_ERR;
   // a receive MsgObj is registered with 0 in corresponding ui8_canBufferDirectionState
   if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] != 0 ) return HAL_CONFIG_ERR;
@@ -1366,7 +1396,7 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
 */
 int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CANPkg_c* rpc_data)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return HAL_RANGE_ERR;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
   if ( isCanRingBufferEmpty( rui8_busNr, rui8_msgobjNr ) ) return HAL_WARN_ERR;
   // a receive MsgObj is registered with 0 in corresponding ui8_canBufferDirectionState
   if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] != 0 ) return HAL_CONFIG_ERR;
@@ -1446,7 +1476,7 @@ void can_useMsgobjIgnore(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 */
 int16_t can_useMsgobjClear(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > 13 ) ) return HAL_RANGE_ERR;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
   // a receive MsgObj is registered with 0 in corresponding ui8_canBufferDirectionState
   if ( ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr] != 1 ) return HAL_CONFIG_ERR;
   // reset buffer state
@@ -1543,9 +1573,9 @@ interrupt (XP0INT) _using(CAN1_ISR) void CAN1_Isr(void)
       if( CAN1_MsgLost( ui8_msgObjInd ) ) {
         // maybe do some special action on lost msg - but mainly cause clear of register bit
       }
-      if ( CAN1_NewData( ui8_msgObjInd ) ) {
+      if ( ( CAN1_NewData( ui8_msgObjInd ) ) && ( ! b_canBufferLock[0][ui8_msgObjInd] ) ) {
         // The CAN controller has stored a new message
-        // into this object.
+        // into this object - and this msgObj is not marked as locked
         if ( isCanRingBufferFull( 0, ui8_msgObjInd ) ) {
           // clear so that potentially interrupted read action of App can detect
           // that in overflowe condition, the next data must be read
@@ -1554,7 +1584,7 @@ interrupt (XP0INT) _using(CAN1_ISR) void CAN1_Isr(void)
         pt_tempElement = writeDataToCanRingBuffer( 0, ui8_msgObjInd, true );
         CAN1_GetMsgObj( ui8_msgObjInd , &( pt_tempElement->data ) );
         pt_tempElement->timestamp = ci32_now;
-		sui32_lastIdent = pt_tempElement->data.id;
+				sui32_lastIdent = pt_tempElement->data.id;
       }
       CAN1_ReleaseObj( ui8_msgObjInd );
     }
@@ -1578,7 +1608,7 @@ interrupt (XP0INT) _using(CAN1_ISR) void CAN1_Isr(void)
 		CAN1_ReleaseObj( ui8_msgObjInd );
         // search in other configureg send buffer for other waiting msgs
         pt_tempElement = NULL;
-        for ( ui8_msgObjInd = 0; ui8_msgObjInd < 14; ui8_msgObjInd++ ) {
+        for ( ui8_msgObjInd = 0; ui8_msgObjInd < 15; ui8_msgObjInd++ ) {
           // check if MsgObj buffer is TX and contains msgs to send
           if ( ( ui8_canBufferDirectionState[0][ui8_msgObjInd] == 1 )
             && ( ! isCanRingBufferEmpty( 0, ui8_msgObjInd )         )
@@ -1693,9 +1723,9 @@ interrupt (XP1INT) _using(CAN2_ISR) void CAN2_Isr(void)
       if( CAN2_MsgLost( ui8_msgObjInd ) ) {
         // maybe do some special action on lost msg - but mainly cause clear of register bit
       }
-      if ( CAN2_NewData( ui8_msgObjInd ) ) {
+      if ( ( CAN2_NewData( ui8_msgObjInd ) ) && ( ! b_canBufferLock[1][ui8_msgObjInd] ) ) {
         // The CAN controller has stored a new message
-        // into this object.
+        // into this object - and this msgObj is not marked as locked
         if ( isCanRingBufferFull( 1, ui8_msgObjInd ) ) {
           // clear so that potentially interrupted read action of App can detect
           // that in overflowe condition, the next data must be read
@@ -1727,7 +1757,7 @@ interrupt (XP1INT) _using(CAN2_ISR) void CAN2_Isr(void)
 		CAN2_ReleaseObj( ui8_msgObjInd );
         // search in other configureg send buffer for other waiting msgs
         pt_tempElement = NULL;
-        for ( ui8_msgObjInd = 0; ui8_msgObjInd < 14; ui8_msgObjInd++ ) {
+        for ( ui8_msgObjInd = 0; ui8_msgObjInd < 15; ui8_msgObjInd++ ) {
           // check if MsgObj buffer is TX and contains msgs to send
           if ( ( ui8_canBufferDirectionState[1][ui8_msgObjInd] == 1 )
             && ( ! isCanRingBufferEmpty( 1, ui8_msgObjInd )         )

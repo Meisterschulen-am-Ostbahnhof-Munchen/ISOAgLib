@@ -215,6 +215,15 @@
 // is needed for the documentation generator
 using namespace IsoAgLib;
 
+/** define channel to write:
+ - provide data for tutorial example 1_1_ReadDin which reads on channel 0
+    -> select here the corresponding channel in your configuration
+			 ( e.g. select channel 1 for a 2-channel CAN-Hardware )
+	- simply write on channel 0, when no connection needed, or the connection is
+	  realized with another external connection
+*/
+static const int32_t cui32_canChannel = 1;
+
 
 /** dummy function to serve a year information - in reality a local RTC element could be used */
 uint16_t localGetYear() { return 2004; };
@@ -231,8 +240,8 @@ uint16_t localGetSecond() { return ((iSystem_c::getTime()/1000)%60); };
 
 
 int main()
-{ // simply call startImi
-  getIcanInstance().init( 0, 250 );
+{ // init CAN channel with 125kBaud at needed channel ( count starts with 0 )
+  getIcanInstance().init( cui32_canChannel, 125 );
   // variable for GETY_POS
   // default with tractor
   IsoAgLib::iGetyPos_c myGtp( 1, 5 );
@@ -264,13 +273,13 @@ int main()
 			only during address claim, mask updload and other special
 			circumstances in a high repetition rate )
 		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define BUFFER_SHORT_CAN_EN_LOSS_MSEC
+			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
 			in isoaglib_config.h to ignore short CAN_EN loss.
 		- This explicit control of power state without automatic powerdown on CanEn loss
 			can be controled with the central config define
-			#define DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
 			or
-			#define DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
 			in the header xgpl_src/Application_Config/isoaglib_config.h
 		- This can be also controlled during runtime with the function call:
 			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )

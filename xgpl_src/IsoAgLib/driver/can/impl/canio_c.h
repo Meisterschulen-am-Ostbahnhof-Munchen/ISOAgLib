@@ -143,13 +143,21 @@ class CANIO_c : public SingletonCANIO_c {
     define dynamic array of MsgObj_c instances for each hardware
     MsgObj_c one object instances in array
   */
+	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef std::slist<MsgObj_c,std::__malloc_alloc_template<0> > ArrMsgObj;
+	#else
+  typedef std::slist<MsgObj_c> ArrMsgObj;
+	#endif
   /**
     define dynamic array of FilterBox_c instances;
     if a __IsoAgLib::CANCustomer_c creates one FilterBox_c definitions,
     one object instance is inserted in array
   */
+	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef std::slist<FilterBox_c,std::__malloc_alloc_template<0> > ArrFilterBox;
+	#else
+  typedef std::slist<FilterBox_c> ArrFilterBox;
+	#endif
 
  public:
 
@@ -164,7 +172,7 @@ class CANIO_c : public SingletonCANIO_c {
     then the configuration settings of a previous init call are not
     changed. In this case, the CAN BUS is only reset with the old settings.
     This is enabled by the default value 0xFF for rui8_busNumber, which is
-    changed to DEFAULT_BUS_NUMBER for the first call of init() after the constructor.
+    changed to CONFIG_CAN_DEFAULT_BUS_NUMBER for the first call of init() after the constructor.
     In all other cases, the special value 0xFF is indicator for empty parameter list.
 
     possible errors:
@@ -191,8 +199,8 @@ class CANIO_c : public SingletonCANIO_c {
   bool init(uint8_t rui8_busNumber = 0xFF,
         uint16_t rui16_bitrate = DEFAULT_BITRATE,
         Ident_c::identType_t ren_identType = DEFAULT_CONFIG_IDENT_TYPE,
-        uint8_t rui8_minObjNr = DEFAULT_MIN_OBJ_NR,
-        uint8_t rui8_maxObjNr = DEFAULT_MAX_OBJ_NR
+        uint8_t rui8_minObjNr = CONFIG_CAN_DEFAULT_MIN_OBJ_NR,
+        uint8_t rui8_maxObjNr = CONFIG_CAN_DEFAULT_MAX_OBJ_NR
         );
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
@@ -215,7 +223,7 @@ class CANIO_c : public SingletonCANIO_c {
 
   /** provide BUS number */
 	uint8_t getBusNumber( void ) const { return ui8_busNumber;};
-  /**
+	/**
     deliver actual BUS load in baud
     @return baudrate in [kbaud] on used CAN BUS
   */

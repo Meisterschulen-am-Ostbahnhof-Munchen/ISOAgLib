@@ -115,7 +115,7 @@ namespace HAL
     @param rui8_channel channel number of output [0..11]
     @return max possible PWM value
   */
-  inline uint16_t getMaxPwmDigout(uint8_t rui8_channel)
+  inline uint16_t getMaxPwmDigout(uint8_t /* rui8_channel */ )
   { return 0xFFFF; };
 
   /**
@@ -144,7 +144,7 @@ namespace HAL
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
     */
-  inline int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent)
+  inline int16_t getDigoutDiagnose(uint8_t /* rui8_channel */, uint16_t /* rui16_minCurrent */, uint16_t /* rui16_maxCurrent */)
   {
     return HAL_NO_ERR;
   };

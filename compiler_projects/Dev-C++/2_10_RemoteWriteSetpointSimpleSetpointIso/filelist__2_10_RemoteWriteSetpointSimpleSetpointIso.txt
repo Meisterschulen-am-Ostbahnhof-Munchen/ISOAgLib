@@ -25,13 +25,15 @@
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.cpp
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_10_RemoteWriteSetpointSimpleSetpointIso/2_10_RemoteWriteSetpointSimpleSetpointIso.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -65,7 +67,7 @@
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
-../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.h
@@ -108,5 +110,8 @@
 ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-D:\Development\VectorInformatik\XL Driver Library\bin\vxlapi.lib
-D:\Development\VectorInformatik\XL Driver Library\bin\vxlapi.h
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.h
+../../../xgpl_src/supplementary_driver/hal/rs232.h
+../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
+../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
+D:\Development\Sontheim=_=CANAPI.H

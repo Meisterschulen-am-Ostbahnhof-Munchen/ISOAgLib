@@ -210,17 +210,17 @@ CANPkgExt_c& ISOMonitor_c::dataBase()
   @return true -> all planned activities performed in allowed time
 */
 bool ISOMonitor_c::timeEvent( void ){
-  #if defined(ISO_ITEM_MAX_AGE)
+  #if CONFIG_ISO_ITEM_MAX_AGE > 0
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   int32_t i32_now = Scheduler_c::getLastTimeEventTrigger();
-  
+
   bool b_repeat = true;
   while ((!vec_isoMember.empty()) && b_repeat) {
     b_repeat = false;
     for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
-    { // delete item, if it didn't answer longer than ISO_ITEM_MAX_AGE since last adress claim request
-      int32_t i32_timeSinceLastRequestWithMaxAge = (i32_now - lastIsoSaRequest()) + ISO_ITEM_MAX_AGE;
+    { // delete item, if it didn't answer longer than CONFIG_ISO_ITEM_MAX_AGE since last adress claim request
+      int32_t i32_timeSinceLastRequestWithMaxAge = (i32_now - lastIsoSaRequest()) + CONFIG_ISO_ITEM_MAX_AGE;
       int32_t i32_timeSinceLastAdressClaim = pc_iter->lastedTime();
       if ((i32_timeSinceLastRequestWithMaxAge > 0)
       && (i32_timeSinceLastRequestWithMaxAge < i32_timeSinceLastAdressClaim)

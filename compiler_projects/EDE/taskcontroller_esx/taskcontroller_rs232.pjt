@@ -4,7 +4,7 @@ ConfigSetExtMode=2
 ProjSetConfigFlags=0x00010140
 
 [Files]
-..\..\..\xgpl_src\__IsoAgLib\master_header.h
+..\..\..\xgpl_src\__IsoAgLib\isoaglib_config.h
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_namespace.h
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_esx\bios_namespace.h
 ..\..\..\commercial_BIOS\bios_esx\Xos20err.c
@@ -142,7 +142,7 @@ ProjSetConfigFlags=0x00010140
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_esx\bios_extenders.c
 ..\..\..\xgpl_src\__IsoAgLib\HwSensor\counter_i.h
 ..\..\..\xgpl_src\__IsoAgLib\HwSensor\counter_i.cpp
-..\..\..\xgpl_src\Lib\imaster_header.h
+..\..\..\xgpl_src\Lib\iisoaglib_config.h
 ..\..\..\xgpl_src\__IsoAgLib\System\monitor_item.h
 ..\..\..\xgpl_src\__IsoAgLib\System\monitor_item.cpp
 ..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\procdatamanager.h
@@ -188,7 +188,7 @@ SrchSetAgainFlags=0x02096004,1
 FileSortMode=0x0
 _StateView='C:\develop\c166\include.cpp\STL_FUNCTION.H',110,110,817,453,-1,-1,505,1,493,1,1,'',0x00100009,0,80,0,0,''
 _StateBuffer='C:\develop\c166\include.cpp\STL_FUNCTION.H',0x8400048e,505,1,25,'3 5','',0x0,'',1,72,1
-_StateHistory=FILELIST,'..\..\..\xgpl_src\Lib\Scheduler\i.h','..\..\..\xgpl_src\__IsoAgLib\master_header.h','..\..\..\xgpl_src\__IsoAgLib\Process\measure_prog_base.cpp','C:\develop\c166\include.cpp\STL_ALGO.H','C:\develop\c166\include.cpp\LIST','C:\develop\c166\include.cpp\STL_LIST.H','C:\develop\c166\include.cpp\STL_CONFIG.H','..\..\..\xgpl_src\__IsoAgLib\Process\_gps.cpp','C:\develop\c166\include.cpp\STL_FUNCTION.H'
+_StateHistory=FILELIST,'..\..\..\xgpl_src\Lib\Scheduler\i.h','..\..\..\xgpl_src\__IsoAgLib\isoaglib_config.h','..\..\..\xgpl_src\__IsoAgLib\Process\measure_prog_base.cpp','C:\develop\c166\include.cpp\STL_ALGO.H','C:\develop\c166\include.cpp\LIST','C:\develop\c166\include.cpp\STL_LIST.H','C:\develop\c166\include.cpp\STL_CONFIG.H','..\..\..\xgpl_src\__IsoAgLib\Process\_gps.cpp','C:\develop\c166\include.cpp\STL_FUNCTION.H'
 _StateHistory=SEARCH,'::LBS_Process::','::LBS_System::','stl_algo.h','stl_algo','find(','list<','list','__STL_BEGIN_NAMESPACE','int2float','pb_tmp_val'
 _StateHistory=REPLACE,'::nHwSystem::','HwSystem','0.2.0','::nHwEEPROM::','::nLBS::','::nRS232::','::nHwRS232::','::nLBS_Base::','::nLBS_Process::','::nLBS_System::'
 _StateHistory=XSYMBOL,'get_modul','lbs_system','din_member_cnt_announced','p_hardware','get_time'

@@ -67,7 +67,7 @@ int16_t  setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency)
    return HAL_NO_ERR;
 }
 /* set pwm value 0 ... 100 %*/
-int16_t  setDigout(uint8_t bOutputNo, uint16_t wPWMValue)
+int16_t  setDigout(uint8_t /* bOutputNo */, uint16_t /* wPWMValue */ )
 {
   #if 0
 	printf("digout fuer Kanal %i auf %i gesetzt\n", bOutputNo, wPWMValue);

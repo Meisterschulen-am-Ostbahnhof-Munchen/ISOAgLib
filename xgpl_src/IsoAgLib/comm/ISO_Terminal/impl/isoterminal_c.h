@@ -46,37 +46,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef ISO_TERMINAL_H
@@ -204,7 +204,7 @@ public:
     uint8_t  skHeight;
   } vtCapabilities_s;
 
-  
+
   /**
     struct that stores the Language and Units information
     received from the LANGUAGE_PGN
@@ -226,8 +226,8 @@ public:
     uint8_t  uVolume;
     uint8_t  uMass;
   } localSettings_s;
-  
-  
+
+
   /**
     default destructor, which initiate sending address release for all own identities
     @see MemberMonitor::~MemberMonitor
@@ -273,7 +273,7 @@ public:
     de-register registered object pool and versionLabel
   */
   bool deregisterIsoObjectPool ();
-  
+
   /**
     deliver reference to data pkg
     @return reference to the member BasePkg_c, which encapsulates the CAN send structure
@@ -347,7 +347,7 @@ public:
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE CHILD LOCATION COMMAND
 	//  Operation: sendCommandChangeChildLocation
 	//! Parameter:
-	//! @param rpc_object: 
+	//! @param rpc_object:
 	//! @param childObjectId:
 	//! @param dx:
 	//! @param dy:
@@ -355,26 +355,26 @@ public:
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE BACKGROUND COLOUR COMMAND
 	//  Operation: sendCommandChangeBackgroundColor
 	//! Parameter:
-	//! @param objectId: 
+	//! @param objectId:
 	//! @param colorValue:
   bool sendCommandChangeBackgroundColour(IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour);
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE PRIORITY COMMAND
 	//  Operation: sendCommandChangePriority
 	//! Parameter:
-	//! @param objectId: 
+	//! @param objectId:
 	//! @param colorValue:
   bool sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority);
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE SIZE COMMAND
   //  Operation: sendCommandChangeSize
   //! Parameter:
-  //! @param rpc_object: 
+  //! @param rpc_object:
   //! @param newWidth:
   //! @param newHeight:
   bool sendCommandChangeSize(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight);
 
   //  Operation: sendCommandChangeEndPoint
   //! Parameter:
-  //! @param rpc_object: 
+  //! @param rpc_object:
   //! @param newWidth:
   //! @param newHeight:
   //! @param newLineDirection:
@@ -384,7 +384,7 @@ public:
 // ADDED BY BRAD COX 17-SEP-2004 TO IMPLEMENT CHANGE FILL ATTRIBUTES COMMAND
 	//  Operation: sendCommandChangeSize
 	//! Parameter:
-	//! @param rpc_object: 
+	//! @param rpc_object:
 	//! @param newFillType:
 	//! @param newFillColour:
 	//! @param newFillPatternObject:
@@ -416,7 +416,7 @@ private:
   void indicateObjectPoolCompletion ();
 
   bool startUpload (SendUpload_c* actSend);
-  
+
   /**
     Command sending stuff...
   */
@@ -436,11 +436,11 @@ private:
 	//   memory fragmentation ==>> here CHUNK Alloc is the only choice )
   std::list<SendCommand_c> q_sendCommand;
   #else
-  std::queue<SendCommand_c, std::deque<SendCommand_c,std::__malloc_alloc_template<0> > > q_sendCommand;
+  std::queue<SendCommand_c> q_sendCommand;
   #endif
 
   bool vtAliveNew;
-  
+
   /** gets set as soon as the first "VT Status Message" gets received */
   uint8_t vtSourceAddress;
   /** stores the last "VT Status Message" */
@@ -466,7 +466,7 @@ private:
 
   // the values of registerIsoObjectPool gets stored here
   IsoAgLib::iIsoTerminalObjectPool_c* pc_pool;
-  
+
   char* pc_versionLabel; // NULL if no Version Name is given
 
 
@@ -482,10 +482,13 @@ private:
   uploadType_t en_uploadType;
   MultiSend_c::sendSuccess_t en_sendSuccess;
   #ifdef USE_LIST_FOR_FIFO
+	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   std::list<SendUpload_c,std::__malloc_alloc_template<0> >  q_sendUpload;
-//  std::list<SendUpload_c>  q_sendUpload;
+	#else
+  std::list<SendUpload_c>  q_sendUpload;
+	#endif
   #else
-  std::queue<SendUpload_c, std::deque<SendUpload_c,std::__malloc_alloc_template<0> > > q_sendUpload;
+  std::queue<SendUpload_c> q_sendUpload;
   #endif
 
   uint32_t ui32_objectStreamPosition;

@@ -241,10 +241,10 @@ bool DINMonitor_c::timeEvent( void ){
           collectAdrvect.setUsedAdr(pc_iterItem->nr());
           allOrVect |= pc_iterItem->adrvect();
         }
-  
-        #if defined(MEMBER_ITEM_MAX_AGE)
+
+        #if CONFIG_DIN_ITEM_MAX_AGE > 0
         // clean every 3sec. inactive member items from list
-        if ((pc_iterItem->lastedTime() > MEMBER_ITEM_MAX_AGE) && (!(pc_iterItem->itemState(IState_c::Local))))
+        if ((pc_iterItem->lastedTime() > CONFIG_DIN_ITEM_MAX_AGE) && (!(pc_iterItem->itemState(IState_c::Local))))
         {
           Vec_MemberIterator pc_iterDelete = pc_iterItem;
           #ifdef USE_ISO_11783
@@ -269,7 +269,7 @@ bool DINMonitor_c::timeEvent( void ){
           #endif
           b_repeat = true;
           break;
-  // Old version:      
+  // Old version:
   //        return true;        // return from this function, as the iterator might get problem after erase
         }
         #endif
@@ -816,7 +816,7 @@ bool DINMonitor_c::freeNrAvailable(bool rb_eraseInactiveItem)
 
   // if no number is free search for item with claimed address,
   // which didn't sent alive for min 3 sec
-#ifdef MEMBER_ITEM_MAX_AGE
+#if CONFIG_DIN_ITEM_MAX_AGE > 0
   if (true)
 #else
   if (!b_result && rb_eraseInactiveItem)
@@ -837,11 +837,11 @@ bool DINMonitor_c::freeNrAvailable(bool rb_eraseInactiveItem)
         b_result = true; // now one adress is free
         break;
        }
-#ifdef MEMBER_ITEM_MAX_AGE
+#if CONFIG_DIN_ITEM_MAX_AGE > 0
       else
       {
         aliveAge = dinMemberNr(i).lastedTime();
-        if (aliveAge > MEMBER_ITEM_MAX_AGE)
+        if (aliveAge > CONFIG_DIN_ITEM_MAX_AGE)
         { // this item isn't active any more -> possibly reuse this nr
           clearUsedAdr(i);
           b_result = true; // now one adress is free

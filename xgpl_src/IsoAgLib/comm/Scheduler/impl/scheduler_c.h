@@ -48,37 +48,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef SCHEDULER_H
@@ -191,16 +191,9 @@ private: //Private methods
   Scheduler_c() {init();};
 
 private: // Private attributes
+	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   /** vector of execution times for all registered timeEvent clients */
   std::vector<int16_t,std::__malloc_alloc_template<0> > arrExecTime;
-  /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
-  static int32_t i32_lastTimeEventTime;
-  /** commanded timestamp, where Scheduler_c::timeEvent MUST return action to caller */
-  static int32_t i32_demandedExecEnd;
-  /** average execution time for Scheduler_c::timeEvent */
-  int32_t i32_averageExecTime;
-  /** execution time of last call of CANIO_c::timeEvent() */
-  int16_t i16_canExecTime;
   /** iterator to continue each timeEvent after end of last timeEvent call
       -> cache in execution time vector
     */
@@ -209,6 +202,26 @@ private: // Private attributes
       -> cache in client vector
     */
   std::vector<ElementBase_c*,std::__malloc_alloc_template<0> >::iterator pc_timeEventClientIter;
+	#else
+  /** vector of execution times for all registered timeEvent clients */
+  std::vector<int16_t> arrExecTime;
+  /** iterator to continue each timeEvent after end of last timeEvent call
+      -> cache in execution time vector
+    */
+  std::vector<int16_t>::iterator pc_timeEventTimeIter;
+  /** iterator to continue each timeEvent after end of last timeEvent call
+      -> cache in client vector
+    */
+  std::vector<ElementBase_c*>::iterator pc_timeEventClientIter;
+	#endif
+  /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
+  static int32_t i32_lastTimeEventTime;
+  /** commanded timestamp, where Scheduler_c::timeEvent MUST return action to caller */
+  static int32_t i32_demandedExecEnd;
+  /** average execution time for Scheduler_c::timeEvent */
+  int32_t i32_averageExecTime;
+  /** execution time of last call of CANIO_c::timeEvent() */
+  int16_t i16_canExecTime;
 
   /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
   static bool b_execStopForced;

@@ -56,7 +56,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <__IsoAgLib/master_header.h>
+#include <__IsoAgLib/isoaglib_config.h>
 #include <__IsoAgLib/HwBIOS/bios_namespace.h>
 #include <IsoAgLib/util/liberr_c.h>
 

@@ -1,12 +1,12 @@
 [Project]
 FileName=0_3_LookupIso__vector_canlib__simulating.dev
 Name=0_3_LookupIso
-UnitCount=87
+UnitCount=85
 Type=1
 Ver=1
 ObjFiles=
-Includes=../../..;../../../xgpl_src;../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_3_LookupIso;D:/Development/VectorInformatik/CANLIB/dll
-Libs=D:/Development/VectorInformatik/CANLIB/dll
+Includes=../../..;../../../xgpl_src;../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_3_LookupIso;D:/Development/CANLIB/dll
+Libs=D:/Development/CANLIB/dll
 Linker=-lvcand32_@@_
 PrivateResource=
 ResourceIncludes=
@@ -618,7 +618,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit58]
-FileName=../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 CompileCpp=1
 Folder=0_3_LookupIso
 Compile=1
@@ -868,26 +868,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit83]
-FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
-CompileCpp=1
-Folder=0_3_LookupIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit84]
-FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
-CompileCpp=1
-Folder=0_3_LookupIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit85]
 FileName=../../../xgpl_src/supplementary_driver/hal/rs232.h
 CompileCpp=1
 Folder=0_3_LookupIso
@@ -897,7 +877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit86]
+[Unit84]
 FileName=../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
 CompileCpp=1
 Folder=0_3_LookupIso
@@ -907,7 +887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit87]
+[Unit85]
 FileName=../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
 CompileCpp=1
 Folder=0_3_LookupIso

@@ -107,7 +107,7 @@ namespace HAL
     this is the case if neither succesfull sent nor received msg
     is detcted AND CAN controller is in WARN or OFF state
     (the time since last succ. send/rec and the time of WARN/OFF
-     can be defined with MAX_CAN_ERR_TIME_BEFORE_CAN_SLOWERING
+     can be defined with CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
      in the application specific config file isoaglib_config
      -> should not be to short to avoid false alarm)
     @param rui8_busNr number of the BUS to check (default 0)
@@ -154,10 +154,10 @@ namespace HAL
   /**
     check if a send MsgObj can't send msgs from buffer to the
     BUS (detecetd by comparing the inactive time with
-    MAX_SEND_WAIT_TIME (defined in isoaglib_config)
+    CONFIG_CAN_MAX_SEND_WAIT_TIME (defined in isoaglib_config)
     @param rui8_busNr number of the BUS to check
     @param rui8_msgobjNr number of the MsgObj to check
-    @return true -> longer than MAX_SEND_WAIT_TIME no msg sent on BUS
+    @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
   */
   inline bool can_stateMsgobjSendproblem(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
     {return __HAL::can_stateMsgobjSendproblem(rui8_busNr, rui8_msgobjNr);};

@@ -449,7 +449,7 @@ private: // Private methods
 private: // Private attributes
   /** data value as uint8_t string */
   uint8_t pb_data[5];
-  struct {
+  struct _bit_data {
     /** ZAEHLNUM for data */
     uint16_t ui8_zaehlnum : 8;
     /** EMPF forheader */

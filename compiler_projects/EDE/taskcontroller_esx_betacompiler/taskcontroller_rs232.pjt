@@ -4,7 +4,7 @@ ConfigSetExtMode=2
 ProjSetConfigFlags=0x00010140
 
 [Files]
-..\..\..\xgpl_src\__IsoAgLib\master_header.h
+..\..\..\xgpl_src\__IsoAgLib\isoaglib_config.h
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_namespace.h
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_esx\bios_namespace.h
 ..\..\..\commercial_BIOS\bios_esx\Xos20err.c
@@ -142,7 +142,7 @@ ProjSetConfigFlags=0x00010140
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_esx\bios_extenders.c
 ..\..\..\xgpl_src\__IsoAgLib\HwSensor\counter_i.h
 ..\..\..\xgpl_src\__IsoAgLib\HwSensor\counter_i.cpp
-..\..\..\xgpl_src\Lib\imaster_header.h
+..\..\..\xgpl_src\Lib\iisoaglib_config.h
 ..\..\..\xgpl_src\__IsoAgLib\System\monitor_item.h
 ..\..\..\xgpl_src\__IsoAgLib\System\monitor_item.cpp
 ..\..\..\IsoAgLib_Examples\Taskcontroller_Classes\procdatamanager.h

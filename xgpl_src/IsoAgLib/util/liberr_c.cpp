@@ -53,8 +53,6 @@
 #include "config.h"
 #include <IsoAgLib/hal/system.h>
 
-#define DEBUG
-
 #ifdef DEBUG
 #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
@@ -120,7 +118,7 @@ void LibErr_c::registerError( LibErr_c::LbsLibErrTypes_t rt_errType, LbsLibErrLo
     si32_nextDebug = HAL::getTime() + 500;
     st_lastDebugErrType = rt_errType;
     st_lastDebugErrLocation = rt_errLocation;
-    __IsoAgLib::getRs232Instance() 
+    __IsoAgLib::getRs232Instance()
       << "registerError( " << rt_errType << ", " << rt_errLocation << " )\r\n";
   }
 #endif

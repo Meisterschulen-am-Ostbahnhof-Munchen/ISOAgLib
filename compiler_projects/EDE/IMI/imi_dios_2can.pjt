@@ -4,7 +4,7 @@ ConfigSetExtMode=2
 ProjSetConfigFlags=0x00010140
 
 [Files]
-..\..\..\xgpl_src\__IsoAgLib\master_header.h
+..\..\..\xgpl_src\__IsoAgLib\isoaglib_config.h
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_namespace.h
 ..\..\..\xgpl_src\__IsoAgLib\HwCAN\can_io.cpp
 ..\..\..\xgpl_src\__IsoAgLib\HwCAN\can_io.h
@@ -88,7 +88,7 @@ ProjSetConfigFlags=0x00010140
 ..\..\..\xgpl_src\__IsoAgLib\Util\util_funcs.cpp
 ..\..\..\xgpl_src\Application_Config\eeprom_adr.h
 ..\..\..\xgpl_src\Application_Config\isoaglib_config.h
-..\..\..\xgpl_src\Lib\master_header.h
+..\..\..\xgpl_src\Lib\isoaglib_config.h
 ..\..\..\xgpl_src\Lib\HwCAN\ican_io.h
 ..\..\..\xgpl_src\Lib\HwEEPROM\ieeprom_io.h
 ..\..\..\xgpl_src\Lib\HwSystem\isystem.h

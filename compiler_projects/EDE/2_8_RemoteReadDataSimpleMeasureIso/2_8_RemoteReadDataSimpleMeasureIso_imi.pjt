@@ -153,6 +153,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\driver\can\impl\canio_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
+..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
 ..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_8_RemoteReadDataSimpleMeasureIso\2_8_RemoteReadDataSimpleMeasureIso.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\monitoritem_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.h
@@ -186,7 +187,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\icancustomer_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
-..\..\..\xgpl_src\IsoAgLib\util\symbol_shortening.h
+..\..\..\xgpl_src\IsoAgLib\util\compiler_adoption.h
 ..\..\..\xgpl_src\IsoAgLib\util\igetypos_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processelementbase_c.h
@@ -227,6 +228,9 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\driver\can\icanio_c.h
 ..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.h
 ..\..\..\xgpl_src\IsoAgLib\driver\system\isystem_c.h
+..\..\..\xgpl_src\supplementary_driver\hal\rs232.h
+..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.h
+..\..\..\xgpl_src\supplementary_driver\driver\rs232\irs232io_c.h
 ..\..\..\commercial_BIOS\bios_esx/Xos20go.asm
 ..\..\..\commercial_BIOS\bios_esx/Xos20err.c
 ..\..\..\commercial_BIOS\bios_esx/xos20esx.h

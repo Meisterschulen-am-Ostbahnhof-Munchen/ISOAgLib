@@ -71,8 +71,8 @@ USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 USE_EMBED_ILO="Xos20lcs.ilo"
 USE_EMBED_COMPILER_DIR="c:/programme/tasking/7.56/c166"
 
-USE_WIN32_LIB_DIRECTORY="D:/Development/VectorInformatik"
-USE_WIN32_HEADER_DIRECTORY="D:/Development/VectorInformatik"
+USE_WIN32_LIB_DIRECTORY="D:/Development"
+USE_WIN32_HEADER_DIRECTORY="D:/Development"
 USE_WIN32_CAN_HW_TYPE="HWTYPE_VIRTUAL"
 
 USE_STLPORT_HEADER_DIRECTORY="C:/STLport/stlport"
@@ -95,7 +95,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # variables
 # if one of the following variables isn't set
 # the corresponding default values are used
-# + USE_CAN_DRIVER="simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl" -> select wanted driver connection for CAN
+# + USE_CAN_DRIVER="simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim" -> select wanted driver connection for CAN
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
@@ -140,6 +140,11 @@ function check_set_correct_variables()
 	if [ "A$USE_FLOAT_DATA_TYPE" = "A" ] ; then
   	USE_FLOAT_DATA_TYPE=0
   fi
+
+	if [ "A$OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" = "A" ] ; then
+  	OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
+  fi
+
 
   if [ "A$CAN_BUS_CNT" = "A" ] ; then
   	CAN_BUS_CNT=1
@@ -297,7 +302,6 @@ function check_set_correct_variables()
 		fi
 	fi
 
-
   # preset some conditional vars
 	INC_LOC_STD_MEASURE_ELEMENTS=0
   INC_LOC_SIMPLE_MEASURE_ELEMENTS=0
@@ -320,64 +324,64 @@ function create_filelist( )
     if [ -n "$COMM_PROC_FEATURES" ] ; then
       COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o "
     fi
-    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*Process/impl/proc*'"
+    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*'"
 
 		if [ $PRJ_GPS -gt 0 ] ; then
 			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*gps_c.*'"
 		fi
 
     if [ $PROC_LOCAL -gt 0 ] ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Local/impl*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/impl/*'"
 
       if [ $PROC_LOCAL_STD -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Local/Std/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/Std/*'"
         INC_LOC_STD_MEASURE_ELEMENTS=1
         INC_LOC_STD_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_LOCAL_SIMPLE_MEASURE -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Local/SimpleMeasure/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/SimpleMeasure/*'"
         INC_LOC_STD_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_LOCAL_SIMPLE_SETPOINT -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Local/SimpleSetpoint/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/SimpleSetpoint/*'"
         INC_LOC_STD_MEASURE_ELEMENTS=1
         INC_LOC_SIMPLE_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_LOCAL_SIMPLE_MEASURE_SETPOINT -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Local/SimpleMeasureSetpoint/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/SimpleMeasureSetpoint/*'"
         INC_LOC_SIMPLE_SETPOINT_ELEMENTS=1
       fi
 
       if [ $INC_LOC_STD_MEASURE_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Local/StdMeasureElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/StdMeasureElements/*'"
       fi
       if [ $INC_LOC_STD_SETPOINT_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Local/StdSetpointElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/StdSetpointElements/*'"
       fi
       if [ $INC_LOC_SIMPLE_SETPOINT_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Local/SimpleSetpointElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/SimpleSetpointElements/*'"
       fi
     fi
     if [ $PROC_REMOTE -gt 0 ] ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Remote/impl*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/impl/*'"
 
       if [ $PROC_REMOTE_STD -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Remote/Std/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/Std/*'"
         INC_REM_STD_MEASURE_ELEMENTS=1
         INC_REM_STD_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_REMOTE_SIMPLE_MEASURE -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Remote/SimpleMeasure/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleMeasure/*'"
         INC_REM_SIMPLE_MEASURE_ELEMENTS=1
         INC_REM_STD_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_REMOTE_SIMPLE_SETPOINT -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Remote/SimpleSetpoint/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleSetpoint/*'"
         INC_REM_STD_MEASURE_ELEMENTS=1
         INC_REM_SIMPLE_SETPOINT_ELEMENTS=1
       fi
       if test $PROC_REMOTE_SIMPLE_MEASURE_SETPOINT -gt 0 -a $PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED -gt 0   ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Remote/SimpleMeasureSetpoint/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleMeasureSetpoint/*'"
         INC_REM_SIMPLE_MEASURE_ELEMENTS=1
         INC_REM_SIMPLE_SETPOINT_ELEMENTS=1
       elif [ $PROC_REMOTE_SIMPLE_MEASURE_SETPOINT -gt 0 ] ; then
@@ -388,24 +392,24 @@ function create_filelist( )
         COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*procdataremotesimplesetpointsimplemeasurecombined_c.*'"
 			fi
       if [ $INC_REM_STD_MEASURE_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Remote/StdMeasureElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/StdMeasureElements/*'"
       fi
       if [ $INC_REM_SIMPLE_MEASURE_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Remote/SimpleMeasureElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleMeasureElements/*'"
       fi
       if [ $INC_REM_STD_SETPOINT_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Remote/StdSetpointElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/StdSetpointElements/*'"
       fi
       if [ $INC_REM_SIMPLE_SETPOINT_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/Remote/SimpleSetpointElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleSetpointElements/*'"
       fi
     fi
 
     if test $INC_LOC_STD_MEASURE_ELEMENTS -gt 0 -o $INC_REM_STD_MEASURE_ELEMENTS -gt 0 ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/StdMeasureElements/*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/StdMeasureElements/*'"
     fi
     if test $INC_LOC_STD_SETPOINT_ELEMENTS -gt 0 -o $INC_REM_STD_SETPOINT_ELEMENTS -gt 0 ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*Process/StdSetpointElements/*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/StdSetpointElements/*'"
     fi
 
   fi
@@ -420,52 +424,55 @@ function create_filelist( )
 			;;
 	esac
 
-  COMM_FEATURES=" -path '*/IsoAgLib/typedef.h' -o -path '*hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'"
+  COMM_FEATURES=" -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'"
 	PRJ_MULTIPACKET=0
   if [ $PRJ_BASE -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/Base*'"
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
   fi
   if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal*'"
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*'"
     PRJ_MULTIPACKET=1
   fi
   if [ $PRJ_DIN_TERMINAL -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/DIN_Terminal*'"
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/DIN_Terminal/*'"
     PRJ_MULTIPACKET=1
   fi
   if [ $PRJ_MULTIPACKET -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket*'"
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/*'"
   fi
 
-	DRIVER_FEATURES=" -path '*driver/can*' -o  -path '*hal/"$HAL_PATH"/can/can*'  -o  -path '*hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*driver/system*' -o -path '*hal/"$HAL_PATH"/system*' -o -path '*/hal/system.h' -o -path '*hal/"$HAL_PATH"/errcodes.h' -o -path '*hal/"$HAL_PATH"/config.h'"
+	DRIVER_FEATURES=" -path '*/driver/can/*' -o  -path '*/hal/"$HAL_PATH"/can/can*'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*' -o -path '*/hal/"$HAL_PATH"/system*' -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'"
 
 
+  echo "CAN driver: $USE_CAN_DRIVER"
 	if [ $USE_CAN_DRIVER = "simulating" ] ; then
-		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/can/target_extension_can_simulating*'"
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_simulating*'"
 	elif [ $USE_CAN_DRIVER = "rte" ] ; then
-		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/can/target_extension_can_rte*'"
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_rte*'"
 	elif [ $USE_CAN_DRIVER = "sys" ] ; then
 		PLATFORM=`uname`
 		if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/can/target_extension_can_linux_sys*'"
+			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_linux_sys*'"
 		elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
-			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/can/target_extension_can_w32_sys*'"
+			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_sys*'"
 		fi
 	elif  [ $USE_CAN_DRIVER = "vector_canlib" ] ; then
-		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/can/target_extension_can_w32_vector_canlib*'"
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_vector_canlib*'"
 	elif  [ $USE_CAN_DRIVER = "vector_xl" ] ; then
-		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/can/target_extension_can_w32_vector_xl*'"
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_vector_xl*'"
+	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_sontheim_canlpt*'"
 	else
-		echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"'
+		echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim"'
 		echo 'Current Setting is $USE_CAN_DRIVER'
 		exit 3
 	fi
 
   if [ $PRJ_EEPROM -gt 0 ] ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*driver/eeprom*' -o -path '*hal/"$HAL_PATH"/eeprom*' -o -path '*/hal/eeprom.h' -o -name 'eeprom_adr.h'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/eeprom/*' -o -path '*/hal/"$HAL_PATH"/eeprom/*' -o -path '*/hal/eeprom.h' -o -name 'eeprom_adr.h'"
   fi
   if [ $PRJ_ACTOR -gt 0 ] ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*driver/actor*' -o -path '*hal/"$HAL_PATH"/actor*' -o -path '*/hal/actor.h'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/actor*' -o -path '*/hal/"$HAL_PATH"/actor/*' -o -path '*/hal/actor.h'"
   fi
   if [ $PRJ_SENSOR_DIGITAL -gt 0 ] ; then
     DRIVER_FEATURES="$DRIVER_FEATURES -o -name '*digitali_c.*'"
@@ -477,23 +484,24 @@ function create_filelist( )
     DRIVER_FEATURES="$DRIVER_FEATURES -o -name '*counteri.*'"
   fi
 	if test $PRJ_SENSOR_DIGITAL -gt 0 -o $PRJ_SENSOR_ANALOG -gt 0 -o $PRJ_SENSOR_COUNTER -gt 0 ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/sensor*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/sensor/*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'"
 	fi
   if [ $PRJ_RS232 -gt 0 ] ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*driver/rs232*' -o -path '*hal/"$HAL_PATH"/rs232/rs232*' -o -path '*/hal/rs232.h'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/rs232/*' -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*' -o -path '*/hal/rs232.h'"
+    echo "RS232 driver: $USE_RS232_DRIVER"
 		if [ $USE_RS232_DRIVER = "simulating" ] ; then
-			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
+			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
 		elif [ $USE_RS232_DRIVER = "rte" ] ; then
-			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'"
+			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'"
 		elif [ $USE_RS232_DRIVER = "sys" ] ; then
 			PLATFORM=`uname`
 			if [ $PLATFORM = "Linux" ] ; then
-				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'"
+				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'"
 			else
-				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
+				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
 			fi
 		else
-			echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"'
+			echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim"'
 			echo 'Current Setting is $USE_RS232_DRIVER'
 			exit 3
 		fi
@@ -526,19 +534,19 @@ function create_filelist( )
 	fi
   # find central elements
 	if [ $PRJ_DIN9684 -lt 1 ] ; then
-		EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path "*/DIN9684"*"
+		EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path '*/DIN9684/*'"
 	elif [ $PRJ_ISO11783 -lt 1 ] ; then
-		EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path "*/ISO11783"*"
+		EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path '*/ISO11783/*'"
 	else
 		EXCLUDE_FROM_SYSTEM_MGMT=""
 	fi
 	rm -f .exec.tmp
 	if [ $USE_TARGET_SYSTEM == "pc_linux" ] ; then
-		echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*System*' -o -path '*util*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" > .exec.tmp
-		echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*System*' -o -path '*util*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
+		echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'SOURCES += %h/%f\n' >> $FILELIST_QMAKE" > .exec.tmp
+		echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf 'HEADERS += %h/%f\n' >> $FILELIST_QMAKE" >> .exec.tmp
   fi
-	echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*System*' -o -path '*util*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
-  echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*System*' -o -path '*util*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
+	echo "find $LIB_ROOT $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_PURE" >> .exec.tmp
+  echo "find $LIB_ROOT -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_HDR" >> .exec.tmp
 
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
@@ -734,18 +742,39 @@ function create_autogen_project_config()
 		CONFIG_HEADER_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/config_header"'__'"$PROJECT-doc.txt"
 	fi
 
+  # first backup individual settings after line
+	# START_INDIVIDUAL_PROJECT_CONFIG
+	if [ -f $CONFIG_NAME ] ; then
+		grep -A1000 "// START_INDIVIDUAL_PROJECT_CONFIG"  $CONFIG_NAME > $CONFIG_NAME.bak
+	else
+		touch $CONFIG_NAME.bak
+	fi
 	rm -f $CONFIG_NAME
 	# write INST counts
 	CONFIG_HEADER_FILENAME=`basename $CONFIG_NAME`
 	echo "// File: $CONFIG_HEADER_FILENAME" > $CONFIG_NAME
-	echo "// IMPORTANT: Never change this header manually!!!" >> $CONFIG_NAME
+	echo "// IMPORTANT: Never change the first block of this header manually!!!" >> $CONFIG_NAME
 	echo "//            All manual changes are overwritten by the next call of \"update_makefile.sh $CONF_FILE\" " >> $CONFIG_NAME
 	echo "//            Perform changes direct in the feature and project setup file $CONF_FILE"  >> $CONFIG_NAME
+	echo "//  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after" >> $CONFIG_NAME
+	echo "//                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there."  >> $CONFIG_NAME
+	echo "//                    All commented out defines in the middle block will be upated on next \"update_makefile.sh $CONF_FILE\" call,"  >> $CONFIG_NAME
+	echo "//                    if the corresponding value in isoaglib_config.h changed" >> $CONFIG_NAME
 	echo -e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+
+
+	echo "// Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed" >> $CONFIG_NAME
+	echo "// Strong Advice: Don't activate this, as long your target has not too tight memory restrictions" >> $CONFIG_NAME
+	echo "// Initialization of CAN filters and of local process data might get too slow under worst case conditions" >> $CONFIG_NAME
+	if [ $OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED -gt 0 ] ; then
+		echo "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" >> $CONFIG_NAME
+	else
+		echo "// #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" >> $CONFIG_NAME
 	fi
 
 
@@ -784,6 +813,37 @@ function create_autogen_project_config()
 	if [ $PRJ_GPS -gt 0 ] ; then
 		echo -e "#ifndef USE_GPS $ENDLINE\t#define USE_GPS $ENDLINE#endif" >> $CONFIG_NAME
 	fi
+
+	# write overwriteable parts of isoaglib_config.h
+	echo -e "\n// The following configuration values can be overwritten." >> $CONFIG_NAME
+	echo "// These settings are initially defined in isoaglib_config.h ." >> $CONFIG_NAME
+	echo "// These settings are in commented-out, so that you can activate and adopt them by" >> $CONFIG_NAME
+	echo -e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG\n"  >> $CONFIG_NAME
+
+	for conf_line in `grep "#define CONFIG_" ../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/isoaglib_config.h | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g'` ; do
+		conf_name=`echo $conf_line | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g'`
+		INDIV_CNT=`grep -c $conf_name $CONFIG_NAME.bak`
+		if [ $INDIV_CNT -lt 1 ] ; then
+			grep -B1 "#define $conf_line" ../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/isoaglib_config.h >> $CONFIG_NAME
+			CMDLINE=`echo "sed -e 's|#define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $CONFIG_NAME.1"`
+			echo $CMDLINE | sh
+			mv $CONFIG_NAME.1 $CONFIG_NAME
+			echo -e -n "\n" >> $CONFIG_NAME
+		fi
+	done
+	echo -e "\n// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!" >> $CONFIG_NAME
+	FRESH=`grep -c "// START_INDIVIDUAL_PROJECT_CONFIG" $CONFIG_NAME.bak`
+	if [ $FRESH -lt 1 ] ; then
+		echo "// START_INDIVIDUAL_PROJECT_CONFIG" >> $CONFIG_NAME
+	fi
+	cat $CONFIG_NAME.bak >> $CONFIG_NAME
+	rm -f $CONFIG_NAME.bak
+
+	sed -e 's|^[ \t]*//|//|g' $CONFIG_NAME > $CONFIG_NAME.1
+	sed -e 's|^[ \t]*/\*|/\*|g' $CONFIG_NAME.1 > $CONFIG_NAME
+	rm -f $CONFIG_NAME.1
+
+
 
 	#echo "/**" > $CONFIG_HEADER_DOXYGEN_READY
 	#echo "* \section PrjConfig$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >> $CONFIG_HEADER_DOXYGEN_READY
@@ -874,12 +934,13 @@ function create_makefile()
 	# now create a Kdevelop3 project file
 	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/kdevelop3Generic.kdevelop $PROJECT.kdevelop
 
-	CMDLINE=`echo "perl -p -i -e 's/REPLACE_AUTHOR/$PROJECT_AUTHOR/g' $PROJECT.kdevelop"`
+	CMDLINE=`echo "sed -e 's/REPLACE_AUTHOR/$PROJECT_AUTHOR/g' $PROJECT.kdevelop > $PROJECT.kdevelop.1"`
 	echo $CMDLINE | sh
-	CMDLINE=`echo "perl -p -i -e 's/REPLACE_AUTHOR_EMAIL/$PROJECT_AUTHOR_EMAIL/g' $PROJECT.kdevelop"`
+	CMDLINE=`echo "sed -e 's/REPLACE_AUTHOR_EMAIL/$PROJECT_AUTHOR_EMAIL/g' $PROJECT.kdevelop.1 > $PROJECT.kdevelop"`
 	echo $CMDLINE | sh
-	CMDLINE=`echo "perl -p -i -e 's/REPLACE_PROJECT/$PROJECT/g' $PROJECT.kdevelop"`
+	CMDLINE=`echo "sed -e 's/REPLACE_PROJECT/$PROJECT/g' $PROJECT.kdevelop > $PROJECT.kdevelop.1"`
 	echo $CMDLINE | sh
+	mv $PROJECT.kdevelop.1 $PROJECT.kdevelop
 
 	echo "# KDevelop Custom Project File List" > $PROJECT.kdevelop.filelist
 	cat filelist__$PROJECT.txt >> $PROJECT.kdevelop.filelist
@@ -959,6 +1020,12 @@ function create_DevCCPrj() {
 		LIB_FILE_LINE="-lvxlapi_@@_"
 		DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
 		DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE=XL_'"$USE_WIN32_CAN_HW_TYPE"'_@@_'
+	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
+		INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;\"$USE_WIN32_HEADER_DIRECTORY/Sontheim\""
+		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY/Sontheim\""
+		LIB_FILE_LINE="-lvcanapi_@@_"
+		DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
+		DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_'
 	fi
 
 	echo "Includes=$INCLUDE_DIR_LINE" >> $PROJECT_FILE_NAME
@@ -1091,12 +1158,13 @@ function create_EdePrj()
 	# Build Tasking Project File by: a) first stub part; b) file list c) second stub part
 	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/EDE.part1.pjt $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
-	CMDLINE=`echo "perl -p -i -e 's#/#=_=_#g' $EdePrjFilelist"`
+	CMDLINE=`echo "sed -e 's#/#=_=_#g' $EdePrjFilelist > $EdePrjFilelist.1"`
 	echo $CMDLINE | sh
-	CMDLINE=`echo "perl -p -i -e 's#\x5c#=_=_#g'  $EdePrjFilelist"`
+	CMDLINE=`echo "sed -e 's#=_=_[0-9a-zA-Z_+\-]+=_=_\.\.##g'  $EdePrjFilelist.1 > $EdePrjFilelist"`
 	echo $CMDLINE | sh
-	CMDLINE=`echo "perl -p -i -e 's#=_=_[0-9a-zA-Z_+\-]+=_=_\.\.##g'  $EdePrjFilelist"`
+	CMDLINE=`echo "sed -e 's#=_=_[0-9a-zA-Z_+\-]+=_=_\.\.##g'  $EdePrjFilelist > $EdePrjFilelist.1"`
 	echo $CMDLINE | sh
+	mv $EdePrjFilelist.1  $EdePrjFilelist
   cat $EdePrjFilelist >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 	# insert specific BIOS/OS sources
@@ -1116,7 +1184,8 @@ function create_EdePrj()
 
   rm -f $PROJECT_FILE_NAME.1
 
-	CMDLINE=`echo "perl -p -i -e 's#=_=_#\x5c#g'  $PROJECT_FILE_NAME"`
+	sed -e 's#=_=_#\\#g' $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+	mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
 	echo $CMDLINE | sh
 
   # org test
@@ -1155,23 +1224,29 @@ function create_VCPrj()
 	USE_WIN32_LIB_DIRECTORY_WIN=`echo "$USE_WIN32_LIB_DIRECTORY_WIN" | sed -e 's#\\\#=_=_#g'`
 
 	if  [ $USE_CAN_DRIVER = "vector_canlib" ] ; then
-		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN\x5cxgpl_src"'" /I "'"$USE_PRJ_PATH_WIN"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN\x5cCANLIB\x5cdll"'"'
+		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_PRJ_PATH_WIN"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_CANLIB=_=_dll"'"'
 		USE_DEFINES="$USE_DEFINES"' /D ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
 		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
-		LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN\x5cCANLIB\x5cdll"
+		LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll"
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_vcandm32.lib" >> $DspPrjFilelist
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_VCanD.h" >> $DspPrjFilelist
 	elif  [ $USE_CAN_DRIVER = "vector_xl" ] ; then
-		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN\xgpl_src"'" /I "'"$USE_PRJ_PATH_WIN"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN\x5cXL Driver Library\x5cbin"'"'
+		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_PRJ_PATH_WIN"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"'"'
 		USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
 		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
-		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY_WIN\x5cXL Driver Library\x5cbin\""
+		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin\""
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.lib" >> $DspPrjFilelist
 		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.h" >> $DspPrjFilelist
+	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
+		USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_xgpl_src"'" /I "'"$USE_PRJ_PATH_WIN"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim"'"'
+		USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
+		USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
+		LIB_DIR_LINE="\"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim\""
+		echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=CANAPI.H" >> $DspPrjFilelist
 	fi
 
-	CMDLINE=`echo "perl -p -i -e 's#=_=_#\x5c#g'  $DspPrjFilelist"`
-	echo $CMDLINE | sh
+	sed -e 's#=_=_#\\#g'  $DspPrjFilelist > $DspPrjFilelist.1
+	mv $DspPrjFilelist.1 $DspPrjFilelist
 
 	#echo "Libs=$LIB_DIR_LINE"
 	#echo "Linker=$LIB_FILE_LINE"
@@ -1185,23 +1260,22 @@ function create_VCPrj()
 
   cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/vc6_prj_base.dsp $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
-	CMDLINE=`echo "perl -p -i -e 's#INSERT_PROJECT#$PROJECT#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
+	CMDLINE=`echo "sed -e 's#INSERT_PROJECT#$PROJECT#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"`
 	echo $CMDLINE | sh
 
-	CMDLINE=`echo "perl -p -i -e 's#INSERT_INCLUDE_PATHS#$USE_INCLUDE_PATHS#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
+	CMDLINE=`echo "sed -e 's#INSERT_INCLUDE_PATHS#$USE_INCLUDE_PATHS#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
 	echo $CMDLINE | sh
 
-	CMDLINE=`echo "perl -p -i -e 's#INSERT_DEFINES#$USE_DEFINES#g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
+	CMDLINE=`echo "sed -e 's#INSERT_DEFINES#$USE_DEFINES#g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"`
 	echo $CMDLINE | sh
 
-	CMDLINE=`echo "perl -p -i -e 's#INSERT_d_DEFINES#$USE_d_DEFINES#g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
+	CMDLINE=`echo "sed -e 's#INSERT_d_DEFINES#$USE_d_DEFINES#g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
 	echo $CMDLINE | sh
 
-	CMDLINE=`echo "perl -p -i -e 's#INSERT_CAN_LIB_PATH#$LIB_DIR_LINE#g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
+	CMDLINE=`echo "sed -e 's#INSERT_CAN_LIB_PATH#$LIB_DIR_LINE#g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"`
 	echo $CMDLINE | sh
 
-	CMDLINE=`echo "perl -p -i -e 's#=_=_#\x5c#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
-	echo $CMDLINE | sh
+  sed -e 's#=_=_#\\#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 
 	SOURCES=`grep -E "\.cc|\.cpp|\.c|\.lib" $DspPrjFilelist`
@@ -1249,10 +1323,9 @@ function create_VCPrj()
 	echo "# End Target" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 	echo "# End Project" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
-	if [ -e "/usr/bin/unix2dos" ] ; then
-		echo "Convert to Win32 End-Of-Line"
-		/usr/bin/unix2dos $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-	fi
+	echo "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
+	sed -e 's/$/\r/' $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+	mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
   cd $DEV_PRJ_DIR
   # org test
 }
@@ -1343,7 +1416,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     target which is specified in the configuration file
                                     ( "pc_linux"|"pc_win32"|"esx"|"imi"|"pm167"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
-                                    ( "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl" ).
+                                    ( "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl"|"sontheim" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte" ).
 
@@ -1438,126 +1511,150 @@ cd $START_DIR
 . $CONF_FILE
 
 # perform some checks based on user input
+# check for correct target system setting
 if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
 	USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
-	case "$PARAMETER_TARGET_SYSTEM" in
-		pc_linux | pc_win32 | esx | imi | pm167 | mitron167)
-		;;
-		*)
-		echo "Unknown target system $PARAMETER_TARGET_SYSTEM" 1>&2
-		usage
-		exit 1 ;;
-	esac
 fi
+case "$USE_TARGET_SYSTEM" in
+	pc_linux | pc_win32 | esx | imi | pm167 | mitron167)
+	;;
+	*)
+	echo "Unknown target system $USE_TARGET_SYSTEM" 1>&2
+	usage
+	exit 1 ;;
+esac
+
+# check for corrext CAN driver - and automatically adopt to embedded targets
 if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
-	case "$USE_TARGET_SYSTEM" in
-		esx | imi | pm167 | mitron167)
-		if [ $PARAMETER_CAN_DRIVER != "sys" ] ; then
-			echo "A selection of CAN_DRIVER other than sys is only applicable for PC." 1>&2
-			usage
-			exit 1
-		fi
-		;;
-	esac
-	case "$PARAMETER_CAN_DRIVER" in
-		simulating)
-			case "$USE_TARGET_SYSTEM" in
-				pc_linux | pc_win32)
-				;;
-				*)
-					PARAMETER_CAN_DRIVER="sys"
-					echo "Override simulating CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
-				;;
-			esac
-		;;
-		sys)
-			case "$USE_TARGET_SYSTEM" in
-				pc_linux | pc_win32)
-					echo "A selection of sys CAN_DRIVER is only applicable for embedded targets." 1>&2
-					usage
-					exit 1
-				;;
-				*)
-				;;
-			esac
-		;;
-		rte)
-			case "$USE_TARGET_SYSTEM" in
-				pc_linux)
-				;;
-				pc_win32)
-					echo "RTE CAN driver can only used for target pc_linux" 1>&2
-					usage
-					exit 1
-				;;
-				*)
-					PARAMETER_CAN_DRIVER="sys"
-					echo "Override rte CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
-				;;
-			esac
-		;;
-		vector_canlib)
-			case "$USE_TARGET_SYSTEM" in
-				pc_linux)
-					echo "Vector CANLIB driver can only used for target pc_win32" 1>&2
-					usage
-					exit 1
-				;;
-				pc_win32)
-				;;
-				*)
-					PARAMETER_CAN_DRIVER="sys"
-					echo "Override rte CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
-				;;
-			esac
-		;;
-		vector_xl)
-			case "$USE_TARGET_SYSTEM" in
-				pc_linux)
-					echo "Vector XL Driver Library can be only used for target pc_win32" 1>&2
-					usage
-					exit 1
-				;;
-				pc_win32)
-				;;
-				*)
-					PARAMETER_CAN_DRIVER="sys"
-					echo "Override rte CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
-				;;
-			esac
-		;;
-		*)
-			echo "Unknown CAN driver $PARAMETER_CAN_DRIVER" 1>&2
-			usage
-			exit 1
-			;;
-	esac
+	USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
 fi
-if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
-	case "$USE_TARGET_SYSTEM" in
-		esx | imi | pm167 | mitron167)
-		if [ $PARAMETER_RS232_DRIVER != "sys" ] ; then
-			echo "A selection of RS232_DRIVER other than sys is only applicable for PC." 1>&2
-			usage
-			exit 1
-		fi ;;
-	esac
-	case "$PARAMETER_RS232_DRIVER" in
-		simulating | sys)
-		;;
-		rte)
-			if [ $USE_TARGET_SYSTEM != "pc_linux" ] ; then
-				echo "RTE RS232 driver can only used for target pc_linux" 1>&2
+case "$USE_CAN_DRIVER" in
+	simulating)
+		case "$USE_TARGET_SYSTEM" in
+			pc_linux | pc_win32)
+			;;
+			*)
+				USE_CAN_DRIVER="sys"
+				echo "Override simulating CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+			;;
+		esac
+	;;
+	sys)
+		case "$USE_TARGET_SYSTEM" in
+			pc_linux | pc_win32)
+				echo "A selection of sys CAN_DRIVER is only applicable for embedded targets." 1>&2
+				usage
 				exit 1
-			fi
-		;;
-		*)
-			echo "Unknown RS232 driver $PARAMETER_RS232_DRIVER" 1>&2
-			usage
-			exit 1
 			;;
-	esac
+			*)
+			;;
+		esac
+	;;
+	rte)
+		case "$USE_TARGET_SYSTEM" in
+			pc_linux)
+			;;
+			pc_win32)
+				echo "RTE CAN driver can only used for target pc_linux" 1>&2
+				usage
+				exit 1
+			;;
+			*)
+				USE_CAN_DRIVER="sys"
+				echo "Override rte CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+			;;
+		esac
+	;;
+	vector_canlib)
+		case "$USE_TARGET_SYSTEM" in
+			pc_linux)
+				echo "Vector CANLIB driver can only used for target pc_win32" 1>&2
+				usage
+				exit 1
+			;;
+			pc_win32)
+			;;
+			*)
+				USE_CAN_DRIVER="sys"
+				echo "Override Vector CANLIB CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+			;;
+		esac
+	;;
+	vector_xl)
+		case "$USE_TARGET_SYSTEM" in
+			pc_linux)
+				echo "Vector XL Driver Library can be only used for target pc_win32" 1>&2
+				usage
+				exit 1
+			;;
+			pc_win32)
+			;;
+			*)
+				USE_CAN_DRIVER="sys"
+				echo "Override Vector XL CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+			;;
+		esac
+	;;
+	sontheim)
+		case "$USE_TARGET_SYSTEM" in
+			pc_linux)
+				echo "Sontheim Driver Library can be only used for target pc_win32" 1>&2
+				usage
+				exit 1
+			;;
+			pc_win32)
+				echo "The contents of the Sontheim CAN API ZIP file should be extracted in directory $USE_WIN32_HEADER_DIRECTORY/Sontheim so that CANAPI.DLL is in that directory!"
+			;;
+			*)
+				USE_CAN_DRIVER="sys"
+				echo "Override Sontheim CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+			;;
+		esac
+	;;
+	*)
+		echo "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
+		usage
+		exit 1
+		;;
+esac
+
+
+if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
+	USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
 fi
+case "$USE_RS232_DRIVER" in
+	simulating)
+		case "$USE_TARGET_SYSTEM" in
+			pc_linux | pc_win32)
+			;;
+			*)
+				USE_RS232_DRIVER="sys"
+				echo "Override simulating RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
+			;;
+		esac
+	;;
+	sys)
+	;;
+	rte)
+		case "$USE_TARGET_SYSTEM" in
+			pc_linux)
+			;;
+			pc_win32)
+				USE_RS232_DRIVER="sys"
+				echo "RTE RS232 driver can only used for target pc_linux -> Override by sys"
+			;;
+			*)
+				USE_RS232_DRIVER="sys"
+				echo "Override rte RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
+			;;
+		esac
+	;;
+	*)
+		echo "Unknown RS232 driver $USE_RS232_DRIVER" 1>&2
+		usage
+		exit 1
+		;;
+esac
 
 
 # call the main function to create

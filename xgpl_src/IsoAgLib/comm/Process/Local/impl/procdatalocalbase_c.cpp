@@ -349,7 +349,7 @@ bool ProcDataLocalBase_c::timeEvent( void ){
   #ifdef USE_EEPROM_IO
   // check if eeprom value should be stored
   int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
-  if ((i32_time - i32_lastEepromStore > STORE_EEPROM_INTERVAL) && (ui16_eepromAdr != 0xFFFF))
+  if ((i32_time - i32_lastEepromStore > CONFIG_PROC_STORE_EEPROM_INTERVAL) && (ui16_eepromAdr != 0xFFFF))
   { // store needed
     getEepromInstance().setp(ui16_eepromAdr);
     #ifdef USE_FLOAT_DATA_TYPE

@@ -118,7 +118,11 @@ namespace __IsoAgLib {
 class MsgObj_c {
 private:
   // private typedef alias names
+	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef std::slist<FilterBox_c,std::__malloc_alloc_template<0> >::iterator FilterRef;
+	#else
+  typedef std::slist<FilterBox_c>::iterator FilterRef;
+	#endif
 public:
   /**
     default constructor for MsgObj_c which only init all member values defined start state

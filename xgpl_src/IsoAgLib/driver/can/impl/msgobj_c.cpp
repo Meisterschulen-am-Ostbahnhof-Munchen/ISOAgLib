@@ -560,7 +560,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
 				}
 			}
     }
-    if (!b_processed)HAL::can_useMsgobjIgnore(rui8_busNumber, msgObjNr());
+    if (!b_processed) HAL::can_useMsgobjIgnore(rui8_busNumber, msgObjNr());
   }   // end while
   return b_count;
 }
@@ -644,9 +644,6 @@ bool MsgObj_c::verifyBusMsgobjNr(int8_t rc_busNr, int8_t rc_msgobjNr)
   //check if there is an error
   if (
      (b_testBus > HAL_CAN_MAX_BUS_NR)
-#ifdef HAL_CAN_MIN_BUS_NR_GREATER_ZERO
-  || (b_testBus < HAL_CAN_MIN_BUS_NR)
-#endif
   || (b_testMsgobj < HAL_CAN_MIN_REC_OBJ)
   || (b_testMsgobj > HAL_CAN_MAX_REC_OBJ)
      )

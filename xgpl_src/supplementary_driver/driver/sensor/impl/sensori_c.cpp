@@ -103,7 +103,7 @@ SensorI_c& getSensorInstance( void ) { return SensorI_c::instance();};
   @param rb_analogLast greatest allowed analog input channel number (ANALOG_INPUT_MAX)
   @param rb_counterFirst smallest allowed counter input channel number (COUNTER_INPUT_MIN)
   @param rb_counterLast greatest allowed counter input channel number (COUNTER_INPUT_MAX)
-  @see master_header.h
+  @see isoaglib_config.h
 */
 void SensorI_c::init(uint8_t rb_digitalFirst, uint8_t rb_digitalLast, uint8_t rb_analogFirst, uint8_t rb_analogLast,
            uint8_t rb_counterFirst, uint8_t rb_counterLast)

@@ -5,8 +5,8 @@ UnitCount=86
 Type=1
 Ver=1
 ObjFiles=
-Includes=../../..;../../../xgpl_src;../../../IsoAgLib_Examples/tutorial/1_BaseData/1_4_WriteFlexibleIso;"D:/Development/VectorInformatik/XL Driver Library/bin"
-Libs="D:/Development/VectorInformatik/XL Driver Library/bin"
+Includes=../../..;../../../xgpl_src;../../../IsoAgLib_Examples/tutorial/1_BaseData/1_4_WriteFlexibleIso;"D:/Development/XL Driver Library/bin"
+Libs="D:/Development/XL Driver Library/bin"
 Linker=-lvxlapi_@@_
 PrivateResource=
 ResourceIncludes=
@@ -618,7 +618,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit58]
-FileName=../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 CompileCpp=1
 Folder=1_4_WriteFlexibleIso
 Compile=1

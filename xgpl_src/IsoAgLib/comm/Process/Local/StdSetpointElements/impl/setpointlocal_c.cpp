@@ -335,12 +335,13 @@ void SetpointLocal_c::setMasterVal( int32_t ri32_val)
 {
   if (!existMaster())
   { // create register entry for master value
-    const uint16_t cui16_oldSize = vec_register.size();
+		const uint16_t cui16_oldSize = vec_register.size();
     vec_register.push_front();
-    if ( uint16_t cui16_oldSize >= vec_register.size() )
-    { // out-of-memory
-      getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
-    }
+    if ( cui16_oldSize >= vec_register.size() )
+		{ // out-of-memory
+			getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+			return;
+		}
     #ifdef DEBUG_HEAP_USEAGE
     else
     {
@@ -350,7 +351,6 @@ void SetpointLocal_c::setMasterVal( int32_t ri32_val)
 		    << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
     }
     #endif
-    
     pc_master = vec_register.begin();
   }
   master().setExact( ri32_val);
@@ -562,7 +562,7 @@ bool SetpointLocal_c::timeEvent( void ){
   // delete all NOT-master entries handled >3sec ago, or
   // delete master entries where gtp of caller is inactive >3sec
   bool b_repeat=true;
-  while (b_repeat && (!vec_register.empty()) {
+  while (b_repeat && (!vec_register.empty()) ) {
     b_repeat = false;
     for (Vec_SetpointRegister::iterator pc_iter = vec_register.begin();
         pc_iter != vec_register.end(); pc_iter++)
@@ -684,12 +684,13 @@ void SetpointLocal_c::processSet(){
   { // caller didn't set setpoint previous to this -> create item
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     {
-      const uint16_t cui16_oldSize = vec_register.size();
-      vec_register.push_front( SetpointRegister_c( c_callerGtp));
-      if ( uint16_t cui16_oldSize >= vec_register.size() )
-      { // out-of-memory
-        getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
-      }
+			const uint16_t cui16_oldSize = vec_register.size();
+			vec_register.push_front( SetpointRegister_c( c_callerGtp));
+			if ( cui16_oldSize >= vec_register.size() )
+			{ // out-of-memory
+				getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+				return;
+			}
       #ifdef DEBUG_HEAP_USEAGE
       else
       {

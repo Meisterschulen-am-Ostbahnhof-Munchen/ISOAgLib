@@ -76,6 +76,11 @@ ISO_AG_LIB_PATH="../.."
 #   GPS decode )
 # USE_FLOAT_DATA_TYPE=0
 
+# select if HEAP usage should reduce size in favour of speed
+# ( default: maximize speed, which costs about 10KByte more HEAPSIZE,
+#            but avoids slow memory allocation in too small units )
+# OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
+
 # ###############################################################
 # Basic Hardware Setup
 # ###############################################################
@@ -349,7 +354,7 @@ PRJ_ISO11783=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development/VectorInformatik"
+# USE_WIN32_LIB_DIRECTORY="D:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -364,7 +369,7 @@ PRJ_ISO11783=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development/VectorInformatik"
+# USE_WIN32_HEADER_DIRECTORY="D:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several

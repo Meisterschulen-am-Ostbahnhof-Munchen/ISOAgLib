@@ -79,7 +79,7 @@ public:
         * Err_c::unspecified Bios calls for TaskTimer, Relais or StayAlive caused an error
     @return true -> everything without errors initialised
   */
-  bool init( bool rb_forceReinit = false, SystemPowerdownStrategy_t rt_strategy = DEFAULT_POWERDOWN_STRATEGY ) { return System_c::init(rb_forceReinit, rt_strategy);};
+  bool init( bool rb_forceReinit = false, SystemPowerdownStrategy_t rt_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY ) { return System_c::init(rb_forceReinit, rt_strategy);};
 	/**
 		default behaviour of IsoAgLib is to activate power hold, so that
 		the application can decide on its own, if a CAN_EN loss shall cause

@@ -5,8 +5,8 @@ UnitCount=199
 Type=1
 Ver=1
 ObjFiles=
-Includes=../../..;../../../xgpl_src;../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso;"D:/Development/VectorInformatik/XL Driver Library/bin"
-Libs="D:/Development/VectorInformatik/XL Driver Library/bin"
+Includes=../../..;../../../xgpl_src;../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso;"D:/Development/XL Driver Library/bin"
+Libs="D:/Development/XL Driver Library/bin"
 Linker=-lvxlapi_@@_
 PrivateResource=
 ResourceIncludes=
@@ -988,7 +988,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit95]
-FileName=../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1

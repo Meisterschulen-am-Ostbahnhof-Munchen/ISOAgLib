@@ -227,7 +227,7 @@ PROC_REMOTE_SIMPLE_MEASURE=1
 
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
-# PRJ_RS232=0
+PRJ_RS232=1
 
 # select iDigitalO_c ( one instance/variable of this class per channel )
 # for digital On/Off input
@@ -348,7 +348,7 @@ PROC_REMOTE_SIMPLE_MEASURE=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development/VectorInformatik"
+# USE_WIN32_LIB_DIRECTORY="D:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -363,7 +363,7 @@ PROC_REMOTE_SIMPLE_MEASURE=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development/VectorInformatik"
+# USE_WIN32_HEADER_DIRECTORY="D:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several

@@ -1,7 +1,7 @@
 [Project]
 FileName=1_1_ReadDin__simulating__simulating.dev
 Name=1_1_ReadDin
-UnitCount=102
+UnitCount=100
 Type=1
 Ver=1
 ObjFiles=
@@ -728,7 +728,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit69]
-FileName=../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 CompileCpp=1
 Folder=1_1_ReadDin
 Compile=1
@@ -1018,26 +1018,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit98]
-FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
-CompileCpp=1
-Folder=1_1_ReadDin
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit99]
-FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
-CompileCpp=1
-Folder=1_1_ReadDin
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit100]
 FileName=../../../xgpl_src/supplementary_driver/hal/rs232.h
 CompileCpp=1
 Folder=1_1_ReadDin
@@ -1047,7 +1027,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit101]
+[Unit99]
 FileName=../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
 CompileCpp=1
 Folder=1_1_ReadDin
@@ -1057,7 +1037,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit102]
+[Unit100]
 FileName=../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
 CompileCpp=1
 Folder=1_1_ReadDin

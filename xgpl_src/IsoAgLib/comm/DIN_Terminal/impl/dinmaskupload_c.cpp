@@ -198,7 +198,7 @@ bool DINMaskUpload_c::timeEvent( void )
       {
         if ( (getDinMonitorInstance4Comm().existDinMemberGtp( psMaskDef[ui8_testInd]->c_gtp, true ))
           && ( (CNAMESPACE::memcmp(getDinMonitorInstance4Comm().dinMemberGtp(psMaskDef[ui8_testInd]->c_gtp).name(), psMaskDef[ui8_testInd]->pb_termName, 7) == 0)
-//            || ( ( ui8_maskDefCnt > 0 ) && ( getSystemMgmtInstance4Comm().existActiveLocalDinMember() ) ) 
+//            || ( ( ui8_maskDefCnt > 0 ) && ( getSystemMgmtInstance4Comm().existActiveLocalDinMember() ) )
           )
            )
         { // registered terminal at index ui8_testInd is found
@@ -233,8 +233,7 @@ bool DINMaskUpload_c::timeEvent( void )
             if ( activeMask().en_terminalType != IsoAgLib::FieldstarOld) createLbsplusProcdata();
             else createFieldstarProcdata();
           }
-//          #ifdef DEBUG_RS232
-          #if 1
+          #if defined(DEBUG_RS232) || defined(DEBUG_HEAP_USEAGE)
           getRs232Instance() << "Starte DIN Upload zu Terminal Gety: "
             << uint16_t( c_gtp.getGety() )
             << ", Pos: " << uint16_t( c_gtp.getPos() )
@@ -488,7 +487,7 @@ void DINMaskUpload_c::createLbsplusProcdata()
   }
 	#ifdef DEBUG_HEAP_USEAGE
   sui16_syncProcTotal += ( activeMask().ui8_syncCnt + 1 );
-  
+
   getRs232Instance()
     << sui16_syncProcTotal << " x DINMaskUpload_c(syncproc_t): Mal-Alloc: "
     <<  sizeSlistTWithMalloc( sizeof(syncproc_t), sui16_syncProcTotal )
@@ -548,7 +547,7 @@ void DINMaskUpload_c::createFieldstarProcdata()
 #endif
 	#ifdef DEBUG_HEAP_USEAGE
   sui16_syncProcTotal += ( activeMask().ui8_syncCnt + 1 );
-  
+
   getRs232Instance()
     << sui16_syncProcTotal << " x DINMaskUpload_c(syncproc_t): Mal-Alloc: "
     <<  sizeSlistTWithMalloc( sizeof(syncproc_t), sui16_syncProcTotal )

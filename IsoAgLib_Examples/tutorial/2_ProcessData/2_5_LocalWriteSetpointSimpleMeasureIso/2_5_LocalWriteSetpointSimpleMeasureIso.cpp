@@ -357,11 +357,11 @@ MyProcDataHandler_c c_mySetpointHandler;
 
 
 int main()
-{ // simply call startImi
+{ // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   IsoAgLib::getIcanInstance().init( 0, 250 );
   // variable for GETY_POS
-  // default with primary cultivation mounted back
-  IsoAgLib::iGetyPos_c myGtp( 2, 0 );
+  // default with fertilizer spreader mounted back
+  IsoAgLib::iGetyPos_c myGtp( 5, 0 );
 
   // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
@@ -413,13 +413,13 @@ int main()
 			only during address claim, mask updload and other special
 			circumstances in a high repetition rate )
 		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define BUFFER_SHORT_CAN_EN_LOSS_MSEC
+			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
 			in isoaglib_config.h to ignore short CAN_EN loss.
 		- This explicit control of power state without automatic powerdown on CanEn loss
 			can be controled with the central config define
-			#define DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
 			or
-			#define DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
 			in the header xgpl_src/Application_Config/isoaglib_config.h
 		- This can be also controlled during runtime with the function call:
 			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )

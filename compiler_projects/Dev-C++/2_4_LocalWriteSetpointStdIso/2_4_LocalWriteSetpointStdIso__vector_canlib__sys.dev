@@ -5,8 +5,8 @@ UnitCount=117
 Type=1
 Ver=1
 ObjFiles=
-Includes=../../..;../../../xgpl_src;../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_4_LocalWriteSetpointStdIso;D:/Development/VectorInformatik/CANLIB/dll
-Libs=D:/Development/VectorInformatik/CANLIB/dll
+Includes=../../..;../../../xgpl_src;../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_4_LocalWriteSetpointStdIso;D:/Development/CANLIB/dll
+Libs=D:/Development/CANLIB/dll
 Linker=-lvcand32_@@_
 PrivateResource=
 ResourceIncludes=
@@ -748,7 +748,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit71]
-FileName=../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 CompileCpp=1
 Folder=2_4_LocalWriteSetpointStdIso
 Compile=1

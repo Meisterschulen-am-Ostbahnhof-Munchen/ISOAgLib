@@ -175,7 +175,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\icancustomer_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
-..\..\..\xgpl_src\IsoAgLib\util\symbol_shortening.h
+..\..\..\xgpl_src\IsoAgLib\util\compiler_adoption.h
 ..\..\..\xgpl_src\IsoAgLib\util\igetypos_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
 ..\..\..\xgpl_src\Application_Config\isoaglib_config.h
@@ -198,7 +198,6 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\driver\can\icanio_c.h
 ..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.h
 ..\..\..\xgpl_src\IsoAgLib\driver\system\isystem_c.h
-..\..\..\xgpl_src\supplementary_driver\hal\esx\rs232\rs232.h
 ..\..\..\xgpl_src\supplementary_driver\hal\rs232.h
 ..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.h
 ..\..\..\xgpl_src\supplementary_driver\driver\rs232\irs232io_c.h

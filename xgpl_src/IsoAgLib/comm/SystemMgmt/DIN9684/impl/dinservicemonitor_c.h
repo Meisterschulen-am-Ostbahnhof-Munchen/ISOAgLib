@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef SERVICE_MONITOR_H
@@ -120,8 +120,13 @@ namespace __IsoAgLib {
 class DINServiceMonitor_c : public ElementBase_c, public SINGLETON(DINServiceMonitor_c)
 {
 private:
+	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef std::slist<DINServiceItem_c,std::__malloc_alloc_template<0> > ArrService;
   typedef std::slist<DINServiceItem_c,std::__malloc_alloc_template<0> >::iterator ArrServiceIterator;
+	#else
+  typedef std::slist<DINServiceItem_c> ArrService;
+  typedef std::slist<DINServiceItem_c>::iterator ArrServiceIterator;
+	#endif
 
 public:
   /** basic intialisation */
@@ -141,14 +146,14 @@ public:
   /**
     create a service ident, for which the library
     sends the suitable alive messages
-  
+
     possible errors:
       * Err_c::badAlloc on not enough memory to create the needed DINServiceItem_c instance
       * Err_c::precondition on invalid GETY_POS code
       * Err_c::busy another DINServiceItem_c with same GETY_POS is already in list of active services
     @param rc_gtp GETY_POS code for the service
     @param rui8_nr corresponding service no
-    @return true -> service was created successfully (no equal service exist, 
+    @return true -> service was created successfully (no equal service exist,
         enough memory to store new entry in ServiceMonitor)
      @exception badAlloc preconditionViolation
   */
@@ -160,25 +165,25 @@ public:
     this variant has only different name and is replaced during compile
     time by call to createLocalService; this is only for allowing
     an alternative consistent naming scheme with the other functions of ServiceMonitor
-  
+
     possible errors:
       * Err_c::badAlloc on not enough memory to create the needed DINServiceItem_c instance
       * Err_c::precondition on invalid GETY_POS code
       * Err_c::busy another DINServiceItem_c with same GETY_POS is already in list of active services
     @param rc_gtp GETY_POS code for the service
     @param rui8_nr corresponding service no
-    @return true -> service was created successfully (no equal service exist, 
+    @return true -> service was created successfully (no equal service exist,
         enough memory to store new entry in ServiceMonitor)
      @exception badAlloc preconditionViolation
   */
   bool createLocalDinService(GetyPos_c rc_gtp, uint8_t rui8_nr= 0xFF)
     {return createLocalService(rc_gtp, rui8_nr);};
-  
+
   /**
     delete a local service
     @param rc_gtp GETY_POS code of the service
     @return true -> wanted item found and deleted
-  */  
+  */
   bool deleteLocalService(GetyPos_c rc_gtp);
 
   /**
@@ -188,7 +193,7 @@ public:
     overhead is caused
     @param rc_gtp GETY_POS code of the service
     @return true -> wanted item found and deleted
-  */  
+  */
   bool deleteLocalDinService(GetyPos_c rc_gtp) {return deleteLocalService(rc_gtp);};
 
   /**

@@ -236,8 +236,6 @@
 // is needed for the documentation generator
 using namespace IsoAgLib;
 
-#include <iostream>
-
 /**
 	write data column header to RS232
 */
@@ -348,13 +346,13 @@ int main()
 			only during address claim, mask updload and other special
 			circumstances in a high repetition rate )
 		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define BUFFER_SHORT_CAN_EN_LOSS_MSEC
+			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
 			in isoaglib_config.h to ignore short CAN_EN loss.
 		- This explicit control of power state without automatic powerdown on CanEn loss
 			can be controled with the central config define
-			#define DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
 			or
-			#define DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
 			in the header xgpl_src/Application_Config/isoaglib_config.h
 		- This can be also controlled during runtime with the function call:
 			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
@@ -365,12 +363,6 @@ int main()
 	{ // run main loop
 		// IMPORTANT: call main timeEvent function for
 		// all time controlled actions of IsoAgLib
-		if ( ( IsoAgLib::iSystem_c::getTime() - i32_loopTime ) > 1000 )
-		{ 
-			std::cerr << "Letzte Schleife zur Zeit " << i32_loopTime
-				<< "Darauffolgende: " << IsoAgLib::iSystem_c::getTime()
-				<< std::endl;
-		}
 		i32_loopTime = IsoAgLib::iSystem_c::getTime();
 		IsoAgLib::getISchedulerInstance().timeEvent( i32_loopTime + 1000 );
 

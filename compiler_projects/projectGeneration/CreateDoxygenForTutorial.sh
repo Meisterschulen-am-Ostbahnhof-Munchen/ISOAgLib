@@ -3,7 +3,7 @@ DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
 EXAMPLE_LIST=`ls conf* | grep -v "~" | grep -e "conf_[0-9]" | sed -e 's/[ \t\n]+/:/g'`
 # EXAMPLE_LIST="conf_2_8_RemoteReadDataSimpleMeasureIso"
 TARGET_LIST="pc_linux:pc_win32:esx:imi:pm167"
-CAN_LIST="simulating:sys:vector_canlib:vector_xl"
+CAN_LIST="simulating:sys:vector_canlib:vector_xl:sontheim"
 RS232_LIST="simulating:sys:rte"
 for conf_example in $EXAMPLE_LIST ; do
   EXAMPLE_DIR=""
@@ -32,6 +32,11 @@ for conf_example in $EXAMPLE_LIST ; do
           fi
         fi
         if [ $can_drv = "vector_xl" ] ; then
+	        if    [ $target != "pc_win32" ] ; then
+      		  continue
+          fi
+        fi
+        if [ $can_drv = "sontheim" ] ; then
 	        if    [ $target != "pc_win32" ] ; then
       		  continue
           fi

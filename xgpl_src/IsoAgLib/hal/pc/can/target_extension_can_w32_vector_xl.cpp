@@ -1,5 +1,5 @@
 /***************************************************************************
-                          targetExtensionCanCardXWin32.cc - source for the PSEUDO BIOS for
+                          target_extension_can_w32_vector_xl.cpp - source for the PSEUDO BIOS for
                                        development and test on a Win32 PC
                                        with CAN communication through Vector-Informatik
                                        CANcardX
@@ -75,15 +75,20 @@ namespace __HAL {
 /////////////////////////////////////////////////////////////////////////
 // Globals
 HANDLE       gEventHandle    = 0;
+// IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
+// -> all needed offsets shall be added at the lowest possible layer
+//    ( i.e. direct in the BIOS/OS call)
+static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 
 
 // CAN Globals
-char            g_AppName[XL_MAX_LENGTH+1]  = "IsoAgLib";            //!< Application name which is displayed in VHWconf
-XLportHandle    g_xlPortHandle              = XL_INVALID_PORTHANDLE;  //!< Global porthandle (we use only one!)
-XLdriverConfig  g_xlDrvConfig;                                        //!< Contains the actual hardware configuration
-XLaccess        g_xlChannelMask             = 0;                      //!< Global channelmask (includes all founded channels)
-XLaccess        g_xlPermissionMask          = 0;                      //!< Global permissionmask (includes all founded channels)
+char            g_AppName[XL_MAX_LENGTH+1]  = "IsoAgLib";   //!< Application name which is displayed in VHWconf
+XLdriverConfig  g_xlDrvConfig;                              //!< Contains the actual hardware configuration
 int16_t gChannel = 0;
+
+XLportHandle    g_xlPortHandle[cui32_maxCanBusCnt]     ;    //!< Global porthandle (we use only one!)
+XLaccess        g_xlChannelMask[cui32_maxCanBusCnt]    ;    //!< Global channelmask (includes all founded channels)
+XLaccess        g_xlPermissionMask[cui32_maxCanBusCnt] ;    //!< Global permissionmask (includes all founded channels)
 
 #ifdef USE_CAN_CARD_TYPE
 uint16_t gHwType = USE_CAN_CARD_TYPE;
@@ -101,22 +106,23 @@ struct can_data {
   uint8_t pb_data[8];
 };
 
-static can_data* rec_buf[2][16];
-static int16_t rec_bufCnt[2][16];
-static int16_t rec_bufSize[2][16];
-static int16_t rec_bufOut[2][16];
-static int16_t rec_bufIn[2][16];
-static bool rec_bufXtd[2][16];
-static uint32_t rec_bufFilter[2][16];
+static can_data* rec_buf[cui32_maxCanBusCnt][15];
+static int16_t rec_bufCnt[cui32_maxCanBusCnt][15];
+static int16_t rec_bufSize[cui32_maxCanBusCnt][15];
+static int16_t rec_bufOut[cui32_maxCanBusCnt][15];
+static int16_t rec_bufIn[cui32_maxCanBusCnt][15];
+static bool rec_bufXtd[cui32_maxCanBusCnt][15];
+static uint32_t rec_bufFilter[cui32_maxCanBusCnt][15];
+static bool b_canBufferLock[cui32_maxCanBusCnt][15];
 int32_t i32_lastReceiveTime;
 
-static uint16_t ui16_globalMask[2];
-static uint32_t ui32_globalMask[2];
-static uint32_t ui32_lastMask[2];
-static bool b_busOpened[2];
+static uint16_t ui16_globalMask[cui32_maxCanBusCnt];
+static uint32_t ui32_globalMask[cui32_maxCanBusCnt];
+static uint32_t ui32_lastMask[cui32_maxCanBusCnt];
+static bool b_busOpened[cui32_maxCanBusCnt];
 
 // globale Filehandle fuer simulierte CAN Input
-static FILE* canlogDat;
+static FILE* canlogDat[cui32_maxCanBusCnt];
 
 #ifdef USE_THREAD
 /** flag to control running thread */
@@ -164,8 +170,19 @@ int16_t can_startDriver()
   xlStatus = xlOpenDriver();
   xlStatus = xlGetDriverConfig(&g_xlDrvConfig);
 
-  b_busOpened[0] = false;
-  b_busOpened[1] = false;
+	for ( uint32_t ind = 0; ind < cui32_maxCanBusCnt; ind++ )
+	{
+		g_xlPortHandle[ind]     = XL_INVALID_PORTHANDLE;  //!< Global porthandle (we use only one!)
+		g_xlChannelMask[ind]    = 0;                      //!< Global channelmask (includes all founded channels)
+		g_xlPermissionMask[ind] = 0;                      //!< Global permissionmask (includes all founded channels)
+		b_busOpened[ind]        = false;
+		canlogDat[ind]          = NULL;
+    for (uint8_t ui8_nr = 0; ui8_nr < 15; ui8_nr++)
+    {
+      rec_bufSize[ind][ui8_nr] = 0;
+      rec_bufCnt[ind][ui8_nr] = 0;
+    }
+	}
 
 	#ifdef USE_THREAD
 	/** flag to control running thread */
@@ -187,14 +204,6 @@ int16_t can_startDriver()
 	}
 	#endif
 
-  for (uint8_t b_bus = 0; b_bus < 2; b_bus++)
-  {
-    for (uint8_t ui8_nr = 0; ui8_nr < 16; ui8_nr++)
-    {
-      rec_bufSize[b_bus][ui8_nr] = 0;
-      rec_bufCnt[b_bus][ui8_nr] = 0;
-    }
-  }
   if (xlStatus) goto error;
 
   return HAL_NO_ERR;
@@ -211,10 +220,13 @@ int16_t can_stopDriver()
 	b_blockThread = true;
 	#endif
   xlCloseDriver();
-    if (canlogDat != NULL){
-    fclose(canlogDat);
-    canlogDat = NULL;
-  }
+	for ( uint32_t ind = 0; ind < cui32_maxCanBusCnt; ind++ )
+	{
+		if (canlogDat[ind] != NULL){
+    	fclose(canlogDat[ind]);
+    	canlogDat[ind] = NULL;
+		}
+	}
   return HAL_NO_ERR;
 }
 
@@ -233,7 +245,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 	#ifndef USE_THREAD
   checkMsg();
 	#endif
-  return ((bBusNumber < 2)&&(bMsgObj < 16))?rec_bufCnt[bBusNumber][bMsgObj]:0;
+  return ((bBusNumber < 2)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
 
@@ -241,36 +253,44 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 {
   XLstatus xlStatus;
 
-  canlogDat = fopen("../../../simulated_io/can_send.txt", "a+");
+  canlogDat[bBusNumber] = fopen("..\\..\\..\\..\\simulated_io\\can_send.txt", "w+");
+  if(canlogDat[bBusNumber])
+  {
+	printf("canlogDat file opened\n");
+  }
+  else
+  {
+	printf("canlogDat file FAILED to open! Error Code = %d\n", canlogDat[bBusNumber]);
+  }
 
   if (b_busOpened[bBusNumber] == false)
   { // Select channel
     gChannel = bBusNumber + 1;
-    g_xlChannelMask = xlGetChannelMask(gHwType, 0, gChannel);
+    g_xlChannelMask[bBusNumber] = xlGetChannelMask(gHwType, 0, gChannel);
 
-    if (!g_xlChannelMask) {
+    if (!g_xlChannelMask[bBusNumber]) {
       printf("ERROR: no available channels found! (e.g. no CANcabs...)\n\n");
       xlStatus = XL_ERROR;
       return HAL_RANGE_ERR;
     }
-    g_xlPermissionMask = g_xlChannelMask;
+    g_xlPermissionMask[bBusNumber] = g_xlChannelMask[bBusNumber];
 
     // ------------------------------------
     // open ONE port including all channels
     // ------------------------------------
-    xlStatus = xlOpenPort(&g_xlPortHandle, g_AppName, g_xlChannelMask, &g_xlPermissionMask, 256, XL_INTERFACE_VERSION, XL_BUS_TYPE_CAN);
+    xlStatus = xlOpenPort(&g_xlPortHandle[bBusNumber], g_AppName, g_xlChannelMask[bBusNumber], &g_xlPermissionMask[bBusNumber], 256, XL_INTERFACE_VERSION, XL_BUS_TYPE_CAN);
     printf("- OpenPort         : CM=0x%I64x, PH=0x%02X, PM=0x%I64x, %s\n",
-      g_xlChannelMask, g_xlPortHandle, g_xlPermissionMask, xlGetErrorString(xlStatus));
+      g_xlChannelMask[bBusNumber], g_xlPortHandle[bBusNumber], g_xlPermissionMask[bBusNumber], xlGetErrorString(xlStatus));
 
-    if ( (xlStatus) || (g_xlPortHandle == XL_INVALID_PORTHANDLE) )
+    if ( (xlStatus) || (g_xlPortHandle[bBusNumber] == XL_INVALID_PORTHANDLE) )
     	goto error;
   }
   // ------------------------------------
   // if we have permission we set the
   // bus parameters (baudrate)
   // ------------------------------------
-  if (g_xlPermissionMask) {
-    xlStatus = xlCanSetChannelBitrate(g_xlPortHandle, g_xlChannelMask, wBitrate);
+  if (g_xlPermissionMask[bBusNumber]) {
+    xlStatus = xlCanSetChannelBitrate(g_xlPortHandle[bBusNumber], g_xlChannelMask[bBusNumber], wBitrate);
     printf("- SetChannelBitrate: baudr.=%u, %s\n",wBitrate, xlGetErrorString(xlStatus));
     if (xlStatus) goto error;
   }
@@ -282,19 +302,19 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 	ui32_lastMask[bBusNumber] = dwGlobMaskLastmsg;
 
   // Disable the TX and TXRQ notifications
-  xlStatus = xlCanSetChannelMode(g_xlPortHandle,g_xlChannelMask,0,0);
+  xlStatus = xlCanSetChannelMode(g_xlPortHandle[bBusNumber],g_xlChannelMask[bBusNumber],0,0);
   if (xlStatus) goto error;
 
 
   if (b_busOpened[bBusNumber] == false)
   { // set global mask
-    xlStatus = xlCanSetChannelAcceptance(g_xlPortHandle, g_xlChannelMask, 0x000, 0x000, XL_CAN_STD );
+    xlStatus = xlCanSetChannelAcceptance(g_xlPortHandle[bBusNumber], g_xlChannelMask[bBusNumber], 0x000, 0x000, XL_CAN_STD );
     if (xlStatus) goto error;
-    xlStatus = xlCanSetChannelAcceptance(g_xlPortHandle, g_xlChannelMask, 0x000, 0x000, XL_CAN_EXT );
+    xlStatus = xlCanSetChannelAcceptance(g_xlPortHandle[bBusNumber], g_xlChannelMask[bBusNumber], 0x000, 0x000, XL_CAN_EXT );
     if (xlStatus) goto error;
 
     // Go on bus and reset clock
-    xlStatus = xlActivateChannel(g_xlPortHandle, g_xlChannelMask, XL_BUS_TYPE_CAN, XL_ACTIVATE_RESET_CLOCK);
+    xlStatus = xlActivateChannel(g_xlPortHandle[bBusNumber], g_xlChannelMask[bBusNumber], XL_BUS_TYPE_CAN, XL_ACTIVATE_RESET_CLOCK);
     if (xlStatus) goto error;
 
   }
@@ -308,9 +328,9 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   error:
     printf("ERROR: %s!\n", xlGetErrorString(xlStatus));
 
-    if (g_xlPortHandle != XL_INVALID_PORTHANDLE) {
-      xlClosePort(g_xlPortHandle);
-      g_xlPortHandle = XL_INVALID_PORTHANDLE;
+    if (g_xlPortHandle[bBusNumber] != XL_INVALID_PORTHANDLE) {
+      xlClosePort(g_xlPortHandle[bBusNumber]);
+      g_xlPortHandle[bBusNumber] = XL_INVALID_PORTHANDLE;
     }
 
     b_busOpened[bBusNumber] = false;
@@ -319,13 +339,13 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 
 int16_t closeCan ( uint8_t bBusNumber )
 {
-  if (canlogDat != NULL){
-    fclose(canlogDat);
-    canlogDat = NULL;
+  if (canlogDat[bBusNumber] != NULL){
+    fclose(canlogDat[bBusNumber]);
+    canlogDat[bBusNumber] = NULL;
   }
-  xlDeactivateChannel(g_xlPortHandle, g_xlChannelMask);
-  xlClosePort(g_xlPortHandle);
-  g_xlPortHandle = XL_INVALID_PORTHANDLE;
+  xlDeactivateChannel(g_xlPortHandle[bBusNumber], g_xlChannelMask[bBusNumber]);
+  xlClosePort(g_xlPortHandle[bBusNumber]);
+  g_xlPortHandle[bBusNumber] = XL_INVALID_PORTHANDLE;
   b_busOpened[bBusNumber] = false;
   return HAL_NO_ERR;
 };
@@ -349,7 +369,7 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 {
   if (rec_bufCnt[bBusNumber][bMsgObj] == -1)
   { // it's a send object -> call native clear transmit
-    xlCanFlushTransmitQueue(g_xlPortHandle, g_xlChannelMask);
+    xlCanFlushTransmitQueue(g_xlPortHandle[bBusNumber], g_xlChannelMask[bBusNumber]);
   }
   else
   { // set receive buffer to 0
@@ -362,6 +382,7 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig )
 {
+	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (ptConfig->bMsgType == TX)
   { /* Sendeobjekt */
     rec_bufSize[bBusNumber][bMsgObj] = -1;
@@ -381,6 +402,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
 
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd )
 {
+	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] > -1)
   { // active receive object
     rec_bufFilter[bBusNumber][bMsgObj] = dwId;
@@ -388,9 +410,24 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   }
   return HAL_NO_ERR;
 }
+/**
+	lock a MsgObj to avoid further placement of messages into buffer.
+  @param rui8_busNr number of the BUS to config
+  @param rui8_msgobjNr number of the MsgObj to config
+	@param rb_doLock true==lock(default); false==unlock
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+	*/
+int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+{ // first get waiting messages
+	checkMsg();
+	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+}
 
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
+	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] == -1)
   { /* Sendeobjekt */
     rec_bufSize[bBusNumber][bMsgObj] = -1;
@@ -419,7 +456,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
   xlEvent.tagData.msg.flags   = 0;
   memmove(xlEvent.tagData.msg.data, ptSend->abData, ptSend->bDlc);
 
-  xlStatus = xlCanTransmit(g_xlPortHandle, g_xlChannelMask, &messageCount, &xlEvent);
+  xlStatus = xlCanTransmit(g_xlPortHandle[bBusNumber], g_xlChannelMask[bBusNumber], &messageCount, &xlEvent);
 
   if ( ((ptSend->dwId & 0x700) == 0x700)
      ||((ptSend->dwId & 0x7FF) == 0x520)
@@ -432,7 +469,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
       ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
       ptSend->abData[6], ptSend->abData[7]);
 
-      fprintf(canlogDat, "Sende: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
+      fprintf(canlogDat[bBusNumber], "Sende: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
       ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
       ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
       ptSend->abData[6], ptSend->abData[7]);
@@ -508,88 +545,90 @@ int16_t checkMsg()
   XLstatus xlStatus;
   XLevent*  gpEvent;
 
-  int16_t result = 0;
-  unsigned int msgsrx = 1;
-  for(xlStatus = xlReceive(g_xlPortHandle, &msgsrx, gpEvent); xlStatus == XL_SUCCESS; xlStatus = xlReceive(g_xlPortHandle, &msgsrx, gpEvent))
-  { // msg from CANcardX buffer
-		// this functions retrurns not only received messages
-		// ACK for SENT messages is also returned!!!
-		if( ( gpEvent->tag != XL_RECEIVE_MSG ) || ( gpEvent->tagData.msg.flags != 0 ) )
-		{ // don't further process this message as it is NO received message
-			continue;
-		}
+  int32_t result = 0;
 
-    result += 1;
-    uint8_t b_xtd = (gpEvent->tagData.msg.id > 0x7FFFFFFF)?1:0;
-    uint32_t ui32_id = (gpEvent->tagData.msg.id & 0x1FFFFFFF);
-    if (ui32_id >= 0x7FFFFFFF)
-    {
-      printf("!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
-      fprintf(canlogDat, "!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
-      continue;
-    }
-    uint16_t ui16_id = (gpEvent->tagData.msg.id & 0xFFFF);
-    for (uint8_t b_bus = 0; b_bus < 2; b_bus++)
-    {
-      if (b_busOpened[b_bus])
-      {
-        for (int16_t i16_obj = 0; i16_obj < 16; i16_obj++)
-        { // compare received msg with filter
-          int16_t i16_in;
-          can_data* pc_data;
-          if
+  for (uint32_t b_bus = 0; b_bus < cui32_maxCanBusCnt; b_bus++)
+  { // if b_bus is not open --> immediately try next bus
+		if ( !b_busOpened[b_bus] ) continue;
+		// try to receive a message
+		for(xlStatus = xlReceive(g_xlPortHandle[b_bus], &msgsrx, gpEvent); xlStatus == XL_SUCCESS; xlStatus = xlReceive(g_xlPortHandle[b_bus], &msgsrx, gpEvent))
+		{ // msg from CANcardX buffer
+			// this functions retrurns not only received messages
+			// ACK for SENT messages is also returned!!!
+			if( ( gpEvent->tag != XL_RECEIVE_MSG ) || ( gpEvent->tagData.msg.flags != 0 ) )
+			{ // don't further process this message as it is NO received message
+				continue;
+			}
+			result += 1;
+			uint8_t b_xtd = (gpEvent->tagData.msg.id > 0x7FFFFFFF)?1:0;
+			uint32_t ui32_id = (gpEvent->tagData.msg.id & 0x1FFFFFFF);
+			if (ui32_id >= 0x7FFFFFFF)
+			{
+				printf("!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
+				fprintf(canlogDat[b_bus], "!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
+				continue;
+			}
+			// now search for MsgObj queue on this b_bus, where new message from b_bus maps
+			for (int32_t i32_obj = 1; i32_obj < 15; i32_obj++)
+			{ // compare received msg with filter
+				int32_t i32_in;
+				can_data* pc_data;
+				if ( b_canBufferLock[b_bus][i32_obj] )
+				{ // don't even check this MsgObj as it shall not receive messages
+					continue;
+				}
+				if
+					(
 						(
-							(
-								( i16_obj < 15 )
-						&&  (
-									( (rec_bufXtd[b_bus][i16_obj] == 1)
-									&& (b_xtd == 1)
-									&& (rec_bufSize[b_bus][i16_obj] > 0)
-									&& ( (ui32_id & ui32_globalMask[b_bus]) ==  ((rec_bufFilter[b_bus][i16_obj]) & ui32_globalMask[b_bus]) )
-									)
-								|| ( (rec_bufXtd[b_bus][i16_obj] == 0)
-									&& (b_xtd == 0)
-									&& (rec_bufSize[b_bus][i16_obj] > 0)
-									&& ( (ui16_id & ui16_globalMask[b_bus]) ==  (rec_bufFilter[b_bus][i16_obj] & ui16_globalMask[b_bus]) )
-									)
+							( i32_obj < 14 )
+					&&  (
+								( (rec_bufXtd[b_bus][i32_obj] == 1)
+								&& (b_xtd == 1)
+								&& (rec_bufSize[b_bus][i32_obj] > 0)
+								&& ( (ui32_id & ui32_globalMask[b_bus]) ==  ((rec_bufFilter[b_bus][i32_obj]) & ui32_globalMask[b_bus]) )
 								)
-							)
-					|| (
-								( i16_obj == 15 )
-						&&  (
-									( (rec_bufXtd[b_bus][i16_obj] == 1)
-									&& (b_xtd == 1)
-									&& (rec_bufSize[b_bus][i16_obj] > 0)
-									&& ( (ui32_id & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) ==  ((rec_bufFilter[b_bus][i16_obj]) & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) )
-									)
-								|| ( (rec_bufXtd[b_bus][i16_obj] == 0)
-									&& (b_xtd == 0)
-									&& (rec_bufSize[b_bus][i16_obj] > 0)
-									&& ( (ui16_id & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) ==  (rec_bufFilter[b_bus][i16_obj] & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) )
-									)
+							|| ( (rec_bufXtd[b_bus][i32_obj] == 0)
+								&& (b_xtd == 0)
+								&& (rec_bufSize[b_bus][i32_obj] > 0)
+								&& ( (ui32_id & ui16_globalMask[b_bus]) ==  (rec_bufFilter[b_bus][i32_obj] & ui16_globalMask[b_bus]) )
 								)
 							)
 						)
-          { // received msg fits actual filter
-            i16_in = rec_bufIn[b_bus][i16_obj];
-            rec_bufIn[b_bus][i16_obj] = ((i16_in + 1) % rec_bufSize[b_bus][i16_obj]);
-            if (rec_bufCnt[b_bus][i16_obj] >= rec_bufSize[b_bus][i16_obj])
-            { // overflow -> insert new, and overwrite oldest msg in buffer
-              rec_bufOut[b_bus][i16_obj] = rec_bufIn[b_bus][i16_obj];
-            }
-            else
-            {
-              rec_bufCnt[b_bus][i16_obj] += 1;
-            }
-            pc_data = &(rec_buf[b_bus][i16_obj][i16_in]);
-            pc_data->i32_time = getTime();
-            pc_data->i32_ident = ui32_id;
-            pc_data->b_dlc = gpEvent->tagData.msg.dlc;
-            pc_data->b_xtd = b_xtd;
-            memcpy(pc_data->pb_data, gpEvent->tagData.msg.data,pc_data->b_dlc);
-          } // if fit
-        } // for objNr
-      } // if opened
+				|| (
+							( i32_obj == 14 )
+					&&  (
+								( (rec_bufXtd[b_bus][i32_obj] == 1)
+								&& (b_xtd == 1)
+								&& (rec_bufSize[b_bus][i32_obj] > 0)
+								&& ( (ui32_id & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) ==  ((rec_bufFilter[b_bus][i32_obj]) & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) )
+								)
+							|| ( (rec_bufXtd[b_bus][i32_obj] == 0)
+								&& (b_xtd == 0)
+								&& (rec_bufSize[b_bus][i32_obj] > 0)
+								&& ( (ui32_id & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) ==  (rec_bufFilter[b_bus][i32_obj] & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) )
+								)
+							)
+						)
+					)
+				{ // received msg fits actual filter
+					i32_in = rec_bufIn[b_bus][i32_obj];
+					rec_bufIn[b_bus][i32_obj] = ((i32_in + 1) % rec_bufSize[b_bus][i32_obj]);
+					if (rec_bufCnt[b_bus][i32_obj] >= rec_bufSize[b_bus][i32_obj])
+					{ // overflow -> insert new, and overwrite oldest msg in buffer
+						rec_bufOut[b_bus][i32_obj] = rec_bufIn[b_bus][i32_obj];
+					}
+					else
+					{
+						rec_bufCnt[b_bus][i32_obj] += 1;
+					}
+					pc_data = &(rec_buf[b_bus][i32_obj][i32_in]);
+					pc_data->i32_time = getTime();
+					pc_data->i32_ident = ui32_id;
+					pc_data->b_dlc = gpEvent->tagData.msg.dlc;
+					pc_data->b_xtd = b_xtd;
+					memcpy(pc_data->pb_data, gpEvent->tagData.msg.data,pc_data->b_dlc);
+				} // if fit
+			} // for objNr
     } // for bus
   } // for receive msg from CANcardX
   return result;

@@ -4,7 +4,7 @@ ConfigSetExtMode=2
 ProjSetConfigFlags=0x00010140
 
 [Files]
-..\..\..\xgpl_src\__IsoAgLib\master_header.h
+..\..\..\xgpl_src\__IsoAgLib\isoaglib_config.h
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_namespace.h
 ..\..\..\xgpl_src\__IsoAgLib\HwBIOS\bios_esx\bios_namespace.h
 ..\..\..\commercial_BIOS\bios_esx\Xos20err.c
@@ -98,7 +98,7 @@ ProjSetConfigFlags=0x00010140
 ..\..\..\xgpl_src\__IsoAgLib\HwRS232\rs232_io.h
 ..\..\..\xgpl_src\Application_Config\eeprom_adr.h
 ..\..\..\xgpl_src\Application_Config\isoaglib_config.h
-..\..\..\xgpl_src\Lib\master_header.h
+..\..\..\xgpl_src\Lib\isoaglib_config.h
 ..\..\..\xgpl_src\Lib\HwCAN\ican_io.h
 ..\..\..\xgpl_src\Lib\HwEEPROM\ieeprom_io.h
 ..\..\..\xgpl_src\Lib\HwSystem\isystem.h
@@ -329,8 +329,8 @@ f:\projekt\isoaglib\_library\__lbs_lib\util\can_pkg_ext.cpp=f:\projekt\isoaglib\
 f:\projekt\isoaglib\_library\__lbs_lib\util\can_pkg_ext.h=f:\projekt\isoaglib\_library\__lbs_lib\util\can_pkg.h
 f:\projekt\isoaglib\_library\__lbs_lib\util\_element_base.cpp=f:\projekt\isoaglib\_library\__lbs_lib\util\_element_base.h
 f:\projekt\isoaglib\_library\__lbs_lib\util\_element_base.h=
-f:\projekt\isoaglib\_library\__lbs_lib\master_header.h=
-f:\projekt\isoaglib\_library\_lib\master_header.h=
+f:\projekt\isoaglib\_library\__lbs_lib\isoaglib_config.h=
+f:\projekt\isoaglib\_library\_lib\isoaglib_config.h=
 f:\projekt\isoaglib\_library\__lbs_lib\hwbios\bios_namespace.h=
 f:\projekt\isoaglib\_library\__lbs_lib\hwbios\bios_esx\bios_namespace.h=
 f:\projekt\isoaglib\_library\__lbs_lib\hwconfig\config_esx.h=
@@ -399,7 +399,7 @@ FileList7=f:\projekt\isoaglib\_library\__lbs_lib\_process\setpoint_remote.cpp,f:
 FileList8=f:\projekt\isoaglib\_library\__lbs_lib\_system\istate.h,f:\projekt\isoaglib\_library\__lbs_lib\_system\ident_item.cpp,f:\projekt\isoaglib\_library\__lbs_lib\_system\ident_item.h,f:\projekt\isoaglib\_library\__lbs_lib\_system\istate.cpp,f:\projekt\isoaglib\_library\__lbs_lib\_system\_system.cpp,f:\projekt\isoaglib\_library\__lbs_lib\_system\_system.h,f:\projekt\isoaglib\_library\__lbs_lib\_system\system_pkg.h,...
 FileList9=f:\projekt\isoaglib\_library\__lbs_lib\_system\member_monitor.h,f:\projekt\isoaglib\_library\__lbs_lib\_system\member_item.h,f:\projekt\isoaglib\_library\__lbs_lib\_system\service_item.h,f:\projekt\isoaglib\_library\__lbs_lib\_system\service_monitor.h,f:\projekt\isoaglib\_library\__lbs_lib\_system\stop_manager.h,f:\projekt\isoaglib\_library\__lbs_lib\_system\member_item.cpp,f:\projekt\isoaglib\_library\__lbs_lib\_system\member_monitor.cpp,...
 FileList10=f:\projekt\isoaglib\_library\__lbs_lib\_system\service_item.cpp,f:\projekt\isoaglib\_library\__lbs_lib\_system\service_monitor.cpp,f:\projekt\isoaglib\_library\__lbs_lib\_system\stop_manager.cpp,f:\projekt\isoaglib\_library\__lbs_lib\_system\system_pkg.cpp,f:\projekt\isoaglib\_library\__lbs_lib\util\can_pkg.cpp,f:\projekt\isoaglib\_library\__lbs_lib\util\can_pkg.h,f:\projekt\isoaglib\_library\__lbs_lib\util\can_pkg_ext.cpp,...
-FileList11=f:\projekt\isoaglib\_library\__lbs_lib\util\can_pkg_ext.h,f:\projekt\isoaglib\_library\__lbs_lib\util\_element_base.cpp,f:\projekt\isoaglib\_library\__lbs_lib\util\_element_base.h,f:\projekt\isoaglib\_library\__lbs_lib\master_header.h,f:\projekt\isoaglib\_library\_lib\master_header.h,f:\projekt\isoaglib\_library\__lbs_lib\hwbios\bios_namespace.h,f:\projekt\isoaglib\_library\__lbs_lib\hwbios\bios_esx\bios_namespace.h,...
+FileList11=f:\projekt\isoaglib\_library\__lbs_lib\util\can_pkg_ext.h,f:\projekt\isoaglib\_library\__lbs_lib\util\_element_base.cpp,f:\projekt\isoaglib\_library\__lbs_lib\util\_element_base.h,f:\projekt\isoaglib\_library\__lbs_lib\isoaglib_config.h,f:\projekt\isoaglib\_library\_lib\isoaglib_config.h,f:\projekt\isoaglib\_library\__lbs_lib\hwbios\bios_namespace.h,f:\projekt\isoaglib\_library\__lbs_lib\hwbios\bios_esx\bios_namespace.h,...
 FileList12=f:\projekt\isoaglib\_library\__lbs_lib\hwconfig\config_esx.h,f:\projekt\isoaglib\_library\_shared\err.cpp,f:\projekt\isoaglib\_library\_shared\err.h,f:\projekt\isoaglib\_library\__lbs_lib\hweeprom\eeprom_io.h,f:\projekt\isoaglib\_library\__lbs_lib\util\ringpuffer.h,f:\projekt\isoaglib\_library\__lbs_lib\hwbios\bios_esx\xos20go.asm,f:\projekt\isoaglib\_library\__lbs_lib\hwbios\bios_esx\xos20err.c,f:\projekt\isoaglib\_library\_lib\_system\istate.h,...
 FileList13=f:\projekt\isoaglib\_library\_lib\_system\i_system.h,f:\projekt\isoaglib\_library\_lib\_process\i_process.h,f:\projekt\isoaglib\_library\_lib\_process\i_process_data_local.h,f:\projekt\isoaglib\_library\_lib\_process\i_process_data_remote.h,f:\projekt\isoaglib\_library\_lib\_process\imeasure_prog_local.h,f:\projekt\isoaglib\_library\_lib\_process\imeasure_prog_remote.h,...
 FileList14=f:\projekt\isoaglib\_library\_lib\_process\isetpoint_local.h,f:\projekt\isoaglib\_library\_lib\_process\isetpoint_register.h,f:\projekt\isoaglib\_library\_lib\_process\isetpoint_remote.h,f:\projekt\isoaglib\_library\_lib\_process\proc.h,f:\projekt\isoaglib\_library\application_config\isoaglib_config.h,f:\projekt\isoaglib\_library\__lbs_lib\_terminal\_terminal.cpp,f:\projekt\isoaglib\_library\__lbs_lib\_terminal\_terminal.h,...

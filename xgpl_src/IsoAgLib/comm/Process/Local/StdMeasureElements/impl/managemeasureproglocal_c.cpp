@@ -47,37 +47,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
@@ -98,8 +98,10 @@ static uint16_t sui16_lastPrintedMeasureProgLocalTotal = 0;
 static uint16_t sui16_deconstructMeasureProgLocalTotal = 0;
 static uint16_t sui16_printedDeconstructMeasureProgLocalTotal = 0;
 
+#ifdef MASSERT
 extern unsigned int AllocateHeapMalloc;
 extern unsigned int DeallocateHeapMalloc;
+#endif
 #endif
 
 namespace __IsoAgLib {
@@ -110,7 +112,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   // insert default entry
   if ( pprocessData() != NULL )
   {
-    ProcDataLocalBase_c* pc_procdata = 
+    ProcDataLocalBase_c* pc_procdata =
       static_cast<ProcDataLocalBase_c*>(pprocessData());
     vec_prog().push_front(MeasureProgLocal_c(pc_procdata, Proc_c::UndefinedProg,
                                               pc_procdata->masterVal()
@@ -179,7 +181,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
   else
   {
     sui16_MeasureProgLocalTotal += vec_prog().size();
-  
+
     if ( ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
       || ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal                                  ) )
     {
@@ -192,7 +194,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
         << ", Chunk-Alloc: "
         << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
 	      << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-      #if 0
+      #ifndef MASSERT
         << "\r\n\r\n";
       #else
         << ", __mall tot:" << AllocateHeapMalloc
@@ -221,7 +223,7 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
   #ifdef DEBUG_HEAP_USEAGE
   sui16_MeasureProgLocalTotal -= vec_prog().size();
   sui16_deconstructMeasureProgLocalTotal += c_vec_prog.size();
-  
+
   if ( ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
     || ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal                                  ) )
   {
@@ -234,7 +236,7 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-    #if 0
+    #ifndef MASSERT
       << "\r\n\r\n";
     #else
       << ", __mall tot:" << AllocateHeapMalloc
@@ -253,10 +255,10 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
 */
 bool ManageMeasureProgLocal_c::timeEvent( void ){
   SystemMgmt_c& c_lbsSystem = getSystemMgmtInstance4Comm();
-  
+
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   GetyPos_c c_callerGtp;
-  
+
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
     || ( sui16_printedDeconstructMeasureProgLocalTotal != sui16_deconstructMeasureProgLocalTotal  ) )
@@ -270,7 +272,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-    #if 0
+    #ifndef MASSERT
       << "\r\n\r\n";
     #else
       << ", __mall tot:" << AllocateHeapMalloc
@@ -290,7 +292,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
   { // only one measure prog -> set it to undefined prog type if gtp inactive
     c_callerGtp = vec_prog().begin()->gtp();
     if ((!vec_prog().begin()->checkProgType(Proc_c::UndefinedProg))
-      &&((!c_lbsSystem.existMemberGtp(c_callerGtp)) 
+      &&((!c_lbsSystem.existMemberGtp(c_callerGtp))
       ||(
           (c_lbsSystem.memberGtp(c_callerGtp).lastedTime() > 3000)
         &&(c_lbsSystem.memberGtp(c_callerGtp).itemState(IState_c::Din))
@@ -298,7 +300,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
         )
       )
     { // progType of first and only element is not default undefined
-      // --> gtp should be an active member, but is inactie > 3sec 
+      // --> gtp should be an active member, but is inactie > 3sec
       // stop all programs and set prog type to default
       vec_prog().begin()->stop(); // programs stopped
       vec_prog().begin()->setProgType(Proc_c::UndefinedProg); // set to default
@@ -312,7 +314,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
       for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
           pc_iter != vec_prog().end(); pc_iter++)
       { // check if this item has inactive gtp
-        if ((!c_lbsSystem.existMemberGtp(pc_iter->gtp())) 
+        if ((!c_lbsSystem.existMemberGtp(pc_iter->gtp()))
           ||(
             (c_lbsSystem.memberGtp(pc_iter->gtp()).lastedTime() > 3000)
           &&(c_lbsSystem.memberGtp(pc_iter->gtp()).itemState(IState_c::Din))
@@ -327,7 +329,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
             #ifdef DEBUG_HEAP_USEAGE
             sui16_MeasureProgLocalTotal--;
             sui16_deconstructMeasureProgLocalTotal++;
-  
+
             if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
               || ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  ) )
             {
@@ -340,7 +342,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
 				        << ", Chunk-Alloc: "
 				        << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
                 << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-              #if 0
+				      #ifndef MASSERT
                 << "\r\n\r\n";
               #else
                 << ", __mall tot:" << AllocateHeapMalloc
@@ -356,7 +358,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
         }
       }
     }
-  }  
+  }
   // call the time event for all measure programs
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
        pc_iter != vec_prog().end(); pc_iter++)
@@ -379,7 +381,7 @@ void ManageMeasureProgLocal_c::processProg(){
   { // use normal mechanism -> exist function if no entry found
     if (!updateProgCache(c_pkg.pri(),c_callerGtp, false))return;
   }
-  
+
   #ifdef DEBUG_HEAP_USEAGE
   // first real access - print size now if this current size not yet printed
   // ( this is needed, as ManageMeasureProgLocal_c::init causes too much
@@ -394,7 +396,7 @@ void ManageMeasureProgLocal_c::processProg(){
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-    #if 0
+    #ifndef MASSERT
       << "\r\n\r\n";
     #else
       << ", __mall tot:" << AllocateHeapMalloc
@@ -408,7 +410,7 @@ void ManageMeasureProgLocal_c::processProg(){
 }
 
 /**
-  search for suiting measureprog, if not found AND if rb_doCreate == true 
+  search for suiting measureprog, if not found AND if rb_doCreate == true
   create copy from first element at end of vector
 
   possible errors:
@@ -423,7 +425,7 @@ MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(uint8_t rui8_pri, GetyPos_c r
   { // not found and no creation wanted
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
   }
-  
+
   // now return the cache pointed prog
   return *pc_progCache;
 }
@@ -460,7 +462,7 @@ void ManageMeasureProgLocal_c::setGlobalVal( float rf_val )
 
 /**
   create a new measure prog item;
-  if there is still the default initial item undefined define it 
+  if there is still the default initial item undefined define it
   and create no new item
 
   possible errors:
@@ -499,7 +501,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, GetyPos_c rc
     }
     #ifdef DEBUG_HEAP_USEAGE
     sui16_MeasureProgLocalTotal++;
-  
+
     if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
       || ( sui16_printedDeconstructMeasureProgLocalTotal != sui16_deconstructMeasureProgLocalTotal  ) )
     {
@@ -512,7 +514,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, GetyPos_c rc
         << ", Chunk-Alloc: "
         << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
         << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-      #if 0
+      #ifndef MASSERT
         << "\r\n\r\n";
       #else
         << ", __mall tot:" << AllocateHeapMalloc

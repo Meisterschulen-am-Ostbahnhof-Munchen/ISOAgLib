@@ -1,4 +1,4 @@
-DEFINES = SYSTEM_PC PRJ_USE_AUTOGEN_CONFIG=config_1_0_ReadIso.h
+DEFINES = SYSTEM_PC PRJ_USE_AUTOGEN_CONFIG=config_1_0_ReadIso.h USE_FLOAT_DATA_TYPE
 INCLUDEPATH = ../../../xgpl_src
 INCLUDEPATH += ../../../IsoAgLib_Examples/tutorial/1_BaseData/1_0_ReadIso
 TEMPLATE = app
@@ -58,7 +58,7 @@ HEADERS += ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/util/config.h
 HEADERS += ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
-HEADERS += ../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+HEADERS += ../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 HEADERS += ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
 SOURCES += ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
@@ -99,8 +99,6 @@ HEADERS += ../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 HEADERS += ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-HEADERS += ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
-HEADERS += ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 HEADERS += ../../../xgpl_src/supplementary_driver/hal/rs232.h
 HEADERS += ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
 HEADERS += ../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h

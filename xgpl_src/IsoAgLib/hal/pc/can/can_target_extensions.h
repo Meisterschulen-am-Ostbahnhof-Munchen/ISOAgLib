@@ -2,10 +2,10 @@
                           target_extensions.h - header for PC specific
                                                 extensions for the HAL
                                                 for CAN
-                             -------------------                                         
+                             -------------------
     begin                : Sat Jan 01 2003
     copyright            : (C) 2003 by Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de                                     
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -78,6 +78,8 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend );
 int16_t checkMsg();
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive );
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd );
+int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock );
+
 int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause);
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj);
 

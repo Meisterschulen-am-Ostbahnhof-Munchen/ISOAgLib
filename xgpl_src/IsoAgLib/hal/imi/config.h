@@ -55,11 +55,9 @@
 #include <Application_Config/isoaglib_config.h>
 #include <IsoAgLib/util/compiler_adoption.h>
 
-/** STW BIOS start with CAN Msg Obj offset 1 */
-#define HAL_CAN_MSGOBJ_OFFSET 1
-#define HAL_CAN_MIN_BUS_NR 0
-// only uncomment following line if  HAL_CAN_MIN_BUS_NR > 0
-//#define HAL_CAN_MIN_BUS_NR_GREATER_ZERO
+// IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
+// -> all needed offsets shall be added at the lowest possible layer
+//    ( i.e. direct in the BIOS/OS call)
 #define HAL_CAN_MAX_BUS_NR 1
 
 /** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */

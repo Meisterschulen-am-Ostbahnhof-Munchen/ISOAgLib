@@ -161,7 +161,7 @@ public:
 
   /** retrieve len of last received CAN message */
   static uint8_t getLen( void ) { return ui8_len;};
-  
+
   /**
     set the data len of CAN pkg (if rb_val is greater than 8, 8 is stored)
     @param rb_val length/amount of uint8_t in data string
@@ -206,7 +206,7 @@ public:
     @param refb_dlcTarget reference to the DLC field of the target
     @param pb_dataTarget pointer to the data string of the target
   */
-  virtual void getData(MASK_TYPE& reft_ident, uint8_t& refui8_identType,
+  virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
   /**
     compare for equality with other CANPkg

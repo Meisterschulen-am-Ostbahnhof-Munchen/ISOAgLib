@@ -80,17 +80,21 @@ struct can_data { // evtl. anpassen
   uint8_t pb_data[8];
 };
 
-static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 - HAL_CAN_MIN_BUS_NR );
+// IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
+// -> all needed offsets shall be added at the lowest possible layer
+//    ( i.e. direct in the BIOS/OS call)
+static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 static can_c* rteCan_c [cui32_maxCanBusCnt];
 static rtd_can_bus_state_t rteCanBusState[cui32_maxCanBusCnt];
 
-static can_data* rec_buf[cui32_maxCanBusCnt][16];
-static int16_t rec_bufCnt[cui32_maxCanBusCnt][16];
-static int16_t rec_bufSize[cui32_maxCanBusCnt][16];
-static int16_t rec_bufOut[cui32_maxCanBusCnt][16];
-static int16_t rec_bufIn[cui32_maxCanBusCnt][16];
-static bool rec_bufXtd[cui32_maxCanBusCnt][16];
-static uint32_t rec_bufFilter[cui32_maxCanBusCnt][16];
+static can_data* rec_buf[cui32_maxCanBusCnt][15];
+static int16_t rec_bufCnt[cui32_maxCanBusCnt][15];
+static int16_t rec_bufSize[cui32_maxCanBusCnt][15];
+static int16_t rec_bufOut[cui32_maxCanBusCnt][15];
+static int16_t rec_bufIn[cui32_maxCanBusCnt][15];
+static bool rec_bufXtd[cui32_maxCanBusCnt][15];
+static uint32_t rec_bufFilter[cui32_maxCanBusCnt][15];
+static bool b_canBufferLock[cui32_maxCanBusCnt][15];
 int32_t i32_lastReceiveTime;
 
 static uint16_t ui16_globalMask[cui32_maxCanBusCnt];
@@ -137,7 +141,7 @@ int16_t can_startDriver()
 		rteCan_c[ind] = NULL;
 		canlogDat[ind] = NULL;
 		b_busOpened[ind] = false;
-    for (uint8_t ui8_nr = 0; ui8_nr < 16; ui8_nr++)
+    for (uint8_t ui8_nr = 0; ui8_nr < 15; ui8_nr++)
     {
       rec_bufSize[ind][ui8_nr] = 0;
       rec_bufCnt[ind][ui8_nr] = 0;
@@ -191,7 +195,7 @@ int32_t can_lastReceiveTime()
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
   checkMsg();
-  return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 16))?rec_bufCnt[bBusNumber][bMsgObj]:0;
+  return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
 
@@ -204,7 +208,7 @@ int16_t closeCan ( uint8_t bBusNumber )
   }
   b_busOpened[bBusNumber] = false;
 
-  for (int i=0; i<16; i++) {
+  for (int i=0; i < 15; i++) {
     closeCanObj (bBusNumber, i);
   }
 
@@ -262,6 +266,7 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig )
 {
+	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (ptConfig->bMsgType == TX)
   { /* Sendeobjekt */
     rec_bufSize[bBusNumber][bMsgObj] = -1;
@@ -286,6 +291,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
 
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd )
 {
+	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] > -1)
   { // active receive object
     rec_bufFilter[bBusNumber][bMsgObj] = dwId;
@@ -294,8 +300,29 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   return HAL_NO_ERR;
 }
 
+/**
+	lock a MsgObj to avoid further placement of messages into buffer.
+  @param rui8_busNr number of the BUS to config
+  @param rui8_msgobjNr number of the MsgObj to config
+	@param rb_doLock true==lock(default); false==unlock
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+	*/
+int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+{ // first get waiting messages
+  if (b_busOpened[rui8_busNr])
+  {
+    rteCan_c [rui8_busNr]->poll ();
+  }
+	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+  return HAL_NO_ERR;
+}
+
+
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
+	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] == -1)
   { /* Sendeobjekt */
     rec_bufSize[bBusNumber][bMsgObj] = -1;
@@ -423,83 +450,86 @@ static int send(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t id, uint
   }
   #endif
 
-  for (int16_t i16_obj = 0; i16_obj < 16; i16_obj++)
-    { // compare received msg with filter
-      int16_t i16_in;
-      can_data* pc_data;
-      if
+  for (int16_t i16_obj = 0; i16_obj < 15; i16_obj++)
+	{ // compare received msg with filter
+		int16_t i16_in;
+		can_data* pc_data;
+		if ( b_canBufferLock[b_bus][i16_obj] )
+		{ // don't even check this MsgObj as it shall not receive messages
+			continue;
+		}
+		if
+		(
 			(
-				(
-					( i16_obj < 15 )
-			 && (
-						( (rec_bufXtd[b_bus][i16_obj] == 1)
-						&& (b_xtd == 1)
-						&& (rec_bufSize[b_bus][i16_obj] > 0)
-						&& ( (id & ui32_globalMask[b_bus]) ==  ((rec_bufFilter[b_bus][i16_obj]) & ui32_globalMask[b_bus]) )
-						)
-					|| ( (rec_bufXtd[b_bus][i16_obj] == 0)
-						&& (b_xtd == 0)
-						&& (rec_bufSize[b_bus][i16_obj] > 0)
-						&& ( (id & ui16_globalMask[b_bus]) ==  (rec_bufFilter[b_bus][i16_obj] & ui16_globalMask[b_bus]) )
-						)
+				( i16_obj < 14 )
+			&& (
+					( (rec_bufXtd[b_bus][i16_obj] == 1)
+					&& (b_xtd == 1)
+					&& (rec_bufSize[b_bus][i16_obj] > 0)
+					&& ( (id & ui32_globalMask[b_bus]) ==  ((rec_bufFilter[b_bus][i16_obj]) & ui32_globalMask[b_bus]) )
 					)
-				)
-		 || (
-					( i16_obj == 15 )
-			 && (
-						( (rec_bufXtd[b_bus][i16_obj] == 1)
-						&& (b_xtd == 1)
-						&& (rec_bufSize[b_bus][i16_obj] > 0)
-						&& ( (id & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) == ((rec_bufFilter[b_bus][i16_obj]) & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) )
-						)
-					|| ( (rec_bufXtd[b_bus][i16_obj] == 0)
-						&& (b_xtd == 0)
-						&& (rec_bufSize[b_bus][i16_obj] > 0)
-						&& ( (id & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) == (rec_bufFilter[b_bus][i16_obj] & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) )
-						)
+				|| ( (rec_bufXtd[b_bus][i16_obj] == 0)
+					&& (b_xtd == 0)
+					&& (rec_bufSize[b_bus][i16_obj] > 0)
+					&& ( (id & ui16_globalMask[b_bus]) ==  (rec_bufFilter[b_bus][i16_obj] & ui16_globalMask[b_bus]) )
 					)
 				)
 			)
-      { // received msg fits actual filter
-        i16_in = rec_bufIn[b_bus][i16_obj];
-        rec_bufIn[b_bus][i16_obj] = ((i16_in + 1) % rec_bufSize[b_bus][i16_obj]);
-        if (rec_bufCnt[b_bus][i16_obj] >= rec_bufSize[b_bus][i16_obj])
-        { // overflow -> insert new, and overwrite oldest msg in buffer
-          rec_bufOut[b_bus][i16_obj] = rec_bufIn[b_bus][i16_obj];
-        }
-        else
-        {
-          rec_bufCnt[b_bus][i16_obj] += 1;
-        }
-        pc_data = &(rec_buf[b_bus][i16_obj][i16_in]);
-        pc_data->i32_time = getTime();
-        pc_data->i32_ident = id;
-        pc_data->b_dlc = size;
-        pc_data->b_xtd = (type == rtd_can_type_xtd_msg)?1:0;
-        memcpy(pc_data->pb_data, data, pc_data->b_dlc);
-        #if 0
-        if (  ((id & 0x700) == 0x700)
-           || ((id & 0x700) == 0x500)
-           || ((id & 0x700) == 0x200)
-           || ((id & 0x700) == 0x000)
-//           || ( pc_data->b_xtd )
-            )
-        {
-          printf("Empfang %d.%03d: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", pc_data->i32_time/1000,pc_data->i32_time%1000, id,
-          pc_data->pb_data[0], pc_data->pb_data[1], pc_data->pb_data[2],
-          pc_data->pb_data[3], pc_data->pb_data[4], pc_data->pb_data[5],
-          pc_data->pb_data[6], pc_data->pb_data[7]);
+		|| (
+				( i16_obj == 14 )
+			&& (
+					( (rec_bufXtd[b_bus][i16_obj] == 1)
+					&& (b_xtd == 1)
+					&& (rec_bufSize[b_bus][i16_obj] > 0)
+					&& ( (id & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) == ((rec_bufFilter[b_bus][i16_obj]) & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) )
+					)
+				|| ( (rec_bufXtd[b_bus][i16_obj] == 0)
+					&& (b_xtd == 0)
+					&& (rec_bufSize[b_bus][i16_obj] > 0)
+					&& ( (id & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) == (rec_bufFilter[b_bus][i16_obj] & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) )
+					)
+				)
+			)
+		)
+		{ // received msg fits actual filter
+			i16_in = rec_bufIn[b_bus][i16_obj];
+			rec_bufIn[b_bus][i16_obj] = ((i16_in + 1) % rec_bufSize[b_bus][i16_obj]);
+			if (rec_bufCnt[b_bus][i16_obj] >= rec_bufSize[b_bus][i16_obj])
+			{ // overflow -> insert new, and overwrite oldest msg in buffer
+				rec_bufOut[b_bus][i16_obj] = rec_bufIn[b_bus][i16_obj];
+			}
+			else
+			{
+				rec_bufCnt[b_bus][i16_obj] += 1;
+			}
+			pc_data = &(rec_buf[b_bus][i16_obj][i16_in]);
+			pc_data->i32_time = getTime();
+			pc_data->i32_ident = id;
+			pc_data->b_dlc = size;
+			pc_data->b_xtd = (type == rtd_can_type_xtd_msg)?1:0;
+			memcpy(pc_data->pb_data, data, pc_data->b_dlc);
+			#if 0
+			if (  ((id & 0x700) == 0x700)
+					|| ((id & 0x700) == 0x500)
+					|| ((id & 0x700) == 0x200)
+					|| ((id & 0x700) == 0x000)
+//        || ( pc_data->b_xtd )
+					)
+			{
+				printf("Empfang %d.%03d: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", pc_data->i32_time/1000,pc_data->i32_time%1000, id,
+				pc_data->pb_data[0], pc_data->pb_data[1], pc_data->pb_data[2],
+				pc_data->pb_data[3], pc_data->pb_data[4], pc_data->pb_data[5],
+				pc_data->pb_data[6], pc_data->pb_data[7]);
 
-          fprintf(canlogDat[b_bus], "Empfang %d.%03d: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", pc_data->i32_time/1000,pc_data->i32_time%1000, id,
-          pc_data->pb_data[0], pc_data->pb_data[1], pc_data->pb_data[2],
-          pc_data->pb_data[3], pc_data->pb_data[4], pc_data->pb_data[5],
-          pc_data->pb_data[6], pc_data->pb_data[7]);
-        }
-        #endif
+				fprintf(canlogDat[b_bus], "Empfang %d.%03d: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", pc_data->i32_time/1000,pc_data->i32_time%1000, id,
+				pc_data->pb_data[0], pc_data->pb_data[1], pc_data->pb_data[2],
+				pc_data->pb_data[3], pc_data->pb_data[4], pc_data->pb_data[5],
+				pc_data->pb_data[6], pc_data->pb_data[7]);
+			}
+			#endif
 
-      } // if fit
-    } // for objNr
-
+		} // if fit
+	} // for objNr
   can_c *c;
   if (rte_get_class<can_c>( para, c ) == 0)
     return rte_set_error( illegal_para );

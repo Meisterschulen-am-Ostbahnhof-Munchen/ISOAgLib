@@ -55,7 +55,7 @@
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_config.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_icancustomer_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_icanpkg_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_symbol_shortening.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_compiler_adoption.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_igetypos_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_iutil_funcs.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_Application_Config=_=_isoaglib_config.h
@@ -82,7 +82,6 @@
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_icanio_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_system=_=_impl=_=_system_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_system=_=_isystem_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_supplementary_driver=_=_hal=_=_pm167=_=_rs232=_=_rs232.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_supplementary_driver=_=_hal=_=_rs232.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_supplementary_driver=_=_driver=_=_rs232=_=_impl=_=_rs232io_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_supplementary_driver=_=_driver=_=_rs232=_=_irs232io_c.h

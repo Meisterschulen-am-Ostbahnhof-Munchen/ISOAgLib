@@ -1,7 +1,7 @@
 [Project]
 FileName=1_0_ReadIso__simulating__sys.dev
 Name=1_0_ReadIso
-UnitCount=94
+UnitCount=92
 Type=1
 Ver=1
 ObjFiles=
@@ -11,8 +11,8 @@ Linker=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
-Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_1_0_ReadIso.h_@@_
-CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_1_0_ReadIso.h_@@_
+Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_1_0_ReadIso.h_@@_-DUSE_FLOAT_DATA_TYPE_@@_
+CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_1_0_ReadIso.h_@@_-DUSE_FLOAT_DATA_TYPE_@@_
 IsCpp=1
 Icon=
 ExeOutput=
@@ -638,7 +638,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit60]
-FileName=../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 CompileCpp=1
 Folder=1_0_ReadIso
 Compile=1
@@ -928,26 +928,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit89]
-FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
-CompileCpp=1
-Folder=1_0_ReadIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit90]
-FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
-CompileCpp=1
-Folder=1_0_ReadIso
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit91]
 FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.h
 CompileCpp=1
 Folder=1_0_ReadIso
@@ -957,7 +937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit92]
+[Unit90]
 FileName=../../../xgpl_src/supplementary_driver/hal/rs232.h
 CompileCpp=1
 Folder=1_0_ReadIso
@@ -967,7 +947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit93]
+[Unit91]
 FileName=../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
 CompileCpp=1
 Folder=1_0_ReadIso
@@ -977,7 +957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit94]
+[Unit92]
 FileName=../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
 CompileCpp=1
 Folder=1_0_ReadIso

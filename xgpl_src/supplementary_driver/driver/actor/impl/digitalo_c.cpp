@@ -90,7 +90,7 @@ namespace __IsoAgLib {
 /**
   internal called constructor for a new digital input 
   channel which performs configuration of hardware
-  (configure PWM frequency to DEFAULT_PWM_FREQUENCY
+  (configure PWM frequency to CONFIG_PWM_DEFAULT_FREQUENCY
   which is set in isoaglib_config.h)
   (uses BIOS function)
 
@@ -110,7 +110,7 @@ void DigitalO_c::init(uint8_t rui8_channel)
 {
   ActorBase_c::init( rui8_channel );
   // config the PWM freq with BIOS call
-  if (HAL::setPwmFreq(rui8_channel, DEFAULT_PWM_FREQUENCY) == HAL_RANGE_ERR)
+  if (HAL::setPwmFreq(rui8_channel, CONFIG_PWM_DEFAULT_FREQUENCY) == HAL_RANGE_ERR)
   { // wrong channel or PWM
     getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
   }

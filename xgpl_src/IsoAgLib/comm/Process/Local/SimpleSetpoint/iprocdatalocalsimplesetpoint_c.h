@@ -476,14 +476,14 @@ public:
     @param ri32_val new setpoint value
   */
   void setSetpointMasterVal(int32_t ri32_val)
-    { return ProcDataLocalSimpleSetpoint_c::setpoint().setSetpointMasterVal(ri32_val);};
+    { ProcDataLocalSimpleSetpoint_c::setpoint().setSetpointMasterVal(ri32_val);};
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the setpoint value as float value
     @param rf_val new setpoint value
   */
   void setSetpointMasterVal(float rf_val)
-    { return ProcDataLocalSimpleSetpoint_c::setpoint().setSetpointMasterVal(rf_val);};
+    { ProcDataLocalSimpleSetpoint_c::setpoint().setSetpointMasterVal(rf_val);};
   #endif
 
    /**

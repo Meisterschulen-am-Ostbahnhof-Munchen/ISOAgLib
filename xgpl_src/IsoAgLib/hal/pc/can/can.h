@@ -114,7 +114,7 @@ namespace HAL
     this is the case if neither succesfull sent nor received msg
     is detcted AND CAN controller is in WARN or OFF state
     (the time since last succ. send/rec and the time of WARN/OFF
-     can be defined with MAX_CAN_ERR_TIME_BEFORE_CAN_SLOWERING
+     can be defined with CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
      in the application specific config file isoaglib_config
      -> should not be to short to avoid false alarm)
     @param rui8_busNr number of the BUS to check (default 0)
@@ -161,10 +161,10 @@ namespace HAL
   /**
     check if a send MsgObj can't send msgs from buffer to the
     BUS (detecetd by comparing the inactive time with
-    MAX_SEND_WAIT_TIME (defined in isoaglib_config)
+    CONFIG_CAN_MAX_SEND_WAIT_TIME (defined in isoaglib_config)
     @param rui8_busNr number of the BUS to check
     @param rui8_msgobjNr number of the MsgObj to check
-    @return true -> longer than MAX_SEND_WAIT_TIME no msg sent on BUS
+    @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
   */
   inline bool can_stateMsgobjSendproblem(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
     {return __HAL::can_stateMsgobjSendproblem(rui8_busNr, rui8_msgobjNr);};
@@ -286,6 +286,18 @@ namespace HAL
   inline int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident)
     {return __HAL::can_configMsgobjChgid(rui8_busNr, rui8_msgobjNr, rrefc_ident);};
 
+	/**
+		lock a MsgObj to avoid further placement of messages into buffer.
+		@param rui8_busNr number of the BUS to config
+		@param rui8_msgobjNr number of the MsgObj to config
+		@param rb_doLock true==lock(default); false==unlock
+		@return HAL_NO_ERR == no error;
+						HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+						HAL_RANGE_ERR == wrong BUS or MsgObj number
+		*/
+	inline int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock = true )
+		{return __HAL::can_configMsgobjLock( rui8_busNr, rui8_msgobjNr, rb_doLock);};
+
   /**
     change the the send rate for one MsgObj by setting the minimum
     pause time between two messages [msec.]
@@ -321,7 +333,7 @@ namespace HAL
     CANPkg_c (or derived object) must provide (virtual)
     functions:
     * Ident_c& getIdent() -> deliver ident of msg to send
-    * uint8_t getData(MASK_TYPE& reft_ident, uint8_t& refui8_identType, 
+    * uint8_t getData(MASK_TYPE& reft_ident, uint8_t& refui8_identType,
                       uint8_t& refb_dlc, uint8_t* pb_data)
       -> put DLC in referenced ref_dlc and insert data in uint8_t string pb_data
     @param rui8_busNr number of the BUS to config

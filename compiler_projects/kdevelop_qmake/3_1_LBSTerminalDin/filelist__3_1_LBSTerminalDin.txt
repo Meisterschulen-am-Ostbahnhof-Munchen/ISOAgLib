@@ -74,7 +74,7 @@
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
-../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.h

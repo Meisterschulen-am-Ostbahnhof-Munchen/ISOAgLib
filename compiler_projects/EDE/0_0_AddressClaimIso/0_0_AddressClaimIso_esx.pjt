@@ -1,13 +1,14 @@
 ;Codewright Project File (do not remove or modify this line)
 [State]
-SysSetCwd='D:\Fritzmeier\MiniVegN\IsoAgLib'
+SysSetCwd='..\..\..'
 SrchSetFlags=0x0418680a
 SrchSetAgainFlags=0x00006002,0
 SrchSetAgainFlags=0x0200600a,1
 FileSortMode=0x0
-_StateHistory=FILELIST,'C:\Programme\Tasking\7.56\c166\include.cpp\stl_function.h'
-_StateHistory=DOCUMENTVISIT,'505         1           C:\Programme\Tasking\7.56\c166\include.cpp\stl_function.h'
-_StateDocumentVisit=1
+_StateView=
+_StateBuffer=
+_StateHistory=
+_StateDocumentVisit=10
 
 [ProjInit]
 ConfigSetExtMode=2
@@ -173,7 +174,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\icancustomer_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
-..\..\..\xgpl_src\IsoAgLib\util\symbol_shortening.h
+..\..\..\xgpl_src\IsoAgLib\util\compiler_adoption.h
 ..\..\..\xgpl_src\IsoAgLib\util\igetypos_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
 ..\..\..\xgpl_src\Application_Config\isoaglib_config.h
@@ -211,7 +212,7 @@ Libraries=c:\programme\tasking\7.56\c166\lib;..\..\..\commercial_BIOS\bios_esx
 [Ede]
 Toolchain=c:\programme\tasking\7.56\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=d:\fritzmeier\minivegn\isoaglib\compiler_projects\ede\0_0_addressclaimiso
+ProjectDir=\home\spangler\Fritzmeier\MiniVegN\IsoAgLib\compiler_projects\EDE\\0_0_AddressClaimIso
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b
@@ -259,10 +260,12 @@ COptim=CAdvOptim
 COptimAliasTypeChk=0
 OutIHex=1
 OutIHexType=OutIHexType32
-OutIHexAdditionalOpt=-r -O -P
+OutIHexAdditionalOpt="-r -O -P"
 LocMyIlo=..\..\..\commercial_BIOS\bios_esx\Xos20lcs.ilo
 LocSmartlink=1
 LnkLocTrapFPLib=0
 LnkLocSupprWarn=118
-LnkLocAddOptions=-Wo ..\..\..\commercial_BIOS\bios_esx\C756\Xos20l.lib -Wo ..\..\..\commercial_BIOS\bios_esx\Module\Xma20l.lib
+LnkLocAddOptions= -Wo ..\..\..\commercial_BIOS\bios_esx\C756\Xos20l.lib -Wo ..\..\..\commercial_BIOS\bios_esx\Module\Xma20l.lib
 OptionList=CppCompGlobal,CCompGlobal,CpuType,CompAlternativeTokens,CompRtti,CppDefine,CppKeepOutput,CMemModel,CEstimateUsk,COutKeepSrc,CFragment,CDispAllWarn,CSupprSomeWarn,CSupprWarn,CDebug,CDefine,COptim,COptimAliasTypeChk,OutIHex,OutIHexType,OutIHexAdditionalOpt,LocMyIlo,LocSmartlink,LnkLocTrapFPLib,LnkLocSupprWarn,LnkLocAddOptions
+
+

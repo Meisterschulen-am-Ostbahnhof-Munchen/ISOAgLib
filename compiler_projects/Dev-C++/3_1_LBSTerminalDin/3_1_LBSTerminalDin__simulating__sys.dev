@@ -808,7 +808,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit77]
-FileName=../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 CompileCpp=1
 Folder=3_1_LBSTerminalDin
 Compile=1

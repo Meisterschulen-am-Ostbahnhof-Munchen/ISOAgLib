@@ -100,8 +100,10 @@ static uint16_t sui16_msgObjTotal = 0;
 static uint16_t sui16_filterBoxTotal = 0;
 static uint16_t sui16_deconstructMsgObjCnt = 0;
 
+#ifdef MASSERT
 extern unsigned int AllocateHeapMalloc;
 extern unsigned int DeallocateHeapMalloc;
+#endif
 #endif
 
 
@@ -129,8 +131,11 @@ namespace __IsoAgLib {
 /** global array for pointers to dynamic MsgObj_c array of CANIO_c objects for each BUS
   -> by BUS Nr parameter in interrupt function,
      the appropriate dynamic MsgObj_c array can be found */
-//std::slist<MsgObj_c>* irqMsgObjVec[CAN_BUS_CNT];
+#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
 std::slist<MsgObj_c,std::__malloc_alloc_template<0> >* irqMsgObjVec[CAN_BUS_CNT];
+#else
+std::slist<MsgObj_c>* irqMsgObjVec[CAN_BUS_CNT];
+#endif
 
 uint8_t b_irqCanReceiveOffset[CAN_BUS_CNT];
 
@@ -150,7 +155,7 @@ uint8_t b_irqCanReceiveOffset[CAN_BUS_CNT];
   then the configuration settings of a previous init call are not
   changed. In this case, the CAN BUS is only reset with the old settings.
   This is enabled by the default value 0xFF for rui8_busNumber, which is
-  changed to DEFAULT_BUS_NUMBER for the first call of init() after the constructor.
+  changed to CONFIG_CAN_DEFAULT_BUS_NUMBER for the first call of init() after the constructor.
   In all other cases, the special value 0xFF is indicator for empty parameter list.
 
   possible errors:
@@ -196,9 +201,7 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     // close CAN Bus, if ui8_busNumber is valid at the
     // moment (this can be a reconfig after a default
     // config)
-    if ( ( ui8_busNumber >= HAL_CAN_MIN_BUS_NR )
-      && ( ui8_busNumber <= HAL_CAN_MAX_BUS_NR )
-      )
+    if ( ui8_busNumber <= HAL_CAN_MAX_BUS_NR )
     {
       HAL::can_configGlobalClose(ui8_busNumber);
     }
@@ -246,9 +249,6 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
       ||(rui8_minObjNr > HAL_CAN_MAX_SEND_OBJ)
       ||(rui8_maxObjNr < HAL_CAN_MIN_SEND_OBJ)
       ||(rui8_maxObjNr > HAL_CAN_MAX_SEND_OBJ)
-  #ifdef HAL_CAN_MIN_BUS_NR_GREATER_ZERO
-      ||(rui8_busNumber < HAL_CAN_MIN_BUS_NR)
-  #endif
       ||(rui8_busNumber > HAL_CAN_MAX_BUS_NR)
         )
     { // one of the range tests not passed
@@ -271,7 +271,7 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     setMaxMsgObjNr(rui8_maxObjNr);
     // store given BUS number: if default value 0xFF is given, use
     // the default defined value
-    ui8_busNumber = (rui8_busNumber != 0xFF)?rui8_busNumber:DEFAULT_BUS_NUMBER;
+    ui8_busNumber = (rui8_busNumber != 0xFF)?rui8_busNumber:CONFIG_CAN_DEFAULT_BUS_NUMBER;
     // store wanted CAN identifier type
     en_identType = ren_identType;
     // set global irqMsgObjVec pointer for irqFun
@@ -338,7 +338,7 @@ bool CANIO_c::timeEvent( void ){
   // if still not ready, CANIO_c is not yet initialised complete -> do nothing
   if ( (ui16_bitrate == 0) || ( ui8_busNumber > HAL_CAN_MAX_BUS_NR ) ) return false;
 
-  #if ( USE_FALLBACK_ON_CAN_DEADLOCK )
+  #if ( CONFIG_CAN_USE_FALLBACK_ON_CAN_DEADLOCK )
   // check if CAN BUS is o.k.
   int32_t i32_now = HAL::getTime();
   int32_t i32_lastSend;
@@ -366,7 +366,7 @@ bool CANIO_c::timeEvent( void ){
   if (HAL::can_stateGlobalBlocked())b_sendProblem = true;
   if (b_sendProblem)
   { // a send problem occured -> close CAN and open again
-    setBitrate(CAN_FALLBACK_BITRATE);
+    setBitrate(CONFIG_CAN_FALLBACK_BITRATE);
   }
   #endif
 
@@ -608,7 +608,7 @@ bool CANIO_c::deleteFilter(MASK_TYPE rt_mask, MASK_TYPE rt_filter,
       << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(FilterBox_c), sui16_filterBoxTotal )
-    #if 0
+    #ifdef MASSERT
       << "\r\n__mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
       << "\r\n";
@@ -633,9 +633,6 @@ bool CANIO_c::verifyBusMsgobjNr(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 { //cehck if there is an error
   if (
      (rui8_busNr > HAL_CAN_MAX_BUS_NR)
-#ifdef HAL_CAN_MIN_BUS_NR_GREATER_ZERO
-  || (rui8_busNr < HAL_CAN_MIN_BUS_NR)
-#endif
   || (rui8_msgobjNr < (minMsgObjNr() + 1))
   || (rui8_msgobjNr > maxMsgObjNr())
      )
@@ -670,7 +667,7 @@ bool CANIO_c::processMsg(){
 		c_lastMsgObj.close();
 	}
 
-  for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
+	for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
   { // stop processing of message buffers, if not enough time
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 		System_c::triggerWd();
@@ -1008,7 +1005,7 @@ void CANIO_c::CheckSetCntMsgObj(){
     << "/" << sizeSlistTWithMalloc( sizeof(MsgObj_c), 1 )
     << ", Chunk-Alloc: "
     << sizeSlistTWithChunk( sizeof(MsgObj_c), sui16_msgObjTotal )
-  #if 0
+  #ifdef MASSERT
     << "\r\n__mall tot:" << AllocateHeapMalloc
     << ", _mall deal tot: " << DeallocateHeapMalloc
     << "\r\n";
@@ -1036,7 +1033,7 @@ bool CANIO_c::reconfigureMsgObj()
     << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
     << ", Chunk-Alloc: "
     << sizeSlistTWithChunk( sizeof(FilterBox_c), sui16_filterBoxTotal )
-  #if 0
+  #ifdef MASSERT
     << "\r\n__mall tot:" << AllocateHeapMalloc
     << ", _mall deal tot: " << DeallocateHeapMalloc
     << "\r\n";
@@ -1106,7 +1103,6 @@ bool CANIO_c::reconfigureMsgObj()
     pc_iterMsgObj->configCan(ui8_busNumber, minMsgObjNr()+i+b_irqCanReceiveOffset[ui8_busNumber]);
     i++;
   }
-
 	if ( c_lastMsgObj.isOpen() )
 	{ // lock the MsgObj_c to avoid receive of further messages
 		c_lastMsgObj.lock( true );
@@ -1220,7 +1216,7 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
 
   #ifdef USE_CAN_EEPROM_EDITOR
     /* if CAN init with success init CAN EEEditor */
-    if ( ( i16_retvalInit == HAL_NO_ERR) && ( ui8_busNumber == CAN_EEDITOR_BUS ) )
+    if ( ( i16_retvalInit == HAL_NO_ERR) && ( ui8_busNumber == CONFIG_EEPROM_USE_CAN_BUS ) )
     {
       uint8_t b_eepromType;
       if ((en_identType == Ident_c::BothIdent) || (en_identType == Ident_c::StandardIdent))
@@ -1231,9 +1227,9 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
       {
         b_eepromType = Ident_c::ExtendedIdent;
       }
-      HAL::InitEEEditor( CAN_EEDITOR_BUS, maxMsgObjNr(),
-          (maxMsgObjNr() - 1), CAN_EEDITOR_REC_IDENT, b_eepromType,
-          CAN_EEDITOR_PUFFER, SEND_PUFFER_SIZE);
+      HAL::InitEEEditor( CONFIG_EEPROM_USE_CAN_BUS, maxMsgObjNr(),
+          (maxMsgObjNr() - 1), CONFIG_EEPROM_USE_CAN_REC_IDENT, b_eepromType,
+          CONFIG_EEPROM_USE_CAN_BUFFER_SIZE, CONFIG_CAN_SEND_BUFFER_SIZE);
     }
   #endif
 

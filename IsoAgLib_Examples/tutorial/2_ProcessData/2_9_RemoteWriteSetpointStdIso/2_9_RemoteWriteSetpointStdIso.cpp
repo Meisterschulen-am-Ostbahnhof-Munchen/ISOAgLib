@@ -200,6 +200,7 @@
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <IsoAgLib/driver/can/icanio_c.h>
+#include <supplementary_driver/driver/rs232/irs232io_c.h>
 
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
@@ -217,11 +218,27 @@
 	#include <IsoAgLib/comm/Process/processdatachangehandler_c.h>
 #endif
 
+#ifdef WIN32
+	#define LOG_INFO std::cout
+	#include <iostream>
+#else
+	#define LOG_INFO getIrs232Instance()
+#endif
+
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
 // with this command the text part "IsoAgLib::" can be avoided, which
 // is needed for the documentation generator
 using namespace IsoAgLib;
+
+/** define channel to write:
+ - access data from tutorial examples 2_0_xy to 2_6_nm which listen to requests on channel 0
+    -> select here the corresponding channel in your configuration
+			 ( e.g. select channel 1 for a 2-channel CAN-Hardware )
+	- simply write on channel 0, when no connection needed, or the connection is
+	  realized with another external connection
+*/
+static const int32_t cui32_canChannel = 1;
 
 
 /** dummy function which can be called from some other module to control the remote work state */
@@ -231,16 +248,18 @@ void controlRemoteApplicationRate( int32_t ri32_applicationRate );
 /** dummy function which is called upon reaction from to be controlled remote device
 		- for work state
 	*/
-void indicateRemoteWorkStateResponse( bool /* rb_accepted */ )
+void indicateRemoteWorkStateResponse( bool rb_work )
 { // perform some reaction based on result
-
+	if ( rb_work ) LOG_INFO << "Remote ECU switched to WORK-STATE\r\n";
+	else LOG_INFO << "Remote ECU switched to NO-WORK\r\n";
 }
 /** dummy function which is called upon reaction from to be controlled remote device
 		- for Application Rate
 	*/
-void indicateRemoteApplicationRateResponse( bool /* rb_accepted */ )
+void indicateRemoteApplicationRateResponse( bool rb_accepted )
 { // perform some reaction based on result
-
+	if ( rb_accepted ) LOG_INFO << "FINE - Remote ECU accepted our last setpoint\r\n";
+	else LOG_INFO << "SAD - Remote ECU didn't accept our last setpoint\r\n";
 }
 
 #ifdef USE_PROC_HANDLER
@@ -298,13 +317,15 @@ bool MyProcDataHandler_c::processSetpointResponse( EventSource_c rc_src, int32_t
 MyProcDataHandler_c c_myMeasurementHandler;
 #endif
 
+// default with primary cultivation mounted back
+IsoAgLib::iGetyPos_c c_myGtp( 2, 0 );
+// device type of remote ECU
+IsoAgLib::iGetyPos_c c_remoteDeviceType( 0x5, 0 );
 
 int main()
-{ // simply call startImi
-  IsoAgLib::getIcanInstance().init( 0, 250 );
+{ // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
+  getIcanInstance().init( cui32_canChannel, 250 );
   // variable for GETY_POS
-  // default with primary cultivation mounted back
-  IsoAgLib::iGetyPos_c c_myGtp( 2, 0 );
 
   // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
@@ -325,23 +346,20 @@ int main()
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
-	// device type of remote ECU
-	IsoAgLib::iGetyPos_c c_remoteDeviceType( 0x5, 0 );
-
 
 	#ifdef USE_PROC_HANDLER
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-  arr_procData[cui8_indexWorkState].init(0, c_myGtp, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  arr_procData[cui8_indexWorkState].init(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-  arr_procData[cui8_indexApplicationRate].init(0, c_myGtp, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  arr_procData[cui8_indexApplicationRate].init(0, c_remoteDeviceType, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
 	#else
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
 	// of device with device type/subtype=5/0
-	IsoAgLib::iProcDataRemote_c c_workState(0, c_myGtp, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
+	IsoAgLib::iProcDataRemote_c c_workState(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
 	bool b_waitingRespWorkState = false;
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
 	// of device with device type/subtype=5/0
-  IsoAgLib::iProcDataRemote_c c_applicationRate(0, c_myGtp, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
+  IsoAgLib::iProcDataRemote_c c_applicationRate(0, c_remoteDeviceType, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
 	bool b_waitingRespApplicationRate = false;
 	#endif
 
@@ -358,13 +376,13 @@ int main()
 			only during address claim, mask updload and other special
 			circumstances in a high repetition rate )
 		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define BUFFER_SHORT_CAN_EN_LOSS_MSEC
+			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
 			in isoaglib_config.h to ignore short CAN_EN loss.
 		- This explicit control of power state without automatic powerdown on CanEn loss
 			can be controled with the central config define
-			#define DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
 			or
-			#define DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
 			in the header xgpl_src/Application_Config/isoaglib_config.h
 		- This can be also controlled during runtime with the function call:
 			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
@@ -377,6 +395,8 @@ int main()
 		// all time controlled actions of IsoAgLib
 		IsoAgLib::getISchedulerInstance().timeEvent();
 
+		if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) continue;
+		if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) continue;
 		#ifndef USE_PROC_HANDLER
 		if ( ( b_waitingRespWorkState ) && ( c_workState.setpoint().answered() ) )
 		{ // we got a reaction of remote device
@@ -410,6 +430,8 @@ int main()
 /** dummy function which can be called from some other module to control the remote work state */
 void controlRemoteWorkState( bool rb_isWorking )
 {
+	if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) return;
+	if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) return;
 	#ifndef USE_PROC_HANDLER
 	b_waitingRespWorkState = true;
 	if ( rb_isWorking ) c_workState.setSetpointMasterVal( 100 );
@@ -422,6 +444,8 @@ void controlRemoteWorkState( bool rb_isWorking )
 /** dummy function which can be called from some other module to control the remote application rate */
 void controlRemoteApplicationRate( int32_t ri32_applicationRate )
 {
+	if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) return;
+	if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) return;
 	#ifndef USE_PROC_HANDLER
 	b_waitingRespApplicationRate = true;
 	c_applicationRate.setSetpointMasterVal( ri32_applicationRate );

@@ -92,18 +92,26 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   char name[50];
   printf("init_rs232 aufgerufen mit %d Baud, Modus %hd, %hd Stop-Bits, XON/XOFF %d\n",
         wBaudrate,bMode, bStoppbits, bitSoftwarehandshake);
-  strcpy(sendName, "../../../simulated_io/rs232_send");
+	#ifdef WIN32
+	strcpy(sendName, "rs232_send");
+	#else
+	strcpy(sendName, "../../../simulated_io/rs232_send");
+	#endif
   rs232_output = fopen(sendName, "w"); // "a+"
 
 	#ifdef WRITE_LOG_FILE
-  strcpy(name, "../../../simulated_io/rs232_log");
+	#ifdef WIN32
+  strcpy(name, "rs232_log");
+	#else
+	strcpy(sendName, "../../../simulated_io/rs232_log");
+	#endif
   rs232_log = fopen(name, "w"); // "a+"
 	#endif
 
   printf("Versuch Datei mit Name %s zum schreiben zu oeffnen\n", name);
-#ifdef USE_REAL_RS232
+	#ifdef USE_REAL_RS232
   SioInit(1,wBaudrate);
-#endif
+	#endif
   return HAL_NO_ERR;
 }
 /**

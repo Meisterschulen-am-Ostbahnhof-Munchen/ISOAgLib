@@ -54,11 +54,9 @@
 // include target independend configs
 #include <Application_Config/isoaglib_config.h>
 
-/** simulated PC BIOS start with CAN Msg Obj offset 0 */
-#define HAL_CAN_MSGOBJ_OFFSET 0
-#define HAL_CAN_MIN_BUS_NR 0
-// only uncomment following line if  HAL_CAN_MIN_BUS_NR > 0
-//#define HAL_CAN_MIN_BUS_NR_GREATER_ZERO
+// IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
+// -> all needed offsets shall be added at the lowest possible layer
+//    ( i.e. direct in the BIOS/OS call)
 #define HAL_CAN_MAX_BUS_NR 3
 
 
@@ -103,10 +101,10 @@
 /* Initialisierung Watchdog 0 */
 #define WD_MAX_TIME      0//200        /* 128 ms                    */
 #define WD_MIN_TIME      0      /* 0 ms                      */
-#define UD_MAX          233     /* 16.7 V                    */
-#define UD_MIN        100      /* 7.2 V                    */
-#define CONFIG_RELAIS    255     /* Relais wird bei allen Fehlern abgeschaltet */
-#define  CONFIG_RESET    0x10    /* (b 0001 0000) Reset bei WD Verzug      */
+#define UD_MAX           233    /* 16.7 V                    */
+#define UD_MIN           100    /* 7.2 V                    */
+#define CONFIG_RELAIS    255    /* Relais wird bei allen Fehlern abgeschaltet */
+#define  CONFIG_RESET    0x10   /* (b 0001 0000) Reset bei WD Verzug      */
 
 /** @def SYSTEM_PC_VC_YN
   * set this define to YES if IsoAgLib is used for a PC with microsoft Visual C++ compiler

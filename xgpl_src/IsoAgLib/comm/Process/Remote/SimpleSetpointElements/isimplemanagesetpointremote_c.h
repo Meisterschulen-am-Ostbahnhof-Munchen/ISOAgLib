@@ -87,7 +87,7 @@ class iSimpleManageSetpointRemote_c : public __IsoAgLib::SimpleManageSetpointRem
     @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
   */
   void setSetpointPercentVal(uint8_t rb_val, bool rb_onlyStoreOnResponse = true)
-    { return SimpleManageSetpointRemote_c::setSetpointPercentVal( rb_val, rb_onlyStoreOnResponse);};
+    { SimpleManageSetpointRemote_c::setSetpointPercentVal( rb_val, rb_onlyStoreOnResponse);};
   #endif
   /**
     deliver the actual master setpoint
@@ -102,7 +102,7 @@ class iSimpleManageSetpointRemote_c : public __IsoAgLib::SimpleManageSetpointRem
     @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
   */
   void setSetpointMasterVal(int32_t ri32_val, bool rb_onlyStoreOnResponse = true)
-    { return SimpleManageSetpointRemote_c::setSetpointMasterVal( ri32_val, rb_onlyStoreOnResponse);};
+    { SimpleManageSetpointRemote_c::setSetpointMasterVal( ri32_val, rb_onlyStoreOnResponse);};
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the actual master setpoint
@@ -117,7 +117,7 @@ class iSimpleManageSetpointRemote_c : public __IsoAgLib::SimpleManageSetpointRem
     @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
   */
   void setSetpointMasterVal(float rf_val, bool rb_onlyStoreOnResponse = true)
-    { return SimpleManageSetpointRemote_c::setSetpointMasterVal( rf_val, rb_onlyStoreOnResponse);};
+    { SimpleManageSetpointRemote_c::setSetpointMasterVal( rf_val, rb_onlyStoreOnResponse);};
   #endif
  private:
   friend class iProcDataRemote_c;

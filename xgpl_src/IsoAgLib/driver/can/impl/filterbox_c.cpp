@@ -110,8 +110,8 @@ FilterBox_c::FilterBox_c()
   instance; even define specific mask and filter setting
   
   @param rpc_customer pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
-  @param rt_mask mask for this Filer_Box (MASK_TYPE defined in master_header.h)
-  @param rt_filter filter for this Filer_Box (MASK_TYPE defined in master_header.h)
+  @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
    @exception badAlloc
 */
@@ -180,8 +180,8 @@ void FilterBox_c::clearData()
 /**
   set the mask (t_mask) and filter (t_filter) of this FilterBox
   @param rpc_customer pointer to the CANCustomer_c instance, which creates this FilterBox_c instance
-  @param rt_mask mask for this Filer_Box (MASK_TYPE defined in master_header.h)
-  @param rt_filter filter for this Filer_Box (MASK_TYPE defined in master_header.h)
+  @param rt_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param rt_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
 */
 void FilterBox_c::set(const Ident_c& rrefc_mask, 

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          target_extension_can_w32_vector_canlib.cc - source for the PSEUDO BIOS for
+                          target_extension_can_w32_vector_canlib.cpp - source for the PSEUDO BIOS for
                                        development and test on a Win32 PC
                                        with CAN communication through Vector-Informatik
                                        CANcardX
@@ -77,7 +77,10 @@ namespace __HAL {
 /////////////////////////////////////////////////////////////////////////
 // Globals
 HANDLE       gEventHandle    = 0;
-static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 - HAL_CAN_MIN_BUS_NR );
+// IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
+// -> all needed offsets shall be added at the lowest possible layer
+//    ( i.e. direct in the BIOS/OS call)
+static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 
 
 // CAN Globals
@@ -107,13 +110,14 @@ struct can_data {
   uint8_t pb_data[8];
 };
 
-static can_data* rec_buf[cui32_maxCanBusCnt][16];
-static int32_t rec_bufCnt[cui32_maxCanBusCnt][16];
-static int32_t rec_bufSize[cui32_maxCanBusCnt][16];
-static int32_t rec_bufOut[cui32_maxCanBusCnt][16];
-static int32_t rec_bufIn[cui32_maxCanBusCnt][16];
-static bool rec_bufXtd[cui32_maxCanBusCnt][16];
-static uint32_t rec_bufFilter[cui32_maxCanBusCnt][16];
+static can_data* rec_buf[cui32_maxCanBusCnt][15];
+static int32_t rec_bufCnt[cui32_maxCanBusCnt][15];
+static int32_t rec_bufSize[cui32_maxCanBusCnt][15];
+static int32_t rec_bufOut[cui32_maxCanBusCnt][15];
+static int32_t rec_bufIn[cui32_maxCanBusCnt][15];
+static int32_t rec_bufXtd[cui32_maxCanBusCnt][15];
+static uint32_t rec_bufFilter[cui32_maxCanBusCnt][15];
+static bool b_canBufferLock[cui32_maxCanBusCnt][15];
 int32_t i32_lastReceiveTime;
 
 static uint16_t ui16_globalMask[cui32_maxCanBusCnt];
@@ -187,13 +191,13 @@ int16_t can_startDriver()
 
 	for ( uint32_t ind = 0; ind < cui32_maxCanBusCnt; ind++ )
 	{
-		VportHandle gPortHandle[ind] = INVALID_PORTHANDLE;
-		Vaccess gChannelMask[ind]    = 0;
-		Vaccess gPermissionMask[ind] = 0;
-		Vaccess gInitMask[ind]       = 0;
+		gPortHandle[ind] = INVALID_PORTHANDLE;
+		gChannelMask[ind]    = 0;
+		gPermissionMask[ind] = 0;
+		gInitMask[ind]       = 0;
 		b_busOpened[ind]             = false;
 		canlogDat[ind]               = NULL;
-    for (uint8_t ui8_nr = 0; ui8_nr < 16; ui8_nr++)
+    for (uint8_t ui8_nr = 0; ui8_nr < 15; ui8_nr++)
     {
       rec_bufSize[ind][ui8_nr] = 0;
       rec_bufCnt[ind][ui8_nr] = 0;
@@ -270,7 +274,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 	#ifndef USE_THREAD
   checkMsg();
 	#endif
-  return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 16))?rec_bufCnt[bBusNumber][bMsgObj]:0;
+  return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
 
@@ -282,7 +286,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 
 	Vaccess virtualChannelMask = 0;
 
-  canlogDat[bBusNumber] = fopen("..\\..\\..\\..\\simulated_io\\can_send.txt", "w+");
+	canlogDat[bBusNumber] = fopen("can_send.txt", "w+");
   if(canlogDat[bBusNumber])
   {
 	printf("canlogDat file opened\n");
@@ -436,6 +440,7 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig )
 {
+	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (ptConfig->bMsgType == TX)
   { /* Sendeobjekt */
     rec_bufSize[bBusNumber][bMsgObj] = -1;
@@ -455,6 +460,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
 
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd )
 {
+	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] > -1)
   { // active receive object
     rec_bufFilter[bBusNumber][bMsgObj] = dwId;
@@ -462,9 +468,24 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   }
   return HAL_NO_ERR;
 }
+/**
+	lock a MsgObj to avoid further placement of messages into buffer.
+  @param rui8_busNr number of the BUS to config
+  @param rui8_msgobjNr number of the MsgObj to config
+	@param rb_doLock true==lock(default); false==unlock
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+	*/
+int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+{ // first get waiting messages
+	checkMsg();
+	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+}
 
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
+	b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (rec_bufSize[bBusNumber][bMsgObj] == -1)
   { /* Sendeobjekt */
     rec_bufSize[bBusNumber][bMsgObj] = -1;
@@ -508,12 +529,10 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
       ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
       ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
       ptSend->abData[6], ptSend->abData[7]);
-
       fprintf(canlogDat[bBusNumber], "Sende: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
       ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
       ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
       ptSend->abData[6], ptSend->abData[7]);
-
     }
 
   vErr = ncdTransmit(lPortHandle, lChannelMask, &lEvent);
@@ -609,16 +628,19 @@ int16_t checkMsg()
 				fprintf(canlogDat[b_bus], "!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
 				continue;
 			}
-			ui32_id = (gpEvent->tagData.msg.id & 0xFFFF);
 			// now search for MsgObj queue on this b_bus, where new message from b_bus maps
-			for (int32_t i32_obj = 1; i32_obj < 16; i32_obj++)
+			for (int32_t i32_obj = 1; i32_obj < 15; i32_obj++)
 			{ // compare received msg with filter
 				int32_t i32_in;
 				can_data* pc_data;
+				if ( b_canBufferLock[b_bus][i32_obj] )
+				{ // don't even check this MsgObj as it shall not receive messages
+					continue;
+				}
 				if
 					(
 						(
-							( i32_obj < 15 )
+							( i32_obj < 14 )
 					&&  (
 								( (rec_bufXtd[b_bus][i32_obj] == 1)
 								&& (b_xtd == 1)
@@ -633,7 +655,7 @@ int16_t checkMsg()
 							)
 						)
 				|| (
-							( i32_obj == 15 )
+							( i32_obj == 14 )
 					&&  (
 								( (rec_bufXtd[b_bus][i32_obj] == 1)
 								&& (b_xtd == 1)

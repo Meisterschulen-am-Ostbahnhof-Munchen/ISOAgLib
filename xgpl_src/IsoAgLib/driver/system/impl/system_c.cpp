@@ -210,13 +210,13 @@ bool System_c::initWd ( void )
 	@return true -> D+ or. CAN_EN is active OR D+ should not be checked
 */
 bool System_c::canEn( void ) {
-	#ifndef BUFFER_SHORT_CAN_EN_LOSS_MSEC
+	#ifndef CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
 	return HAL::getOn_offSwitch();
 	#else
 	static int32_t si32_lastCanEnActive = 0;
 	const int32_t ci32_now = getTime();
 	if ( HAL::getOn_offSwitch() ) si32_lastCanEnActive = ci32_now;
-	return ( ci32_now - si32_lastCanEnActive <= BUFFER_SHORT_CAN_EN_LOSS_MSEC )?true:false;
+	return ( ci32_now - si32_lastCanEnActive <= CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC )?true:false;
 	#endif
 }
 

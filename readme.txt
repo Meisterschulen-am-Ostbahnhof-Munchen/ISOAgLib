@@ -13,6 +13,7 @@
 \ref IndexNews<br>
 \ref IndexChanges<br>
 \ref IndexMainFeatures<br>
+\ref IndexMemoryUsage<br>
 \ref IndexStructuralOverview<br>
 \ref IndexLicenseConditions<br>
 \ref IndexAchnowledgements<br>
@@ -44,7 +45,7 @@
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>05 November 2004<br>
+Last Update: <br>06 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -98,6 +99,13 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		can discuss changes there, before somebody starts implementing the change<br>
 		- subscribe at <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib</a>
 		- access the archive of all emails at <a href="http://linux90.idvnet.de/pipermail/isoaglib/">http://linux90.idvnet.de/pipermail/isoaglib/</a>
+	- <b>2004-11-18:</b> Add creation of <b>Microsoft Visual C++ V6.0</b> project files to update_makefile.sh , as <b>Dev-C++</b> can't build EXE files which are running with
+		Vector-Informatik CAN cards
+	- <b>2004-11-23:</b>update_makefile.sh runs in MSYS ( Win32 shell environment ) again, as intermediate use of perl commands is stopped
+	- <b>2004-11-24:</b> Add driver for <b>Sontheim CAN cards</b> ( tested only with CANLPT, but in theory designed according general API documentation, as all card
+		differences are handled by the driver )
+	- <b>2004-12-03:</b> Finish heavy optimization of HEAP usage and optional exact documentation of HEAP usage during runtime via RS232, so that really needed HEAPSIZE can be derived
+		( reduction of HEAPSIZE dependend on application can vary between 4 KByte and 10 KByte )
 
 
 \subsection IndexOldNews News before 1.0.0 release
@@ -224,6 +232,8 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- provided automatic CAN CARD HW selection for Vector-Informatik CAN CARDs so that:
 		- either all CAN channels of real CAN cards can be counted
 		- or just the CAN channels of the special virtual CAN device can be counted ( if no real CAN card is connected )
+	- add driver for <b>Sontheim CAN cards</b> ( tested only with CANLPT, but in theory designed according general API documentation, as all card
+		differences are handled by the driver )
 	- adopted the check for new messages in CAN CARD to RTE style
 	- added basic language handling and AUX functions handling into ISO Terminal
 	- added <b>ISO 11783 Virtual Terminal</b> connection management, so that the pool is automatically
@@ -236,6 +246,23 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		( see file "include.cpp/algorithm" which includes "include.cpp/stl_algobase.h" which includes "string.h" into global namespace;
 		  a C++ system header shall include C-Library functions into the "std::" namespace -> it should include <string> instead;
 			other compilers do this correct )
+	- introduce config setting for project config to select HEAP allocation strategy:
+		- either allocate chunks of items ( for Tasking: 40 items per chunk ) to avoid HEAP defragmentation and to avoid memory allocation runtime as long as no new chunk is
+			needed, which doesn't happen for most use cases, as the chunk size is pretty big in relation to the awaited numbers of mostly smaller than 10
+		- or directly call malloc on each item creation, which causes greater overhead per item ( linkage of all malloced blocks in HEAP, whereas the chunks have a
+			pretty efficient organization structure ) and which can cause longer malloc execution time on each item creation ( can be important, if large amount
+			of monitor list entries, several measurement programs, setpoints occure, or if CAN filter setting must be reconfigured due to configuration change )
+		- <b>PREFER CHUNK ALLOCATION AS LONG AS HEAP OVERHEAD IS ACCEPTIBLE, USE OTHER METHOD ONLY FOR RESTRICTED HEAP MEM CONDITIONS</b>
+	- avoid allocation of HEAP for elements of temporal ManageMeasureProgLocal_c instances ( create default MeasureProgLocal_c instances on first real access )
+	- optimize HEAP memory item size debug messages, so that real HEAP usage is reflected ( including overhead due to memory block linking in HEAP )<br>
+			Thanks to the help of Tasking support ( information on simple integration of _malloc.c into EDE projects )
+	- change update_makefile.sh shell script to avoid calls to <b>perl</b> functions, as these are only part of standard LINUX systems, and are <b>not</b>
+		part of <b>MSYS</b> system ; additionally replace UNIX style directory seperation from slash to backslash for Win32 compilers and use Windows stly newline
+	- change device types and CAN channels of tutorial examples, so that e.g. 1_0_ReadIso.cpp and 1_2_WriteIso.cpp can interact ( <b>a)</b> different device types
+		for both ECUs and <b>b)</b> different CAN channels so that two channels of one PC CAN card can be connected )
+	- unify number intervals of CAN HAL for BUS and MsgObj numbers to start with <b>0</b> for each type of HAL ( avoid HAL dependend offset constants ).
+
+
 
 \section IndexMainFeatures Main Features
 The ISO<i><sub>AgLib</sub></i> is designed to provide the following main features
@@ -261,61 +288,98 @@ The ISO<i><sub>AgLib</sub></i> is designed to provide the following main feature
 - orientate design according to requirements of networks with more then two devices
 
 \section IndexMemoryUsage Information on Memory Resource Requirements
-\subsection IndexHeapMemory Use of HEAP
 The ISO<i><sub>AgLib</sub></i> was optimized in relation to the old LBS<i><sub>Lib</sub></i> to use as less HEAP
-memory as possible. Thus the current ISO<i><sub>AgLib</sub></i> uses HEAP only for the following functions
-( <b>all Byte numbers map to 16 Bit CPU with large memory modell </b> ):
-	- vector for internal scheduling of core functional components with MAX 10 pointers stored in a compact STL vector<T> ( internal data structure: array )
-	- vector with pointers to all locally managed identities which are presented at the BUS as a node
+memory as possible. Thus the current ISO<i><sub>AgLib</sub></i> uses HEAP only for the following functions:
+	- vector for internal scheduling of core functional components with approximate 10 pointers stored in a compact STL vector<T> ( internal data structure: array )
+	- vector with <b>pointers</b> to all locally managed identities which are presented at the BUS as a node
 		( <b> ISO<i><sub>AgLib</sub></i> enables the presentation of more than one node at the BUS</b> )
-	- vector to forward CAN data processing to process data instances, which are located somewhere in the application scope
+	- vector of <b>pointers</b> to forward CAN data processing to process data instances, which are located somewhere in the application scope
 		with a STL vector<T> with as much pointers as variables are used ( you can reserve enough space at system start,
 		to avoid reallocation of the internal array )<br>
 		this HEAP usage takes only place, if process data are used
-	- lists for automatic CAN filter management with around <b>1 KByte</b> memory per CAN channel for intensive use
-		( means: real world system like <b>MiniVeg N</b> and not only a small tutorial )<br>
-		this amount depends heavy on the amount of used features of the ISO<i><sub>AgLib</sub></i>
-	- list of entries in monitor lists with around <b>40 Byte</b> per device on the BUS ( inclusive the local own device )
-	- vector for global lookup of sensor or actor I/O instances with one pointer per instance ( <b> only present if the corresponding I/O feaure is used </b> )
+	- lists of measurement programs per local process data ( only for  ProcDataLocal_c or ProcDataLocalSimpleSetpoint_c instances )
+	- lists for automatic CAN filter management
+	- list of entries in monitor lists ( ISOItem_c, DINItem_c , DINServiceItem - each type only if the corresponding protocol is used )
+	- vector for global lookup of sensor or actor I/O instances with one <b>pointer</b> per instance ( <b> only present if the corresponding I/O feaure is used </b> )
 	- list for synchronisation data for LBS+ Terminal Mask Upload ( <b>only needed if DIN 9684 with LBS+ Terminal is used</b> )
 
-<b>One important note on safety of HEAP usage:</b><br>
-Most HEAP is allocated during the system init, so that the potentially too long lasting function
-allocate() is not called under work load conditions. A HEAP allocation in work state takes only place,
-if the complete system state changes ( e.g. a new device claims an address, so that around <b>40 Byte</b> for
-the corresponding device information must be allocated; the list<T> data structure avoids reallocation of the
-already existing nodes in the list <b>under all circumstances</b>, so that this function should run quick enough ).
-<br>
-As the amount of device nodes at the BUS and the amount of measuring programs for local process data
-( remote device can request periodic value update at individual rates; each of the remote device can request one
-or more such periodic updates per process data - e.g. one ECU might need value every 10meter the MIN and MAX and every
-10second the current measurement value ) are not known during implementation time, variable sized data structures are needed.
-<br>
-&nbsp;<br>
-This results in the following approximate HEAP usage numbers:
-	- simply claim address and manage terminal needs <b>less than 1 KByte</b>
-	- claim address, manage terminal, access GPS and tractor data on BUS needs <b>approximate 1 KByte</b>
-	- additionally use some process data where remote ECUs can request some sort of periodic value update
-		will need approximate 60 Byte per standard local process data instance
-		and 10 Byte per registered periodic value update ( i.e. measurement program )
-	- additionally use some process data where remote ECUs can set setpoints will need approximate
-		16 Byte per stored setpoint ( ISO<i><sub>AgLib</sub></i> can handle more than one setpoint per process
-		data, so that the application can evaluate all requests and can then decide based on some local
-		strategies on the setpoint to use for local control )
-	- real world projects like <b>MiniVeg N</b> with heavy use of most ISO<i><sub>AgLib</sub></i> features
-		needs approximate <b>15 KByte</b>
+\subsection IndexHeapDerive Derive Needed HEAPSIZE
+The HEAP allocation strategy results in the need of <b>11 KByte</b> HEAPSIZE for the complete <b>MiniVeg N</b> system, which provides
+57 process data for remote access ( e.g. Varioterminal ), handles several internal CAN nodes, connects to DIN 9684 and ISO 11783 BUSes with the corresponding
+terminal types and is able to directly control fertilizer spreaders which are accessible by process data.<br>
+<b>===>></b> Probability for need of more than 20 - 30 KByte is really low for other production systems<br>
 
-<b>IMPORTANT:</b><br>
-Add enough space in HEAPSIZE so that the memory fragmentation of systems malloc doesn't lead to out-of-memory state.
-Eventual memory problems will be registered in the central error handling class LibErr_c, so that you can check for any
-memory problems there ( type: 1 BadAlloc ).<br>
-Example for <b>MiniVeg N</b> has calculated heap size of approximate 10KB, but needs 15KB to work. It will get some more emergency space
-in HEAP to avoid any problems in production release.
-<br>
-&nbsp;<br>
-The embedded compiler of Tasking uses a special linker/locator control named HEAPSIZE to define the amount of
-storage which is reserved for HEAP. This can be done in a IDE independend ILO file ( e.g. ECUs of STW ) or in one
-of the compiler setting dialogs.
+ISO<i><sub>AgLib</sub></i> provides some debugging methods to collect information on needed HEAPSIZE for the monitored runtime conditions:
+	- <b>DEBUG_HEAP_USEAGE</b> causes output of used HEAP amount for each change of HEAP-placed items ( see above for information on items which are placed at HEAP )
+		on RS232 ( please activate RS232 output in project settings for your project )<br>
+		-->> direct derive of needed HEAPSIZE, if appropriate worst case load conditions are tested
+	- <b>DEBUG_CAN_BUFFER_FILLING</b> causes output of MAX filling and MIN free space of circular buffers ( output filter of individual MsgObj where new MAX filling or
+		MIN free space was detected )<br>
+		BIOS like the one of STW use special internal buffer memory to store CAN messages in circular buffers;
+		each project must define size of this internal memory as a sum for all internal CAN and RS232 buffers<br>
+		-->> direct derive of needed size of internal memory block to avoid CAN or RS232 buffer overflow <br>
+		-->> ISO<i><sub>AgLib</sub></i> supports allocation of two different CAN buffer sizes, so that CAN filters with especially high load can
+			get higher buffer size than other CAN filters with lower load ( see CONFIG_CAN_HIGH_LOAD_IDENT_LIST which is predefined in isoaglib_config.h and can
+			be overridden in the project specific config file, that is created and updated by update_makefile.sh )
+
+As some HEAP memory overhead can be caused by reallocation or some other small, not logged items, you should add approximate 1 KByte to the derived size.
+
+
+\subsection IndexHeapStrategy Selection of HEAP Allocation Method
+The <b>S</b>tandard <b>T</b>emplate <b>L</b>ibrary ( STL ) default allocation strategy, which allocates always large chunks of items ( Tasking: 40 ) has the following effects in relation to the malloc_allocation handler:
+	- <b>POSITIVE:</b>
+		- malloc, which can affect system runtime, is only called one time for a large block of Malloc-Memory ( and not for each single item )
+		- cycles of creation-deletion-creation-.. <b>don't</b> cause HEAP fragmentation, as long as amplitude of change doesn't affect amount of needed chunks per datatype,
+			because organization of items in one chunk is very efficient
+		- low overhead in malloc managed memory block list ( typical malloc algorithm creates one block per malloc call, each block has pointers to PREV and NEXT -> 8 Byte for large memory modell )
+	- <b>NEGATIVE:</b>
+		- typical ISO<i><sub>AgLib</sub></i> applications will use less than 10 instances of the corresponding data types, so that each chunk will be used just for a low
+			percentage ( STL uses one chunk per data type like monitor list item; several lists, which hold same data type as node can share space of one chunk )
+
+Thus the ISO<i><sub>AgLib</sub></i> prints always the following size information:
+	- HEAP memory size for malloc_alloc STL allocation handler ( set "OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=1" in project feature setup file )
+	- HEAP memory size for default chunk allocation strategy of STL ( <b>default</b> value "OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0" in project feature setup file )
+
+With this information you can individually decide on the appropriate allocation strategy ( <b>OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED</b> in the
+project specification file conf_foo ).
+
+The following table present some exact numbers for the needed HEAP memory, so that the decision on the HEAP allocation strategy is eased:
+( all numbers for 16 Bit CPU with large memory modell; unit Byte )
+<table>
+<tr><td>Item</td><td>Size without chunks</td><td>Size with chunks</td><td>Typical unused memory per chunk</td><td>Comment</td></tr>
+
+<tr><td>Scheduler Entry</td><td>12 x scheduled items -> 56</td><td>160</td><td>104</td><td>Vector of pointers to 12 scheduled part tasks</td></tr>
+<tr><td>Scheduled Times</td><td>12 x scheduled items -> 32</td><td>80</td><td>48</td><td>Vector of uint16_t execution times of scheduled part tasks</td></tr>
+
+<tr><td>DIN 9684 Monitor List Entry ( DINItem_c )</td><td>10 x 42 DIN -> 420</td><td>1360</td><td>940</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
+<tr><td>ISO 11783 Monitor List Entry ( ISOItem_c )</td><td>10 x 52 ISO -> 520</td><td>1768</td><td>1248</td><td>Calculated for 10 ECU nodes on monitored BUS</td></tr>
+
+<tr><td>CAN Filter MsgObj_c</td><td>10 x 82 -> 820</td><td>2960</td><td>2140</td><td>Depends on used protocol parts -> CAN idents to receive</td></tr>
+<tr><td>CAN Filter FilterBox_c</td><td>10 x 28 -> 280</td><td>800</td><td>520</td><td>Depends on used protocol parts -> CAN idents to receive</td></tr>
+
+<tr><td>Local Process Data Entry</td><td>10 x pointers to local process data -> 48</td><td>168</td><td>120</td>
+	<td>Only if 10 local process data instances are used</td></tr>
+<tr><td>Remote Process Data Entry</td><td>10 x pointers to remote process data -> 48</td><td>168</td><td>120</td>
+	<td>Only if 10 remote process data instances are used</td></tr>
+<tr><td>MeasureProgLocal_c</td><td>10 x 76 -> 760</td><td>2720</td><td>1960</td><td>Only if 10 measure programs are active - one default instance per used ProcDataLocal_c or ProcDataLocalSimpleSetpoint_c instance</td></tr>
+
+<tr><td>DIN LBS+ Mask Synchronisation data</td><td>13 x 66 -> 858</td><td>2320</td><td>1462</td><td>Only if a LBS+ mask project shall be used.</td></tr>
+<tr><td>ISO Buffer of SendCommand_c</td><td> (only chunk allocation) </td><td>1284 ( chunk of 80 commands )</td><td>--</td><td>For buffer of SendCommand_c the malloc alloc is for most conditions not more efficient in HEAP use.</td></tr>
+<tr><td>ISO Buffer of SendUpload_c</td><td>2 x 32 -> 64</td><td>888</td><td>824</td><td>For buffer of SendCommand_c the malloc alloc is for most conditions not more efficient in HEAP use.</td></tr>
+
+<tr><td><b>SUM DIN 9684</b></td><td>3322</td><td>10736</td><td>7414</td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
+
+<tr><td><b>SUM ISO 11783</b></td><td>3912</td><td>10996</td><td>7084</td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
+</table>
+
+<b>IMPORTANT:<br>
+At least the Tasking compiler uses pages of each 16 KByte in HEAP, where the limits are not defined relative to the beginning of the heap, but are
+strictly calculated by multitudes of 0x4000. As one chunk allocation must be fullfilled within one page, the needed HEAPSIZE can be approximate
+2 KByte larger than needed, if just some few byte of a large chunk doesn't fit into one page. This worst case condition can be avoided for most
+applications, if the HEAP is manually located at the beginning of a 0x4000 multitude in the linker/locator setting ( at least version 7.56 doesn't place
+the HEAP automatically at an optimal address, so that manual control is needed ).
+</b>
+
 
 \subsection IndexBiosOsMemory Internal BIOS/OS Memory
 ECUs like the several products of <a href="http://www.sensor-technik.de">STW</a> provide a BIOS which implements
@@ -325,12 +389,14 @@ They have an internal memory buffer that holds the CAN and RS232 buffers. Its si
 The amount of needed internal buffer memory for CAN communication is controlled by the following conditions:
 	- amount of CAN channels
 	- amount of CAN messages which shall be buffered per CAN controller Message Object<br>
-		( this is defined by SEND_PUFFER_SIZE and RECEIVE_PUFFER_SIZE in the file isoaglib_config.h;
-			default setting 20 items for send and 20 items for receive;
+		( this is defined by CONFIG_CAN_SEND_BUFFER_SIZE, CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN and CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN in the file isoaglib_config.h and can be overridden
+			in the project specific config header which is created and updated by update_makefile.sh;
+			default setting 20 items for send and 15 and 25 items for normal and high load receive;
 			therefore 408 Bytes per buffer with 20 items )
 This results in approximate <b>6 KByte</b> per CAN channel with the default values ( max 15 MsgObj with each 20 items in buffer ).<br>
 The amount of needed internal buffer memory for RS232 handling depends on the used send and receive buffer. The
-default size can be controlled by the settings DEFAULT_SND_PUF_SIZE and DEFAULT_REC_PUF_SIZE in isoaglib_config.h .
+default size can be controlled by the settings CONFIG_RS232_DEFAULT_SND_PUF_SIZE and CONFIG_RS232_DEFAULT_REC_PUF_SIZE in isoaglib_config.h and can be overridden
+in the project specific config header which is created and updated by update_makefile.sh;
 These values can be overridden during runtime by interface functions of iRS232IO_c .
 Here a 100 char RS232 buffer needs 108 Bytes of the internal STW memory pool.
 <br>
@@ -683,8 +749,10 @@ Some examples:
 The following items are at the TODO list. You are encouraged to
 help contributing for their implementation with source code or financial donation.
 
-	- Setup of Mailing List for discussion and interactive help in user community<br>
-		<b>Implemented as soon as possible</b>
+	- Write some tutorial examples for use of supplementary IO drivers<br>
+		<b>Integrated as soon as there's some time</b>
+	- Write tutorial example with second ISO<i><sub>AgLib</sub></i> CAN instance for proprietary CAN protocol at internal BUS<br>
+		<b>Integrated as soon as there's some time</b>
 	- Refinement of GPS decoding<br>
 		<b>Integrated as soon as correct decoding is detected</b>
 	- Calculate the RAM + ROM resource need of the ISO<i><sub>AgLib</sub></i> tutorial example programs
@@ -765,6 +833,7 @@ management of such interactions. This list can then help to identify well suppor
 \ref IndexNews<br>
 \ref IndexChanges<br>
 \ref IndexMainFeatures<br>
+\ref IndexMemoryUsage<br>
 \ref IndexStructuralOverview<br>
 \ref IndexLicenseConditions<br>
 \ref IndexAchnowledgements<br>
@@ -796,7 +865,7 @@ management of such interactions. This list can then help to identify well suppor
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>05 November 2004<br>
+Last Update: <br>06 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -929,6 +998,7 @@ source and the contained informative text files.
 \ref IndexNews<br>
 \ref IndexChanges<br>
 \ref IndexMainFeatures<br>
+\ref IndexMemoryUsage<br>
 \ref IndexStructuralOverview<br>
 \ref IndexLicenseConditions<br>
 \ref IndexAchnowledgements<br>
@@ -960,7 +1030,7 @@ source and the contained informative text files.
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>05 November 2004<br>
+Last Update: <br>06 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -1108,12 +1178,12 @@ check the RS232 output, when you compile the project with the #define DEBUG_HEAP
 \subsubsection TaskingCanRs232Buffer Allocate enough buffer for CAN receive buffer queues and RS232 buffer
 Some OS/BIOS which are designed like <a href="http://www.sensor-technik.de">STW BIOS</a> have a special setting to
 allocate enough memory for the internal managed buffers for RS232 and CAN. The amount of items which are reserved by
-ISO<i><sub>AgLib</sub></i> in isoaglib_config.h #define RECEIVE_PUFFER_SIZE and DEFAULT_SND_PUF_SIZE ( this can be overridden by
+ISO<i><sub>AgLib</sub></i> in isoaglib_config.h #define CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN and CONFIG_RS232_DEFAULT_SND_PUF_SIZE ( this can be overridden by
 configuration call with iRS232IO_c::setSndPufferSize and iRS232IO_c::setRecPufferSize ).<br>
 - Again - set the value ( in case of <a href="http://www.sensor-technik.de">STW BIOS</a> set variable BUFFER_SIZE in file "Xos20go.asm" ) to MAX or other great enough value for a start.
 - Then compile your project with DEBUG_CAN_BUFFER_FILLING ( activate it in the feature setup file of your project )
 - Check the RS232 output for fill grade of CAN buffers ( the MAX amount of buffered CAN messages per BUS is printed )
-- Calculate the needed memory for RS232 ( corresponds to DEFAULT_SND_PUF_SIZE or the overridden value ) and CAN ( corresponds to the MAX output from step above )
+- Calculate the needed memory for RS232 ( corresponds to CONFIG_RS232_DEFAULT_SND_PUF_SIZE or the overridden value ) and CAN ( corresponds to the MAX output from step above )
 - Adopt the buffer size value ( leave some additional space )
 
 \section InstallIsoToolVt2Iso HOWTO Install vt2iso - Tool for Creation of ISO 11783 Virtual Terminal Masks
@@ -1230,10 +1300,10 @@ The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as fol
 	<li>set the variables <i>USE_WIN32_HEADER_DIRECTORY</i> and <i>USE_WIN32_LIB_DIRECTORY</i> to your
 			installation root ( <b>don't include the directory name part <i>CANLIB</i> resp. <i>XL Driver Library</i> </b> ) <br>
 			Example: <ul>
-			<li>You selected "D:/Development/VectorInformatik" during the execution of <i>SETUP.EXE</i>.
-			<li><i>SETUP.EXE</i> placed everything in the directory "D:/Development/VectorInformatik/CANLIB"
-					resp. "D:/Development/VectorInformatik/XL Driver Library"
-			<li>Set both above mentioned variables to "D:/Development/VectorInformatik"
+			<li>You selected "D:/Development" during the execution of <i>SETUP.EXE</i>.
+			<li><i>SETUP.EXE</i> placed everything in the directory "D:/Development/CANLIB"
+					resp. "D:/Development/XL Driver Library"
+			<li>Set both above mentioned variables to "D:/Development"
 			</ul>
 	<li>set the variable USE_CAN_DRIVER to either "vector_canlib" or "vector_xl"
 	<li>select the CAN card type variable USE_WIN32_CAN_HW_TYPE to HWTYPE_VIRTUAL, HWTYPE_CANCARDX,
@@ -1471,13 +1541,13 @@ The next configuration variables are needed for Vector-Informatik CAN cards.
 As Vector-Informatik provides two types of programming libraries which can be used for the same cards, the
 ISO<i><sub>AgLib</sub></i> reflects this option. To ease directory management, ISO<i><sub>AgLib</sub></i>
 awaits the potentially parallel installed versions rooted in the same parent directory.<br>
-E.g when you selected "D:/Development/VectorInformatik" as base directory during the SETUP of both CAN program linbraries,
+E.g when you selected "D:/Development" as base directory during the SETUP of both CAN program linbraries,
 you will get
-	- the CANLIB driver in "D:/Development/VectorInformatik/CANLIB"
-	- the XL Driver Library in "D:/Development/VectorInformatik/XL Driver Library"
+	- the CANLIB driver in "D:/Development/CANLIB"
+	- the XL Driver Library in "D:/Development/XL Driver Library"
 Now ISO<i><sub>AgLib</sub></i> can access both of them if you specify:
-	- <b>USE_WIN32_LIB_DIRECTORY="D:/Development/VectorInformatik"</b>,
-	- <b>USE_WIN32_HEADER_DIRECTORY="D:/Development/VectorInformatik"</b>
+	- <b>USE_WIN32_LIB_DIRECTORY="D:/Development"</b>,
+	- <b>USE_WIN32_HEADER_DIRECTORY="D:/Development"</b>
 which is the default setting. The script <i>update_makefile.sh</i> will find both versions of the driver.
 
 The ISO<i><sub>AgLib</sub></i> HAL adoption to the Vector-Informatik CAN driver can be configured by the configuration file
@@ -1846,7 +1916,7 @@ PRJ_ISO11783=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development/VectorInformatik"
+# USE_WIN32_LIB_DIRECTORY="D:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -1861,7 +1931,7 @@ PRJ_ISO11783=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development/VectorInformatik"
+# USE_WIN32_HEADER_DIRECTORY="D:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several
@@ -1900,6 +1970,7 @@ PRJ_ISO11783=1
 \ref IndexNews<br>
 \ref IndexChanges<br>
 \ref IndexMainFeatures<br>
+\ref IndexMemoryUsage<br>
 \ref IndexStructuralOverview<br>
 \ref IndexLicenseConditions<br>
 \ref IndexAchnowledgements<br>
@@ -1931,7 +2002,7 @@ PRJ_ISO11783=1
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>05 November 2004<br>
+Last Update: <br>06 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2152,6 +2223,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 \ref IndexNews<br>
 \ref IndexChanges<br>
 \ref IndexMainFeatures<br>
+\ref IndexMemoryUsage<br>
 \ref IndexStructuralOverview<br>
 \ref IndexLicenseConditions<br>
 \ref IndexAchnowledgements<br>
@@ -2183,7 +2255,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>05 November 2004<br>
+Last Update: <br>06 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2266,6 +2338,7 @@ This is possible, if some basic strategies are used by all devices:
 \ref IndexNews<br>
 \ref IndexChanges<br>
 \ref IndexMainFeatures<br>
+\ref IndexMemoryUsage<br>
 \ref IndexStructuralOverview<br>
 \ref IndexLicenseConditions<br>
 \ref IndexAchnowledgements<br>
@@ -2297,7 +2370,7 @@ This is possible, if some basic strategies are used by all devices:
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>05 November 2004<br>
+Last Update: <br>06 December 2004<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">

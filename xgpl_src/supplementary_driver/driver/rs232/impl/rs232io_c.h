@@ -139,10 +139,10 @@ public:
         * Err_c::badAlloc not enough memory for allocating the puffers
         * Err_c::range one of the configuration vals is not in allowed ranges
   */
-  bool init(uint16_t rui16_baudrate = DEFAULT_BAUDRATE,
-          t_dataMode ren_dataMode = DEFAULT_DATA_MODE,
-          bool rb_xonXoff = DEFAULT_XON_XOFF,
-          uint16_t rui16_sndPuf = DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = DEFAULT_REC_PUF_SIZE);
+  bool init(uint16_t rui16_baudrate = CONFIG_RS232_DEFAULT_BAUDRATE,
+          t_dataMode ren_dataMode = CONFIG_RS232_DEFAULT_DATA_MODE,
+          bool rb_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
+          uint16_t rui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE);
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
   void close( void ){};

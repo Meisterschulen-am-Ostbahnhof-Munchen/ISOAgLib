@@ -988,7 +988,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit95]
-FileName=../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1

@@ -1,5 +1,5 @@
   #if defined( GET_CL_DECL ) && defined( GET_K_DECL )
-  /** register pointer to a new client 
+  /** register pointer to a new client
     * this function is called within construction of new client instance
     */
   bool gluemacs( register, GET_CL_DECL() )( GET_CL_DECL()* pc_client );
@@ -22,11 +22,16 @@
     * @return instance of the searched client instance
     */
   GET_CL_DECL()& gluemacs( get, GET_CL_DECL() ) ( GET_K_DECL() rt_key );
-  
+
   /** vector with pointers to registered client instances */
+	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   std::vector<GET_CL_DECL()*,std::__malloc_alloc_template<0> > gluemacs( c_arrClient, GET_CL_DECL() );
-  
   typedef typename std::vector<GET_CL_DECL()*,std::__malloc_alloc_template<0> >::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
+	#else
+  std::vector<GET_CL_DECL()*> gluemacs( c_arrClient, GET_CL_DECL() );
+  typedef typename std::vector<GET_CL_DECL()*>::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
+	#endif
+
   gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t) gluemacs( pc_searchCache, GET_CL_DECL() );
 #endif
 #if defined( GET_CL_DEF ) && defined( GET_K_DEF )
@@ -51,7 +56,7 @@ template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( register, GE
   }
   return b_result;
 }
-  
+
   /** unregister a client instance, which is destructed at the moment
     * this function is called within the destructor of the client instance
     */
@@ -75,7 +80,7 @@ template<TEMPLATE_DECL> void CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( unregister, 
   * @param rt_key key value to identify the searched entry
   * @return true -> searched item exists
   */
-template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( exist, GET_CL_DEF() )( GET_K_DEF() rt_key ) 
+template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( exist, GET_CL_DEF() )( GET_K_DEF() rt_key )
 { // first check if the actual search cache iterator points to the searched item
   if ( ( gluemacs( pc_searchCache, GET_CL_DEF() ) != gluemacs( c_arrClient, GET_CL_DEF() ).end() ) && ( (*gluemacs( pc_searchCache, GET_CL_DEF() ))->operator==( rt_key ) ) )
     return true;
@@ -108,5 +113,5 @@ template<TEMPLATE_DECL> GET_CL_DEF()& CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( get
   // cache points now to searched item OR to default beginning
   return **gluemacs( pc_searchCache, GET_CL_DEF() );
 }
- 
+
 #endif

@@ -79,27 +79,27 @@ namespace __HAL {
 /* ************************************************** */
 /*@{*/
 
-/** 
+/**
   test if the CAN BUS is in WARN state
   @param rui8_busNr number of the BUS to check (default 0)
   @return true == CAN BUS is in WARN state, else normal operation
 */
 bool can_stateGlobalWarn(uint8_t rui8_busNr = 0);
 
-/** 
+/**
   test if the CAN BUS is in OFF state
   @param rui8_busNr number of the BUS to check (default 0)
   @return true == CAN BUS is in OFF state, else normal operation
 */
 bool can_stateGlobalOff(uint8_t rui8_busNr = 0);
 
-/** 
+/**
   test if the CAN BUS is in Blocked state, which can be a sign
   for CAN controllers which are configured with different baudrates;
   this is the case if neither succesfull sent nor received msg
   is detcted AND CAN controller is in WARN or OFF state
   (the time since last succ. send/rec and the time of WARN/OFF
-   can be defined with MAX_CAN_ERR_TIME_BEFORE_CAN_SLOWERING
+   can be defined with CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
    in the application specific config file isoaglib_config
    -> should not be to short to avoid false alarm)
   @param rui8_busNr number of the BUS to check (default 0)
@@ -117,7 +117,7 @@ int32_t can_stateGlobalBusload(uint8_t rui8_busNr = 0);
 /**
   check if a send try on this BUS caused an Bit1Error
   (occurs if >1 controller try to send msg with same ident)
-  ==> ISO 11783 forces stop of retries in this case for 
+  ==> ISO 11783 forces stop of retries in this case for
       adress claim
       @param rui8_busNr number of the BUS to check
       @return true -> Bit1Err occured
@@ -143,10 +143,10 @@ int32_t can_stateMsgobjTxok(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 /**
   check if a send MsgObj can't send msgs from buffer to the
   BUS (detecetd by comparing the inactive time with
-  MAX_SEND_WAIT_TIME (defined in isoaglib_config)
+  CONFIG_CAN_MAX_SEND_WAIT_TIME (defined in isoaglib_config)
   @param rui8_busNr number of the BUS to check
   @param rui8_msgobjNr number of the MsgObj to check
-  @return true -> longer than MAX_SEND_WAIT_TIME no msg sent on BUS
+  @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
 */
 bool can_stateMsgobjSendproblem(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 
@@ -166,7 +166,7 @@ bool can_stateMsgobjOverflow(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
   @param rui8_msgobjNr number of the MsgObj to check
   @return number of messages in buffer or negative error code:
     HAL_CONFIG_ERR == BUS not initialised
-    HAL_RANGE_ERR == wrong BUS or MsgObj number 
+    HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
 int16_t can_stateMsgobjBuffercnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 
@@ -273,6 +273,17 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
 int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident);
 
 /**
+	lock a MsgObj to avoid further placement of messages into buffer.
+  @param rui8_busNr number of the BUS to config
+  @param rui8_msgobjNr number of the MsgObj to config
+	@param rb_doLock true==lock(default); false==unlock
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+	*/
+int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock = true );
+
+/**
   close a MsgObj
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
@@ -294,7 +305,7 @@ int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
   CANPkg_c (or derived object) must provide (virtual)
   functions:
   * Ident_c& getIdent() -> deliver ident of msg to send
-  * void getData(MASK_TYPE& reft_ident, uint8_t& refui8_identType, 
+  * void getData(MASK_TYPE& reft_ident, uint8_t& refui8_identType,
                  uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget)
     -> put DLC in referenced ref_dlc and insert data in uint8_t string pb_data
   @param rui8_busNr number of the BUS to config

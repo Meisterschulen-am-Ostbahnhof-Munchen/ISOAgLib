@@ -91,7 +91,7 @@
   #define	isspace(_c)	((_c)&(0x1|0x4))
 #else
   #include <cctype>
-  #if !defined(__TSW_CPP_756__)
+  #if !defined(__TSW_CPP_756__) && !defined(SYSTEM_PC_VC)
   using std::isspace;
   #endif
 #endif  
@@ -290,7 +290,7 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
             ui8_restLen = rui8_len;
     while ( ui8_restLen > 0 )
     { // send max item
-      ui8_maxSendItemSize = DEFAULT_SND_PUF_SIZE - HAL::getRs232TxBufCount();
+      ui8_maxSendItemSize = CONFIG_RS232_DEFAULT_SND_PUF_SIZE - HAL::getRs232TxBufCount();
       // restrict actual max item size to waiting chars to send
       if ( ui8_maxSendItemSize > ui8_restLen ) ui8_maxSendItemSize = ui8_restLen;
       // send actual item
@@ -458,7 +458,7 @@ RS232IO_c& RS232IO_c::operator<<(float rf_data)
 {
   char pc_data[20];
   // sprintf print value as text to uint8_t string and terminate it with '\0'
-  HAL::sprintf(pc_data, "%f", rf_data);
+  CNAMESPACE::sprintf(pc_data, "%f", rf_data);
   // change use float format to german
   *(CNAMESPACE::strstr((const char*)pc_data, ".")) = ',';
 
@@ -666,7 +666,7 @@ RS232IO_c& RS232IO_c::operator>>(int32_t& i32_data)
 RS232IO_c& RS232IO_c::operator>>(float& f_data)
 {
   readToken(); // it set rs232_underflow error if no data is read
-  HAL::sscanf(pc_token, "%f", &f_data);
+  CNAMESPACE::sscanf(pc_token, "%f", &f_data);
   return *this;
 }
 #endif

@@ -99,8 +99,10 @@
 static uint16_t sui16_clientPointerTotal = 0;
 static uint16_t sui16_clientTimeTotal = 0;
 
+#ifdef MASSERT
 extern unsigned int AllocateHeapMalloc;
 extern unsigned int DeallocateHeapMalloc;
+#endif
 #endif
 
 
@@ -228,11 +230,11 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
       << "/" << sizeof(uint16_t)
       << ", Chunk-Alloc: "
       << sizeVectorTWithChunk( sizeof(uint16_t), arrExecTime.capacity() )
-      #if 0
-      << "\r\n\r\n";
-      #else
+      #ifdef MASSERT
       << "\r\n__mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
+      << "\r\n\r\n";
+      #else
       << "\r\n\r\n";
       #endif
     #endif
@@ -285,11 +287,11 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
       << "/" << sizeof(uint16_t)
       << ", Chunk-Alloc: "
       << sizeVectorTWithChunk( sizeof(uint16_t), arrExecTime.capacity() )
-      #if 0
-      << "\r\n\r\n";
-      #else
+      #ifdef MASSERT
       << "\r\n__mall tot:" << AllocateHeapMalloc
       << ", _mall deal tot: " << DeallocateHeapMalloc
+      << "\r\n\r\n";
+      #else
       << "\r\n\r\n";
       #endif
     #endif
@@ -340,10 +342,10 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   int32_t i32_stepStartTime = i32_lastTimeEventTime = System_c::getTime();
 
 	i32_demandedExecEnd = ri32_demandedExecEnd;
-	#ifdef DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+	#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
 	if ( ri32_demandedExecEnd < 0 )
 	{ // limit execution time, even if no limit was defined by caller - avoid deadlock due to overload
-		i32_demandedExecEnd = i32_stepStartTime + DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
 	}
 	#endif
   // trigger the watchdog
@@ -364,8 +366,8 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   // process data which are requested by terminal for mask sync
   if ( ( pc_ctlDinMaskupload != NULL ) && ( b_din_memberNameReceived || b_switch2AddressClaim ) )
   { // make execution unlimited for this special case
-		#ifdef DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-		i32_demandedExecEnd = i32_stepStartTime + DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+		#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
 		#else
     i32_demandedExecEnd = -1;
 		#endif
@@ -395,8 +397,8 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   // process data which are requested by terminal for mask sync
   if ( ( pc_ctlDinMaskupload != NULL ) && ( b_din_memberNameReceived || b_switch2AddressClaim ) )
   { // make execution unlimited for this special case
-		#ifdef DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-		i32_demandedExecEnd = i32_stepStartTime + DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+		#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
 		#else
     i32_demandedExecEnd = -1;
 		#endif
@@ -436,8 +438,8 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   // call aditionally CANIO_c if fresh address claim
   if ( b_switch2AddressClaim )
   { // make execution unlimited for this special case
-		#ifdef DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-		i32_demandedExecEnd = i32_stepStartTime + DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+		#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
 		#else
     i32_demandedExecEnd = -1;
 		#endif
@@ -448,8 +450,8 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   // process data which are requested by terminal for mask sync
   if ( ( pc_ctlDinMaskupload != NULL ) && ( b_din_memberNameReceived || b_switch2AddressClaim ) )
   { // make execution unlimited for this special case
-		#ifdef DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-		i32_demandedExecEnd = i32_stepStartTime + DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+		#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
 		#else
     i32_demandedExecEnd = -1;
 		#endif

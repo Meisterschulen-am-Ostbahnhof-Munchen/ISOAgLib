@@ -72,7 +72,7 @@ ISO_AG_LIB_PATH="../.."
 # default is FALSE as far as possible
 # ( this has an impact on process data, RS232 output,
 #   GPS decode )
-# USE_FLOAT_DATA_TYPE=0
+USE_FLOAT_DATA_TYPE=1
 
 # ###############################################################
 # Basic Hardware Setup
@@ -347,7 +347,7 @@ PRJ_RS232=1
 #        default directory name from the SETUP.EXE
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="D:/Development/VectorInformatik"
+# USE_WIN32_LIB_DIRECTORY="D:/Development"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN headers
@@ -362,7 +362,7 @@ PRJ_RS232=1
 #        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
 #          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
 # ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="D:/Development/VectorInformatik"
+# USE_WIN32_HEADER_DIRECTORY="D:/Development"
 
 # specify the wanted Hardware Type of the CAN card
 # ( esp. Vector Informatik CAN drivers can be used for several

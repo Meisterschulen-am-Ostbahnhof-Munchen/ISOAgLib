@@ -22,7 +22,7 @@
 ../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleMeasureSetpoint/impl/procdatalocalsimplesetpointsimplemeasure_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -62,7 +62,7 @@
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
-../../../xgpl_src/IsoAgLib/util/symbol_shortening.h
+../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.h
@@ -101,5 +101,4 @@
 ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-D:\Development\VectorInformatik\XL Driver Library\bin\vxlapi.lib
-D:\Development\VectorInformatik\XL Driver Library\bin\vxlapi.h
+D:\Development\Sontheim=_=CANAPI.H
