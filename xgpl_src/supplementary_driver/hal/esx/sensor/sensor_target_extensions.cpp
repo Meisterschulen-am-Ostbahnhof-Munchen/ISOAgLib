@@ -66,8 +66,18 @@
 #include "sensor_target_extensions.h"
 #include "sensor.h"
 #include <IsoAgLib/hal/esx/config.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 #include <cstdlib>
+
+
+/** acivate the following define, if the signal period shall be
+    calculated from get_digin_freq() as the BIOS function
+		get_digin_period() is very unprecise as long as the
+		chosen timebase is not 80 times larger than the signal period.
+		--> the better precision is worth while the more calculation afford
+	*/ 
+#define CALC_PERDIOD_FROM_FREQ
 
 namespace __HAL {
 extern "C" {
@@ -129,11 +139,9 @@ void counterIrqFlex(uint8_t rb_row, uint8_t rb_col)
     _put_temp = &(_pt_diginTriggerTime[rb_row][rb_col]);
     _wIrqTime = (get_time() & 0xFFFF);
     if (_wIrqTime > _put_temp->uiAct) _put_temp->uiPeriod = _wIrqTime - _put_temp->uiAct;
-    else
-    {
-      if (_wIrqTime == _put_temp->uiAct) _put_temp->uiPeriod = 1;
-      else _put_temp->uiPeriod = _wIrqTime - (0xFFFF - _put_temp->uiAct);
-    }
+    else if (_wIrqTime == _put_temp->uiAct) _put_temp->uiPeriod = 1;
+		else _put_temp->uiPeriod = _wIrqTime - (0xFFFF - _put_temp->uiAct);
+
     _put_temp->uiAct = _wIrqTime;
   }
 }
@@ -164,6 +172,16 @@ static counterIrqFunction irqFuncArr[16] =
  &counterIrq_12, &counterIrq_13, &counterIrq_14, &counterIrq_15};
 
 /**
+	helper function to get max period between counted events, so that
+	BIOS/OS internal functions for freq,period detection can be used
+	*/
+uint16_t get_max_bios_timebase( void )
+{
+	static uint16_t sui16_limit = (1024 * 65534 / (get_cpu_freq() * 1000));
+	return sui16_limit;
+}
+
+/**
   init counter for trigger events on digital inoput;
   rising edges are counted;
   @param rb_channel input channel to use [0..15]
@@ -180,53 +198,11 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
   uint8_t b_codeActiv = (rb_activHigh)?HIGH_ACTIV:LOW_ACTIV;
   uint8_t b_codeEdge = (rb_risingEdge)?RISING_EDGE:FALLING_EDGE;
 
-//  int32_t ui16_prescale = ((rui16_timebase * getCpuFreq() * 1000) / 65534);
   uint8_t ui8_pow;
-  int16_t i16_errorState;
-  i32_prescale *= (get_cpu_freq() * 1000);
-  i32_prescale /= 65534;
+  int16_t i16_errorState = 0;
   /* check if rb_channel is allowed and exit function with RANGE error if not correct */
   if (rb_channel > 15) return C_RANGE;
-  /* configure init channel */
-  init_digin(rb_channel, b_codeEdge, b_codeActiv, irqFuncArr[rb_channel]);
-  if (rb_channel < 5)
-  { /* standard BIOS supports two prescaler parts */
-    for (ui8_pow = 9; ui8_pow > 1; ui8_pow--)
-    { /* the prescaler must be configured by (2 << pow) values */
-      if ((i32_prescale > (2 << ui8_pow)) || (ui8_pow == 2))
-      { /* only change prescaler if longer than before */
-        if (_b_prescale_1_4Index < (ui8_pow - 2))
-          _b_prescale_1_4Index = (ui8_pow - 2);
-        break;
-      }
-    }
-    /* set prescaler */
-    i16_errorState = set_digin_prescaler(RPM_IN_1_4, _b_prescale_1_4Index);
-  }
-  else
-  { /* same for other prescaler part */
-    for (ui8_pow = 9; ui8_pow > 1; ui8_pow--)
-    {
-      if ((i32_prescale > (2 << ui8_pow)) || (ui8_pow == 2))
-      {
-        if (_b_prescale_5_16Index < (ui8_pow - 2))
-          _b_prescale_5_16Index = (ui8_pow - 2);
-        break;
-      }
-    }
-    i16_errorState = set_digin_prescaler(RPM_IN_5_16, _b_prescale_5_16Index);
-  }
 
-  /* create var for counter value -> this vars are managed in 4-groups
-   *  of int32_t -> avoid memory waste
-   */
-  if (_pulDiginCounter[(rb_channel / 4)] == NULL)
-  { /* according 4-group of uint32_t isn't created -> allocate */
-    _pulDiginCounter[(rb_channel / 4)] = (uint32_t*)std::malloc(4*sizeof(uint32_t));
-    /* check if allocated properly and init */
-    if (_pulDiginCounter[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
-    else CNAMESPACE::memset(_pulDiginCounter[(rb_channel / 4)], 0, sizeof(uint32_t)*4);
-  }
 
   /* store given timebase in according 4-group */
   if (_puiDiginTimebase[(rb_channel / 4)] == NULL)
@@ -241,11 +217,51 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
     }
   }
 
-  if (i32_prescale > 1024)
-  { /* standard BIOS frequency and period methods doesn't fir for
-     * the wanted timebase -> use extension functions -> allocate needed vars
-     */
-    if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL)
+  i32_prescale *= (get_cpu_freq() * 1000);
+  i32_prescale /= 65534;
+  if (i32_prescale <= 1024)
+	{ // use BIOS for period/freq detection
+		init_digin(rb_channel, b_codeEdge, b_codeActiv, NULL );
+		uint16_t ui16_tempPrescaleInd = (rb_channel < 5)?_b_prescale_1_4Index:_b_prescale_5_16Index;
+    for (ui8_pow = 9; ui8_pow > 1; ui8_pow--)
+    { /* the prescaler must be configured by (2 << pow) values */
+      if ((i32_prescale > (2 << ui8_pow)) || (ui8_pow == 2))
+      { /* only change prescaler if longer than before */
+        if (ui16_tempPrescaleInd < (ui8_pow - 2)) ui16_tempPrescaleInd = (ui8_pow - 2);
+        break;
+      }
+    }
+		
+	  if (rb_channel < 5)
+	  { /* set prescaler */
+			_b_prescale_1_4Index = ui16_tempPrescaleInd;
+	    i16_errorState = set_digin_prescaler(RPM_IN_1_4, _b_prescale_1_4Index);
+	  }
+	  else
+	  { /* same for other prescaler part */
+			_b_prescale_5_16Index = ui16_tempPrescaleInd;
+	    i16_errorState = set_digin_prescaler(RPM_IN_5_16, _b_prescale_5_16Index);
+	  }
+	}
+	else
+	{ // the max time between impulses that shall be gathere for
+		// period detection is larger than supported by BIOS
+		// ==> use IsoAgLib IRQ based detection
+  	init_digin(rb_channel, b_codeEdge, b_codeActiv, irqFuncArr[rb_channel]);
+
+	  /* create var for counter value -> this vars are managed in 4-groups
+	   *  of int32_t -> avoid memory waste
+	   */
+	  if (_pulDiginCounter[(rb_channel / 4)] == NULL)
+	  { /* according 4-group of uint32_t isn't created -> allocate */
+	    _pulDiginCounter[(rb_channel / 4)] = (uint32_t*)std::malloc(4*sizeof(uint32_t));
+	    /* check if allocated properly and init */
+	    if (_pulDiginCounter[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
+	    else CNAMESPACE::memset(_pulDiginCounter[(rb_channel / 4)], 0, sizeof(uint32_t)*4);
+	  }
+
+    // create corresponding array elements for last trigger time
+		if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL)
     {  /* according 4-group of t_triggerNode isn't created -> allocate */
       _pt_diginTriggerTime[(rb_channel / 4)] = (t_triggerNode*)std::malloc(4*sizeof(t_triggerNode));
       if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
@@ -261,13 +277,16 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
   @return counter events since init or last reset
 */
 uint32_t getCounter(uint8_t rb_channel)
-{
-  /* check if rb_channel is allowed and var array is allocated */
-  if ((rb_channel < 16) && (_pulDiginCounter[(rb_channel / 4)] != NULL))
-  {
+{	if ((rb_channel < 16) && (_pulDiginCounter[(rb_channel / 4)] != NULL))
+  { /* rb_channel is allowed and var array is allocated */
     return _pulDiginCounter[(rb_channel / 4)][(rb_channel % 4)];
   }
-  else return 0;
+  else
+	{ // this can happen if counter is not yet initialized
+		// or if wanted timebase allows use of BIOS for
+		// period and freq detection
+		return 0;
+	}
 }
 /**
   reset the given counter
@@ -282,7 +301,12 @@ int16_t resetCounter(uint8_t rb_channel)
     _pulDiginCounter[(rb_channel / 4)][(rb_channel % 4)] = 0;
     return C_NO_ERR;
   }
-  else return C_RANGE;
+  else
+	{ // this can happen if counter is not yet initialized
+		// or if wanted timebase allows use of BIOS for
+		// period and freq detection
+		return C_RANGE;
+	}
 }
 /**
   get period of counter channel
@@ -292,24 +316,30 @@ int16_t resetCounter(uint8_t rb_channel)
 */
 uint16_t getCounterPeriod(uint8_t rb_channel)
 {
-  uint16_t ui16_timebase, ui16_result = 0xFFFF, ui16_counter;
+	#ifndef CALC_PERDIOD_FROM_FREQ
+	uint16_t ui16_counter;
+	#endif
+  uint16_t ui16_timebase, ui16_result = 0xFFFF;
   /* check if rb_channel is allowed and var array is allocated */
   if (rb_channel > 15) return 0xFFFF;
   if (_puiDiginTimebase[(rb_channel / 4)] != NULL)
   {
     ui16_timebase = _puiDiginTimebase[(rb_channel / 4)][(rb_channel % 4)];
     if (ui16_timebase == 0) ui16_result = 0xFFFF;
-    else if (ui16_timebase < (1024 * 65534 / (get_cpu_freq() * 1000)))
+    else if ( ui16_timebase <= get_max_bios_timebase() )
     { /* use standard BIOS method because timebase is short enough */
+			#ifdef CALC_PERDIOD_FROM_FREQ
+			get_digin_freq(rb_channel, &ui16_result);
+			// result of get_digin_freq has scaling [100mHz] -> use 10000/result to get period [msec]
+			ui16_result = ( ( 1000 * 10 ) / ui16_result );
+			#else
       get_digin_period(rb_channel, &ui16_result, &ui16_counter);
-      if (rb_channel < 5)
-      {
-        ui16_result = (((2 << (_b_prescale_1_4Index + 2)) * ui16_result )/ (get_cpu_freq() * 1000));
-      }
-      else
-      {
-        ui16_result = (((2 << (_b_prescale_5_16Index + 2)) * ui16_result )/ (get_cpu_freq() * 1000));
-      }
+			const uint16_t cui_usePrescaleInd = (rb_channel < 5)?_b_prescale_1_4Index:_b_prescale_5_16Index;
+
+			// use util helper function to avoid overflow
+      ui16_result
+				= __IsoAgLib::mul1Div1Mul2Div2((2 << (cui_usePrescaleInd + 2)), get_cpu_freq(), ui16_result, 1000 );
+			#endif
     }
     else
     { /* use extension method */
@@ -341,7 +371,7 @@ uint16_t getCounterFrequency(uint8_t rb_channel)
   {
     ui16_timebase = _puiDiginTimebase[(rb_channel / 4)][(rb_channel % 4)];
     if (ui16_timebase == 0) ui16_result = 0;
-    else if (ui16_timebase < (1024 * 65534 / (get_cpu_freq() * 1000)))
+    else if ( ui16_timebase <= get_max_bios_timebase() )
     { /* use standard BIOS method because timebase is short enough */
       get_digin_freq(rb_channel, &ui16_result);
     }
@@ -356,7 +386,8 @@ uint16_t getCounterFrequency(uint8_t rb_channel)
           if (ui16_lastPeriod == 0) ui16_result = 0;
           else
           {
-            if ((ui16_lastPeriod * 2) < ui16_lastSignalAge) ui16_lastPeriod = ((int32_t)ui16_lastPeriod + (int32_t)ui16_lastSignalAge)/(int32_t)2;
+            if ((ui16_lastPeriod * 2) < ui16_lastSignalAge)
+							ui16_lastPeriod = ((int32_t)ui16_lastPeriod + (int32_t)ui16_lastSignalAge)/(int32_t)2;
             ui16_result = (10000 / ui16_lastPeriod);
           }
         }
