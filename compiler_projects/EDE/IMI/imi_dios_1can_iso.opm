@@ -1,0 +1,4 @@
+-G "D:\Fritzmeier\MiniVegN\lbs_library\compiler_projects\EDE\IMI\"
+-err "imi_dios_1can_iso.err"
+-r
+-f "imi_dios_1can_iso.mak"
