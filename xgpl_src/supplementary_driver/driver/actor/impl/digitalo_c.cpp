@@ -188,7 +188,12 @@ bool DigitalO_c::good( void ) const
 }
 
 /** deliver detailed error state information for this Digital Output
-  * @return dout_err_t [noDoutErr|dout_openErr|dout_shortcutErr|dout_overtempErr|dout_overvoltErr|dout_untervoltErr]
+	* This function evaluates the current where possible, otherwise it evaluates
+	* the measured voltage at the output. The latter interpretation can go wrong
+	* if the PWM setting is >0 but has a very low value, so that even under normal
+	* conditions the voltage with connected consuming device is lower than to open
+	* connector state at low level.
+  * @return dout_err_t [noDoutErr|dout_openErr|dout_shortcutErr]
   */
 DigitalO_c::dout_err_t DigitalO_c::getState( void ) const
 {
@@ -199,15 +204,10 @@ DigitalO_c::dout_err_t DigitalO_c::getState( void ) const
     i16_stateHal = HAL::getDigoutDiagnose( channelNr(), ui16_minAllowedCurrent, ui16_maxAllowedCurrent );
   switch ( i16_stateHal )
   {
-    case HAL_NO_ERR:            return noDoutErr;
     case HAL_DIGOUT_OPEN:       return dout_openErr;
     case HAL_DIGOUT_SHORTCUT:   return dout_shortcutErr;
-    case HAL_DIGOUT_OVERTEMP:   return dout_overtempErr;
-    case HAL_DIGOUT_UNDERVOLT:  return dout_untervoltErr;
-    case HAL_DIGOUT_OVERVOLT:   return dout_overvoltErr;
+		default: return noDoutErr;
   }
-  // make compiler happy - normally this command is NOT reached
-  return noDoutErr;
 }
 
 } // end of namespace __IsoAgLib

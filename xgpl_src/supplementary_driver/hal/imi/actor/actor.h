@@ -118,7 +118,7 @@ namespace HAL
     @return max possible PWM value
   */
   inline uin16_t getMaxPwmDigout(uint8_t rui8_channel)
-  { __HALL::tOutput tOutputstatus; __HAL::getDigoutStatus(&tOutputstatus);
+  { __HALL::tOutput tOutputstatus; __HAL::get_digout_status(&tOutputstatus);
     return tOutputstatus.wMaxOutput;
   }
 
@@ -130,7 +130,7 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
   inline int16_t setDigout(uint8_t bOutputNo, uint16_t wPWMValue)
-    {__HAL::setOut_UD(wPWMValue);return HAL_NO_ERR;};
+    {__HAL::set_out_UD(wPWMValue);return HAL_NO_ERR;};
 
   /*@}*/
 }

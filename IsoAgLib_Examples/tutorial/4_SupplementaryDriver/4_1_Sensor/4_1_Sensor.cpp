@@ -276,8 +276,9 @@ int main()
 	// create Digin which uses hardware interrupt function
 	// ( keep in mind, that most BIOS/OS will have some consolidation method to
 	//   avoid reaction on erroneous signals - so use this very immediate reaction on your own risc )
-	MyDiginIrqHandle myHandler;
-	IsoAgLib::iDigitalI_c c_diginIrqTest( 4, IsoAgLib::iSensor_c::OnHigh, &myHandler );
+	MyDiginIrqHandle myHandler; 
+	bool b_useStaticRead = false;
+	IsoAgLib::iDigitalI_c c_diginIrqTest( 4, IsoAgLib::iSensor_c::OnHigh, b_useStaticRead, &myHandler );
 
 
 	// create two simple analog inputs
@@ -357,7 +358,7 @@ int main()
 		getISchedulerInstance().timeEvent();
 
 		// immediately re-loop if it's not yet time for debug messages
-		if ( i32_nextDebug < IsoAgLib::iSystem_c::getTime() ) continue;
+		if ( i32_nextDebug > IsoAgLib::iSystem_c::getTime() ) continue;
 		// now it's time for debug
 		i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
 
@@ -426,16 +427,16 @@ int main()
 		IsoAgLib::getIrs232Instance()
 			<< "Quick counter at channel 2 has frequency: " << c_counterHighRate.frequency()
 			<< ", with period: " << c_counterHighRate.period()
-			<< " and counter value: " << c_counterHighRate.val()
+			<< "[msec] and counter value: " << c_counterHighRate.val()
 			<< "\r\n";
 
 		// read slow counter
 		IsoAgLib::getIrs232Instance()
 			<< "Slow counter at channel 3 has frequency: " << c_counterLowRate.frequency()
 			<< ", with period: " << c_counterLowRate.period()
-			<< ", counter value: " << c_counterLowRate.val()
-			<< " and last event at time: " << c_counterLowRate.lastSignalAge()
-			<< "\r\n";
+			<< "[msec], counter value: " << c_counterLowRate.val()
+			<< " and last event detected " << c_counterLowRate.lastSignalAge()
+			<< "[msec] ago\r\n";
   }
   return 1;
 }

@@ -69,8 +69,6 @@
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/util/impl/canpkg_c.h>
 
-#include <supplementary_driver/driver/rs232/irs232io_c.h>
-
 
 namespace __HAL {
 extern "C" {

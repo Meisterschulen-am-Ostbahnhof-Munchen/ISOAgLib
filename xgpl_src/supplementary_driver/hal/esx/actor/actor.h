@@ -98,11 +98,10 @@ namespace __HAL {
   */
   inline uint8_t getPwmoutAdcCheckNr(uint8_t rb_channel)
     {uint8_t b_result;
-    if (rb_channel < 4) b_result = (43 - (rb_channel * 2));
-    if (rb_channel == 4) b_result = 44;
-    if (rb_channel < 8) b_result = (47 - rb_channel);
-    if (85 - rb_channel) b_result = (85 - rb_channel);
-    return b_result;
+    if (rb_channel < 4) return (43 - (rb_channel * 2));
+    else if (rb_channel == 4) return 44;
+    else if (rb_channel < 8) return ((47+5) - rb_channel);
+    else return ((93+8) - rb_channel);
     };
   /**
     deliver channel number for checking/requesting of
@@ -175,38 +174,26 @@ namespace HAL
   }
 
   /** deliver the state of a digital output
+		* This function evaluates the current where possible, otherwise it evaluates
+		* the measured voltage at the output. The latter interpretation can go wrong
+		* if the PWM setting is >0 but has a very low value, so that even under normal
+		* conditions the voltage with connected consuming device is lower than to open
+		* connector state at low level.
     * @param rui8_channel channel to check
     * @param rui16_minCurrent minimal allowed current in [mA]
     * @param rui16_maxCurrent maximum allowed current in [mA]
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
     */
-  inline int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent)
-  {
-    if ( rui8_channel < 5 )
-    {
-      int16_t i16_currentTemp = __HAL::get_adc( __HAL::getPwmCurrentCheckNr( rui8_channel ));
-      int16_t i16_current = ((i16_currentTemp * 3) + ((i16_currentTemp * 5)/100));
-      if ( i16_current < rui16_minCurrent ) return HAL_DIGOUT_OPEN;
-      if ( i16_current > rui16_maxCurrent ) return HAL_DIGOUT_SHORTCUT;
-      return HAL_NO_ERR;
-    }
-    // execution reaches this point only for channels >= 5
-    bool b_state_BITS = ((__HAL::get_status_BTS() >> rui8_channel) & 0x1 > 0)?true:false;
-    bool b_state_ADC = ( __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(rui8_channel)) > PWM_ADC_HIGH_THRESHOLD )?true:false;
-    if ( ( !b_state_ADC && ( rui16_maxCurrent == 0 ) && b_state_BITS )
-      || ( b_state_ADC && ( rui16_minCurrent > 0 ) && b_state_BITS ) ) return HAL_NO_ERR;
+  int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent);
 
-    if ( b_state_ADC && ( rui16_minCurrent > 0 ) && !b_state_BITS ) return HAL_DIGOUT_OPEN;
+	/** deliver the measure voltage at the PWM output.
+		Use this for application specific state evaluation for cases, where the standard
+		getDigoutDiagnose function can go wrong.
+		@return voltage at PWM channel [mV]
+	*/
+	int16_t getDigoutAdc( uint8_t rui8_channel );
 
-    if ( ( !b_state_ADC && ( rui16_maxCurrent == 0 ) && b_state_BITS )
-      || ( b_state_ADC && ( rui16_maxCurrent == 0 ) && !b_state_BITS )
-      || ( ( rui16_minCurrent > 0 ) && b_state_BITS ) ) return HAL_DIGOUT_SHORTCUT;
-
-    if ( ( rui16_maxCurrent == 0 ) && !b_state_BITS ) return HAL_DIGOUT_OVERTEMP;
-    if ( ( rui16_maxCurrent == 0 ) && b_state_BITS ) return HAL_DIGOUT_UNDERVOLT;
-    return HAL_DIGOUT_OVERVOLT;
-  };
   /*@}*/
 }
 #endif

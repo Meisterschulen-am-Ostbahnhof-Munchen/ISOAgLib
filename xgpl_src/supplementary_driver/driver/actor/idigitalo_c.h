@@ -69,10 +69,10 @@ namespace IsoAgLib {
 class iDigitalO_c : private __IsoAgLib::DigitalO_c {
 public:
   /** enum for error states of digital output
-    * values: noDoutErr, dout_openErr, dout_shortcutErr, dout_overtempErr,
+    * values: noDoutErr, dout_openErr, dout_shortcutErr,
     *         dout_overvoltErr, dout_untervoltErr
     */
-  typedef enum { noDoutErr, dout_openErr, dout_shortcutErr, dout_overtempErr, dout_overvoltErr, dout_untervoltErr } dout_err_t;
+  typedef enum { noDoutErr, dout_openErr, dout_shortcutErr } dout_err_t;
   //typedef __IsoAgLib::DigitalO_c::dout_err_t dout_err_t;
 
   /**
@@ -142,9 +142,20 @@ public:
     */
   bool good( void ) const { return DigitalO_c::good();};
   /** deliver detailed error state information for this Digital Output
-    * @return dout_err_t [noDoutErr|dout_openErr|dout_shortcutErr|dout_overtempErr|dout_overvoltErr|dout_untervoltErr]
+		* This function evaluates the current where possible, otherwise it evaluates
+		* the measured voltage at the output. The latter interpretation can go wrong
+		* if the PWM setting is >0 but has a very low value, so that even under normal
+		* conditions the voltage with connected consuming device is lower than to open
+		* connector state at low level.
+    * @return dout_err_t [noDoutErr|dout_openErr|dout_shortcutErr]
     */
   iDigitalO_c::dout_err_t getState( void ) const { return iDigitalO_c::dout_err_t((uint16_t)DigitalO_c::getState());};
+	/** deliver the measure voltage at the PWM output.
+		Use this for application specific state evaluation for cases, where the standard
+		getDigoutDiagnose function can go wrong.
+		@return voltage at PWM output [mV]
+	*/
+	int16_t getDigoutAdc( void ) const { return DigitalO_c::getDigoutAdc();};
 private:
   /**
     HIDDEN! copy constructor for Digital_O

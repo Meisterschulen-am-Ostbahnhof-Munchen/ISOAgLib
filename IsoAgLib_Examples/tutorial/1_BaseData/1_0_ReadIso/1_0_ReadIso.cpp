@@ -286,9 +286,9 @@ int main()
 
 		#ifdef USE_RS232_FOR_DEBUG
 		static int32_t si32_lastDebug = 0;
-		if ( ( IsoAgLib::iSystem_c::getTime() % 1000 ) > si32_lastDebug )
+		if ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) > si32_lastDebug )
 		{ // it's time to print debug msg
-			si32_lastDebug = ( IsoAgLib::iSystem_c::getTime() % 1000 );
+			si32_lastDebug = ( IsoAgLib::iSystem_c::getTime() / 1000 );
 			getIrs232Instance() << "The theoretical distance of the tractor is now " << getIBaseInstance().distTheor() << "\n";
 			getIrs232Instance() << "The real distance of the tractor is now " << getIBaseInstance().distReal() << "\n";
 			getIrs232Instance() << "The theoretical speed  of the tractor is now " << getIBaseInstance().speedTheor() << "\n";

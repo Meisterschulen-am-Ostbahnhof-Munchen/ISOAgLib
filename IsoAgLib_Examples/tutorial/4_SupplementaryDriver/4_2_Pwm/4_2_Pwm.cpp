@@ -289,7 +289,7 @@ int main()
 		getISchedulerInstance().timeEvent();
 
 		// immediately re-loop if it's not yet time for debug messages
-		if ( i32_nextDebug < IsoAgLib::iSystem_c::getTime() ) continue;
+		if ( i32_nextDebug > IsoAgLib::iSystem_c::getTime() ) continue;
 		// now it's time for debug
 		i32_nextDebug = IsoAgLib::iSystem_c::getTime() + 1000;
 
@@ -327,14 +327,23 @@ int main()
 		if ( ! c_pwmCurrentDiagnose  )
 		{ // ERROR
 			IsoAgLib::getIrs232Instance()
-				<< "ERROR: c_pwmCurrentDiagnose is faulted with current: " << c_pwmCurrentDiagnose.getDigoutCurrent()
-				<< " and current state: " << c_pwmCurrentDiagnose.get()
-				<< "\r\n";
+				<< "ERROR: c_pwmCurrentDiagnose is faulted with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
 		}
+		else
+		{
+			IsoAgLib::getIrs232Instance()
+				<< "FINE: c_pwmCurrentDiagnose is in good state with current: " << c_pwmCurrentDiagnose.getDigoutCurrent();
+		}
+		IsoAgLib::getIrs232Instance()
+			<< ", current state: " << c_pwmCurrentDiagnose.get()
+			<< " and PWM output voltage: " << c_pwmCurrentDiagnose.getDigoutAdc()
+			<< "[mV]\r\n";
+		
 		// do some more evaluation
 		IsoAgLib::getIrs232Instance()
 			<< "c_pwmCurrentSimple is currently set to: " << c_pwmCurrentSimple.get()
-			<< "\r\n";
+			<< ", has PWM output voltage: " << c_pwmCurrentSimple.getDigoutAdc()
+			<< "[mV]\r\n";
 		switch ( c_pwmCurrentSimple.getState() )
 		{
 			case IsoAgLib::iDigitalO_c::noDoutErr :
@@ -348,18 +357,6 @@ int main()
 			case IsoAgLib::iDigitalO_c::dout_shortcutErr :
 				IsoAgLib::getIrs232Instance()
 					<< "ERROR - c_pwmCurrentSimple has shortcut\r\n";
-				break;
-			case IsoAgLib::iDigitalO_c::dout_overtempErr :
-				IsoAgLib::getIrs232Instance()
-					<< "ERROR - c_pwmCurrentSimple is overheated\r\n";
-				break;
-			case IsoAgLib::iDigitalO_c::dout_untervoltErr :
-				IsoAgLib::getIrs232Instance()
-					<< "ERROR - c_pwmCurrentSimple has too low voltage\r\n";
-				break;
-			case IsoAgLib::iDigitalO_c::dout_overvoltErr :
-				IsoAgLib::getIrs232Instance()
-					<< "ERROR - c_pwmCurrentSimple has too high voltage\r\n";
 				break;
 		}
   }
