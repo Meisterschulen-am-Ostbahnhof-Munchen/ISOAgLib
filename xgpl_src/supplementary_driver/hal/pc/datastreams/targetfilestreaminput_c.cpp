@@ -90,6 +90,8 @@
 //! open a input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
+	b_eofReached = false;
+
 	if ( ( rt_mode & StreamOut ) != 0 ) return false;
 
 	std::ios_base::openmode mode = std::ios_base::in;
@@ -112,6 +114,13 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
-	ui8_data = (static_cast<std::ifstream*>(this))->get();
+	std::ifstream* isp_tmp = static_cast<std::ifstream*>(this);
+	
+	ui8_data = isp_tmp->get();
+  
+	// check if next get returns EOF: nothing more to read
+	if (isp_tmp->peek() == EOF)
+		b_eofReached = true;
+  
 	return *this;
 }

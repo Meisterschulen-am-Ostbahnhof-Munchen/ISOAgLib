@@ -117,7 +117,14 @@ public:
   virtual TargetFileStreamInput_c& operator>>(uint8_t &ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const { return static_cast<const std::ifstream*>(this)->eof();};
+  //  b_eofReached is set to true when peek() returns EOF in operator>>: nothing more to read
+	//  b_eofReached is initialized to false in open()
+	virtual bool eof() const { return b_eofReached | static_cast<const std::ifstream*>(this)->eof();};
+	
+private:
+
+  //  does next get() fail?
+  bool b_eofReached;
 }; // ~X2C
 
 // TargetFileStreamInput_c & operator>> (TargetFileStreamInput_c &, uint8_t &ui8_data);
