@@ -650,12 +650,7 @@ compiler_projects/VC6/5_0_InternalCan/5_0_InternalCan__vector_xl_drv_lib__simula
 compiler_projects/VC6/5_0_InternalCan/5_0_InternalCan__vector_xl_drv_lib__sys.dsp eol=crlf
 compiler_projects/VC6/AutoDataCollector/AutoDataCollector__vector_canlib__simulating.dsp eol=crlf
 compiler_projects/VC6/AutoDataCollector/AutoDataCollector__vector_xl_drv_lib__simulating.dsp eol=crlf
-compiler_projects/VC6/imi_iso_rte/imi_iso_rte__vector_canlib__rte.dsp eol=crlf
-compiler_projects/VC6/imi_iso_rte/imi_iso_rte__vector_xl_drv_lib__rte.dsp text eol=crlf
-compiler_projects/VC6/imi_iso_sim/imi_iso_sim__vector_canlib__simulating.dsp eol=crlf
-compiler_projects/VC6/imi_iso_sim/imi_iso_sim__vector_xl_drv_lib__simulating.dsp eol=crlf
-compiler_projects/VC6/imi_iso_w32/imi_iso_w32__vector_canlib__sys.dsp eol=crlf
-compiler_projects/VC6/imi_iso_w32/imi_iso_w32__vector_xl_drv_lib__sys.dsp eol=crlf
+compiler_projects/VC6/imi_iso/imi_iso__vector_xl_drv_lib__simulating.dsp -text
 compiler_projects/VC6/tractor/tractor__simulating__simulating.dsp eol=crlf
 compiler_projects/VC6/tractor/tractor__simulating__sys.dsp eol=crlf
 compiler_projects/VC6/tractor/tractor__sontheim__simulating.dsp eol=crlf
