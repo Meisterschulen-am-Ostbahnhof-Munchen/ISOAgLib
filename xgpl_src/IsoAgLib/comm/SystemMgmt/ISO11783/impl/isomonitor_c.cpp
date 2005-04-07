@@ -128,6 +128,7 @@ namespace __IsoAgLib {
 */
 ISOMonitor_c::ISOMonitor_c()
   : SingletonISOMonitor_c(), vec_isoMember() {
+  setAlreadyClosed(); // so init() will init ;-)
   init();
 }
 
@@ -135,33 +136,39 @@ ISOMonitor_c::ISOMonitor_c()
 */
 void ISOMonitor_c::init( void )
 {
-  c_data.setSingletonKey( getSingletonVecKey() );
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_isoItemTotal -= vec_isoMember.size();
-  #endif
-  vec_isoMember.clear();
-  pc_isoMemberCache = vec_isoMember.end();
-  i32_lastSaRequest = 0;
-  c_tempIsoMemberItem.set( 0, GetyPos_c(0xF, 0xF), 0xFE, IState_c::Active,
-           0xFFFF, (ISOName_c*)NULL, getSingletonVecKey() );
-
-  // clear state of b_alreadyClosed, so that close() is called one time
-  clearAlreadyClosed();
-  // register in Scheduler_c to be triggered fopr timeEvent
-  getSchedulerInstance4Comm().registerClient( this );
-
-  bool b_configure = false;
-  if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FF00) << 8), MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN) << 8), false, Ident_c::ExtendedIdent))
-    b_configure = true;
-  if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), false, Ident_c::ExtendedIdent))
-    b_configure = true;
-  if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), false, Ident_c::ExtendedIdent))
-    b_configure = true;
-  if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), false, Ident_c::ExtendedIdent))
-    b_configure = true;
-
-  if (b_configure) {
-    getCanInstance4Comm().reconfigureMsgObj();
+  // only init if closed (constructor "closes" it so it gets init'ed initially!
+  if (checkAlreadyClosed())
+  {
+    c_data.setSingletonKey( getSingletonVecKey() );
+    #ifdef DEBUG_HEAP_USEAGE
+    sui16_isoItemTotal -= vec_isoMember.size();
+    #endif
+    vec_isoMember.clear();
+    pc_isoMemberCache = vec_isoMember.end();
+    i32_lastSaRequest = 0;
+    c_tempIsoMemberItem.set( 0, GetyPos_c(0xF, 0xF), 0xFE, IState_c::Active,
+            0xFFFF, (ISOName_c*)NULL, getSingletonVecKey() );
+  
+    // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
+    clearAlreadyClosed();
+    // register in Scheduler_c to be triggered fopr timeEvent
+    getSchedulerInstance4Comm().registerClient( this );
+  
+    bool b_configure = false;
+    if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FF00) << 8), MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN) << 8), false, Ident_c::ExtendedIdent))
+      b_configure = true;
+    if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), false, Ident_c::ExtendedIdent))
+      b_configure = true;
+    FilterBox_c* pc_filterBoxWsMaster
+      = getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), false, Ident_c::ExtendedIdent);
+    if (pc_filterBoxWsMaster)
+      b_configure = true;
+    if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), false, Ident_c::ExtendedIdent), pc_filterBoxWsMaster)
+      b_configure = true;
+  
+    if (b_configure) {
+      getCanInstance4Comm().reconfigureMsgObj();
+    }
   }
 }
 
@@ -209,38 +216,33 @@ bool ISOMonitor_c::timeEvent( void ){
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   int32_t i32_now = Scheduler_c::getLastTimeEventTrigger();
-
-  bool b_repeat = true;
-  while ((!vec_isoMember.empty()) && b_repeat) {
-    b_repeat = false;
-    for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
+  const int32_t ci32_timeSinceLastAdrClaimRequest = (i32_now - lastIsoSaRequest());
+  if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
+  { // the last request is more than CONFIG_ISO_ITEM_MAX_AGE ago
+    // --> each client MUST have answered until now if it's still alive
+    for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end();)
     { // delete item, if it didn't answer longer than CONFIG_ISO_ITEM_MAX_AGE since last adress claim request
-      int32_t i32_timeSinceLastRequestWithMaxAge = (i32_now - lastIsoSaRequest()) + CONFIG_ISO_ITEM_MAX_AGE;
-      int32_t i32_timeSinceLastAdressClaim = pc_iter->lastedTime();
-      if ((i32_timeSinceLastRequestWithMaxAge > 0)
-      && (i32_timeSinceLastRequestWithMaxAge < i32_timeSinceLastAdressClaim)
-      &&(!(pc_iter->itemState(IState_c::Local))))
-      {
+      if ( ( pc_iter->lastTime() < lastIsoSaRequest() )
+        && ( !(pc_iter->itemState(IState_c::Local))   ) )
+      { // its last AdrClaim is too old - it didn't react on the last request
         Vec_ISOIterator pc_iterDelete = pc_iter;
-        vec_isoMember.erase(pc_iterDelete);
         #ifdef DEBUG_HEAP_USEAGE
         sui16_isoItemTotal--;
 
         getRs232Instance()
-	        << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
+          << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
           <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
           << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
           << ", Chunk-Alloc: "
           << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
           << "\r\n\r\n";
         #endif
-        pc_iter = vec_isoMember.begin();
-        b_repeat = true;
-        // break and start it all over again (because of pc_iter changed to begin(), which won't go with the following pc_iter++ if empty!
-        break;
+        pc_iter = vec_isoMember.erase(pc_iterDelete); // erase returns iterator to next element after the erased one
+      } else  {
+        pc_iter++;
       }
-    }
-  }
+    } // for
+  } // if
   #endif
   return true;
 }
@@ -814,7 +816,7 @@ bool ISOMonitor_c::processMsg(){
         case ADRESS_CLAIM_PGN: // request for adress claim
           // update time of last adress claim request
            b_processed = true;
-           setLastIsoSaRequest();
+           setLastIsoSaRequest(data().time()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
            // don't break because default handling is true for
            // adress claim request, too
         default:
@@ -859,6 +861,10 @@ bool ISOMonitor_c::processMsg(){
       { // ISOItem_c with same SA has to exist!
         pc_itemMaster = &(isoMemberNr(data().isoSa()));
         pc_itemMaster->setMaster (pc_itemMaster); // set item as mas
+        #ifdef DEBUG
+        // only for testing, you can remove this!
+        std::cout << "\nWORKING_SET_MASTER_PGN encountered from SA " << (uint32_t) data().isoSa() << " at time " << HAL::getTime() << ".\n";
+        #endif
         // IGNORE THAT WE GOT x MEMBERS FOR NOW
         // LATER WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
       }

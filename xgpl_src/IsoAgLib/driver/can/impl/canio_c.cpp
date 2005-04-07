@@ -534,6 +534,10 @@ bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
   of received data in dedicated customer object (no search);
   uses BIOS functions
 
+  This specialized function allows the user to use the same message
+  object as the filter box that is given "rpc_connectedFilterBox"
+  Use this feature if messages from two or more filterboxes have to be processed chronologically
+  
   possible errors:
       * Err_c::badAlloc on not enough memory for new FilterBox_c instance or for new configured MsgObj_c's
   @see __IsoAgLib::CANCustomer
@@ -594,9 +598,65 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   return &arrFilterBox.front();
 }
 
+
+
 /**
-  delete a FilerBox definition
-	@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
+  create a Filter Box with specified rt_mask/rt_filter
+  on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
+  rb_reconfigImmediate == true -> useful for
+  avoiding unneeded reconfiguration during
+  sequence of FilterBox_c insertions;
+  by rref_customer CANIO_c (FilterBox_c) can start direct processing
+  of received data in dedicated customer object (no search);
+  uses BIOS functions
+
+  This specialized function allows the user to use the same message
+  object as the filter box that exists with the given extra rt_mask/rt_filter pair!
+  Use this feature if messages from two or more filterboxes have to be processed chronologically
+  
+  possible errors:
+      * Err_c::badAlloc on not enough memory for new FilterBox_c instance or for new configured MsgObj_c's
+  @see __IsoAgLib::CANCustomer
+  @param rref_customer reference to __IsoAgLib::CANCustomer_c which needs filtered
+      messages (-> on received msg call rref_customer.processMsg())
+  @param rt_mask individual mask for this filter box
+  @param rt_filter individual filter
+  @param rb_reconfigImmediate true -> all Filter objects are reconfigured to according
+      CAN hardware MsgObj after creating this filter
+  @param rt_identType ident type of the created ident: standard 11bit (default) or extended 29bit
+  @return != NULL -> if inserting and wanted reconfiguration are performed without errors, a reference to the created FilterBox is returned
+  @exception badAlloc
+*/
+FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
+    uint32_t rt_mask, uint32_t rt_filter, bool rb_reconfigImmediate,
+    const Ident_c::identType_t rt_identType, uint32_t rt_connectedMask, uint32_t rt_connectedFilter, const Ident_c::identType_t rt_connectedIdentType)
+{
+  Ident_c c_connectedMask = Ident_c(rt_connectedMask, rt_connectedIdentType);
+  Ident_c c_connectedFilter = Ident_c(rt_connectedFilter, rt_connectedIdentType);
+  
+  bool b_connectedFilterFound = false;
+
+  // check if given FilterBox_c definition is in array
+  ArrFilterBox::iterator pc_iter = arrFilterBox.begin();
+  for (; pc_iter != arrFilterBox.end(); pc_iter++)
+  {
+    if ( pc_iter->equalFilterMask(c_connectedMask, c_connectedFilter ) )
+    { // FilterBox_c with equal def (mask, filter, NOT customer) found
+      b_connectedFilterFound = true;
+      break; // don't search rest of array
+    }
+  }
+ 
+  if (!b_connectedFilterFound) // "existFilter()" not used as it also compares the customer!
+    return NULL;
+    
+  return insertFilter(rref_customer, rt_mask, rt_filter, rb_reconfigImmediate, rt_identType, &(*pc_iter));
+}
+    
+
+/**
+  delete a FilterBox definition
+  @param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
   @param rt_mask individual mask for this filter box
   @param rt_filter individual filter
   @param rt_identType ident type of the deleted ident: standard 11bit or extended 29bit

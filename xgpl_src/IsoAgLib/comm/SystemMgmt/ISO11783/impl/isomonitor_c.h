@@ -348,8 +348,12 @@ public:
     set timestamp of last ISO request for SA claim msg
     @param ri32_time set timestamp to ri32_time or use actual time on default
   */
-  void setLastIsoSaRequest(int32_t ri32_time = -1)
-    {i32_lastSaRequest = (ri32_time != -1)?ri32_time:System_c::getTime();};
+  void setLastIsoSaRequest(int32_t ri32_time/* = -1*/)
+    /** changed by M.Wodok so that NO system time is used,
+        because REQUEST_FOR_CLAIMED_ADDRESS may be processed AFTER
+        ADDRESS_CLAIM, so it's NOT chronologically. So CAN-Pkg-Times
+        should be used here instead!! */
+    {i32_lastSaRequest = /*(ri32_time != -1)?*/ri32_time/*:System_c::getTime()*/;};
 
 	/**
 		trigger a request for claimed addreses

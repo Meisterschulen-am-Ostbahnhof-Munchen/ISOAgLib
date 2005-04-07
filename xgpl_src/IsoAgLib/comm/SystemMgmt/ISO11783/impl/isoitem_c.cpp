@@ -622,7 +622,7 @@ bool ISOItem_c::processMsg(){
 					case ADRESS_CLAIM_PGN: // request for adress claim
 						c_pkg.setIsoPri(6);
 						c_pkg.setIsoSa(nr());
-						c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
+						c_pkg.setIsoPgn(ADRESS_CLAIM_PGN); // doppelt gemoppelt ;)
 						c_pkg.setIsoPf(238);
 						c_pkg.setIsoPs(255); // global information
 						// set NAME to CANPkg

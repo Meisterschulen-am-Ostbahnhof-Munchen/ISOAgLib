@@ -261,7 +261,7 @@ class CANIO_c : public SingletonCANIO_c {
     @return true -> same FilterBox_c already exist
   */
   bool existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
-	  uint16_t rui32_mask, uint16_t rui32_filter,
+	  uint16_t rui16_mask, uint16_t rui16_filter,
     Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
     ArrFilterBox::iterator* rpc_iter = NULL);
   /**
@@ -321,9 +321,14 @@ class CANIO_c : public SingletonCANIO_c {
    @exception badAlloc
   */
   FilterBox_c* insertFilter(__IsoAgLib::CANCustomer_c& rref_customer, uint32_t rui32_mask,
-                     uint32_t rui32_filter, bool rb_reconfigImmediate = true,
-                     const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE, FilterBox_c* rpc_connectedFilterBox = NULL);
+                            uint32_t rui32_filter, bool rb_reconfigImmediate = true,
+                            const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE, 
+                            FilterBox_c* rpc_connectedFilterBox = NULL);
 
+  FilterBox_c* insertFilter(__IsoAgLib::CANCustomer_c& rref_customer, uint32_t rui32_mask, 
+                            uint32_t rui32_filter, bool rb_reconfigImmediate,
+                            const Ident_c::identType_t rt_identType, 
+                            uint32_t rt_connectedMask, uint32_t rt_connectedFilter, const Ident_c::identType_t rt_connectedIdentType);
   /**
     reconfigure the MsgObj after insert/delete of FilterBox
   */
