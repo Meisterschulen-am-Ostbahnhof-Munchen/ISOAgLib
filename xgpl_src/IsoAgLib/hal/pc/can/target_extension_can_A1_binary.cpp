@@ -457,21 +457,27 @@ int ca_GetData_1 (can_recv_data* receivedata)
 	size_t len = 0;
 	ssize_t read;
 
-	fd_set rfds;
-        struct timeval tv;
-        int retval;
-	int maxfd = can_device+1;
 
 	for( int channel=0; channel<cui32_maxCanBusCnt; channel++ )
 	{
 		if( canBusIsOpen[channel])
 		{
 
+		fd_set rfds;
+	    int retval;
+		int maxfd = can_device+1;
+
 		FD_ZERO(&rfds);
-        	FD_SET(can_device, &rfds);
-        	tv.tv_sec = 0;  // timeout immediately (only check if data is waiting
-        	tv.tv_usec = 0;
+       	FD_SET(can_device, &rfds);
+
+#ifdef USE_THREAD
+		retval = select(maxfd, &rfds, NULL, NULL, NULL);	// wait infinitely for next CAN msg (when multi-threaded)
+#else
+	    struct timeval tv;
+		tv.tv_sec = 0;  	// timeout immediately (only check if data is waiting when on a timer)
+		tv.tv_usec = 0;
 		retval = select(maxfd, &rfds, NULL, NULL, &tv);
+#endif
 
 		if(retval == -1)
 		{
