@@ -66,9 +66,9 @@
  #include <stdio.h>
  #include <ostream>
 //        extern "C"
-        using namespace std;
+ using namespace std;
  RGBQUAD vtColorTable[256]=
-{
+ {
    {0x00,0x00,0x00,0x00},//0
    {0xFF,0xFF,0xff,0x00},//1
    {0x00,0x99,0x00,0x00},//2
@@ -326,7 +326,7 @@
    {0x00,0x00,0x00,0x00},//253
    {0x00,0x00,0x00,0x00},//254
    {0x00,0x00,0x00,0x00}//255
-};
+ };
 #else
  #include <fstream.h>
  #include <dirent.h>
@@ -689,7 +689,7 @@ unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wi
 
 unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro)
 {
-  if (rpc_string [0] == 0x00) clean_exit (-1, "empty attribute!");
+  if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
 
 /** @todo check if all chars in the string are numbers, not only the first! */
 		if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
@@ -1330,7 +1330,6 @@ void cleanAttribute(int attrID)
  attrString [attrID] [stringLength+1-1] = 0x00;
  attrIsGiven [attrID] = false;
 }
-
 
 void utf16convert (char* source, char* destin, int count)
 {
@@ -2037,10 +2036,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         strncpy (objChildName, attr_value, stringLength);
         is_objChildName = true;
        }
-                                                        if (strncmp (attr_name, "id", stringLength) == 0) {
-                                                                objChildID = atoi (attr_value);
-                                                                is_objChildID = true;
-                                                        }
+       if (strncmp (attr_name, "id", stringLength) == 0) {
+        objChildID = atoi (attr_value);
+        is_objChildID = true;
+       }
       }
      }
      if (is_objChildName == false)
@@ -2064,8 +2063,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
       clean_exit (-1);
      }
-                                        //fprintf (partFileB, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
-                                        fprintf (partFileB, "{%d, &iVtObject%s}", eventToi(attrString [attrEvent]), objChildName);
+     //fprintf (partFileB, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
+     fprintf (partFileB, "{%d, &iVtObject%s}", eventToi(attrString [attrEvent]), objChildName);
      objChildMacros++;
      firstElement = false;
     }
@@ -2117,14 +2116,14 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
        }
        break;
       case ctEnableDisableObject:
-							if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
+        if(child->hasAttributes())
+        {
+          // parse through all attributes
+          pAttributes = child->getAttributes();
+          int nSize = pAttributes->getLength();
 
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrDisable_enable);
+          cleanAttribute(attrObjectID);
+          cleanAttribute(attrDisable_enable);
 
         for(int i=0;i<nSize;++i)
         {
