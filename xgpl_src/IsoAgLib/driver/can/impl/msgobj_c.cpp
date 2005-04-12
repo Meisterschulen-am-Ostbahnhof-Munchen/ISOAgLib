@@ -727,13 +727,20 @@ void MsgObj_c::closeCan()
 	simply conserved until normal CANIO_c::processMsg() is called.
 */
 void MsgObj_c::lock( bool rb_lock )
-{ // lock the CAN hardware to avoid receive of further messages
-	// the lastMessageObject should be locked two ways:
-	// a) change filter, to avoid match -> just set to 0x1FFFFFFF
-	Ident_c c_tempIdent( 0x1FFFFFFF, c_filter.identType() );
-	HAL::can_configMsgobjChgid( busNumber(), msgObjNr(), c_tempIdent );
-	// b) use BIOS/OS lock function
-	HAL::can_configMsgobjLock( busNumber(), msgObjNr(), rb_lock );
+{
+	if ( rb_lock )
+	{ // lock the CAN hardware to avoid receive of further messages
+		// the lastMessageObject should be locked two ways:
+		// a) change filter, to avoid match -> just set to 0x1FFFFFFF
+		Ident_c c_tempIdent( 0x1FFFFFFF, c_filter.identType() );
+		HAL::can_configMsgobjChgid( busNumber(), msgObjNr(), c_tempIdent );
+		// b) use BIOS/OS lock function
+		HAL::can_configMsgobjLock( busNumber(), msgObjNr(), true );
+	}
+	else
+	{ // unlock
+		HAL::can_configMsgobjLock( busNumber(), msgObjNr(), false );
+	}
 }
 
 } // end namespace __IsoAgLib
