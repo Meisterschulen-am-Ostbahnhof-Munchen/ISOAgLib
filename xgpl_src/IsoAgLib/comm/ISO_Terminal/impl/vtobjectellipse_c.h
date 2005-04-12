@@ -46,37 +46,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
@@ -105,17 +105,17 @@ public:
 
   //  Operation: stream
   //! Parameter:
-  //! @param destMemory: 
+  //! @param destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset: 
+  //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  uint16_t sourceOffset);
 
   //  Operation: init
   //! Parameter:
-  //! @param vtObjectellipseSROM: 
-  //! @param b_initPointer: 
+  //! @param vtObjectellipseSROM:
+  //! @param b_initPointer:
   void init(const iVtObjectEllipse_s* vtObjectellipseSROM) { vtObject_c::init ((iVtObject_s*) vtObjectellipseSROM); };
 
   //  Operation: get_vtObjectmeter_a
@@ -129,62 +129,62 @@ public:
 
   //  Operation: setLineAttributes
   //! Parameter:
-  //! @param newLineAttribute: 
-  //! @param b_updateObject: 
+  //! @param newLineAttribute:
+  //! @param b_updateObject:
   void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes) : 0, sizeof(iVtObjectEllipse_s), 1 /* "Line Attribute" */, newLineAttributes);
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes) : 0, sizeof(iVtObjectEllipse_s), 1 /* "Line Attributes" */, newLineAttributes);
   };
 
   //  Operation: setWidth
   //! Parameter:
-  //! @param newWidth: 
-  //! @param b_updateObject: 
+  //! @param newWidth:
+  //! @param b_updateObject:
   void setWidth(uint16_t newWidth, bool b_updateObject=false){
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), width) : 0, sizeof(iVtObjectEllipse_s), 2 /* "Width" */, newWidth);
   };
-  
+
   //  Operation: setHeight
   //! Parameter:
-  //! @param newHeight: 
-  //! @param b_updateObject: 
+  //! @param newHeight:
+  //! @param b_updateObject:
   void setHeight(uint16_t newHeight, bool b_updateObject=false) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), height) : 0, sizeof(iVtObjectEllipse_s), 3 /* "Height" */, newHeight);
   };
 
   //  Operation: setEllipseType
   //! Parameter:
-  //! @param newEllipseType: 
-  //! @param b_updateObject: 
+  //! @param newEllipseType:
+  //! @param b_updateObject:
   void setEllipseType(uint8_t newEllipseType, bool b_updateObject=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType) : 0, sizeof(iVtObjectEllipse_s), 4 /* "Ellipse Type" */, newEllipseType, newEllipseType);
   };
 
   //  Operation: setStartAngle
   //! Parameter:
-  //! @param newStartAngle: 
-  //! @param b_updateObject: 
+  //! @param newStartAngle:
+  //! @param b_updateObject:
   void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle) : 0, sizeof(iVtObjectEllipse_s), 5 /* "Start Angle" */, newStartAngle, newStartAngle);
   };
 
   //  Operation: setEndAngle
   //! Parameter:
-  //! @param newEndAngle: 
-  //! @param b_updateObject: 
+  //! @param newEndAngle:
+  //! @param b_updateObject:
   void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle) : 0, sizeof(iVtObjectEllipse_s), 6 /* "End Angle" */, newEndAngle, newEndAngle);
   };
 
   //  Operation: setFillAttributes
   //! Parameter:
-  //! @param newFillAttribute: 
-  //! @param b_updateObject: 
+  //! @param newFillAttribute:
+  //! @param b_updateObject:
   void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes) : 0, sizeof(iVtObjectEllipse_s), 7 /* "Fill Attributes" */, newFillAttributes);
   };
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false);
-  
+
   //  Operation: setOriginSKM
   //! Parameter:
   //! @param b_SKM:

@@ -166,7 +166,7 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
     // at least 3 bytes from the string have to be written, if not, fill with 0xFF, so the pkg-len is 8!
     vec_uploadBuffer.push_back (0xFF);
   }
-  
+
   if ((5+strLen) < 9)
     ui8_retryCount = DEF_Retries_NormalCommands;
   else
@@ -270,7 +270,7 @@ SendUpload_c::SendUpload_c (const SendUpload_c& ref_source)
 }
 
 
-  
+
   /*************************************/
  /**** Iso Terminal Implementation ****/
 /*************************************/
@@ -657,6 +657,9 @@ bool ISOTerminal_c::timeEvent( void )
       // timedout
       if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
         // we couldn't store for some reason, but don't care, finalize anyway...
+        #ifdef DEBUG
+          std::cout << "StoreVersion TimedOut!\n";
+        #endif
         finalizeUploading ();
       }
     }
@@ -854,22 +857,22 @@ void ISOTerminalStreamer_c::resetDataNextStreamPart ()
   uploadBufferPosition = 0;
   uploadBufferFilled = 1;
   uploadBuffer [0] = 17;
-  
+
   // ! ui32_streamSize is constant and is initialized in "StartObjectPoolUploading"
   // ! pc_pool         is constant and is initialized in "StartObjectPoolUploading"
-  
+
   // following should not be needed to be reset, as this set by "saveDataNextStreamPart"
-  // ? ui32_objectStreamPositionStored 
+  // ? ui32_objectStreamPositionStored
   // ? pc_iterObjectsStored;
   // ? uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
   // ? uploadBufferFilledStored;
   // ? uploadBufferPositionStored;
 }
-  
 
 
-  
-  
+
+
+
 /** place next data to send direct into send puffer of pointed
     stream send package - MultiSendStreamer_c will send this
     puffer afterwards
@@ -924,6 +927,9 @@ void ISOTerminal_c::startObjectPoolUploading ()
 
 void ISOTerminal_c::finalizeUploading ()
 {
+#ifdef DEBUG
+  std::cout << "now en_objectPoolState = OPUploadedSuccessfully;\n";
+#endif
   en_uploadType = UploadIdle;
   en_objectPoolState = OPUploadedSuccessfully;
   if (c_streamer.pc_pool != NULL) {

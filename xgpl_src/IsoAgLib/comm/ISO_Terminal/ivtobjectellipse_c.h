@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 
 #ifndef IVTOBJECTELLIPSE_C_H
@@ -71,8 +71,8 @@ public:
 
   //  Operation: init
   //! Parameter:
-  //! @param vtObjectellipseSROM: 
-  //! @param b_initPointer: 
+  //! @param vtObjectellipseSROM:
+  //! @param b_initPointer:
   void init(const iVtObjectEllipse_s* vtObjectellipseSROM) {
     vtObjectEllipse_c::init (vtObjectellipseSROM);
   };
@@ -80,58 +80,58 @@ public:
   //  Operation: get_vtObjectmeter_a
   iVtObjectEllipse_s* get_vtObjectEllipse_a() { return vtObjectEllipse_c::get_vtObjectEllipse_a(); };
 
-  //  Operation: setLineAttribute
+  //  Operation: setLineAttributes
   //! Parameter:
-  //! @param newLineAttribute: 
-  //! @param b_updateObject: 
-  void setLineAttribute(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false) {
+  //! @param newLineAttributes:
+  //! @param b_updateObject:
+  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false) {
     vtObjectEllipse_c::setLineAttributes (newLineAttributes, b_updateObject);
   };
 
   //  Operation: setWidth
   //! Parameter:
-  //! @param newWidth: 
-  //! @param b_updateObject: 
+  //! @param newWidth:
+  //! @param b_updateObject:
   void setWidth(uint16_t newWidth, bool b_updateObject=false) {
     vtObjectEllipse_c::setWidth (newWidth, b_updateObject);
   };
 
   //  Operation: setHeight
   //! Parameter:
-  //! @param newHeight: 
-  //! @param b_updateObject: 
+  //! @param newHeight:
+  //! @param b_updateObject:
   void setHeight(uint16_t newHeight, bool b_updateObject=false) {
     vtObjectEllipse_c::setHeight (newHeight, b_updateObject);
   };
 
   //  Operation: setEllipseType
   //! Parameter:
-  //! @param newEllipseType: 
-  //! @param b_updateObject: 
+  //! @param newEllipseType:
+  //! @param b_updateObject:
   void setEllipseType(uint8_t newEllipseType, bool b_updateObject=false) {
     vtObjectEllipse_c::setEllipseType (newEllipseType, b_updateObject);
   };
 
   //  Operation: setStartAngle
   //! Parameter:
-  //! @param newStartAngle: 
-  //! @param b_updateObject: 
+  //! @param newStartAngle:
+  //! @param b_updateObject:
   void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false) {
     vtObjectEllipse_c::setStartAngle (newStartAngle, b_updateObject);
   };
 
   //  Operation: setEndAngle
   //! Parameter:
-  //! @param newEndAngle: 
-  //! @param b_updateObject: 
+  //! @param newEndAngle:
+  //! @param b_updateObject:
   void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false) {
     vtObjectEllipse_c::setEndAngle (newEndAngle, b_updateObject);
   };
 
   //  Operation: setFillAttributes
   //! Parameter:
-  //! @param newFillAttribute: 
-  //! @param b_updateObject: 
+  //! @param newFillAttribute:
+  //! @param b_updateObject:
   void setFillAttributes(iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false) {
     vtObjectEllipse_c::setFillAttributes (newFillAttributes, b_updateObject);
   };
@@ -144,7 +144,7 @@ public:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false) {
     vtObjectEllipse_c::setSize(newWidth, newHeight, b_updateObject);
   };
-  
+
 }; // ~X2C
 
 } // end namespace IsoAgLib

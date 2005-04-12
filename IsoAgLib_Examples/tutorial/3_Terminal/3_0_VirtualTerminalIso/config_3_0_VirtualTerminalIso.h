@@ -8,7 +8,7 @@
 //                    if the corresponding value in isoaglib_config.h changed
 #define CAN_BUS_CNT 3
 
-#define CAN_BUS_USED 2
+#define CAN_BUS_USED 3
 
 #define CAN_INSTANCE_CNT 1
 

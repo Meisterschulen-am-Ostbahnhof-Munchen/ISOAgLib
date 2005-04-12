@@ -91,13 +91,13 @@ namespace __IsoAgLib {
 // //////////////////////////////// +X2C Operation 783 : setAttribute
 //! Parameter:
 //! @param attrID: Attribute ID of the object's attribute
-//! @param newValue: New Value of the attribute 
+//! @param newValue: New Value of the attribute
 void
 vtObject_c::setAttribute(uint8_t attrID, uint32_t newValue)
 { // ~X2C
 	__IsoAgLib::getIsoTerminalInstance().sendCommandChangeAttribute (this, attrID, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24);
 } // -X2C
- 
+
 
 
 void
@@ -156,7 +156,7 @@ vtObject_c::saveValue32SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_s
 }
 void
 vtObject_c::saveValuePSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, IsoAgLib::iVtObject_c* p_newValue) {
-  saveValueP (ui16_structOffset, ui16_structLen, p_newValue);
+  if (ui16_structOffset != 0) saveValueP (ui16_structOffset, ui16_structLen, p_newValue);
   setAttribute (ui8_ind, (p_newValue == NULL) ? 65535 : p_newValue->getID());
 }
 
@@ -164,7 +164,7 @@ bool
 vtObject_c::genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
 { // ~X2C
   // Find the child object in question
-  for(int8_t i = 0; i < numObjectsToFollow; i++) {  
+  for(int8_t i = 0; i < numObjectsToFollow; i++) {
     if (childObject->getID() == objectsToFollow[i].vtObject->getID()) {
       if (b_updateObject) {
         // Check if RAM version of objectsToFollow already exists?
@@ -177,7 +177,7 @@ vtObject_c::genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iV
           // saveValue will check itself if general structure is already in RAM and can be altered
           saveValueP(ui16_structOffset, ui16_structLen, (IsoAgLib::iVtObject_c *)objectsToFollow);
           flags |= FLAG_OBJECTS2FOLLOW_IN_RAM;
-        } 
+        }
         if (rb_isLocation) {
           objectsToFollow[i].x = objectsToFollow[i].x + dx;
           objectsToFollow[i].y = objectsToFollow[i].y + dy;
