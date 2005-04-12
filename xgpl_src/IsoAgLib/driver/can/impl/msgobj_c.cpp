@@ -604,6 +604,8 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
     case HAL_NO_ERR:
       /* no error -> clear error state */
       setIsOpen(true);
+			// remove any previously active lock
+			lock( false );
 
       b_result = true;
       break;

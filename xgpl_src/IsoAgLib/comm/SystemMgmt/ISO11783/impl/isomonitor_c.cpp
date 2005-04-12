@@ -148,12 +148,12 @@ void ISOMonitor_c::init( void )
     i32_lastSaRequest = 0;
     c_tempIsoMemberItem.set( 0, GetyPos_c(0xF, 0xF), 0xFE, IState_c::Active,
             0xFFFF, (ISOName_c*)NULL, getSingletonVecKey() );
-  
+
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
     // register in Scheduler_c to be triggered fopr timeEvent
     getSchedulerInstance4Comm().registerClient( this );
-  
+
     bool b_configure = false;
     if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FF00) << 8), MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN) << 8), false, Ident_c::ExtendedIdent))
       b_configure = true;
@@ -165,7 +165,7 @@ void ISOMonitor_c::init( void )
       b_configure = true;
     if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), false, Ident_c::ExtendedIdent), pc_filterBoxWsMaster)
       b_configure = true;
-  
+
     if (b_configure) {
       getCanInstance4Comm().reconfigureMsgObj();
     }
@@ -557,7 +557,7 @@ bool ISOMonitor_c::deleteIsoMemberGtp(GetyPos_c rc_gtp)
         if ((*pc_iter).getMaster() == &(*pc_isoMemberCache)) (*pc_iter).setMaster(NULL);
       }
     }
-  
+
     // erase it from list (existIsoMemberGtp sets pc_isoMemberCache to the wanted item)
     vec_isoMember.erase(pc_isoMemberCache);
     #ifdef DEBUG_HEAP_USEAGE
@@ -661,21 +661,20 @@ bool ISOMonitor_c::unifyIsoGtp(GetyPos_c& refc_gtp){
 */
 uint8_t ISOMonitor_c::unifyIsoSa(const ISOItem_c* rpc_isoItem)
 {
-  uint8_t b_wishSa = rpc_isoItem->nr();
+  uint8_t ui8_wishSa = rpc_isoItem->nr();
   bool b_free = true;
 
-  if ((b_wishSa < 128) && (rpc_isoItem->selfConf() == 1))
+  if ((ui8_wishSa < 128) && (rpc_isoItem->selfConf() == 1))
   { // false SA adress -> correct
-    b_wishSa = 128;
+    ui8_wishSa = 128;
   }
 
-  if (b_wishSa != 254)
+  if (ui8_wishSa != 254)
   {
     for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
           pc_iterItem != vec_isoMember.end(); pc_iterItem++)
     {
-      if ((pc_iterItem->nr() == b_wishSa)
-        &&(b_wishSa != 254)
+      if ((pc_iterItem->nr() == ui8_wishSa)
         &&(&(*pc_iterItem) != rpc_isoItem)
          )
       { // same SA, rpc_isoItem had special SA wish and actual
@@ -684,38 +683,34 @@ uint8_t ISOMonitor_c::unifyIsoSa(const ISOItem_c* rpc_isoItem)
         break;
       }
     }
-    if (b_free) return b_wishSa;
+    if (b_free) return ui8_wishSa;
   }
   if (!(rpc_isoItem->selfConf()))
   { // wanted fixed SA not free -> signal this with 254
     return 254;
   }
   // now wished SA isn't free or no SA wished
-  b_free = true;
-  for (b_wishSa = 128; b_wishSa <= 207; b_wishSa++)
+  for (ui8_wishSa = 128; ui8_wishSa <= 207; ui8_wishSa++)
   { // try all possible self conf adresses
+	  b_free = true;
     for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
           pc_iterItem != vec_isoMember.end(); pc_iterItem++)
     {
-      if (pc_iterItem->nr() == b_wishSa)
+      if (pc_iterItem->nr() == ui8_wishSa)
       { // the tried SA is already used by this item
-        // -> break this search loop and try another b_wishSa
+        // -> break this search loop and try another ui8_wishSa
         b_free = false;
         break;
       }
     }
-    if (b_free) break; // break search loop
-    else b_free = true; // now next b_wishSa to try
+
+    if (b_free)
+		{ // free SA found
+			return ui8_wishSa;
+		}
   }
-  // if b_free is true -> b_wishSa has a free number
-  if (b_free && (b_wishSa != 208))
-  { // free SA found
-    return b_wishSa;
-  }
-  else
-  { // no free SA found -> return 254 as signal
-    return 254;
-  }
+  // no free SA found -> return 254 as signal
+  return 254;
 }
 
 /**
@@ -850,8 +845,8 @@ bool ISOMonitor_c::processMsg(){
       return getProcessInstance4Comm().processMsg();
 #endif
   } // end switch for DESTINATION pgn
-  
-  
+
+
   // Handle NON-DESTINATION PGNs
   switch ((data().isoPgn() /* & 0x1FFFF */ )) // isoPgn is already "& 0x1FFFF" !
   {
@@ -891,7 +886,7 @@ bool ISOMonitor_c::processMsg(){
     default:
       break;
   } // end switch for NON-DESTINATION pgn
-  
+
   return b_processed; // return if msg was processed by ISOMonitor_c
 }
 

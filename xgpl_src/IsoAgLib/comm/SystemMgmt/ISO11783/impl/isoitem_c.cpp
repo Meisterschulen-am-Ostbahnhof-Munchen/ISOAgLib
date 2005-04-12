@@ -620,6 +620,7 @@ bool ISOItem_c::processMsg(){
         switch (i32_reqPgn)
         {
 					case ADRESS_CLAIM_PGN: // request for adress claim
+						if ( ! itemState(IState_c::ClaimedAddress) ) break; ///< send no answer, if not yet ready claimed
 						c_pkg.setIsoPri(6);
 						c_pkg.setIsoSa(nr());
 						c_pkg.setIsoPgn(ADRESS_CLAIM_PGN); // doppelt gemoppelt ;)
