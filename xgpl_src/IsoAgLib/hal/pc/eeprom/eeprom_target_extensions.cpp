@@ -62,6 +62,7 @@
 
 #include "eeprom_target_extensions.h"
 #include <cstdio>
+#include <cctype>
 namespace __HAL {
 
 /* ***************************************** */
@@ -121,7 +122,7 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
       for (i=0; i < wNumber; i++)
       {
         c_temp = pByte[i];
-        putchar(c_temp);
+        if ( std::isprint( c_temp ) ) putchar(c_temp);
         fputc(c_temp, eepromDat);
       }
       printf(", als Zahl %i", i32_temp);
@@ -131,21 +132,21 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
       pByte = (uint8_t*)&sTemp;
       for (i=0; i < wNumber; i++)
       {
-       putchar(pByte[i]);
+			 if ( std::isprint( pByte[i] ) ) putchar(pByte[i]);
        fputc(pByte[i], eepromDat);
       }
       printf(", als Zahl %hi", sTemp);
       break;
     case 1:
       c_temp = *(int8_t*)pbData;
-      putchar(c_temp);
+      if ( std::isprint( c_temp ) ) putchar(c_temp);
       fputc(c_temp, eepromDat);
       printf(", als Zahl %hi oder als Text %c", c_temp, c_temp);
       break;
     default:
       for (i=0; i < wNumber; i++)
       {
-        putchar(pbData[i]);
+        if ( std::isprint( pbData[i] ) ) putchar(pbData[i]);
         fputc(pbData[i], eepromDat);
       }
       break;
@@ -157,7 +158,7 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
 
 /* write one uint8_t into the eeprom */
 int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte){
-  printf("schreibe Daten von %i mit Daten %i\n", wAddress, bByte);
+  printf("schreibe Daten von %i mit Daten %i\n", wAddress, uint16_t(bByte));
 #ifdef WIN32
   eepromDat = fopen("..\\..\\..\\simulated_io\\eeprom.dat", "r+b");
 #else

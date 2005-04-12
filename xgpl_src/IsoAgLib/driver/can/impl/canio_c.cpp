@@ -82,6 +82,8 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
+#include <iostream>
+
 #include "canio_c.h"
 #include <functional>
 #include <algorithm>
@@ -537,7 +539,7 @@ bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
   This specialized function allows the user to use the same message
   object as the filter box that is given "rpc_connectedFilterBox"
   Use this feature if messages from two or more filterboxes have to be processed chronologically
-  
+
   possible errors:
       * Err_c::badAlloc on not enough memory for new FilterBox_c instance or for new configured MsgObj_c's
   @see __IsoAgLib::CANCustomer
@@ -613,7 +615,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
   This specialized function allows the user to use the same message
   object as the filter box that exists with the given extra rt_mask/rt_filter pair!
   Use this feature if messages from two or more filterboxes have to be processed chronologically
-  
+
   possible errors:
       * Err_c::badAlloc on not enough memory for new FilterBox_c instance or for new configured MsgObj_c's
   @see __IsoAgLib::CANCustomer
@@ -633,7 +635,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
 {
   Ident_c c_connectedMask = Ident_c(rt_connectedMask, rt_connectedIdentType);
   Ident_c c_connectedFilter = Ident_c(rt_connectedFilter, rt_connectedIdentType);
-  
+
   bool b_connectedFilterFound = false;
 
   // check if given FilterBox_c definition is in array
@@ -646,13 +648,13 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
       break; // don't search rest of array
     }
   }
- 
+
   if (!b_connectedFilterFound) // "existFilter()" not used as it also compares the customer!
     return NULL;
-    
+
   return insertFilter(rref_customer, rt_mask, rt_filter, rb_reconfigImmediate, rt_identType, &(*pc_iter));
 }
-    
+
 
 /**
   delete a FilterBox definition
@@ -979,9 +981,11 @@ int16_t CANIO_c::FilterBox2MsgObj(){
     HAL::wdTriggern();
 		if ( pc_iterMsgObj->isOpen() )
     { // process received messages
+			pc_iterMsgObj->lock( true, false );
       pc_iterMsgObj->processMsg( ui8_busNumber, true );
     }
     pc_iterMsgObj->close();
+		pc_iterMsgObj->lock( false, false );
   }
 
   HAL::wdTriggern();
@@ -1246,7 +1250,7 @@ bool CANIO_c::reconfigureMsgObj()
   }
 	if ( c_lastMsgObj.isOpen() )
 	{ // lock the MsgObj_c to avoid receive of further messages
-		c_lastMsgObj.lock( true );
+		c_lastMsgObj.lock( true, false );
 	}
   // clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object

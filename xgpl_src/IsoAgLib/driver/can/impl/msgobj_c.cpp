@@ -202,7 +202,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
     right.setIsOpen(false); // now left is correlated to the open obj
   }
 
-  #ifdef SYSTEM_PC
+  #if defined( SYSTEM_PC ) && defined( DEBUG )
   for ( int i = 0; i < cnt_filterBox(); i++ )
   {
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
@@ -224,7 +224,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
       (cnt++, j++))
   {
     arrPfilterBox[cnt] = right.arrPfilterBox[j];
-    #ifdef SYSTEM_PC
+	  #if defined( SYSTEM_PC ) && defined( DEBUG )
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
     std::cout << "zusaetzliche FilterBox in merge nr: " << cnt
       << "FilterBox: 0x"
@@ -312,7 +312,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
       // check if given FilterRef is already registered
       if ( &(*arrPfilterBox[i]) == &(*rrefc_box) )
       {
-        #ifdef SYSTEM_PC
+			  #if defined( SYSTEM_PC ) && defined( DEBUG )
         std::cout << "Versuch doppelte FilterBox einzutragen abgewiesen mit" << &(*arrPfilterBox[i]) << std::endl;
         #endif
         return true;
@@ -510,7 +510,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
       // search for the suiting FilterBox
       for (int16_t i=0; i < cnt_filterBox(); i++)
       {
-        #ifdef SYSTEM_PC
+			  #if defined( SYSTEM_PC ) && defined( DEBUG )
         if ( ( i32_ident & 0x7F0 ) == 0x500 )
         {
           std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
@@ -524,7 +524,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
         #endif
         if (arrPfilterBox[i]->matchMsgId(i32_ident, c_filter.identType()))
         { // ident of received data matches the filter of the i'th registered FilterBox
-          #ifdef SYSTEM_PC
+				  #if defined( SYSTEM_PC ) && defined( DEBUG )
           if ( ( i32_ident & 0x7F0 ) == 0x500 ) std::cout << "Stosse Verarbeitung zu Eintrag i == " << i << " an." << std::endl;
           #endif
           CANPkgExt_c* pc_target = arrPfilterBox[i]->customersCanPkg();
@@ -726,14 +726,16 @@ void MsgObj_c::closeCan()
 	Thus CANIO_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
 	simply conserved until normal CANIO_c::processMsg() is called.
 */
-void MsgObj_c::lock( bool rb_lock )
+void MsgObj_c::lock( bool rb_lock, bool rb_changeID )
 {
 	if ( rb_lock )
 	{ // lock the CAN hardware to avoid receive of further messages
 		// the lastMessageObject should be locked two ways:
-		// a) change filter, to avoid match -> just set to 0x1FFFFFFF
-		Ident_c c_tempIdent( 0x1FFFFFFF, c_filter.identType() );
-		HAL::can_configMsgobjChgid( busNumber(), msgObjNr(), c_tempIdent );
+		if ( rb_changeID )
+		{ // a) change filter, to avoid match -> just set to 0x1FFFFFFF
+			Ident_c c_tempIdent( 0x1FFFFFFF, c_filter.identType() );
+			HAL::can_configMsgobjChgid( busNumber(), msgObjNr(), c_tempIdent );
+		}
 		// b) use BIOS/OS lock function
 		HAL::can_configMsgobjLock( busNumber(), msgObjNr(), true );
 	}

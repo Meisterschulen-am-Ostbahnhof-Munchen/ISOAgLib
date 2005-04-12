@@ -307,7 +307,7 @@ public:
 		Thus CANIO_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
 		simply conserved until normal CANIO_c::processMsg() is called.
 	*/
-	void lock( bool rb_lock = true );
+	void lock( bool rb_lock = true, bool rb_changeID = false );
 
 private:
   // Private attributes
