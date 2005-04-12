@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTBUTTON_C_H
 #define IVTOBJECTBUTTON_C_H
@@ -79,16 +79,18 @@ public:
   //  Operation: get_vtObjectButton_a
   iVtObjectButton_s* get_vtObjectButton_a() { return vtObjectButton_c::get_vtObjectButton_a(); };
 
-  
-  
-  
+
+
+
   //  Operation: setSize
   //! Parameter:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false);
-  
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false) {
+    vtObjectButton_c::setSize (newWidth, newHeight, b_updateObject);
+  };
+
   //  Operation: setWidth
   //! Parameter:
   //! @param newWidth:
@@ -96,7 +98,7 @@ public:
   void setWidth(uint16_t newValue, bool b_updateObject=false) {
     vtObjectButton_c::setWidth (newValue, b_updateObject);
   };
-  
+
   //  Operation: setHeight
   //! Parameter:
   //! @param newHeight:
@@ -104,7 +106,7 @@ public:
   void setHeight(uint16_t newValue, bool b_updateObject=false) {
     vtObjectButton_c::setHeight (newValue, b_updateObject);
   };
-  
+
   //  Operation: setBackgroundColour
   //! Parameter:
   //! @param newValue:
@@ -112,7 +114,7 @@ public:
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false) {
     vtObjectButton_c::setBackgroundColour (newValue, b_updateObject);
   };
-  
+
   //  Operation: setBorderColour
   //! Parameter:
   //! @param newValue:
@@ -120,7 +122,7 @@ public:
   void setBorderColour(uint8_t newValue, bool b_updateObject=false) {
     vtObjectButton_c::setBorderColour (newValue, b_updateObject);
   };
-  
+
   //  Operation: setKeyCode
   //! Parameter:
   //! @param newValue:
@@ -128,7 +130,7 @@ public:
   void setKeyCode(uint8_t newValue, bool b_updateObject=false) {
     vtObjectButton_c::setKeyCode (newValue, b_updateObject);
   };
-  
+
   //  Operation: setLatchable
   //! Parameter:
   //! @param newValue:

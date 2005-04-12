@@ -97,7 +97,7 @@ public:
   void setFontSize(uint8_t newValue, bool b_updateObject=false) {
     vtObjectFontAttributes_c::setFontSize (newValue, b_updateObject);
   };
-  
+
   //  Operation: setFontType
   //! Parameter:
   //! @param newValue:
@@ -121,7 +121,9 @@ public:
   //! @param newFontType:
   //! @param newFontStyle:
   //! @param b_updateObject:
-  void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false);
+  void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false){
+    vtObjectFontAttributes_c::setFontAttributes(newFontColour, newFontSize, newFontType, newFontStyle, b_updateObject);
+  };
 }; // ~X2C
 
 } // end of namespace IsoAgLib

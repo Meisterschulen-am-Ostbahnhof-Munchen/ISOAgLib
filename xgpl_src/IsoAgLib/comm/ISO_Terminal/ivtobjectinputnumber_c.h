@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTINPUTNUMBER_C_H
 #define IVTOBJECTINPUTNUMBER_C_H
@@ -196,7 +196,9 @@ public:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false){
+    vtObjectInputNumber_c::setSize(newWidth, newHeight, b_updateObject);
+  };
 
 }; // ~X2C
 
