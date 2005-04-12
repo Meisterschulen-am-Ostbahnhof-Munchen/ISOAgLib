@@ -82,8 +82,6 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-#include <iostream>
-
 #include "canio_c.h"
 #include <functional>
 #include <algorithm>
