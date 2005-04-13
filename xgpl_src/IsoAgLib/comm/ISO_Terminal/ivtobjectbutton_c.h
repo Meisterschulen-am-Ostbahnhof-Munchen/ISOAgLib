@@ -131,14 +131,6 @@ public:
     vtObjectButton_c::setKeyCode (newValue, b_updateObject);
   };
 
-  //  Operation: setLatchable
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
-  void setLatchable(bool newValue, bool b_updateObject=false) {
-    vtObjectButton_c::setLatchable (newValue, b_updateObject);
-  };
-
   //  Operation: moveChildLocation
   //! Parameter:
   //! @param rpc_childObject:
