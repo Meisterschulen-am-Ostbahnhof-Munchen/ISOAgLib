@@ -203,6 +203,15 @@ namespace HAL
   inline int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
     {return __HAL::can_stateMsgobjFreecnt(rui8_busNr, rui8_msgobjNr);};
 
+
+	/**
+		check if MsgObj is currently locked
+		@param rui8_busNr number of the BUS to check
+		@param rui8_msgobjNr number of the MsgObj to check
+		@return true -> MsgObj is currently locked
+	*/
+	inline bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+		{return __HAL::can_stateMsgobjLocked( rui8_busNr, rui8_msgobjNr );};
   /*@}*/
 
   /* ************************************************************ */

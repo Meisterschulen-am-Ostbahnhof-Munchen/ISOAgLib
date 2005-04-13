@@ -82,6 +82,7 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock );
 
 int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause);
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj);
+bool getCanMsgObjLocked(uint8_t bBusNumber,uint8_t bMsgObj);
 
 /* Typ CAN-Nachrichtenobjekt */
 #define  RX                             0

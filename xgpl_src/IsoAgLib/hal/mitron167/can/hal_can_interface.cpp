@@ -587,6 +587,18 @@ bool can_stateMsgobjOverflow(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
   if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
   return ( can_stateMsgobjFreecnt( rui8_busNr, rui8_msgobjNr ) == 0 )?true:false;
 }
+/**
+	check if MsgObj is currently locked
+  @param rui8_busNr number of the BUS to check
+  @param rui8_msgobjNr number of the MsgObj to check
+	@return true -> MsgObj is currently locked
+*/
+bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+{
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
+	else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
+	else return false;
+}
 
 /**
   deliver amount of messages in buffer

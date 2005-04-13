@@ -633,6 +633,19 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
+/**
+	check if MsgObj is currently locked
+  @param rui8_busNr number of the BUS to check
+  @param rui8_msgobjNr number of the MsgObj to check
+	@return true -> MsgObj is currently locked
+*/
+bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+{
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
+	else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
+	else return false;
+}
+
 
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {

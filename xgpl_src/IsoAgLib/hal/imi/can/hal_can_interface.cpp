@@ -361,6 +361,21 @@ int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 	else return ( ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr-1] - i16_msgcnt);
 }
 
+/**
+	check if MsgObj is currently locked
+  @param rui8_busNr number of the BUS to check
+  @param rui8_msgobjNr number of the MsgObj to check
+	@return true -> MsgObj is currently locked
+*/
+bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+{
+  if (get_can_obj_status(rui8_busNr, (rui8_msgobjNr+1), &t_cinterfMsgobjState) == HAL_NO_ERR)
+  {
+		if (t_cinterfMsgobjState.bUsage == LOCKED ) return true;
+		else return false;
+  }
+	return false;
+}
 /* ***************************************************** */
 /* ***************** Configuration ********************* */
 /* ***************************************************** */

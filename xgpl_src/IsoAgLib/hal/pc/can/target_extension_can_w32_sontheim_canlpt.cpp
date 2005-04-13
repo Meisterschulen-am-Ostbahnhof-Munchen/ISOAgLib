@@ -258,7 +258,7 @@ int16_t can_startDriver()
 		for ( int32_t ind = 0; ind < ci_cardTypeCnt; ind++ )
 		{
 			Sleep( 100 );
-            
+
 			if ( ( ci_tryCardTypes[ind] != c_CANAS ) && ( ci_tryCardTypes[ind] != c_ECAN_PCI ) )
 			{
 				if (ci_tryCardTypes[ind]== c_CANUSB_Std_Api)
@@ -316,7 +316,7 @@ int16_t can_startDriver()
 	}
 
     // Added this section of code to try to get the version from the CANUSB adapter.
-    if (gHwType == c_CANUSB_Std_Api)       
+    if (gHwType == c_CANUSB_Std_Api)
     {
         int sdata[16];
         int k=0;
@@ -325,17 +325,17 @@ int16_t can_startDriver()
         for (k=0 ; k<16 ; k++) sdata[k]=0;
         sdata[0]=0x25;
         erg = ca_Instruction_1(sdata);
-        if(erg) 
+        if(erg)
         {
             buf[0]=0;
-            for(k=3;k<16;k++) 
+            for(k=3;k<16;k++)
             {
                 buf[k-3] = (char)sdata[k];
             }
             buf[12]=0;
             printf("\nVersion of CANUSB: %s", buf);
         }
-        else 
+        else
         {
             printf("\nReading of Version failed !!!");
            // getch();
@@ -422,6 +422,19 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
+
+/**
+	check if MsgObj is currently locked
+  @param rui8_busNr number of the BUS to check
+  @param rui8_msgobjNr number of the MsgObj to check
+	@return true -> MsgObj is currently locked
+*/
+bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+{
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
+	else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
+	else return false;
+}
 
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {
@@ -853,7 +866,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 			transmitdata);			   // can object
 	if ( result ) return HAL_NO_ERR;
 	else
-    {   
+    {
         printf("HAL_OVERFLOW_ERROR!\n");
         return HAL_OVERFLOW_ERR;
     }
@@ -890,7 +903,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
    //  ||((ptReceive->dwId & 0x700) == 0x200)
    //  ||((ptReceive->dwId & 0x7FF) == 0x502)
    //   )
-    if( (ptReceive->dwId & 0xCB0000) == 0x00CB0000) 
+    if( (ptReceive->dwId & 0xCB0000) == 0x00CB0000)
     {
       printf("Rx: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
       ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
@@ -1053,7 +1066,7 @@ int16_t checkMsg()
 			} // if fit
 		} // for objNr
 		#ifdef USE_THREAD
-		// un-block access from application on the buffers, as 
+		// un-block access from application on the buffers, as
 		// the current buffers are again free for access
 		b_blockApp = false;
 		#endif

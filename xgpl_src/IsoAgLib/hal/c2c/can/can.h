@@ -1,5 +1,5 @@
 /***************************************************************************
-                          can.h - definition of Hardware Abstraction 
+                          can.h - definition of Hardware Abstraction
                                   Layer for CAN functions
                                   for C2C
                              -------------------
@@ -89,7 +89,7 @@ namespace HAL
   /** \name CAN BIOS functions for global status checking per BUS */
 /*@{*/
 
-  /** 
+  /**
     test if the CAN BUS is in WARN state
     @param rui8_busNr number of the BUS to check (default 0)
     @return true == CAN BUS is in WARN state, else normal operation
@@ -97,7 +97,7 @@ namespace HAL
   inline bool can_stateGlobalWarn(uint8_t rui8_busNr = 0)
     {return __HAL::can_stateGlobalWarn(rui8_busNr);};
 
-  /** 
+  /**
     test if the CAN BUS is in OFF state
     @param rui8_busNr number of the BUS to check (default 0)
     @return true == CAN BUS is in OFF state, else normal operation
@@ -105,7 +105,7 @@ namespace HAL
   inline bool can_stateGlobalOff(uint8_t rui8_busNr = 0)
     {return __HAL::can_stateGlobalOff(rui8_busNr);};
 
-  /** 
+  /**
     test if the CAN BUS is in Blocked state, which can be a sign
     for CAN controllers which are configured with different baudrates;
     this is the case if neither succesfull sent nor received msg
@@ -131,7 +131,7 @@ namespace HAL
   /**
     check if a send try on this BUS caused an Bit1Error
     (occurs if >1 controller try to send msg with same ident)
-    ==> ISO 11783 forces stop of retries in this case for 
+    ==> ISO 11783 forces stop of retries in this case for
         adress claim
         @param rui8_busNr number of the BUS to check
         @return true -> Bit1Err occured
@@ -183,7 +183,7 @@ namespace HAL
     @param rui8_msgobjNr number of the MsgObj to check
     @return number of messages in buffer or negative error code:
       C_CONFIG == BUS not initialised
-      C_RANGE == wrong BUS or MsgObj number 
+      C_RANGE == wrong BUS or MsgObj number
   */
   inline uint16_t can_stateMsgobjBuffercnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
     {return __HAL::can_stateMsgobjBuffercnt(rui8_busNr, rui8_msgobjNr);};
@@ -199,6 +199,15 @@ namespace HAL
   */
   inline int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
     {return __HAL::can_stateMsgobjFreecnt(rui8_busNr, rui8_msgobjNr);};
+
+	/**
+		check if MsgObj is currently locked
+		@param rui8_busNr number of the BUS to check
+		@param rui8_msgobjNr number of the MsgObj to check
+		@return true -> MsgObj is currently locked
+	*/
+	inline bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+		{return __HAL::can_stateMsgobjLocked( rui8_busNr, rui8_msgobjNr );};
 
   /*@}*/
 
