@@ -309,6 +309,8 @@ public:
 	*/
 	void lock( bool rb_lock = true, bool rb_changeID = false );
 
+	/** check if this given MsgObj_c is locked */
+	bool isLocked() const { return HAL::can_stateMsgobjLocked( busNumber(), msgObjNr() );};
 private:
   // Private attributes
   /** array of pointer to appointed arrPfilterBox instances */

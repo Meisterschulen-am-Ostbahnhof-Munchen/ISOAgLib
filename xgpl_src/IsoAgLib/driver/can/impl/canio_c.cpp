@@ -738,12 +738,12 @@ int16_t CANIO_c::processMsg(){
 	// and process these messages first
 	// - this happens, if this is first processMsg call after
 	//   reconfigureMsgObj
-	if ( c_lastMsgObj.isOpen() )
+	if ( ! c_lastMsgObj.isLocked() )
 	{ // process all messages which where placed during the reconfig in the last message object
     // trigger watchdog
     HAL::wdTriggern();
 		ui8_processedMsgCnt += c_lastMsgObj.processMsg( ui8_busNumber, true );
-		c_lastMsgObj.close();
+		c_lastMsgObj.lock( true, false );
 	}
 
 	for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
@@ -1200,23 +1200,15 @@ bool CANIO_c::reconfigureMsgObj()
   getCommonFilterMask();
 
   // if last MessageObj is still open since last config - first process stored messages
-	if ( c_lastMsgObj.isOpen() )
+	if ( ! c_lastMsgObj.isLocked() )
 	{ // process all messages which where placed during the reconfig in the last message object
     // trigger watchdog
     HAL::wdTriggern();
 		c_lastMsgObj.processMsg( ui8_busNumber, true );
-		c_lastMsgObj.close();
+		c_lastMsgObj.lock( true, false );
 	}
 
-	if ( (ui16_bitrate != 0xFF) && (ui16_bitrate != 0) && ( ui8_busNumber <= HAL_CAN_MAX_BUS_NR ) && ( ! arrMsgObj.empty() ) && ( arrMsgObj.begin()->isOpen() ) )
-	{ // open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
-		// --> avoid loss of CAN messages which would normally be stored in the already active MsgObj_c instances
-		Ident_c tmp ( 0, Ident_c::ExtendedIdent );
-		// finally configure the last MsgObj_c
-		c_lastMsgObj.setFilter( tmp );
-		c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
-	}
-
+	c_lastMsgObj.lock( false, false );
 
   // create according to new global t_mask all MsgObj_c with
   // unique filter settings -> merge all filter settings where
@@ -1246,11 +1238,11 @@ bool CANIO_c::reconfigureMsgObj()
     pc_iterMsgObj->configCan(ui8_busNumber, minMsgObjNr()+i+b_irqCanReceiveOffset[ui8_busNumber]);
     i++;
   }
-	if ( c_lastMsgObj.isOpen() )
-	{ // lock the MsgObj_c to avoid receive of further messages
-		c_lastMsgObj.lock( true, false );
-	}
-  // clear any CAN BUFFER OVERFLOW error that might occure
+
+	// lock the MsgObj_c to avoid receive of further messages
+	c_lastMsgObj.lock( true, false );
+
+	// clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object
   getLbsErrInstance().clear( LibErr_c::CanOverflow, LibErr_c::Can );
 
@@ -1343,46 +1335,57 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
   }
 
   // store wanted bitrate for CAN communication
-  ui16_bitrate = rui16_bitrate;
+	ui16_bitrate = rui16_bitrate;
 
-  // to prevent double re-init of can close it first
-  HAL::wdTriggern(); // trigger watchdog first
-  HAL::can_configGlobalClose(ui8_busNumber);
-  c_lastMsgObj.close();
-  #ifdef DEBUG
-  getRs232Instance()
-      << "CANIO_c::baseCanInit( " << rui16_bitrate << " ) vor HAL::can_configGlobalInit\n";
-  #endif
-  // init CAN BUS (BIOS function)
-  int16_t i16_retvalInit = HAL::can_configGlobalInit(ui8_busNumber, ui16_bitrate, c_maskStd.ident(), c_maskExt.ident(),
-                       c_maskLastmsg.ident());
+	// to prevent double re-init of can close it first
+	HAL::wdTriggern(); // trigger watchdog first
+	HAL::can_configGlobalClose(ui8_busNumber);
+	c_lastMsgObj.close();
+	#ifdef DEBUG
+	getRs232Instance()
+			<< "CANIO_c::baseCanInit( " << rui16_bitrate << " ) vor HAL::can_configGlobalInit\n";
+	#endif
+	// init CAN BUS (BIOS function)
+	int16_t i16_retvalInit = HAL::can_configGlobalInit(ui8_busNumber, ui16_bitrate, c_maskStd.ident(), c_maskExt.ident(),
+											c_maskLastmsg.ident());
 
-  #ifdef USE_CAN_EEPROM_EDITOR
-    /* if CAN init with success init CAN EEEditor */
-    if ( ( i16_retvalInit == HAL_NO_ERR) && ( ui8_busNumber == CONFIG_EEPROM_USE_CAN_BUS ) )
-    {
-      uint8_t b_eepromType;
-      if ((en_identType == Ident_c::BothIdent) || (en_identType == Ident_c::StandardIdent))
-      {
-        b_eepromType = Ident_c::StandardIdent;
-      }
-      else
-      {
-        b_eepromType = Ident_c::ExtendedIdent;
-      }
-      HAL::InitEEEditor( CONFIG_EEPROM_USE_CAN_BUS, maxMsgObjNr(),
-          (maxMsgObjNr() - 1), CONFIG_EEPROM_USE_CAN_REC_IDENT, b_eepromType,
-          CONFIG_EEPROM_USE_CAN_BUFFER_SIZE, CONFIG_CAN_SEND_BUFFER_SIZE);
-    }
-  #endif
+	#ifdef USE_CAN_EEPROM_EDITOR
+		/* if CAN init with success init CAN EEEditor */
+		if ( ( i16_retvalInit == HAL_NO_ERR) && ( ui8_busNumber == CONFIG_EEPROM_USE_CAN_BUS ) )
+		{
+			uint8_t b_eepromType;
+			if ((en_identType == Ident_c::BothIdent) || (en_identType == Ident_c::StandardIdent))
+			{
+				b_eepromType = Ident_c::StandardIdent;
+			}
+			else
+			{
+				b_eepromType = Ident_c::ExtendedIdent;
+			}
+			HAL::InitEEEditor( CONFIG_EEPROM_USE_CAN_BUS, maxMsgObjNr(),
+					(maxMsgObjNr() - 1), CONFIG_EEPROM_USE_CAN_REC_IDENT, b_eepromType,
+					CONFIG_EEPROM_USE_CAN_BUFFER_SIZE, CONFIG_CAN_SEND_BUFFER_SIZE);
+		}
+	#endif
 
-  // check for error state
-  if (i16_retvalInit == HAL_RANGE_ERR)
-  { // BIOS complains about limits of BUSnr or msgObj
-    // seldom, because before checked with defined LIMITS
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
-    return false;
-  }
+	// check for error state
+	if (i16_retvalInit == HAL_RANGE_ERR)
+	{ // BIOS complains about limits of BUSnr or msgObj
+		// seldom, because before checked with defined LIMITS
+		getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+		return false;
+	}
+
+	if ( ! c_lastMsgObj.isOpen() )
+	{ // open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
+		// --> avoid loss of CAN messages which would normally be stored in the already active MsgObj_c instances
+		Ident_c tmp ( 0, Ident_c::ExtendedIdent );
+		// configure the last MsgObj_c
+		c_lastMsgObj.setFilter( tmp );
+		c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
+		// lock it immediately, as it shall only receive messages during reconfigureMsgObj() execution
+		c_lastMsgObj.lock( true, false );
+	}
 
   // init of BUS without error -> continue with send obj configuration
 
