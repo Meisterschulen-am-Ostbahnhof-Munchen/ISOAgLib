@@ -203,15 +203,6 @@ namespace HAL
   inline int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
     {return __HAL::can_stateMsgobjFreecnt(rui8_busNr, rui8_msgobjNr);};
 
-
-	/**
-		check if MsgObj is currently locked
-		@param rui8_busNr number of the BUS to check
-		@param rui8_msgobjNr number of the MsgObj to check
-		@return true -> MsgObj is currently locked
-	*/
-	inline bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
-		{return __HAL::can_stateMsgobjLocked( rui8_busNr, rui8_msgobjNr );};
   /*@}*/
 
   /* ************************************************************ */
@@ -294,18 +285,6 @@ namespace HAL
   */
   inline int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident)
     {return __HAL::can_configMsgobjChgid(rui8_busNr, rui8_msgobjNr, rrefc_ident);};
-
-	/**
-		lock a MsgObj to avoid further placement of messages into buffer.
-		@param rui8_busNr number of the BUS to config
-		@param rui8_msgobjNr number of the MsgObj to config
-		@param rb_doLock true==lock(default); false==unlock
-		@return HAL_NO_ERR == no error;
-						HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
-						HAL_RANGE_ERR == wrong BUS or MsgObj number
-		*/
-	inline int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock = true )
-		{return __HAL::can_configMsgobjLock( rui8_busNr, rui8_msgobjNr, rb_doLock);};
 
   /**
     change the the send rate for one MsgObj by setting the minimum

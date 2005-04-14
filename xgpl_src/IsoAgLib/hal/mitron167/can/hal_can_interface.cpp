@@ -588,19 +588,6 @@ bool can_stateMsgobjOverflow(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
   return ( can_stateMsgobjFreecnt( rui8_busNr, rui8_msgobjNr ) == 0 )?true:false;
 }
 /**
-	check if MsgObj is currently locked
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
-	@return true -> MsgObj is currently locked
-*/
-bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
-{
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
-	else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
-	else return false;
-}
-
-/**
   deliver amount of messages in buffer
   (interesting for RX objects)
   @param rui8_busNr number of the BUS to check
@@ -1151,20 +1138,6 @@ int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAg
   resetCanRingBuffer( rui8_busNr, rui8_msgobjNr );
 
   return HAL_NO_ERR;
-}
-
-/**
-	lock a MsgObj to avoid further placement of messages into buffer.
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-	@param rb_doLock true==lock(default); false==unlock
-  @return HAL_NO_ERR == no error;
-          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
-          HAL_RANGE_ERR == wrong BUS or MsgObj number
-	*/
-int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
-{
-	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
 }
 
 /**

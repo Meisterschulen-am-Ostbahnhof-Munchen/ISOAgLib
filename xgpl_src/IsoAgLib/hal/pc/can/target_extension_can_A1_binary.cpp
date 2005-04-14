@@ -768,19 +768,6 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
-/**
-	check if MsgObj is currently locked
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
-	@return true -> MsgObj is currently locked
-*/
-bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
-{
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
-	else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
-	else return false;
-}
-
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {
 	int fdata[16];
@@ -1104,35 +1091,6 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
     rec_bufFilter[bBusNumber][bMsgObj] = dwId;
     rec_bufXtd[bBusNumber][bMsgObj] = bXtd;
   }
-	#ifdef USE_THREAD
-	b_blockThread = false;
-	#endif
-  return HAL_NO_ERR;
-}
-/**
-	lock a MsgObj to avoid further placement of messages into buffer.
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-	@param rb_doLock true==lock(default); false==unlock
-  @return HAL_NO_ERR == no error;
-          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
-          HAL_RANGE_ERR == wrong BUS or MsgObj number
-	*/
-int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
-{ // first get waiting messages
-	if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > 14 ) ) return HAL_RANGE_ERR;
-	#ifdef USE_THREAD
-	// wait until the receive thread allows access to buffer
-	while ( b_blockApp )
-	{ // do something for 1msec - just to take time
-		usleep( 100 );
-	}
-	// tell thread to wait until this function is finished
-	b_blockThread = true;
-	#else
-	checkMsg();
-	#endif
-	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
 	#ifdef USE_THREAD
 	b_blockThread = false;
 	#endif

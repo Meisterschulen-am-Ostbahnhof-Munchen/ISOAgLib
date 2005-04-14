@@ -180,14 +180,6 @@ int16_t can_stateMsgobjBuffercnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
     HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
 int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
-
-/**
-	check if MsgObj is currently locked
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
-	@return true -> MsgObj is currently locked
-*/
-bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr );
 /*@}*/
 
 /* ************************************************** */

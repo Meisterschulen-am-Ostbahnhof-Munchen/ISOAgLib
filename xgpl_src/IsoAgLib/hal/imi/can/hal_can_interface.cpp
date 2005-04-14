@@ -361,21 +361,6 @@ int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 	else return ( ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr-1] - i16_msgcnt);
 }
 
-/**
-	check if MsgObj is currently locked
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
-	@return true -> MsgObj is currently locked
-*/
-bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
-{
-  if (get_can_obj_status(rui8_busNr, (rui8_msgobjNr+1), &t_cinterfMsgobjState) == HAL_NO_ERR)
-  {
-		if (t_cinterfMsgobjState.bUsage == LOCKED ) return true;
-		else return false;
-  }
-	return false;
-}
 /* ***************************************************** */
 /* ***************** Configuration ********************* */
 /* ***************************************************** */
@@ -520,21 +505,6 @@ int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAg
 {	// add offset 1 to rui8_msgobjNr as ESX BIOS starts counting with 1
 	// whereas IsoAgLib starts with 0
   return chg_can_obj_id(rui8_busNr, (rui8_msgobjNr+1), rrefc_ident.ident(), rrefc_ident.identType());
-}
-
-/**
-	lock a MsgObj to avoid further placement of messages into buffer.
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-	@param rb_doLock true==lock(default); false==unlock
-  @return HAL_NO_ERR == no error;
-          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
-          HAL_RANGE_ERR == wrong BUS or MsgObj number
-	*/
-int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
-{
-	if ( rb_doLock ) return lock_can_obj( rui8_busNr, (rui8_msgobjNr+1) );
-	else return unlock_can_obj( rui8_busNr, (rui8_msgobjNr+1) );
 }
 
 /**
