@@ -629,7 +629,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 			return HAL_CONFIG_ERR;
 	 }
 
-	ui32_globalMask[bBusNumber] = wGlobMask;
+  ui16_globalMask[bBusNumber] = wGlobMask;
   ui32_globalMask[bBusNumber] = dwGlobMask;
 	ui32_lastMask[bBusNumber] = dwGlobMaskLastmsg;
 

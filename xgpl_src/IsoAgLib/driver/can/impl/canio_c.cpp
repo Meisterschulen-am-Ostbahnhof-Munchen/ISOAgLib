@@ -738,10 +738,8 @@ int16_t CANIO_c::processMsg(){
 	// and process these messages first
 	// - this happens, if this is first processMsg call after
 	//   reconfigureMsgObj
-	if ( ! c_lastMsgObj.isLocked() )
+	if ( c_lastMsgObj.isOpen() )
 	{ // process all messages which where placed during the reconfig in the last message object
-    // trigger watchdog
-    HAL::wdTriggern();
 		ui8_processedMsgCnt += c_lastMsgObj.processMsg( ui8_busNumber, true );
 		c_lastMsgObj.lock( true, false );
 	}
@@ -1190,8 +1188,6 @@ bool CANIO_c::reconfigureMsgObj()
   //increase receive offset to 2 if both 11bit and 29bit ident CAN are used
 
   if (en_identType == Ident_c::BothIdent) b_irqCanReceiveOffset[ui8_busNumber] = 2;
-  // trigger watchdog
-  HAL::wdTriggern();
   // store old mask to check if global CAN BIOS mask must be changed
   Ident_c oldMaskStd = c_maskStd,
         oldMaskExt = c_maskExt;
@@ -1199,15 +1195,12 @@ bool CANIO_c::reconfigureMsgObj()
   // build suitable global t_mask
   getCommonFilterMask();
 
-  // if last MessageObj is still open since last config - first process stored messages
-	if ( ! c_lastMsgObj.isLocked() )
+	if ( c_lastMsgObj.isOpen() )
 	{ // process all messages which where placed during the reconfig in the last message object
-    // trigger watchdog
-    HAL::wdTriggern();
 		c_lastMsgObj.processMsg( ui8_busNumber, true );
-		c_lastMsgObj.lock( true, false );
 	}
 
+	// unlock in any case the last MsgObj_c for receive of all msgs during reconfig
 	c_lastMsgObj.lock( false, false );
 
   // create according to new global t_mask all MsgObj_c with
@@ -1334,12 +1327,21 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
     return false; // exit function with error value
   }
 
-  // store wanted bitrate for CAN communication
+  bool b_lastMsgObjWasLocked = true;
+	if ( c_lastMsgObj.isOpen() )
+	{ // the last MsgObj_c is open -> so it may contain some unprocessed messages
+		if ( ! c_lastMsgObj.isLocked() ) b_lastMsgObjWasLocked = false;
+		// ==>> process all messages which where placed during the reconfig in the last message object
+		c_lastMsgObj.processMsg( ui8_busNumber, true );
+	}
+
+
+	// store wanted bitrate for CAN communication
 	ui16_bitrate = rui16_bitrate;
 
 	// to prevent double re-init of can close it first
-	HAL::wdTriggern(); // trigger watchdog first
 	HAL::can_configGlobalClose(ui8_busNumber);
+	// clear state of last MsgObj_c
 	c_lastMsgObj.close();
 	#ifdef DEBUG
 	getRs232Instance()
@@ -1376,15 +1378,19 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
 		return false;
 	}
 
-	if ( ! c_lastMsgObj.isOpen() )
-	{ // open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
-		// --> avoid loss of CAN messages which would normally be stored in the already active MsgObj_c instances
-		Ident_c tmp ( 0, Ident_c::ExtendedIdent );
-		// configure the last MsgObj_c
-		c_lastMsgObj.setFilter( tmp );
-		c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
-		// lock it immediately, as it shall only receive messages during reconfigureMsgObj() execution
+	// open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
+	// --> avoid loss of CAN messages which would normally be stored in the already active MsgObj_c instances
+	Ident_c tmp ( 0, Ident_c::ExtendedIdent );
+	// configure the last MsgObj_c
+	c_lastMsgObj.setFilter( tmp );
+	c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
+	if ( b_lastMsgObjWasLocked )
+	{ // lock it immediately, as it shall only receive messages during reconfigureMsgObj() execution
 		c_lastMsgObj.lock( true, false );
+	}
+	else
+	{ // don't lock it, so that messages can be stored during further reconfig
+		c_lastMsgObj.lock( false, false );
 	}
 
   // init of BUS without error -> continue with send obj configuration

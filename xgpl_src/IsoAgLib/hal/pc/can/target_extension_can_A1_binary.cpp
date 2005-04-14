@@ -159,7 +159,7 @@ static bool b_canBufferLock[cui32_maxCanBusCnt][15];
 int32_t i32_lastReceiveTime;
 
 static uint16_t ui16_globalMask[cui32_maxCanBusCnt];
-static uint32_t ui32_globalMask[cui32_maxCanBusCnt];
+static uint32_t [cui32_maxCanBusCnt];
 static uint32_t ui32_lastMask[cui32_maxCanBusCnt];
 static bool b_busOpened[cui32_maxCanBusCnt];
 
@@ -975,8 +975,8 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 			return HAL_CONFIG_ERR;
 	 }
 
-	ui32_globalMask[bBusNumber] = wGlobMask;
-    ui32_globalMask[bBusNumber] = dwGlobMask;
+  ui16_globalMask[bBusNumber] = wGlobMask;
+  ui32_globalMask[bBusNumber] = dwGlobMask;
 	ui32_lastMask[bBusNumber] = dwGlobMaskLastmsg;
 
     b_busOpened[bBusNumber] = true;
