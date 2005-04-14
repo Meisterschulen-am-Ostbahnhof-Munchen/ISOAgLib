@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTLINE_C_H
 #define IVTOBJECTLINE_C_H
@@ -79,7 +79,7 @@ public:
   //  Operation: get_vtObjectLine_a
   iVtObjectLine_s* get_vtObjectLine_a() { return vtObjectLine_c::get_vtObjectLine_a(); };
 
-  
+
   //  Operation: setLineAttributes
   //! Parameter:
   //! @param newValue:
@@ -121,16 +121,6 @@ public:
     vtObjectLine_c::setSize(newWidth, newHeight, b_updateObject);
   };
 
-  //  Operation: setEndPoint
-  //! Parameter:
-  //! @param newWidth:
-  //! @param newHeight:
-  //! @param newLineDirection:
-  //! @param b_updateObject:
-  void setEndPoint(uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject=false) {
-    vtObjectLine_c::setEndPoint (newWidth, newHeight, newLineDirection, b_updateObject);
-  };
-  
 }; // ~X2C
 
 } // end of namespace IsoAgLib
