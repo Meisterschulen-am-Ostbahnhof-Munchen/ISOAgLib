@@ -77,8 +77,8 @@ namespace __HAL {
 
 
 // globals
-msqData_s msqDataClient;
-int32_t i32_lastReceiveTime;
+static msqData_s msqDataClient;
+static int32_t i32_lastReceiveTime;
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -271,6 +271,41 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
   return send_command(&msqCommandBuf, &msqDataClient);
 
 }
+
+/**
+	check if MsgObj is currently locked
+  @param rui8_busNr number of the BUS to check
+  @param rui8_msgobjNr number of the MsgObj to check
+	@return true -> MsgObj is currently locked
+*/
+bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+{
+
+  int16_t i16_rc;
+  msqCommand_s msqCommandBuf;
+
+  DEBUG_PRINT2("getCanMsgObjLocked, bus %d, obj %d\n", rui8_busNr, rui8_msgobjNr);
+
+  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > cui8_maxCanObj - 1 ) ) return true;
+  else {
+    
+    msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+    msqCommandBuf.i16_command = COMMAND_QUERYLOCK;
+    msqCommandBuf.s_config.ui8_bus = rui8_busNr;
+    msqCommandBuf.s_config.ui8_obj = rui8_msgobjNr;
+
+    i16_rc = send_command(&msqCommandBuf, &msqDataClient);
+    
+    if (!i16_rc)
+      return msqCommandBuf.s_config.ui16_queryLockResult;
+    else
+      return false;
+  }
+
+}
+
 
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 {

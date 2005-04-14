@@ -66,13 +66,13 @@
 
 #include <list>
 
-#include <sys/time.h>
-#include <time.h>
-
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
+#include <time.h>
 
 #include <pthread.h>
 
@@ -97,8 +97,9 @@ using namespace __HAL;
 // Globals
 
 // CAN Globals
-int AllCanChannelCount = 0;
-int apiversion;
+static int AllCanChannelCount = 0;
+static int apiversion;
+static int can_device = 0;
 
 static bool b_busOpened[cui32_maxCanBusCnt];
 
@@ -108,10 +109,10 @@ const int32_t LptIsaIoAdr = 0x378;
 #define USE_CAN_CARD_TYPE c_CANA1BINARY
 
 #ifdef USE_CAN_CARD_TYPE
-int32_t gHwType = USE_CAN_CARD_TYPE;
+static int32_t gHwType = USE_CAN_CARD_TYPE;
 #else
 // select the Vector CAN card type to use
-int32_t gHwType = HWTYPE_AUTO;
+static int32_t gHwType = HWTYPE_AUTO;
 #endif
 
 
@@ -119,7 +120,6 @@ int32_t gHwType = HWTYPE_AUTO;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // Wachendorff stuff...
-#include <sys/ioctl.h>
 
 #define MSGTYPE_EXTENDED        0x02            /* extended frame */
 #define MSGTYPE_STANDARD        0x00            /* standard frame */
@@ -140,10 +140,9 @@ struct CANmsg {
         unsigned long   time;           /* timestamp in msec, at read only */
 };
 typedef struct CANmsg canmsg;
-// ...Wachendorff stuff
-////////////////////////////////////////////////////////////////////////////////////////
 
-// client data at server
+
+// client specific data
 typedef struct {
   int32_t  i32_clientID;
   int32_t  i32_runTime_msec;
@@ -159,34 +158,29 @@ typedef struct {
 } client_s;
 
 
-
-
-// globals
-int can_device = 0;
-
-msqData_s msqDataServer;
-std::list<client_s> l_clients;
+static msqData_s msqDataServer;
+static std::list<client_s> l_clients;
 
 
 /////////////////////////////////////////////////////////////////////////
 // Function Declarations
 
-int ca_InitApi_1 (int typ, int IoAdr);
-int ca_ResetCanCard_1(void);
-int ca_InitCanCard_1 (int channel, int msgnr, int accode, int accmask,
+static int ca_InitApi_1 (int typ, int IoAdr);
+static int ca_ResetCanCard_1(void);
+static int ca_InitCanCard_1 (int channel, int msgnr, int accode, int accmask,
                       int fullcanmask[5], int btr0, int btr1, int octrl, int typ, int extended);
-int ca_TransmitCanCard_1(int channel, tSend* ptSend);
-int ca_GetData_1 (can_recv_data* receivedata);
+static int ca_TransmitCanCard_1(int channel, tSend* ptSend);
+static int ca_GetData_1 (can_recv_data* receivedata);
 
 /////////////////////////////////////////////////////////////////////////
 // Local Data
 
-int	canBusIsOpen[cui32_maxCanBusCnt];
-FILE*	canBusFp[cui32_maxCanBusCnt];
-can_recv_data receivedata;
+static int	canBusIsOpen[cui32_maxCanBusCnt];
+static FILE*	canBusFp[cui32_maxCanBusCnt];
+
 
 static struct timeval startUpTime = {0,0};
-int32_t getTime()
+static int32_t getTime()
 {
    struct timeval now;
    gettimeofday(&now, 0);
@@ -203,7 +197,7 @@ int32_t getTime()
 }
 
 
-int open_semaphore_set(int sema_proj_id )
+static int open_semaphore_set(int sema_proj_id )
 {
   int sid;
   key_t  semkey;
@@ -231,7 +225,7 @@ int open_semaphore_set(int sema_proj_id )
 }
 
 
-int get_semaphore(int sid, int operation ) {
+static int get_semaphore(int sid, int operation ) {
 
   struct sembuf sem_command = { 0, operation, 0 };
 
@@ -243,77 +237,8 @@ int get_semaphore(int sid, int operation ) {
 }
 
 
-/////////////////////////////////////////////////////////////////////////
-void* can_write_thread_func(void* ptr) 
+static void enqueue_msg(int local_semaphore_id, uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t b_xtd, uint8_t* pui8_data, int32_t i32_clientID)
 {
-  int16_t i16_rc;
-  int32_t i32_error = 0;
-  msqWrite_s msqWriteBuf;
-
-  for (;;) {
-
-    if((i16_rc = msgrcv(msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0, 0)) == -1) {
-      perror("msgrcv");
-      usleep(1000);
-      continue;
-    }
-
-    DEBUG_PRINT("+");
-    i16_rc = ca_TransmitCanCard_1(msqWriteBuf.ui8_bus, &(msqWriteBuf.s_sendData));			   // can object
-    DEBUG_PRINT1("send: %d\n", i16_rc);
-
-    // i16_rc == 1: send was ok
-    if (!i16_rc)
-      i32_error = HAL_OVERFLOW_ERR;
-
-    send_command_ack(msqWriteBuf.i32_mtype, i32_error, &msqDataServer);
-
-  }
-
-  return NULL;
-}
-
-
-/////////////////////////////////////////////////////////////////////////
-void can_read() 
-{
-  uint32_t DLC;
-  uint8_t b_xtd;
-  uint32_t ui32_id;
-  uint32_t b_bus;
-  
-  int local_semaphore_id;
-
-  if ((local_semaphore_id = open_semaphore_set(SERVER_SEMAPHORE)) == -1) {
-    perror("semaphore not available");
-    exit(1);
-  }
-
-
-  for (;;) {
-
-    DEBUG_PRINT(".");
-
-    // specify no channel on data request, wait infinitely 
-    if ( ! ca_GetData_1( &receivedata) ) { // no data received or no channel open
-      usleep(100000);
-      continue;
-    }
-	
-    DLC = ( receivedata.msg.b_dlc & 0xF );
-    if ( DLC > 8 ) DLC = 8;
-    ui32_id = receivedata.msg.i32_ident;
-    b_bus = receivedata.b_bus;
-    b_xtd = receivedata.msg.b_xtd;
-
-    DEBUG_PRINT4("DLC %d, ui32_id 0x%08x, b_bus %d, b_xtd %d\n", DLC, ui32_id, b_bus, b_xtd);
-
-    if (ui32_id >= 0x7FFFFFFF) {
-#ifdef DEBUG
-      fprintf(stderr,"!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
-#endif
-      continue;
-    }
 
     can_data* pc_data;
 
@@ -326,12 +251,16 @@ void can_read()
     std::list<client_s>::iterator iter;
     for (iter = l_clients.begin(); iter != l_clients.end(); iter++) {
 
-      /*      DEBUG_PRINT1("client pid %d\n", iter->i32_clientID);
-      DEBUG_PRINT1("iter->ui32_globalMask[b_bus] 0x%08x\n", iter->ui32_globalMask[b_bus]);
-      DEBUG_PRINT1("iter->ui32_lastMask[b_bus] 0x%08x\n", iter->ui32_lastMask[b_bus]);
+      /* DEBUG_PRINT1("client pid %d\n", iter->i32_clientID);
+         DEBUG_PRINT1("iter->ui32_globalMask[b_bus] 0x%08x\n", iter->ui32_globalMask[b_bus]);
+         DEBUG_PRINT1("iter->ui32_lastMask[b_bus] 0x%08x\n", iter->ui32_lastMask[b_bus]);
       */
 		// now search for MsgObj queue on this b_bus, where new message from b_bus maps
 		for (int32_t i32_obj = 1; i32_obj < cui8_maxCanObj; i32_obj++) { 
+
+        // i32_clientID != 0 in forwarding mode during send, do not enqueue this message for sending client
+        if (i32_clientID && (iter->i32_clientID == i32_clientID))
+          continue;
 
         if (!iter->b_canObjConfigured[b_bus][i32_obj])
           continue;
@@ -342,10 +271,10 @@ void can_read()
           continue;
         }
        
-        /*        DEBUG_PRINT1("obj: %d ", i32_obj);
-        DEBUG_PRINT1("iter->ui8_bufXtd[b_bus][i32_obj] %d\n", iter->ui8_bufXtd[b_bus][i32_obj]);
-        DEBUG_PRINT1("iter->ui16_size[b_bus][i32_obj] %d\n", iter->ui16_size[b_bus][i32_obj]);
-        DEBUG_PRINT1("iter->ui32_filter[b_bus][i32_obj] 0x%08x\n", iter->ui32_filter[b_bus][i32_obj]);
+        /* DEBUG_PRINT1("obj: %d ", i32_obj);
+           DEBUG_PRINT1("iter->ui8_bufXtd[b_bus][i32_obj] %d\n", iter->ui8_bufXtd[b_bus][i32_obj]);
+           DEBUG_PRINT1("iter->ui16_size[b_bus][i32_obj] %d\n", iter->ui16_size[b_bus][i32_obj]);
+           DEBUG_PRINT1("iter->ui32_filter[b_bus][i32_obj] 0x%08x\n", iter->ui32_filter[b_bus][i32_obj]);
         */
         // compare received msg with filter
         if
@@ -391,7 +320,7 @@ void can_read()
             pc_data->i32_ident = ui32_id;
             pc_data->b_dlc = DLC;
             pc_data->b_xtd = b_xtd;
-            for ( uint32_t ind = 0; ind < DLC; ind++ ) pc_data->pb_data[ind] = receivedata.msg.pb_data[ind];
+            for ( uint32_t ind = 0; ind < DLC; ind++ ) pc_data->pb_data[ind] = pui8_data[ind];
             
             DEBUG_PRINT1("mtype: 0x%08x\n", assemble_mtype(iter->i32_clientID, b_bus, i32_obj));
             msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, i32_obj);
@@ -408,17 +337,15 @@ void can_read()
     }
 
   } // for loop
-}
 
 
 
 /////////////////////////////////////////////////////////////////////////
-void* register_client_thread_func(void* ptr) 
+static void* can_write_thread_func(void* ptr) 
 {
-
   int16_t i16_rc;
-  int32_t i32_error;
-  msqCommand_s msqCommandBuf;
+  int32_t i32_error = 0;
+  msqWrite_s msqWriteBuf;
 
   int local_semaphore_id;
 
@@ -426,7 +353,98 @@ void* register_client_thread_func(void* ptr)
     perror("semaphore not available");
     exit(1);
   }
+
+  for (;;) {
+
+    if((i16_rc = msgrcv(msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0, 0)) == -1) {
+      perror("msgrcv");
+      usleep(1000);
+      continue;
+    }
+
+    DEBUG_PRINT("+");
+    i16_rc = ca_TransmitCanCard_1(msqWriteBuf.ui8_bus, &(msqWriteBuf.s_sendData));			   // can object
+    DEBUG_PRINT1("send: %d\n", i16_rc);
+
+    // i16_rc == 1: send was ok
+    if (!i16_rc)
+      i32_error = HAL_OVERFLOW_ERR;
+    else 
+      // clientID in msqWriteBuf.i32_mtype 
+      enqueue_msg(local_semaphore_id, msqWriteBuf.s_sendData.bDlc, msqWriteBuf.s_sendData.dwId, msqWriteBuf.ui8_bus, msqWriteBuf.s_sendData.bXtd, &msqWriteBuf.s_sendData.abData[0], msqWriteBuf.i32_mtype);
+
+    send_command_ack(msqWriteBuf.i32_mtype, i32_error, &msqDataServer);
+
+  }
+
+  return NULL;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+static void can_read() 
+{
+  can_recv_data receivedata;
+  uint32_t DLC;
+  uint8_t b_xtd;
+  uint32_t ui32_id;
+  uint32_t b_bus;
   
+  int local_semaphore_id;
+
+  if ((local_semaphore_id = open_semaphore_set(SERVER_SEMAPHORE)) == -1) {
+    perror("semaphore not available");
+    exit(1);
+  }
+
+
+  for (;;) {
+
+    DEBUG_PRINT(".");
+
+    // specify no channel on data request, wait infinitely 
+    if ( ! ca_GetData_1( &receivedata) ) { // no data received or no channel open
+      usleep(100000);
+      continue;
+    }
+	
+    DLC = ( receivedata.msg.b_dlc & 0xF );
+    if ( DLC > 8 ) DLC = 8;
+    ui32_id = receivedata.msg.i32_ident;
+    b_bus = receivedata.b_bus;
+    b_xtd = receivedata.msg.b_xtd;
+
+    DEBUG_PRINT4("DLC %d, ui32_id 0x%08x, b_bus %d, b_xtd %d\n", DLC, ui32_id, b_bus, b_xtd);
+
+    if (ui32_id >= 0x7FFFFFFF) {
+      DEBUG_PRINT1("!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
+      continue;
+    }
+
+    enqueue_msg(local_semaphore_id, DLC, ui32_id, b_bus, b_xtd, &receivedata.msg.pb_data[0], 0);
+
+  } // for loop
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////
+static void* command_thread_func(void* ptr) 
+{
+
+  int16_t i16_rc;
+  int32_t i32_error;
+  msqCommand_s msqCommandBuf;
+  int local_semaphore_id;
+  uint16_t ui16_busRefCnt[cui32_maxCanBusCnt];
+
+  if ((local_semaphore_id = open_semaphore_set(SERVER_SEMAPHORE)) == -1) {
+    perror("semaphore not available");
+    exit(1);
+  }
+
+  memset(ui16_busRefCnt, 0, sizeof(ui16_busRefCnt));
+
   for (;;) {
 
     // check command queue
@@ -461,7 +479,7 @@ void* register_client_thread_func(void* ptr)
       
         client_s s_tmpClient;
 
-        DEBUG_PRINT("command register\n");
+        DEBUG_PRINT("command start driver\n");
 
         // initialize
         memset(&s_tmpClient, 0, sizeof(client_s));
@@ -470,6 +488,8 @@ void* register_client_thread_func(void* ptr)
         s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
         // save difference between client runtime and server runtime
         s_tmpClient.i32_runTime_msec = msqCommandBuf.s_runtime.i32_runTime_msec - getTime();
+
+        DEBUG_PRINT1("msec diff between can client and server: %d\n", s_tmpClient.i32_runTime_msec);
         
         l_clients.push_back(s_tmpClient);
 
@@ -479,6 +499,9 @@ void* register_client_thread_func(void* ptr)
 
       case COMMAND_DEREGISTER:
 
+        DEBUG_PRINT("command stop driver\n");
+
+        // @todo: is queue clearing necessary?
         if (iter_client != NULL) {
           l_clients.erase(iter_client);
         } else 
@@ -495,45 +518,44 @@ void* register_client_thread_func(void* ptr)
         int btr0, btr1;
         int16_t i16_init_rc;
         
-        // @todo check if bus already initialized
+        if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]) {
+          // first init command for current bus
         
-        memset(fdata, 0, sizeof(fdata));
+          memset(fdata, 0, sizeof(fdata));
         
-        if (iter_client != NULL) {
+          if (iter_client != NULL) {
 
-          switch ( msqCommandBuf.s_init.ui16_wBitrate ) {
-            case 100: { btr0 = 0xc3; btr1 = 0x3e;} break;
-            case 125: { btr0 = 0xc3; btr1 = 0x3a;} break;
-            case 250: { btr0 = 0xc1; btr1 = 0x3a;} break;
-            case 500: { btr0 = 0xc0; btr1 = 0x3a;} break;
-          }
+            switch ( msqCommandBuf.s_init.ui16_wBitrate ) {
+              case 100: { btr0 = 0xc3; btr1 = 0x3e;} break;
+              case 125: { btr0 = 0xc3; btr1 = 0x3a;} break;
+              case 250: { btr0 = 0xc1; btr1 = 0x3a;} break;
+              case 500: { btr0 = 0xc0; btr1 = 0x3a;} break;
+            }
    
-          i16_init_rc = ca_InitCanCard_1(msqCommandBuf.s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
-                                         0x00,  // msg-nr / 0 for CANLPT/ICAN
-                                         0x00,  // Acceptance Code to receive everything for ICAN
-                                         0xFF,  // Acceptance Mask to receive everything for ICAN
-                                         fdata, // filter array of int[16];
-                                         btr0,  // BTR0
-                                         btr1,  // BTR1
-                                         0x00,  // reserved
-                                         0x00,  // typ 0 = 2 x 32 Bit, 1 = 4 x 16 Bit,
-                                         // 2 = 8 x 8 Bit, 3 = kein durchlass
-                                         0x00); // reserved
+            i16_init_rc = ca_InitCanCard_1(msqCommandBuf.s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
+                                           0x00,  // msg-nr / 0 for CANLPT/ICAN
+                                           0x00,  // Acceptance Code to receive everything for ICAN
+                                           0xFF,  // Acceptance Mask to receive everything for ICAN
+                                           fdata, // filter array of int[16];
+                                           btr0,  // BTR0
+                                           btr1,  // BTR1
+                                           0x00,  // reserved
+                                           0x00,  // typ 0 = 2 x 32 Bit, 1 = 4 x 16 Bit, 2 = 8 x 8 Bit, 3 = kein durchlass
+                                           0x00); // reserved
           
-   
-          if (i16_init_rc) {
-            //printf ("CAN-LPT initialized\n");
-          } else {
-            printf ("can't initialize CAN\n");
-            //printf ("can't initialize CANLPT\n");
+            
+            if (!i16_init_rc) {
+              printf("can't initialize CAN\n");
+              i32_error = HAL_CONFIG_ERR;
+            }      
+          
+          } else 
             i32_error = HAL_CONFIG_ERR;
-          }
-          
-          
-          
-        } else 
-          i32_error = HAL_CONFIG_ERR;
 
+        }
+
+        ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
+        
         if (!i32_error) {
           // @todo check ui16/ui32_globalMask in original driver
           iter_client->ui16_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui16_wGlobMask;
@@ -552,7 +574,12 @@ void* register_client_thread_func(void* ptr)
       
         if (iter_client != NULL) {
 
-          b_busOpened[msqCommandBuf.s_config.ui8_bus] = false;
+          if (ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
+            ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]--;
+
+          if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
+            // last client closes bus
+            b_busOpened[msqCommandBuf.s_config.ui8_bus] = false;
 
           for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
             for (uint8_t j=0; j<cui8_maxCanObj; j++) {
@@ -622,6 +649,22 @@ void* register_client_thread_func(void* ptr)
         break;
 
 
+      case COMMAND_QUERYLOCK:
+
+        if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > cui8_maxCanObj-1 ))
+          i32_error = HAL_RANGE_ERR;
+        else {
+          if (iter_client != NULL) {
+            msqCommandBuf.s_config.ui16_queryLockResult = iter_client->b_canBufferLock[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj]; 
+          } else 
+            i32_error = HAL_CONFIG_ERR;
+        }
+        
+        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &msqDataServer);
+        
+        break;
+
+
       case COMMAND_CLOSEOBJ:
 
         if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > cui8_maxCanObj-1 ))
@@ -676,7 +719,7 @@ void* register_client_thread_func(void* ptr)
 //			/dev/wecan1 are available and the drivers installed correctly or not
 //
 /////////////////////////////////////////////////////////////////////////
-int ca_InitApi_1 (int typ, int IoAdr)
+static int ca_InitApi_1 (int typ, int IoAdr)
 {
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
     {
@@ -698,7 +741,7 @@ int ca_InitApi_1 (int typ, int IoAdr)
 // FUTURE:  This should be finished to actually check the return values of fflush()
 //
 /////////////////////////////////////////////////////////////////////////
-int ca_ResetCanCard_1(void)
+static int ca_ResetCanCard_1(void)
 {
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
     if( canBusIsOpen[i] )
@@ -733,7 +776,7 @@ int ca_ResetCanCard_1(void)
 //			was set correctly before proceeding.
 //
 /////////////////////////////////////////////////////////////////////////
-int ca_InitCanCard_1 (int channel, int msgnr, int accode, int accmask
+static int ca_InitCanCard_1 (int channel, int msgnr, int accode, int accmask
                       , int fullcanmask[5], int btr0, int btr1, int octrl, int typ, int extended)
 {
 #ifdef DEBUG
@@ -816,7 +859,7 @@ int ca_InitCanCard_1 (int channel, int msgnr, int accode, int accmask
 // NOTES:	In this case, we will simply return 1
 //
 /////////////////////////////////////////////////////////////////////////
-int ca_TransmitCanCard_1(int channel, tSend* ptSend)
+static int ca_TransmitCanCard_1(int channel, tSend* ptSend)
 {
 // Always Transmit to this format:
 //  the letter 'm', extended/standard ID, CAN ID, Data Length, data bytes, timestamp
@@ -878,7 +921,7 @@ int ca_TransmitCanCard_1(int channel, tSend* ptSend)
 // FUTURE:  This should be finished to actually receive a CAN msg
 //
 /////////////////////////////////////////////////////////////////////////
-int ca_GetData_1 (can_recv_data* receivedata)
+static int ca_GetData_1 (can_recv_data* receivedata)
 {
 
   fd_set rfds;
@@ -991,7 +1034,7 @@ int main() {
 
   printf("creating threads\n");
 
-  i_registerClientThreadHandle = pthread_create( &thread_registerClient, NULL, &register_client_thread_func, NULL);
+  i_registerClientThreadHandle = pthread_create( &thread_registerClient, NULL, &command_thread_func, NULL);
   i_canWriteThreadHandle = pthread_create( &thread_canWrite, NULL, &can_write_thread_func, NULL);
 
   printf("operating\n");

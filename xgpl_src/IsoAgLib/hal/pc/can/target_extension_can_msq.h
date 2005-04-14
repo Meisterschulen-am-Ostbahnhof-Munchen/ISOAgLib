@@ -36,6 +36,7 @@ namespace __HAL {
 #define COMMAND_CHG_CONFIG 31
 #define COMMAND_LOCK       40
 #define COMMAND_UNLOCK     41
+#define COMMAND_QUERYLOCK  42
 #define COMMAND_CLOSEOBJ   50
 
 
@@ -77,7 +78,7 @@ typedef struct {
       uint32_t ui32_dwId;
       // byte 8-11
       uint16_t ui16_wNumberMsgs;
-      uint16_t ui16_fill1;
+      uint16_t ui16_queryLockResult;
       // byte 12-15
       int32_t  i32_fill2;
     } s_config;
