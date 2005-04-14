@@ -159,7 +159,7 @@ static bool b_canBufferLock[cui32_maxCanBusCnt][15];
 int32_t i32_lastReceiveTime;
 
 static uint16_t ui16_globalMask[cui32_maxCanBusCnt];
-static uint32_t [cui32_maxCanBusCnt];
+static uint32_t ui32_globalMask[cui32_maxCanBusCnt];
 static uint32_t ui32_lastMask[cui32_maxCanBusCnt];
 static bool b_busOpened[cui32_maxCanBusCnt];
 
