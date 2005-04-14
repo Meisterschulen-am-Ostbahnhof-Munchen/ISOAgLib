@@ -690,7 +690,6 @@ unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wi
 unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro)
 {
   if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
-
 /** @todo check if all chars in the string are numbers, not only the first! */
 		if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
 
@@ -892,6 +891,7 @@ unsigned int booltoi (char *text_bool)
  }
  std::cout << "INVALID TRUTH VALUE '" << text_bool << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
  clean_exit (-1);
+ return 0; // to make compiler happy
 }
 
 unsigned int fontsizetoi (char *text_fontsize)
@@ -904,6 +904,7 @@ unsigned int fontsizetoi (char *text_fontsize)
  }
  std::cout << "INVALID FONT SIZE '" << text_fontsize << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
  clean_exit (-1);
+ return 0; // to make compiler happy
 }
 
 unsigned int formattoi (char *text_format)
@@ -916,6 +917,7 @@ unsigned int formattoi (char *text_format)
  }
  std::cout << "INVALID FORMAT '" << text_format << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
  clean_exit (-1);
+ return 0; // to make compiler happy
 }
 
 unsigned int horizontaljustificationtoi (char *text_horiz)
@@ -928,6 +930,7 @@ unsigned int horizontaljustificationtoi (char *text_horiz)
  }
  std::cout << "INVALID HORIZONTALJUSTIFICATION '" << text_horiz << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
  clean_exit (-1);
+ return 0; // to make compiler happy
 }
 
 unsigned int optionstoi (char *text_options)
@@ -1017,6 +1020,7 @@ unsigned int prioritytoi (char *text_priority)
  }
  std::cout << "INVALID PRIORITY '" << text_priority << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
  clean_exit (-1);
+ return 0; // to make compiler happy
 }
 
 unsigned int acousticsignaltoi (char *text_acousticsignal)
@@ -1029,6 +1033,7 @@ unsigned int acousticsignaltoi (char *text_acousticsignal)
  }
  std::cout << "INVALID ACOUSTIC SIGNAL '" << text_acousticsignal << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
  clean_exit (-1);
+ return 0; // to make compiler happy
 }
 
 
@@ -2261,11 +2266,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
          setAttributeValue(attrParent_objectID);
          setAttributeValue(attrObjectID);
-         setAttributeValue(attrX_change);
-         setAttributeValue(attrY_change);
+         setAttributeValue(attrX_pos);
+         setAttributeValue(attrY_pos);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrX_pos], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrY_pos], /*macro?*/false)));
+        sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
         objChildCommands++;
        }
        break;
