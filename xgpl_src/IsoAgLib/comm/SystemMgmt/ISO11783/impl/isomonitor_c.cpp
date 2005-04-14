@@ -769,7 +769,6 @@ bool ISOMonitor_c::processMsg(){
   switch ((data().isoPgn() & 0x1FF00))
   {
     case ADRESS_CLAIM_PGN: // adress claim
-			std::cout << "receive AdressClaim" << std::endl;
       // if local item has same SA -> let it process the msg first
       // for suitable reaction
       if (existIsoMemberNr(data().isoSa()))
