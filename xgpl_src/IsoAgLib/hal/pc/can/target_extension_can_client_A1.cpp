@@ -251,7 +251,6 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 {
 
-  int16_t i16_rc;
   msqCommand_s msqCommandBuf;
 
   DEBUG_PRINT3("lockCanObj, bus %d, obj %d, lock %d\n", rui8_busNr, rui8_msgobjNr, rb_doLock);
@@ -309,8 +308,6 @@ bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 {
-  msqRead_s  msqReadBuf;
-  msqWrite_s msqWriteBuf;
 
   DEBUG_PRINT2("clearCanObjBuf, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
