@@ -741,7 +741,7 @@ int16_t CANIO_c::processMsg(){
 	if ( c_lastMsgObj.isOpen() )
 	{ // process all messages which where placed during the reconfig in the last message object
 		ui8_processedMsgCnt += c_lastMsgObj.processMsg( ui8_busNumber, true );
-		c_lastMsgObj.lock( true, false );
+		c_lastMsgObj.lock( true );
 	}
 
 	for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
@@ -977,11 +977,11 @@ int16_t CANIO_c::FilterBox2MsgObj(){
     HAL::wdTriggern();
 		if ( pc_iterMsgObj->isOpen() )
     { // process received messages
-			pc_iterMsgObj->lock( true, false );
+			pc_iterMsgObj->lock( true );
       pc_iterMsgObj->processMsg( ui8_busNumber, true );
     }
     pc_iterMsgObj->close();
-		pc_iterMsgObj->lock( false, false );
+		pc_iterMsgObj->lock( false );
   }
 
   HAL::wdTriggern();
@@ -1201,7 +1201,7 @@ bool CANIO_c::reconfigureMsgObj()
 	}
 
 	// unlock in any case the last MsgObj_c for receive of all msgs during reconfig
-	c_lastMsgObj.lock( false, false );
+	c_lastMsgObj.lock( false );
 
   // create according to new global t_mask all MsgObj_c with
   // unique filter settings -> merge all filter settings where
@@ -1233,7 +1233,7 @@ bool CANIO_c::reconfigureMsgObj()
   }
 
 	// lock the MsgObj_c to avoid receive of further messages
-	c_lastMsgObj.lock( true, false );
+	c_lastMsgObj.lock( true );
 
 	// clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object
@@ -1333,6 +1333,8 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
 		if ( ! c_lastMsgObj.isLocked() ) b_lastMsgObjWasLocked = false;
 		// ==>> process all messages which where placed during the reconfig in the last message object
 		c_lastMsgObj.processMsg( ui8_busNumber, true );
+		// unlock it now in any case
+		c_lastMsgObj.lock( false );
 	}
 
 
@@ -1386,11 +1388,11 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
 	c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
 	if ( b_lastMsgObjWasLocked )
 	{ // lock it immediately, as it shall only receive messages during reconfigureMsgObj() execution
-		c_lastMsgObj.lock( true, false );
+		c_lastMsgObj.lock( true );
 	}
 	else
 	{ // don't lock it, so that messages can be stored during further reconfig
-		c_lastMsgObj.lock( false, false );
+		c_lastMsgObj.lock( false );
 	}
 
   // init of BUS without error -> continue with send obj configuration

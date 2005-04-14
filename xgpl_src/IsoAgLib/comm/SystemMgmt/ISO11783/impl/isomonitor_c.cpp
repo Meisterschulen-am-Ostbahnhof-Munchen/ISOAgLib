@@ -856,10 +856,6 @@ bool ISOMonitor_c::processMsg(){
       { // ISOItem_c with same SA has to exist!
         pc_itemMaster = &(isoMemberNr(data().isoSa()));
         pc_itemMaster->setMaster (pc_itemMaster); // set item as mas
-        #ifdef DEBUG
-        // only for testing, you can remove this!
-        std::cout << "\nWORKING_SET_MASTER_PGN encountered from SA " << (uint32_t) data().isoSa() << " at time " << HAL::getTime() << ".\n";
-        #endif
         // IGNORE THAT WE GOT x MEMBERS FOR NOW
         // LATER WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
       }

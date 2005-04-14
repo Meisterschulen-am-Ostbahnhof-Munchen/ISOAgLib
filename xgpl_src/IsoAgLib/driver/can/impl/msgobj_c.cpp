@@ -471,16 +471,25 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
         break;
       case HAL_RANGE_ERR:
         getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+				#ifdef DEBUG
+				getRs232Instance() << "CAN-Receive Range Err\n";
+				#endif
+				HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_CONFIG_ERR:
 				#if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
         getRs232Instance() << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(rui8_busNumber) << "\r\n";
 				#endif
         getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
+				HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_NOACT_ERR:
+				#ifdef DEBUG
+				getRs232Instance() << "CAN-Receive NoAct Err\n";
+				#endif
         // wrong use of MsgObj (not likely) or CAN BUS OFF
         getLbsErrInstance().registerError( LibErr_c::CanOff, LibErr_c::Can );
+				HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_WARN_ERR:
         getLbsErrInstance().registerError( LibErr_c::CanWarn, LibErr_c::Can );
@@ -726,22 +735,24 @@ void MsgObj_c::closeCan()
 	Thus CANIO_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
 	simply conserved until normal CANIO_c::processMsg() is called.
 */
-void MsgObj_c::lock( bool rb_lock, bool rb_changeID )
+void MsgObj_c::lock( bool rb_lock )
 {
-	if ( rb_lock )
-	{ // lock the CAN hardware to avoid receive of further messages
-		// the lastMessageObject should be locked two ways:
-		if ( rb_changeID )
-		{ // a) change filter, to avoid match -> just set to 0x1FFFFFFF
-			Ident_c c_tempIdent( 0x1FFFFFFF, c_filter.identType() );
-			HAL::can_configMsgobjChgid( busNumber(), msgObjNr(), c_tempIdent );
-		}
-		// b) use BIOS/OS lock function
-		HAL::can_configMsgobjLock( busNumber(), msgObjNr(), true );
+	if ( ! rb_lock )
+	{
+		if ( ! isLocked() ) return; ///< object is not locked
+		// activate normal configured ident
+		HAL::can_configMsgobjChgid(bit_data.busNumber, bit_data.ui8_msgObjNr, c_filter);
+		// clear lock bit
+		bit_data.isLocked = 0;
 	}
 	else
-	{ // unlock
-		HAL::can_configMsgobjLock( busNumber(), msgObjNr(), false );
+	{
+		if ( isLocked() ) return; ///< is already locked
+		// change to ident which results at least for 
+		Ident_c c_tempIdent( 0x1FFFFFFF, c_filter.identType() );
+		HAL::can_configMsgobjChgid(bit_data.busNumber, bit_data.ui8_msgObjNr, c_tempIdent);
+		// set lock bit
+		bit_data.isLocked = 1;
 	}
 }
 

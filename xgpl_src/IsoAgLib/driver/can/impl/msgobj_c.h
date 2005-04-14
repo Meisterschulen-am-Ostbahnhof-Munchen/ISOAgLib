@@ -307,10 +307,10 @@ public:
 		Thus CANIO_c::reconfigureMsgObj() locks the lastMessageObject at the end, so that the buffer content is
 		simply conserved until normal CANIO_c::processMsg() is called.
 	*/
-	void lock( bool rb_lock = true, bool rb_changeID = false );
+	void lock( bool rb_lock = true );
 
 	/** check if this given MsgObj_c is locked */
-	bool isLocked() const { return HAL::can_stateMsgobjLocked( busNumber(), msgObjNr() );};
+	bool isLocked() const { return bit_data.isLocked;};
 private:
   // Private attributes
   /** array of pointer to appointed arrPfilterBox instances */
@@ -318,11 +318,12 @@ private:
   /** Ident_c filter for this msgObj */
   Ident_c c_filter;
   /** msgObjNr */
-  uint8_t ui8_msgObjNr;
   struct {
-    uint8_t cnt_filterBox : 4;
-    uint8_t isOpen : 1;
-    uint8_t busNumber : 3;
+	  uint16_t ui8_msgObjNr  : 7;
+		uint16_t isLocked      : 1;
+    uint16_t cnt_filterBox : 4;
+    uint16_t isOpen        : 1;
+    uint16_t busNumber     : 3;
   } bit_data;
 private:
 // Private methods
@@ -355,12 +356,12 @@ private:
     deliver msgObj number for BIOS interaction
     @return msgObj number
   */
-  uint8_t msgObjNr()const{return ui8_msgObjNr;};
+  uint8_t msgObjNr()const{return bit_data.ui8_msgObjNr;};
   /**
     set msgObj number for BIOS interaction
     @param rb_val wanted msgObj number
   */
-  void setMsgObjNr(uint8_t rb_val){ui8_msgObjNr = rb_val;};
+  void setMsgObjNr(uint8_t rb_val){bit_data.ui8_msgObjNr = rb_val;};
 
   /**
     verify given BUS number and MsgObj number, if they are within allowed
