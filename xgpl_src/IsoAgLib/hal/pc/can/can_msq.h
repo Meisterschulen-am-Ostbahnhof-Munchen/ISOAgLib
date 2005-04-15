@@ -1,6 +1,8 @@
 #ifndef _PC_HAL_TARGET_EXTENSIONS_CAN_SERVER_H_
 #define _PC_HAL_TARGET_EXTENSIONS_CAN_SERVER_H_
 
+namespace __HAL {
+
 #ifdef DEBUG
 #define DEBUG_PRINT(str) printf(str); fflush(0)
 #define DEBUG_PRINT1(str,a) printf(str,a); fflush(0)
@@ -14,8 +16,6 @@
 #define DEBUG_PRINT3
 #define DEBUG_PRINT4
 #endif
-
-namespace __HAL {
 
 #define MSQ_COMMAND      'm'
 #define MSQ_COMMAND_ACK  'n'
