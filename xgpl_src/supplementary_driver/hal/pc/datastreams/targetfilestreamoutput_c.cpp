@@ -86,9 +86,28 @@
  ***************************************************************************/
 #include "targetfilestreamoutput_c.h"
 
+using namespace std;
+
 //! open a output stream
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 {
+#if defined( SYSTEM_A1 )
+	if ( ( rt_mode & StreamIn ) != 0 ) return false;
+
+	ios::openmode mode = ios::out;
+
+	if ( ( rt_mode & StreamAte    ) != 0 ) mode = ios::openmode( mode | ios::ate    );
+	if ( ( rt_mode & StreamApp    ) != 0 ) mode = ios::openmode( mode | ios::app    );
+	if ( ( rt_mode & StreamTrunc  ) != 0 ) mode = ios::openmode( mode | ios::trunc  );
+	if ( ( rt_mode & StreamBinary ) != 0 ) mode = ios::openmode( mode | ios::binary );
+
+	static_cast<ofstream*>(this)->open( filename, mode );
+
+	if ( ( static_cast<ofstream*>(this)->good() )
+		&& ( static_cast<ofstream*>(this)->is_open() ) ) return true;
+	else
+		return false;
+#else
 	if ( ( rt_mode & StreamIn ) != 0 ) return false;
 
 	std::ios_base::openmode mode = std::ios_base::out;
@@ -102,7 +121,9 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 
 	if ( ( static_cast<std::ofstream*>(this)->good() )
 		&& ( static_cast<std::ofstream*>(this)->is_open() ) ) return true;
-	else return false;
+	else
+		return false;
+#endif
 }
 
 //  Operation: operator>>
@@ -110,6 +131,8 @@ bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 //! @param ui8_data:
 TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 {
-	(static_cast<std::ofstream*>(this))->put(ui8_data);
+//	(static_cast<std::ofstream*>(this))->put(ui8_data);
+	(static_cast<ofstream*>(this))->put(ui8_data);
+
 	return *this;
 }
