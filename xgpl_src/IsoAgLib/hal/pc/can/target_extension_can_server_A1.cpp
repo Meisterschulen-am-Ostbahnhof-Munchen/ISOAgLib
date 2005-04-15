@@ -54,6 +54,8 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
+#define SIMULATE_BUS_MODE 1
+
 #include "can_target_extensions.h"
 //#include <IsoAgLib/hal/pc/system/system.h>
 #include <cstring>
@@ -126,8 +128,10 @@ static int32_t gHwType = HWTYPE_AUTO;
 #define MYSEQ_START             0x80
 
 // @todo: kernel 2.6 needs type for third argument and not sizeof()
-#define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, sizeof(canmsg))
-#define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, sizeof(canmsg))
+//#define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, sizeof(canmsg))
+//#define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, sizeof(canmsg))
+#define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, canmsg)
+#define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, canmsg)
 
 struct CANmsg {
         unsigned        id;
@@ -779,10 +783,16 @@ static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1)
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", channel);
     
     char fname[32];
+#ifndef SIMULATE_BUS_MODE
     sprintf( fname, "/dev/wecan%u", channel );
+#else
+    sprintf( fname, "/dev/null");
+#endif
+
     DEBUG_PRINT1("open( \"%s\", O_RDRWR)\n", fname);
-    
+
     can_device = open(fname, O_RDWR);
+
     if (!can_device) {
       DEBUG_PRINT1("Could not open CAN bus%d\n",channel);
       return 0;
@@ -793,6 +803,7 @@ static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1)
     {
       char buf[16];
       sprintf( buf, "i 0x%2x%2x e\n", btr0 & 0xFF, btr1 & 0xFF );     //, (extended?" e":" ") extended is not being passed in! Don't use it!
+
       DEBUG_PRINT3("write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
       write(can_device, buf, strlen(buf));
     }
@@ -855,7 +866,12 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
   for( int i=0; i<msg.len; i++ )
     msg.data[i] = ptSend->abData[i];
 
+#ifndef SIMULATE_BUS_MODE
   int ret = ioctl(can_device, CAN_WRITE_MSG, &msg);
+#else
+  int ret = 0;
+#endif
+
   if (ret < 0) {
     /* nothing to read or interrupted system call */
     DEBUG_PRINT("CAN error: \n");
@@ -974,6 +990,12 @@ int main() {
 
   printf("operating\n");
 
+#ifndef SIMULATE_BUS_MODE
   can_read();
+#else
+  for (;;)
+    sleep(1000);
+#endif
+
 
 }
