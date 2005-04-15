@@ -150,6 +150,7 @@ int16_t closeCan ( uint8_t bBusNumber )
 
   msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_CLOSE;
+  msqCommandBuf.s_init.ui8_bus = bBusNumber;
   
   // read/write queue is cleared by server!
   return send_command(&msqCommandBuf, &msqDataClient);

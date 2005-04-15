@@ -149,7 +149,7 @@ void clearReadQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, 
 {
   msqRead_s msqReadBuf;
 
-  DEBUG_PRINT3("clear read queue: bus %d, obj %d, pid %d\n", bBusNumber, bMsgObj, i32_pid);
+  //DEBUG_PRINT3("clear read queue: bus %d, obj %d, pid %d\n", bBusNumber, bMsgObj, i32_pid);
   while (msgrcv(i32_msqHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assemble_mtype(i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT) > 0)
     ;
 }
@@ -158,7 +158,7 @@ void clearWriteQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle,
 {
   msqWrite_s msqWriteBuf;
 
-  DEBUG_PRINT3("clear write queue: bus %d, obj %d, pid %d\n", bBusNumber, bMsgObj, i32_pid);
+  //DEBUG_PRINT3("clear write queue: bus %d, obj %d, pid %d\n", bBusNumber, bMsgObj, i32_pid);
   while (msgrcv(i32_msqHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), assemble_mtype(i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT) > 0)
     ;
 }

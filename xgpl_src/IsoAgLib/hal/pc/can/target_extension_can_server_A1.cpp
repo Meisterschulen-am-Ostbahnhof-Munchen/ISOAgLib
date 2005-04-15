@@ -164,15 +164,26 @@ typedef struct {
 // server specific data
 class server_c {
 public:
+  server_c();
   msqData_s msqDataServer;
   std::list<client_s> l_clients;
   std::string logFileBase;
   std::string inputFile;
   uint16_t ui16_globalMask[cui32_maxCanBusCnt];
-  FILE* f_canOutput[cui32_maxCanBusCnt];
+  // logging
   bool b_logMode;
+  FILE* f_canOutput[cui32_maxCanBusCnt];
+  // replay
   bool b_inputFileMode;
+  FILE* f_canInput;
 };
+
+server_c::server_c()
+  : b_logMode(FALSE), b_inputFileMode(FALSE)
+{
+  memset(f_canOutput, 0, sizeof(f_canOutput));
+  memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
+}
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -210,8 +221,8 @@ static int32_t getTime()
 
 static void usage() {
   printf("usage: can_server_A1 [--log <log_file_name_base>] [--file-input <log_file_name>]\n\n");
-  printf("  --log         log can traffic into IsoAglib/simulated_io/<log_file_name_base>_<bus_id>\n");
-  printf("  --file-input  read can data from file IsoAglib/simulated_io/<log_fil_name>\n\n");
+  printf("  --log         log can traffic into <log_file_name_base>_<bus_id>\n");
+  printf("  --file-input  read can data from file <log_fil_name>\n\n");
 }
 
 
@@ -257,34 +268,88 @@ static int get_semaphore(int sid, int operation ) {
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_handle)
 {
   uint8_t data[8] = {0,0,0,0,0,0,0,0};
-  int16_t i = 0;
   int32_t i32_sendTimestamp = getTime();
   memcpy(data, ptSend->abData, ptSend->bDlc);
   // @todo check timestamp
   //if (i32_lastSendTime + ui16_sendPause > i32_sendTimestamp)
   //i32_sendTimestamp = i32_lastSendTime + ui16_sendPause;
   //i32_lastSendTime = i32_sendTimestamp;
- 
-  if (ptSend->bXtd)
-  { // extended Ident_c mit Ident_c Laenge 5
-    fprintf(f_handle,
-      "%05d %-8x  %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx",
-      i32_sendTimestamp, ptSend->dwId,
-      data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
-  }
-  else
-  {
-    fprintf(f_handle,
-      "%05d %-8x  %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx",
-      i32_sendTimestamp, ptSend->dwId,
-      data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
-  }
-  for (i= 0; i < 8; i++) {
-    if (!isalnum(data[i]) && !(data[i] == ' ')) data[i] = '.';}
-  fprintf(f_handle, "\t\t%c %c %c %c %c %c %c %c\n",
-    data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+
+  fprintf(f_handle,
+          "%05d %d %d %d %d %-8x  %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx\n",
+          i32_sendTimestamp, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, ptSend->dwId,
+          data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+
 };
 
+
+bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
+{
+  char zeile[100];
+  tReceive canData;
+  static struct timeval tv_start;
+  static bool first_call = TRUE;
+  struct timeval tv_current;
+  struct timezone tz;
+  uint32_t mydiff;
+
+  tz.tz_minuteswest=0;
+  tz.tz_dsttime=0;
+
+  if (first_call) {
+    first_call = FALSE;
+
+    if ((pc_serverData->f_canInput = fopen(pc_serverData->inputFile.c_str(), "r")) == NULL ) {
+      perror("fopen");
+      exit(1);
+    }
+    
+    if (gettimeofday(&tv_start, &tz)) {
+      perror("error in gettimeofday()");
+      exit(1);
+    }
+  }
+
+  while ( true ) {
+    fgets(zeile, 99, pc_serverData->f_canInput);
+    if ( strlen(zeile) == 0 ) {
+
+      if ( feof(pc_serverData->f_canInput) )
+        // no more data available
+        return FALSE;
+
+      continue;
+
+      int obj;
+
+		int iResult = sscanf(zeile, "%u %d %d %d %d %x  %hx %hx %hx %hx %hx %hx %hx %hx \n",
+                           &(ps_receiveData->msg.i32_time),
+                           &(ps_receiveData->b_bus), &obj,
+                           &(ps_receiveData->msg.b_xtd), &(ps_receiveData->msg.b_dlc),
+                           &(ps_receiveData->msg.i32_ident),
+                           &(ps_receiveData->msg.pb_data[0]), &(ps_receiveData->msg.pb_data[1]),
+                           &(ps_receiveData->msg.pb_data[2]), &(ps_receiveData->msg.pb_data[3]),
+                           &(ps_receiveData->msg.pb_data[4]), &(ps_receiveData->msg.pb_data[5]),
+                           &(ps_receiveData->msg.pb_data[6]), &(ps_receiveData->msg.pb_data[7]));
+      // @todo: ?  receivedata->msg.b_xtd = (msg.msg_type == MSGTYPE_EXTENDED);
+
+      // is data ready for submission?
+      if (gettimeofday(&tv_current, &tz)) {
+        perror("error in gettimeofday()");
+        exit(1);
+      }
+
+      mydiff=(tv_current.tv_sec-tv_start.tv_sec)*1000 + (tv_current.tv_usec-tv_start.tv_usec)/1000;
+
+      usleep((canData.tReceiveTime.l1ms - mydiff)*1000);
+
+      break;
+    }
+  }
+
+  // more data available
+  return TRUE;
+}
 
 
 static void enqueue_msg(int local_semaphore_id, uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t b_xtd, uint8_t* pui8_data, int32_t i32_clientID, server_c* pc_serverData)
@@ -440,12 +505,12 @@ static void* can_write_thread_func(void* ptr)
 /////////////////////////////////////////////////////////////////////////
 static void can_read(server_c* pc_serverData) 
 {
-  can_recv_data receivedata;
+  can_recv_data receiveData;
   uint32_t DLC;
   uint8_t b_xtd;
   uint32_t ui32_id;
   uint32_t b_bus;
-  
+  bool b_moreToRead = TRUE;
   int local_semaphore_id;
 
   if ((local_semaphore_id = open_semaphore_set(SERVER_SEMAPHORE)) == -1) {
@@ -459,20 +524,24 @@ static void can_read(server_c* pc_serverData)
 
 #ifndef SIMULATE_BUS_MODE
     // specify no channel on data request, wait infinitely 
-    if ( ! ca_GetData_1( &receivedata) ) { // error in receive or no channel open
+    if ( ! ca_GetData_1( &receiveData) ) { // error in receive or no channel open
       usleep(100000);
       continue;
     }
 #else
-    for (;;)
-      sleep(1000);
+
+    if (pc_serverData->b_inputFileMode && b_moreToRead) {
+      b_moreToRead = readCanDataFile(pc_serverData, &receiveData);
+    } else
+      for (;;)
+        sleep(1000);
 #endif
 	
-    DLC = ( receivedata.msg.b_dlc & 0xF );
+    DLC = ( receiveData.msg.b_dlc & 0xF );
     if ( DLC > 8 ) DLC = 8;
-    ui32_id = receivedata.msg.i32_ident;
-    b_bus = receivedata.b_bus;
-    b_xtd = receivedata.msg.b_xtd;
+    ui32_id = receiveData.msg.i32_ident;
+    b_bus = receiveData.b_bus;
+    b_xtd = receiveData.msg.b_xtd;
 
     DEBUG_PRINT4("DLC %d, ui32_id 0x%08x, b_bus %d, b_xtd %d\n", DLC, ui32_id, b_bus, b_xtd);
 
@@ -481,7 +550,7 @@ static void can_read(server_c* pc_serverData)
       continue;
     }
 
-    enqueue_msg(local_semaphore_id, DLC, ui32_id, b_bus, b_xtd, &receivedata.msg.pb_data[0], 0, pc_serverData);
+    enqueue_msg(local_semaphore_id, DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
 
   }
 }
@@ -623,14 +692,12 @@ static void* command_thread_func(void* ptr)
           ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
 
           if (pc_serverData->b_logMode) {
-            std::string file_name;
-#ifdef WIN32
-            //            sprintf(file_name., "..\\..\\..\\simulated_io\\%s_%hx", pc_serverData->logFileBase.c_str(), msqCommandBuf.s_init.ui8_bus);
-#else
-            // sprintf(file_name, "../../../simulated_io/%s_%hx", pc_serverData->logFileBase.c_str(), msqCommandBuf.s_init.ui8_bus);
-#endif
-
-            pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus] = fopen(file_name.c_str(), "a+");
+            char file_name[255];
+            snprintf(file_name, 255, "%s_%hx", pc_serverData->logFileBase.c_str(), msqCommandBuf.s_init.ui8_bus);
+            if ((pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus] = fopen(file_name, "a+")) == NULL ) {
+              perror("fopen");
+              exit(1);
+            }
           }
         }
         
@@ -640,24 +707,31 @@ static void* command_thread_func(void* ptr)
         
 
       case COMMAND_CLOSE:
+
+        if (msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR )
+          i32_error = HAL_RANGE_ERR;
+        else {
       
-        if (iter_client != NULL) {
+          if (iter_client != NULL) {
 
-          if (ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
-            ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]--;
+            if (ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
+              ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]--;
 
-          for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
-            for (uint8_t j=0; j<cui8_maxCanObj; j++) {
-              clearReadQueue(i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
-              clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
+            for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
+              for (uint8_t j=0; j<cui8_maxCanObj; j++) {
+                clearReadQueue(i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
+                clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
+              }
+            
+            if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] && pc_serverData->b_logMode && pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]) {
+              fclose(pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]);
+              pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus] = 0;
             }
 
-          if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] && (pc_serverData->logMode || pc_serverData->inputFileMode) && pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus])
-            fclose(pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]);
+          } else 
+            i32_error = HAL_CONFIG_ERR;
+        }
 
-        } else 
-          i32_error = HAL_CONFIG_ERR;
-        
         send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
         
         break;

@@ -172,6 +172,7 @@ void scanCanMsgLine( uint8_t bBusNumber,uint8_t bMsgObj )
 			&(pRead[bBusNumber][bMsgObj].abData[2]), &(pRead[bBusNumber][bMsgObj].abData[3]),
 			&(pRead[bBusNumber][bMsgObj].abData[4]), &(pRead[bBusNumber][bMsgObj].abData[5]),
 			&(pRead[bBusNumber][bMsgObj].abData[6]), &(pRead[bBusNumber][bMsgObj].abData[7]));
+
 		// check for close time
 		if ( ( pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms >= lastCloseTimeArr[bBusNumber][bMsgObj] )
 			&& ( iResult != EOF ) )
