@@ -741,7 +741,7 @@ int16_t CANIO_c::processMsg(){
 	if ( c_lastMsgObj.isOpen() )
 	{ // process all messages which where placed during the reconfig in the last message object
 		ui8_processedMsgCnt += c_lastMsgObj.processMsg( ui8_busNumber, true );
-		c_lastMsgObj.lock( true );
+		c_lastMsgObj.close();
 	}
 
 	for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
@@ -1198,10 +1198,16 @@ bool CANIO_c::reconfigureMsgObj()
 	if ( c_lastMsgObj.isOpen() )
 	{ // process all messages which where placed during the reconfig in the last message object
 		c_lastMsgObj.processMsg( ui8_busNumber, true );
+		// unlock it in any case
+		c_lastMsgObj.lock( false );
 	}
-
-	// unlock in any case the last MsgObj_c for receive of all msgs during reconfig
-	c_lastMsgObj.lock( false );
+	else
+	{ // not yet open -> open it now
+		Ident_c tmp ( 0, Ident_c::ExtendedIdent );
+		// configure the last MsgObj_c
+		c_lastMsgObj.setFilter( tmp );
+		c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
+	}
 
   // create according to new global t_mask all MsgObj_c with
   // unique filter settings -> merge all filter settings where
@@ -1239,7 +1245,6 @@ bool CANIO_c::reconfigureMsgObj()
   // for last message object
   getLbsErrInstance().clear( LibErr_c::CanOverflow, LibErr_c::Can );
 
-  HAL::wdTriggern();
   return b_result;
 }
 
@@ -1327,14 +1332,13 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
     return false; // exit function with error value
   }
 
-  bool b_lastMsgObjWasLocked = true;
+  bool b_lastMsgObjWasOpen = false;
 	if ( c_lastMsgObj.isOpen() )
 	{ // the last MsgObj_c is open -> so it may contain some unprocessed messages
-		if ( ! c_lastMsgObj.isLocked() ) b_lastMsgObjWasLocked = false;
 		// ==>> process all messages which where placed during the reconfig in the last message object
 		c_lastMsgObj.processMsg( ui8_busNumber, true );
-		// unlock it now in any case
-		c_lastMsgObj.lock( false );
+		c_lastMsgObj.close();
+		b_lastMsgObjWasOpen = true;
 	}
 
 
@@ -1343,8 +1347,6 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
 
 	// to prevent double re-init of can close it first
 	HAL::can_configGlobalClose(ui8_busNumber);
-	// clear state of last MsgObj_c
-	c_lastMsgObj.close();
 	#ifdef DEBUG
 	getRs232Instance()
 			<< "CANIO_c::baseCanInit( " << rui16_bitrate << " ) vor HAL::can_configGlobalInit\n";
@@ -1380,19 +1382,14 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
 		return false;
 	}
 
-	// open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
-	// --> avoid loss of CAN messages which would normally be stored in the already active MsgObj_c instances
-	Ident_c tmp ( 0, Ident_c::ExtendedIdent );
-	// configure the last MsgObj_c
-	c_lastMsgObj.setFilter( tmp );
-	c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
-	if ( b_lastMsgObjWasLocked )
-	{ // lock it immediately, as it shall only receive messages during reconfigureMsgObj() execution
-		c_lastMsgObj.lock( true );
-	}
-	else
-	{ // don't lock it, so that messages can be stored during further reconfig
-		c_lastMsgObj.lock( false );
+
+	if ( b_lastMsgObjWasOpen )
+	{ // open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
+		// --> avoid loss of CAN messages which would normally be stored in the already active MsgObj_c instances
+		Ident_c tmp ( 0, Ident_c::ExtendedIdent );
+		// configure the last MsgObj_c
+		c_lastMsgObj.setFilter( tmp );
+		c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
 	}
 
   // init of BUS without error -> continue with send obj configuration
