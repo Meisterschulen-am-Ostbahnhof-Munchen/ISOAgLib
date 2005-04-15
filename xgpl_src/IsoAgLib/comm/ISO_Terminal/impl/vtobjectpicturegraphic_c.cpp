@@ -165,14 +165,18 @@ namespace __IsoAgLib {
       } \
     } 
 
-#define MACRO_calculateRequestedSize \
+#if defined (NO_BITMAP_SCALING)
+  #define MACRO_calculateRequestedSize \
+  	uint16_t width = vtObjectPictureGraphic_a->width;
+#else
+  #define MACRO_calculateRequestedSize \
     uint16_t width; \
     if (flags & FLAG_ORIGIN_SKM) { \
       width = (((uint32_t) vtObjectPictureGraphic_a->width * factor) >> 20); \
     } else { \
       width = (((uint32_t) vtObjectPictureGraphic_a->width * vtDimension) /opDimension); \
     }
-
+#endif
 
 
 // //////////////////////////////// +X2C Operation 150 : stream
