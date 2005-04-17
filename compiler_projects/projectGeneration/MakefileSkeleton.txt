@@ -1,0 +1,88 @@
+####### Some Standard Rules
+CC       = gcc
+CXX      = g++
+LEX      = flex
+YACC     = yacc
+CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith -Wstrict-prototypes $(PROJ_DEFINES)
+CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith -Wstrict-prototypes $(PROJ_DEFINES)
+LEXFLAGS =
+YACCFLAGS= -d
+INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
+LINK     = g++
+LFLAGS   =
+LIBS     = $(SUBLIBS)  $(BIOS_LIB)
+AR       = ar cqs
+RANLIB   =
+TAR      = tar -cf
+GZIP     = gzip -9f
+COPY     = cp -f
+COPY_FILE= $(COPY)
+COPY_DIR = $(COPY) -r
+INSTALL_FILE= $(COPY_FILE)
+INSTALL_DIR = $(COPY_DIR)
+DEL_FILE = rm -f
+SYMLINK  = ln -sf
+DEL_DIR  = rmdir
+MOVE     = mv -f
+CHK_DIR_EXISTS= test -d
+MKDIR    = mkdir -p
+
+####### Output directory
+
+OBJ_DIR  = objects
+
+####### Build Rules
+
+OBJECTS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
+DEPS := $(patsubst %.o,%.d,$(OBJECTS))
+
+# $(OBJ_DIR)/%.d :
+# 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM -MT $(patsubst %.d,%.o,$@)  $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) > $@
+
+$(OBJ_DIR)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR)/$$1!' > $@
+
+include $(DEPS)
+
+####### Implicit rules
+
+.SUFFIXES: .c .o .cpp .cc .cxx .C
+
+$(OBJ_DIR)/%.o : $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) $(OBJ_DIR)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR)/%.o,%,$@).cpp,$(SOURCES))
+
+####### Build rules
+deps : $(DEPS)
+
+all: Makefile $(TARGET)
+$(TARGET):  $(OBJECTS)
+	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
+
+dist:
+	@mkdir -p objects/$(TARGET) && $(COPY_FILE) --parents $(SOURCES) $(HEADERS) $(FORMS) $(DIST) objects/$(TARGET)/ && ( cd `dirname objects/$(TARGET)` && $(TAR) vtserver_rte.tar vtserver_rte && $(GZIP) vtserver_rte.tar ) && $(MOVE) `dirname objects/vtserver_rte`/vtserver_rte.tar.gz . && $(DEL_FILE) -r objects/vtserver_rte
+
+yaccclean:
+lexclean:
+clean:
+	-$(DEL_FILE) $(OBJECTS) $(DEPS)
+	-$(DEL_FILE) *~ core *.core
+
+
+####### Sub-libraries
+
+distclean: clean
+	-$(DEL_FILE) $(TARGET) $(TARGET)
+
+
+FORCE:
+
+####### Compile
+
+
+####### Install
+
+install:
+
+uninstall:
+

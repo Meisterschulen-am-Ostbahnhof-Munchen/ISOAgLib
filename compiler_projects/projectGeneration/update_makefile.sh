@@ -95,7 +95,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # variables
 # if one of the following variables isn't set
 # the corresponding default values are used
-# + USE_CAN_DRIVER="simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" -> select wanted driver connection for CAN
+# + USE_CAN_DRIVER="simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" -> select wanted driver connection for CAN
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
@@ -460,6 +460,8 @@ function create_filelist( )
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_simulating*'"
 	elif [ $USE_CAN_DRIVER = "rte" ] ; then
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_rte*'"
+	elif [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'"
 	elif [ $USE_CAN_DRIVER = "sys" ] ; then
 		PLATFORM=`uname`
 		if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
@@ -474,7 +476,7 @@ function create_filelist( )
 	elif  [ $USE_CAN_DRIVER = "sontheim" ] ; then
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_sontheim_canlpt*'"
 	else
-		echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
+		echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
 		echo 'Current Setting is $USE_CAN_DRIVER'
 		exit 3
 	fi
@@ -911,67 +913,81 @@ function create_autogen_project_config()
 	cd $1
 }
 
-function find_qmake()
-{
-	if [ -z "$QMAKE_PATH" ] ; then
-  	#try to find it with which
-    QMAKE_PATH=`which qmake`
-  fi
-	if [ -z "$QMAKE_PATH" ] ; then
-  	#still no set -> search it in /usr/lib/qt*
-    QMAKE_PATH=`find /usr/lib \( -type f -o -type l \) -perm -a=x -name "qmake" -path "*/qt*"`
-  fi
-
-	if [ -z "$QMAKE_PATH" ] ; then
-  	#still no set -> search it in /usr/lib/qt*
-    QMAKE_PATH=`find /usr/share \( -type f -o -type l \) -perm -a=x -name "qmake" -path "*/qt*"`
-  fi
-
-  return
-}
-
-
 function create_makefile()
 {
   # go to project dir - below config dir
   DEV_PRJ_DIR="$1/$PROJECT"
-  mkdir -p "$DEV_PRJ_DIR/objects"
   cd $DEV_PRJ_DIR
+  mkdir -p "objects"
+  MakefileFilelist="$1/$PROJECT/$FILELIST_PURE"
 
-	#first variable lines
-  `echo DEFINES = $USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES > $PROJECT.pro`
-	`echo INCLUDEPATH = ../$ISO_AG_LIB_PATH/xgpl_src >> $PROJECT.pro`
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-	`echo INCLUDEPATH += ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH >> $PROJECT.pro`
-    done
+	MakefileName="Makefile"
 
+	# create Makefile Header
+	echo "#############################################################################" > $MakefileName
+	echo "# Makefile for building: $PROJECT" >> $MakefileName
+	echo "# Project:               $PROJECT" >> $MakefileName
+	echo "#############################################################################" >> $MakefileName
+	echo ""  >> $MakefileName
+	echo "####### Project specific variables" >> $MakefileName
+	echo "TARGET = $PROJECT" >> $MakefileName
+	echo "ISOAGLIB_PATH = ../$ISO_AG_LIB_PATH" >> $MakefileName
+	echo -n "APP_INC = " >> $MakefileName
+  for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+		echo -n "-I../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH " >> $MakefileName
+  done
 
-	cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/qmake_stub.pro $FILELIST_QMAKE >> $PROJECT.pro
+	echo "" >> $MakefileName
+	if [ $USE_CAN_DRIVER = "rte" -o $USE_RS232_DRIVER = "rte" ] ; then
+		echo "BIOS_LIB = ../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/lib/librte_client.a" >> $MakefileName
 
-
-
-	if [ $USE_CAN_DRIVER = "rte" ] ; then
-		`echo QMAKE_LIBS += ../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/lib/librte_client.a >> $PROJECT.pro`
-		# first include line
-		`echo INCLUDEPATH += ../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/rte_client_lib >> $PROJECT.pro`
-		`echo INCLUDEPATH += ../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/include >> $PROJECT.pro`
-		`echo INCLUDEPATH += ../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/sw >> $PROJECT.pro`
+		echo -n "BIOS_INC = -I../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/rte_client_lib" >> $MakefileName
+		echo -n " -I../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/include" >> $MakefileName
+		echo " -I../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/sw" >> $MakefileName
 	fi
 
-  #`echo DEFINES += USE_DIN_GPS USE_EEPROM_IO >> $PROJECT.pro`
+	echo -n -e "\nPROJ_DEFINES = -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileName
+	for SinglePrjDefine in $PRJ_DEFINES ; do
+		echo -n " -D$SinglePrjDefine" >> $MakefileName
+	done
+	echo "" >> $MakefileName
 
-  # call the function to derive the path to qmake
-  find_qmake
-  # now call qmake to create the Makefiles
-  `$QMAKE_PATH -o 'Makefile' $PROJECT.pro`
-  sed s#-g#-ggdb#g Makefile > Makefile.1
-  sed s#-O2#-O0#g Makefile.1 > Makefile.2
-  sed s#-I/usr/include##g Makefile.2 > Makefile
+	echo -e "\n\nfirst: all\n" >> $MakefileName
+	echo "####### Files" >> $MakefileName
+	echo -n "SOURCES = " >> $MakefileName
 
-	rm -f Makefile.1
-	rm -f Makefile.2
-	rm -f filelist.qmake
 
+	FIRST_LOOP="YES"
+	for CcFile in `grep -E "\.cc|\.cpp|\.c" $MakefileFilelist` ; do
+		if [ $FIRST_LOOP != "YES" ] ; then
+			echo -e -n '\\' >> $MakefileName
+			echo -e -n "\n\t\t" >> $MakefileName
+		else
+			FIRST_LOOP="NO"
+		fi
+		echo -e -n "$CcFile  " >> $MakefileName
+	done
+	echo -e "\n" >> $MakefileName
+
+	# build special target for CAN server
+	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
+		mkdir -p objects_server
+		echo -e "\n#Special Sources for CAN Server" >> $MakefileName
+		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \\" >> $MakefileName
+		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp" >> $MakefileName
+		echo -e "\n#Special Rules for CAN Server" >> $MakefileName
+
+		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileName
+	fi
+
+
+	cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt >> $MakefileName
+
+	# add can_server creation to target "all"
+	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
+		sed -e 's#all:#all: can_server#g'  $MakefileName > $MakefileName.1
+		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileName.1 > $MakefileName
+	fi
 
 	# now create a Kdevelop3 project file
 	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/kdevelop3Generic.kdevelop $PROJECT.kdevelop
@@ -1479,7 +1495,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     target which is specified in the configuration file
                                     ( "pc_linux"|"pc_win32"|"esx"|"c2c"|"imi"|"pm167"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
-                                    ( "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
+                                    ( "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte" ).
 
@@ -1620,6 +1636,22 @@ case "$USE_CAN_DRIVER" in
 			;;
 			pc_win32)
 				echo "RTE CAN driver can only used for target pc_linux" 1>&2
+				usage
+				exit 1
+			;;
+			*)
+				echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+				USE_CAN_DRIVER="sys"
+				PARAMETER_CAN_DRIVER="sys"
+			;;
+		esac
+	;;
+	linux_server_client)
+		case "$USE_TARGET_SYSTEM" in
+			pc_linux)
+			;;
+			pc_win32)
+				echo "Server Client CAN driver can only used for target pc_linux" 1>&2
 				usage
 				exit 1
 			;;
