@@ -92,7 +92,8 @@ using namespace std;
 //! open a input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
-#if defined( SYSTEM_A1 )
+//#if defined( SYSTEM_A1 )
+#if __GNUC__ < 3
 	b_eofReached = false;
 
 	if ( ( rt_mode & StreamOut ) != 0 ) return false;
