@@ -692,7 +692,6 @@ unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro)
   if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
 /** @todo check if all chars in the string are numbers, not only the first! */
 		if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
-
 		// Starting with a letter, so look up id!
 		return getID (rpc_string, rb_isMacro, false, 0);
 }
@@ -2503,7 +2502,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          setAttributeValue(attrFill_pattern);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFill_type]), atoi(attrString [attrFill_colour]), MACRO_16bitToLE(idOrName_toi(attrString [attrFill_pattern], /*macro?*/false)));
+        sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFill_type]), atoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
 
         objChildCommands++;
        }
