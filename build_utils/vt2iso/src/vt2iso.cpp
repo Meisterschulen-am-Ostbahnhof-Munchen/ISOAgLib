@@ -2472,7 +2472,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
          setAttributeValue(attrLine_art);
         }
         // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(idOrName_toi(attrString [attrLine_art], /*macro?*/false)));
+        sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(atoi(attrString [attrLine_art])));
 
         objChildCommands++;
        }
