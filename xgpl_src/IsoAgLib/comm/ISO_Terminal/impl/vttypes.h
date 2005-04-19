@@ -157,8 +157,12 @@ class vtObjectAuxiliaryInput_c;
     MACRO_scaleLocalVarVtDimension
 
 #define MACRO_scaleSKLocalVars \
-    uint32_t factorX = ((uint32_t) __IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skWidth << 20) / 60; \
-    uint32_t factorY = ((uint32_t) __IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skHeight << 20) / 32; \
+    uint32_t opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance().getVtObjectPoolSoftKeyWidth(); \
+    uint32_t opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance().getVtObjectPoolSoftKeyHeight(); \
+    uint32_t vtSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skWidth; \
+    uint32_t vtSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skHeight; \
+    uint32_t factorX = (vtSoftKeyWidth  << 20) / opSoftKeyWidth; \
+    uint32_t factorY = (vtSoftKeyHeight << 20) / opSoftKeyHeight; \
     uint32_t factor  = (factorX < factorY) ? factorX : factorY;
 
 
@@ -211,8 +215,8 @@ class vtObjectAuxiliaryInput_c;
 #define MACRO_streamObjectXYcenteredInSoftKey(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
     MACRO_scaleSKLocalVars \
-    uint16_t centerX = (__IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skWidth -  ((60*factor) >> 20)) >>1; \
-    uint16_t centerY = (__IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skHeight - ((32*factor) >> 20)) >>1; \
+    uint16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factor) >> 20)) >>1; \
+    uint16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factor) >> 20)) >>1; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
@@ -247,22 +251,6 @@ class vtObjectAuxiliaryInput_c;
       curBytes += 2; \
       sourceOffset += 2; \
     }
-
-/* Brad's Version - seems not to be right... why center anything??
-#define MACRO_streamPolygonPoints(bytesBefore) \
-    uint16_t nrPointXY = (sourceOffset-(bytesBefore)) / 4; \
-    uint16_t centerX = (__IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skWidth -  ((60*factor) >> 20)) >>1; \
-    uint16_t centerY = (__IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skHeight - ((32*factor) >> 20)) >>1; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+4*MACRO_vtObjectTypeA->numberOfPoints)) && ((curBytes+4) <= maxBytes)) { \
-      destMemory [curBytes] = (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x+centerX) & 0xFF; \
-      destMemory [curBytes+1] = (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x+centerX) >> 8; \
-      destMemory [curBytes+2] = (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y+centerY) & 0xFF; \
-      destMemory [curBytes+3] = (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y+centerY) >> 8; \
-      nrPointXY++; \
-      curBytes += 4; \
-      sourceOffset += 4; \
-    }
-*/
 
 /** @todo: polygon positions with x/yBlock!
       if (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont != NULL) { \

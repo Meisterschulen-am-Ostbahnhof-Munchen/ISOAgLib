@@ -372,6 +372,8 @@ public:
   */
   uint8_t            getVtSourceAddress () { return vtSourceAddress; };
   uint16_t           getVtObjectPoolDimension () { return c_streamer.pc_pool->getDimension(); };
+  uint16_t           getVtObjectPoolSoftKeyWidth () { return c_streamer.pc_pool->getSkWidth(); };
+  uint16_t           getVtObjectPoolSoftKeyHeight () { return c_streamer.pc_pool->getSkHeight(); };
   uint32_t           getVtHardwareDimension () { return (uint32_t) vtCapabilities_a.hwWidth; };
 //sendCommandState_t getVtSendCommandState () { return en_sendCommandState; };
   vtCapabilities_s*  getVtCapabilities () { return &vtCapabilities_a; };

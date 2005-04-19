@@ -392,6 +392,8 @@ unsigned int kcNextAutoID;
 unsigned int objNextUnnamedName;
 unsigned int objCount;
 unsigned int opDimension; bool is_opDimension=false;
+unsigned int skWidth;     bool is_skWidth=false;
+unsigned int skHeight;    bool is_skHeight=false;
 
 char attrString [maxAttributeNames] [stringLength+1];
 bool attrIsGiven [maxAttributeNames];
@@ -463,8 +465,8 @@ void clean_exit (int return_value, char* error_message=NULL)
    // write implementation of handler class constructor into list
   // as there the list must be known
   // -> the handler decleration can be included from everywhere
-  fprintf (partFileE, "\n  iObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjects, %d, %d) {};\n",
-   proName, proName, objCount, opDimension);
+  fprintf (partFileE, "\n  iObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjects, %d, %d, %d, %d) {};\n",
+   proName, proName, objCount, opDimension, skWidth, skHeight);
 
   fclose(partFileE);
  }
@@ -481,7 +483,7 @@ void clean_exit (int return_value, char* error_message=NULL)
    fprintf (partFileF, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
    fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
    fprintf (partFileF, "\n  void initAllObjectsOnce();");
-   fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName); //, objCount, opDimension);
+   fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName);
    fprintf (partFileF, "\n};\n");
    fprintf (partFileF, "\n #endif\n" );
    fclose (partFileF);
@@ -496,7 +498,7 @@ void clean_exit (int return_value, char* error_message=NULL)
 // fprintf (partFileFderived, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
 // fprintf (partFileFderived, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
    fprintf (partFileFderived, "\n  void initAllObjectsOnce();");
-   fprintf (partFileFderived, "\n  iObjectPool_%s_c ();", proName); //, objCount, opDimension);
+   fprintf (partFileFderived, "\n  iObjectPool_%s_c ();", proName);
    fprintf (partFileFderived, "\n};\n");
    fprintf (partFileFderived, "\n #endif\n" );
    fclose (partFileFderived);
@@ -1631,6 +1633,24 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       is_opDimension = true;
       continue;
      }
+     if (strncmp (attr_name, "sk_width", stringLength) == 0) {
+      if (is_skWidth) {
+        std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
+        clean_exit (-1);
+      }
+      skWidth = atoi (attr_value);
+      is_skWidth = true;
+      continue;
+     }
+     if (strncmp (attr_name, "sk_height", stringLength) == 0) {
+      if (is_skHeight) {
+        std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_height= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
+        clean_exit (-1);
+      }
+      skHeight = atoi (attr_value);
+      is_skHeight = true;
+      continue;
+     }
      if (strncmp (attr_name, "std_bitmap_path", stringLength) == 0) {
        strcpy (std_bitmap_path, attr_value);
        continue;
@@ -1639,9 +1659,6 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
        strcpy (fix_bitmap_path, attr_value);
        continue;
      }
-    }
-    if (is_opDimension) {
-     fprintf (partFileD, "#define vtObjectPoolDimension %d\n", opDimension);
     }
    }
   }
@@ -3542,9 +3559,16 @@ int main(int argC, char* argV[])
   // And call the termination method
   XMLPlatformUtils::Terminate();
 
-
-
  } // loop all files
+
+
+ /** @todo Do NOT allow 60/32 as standard. User has to set it just like dimension! */
+ if (!is_skWidth) skWidth = 60;
+ if (!is_skHeight) skHeight = 32;
+ fprintf (partFileD, "#define vtObjectPoolDimension %d\n", opDimension);
+ fprintf (partFileD, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
+ fprintf (partFileD, "#define vtObjectPoolSoftKeyHeight %d\n", skHeight);
+
 
  if (errorOccurred) clean_exit (4, "XML-Parsing error occured. Terminating.\n");
  else clean_exit (0, "All conversion done successfully.\n");

@@ -191,15 +191,20 @@ public:
     hook function that gets called immediately after recognizing
     the loss of the VT (VT Status Msg not coming for >= 3secs.)
   */
-  virtual void eventEnterSafeState ()=0;
+  virtual void eventEnterSafeState()=0;
   
   /**
     this init function has to be idempotent!
   */
   virtual void initAllObjectsOnce()=0;
   
-  iIsoTerminalObjectPool_c(iVtObject_c** r_iVtObjects, uint16_t r_numObjects, uint16_t r_dimension) :
-    iVtObjects (r_iVtObjects), numObjects (r_numObjects), dimension (r_dimension), b_initAllObjects (false) {};
+  iIsoTerminalObjectPool_c(iVtObject_c** r_iVtObjects, uint16_t r_numObjects, uint16_t r_dimension, uint16_t r_skWidth=60, uint16_t r_skHeight=32)
+    : iVtObjects (r_iVtObjects)
+    , numObjects (r_numObjects)
+    , dimension (r_dimension)
+    , skWidth (r_skWidth)
+    , skHeight (r_skHeight)
+    , b_initAllObjects (false) {};
   
   /**
     hook function that gets called every time a color-value
@@ -226,12 +231,16 @@ protected:
   iVtObject_c** iVtObjects;
   uint16_t numObjects;
   uint16_t dimension;
+  uint16_t skWidth;
+  uint16_t skHeight;
   bool b_initAllObjects;
 
 public:
   iVtObject_c** getIVtObjects() { return iVtObjects; };
   uint16_t getNumObjects() { return numObjects; };
   uint16_t getDimension() { return dimension; };
+  uint16_t getSkWidth() { return skWidth; };
+  uint16_t getSkHeight() { return skHeight; };
     
 };
 
