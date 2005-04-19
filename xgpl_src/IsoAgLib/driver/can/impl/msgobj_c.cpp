@@ -87,7 +87,7 @@
 #include "canio_c.h"
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/hal/system.h>
-#ifdef SYSTEM_PC
+#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
 #include <iostream>
 #endif
 
@@ -202,7 +202,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
     right.setIsOpen(false); // now left is correlated to the open obj
   }
 
-  #if defined( SYSTEM_PC ) && defined( DEBUG )
+  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
   for ( int i = 0; i < cnt_filterBox(); i++ )
   {
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
@@ -224,7 +224,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
       (cnt++, j++))
   {
     arrPfilterBox[cnt] = right.arrPfilterBox[j];
-	  #if defined( SYSTEM_PC ) && defined( DEBUG )
+	  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
     std::cout << "zusaetzliche FilterBox in merge nr: " << cnt
       << "FilterBox: 0x"
@@ -291,13 +291,13 @@ void MsgObj_c::close(){
   @return true -> this reference could be stored in this MsgObj_c (limited amount)
 */
 bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
-  // #ifdef SYSTEM_PC
+  // #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
 	#if 0
   std::cout << "\n\nCALL MsgObj_c::insertFilterBox" << std::endl;
   #endif
   for ( int i = 0; i < cnt_filterBox(); i++ )
   {
-    // #ifdef SYSTEM_PC
+    // #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
 		#if 0
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
     std::cout << "bestehend FilterBox in insertFilterBox nr: " << i
@@ -312,7 +312,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
       // check if given FilterRef is already registered
       if ( &(*arrPfilterBox[i]) == &(*rrefc_box) )
       {
-			  #if defined( SYSTEM_PC ) && defined( DEBUG )
+			  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
         std::cout << "Versuch doppelte FilterBox einzutragen abgewiesen mit" << &(*arrPfilterBox[i]) << std::endl;
         #endif
         return true;
@@ -323,7 +323,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
   { // insertion of pinter is possible -> register the pointer
     // insert pointer in array
     arrPfilterBox[cnt_filterBox()] = rrefc_box;
-    // #ifdef SYSTEM_PC
+    // #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
 		#if 0
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
     std::cout << "neue FilterBox in insertFilterBox "
@@ -519,7 +519,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
       // search for the suiting FilterBox
       for (int16_t i=0; i < cnt_filterBox(); i++)
       {
-			  #if defined( SYSTEM_PC ) && defined( DEBUG )
+			  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
         if ( ( i32_ident & 0x7F0 ) == 0x500 )
         {
           std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
@@ -533,7 +533,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
         #endif
         if (arrPfilterBox[i]->matchMsgId(i32_ident, c_filter.identType()))
         { // ident of received data matches the filter of the i'th registered FilterBox
-				  #if defined( SYSTEM_PC ) && defined( DEBUG )
+				  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
           if ( ( i32_ident & 0x7F0 ) == 0x500 ) std::cout << "Stosse Verarbeitung zu Eintrag i == " << i << " an." << std::endl;
           #endif
           CANPkgExt_c* pc_target = arrPfilterBox[i]->customersCanPkg();
@@ -594,7 +594,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
 bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
   bool b_result = false;
 #ifdef DEBUG
-    std::cout << "MsgObj::configCAN (busNr="<< (uint32_t) rui8_busNumber <<", msgNr="<< (uint32_t) rui8_msgNr <<")called. Filter is: " << c_filter.ident() << ". \n";
+    //std::cout << "MsgObj::configCAN (busNr="<< (uint32_t) rui8_busNumber <<", msgNr="<< (uint32_t) rui8_msgNr <<")called. Filter is: " << c_filter.ident() << ". \n";
 #endif
   if (!verifyBusMsgobjNr(rui8_busNumber, rui8_msgNr))
   { // the given values are not within allowed limits (defined in isoaglib_config.h)

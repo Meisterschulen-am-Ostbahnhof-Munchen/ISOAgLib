@@ -100,7 +100,7 @@
 #include "filterbox_c.h"
 
 // headers for string manipulation
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC)
+#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
   #include <ext/slist>
   namespace std { using __gnu_cxx::slist;};
 #else

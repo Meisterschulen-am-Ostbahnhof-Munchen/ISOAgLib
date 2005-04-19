@@ -122,7 +122,7 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
       for (i=0; i < wNumber; i++)
       {
         c_temp = pByte[i];
-        if ( std::isprint( c_temp ) ) putchar(c_temp);
+        if ( isprint( c_temp ) ) putchar(c_temp);
         fputc(c_temp, eepromDat);
       }
       printf(", als Zahl %i", i32_temp);
@@ -132,21 +132,21 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
       pByte = (uint8_t*)&sTemp;
       for (i=0; i < wNumber; i++)
       {
-			 if ( std::isprint( pByte[i] ) ) putchar(pByte[i]);
+			 if ( isprint( pByte[i] ) ) putchar(pByte[i]);
        fputc(pByte[i], eepromDat);
       }
       printf(", als Zahl %hi", sTemp);
       break;
     case 1:
       c_temp = *(int8_t*)pbData;
-      if ( std::isprint( c_temp ) ) putchar(c_temp);
+      if ( isprint( c_temp ) ) putchar(c_temp);
       fputc(c_temp, eepromDat);
       printf(", als Zahl %hi oder als Text %c", c_temp, c_temp);
       break;
     default:
       for (i=0; i < wNumber; i++)
       {
-        if ( std::isprint( pbData[i] ) ) putchar(pbData[i]);
+        if ( isprint( pbData[i] ) ) putchar(pbData[i]);
         fputc(pbData[i], eepromDat);
       }
       break;
