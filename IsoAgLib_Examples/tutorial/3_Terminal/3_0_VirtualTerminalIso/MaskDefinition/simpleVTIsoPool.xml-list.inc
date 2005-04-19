@@ -86,4 +86,4 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectsoftkeysAlarm
 };
 
-  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 85, 200) {};
+  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 85, 200, 60, 32) {};

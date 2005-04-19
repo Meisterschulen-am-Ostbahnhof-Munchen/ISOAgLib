@@ -3562,9 +3562,12 @@ int main(int argC, char* argV[])
  } // loop all files
 
 
- /** @todo Do NOT allow 60/32 as standard. User has to set it just like dimension! */
  if (!is_skWidth) skWidth = 60;
  if (!is_skHeight) skHeight = 32;
+ if (!is_skWidth || !is_skHeight) {
+   std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
+             << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so thake care that you know what you're doing!\n\n";
+ }
  fprintf (partFileD, "#define vtObjectPoolDimension %d\n", opDimension);
  fprintf (partFileD, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
  fprintf (partFileD, "#define vtObjectPoolSoftKeyHeight %d\n", skHeight);

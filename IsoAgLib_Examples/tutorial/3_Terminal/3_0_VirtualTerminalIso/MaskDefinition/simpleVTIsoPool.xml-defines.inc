@@ -1,4 +1,3 @@
-#define vtObjectPoolDimension 200
 #define iVtObjectIDimiIsoMaskupload 65534
 #define iVtObjectIDUnnamed1 65533
 #define iVtObjectIDUnnamed2 65532
@@ -92,5 +91,8 @@
 #define iVtObjectIDUnnamed25 65456
 #define iVtObjectIDUnnamed26 65455
 #define iVtObjectIDsoftkeysAlarm 65454
+#define vtObjectPoolDimension 200
+#define vtObjectPoolSoftKeyWidth 60
+#define vtObjectPoolSoftKeyHeight 32
 
 #define vtKeyCodeACK 0
