@@ -1,6 +1,5 @@
-#ifndef _PC_HAL_TARGET_EXTENSIONS_CAN_SERVER_H_
-#define _PC_HAL_TARGET_EXTENSIONS_CAN_SERVER_H_
-
+#ifndef _PC_HAL_CAN_CAN_MSG_H_
+#define _PC_HAL_CAN_CAN_MSG_H_
 
 #ifdef DEBUG
 #define DEBUG_PRINT(str) printf(str); fflush(0)
@@ -39,6 +38,27 @@ namespace __HAL {
 #define COMMAND_UNLOCK     41
 #define COMMAND_QUERYLOCK  42
 #define COMMAND_CLOSEOBJ   50
+
+
+struct can_data {
+  int32_t i32_time;
+  int32_t i32_ident;
+  uint8_t b_dlc;
+  uint8_t b_xtd;
+  uint8_t pb_data[8];
+};
+
+struct can_recv_data {
+  uint32_t b_bus;
+  can_data msg;
+};
+
+
+// IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
+// -> all needed offsets shall be added at the lowest possible layer
+//    ( i.e. direct in the BIOS/OS call)
+static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
+static const uint8_t cui8_maxCanObj = 15;
 
 
 // message queues / process id 
@@ -99,19 +119,6 @@ typedef struct {
   };
 } msqCommand_s;
 
-struct can_data {
-  int32_t i32_time;
-  int32_t i32_ident;
-  uint8_t b_dlc;
-  uint8_t b_xtd;
-  uint8_t pb_data[8];
-};
-
-struct can_recv_data {
-  uint32_t b_bus;
-  can_data msg;
-};
-
 
 typedef struct {
   int32_t i32_mtype;
@@ -126,12 +133,6 @@ typedef struct {
   tSend    s_sendData;
 } msqWrite_s;
 
-
-// IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
-// -> all needed offsets shall be added at the lowest possible layer
-//    ( i.e. direct in the BIOS/OS call)
-static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
-static const uint8_t cui8_maxCanObj = 15;
 
 void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqDataServer);
 

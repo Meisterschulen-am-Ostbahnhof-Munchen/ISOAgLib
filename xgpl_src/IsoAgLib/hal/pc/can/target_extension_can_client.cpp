@@ -64,11 +64,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <signal.h>
 
 #include <list>
 
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <sys/time.h>
 
 
 #include "can_msq.h"
@@ -279,6 +281,49 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
     }
 
   return 0;
+
+};
+
+void signal_handler(int signum) {
+  printf("signal: %d received\n", signum);
+}
+
+// wait for new messages in receive queue or i32_endThisLoop timestamp is reached, don't filter with client id, bus number oder msg obj
+void waitUntilCanReceive(int32_t i32_endThisLoop)
+{
+  int16_t i16_rc;
+  struct itimerval itimerVal;
+  static bool sigHandlerInstalled = FALSE;
+  int32_t i32_now;
+
+  if (i32_endThisLoop < (i32_now = getTime())) {
+    DEBUG_PRINT("*");
+    return;
+  }
+
+  if (!sigHandlerInstalled) {
+    signal(SIGALRM, signal_handler);
+    sigHandlerInstalled = TRUE;
+    DEBUG_PRINT("signal handler installed\n");
+  }
+
+  // no periodic timer!
+  itimerVal.it_interval.tv_sec=0;
+  itimerVal.it_interval.tv_usec=0;
+
+  // wait
+  itimerVal.it_value.tv_sec=0;
+  itimerVal.it_value.tv_usec = i32_endThisLoop - i32_now;
+
+  i16_rc = setitimer(ITIMER_REAL, &itimerVal, 0);
+
+  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, NULL, 0, 0, 0)) == -1)
+    if (errno == E2BIG) {
+      // message received, timer still running, stop timer
+      itimerVal.it_value.tv_sec=0;
+      itimerVal.it_value.tv_usec=0;
+      i16_rc = setitimer(ITIMER_REAL, &itimerVal, 0);
+    }
 
 };
 

@@ -62,7 +62,7 @@
 
 #include "can_target_extensions.h"
 
-#include "can_msq.h"
+#include "can_server.h"
 
 namespace __HAL {
 

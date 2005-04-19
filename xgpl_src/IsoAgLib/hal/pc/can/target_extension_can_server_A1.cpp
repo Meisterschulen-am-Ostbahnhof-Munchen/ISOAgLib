@@ -1,9 +1,10 @@
 /***************************************************************************
-						  target_extension_can_A1_binary.cpp - source for the
-									   PSEUDO BIOS for development and test on
-									   the Opus A1 with CAN communication using
-									   the Binary can drivers for /dev/wecan0
-									   and /dev/wecan1
+						  target_extension_can_server_A1_binary.cpp - 
+                    can server communicates with clients through message queues
+                    read/write operation for /dev/wecan<bus_no>
+                    message forwarding to other clients
+                    #define SIMULATE_BUS_MODE for operation without can device (operation based on message forwarding)
+                    use "can_server_a1 --help" for input parameters (log, replay mode)
 
                              -------------------
     begin                : Tue Oct 2 2001
@@ -54,12 +55,12 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
+
 // do not use can bus, operation is based on message forwarding in server
 #define SIMULATE_BUS_MODE 1
 
 
 #include "can_target_extensions.h"
-//#include <IsoAgLib/hal/pc/system/system.h>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -81,6 +82,7 @@
 
 #include <pthread.h>
 
+#include "can_server.h"
 #include "can_msq.h"
 
 using namespace __HAL;
@@ -146,37 +148,6 @@ struct CANmsg {
 typedef struct CANmsg canmsg;
 
 
-// client specific data
-typedef struct {
-  int32_t  i32_clientID;
-  int32_t  i32_runTime_msec;
-  bool     b_canBufferLock[cui32_maxCanBusCnt][cui8_maxCanObj];
-  bool     b_canObjConfigured[cui32_maxCanBusCnt][cui8_maxCanObj];
-  uint8_t  ui8_bufXtd[cui32_maxCanBusCnt][cui8_maxCanObj];
-  uint8_t  ui8_bMsgType[cui32_maxCanBusCnt][cui8_maxCanObj];
-  uint32_t ui32_filter[cui32_maxCanBusCnt][cui8_maxCanObj];
-  uint16_t ui16_size[cui32_maxCanBusCnt][cui8_maxCanObj];
-  uint16_t ui16_globalMask[cui32_maxCanBusCnt];
-  uint32_t ui32_globalMask[cui32_maxCanBusCnt];
-  uint32_t ui32_lastMask[cui32_maxCanBusCnt];
-} client_s;
-
-// server specific data
-class server_c {
-public:
-  server_c();
-  msqData_s msqDataServer;
-  std::list<client_s> l_clients;
-  std::string logFileBase;
-  std::string inputFile;
-  uint16_t ui16_globalMask[cui32_maxCanBusCnt];
-  // logging
-  bool b_logMode;
-  FILE* f_canOutput[cui32_maxCanBusCnt];
-  // replay
-  bool b_inputFileMode;
-  FILE* f_canInput;
-};
 
 server_c::server_c()
   : b_logMode(FALSE), b_inputFileMode(FALSE)
@@ -189,7 +160,7 @@ server_c::server_c()
 /////////////////////////////////////////////////////////////////////////
 // Function Declarations
 
-static int ca_InitApi_1 (int typ, int IoAdr);
+static int ca_InitApi_1 ();
 static int ca_ResetCanCard_1(void);
 static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1);
 static int ca_TransmitCanCard_1(tSend* ptSend);
@@ -202,155 +173,30 @@ static int	canBusIsOpen[cui32_maxCanBusCnt];
 static FILE*	canBusFp[cui32_maxCanBusCnt];
 
 
-static struct timeval startUpTime = {0,0};
-static int32_t getTime()
+namespace __HAL {
+
+int32_t getTime()
 {
-   struct timeval now;
-   gettimeofday(&now, 0);
-   if ( ( startUpTime.tv_usec == 0) && ( startUpTime.tv_sec == 0) ) {
-     startUpTime.tv_usec = now.tv_usec;
-     startUpTime.tv_sec = now.tv_sec;
-   }
-   if ((now.tv_usec-= startUpTime.tv_usec) < 0) {
-     now.tv_usec+= 1000000;
-     now.tv_sec-= 1;
-   }
-   now.tv_sec-= startUpTime.tv_sec;
-   return (now.tv_usec / 1000 + now.tv_sec * 1000);
-}
+  // use gettimeofday for native LINUX system
+  static struct timeval startUpTime = {0,0};
+  struct timeval now;
 
-static void usage() {
-  printf("usage: can_server_A1 [--log <log_file_name_base>] [--file-input <log_file_name>]\n\n");
-  printf("  --log         log can traffic into <log_file_name_base>_<bus_id>\n");
-  printf("  --file-input  read can data from file <log_fil_name>\n\n");
-}
-
-
-static int open_semaphore_set(int sema_proj_id )
-{
-  int sid;
-  key_t  semkey;
-
-  union semun {
-    int val;
-    struct semid_ds *buf;
-    unsigned short int *array;
-    struct seminfo *__buf;
-  } semopts;
-  
-  /* Generate our IPC key value */
-  semkey = ftok(MSQ_KEY_PATH, sema_proj_id);
-
-  if((sid = semget( semkey, 1, IPC_CREAT | 0660 )) == -1) {
-    return(-1);
-  }
-
-  semopts.val = 1;  /* initial value: resource free */
-  if (semctl( sid, 0, SETVAL, semopts) == -1) {
-    return(-1);
-  }
-
-  return(sid);
-}
-
-
-static int get_semaphore(int sid, int operation ) {
-
-  struct sembuf sem_command = { 0, operation, 0 };
-
-  if (semop(sid, &sem_command, 1) == -1)
-    return(-1);
-
-  return 1;
-
-}
-
-void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_handle)
-{
-  uint8_t data[8] = {0,0,0,0,0,0,0,0};
-  int32_t i32_sendTimestamp = getTime();
-  memcpy(data, ptSend->abData, ptSend->bDlc);
-  // @todo check timestamp
-  //if (i32_lastSendTime + ui16_sendPause > i32_sendTimestamp)
-  //i32_sendTimestamp = i32_lastSendTime + ui16_sendPause;
-  //i32_lastSendTime = i32_sendTimestamp;
-
-  fprintf(f_handle,
-          "%05d %d %d %d %d %-8x  %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx\n",
-          i32_sendTimestamp, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, ptSend->dwId,
-          data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
-
-};
-
-
-bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
-{
-  char zeile[100];
-  tReceive canData;
-  static struct timeval tv_start;
-  static bool first_call = TRUE;
-  struct timeval tv_current;
-  struct timezone tz;
-  uint32_t mydiff;
-
-  tz.tz_minuteswest=0;
-  tz.tz_dsttime=0;
-
-  if (first_call) {
-    first_call = FALSE;
-
-    if ((pc_serverData->f_canInput = fopen(pc_serverData->inputFile.c_str(), "r")) == NULL ) {
-      perror("fopen");
-      exit(1);
+  gettimeofday(&now, 0);
+  if ( ( startUpTime.tv_usec == 0) && ( startUpTime.tv_sec == 0) )
+	 {
+	 	startUpTime.tv_usec = now.tv_usec;
+	 	startUpTime.tv_sec = now.tv_sec;
+	 }
+  if ((now.tv_usec-= startUpTime.tv_usec) < 0)
+    {
+      now.tv_usec+= 1000000;
+      now.tv_sec-= 1;
     }
-    
-    if (gettimeofday(&tv_start, &tz)) {
-      perror("error in gettimeofday()");
-      exit(1);
-    }
-  }
-
-  while ( true ) {
-    fgets(zeile, 99, pc_serverData->f_canInput);
-    if ( strlen(zeile) == 0 ) {
-
-      if ( feof(pc_serverData->f_canInput) )
-        // no more data available
-        return FALSE;
-
-      continue;
-
-      int obj;
-
-		int iResult = sscanf(zeile, "%u %d %d %d %d %x  %hx %hx %hx %hx %hx %hx %hx %hx \n",
-                           &(ps_receiveData->msg.i32_time),
-                           &(ps_receiveData->b_bus), &obj,
-                           &(ps_receiveData->msg.b_xtd), &(ps_receiveData->msg.b_dlc),
-                           &(ps_receiveData->msg.i32_ident),
-                           &(ps_receiveData->msg.pb_data[0]), &(ps_receiveData->msg.pb_data[1]),
-                           &(ps_receiveData->msg.pb_data[2]), &(ps_receiveData->msg.pb_data[3]),
-                           &(ps_receiveData->msg.pb_data[4]), &(ps_receiveData->msg.pb_data[5]),
-                           &(ps_receiveData->msg.pb_data[6]), &(ps_receiveData->msg.pb_data[7]));
-      // @todo: ?  receivedata->msg.b_xtd = (msg.msg_type == MSGTYPE_EXTENDED);
-
-      // is data ready for submission?
-      if (gettimeofday(&tv_current, &tz)) {
-        perror("error in gettimeofday()");
-        exit(1);
-      }
-
-      mydiff=(tv_current.tv_sec-tv_start.tv_sec)*1000 + (tv_current.tv_usec-tv_start.tv_usec)/1000;
-
-      usleep((canData.tReceiveTime.l1ms - mydiff)*1000);
-
-      break;
-    }
-  }
-
-  // more data available
-  return TRUE;
+  now.tv_sec-= startUpTime.tv_sec;
+  return (now.tv_usec / 1000 + now.tv_sec * 1000);
 }
 
+} // end namespace
 
 static void enqueue_msg(int local_semaphore_id, uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t b_xtd, uint8_t* pui8_data, int32_t i32_clientID, server_c* pc_serverData)
 {
@@ -391,6 +237,7 @@ static void enqueue_msg(int local_semaphore_id, uint32_t DLC, uint32_t ui32_id, 
          DEBUG_PRINT1("iter->ui16_size[b_bus][i32_obj] %d\n", iter->ui16_size[b_bus][i32_obj]);
          DEBUG_PRINT1("iter->ui32_filter[b_bus][i32_obj] 0x%08x\n", iter->ui32_filter[b_bus][i32_obj]);
       */
+
       // compare received msg with filter
       if
         (
@@ -431,7 +278,7 @@ static void enqueue_msg(int local_semaphore_id, uint32_t DLC, uint32_t ui32_id, 
             
           DEBUG_PRINT("queueing message\n");
           pc_data = &(msqReadBuf.s_canData);
-          pc_data->i32_time = getTime() + iter->i32_runTime_msec;
+          pc_data->i32_time = __HAL::getTime() + iter->i32_runTime_msec;
           pc_data->i32_ident = ui32_id;
           pc_data->b_dlc = DLC;
           pc_data->b_xtd = b_xtd;
@@ -618,7 +465,7 @@ static void* command_thread_func(void* ptr)
         // client process id is used as clientID 
         s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
         // save difference between client runtime and server runtime
-        s_tmpClient.i32_runTime_msec = msqCommandBuf.s_runtime.i32_runTime_msec - getTime();
+        s_tmpClient.i32_runTime_msec = msqCommandBuf.s_runtime.i32_runTime_msec - __HAL::getTime();
 
         DEBUG_PRINT1("msec diff between can client and server: %d\n", s_tmpClient.i32_runTime_msec);
         
@@ -822,7 +669,7 @@ static void* command_thread_func(void* ptr)
 //			/dev/wecan1 are available and the drivers installed correctly or not
 //
 /////////////////////////////////////////////////////////////////////////
-static int ca_InitApi_1 (int typ, int IoAdr)
+static int ca_InitApi_1 ()
 {
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
     {
@@ -882,7 +729,7 @@ static int ca_ResetCanCard_1(void)
 static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1)
 {
 
-  DEBUG_PRINT1("In Init Function - can channel = %d\n", channel);
+  DEBUG_PRINT1("init can channel %d\n", channel);
 
   if( !canBusIsOpen[channel] ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", channel);
@@ -1085,7 +932,7 @@ int main(int argc, char *argv[])
   gHwType = HWTYPE_AUTO;
 #endif
 
-  apiversion = ca_InitApi_1(gHwType, LptIsaIoAdr);
+  apiversion = ca_InitApi_1();
   if ( apiversion == 0 ) { // failure - nothing found
     DEBUG_PRINT1("FAILURE - No CAN card was found with automatic search with IO address %04X for manually configured cards\r\n", LptIsaIoAdr );
     exit(1);
@@ -1118,12 +965,6 @@ int main(int argc, char *argv[])
 
   printf("operating\n");
 
-#ifndef SIMULATE_BUS_MODE
   can_read(&c_serverData);
-#else
-  for (;;)
-    sleep(1000);
-#endif
-
 
 }
