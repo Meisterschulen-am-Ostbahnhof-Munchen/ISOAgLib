@@ -45,8 +45,8 @@
 	#include <paintlib/common/planydec.h>
 	#include <paintlib/common/planybmp.h>
 #else
-	#include "/usr/include/paintlib/planydec.h"
-	#include "/usr/include/paintlib/planybmp.h"
+	#include <paintlib/planydec.h>
+	#include <paintlib/planybmp.h>
 #endif
 
 #include "vt2isoimagebase_c.h"
