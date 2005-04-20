@@ -91,7 +91,11 @@
 #include <IsoAgLib/hal/eeprom.h>
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#ifdef SYSTEM_PC
+		#include <iostream>
+	#else
+		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#endif
 	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
@@ -186,7 +190,7 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
   static bool firstDefaultInitCallStart = true;
   if ( firstDefaultInitCallStart ) {
     firstDefaultInitCallStart = false;
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
         << "Start CANIO_c::init() mit BUS: " << int(rui8_busNumber)
         << ", Bitrate: " << int(rui16_bitrate) << "\n";
   }
@@ -230,7 +234,7 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     static bool firstDefaultInitCallEnd = true;
     if ( ! firstDefaultInitCallEnd ) {
       firstDefaultInitCallEnd = false;
-      getRs232Instance()
+      INTERNAL_DEBUG_DEVICE
           << "Ende CANIO_c::init() mit Default Werten bei spc_instance == "
           << uint32_t( spc_instance )
           << "\n";
@@ -256,7 +260,7 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     { // one of the range tests not passed
       getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
       #ifdef DEBUG
-      getRs232Instance()
+      INTERNAL_DEBUG_DEVICE
           << "Ende CANIO_c::init() mit falschen Parametern\n";
       #endif
       return false; // exit function with error information
@@ -280,7 +284,7 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     irqMsgObjVec[ui8_busNumber] = &arrMsgObj;
   }
   #ifdef DEBUG
-  getRs232Instance()
+  INTERNAL_DEBUG_DEVICE
       << "Ende CANIO_c::init()\n";
   #endif
 
@@ -306,7 +310,7 @@ void CANIO_c::close( void )
     case HAL_CONFIG_ERR:
       // ignore this type also, as this is only the indication of try to close an already closed channel
 			#if defined(DEBUG)
-      getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call\r\n";
+      INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call\r\n";
       #endif
       break;
     default:
@@ -434,7 +438,7 @@ void CANIO_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
     ui8_sendObjNr += 1;
   }
 	#ifdef DEBUG
-  getRs232Instance()
+  INTERNAL_DEBUG_DEVICE
    << "CANIO_c::sendCanClearbuf for MsgObj: " << uint16_t(ui8_sendObjNr) << "\r\n";
 	#endif
 
@@ -679,7 +683,7 @@ bool CANIO_c::deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
     #ifdef DEBUG_HEAP_USEAGE
     sui16_filterBoxTotal--;
 
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(FilterBox_c), sui16_filterBoxTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
@@ -774,7 +778,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
   uint8_t ui8_sendObjNr = minMsgObjNr();
   #if 0
   if ( ui8_busNumber == 1 ) {
-    getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << "CANIO_c::operator<< mit MIN MsgObj Nr: " << uint16_t( ui8_sendObjNr )
       << "Xtd: " << refc_src.identType()
       << "\n\r";
@@ -804,7 +808,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
     if (HAL::can_stateGlobalBlocked(ui8_busNumber))
     {  // clear MsgObj CAN queue
 		  #ifdef DEBUG
-			getRs232Instance()
+			INTERNAL_DEBUG_DEVICE
 		   << "CANIO_c::operator<< Blocked BUS Nr: " << uint16_t(ui8_busNumber) << "\r\n";
 		  #endif
 
@@ -823,19 +827,19 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
 
 	if ( b_bit1err )
 	{
-			getRs232Instance()
+			INTERNAL_DEBUG_DEVICE
 			<< "BITERR VOR HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}
 	if ( b_sendproblem )
 	{
-		getRs232Instance() << "SENDPROBLEM VOR HAL::can_useMsgobjSend BUS: "
+		INTERNAL_DEBUG_DEVICE << "SENDPROBLEM VOR HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}
 	if ( b_warnState )
-	{	getRs232Instance()
+	{	INTERNAL_DEBUG_DEVICE
 			<< "CAN_WARN VOR HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
@@ -849,19 +853,19 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
 	b_warnState = HAL::can_stateGlobalWarn(ui8_busNumber);
 
 	if ( b_bit1err )
-	{	getRs232Instance()
+	{	INTERNAL_DEBUG_DEVICE
 			<< "BITERR NACH HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}
 	if ( b_sendproblem )
 	{
-		getRs232Instance() << "SENDPROBLEM NACH HAL::can_useMsgobjSend BUS: "
+		INTERNAL_DEBUG_DEVICE << "SENDPROBLEM NACH HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
 	}
 	if ( b_warnState )
-	{	getRs232Instance()
+	{	INTERNAL_DEBUG_DEVICE
 			<< "CAN_WARN NACH HAL::can_useMsgobjSend BUS: "
 			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
 			<< "\r\n";
@@ -881,7 +885,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       // on init of this object
       // (and is done if timeEvent notices that CAN wasn't configured by init)
 			#if defined(DEBUG)
-      getRs232Instance() << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj\r\n";
+      INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj\r\n";
 			#endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
       break;
@@ -900,7 +904,7 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
     case HAL_WARN_ERR:
       // signal for BUS-WARN problem
 			#if defined(DEBUG)
-      getRs232Instance() << "BUS " << uint16_t(ui8_busNumber) << " in WARN STATE\r\n";
+      INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(ui8_busNumber) << " in WARN STATE\r\n";
 			#endif
       getLbsErrInstance().registerError( LibErr_c::CanWarn, LibErr_c::Can );
       break;
@@ -1067,7 +1071,7 @@ int16_t CANIO_c::FilterBox2MsgObj(){
   }
   if ( i16_result >= 0) i16_result = arrMsgObj.size();
   #ifdef DEBUG_HEAP_USEAGE
-  getRs232Instance()
+  INTERNAL_DEBUG_DEVICE
 	  << "MsgObj: " << sui16_msgObjTotal << " -> ";
   #endif
   return i16_result;
@@ -1140,7 +1144,7 @@ void CANIO_c::CheckSetCntMsgObj(){
   }
   // now the amount of arrMsgObj is allowed
   #ifdef DEBUG_HEAP_USEAGE
-  getRs232Instance()
+  INTERNAL_DEBUG_DEVICE
     << sui16_msgObjTotal << " x MsgObj_c: Mal-Alloc: "
     <<  sizeSlistTWithMalloc( sizeof(MsgObj_c), sui16_msgObjTotal )
     << "/" << sizeSlistTWithMalloc( sizeof(MsgObj_c), 1 )
@@ -1168,7 +1172,7 @@ bool CANIO_c::reconfigureMsgObj()
   if ( ui8_busNumber > HAL_CAN_MAX_BUS_NR ) return false;
 
   #ifdef DEBUG_HEAP_USEAGE
-  getRs232Instance()
+  INTERNAL_DEBUG_DEVICE
     << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
     <<  sizeSlistTWithMalloc( sizeof(FilterBox_c), sui16_filterBoxTotal )
     << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
@@ -1348,7 +1352,7 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
 	// to prevent double re-init of can close it first
 	HAL::can_configGlobalClose(ui8_busNumber);
 	#ifdef DEBUG
-	getRs232Instance()
+	INTERNAL_DEBUG_DEVICE
 			<< "CANIO_c::baseCanInit( " << rui16_bitrate << " ) vor HAL::can_configGlobalInit\n";
 	#endif
 	// init CAN BUS (BIOS function)
@@ -1462,7 +1466,7 @@ bool CANIO_c::stopSendRetryOnErr()
   if (b_bit1err && b_sendproblem)
   { // only send 1 has bit1 err -> clear msg obj
 	  #ifdef DEBUG
-	  getRs232Instance()
+	  INTERNAL_DEBUG_DEVICE
 	   << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
 		 << ", ObjNr: " << minMsgObjNr()
 		 << "\r\n";
@@ -1476,7 +1480,7 @@ bool CANIO_c::stopSendRetryOnErr()
     if (b_bit1err && b_sendproblem)
     { // only send 1 has bit1 err -> clear msg obj
 		  #ifdef DEBUG
-		  getRs232Instance()
+		  INTERNAL_DEBUG_DEVICE
 		   << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
 			 << ", ObjNr: " << (minMsgObjNr()+1)
 			 << "\r\n";

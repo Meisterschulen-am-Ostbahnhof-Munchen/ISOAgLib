@@ -116,7 +116,7 @@ int16_t can_stopDriver()
 
   msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_DEREGISTER;
-  
+
   return send_command(&msqCommandBuf, &msqDataClient);
 
 }
@@ -153,7 +153,7 @@ int16_t closeCan ( uint8_t bBusNumber )
   msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_CLOSE;
   msqCommandBuf.s_init.ui8_bus = bBusNumber;
-  
+
   // read/write queue is cleared by server!
   return send_command(&msqCommandBuf, &msqDataClient);
 
@@ -313,7 +313,7 @@ void waitUntilCanReceive(int32_t i32_endThisLoop)
 
   // wait
   itimerVal.it_value.tv_sec=0;
-  itimerVal.it_value.tv_usec = i32_endThisLoop - i32_now;
+  itimerVal.it_value.tv_usec = (i32_endThisLoop - i32_now) * 1000;
 
   i16_rc = setitimer(ITIMER_REAL, &itimerVal, 0);
 
@@ -339,7 +339,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   msqRead_s msqReadBuf;
 
   DEBUG_PRINT2("getCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
-  
+
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
 
   if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assemble_mtype(msqDataClient.i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT)) == -1)
@@ -356,7 +356,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   ptReceive->tReceiveTime.l1ms = pc_data->i32_time;
   ptReceive->bXtd = pc_data->b_xtd;
   memcpy(ptReceive->abData, pc_data->pb_data, pc_data->b_dlc);
-  
+
 #ifdef DEBUG
   printf("Empfang: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
          ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
@@ -402,7 +402,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
     printf("nack received\n");
     return msqCommandBuf.s_error.i32_error;
   }
-  
+
   return HAL_UNKNOWN_ERR;
 
 };

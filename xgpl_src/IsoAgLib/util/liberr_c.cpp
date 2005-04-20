@@ -55,7 +55,11 @@
 
 
 #ifdef DEBUG
-#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#ifdef SYSTEM_PC
+		#include <iostream>
+	#else
+		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#endif
 #endif
 
 // Begin Namespace IsoAgLib
@@ -119,7 +123,7 @@ void LibErr_c::registerError( LibErr_c::LbsLibErrTypes_t rt_errType, LbsLibErrLo
     si32_nextDebug = HAL::getTime() + 500;
     st_lastDebugErrType = rt_errType;
     st_lastDebugErrLocation = rt_errLocation;
-    __IsoAgLib::getRs232Instance()
+    INTERNAL_DEBUG_DEVICE
       << "registerError( " << rt_errType << ", " << rt_errLocation << " )\r\n";
   }
 #endif

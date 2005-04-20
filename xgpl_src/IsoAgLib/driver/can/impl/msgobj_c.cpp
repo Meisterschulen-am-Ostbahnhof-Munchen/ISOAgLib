@@ -195,7 +195,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
       == HAL_CONFIG_ERR)
     { // BUS not initialized or ID can'tbe chenged
 			#if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-      getRs232Instance() << "\r\nBUS not initialized or ID can't be changed\r\n";
+      INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or ID can't be changed\r\n";
 			#endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
     }
@@ -251,7 +251,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
 		if ( (cnt_filterBox() + right.cnt_filterBox()) > ref_maxCnt )
 		{ // new max filter cnt per MsgObj found
 			ref_maxCnt = (cnt_filterBox() + right.cnt_filterBox());
-			getRs232Instance() << "New Max Amount " << ref_maxCnt
+			INTERNAL_DEBUG_DEVICE << "New Max Amount " << ref_maxCnt
 				<< " of FilterBox_c instances per MsgObj_c with ident "
 				<< int16_t( filter().ident() )
 				<< "\r\n";
@@ -472,20 +472,20 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
       case HAL_RANGE_ERR:
         getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
 				#ifdef DEBUG
-				getRs232Instance() << "CAN-Receive Range Err\n";
+				INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err\n";
 				#endif
 				HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_CONFIG_ERR:
 				#if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-        getRs232Instance() << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(rui8_busNumber) << "\r\n";
+        INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(rui8_busNumber) << "\r\n";
 				#endif
         getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
 				HAL::can_useMsgobjPopFront(rui8_busNumber, msgObjNr());
         return (b_count-1);
       case HAL_NOACT_ERR:
 				#ifdef DEBUG
-				getRs232Instance() << "CAN-Receive NoAct Err\n";
+				INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err\n";
 				#endif
         // wrong use of MsgObj (not likely) or CAN BUS OFF
         getLbsErrInstance().registerError( LibErr_c::CanOff, LibErr_c::Can );
@@ -625,7 +625,7 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
     case HAL_CONFIG_ERR:
       /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
 			#if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-      getRs232Instance() << "\r\nALARM Not enough memory for CAN buffer\r\n";
+      INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer\r\n";
 			#endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
       break;
@@ -748,7 +748,7 @@ void MsgObj_c::lock( bool rb_lock )
 	else
 	{
 		if ( isLocked() ) return; ///< is already locked
-		// change to ident which results at least for 
+		// change to ident which results at least for
 		Ident_c c_tempIdent( 0x1FFFFFFF, c_filter.identType() );
 		HAL::can_configMsgobjChgid(bit_data.busNumber, bit_data.ui8_msgObjNr, c_tempIdent);
 		// set lock bit

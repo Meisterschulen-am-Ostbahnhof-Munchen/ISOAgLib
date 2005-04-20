@@ -83,7 +83,11 @@
 #include "system_c.h"
 
 #ifdef DEBUG
-#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#ifdef SYSTEM_PC
+		#include <iostream>
+	#else
+		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#endif
 #endif
 
 namespace __IsoAgLib {
@@ -126,7 +130,7 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
     if ( ci_err != HAL_NO_ERR)
     {
 		#ifdef DEBUG
-		__IsoAgLib::getRs232Instance()
+		INTERNAL_DEBUG_DEVICE
         << "Fehler bei Systemstart: " << ci_err << "\r\n";
 		#endif
       getLbsErrInstance().registerError( LibErr_c::SystemOpen, LibErr_c::HwSystem ); // something is still wrong

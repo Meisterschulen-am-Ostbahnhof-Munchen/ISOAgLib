@@ -95,9 +95,10 @@
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 
 #ifdef DEBUG
-#include <supplementary_driver/driver/rs232/irs232io_c.h>
 	#ifdef SYSTEM_PC
-	#include <iostream>
+		#include <iostream>
+	#else
+		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 	#endif
 #endif
 
@@ -222,10 +223,7 @@ bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rh
   if (en_sendState != Idle) return false;
 
   #if defined( DEBUG )
-  IsoAgLib::getIrs232Instance() << "MultiSend_c::sendDin";
-  #if defined( SYSTEM_PC )
-  std::printf ("MultiSend_c::sendDin mit Laenge %d\n",ri32_dataSize );
-  #endif
+  INTERNAL_DEBUG_DEVICE << "MultiSend_c::sendDin with Len " << ri32_dataSize << "\n";
   #endif
 
   // initialise data for begin
@@ -403,10 +401,7 @@ bool MultiSend_c::timeEvent( void )
 
   if ( Scheduler_c::getAvailableExecTime() == 0 ) {
     #if defined( DEBUG )
-    IsoAgLib::getIrs232Instance() << "MultiSend_c::timeEvent --- getAvailableExecTime() == 0;\n";
-    #if defined (SYSTEM_PC)
-    std::cout << "MultiSend_c::timeEvent --- getAvailableExecTime() == 0;" << std::endl;
-    #endif
+    INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- getAvailableExecTime() == 0;\n";
     #endif
     return false;
   }
@@ -593,10 +588,7 @@ bool MultiSend_c::timeEvent( void )
 
       if (ui8_pkgCnt == 0){
         #if defined( DEBUG )
-        IsoAgLib::getIrs232Instance() << "MultiSend_c::timeEvent --- pkgCnt == 0;\n";
-        #if defined( SYSTEM_PC )
-        std::cout << "MultiSend_c::timeEvent --- pkgCnt == 0;" << std::endl;
-        #endif
+        INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- pkgCnt == 0;\n";
         #endif
       }
       for (ui8_pkgInd = 0; ui8_pkgInd < ui8_pkgCnt; ui8_pkgInd++)
@@ -642,10 +634,7 @@ bool MultiSend_c::timeEvent( void )
                   // wait for CTS for next part of transfer
                   en_sendState = AwaitCts;
                   #if defined( DEBUG )
-                  IsoAgLib::getIrs232Instance() << "MultiSend_c::timeEvent --- after Sending now awaiting CTS!\n";
-                  #if defined( SYSTEM_PC )
-                  std::cout << "MultiSend_c::timeEvent --- after Sending now awaiting CTS!" << std::endl;
-                  #endif
+                  INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after Sending now awaiting CTS!\n";
                   #endif
                   break;
                 case Din:
@@ -659,10 +648,7 @@ bool MultiSend_c::timeEvent( void )
             if (en_msgType != IsoBroadcast)
             {
               #if defined( DEBUG )
-              IsoAgLib::getIrs232Instance() << "MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!\n";
-              #if defined( SYSTEM_PC )
-              std::cout << "MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!" << std::endl;
-              #endif
+              INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!\n";
               #endif
               en_sendState = AwaitEndofmsgack;
             }
@@ -721,11 +707,8 @@ bool MultiSend_c::processMsg(){
       // upate i32_DC, ui8_sequenceNr and b_pkgToSend
       i32_DC = read_DC();
       #if defined( DEBUG )
-      IsoAgLib::getIrs232Instance() << "MultiSend_c::processMsg --- CTS received!\nFor Date from DC: " << i32_DC
+      INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- CTS received!\nFor Date from DC: " << i32_DC
         << "\n";
-      #if defined( SYSTEM_PC )
-      std::cout << "MultiSend_c::processMsg --- CTS received!\nFor Date from DC: " << i32_DC << std::endl;
-      #endif
       #endif
       // clear send buffer
       getCanInstance4Comm().sendCanClearbuf();
@@ -766,7 +749,7 @@ bool MultiSend_c::processMsg(){
           if (b_ext) {
              ui32_pkgCTSd += (uint32_t(constData().data(3)) << 8) + (uint32_t(constData().data(4)) << 16);
           }
-          
+
           if ( pc_mss != NULL )
           {
             if (ui32_pkgCTSd == ui32_lastNextPacketNumberToSend) {
@@ -802,10 +785,7 @@ bool MultiSend_c::processMsg(){
           }
           // now receiver wants to receive new data
           #if defined( DEBUG )
-          IsoAgLib::getIrs232Instance() << "Start To Send Next Data Block\n";
-          #if defined( SYSTEM_PC )
-          std::cout << "Start To Send Next Data Block" << std::endl;
-          #endif
+          INTERNAL_DEBUG_DEVICE << "Start To Send Next Data Block\n";
           #endif
           en_sendState = SendData;
         } // end request to send
@@ -815,10 +795,7 @@ bool MultiSend_c::processMsg(){
     case eCM_EndofMsgACK:
       if (en_sendState == AwaitEndofmsgack) {
         #if defined( DEBUG )
-        IsoAgLib::getIrs232Instance() << "MultiSend_c::processMsg --- EOMACK received!\n";
-        #if defined( SYSTEM_PC )
-        std::cout << "MultiSend_c::processMsg --- EOMACK received!" << std::endl;
-        #endif
+        INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- EOMACK received!\n";
         #endif
         // CHECK HERE IF WE'RE AWAITING AN EOMACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (en_msgType == Din)
@@ -854,19 +831,13 @@ bool MultiSend_c::processMsg(){
         }
       } else { // not awaiting end of message ack
         #if defined( DEBUG )
-        IsoAgLib::getIrs232Instance() << "MultiSend_c::processMsg --- EOMACK received without expecting it!\n";
-        #if defined( SYSTEM_PC )
-        std::cout << "MultiSend_c::processMsg --- EOMACK received without expecting it!" << std::endl;
-        #endif
+        INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- EOMACK received without expecting it!\n";
         #endif
       }
       break;
     case ConnAbort:
       #if defined( DEBUG )
-      IsoAgLib::getIrs232Instance() << "MultiSend_c::processMsg --- ConnAbort received!\n";
-      #if defined( SYSTEM_PC )
-      std::cout << "MultiSend_c::processMsg --- ConnAbort received!" << std::endl;
-      #endif
+      INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- ConnAbort received!\n";
       #endif
       setSendStateIdle();
       *pen_sendSuccessNotify = en_sendSuccess = SendAborted;
