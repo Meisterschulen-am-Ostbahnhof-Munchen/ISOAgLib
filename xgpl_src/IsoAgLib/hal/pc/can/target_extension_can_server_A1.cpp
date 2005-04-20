@@ -164,7 +164,7 @@ static int ca_InitApi_1 ();
 static int ca_ResetCanCard_1(void);
 static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1);
 static int ca_TransmitCanCard_1(tSend* ptSend);
-static int ca_GetData_1 (can_recv_data* receivedata);
+static int ca_GetData_1 (can_recv_data* receivedata, int local_semaphore_id);
 
 /////////////////////////////////////////////////////////////////////////
 // Local Data
@@ -198,17 +198,13 @@ int32_t getTime()
 
 } // end namespace
 
-static void enqueue_msg(int local_semaphore_id, uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t b_xtd, uint8_t* pui8_data, int32_t i32_clientID, server_c* pc_serverData)
+static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t b_xtd, uint8_t* pui8_data, int32_t i32_clientID, server_c* pc_serverData)
 {
 
   can_data* pc_data;
 
-  // acquire semaphore
-  if (get_semaphore(local_semaphore_id, -1) == -1) {
-    perror("aquire semaphore error");
-    exit(1);
-  }
-  
+  // semaphore to prevent client list modification already set in calling function
+
   std::list<client_s>::iterator iter;
   for (iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++) {
     
@@ -291,13 +287,6 @@ static void enqueue_msg(int local_semaphore_id, uint32_t DLC, uint32_t ui32_id, 
         } // if fit
     } // for objNr
   }// for iter
-
-  // release semaphore
-  if (get_semaphore(local_semaphore_id, 1) == -1) {
-    perror("release semaphore error");
-    exit(1);
-  }
-
 }
 
 
@@ -326,6 +315,12 @@ static void* can_write_thread_func(void* ptr)
       continue;
     }
 
+    // acquire semaphore (prevents concurrent read/write access to can driver and modification of client list during execution of enqueue_msg
+    if (get_semaphore(local_semaphore_id, -1) == -1) {
+      perror("aquire semaphore error");
+      exit(1);
+    }
+
     DEBUG_PRINT("+");
     i16_rc = ca_TransmitCanCard_1(&(msqWriteBuf.s_sendData));
     DEBUG_PRINT1("send: %d\n", i16_rc);
@@ -338,10 +333,17 @@ static void* can_write_thread_func(void* ptr)
     if (!i16_rc)
       i32_error = HAL_OVERFLOW_ERR;
     else 
+      // message forwarding
       // clientID in msqWriteBuf.i32_mtype 
-      enqueue_msg(local_semaphore_id, msqWriteBuf.s_sendData.bDlc, msqWriteBuf.s_sendData.dwId, msqWriteBuf.ui8_bus, msqWriteBuf.s_sendData.bXtd, &msqWriteBuf.s_sendData.abData[0], msqWriteBuf.i32_mtype, pc_serverData);
+      enqueue_msg(msqWriteBuf.s_sendData.bDlc, msqWriteBuf.s_sendData.dwId, msqWriteBuf.ui8_bus, msqWriteBuf.s_sendData.bXtd, &msqWriteBuf.s_sendData.abData[0], msqWriteBuf.i32_mtype, pc_serverData);
 
     send_command_ack(msqWriteBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
+
+    // release semaphore
+    if (get_semaphore(local_semaphore_id, 1) == -1) {
+      perror("release semaphore error");
+      exit(1);
+    }
 
   }
 
@@ -370,8 +372,9 @@ static void can_read(server_c* pc_serverData)
     DEBUG_PRINT(".");
 
 #ifndef SIMULATE_BUS_MODE
-    // specify no channel on data request, wait infinitely 
-    if ( ! ca_GetData_1( &receiveData) ) { // error in receive or no channel open
+    // specify no channel on data request, wait infinitely
+    // use local_semaphore_id to prevent concurrent read/write access to can driver
+    if ( ! ca_GetData_1(&receiveData, local_semaphore_id) ) { // error in receive or no channel open
       usleep(100000);
       continue;
     }
@@ -397,7 +400,19 @@ static void can_read(server_c* pc_serverData)
       continue;
     }
 
-    enqueue_msg(local_semaphore_id, DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
+    // acquire semaphore to prevent modification of client list during execution of enqueue_msg
+    if (get_semaphore(local_semaphore_id, -1) == -1) {
+      perror("aquire semaphore error");
+      exit(1);
+    }
+
+    enqueue_msg(DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
+
+    // release semaphore
+    if (get_semaphore(local_semaphore_id, 1) == -1) {
+      perror("release semaphore error");
+      exit(1);
+    }
 
   }
 }
@@ -837,6 +852,7 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
 // METHOD:	ca_GetData_1
 // PURPOSE:	To receive a msg from a CAN BUS
 // PARAMS:	receivedata		// can object
+//          local_semaphore_id to prevent concurrent read/write access
 // RETURNS:	non-zero if a msg was received
 // 			0 if no msg received
 // NOTES:	In this case, we will simply return 0
@@ -844,7 +860,7 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
 // FUTURE:  This should be finished to actually receive a CAN msg
 //
 /////////////////////////////////////////////////////////////////////////
-static int ca_GetData_1 (can_recv_data* receivedata)
+static int ca_GetData_1 (can_recv_data* receivedata, int local_semaphore_id)
 {
 
   fd_set rfds;
@@ -869,9 +885,23 @@ static int ca_GetData_1 (can_recv_data* receivedata)
           return 0;
         }
       }
+
+
+      // acquire semaphore to prevent concurrent read/write to can driver
+      if (get_semaphore(local_semaphore_id, -1) == -1) {
+        perror("aquire semaphore error");
+        exit(1);
+      }
 	  
       CANmsg msg;
       int ret = ioctl(can_device, CAN_READ_MSG, &msg);
+
+      // release semaphore
+      if (get_semaphore(local_semaphore_id, 1) == -1) {
+        perror("release semaphore error");
+        exit(1);
+      }
+
       if (ret < 0) {
         /* nothing to read or interrupted system call */
 #ifdef DEBUG

@@ -1,7 +1,7 @@
 #ifndef _PC_HAL_CAN_CAN_MSG_H_
 #define _PC_HAL_CAN_CAN_MSG_H_
 
-#ifdef DEBUG
+#ifdef DEBUG_CAN
 #define DEBUG_PRINT(str) printf(str); fflush(0)
 #define DEBUG_PRINT1(str,a) printf(str,a); fflush(0)
 #define DEBUG_PRINT2(str,a,b) printf(str,a,b); fflush(0)

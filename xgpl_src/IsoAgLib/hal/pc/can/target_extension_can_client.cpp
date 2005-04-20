@@ -285,7 +285,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 };
 
 void signal_handler(int signum) {
-  printf("signal: %d received\n", signum);
+  DEBUG_PRINT1("signal: %d received\n", signum);
 }
 
 // wait for new messages in receive queue or i32_endThisLoop timestamp is reached, don't filter with client id, bus number oder msg obj
@@ -324,7 +324,6 @@ void waitUntilCanReceive(int32_t i32_endThisLoop)
       itimerVal.it_value.tv_usec=0;
       i16_rc = setitimer(ITIMER_REAL, &itimerVal, 0);
     }
-
 };
 
 // MDS NOTE: This is code is highly inefficient and needs to be optimized!
