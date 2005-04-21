@@ -81,6 +81,7 @@
 #include <time.h>
 
 #include <pthread.h>
+#include <linux/version.h>
 
 #include "can_server.h"
 #include "can_msq.h"
@@ -132,11 +133,14 @@ static int32_t gHwType = HWTYPE_AUTO;
 #define CAN_MAGIC_NUMBER        'z'
 #define MYSEQ_START             0x80
 
-// @todo: kernel 2.6 needs type for third argument and not sizeof()
-//#define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, sizeof(canmsg))
-//#define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, sizeof(canmsg))
+// kernel 2.6 needs type for third argument and not sizeof()
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
+#define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, sizeof(canmsg))
+#define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, sizeof(canmsg))
+#else
 #define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, canmsg)
 #define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, canmsg)
+#endif
 
 struct CANmsg {
         unsigned        id;
