@@ -164,7 +164,6 @@ static int ca_InitApi_1 ();
 static int ca_ResetCanCard_1(void);
 static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1);
 static int ca_TransmitCanCard_1(tSend* ptSend);
-static int ca_GetData_1 (can_recv_data* receivedata, int local_semaphore_id);
 
 /////////////////////////////////////////////////////////////////////////
 // Local Data
@@ -371,22 +370,96 @@ static void can_read(server_c* pc_serverData)
 
     DEBUG_PRINT(".");
 
+    bool b_processMsg = FALSE;
+
 #ifndef SIMULATE_BUS_MODE
-    // specify no channel on data request, wait infinitely
-    // use local_semaphore_id to prevent concurrent read/write access to can driver
-    if ( ! ca_GetData_1(&receiveData, local_semaphore_id) ) { // error in receive or no channel open
-      usleep(100000);
-      continue;
+
+    fd_set rfds;
+    int retval;
+    int maxfd = can_device+1;
+    uint32_t channel;
+
+    for (channel=0; channel<cui32_maxCanBusCnt; channel++ ) {
+      if (canBusIsOpen[channel]) {
+        FD_ZERO(&rfds);
+        FD_SET(can_device, &rfds);
+        retval = select(maxfd, &rfds, NULL, NULL, NULL);	// wait infinitely for next CAN msg
+
+        if(retval == -1) {
+          DEBUG_PRINT("Error Occured in select\n");
+          break;
+        } else if (retval == 0) {
+          break;
+        } else {
+          if(FD_ISSET(can_device, &rfds) != 1) {
+            DEBUG_PRINT("Not selecting right thing\n");
+            break;
+          }
+        }
+
+        b_processMsg = TRUE;
+        break;
+      }
     }
+
+    if (b_processMsg) {
+      
+      // acquire semaphore to prevent concurrent read/write to can driver
+      if (get_semaphore(local_semaphore_id, -1) == -1) {
+        perror("aquire semaphore error");
+        exit(1);
+      }
+      
+      CANmsg msg;
+      int ret = ioctl(can_device, CAN_READ_MSG, &msg);
+      
+      if (ret < 0) {
+        /* nothing to read or interrupted system call */
+#ifdef DEBUG
+        perror("ioctl");
+#endif
+        DEBUG_PRINT1("CANRead error: %i\n", ret);
+        b_processMsg = FALSE;
+
+        // release semaphore
+        if (get_semaphore(local_semaphore_id, 1) == -1) {
+          perror("release semaphore error");
+          exit(1);
+        }
+        
+      } else {
+        receiveData.b_bus = channel;
+        receiveData.msg.i32_ident = msg.id;
+        receiveData.msg.b_xtd = (msg.msg_type == MSGTYPE_EXTENDED);
+        receiveData.msg.b_dlc = msg.len;
+        receiveData.msg.i32_time = msg.time;
+        for( int i=0; i<msg.len; i++ )
+          receiveData.msg.pb_data[i] = msg.data[i];
+      }  
+    }
+
 #else
 
     if (pc_serverData->b_inputFileMode && b_moreToRead) {
       b_moreToRead = readCanDataFile(pc_serverData, &receiveData);
+      b_processMsg = TRUE;
+
+      // acquire semaphore to prevent modification of client list during execution of enqueue_msg
+      if (get_semaphore(local_semaphore_id, -1) == -1) {
+        perror("aquire semaphore error");
+        exit(1);
+      }
+
     } else
       for (;;)
         sleep(1000);
 #endif
 	
+    if (!b_processMsg) {
+      usleep(10000);
+      continue;
+    }
+
     DLC = ( receiveData.msg.b_dlc & 0xF );
     if ( DLC > 8 ) DLC = 8;
     ui32_id = receiveData.msg.i32_ident;
@@ -397,16 +470,8 @@ static void can_read(server_c* pc_serverData)
 
     if (ui32_id >= 0x7FFFFFFF) {
       DEBUG_PRINT1("!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
-      continue;
-    }
-
-    // acquire semaphore to prevent modification of client list during execution of enqueue_msg
-    if (get_semaphore(local_semaphore_id, -1) == -1) {
-      perror("aquire semaphore error");
-      exit(1);
-    }
-
-    enqueue_msg(DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
+    } else
+      enqueue_msg(DLC, ui32_id, b_bus, b_xtd, &receiveData.msg.pb_data[0], 0, pc_serverData);
 
     // release semaphore
     if (get_semaphore(local_semaphore_id, 1) == -1) {
@@ -845,84 +910,6 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
   }
 
   return 1;
-}
-
-/////////////////////////////////////////////////////////////////////////
-//
-// METHOD:	ca_GetData_1
-// PURPOSE:	To receive a msg from a CAN BUS
-// PARAMS:	receivedata		// can object
-//          local_semaphore_id to prevent concurrent read/write access
-// RETURNS:	non-zero if a msg was received
-// 			0 if no msg received
-// NOTES:	In this case, we will simply return 0
-//
-// FUTURE:  This should be finished to actually receive a CAN msg
-//
-/////////////////////////////////////////////////////////////////////////
-static int ca_GetData_1 (can_recv_data* receivedata, int local_semaphore_id)
-{
-
-  fd_set rfds;
-  int retval;
-  int maxfd = can_device+1;
-
-  for( uint32_t channel=0; channel<cui32_maxCanBusCnt; channel++ ) {
-    if( canBusIsOpen[channel]) {
-      
-      FD_ZERO(&rfds);
-      FD_SET(can_device, &rfds);
-      retval = select(maxfd, &rfds, NULL, NULL, NULL);	// wait infinitely for next CAN msg
-
-      if(retval == -1) {
-        DEBUG_PRINT("Error Occured in select\n");
-        return 0;
-      } else if (retval == 0) {
-        return 0;
-      } else {
-        if(FD_ISSET(can_device, &rfds) != 1) {
-          DEBUG_PRINT("Not selecting right thing\n");
-          return 0;
-        }
-      }
-
-
-      // acquire semaphore to prevent concurrent read/write to can driver
-      if (get_semaphore(local_semaphore_id, -1) == -1) {
-        perror("aquire semaphore error");
-        exit(1);
-      }
-	  
-      CANmsg msg;
-      int ret = ioctl(can_device, CAN_READ_MSG, &msg);
-
-      // release semaphore
-      if (get_semaphore(local_semaphore_id, 1) == -1) {
-        perror("release semaphore error");
-        exit(1);
-      }
-
-      if (ret < 0) {
-        /* nothing to read or interrupted system call */
-#ifdef DEBUG
-        perror("ioctl");
-#endif
-        DEBUG_PRINT1("CANRead error: %i\n", ret);
-        return 0;
-      } else {
-        receivedata->b_bus = channel;
-        receivedata->msg.i32_ident = msg.id;
-        receivedata->msg.b_xtd = (msg.msg_type == MSGTYPE_EXTENDED);
-        receivedata->msg.b_dlc = msg.len;
-        receivedata->msg.i32_time = msg.time;
-        for( int i=0; i<msg.len; i++ )
-          receivedata->msg.pb_data[i] = msg.data[i];
-        
-        return 1;
-      }
-    }
-  }
-  return 0;
 }
 
 
