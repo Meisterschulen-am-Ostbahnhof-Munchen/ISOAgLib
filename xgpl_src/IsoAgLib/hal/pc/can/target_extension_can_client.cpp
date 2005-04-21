@@ -126,7 +126,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 {
   msqCommand_s msqCommandBuf;
 
-  DEBUG_PRINT2("init_can, bus %d, bitrate %d\n", bBusNumber, wBitrate); fflush(0);
+  DEBUG_PRINT2("init_can, bus %d, bitrate %d\n", bBusNumber, wBitrate);
 
   if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
 
@@ -271,7 +271,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
   int16_t i16_rc;
 
-  //  DEBUG_PRINT3("getCanMsgBufCount, bus %d, obj %d, pid %d ", bBusNumber, bMsgObj, msqDataClient.i32_pid); fflush(0);
+  //  DEBUG_PRINT3("getCanMsgBufCount, bus %d, obj %d, pid %d ", bBusNumber, bMsgObj, msqDataClient.i32_pid);
   DEBUG_PRINT(".");
 
   if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, NULL, 0, assemble_mtype(msqDataClient.i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT)) == -1)
