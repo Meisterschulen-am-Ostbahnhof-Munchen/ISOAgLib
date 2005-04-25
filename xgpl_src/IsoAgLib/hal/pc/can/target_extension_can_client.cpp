@@ -104,7 +104,21 @@ int16_t can_startDriver()
   msqCommandBuf.i16_command = COMMAND_REGISTER;
   msqCommandBuf.s_runtime.i32_runTime_msec = getTime();
 
-  return send_command(&msqCommandBuf, &msqDataClient);
+  i16_rc = send_command(&msqCommandBuf, &msqDataClient);
+
+  if (i16_rc == HAL_NO_ERR) {
+    
+    char pipe_name[255];
+    sprintf(pipe_name, "%s%d", PIPE_PATH, msqCommandBuf.s_startAck.i32_pipeId);
+
+    // pipe is already created by can server!
+
+    // O_NONBLOCK because open in read only mode blocks!
+    if ((msqDataClient.i32_pipeHandle = open(pipe_name, O_NONBLOCK | O_RDONLY)) == -1)
+      return HAL_UNKNOWN_ERR;
+  }
+
+  return i16_rc;
 
 }
 
@@ -113,6 +127,9 @@ int16_t can_stopDriver()
   msqCommand_s msqCommandBuf;
 
   DEBUG_PRINT("can_stopDriver called\n");
+
+  if (msqDataClient.i32_pipeHandle)
+    close(msqDataClient.i32_pipeHandle);
 
   msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_DEREGISTER;
@@ -284,46 +301,33 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 
 };
 
-void signal_handler(int signum) {
-  DEBUG_PRINT1("signal: %d received\n", signum);
-}
 
-// wait for new messages in receive queue or i32_endThisLoop timestamp is reached, don't filter with client id, bus number oder msg obj
 void waitUntilCanReceive(int32_t i32_endThisLoop)
 {
   int16_t i16_rc;
-  struct itimerval itimerVal;
-  static bool sigHandlerInstalled = FALSE;
+  fd_set rfds;
   int32_t i32_now;
+  struct timeval s_timeout;
+  uint8_t ui8_buf[16];
 
   if (i32_endThisLoop < (i32_now = getTime())) {
     DEBUG_PRINT("*");
     return;
   }
+  
+  FD_ZERO(&rfds);
+  FD_SET(msqDataClient.i32_pipeHandle, &rfds);
 
-  if (!sigHandlerInstalled) {
-    signal(SIGALRM, signal_handler);
-    sigHandlerInstalled = TRUE;
-    DEBUG_PRINT("signal handler installed\n");
-  }
+  s_timeout.tv_sec = 0;
+  s_timeout.tv_usec = (i32_endThisLoop - i32_now) * 1000;
 
-  // no periodic timer!
-  itimerVal.it_interval.tv_sec=0;
-  itimerVal.it_interval.tv_usec=0;
+  i16_rc = select(msqDataClient.i32_pipeHandle+1, &rfds, NULL, NULL, &s_timeout);
+  
+  if(i16_rc > 0 && FD_ISSET(msqDataClient.i32_pipeHandle, &rfds) > 0)
+    // clear pipe (is done also in can server before next write)
+    i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16);
 
-  // wait
-  itimerVal.it_value.tv_sec=0;
-  itimerVal.it_value.tv_usec = (i32_endThisLoop - i32_now) * 1000;
 
-  i16_rc = setitimer(ITIMER_REAL, &itimerVal, 0);
-
-  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, NULL, 0, 0, 0)) == -1)
-    if (errno == E2BIG) {
-      // message received, timer still running, stop timer
-      itimerVal.it_value.tv_sec=0;
-      itimerVal.it_value.tv_usec=0;
-      i16_rc = setitimer(ITIMER_REAL, &itimerVal, 0);
-    }
 };
 
 // MDS NOTE: This is code is highly inefficient and needs to be optimized!

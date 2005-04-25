@@ -20,6 +20,7 @@ typedef struct {
   uint16_t ui16_globalMask[cui32_maxCanBusCnt];
   uint32_t ui32_globalMask[cui32_maxCanBusCnt];
   uint32_t ui32_lastMask[cui32_maxCanBusCnt];
+  int32_t  i32_pipeHandle;
 } client_s;
 
 
@@ -39,6 +40,7 @@ public:
   // replay
   bool b_inputFileMode;
   FILE* f_canInput;
+  int32_t i32_lastPipeId;
 };
 
 

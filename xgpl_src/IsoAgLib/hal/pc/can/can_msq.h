@@ -25,6 +25,7 @@ namespace __HAL {
 #define SERVER_SEMAPHORE 'u'
 
 #define MSQ_KEY_PATH     "/root"
+#define PIPE_PATH        "/tmp/can_server_"
 
 #define COMMAND_ACK        1
 #define COMMAND_NACK       2
@@ -70,6 +71,7 @@ typedef struct {
   // client write queue
   int32_t i32_wrHandle;
   int32_t i32_pid;
+  int32_t i32_pipeHandle;
 } msqData_s;
 
 
@@ -83,6 +85,12 @@ typedef struct {
       int32_t i32_fill2;
       int32_t i32_fill3;
     } s_runtime;
+    struct {
+      int32_t i32_pipeId;
+      int32_t i32_fill1;
+      int32_t i32_fill2;
+      int32_t i32_fill3;
+    } s_startAck;
     struct {
       int32_t i32_error;
       int32_t i32_fill1;
@@ -134,7 +142,7 @@ typedef struct {
 } msqWrite_s;
 
 
-void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqDataServer);
+void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqDataServer, int32_t i32_lastPipeId = NULL);
 
 int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient);
 

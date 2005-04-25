@@ -154,7 +154,7 @@ typedef struct CANmsg canmsg;
 
 
 server_c::server_c()
-  : b_logMode(FALSE), b_inputFileMode(FALSE)
+  : b_logMode(FALSE), b_inputFileMode(FALSE), i32_lastPipeId(0)
 {
   memset(f_canOutput, 0, sizeof(f_canOutput));
   memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
@@ -286,7 +286,17 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           DEBUG_PRINT1("mtype: 0x%08x\n", assemble_mtype(iter->i32_clientID, b_bus, i32_obj));
           msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, i32_obj);
           msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
-            
+
+          if (iter->i32_pipeHandle) {
+            uint8_t ui8_buf[16];
+
+            // clear pipe (is done also in client)
+            int16_t rc=read(iter->i32_pipeHandle, &ui8_buf, 16);
+
+            // trigger wakeup
+            rc=write(iter->i32_pipeHandle, &ui8_buf, 1);
+          }
+
         } // if fit
     } // for objNr
   }// for iter
@@ -383,6 +393,7 @@ static void can_read(server_c* pc_serverData)
     int maxfd = can_device+1;
     uint32_t channel;
 
+    // only one bus is served!
     for (channel=0; channel<cui32_maxCanBusCnt; channel++ ) {
       if (canBusIsOpen[channel]) {
         FD_ZERO(&rfds);
@@ -553,9 +564,22 @@ static void* command_thread_func(void* ptr)
 
         DEBUG_PRINT1("msec diff between can client and server: %d\n", s_tmpClient.i32_runTime_msec);
         
-        pc_serverData->l_clients.push_back(s_tmpClient);
+        char pipe_name[255];
+        sprintf(pipe_name, "%s%d", PIPE_PATH, ++(pc_serverData->i32_lastPipeId));
 
-        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
+        umask(0);
+        // if not existing already
+        mknod(pipe_name, S_IFIFO|0666, 0);
+
+        // open pipe in read/write mode to allow read access to clean the pipe and to avoid SIGPIPE when client dies and was the only reader to the pipe
+        if ((s_tmpClient.i32_pipeHandle = open(pipe_name, O_NONBLOCK | O_RDWR, 0)) == -1)
+          i32_error = HAL_UNKNOWN_ERR;
+        
+        if (!i32_error)
+          pc_serverData->l_clients.push_back(s_tmpClient);
+        
+        // transmit current pipeId to client (for composition of pipe name)
+        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer), pc_serverData->i32_lastPipeId);
 
         break;
 
@@ -565,7 +589,12 @@ static void* command_thread_func(void* ptr)
 
         // @todo: is queue clearing necessary?
         if (iter_client != NULL) {
+
+          if (iter_client->i32_pipeHandle)
+            close(iter_client->i32_pipeHandle);
+
           pc_serverData->l_clients.erase(iter_client);
+
         } else 
           i32_error = HAL_CONFIG_ERR;
         

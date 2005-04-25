@@ -66,16 +66,18 @@
 
 namespace __HAL {
 
-void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqDataServer)
+void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqDataServer, int32_t i32_lastPipeId)
 {
   msqCommand_s msqCommandBuf;
 
   msqCommandBuf.i32_mtype = i32_mtype;
 
   // send ACK/NACK
-  if (!i32_error)
+  if (!i32_error) {
     msqCommandBuf.i16_command = COMMAND_ACK;
-  else {
+    // transmit current pipeId to client (for composition of pipe name, only needed for start driver ack)
+    msqCommandBuf.s_startAck.i32_pipeId = i32_lastPipeId;
+  } else {
     // inform client about troubles with can bus init
     msqCommandBuf.i16_command = COMMAND_NACK;
     msqCommandBuf.s_error.i32_error = i32_error;
@@ -111,31 +113,31 @@ int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient)
 /////////////////////////////////////////////////////////////////////////
 int16_t ca_createMsqs(msqData_s& msqData)
 {
-   key_t  msgkey;
+  key_t  msgkey;
 
-   DEBUG_PRINT("ca_createMsqs called\n");
-   msqData.i32_pid = getpid();
+  DEBUG_PRINT("ca_createMsqs called\n");
+  msqData.i32_pid = getpid();
 
-   /* Generate our IPC key value */
-   msgkey = ftok(MSQ_KEY_PATH , MSQ_COMMAND);
-   if ((msqData.i32_cmdHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
-     return HAL_UNKNOWN_ERR;
-
-   msgkey = ftok(MSQ_KEY_PATH , MSQ_COMMAND_ACK);
-   if ((msqData.i32_cmdAckHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
-     return HAL_UNKNOWN_ERR;
+  /* Generate our IPC key value */
+  msgkey = ftok(MSQ_KEY_PATH , MSQ_COMMAND);
+  if ((msqData.i32_cmdHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
+    return HAL_UNKNOWN_ERR;
   
-   msgkey = ftok(MSQ_KEY_PATH , MSQ_CLIENT_READ);
-   if ((msqData.i32_rdHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
-     return HAL_UNKNOWN_ERR;
-
-   msgkey = ftok(MSQ_KEY_PATH , MSQ_CLIENT_WRITE);
-   if ((msqData.i32_wrHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
-     return HAL_UNKNOWN_ERR;
-
-   DEBUG_PRINT4("queues: cmd %d, ack %d, rd %d, wr %d\n", msqData.i32_cmdHandle, msqData.i32_cmdAckHandle, msqData.i32_rdHandle, msqData.i32_wrHandle);
-
-   return 0;
+  msgkey = ftok(MSQ_KEY_PATH , MSQ_COMMAND_ACK);
+  if ((msqData.i32_cmdAckHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
+    return HAL_UNKNOWN_ERR;
+  
+  msgkey = ftok(MSQ_KEY_PATH , MSQ_CLIENT_READ);
+  if ((msqData.i32_rdHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
+    return HAL_UNKNOWN_ERR;
+  
+  msgkey = ftok(MSQ_KEY_PATH , MSQ_CLIENT_WRITE);
+  if ((msqData.i32_wrHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
+    return HAL_UNKNOWN_ERR;
+  
+  DEBUG_PRINT4("queues: cmd %d, ack %d, rd %d, wr %d\n", msqData.i32_cmdHandle, msqData.i32_cmdAckHandle, msqData.i32_rdHandle, msqData.i32_wrHandle);
+  
+  return 0;
 }
 
 
