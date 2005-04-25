@@ -92,7 +92,6 @@ using namespace std;
 //! open a input stream
 bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 {
-//#if defined( SYSTEM_A1 )
 #if __GNUC__ < 3
 	b_eofReached = false;
 
@@ -141,9 +140,9 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
 //	std::ifstream* isp_tmp = static_cast<std::ifstream*>(this);
 	ifstream* isp_tmp = static_cast<ifstream*>(this);
-	
+
 	ui8_data = isp_tmp->get();
-  
+
 	// check if next get returns EOF: nothing more to read
 	if (isp_tmp->peek() == EOF)
 		b_eofReached = true;

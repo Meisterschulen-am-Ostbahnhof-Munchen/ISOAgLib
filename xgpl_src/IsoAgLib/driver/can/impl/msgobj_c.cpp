@@ -87,12 +87,14 @@
 #include "canio_c.h"
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/hal/system.h>
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
-#include <iostream>
-#endif
 
-#if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#if defined(DEBUG) || defined(DEBUG_CAN_BUFFER_FILLING)
+	#ifdef SYSTEM_PC
+		#include <iostream>
+	#else
+		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#endif
+	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 /* ************************************** */
@@ -202,17 +204,21 @@ bool MsgObj_c::merge(MsgObj_c& right)
     right.setIsOpen(false); // now left is correlated to the open obj
   }
 
-  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
+  #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
   for ( int i = 0; i < cnt_filterBox(); i++ )
   {
-    std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
-    std::cout << "bestehend FilterBox in merge nr: " << i
+		#ifdef SYSTEM_PC
+		std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
+		#endif
+    INTERNAL_DEBUG_DEVICE << "existing FilterBox in merge nr: " << i
       << "FilterBox: 0x"
       << arrPfilterBox[i]->filter().ident()
       << ", Mask: 0x" << arrPfilterBox[i]->mask().ident()
       << ", IdentType: " << arrPfilterBox[i]->identType()
       << std::endl;
+		#ifdef SYSTEM_PC
     std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
+		#endif
   }
   #endif
 
@@ -224,16 +230,20 @@ bool MsgObj_c::merge(MsgObj_c& right)
       (cnt++, j++))
   {
     arrPfilterBox[cnt] = right.arrPfilterBox[j];
-	  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
+	  #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+		#ifdef SYSTEM_PC
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
-    std::cout << "zusaetzliche FilterBox in merge nr: " << cnt
+		#endif
+    INTERNAL_DEBUG_DEVICE << "add additional FilterBox in merge nr: " << cnt
       << "FilterBox: 0x"
       << arrPfilterBox[cnt]->filter().ident()
       << ", Mask: 0x" << arrPfilterBox[cnt]->mask().ident()
       << ", IdentType: " << arrPfilterBox[cnt]->identType()
-			<< " und Filter des MsgObj: " << int( filter().ident() )
+			<< " and Filter of MsgObj: " << int( filter().ident() )
       << std::endl;
+		#ifdef SYSTEM_PC
     std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
+		#endif
     #endif
   }
 	#if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
@@ -259,7 +269,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
 	#endif
   setCntFilterBox(cnt_filterBox() + right.cnt_filterBox());
 
-  //exit funciton with success indication
+  //exit function with success indication
   return true;
 }
 
@@ -291,49 +301,54 @@ void MsgObj_c::close(){
   @return true -> this reference could be stored in this MsgObj_c (limited amount)
 */
 bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
-  // #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
-	#if 0
-  std::cout << "\n\nCALL MsgObj_c::insertFilterBox" << std::endl;
-  #endif
   for ( int i = 0; i < cnt_filterBox(); i++ )
   {
-    // #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
-		#if 0
+	  #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+		#ifdef SYSTEM_PC
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
-    std::cout << "bestehend FilterBox in insertFilterBox nr: " << i
+		#endif
+    INTERNAL_DEBUG_DEVICE << "existing FilterBox in insertFilterBox nr: " << i
       << "FilterBox: 0x"
       << arrPfilterBox[i]->filter().ident()
       << ", Mask: 0x" << arrPfilterBox[i]->mask().ident()
       << ", IdentType: " << arrPfilterBox[i]->identType()
       << ", FilterBox instance: " << &(*arrPfilterBox[i])
       << std::endl;
+		#ifdef SYSTEM_PC
     std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
+		#endif
     #endif
-      // check if given FilterRef is already registered
-      if ( &(*arrPfilterBox[i]) == &(*rrefc_box) )
-      {
-			  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
-        std::cout << "Versuch doppelte FilterBox einzutragen abgewiesen mit" << &(*arrPfilterBox[i]) << std::endl;
-        #endif
-        return true;
-      }
+
+		// check if given FilterRef is already registered
+		if ( &(*arrPfilterBox[i]) == &(*rrefc_box) )
+		{
+		  #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+			INTERNAL_DEBUG_DEVICE << "Reject try to insert the same FilterBox a second time"
+				<< &(*arrPfilterBox[i]) << std::endl;
+			#endif
+			return true;
+		}
   }
 
   if (cnt_filterBox() < FILTER_BOX_PER_MSG_OBJ)
-  { // insertion of pinter is possible -> register the pointer
+  { // insertion of pointer is possible -> register the pointer
     // insert pointer in array
     arrPfilterBox[cnt_filterBox()] = rrefc_box;
-    // #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
-		#if 0
+
+	  #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+		#ifdef SYSTEM_PC
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
-    std::cout << "neue FilterBox in insertFilterBox "
+		#endif
+    INTERNAL_DEBUG_DEVICE << "add new FilterBox in insertFilterBox "
       << "FilterBox: 0x"
       << rrefc_box->filter().ident()
       << ", Mask: 0x" << rrefc_box->mask().ident()
       << ", IdentType: " << rrefc_box->identType()
       << ", FilterBox instance: " << &(*rrefc_box)
       << std::endl;
+		#ifdef SYSTEM_PC
     std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
+		#endif
     #endif
 
 
@@ -438,7 +453,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
 		if ( HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr()) > ref_maxCnt )
 		{ // new MAX detected -> update and print
 			ref_maxCnt = HAL::can_stateMsgobjBuffercnt(rui8_busNumber, msgObjNr());
-			getRs232Instance() << "\r\nNew Max buffer filling: " << ref_maxCnt
+			INTERNAL_DEBUG_DEVICE << "\r\nNew Max buffer filling: " << ref_maxCnt
         << " at MsgObj: " << uint16_t(msgObjNr())
 				<< " with Filter: " << c_filter.ident()
         << " at BUS: " << uint16_t(rui8_busNumber)
@@ -447,7 +462,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
 		if ( HAL::can_stateMsgobjFreecnt(rui8_busNumber, msgObjNr()) < ref_minFree )
 		{ // new MIN detected -> update and print
 			ref_minFree = HAL::can_stateMsgobjFreecnt(rui8_busNumber, msgObjNr());
-			getRs232Instance() << "\r\nNew Min buffer free: " << ref_minFree
+			INTERNAL_DEBUG_DEVICE << "\r\nNew Min buffer free: " << ref_minFree
         << " at MsgObj: " << uint16_t(msgObjNr())
 				<< " with Filter: " << c_filter.ident()
         << " at BUS: " << uint16_t(rui8_busNumber)
@@ -503,7 +518,7 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
       	#ifdef DEBUG_CAN_BUFFER_FILLING
 				if ( ! b_detectedOverflow )
 				{
-			  	getRs232Instance() << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
+			  	INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
 				  	<< uint16_t(msgObjNr()) << " at BUS: " << uint16_t(rui8_busNumber)
           	<< " with Ident: " << c_filter.ident()
 				  	<< "\r\n";
@@ -519,23 +534,8 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
       // search for the suiting FilterBox
       for (int16_t i=0; i < cnt_filterBox(); i++)
       {
-			  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
-        if ( ( i32_ident & 0x7F0 ) == 0x500 )
-        {
-          std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
-          std::cout << "GPS Botschaft empfangen mit zugeordneter FilterBox: 0x"
-          << arrPfilterBox[i]->filter().ident()
-          << ", Mask: 0x" << arrPfilterBox[i]->mask().ident()
-          << ", IdentType: " << arrPfilterBox[i]->identType()
-          << std::endl;
-          std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
-        }
-        #endif
         if (arrPfilterBox[i]->matchMsgId(i32_ident, c_filter.identType()))
         { // ident of received data matches the filter of the i'th registered FilterBox
-				  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && defined( DEBUG )
-          if ( ( i32_ident & 0x7F0 ) == 0x500 ) std::cout << "Stosse Verarbeitung zu Eintrag i == " << i << " an." << std::endl;
-          #endif
           CANPkgExt_c* pc_target = arrPfilterBox[i]->customersCanPkg();
           HAL::can_useMsgobjGet(rui8_busNumber, msgObjNr(), pc_target);
           if ( arrPfilterBox[i]->processMsg() )
@@ -593,9 +593,6 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
 */
 bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
   bool b_result = false;
-#ifdef DEBUG
-    //std::cout << "MsgObj::configCAN (busNr="<< (uint32_t) rui8_busNumber <<", msgNr="<< (uint32_t) rui8_msgNr <<")called. Filter is: " << c_filter.ident() << ". \n";
-#endif
   if (!verifyBusMsgobjNr(rui8_busNumber, rui8_msgNr))
   { // the given values are not within allowed limits (defined in isoaglib_config.h)
     getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );

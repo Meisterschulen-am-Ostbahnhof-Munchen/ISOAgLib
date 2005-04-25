@@ -99,7 +99,7 @@
 #include "isosystempkg_c.h"
 #include "isoitem_c.h"
 
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
+#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
   #include <ext/slist>
   namespace std { using __gnu_cxx::slist;};
 #else

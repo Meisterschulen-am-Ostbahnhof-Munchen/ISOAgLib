@@ -100,7 +100,7 @@
 #include "filterbox_c.h"
 
 // headers for string manipulation
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
+#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
   #include <ext/slist>
   namespace std { using __gnu_cxx::slist;};
 #else
@@ -322,12 +322,12 @@ class CANIO_c : public SingletonCANIO_c {
   */
   FilterBox_c* insertFilter(__IsoAgLib::CANCustomer_c& rref_customer, uint32_t rui32_mask,
                             uint32_t rui32_filter, bool rb_reconfigImmediate = true,
-                            const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE, 
+                            const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE,
                             FilterBox_c* rpc_connectedFilterBox = NULL);
 
-  FilterBox_c* insertFilter(__IsoAgLib::CANCustomer_c& rref_customer, uint32_t rui32_mask, 
+  FilterBox_c* insertFilter(__IsoAgLib::CANCustomer_c& rref_customer, uint32_t rui32_mask,
                             uint32_t rui32_filter, bool rb_reconfigImmediate,
-                            const Ident_c::identType_t rt_identType, 
+                            const Ident_c::identType_t rt_identType,
                             uint32_t rt_connectedMask, uint32_t rt_connectedFilter, const Ident_c::identType_t rt_connectedIdentType);
   /**
     reconfigure the MsgObj after insert/delete of FilterBox

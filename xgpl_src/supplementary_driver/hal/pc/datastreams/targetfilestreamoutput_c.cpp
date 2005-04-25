@@ -91,7 +91,6 @@ using namespace std;
 //! open a output stream
 bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t rt_mode )
 {
-//#if defined( SYSTEM_A1 )
 #if __GNUC__ < 3
 	if ( ( rt_mode & StreamIn ) != 0 ) return false;
 
