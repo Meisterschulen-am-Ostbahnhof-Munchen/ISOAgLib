@@ -244,16 +244,16 @@ namespace HAL
   inline int16_t  getAdcVoltage(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getAnaloginCheckNr(rb_channel));
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return ((i16_temp * 9) + ((i16_temp * 59)/100));};
+     return (i16_temp * 30); }
   /**
     get the MEDIUM of measured voltage value of a channel in [mV]
     @param rb_channel measured channel
     @return voltage [0..8500] [mV] or C_RANGE on wrong input channel number
   */
   inline int16_t  getAdcMeanVoltage(uint8_t rb_channel)
-    {int16_t i16_temp = __HAL::get_adc_mean(rb_channel);
+    {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getAnaloginCheckNr(rb_channel));
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return ((i16_temp * 9) + ((i16_temp * 59)/100));};
+     return (i16_temp * 30); }
   /**
     get the measured current value of a channel in [uA]
     @param rb_channel measured channel
