@@ -149,6 +149,7 @@ int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient);
 int16_t ca_createMsqs(msqData_s& msqData);
 
 uint32_t assemble_mtype(int32_t i32_pid, uint8_t bus, uint8_t obj);
+int32_t disassemble_client_id(int32_t i32_mtype);
 
 void clearReadQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, int32_t i32_pid);
 

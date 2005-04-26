@@ -146,12 +146,16 @@ uint32_t assemble_mtype(int32_t i32_pid, uint8_t bus, uint8_t obj)
   return (i32_pid << 16 | bus << 8 | obj);
 }
 
+int32_t disassemble_client_id(int32_t i32_mtype)
+{
+  return (i32_mtype >> 16);
+}
+
 
 void clearReadQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, int32_t i32_pid)
 {
   msqRead_s msqReadBuf;
 
-  //DEBUG_PRINT3("clear read queue: bus %d, obj %d, pid %d\n", bBusNumber, bMsgObj, i32_pid);
   while (msgrcv(i32_msqHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assemble_mtype(i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT) > 0)
     ;
 }
@@ -160,7 +164,6 @@ void clearWriteQueue(uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle,
 {
   msqWrite_s msqWriteBuf;
 
-  //DEBUG_PRINT3("clear write queue: bus %d, obj %d, pid %d\n", bBusNumber, bMsgObj, i32_pid);
   while (msgrcv(i32_msqHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), assemble_mtype(i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT) > 0)
     ;
 }

@@ -79,6 +79,7 @@
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <time.h>
+#include <signal.h>
 
 #include <pthread.h>
 #include <linux/version.h>
@@ -205,16 +206,21 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 {
 
   can_data* pc_data;
+  std::list<client_s>::iterator iter, iter_delete = 0;
 
   // semaphore to prevent client list modification already set in calling function
 
-  std::list<client_s>::iterator iter;
   for (iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++) {
-    
-    /* DEBUG_PRINT1("client pid %d\n", iter->i32_clientID);
-       DEBUG_PRINT1("iter->ui32_globalMask[b_bus] 0x%08x\n", iter->ui32_globalMask[b_bus]);
-       DEBUG_PRINT1("iter->ui32_lastMask[b_bus] 0x%08x\n", iter->ui32_lastMask[b_bus]);
-    */
+
+    // send signal 0 (no signal is send, but error handling is done) to check is process is alive
+    if (kill(iter->i32_clientID, 0) == -1) {
+      // client dead!
+      DEBUG_PRINT1("client with ID %d no longer alive!\n", iter->i32_clientID);
+      // remove this client from list after iterator loop
+      iter_delete = iter;
+      continue;
+    }
+
     // now search for MsgObj queue on this b_bus, where new message from b_bus maps
     for (int32_t i32_obj = 1; i32_obj < cui8_maxCanObj; i32_obj++) { 
       
@@ -231,11 +237,6 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
         continue;
       }
        
-      /* DEBUG_PRINT1("obj: %d ", i32_obj);
-         DEBUG_PRINT1("iter->ui8_bufXtd[b_bus][i32_obj] %d\n", iter->ui8_bufXtd[b_bus][i32_obj]);
-         DEBUG_PRINT1("iter->ui16_size[b_bus][i32_obj] %d\n", iter->ui16_size[b_bus][i32_obj]);
-         DEBUG_PRINT1("iter->ui32_filter[b_bus][i32_obj] 0x%08x\n", iter->ui32_filter[b_bus][i32_obj]);
-      */
 
       // compare received msg with filter
       if
@@ -300,6 +301,21 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
         } // if fit
     } // for objNr
   }// for iter
+
+  if (iter_delete != 0) {
+
+    for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
+      for (uint8_t j=0; j<cui8_maxCanObj; j++) {
+        clearReadQueue(i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->i32_clientID);
+        clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->i32_clientID);
+      }
+
+    if (iter_delete->i32_pipeHandle)
+      close(iter_delete->i32_pipeHandle);
+    
+    pc_serverData->l_clients.erase(iter_delete);
+  }
+
 }
 
 
@@ -347,10 +363,10 @@ static void* can_write_thread_func(void* ptr)
       i32_error = HAL_OVERFLOW_ERR;
     else 
       // message forwarding
-      // clientID in msqWriteBuf.i32_mtype 
-      enqueue_msg(msqWriteBuf.s_sendData.bDlc, msqWriteBuf.s_sendData.dwId, msqWriteBuf.ui8_bus, msqWriteBuf.s_sendData.bXtd, &msqWriteBuf.s_sendData.abData[0], msqWriteBuf.i32_mtype, pc_serverData);
+      // get clientID from msqWriteBuf.i32_mtype
+      enqueue_msg(msqWriteBuf.s_sendData.bDlc, msqWriteBuf.s_sendData.dwId, msqWriteBuf.ui8_bus, msqWriteBuf.s_sendData.bXtd, &msqWriteBuf.s_sendData.abData[0], disassemble_client_id(msqWriteBuf.i32_mtype), pc_serverData);
 
-    send_command_ack(msqWriteBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
+    send_command_ack(disassemble_client_id(msqWriteBuf.i32_mtype), i32_error, &(pc_serverData->msqDataServer));
 
     // release semaphore
     if (get_semaphore(local_semaphore_id, 1) == -1) {
@@ -571,7 +587,7 @@ static void* command_thread_func(void* ptr)
         // if not existing already
         mknod(pipe_name, S_IFIFO|0666, 0);
 
-        // open pipe in read/write mode to allow read access to clean the pipe and to avoid SIGPIPE when client dies and was the only reader to the pipe
+        // open pipe in read/write mode to allow read access to clean the pipe and to avoid SIGPIPE when client dies and this client was the only reader to the pipe
         if ((s_tmpClient.i32_pipeHandle = open(pipe_name, O_NONBLOCK | O_RDWR, 0)) == -1)
           i32_error = HAL_UNKNOWN_ERR;
         
