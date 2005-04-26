@@ -363,14 +363,21 @@ void ISOName_c::setSerNo(uint32_t rui32_serNo)
 bool ISOName_c::higherPriThanPar(const uint8_t* rpb_compare)
 {
   bool b_lowerVal = true;
-  for (int8_t ui8_cnt = 8; ui8_cnt >= 0; ui8_cnt -= 1)
+  int8_t ui8_cnt;
+
+  for (ui8_cnt = 8; ui8_cnt >= 0; ui8_cnt -= 1)
   { // compare starting with self_conf and indGroup flag
     // in parts of uint16_t (2-uint8_t)
     if (pb_data[ui8_cnt] > rpb_compare[ui8_cnt])
-    { // compared value has smaller val -> %e.g. higher prio
+    { // compared value has smaller or val -> %e.g. higher prio
       b_lowerVal = false;
       break;
     }
   }
+
+  if (ui8_cnt < 0)
+    // all values equal => same prio, return false
+    b_lowerVal = false;
+
   return b_lowerVal;
 }
