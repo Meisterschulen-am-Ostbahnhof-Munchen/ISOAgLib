@@ -569,7 +569,15 @@ bool ISOItem_c::processMsg(){
           { // this item has higher prio (lower val) -> send adr claim
             c_pkg.setIsoSa(nr());
           }
-          else
+					else if ( c_pkg.gtp() == gtp() )
+					{ // address claim has same GTP ( device class and -instance )
+						// -> give this instance to the remote one
+						clearItemState(IState_c::Local);
+						setItemState(IState_c::ClaimedAddress);
+						setNr(c_pkg.isoSa());
+						inputString(c_pkg.name());
+					}
+					else
           { // local item has lower prio -> search free SA and claim this
             // or set nr to the code 254 %e.g. no suitbla nr found -> error
             setNr(getIsoMonitorInstance4Comm().unifyIsoSa(this));
