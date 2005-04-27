@@ -78,6 +78,7 @@
 #include <sys/msg.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
+#include <sys/stat.h>
 #include <time.h>
 #include <signal.h>
 
