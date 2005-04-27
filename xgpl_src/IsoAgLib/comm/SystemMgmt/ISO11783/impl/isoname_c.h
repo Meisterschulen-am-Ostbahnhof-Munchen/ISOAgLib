@@ -286,8 +286,9 @@ public:
     check if this NAME has higher prio
     than the given NAME 8-uint8_t string
     @param rpb_compare
+		@return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
   */
-  bool higherPriThanPar(const uint8_t* rpb_compare);
+  int8_t higherPriThanPar(const uint8_t* rpb_compare);
 protected:
 // Protected Methods
 

@@ -565,8 +565,11 @@ bool ISOItem_c::processMsg(){
         { // local item has already claimed the same adress
           // -> react suitable for this contention
           // -> check for NAME
-          if (c_isoName.higherPriThanPar(c_pkg.name()))
+					int8_t i8_higherPrio = c_isoName.higherPriThanPar(c_pkg.name());
+          if ( ( i8_higherPrio == 1                                                )
+					  || ( ( i8_higherPrio == 0 ) && ( itemState(IState_c::ClaimedAddress) ) ) )
           { // this item has higher prio (lower val) -> send adr claim
+						// OR both items have same prio and this item is already claimed -> stay
             c_pkg.setIsoSa(nr());
           }
 					else if ( c_pkg.gtp() == gtp() )

@@ -359,25 +359,27 @@ void ISOName_c::setSerNo(uint32_t rui32_serNo)
   check if this NAME has higher prio
   than the given NAME 8-uint8_t string
   @param rpb_compare
+	@return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
 */
-bool ISOName_c::higherPriThanPar(const uint8_t* rpb_compare)
+int8_t ISOName_c::higherPriThanPar(const uint8_t* rpb_compare)
 {
-  bool b_lowerVal = true;
-  int8_t ui8_cnt;
+  int8_t i8_result = +1;
+  int8_t i8_cnt;
 
-  for (ui8_cnt = 8; ui8_cnt >= 0; ui8_cnt -= 1)
+  for (i8_cnt = 8; i8_cnt >= 0; i8_cnt -= 1)
   { // compare starting with self_conf and indGroup flag
     // in parts of uint16_t (2-uint8_t)
-    if (pb_data[ui8_cnt] > rpb_compare[ui8_cnt])
+    if (pb_data[i8_cnt] > rpb_compare[i8_cnt])
     { // compared value has smaller or val -> %e.g. higher prio
-      b_lowerVal = false;
+      i8_result = -1;
       break;
     }
   }
 
-  if (ui8_cnt < 0)
-    // all values equal => same prio, return false
-    b_lowerVal = false;
+  if (i8_cnt < 0)
+  { // all values equal => same prio, return false
+    i8_result = 0;
+	}
 
-  return b_lowerVal;
+  return i8_result;
 }
