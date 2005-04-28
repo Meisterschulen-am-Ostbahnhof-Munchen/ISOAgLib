@@ -156,6 +156,11 @@ public:
 		@return voltage at PWM output [mV]
 	*/
 	int16_t getDigoutAdc( void ) const { return DigitalO_c::getDigoutAdc();};
+	/** deliver the max allowed PWM -> setting this value results in max output
+		@return max allowed PWM for the current PWM frequency setting
+	*/
+	uint16_t getMaxOutputPwmFreq() const { return DigitalO_c::getMaxOutputPwmFreq();};
+
 private:
   /**
     HIDDEN! copy constructor for Digital_O

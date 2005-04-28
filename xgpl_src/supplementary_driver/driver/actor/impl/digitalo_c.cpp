@@ -112,14 +112,16 @@ void DigitalO_c::init(uint8_t rui8_channel)
   // config the PWM freq with BIOS call
   if (HAL::setPwmFreq(rui8_channel, CONFIG_PWM_DEFAULT_FREQUENCY) == HAL_RANGE_ERR)
   { // wrong channel or PWM
+	ui16_maxOutputPwmFreq = 0xFFFF;
     getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
   }
   else
   { // correct channel and PWM - now register the valid new analog input into ActorO_c
+    // retrieve max allowed PWM freq
+    ui16_maxOutputPwmFreq = HAL::getMaxPwmDigout( rui8_channel );
+
     getActorInstance().registerClient( this );
   }
-  // retrieve max allowed PWM freq
-  ui16_maxOutputPwmFreq = HAL::getMaxPwmDigout( rui8_channel );
 }
 
 /**  destructor of the input object which can close explicit the hardware input */
@@ -139,7 +141,13 @@ void DigitalO_c::setFreq(uint32_t rui32_val){
   // set output PWM frequency with BIOS call
   if (HAL::setPwmFreq(channelNr(), rui32_val) == HAL_RANGE_ERR)
   { // wrong channel number or wrong frequency
+	ui16_maxOutputPwmFreq = 0xFFFF;
     getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Actor );
+  }
+  else
+  {
+    // retrieve max allowed PWM freq
+    ui16_maxOutputPwmFreq = HAL::getMaxPwmDigout( channelNr() );
   }
 }
 

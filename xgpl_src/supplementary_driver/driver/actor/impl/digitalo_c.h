@@ -185,7 +185,12 @@ public:
 		getDigoutDiagnose function can go wrong.
 		@return voltage at PWM output [mV]
 	*/
-	int16_t getDigoutAdc( void ) const { return HAL::getDigoutAdc( channelNr() );};
+  int16_t getDigoutAdc( void ) const { return HAL::getDigoutAdc( channelNr() );};
+	/** deliver the max allowed PWM -> setting this value results in max output
+		@return max allowed PWM for the current PWM frequency setting
+	*/
+  uint16_t getMaxOutputPwmFreq() const
+	{ return ui16_maxOutputPwmFreq; }
 	
 private:
   /**
