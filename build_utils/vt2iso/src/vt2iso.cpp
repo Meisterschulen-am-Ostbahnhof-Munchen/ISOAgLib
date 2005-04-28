@@ -3396,10 +3396,10 @@ int main(int argC, char* argV[])
   while ((ep = readdir (dp))) {
    c_directoryCompareItem = ep->d_name;
    if ( c_directoryCompareItem[0] == '.' ) continue;
-   if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
-   if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
-   if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
-   if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
+   if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
+   if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
+   if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
+   if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
 
    if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
     c_directoryCompareItem.insert(0, "/" );

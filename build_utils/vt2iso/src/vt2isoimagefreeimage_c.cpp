@@ -89,8 +89,19 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
   bitmap = FreeImage_Load(fif, filename, 0);
  }
  else
- { // ardcore - try with BMP
+ { // hardcore - try with BMP
+  std::cerr << "Try with BMP" << std::endl;
   bitmap = FreeImage_Load(FIF_BMP, filename, 0);
+  if ( bitmap == NULL )
+  { // next hardcoretry with png
+    std::cerr << "Try with PNG" << std::endl;
+    bitmap = FreeImage_Load(FIF_PNG, filename, 0);
+  }
+  if ( bitmap == NULL )
+  { // next hardcoretry with jpg
+    std::cerr << "Try with JPEG" << std::endl;
+    bitmap = FreeImage_Load(FIF_JPEG, filename, 0);
+  }
   if ( bitmap == NULL )
   {
    std::cerr << "Fehler beim Laden" << std::endl;
