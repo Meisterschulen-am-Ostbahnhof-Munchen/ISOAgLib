@@ -108,7 +108,7 @@ public:
     check for the input value (uses BIOS function)
     @return true for counter > 0
   */
-  int16_t val(){return CounterI_c::val();};
+  int16_t val() const {return CounterI_c::val();};
   /**
     check for the input value (uses BIOS function)
     @return true for counter > 0
@@ -118,7 +118,7 @@ public:
     check for the input value (uses BIOS function)
     @return amount of signals since initialisation or last reset
   */
-  bool active(){return CounterI_c::active();};
+  bool active() const {return CounterI_c::active();};
   /**
     reset the given counter
 
