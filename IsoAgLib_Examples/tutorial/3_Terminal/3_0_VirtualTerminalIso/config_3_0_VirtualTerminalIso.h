@@ -1,20 +1,20 @@
 // File: config_3_0_VirtualTerminalIso.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_3_0_VirtualTerminalIso"
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_3_0_VirtualTerminalIso" 
 //            Perform changes direct in the feature and project setup file conf_3_0_VirtualTerminalIso
 //  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_3_0_VirtualTerminalIso" call,
 //                    if the corresponding value in isoaglib_config.h changed
-#define CAN_BUS_CNT 3
+#define CAN_BUS_CNT 1 
 
-#define CAN_BUS_USED 3
+#define CAN_BUS_USED 0 
 
-#define CAN_INSTANCE_CNT 1
+#define CAN_INSTANCE_CNT 1 
 
-#define PRT_INSTANCE_CNT 1
+#define PRT_INSTANCE_CNT 1 
 
-#define RS232_INSTANCE_CNT 1
+#define RS232_INSTANCE_CNT 1 
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
@@ -29,20 +29,20 @@
 #ifndef NO
   #define NO 0
 #endif
-#ifndef USE_PROCESS_YN
-	#define USE_PROCESS_YN NO
+#ifndef USE_PROCESS_YN 
+	#define USE_PROCESS_YN NO 
 #endif
-#ifndef USE_EEPROM_IO_YN
-	#define USE_EEPROM_IO_YN NO
+#ifndef USE_EEPROM_IO_YN 
+	#define USE_EEPROM_IO_YN NO 
 #endif
-#ifndef USE_DATASTREAMS_IO_YN
-	#define USE_DATASTREAMS_IO_YN NO
+#ifndef USE_DATASTREAMS_IO_YN 
+	#define USE_DATASTREAMS_IO_YN NO 
 #endif
-#ifndef USE_ISO_11783
-	#define USE_ISO_11783
+#ifndef USE_ISO_11783 
+	#define USE_ISO_11783 
 #endif
-#ifndef USE_ISO_TERMINAL
-	#define USE_ISO_TERMINAL
+#ifndef USE_ISO_TERMINAL 
+	#define USE_ISO_TERMINAL 
 #endif
 
 // The following configuration values can be overwritten.

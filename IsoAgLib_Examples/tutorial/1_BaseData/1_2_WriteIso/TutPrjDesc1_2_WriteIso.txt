@@ -128,6 +128,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -264,7 +269,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -516,6 +521,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -652,7 +662,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -782,7 +792,7 @@ PRJ_BASE=1
 \endcode
 
 
- \section PrjSpec1_2_WriteIso__pc_linux__rte__rte List of configuration settings for 1_2_WriteIso with CAN Driver rte and RS232 Driver rte
+ \section PrjSpec1_2_WriteIso__pc_linux__linux_server_client__rte List of configuration settings for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver rte
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
@@ -877,7 +887,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
-USE_CAN_DRIVER="rte"
+USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"
@@ -904,6 +914,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -1040,7 +1055,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -1170,7 +1185,7 @@ PRJ_BASE=1
 \endcode
 
 
- \section PrjSpec1_2_WriteIso__pc_linux__rte__simulating List of configuration settings for 1_2_WriteIso with CAN Driver rte and RS232 Driver simulating
+ \section PrjSpec1_2_WriteIso__pc_linux__linux_server_client__simulating List of configuration settings for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
@@ -1265,7 +1280,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
-USE_CAN_DRIVER="rte"
+USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"
@@ -1292,6 +1307,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -1428,7 +1448,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -1558,7 +1578,7 @@ PRJ_BASE=1
 \endcode
 
 
- \section PrjSpec1_2_WriteIso__pc_linux__rte__sys List of configuration settings for 1_2_WriteIso with CAN Driver rte and RS232 Driver sys
+ \section PrjSpec1_2_WriteIso__pc_linux__linux_server_client__sys List of configuration settings for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
  Use the file conf_1_2_WriteIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
@@ -1653,7 +1673,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"
-USE_CAN_DRIVER="rte"
+USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"
@@ -1679,6 +1699,11 @@ else
 	# default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
+
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
 
 # ###############################################################
 # Core Communication Setup
@@ -1816,7 +1841,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -2068,6 +2093,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -2204,7 +2234,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -2456,6 +2486,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -2592,7 +2627,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -2844,6 +2879,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -2980,7 +3020,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -3232,6 +3272,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -3368,7 +3413,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -3620,6 +3665,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -3756,7 +3806,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -4008,6 +4058,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -4144,7 +4199,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -4396,6 +4451,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -4532,7 +4592,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -4784,6 +4844,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -4920,7 +4985,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -5172,6 +5237,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -5308,7 +5378,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -5560,6 +5630,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -5696,7 +5771,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -5948,6 +6023,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -6084,7 +6164,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -6336,6 +6416,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -6472,7 +6557,7 @@ PRJ_BASE=1
 # PRJ_SENSOR_COUNTER=0
 
 # slect if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
@@ -6610,7 +6695,7 @@ PRJ_BASE=1
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_1_2_WriteIso.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file conf_1_2_WriteIso in the directory /home/spangler/Fritzmeier/MiniVegN/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
+ Use the file conf_1_2_WriteIso in the directory /home/spangler/AGCO/VtServer/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
 \code
 // File: config_1_2_WriteIso.h
 // IMPORTANT: Never change the first block of this header manually!!!
@@ -6622,9 +6707,13 @@ PRJ_BASE=1
 //                    if the corresponding value in isoaglib_config.h changed
 #define CAN_BUS_CNT 1 
 
+#define CAN_BUS_USED 0 
+
 #define CAN_INSTANCE_CNT 1 
 
 #define PRT_INSTANCE_CNT 1 
+
+#define RS232_INSTANCE_CNT 1 
 
 #ifndef USE_BASE 
 	#define USE_BASE 
@@ -6647,6 +6736,9 @@ PRJ_BASE=1
 #endif
 #ifndef USE_EEPROM_IO_YN 
 	#define USE_EEPROM_IO_YN NO 
+#endif
+#ifndef USE_DATASTREAMS_IO_YN 
+	#define USE_DATASTREAMS_IO_YN NO 
 #endif
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 
@@ -6988,10 +7080,10 @@ PRJ_BASE=1
 \endcode
 
 
- \section FileLists1_2_WriteIso__pc_linux__rte__rte List of Files for 1_2_WriteIso with CAN Driver rte and RS232 Driver rte
+ \section FileLists1_2_WriteIso__pc_linux__linux_server_client__rte List of Files for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver rte
 
 
- \section SrcList1_2_WriteIso__pc_linux__rte__rte List of Sourcefiles for 1_2_WriteIso with CAN Driver rte and RS232 Driver rte
+ \section SrcList1_2_WriteIso__pc_linux__linux_server_client__rte List of Sourcefiles for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver rte
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -7010,8 +7102,10 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -7023,7 +7117,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_2_WriteIso__pc_linux__rte__rte List of Headers for 1_2_WriteIso with CAN Driver rte and RS232 Driver rte
+ \section HdrList1_2_WriteIso__pc_linux__linux_server_client__rte List of Headers for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver rte
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7071,7 +7165,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -7089,10 +7185,10 @@ PRJ_BASE=1
 \endcode
 
 
- \section FileLists1_2_WriteIso__pc_linux__rte__simulating List of Files for 1_2_WriteIso with CAN Driver rte and RS232 Driver simulating
+ \section FileLists1_2_WriteIso__pc_linux__linux_server_client__simulating List of Files for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver simulating
 
 
- \section SrcList1_2_WriteIso__pc_linux__rte__simulating List of Sourcefiles for 1_2_WriteIso with CAN Driver rte and RS232 Driver simulating
+ \section SrcList1_2_WriteIso__pc_linux__linux_server_client__simulating List of Sourcefiles for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -7111,8 +7207,10 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -7124,7 +7222,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_2_WriteIso__pc_linux__rte__simulating List of Headers for 1_2_WriteIso with CAN Driver rte and RS232 Driver simulating
+ \section HdrList1_2_WriteIso__pc_linux__linux_server_client__simulating List of Headers for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver simulating
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7172,7 +7270,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -7190,10 +7290,10 @@ PRJ_BASE=1
 \endcode
 
 
- \section FileLists1_2_WriteIso__pc_linux__rte__sys List of Files for 1_2_WriteIso with CAN Driver rte and RS232 Driver sys
+ \section FileLists1_2_WriteIso__pc_linux__linux_server_client__sys List of Files for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver sys
 
 
- \section SrcList1_2_WriteIso__pc_linux__rte__sys List of Sourcefiles for 1_2_WriteIso with CAN Driver rte and RS232 Driver sys
+ \section SrcList1_2_WriteIso__pc_linux__linux_server_client__sys List of Sourcefiles for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
@@ -7212,8 +7312,10 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -7225,7 +7327,7 @@ PRJ_BASE=1
 
 
 
- \section HdrList1_2_WriteIso__pc_linux__rte__sys List of Headers for 1_2_WriteIso with CAN Driver rte and RS232 Driver sys
+ \section HdrList1_2_WriteIso__pc_linux__linux_server_client__sys List of Headers for 1_2_WriteIso with CAN Driver linux_server_client and RS232 Driver sys
 \code
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
@@ -7273,7 +7375,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -7314,6 +7418,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7374,7 +7479,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -7415,6 +7522,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7475,7 +7583,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -7516,6 +7626,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7576,7 +7687,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -7617,6 +7730,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7677,7 +7791,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -7718,6 +7834,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7778,7 +7895,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -7819,6 +7938,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7879,7 +7999,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -7920,6 +8042,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7980,7 +8103,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -8021,6 +8146,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8081,7 +8207,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -8122,6 +8250,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8182,7 +8311,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -8223,6 +8354,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8283,7 +8415,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -8324,6 +8458,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8384,7 +8519,9 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
