@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_9_RemoteWriteSetpointStdIso" /I "D:\Development\CANLIB\dll" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_2_9_RemoteWriteSetpointStdIso.h" /D "HWTYPE_VIRTUAL" /YX /FD /TP /c
+# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\CANLIB\dll" /I "..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_9_RemoteWriteSetpointStdIso" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_2_9_RemoteWriteSetpointStdIso.h" /D "HWTYPE_VIRTUAL" /YX /FD /TP /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_2_9_RemoteWriteSetpointStdIso.h" /d "HWTYPE_VIRTUAL"
 # ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_2_9_RemoteWriteSetpointStdIso.h" /d "HWTYPE_VIRTUAL"
 BSC32=bscmake.exe
@@ -49,7 +49,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /machine:I386 /libpath:"D:\Development\CANLIB\dll"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /machine:I386 /libpath:"C:\Development\CANLIB\dll"
 
 !ELSEIF  "$(CFG)" == "2_9_RemoteWriteSetpointStdIso - Win32 Debug"
 
@@ -65,7 +65,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_9_RemoteWriteSetpointStdIso" /I "D:\Development\CANLIB\dll" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_2_9_RemoteWriteSetpointStdIso.h" /D "HWTYPE_VIRTUAL" /YX /FD /TP /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\CANLIB\dll" /I "..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_9_RemoteWriteSetpointStdIso" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_2_9_RemoteWriteSetpointStdIso.h" /D "HWTYPE_VIRTUAL" /YX /FD /TP /GZ /c
 # ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_2_9_RemoteWriteSetpointStdIso.h" /d "HWTYPE_VIRTUAL"
 # ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_2_9_RemoteWriteSetpointStdIso.h" /d "HWTYPE_VIRTUAL"
 BSC32=bscmake.exe
@@ -73,7 +73,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"D:\Development\CANLIB\dll"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"C:\Development\CANLIB\dll"
 
 !ENDIF
 
@@ -205,6 +205,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.cpp
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server_helper.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\target_extension_can_w32_vector_canlib.cpp
 # End Source File
 
@@ -245,7 +249,7 @@ SOURCE=..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_9_RemoteWriteSetpoint
 # End Source File
 
 # Begin Source File
-SOURCE=D:\Development\CANLIB\dll\vcandm32.lib
+SOURCE=C:\Development\CANLIB\dll\vcandm32.lib
 # End Source File
 
 # End Group
@@ -506,7 +510,15 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_target_extensions.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_msq.h
 # End Source File
 
 # Begin Source File
@@ -582,7 +594,7 @@ SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\rs232\irs232io_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=D:\Development\CANLIB\dll\VCanD.h
+SOURCE=C:\Development\CANLIB\dll\VCanD.h
 # End Source File
 
 # End Group

@@ -35,6 +35,7 @@
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp
@@ -123,7 +124,9 @@
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h
@@ -145,4 +148,4 @@
 ../../../xgpl_src/IsoAgLib/driver/eeprom/ieepromio_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-D:\Development\Sontheim=_=CANAPI.H
+C:\Development\Sontheim=_=CANAPI.H

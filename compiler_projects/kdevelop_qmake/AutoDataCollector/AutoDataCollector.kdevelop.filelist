@@ -39,8 +39,10 @@
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp
@@ -141,7 +143,9 @@
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h
@@ -174,6 +178,3 @@
 ../../../IsoAgLib_Examples/AutoDataCollector_Classes/defaultrecordconfig_c.h
 ../../../IsoAgLib_Examples/AutoDataCollector_Classes/gpsmanager_c.h
 ../../../IsoAgLib_Examples/config_imi_iso.h
-../../../IsoAgLib_Examples/config_imi_iso_w32.h
-../../../IsoAgLib_Examples/config_imi_iso_rte.h
-../../../IsoAgLib_Examples/config_imi_iso_sim.h

@@ -22,6 +22,7 @@
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -84,7 +85,9 @@
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 ../../../xgpl_src/IsoAgLib/hal/pc/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
@@ -99,4 +102,4 @@
 ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-D:\Development\Sontheim=_=CANAPI.H
+C:\Development\Sontheim=_=CANAPI.H

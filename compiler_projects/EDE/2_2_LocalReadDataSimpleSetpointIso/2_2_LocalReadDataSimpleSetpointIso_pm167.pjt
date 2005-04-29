@@ -1,6 +1,6 @@
 ;Codewright Project File (do not remove or modify this line)
 [State]
-SysSetCwd='..=_=_..=_=_..'
+SysSetCwd='..\..\..'
 SrchSetFlags=0x0418680a
 SrchSetAgainFlags=0x00006002,0
 SrchSetAgainFlags=0x0200600a,1
@@ -41,25 +41,25 @@ ToolAddCmd='$_custom_tool_$_1','API Database Editor',1342177312,'cwtedit.exe'
 TagSetCmd='"${HOME}${WTAGS}" -oc -d -t"${TAGFILE}.tag" -p"${TAGFILE}.ptg"',0x8000060
 BrowseSetFile='2_2_LocalReadDataSimpleSetpointIso.ptg'
 TagSetFile='2_2_LocalReadDataSimpleSetpointIso.tag'
-CompilerAddCmdEx='TASKING src','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING src','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING src',
-CompilerAddCmdEx='TASKING fle','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING fle','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING fle',
-CompilerAddCmdEx='TASKING cc','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cc','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cc',
-CompilerAddCmdEx='TASKING cxx','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cxx','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cxx',
-CompilerAddCmdEx='TASKING asm','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING asm','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING asm',
-CompilerAddCmdEx='TASKING cmp','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cmp','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cmp',
-CompilerAddCmdEx='$_cw_proj_hash_$','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\xfw166.exe 2_2_LocalReadDataSimpleSetpointIso.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='$_cw_proj_hash_$','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\programme\tasking\7.56\c166\bin\xfw166.exe 2_2_LocalReadDataSimpleSetpointIso.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='$_cw_proj_hash_$',
-CompilerAddCmdEx='TASKING ic','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING ic','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING ic',
-CompilerAddCmdEx='TASKING cpp','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cpp','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cpp',
-CompilerAddCmdEx='TASKING c','"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING c','"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\7.56\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING c',
 CompilerNewExt=.htm
 CompilerAssign='TASKING src','.src'
@@ -114,138 +114,138 @@ VCSSetCmd=VCS_ADD_ID,'vcs -i -t@"%Q" "%b%e"',0x8000040
 VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
 
 [Project]
-ConfigSetLinkDBFilename='c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\cwright.ldb'
-ConfigSetMarkDBFilename='c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin\cwright.mrk'
+ConfigSetLinkDBFilename='c:\programme\tasking\7.56\c166\bin\cwright.ldb'
+ConfigSetMarkDBFilename='c:\programme\tasking\7.56\c166\bin\cwright.mrk'
 ConfigSetSymbolDBFilename='2_2_LocalReadDataSimpleSetpointIso.sbl'
 EditSetPath=''
 
 [Files]
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_monitoritem_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_baseitem_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_systemmgmt_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_istate_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_identitem_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isoname_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isoitem_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isomonitor_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isosystempkg_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Scheduler=_=_impl=_=_scheduler_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkgext_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_util_funcs.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkg_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_cancustomer_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_liberr_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_procdatabase_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_processpkg_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_processelementbase_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_procident_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_process_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_impl=_=_procdatalocalbase_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_SimpleSetpointElements=_=_impl=_=_simplemanagesetpointlocal_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_StdMeasureElements=_=_impl=_=_managemeasureproglocal_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_StdMeasureElements=_=_impl=_=_measureproglocal_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_SimpleSetpoint=_=_impl=_=_procdatalocalsimplesetpoint_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_StdMeasureElements=_=_impl=_=_measureprogbase_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_StdMeasureElements=_=_impl=_=_measuresubprog_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_processdatachangehandler_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_can=_=_hal_can_interface.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_system=_=_system_target_extensions.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_ident_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_msgobj_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_filterbox_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_canio_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_system=_=_impl=_=_system_c.cpp
-..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_tutorial=_=_2_ProcessData=_=_2_2_LocalReadDataSimpleSetpointIso=_=_2_2_LocalReadDataSimpleSetpointIso.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_monitoritem_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_identitem_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_baseitem_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_istate_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_impl=_=_systemmgmt_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isoitem_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isomonitor_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isoname_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_impl=_=_isosystempkg_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_iisoitem_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_iisomonitor_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_ISO11783=_=_iisoname_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_istate_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_imonitoritem_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_isystemmgmt_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_SystemMgmt=_=_iidentitem_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Scheduler=_=_impl=_=_scheduler_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Scheduler=_=_ischeduler_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_icanpkgext_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_cancustomer_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_singleton_container.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_elementbase_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_singleton_container_decl.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_getypos_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_util_funcs.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkgext_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_singleton.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_impl=_=_canpkg_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_liberr_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_config.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_icancustomer_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_icanpkg_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_compiler_adoption.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_igetypos_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_util=_=_iutil_funcs.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_processelementbase_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_procident_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_process_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_procdatabase_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_processpkg_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_proc_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_impl=_=_procdatalocalbase_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_SimpleSetpointElements=_=_impl=_=_simplemanagesetpointlocal_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_SimpleSetpointElements=_=_isimplemanagesetpointlocal_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_StdMeasureElements=_=_impl=_=_managemeasureproglocal_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_StdMeasureElements=_=_impl=_=_measureproglocal_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_StdMeasureElements=_=_imeasureproglocal_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_SimpleSetpoint=_=_impl=_=_procdatalocalsimplesetpoint_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Local=_=_SimpleSetpoint=_=_iprocdatalocalsimplesetpoint_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_StdMeasureElements=_=_impl=_=_measuresubprog_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_StdMeasureElements=_=_impl=_=_measureprogbase_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_processdatachangehandler_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_proc_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_iprocess_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_Application_Config=_=_isoaglib_config.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_typedef.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_config.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_typedef.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_can.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_can=_=_can.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_can=_=_hal_can_interface.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_config.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_system=_=_system_target_extensions.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_system=_=_system.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_pm167=_=_errcodes.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_system.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_filterbox_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_msgobj_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_ident_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_impl=_=_canio_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_iident_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_can=_=_icanio_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_system=_=_impl=_=_system_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_driver=_=_system=_=_isystem_c.h
-..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/Xos20go.asm
-..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/Xos20err.c
-..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/xos20esx.h
-..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/XOS20EEC.H
-..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx/XOS20EEC.OBJ
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\monitoritem_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\systemmgmt_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoitem_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp
+..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.cpp
+..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.cpp
+..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.cpp
+..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.cpp
+..\..\..\xgpl_src\IsoAgLib\util\liberr_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procdatabase_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processpkg_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processelementbase_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procident_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\process_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\impl\procdatalocalbase_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpointElements\impl\simplemanagesetpointlocal_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\impl\managemeasureproglocal_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\impl\measureproglocal_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpoint\impl\procdatalocalsimplesetpoint_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\StdMeasureElements\impl\measureprogbase_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\StdMeasureElements\impl\measuresubprog_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\processdatachangehandler_c.cpp
+..\..\..\xgpl_src\IsoAgLib\hal\pm167\can\hal_can_interface.cpp
+..\..\..\xgpl_src\IsoAgLib\hal\pm167\system\system_target_extensions.cpp
+..\..\..\xgpl_src\IsoAgLib\driver\can\impl\ident_c.cpp
+..\..\..\xgpl_src\IsoAgLib\driver\can\impl\msgobj_c.cpp
+..\..\..\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.cpp
+..\..\..\xgpl_src\IsoAgLib\driver\can\impl\canio_c.cpp
+..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
+..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_2_LocalReadDataSimpleSetpointIso\2_2_LocalReadDataSimpleSetpointIso.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\monitoritem_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\systemmgmt_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoitem_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isomonitor_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isosystempkg_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisoitem_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisomonitor_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\iisoname_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\istate_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\imonitoritem_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\isystemmgmt_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\iidentitem_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\ischeduler_c.h
+..\..\..\xgpl_src\IsoAgLib\util\icanpkgext_c.h
+..\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.h
+..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container.h
+..\..\..\xgpl_src\IsoAgLib\util\impl\elementbase_c.h
+..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
+..\..\..\xgpl_src\IsoAgLib\util\impl\getypos_c.h
+..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
+..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.h
+..\..\..\xgpl_src\IsoAgLib\util\impl\singleton.h
+..\..\..\xgpl_src\IsoAgLib\util\impl\canpkg_c.h
+..\..\..\xgpl_src\IsoAgLib\util\liberr_c.h
+..\..\..\xgpl_src\IsoAgLib\util\config.h
+..\..\..\xgpl_src\IsoAgLib\util\icancustomer_c.h
+..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
+..\..\..\xgpl_src\IsoAgLib\util\compiler_adoption.h
+..\..\..\xgpl_src\IsoAgLib\util\igetypos_c.h
+..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processelementbase_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procident_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\process_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procdatabase_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processpkg_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\proc_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\impl\procdatalocalbase_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpointElements\impl\simplemanagesetpointlocal_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpointElements\isimplemanagesetpointlocal_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\impl\managemeasureproglocal_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\impl\measureproglocal_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\StdMeasureElements\imeasureproglocal_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpoint\impl\procdatalocalsimplesetpoint_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\Local\SimpleSetpoint\iprocdatalocalsimplesetpoint_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\StdMeasureElements\impl\measuresubprog_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\StdMeasureElements\impl\measureprogbase_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\processdatachangehandler_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\proc_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\iprocess_c.h
+..\..\..\xgpl_src\Application_Config\isoaglib_config.h
+..\..\..\xgpl_src\IsoAgLib\hal\pm167\typedef.h
+..\..\..\xgpl_src\IsoAgLib\hal\config.h
+..\..\..\xgpl_src\IsoAgLib\typedef.h
+..\..\..\xgpl_src\IsoAgLib\hal\can.h
+..\..\..\xgpl_src\IsoAgLib\hal\pm167\can\can.h
+..\..\..\xgpl_src\IsoAgLib\hal\pm167\can\hal_can_interface.h
+..\..\..\xgpl_src\IsoAgLib\hal\pm167\config.h
+..\..\..\xgpl_src\IsoAgLib\hal\pm167\system\system_target_extensions.h
+..\..\..\xgpl_src\IsoAgLib\hal\pm167\system\system.h
+..\..\..\xgpl_src\IsoAgLib\hal\pm167\errcodes.h
+..\..\..\xgpl_src\IsoAgLib\hal\system.h
+..\..\..\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.h
+..\..\..\xgpl_src\IsoAgLib\driver\can\impl\msgobj_c.h
+..\..\..\xgpl_src\IsoAgLib\driver\can\impl\ident_c.h
+..\..\..\xgpl_src\IsoAgLib\driver\can\impl\canio_c.h
+..\..\..\xgpl_src\IsoAgLib\driver\can\iident_c.h
+..\..\..\xgpl_src\IsoAgLib\driver\can\icanio_c.h
+..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.h
+..\..\..\xgpl_src\IsoAgLib\driver\system\isystem_c.h
+..\..\..\commercial_BIOS\bios_esx/Xos20go.asm
+..\..\..\commercial_BIOS\bios_esx/Xos20err.c
+..\..\..\commercial_BIOS\bios_esx/xos20esx.h
+..\..\..\commercial_BIOS\bios_esx/XOS20EEC.H
+..\..\..\commercial_BIOS\bios_esx/XOS20EEC.OBJ
 
 
 [Directories]
-Executables=c:=_=_programme=_=_tasking=_=_7.56=_=_c166\bin
-Includes=c:=_=_programme=_=_tasking=_=_7.56=_=_c166\include.cpp;..=_=_..=_=_..=_=_IsoAgLib_Examples=_=_tutorial=_=_2_ProcessData=_=_2_2_LocalReadDataSimpleSetpointIso;..=_=_..=_=_..;..=_=_..=_=_../xgpl_src;..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx
-Libraries=c:=_=_programme=_=_tasking=_=_7.56=_=_c166\lib;..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx
+Executables=c:\programme\tasking\7.56\c166\bin
+Includes=c:\programme\tasking\7.56\c166\include.cpp;..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_2_LocalReadDataSimpleSetpointIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esx
+Libraries=c:\programme\tasking\7.56\c166\lib;..\..\..\commercial_BIOS\bios_esx
 
 [Ede]
-Toolchain=c:=_=_programme=_=_tasking=_=_7.56=_=_c166\etc\c166.dol
+Toolchain=c:\programme\tasking\7.56\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir==_=_home=_=_spangler=_=_Fritzmeier=_=_MiniVegN=_=_IsoAgLib=_=_compiler_projects=_=_EDE=_=_=_=_2_2_LocalReadDataSimpleSetpointIso
+ProjectDir=\home\spangler\AGCO\VtServer\IsoAgLib\compiler_projects\EDE\\2_2_LocalReadDataSimpleSetpointIso
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b
@@ -294,11 +294,11 @@ COptimAliasTypeChk=0
 OutIHex=1
 OutIHexType=OutIHexType32
 OutIHexAdditionalOpt="-r -O -P"
-LocMyIlo=..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx=_=_Xos20lcs.ilo
+LocMyIlo=..\..\..\commercial_BIOS\bios_esx\Xos20lcs.ilo
 LocSmartlink=1
 LnkLocTrapFPLib=0
 LnkLocSupprWarn=118
-LnkLocAddOptions= -Wo ..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx=_=_C756=_=_Xos20l.lib -Wo ..=_=_..=_=_..=_=_commercial_BIOS=_=_bios_esx=_=_Module=_=_Xma20l.lib
+LnkLocAddOptions= -Wo ..\..\..\commercial_BIOS\bios_esx\C756\Xos20l.lib -Wo ..\..\..\commercial_BIOS\bios_esx\Module\Xma20l.lib
 OptionList=CppCompGlobal,CCompGlobal,CpuType,CompAlternativeTokens,CompRtti,CppDefine,CppKeepOutput,CMemModel,CEstimateUsk,COutKeepSrc,CFragment,CDispAllWarn,CSupprSomeWarn,CSupprWarn,CDebug,CDefine,COptim,COptimAliasTypeChk,OutIHex,OutIHexType,OutIHexAdditionalOpt,LocMyIlo,LocSmartlink,LnkLocTrapFPLib,LnkLocSupprWarn,LnkLocAddOptions
 
 

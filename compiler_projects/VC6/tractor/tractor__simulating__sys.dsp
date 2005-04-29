@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2  /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_tractor.h" /YX /FD /TP /c
+# ADD CPP /nologo /W3 /GX /O2  /I "..\..\..\IsoAgLib_Examples" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_tractor.h" /YX /FD /TP /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractor.h"
 # ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractor.h"
 BSC32=bscmake.exe
@@ -65,7 +65,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od  /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_tractor.h" /YX /FD /TP /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od  /I "..\..\..\IsoAgLib_Examples" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_tractor.h" /YX /FD /TP /GZ /c
 # ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractor.h"
 # ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractor.h"
 BSC32=bscmake.exe
@@ -154,6 +154,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\basepkg_c.cpp
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server_helper.cpp
 # End Source File
 
 # Begin Source File
@@ -386,7 +390,15 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_target_extensions.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_msq.h
 # End Source File
 
 # Begin Source File

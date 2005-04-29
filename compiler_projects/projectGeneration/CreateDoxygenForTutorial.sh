@@ -25,7 +25,7 @@ for conf_example in $EXAMPLE_LIST ; do
   	  for rs232_drv in $RS232_LIST ; do
         if [ $can_drv = "sys" ] ; then
 	        if    [ $target = "pc_linux" ] ; then
-      		  can_drv="rte"
+      		  can_drv="linux_server_client"
           elif [ $target = "pc_win32" ] ; then
       		  continue
           fi
