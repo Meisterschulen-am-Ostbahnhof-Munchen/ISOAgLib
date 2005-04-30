@@ -309,7 +309,7 @@ fprintf(stderr,"Opening CAN BUS channel=%d\n", channel);
 #ifdef DEBUG
 fprintf(stderr,"open( \"%s\", O_RDRWR)\n", fname);
 #endif
-			can_device = open(fname, O_RDWR);
+    			can_device = open(fname, O_RDWR | O_NONBLOCK);
 			if (!can_device)
 				{
 #ifdef DEBUG
@@ -407,6 +407,35 @@ int ca_TransmitCanCard_1(int channel, tSend* ptSend)
     msg.time = 0;
 	for( int i=0; i<msg.len; i++ )
         msg.data[i] = ptSend->abData[i];
+
+  fd_set wfds;
+  int retval;
+  int maxfd = can_device+1;
+
+  FD_ZERO(&wfds);
+  FD_SET(can_device, &wfds);
+
+  struct timeval tv;
+  tv.tv_sec = 0;  	// timeout immediately (only check if data is waiting when on a timer)
+  tv.tv_usec = 0;
+  retval = select(maxfd, NULL, &wfds, NULL, &tv);
+  if(retval == -1)
+  {
+    fprintf(stderr, "Error Occured in select\n");
+    return 0;
+
+  } else if(retval == 0)
+  {
+    fprintf(stderr, "Error can't write Occured in select\n");
+    return 0;
+  } else
+  {
+    if(FD_ISSET(can_device, &wfds) != 1)
+    {
+      fprintf(stderr, "Not selecting right thing\n");
+      return 0;
+    }
+  }
 
     int ret = ioctl(can_device, CAN_WRITE_MSG, &msg);
     if (ret < 0)
@@ -515,7 +544,7 @@ int ca_GetData_1 (can_recv_data* receivedata)
 //            fprintf(stderr, "CANRead OK: %i\n", ret);
 		    receivedata->b_bus = channel;
             receivedata->msg.i32_ident = msg.id;
-            receivedata->msg.b_xtd = (msg.msg_type == MSGTYPE_EXTENDED);
+			receivedata->msg.b_xtd = (msg.msg_type & MSGTYPE_EXTENDED) == MSGTYPE_EXTENDED;
             receivedata->msg.b_dlc = msg.len;
             receivedata->msg.i32_time = msg.time;
 	        for( int i=0; i<msg.len; i++ )
