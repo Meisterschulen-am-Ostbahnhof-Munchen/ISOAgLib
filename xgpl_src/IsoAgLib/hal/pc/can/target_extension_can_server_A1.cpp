@@ -957,8 +957,8 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
   FD_SET(can_device, &wfds);
 
   struct timeval tv;
-  tv.tv_sec = 0;  	// timeout immediately (only check if data is waiting when on a timer)
-  tv.tv_usec = 0;
+  tv.tv_sec = 0;  	// tv_sec and tv_usec= 0: timeout immediately (only check if data is waiting when on a timer)
+  tv.tv_usec = 10000;  // wait not more than 10 msec for the state: nonblocking write
   retval = select(maxfd, NULL, &wfds, NULL, &tv);
   if(retval == -1)
   {
