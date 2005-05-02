@@ -406,7 +406,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   }
 
   if (msqCommandBuf.i16_command == COMMAND_NACK ) {
-    printf("nack received\n");
+    printf("nack received in sendCanMsg\n");
     return msqCommandBuf.s_error.i32_error;
   }
 
