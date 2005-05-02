@@ -102,7 +102,7 @@ int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient)
   }
 
   if (p_msqCommandBuf->i16_command == COMMAND_NACK ) {
-    printf("nack received\n");
+    printf("nack received in send_command\n");
     return p_msqCommandBuf->s_error.i32_error;
   }
   
