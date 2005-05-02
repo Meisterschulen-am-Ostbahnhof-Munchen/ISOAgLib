@@ -92,16 +92,18 @@
 #endif
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#include <IsoAgLib/util/impl/util_funcs.h>
+	#ifdef SYSTEM_PC
+		#include <iostream>
+	#else
+		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#endif
 	#include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
+
 #ifdef DEBUG_HEAP_USEAGE
 static uint16_t sui16_isoItemTotal = 0;
-#endif
-
-#ifdef SYSTEM_PC
-  #include <iostream>
 #endif
 
 namespace __IsoAgLib {
