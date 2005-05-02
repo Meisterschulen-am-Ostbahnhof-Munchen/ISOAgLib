@@ -105,6 +105,7 @@ static uint8_t _b_prescale_1_Index;
   used for counting
 */
 static uint32_t _pulDiginCounter;
+static uint16_t _prevCounter;
 
 /**
   structure to store last and actual trigger timestamp
@@ -233,8 +234,8 @@ uint32_t getCounter()
  uint16_t ui16_result = 0xFFFF, ui16_counter;
 
 get_digin_period(&ui16_result, &ui16_counter);
-_pulDiginCounter = ui16_counter;
-_pulDiginCounter += ui16_counter;
+_pulDiginCounter += ( ui16_counter - _prevCounter );
+_prevCounter = ui16_counter;
 
     return _pulDiginCounter;
 }
@@ -244,7 +245,11 @@ _pulDiginCounter += ui16_counter;
 */
 int16_t resetCounter()
 {
+  uint16_t ui16_result = 0xFFFF, ui16_counter;
+  get_digin_period(&ui16_result, &ui16_counter);
   _pulDiginCounter = 0;
+  _prevCounter = ui16_counter;
+
   return C_NO_ERR;
 }
 /**
@@ -257,7 +262,8 @@ uint16_t getCounterPeriod()
   uint16_t ui16_timebase, ui16_result = 0xFFFF, ui16_counter;
 
 get_digin_period(&ui16_result, &ui16_counter);
-_pulDiginCounter += ui16_counter;
+_pulDiginCounter += ( ui16_counter - _prevCounter );
+_prevCounter = ui16_counter;
 
     ui16_result = (((2 << (_b_prescale_1_Index + 2)) * ui16_result )/ (get_cpu_freq() * 1000));
 #if 0
