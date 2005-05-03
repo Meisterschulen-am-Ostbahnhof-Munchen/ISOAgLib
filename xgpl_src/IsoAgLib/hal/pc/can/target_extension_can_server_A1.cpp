@@ -57,8 +57,9 @@
  ***************************************************************************/
 
 // do not use can bus, operation is based on message forwarding in server
-//#define SIMULATE_BUS_MODE 1
-
+#ifndef SYSTEM_A1
+#define SIMULATE_BUS_MODE 1
+#endif
 
 #include "can_target_extensions.h"
 #include <cstring>
