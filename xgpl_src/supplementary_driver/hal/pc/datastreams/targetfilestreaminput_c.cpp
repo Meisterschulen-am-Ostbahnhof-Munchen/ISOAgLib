@@ -144,7 +144,7 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 	ui8_data = isp_tmp->get();
 
 	// check if next get returns EOF: nothing more to read
-	if (isp_tmp->peek() == EOF)
+	if ((isp_tmp->peek() == EOF) || (isp_tmp->eof()))
 		b_eofReached = true;
 
 	return *this;
