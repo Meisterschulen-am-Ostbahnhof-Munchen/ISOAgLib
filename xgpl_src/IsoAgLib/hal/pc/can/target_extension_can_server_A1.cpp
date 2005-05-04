@@ -963,18 +963,18 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
   retval = select(maxfd, NULL, &wfds, NULL, &tv);
   if(retval == -1)
   {
-    DEBUG_PRINT1("Error Occured in select\n");
+    DEBUG_PRINT("Error Occured in select\n");
     return 0;
 
   } else if(retval == 0)
   {
-    DEBUG_PRINT1("Error can't write Occured in select\n");
+    DEBUG_PRINT("Error can't write Occured in select\n");
     return 0;
   } else
   {
     if(FD_ISSET(can_device, &wfds) != 1)
     {
-      DEBUG_PRINT1("Not selecting right thing\n");
+      DEBUG_PRINT("Not selecting right thing\n");
       return 0;
     }
   }
