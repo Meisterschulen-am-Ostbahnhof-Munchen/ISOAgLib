@@ -286,7 +286,7 @@ ISOItem_c::~ISOItem_c(){
 
 /**
   deliver name
-  @return pointer to the name uint8_t string (7byte)
+  @return pointer to the name uint8_t string (8byte)
 */
 const uint8_t* ISOItem_c::name() const {
   return c_isoName.outputString();

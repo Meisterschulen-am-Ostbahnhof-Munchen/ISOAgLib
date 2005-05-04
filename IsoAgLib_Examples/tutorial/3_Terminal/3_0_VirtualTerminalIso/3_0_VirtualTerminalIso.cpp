@@ -435,7 +435,7 @@ static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
 int main()
 { // simply call startImi
 
-  getIcanInstance().init( 0, 250 );
+  getIcanInstance().init( CAN_BUS_USED, 250 );
 
   // variable for GETY_POS
   // default with primary cultivation mounted back

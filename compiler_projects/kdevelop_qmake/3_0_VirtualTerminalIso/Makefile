@@ -73,7 +73,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \

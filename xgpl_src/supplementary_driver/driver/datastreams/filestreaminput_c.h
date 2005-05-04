@@ -97,20 +97,33 @@
 // +X2C includes
 // ~X2C
 
-//  +X2C Class 915 : FileFileStreamInput_c
+//  +X2C Class 915 : FileStreamInput_c
 class FileStreamInput_c : public StreamInput_c
 {
 
 public:
 
-	//! open a input stream
-	bool open( std::string& filename, FileMode_t rt_mode ) { return c_targetHandle.open( filename, rt_mode );};
-	//! open a input stream
-	bool open( const char* filename, FileMode_t rt_mode ) { return c_targetHandle.open( filename, rt_mode); };
-	//! close a input stream
-	void close() { c_targetHandle.close();};
+  //! open an input stream
+  bool open( std::string& filename, FileMode_t rt_mode ) {
+    bool b_result = c_targetHandle.open( filename, rt_mode );
+    if (b_result) str_openedFile = filename;
+    return b_result;
+  };
+  //! open an input stream
+  bool open( const char* filename, FileMode_t rt_mode ) {
+    bool b_result = c_targetHandle.open( filename, rt_mode);
+    if (b_result) str_openedFile = filename;
+    return b_result;
+  };
+  //! close an input stream
+  void close(bool b_deleteFile=false) { 
+    c_targetHandle.close();
+    if (b_deleteFile) {
+      remove (str_openedFile.c_str());
+    }
+  };
 
-	//  Operation: operator>>
+  //  Operation: operator>>
   //! Parameter:
   //! @param ui8_data:
   virtual StreamInput_c& operator>>(uint8_t& ui8_data);
@@ -119,8 +132,9 @@ public:
   virtual bool eof() const { return c_targetHandle.eof();};
 
 private:
-	TargetFileStreamInput_c c_targetHandle;
+  TargetFileStreamInput_c c_targetHandle;
 
+  std::string str_openedFile;
 }; // ~X2C
 
 
