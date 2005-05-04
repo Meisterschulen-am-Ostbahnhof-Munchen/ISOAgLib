@@ -954,6 +954,8 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
   int retval;
   int maxfd = can_device+1;
 
+  // select call should not be necessary during write
+#if 0
   FD_ZERO(&wfds);
   FD_SET(can_device, &wfds);
 
@@ -978,6 +980,7 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
       return 0;
     }
   }
+#endif
 
   int ret = ioctl(can_device, CAN_WRITE_MSG, &msg);
 #else
