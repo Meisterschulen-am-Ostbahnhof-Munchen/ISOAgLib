@@ -950,12 +950,13 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
     msg.data[i] = ptSend->abData[i];
 
 #ifndef SIMULATE_BUS_MODE
+
+// select call should not be necessary during write
+#if 0
   fd_set wfds;
   int retval;
   int maxfd = can_device+1;
 
-  // select call should not be necessary during write
-#if 0
   FD_ZERO(&wfds);
   FD_SET(can_device, &wfds);
 
