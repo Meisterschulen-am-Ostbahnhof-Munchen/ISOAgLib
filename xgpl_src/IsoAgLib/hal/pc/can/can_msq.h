@@ -142,7 +142,7 @@ typedef struct {
 } msqWrite_s;
 
 
-void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqDataServer, int32_t i32_lastPipeId = NULL);
+void send_command_ack(int32_t i32_mtype, int32_t i32_error, msqData_s* p_msqDataServer, int32_t i32_lastPipeId = 0);
 
 int32_t send_command(msqCommand_s* p_msqCommandBuf, msqData_s* p_msqDataClient);
 
