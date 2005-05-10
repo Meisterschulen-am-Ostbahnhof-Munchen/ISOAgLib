@@ -403,9 +403,9 @@ bool attrIsGiven [maxAttributeNames];
 // ---------------------------------------------------------------------------
 //
 #ifdef USE_FREE_IMAGE_LIB
- Vt2IsoImageFreeImage_c c_Bitmap;
+  Vt2IsoImageFreeImage_c c_Bitmap;
 #else
- Vt2IsoImagePaintlib_c c_Bitmap;
+  Vt2IsoImagePaintlib_c c_Bitmap;
 #endif
 
 // ---------------------------------------------------------------------------
@@ -414,21 +414,21 @@ bool attrIsGiven [maxAttributeNames];
 
 static void usage()
 {
- std::cout << "\nvt2iso BUILD DATE: 14-Jan-2005\n\n"
-   "Usage:\n"
-   " vt2iso [options] <XML file>\n\n"
-   "This program invokes the DOMBuilder, builds the DOM tree,\n"
-   "and then converts the tree to ISO Virtual Terminal cpp-files.\n\n"
-   "Input files are all files starting with <XML file>,\nsorted by alphabetical order.\n"
-   "This has been done to give the possibility to split \nlarge XML files into several ones.\n\n"
-   "Options:\n"
-   " -v=xxx   Validation scheme [always | never | auto]. Defaults to auto\n"
-   " -n    Enable namespace processing. Defaults to off.\n"
-   " -s    Enable schema processing. Defaults to off.\n"
-   " -f    Enable full schema constraint checking. Defaults to off.\n"
-   " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
-   " -?    Show this help.\n\n"
-   << std::endl;
+  std::cout << "\nvt2iso BUILD DATE: 14-Jan-2005\n\n"
+    "Usage:\n"
+    " vt2iso [options] <XML file>\n\n"
+    "This program invokes the DOMBuilder, builds the DOM tree,\n"
+    "and then converts the tree to ISO Virtual Terminal cpp-files.\n\n"
+    "Input files are all files starting with <XML file>,\nsorted by alphabetical order.\n"
+    "This has been done to give the possibility to split \nlarge XML files into several ones.\n\n"
+    "Options:\n"
+    " -v=xxx   Validation scheme [always | never | auto]. Defaults to auto\n"
+    " -n    Enable namespace processing. Defaults to off.\n"
+    " -s    Enable schema processing. Defaults to off.\n"
+    " -f    Enable full schema constraint checking. Defaults to off.\n"
+    " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
+    " -?    Show this help.\n\n"
+    << std::endl;
 }
 
 
@@ -436,149 +436,147 @@ char proName[1024+1];
 
 void clean_exit (int return_value, char* error_message=NULL)
 {
- char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
+  char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
 
- if (error_message != NULL)
-  std::cout << error_message;
+  if (error_message != NULL)
+    std::cout << error_message;
 
- if (partFileA) fclose (partFileA);
+  if (partFileA) fclose (partFileA);
 
- if (partFileB) fclose (partFileB);
+  if (partFileB) fclose (partFileB);
 
- if (partFileC) {
-   fprintf (partFileC, "\n  for (int i=0;i<numObjects; i++) {");
-   fprintf (partFileC, "\n    iVtObjects [i]->setOriginSKM (false);");
-   fprintf (partFileC, "\n  }");
-   fprintf (partFileC, "\n  b_initAllObjects = true;");
-   fprintf (partFileC, "\n}\n");
-   fclose (partFileC);
- }
+  if (partFileC) {
+    fprintf (partFileC, "\n  for (int i=0;i<numObjects; i++) {");
+    fprintf (partFileC, "\n    iVtObjects [i]->setOriginSKM (false);");
+    fprintf (partFileC, "\n  }");
+    fprintf (partFileC, "\n  b_initAllObjects = true;");
+    fprintf (partFileC, "\n}\n");
+    fclose (partFileC);
+  }
 
- if (partFileD) {
-   fprintf (partFileD, "\n#define vtKeyCodeACK 0\n");
-// OLD:  fprintf (partFileD, "\n#define vtObjectCount %d\n", objCount);
-  fclose (partFileD);
- }
+  if (partFileD) {
+    fprintf (partFileD, "\n#define vtKeyCodeACK 0\n");
+    // OLD:  fprintf (partFileD, "\n#define vtObjectCount %d\n", objCount);
+    fclose (partFileD);
+  }
 
- if (partFileE) { // -list
-   fputs ("\n};\n", partFileE);
-   // write implementation of handler class constructor into list
-  // as there the list must be known
-  // -> the handler decleration can be included from everywhere
-  fprintf (partFileE, "\n  iObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjects, %d, %d, %d, %d) {};\n",
-   proName, proName, objCount, opDimension, skWidth, skHeight);
+  if (partFileE) { // -list
+    fputs ("\n};\n", partFileE);
+    // write implementation of handler class constructor into list
+    // as there the list must be known
+    // -> the handler decleration can be included from everywhere
+    fprintf (partFileE, "\n  iObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjects, %d, %d, %d, %d) {};\n",
+    proName, proName, objCount, opDimension, skWidth, skHeight);
 
-  fclose(partFileE);
- }
- if (partFileF) { // handler class direct
-// NEW:
-   fprintf (partFileF, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName );
-   fprintf (partFileF, "\n #define DECL_direct_iObjectPool_%s_c", proName );
-   fprintf (partFileF, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
-   fprintf (partFileF, "\npublic:");
-   fprintf (partFileF, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
-   fprintf (partFileF, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
-   fprintf (partFileF, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
-   fprintf (partFileF, "\n  virtual void eventEnterSafeState ();");
-   fprintf (partFileF, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
-   fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
-   fprintf (partFileF, "\n  void initAllObjectsOnce();");
-   fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName);
-   fprintf (partFileF, "\n};\n");
-   fprintf (partFileF, "\n #endif\n" );
-   fclose (partFileF);
- }
- if (partFileFderived) { // handler class derived
-// NEW:
-   fprintf (partFileFderived, "\n #ifndef DECL_derived_iObjectPool_%s_c", proName );
-   fprintf (partFileFderived, "\n #define DECL_derived_iObjectPool_%s_c", proName );
-   fprintf (partFileFderived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
-   fprintf (partFileFderived, "\npublic:");
-// fprintf (partFileFderived, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
-// fprintf (partFileFderived, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
-// fprintf (partFileFderived, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
-   fprintf (partFileFderived, "\n  void initAllObjectsOnce();");
-   fprintf (partFileFderived, "\n  iObjectPool_%s_c ();", proName);
-   fprintf (partFileFderived, "\n};\n");
-   fprintf (partFileFderived, "\n #endif\n" );
-   fclose (partFileFderived);
- }
-
-
-// Write Direct Includes
-
- char* pc_lastDirectoryBackslash, *pc_lastDirectorySlash;
- char xmlFileWithoutPath[255];
- pc_lastDirectoryBackslash = strrchr( xmlFileGlobal, '\\' );
- pc_lastDirectorySlash = strrchr( xmlFileGlobal, '/' );
-
- if ( ( pc_lastDirectoryBackslash == NULL ) && ( pc_lastDirectorySlash == NULL ) )
- { // no path found
-   strncpy( xmlFileWithoutPath, xmlFileGlobal, 254 );
- }
- else if ( ( pc_lastDirectoryBackslash == NULL ) && ( pc_lastDirectorySlash != NULL ) )
- { // only UNIX style slash found
-   strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
- }
- else if ( ( pc_lastDirectoryBackslash != NULL ) && ( pc_lastDirectorySlash == NULL ) )
- { // only WIN32 style Backslash found
-   strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
- }
- else if ( pc_lastDirectoryBackslash > pc_lastDirectorySlash )
- { // last backslash is behind last slash - cas of mixed directory seperators
-   strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
- }
- else
- { // last slash is behind last backslash - cas of mixed directory seperators
-   strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
- }
-
-
- strncpy (partFileName, xmlFileGlobal, 1024);
- strcat (partFileName, "_direct.h");
- partFileA = fopen (partFileName,"wt");
-
- fprintf (partFileA, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
- fprintf (partFileA, "#include \"%s-handler-direct.inc\"\n", xmlFileWithoutPath);
- fprintf (partFileA, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
- fprintf (partFileA, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
- fprintf (partFileA, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
- fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
- fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
-
- fclose (partFileA);
+    fclose(partFileE);
+  }
+  if (partFileF) { // handler class direct
+  // NEW:
+    fprintf (partFileF, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName );
+    fprintf (partFileF, "\n #define DECL_direct_iObjectPool_%s_c", proName );
+    fprintf (partFileF, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
+    fprintf (partFileF, "\npublic:");
+    fprintf (partFileF, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
+    fprintf (partFileF, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
+    fprintf (partFileF, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
+    fprintf (partFileF, "\n  virtual void eventEnterSafeState ();");
+    fprintf (partFileF, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
+    fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
+    fprintf (partFileF, "\n  void initAllObjectsOnce();");
+    fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName);
+    fprintf (partFileF, "\n};\n");
+    fprintf (partFileF, "\n #endif\n" );
+    fclose (partFileF);
+  }
+  if (partFileFderived) { // handler class derived
+  // NEW:
+    fprintf (partFileFderived, "\n #ifndef DECL_derived_iObjectPool_%s_c", proName );
+    fprintf (partFileFderived, "\n #define DECL_derived_iObjectPool_%s_c", proName );
+    fprintf (partFileFderived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
+    fprintf (partFileFderived, "\npublic:");
+  // fprintf (partFileFderived, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
+  // fprintf (partFileFderived, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
+  // fprintf (partFileFderived, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
+    fprintf (partFileFderived, "\n  void initAllObjectsOnce();");
+    fprintf (partFileFderived, "\n  iObjectPool_%s_c ();", proName);
+    fprintf (partFileFderived, "\n};\n");
+    fprintf (partFileFderived, "\n #endif\n" );
+    fclose (partFileFderived);
+  }
 
 
 // Write Direct Includes
- strncpy (partFileName, xmlFileGlobal, 1024);
- strcat (partFileName, "_derived-cpp.h");
- partFileA = fopen (partFileName,"wt");
+
+  char* pc_lastDirectoryBackslash, *pc_lastDirectorySlash;
+  char xmlFileWithoutPath[255];
+  pc_lastDirectoryBackslash = strrchr( xmlFileGlobal, '\\' );
+  pc_lastDirectorySlash = strrchr( xmlFileGlobal, '/' );
+
+  if ( ( pc_lastDirectoryBackslash == NULL ) && ( pc_lastDirectorySlash == NULL ) )
+  { // no path found
+    strncpy( xmlFileWithoutPath, xmlFileGlobal, 254 );
+  }
+  else if ( ( pc_lastDirectoryBackslash == NULL ) && ( pc_lastDirectorySlash != NULL ) )
+  { // only UNIX style slash found
+    strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
+  }
+  else if ( ( pc_lastDirectoryBackslash != NULL ) && ( pc_lastDirectorySlash == NULL ) )
+  { // only WIN32 style Backslash found
+    strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
+  }
+  else if ( pc_lastDirectoryBackslash > pc_lastDirectorySlash )
+  { // last backslash is behind last slash - cas of mixed directory seperators
+    strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
+  }
+  else
+  { // last slash is behind last backslash - cas of mixed directory seperators
+    strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
+  }
 
 
- fprintf (partFileA, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
- fprintf (partFileA, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
- fprintf (partFileA, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
- fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
- fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
+  strncpy (partFileName, xmlFileGlobal, 1024);
+  strcat (partFileName, "_direct.h");
+  partFileA = fopen (partFileName,"wt");
 
- fclose (partFileA);
+  fprintf (partFileA, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+  fprintf (partFileA, "#include \"%s-handler-direct.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFileA, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFileA, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFileA, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
+
+  fclose (partFileA);
 
 
 // Write Direct Includes
- strncpy (partFileName, xmlFileGlobal, 1024);
- strcat (partFileName, "_derived-h.h");
- partFileA = fopen (partFileName,"wt");
-
- fprintf (partFileA, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
- fprintf (partFileA, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath);
-
- fclose (partFileA);
+  strncpy (partFileName, xmlFileGlobal, 1024);
+  strcat (partFileName, "_derived-cpp.h");
+  partFileA = fopen (partFileName,"wt");
 
 
- exit (return_value);
+  fprintf (partFileA, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFileA, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFileA, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
+  fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
+
+  fclose (partFileA);
+
+
+// Write Direct Includes
+  strncpy (partFileName, xmlFileGlobal, 1024);
+  strcat (partFileName, "_derived-h.h");
+  partFileA = fopen (partFileName,"wt");
+
+  fprintf (partFileA, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+  fprintf (partFileA, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath);
+
+  fclose (partFileA);
+
+
+  exit (return_value);
 }
-
-
 
 
 
@@ -601,38 +599,38 @@ void copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
 // ---------------------------------------------------------------------------
 class XStr
 {
-public :
- // -----------------------------------------------------------------------
- //  Constructors and Destructor
- // -----------------------------------------------------------------------
- XStr(const char* const toTranscode)
- {
-  // Call the private transcoding method
-  fUnicodeForm = XMLString::transcode(toTranscode);
- }
+  public :
+    // -----------------------------------------------------------------------
+    //  Constructors and Destructor
+    // -----------------------------------------------------------------------
+    XStr(const char* const toTranscode)
+    {
+      // Call the private transcoding method
+      fUnicodeForm = XMLString::transcode(toTranscode);
+    }
 
- ~XStr()
- {
-  XMLString::release(&fUnicodeForm);
- }
+    ~XStr()
+    {
+      XMLString::release(&fUnicodeForm);
+    }
 
 
- // -----------------------------------------------------------------------
- //  Getter methods
- // -----------------------------------------------------------------------
- const XMLCh* unicodeForm() const
- {
-  return fUnicodeForm;
- }
+  // -----------------------------------------------------------------------
+  //  Getter methods
+  // -----------------------------------------------------------------------
+  const XMLCh* unicodeForm() const
+  {
+    return fUnicodeForm;
+  }
 
-private :
- // -----------------------------------------------------------------------
- //  Private data members
- //
- //  fUnicodeForm
- //   This is the Unicode XMLCh format of the string.
- // -----------------------------------------------------------------------
- XMLCh*   fUnicodeForm;
+  private :
+  // -----------------------------------------------------------------------
+  //  Private data members
+  //
+  //  fUnicodeForm
+  //   This is the Unicode XMLCh format of the string.
+  // -----------------------------------------------------------------------
+  XMLCh*   fUnicodeForm;
 };
 
 #define X(str) XStr(str).unicodeForm()
@@ -645,520 +643,512 @@ private :
 
 unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wishID)
 {
- bool isThere = false;
- unsigned int foundID = 0;
+  bool isThere = false;
+  unsigned int foundID = 0;
 
- // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL  object ID (65535)
- // do not assign object ids for this, and as a result count an additional object unnecessarily by incrementing objCount. -BAC 10-Jan-2004
- if (wishID == 65535)
- {
-     return wishID;
- }
- // first check if ID is there already
- for (unsigned int i=0; i<objCount; i++)
- {
-  // std::cout << "comparing " << objName << " with " << &objNameTable [i*(stringLength+1)] << "\n";
-  if (strncmp (objName, &objNameTable [i*(stringLength+1)], stringLength) == 0)
+  // Added the following check. This is necessary so that objects like input lists which can contain lists of the NULL  object ID (65535)
+  // do not assign object ids for this, and as a result count an additional object unnecessarily by incrementing objCount. -BAC 10-Jan-2004
+  if (wishID == 65535)
   {
-   foundID = objIDTable [i];
-   isThere = true;
-   break;
+    return wishID;
   }
- }
+  // first check if ID is there already
+  for (unsigned int i=0; i<objCount; i++)
+  {
+    // std::cout << "comparing " << objName << " with " << &objNameTable [i*(stringLength+1)] << "\n";
+    if (strncmp (objName, &objNameTable [i*(stringLength+1)], stringLength) == 0)
+    {
+      foundID = objIDTable [i];
+      isThere = true;
+      break;
+    }
+  }
 
- if (!isThere) {
-  // check what's the new ID to be
-  if (wishingID) {
-   foundID = wishID;
-  } else {
-   if (isMacro) {
-    foundID = objNextMacroAutoID;
-    objNextMacroAutoID--;
-   } else {
-    foundID = objNextAutoID;
-    objNextAutoID--;
-   }
+  if (!isThere) {
+    // check what's the new ID to be
+    if (wishingID) {
+      foundID = wishID;
+    } else {
+      if (isMacro) {
+        foundID = objNextMacroAutoID;
+        objNextMacroAutoID--;
+      } else {
+        foundID = objNextAutoID;
+        objNextAutoID--;
+      }
+    }
+    // insert new name-id pair now!
+    objIDTable [objCount] = foundID;
+    strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
+    objCount++;
   }
-  // insert new name-id pair now!
-  objIDTable [objCount] = foundID;
-  strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
-  objCount++;
- }
- // else { take ID found }
- return (foundID);
+  // else { take ID found }
+  return (foundID);
 }
 
 
 unsigned int idOrName_toi(char* rpc_string, bool rb_isMacro)
 {
   if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
-/** @todo check if all chars in the string are numbers, not only the first! */
-		if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
-		// Starting with a letter, so look up id!
-		return getID (rpc_string, rb_isMacro, false, 0);
+  /** @todo check if all chars in the string are numbers, not only the first! */
+  if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
+  // Starting with a letter, so look up id!
+  return getID (rpc_string, rb_isMacro, false, 0);
 }
 
 
 void getKeyCode ()
 {
- attrIsGiven [attrKey_code] = true;
- sprintf (attrString [attrKey_code], "%d", kcNextAutoID);
- kcNextAutoID--;
+  attrIsGiven [attrKey_code] = true;
+  sprintf (attrString [attrKey_code], "%d", kcNextAutoID);
+  kcNextAutoID--;
 }
 
 void init (const char* xmlFile)
 {
- strcpy (xmlFileGlobal, xmlFile);
+  strcpy (xmlFileGlobal, xmlFile);
 
- char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
+  char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
 
- for (int i=0; i<((stringLength+1)*1000); i++)
- {
-  objNameTable [i] = 0x00;
- }
- objCount = 0;
- objNextAutoID = 65534;
- objNextMacroAutoID = 255;
- kcNextAutoID = 254; // for safety, 255 should also be okay though...
- objNextUnnamedName = 1;
-
-
+  for (int i=0; i<((stringLength+1)*1000); i++)
+  {
+    objNameTable [i] = 0x00;
+  }
+  objCount = 0;
+  objNextAutoID = 65534;
+  objNextMacroAutoID = 255;
+  kcNextAutoID = 254; // for safety, 255 should also be okay though...
+  objNextUnnamedName = 1;
 
 // partFileA = fopen ("picture.raw", "wb");
 // fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFileA);
 // fclose (partFileA);
 
+  strncpy (partFileName, xmlFile, 1024);
+  strcat (partFileName, "-variables.inc");
+  partFileA = fopen (partFileName,"wt");
 
- strncpy (partFileName, xmlFile, 1024);
- strcat (partFileName, "-variables.inc");
- partFileA = fopen (partFileName,"wt");
+  strncpy (partFileName, xmlFile, 1024);
+  strcat (partFileName, "-attributes.inc");
+  partFileB = fopen (partFileName,"wt");
 
- strncpy (partFileName, xmlFile, 1024);
- strcat (partFileName, "-attributes.inc");
- partFileB = fopen (partFileName,"wt");
+  strncpy (partFileName, xmlFile, 1024);
+  strcat (partFileName, "-functions.inc");
+  partFileC = fopen (partFileName,"wt");
+  fprintf (partFileC, "void iObjectPool_%s_c::initAllObjectsOnce ()\n{\n", proName);
+  fprintf (partFileC, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
 
- strncpy (partFileName, xmlFile, 1024);
- strcat (partFileName, "-functions.inc");
- partFileC = fopen (partFileName,"wt");
- fprintf (partFileC, "void iObjectPool_%s_c::initAllObjectsOnce ()\n{\n", proName);
- fprintf (partFileC, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
+  strncpy (partFileName, xmlFile, 1024);
+  strcat (partFileName, "-defines.inc");
+  partFileD = fopen (partFileName,"wt");
 
- strncpy (partFileName, xmlFile, 1024);
- strcat (partFileName, "-defines.inc");
- partFileD = fopen (partFileName,"wt");
+  strncpy (partFileName, xmlFile, 1024);
+  strcat (partFileName, "-list.inc");
+  partFileE = fopen (partFileName,"wt");
+  fputs ("IsoAgLib::iVtObject_c* all_iVtObjects [] = {", partFileE);
 
- strncpy (partFileName, xmlFile, 1024);
- strcat (partFileName, "-list.inc");
- partFileE = fopen (partFileName,"wt");
- fputs ("IsoAgLib::iVtObject_c* all_iVtObjects [] = {", partFileE);
-
- strncpy (partFileName, xmlFile, 1024);
- strcat (partFileName, "-handler-direct.inc");
-// check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
- partFileF = fopen (partFileName,"rb");
- if (partFileF) {
+  strncpy (partFileName, xmlFile, 1024);
+  strcat (partFileName, "-handler-direct.inc");
+  // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
+  partFileF = fopen (partFileName,"rb");
+  if (partFileF) {
    // could open file, so it exists --> don't overwrite - create "-template" then
    fclose (partFileF);
    strcat (partFileName, "-template");
- } else {
-   // file couldn't be opened, so create it, simply write to it...
- }
- partFileF = fopen (partFileName,"wt");
+  } else {
+    // file couldn't be opened, so create it, simply write to it...
+  }
+  partFileF = fopen (partFileName,"wt");
 
- strncpy (partFileName, xmlFile, 1024);
- strcat (partFileName, "-handler-derived.inc");
- partFileFderived = fopen (partFileName,"wt");
+  strncpy (partFileName, xmlFile, 1024);
+  strcat (partFileName, "-handler-derived.inc");
+  partFileFderived = fopen (partFileName,"wt");
 
- for (int j=0; j<maxAttributeNames; j++)
-  attrString [j] [stringLength+1-1] = 0x00;
+  for (int j=0; j<maxAttributeNames; j++)
+    attrString [j] [stringLength+1-1] = 0x00;
 }
 
 
 void defaultAttributes ()
 {
- if (!attrIsGiven [attrBackground_colour]) {
-  sprintf (attrString [attrBackground_colour], "white");
-  attrIsGiven [attrBackground_colour] = true;
- }
- if (!attrIsGiven [attrSelectable]) {
-  sprintf (attrString [attrSelectable], "yes");
-  attrIsGiven [attrSelectable] = true;
- }
- if (!attrIsGiven [attrSoft_key_mask]) {
-  sprintf (attrString [attrSoft_key_mask], "NULL");
-  attrIsGiven [attrSoft_key_mask] = true;
- }
- if (!attrIsGiven [attrHidden]) {
-  sprintf (attrString [attrHidden], "no");
-  attrIsGiven [attrHidden] = true;
- }
- if (!attrIsGiven [attrBorder_colour]) {
-  sprintf (attrString [attrBorder_colour], "black");
-  attrIsGiven [attrBorder_colour] = true;
- }
- if (!attrIsGiven [attrLatchable]) {
-  sprintf (attrString [attrLatchable], "no");
-  attrIsGiven [attrLatchable] = true;
- }
- if (!attrIsGiven [attrHorizontal_justification]) {
-  sprintf (attrString [attrHorizontal_justification], "left");
-  attrIsGiven [attrHorizontal_justification] = true;
- }
- if (!attrIsGiven [attrFont_style]) {
-  sprintf (attrString [attrFont_style], "normal"); // anything that doesn't match anything from the fontstyleTable
-  attrIsGiven [attrFont_style] = true;
- }
-// I think it's better to let the user specify, 8bit as default would blow up the pool, and if only b/w was wanted to be used.. too bad then.
-// if (!attrIsGiven [attrFormat]) {
-//  sprintf (attrString [attrFormat], "8bit");
-//  attrIsGiven [attrFormat] = true;
-// }
- if (!attrIsGiven [attrVariable_reference]) {
-  sprintf (attrString [attrVariable_reference], "NULL");
-  attrIsGiven [attrVariable_reference] = true;
- }
- if (!attrIsGiven [attrTarget_value_variable_reference]) {
-  sprintf (attrString [attrTarget_value_variable_reference], "NULL");
-  attrIsGiven [attrTarget_value_variable_reference] = true;
- }
- if (!attrIsGiven [attrEnabled]) {
-  sprintf (attrString [attrEnabled], "yes");
-  attrIsGiven [attrEnabled] = true;
- }
-/*
- if (!attrIsGiven [attr]) {
-  sprintf (attrString [attr], "");
-  attrIsGiven [attr] = true;
- }
-*/
+  if (!attrIsGiven [attrBackground_colour]) {
+    sprintf (attrString [attrBackground_colour], "white");
+    attrIsGiven [attrBackground_colour] = true;
+  }
+  if (!attrIsGiven [attrSelectable]) {
+    sprintf (attrString [attrSelectable], "yes");
+    attrIsGiven [attrSelectable] = true;
+  }
+  if (!attrIsGiven [attrSoft_key_mask]) {
+    sprintf (attrString [attrSoft_key_mask], "NULL");
+    attrIsGiven [attrSoft_key_mask] = true;
+  }
+  if (!attrIsGiven [attrHidden]) {
+    sprintf (attrString [attrHidden], "no");
+    attrIsGiven [attrHidden] = true;
+  }
+  if (!attrIsGiven [attrBorder_colour]) {
+    sprintf (attrString [attrBorder_colour], "black");
+    attrIsGiven [attrBorder_colour] = true;
+  }
+  if (!attrIsGiven [attrLatchable]) {
+    sprintf (attrString [attrLatchable], "no");
+    attrIsGiven [attrLatchable] = true;
+  }
+  if (!attrIsGiven [attrHorizontal_justification]) {
+    sprintf (attrString [attrHorizontal_justification], "left");
+    attrIsGiven [attrHorizontal_justification] = true;
+  }
+  if (!attrIsGiven [attrFont_style]) {
+    sprintf (attrString [attrFont_style], "normal"); // anything that doesn't match anything from the fontstyleTable
+    attrIsGiven [attrFont_style] = true;
+  }
+  // I think it's better to let the user specify, 8bit as default would blow up the pool, and if only b/w was wanted to be used.. too bad then.
+  // if (!attrIsGiven [attrFormat]) {
+  //  sprintf (attrString [attrFormat], "8bit");
+  //  attrIsGiven [attrFormat] = true;
+  // }
+  if (!attrIsGiven [attrVariable_reference]) {
+    sprintf (attrString [attrVariable_reference], "NULL");
+    attrIsGiven [attrVariable_reference] = true;
+  }
+  if (!attrIsGiven [attrTarget_value_variable_reference]) {
+    sprintf (attrString [attrTarget_value_variable_reference], "NULL");
+    attrIsGiven [attrTarget_value_variable_reference] = true;
+  }
+  if (!attrIsGiven [attrEnabled]) {
+    sprintf (attrString [attrEnabled], "yes");
+    attrIsGiven [attrEnabled] = true;
+  }
+  /*
+  if (!attrIsGiven [attr]) {
+    sprintf (attrString [attr], "");
+    attrIsGiven [attr] = true;
+  }
+  */
 }
 
 
 unsigned int objectIsType (char* lookup_name)
 {
- for (int i=0; i<maxObjectTypesToCompare; i++) {
-  if (0 == strncmp (lookup_name, otCompTable [i], stringLength)) {
-   return i;
+  for (int i=0; i<maxObjectTypesToCompare; i++) {
+    if (0 == strncmp (lookup_name, otCompTable [i], stringLength)) {
+      return i;
+    }
   }
- }
- return 0xFFFF;
+  return 0xFFFF;
 }
 
 unsigned int commandIsType (char* lookup_name)
 {
   for (int i=0; i<maxCommandsToCompare; i++) {
-     if (0 == strncmp (lookup_name, ctCommandTable [i], stringLength)) {
-        return i;
-     }
+    if (0 == strncmp (lookup_name, ctCommandTable [i], stringLength)) {
+      return i;
+    }
   }
   return 0xFFFF;
 }
 
 unsigned int colortoi (char* text_color)
 {
- int l;
- for (l=0; l<16; l++) {
-  if (strncmp (text_color, colorTable [l], stringLength) == 0) {
-   return l;
+  int l;
+  for (l=0; l<16; l++) {
+    if (strncmp (text_color, colorTable [l], stringLength) == 0) {
+      return l;
+    }
   }
- }
- return atoi (text_color);
+  return atoi (text_color);
 }
 
 unsigned int colordepthtoi (char* text_colordepth)
 {
- int l;
- for (l=0; l<2; l++) {
-  if (text_colordepth [0] == colorDepthTable [l]) {
-   return l;
+  int l;
+  for (l=0; l<2; l++) {
+    if (text_colordepth [0] == colorDepthTable [l]) {
+      return l;
+    }
   }
- }
- return 2;
+  return 2;
 }
 
 
 unsigned int booltoi (char *text_bool)
 {
- int l;
- for (l=0; l<maxTruthTable; l++) {
-  if (strncmp (text_bool, truthTable [l], stringLength) == 0) {
-   return true;
+  int l;
+  for (l=0; l<maxTruthTable; l++) {
+    if (strncmp (text_bool, truthTable [l], stringLength) == 0) {
+      return true;
+    }
   }
- }
- for (l=0; l<maxFalseTable; l++) {
-  if (strncmp (text_bool, falseTable [l], stringLength) == 0) {
-   return false;
+  for (l=0; l<maxFalseTable; l++) {
+    if (strncmp (text_bool, falseTable [l], stringLength) == 0) {
+      return false;
+    }
   }
- }
- std::cout << "INVALID TRUTH VALUE '" << text_bool << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
- clean_exit (-1);
- return 0; // to make compiler happy
+  std::cout << "INVALID TRUTH VALUE '" << text_bool << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  clean_exit (-1);
+  return 0; // to make compiler happy
 }
 
 unsigned int fontsizetoi (char *text_fontsize)
 {
- int l;
- for (l=0; l<maxFontsizeTable; l++) {
-  if (strncmp (text_fontsize, fontsizeTable [l], stringLength) == 0) {
-   return l;
+  int l;
+  for (l=0; l<maxFontsizeTable; l++) {
+    if (strncmp (text_fontsize, fontsizeTable [l], stringLength) == 0) {
+      return l;
+    }
   }
- }
- std::cout << "INVALID FONT SIZE '" << text_fontsize << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
- clean_exit (-1);
- return 0; // to make compiler happy
+  std::cout << "INVALID FONT SIZE '" << text_fontsize << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  clean_exit (-1);
+  return 0; // to make compiler happy
 }
 
 unsigned int formattoi (char *text_format)
 {
- int l;
- for (l=0; l<maxFormatTable; l++) {
-  if (strncmp (text_format, formatTable [l], stringLength) == 0) {
-   return l;
+  int l;
+  for (l=0; l<maxFormatTable; l++) {
+    if (strncmp (text_format, formatTable [l], stringLength) == 0) {
+      return l;
+    }
   }
- }
- std::cout << "INVALID FORMAT '" << text_format << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
- clean_exit (-1);
- return 0; // to make compiler happy
+  std::cout << "INVALID FORMAT '" << text_format << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  clean_exit (-1);
+  return 0; // to make compiler happy
 }
 
 unsigned int horizontaljustificationtoi (char *text_horiz)
 {
- int l;
- for (l=0; l<maxHorizontalJustificationTable; l++) {
-  if (strncmp (text_horiz, horizontalJustificationTable [l], stringLength) == 0) {
-   return l;
+  int l;
+  for (l=0; l<maxHorizontalJustificationTable; l++) {
+    if (strncmp (text_horiz, horizontalJustificationTable [l], stringLength) == 0) {
+      return l;
+    }
   }
- }
- std::cout << "INVALID HORIZONTALJUSTIFICATION '" << text_horiz << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
- clean_exit (-1);
- return 0; // to make compiler happy
+  std::cout << "INVALID HORIZONTALJUSTIFICATION '" << text_horiz << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  clean_exit (-1);
+  return 0; // to make compiler happy
 }
 
 unsigned int optionstoi (char *text_options)
 {
- int l, retval=0;
- for (l=0; l<maxOptionsTable; l++) {
-  if (strstr (text_options, optionsTable [l]) != 0) {
-   retval += (uint64_t(1)<<l);
+  int l, retval=0;
+  for (l=0; l<maxOptionsTable; l++) {
+    if (strstr (text_options, optionsTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
+    }
   }
- }
- return retval;
+  return retval;
 }
 
 unsigned int outputnumberoptionstoi (char *text_options)
 {
- int l, retval=0;
- for (l=0; l<maxOutputNumberOptionsTable; l++) {
-  if (strstr (text_options, outputNumberOptionsTable [l]) != 0) {
-   retval += (uint64_t(1)<<l);
+  int l, retval=0;
+  for (l=0; l<maxOutputNumberOptionsTable; l++) {
+    if (strstr (text_options, outputNumberOptionsTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
+    }
   }
- }
- return retval;
+  return retval;
 }
 
 unsigned int picturegraphicoptionstoi (char *text_options)
 {
- int l, retval=0;
- for (l=0; l<maxPictureGraphicOptionsTable; l++) {
-  if (strstr (text_options, pictureGraphicOptionsTable [l]) != 0) {
-   retval += (uint64_t(1)<<l);
+  int l, retval=0;
+  for (l=0; l<maxPictureGraphicOptionsTable; l++) {
+    if (strstr (text_options, pictureGraphicOptionsTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
+    }
   }
- }
- return retval;
+  return retval;
 }
 
 unsigned int picturegraphicrletoi (char *text_options)
 {
- int l, retval=0;
- for (l=0; l<maxPictureGraphicRleTable; l++) {
-  if (strstr (text_options, pictureGraphicRleTable [l]) != 0) {
-   retval += (uint64_t(1)<<l);
+  int l, retval=0;
+  for (l=0; l<maxPictureGraphicRleTable; l++) {
+    if (strstr (text_options, pictureGraphicRleTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
+    }
   }
- }
- return retval;
+  return retval;
 }
 
 unsigned int meteroptionstoi (char *text_options)
 {
-    int l, retval=0;
-    for (l=0; l<maxMeterOptionsTable; l++) {
-        if (strstr (text_options, meterOptionsTable [l]) != 0) {
-            retval += (uint64_t(1)<<l);
-        }
+  int l, retval=0;
+  for (l=0; l<maxMeterOptionsTable; l++) {
+    if (strstr (text_options, meterOptionsTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
     }
-    return retval;
+  }
+  return retval;
 }
 
 unsigned int linearbargraphoptionstoi (char *text_options)
 {
- int l, retval=0;
- for (l=0; l<maxLinearBarGraphOptionsTable; l++) {
-  if (strstr (text_options, linearBarGraphOptionsTable [l]) != 0) {
-   retval += (uint64_t(1)<<l);
+  int l, retval=0;
+  for (l=0; l<maxLinearBarGraphOptionsTable; l++) {
+    if (strstr (text_options, linearBarGraphOptionsTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
+    }
   }
- }
- return retval;
+  return retval;
 }
 
 unsigned int archedbargraphoptionstoi (char *text_options)
 {
-    int l, retval=0;
-    for (l=0; l<maxArchedBarGraphOptionsTable; l++) {
-        if (strstr (text_options, archedBarGraphOptionsTable [l]) != 0) {
-            retval += (uint64_t(1)<<l);
-        }
+  int l, retval=0;
+  for (l=0; l<maxArchedBarGraphOptionsTable; l++) {
+    if (strstr (text_options, archedBarGraphOptionsTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
     }
-    return retval;
+  }
+  return retval;
 }
 
 unsigned int prioritytoi (char *text_priority)
 {
- int l;
- for (l=0; l<maxPriorityAcousticSignalTable-1; l++) {
-  if (strncmp (text_priority, priorityAcousticSignalTable [l], stringLength) == 0) {
-   return l;
+  int l;
+  for (l=0; l<maxPriorityAcousticSignalTable-1; l++) {
+    if (strncmp (text_priority, priorityAcousticSignalTable [l], stringLength) == 0) {
+      return l;
+    }
   }
- }
- std::cout << "INVALID PRIORITY '" << text_priority << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
- clean_exit (-1);
- return 0; // to make compiler happy
+  std::cout << "INVALID PRIORITY '" << text_priority << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  clean_exit (-1);
+  return 0; // to make compiler happy
 }
 
 unsigned int acousticsignaltoi (char *text_acousticsignal)
 {
- int l;
- for (l=0; l<maxPriorityAcousticSignalTable; l++) {
-  if (strncmp (text_acousticsignal, priorityAcousticSignalTable [l], stringLength) == 0) {
-   return l;
+  int l;
+  for (l=0; l<maxPriorityAcousticSignalTable; l++) {
+    if (strncmp (text_acousticsignal, priorityAcousticSignalTable [l], stringLength) == 0) {
+      return l;
+    }
   }
- }
- std::cout << "INVALID ACOUSTIC SIGNAL '" << text_acousticsignal << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
- clean_exit (-1);
- return 0; // to make compiler happy
+  std::cout << "INVALID ACOUSTIC SIGNAL '" << text_acousticsignal << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  clean_exit (-1);
+  return 0; // to make compiler happy
 }
 
 
 unsigned int fontstyletoi (char *text_fontstyle)
 {
- int l, retval=0;
- for (l=0; l<maxFontstyleTable; l++) {
-  if (strstr (text_fontstyle, fontstyleTable [l]) != NULL) {
-   retval += (uint64_t(1)<<l);
+  int l, retval=0;
+  for (l=0; l<maxFontstyleTable; l++) {
+    if (strstr (text_fontstyle, fontstyleTable [l]) != NULL) {
+      retval += (uint64_t(1)<<l);
+    }
   }
- }
- return retval;
+  return retval;
 }
 
 unsigned int linedirectiontoi (char *text_linedirection)
 {
- int retval=0;
- if (strstr (text_linedirection, "bottomlefttotopright") != NULL) {
-   retval = 1;
- }
- return retval;
+  int retval=0;
+  if (strstr (text_linedirection, "bottomlefttotopright") != NULL) {
+    retval = 1;
+  }
+  return retval;
 }
 
 unsigned int linearttoi (char *text_lineart)
 {
- int retval=0;
- char thischar;
- while ((thischar = *text_lineart) != 0x00) {
-  retval <<= 1;
-  if (thischar == '1') {
-   retval |= 0x0001;
+  int retval=0;
+  char thischar;
+  while ((thischar = *text_lineart) != 0x00) {
+    retval <<= 1;
+    if (thischar == '1') {
+      retval |= 0x0001;
+    }
+    text_lineart++;
   }
-  text_lineart++;
- }
- return retval;
+  return retval;
 }
 
 
 
 unsigned int linesuppressiontoi (char *text_linesuppression)
 {
-    int l, retval=0;
-    for (l=0; l<maxLineSuppressionTable; l++) {
-        if (strstr (text_linesuppression, lineSuppressionTable [l]) != 0) {
-            retval += (uint64_t(1)<<l);
-        }
+  int l, retval=0;
+  for (l=0; l<maxLineSuppressionTable; l++) {
+    if (strstr (text_linesuppression, lineSuppressionTable [l]) != 0) {
+      retval += (uint64_t(1)<<l);
     }
-    return retval;
+  }
+  return retval;
 }
 
 
 unsigned int ellipsetypetoi (char *text_ellipsetype)
 {
-    int l, retval=0;
-    for (l=0; l<maxEllipseTypeTable; l++) {
-        if (strcmp(text_ellipsetype, ellipseTypeTable [l]) == 0) {
-            retval = l;
-   break;
-        }
+  int l, retval=0;
+  for (l=0; l<maxEllipseTypeTable; l++) {
+    if (strcmp(text_ellipsetype, ellipseTypeTable [l]) == 0) {
+      retval = l;
+      break;
     }
-    return retval;
+  }
+  return retval;
 }
 
 unsigned int polygontypetoi (char *text_polygontype)
 {
-    int l, retval=0;
-    for (l=0; l<maxPolygonTypeTable; l++) {
-        if (strcmp (text_polygontype, polygonTypeTable [l]) == 0) {
-            retval = l;
-   break;
-        }
+  int l, retval=0;
+  for (l=0; l<maxPolygonTypeTable; l++) {
+    if (strcmp (text_polygontype, polygonTypeTable [l]) == 0) {
+      retval = l;
+      break;
     }
-    return retval;
+  }
+  return retval;
 }
 
 unsigned int validationtypetoi (char *text_validationtype)
 {
-    int l, retval=0;
-    for (l=0; l<maxValidationTypeTable; l++) {
-        if (strstr (text_validationtype, validationTypeTable [l]) != 0) {
-            retval = l;
-   break;
-        }
-    }
-    return retval;
+  int retval=0;
+  if (strstr (text_validationtype, "invalid") != 0) {
+    retval = 1;
+  }
+  return retval;
 }
 
 
 unsigned int filltypetoi (char *text_filltype)
 {
-    int l, retval=0;
-    for (l=0; l<maxFillTypeTable; l++) {
-        if (strstr (text_filltype, fillTypeTable [l]) != 0) {
-            retval = l;
-   break;
-        }
+  int l, retval=0;
+  for (l=0; l<maxFillTypeTable; l++) {
+    if (strstr (text_filltype, fillTypeTable [l]) != 0) {
+      retval = l;
+      break;
     }
-    return retval;
+  }
+  return retval;
 }
 
 unsigned int eventToi (char *text_eventName)
 {
-    int l, retval=0;
-    for (l=0; l<maxEventTable; l++) {
-        if (strstr (text_eventName, eventTable [l]) != 0) {
-            retval = l + 1;
-   break;
-        }
+  int l, retval=0;
+  for (l=0; l<maxEventTable; l++) {
+    if (strstr (text_eventName, eventTable [l]) != 0) {
+      retval = l + 1;
+      break;
     }
-    return retval;
+  }
+  return retval;
 }
 
 unsigned int auxfunctiontyptetoi(char *text_auxFunctionType)
 {
- int l, retval=0;
- for (l=0; l<maxAuxFunctionTypes; l++)
-    {
-  if (strstr (text_auxFunctionType, auxFunctionTypeTable [l]) != 0)
-        {
-   retval = l;
-   break;
+  int l, retval=0;
+  for (l=0; l<maxAuxFunctionTypes; l++) {
+    if (strstr (text_auxFunctionType, auxFunctionTypeTable [l]) != 0) {
+      retval = l;
+      break;
+    }
   }
- }
- return retval;
+  return retval;
 }
 
 /* ?????? ---OBSOLETE--- ??????
@@ -1323,130 +1313,128 @@ bool is_objID;
 /* sets the passed attribute if name matches id */
 void setAttributeValue(int attrID)
 {
- if (strncmp (attr_name, attrNameTable[attrID], stringLength) == 0)
- {
-  strncpy (attrString [attrID], attr_value, stringLength);
-  attrIsGiven [attrID] = true;
- }
+  if (strncmp (attr_name, attrNameTable[attrID], stringLength) == 0)
+  {
+    strncpy (attrString [attrID], attr_value, stringLength);
+    attrIsGiven [attrID] = true;
+  }
 }
 
 /* cleans the passed attribute value */
 void cleanAttribute(int attrID)
 {
- attrString [attrID] [stringLength+1-1] = 0x00;
- attrIsGiven [attrID] = false;
+  attrString [attrID] [stringLength+1-1] = 0x00;
+  attrIsGiven [attrID] = false;
 }
 
 void utf16convert (char* source, char* destin, int count)
 {
- int i=-1;
- do {
-  i++;
-  destin [i] = source [(i*2)];
- } while (destin [i] != 0x00);
+  int i=-1;
+  do {
+    i++;
+    destin [i] = source [(i*2)];
+  } while (destin [i] != 0x00);
 }
 
 void checkForFileOrFile148 (char *tag) {
-   char errMsg[1024+1]; errMsg[0] = 0x00;
-   if (!attrIsGiven [attrFile]) {
-     switch (colordepthtoi (attrString [attrFormat])) {
-       case 2: if (!(attrIsGiven [attrFile0] && attrIsGiven [attrFile2]))
-                 sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR MINIMUM fileX= (x=0,2) ATTRIBUTES FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
-               break;
-       case 1: if (!(attrIsGiven [attrFile0] && attrIsGiven [attrFile1]))
-                 sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR ALL fileX= (x=0,1) ATTRIBUTES FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
-               break;
-       case 0: if (!(attrIsGiven [attrFile0]))
-                 sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR THE file0= ATTRIBUTE FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
-               break;
-     }
-     if (strlen(errMsg)) clean_exit (-1, errMsg);
-   }
+  char errMsg[1024+1]; errMsg[0] = 0x00;
+  if (!attrIsGiven [attrFile]) {
+    switch (colordepthtoi (attrString [attrFormat])) {
+      case 2: if (!(attrIsGiven [attrFile0] && attrIsGiven [attrFile2]))
+                sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR MINIMUM fileX= (x=0,2) ATTRIBUTES FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
+              break;
+      case 1: if (!(attrIsGiven [attrFile0] && attrIsGiven [attrFile1]))
+                sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR ALL fileX= (x=0,1) ATTRIBUTES FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
+              break;
+      case 0: if (!(attrIsGiven [attrFile0]))
+                sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR THE file0= ATTRIBUTE FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
+              break;
+    }
+    if (strlen(errMsg)) clean_exit (-1, errMsg);
+  }
 }
 
 
 void getAttributesFromNode(DOMNode *n, bool treatSpecial) {
   DOMNamedNodeMap *pAttributes;
   if (n->hasAttributes()) { // parse through all attributes
-   pAttributes = n->getAttributes();
-   int nSize = pAttributes->getLength();
+    pAttributes = n->getAttributes();
+    int nSize = pAttributes->getLength();
 
-   // empty all possible attribute-values...
-   for (int j=0; j<maxAttributeNames; j++) {
-    for (int k=0; k<stringLength+1; k++) {
-     attrString [j] [k] = 0x00;
+    // empty all possible attribute-values...
+    for (int j=0; j<maxAttributeNames; j++) {
+      for (int k=0; k<stringLength+1; k++) {
+        attrString [j] [k] = 0x00;
+      }
+      attrIsGiven [j] = false;
     }
-    attrIsGiven [j] = false;
-   }
 
    // now get all attributes listed in the <tag ...> element
-   for (int i=0;i<nSize;++i) {
-    DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-    utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-    utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+    for (int i=0;i<nSize;++i) {
+      DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+      utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+      utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-if (treatSpecial) { // get 'name=', 'id=' and all other possible attributes
-    if (strncmp (attr_name, "name", stringLength) == 0) {
-     strncpy (objName, attr_value, stringLength);
-     is_objName = true;
-     continue;
-    }
-    if (strncmp (attr_name, "id", stringLength) == 0) {
-     objID = atoi (attr_value);
-     is_objID = true;
-     continue;
-    }
-}
-    int l; for (l=0; l<maxAttributeNames; l++) {
-     if (strncmp (attr_name, attrNameTable [l], stringLength) == 0) {
-      strncpy (attrString [l], attr_value, stringLength);
-      attrIsGiven [l] = true;
-// DEBUG-OUT
-//      std::cout << "FOUND ATTR: IND " << l << ":= " << attrNameTable [l] << " -> " << attrString[l] << ":"
-//                << attrIsGiven [l] << "\n";
-      break;
-     }
-    }
+      if (treatSpecial) { // get 'name=', 'id=' and all other possible attributes
+        if (strncmp (attr_name, "name", stringLength) == 0) {
+          strncpy (objName, attr_value, stringLength);
+          is_objName = true;
+          continue;
+        }
+        if (strncmp (attr_name, "id", stringLength) == 0) {
+          objID = atoi (attr_value);
+          is_objID = true;
+          continue;
+        }
+      }
+      int l;
+      for (l=0; l<maxAttributeNames; l++) {
+        if (strncmp (attr_name, attrNameTable [l], stringLength) == 0) {
+          strncpy (attrString [l], attr_value, stringLength);
+          attrIsGiven [l] = true;
+    // DEBUG-OUT
+    //      std::cout << "FOUND ATTR: IND " << l << ":= " << attrNameTable [l] << " -> " << attrString[l] << ":"
+    //                << attrIsGiven [l] << "\n";
+          break;
+        }
+      }
 
-    // ERROR: We didn't match a possible attribute name
-    if (l == maxAttributeNames)
+      // ERROR: We didn't match a possible attribute name
+      if (l == maxAttributeNames)
+      {
+        std::cout << "\n\nUNKNOWN ATTRIBUTE " << attr_name <<"="<< attr_value <<" IN TAG <"<< XMLString::transcode(n->getNodeName()) <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+        clean_exit (-1);
+      }
+    }
+  }
+
+  if (treatSpecial) {
+    // If no 'name=' given, add 'name=unnamed%d' attribute
+    if (is_objName == false)
     {
-     std::cout << "\n\nUNKNOWN ATTRIBUTE " << attr_name <<"="<< attr_value <<" IN TAG <"<< XMLString::transcode(n->getNodeName()) <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-     clean_exit (-1);
+      sprintf (objName, "Unnamed%d", objNextUnnamedName);
+      ((DOMElement *)n)->setAttribute (X("name"), X(objName));
+      objNextUnnamedName++;
+      is_objName = true;
     }
-   }
-  }
-
-if (treatSpecial) {
-  // If no 'name=' given, add 'name=unnamed%d' attribute
-  if (is_objName == false)
-  {
-   sprintf (objName, "Unnamed%d", objNextUnnamedName);
-   ((DOMElement *)n)->setAttribute (X("name"), X(objName));
-   objNextUnnamedName++;
-   is_objName = true;
   }
 }
-}
-
-
 
 
 void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &options, int fixNr=-1)
 {
-   std::cout << "Bitmappath: " << _bitmap_path << std::endl;
-   if (attrIsGiven [attrRle]) {
-     // set rle stuff
-     unsigned int rle = picturegraphicrletoi (attrString [attrRle]);
-     // replace possible rle='auto' by 'rle1+rle4+rle8'
-     if (rle & (uint64_t(1)<<3)) rle = (uint64_t(1)<<0) | (uint64_t(1)<<1) | (uint64_t(1)<<2);
-     // and merge to options byte
-     options |= rle<<2;
-   }
+  std::cout << "Bitmappath: " << _bitmap_path << std::endl;
+  if (attrIsGiven [attrRle]) {
+    // set rle stuff
+    unsigned int rle = picturegraphicrletoi (attrString [attrRle]);
+    // replace possible rle='auto' by 'rle1+rle4+rle8'
+    if (rle & (uint64_t(1)<<3)) rle = (uint64_t(1)<<0) | (uint64_t(1)<<1) | (uint64_t(1)<<2);
+    // and merge to options byte
+    options |= rle<<2;
+  }
 
   // generate all lower depth-bitmaps...
   for (unsigned int actDepth=0; actDepth <= colordepthtoi (attrString [attrFormat]); actDepth++) {
-
     if (fixNr == -1) { // noFix
       // It's allowed to leave out 16-color bitmaps as there's a fallback to 2-color bitmap!!
       if ((actDepth == 1) && ((!attrIsGiven[attrFile1] && !attrIsGiven[attrFile]) || (attrIsGiven [attrFile1] && (strlen (attrString [attrFile1]) == 0)))) continue;
@@ -1612,68 +1600,68 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
   if (objType >= maxObjectTypes) {
     if (objType == otObjectpool) {
-    // expect (datamask) dimension here
-    if (n->hasAttributes()) { // parse through all attributes
-      pAttributes = n->getAttributes();
-      int nSize = pAttributes->getLength();
+      // expect (datamask) dimension here
+      if (n->hasAttributes()) { // parse through all attributes
+        pAttributes = n->getAttributes();
+        int nSize = pAttributes->getLength();
 
-      // now get all attributes listed in the <tag ...> element
-      for (int i=0;i<nSize;++i) {
-      DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-      utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-      utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+        // now get all attributes listed in the <tag ...> element
+        for (int i=0;i<nSize;++i) {
+          DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-      // get 'name=', 'id=' and all other possible attributes
-      if (strncmp (attr_name, "dimension", stringLength) == 0) {
-        if (is_opDimension) {
-          std::cout << "\n\nYOU MUSTN'T SPECIFY THE dimension= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
-          clean_exit (-1);
+          // get 'name=', 'id=' and all other possible attributes
+          if (strncmp (attr_name, "dimension", stringLength) == 0) {
+            if (is_opDimension) {
+              std::cout << "\n\nYOU MUSTN'T SPECIFY THE dimension= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
+              clean_exit (-1);
+            }
+            opDimension = atoi (attr_value);
+            is_opDimension = true;
+            continue;
+          }
+          if (strncmp (attr_name, "sk_width", stringLength) == 0) {
+            if (is_skWidth) {
+              std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
+              clean_exit (-1);
+            }
+            skWidth = atoi (attr_value);
+            is_skWidth = true;
+            continue;
+          }
+          if (strncmp (attr_name, "sk_height", stringLength) == 0) {
+            if (is_skHeight) {
+              std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_height= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
+              clean_exit (-1);
+            }
+            skHeight = atoi (attr_value);
+            is_skHeight = true;
+            continue;
+          }
+          if (strncmp (attr_name, "std_bitmap_path", stringLength) == 0) {
+            strcpy (std_bitmap_path, attr_value);
+            continue;
+          }
+          if (strncmp (attr_name, "fix_bitmap_path", stringLength) == 0) {
+            strcpy (fix_bitmap_path, attr_value);
+            continue;
+          }
         }
-        opDimension = atoi (attr_value);
-        is_opDimension = true;
-        continue;
       }
-      if (strncmp (attr_name, "sk_width", stringLength) == 0) {
-        if (is_skWidth) {
-          std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
-          clean_exit (-1);
-        }
-        skWidth = atoi (attr_value);
-        is_skWidth = true;
-        continue;
-      }
-      if (strncmp (attr_name, "sk_height", stringLength) == 0) {
-        if (is_skHeight) {
-          std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_height= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
-          clean_exit (-1);
-        }
-        skHeight = atoi (attr_value);
-        is_skHeight = true;
-        continue;
-      }
-      if (strncmp (attr_name, "std_bitmap_path", stringLength) == 0) {
-        strcpy (std_bitmap_path, attr_value);
-        continue;
-      }
-      if (strncmp (attr_name, "fix_bitmap_path", stringLength) == 0) {
-        strcpy (fix_bitmap_path, attr_value);
-        continue;
-      }
-      }
-    }
     }
   } else {
     // normal to insert element!
     if (( (uint64_t(1)<<objType) & ombType) == 0) {
-    // ERROR: Unallowed <TAG> here?!
-    std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << ">\nPOSSIBLE TAGS HERE WOULD BE: ";
-    for (int j=0; j<maxObjectTypesToCompare; j++) {
-      if ((uint64_t(1)<<j) & ombType) {
-      std::cout << " <" << otCompTable [j] << ">  ";
+      // ERROR: Unallowed <TAG> here?!
+      std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << ">\nPOSSIBLE TAGS HERE WOULD BE: ";
+      for (int j=0; j<maxObjectTypesToCompare; j++) {
+        if ((uint64_t(1)<<j) & ombType) {
+          std::cout << " <" << otCompTable [j] << ">  ";
+        }
       }
-    }
-    std::cout << "\n\n";
-    clean_exit (-1);
+      std::cout << "\n\n";
+      clean_exit (-1);
     }
     getAttributesFromNode(n, true); // true: read name= and id=
 
@@ -1725,7 +1713,6 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       case otButton:
       case otAuxiliaryfunction:
       case otAuxiliaryinput:
-
         objHasArrayObjectXY = true;
         break;
     }
