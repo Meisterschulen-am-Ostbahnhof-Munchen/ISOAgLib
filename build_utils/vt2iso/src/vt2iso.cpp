@@ -1547,193 +1547,193 @@ void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir)
 static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir)
 #endif
 {
- DOMNode *child;
- DOMNamedNodeMap *pAttributes;
- char *node_name = XMLString::transcode(n->getNodeName());
+  DOMNode *child;
+  DOMNamedNodeMap *pAttributes;
+  char *node_name = XMLString::transcode(n->getNodeName());
 
-// all possible values of the objects
- unsigned int objChildID=0; bool is_objChildID=false; //init for happy compiler
- unsigned int objChildX=0; bool is_objChildX=false; //init for happy compiler
- unsigned int objChildY=0; bool is_objChildY=false; //init for happy compiler
- unsigned int objBlockRow=0; //init for happy compiler
- unsigned int objBlockCol=0; //init for happy compiler
- unsigned int objType=0; //init for happy compiler
- unsigned int commandType=0; //init for happy compiler
- unsigned int objChildObjects=0; //init for happy compiler
+  // all possible values of the objects
+  unsigned int objChildID=0; bool is_objChildID=false; //init for happy compiler
+  unsigned int objChildX=0; bool is_objChildX=false; //init for happy compiler
+  unsigned int objChildY=0; bool is_objChildY=false; //init for happy compiler
+  unsigned int objBlockRow=0; //init for happy compiler
+  unsigned int objBlockCol=0; //init for happy compiler
+  unsigned int objType=0; //init for happy compiler
+  unsigned int commandType=0; //init for happy compiler
+  unsigned int objChildObjects=0; //init for happy compiler
 
- unsigned int deXactualWidth=0; //init for happy compiler
- unsigned int deXactualHeight=0; //init for happy compiler
- unsigned int deXwidth=0; //init for happy compiler
- unsigned int deXcolorDepth=0; //init for happy compiler
- unsigned int deXtransCol=0; //init for happy compiler
- unsigned int stdRawBitmapBytes [3];
+  unsigned int deXactualWidth=0; //init for happy compiler
+  unsigned int deXactualHeight=0; //init for happy compiler
+  unsigned int deXwidth=0; //init for happy compiler
+  unsigned int deXcolorDepth=0; //init for happy compiler
+  unsigned int deXtransCol=0; //init for happy compiler
+  unsigned int stdRawBitmapBytes [3];
 
-#define maxFixedBitmaps 1000
+  #define maxFixedBitmaps 1000
 
- unsigned int fiXactualWidth [maxFixedBitmaps];
- unsigned int fiXactualHeight [maxFixedBitmaps];
-//unsigned int deXtransCol [maxFixedBitmaps];
- unsigned int fixRawBitmapBytes [maxFixedBitmaps] [3];
- unsigned int fixBitmapOptions [maxFixedBitmaps];
- unsigned int fixNr=0; //init for happy compiler
+  unsigned int fiXactualWidth [maxFixedBitmaps];
+  unsigned int fiXactualHeight [maxFixedBitmaps];
+  //unsigned int deXtransCol [maxFixedBitmaps];
+  unsigned int fixRawBitmapBytes [maxFixedBitmaps] [3];
+  unsigned int fixBitmapOptions [maxFixedBitmaps];
+  unsigned int fixNr=0; //init for happy compiler
 
- unsigned int objChildMacros=0; //init for happy compiler
- unsigned int objChildCommands=0; //init for happy compiler
- unsigned int objChildPoints=0; //init for happy compiler
- unsigned int objChildLanguages=0; //init for happy compiler
+  unsigned int objChildMacros=0; //init for happy compiler
+  unsigned int objChildCommands=0; //init for happy compiler
+  unsigned int objChildPoints=0; //init for happy compiler
+  unsigned int objChildLanguages=0; //init for happy compiler
 
- unsigned int objBitmapOptions;
+  unsigned int objBitmapOptions;
 
- char commandMessage[stringLength+1];
- char objChildName [stringLength+1]; bool is_objChildName=false; //init for happy compiler
- char tempString [stringLength+1]; tempString [stringLength+1-1] = 0x00;
- char tempString2 [stringLength+1]; tempString2 [stringLength+1-1] = 0x00;
- char objBlockFont [stringLength+1];
+  char commandMessage[stringLength+1];
+  char objChildName [stringLength+1]; bool is_objChildName=false; //init for happy compiler
+  char tempString [stringLength+1]; tempString [stringLength+1-1] = 0x00;
+  char tempString2 [stringLength+1]; tempString2 [stringLength+1-1] = 0x00;
+  char objBlockFont [stringLength+1];
 
- objName [stringLength+1-1] = 0x00;
- is_objName=false;
- is_objID=false;
-
-
- if (!n) return;
-
- // get own ObjectType
- objType = objectIsType (node_name); // returns 0..34
+  objName [stringLength+1-1] = 0x00;
+  is_objName=false;
+  is_objID=false;
 
 
- // get own Command Type
- commandType = commandIsType (node_name);
+  if (!n) return;
 
- // ERROR: Wrong <TAG>
- if (objType == 0xFFFF && commandType == 0xFFFF) {
-  std::cout << "\n\nUNKNOWN TAG <"<< node_name <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
-  clean_exit (-1);
- }
+  // get own ObjectType
+  objType = objectIsType (node_name); // returns 0..34
 
- if (objType >= maxObjectTypes) {
-  if (objType == otObjectpool) {
-   // expect (datamask) dimension here
-   if (n->hasAttributes()) { // parse through all attributes
-    pAttributes = n->getAttributes();
-    int nSize = pAttributes->getLength();
 
-    // now get all attributes listed in the <tag ...> element
-    for (int i=0;i<nSize;++i) {
-     DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-     utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-     utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+  // get own Command Type
+  commandType = commandIsType (node_name);
 
-     // get 'name=', 'id=' and all other possible attributes
-     if (strncmp (attr_name, "dimension", stringLength) == 0) {
-      if (is_opDimension) {
-        std::cout << "\n\nYOU MUSTN'T SPECIFY THE dimension= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
-        clean_exit (-1);
+  // ERROR: Wrong <TAG>
+  if (objType == 0xFFFF && commandType == 0xFFFF) {
+    std::cout << "\n\nUNKNOWN TAG <"<< node_name <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+    clean_exit (-1);
+  }
+
+  if (objType >= maxObjectTypes) {
+    if (objType == otObjectpool) {
+    // expect (datamask) dimension here
+    if (n->hasAttributes()) { // parse through all attributes
+      pAttributes = n->getAttributes();
+      int nSize = pAttributes->getLength();
+
+      // now get all attributes listed in the <tag ...> element
+      for (int i=0;i<nSize;++i) {
+      DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+      utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+      utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+      // get 'name=', 'id=' and all other possible attributes
+      if (strncmp (attr_name, "dimension", stringLength) == 0) {
+        if (is_opDimension) {
+          std::cout << "\n\nYOU MUSTN'T SPECIFY THE dimension= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
+          clean_exit (-1);
+        }
+        opDimension = atoi (attr_value);
+        is_opDimension = true;
+        continue;
       }
-      opDimension = atoi (attr_value);
-      is_opDimension = true;
-      continue;
-     }
-     if (strncmp (attr_name, "sk_width", stringLength) == 0) {
-      if (is_skWidth) {
-        std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
-        clean_exit (-1);
+      if (strncmp (attr_name, "sk_width", stringLength) == 0) {
+        if (is_skWidth) {
+          std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
+          clean_exit (-1);
+        }
+        skWidth = atoi (attr_value);
+        is_skWidth = true;
+        continue;
       }
-      skWidth = atoi (attr_value);
-      is_skWidth = true;
-      continue;
-     }
-     if (strncmp (attr_name, "sk_height", stringLength) == 0) {
-      if (is_skHeight) {
-        std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_height= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
-        clean_exit (-1);
+      if (strncmp (attr_name, "sk_height", stringLength) == 0) {
+        if (is_skHeight) {
+          std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_height= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
+          clean_exit (-1);
+        }
+        skHeight = atoi (attr_value);
+        is_skHeight = true;
+        continue;
       }
-      skHeight = atoi (attr_value);
-      is_skHeight = true;
-      continue;
-     }
-     if (strncmp (attr_name, "std_bitmap_path", stringLength) == 0) {
-       strcpy (std_bitmap_path, attr_value);
-       continue;
-     }
-     if (strncmp (attr_name, "fix_bitmap_path", stringLength) == 0) {
-       strcpy (fix_bitmap_path, attr_value);
-       continue;
-     }
+      if (strncmp (attr_name, "std_bitmap_path", stringLength) == 0) {
+        strcpy (std_bitmap_path, attr_value);
+        continue;
+      }
+      if (strncmp (attr_name, "fix_bitmap_path", stringLength) == 0) {
+        strcpy (fix_bitmap_path, attr_value);
+        continue;
+      }
+      }
     }
-   }
-  }
- } else {
-  // normal to insert element!
-  if (( (uint64_t(1)<<objType) & ombType) == 0) {
-   // ERROR: Unallowed <TAG> here?!
-   std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << ">\nPOSSIBLE TAGS HERE WOULD BE: ";
-   for (int j=0; j<maxObjectTypesToCompare; j++) {
-    if ((uint64_t(1)<<j) & ombType) {
-     std::cout << " <" << otCompTable [j] << ">  ";
     }
-   }
-   std::cout << "\n\n";
-   clean_exit (-1);
-  }
-  getAttributesFromNode(n, true); // true: read name= and id=
+  } else {
+    // normal to insert element!
+    if (( (uint64_t(1)<<objType) & ombType) == 0) {
+    // ERROR: Unallowed <TAG> here?!
+    std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << ">\nPOSSIBLE TAGS HERE WOULD BE: ";
+    for (int j=0; j<maxObjectTypesToCompare; j++) {
+      if ((uint64_t(1)<<j) & ombType) {
+      std::cout << " <" << otCompTable [j] << ">  ";
+      }
+    }
+    std::cout << "\n\n";
+    clean_exit (-1);
+    }
+    getAttributesFromNode(n, true); // true: read name= and id=
 
-  // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
-  defaultAttributes ();
+    // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
+    defaultAttributes ();
 
-  // get a new ID for this object is not yet done
-  objID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
+    // get a new ID for this object is not yet done
+    objID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
 
 
-  // Completely parsed <tag ...> now, start writing out to the files!
-  // ______________________________________________________________________________________________________________________________
-  // we got objName, objID, objType here now! - print out standard definitions in A, B and C right after the array definition lines
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Completely parsed <tag ...> now, start writing out to the files!
+    // ______________________________________________________________________________________________________________________________
+    // we got objName, objID, objType here now! - print out standard definitions in A, B and C right after the array definition lines
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  bool objHasArrayEventMacro = false;
-  switch (objType)
-  {
-   case otWorkingset:   case otDatamask:  case otAlarmmask:   case otContainer: case otSoftkeymask: case otKey: case otButton:
-   case otInputboolean: case otInputstring:  case otInputnumber: case otInputlist:
-   case otOutputstring: case otOutputnumber:
-   case otLine:   case otRectangle:    case otEllipse:  case otPolygon:
-   case otMeter:     case otLinearbargraph:  case otArchedbargraph:
-   case otPicturegraphic:
-   // variables have no events/macros
-   case otFontattributes:  case otLineattributes:  case otFillattributes:  case otInputattributes:
-   // object pointer has no events/macros
-    objHasArrayEventMacro = true;
-    break;
-  }
+    bool objHasArrayEventMacro = false;
+    switch (objType)
+    {
+      case otWorkingset:   case otDatamask:  case otAlarmmask:   case otContainer: case otSoftkeymask: case otKey: case otButton:
+      case otInputboolean: case otInputstring:  case otInputnumber: case otInputlist:
+      case otOutputstring: case otOutputnumber:
+      case otLine:   case otRectangle:    case otEllipse:  case otPolygon:
+      case otMeter:     case otLinearbargraph:  case otArchedbargraph:
+      case otPicturegraphic:
+      // variables have no events/macros
+      case otFontattributes:  case otLineattributes:  case otFillattributes:  case otInputattributes:
+      // object pointer has no events/macros
+        objHasArrayEventMacro = true;
+        break;
+    }
 
-  bool objHasArrayObject = false;
-  switch (objType)
-  {
-   case otSoftkeymask:
-   case otInputlist:
-    objHasArrayObject = true;
-    break;
-  }
+    bool objHasArrayObject = false;
+    switch (objType)
+    {
+      case otSoftkeymask:
+      case otInputlist:
+        objHasArrayObject = true;
+        break;
+    }
 
-  bool objHasArrayObjectXY = false;
-  switch (objType)
-  {
-   case otWorkingset:
-   case otDatamask:
-   case otAlarmmask:
-   case otContainer:
-   case otKey:
-   case otButton:
-    case otAuxiliaryfunction:
-    case otAuxiliaryinput:
+    bool objHasArrayObjectXY = false;
+    switch (objType)
+    {
+      case otWorkingset:
+      case otDatamask:
+      case otAlarmmask:
+      case otContainer:
+      case otKey:
+      case otButton:
+      case otAuxiliaryfunction:
+      case otAuxiliaryinput:
 
-    objHasArrayObjectXY = true;
-    break;
-  }
+        objHasArrayObjectXY = true;
+        break;
+    }
 
     bool objHasArrayLanguagecode = false;
     switch (objType)
     {
-        case otWorkingset:
+      case otWorkingset:
         objHasArrayLanguagecode = true;
         break;
     }
@@ -1742,7 +1742,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     bool objHasArrayMacroCommand = false;
     switch (objType)
     {
-        case otMacro:
+      case otMacro:
         objHasArrayMacroCommand = true;
         break;
     }
@@ -1750,997 +1750,990 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     bool objHasArrayPoints = false;
     switch (objType)
     {
-        case otPolygon:
+      case otPolygon:
         objHasArrayPoints = true;
         break;
     }
 
-  // ##########################################
-  // ### Print out Repeat Array definitions ###
-  // ##########################################
+    // ##########################################
+    // ### Print out Repeat Array definitions ###
+    // ##########################################
 
 
-  // ### Print out LANGUAGECODE array
-  if (objHasArrayLanguagecode)
-  {
-        // Process all Child-Elements
-        bool firstElement = true;
-        objChildLanguages = 0;
-        for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
+    // ### Print out LANGUAGECODE array
+    if (objHasArrayLanguagecode)
+    {
+      // Process all Child-Elements
+      bool firstElement = true;
+      objChildLanguages = 0;
+      for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
+      {
+        if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otLanguage])) )
         {
-            if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otLanguage])) )
+          // get 'code=' out of child
+          if(child->hasAttributes())
+          {
+            // parse through all attributes
+            pAttributes = child->getAttributes();
+            int nSize = pAttributes->getLength();
+
+            attrString [attrCode] [stringLength+1-1] = 0x00; attrIsGiven [attrCode] = false;
+            objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
+
+            for(int i=0;i<nSize;++i)
             {
-                // get 'code=' out of child
-                if(child->hasAttributes())
-                {
-                    // parse through all attributes
-                    pAttributes = child->getAttributes();
-                    int nSize = pAttributes->getLength();
+              DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+              utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+              utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-                    attrString [attrCode] [stringLength+1-1] = 0x00; attrIsGiven [attrCode] = false;
-                    objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
-
-                    for(int i=0;i<nSize;++i)
-                    {
-                        DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-                        utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-                        utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-                        if (strncmp (attr_name, "code", stringLength) == 0)
-                        {
-                            strncpy (attrString [attrCode], attr_value, stringLength);
-                            attrIsGiven [attrCode] = true;
-                        } else {
-                            std::cout << "\n\nATTRIBUTE OTHER THAN 'code=' GIVEN IN <language ...> ! STOPPING PARSER! bye.\n\n";
-                            clean_exit (-1);
-                        }
-                    }
-                }
-
-                if (firstElement) {
-                    fprintf (partFileB, "const IsoAgLib::repeat_vtLanguage_s ivtObject%s_aLanguage [] = {", objName);
-                } else {
-                    fprintf (partFileB, ", ");
-                }
-                if (!(attrIsGiven [attrCode]))
-                {
-                    std::cout << "\n\ncode ATTRIBUTE NEEDED IN <language ...> ! STOPPING PARSER! bye.\n\n";
-                    clean_exit (-1);
-                }
-                char languageCode[2];
-                languageCode[0] = attrString[attrCode][0];
-                languageCode[1] = attrString[attrCode][1];
-
-                // Check for correct LanguageCode!
-                int lc;
-                for (lc=0; lc<iso639entries; lc++) {
-                  if ((iso639table[lc][0] == languageCode[0]) && (iso639table[lc][1] == languageCode[1])) break;
-                }
-                if (lc == iso639entries) {
-                  // language not found!
-                  std::cout << "\n\n<language code=\"" << languageCode[0] << languageCode[1] << "\" /> is NOT conform to ISO 639 (Maybe you didn't use lower-case letters?!)! STOPPING PARSER! bye.\n\n";
+              if (strncmp (attr_name, "code", stringLength) == 0)
+              {
+                  strncpy (attrString [attrCode], attr_value, stringLength);
+                  attrIsGiven [attrCode] = true;
+              } else {
+                  std::cout << "\n\nATTRIBUTE OTHER THAN 'code=' GIVEN IN <language ...> ! STOPPING PARSER! bye.\n\n";
                   clean_exit (-1);
-                }
-                sprintf (tempString, "'%c', '%c'", languageCode[0], languageCode[1]);
-                fprintf (partFileB, "{%s}", tempString);
-                objChildLanguages++;
-                firstElement = false;
+              }
             }
+          }
+
+          if (firstElement) {
+            fprintf (partFileB, "const IsoAgLib::repeat_vtLanguage_s ivtObject%s_aLanguage [] = {", objName);
+          } else {
+            fprintf (partFileB, ", ");
+          }
+          if (!(attrIsGiven [attrCode]))
+          {
+            std::cout << "\n\ncode ATTRIBUTE NEEDED IN <language ...> ! STOPPING PARSER! bye.\n\n";
+            clean_exit (-1);
+          }
+          char languageCode[2];
+          languageCode[0] = attrString[attrCode][0];
+          languageCode[1] = attrString[attrCode][1];
+
+          // Check for correct LanguageCode!
+          int lc;
+          for (lc=0; lc<iso639entries; lc++) {
+            if ((iso639table[lc][0] == languageCode[0]) && (iso639table[lc][1] == languageCode[1])) break;
+          }
+          if (lc == iso639entries) {
+            // language not found!
+            std::cout << "\n\n<language code=\"" << languageCode[0] << languageCode[1] << "\" /> is NOT conform to ISO 639 (Maybe you didn't use lower-case letters?!)! STOPPING PARSER! bye.\n\n";
+            clean_exit (-1);
+          }
+          sprintf (tempString, "'%c', '%c'", languageCode[0], languageCode[1]);
+          fprintf (partFileB, "{%s}", tempString);
+          objChildLanguages++;
+          firstElement = false;
         }
-        if (firstElement == false)
-            fprintf (partFileB, "};\n");
-  }
+      }
+      if (firstElement == false)
+        fprintf (partFileB, "};\n");
+    }
 
-  // ### Print out RAWBITMAP byte array
-  if (objType == otPicturegraphic) {
+    // ### Print out RAWBITMAP byte array
+    if (objType == otPicturegraphic) {
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrFormat] && attrIsGiven [attrTransparency_colour]))
+      {
+        clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND format= AND transparency_colour= ATTRIBUTES FOR THE <picturegraphic> OBJECT! STOPPING PARSER! bye.\n\n");
+      }
 
 
-    if (!(attrIsGiven [attrWidth] && attrIsGiven [attrFormat] && attrIsGiven [attrTransparency_colour]))
-    {
-     clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND format= AND transparency_colour= ATTRIBUTES FOR THE <picturegraphic> OBJECT! STOPPING PARSER! bye.\n\n");
+      ///////////////////////////////////////////////////////
+      /// ### +BEGIN+ -- FIRST -- process "standard" bitmap
+
+      c_Bitmap.resetLengths();
+      checkForFileOrFile148 ("picturegraphic");
+
+      objBitmapOptions = picturegraphicoptionstoi (attrString [attrOptions]);
+      openDecodePrintOut (rc_workDir, std_bitmap_path, objBitmapOptions);
+
+      // copy values from c_Bitmap somewhere to have them when Print'ing out the array afterwards...
+      deXwidth = atoi (attrString [attrWidth]);
+      deXcolorDepth = colordepthtoi (attrString [attrFormat]);
+      deXtransCol = colortoi (attrString [attrTransparency_colour]);
+      deXactualWidth = c_Bitmap.getWidth();
+      deXactualHeight = c_Bitmap.getHeight();
+      for (int i=0; i<3; i++) stdRawBitmapBytes [i] = c_Bitmap.objRawBitmapBytes [i];
+
+      /// ### +END+ -- FIRST -- process "standard" bitmap
+      ///////////////////////////////////////////////////////
+
+
+      //////////////////////////////////////////////////////
+      /// ### +BEGIN+ -- SECOND -- process "fixed" bitmaps
+      fixNr = 0;
+      for (child = n->getFirstChild(); child != 0; child=child->getNextSibling()) {
+        if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otFixedBitmap]) )) {
+          getAttributesFromNode(child, false); // false: DON'T read name= and id=
+          // no defaultAttributes() needed here...
+
+          c_Bitmap.resetLengths();
+          checkForFileOrFile148 ("fixedbitmap");
+
+          fixBitmapOptions [fixNr] = objBitmapOptions & 0x3; // keep flashing/transparency information from <pictureobject>
+          openDecodePrintOut (rc_workDir, fix_bitmap_path, fixBitmapOptions[fixNr], fixNr);
+
+          // copy values from c_Bitmap somewhere in a temp array that will be printed afterwards............
+          //fiXtransCol [fixNr] = colortoi (attrString [attrTransparency_colour]);
+          fiXactualWidth [fixNr] = c_Bitmap.getWidth();
+          fiXactualHeight [fixNr] = c_Bitmap.getHeight();
+          for (int i=0; i<3; i++) fixRawBitmapBytes [fixNr] [i] = c_Bitmap.objRawBitmapBytes [i];
+
+          fixNr++; //is count then!!
+        }
+      }
+      // have there been any Fixed Bitmaps?
+      if (fixNr > 0) {
+        // 1st: Print out array here now...
+        fprintf (partFileB, "const IsoAgLib::repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s iVtObject%s_aFixedBitmaps [] = {", objName);
+        bool firstEntry=true;
+        for (unsigned int i=0; i<fixNr; i++) {
+          for (int actDepth=0; actDepth<2; actDepth++) {
+            // was this depth generated for this special bitmap?
+            if (fixRawBitmapBytes[i] [actDepth] > 0) {
+              if (!firstEntry) fprintf (partFileB, ", ");
+              unsigned int options = (fixBitmapOptions[i] & 0x3) | ( (fixBitmapOptions[i] & (uint64_t(1)<<(2+actDepth))) ? (uint64_t(1)<<2) : 0 );
+              fprintf (partFileB, "{iVtObject%s_aRawBitmap%dFixed%d, %d, %d, %d, (%d << 6) | %d}", objName, actDepth, i, fixRawBitmapBytes[i] [actDepth], fiXactualWidth[i], fiXactualHeight[i], actDepth, options);
+              firstEntry = false;
+            }
+          }
+        }
+        fprintf (partFileB, "};\n");
+
+      }
+      /// ### +END+ -- SECOND -- process "fixed" bitmaps
+      //////////////////////////////////////////////////////
+
     }
 
 
-    ///////////////////////////////////////////////////////
-   /// ### +BEGIN+ -- FIRST -- process "standard" bitmap
-
-   c_Bitmap.resetLengths();
-   checkForFileOrFile148 ("picturegraphic");
-
-   objBitmapOptions = picturegraphicoptionstoi (attrString [attrOptions]);
-   openDecodePrintOut (rc_workDir, std_bitmap_path, objBitmapOptions);
-
-   // copy values from c_Bitmap somewhere to have them when Print'ing out the array afterwards...
-   deXwidth = atoi (attrString [attrWidth]);
-   deXcolorDepth = colordepthtoi (attrString [attrFormat]);
-   deXtransCol = colortoi (attrString [attrTransparency_colour]);
-   deXactualWidth = c_Bitmap.getWidth();
-   deXactualHeight = c_Bitmap.getHeight();
-   for (int i=0; i<3; i++) stdRawBitmapBytes [i] = c_Bitmap.objRawBitmapBytes [i];
-
-
-    /// ### +END+ -- FIRST -- process "standard" bitmap
-   ///////////////////////////////////////////////////////
-
-
-    //////////////////////////////////////////////////////
-   /// ### +BEGIN+ -- SECOND -- process "fixed" bitmaps
-   fixNr = 0;
-   for (child = n->getFirstChild(); child != 0; child=child->getNextSibling()) {
-       if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otFixedBitmap]) )) {
-           getAttributesFromNode(child, false); // false: DON'T read name= and id=
-           // no defaultAttributes() needed here...
-
-           c_Bitmap.resetLengths();
-           checkForFileOrFile148 ("fixedbitmap");
-
-           fixBitmapOptions [fixNr] = objBitmapOptions & 0x3; // keep flashing/transparency information from <pictureobject>
-           openDecodePrintOut (rc_workDir, fix_bitmap_path, fixBitmapOptions[fixNr], fixNr);
-
-           // copy values from c_Bitmap somewhere in a temp array that will be printed afterwards............
-         //fiXtransCol [fixNr] = colortoi (attrString [attrTransparency_colour]);
-           fiXactualWidth [fixNr] = c_Bitmap.getWidth();
-           fiXactualHeight [fixNr] = c_Bitmap.getHeight();
-           for (int i=0; i<3; i++) fixRawBitmapBytes [fixNr] [i] = c_Bitmap.objRawBitmapBytes [i];
-
-           fixNr++; //is count then!!
-       }
-   }
-   // have there been any Fixed Bitmaps?
-   if (fixNr > 0) {
-     // 1st: Print out array here now...
-     fprintf (partFileB, "const IsoAgLib::repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s iVtObject%s_aFixedBitmaps [] = {", objName);
-     bool firstEntry=true;
-     for (unsigned int i=0; i<fixNr; i++) {
-       for (int actDepth=0; actDepth<2; actDepth++) {
-         // was this depth generated for this special bitmap?
-         if (fixRawBitmapBytes[i] [actDepth] > 0) {
-           if (!firstEntry) fprintf (partFileB, ", ");
-           unsigned int options = (fixBitmapOptions[i] & 0x3) | ( (fixBitmapOptions[i] & (uint64_t(1)<<(2+actDepth))) ? (uint64_t(1)<<2) : 0 );
-           fprintf (partFileB, "{iVtObject%s_aRawBitmap%dFixed%d, %d, %d, %d, (%d << 6) | %d}", objName, actDepth, i, fixRawBitmapBytes[i] [actDepth], fiXactualWidth[i], fiXactualHeight[i], actDepth, options);
-           firstEntry = false;
-         }
-       }
-     }
-     fprintf (partFileB, "};\n");
-
-   }
-    /// ### +END+ -- SECOND -- process "fixed" bitmaps
-   //////////////////////////////////////////////////////
-
-  }
-
-
-  // ### Print out OBJECTID(_X_Y) array
-  bool xyNeeded = false;
-  if (objHasArrayObjectXY) xyNeeded = true;
-  if (objHasArrayObjectXY || objHasArrayObject)
-  {
-   // Process all Child-Elements
-   bool firstElement = true;
-   objChildObjects = 0;
-   for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
-   {   // if NOT Macro insert as normal object!
-    if (  (child->getNodeType() == DOMNode::ELEMENT_NODE) &&
-        !(
-            (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otMacro])) ||
-            (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otIncludemacro])) ||
-            (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otLanguage]))
-          )
-       )
-
+    // ### Print out OBJECTID(_X_Y) array
+    bool xyNeeded = false;
+    if (objHasArrayObjectXY) xyNeeded = true;
+    if (objHasArrayObjectXY || objHasArrayObject)
     {
-     // get NAME and POS_X and POS_Y attributes out of child
-     if(child->hasAttributes()) {
-      // parse through all attributes
-      pAttributes = child->getAttributes();
-      int nSize = pAttributes->getLength();
-
-      objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
-      is_objChildID = false;
-      is_objChildX = false;
-      is_objChildY = false;
-
-      strcpy (objBlockFont, "NULL");
-      objBlockRow = 0;
-      objBlockCol = 0;
-
-      for(int i=0;i<nSize;++i) {
-       DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-       utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-       utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-       // Get NAME and POS_X and POS_Y directly
-       if (strncmp (attr_name, "name", stringLength) == 0) {
-        strncpy (objChildName, attr_value, stringLength);
-        is_objChildName = true;
-       }
-       if (strncmp (attr_name, "id", stringLength) == 0) {
-        objChildID = atoi (attr_value);
-        is_objChildID = true;
-       }
-       if (strncmp (attr_name, "pos_x", stringLength) == 0) {
-        objChildX = atoi (attr_value);
-        is_objChildX = true;
-       }
-       if (strncmp (attr_name, "pos_y", stringLength) == 0) {
-        objChildY = atoi (attr_value);
-        is_objChildY = true;
-       }
-       if (strncmp (attr_name, "block_font", stringLength) == 0) {
-        strcpy (objBlockFont, "&iVtObject");
-        strncat (objBlockFont, attr_value, stringLength-9);
-       }
-       if (strncmp (attr_name, "block_row", stringLength) == 0) {
-        objBlockRow = atoi (attr_value);
-       }
-       if (strncmp (attr_name, "block_col", stringLength) == 0) {
-        objBlockCol = atoi (attr_value);
-       }
-      }
-     }
-     if (is_objChildName == false)
-     {
-      // create auto-named NAME attribute
-      sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
-      ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
-      objNextUnnamedName++;
-      is_objChildName = true;
-     }
-     // give him an ID, although not necessary now...
-     objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
-     if (firstElement) {
-      if (xyNeeded) fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
-      else          fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
-     } else {
-      fprintf (partFileB, ", ");
-     }
-     if (xyNeeded) {
-      if (!(is_objChildX && is_objChildY)) {
-       std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN <"<< node_name <<"> ! STOPPING PARSER! bye.\n\n";
-       clean_exit (-1);
-      }
-      fprintf (partFileB, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
-     } else {
-        // Added this if statement to account for InputList objects who might have NULL Object IDs in there list of objects. (Which is legal per the standard!)
-        // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
-        if (objChildID == 65535)
+      // Process all Child-Elements
+      bool firstElement = true;
+      objChildObjects = 0;
+      for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
+      {   // if NOT Macro insert as normal object!
+        if (  (child->getNodeType() == DOMNode::ELEMENT_NODE) &&
+            !((0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otMacro])) ||
+              (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otIncludemacro])) ||
+              (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otLanguage]))
+             )
+           )
         {
-          fprintf (partFileB, "{NULL}");
+          // get NAME and POS_X and POS_Y attributes out of child
+          if(child->hasAttributes()) {
+            // parse through all attributes
+            pAttributes = child->getAttributes();
+            int nSize = pAttributes->getLength();
+
+            objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
+            is_objChildID = false;
+            is_objChildX = false;
+            is_objChildY = false;
+
+            strcpy (objBlockFont, "NULL");
+            objBlockRow = 0;
+            objBlockCol = 0;
+
+            for(int i=0;i<nSize;++i) {
+              DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+              utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+              utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+              // Get NAME and POS_X and POS_Y directly
+              if (strncmp (attr_name, "name", stringLength) == 0) {
+                strncpy (objChildName, attr_value, stringLength);
+                is_objChildName = true;
+              }
+              if (strncmp (attr_name, "id", stringLength) == 0) {
+                objChildID = atoi (attr_value);
+                is_objChildID = true;
+              }
+              if (strncmp (attr_name, "pos_x", stringLength) == 0) {
+                objChildX = atoi (attr_value);
+                is_objChildX = true;
+              }
+              if (strncmp (attr_name, "pos_y", stringLength) == 0) {
+                objChildY = atoi (attr_value);
+                is_objChildY = true;
+              }
+              if (strncmp (attr_name, "block_font", stringLength) == 0) {
+                strcpy (objBlockFont, "&iVtObject");
+                strncat (objBlockFont, attr_value, stringLength-9);
+              }
+              if (strncmp (attr_name, "block_row", stringLength) == 0) {
+                objBlockRow = atoi (attr_value);
+              }
+              if (strncmp (attr_name, "block_col", stringLength) == 0) {
+                objBlockCol = atoi (attr_value);
+              }
+            }
+          }
+          if (is_objChildName == false)
+          {
+            // create auto-named NAME attribute
+            sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
+            ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
+            objNextUnnamedName++;
+            is_objChildName = true;
+          }
+          // give him an ID, although not necessary now...
+          objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
+          if (firstElement) {
+            if (xyNeeded) fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
+            else          fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
+          } else {
+            fprintf (partFileB, ", ");
+          }
+          if (xyNeeded) {
+            if (!(is_objChildX && is_objChildY)) {
+              std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN <"<< node_name <<"> ! STOPPING PARSER! bye.\n\n";
+              clean_exit (-1);
+            }
+            fprintf (partFileB, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
+          } else {
+            // Added this if statement to account for InputList objects who might have NULL Object IDs in there list of objects. (Which is legal per the standard!)
+            // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
+            if (objChildID == 65535)
+            {
+              fprintf (partFileB, "{NULL}");
+            }
+            else
+            {
+              fprintf (partFileB, "{&iVtObject%s}", objChildName, objChildX, objChildY);
+            }
+          }
+          objChildObjects++;
+          firstElement = false;
         }
-        else
-        {
-          fprintf (partFileB, "{&iVtObject%s}", objChildName, objChildX, objChildY);
-        }
-     }
-     objChildObjects++;
-     firstElement = false;
-    }
-   }
-   if (firstElement == false)
-    fprintf (partFileB, "};\n");
-  }
-
-
-
-  // ### Print out EVENT_MACRO array
-  if (objHasArrayEventMacro)
-  {
-   // Process all Child-Elements
-   bool firstElement = true;
-   objChildMacros = 0;
-   for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
-   {
-    if ( (child->getNodeType() == DOMNode::ELEMENT_NODE)
-      && ( (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otIncludemacro]))
-     || (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otMacro]))))
-    {
-     // get 'event=' and 'name=' out of child
-     if(child->hasAttributes()) {
-      // parse through all attributes
-      pAttributes = child->getAttributes();
-      int nSize = pAttributes->getLength();
-
-      attrString [attrEvent] [stringLength+1-1] = 0x00; attrIsGiven [attrEvent] = false;
-      objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
-
-      for(int i=0;i<nSize;++i) {
-       DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-       utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-       utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-       if (strncmp (attr_name, "event", stringLength) == 0) {
-        strncpy (attrString [attrEvent], attr_value, stringLength);
-        attrIsGiven [attrEvent] = true;
-       }
-       if (strncmp (attr_name, "name", stringLength) == 0) {
-        strncpy (objChildName, attr_value, stringLength);
-        is_objChildName = true;
-       }
-       if (strncmp (attr_name, "id", stringLength) == 0) {
-        objChildID = atoi (attr_value);
-        is_objChildID = true;
-       }
       }
-     }
-     if (is_objChildName == false)
-     {
-      // create auto-named NAME attribute
-      sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
-      ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
-      objNextUnnamedName++;
-      is_objChildName = true;
-     }
-     // give him an ID, although not necessary now...
-     objChildID = getID (objChildName, true, is_objChildID, objChildID);
-     if (firstElement) {
-         // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
-         // fprintf (partFileB, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
-         fprintf (partFileB, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName);
-     } else {
-      fprintf (partFileB, ", ");
-     }
-     if (!(attrIsGiven [attrEvent])) {
-      std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
-      clean_exit (-1);
-     }
-     //fprintf (partFileB, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
-     fprintf (partFileB, "{%d, &iVtObject%s}", eventToi(attrString [attrEvent]), objChildName);
-     objChildMacros++;
-     firstElement = false;
+      if (firstElement == false)
+        fprintf (partFileB, "};\n");
     }
-   }
-   if (firstElement == false)
-    fprintf (partFileB, "};\n");
-  }
+
+
+    // ### Print out EVENT_MACRO array
+    if (objHasArrayEventMacro)
+    {
+      // Process all Child-Elements
+      bool firstElement = true;
+      objChildMacros = 0;
+      for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
+      {
+        if ( (child->getNodeType() == DOMNode::ELEMENT_NODE)
+          && ( (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otIncludemacro]))
+        || (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otMacro]))))
+        {
+          // get 'event=' and 'name=' out of child
+          if(child->hasAttributes()) {
+            // parse through all attributes
+            pAttributes = child->getAttributes();
+            int nSize = pAttributes->getLength();
+
+            attrString [attrEvent] [stringLength+1-1] = 0x00; attrIsGiven [attrEvent] = false;
+            objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
+
+            for(int i=0;i<nSize;++i) {
+              DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+              utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+              utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+              if (strncmp (attr_name, "event", stringLength) == 0) {
+                strncpy (attrString [attrEvent], attr_value, stringLength);
+                attrIsGiven [attrEvent] = true;
+              }
+              if (strncmp (attr_name, "name", stringLength) == 0) {
+                strncpy (objChildName, attr_value, stringLength);
+                is_objChildName = true;
+              }
+              if (strncmp (attr_name, "id", stringLength) == 0) {
+                objChildID = atoi (attr_value);
+                is_objChildID = true;
+              }
+            }
+          }
+          if (is_objChildName == false)
+          {
+            // create auto-named NAME attribute
+            sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
+            ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
+            objNextUnnamedName++;
+            is_objChildName = true;
+          }
+          // give him an ID, although not necessary now...
+          objChildID = getID (objChildName, true, is_objChildID, objChildID);
+          if (firstElement) {
+            // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
+            // fprintf (partFileB, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
+            fprintf (partFileB, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName);
+          } else {
+            fprintf (partFileB, ", ");
+          }
+          if (!(attrIsGiven [attrEvent])) {
+            std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
+            clean_exit (-1);
+          }
+          //fprintf (partFileB, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
+          fprintf (partFileB, "{%d, &iVtObject%s}", eventToi(attrString [attrEvent]), objChildName);
+          objChildMacros++;
+          firstElement = false;
+        }
+      }
+      if (firstElement == false)
+        fprintf (partFileB, "};\n");
+    }
 
 //****************************************************************************************************************************************
 // This section added by Brad Cox Sep 30, 2004 to parse out commands from macros and to parse out point arrays from polygon objects.
 // New XML tags have been introduced included 20 for each macro-usable command and one called <point> for the points of a polygon object
   // ### Print out MACRO_COMMAND array
-        if (objHasArrayMacroCommand)
-        {
-            // Process all Child-Elements
-            bool firstElement = true;
-            objChildCommands = 0;
-            for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
-            {
-    if (child->getNodeType() == DOMNode::ELEMENT_NODE)  // May need to adjust this to be sure the child is really a command element and not something else to enforce integrity
+  if (objHasArrayMacroCommand)
+  {
+    // Process all Child-Elements
+    bool firstElement = true;
+    objChildCommands = 0;
+    for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
     {
-     char *command_name = XMLString::transcode(child->getNodeName());
-                    commandType = commandIsType (command_name);
-     commandMessage [stringLength+1-1] = 0x00;
-     switch (commandType)
-     {
-      case ctHideShowObject:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrHideShow);
-
-        for(int i=0;i<nSize;++i)
+      if (child->getNodeType() == DOMNode::ELEMENT_NODE)  // May need to adjust this to be sure the child is really a command element and not something else to enforce integrity
+      {
+        char *command_name = XMLString::transcode(child->getNodeName());
+        commandType = commandIsType (command_name);
+        commandMessage [stringLength+1-1] = 0x00;
+        switch (commandType)
         {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrHideShow);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), booltoi(attrString[attrHideShow]));
-        objChildCommands++;
-       }
-       break;
-      case ctEnableDisableObject:
-        if(child->hasAttributes())
-        {
-          // parse through all attributes
-          pAttributes = child->getAttributes();
-          int nSize = pAttributes->getLength();
-
-          cleanAttribute(attrObjectID);
-          cleanAttribute(attrDisable_enable);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrDisable_enable);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA1, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), booltoi(attrString[attrDisable_enable]));
-        objChildCommands++;
-       }
-       break;
-      case ctSelectInputObject:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)));
-        objChildCommands++;
-       }
-       break;
-      case ctControlAudioDevice:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrNumber_of_repetitions);
-        cleanAttribute(attrFrequency);
-        cleanAttribute(attrOnTime_duration);
-        cleanAttribute(attrOffTime_duration);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrNumber_of_repetitions);
-         setAttributeValue(attrFrequency);
-         setAttributeValue(attrOnTime_duration);
-         setAttributeValue(attrOffTime_duration);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA3, %d, %d,%d, %d,%d, %d,%d", atoi(attrString [attrNumber_of_repetitions]),  MACRO_16bitToLE(idOrName_toi(attrString [attrFrequency], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrOnTime_duration], /*macro?*/false)),MACRO_16bitToLE(idOrName_toi(attrString [attrOffTime_duration], /*macro?*/false)));
-        objChildCommands++;
-       }
-       break;
-      case ctSetAudioVolume:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrPercentage);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrPercentage);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA4, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", atoi(attrString [attrPercentage]));
-        objChildCommands++;
-       }
-       break;
-      case ctChangeChildLocation:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrParent_objectID);
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrX_change);
-        cleanAttribute(attrY_change);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrParent_objectID);
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrX_change);
-         setAttributeValue(attrY_change);
-        }
-        // Need check for all attributes being present for this command -bac
-        // add 127 to relative x,y
-        sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
-        objChildCommands++;
-       }
-       break;
-      case ctChangeChildPosition:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrParent_objectID);
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrX_pos);
-        cleanAttribute(attrY_pos);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrParent_objectID);
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrX_pos);
-         setAttributeValue(attrY_pos);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
-        objChildCommands++;
-       }
-       break;
-      case ctChangeSize:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrNew_width);
-        cleanAttribute(attrNew_height);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrNew_width);
-         setAttributeValue(attrNew_height);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_width], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_height], /*macro?*/false)));
-        objChildCommands++;
-       }
-       break;
-      case ctChangeBackgroundColour:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrNew_background_colour);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrNew_background_colour);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrNew_background_colour]));
-        objChildCommands++;
-       }
-       break;
-      case ctChangeNumericValue:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrNew_value);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrNew_value);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA8, %d, %d, 0x00, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false)));
-        objChildCommands++;
-       }
-       break;
-      case ctChangeStringValue:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrNumber_of_bytes);
-        cleanAttribute(attrNew_value);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrBytes_in_string);
-         setAttributeValue(attrNew_value);
-        }
-        // Need check for all attributes being present for this command -bac
-        int strLength;
-        char *tempStrPtr;
-
-        // reset
-        tempString2[0]=0;
-
-        tempStrPtr = attrString[attrNew_value];
-        strLength = strlen(tempStrPtr);
-        for(int i = 0; i < strLength; i++)
-        {
-         sprintf(tempString, ", %d", tempStrPtr[i]);
-         strcat(tempString2, tempString);
-        }
-        //sprintf (attrString [attrValue], "%s", tempString2);
-        sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false)), tempString2);
-
-        objChildCommands++;
-       }
-       break;
-      case ctChangeEndPoint:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrNew_width);
-        cleanAttribute(attrNew_height);
-        cleanAttribute(attrLine_direction);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrNew_width);
-         setAttributeValue(attrNew_height);
-         setAttributeValue(attrLine_direction);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_width], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_height], /*macro?*/false)), atoi(attrString [attrLine_direction]));
-
-        objChildCommands++;
-       }
-       break;
-      case ctChangeFontAttributes:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrFont_colour);
-        cleanAttribute(attrFont_size);
-        cleanAttribute(attrFont_type);
-        cleanAttribute(attrFont_style);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrFont_colour);
-         setAttributeValue(attrFont_size);
-         setAttributeValue(attrFont_type);
-         setAttributeValue(attrFont_style);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFont_colour]), atoi(attrString [attrFont_size]), atoi(attrString [attrFont_type]), atoi(attrString [attrFont_style]));
-
-        objChildCommands++;
-       }
-       break;
-      case ctChangeLineAttributes:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrLine_colour);
-        cleanAttribute(attrLine_width);
-        cleanAttribute(attrLine_art);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrLine_colour);
-         setAttributeValue(attrLine_width);
-         setAttributeValue(attrLine_art);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(atoi(attrString [attrLine_art])));
-
-        objChildCommands++;
-       }
-       break;
-      case ctChangeFillAttributes:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrFill_colour);
-        cleanAttribute(attrFill_type);
-        cleanAttribute(attrFill_colour);
-        cleanAttribute(attrFill_pattern);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrFill_type);
-         setAttributeValue(attrFill_colour);
-         setAttributeValue(attrFill_pattern);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFill_type]), atoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
-
-        objChildCommands++;
-       }
-       break;
-      case ctChangeActiveMask:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrWorking_setID);
-        cleanAttribute(attrNew_active_mask);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrWorking_setID);
-         setAttributeValue(attrNew_active_mask);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAD, %d, %d, %d, %d, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrWorking_setID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_active_mask], /*macro?*/false)));
-
-        objChildCommands++;
-       }
-       break;
-      case ctChangeSoftKeyMask:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrMask_type);
-        cleanAttribute(attrMaskID);
-        cleanAttribute(attrNew_softkey_mask);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrMask_type);
-         setAttributeValue(attrMaskID);
-         setAttributeValue(attrNew_softkey_mask);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAD, %d, %d, %d, %d, %d, 0xFF, 0xFF", atoi(attrString [attrMask_type]), MACRO_16bitToLE(idOrName_toi(attrString [attrMaskID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false)));
-
-        objChildCommands++;
-       }
-       break;
-      case ctChangeAttribute:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrAttributeID);
-        cleanAttribute(attrNew_value);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrAttributeID);
-         setAttributeValue(attrNew_value);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xAF, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrAttributeID]), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false)));
-
-        objChildCommands++;
-       }
-       break;
-      case ctChangePriority:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrNew_priority);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrNew_priority);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrNew_priority]));
-
-        objChildCommands++;
-       }
-       break;
-      case ctChangeListItem:
-       if(child->hasAttributes())
-       {
-        // parse through all attributes
-        pAttributes = child->getAttributes();
-        int nSize = pAttributes->getLength();
-
-        cleanAttribute(attrObjectID);
-        cleanAttribute(attrList_index);
-        cleanAttribute(attrNew_objectID);
-
-        for(int i=0;i<nSize;++i)
-        {
-         DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-         utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-         utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-         setAttributeValue(attrObjectID);
-         setAttributeValue(attrList_index);
-         setAttributeValue(attrNew_objectID);
-        }
-        // Need check for all attributes being present for this command -bac
-        sprintf(commandMessage, "0xB1, %d, %d, %d, %d, %d, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrList_index]), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_objectID], /*macro?*/false)));
-
-        objChildCommands++;
-       }
-       break;
-     }
-
-                    if (firstElement)
-     {
-                        fprintf (partFileB, "const uint8_t iVtObject%s_aMacro_Commands [] = {", objName);
-                    } else {
-                        fprintf (partFileB, ", ");
-                    }
-
-     // We need something like this, but up above for each command type in order to deal with the varying attributes for each command. . . -bac
-                    /*if (!(attrIsGiven [attrEvent]))
-     {
-                        std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
-                        clean_exit (-1);
-                    }*/
-                    //fprintf (partFileB, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
-                    fprintf (partFileB, "%s", commandMessage);
-                    firstElement = false;
-                }
+          case ctHideShowObject:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrHideShow);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrHideShow);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xA0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), booltoi(attrString[attrHideShow]));
+              objChildCommands++;
             }
+            break;
+          case ctEnableDisableObject:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
 
-            if (firstElement == false)
-                fprintf (partFileB, "};\n");
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrDisable_enable);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrDisable_enable);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xA1, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), booltoi(attrString[attrDisable_enable]));
+              objChildCommands++;
+            }
+            break;
+          case ctSelectInputObject:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)));
+              objChildCommands++;
+            }
+            break;
+          case ctControlAudioDevice:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrNumber_of_repetitions);
+              cleanAttribute(attrFrequency);
+              cleanAttribute(attrOnTime_duration);
+              cleanAttribute(attrOffTime_duration);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrNumber_of_repetitions);
+                setAttributeValue(attrFrequency);
+                setAttributeValue(attrOnTime_duration);
+                setAttributeValue(attrOffTime_duration);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xA3, %d, %d,%d, %d,%d, %d,%d", atoi(attrString [attrNumber_of_repetitions]),  MACRO_16bitToLE(idOrName_toi(attrString [attrFrequency], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrOnTime_duration], /*macro?*/false)),MACRO_16bitToLE(idOrName_toi(attrString [attrOffTime_duration], /*macro?*/false)));
+              objChildCommands++;
+            }
+            break;
+          case ctSetAudioVolume:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrPercentage);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrPercentage);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xA4, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", atoi(attrString [attrPercentage]));
+              objChildCommands++;
+            }
+            break;
+          case ctChangeChildLocation:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrParent_objectID);
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrX_change);
+              cleanAttribute(attrY_change);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrParent_objectID);
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrX_change);
+                setAttributeValue(attrY_change);
+              }
+              // Need check for all attributes being present for this command -bac
+              // add 127 to relative x,y
+              sprintf(commandMessage, "0xA5, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrX_change]) + 127 ,atoi(attrString [attrY_change]) + 127 );
+              objChildCommands++;
+            }
+            break;
+          case ctChangeChildPosition:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrParent_objectID);
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrX_pos);
+              cleanAttribute(attrY_pos);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrParent_objectID);
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrX_pos);
+                setAttributeValue(attrY_pos);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
+              objChildCommands++;
+            }
+            break;
+          case ctChangeSize:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrNew_width);
+              cleanAttribute(attrNew_height);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrNew_width);
+                setAttributeValue(attrNew_height);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_width], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_height], /*macro?*/false)));
+              objChildCommands++;
+            }
+            break;
+          case ctChangeBackgroundColour:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrNew_background_colour);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrNew_background_colour);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrNew_background_colour]));
+              objChildCommands++;
+            }
+            break;
+          case ctChangeNumericValue:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrNew_value);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrNew_value);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xA8, %d, %d, 0x00, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false)));
+              objChildCommands++;
+            }
+            break;
+          case ctChangeStringValue:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrNumber_of_bytes);
+              cleanAttribute(attrNew_value);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrBytes_in_string);
+                setAttributeValue(attrNew_value);
+              }
+              // Need check for all attributes being present for this command -bac
+              int strLength;
+              char *tempStrPtr;
+
+              // reset
+              tempString2[0]=0;
+
+              tempStrPtr = attrString[attrNew_value];
+              strLength = strlen(tempStrPtr);
+              for(int i = 0; i < strLength; i++)
+              {
+                sprintf(tempString, ", %d", tempStrPtr[i]);
+                strcat(tempString2, tempString);
+              }
+              //sprintf (attrString [attrValue], "%s", tempString2);
+              sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrBytes_in_string], /*macro?*/false)), tempString2);
+
+              objChildCommands++;
+            }
+            break;
+          case ctChangeEndPoint:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrNew_width);
+              cleanAttribute(attrNew_height);
+              cleanAttribute(attrLine_direction);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrNew_width);
+                setAttributeValue(attrNew_height);
+                setAttributeValue(attrLine_direction);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_width], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_height], /*macro?*/false)), atoi(attrString [attrLine_direction]));
+
+              objChildCommands++;
+            }
+            break;
+          case ctChangeFontAttributes:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrFont_colour);
+              cleanAttribute(attrFont_size);
+              cleanAttribute(attrFont_type);
+              cleanAttribute(attrFont_style);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrFont_colour);
+                setAttributeValue(attrFont_size);
+                setAttributeValue(attrFont_type);
+                setAttributeValue(attrFont_style);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFont_colour]), atoi(attrString [attrFont_size]), atoi(attrString [attrFont_type]), atoi(attrString [attrFont_style]));
+
+              objChildCommands++;
+            }
+            break;
+          case ctChangeLineAttributes:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrLine_colour);
+              cleanAttribute(attrLine_width);
+              cleanAttribute(attrLine_art);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrLine_colour);
+                setAttributeValue(attrLine_width);
+                setAttributeValue(attrLine_art);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(atoi(attrString [attrLine_art])));
+
+              objChildCommands++;
+            }
+            break;
+          case ctChangeFillAttributes:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrFill_colour);
+              cleanAttribute(attrFill_type);
+              cleanAttribute(attrFill_colour);
+              cleanAttribute(attrFill_pattern);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrFill_type);
+                setAttributeValue(attrFill_colour);
+                setAttributeValue(attrFill_pattern);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFill_type]), atoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
+
+              objChildCommands++;
+            }
+            break;
+          case ctChangeActiveMask:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrWorking_setID);
+              cleanAttribute(attrNew_active_mask);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrWorking_setID);
+                setAttributeValue(attrNew_active_mask);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xAD, %d, %d, %d, %d, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrWorking_setID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_active_mask], /*macro?*/false)));
+
+              objChildCommands++;
+            }
+            break;
+          case ctChangeSoftKeyMask:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrMask_type);
+              cleanAttribute(attrMaskID);
+              cleanAttribute(attrNew_softkey_mask);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrMask_type);
+                setAttributeValue(attrMaskID);
+                setAttributeValue(attrNew_softkey_mask);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xAD, %d, %d, %d, %d, %d, 0xFF, 0xFF", atoi(attrString [attrMask_type]), MACRO_16bitToLE(idOrName_toi(attrString [attrMaskID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false)));
+
+              objChildCommands++;
+            }
+            break;
+          case ctChangeAttribute:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrAttributeID);
+              cleanAttribute(attrNew_value);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrAttributeID);
+                setAttributeValue(attrNew_value);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xAF, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrAttributeID]), MACRO_32bitToLE(idOrName_toi(attrString [attrNew_value], /*macro?*/false)));
+
+              objChildCommands++;
+            }
+            break;
+          case ctChangePriority:
+            if(child->hasAttributes())
+            {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              cleanAttribute(attrObjectID);
+              cleanAttribute(attrNew_priority);
+
+              for(int i=0;i<nSize;++i)
+              {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                setAttributeValue(attrObjectID);
+                setAttributeValue(attrNew_priority);
+              }
+              // Need check for all attributes being present for this command -bac
+              sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrNew_priority]));
+
+              objChildCommands++;
+            }
+            break;
+          case ctChangeListItem:
+          if(child->hasAttributes())
+          {
+            // parse through all attributes
+            pAttributes = child->getAttributes();
+            int nSize = pAttributes->getLength();
+
+            cleanAttribute(attrObjectID);
+            cleanAttribute(attrList_index);
+            cleanAttribute(attrNew_objectID);
+
+            for(int i=0;i<nSize;++i)
+            {
+              DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+              utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+              utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+              setAttributeValue(attrObjectID);
+              setAttributeValue(attrList_index);
+              setAttributeValue(attrNew_objectID);
+            }
+            // Need check for all attributes being present for this command -bac
+            sprintf(commandMessage, "0xB1, %d, %d, %d, %d, %d, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrList_index]), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_objectID], /*macro?*/false)));
+
+            objChildCommands++;
+          }
+          break;
         }
+
+        if (firstElement)
+        {
+          fprintf (partFileB, "const uint8_t iVtObject%s_aMacro_Commands [] = {", objName);
+        } else {
+          fprintf (partFileB, ", ");
+        }
+
+        // We need something like this, but up above for each command type in order to deal with the varying attributes for each command. . . -bac
+        /*if (!(attrIsGiven [attrEvent]))
+        {
+          std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
+          clean_exit (-1);
+        }*/
+        //fprintf (partFileB, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
+        fprintf (partFileB, "%s", commandMessage);
+        firstElement = false;
+        }
+      }
+
+      if (firstElement == false)
+        fprintf (partFileB, "};\n");
+    }
 // ****************** End of if (objHasArrayMacroCommand) *************************
 
   // ### Print out point array for a Polygon Object
-        if (objHasArrayPoints)
+    if (objHasArrayPoints)
+    {
+      // Process all Child-Elements
+      bool firstElement = true;
+      objChildPoints = 0;
+      for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
+      {
+        if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otPoint]) ))
         {
-            // Process all Child-Elements
-            bool firstElement = true;
-            objChildPoints = 0;
-            for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
-            {
-                if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otPoint]) ))
-                {
-                    // get 'event=' and 'name=' out of child
-                    if(child->hasAttributes()) {
-                        // parse through all attributes
-                        pAttributes = child->getAttributes();
-                        int nSize = pAttributes->getLength();
+          // get 'event=' and 'name=' out of child
+          if(child->hasAttributes()) {
+            // parse through all attributes
+            pAttributes = child->getAttributes();
+            int nSize = pAttributes->getLength();
 
-                        attrString [attrPos_x] [stringLength+1-1] = 0x00; attrIsGiven [attrPos_x] = false;
-                        attrString [attrPos_y] [stringLength+1-1] = 0x00; attrIsGiven [attrPos_y] = false;
-                        objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
+            attrString [attrPos_x] [stringLength+1-1] = 0x00; attrIsGiven [attrPos_x] = false;
+            attrString [attrPos_y] [stringLength+1-1] = 0x00; attrIsGiven [attrPos_y] = false;
+            objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
 
-                        for(int i=0;i<nSize;++i) {
-                            DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-                            utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-                            utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+            for(int i=0;i<nSize;++i) {
+              DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+              utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+              utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-                            if (strncmp (attr_name, "pos_x", stringLength) == 0)
-                            {
-                                strncpy (attrString [attrPos_x], attr_value, stringLength);
-                                attrIsGiven [attrPos_x] = true;
-                            }
-                            if (strncmp (attr_name, "pos_y", stringLength) == 0)
-                            {
-                                strncpy (attrString [attrPos_y], attr_value, stringLength);
-                                attrIsGiven [attrPos_y] = true;
-                            }
-
-                        }
-                    }
-
-                    if (firstElement) {
-                        fprintf (partFileB, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", objName);
-                    } else {
-                        fprintf (partFileB, ", ");
-                    }
-                    if (!(attrIsGiven [attrPos_x])) {
-                        std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
-                        clean_exit (-1);
-                    }
-                    if (!(attrIsGiven [attrPos_y])) {
-                        std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
-                        clean_exit (-1);
-                    }
-                    fprintf (partFileB, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
-                    objChildPoints++;
-                    firstElement = false;
-                }
+              if (strncmp (attr_name, "pos_x", stringLength) == 0)
+              {
+                strncpy (attrString [attrPos_x], attr_value, stringLength);
+                attrIsGiven [attrPos_x] = true;
+              }
+              if (strncmp (attr_name, "pos_y", stringLength) == 0)
+              {
+                strncpy (attrString [attrPos_y], attr_value, stringLength);
+                attrIsGiven [attrPos_y] = true;
+              }
             }
-            if (firstElement == false)
-                fprintf (partFileB, "};\n");
+          }
+
+          if (firstElement) {
+            fprintf (partFileB, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", objName);
+          } else {
+            fprintf (partFileB, ", ");
+          }
+          if (!(attrIsGiven [attrPos_x])) {
+            std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
+            clean_exit (-1);
+          }
+          if (!(attrIsGiven [attrPos_y])) {
+            std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
+            clean_exit (-1);
+          }
+          fprintf (partFileB, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
+          objChildPoints++;
+          firstElement = false;
         }
+      }
+      if (firstElement == false)
+        fprintf (partFileB, "};\n");
+    }
 //*************************************************************************************************************************************************************
 //******************** End of code added by Brad Cox **********************************************************************************************************
 
@@ -2754,23 +2747,22 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   fprintf (partFileC, "  iVtObject%s.init (&iVtObject%s_sROM);\n", objName, objName);
   fprintf (partFileD, "#define iVtObjectID%s %d\n", objName, objID);
   if (firstLineFileE) {
-   firstLineFileE = false;
+    firstLineFileE = false;
   } else {
-   fprintf (partFileE, ",");
+    fprintf (partFileE, ",");
   }
   fprintf (partFileE, "\n  &iVtObject%s", objName);
 
 
-
   if (strcmp ("NULL", attrString [attrVariable_reference]) != 0)
   { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-   sprintf (tempString, "&iVtObject%s", attrString [attrVariable_reference]);
-   sprintf (attrString [attrVariable_reference], "%s", tempString);
+    sprintf (tempString, "&iVtObject%s", attrString [attrVariable_reference]);
+    sprintf (attrString [attrVariable_reference], "%s", tempString);
   }
   if (strcmp ("NULL", attrString [attrTarget_value_variable_reference]) != 0)
   { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-   sprintf (tempString, "&iVtObject%s", attrString [attrTarget_value_variable_reference]);
-   sprintf (attrString [attrTarget_value_variable_reference], "%s", tempString);
+    sprintf (tempString, "&iVtObject%s", attrString [attrTarget_value_variable_reference]);
+    sprintf (attrString [attrTarget_value_variable_reference], "%s", tempString);
   }
 
 
@@ -2779,439 +2771,437 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   // ###########################################
   switch (objType)
   {
-   case otWorkingset:
-    if (!attrIsGiven [attrActive_mask]) clean_exit (-1, "YOU NEED TO SPECIFY THE active_mask= ATTRIBUTE FOR THE <workingset> OBJECT! STOPPING PARSER! bye.\n\n");
-    fprintf (partFileB, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]), attrString [attrActive_mask]);
-    break;
+    case otWorkingset:
+      if (!attrIsGiven [attrActive_mask]) clean_exit (-1, "YOU NEED TO SPECIFY THE active_mask= ATTRIBUTE FOR THE <workingset> OBJECT! STOPPING PARSER! bye.\n\n");
+      fprintf (partFileB, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]), attrString [attrActive_mask]);
+      break;
 
-   case otDatamask:
-     if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0)  || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
-     fprintf (partFileB, ", %d, NULL", colortoi (attrString [attrBackground_colour]));
-    else
-     fprintf (partFileB, ", %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask]);
-    break;
+    case otDatamask:
+      if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0)  || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
+        fprintf (partFileB, ", %d, NULL", colortoi (attrString [attrBackground_colour]));
+      else
+        fprintf (partFileB, ", %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask]);
+      break;
 
-   case otAlarmmask:
-     if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0) || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
-     fprintf (partFileB, ", %d, NULL, %d, %d", colortoi (attrString [attrBackground_colour]), atoi (attrString [attrPriority]), atoi (attrString [attrAcoustic_signal]));
-    else
-     fprintf (partFileB, ", %d, &iVtObject%s, %d, %d", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask], prioritytoi (attrString [attrPriority]), acousticsignaltoi (attrString [attrAcoustic_signal]));
-    break;
+    case otAlarmmask:
+      if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0) || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
+        fprintf (partFileB, ", %d, NULL, %d, %d", colortoi (attrString [attrBackground_colour]), atoi (attrString [attrPriority]), atoi (attrString [attrAcoustic_signal]));
+      else
+        fprintf (partFileB, ", %d, &iVtObject%s, %d, %d", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask], prioritytoi (attrString [attrPriority]), acousticsignaltoi (attrString [attrAcoustic_signal]));
+      break;
 
-   case otContainer:
-    if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <container> OBJECT! STOPPING PARSER! bye.\n\n");
-    fprintf (partFileB, ", %s, %s, %d", attrString [attrWidth], attrString [attrHeight], booltoi (attrString [attrHidden]));
-    break;
+    case otContainer:
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <container> OBJECT! STOPPING PARSER! bye.\n\n");
+      fprintf (partFileB, ", %s, %s, %d", attrString [attrWidth], attrString [attrHeight], booltoi (attrString [attrHidden]));
+      break;
 
-   case otSoftkeymask:
-    fprintf (partFileB, ", %d", colortoi (attrString [attrBackground_colour]));
-    break;
+    case otSoftkeymask:
+      fprintf (partFileB, ", %d", colortoi (attrString [attrBackground_colour]));
+      break;
 
-   case otKey:
-    if (!attrIsGiven [attrKey_code]) getKeyCode ();
-    fprintf (partFileB, ", %d, %s", colortoi (attrString [attrBackground_colour]), attrString [attrKey_code]);
-    fprintf (partFileD, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otButton
-    break;
+    case otKey:
+      if (!attrIsGiven [attrKey_code]) getKeyCode ();
+      fprintf (partFileB, ", %d, %s", colortoi (attrString [attrBackground_colour]), attrString [attrKey_code]);
+      fprintf (partFileD, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otButton
+      break;
 
-   case otButton:
-    if (!attrIsGiven [attrKey_code]) getKeyCode ();
-    if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <key> OBJECT! STOPPING PARSER! bye.\n\n");
-    fprintf (partFileB, ", %s, %s, %d, %d, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), colortoi (attrString [attrBorder_colour]), attrString [attrKey_code], booltoi (attrString [attrLatchable]));
-    fprintf (partFileD, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otKey
-    break;
+    case otButton:
+      if (!attrIsGiven [attrKey_code]) getKeyCode ();
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <key> OBJECT! STOPPING PARSER! bye.\n\n");
+      fprintf (partFileB, ", %s, %s, %d, %d, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), colortoi (attrString [attrBorder_colour]), attrString [attrKey_code], booltoi (attrString [attrLatchable]));
+      fprintf (partFileD, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otKey
+      break;
 
-   case otInputboolean:
-    if (!(attrIsGiven [attrWidth] && attrIsGiven [attrForeground_colour])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND foreground_colour= ATTRIBUTES FOR THE <inputboolean> OBJECT! STOPPING PARSER! bye.\n\n");
-    if (!attrIsGiven [attrValue])
-     sprintf (attrString [attrValue], "0");
-    fprintf (partFileB, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], attrString [attrForeground_colour], attrString [attrVariable_reference], attrString [attrValue], booltoi (attrString [attrEnabled]));
-    break;
+    case otInputboolean:
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrForeground_colour])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND foreground_colour= ATTRIBUTES FOR THE <inputboolean> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (!attrIsGiven [attrValue])
+        sprintf (attrString [attrValue], "0");
+      fprintf (partFileB, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], attrString [attrForeground_colour], attrString [attrVariable_reference], attrString [attrValue], booltoi (attrString [attrEnabled]));
+      break;
 
-   case otInputstring:
-    if (!attrIsGiven [attrValue])
-    {
-     if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
-     {
-      clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
-     }
-     sprintf (attrString [attrValue], "NULL");
-    }
-    else
-    {
-     if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true; }
-     if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
-     {
-      clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled = ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
-     }
-     copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
-//     sprintf (tempString, "\"%s\"", attrString [attrValue]);
-     sprintf (attrString [attrValue], "%s", tempString);
-    }
-    if ( (!attrIsGiven [attrInput_attributes]) || (strcmp( attrString[attrInput_attributes], "65535")==0) )
-    {
-     sprintf (attrString [attrInput_attributes], "NULL");
-     fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
-    }
-    else
-    {
-     fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
-    }
+    case otInputstring:
+      if (!attrIsGiven [attrValue])
+      {
+        if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
+        {
+          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+        }
+        sprintf (attrString [attrValue], "NULL");
+      }
+      else
+      {
+        if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true; }
+        if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
+        {
+          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled = ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+        }
+        copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
+  //      sprintf (tempString, "\"%s\"", attrString [attrValue]);
+        sprintf (attrString [attrValue], "%s", tempString);
+      }
+      if ( (!attrIsGiven [attrInput_attributes]) || (strcmp( attrString[attrInput_attributes], "65535")==0) )
+      {
+        sprintf (attrString [attrInput_attributes], "NULL");
+        fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
+      }
+      else
+      {
+        fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], attrString [attrInput_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference], horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue], booltoi(attrString [attrEnabled]) );
+      }
+      break;
 
-    break;
+    case otInputnumber:
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value]
+        && attrIsGiven [attrOffset] && attrIsGiven [attrScale] && attrIsGiven [attrNumber_of_decimals] && attrIsGiven [attrFormat]))
+      {
+        clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND min_value= AND max_value= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <inputnumber> OBJECT! STOPPING PARSER! bye.\n\n");
+      }
+      if (!attrIsGiven [attrValue])
+        sprintf (attrString [attrValue], "0");
+      fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d", attrString [attrWidth], attrString [attrHeight],
+        colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
+        attrString [attrValue], attrString [attrMin_value], attrString [attrMax_value], attrString [attrOffset], attrString [attrScale],
+        attrString [attrNumber_of_decimals], formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]),
+        booltoi (attrString [attrEnabled]));
+      break;
 
-   case otInputnumber:
-    if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value]
-       && attrIsGiven [attrOffset] && attrIsGiven [attrScale] && attrIsGiven [attrNumber_of_decimals] && attrIsGiven [attrFormat]))
-    {
-     clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND min_value= AND max_value= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <inputnumber> OBJECT! STOPPING PARSER! bye.\n\n");
-    }
-    if (!attrIsGiven [attrValue])
-     sprintf (attrString [attrValue], "0");
-    fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d", attrString [attrWidth], attrString [attrHeight],
-       colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
-       attrString [attrValue], attrString [attrMin_value], attrString [attrMax_value], attrString [attrOffset], attrString [attrScale],
-       attrString [attrNumber_of_decimals], formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]),
-       booltoi (attrString [attrEnabled]));
-    break;
+    case otInputlist:
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <inputlist> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (!attrIsGiven [attrValue])
+        sprintf (attrString [attrValue], "0");
+      fprintf (partFileB, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference], attrString [attrValue],
+          booltoi (attrString [attrEnabled]));
+      break;
 
-   case otInputlist:
-    if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <inputlist> OBJECT! STOPPING PARSER! bye.\n\n");
-    if (!attrIsGiven [attrValue])
-     sprintf (attrString [attrValue], "0");
-    fprintf (partFileB, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference], attrString [attrValue],
-       booltoi (attrString [attrEnabled]));
-    break;
-
-   case otOutputstring:
-     if (!attrIsGiven [attrValue]) {
-       // Variable Reference
-       if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength])) {
-         clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
-       }
-       sprintf (attrString [attrValue], "NULL");
-     } else {
-       // Direct Value
-       if (!attrIsGiven [attrLength]) {
-         // Auto-calculate Length-field
-         sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true;
-       }
-       if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength])) {
+    case otOutputstring:
+      if (!attrIsGiven [attrValue]) {
+        // Variable Reference
+        if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength])) {
           clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
-       }
-       copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
-       sprintf (attrString [attrValue], "%s", tempString);
-     }
-     fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]),
-              attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
-              horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue]);
-//    printf ("%s --- %d\n", attrString [attrOptions], optionstoi (attrString [attrOptions]));
-     break;
+        }
+        sprintf (attrString [attrValue], "NULL");
+      } else {
+        // Direct Value
+        if (!attrIsGiven [attrLength]) {
+          // Auto-calculate Length-field
+          sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true;
+        }
+        if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength])) {
+            clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+        }
+        copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
+        sprintf (attrString [attrValue], "%s", tempString);
+      }
+      fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]),
+                attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
+                horizontaljustificationtoi (attrString [attrHorizontal_justification]), attrString [attrLength], attrString [attrValue]);
+  //    printf ("%s --- %d\n", attrString [attrOptions], optionstoi (attrString [attrOptions]));
+      break;
 
-   case otOutputnumber:
-    if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrOffset] && attrIsGiven [attrScale]
-       && attrIsGiven [attrNumber_of_decimals] && attrIsGiven [attrFormat]))
-    {
-     clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <outputnumber> OBJECT! STOPPING PARSER! bye.\n\n");
-    }
-    if (!attrIsGiven [attrValue])
-     sprintf (attrString [attrValue], "0");
-    fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %s, %s, %s, %s, %d, %d", attrString [attrWidth], attrString [attrHeight],
-       colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], outputnumberoptionstoi (attrString [attrOptions]),
-       attrString [attrVariable_reference], attrString [attrValue], attrString [attrOffset], attrString [attrScale], attrString [attrNumber_of_decimals],
-       formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]));
-    break;
+    case otOutputnumber:
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrOffset] && attrIsGiven [attrScale]
+        && attrIsGiven [attrNumber_of_decimals] && attrIsGiven [attrFormat]))
+      {
+      clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <outputnumber> OBJECT! STOPPING PARSER! bye.\n\n");
+      }
+      if (!attrIsGiven [attrValue])
+      sprintf (attrString [attrValue], "0");
+      fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %s, %s, %s, %s, %d, %d", attrString [attrWidth], attrString [attrHeight],
+        colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], outputnumberoptionstoi (attrString [attrOptions]),
+        attrString [attrVariable_reference], attrString [attrValue], attrString [attrOffset], attrString [attrScale], attrString [attrNumber_of_decimals],
+        formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]));
+      break;
 
-   case otLine:
-    if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
-    {
-     clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= ATTRIBUTES FOR THE <line> OBJECT! STOPPING PARSER! bye.\n\n");
-    }
-    fprintf (partFileB, ", &iVtObject%s, %s, %s, %d", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], linedirectiontoi (attrString [attrLine_direction]));
-    break;
+    case otLine:
+      if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight]))
+      {
+      clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= ATTRIBUTES FOR THE <line> OBJECT! STOPPING PARSER! bye.\n\n");
+      }
+      fprintf (partFileB, ", &iVtObject%s, %s, %s, %d", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], linedirectiontoi (attrString [attrLine_direction]));
+      break;
 
-            case otRectangle:
-                //clean_exit (-1, "<rectangle> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-                if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= ATTRIBUTES FOR THE <rectangle> OBJECT! STOPPING PARSER! bye.\n\n");
-                if (!attrIsGiven [attrLine_suppression])
-                    sprintf (attrString [attrLine_suppression], "0");
-    if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
-    {
-     sprintf (attrString [attrFill_attributes], "NULL");
-    }
-    else
-    {
-     sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
-     sprintf (attrString [attrFill_attributes], "%s", tempString);
-    }
+    case otRectangle:
+      //clean_exit (-1, "<rectangle> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
+      if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight])) clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= ATTRIBUTES FOR THE <rectangle> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (!attrIsGiven [attrLine_suppression])
+        sprintf (attrString [attrLine_suppression], "0");
+      if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
+      {
+        sprintf (attrString [attrFill_attributes], "NULL");
+      }
+      else
+      {
+        sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
+        sprintf (attrString [attrFill_attributes], "%s", tempString);
+      }
 
-    //else
-    // sprintf (attrString [attrFill_attributes], "&vtObject%s", attrString[attrFill_attributes]);
-    fprintf (partFileB, ", &iVtObject%s, %s, %s, %d, %s", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], linesuppressiontoi (attrString [attrLine_suppression]), attrString[attrFill_attributes]);
-    break;
+      //else
+      // sprintf (attrString [attrFill_attributes], "&vtObject%s", attrString[attrFill_attributes]);
+      fprintf (partFileB, ", &iVtObject%s, %s, %s, %d, %s", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], linesuppressiontoi (attrString [attrLine_suppression]), attrString[attrFill_attributes]);
+      break;
 
-            case otEllipse:
-                //clean_exit (-1, "<ellipse> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-                if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle])) clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= AND start_angle= AND end_angle= ATTRIBUTES FOR THE <ellipse> OBJECT! STOPPING PARSER! bye.\n\n");
-                if (!attrIsGiven [attrEllipse_type])
-                    sprintf (attrString [attrEllipse_type], "0");
-    if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
-    {
-     sprintf (attrString [attrFill_attributes], "NULL");
-    }
-    else
-    {
-     sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
-     sprintf (attrString [attrFill_attributes], "%s", tempString);
-    }
-    fprintf (partFileB, ", &iVtObject%s, %s, %s, %d, %s, %s, %s", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], ellipsetypetoi (attrString [attrEllipse_type]), attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrFill_attributes]);
-    break;
+    case otEllipse:
+      //clean_exit (-1, "<ellipse> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
+      if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle])) clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= AND start_angle= AND end_angle= ATTRIBUTES FOR THE <ellipse> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (!attrIsGiven [attrEllipse_type])
+        sprintf (attrString [attrEllipse_type], "0");
+      if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
+      {
+        sprintf (attrString [attrFill_attributes], "NULL");
+      }
+      else
+      {
+        sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
+        sprintf (attrString [attrFill_attributes], "%s", tempString);
+      }
+      fprintf (partFileB, ", &iVtObject%s, %s, %s, %d, %s, %s, %s", attrString [attrLine_attributes], attrString [attrWidth], attrString [attrHeight], ellipsetypetoi (attrString [attrEllipse_type]), attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrFill_attributes]);
+      break;
 
-            case otPolygon:
-                //clean_exit (-1, "<polygon> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-                if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrLine_attributes])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND Line_attributes= ATTRIBUTES FOR THE <polygon> OBJECT! STOPPING PARSER! bye.\n\n");
-                if (!attrIsGiven [attrPolygon_type])
-                    sprintf (attrString [attrPolygon_type], "0");
-                if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
-                {
-                  sprintf (attrString [attrFill_attributes], "NULL");
-                } else {
-                  sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
-                  sprintf (attrString [attrFill_attributes], "%s", tempString);
-                }
-                fprintf (partFileB, ", %s, %s, &iVtObject%s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrLine_attributes], attrString[attrFill_attributes], polygontypetoi (attrString [attrPolygon_type]));
-                break;
+    case otPolygon:
+      //clean_exit (-1, "<polygon> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrLine_attributes])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND Line_attributes= ATTRIBUTES FOR THE <polygon> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (!attrIsGiven [attrPolygon_type])
+        sprintf (attrString [attrPolygon_type], "0");
+      if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
+      {
+        sprintf (attrString [attrFill_attributes], "NULL");
+      } else {
+        sprintf (tempString, "&iVtObject%s", attrString[attrFill_attributes]);
+        sprintf (attrString [attrFill_attributes], "%s", tempString);
+      }
+      fprintf (partFileB, ", %s, %s, &iVtObject%s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrLine_attributes], attrString[attrFill_attributes], polygontypetoi (attrString [attrPolygon_type]));
+      break;
 
-            case otMeter:
-                //clean_exit (-1, "<meter> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-                if (!(attrIsGiven [attrWidth] && attrIsGiven [attrNeedle_colour] && attrIsGiven [attrBorder_colour] && attrIsGiven [attrArc_and_tick_colour] && attrIsGiven [attrNumber_of_ticks] && attrIsGiven[attrStart_angle] && attrIsGiven[attrEnd_angle] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND needle_colour= AND border_colour= AND target_line_colour= AND number_of_ticks= AND start_angle AND end_angle AND min_value= AND max_value= ATTRIBUTES FOR THE <meter> OBJECT! STOPPING PARSER! bye.\n\n");
-                if (!attrIsGiven [attrValue])
-                    sprintf (attrString [attrValue], "0");
-                if (!attrIsGiven [attrOptions])
-                  sprintf(attrString[attrOptions], "0");
+    case otMeter:
+      //clean_exit (-1, "<meter> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrNeedle_colour] && attrIsGiven [attrBorder_colour] && attrIsGiven [attrArc_and_tick_colour] && attrIsGiven [attrNumber_of_ticks] && attrIsGiven[attrStart_angle] && attrIsGiven[attrEnd_angle] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND needle_colour= AND border_colour= AND target_line_colour= AND number_of_ticks= AND start_angle AND end_angle AND min_value= AND max_value= ATTRIBUTES FOR THE <meter> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (!attrIsGiven [attrValue])
+        sprintf (attrString [attrValue], "0");
+      if (!attrIsGiven [attrOptions])
+        sprintf(attrString[attrOptions], "0");
 
-                fprintf (partFileB, ", %s, %d, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], colortoi(attrString[attrNeedle_colour]), colortoi (attrString [attrBorder_colour]), colortoi (attrString [attrArc_and_tick_colour]), meteroptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks], attrString[attrStart_angle], attrString[attrEnd_angle], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue]);
-                break;
+      fprintf (partFileB, ", %s, %d, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], colortoi(attrString[attrNeedle_colour]), colortoi (attrString [attrBorder_colour]), colortoi (attrString [attrArc_and_tick_colour]), meteroptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks], attrString[attrStart_angle], attrString[attrEnd_angle], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue]);
+      break;
 
-   case otLinearbargraph:
-    if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrColour] && attrIsGiven [attrTarget_line_colour]
-       && attrIsGiven [attrNumber_of_ticks] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value]))
-    {
+    case otLinearbargraph:
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrColour] && attrIsGiven [attrTarget_line_colour]
+        && attrIsGiven [attrNumber_of_ticks] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value]))
+      {
         clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND number_of_ticks= AND min_value= AND max_value= ATTRIBUTES FOR THE <linearbargraph> OBJECT! STOPPING PARSER! bye.\n\n");
-    }
-    if (!attrIsGiven [attrValue])
-     sprintf (attrString [attrValue], "0");
-    if (!attrIsGiven [attrTarget_value])
-     sprintf (attrString [attrTarget_value], "0");
-    fprintf (partFileB, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]),
-       colortoi (attrString [attrTarget_line_colour]), linearbargraphoptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks],
-       attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue],
-       attrString [attrTarget_value_variable_reference], attrString [attrTarget_value]);
-    break;
+      }
+      if (!attrIsGiven [attrValue])
+        sprintf (attrString [attrValue], "0");
+      if (!attrIsGiven [attrTarget_value])
+        sprintf (attrString [attrTarget_value], "0");
+      fprintf (partFileB, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]),
+        colortoi (attrString [attrTarget_line_colour]), linearbargraphoptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks],
+        attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue],
+        attrString [attrTarget_value_variable_reference], attrString [attrTarget_value]);
+      break;
 
-            case otArchedbargraph:
-                //clean_exit (-1, "<archedbargraph> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
-                if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrColour] && attrIsGiven [attrTarget_line_colour] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle] && attrIsGiven[attrBar_graph_width] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND start_angle= AND end_angle= AND bar_graph_width AND min_value= AND max_value= ATTRIBUTES FOR THE <archedbargraph> OBJECT! STOPPING PARSER! bye.\n\n");
-                if (!attrIsGiven [attrValue])
-                    sprintf (attrString [attrValue], "0");
-                if (!attrIsGiven [attrTarget_value])
-                    sprintf (attrString [attrTarget_value], "0");
-    if (!attrIsGiven [attrOptions])
-     sprintf (attrString [attrOptions], "0");
-                fprintf (partFileB, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]), colortoi (attrString [attrTarget_line_colour]), archedbargraphoptionstoi (attrString [attrOptions]), attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrBar_graph_width], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue], attrString [attrTarget_value_variable_reference], attrString [attrTarget_value]);
-    break;
+    case otArchedbargraph:
+      //clean_exit (-1, "<archedbargraph> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
+      if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrColour] && attrIsGiven [attrTarget_line_colour] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle] && attrIsGiven[attrBar_graph_width] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND start_angle= AND end_angle= AND bar_graph_width AND min_value= AND max_value= ATTRIBUTES FOR THE <archedbargraph> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (!attrIsGiven [attrValue])
+        sprintf (attrString [attrValue], "0");
+      if (!attrIsGiven [attrTarget_value])
+        sprintf (attrString [attrTarget_value], "0");
+      if (!attrIsGiven [attrOptions])
+        sprintf (attrString [attrOptions], "0");
+      fprintf (partFileB, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrColour]), colortoi (attrString [attrTarget_line_colour]), archedbargraphoptionstoi (attrString [attrOptions]), attrString[attrStart_angle], attrString[attrEnd_angle], attrString[attrBar_graph_width], attrString [attrMin_value], attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue], attrString [attrTarget_value_variable_reference], attrString [attrTarget_value]);
+      break;
 
-   case otPicturegraphic:
-    // check moved above!
-    fprintf (partFileB, ", %d, %d,%d, %d, %d, %d", deXwidth, deXactualWidth, deXactualHeight, deXcolorDepth, objBitmapOptions, deXtransCol);
-    break;
+    case otPicturegraphic:
+      // check moved above!
+      fprintf (partFileB, ", %d, %d,%d, %d, %d, %d", deXwidth, deXactualWidth, deXactualHeight, deXcolorDepth, objBitmapOptions, deXtransCol);
+      break;
 
-   case otNumbervariable:
-    if (!attrIsGiven [attrValue])
-     sprintf (attrString [attrValue], "0");
-    fprintf (partFileB, ", %s", attrString [attrValue]);
-    break;
+    case otNumbervariable:
+      if (!attrIsGiven [attrValue])
+        sprintf (attrString [attrValue], "0");
+      fprintf (partFileB, ", %s", attrString [attrValue]);
+      break;
 
-   case otStringvariable:
-    if (!attrIsGiven [attrValue]) {
-     if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <stringvariable> OBJECT! STOPPING PARSER! bye.\n\n");
-     sprintf (attrString [attrValue], "NULL");
-    } else {
-     if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true; }
-     copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
-//     sprintf (tempString, "\"%s\"", attrString [attrValue]);
-     sprintf (attrString [attrValue], "%s", tempString);
-    }
-    fprintf (partFileB, ", %s, %s", attrString [attrLength], attrString [attrValue]);
-    break;
+    case otStringvariable:
+      if (!attrIsGiven [attrValue]) {
+        if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <stringvariable> OBJECT! STOPPING PARSER! bye.\n\n");
+        sprintf (attrString [attrValue], "NULL");
+      } else {
+        if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true; }
+        copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
+    //     sprintf (tempString, "\"%s\"", attrString [attrValue]);
+        sprintf (attrString [attrValue], "%s", tempString);
+      }
+      fprintf (partFileB, ", %s, %s", attrString [attrLength], attrString [attrValue]);
+      break;
 
-   case otFontattributes:
-    if (!(attrIsGiven [attrFont_colour] && attrIsGiven [attrFont_size]))
-    {
-     clean_exit (-1, "YOU NEED TO SPECIFY THE font_colour= AND font_size= ATTRIBUTE FOR THE <fontattributes> OBJECT! STOPPING PARSER! bye.\n\n");
-    }
-    fprintf (partFileB, ", %d, %d, 0 /* ISO_LATIN_1 */, %d", colortoi (attrString [attrFont_colour]), fontsizetoi (attrString [attrFont_size]), fontstyletoi (attrString [attrFont_style]));
-    break;
+    case otFontattributes:
+      if (!(attrIsGiven [attrFont_colour] && attrIsGiven [attrFont_size]))
+      {
+        clean_exit (-1, "YOU NEED TO SPECIFY THE font_colour= AND font_size= ATTRIBUTE FOR THE <fontattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+      }
+      fprintf (partFileB, ", %d, %d, 0 /* ISO_LATIN_1 */, %d", colortoi (attrString [attrFont_colour]), fontsizetoi (attrString [attrFont_size]), fontstyletoi (attrString [attrFont_style]));
+      break;
 
-   case otLineattributes:
-    if (!(attrIsGiven [attrLine_colour] && attrIsGiven [attrLine_width] && attrIsGiven [attrLine_art]))
-    {
-     clean_exit (-1, "YOU NEED TO SPECIFY THE line_colour= AND line_width= AND line_art= ATTRIBUTE FOR THE <lineattributes> OBJECT! STOPPING PARSER! bye.\n\n");
-    }
-    fprintf (partFileB, ", %d, %s, 0x%x", colortoi (attrString [attrLine_colour]), attrString [attrLine_width], linearttoi (attrString [attrLine_art]));
-    break;
+    case otLineattributes:
+      if (!(attrIsGiven [attrLine_colour] && attrIsGiven [attrLine_width] && attrIsGiven [attrLine_art]))
+      {
+        clean_exit (-1, "YOU NEED TO SPECIFY THE line_colour= AND line_width= AND line_art= ATTRIBUTE FOR THE <lineattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+      }
+      fprintf (partFileB, ", %d, %s, 0x%x", colortoi (attrString [attrLine_colour]), attrString [attrLine_width], linearttoi (attrString [attrLine_art]));
+      break;
 
-            case otFillattributes:
-                //clean_exit (-1, "<fillattribute> OBJECT NOT YET IMPLEMENTED. STOPPING PARSER! bye.\n\n");
-                if (!(attrIsGiven [attrFill_colour])) clean_exit (-1, "YOU NEED TO SPECIFY THE fill_colour= ATTRIBUTE FOR THE <fillattributes> OBJECT! STOPPING PARSER! bye.\n\n");
-                if (!attrIsGiven [attrFill_type])
-                    sprintf (attrString [attrFill_type], "0");
-                if(!attrIsGiven [attrFill_pattern])
-                {
-                    sprintf (attrString [attrFill_pattern], "NULL");
-                    fprintf (partFileB, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
-                }
-                else
-                {
-                    fprintf (partFileB, ",%d, %d, &iVtObject%s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
-                }
-                break;
+    case otFillattributes:
+      //clean_exit (-1, "<fillattribute> OBJECT NOT YET IMPLEMENTED. STOPPING PARSER! bye.\n\n");
+      if (!(attrIsGiven [attrFill_colour])) clean_exit (-1, "YOU NEED TO SPECIFY THE fill_colour= ATTRIBUTE FOR THE <fillattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (!attrIsGiven [attrFill_type])
+        sprintf (attrString [attrFill_type], "0");
+      if(!attrIsGiven [attrFill_pattern])
+      {
+        sprintf (attrString [attrFill_pattern], "NULL");
+        fprintf (partFileB, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
+      }
+      else
+      {
+        fprintf (partFileB, ",%d, %d, &iVtObject%s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]), attrString [attrFill_pattern]);
+      }
+      break;
 
-            case otInputattributes:
-                //clean_exit (-1, "<inputattribute> OBJECT NOT YET IMPLEMENTED. STOPPING PARSER! bye.\n\n");
-                if (!attrIsGiven [attrValidation_type])
-                    sprintf (attrString [attrValidation_type], "0");
-    if (!attrIsGiven [attrValidation_string]) {
-                    if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <inputattribute> OBJECT! STOPPING PARSER! bye.\n\n");
-                    sprintf (attrString [attrValidation_string], "NULL");
-                } else {
-                    if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValidation_string])); attrIsGiven [attrLength] = true; }
-                    sprintf (tempString, "\"%s\"", attrString [attrValue]);
-                    sprintf (attrString [attrValidation_string], "%s", tempString);
-                }
-    fprintf (partFileB, ", %d, %s, %s", validationtypetoi (attrString [attrValidation_type]), attrString [attrLength], attrString [attrValidation_string]);
-    break;
+    case otInputattributes:
+      //clean_exit (-1, "<inputattribute> OBJECT NOT YET IMPLEMENTED. STOPPING PARSER! bye.\n\n");
+      if (!attrIsGiven [attrValidation_type])
+        sprintf (attrString [attrValidation_type], "0");
+      if (!attrIsGiven [attrValidation_string]) {
+        if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <inputattribute> OBJECT! STOPPING PARSER! bye.\n\n");
+        sprintf (attrString [attrValidation_string], "NULL");
+      } else {
+        if (!attrIsGiven [attrLength]) {
+          sprintf (attrString [attrLength], "%d", strlen (attrString [attrValidation_string]));
+          attrIsGiven [attrLength] = true;
+        }
+        sprintf (tempString, "\"%s\"", attrString [attrValidation_string]);
+        sprintf (attrString [attrValidation_string], "%s", tempString);
+      }
+      fprintf (partFileB, ", %d, %s, %s", validationtypetoi (attrString [attrValidation_type]), attrString [attrLength], attrString [attrValidation_string]);
+      break;
 
-   case otObjectpointer:
-   if ( (!attrIsGiven [attrValue]) ||(strcmp( attrString[attrValue], "65535")==0) )
-   {
-     sprintf (attrString [attrValue], "NULL");
-     attrIsGiven [attrValue] = true;
-    }
-    if (strcmp ("NULL", attrString [attrValue]) != 0)
-    { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-     sprintf (tempString, "&iVtObject%s", attrString [attrValue]);
-     sprintf (attrString [attrValue], "%s", tempString);
-    }
-
-    fprintf (partFileB, ", %s", attrString [attrValue]);
-    break;
+    case otObjectpointer:
+      if ( (!attrIsGiven [attrValue]) ||(strcmp( attrString[attrValue], "65535")==0) )
+      {
+        sprintf (attrString [attrValue], "NULL");
+        attrIsGiven [attrValue] = true;
+      }
+      if (strcmp ("NULL", attrString [attrValue]) != 0)
+      { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
+        sprintf (tempString, "&iVtObject%s", attrString [attrValue]);
+        sprintf (attrString [attrValue], "%s", tempString);
+      }
+      fprintf (partFileB, ", %s", attrString [attrValue]);
+      break;
 
     case otMacro:
-        fprintf (partFileB, ", %s", attrString [attrNumber_of_bytes]);
-        break;
+      fprintf (partFileB, ", %s", attrString [attrNumber_of_bytes]);
+      break;
     case otAuxiliaryfunction:
-        if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type]) )
-        {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction> OBJECT! STOPPING PARSER! bye.\n\n");
-        }
-        fprintf (partFileB, ", %d, %d", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]));
-        break;
+      if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type]) )
+      {
+        clean_exit (-1, "YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction> OBJECT! STOPPING PARSER! bye.\n\n");
+      }
+      fprintf (partFileB, ", %d, %d", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]));
+      break;
     case otAuxiliaryinput:
-        if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type] && attrIsGiven[attrInput_id]) )
-        {
-            clean_exit (-1, "YOU NEED TO SPECIFY THE background_colour= and function_type= and input_id= ATTRIBUTE FOR THE <auxiliaryinput> OBJECT! STOPPING PARSER! bye.\n\n");
-        }
-        fprintf (partFileB, ", %d, %d, %s", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]), attrString[attrInput_id]);
-        break;
-
-  }
-
-
-
-
-  // #########################################
-  // ### Print out Repeat Array REFERENCES ###
-  // #########################################
-
-  if (objHasArrayObject) {
-    if (objChildObjects == 0) {
-      fprintf (partFileB, ", 0,NULL");
-    } else {
-      fprintf (partFileB, ", %d,iVtObject%s_aObject", objChildObjects, objName);
+      if (!(attrIsGiven [attrBackground_colour] && attrIsGiven[attrFunction_type] && attrIsGiven[attrInput_id]) )
+      {
+        clean_exit (-1, "YOU NEED TO SPECIFY THE background_colour= and function_type= and input_id= ATTRIBUTE FOR THE <auxiliaryinput> OBJECT! STOPPING PARSER! bye.\n\n");
+      }
+      fprintf (partFileB, ", %d, %d, %s", colortoi (attrString [attrBackground_colour]), auxfunctiontyptetoi(attrString [attrFunction_type]), attrString[attrInput_id]);
+      break;
     }
-  }
 
-  if (objHasArrayObjectXY) {
-    if (objChildObjects == 0) {
-      fprintf (partFileB, ", 0,NULL");
-    } else {
-      fprintf (partFileB, ", %d,iVtObject%s_aObject_x_y_font_row_col", objChildObjects, objName);
-    }
-  }
 
-  if (objType == otPicturegraphic) {
-    for (unsigned int actDepth=0; actDepth <= 2; actDepth++) {
-      if ( (actDepth > deXcolorDepth) || (stdRawBitmapBytes [actDepth] == 0)) {
+    // #########################################
+    // ### Print out Repeat Array REFERENCES ###
+    // #########################################
+
+    if (objHasArrayObject) {
+      if (objChildObjects == 0) {
         fprintf (partFileB, ", 0,NULL");
       } else {
-        fprintf (partFileB, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], objName, actDepth);
+        fprintf (partFileB, ", %d,iVtObject%s_aObject", objChildObjects, objName);
       }
     }
-    if (fixNr == 0) {
-      fprintf (partFileB, ", 0,NULL");
-    } else {
-      fprintf (partFileB, ", %d,iVtObject%s_aFixedBitmaps", fixNr, objName);
-    }
-  }
 
-  if (objHasArrayPoints) {
-    if(objChildPoints == 0) {
-      fprintf (partFileB, ", 0,NULL");
-    } else {
-      fprintf (partFileB, ", %d,iVtObject%s_aPoints", objChildPoints, objName);
+    if (objHasArrayObjectXY) {
+      if (objChildObjects == 0) {
+        fprintf (partFileB, ", 0,NULL");
+      } else {
+        fprintf (partFileB, ", %d,iVtObject%s_aObject_x_y_font_row_col", objChildObjects, objName);
+      }
     }
-  }
 
-  if (objHasArrayEventMacro) {
-    if (objChildMacros == 0) {
-      fprintf (partFileB, ", 0,NULL");
-    } else {
+    if (objType == otPicturegraphic) {
+      for (unsigned int actDepth=0; actDepth <= 2; actDepth++) {
+        if ( (actDepth > deXcolorDepth) || (stdRawBitmapBytes [actDepth] == 0)) {
+          fprintf (partFileB, ", 0,NULL");
+        } else {
+          fprintf (partFileB, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], objName, actDepth);
+        }
+      }
+      if (fixNr == 0) {
+        fprintf (partFileB, ", 0,NULL");
+      } else {
+        fprintf (partFileB, ", %d,iVtObject%s_aFixedBitmaps", fixNr, objName);
+      }
+    }
+
+    if (objHasArrayPoints) {
+      if(objChildPoints == 0) {
+        fprintf (partFileB, ", 0,NULL");
+      } else {
+        fprintf (partFileB, ", %d,iVtObject%s_aPoints", objChildPoints, objName);
+      }
+    }
+
+    if (objHasArrayEventMacro) {
+      if (objChildMacros == 0) {
+        fprintf (partFileB, ", 0,NULL");
+      } else {
         // Changed this line to give the correct name to the Macro object to match the naming conventions of IsoAgLib V 1.1.0.
         // This coincides with a change made above to the name of the Macro struct. -bac 06-Jan-2005
         //fprintf (partFileB, ", %d,iVtObject%s_aEvent_Macro", objChildMacros, objName);
         fprintf (partFileB, ", %d,iVtObject%s_aMacro_Object", objChildMacros, objName);
+      }
     }
+
+    if (objHasArrayLanguagecode) {
+      if (objChildLanguages == 0) {
+        fprintf (partFileB, ", 0,NULL");
+      } else {
+        fprintf (partFileB, ", %d,ivtObject%s_aLanguage", objChildLanguages, objName);
+      }
+    }
+
+    if (objHasArrayMacroCommand) { /** @todo I think the "else" is not correct, the length has to be put out also!? -mjw */
+      if (objChildCommands == 0) {
+        fprintf (partFileB, ", 0,NULL");
+      } else {
+        fprintf (partFileB, ", iVtObject%s_aMacro_Commands", objName);
+      }
+    }
+    fprintf (partFileB, "};\n"); //s_ROM bla blub terminator...
   }
 
-  if (objHasArrayLanguagecode) {
-    if (objChildLanguages == 0) {
-      fprintf (partFileB, ", 0,NULL");
-    } else {
-      fprintf (partFileB, ", %d,ivtObject%s_aLanguage", objChildLanguages, objName);
+
+  // Add all Child-Elements recursively
+  uint64_t omcType = omcTypeTable [objType];
+  if (objType == otContainer) omcType = ombType; // Object May Contain what the Object Is - Simple rule. more simple than the graphic in the spec. ;)
+
+  for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
+  {
+    if (child->getNodeType() == DOMNode::ELEMENT_NODE)
+    {
+      processElement (child, omcType, rc_workDir);
     }
-  }
-
-  if (objHasArrayMacroCommand) { /** @todo I think the "else" is not correct, the length has to be put out also!? -mjw */
-    if (objChildCommands == 0) {
-      fprintf (partFileB, ", 0,NULL");
-    } else {
-      fprintf (partFileB, ", iVtObject%s_aMacro_Commands", objName);
-    }
-  }
-  fprintf (partFileB, "};\n"); //s_ROM bla blub terminator...
- }
-
-
- // Add all Child-Elements recursively
- uint64_t omcType = omcTypeTable [objType];
- if (objType == otContainer) omcType = ombType; // Object May Contain what the Object Is - Simple rule. more simple than the graphic in the spec. ;)
-
- for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
- {
-   if (child->getNodeType() == DOMNode::ELEMENT_NODE)
-   {
-    processElement (child, omcType, rc_workDir);
-   }
   }
 }
 
@@ -3223,358 +3213,358 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 // ---------------------------------------------------------------------------
 int main(int argC, char* argV[])
 {
- // Check command line and extract arguments.
- if (argC < 2) { usage(); return 1; }
+  // Check command line and extract arguments.
+  if (argC < 2) { usage(); return 1; }
 
- const char*    xmlFile = 0;
- AbstractDOMParser::ValSchemes valScheme = AbstractDOMParser::Val_Auto;
- bool        doNamespaces    = false;
- bool        doSchema     = false;
- bool        schemaFullChecking = false;
- bool        errorOccurred = false;
- char        localeStr[64];
- char        xmlFiles [256] [1024+1];
- char        xmlFileTemp [1024+1];
- int      indexXmlFile, amountXmlFiles=0;
+  const char*    xmlFile = 0;
+  AbstractDOMParser::ValSchemes valScheme = AbstractDOMParser::Val_Auto;
+  bool        doNamespaces    = false;
+  bool        doSchema     = false;
+  bool        schemaFullChecking = false;
+  bool        errorOccurred = false;
+  char        localeStr[64];
+  char        xmlFiles [256] [1024+1];
+  char        xmlFileTemp [1024+1];
+  int      indexXmlFile, amountXmlFiles=0;
 
- std_bitmap_path [0] = 0x00;
- fix_bitmap_path [0] = 0x00;
- attr_name [1024+1-1] = 0x00;
- attr_value [1024+1-1] = 0x00;
+  std_bitmap_path [0] = 0x00;
+  fix_bitmap_path [0] = 0x00;
+  attr_name [1024+1-1] = 0x00;
+  attr_value [1024+1-1] = 0x00;
 
- memset(localeStr, 0, sizeof localeStr);
+  memset(localeStr, 0, sizeof localeStr);
 
- int argInd;
- for (argInd = 1; argInd < argC; argInd++)
- {
-  // Break out on first parm not starting with a dash
-  if (argV[argInd][0] != '-')
-   break;
-
-  // Watch for special case help request
-  if (!strcmp(argV[argInd], "-?"))
+  int argInd;
+  for (argInd = 1; argInd < argC; argInd++)
   {
-   usage();
-   return 2;
-  }
-   else if (!strncmp(argV[argInd], "-v=", 3)
-     ||  !strncmp(argV[argInd], "-V=", 3))
-  {
-   const char* const parm = &argV[argInd][3];
+    // Break out on first parm not starting with a dash
+    if (argV[argInd][0] != '-')
+    break;
 
-   if (!strcmp(parm, "never"))
-    valScheme = AbstractDOMParser::Val_Never;
-   else if (!strcmp(parm, "auto"))
-    valScheme = AbstractDOMParser::Val_Auto;
-   else if (!strcmp(parm, "always"))
-    valScheme = AbstractDOMParser::Val_Always;
-   else
-   {
-    std::cerr << "Unknown -v= value: " << parm << std::endl;
-    return 2;
-   }
-  }
-   else if (!strcmp(argV[argInd], "-n")
+    // Watch for special case help request
+    if (!strcmp(argV[argInd], "-?"))
+    {
+      usage();
+      return 2;
+    }
+    else if (!strncmp(argV[argInd], "-v=", 3)
+      ||  !strncmp(argV[argInd], "-V=", 3))
+    {
+      const char* const parm = &argV[argInd][3];
+
+      if (!strcmp(parm, "never"))
+        valScheme = AbstractDOMParser::Val_Never;
+      else if (!strcmp(parm, "auto"))
+        valScheme = AbstractDOMParser::Val_Auto;
+      else if (!strcmp(parm, "always"))
+        valScheme = AbstractDOMParser::Val_Always;
+      else
+      {
+        std::cerr << "Unknown -v= value: " << parm << std::endl;
+        return 2;
+      }
+    }
+    else if (!strcmp(argV[argInd], "-n")
      ||  !strcmp(argV[argInd], "-N"))
-  {
-   doNamespaces = true;
-  }
-   else if (!strcmp(argV[argInd], "-s")
-     ||  !strcmp(argV[argInd], "-S"))
-  {
-   doSchema = true;
-  }
-   else if (!strcmp(argV[argInd], "-f")
-     ||  !strcmp(argV[argInd], "-F"))
-  {
-   schemaFullChecking = true;
-  }
-   else if (!strncmp(argV[argInd], "-locale=", 8))
-  {
-    // Get out the end of line
-    strcpy(localeStr, &(argV[argInd][8]));
-  }
-   else
-  {
-   std::cerr << "Unknown option '" << argV[argInd]
-     << "', ignoring it\n" << std::endl;
-  }
- }
-
- //
- //  There should be only one and only one parameter left, and that
- //  should be the file name.
- //
- if (argInd != argC - 1) { usage(); return 1; }
-
-
-  // get file list with matching files!
-
-  std::basic_string<char> c_fileName( argV [argInd] );
-  #ifdef WIN32
-  int lastDirPos = c_fileName.find_last_of( "\\" );
-  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-  #else
-  int lastDirPos = c_fileName.find_last_of( "/" );
-  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-  #endif
-  /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
-  std::basic_string<char> c_unwantedType = ".inc";
-  std::basic_string<char> c_unwantedType2 = ".h";
-  std::basic_string<char> c_unwantedType3 = ".inc-template";
-  std::basic_string<char> c_directoryCompareItem;
-  std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
-  strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
-  for (unsigned int i=0; i<strlen(proName); i++) if (proName[i] == '.') { proName[i] = 0x00; break; }
-
-#ifdef WIN32
- HANDLE    hList;
- TCHAR     szDir[255];
- TCHAR     szSubDir[255];
- TCHAR    szCurDir[255];
- WIN32_FIND_DATA FileData;
-
-
- // save current directory
-  GetCurrentDirectory(255, szCurDir);
-  std::cerr << "CurDir: " << szCurDir << std::endl;
-
-  // go to new working directory
-  if (SetCurrentDirectory(c_directory.c_str()) == 0)
- {
-  std::cerr <<  "Couldn't open the directory."<< std::endl;
-
-  CHAR szBuf[80];
-    DWORD dw = GetLastError();
-    sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
-    printf(szBuf);
-    HRESULT_FROM_WIN32(dw);
-  return 0;
- }
-
-  // Get the proper directory path
- wsprintf(szDir, TEXT("*") );
- hList = FindFirstFile(szDir, &FileData);
- if (hList != INVALID_HANDLE_VALUE)
- {   // Traverse through the directory structure
-  do
-  {   // Check the object is a directory or not
-   if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-   {   //if ((strcmp(FileData.cFileName, ".") != 0) && (strcmp(FileData.cFileName, "..") != 0))
-    c_directoryCompareItem = FileData.cFileName;
-    if ( c_directoryCompareItem[0] == '.' ) continue;
-    if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
-    if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
-    if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
-    if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
-
-    if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
-     c_directoryCompareItem.insert(0, "\\" );
-     c_directoryCompareItem.insert(0, c_directory );
-     strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
-     amountXmlFiles++;
-//     std::cout << "found: " << c_directoryCompareItem << "\n";
+    {
+      doNamespaces = true;
     }
-   }
-
-  }while (FindNextFile(hList, &FileData));
-  FindClose(hList);
- }
- else
- {
-  std::cerr <<  "Couldn't open the directory.";
-  return 0;
- }
- SetCurrentDirectory(szCurDir);
-#else
-// LINUX -> POSIX method for directory traversal
- DIR *dp;
- dp = opendir (c_directory.c_str());
- if (dp != NULL)
- {
-  dirent *ep;
-  while ((ep = readdir (dp))) {
-   c_directoryCompareItem = ep->d_name;
-   if ( c_directoryCompareItem[0] == '.' ) continue;
-   if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
-   if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
-   if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
-   if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
-
-   if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
-    c_directoryCompareItem.insert(0, "/" );
-    c_directoryCompareItem.insert(0, c_directory );
-    strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
-    amountXmlFiles++;
-//    std::cout << "found: " << ep->d_name << "\n";
-   }
-  }
-  closedir(dp);
- } else
- {
-  std::cerr <<  "Couldn't open the directory.";
-  return 0;
- }
-#endif
-
-  // now sort this list
- bool stillSorting;
- do {
-  stillSorting=false;
-  for (int a=1; a< amountXmlFiles; a++) {
-   if (strcmp (xmlFiles [a-1], xmlFiles [a]) > 0) {
-    strcpy (xmlFileTemp, xmlFiles [a]);
-    strcpy (xmlFiles [a], xmlFiles [a-1]);
-    strcpy (xmlFiles [a-1], xmlFileTemp);
-    stillSorting=true;
-   }
-  }
- } while (stillSorting);
-
- std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
- for (int dex=0; dex < amountXmlFiles; dex++) std::cout << xmlFiles [dex] << "\n";
- std::cout << "\n";
-
- // Do INITIALIZATION STUFF
- init (argV [argInd]);
-
- for (indexXmlFile = 0; indexXmlFile < amountXmlFiles; indexXmlFile++)
- { // loop all xmlFiles!
-  // Initialize the XML4C system
-  try
-  {
-   if (strlen(localeStr)) {
-    XMLPlatformUtils::Initialize(localeStr);
-   } else {
-    XMLPlatformUtils::Initialize("de_DE");
-   }
-  }
-
-  catch (const XMLException& toCatch)
-  {
-   std::cerr << "Error during initialization! :\n"
-    << StrX(toCatch.getMessage()) << std::endl;
-   return 1;
-  }
-
-  // Instantiate the DOM parser.
-  static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
-  DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
-  DOMBuilder  *parser = ((DOMImplementationLS*)impl)->createDOMBuilder(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
-
-  parser->setFeature(XMLUni::fgDOMNamespaces, doNamespaces);
-  parser->setFeature(XMLUni::fgXercesSchema, doSchema);
-  parser->setFeature(XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);
-
-  if (valScheme == AbstractDOMParser::Val_Auto) {
-   parser->setFeature(XMLUni::fgDOMValidateIfSchema, true);
-  }
-  else if (valScheme == AbstractDOMParser::Val_Never) {
-   parser->setFeature(XMLUni::fgDOMValidation, false);
-  }
-  else if (valScheme == AbstractDOMParser::Val_Always) {
-   parser->setFeature(XMLUni::fgDOMValidation, true);
-  }
-
-  // enable datatype normalization - default is off
-  parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
-
-  // And create our error handler and install it
-  DOMCountErrorHandler errorHandler;
-  parser->setErrorHandler(&errorHandler);
-
-  //
-  //  Get the starting time and kick off the parse of the indicated
-  //  file. Catch any exceptions that might propogate out of it.
-  //
-  std::ifstream fin;
-
-  char fURI[1000];
-  //initialize the array to zeros
-  memset(fURI,0,sizeof(fURI));
-  xmlFile = xmlFiles [indexXmlFile];
-
-  //reset error count first
-  errorHandler.resetErrors();
-
-  XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument *doc = 0;
-
-  try
-  {   // reset document pool
-   parser->resetDocumentPool();
-   doc = parser->parseURI(xmlFile);
-  }
-
-  catch (const XMLException& toCatch)
-  {
-   std::cerr << "\nError during parsing: '" << xmlFile << "'\n"
-    << "Exception message is:  \n"
-    << StrX(toCatch.getMessage()) << "\n" << std::endl;
-   errorOccurred = true;
-  }
-  catch (const DOMException& toCatch)
-  {
-   const unsigned int maxChars = 2047;
-   XMLCh errText[maxChars + 1];
-
-   std::cerr << "\nDOM Error during parsing: '" << xmlFile << "'\n"
-    << "DOMException code is:  " << toCatch.code << std::endl;
-
-   if (DOMImplementation::loadDOMExceptionMsg(toCatch.code, errText, maxChars))
-    std::cerr << "Message is: " << StrX(errText) << std::endl;
-
-   errorOccurred = true;
-  }
-  catch (...)
-  {
-   std::cerr << "\nUnexpected exception during parsing: '" << xmlFile << "'\n";
-   errorOccurred = true;
-  }
-
-  //
-  //  Extract the DOM tree, get the list of all the elements and report the
-  //  length as the count of elements.
-  //
-  if (errorHandler.getSawErrors() || errorOccurred)
-  {
-   std::cout << "\nErrors occurred, no output available\n" << std::endl;
-   errorOccurred = true;
-  } else {
-   if (doc) {
-    // ### main routine starts right here!!! ###
-    processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool), c_directory.c_str() ); // must all be included in an objectpool tag !
-    if (!is_opDimension) {
-     std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
-     clean_exit (-1);
+    else if (!strcmp(argV[argInd], "-s")
+      ||  !strcmp(argV[argInd], "-S"))
+    {
+      doSchema = true;
     }
-   }
+    else if (!strcmp(argV[argInd], "-f")
+      ||  !strcmp(argV[argInd], "-F"))
+    {
+      schemaFullChecking = true;
+    }
+    else if (!strncmp(argV[argInd], "-locale=", 8))
+    {
+      // Get out the end of line
+      strcpy(localeStr, &(argV[argInd][8]));
+    }
+    else
+    {
+      std::cerr << "Unknown option '" << argV[argInd]
+      << "', ignoring it\n" << std::endl;
+    }
   }
 
-
   //
-  //  Delete the parser itself.  Must be done prior to calling Terminate, below.
+  //  There should be only one and only one parameter left, and that
+  //  should be the file name.
   //
-  parser->release();
-
-  // And call the termination method
-  XMLPlatformUtils::Terminate();
-
- } // loop all files
+  if (argInd != argC - 1) { usage(); return 1; }
 
 
- if (!is_skWidth) skWidth = 60;
- if (!is_skHeight) skHeight = 32;
- if (!is_skWidth || !is_skHeight) {
-   std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
-             << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so thake care that you know what you're doing!\n\n";
- }
- fprintf (partFileD, "#define vtObjectPoolDimension %d\n", opDimension);
- fprintf (partFileD, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
- fprintf (partFileD, "#define vtObjectPoolSoftKeyHeight %d\n", skHeight);
+    // get file list with matching files!
+
+    std::basic_string<char> c_fileName( argV [argInd] );
+    #ifdef WIN32
+    int lastDirPos = c_fileName.find_last_of( "\\" );
+    std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+    #else
+    int lastDirPos = c_fileName.find_last_of( "/" );
+    std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+    #endif
+    /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
+    std::basic_string<char> c_unwantedType = ".inc";
+    std::basic_string<char> c_unwantedType2 = ".h";
+    std::basic_string<char> c_unwantedType3 = ".inc-template";
+    std::basic_string<char> c_directoryCompareItem;
+    std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
+    strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
+    for (unsigned int i=0; i<strlen(proName); i++) if (proName[i] == '.') { proName[i] = 0x00; break; }
+
+    #ifdef WIN32
+    HANDLE    hList;
+    TCHAR     szDir[255];
+    TCHAR     szSubDir[255];
+    TCHAR    szCurDir[255];
+    WIN32_FIND_DATA FileData;
 
 
- if (errorOccurred) clean_exit (4, "XML-Parsing error occured. Terminating.\n");
- else clean_exit (0, "All conversion done successfully.\n");
+  // save current directory
+    GetCurrentDirectory(255, szCurDir);
+    std::cerr << "CurDir: " << szCurDir << std::endl;
+
+    // go to new working directory
+    if (SetCurrentDirectory(c_directory.c_str()) == 0)
+    {
+      std::cerr <<  "Couldn't open the directory."<< std::endl;
+
+      CHAR szBuf[80];
+        DWORD dw = GetLastError();
+      sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
+      printf(szBuf);
+      HRESULT_FROM_WIN32(dw);
+      return 0;
+    }
+
+    // Get the proper directory path
+    wsprintf(szDir, TEXT("*") );
+    hList = FindFirstFile(szDir, &FileData);
+    if (hList != INVALID_HANDLE_VALUE)
+    {   // Traverse through the directory structure
+      do
+      {   // Check the object is a directory or not
+        if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+        {   //if ((strcmp(FileData.cFileName, ".") != 0) && (strcmp(FileData.cFileName, "..") != 0))
+          c_directoryCompareItem = FileData.cFileName;
+          if ( c_directoryCompareItem[0] == '.' ) continue;
+          if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
+          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
+          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
+          if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
+
+          if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
+            c_directoryCompareItem.insert(0, "\\" );
+            c_directoryCompareItem.insert(0, c_directory );
+            strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
+            amountXmlFiles++;
+            //std::cout << "found: " << c_directoryCompareItem << "\n";
+          }
+        }
+
+      }while (FindNextFile(hList, &FileData));
+      FindClose(hList);
+    }
+    else
+    {
+      std::cerr <<  "Couldn't open the directory.";
+      return 0;
+    }
+    SetCurrentDirectory(szCurDir);
+    #else
+    // LINUX -> POSIX method for directory traversal
+    DIR *dp;
+    dp = opendir (c_directory.c_str());
+    if (dp != NULL)
+    {
+      dirent *ep;
+      while ((ep = readdir (dp))) {
+        c_directoryCompareItem = ep->d_name;
+        if ( c_directoryCompareItem[0] == '.' ) continue;
+        if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
+        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
+        if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
+        if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
+
+        if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
+          c_directoryCompareItem.insert(0, "/" );
+          c_directoryCompareItem.insert(0, c_directory );
+          strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
+          amountXmlFiles++;
+      //    std::cout << "found: " << ep->d_name << "\n";
+        }
+      }
+      closedir(dp);
+    } else
+    {
+      std::cerr <<  "Couldn't open the directory.";
+      return 0;
+    }
+    #endif
+
+    // now sort this list
+    bool stillSorting;
+    do {
+      stillSorting=false;
+      for (int a=1; a< amountXmlFiles; a++) {
+        if (strcmp (xmlFiles [a-1], xmlFiles [a]) > 0) {
+          strcpy (xmlFileTemp, xmlFiles [a]);
+          strcpy (xmlFiles [a], xmlFiles [a-1]);
+          strcpy (xmlFiles [a-1], xmlFileTemp);
+          stillSorting=true;
+        }
+      }
+    } while (stillSorting);
+
+    std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
+    for (int dex=0; dex < amountXmlFiles; dex++) std::cout << xmlFiles [dex] << "\n";
+    std::cout << "\n";
+
+    // Do INITIALIZATION STUFF
+    init (argV [argInd]);
+
+    for (indexXmlFile = 0; indexXmlFile < amountXmlFiles; indexXmlFile++)
+    { // loop all xmlFiles!
+      // Initialize the XML4C system
+      try
+      {
+        if (strlen(localeStr)) {
+          XMLPlatformUtils::Initialize(localeStr);
+        } else {
+          XMLPlatformUtils::Initialize("de_DE");
+        }
+      }
+
+      catch (const XMLException& toCatch)
+      {
+        std::cerr << "Error during initialization! :\n"
+          << StrX(toCatch.getMessage()) << std::endl;
+        return 1;
+      }
+
+      // Instantiate the DOM parser.
+      static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
+      DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
+      DOMBuilder  *parser = ((DOMImplementationLS*)impl)->createDOMBuilder(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+
+      parser->setFeature(XMLUni::fgDOMNamespaces, doNamespaces);
+      parser->setFeature(XMLUni::fgXercesSchema, doSchema);
+      parser->setFeature(XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);
+
+      if (valScheme == AbstractDOMParser::Val_Auto) {
+        parser->setFeature(XMLUni::fgDOMValidateIfSchema, true);
+      }
+      else if (valScheme == AbstractDOMParser::Val_Never) {
+        parser->setFeature(XMLUni::fgDOMValidation, false);
+      }
+      else if (valScheme == AbstractDOMParser::Val_Always) {
+        parser->setFeature(XMLUni::fgDOMValidation, true);
+      }
+
+      // enable datatype normalization - default is off
+      parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
+
+      // And create our error handler and install it
+      DOMCountErrorHandler errorHandler;
+      parser->setErrorHandler(&errorHandler);
+
+      //
+      //  Get the starting time and kick off the parse of the indicated
+      //  file. Catch any exceptions that might propogate out of it.
+      //
+      std::ifstream fin;
+
+      char fURI[1000];
+      //initialize the array to zeros
+      memset(fURI,0,sizeof(fURI));
+      xmlFile = xmlFiles [indexXmlFile];
+
+      //reset error count first
+      errorHandler.resetErrors();
+
+      XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument *doc = 0;
+
+      try
+      {   // reset document pool
+        parser->resetDocumentPool();
+        doc = parser->parseURI(xmlFile);
+      }
+
+      catch (const XMLException& toCatch)
+      {
+        std::cerr << "\nError during parsing: '" << xmlFile << "'\n"
+          << "Exception message is:  \n"
+          << StrX(toCatch.getMessage()) << "\n" << std::endl;
+        errorOccurred = true;
+      }
+      catch (const DOMException& toCatch)
+      {
+        const unsigned int maxChars = 2047;
+        XMLCh errText[maxChars + 1];
+
+        std::cerr << "\nDOM Error during parsing: '" << xmlFile << "'\n"
+          << "DOMException code is:  " << toCatch.code << std::endl;
+
+        if (DOMImplementation::loadDOMExceptionMsg(toCatch.code, errText, maxChars))
+          std::cerr << "Message is: " << StrX(errText) << std::endl;
+
+        errorOccurred = true;
+      }
+      catch (...)
+      {
+        std::cerr << "\nUnexpected exception during parsing: '" << xmlFile << "'\n";
+        errorOccurred = true;
+      }
+
+      //
+      //  Extract the DOM tree, get the list of all the elements and report the
+      //  length as the count of elements.
+      //
+      if (errorHandler.getSawErrors() || errorOccurred)
+      {
+        std::cout << "\nErrors occurred, no output available\n" << std::endl;
+        errorOccurred = true;
+      } else {
+        if (doc) {
+          // ### main routine starts right here!!! ###
+          processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool), c_directory.c_str() ); // must all be included in an objectpool tag !
+          if (!is_opDimension) {
+          std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
+          clean_exit (-1);
+          }
+        }
+      }
+
+
+      //
+      //  Delete the parser itself.  Must be done prior to calling Terminate, below.
+      //
+      parser->release();
+
+      // And call the termination method
+      XMLPlatformUtils::Terminate();
+
+    } // loop all files
+
+
+  if (!is_skWidth) skWidth = 60;
+  if (!is_skHeight) skHeight = 32;
+  if (!is_skWidth || !is_skHeight) {
+    std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
+              << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so thake care that you know what you're doing!\n\n";
+  }
+  fprintf (partFileD, "#define vtObjectPoolDimension %d\n", opDimension);
+  fprintf (partFileD, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
+  fprintf (partFileD, "#define vtObjectPoolSoftKeyHeight %d\n", skHeight);
+
+
+  if (errorOccurred) clean_exit (4, "XML-Parsing error occured. Terminating.\n");
+  else clean_exit (0, "All conversion done successfully.\n");
 }
 
 
@@ -3596,20 +3586,20 @@ DOMCountErrorHandler::~DOMCountErrorHandler()
 // ---------------------------------------------------------------------------
 bool DOMCountErrorHandler::handleError(const DOMError& domError)
 {
- fSawErrors = true;
- if (domError.getSeverity() == DOMError::DOM_SEVERITY_WARNING)
-  std::cerr << "\nWarning at file ";
- else if (domError.getSeverity() == DOMError::DOM_SEVERITY_ERROR)
-  std::cerr << "\nError at file ";
- else
-  std::cerr << "\nFatal Error at file ";
+  fSawErrors = true;
+  if (domError.getSeverity() == DOMError::DOM_SEVERITY_WARNING)
+    std::cerr << "\nWarning at file ";
+  else if (domError.getSeverity() == DOMError::DOM_SEVERITY_ERROR)
+    std::cerr << "\nError at file ";
+  else
+    std::cerr << "\nFatal Error at file ";
 
- std::cerr << StrX(domError.getLocation()->getURI())
-   << ", line " << domError.getLocation()->getLineNumber()
-   << ", char " << domError.getLocation()->getColumnNumber()
-   << "\n  Message: " << StrX(domError.getMessage()) << std::endl;
+  std::cerr << StrX(domError.getLocation()->getURI())
+    << ", line " << domError.getLocation()->getLineNumber()
+    << ", char " << domError.getLocation()->getColumnNumber()
+    << "\n  Message: " << StrX(domError.getMessage()) << std::endl;
 
- return true;
+  return true;
 }
 
 void DOMCountErrorHandler::resetErrors()
