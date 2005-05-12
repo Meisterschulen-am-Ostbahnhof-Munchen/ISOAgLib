@@ -1979,7 +1979,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           }
           if (xyNeeded) {
             if (!(is_objChildX && is_objChildY)) {
-              std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN <"<< node_name <<"> ! STOPPING PARSER! bye.\n\n";
+              std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN CHILD-OBJECT OF <"<< node_name <<"> ! STOPPING PARSER! bye.\n\n";
               clean_exit (-1);
             }
             fprintf (partFileB, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
@@ -2930,6 +2930,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     case otEllipse:
       //clean_exit (-1, "<ellipse> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
       if (!(attrIsGiven [attrLine_attributes] && attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle])) clean_exit (-1, "YOU NEED TO SPECIFY THE Line_attributes= AND width= AND height= AND start_angle= AND end_angle= ATTRIBUTES FOR THE <ellipse> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180) clean_exit (-1, "start_angle= AND end_angle= FOR THE <ellipse> OBJECT NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye.\n\n");
       if (!attrIsGiven [attrEllipse_type])
         sprintf (attrString [attrEllipse_type], "0");
       if ( (!attrIsGiven [attrFill_attributes]) || (strcmp( attrString[attrFill_attributes], "65535")==0) )
@@ -2962,6 +2963,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     case otMeter:
       //clean_exit (-1, "<meter> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
       if (!(attrIsGiven [attrWidth] && attrIsGiven [attrNeedle_colour] && attrIsGiven [attrBorder_colour] && attrIsGiven [attrArc_and_tick_colour] && attrIsGiven [attrNumber_of_ticks] && attrIsGiven[attrStart_angle] && attrIsGiven[attrEnd_angle] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND needle_colour= AND border_colour= AND target_line_colour= AND number_of_ticks= AND start_angle AND end_angle AND min_value= AND max_value= ATTRIBUTES FOR THE <meter> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180) clean_exit (-1, "start_angle= AND end_angle= FOR THE <meter> OBJECT NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye.\n\n");
       if (!attrIsGiven [attrValue])
         sprintf (attrString [attrValue], "0");
       if (!attrIsGiven [attrOptions])
@@ -2989,6 +2991,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     case otArchedbargraph:
       //clean_exit (-1, "<archedbargraph> OBJECT NOT YET IMPLEMENTED STOPPING PARSER! bye.\n\n");
       if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrColour] && attrIsGiven [attrTarget_line_colour] && attrIsGiven [attrStart_angle] && attrIsGiven [attrEnd_angle] && attrIsGiven[attrBar_graph_width] && attrIsGiven [attrMin_value] && attrIsGiven [attrMax_value])) clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND start_angle= AND end_angle= AND bar_graph_width AND min_value= AND max_value= ATTRIBUTES FOR THE <archedbargraph> OBJECT! STOPPING PARSER! bye.\n\n");
+      if (atoi(attrString[attrStart_angle]) > 180 || atoi(attrString[attrEnd_angle]) > 180) clean_exit (-1, "start_angle= AND end_angle= FOR THE <archedbargraph> OBJECT NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye.\n\n");
       if (!attrIsGiven [attrValue])
         sprintf (attrString [attrValue], "0");
       if (!attrIsGiven [attrTarget_value])
