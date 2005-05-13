@@ -2811,7 +2811,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       {
         if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
         {
-          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         sprintf (attrString [attrValue], "NULL");
       }
@@ -2820,7 +2820,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true; }
         if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
         {
-          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled = ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled = ATTRIBUTES FOR THE <inputstring> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
   //      sprintf (tempString, "\"%s\"", attrString [attrValue]);
