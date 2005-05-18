@@ -1999,6 +1999,39 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           firstElement = false;
         }
       }
+       // all child-elements processed, now:
+      // special treatment for inputlist with NULL objects
+      if (objType == otInputlist && objChildObjects < (uint16_t)atoi(attrString [attrNumber_of_items]))
+      {
+        //only some items are NULL objects which were not counted in objChildObjects
+        if (objChildObjects>0)
+        {
+          for (uint16_t ui_leftChildObjects = objChildObjects; ui_leftChildObjects<(uint16_t)atoi(attrString [attrNumber_of_items]); ui_leftChildObjects++)
+          {
+            if (ui_leftChildObjects < atoi(attrString [attrNumber_of_items])) fprintf (partFileB, ", ");
+            fprintf (partFileB, "{NULL}");
+          }
+          objChildObjects=(uint16_t)atoi(attrString [attrNumber_of_items]);
+        }
+        else {
+          // no child-element at all in the inputlist (all items as NULL objects)
+          // fill the reference-list with {NULL}-elements --> so they could be replaced during runtime with NOT NULL objects
+          if (objChildObjects == 0 && atoi(attrString [attrNumber_of_items]) > 0)
+          {
+            // objChildObjects has to be set to number_of_items otherwise
+            // it is set to 0 in the attributes of the inputlist
+            objChildObjects = (uint16_t)atoi(attrString [attrNumber_of_items]);
+            // create for all number_of_items a no-item placeholder
+            fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
+            for (int i_emptyChildObj=1; i_emptyChildObj <= atoi(attrString [attrNumber_of_items]); i_emptyChildObj++)
+            {
+              fprintf (partFileB, "{NULL}");
+              if (i_emptyChildObj < atoi(attrString [attrNumber_of_items])) fprintf (partFileB, ", ");
+            }
+            fprintf (partFileB, "};\n");
+          }
+        }
+      }
       if (firstElement == false)
         fprintf (partFileB, "};\n");
     }
