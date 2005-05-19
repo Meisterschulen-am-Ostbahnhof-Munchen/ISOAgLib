@@ -727,6 +727,9 @@ bool ISOTerminal_c::timeEvent( void )
       if ( ((en_uploadPoolState == UploadPoolFailed) && (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)))
          || (en_uploadPoolState == UploadPoolInit) ) {
         // Do we want to try to "Load Version" or go directly to uploading?
+// Added this preprocessor so loading of object pools can be prevented for development purposes
+#ifdef NO_LOAD_VERSION
+#else
         if (pc_versionLabel != NULL) {
           // Try to "Non Volatile Memory - Load Version" first!
           c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
@@ -743,6 +746,7 @@ bool ISOTerminal_c::timeEvent( void )
           ui32_uploadTimestamp = HAL::getTime();
         }
         else
+#endif	// NO_LOAD_VERSION
         { // Start uploading right now, no "LoadVersion" first
           startObjectPoolUploading ();
         }
@@ -1057,11 +1061,10 @@ bool ISOTerminal_c::processMsg()
       case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
         if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForEOOResponse)) {
           if (data().getUint8Data (1) == 0) {
-            if (pc_versionLabel != NULL) {
-// Added this preprocessor so storing of object pools can be controlled easily. Development sometimes requires that pools are not stored! -BAC
+// Added this preprocessor so storing of object pools can be prevented for development purposes
 #ifdef NO_STORE_VERSION
-              finalizeUploading();
 #else
+            if (pc_versionLabel != NULL) {
               // Store Version and finalize after "Store Version Response"
               c_data.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                    208 /* D0 */, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
@@ -1071,9 +1074,10 @@ bool ISOTerminal_c::processMsg()
               en_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
               ui32_uploadTimeout = DEF_TimeOut_StoreVersion;
               ui32_uploadTimestamp = HAL::getTime();
-
+            } 
+            else 
 #endif // NO_STORE_VERSION
-            } else {
+            {
               // Finalize now!
               finalizeUploading ();
             }
