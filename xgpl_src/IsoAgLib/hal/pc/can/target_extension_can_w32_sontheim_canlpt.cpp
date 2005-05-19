@@ -121,6 +121,7 @@ int AllCanChannelCount = 0;
 int apiversion;
 int transmitdata[15];
 int receivedata[15];
+int DLL_loaded = false;
 
 // IO address for LPT and ISA ( PCI and PCMCIA use automatic adr )
 const int32_t LptIsaIoAdr = 0x378;
@@ -196,9 +197,11 @@ DWORD WINAPI thread( PVOID par )
 
 int16_t loadDllFunctionAddresses(void)
 {
+  DLL_loaded = false;
+
   // if ((int) (hCAPIDLL = LoadLibrary ("C:\\Hör\\AKTUELL\\Canapi_CanLPT\\Software\\PC\\api\\Release\\CANAPI.DLL")) <=  HINSTANCE_ERROR) {
   if ((int) (hCAPIDLL = LoadLibrary ("CANAPI.DLL")) <=  HINSTANCE_ERROR) {
-       printf ("can't open Library \n");
+       printf ("ERROR - CAN Library could NOT be opened!!!\n");
 		return HAL_CONFIG_ERR;
 	}
   ca_InitApi_1 =
@@ -229,7 +232,9 @@ int16_t loadDllFunctionAddresses(void)
 
   ca_Instruction_1 =
 		(int (far __stdcall*) (int *data))          GetProcAddress (hCAPIDLL,"ca_Instruction_1");
-	return HAL_NO_ERR;
+	
+  DLL_loaded = true;
+  return HAL_NO_ERR;
 }
 
 int16_t can_startDriver()
@@ -278,6 +283,7 @@ int16_t can_startDriver()
 			else
 			{
 				FreeLibrary(hCAPIDLL);
+				DLL_loaded = false;
 				Sleep( 10 );
 				loadDllFunctionAddresses();
 			}
@@ -424,6 +430,9 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {
+	if( !DLL_loaded )
+		return HAL_CONFIG_ERR;
+
 	int fdata[16];
 	int channel = 0;
 	int btr0, btr1;
@@ -608,7 +617,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 	 }
    else
 	 {
-			printf ("can't initialize CANLPT");
+			printf ("can't initialize CAN");
 			#ifdef USE_THREAD
 			b_blockThread = false;
 			#endif
@@ -782,6 +791,9 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 
 int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 {
+	if( !DLL_loaded )
+		return HAL_CONFIG_ERR;
+
 	int channel = 0;
 	if ( ( gHwType == c_ICAN ) || ( gHwType == c_CANLpt ) )
 	{
@@ -886,7 +898,11 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 
 
 int16_t checkMsg()
-{ // first check if CANcardX buffer has received msg
+{
+	if( !DLL_loaded )
+		return HAL_CONFIG_ERR;
+
+  // first check if CANcardX buffer has received msg
   int32_t result = 0;
 	uint32_t DLC;
 	uint8_t b_xtd;
