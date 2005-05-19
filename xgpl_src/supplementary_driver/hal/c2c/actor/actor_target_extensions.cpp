@@ -72,7 +72,12 @@
 
 namespace HAL {
 
-static const int16_t cui16_openLow  = ( 170000L / 4000L ); // 1700mV * 100 / 40mV * 100
+// Measured voltage with NO PWM signal, the get_adc() function always returns around:
+// 		85 * 40 = 3400 mV		with NO CONNECTION	
+// 		27 * 40 = 1080 mV		with small resistor / transistor
+//		0 * 40 = 0 mV			SHORT CIRCUIT to GROUND situation
+// So, we can safely say if less than 10 * 40 = 400 mV, then there is a definite problem!
+static const int16_t cui16_openLow  = 10;	// 800mV (40mV per bit)
 
   /** deliver the state of a digital output.
 		* This function evaluates the current where possible, otherwise it evaluates
