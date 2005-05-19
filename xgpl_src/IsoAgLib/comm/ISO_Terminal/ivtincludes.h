@@ -53,6 +53,8 @@
 
 #include "ivtobjectalarmmask_c.h"
 #include "ivtobjectarchedbargraph_c.h"
+#include "ivtobjectauxiliaryfunction_c.h"
+#include "ivtobjectauxiliaryinput_c.h"
 #include "ivtobjectbutton_c.h"
 #include "ivtobjectcontainer_c.h"
 #include "ivtobjectdatamask_c.h"
