@@ -4,6 +4,7 @@
 #include <cctype>
 #include <ctime>
 #include <cstring>
+#include <deque>
 
 struct T_BAUD { uint32_t rate; uint32_t flag; } t_baud[] = {
   {    600L, B600    }, {   1200L, B1200   }, {   2400L, B2400   },
@@ -15,14 +16,14 @@ struct T_BAUD { uint32_t rate; uint32_t flag; } t_baud[] = {
 struct termios t_0;
 struct termios t_com;
 int16_t f_com[RS232_INSTANCE_CNT];
+std::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
+
 
 #define false 0
 #define true 1
 
 int8_t c_read;
 boolean b_getRead;
-int8_t pc_readPuff[300];
-int16_t i16_readPuffCnt;
 
 
 void SioExit(uint32_t comport)
@@ -49,7 +50,7 @@ int16_t SioInit(uint32_t comport, uint32_t baudrate)
     if (b->rate >= baudrate) break;
   } while (++b < t_baud + sizeof t_baud/sizeof *t_baud);
 
-  com[9] = comport-1+'0';
+  com[9] = comport+'0';
   if ((f_com[comport] = open(com, O_RDWR|O_NDELAY)) < 0) return 0;
   if (tcgetattr(0, &t_0)) return 0;
   if (tcgetattr(0, &t_com)) return 0;
@@ -77,6 +78,10 @@ int16_t SioInit(uint32_t comport, uint32_t baudrate)
   i32_time_2 = (clock()/(CLOCKS_PER_SEC/1000));
   while ((i32_time + 500) > i32_time_2)
     i32_time_2 = (clock()/(CLOCKS_PER_SEC/1000));
+
+	// reset read puffer
+	deq_readPuff[comport].clear();
+
   return 1;
 }
 
@@ -94,27 +99,57 @@ int16_t SioRecPuffCnt(uint32_t comport)
   int8_t c_temp[300];
   int16_t tempLen = read(f_com[comport], c_temp, (299));
 
-  memcpy((pc_readPuff+i16_readPuffCnt), c_temp, tempLen);
-  i16_readPuffCnt += tempLen;
+	for ( uint16_t ind = 0; ind < tempLen; ind++ ) deq_readPuff[comport].push_back( c_temp[ind] );
 
-  return i16_readPuffCnt;
+  return deq_readPuff[comport].size();
 }
 
 int16_t SioGetString(uint32_t comport, uint8_t *p, uint8_t len)
 {
   if ( comport >= RS232_INSTANCE_CNT ) return 0;
   SioRecPuffCnt(comport);
-  if (i16_readPuffCnt >= len)
+  if (deq_readPuff[comport].size() > 0)
   {
-    memcpy(p, pc_readPuff, len);
-    i16_readPuffCnt -= len;
-    memcpy(pc_readPuff, pc_readPuff+len, i16_readPuffCnt);
+		uint16_t ind = 0;
+		for ( ; ind < len; ind++ )
+		{
+			p[ind] = deq_readPuff[comport].front();
+			deq_readPuff[comport].pop_front();
+		}
+		// terminate
+		p[ind] = '\0';
     return 1;
   }
   else
   {
     return 0;
   }
+}
+
+int16_t SioGetTerminatedString(uint32_t comport, uint8_t *p, uint8_t ui8_terminateChar, uint8_t len)
+{
+  if ( comport >= RS232_INSTANCE_CNT ) return 0;
+  SioRecPuffCnt(comport);
+  if (deq_readPuff[comport].size() > 0)
+  {
+		for ( std::deque<int8_t>::iterator iter = deq_readPuff[comport].begin(); iter != deq_readPuff[comport].end(); iter++ )
+		{ // check if terminating char is found
+			if ( *iter == ui8_terminateChar )
+			{ // found -> copy area from begin to iterator
+				uint16_t ind = 0;
+				for ( ; ( ( deq_readPuff[comport].front() != ui8_terminateChar) && ( ind < len ) ); ind++ )
+				{
+					p[ind] = deq_readPuff[comport].front();
+					deq_readPuff[comport].pop_front();
+				}
+				// lastly pop the termination char and terminate the result string
+				deq_readPuff[comport].pop_front();
+				p[ind] = '\0';
+				return HAL_NO_ERR;
+			}
+		}
+  }
+  return HAL_NOACT_ERR;
 }
 
 int16_t SioGetByte(uint32_t comport, uint8_t *p)

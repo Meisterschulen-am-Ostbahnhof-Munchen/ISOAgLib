@@ -6,10 +6,9 @@
 #include <windows.h>    /* for SioXXX() */
 
 HANDLE hCom[RS232_INSTANCE_CNT];
+std::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
 
 int8_t c_read;
-int8_t pc_readPuff[RS232_INSTANCE_CNT][300];
-int16_t i16_readPuffCnt[RS232_INSTANCE_CNT];
 
 
 void SioExit(uint32_t comport) {
@@ -19,39 +18,42 @@ void SioExit(uint32_t comport) {
 
 int16_t SioInit(uint32_t comport, uint32_t baudrate) {
   if ( comport >= RS232_INSTANCE_CNT ) return 0;
-    DCB dcb;
-    COMMTIMEOUTS ct;
-    uint8_t com[] = "COMx";
+	DCB dcb;
+	COMMTIMEOUTS ct;
+	uint8_t com[] = "COMx";
 
-    com[3] = comport + '0';
-    hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
-    if (!hCom[comport]) return 0;
+	com[3] = comport + 1 + '0';
+	hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
+	if (!hCom[comport]) return 0;
 
-    atexit(SioExit);
+	atexit(SioExit);
 
-    if (!SetupComm(hCom[comport],1024,1024)) return 0;
-    if (!GetCommState(hCom[comport],&dcb)) return 0;
-    dcb.BaudRate    = baudrate;
-    dcb.ByteSize    = 8;
-    dcb.Parity      = NOPARITY;
-    dcb.StopBits    = ONESTOPBIT;
-    dcb.fRtsControl = RTS_CONTROL_ENABLE;
-    if (!SetCommState(hCom[comport],&dcb)) return 0;
-    if (!GetCommTimeouts(hCom[comport],&ct)) return 0;
-    ct.ReadIntervalTimeout = MAXDWORD;
-    ct.ReadTotalTimeoutMultiplier = 0;
-    ct.ReadTotalTimeoutConstant = 0;
-    ct.WriteTotalTimeoutMultiplier = 0;
-    ct.WriteTotalTimeoutConstant = 0;
-    if (!SetCommTimeouts(hCom[comport],&ct)) return 0;
+	if (!SetupComm(hCom[comport],1024,1024)) return 0;
+	if (!GetCommState(hCom[comport],&dcb)) return 0;
+	dcb.BaudRate    = baudrate;
+	dcb.ByteSize    = 8;
+	dcb.Parity      = NOPARITY;
+	dcb.StopBits    = ONESTOPBIT;
+	dcb.fRtsControl = RTS_CONTROL_ENABLE;
+	if (!SetCommState(hCom[comport],&dcb)) return 0;
+	if (!GetCommTimeouts(hCom[comport],&ct)) return 0;
+	ct.ReadIntervalTimeout = MAXDWORD;
+	ct.ReadTotalTimeoutMultiplier = 0;
+	ct.ReadTotalTimeoutConstant = 0;
+	ct.WriteTotalTimeoutMultiplier = 0;
+	ct.WriteTotalTimeoutConstant = 0;
+	if (!SetCommTimeouts(hCom[comport],&ct)) return 0;
 
-    // wait some time to avoid buffer error
-    i32_time = (clock()/(CLOCKS_PER_SEC/1000));
-    i32_time_2 = (clock()/(CLOCKS_PER_SEC/1000));
-    while ((i32_time + 500) > i32_time_2)
-      i32_time_2 = (clock()/(CLOCKS_PER_SEC/1000));
+	// wait some time to avoid buffer error
+	i32_time = (clock()/(CLOCKS_PER_SEC/1000));
+	i32_time_2 = (clock()/(CLOCKS_PER_SEC/1000));
+	while ((i32_time + 500) > i32_time_2)
+		i32_time_2 = (clock()/(CLOCKS_PER_SEC/1000));
 
-    return 1;
+	// reset read puffer
+	deq_readPuff[comport].clear();
+
+	return 1;
 }
 
 int16_t SioPutBuffer(uint32_t comport, uint8_t *p, int16_t n) {
@@ -67,27 +69,57 @@ int16_t SioRecPuffCnt(uint32_t comport)
   DWORD tempLen;
   ReadFile(hCom[comport],c_temp,299,&tempLen,NULL);
 
-  memcpy((pc_readPuff[comport]+i16_readPuffCnt[comport]), c_temp, tempLen);
-  i16_readPuffCnt[comport] += tempLen;
+	for ( uint16_t ind = 0; ind < tempLen; ind++ ) deq_readPuff[comport].push_back( c_temp[ind] );
 
-  return i16_readPuffCnt[comport];
+  return deq_readPuff[comport].size();
 }
 
 int16_t SioGetString(uint32_t comport, uint8_t *p, uint8_t len)
 {
   if ( comport >= RS232_INSTANCE_CNT ) return 0;
   SioRecPuffCnt(comport);
-  if (i16_readPuffCnt[comport] >= len)
+  if (deq_readPuff[comport].size() > 0)
   {
-    memcpy(p, pc_readPuff[comport], len);
-    i16_readPuffCnt[comport] -= len;
-    memcpy(pc_readPuff[comport], pc_readPuff[comport]+len, i16_readPuffCnt[comport]);
+		uint16_t ind = 0;
+		for ( ; ind < len; ind++ )
+		{
+			p[ind] = deq_readPuff[comport].front();
+			deq_readPuff[comport].pop_front();
+		}
+		// terminate
+		p[ind] = '\0';
     return 1;
   }
   else
   {
     return 0;
   }
+}
+
+int16_t SioGetTerminatedString(uint32_t comport, uint8_t *p, uint8_t ui8_terminateChar, uint8_t len)
+{
+  if ( comport >= RS232_INSTANCE_CNT ) return 0;
+  SioRecPuffCnt(comport);
+  if (deq_readPuff[comport].size() > 0)
+  {
+		for ( std::deque<int8_t>::iterator iter = deq_readPuff[comport].begin(); iter != deq_readPuff[comport].end(); iter++ )
+		{ // check if terminating char is found
+			if ( *iter == ui8_terminateChar )
+			{ // found -> copy area from begin to iterator
+				uint16_t ind = 0;
+				for ( ; ( ( deq_readPuff[comport].front() != ui8_terminateChar) && ( ind < len ) ); ind++ )
+				{
+					p[ind] = deq_readPuff[comport].front();
+					deq_readPuff[comport].pop_front();
+				}
+				// lastly pop the termination char and terminate the result string
+				deq_readPuff[comport].pop_front();
+				p[ind] = '\0';
+				return HAL_NO_ERR;
+			}
+		}
+  }
+  return HAL_NOACT_ERR;
 }
 
 int16_t SioGetByte(uint32_t comport, uint8_t *p)

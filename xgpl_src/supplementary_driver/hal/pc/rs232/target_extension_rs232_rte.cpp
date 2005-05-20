@@ -62,7 +62,7 @@
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <cstdio>
 #include <cstring>
-#include <vector>
+#include <deque>
 
 namespace __HAL {
 
@@ -84,7 +84,7 @@ PointerSerial_t pc_serial[RS232_INSTANCE_CNT] = {NULL,NULL,NULL};
 PointerSerial_t pc_serial[RS232_INSTANCE_CNT];
 #endif
 
-STL_NAMESPACE::vector<uint8_t> c_buffer[RS232_INSTANCE_CNT];
+STL_NAMESPACE::deque<uint8_t> c_buffer[RS232_INSTANCE_CNT];
 
 /** send handler which is called by RTE on each new received data -> store current fertilizer amount */
 int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *data ) {
@@ -96,12 +96,15 @@ int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *da
 		#if 0
 		std::cerr << hex << "RS232 Receive Handler: #";
 		#endif
+		std::cerr << "\nRS232 Empfang:";
 		for ( uint16_t ind = 0; ind < size; ind++ ) {
 			c_buffer[testInd].push_back( data[ind] );
+			std::cerr << data[ind];
 			#if 0
 			std::cerr << "0x" << int ( data[ind] ) << ", ";
 			#endif
 		}
+		std::cerr << std::endl;
 		#if 0
 		std::cerr << "#" << dec << std::endl;
 		#endif
@@ -224,9 +227,7 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
     return HAL_RANGE_ERR;
   }
   pbRead[0] = c_buffer[rui8_channel][0];
-//  pbRead[1] = '\0';
-  // move rest of string one to front
-  c_buffer[rui8_channel].erase( c_buffer[rui8_channel].begin() );
+	c_buffer[rui8_channel].pop_front();
   return HAL_NO_ERR;
 }
 /**
@@ -238,19 +239,28 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
 int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t rui8_channel)
 {
 	if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  vector<uint8_t>::iterator pc_iter = find( c_buffer[rui8_channel].begin(), c_buffer[rui8_channel].end(), bLastChar );
-  int16_t ind = -1;
-  for ( vector<uint8_t>::iterator pc_reader = c_buffer[rui8_channel].begin(); pc_reader != pc_iter;  pc_reader++ ) {
-    // increment ind
-    ind++;
-    // copy element
-    pbRead[ind] = *pc_reader;
+	uint8_t ui8_test;
+  if (c_buffer[rui8_channel].size() > 0)
+  {
+		for ( STL_NAMESPACE::deque<uint8_t>::iterator iter = c_buffer[rui8_channel].begin(); iter != c_buffer[rui8_channel].end(); iter++ )
+		{ // check if terminating char is found
+			ui8_test = *iter;
+			if ( ui8_test == bLastChar )
+			{ // found -> copy area from begin to iterator
+				uint16_t ind = 0;
+				for ( ; ( c_buffer[rui8_channel].front() != bLastChar); ind++ )
+				{
+					pbRead[ind] = c_buffer[rui8_channel].front();
+					c_buffer[rui8_channel].pop_front();
+				}
+				// lastly pop the termination char and terminate the result string
+				c_buffer[rui8_channel].pop_front();
+				pbRead[ind] = '\0';
+				return HAL_NO_ERR;
+			}
+		}
   }
-  // clear buffer
-  c_buffer[rui8_channel].erase( c_buffer[rui8_channel].begin(), pc_iter );
-  // terminate result string if '\0' isn't last element
-  if ( pbRead[ind] != '\0' ) pbRead[ind] = '\0';
-  return HAL_NO_ERR;
+  return HAL_NOACT_ERR;
 }
 
 /**

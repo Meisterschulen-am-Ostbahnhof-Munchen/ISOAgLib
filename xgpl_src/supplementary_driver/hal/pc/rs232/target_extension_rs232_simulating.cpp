@@ -137,7 +137,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   #endif
 
 	#ifdef USE_REAL_RS232
-  SioInit(1,wBaudrate);
+  SioInit(rui8_channel,wBaudrate);
 	#endif
   return HAL_NO_ERR;
 }
@@ -159,11 +159,11 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t rui8_channel)
 int16_t getRs232RxBufCount(uint8_t rui8_channel)
 {
 	if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-#ifdef USE_REAL_RS232
-  return SioRecPuffCnt();
-#else
+	#ifdef USE_REAL_RS232
+  return SioRecPuffCnt(rui8_channel);
+	#else
   return 2;
-#endif
+	#endif
 }
 /**
   get the amount of data [uint8_t] in send puffer
@@ -221,11 +221,12 @@ int16_t getRs232Error(uint8_t *Errorcode, uint8_t rui8_channel)
 int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
 {
 	if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-#ifdef USE_REAL_RS232
-  SioGetByte(pbRead);
-#endif
+	#ifdef USE_REAL_RS232
+  SioGetByte(rui8_channel, pbRead);
+	#else
   int32_t i32_time = getTime();
   *pbRead = ((uint8_t*)&i32_time)[3];
+	#endif
 	#ifdef WRITE_LOG_FILE
   fprintf(rs232_log[rui8_channel], "%d read %c\n", getTime(), *pbRead);
 	#endif
@@ -240,12 +241,13 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
 int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t rui8_channel)
 {
 	if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-#ifdef USE_REAL_RS232
-  SioGetString(pbRead, bLastChar);
-#endif
+	#ifdef USE_REAL_RS232
+	SioGetTerminatedString(rui8_channel, pbRead, bLastChar);
+	#else
   int32_t i32_time = getTime();
   memcpy(pbRead, ((uint8_t*)&i32_time), 4);
   pbRead[4] = '\0';
+	#endif
   return HAL_NO_ERR;
 }
 
@@ -262,7 +264,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
 	fflush( rs232_output[rui8_channel] );
 #ifdef USE_REAL_RS232
   uint8_t b_data = bByte;
-  SioPutBuffer(&b_data, 1);
+  SioPutBuffer(rui8_channel, &b_data, 1);
 #endif
 	#ifdef WRITE_LOG_FILE
   fprintf(rs232_log[rui8_channel], "%d write %c\n", getTime(), bByte);
@@ -287,7 +289,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
 //  }
 //  printf("\n");
 #ifdef USE_REAL_RS232
-  SioPutBuffer(bpWrite, wNumber);
+  SioPutBuffer(rui8_channel, bpWrite, wNumber);
 #endif
 	#ifdef WRITE_LOG_FILE
   fprintf(rs232_log[rui8_channel], "%d write ", getTime());
@@ -317,7 +319,7 @@ int16_t put_rs232String(const uint8_t *pbString, uint8_t rui8_channel)
   fprintf(rs232_output[rui8_channel], "%s", pbString);
 	fflush( rs232_output[rui8_channel] );
 #ifdef USE_REAL_RS232
-  SioPutBuffer(pbString, strlen(pbString));
+  SioPutBuffer(rui8_channel, pbString, strlen(pbString));
 #endif
   return HAL_NO_ERR;
 }

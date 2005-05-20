@@ -296,6 +296,15 @@ public:
     @param rui8_len length of data string
   */
   void receive(uint8_t* pData, uint8_t rui8_len) {RS232IO_c::receive(pData, rui8_len);};
+	/** read a line to the next apperance of '\n'.
+			read nothing if the delimiter isn't found.
+		@param pui8_data    pointer to puffer for writing the data
+		@param ui8_lastChar terminating char for read ( default '\n' )
+		@return HAL_NOACT_ERR -> nothing copied as delimiter not found;
+		        HAL_NO_ERR -> delimiter found; text before delimiter copied; delimiter removed
+	*/
+	int16_t getLine( uint8_t* pui8_data, uint8_t ui8_lastChar = '\n' )
+		{ return RS232IO_c::getLine( pui8_data, ui8_lastChar );};
   /**
     receive whitespace (or puffer end) terminated string on RS232
     @param refc_data reference to data string for receive
