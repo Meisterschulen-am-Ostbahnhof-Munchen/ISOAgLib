@@ -335,7 +335,7 @@ public:
     uint8_t options;
     iVtObject_c* variableReference;
     uint32_t value;
-    uint32_t offset;
+    int32_t offset;
     float scale;
     uint8_t numberOfDecimals;
     uint8_t format;

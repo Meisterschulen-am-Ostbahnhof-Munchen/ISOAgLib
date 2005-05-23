@@ -163,7 +163,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setScale(int32_t newValue, bool b_updateObject=false) {
+  void setScale(float newValue, bool b_updateObject=false) {
     vtObjectInputNumber_c::setScale (newValue, b_updateObject);
   };
 

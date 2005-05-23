@@ -169,8 +169,8 @@ public:
     saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), offset) : 0, sizeof(iVtObjectInputNumber_s), 9, (uint32_t) newValue);
   }
   
-  void setScale(int32_t newValue, bool b_updateObject=false) {
-    saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), scale) : 0, sizeof(iVtObjectInputNumber_s), 10, (uint32_t) newValue);
+  void setScale(float newValue, bool b_updateObject=false) {
+    saveValueFloatSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), scale) : 0, sizeof(iVtObjectInputNumber_s), 10, newValue);
   }
   
   void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false) {

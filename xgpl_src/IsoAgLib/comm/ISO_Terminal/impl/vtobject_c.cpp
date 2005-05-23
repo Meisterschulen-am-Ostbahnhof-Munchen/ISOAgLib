@@ -83,6 +83,9 @@
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
 
+#include <IsoAgLib/util/impl/util_funcs.h>
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -95,7 +98,15 @@ namespace __IsoAgLib {
 void
 vtObject_c::setAttribute(uint8_t attrID, uint32_t newValue)
 { // ~X2C
-	__IsoAgLib::getIsoTerminalInstance().sendCommandChangeAttribute (this, attrID, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeAttribute (this, attrID, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24);
+} // -X2C
+
+void
+vtObject_c::setAttributeFloat(uint8_t attrID, float newValue)
+{ // ~X2C
+  uint32_t ui32_convertedFloat;
+  float2Int (&newValue, &ui32_convertedFloat);
+  setAttribute (attrID, ui32_convertedFloat);
 } // -X2C
 
 
@@ -132,6 +143,12 @@ vtObject_c::saveValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, ui
   * ((uint32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = ui32_newValue;
 }
 void
+vtObject_c::saveValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, float f_newValue)
+{
+  createRamStructIfNotYet (ui16_structLen);
+  * ((float*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = f_newValue;
+}
+void
 vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, IsoAgLib::iVtObject_c* p_newValue)
 {
   createRamStructIfNotYet (ui16_structLen);
@@ -153,6 +170,11 @@ void
 vtObject_c::saveValue32SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint32_t ui32_newValue) {
   if (ui16_structOffset != 0) saveValue32 (ui16_structOffset, ui16_structLen, ui32_newValue);
   setAttribute (ui8_ind, ui32_newValue);
+}
+void
+vtObject_c::saveValueFloatSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, float f_newValue) {
+  if (ui16_structOffset != 0) saveValueFloat (ui16_structOffset, ui16_structLen, f_newValue);
+  setAttributeFloat (ui8_ind, f_newValue);
 }
 void
 vtObject_c::saveValuePSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, IsoAgLib::iVtObject_c* p_newValue) {

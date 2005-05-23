@@ -140,7 +140,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setOffset(int16_t newValue, bool b_updateObject=false) {
+  void setOffset(int32_t newValue, bool b_updateObject=false) {
     vtObjectOutputNumber_c::setOffset (newValue, b_updateObject);
   };
 

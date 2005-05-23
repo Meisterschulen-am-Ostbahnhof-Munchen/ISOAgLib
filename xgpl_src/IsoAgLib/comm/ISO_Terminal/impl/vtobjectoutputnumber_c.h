@@ -157,11 +157,11 @@ public:
 	void setVariableReference(vtObject_c* newValue, bool b_updateObject=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), variableReference) : 0, sizeof(iVtObjectOutputNumber_s), 6, newValue);
 	}
-	void setOffset(int16_t newValue, bool b_updateObject=false) {
+	void setOffset(int32_t newValue, bool b_updateObject=false) {
     saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), offset) : 0, sizeof(iVtObjectOutputNumber_s), 7, (uint32_t) newValue);
 	}
 	void setScale(float newValue, bool b_updateObject=false) {
-    saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), scale) : 0, sizeof(iVtObjectOutputNumber_s), 8, (uint32_t) newValue);
+    saveValueFloatSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), scale) : 0, sizeof(iVtObjectOutputNumber_s), 8, newValue);
 	}
 	void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), numberOfDecimals) : 0, sizeof(iVtObjectOutputNumber_s), 9, newValue, newValue);
