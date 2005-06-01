@@ -139,6 +139,32 @@ namespace __IsoAgLib {
 #define DEF_Retries_NormalCommands 2
 
 
+/** This is mostly used for debugging now... */
+SendUpload_c::SendUpload_c (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
+{
+  /// Use BUFFER - NOT MultiSendStreamer!
+  mssObjectString=NULL;
+  vec_uploadBuffer.reserve (rui32_bufferSize);
+
+  for (int i=0; i < rui32_bufferSize; i++) {
+    vec_uploadBuffer.push_back (*rpui8_buffer);
+    rpui8_buffer++;
+  }
+
+  ui8_retryCount = 0; // hacked, no retry here!!!
+
+  ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
+
+  #ifdef DEBUG_HEAP_USEAGE
+  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
+  {
+    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
+    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << "\r\n";
+  }
+  #endif
+}
+
+
 /**
   >>StringUpload<< Constructors ( Copy and Reference! )
 */
@@ -1296,6 +1322,33 @@ bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, ui
   q_sendUpload.push_back (SendUpload_c (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout));
   #else
   q_sendUpload.push (SendUpload_c (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout));
+  #endif
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_sendUploadQueueSize++;
+  if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
+    sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
+  #endif
+
+  #ifdef DEBUG
+  std::cout << q_sendUpload.size() << ".\n";
+  #endif
+  return true;  /** @todo return false somewhen???????? buffer tooo full?? */
+}
+
+
+bool ISOTerminal_c::sendCommandForDEBUG (uint8_t* rpui8_buffer, uint32_t ui32_size)
+{
+  if (!isVtActive()) return false;
+
+  #ifdef DEBUG
+  std::cout << "Enqueued Debug-TP-byter: " << q_sendUpload.size() << " -> ";
+  #endif
+
+  #ifdef USE_LIST_FOR_FIFO
+  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+  q_sendUpload.push_back (SendUpload_c (rpui8_buffer, ui32_size));
+  #else
+  q_sendUpload.push (SendUpload_c (rpui8_buffer, ui32_size));
   #endif
   #ifdef DEBUG_HEAP_USEAGE
   sui16_sendUploadQueueSize++;

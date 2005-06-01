@@ -204,6 +204,7 @@ public:
   SendUpload_c (__IsoAgLib::vtObjectString_c* rpc_objectString);
   SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength);
   SendUpload_c (const SendUpload_c& ref_source);
+  SendUpload_c (uint8_t* rpui8_buffer, uint32_t bufferSize);
   const SendUpload_c& operator= (const SendUpload_c& ref_source);
 
   /// Use either an MultiSendStreamer or a direct ui8-Buffer
@@ -392,7 +393,8 @@ public:
   /** sendCommand... methods */
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout);
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout);
-  
+  bool sendCommandForDEBUG (uint8_t* rpui8_buffer, uint32_t ui32_size);
+
   bool sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
   bool sendCommandChangeAttribute    (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
   bool sendCommandChangeSoftKeyMask  (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMaskID);
