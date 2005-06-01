@@ -146,9 +146,13 @@ SendUpload_c::SendUpload_c (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
   mssObjectString=NULL;
   vec_uploadBuffer.reserve (rui32_bufferSize);
 
-  for (int i=0; i < rui32_bufferSize; i++) {
+  int i=0;
+  for (; i < rui32_bufferSize; i++) {
     vec_uploadBuffer.push_back (*rpui8_buffer);
     rpui8_buffer++;
+  }
+  for (; i < 8; i++) {
+    vec_uploadBuffer.push_back (0xFF);
   }
 
   ui8_retryCount = 0; // hacked, no retry here!!!
