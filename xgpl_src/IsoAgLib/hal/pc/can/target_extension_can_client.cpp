@@ -357,7 +357,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   ptReceive->bXtd = pc_data->b_xtd;
   memcpy(ptReceive->abData, pc_data->pb_data, pc_data->b_dlc);
 
-#ifdef DEBUG
+#ifdef DEBUG_CAN
   printf("Empfang: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
          ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
          ptReceive->abData[3], ptReceive->abData[4], ptReceive->abData[5],
@@ -379,7 +379,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   msqWrite_s msqWriteBuf;
   msqCommand_s msqCommandBuf;
 
-#ifdef DEBUG
+#ifdef DEBUG_CAN
   printf("Senden: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
          ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
          ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
