@@ -129,8 +129,8 @@ void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_han
   memcpy(data, ptSend->abData, ptSend->bDlc);
 
   fprintf(f_handle,
-          "%05d %d %d %d %d %-8x   %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx\n",
-          i32_sendTimestamp, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, ptSend->dwId,
+          "%05d %d %d %d %d %d %-8x   %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx\n",
+          i32_sendTimestamp, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, (ptSend->dwId >> 26) & 7 /* priority */, ptSend->dwId,
           data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 
 };
@@ -173,11 +173,11 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
     if ( strlen(zeile) == 0 )
       continue;
     
-    int obj, xtd, dlc;
-    int rc = sscanf(zeile, "%u %d %d %d %d %x   %hx %hx %hx %hx %hx %hx %hx %hx \n", 
+    int obj, xtd, dlc, prio;
+    int rc = sscanf(zeile, "%u %d %d %d %d %d %x   %hx %hx %hx %hx %hx %hx %hx %hx \n", 
                     &(ps_receiveData->msg.i32_time),
                     &(ps_receiveData->b_bus), &obj,
-                    &xtd, &dlc,
+                    &xtd, &dlc, &prio,
                     &(ps_receiveData->msg.i32_ident),
                     &(ps_receiveData->msg.pb_data[0]), &(ps_receiveData->msg.pb_data[1]),
                     &(ps_receiveData->msg.pb_data[2]), &(ps_receiveData->msg.pb_data[3]),
