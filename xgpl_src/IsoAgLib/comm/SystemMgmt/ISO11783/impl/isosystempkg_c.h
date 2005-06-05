@@ -107,6 +107,9 @@ public:
   /** default destructor */
   ~ISOSystemPkg_c();
   /**
+    ==> OBSOLETE, because now all can-pkg-data is STATIC!
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
     assign operator to insert informations from one CANPkg_c into another
     @see __IsoAgLib::FilterBox_c::operator>>
     @see CANPkgExt_c::operator=

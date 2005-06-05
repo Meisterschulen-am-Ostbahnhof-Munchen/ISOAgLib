@@ -95,6 +95,9 @@ CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey ) : CANPkg_c( ri_singletonVecKe
 CANPkgExt_c::~CANPkgExt_c(){
 }
 /**
+  ==> OBSOLETE, because now all can-pkg-data is STATIC!
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
 	assign operator to insert informations from one CANPkg_c into another
 	@see __IsoAgLib::FilterBox_c::operator>>
 	@see CANPkgExt_c::operator=

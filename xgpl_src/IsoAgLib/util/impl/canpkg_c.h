@@ -189,6 +189,9 @@ public:
     __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE);
 
   /**
+    ==> OBSOLETE, because now all pkg-data is STATIC!
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     assign operator to insert informations from one CANPkg_c into another
     @see __IsoAgLib::FilterBox_c::operator>>
     @see CANPkgExt_c::operator=
@@ -209,12 +212,18 @@ public:
   virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
   /**
+    ==> OBSOLETE, because now all pkg-data is STATIC!
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     compare for equality with other CANPkg
     @param rrefc_cmp reference to the to be compared CANPkg
     @return true -> both CANPkg_c have the same data
   */
   bool operator==(const CANPkg_c& rrefc_cmp) const;
   /**
+    ==> OBSOLETE, because now all pkg-data is STATIC!
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     compare for difference to other CANPkg
     @param rrefc_cmp reference to the to be compared CANPkg
     @return true -> both CANPkg_c have different data

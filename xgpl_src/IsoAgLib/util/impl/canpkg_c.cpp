@@ -105,6 +105,8 @@ CANPkg_c::~CANPkg_c(){
 }
 
 /**
+  ==> OBSOLETE, because now all pkg-data is STATIC!
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   assign operator to insert informations from one CANPkg_c into another
   @see __IsoAgLib::FilterBox_c::operator>>
   @see CANPkgExt_c::operator=
@@ -112,13 +114,16 @@ CANPkg_c::~CANPkg_c(){
   @param rrefc_right reference to the source CANPkg_c on the right
   @return reference to the source CANPkg_c to enable assign chains like "pkg1 = pkg2 = pkg3 = pkg4;"
 */
-const CANPkg_c& CANPkg_c::operator=(const CANPkg_c& rrefc_right){
+const CANPkg_c& CANPkg_c::operator=(const CANPkg_c& rrefc_right)
+{
+/*
   c_ident = rrefc_right.c_ident;
   ui8_len = rrefc_right.ui8_len;
   CNAMESPACE::memmove(pb_data, rrefc_right.pb_data, ui8_len);
   i32_time = rrefc_right.i32_time;
 
   return *this;
+*/
 }
 
 /**
@@ -167,33 +172,48 @@ void CANPkg_c::setDataString(const uint8_t* rpb_data, uint8_t rui8_len)
 
 
 /**
+  ==> OBSOLETE, because now all pkg-data is STATIC!
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
   compare for equality with other CANPkg
   @param rrefc_cmp reference to the to be compared CANPkg
   @return true -> both CANPkg_c have the same data
 */
-bool CANPkg_c::operator==(const CANPkg_c& rrefc_cmp) const {
+bool CANPkg_c::operator==(const CANPkg_c& rrefc_cmp) const
+{
   bool b_result = true;
+/*
   if (pb_data != rrefc_cmp.pb_data) b_result = false;
   if (c_ident != rrefc_cmp.c_ident) b_result = false;
   if (ui8_len != rrefc_cmp.ui8_len) b_result = false;
   if (i32_time != rrefc_cmp.i32_time) b_result = false;
-
+*/
   return b_result;
 }
 
 /**
+  ==> OBSOLETE, because now all pkg-data is STATIC!
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
   compare for difference to other CANPkg
   @param rrefc_cmp reference to the to be compared CANPkg
   @return true -> both CANPkg_c have different data
 */
-bool CANPkg_c::operator!=(const CANPkg_c& rrefc_cmp) const {
+bool CANPkg_c::operator!=(const CANPkg_c& rrefc_cmp) const
+{
+/*
+  ANYWAY I THINK THIS LOGIC IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!
+  
   bool b_result = true;
+
   if (pb_data == rrefc_cmp.pb_data) b_result = false;
   if (c_ident == rrefc_cmp.c_ident) b_result = false;
   if (ui8_len == rrefc_cmp.ui8_len) b_result = false;
   if (i32_time == rrefc_cmp.i32_time) b_result = false;
 
   return b_result;
+*/
+  return false;
 }
 
 } // end of namespace __IsoAgLib
