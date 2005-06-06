@@ -104,6 +104,15 @@
 #define MAX_ANALOG_MA 20
 ///set max digital BIOS function return value corresponding to MAX_ANALOG_MA
 #define MAX_ANALOG_MA_DIGIT 833
+
+///set the max voltage that can be read off the ADC [V].  There are 2 variants of C2Cs
+///Those with single CAN (that we have) are setup to be 0-30 V
+///Those with dual CAN (that we have)  are setup to be 0-10 V
+// Override this in your config_xxx.h file if you use single CAN C2Cs with 0-30 V range.
+#ifndef MAX_ADC_V
+#  define MAX_ADC_V 10
+#endif
+
 /*@}*/
 
 namespace __HAL {
@@ -244,7 +253,7 @@ namespace HAL
   inline int16_t  getAdcVoltage(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getAnaloginCheckNr(rb_channel));
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return (i16_temp * 30); }
+     return (i16_temp * MAX_ADC_V); }
   /**
     get the MEDIUM of measured voltage value of a channel in [mV]
     @param rb_channel measured channel
@@ -253,7 +262,7 @@ namespace HAL
   inline int16_t  getAdcMeanVoltage(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getAnaloginCheckNr(rb_channel));
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return (i16_temp * 30); }
+     return (i16_temp * MAX_ADC_V); }
   /**
     get the measured current value of a channel in [uA]
     @param rb_channel measured channel
