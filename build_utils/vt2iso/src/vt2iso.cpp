@@ -2221,7 +2221,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 setAttributeValue(attrOffTime_duration);
               }
               // Need check for all attributes being present for this command -bac
-              sprintf(commandMessage, "0xA3, %d, %d,%d, %d,%d, %d,%d", atoi(attrString [attrNumber_of_repetitions]),  MACRO_16bitToLE(idOrName_toi(attrString [attrFrequency], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrOnTime_duration], /*macro?*/false)),MACRO_16bitToLE(idOrName_toi(attrString [attrOffTime_duration], /*macro?*/false)));
+              sprintf(commandMessage, "0xA3, %d, %d,%d, %d,%d, %d,%d", atoi(attrString [attrNumber_of_repetitions]), MACRO_16bitToLE(atoi(attrString [attrFrequency])), MACRO_16bitToLE(atoi(attrString [attrOnTime_duration])), MACRO_16bitToLE(atoi(attrString [attrOffTime_duration])));
               objChildCommands++;
             }
             break;
@@ -2300,7 +2300,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 setAttributeValue(attrY_pos);
               }
               // Need check for all attributes being present for this command -bac
-              sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
+              sprintf(commandMessage, "0xB4, %d, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrParent_objectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrX_pos])), MACRO_16bitToLE(atoi(attrString [attrY_pos])));
               objChildCommands++;
             }
             break;
@@ -2326,7 +2326,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 setAttributeValue(attrNew_height);
               }
               // Need check for all attributes being present for this command -bac
-              sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_width], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_height], /*macro?*/false)));
+              sprintf(commandMessage, "0xA6, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])));
               objChildCommands++;
             }
             break;
@@ -2350,7 +2350,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 setAttributeValue(attrNew_background_colour);
               }
               // Need check for all attributes being present for this command -bac
-              sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrNew_background_colour]));
+              sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), colortoi(attrString [attrNew_background_colour]));
               objChildCommands++;
             }
             break;
@@ -2443,7 +2443,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 setAttributeValue(attrLine_direction);
               }
               // Need check for all attributes being present for this command -bac
-              sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_width], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_height], /*macro?*/false)), atoi(attrString [attrLine_direction]));
+              sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])), atoi(attrString [attrLine_direction]));
 
               objChildCommands++;
             }
@@ -2474,7 +2474,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 setAttributeValue(attrFont_style);
               }
               // Need check for all attributes being present for this command -bac
-              sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFont_colour]), atoi(attrString [attrFont_size]), atoi(attrString [attrFont_type]), atoi(attrString [attrFont_style]));
+              sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), colortoi(attrString [attrFont_colour]), fontsizetoi(attrString [attrFont_size]), atoi(attrString [attrFont_type]), fontstyletoi(attrString [attrFont_style]));
 
               objChildCommands++;
             }
@@ -2503,7 +2503,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 setAttributeValue(attrLine_art);
               }
               // Need check for all attributes being present for this command -bac
-              sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(atoi(attrString [attrLine_art])));
+              sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), colortoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(linearttoi(attrString [attrLine_art])));
 
               objChildCommands++;
             }
@@ -2533,7 +2533,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 setAttributeValue(attrFill_pattern);
               }
               // Need check for all attributes being present for this command -bac
-              sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrFill_type]), atoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
+              sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), filltypetoi(attrString [attrFill_type]), colortoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
 
               objChildCommands++;
             }
@@ -2637,7 +2637,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 setAttributeValue(attrNew_priority);
               }
               // Need check for all attributes being present for this command -bac
-              sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), atoi(attrString [attrNew_priority]));
+              sprintf(commandMessage, "0xB0, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE(idOrName_toi(attrString [attrObjectID], /*macro?*/false)), prioritytoi(attrString [attrNew_priority]));
 
               objChildCommands++;
             }
