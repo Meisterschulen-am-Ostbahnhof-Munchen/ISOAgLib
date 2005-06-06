@@ -96,15 +96,14 @@ int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *da
 		#if 0
 		std::cerr << hex << "RS232 Receive Handler: #";
 		#endif
-		std::cerr << "\nRS232 Empfang:";
+//		std::cerr << "\nRS232 Empfang:";
 		for ( uint16_t ind = 0; ind < size; ind++ ) {
 			c_buffer[testInd].push_back( data[ind] );
-			std::cerr << data[ind];
-			#if 0
-			std::cerr << "0x" << int ( data[ind] ) << ", ";
-			#endif
+//			std::cerr << data[ind];
+//			std::cerr << "0x" << int ( data[ind] ) << ", ";
 		}
-		std::cerr << std::endl;
+//		std::cerr << std::endl;
+//		#endif
 		#if 0
 		std::cerr << "#" << dec << std::endl;
 		#endif
