@@ -190,6 +190,7 @@ public:
 
   /**
     ==> OBSOLETE, because now all pkg-data is STATIC!
+    ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     assign operator to insert informations from one CANPkg_c into another
@@ -199,8 +200,8 @@ public:
     @param rrefc_right reference to the source CANPkg_c on the right
     @return reference to the source CANPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  */
   virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right);
+  */
 
   /**
     put data into given reference to BIOS related data structure with data, len
@@ -213,22 +214,25 @@ public:
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
   /**
     ==> OBSOLETE, because now all pkg-data is STATIC!
+    ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     compare for equality with other CANPkg
     @param rrefc_cmp reference to the to be compared CANPkg
     @return true -> both CANPkg_c have the same data
-  */
   bool operator==(const CANPkg_c& rrefc_cmp) const;
+  */
+  
   /**
     ==> OBSOLETE, because now all pkg-data is STATIC!
+    ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     compare for difference to other CANPkg
     @param rrefc_cmp reference to the to be compared CANPkg
     @return true -> both CANPkg_c have different data
-  */
   bool operator!=(const CANPkg_c& rrefc_cmp) const;
+  */
 
 //protected: // Protected attributes
 public:

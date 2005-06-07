@@ -108,6 +108,7 @@ public:
   ~ISOSystemPkg_c();
   /**
     ==> OBSOLETE, because now all can-pkg-data is STATIC!
+    ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
     assign operator to insert informations from one CANPkg_c into another
@@ -117,8 +118,8 @@ public:
     @param rrefc_right reference to the source CANPkg_c on the right
     @return reference to the source CANPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  */
   virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right) { return CANPkg_c::operator=(rrefc_right);};
+  */
 
   /* ************************** */
   /* ***retreiving of values*** */
