@@ -740,7 +740,8 @@ bool MultiSend_c::processMsg(){
           }
           else
           {
-            /** @todo to implement for uint8[] sending case! -achim says this should be handled somewhere? */
+            // nothing to do here, as "i32_DC = read_DC();" from above sets the "i32_DC" to where it wants data
+            // in the case of "uint8_t[]" random access is possible, so that should be enough in my opinion --mjw
           }
           // update NextPacketNumberToSend!
           ui32_lastNextPacketNumberToSend = ui32_pkgCTSd;
