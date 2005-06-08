@@ -146,7 +146,7 @@ SendUpload_c::SendUpload_c (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
   mssObjectString=NULL;
   vec_uploadBuffer.reserve (rui32_bufferSize);
 
-  int i=0;
+  uint32_t i=0;
   for (; i < rui32_bufferSize; i++) {
     vec_uploadBuffer.push_back (*rpui8_buffer);
     rpui8_buffer++;
@@ -1104,8 +1104,8 @@ bool ISOTerminal_c::processMsg()
               en_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
               ui32_uploadTimeout = DEF_TimeOut_StoreVersion;
               ui32_uploadTimestamp = HAL::getTime();
-            } 
-            else 
+            }
+            else
 #endif // NO_STORE_VERSION
             {
               // Finalize now!
