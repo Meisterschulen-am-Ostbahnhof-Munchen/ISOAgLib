@@ -334,9 +334,12 @@ bool MultiSend_c::sendIsoTargetIntern(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM
   setDelay(scui8_isoCanPkgDelay);
   b_try = 1;
   en_sendState = SendRts;
-  en_sendSuccess = Running;
-  pen_sendSuccessNotify = rpen_sendSuccessNotify;
-  *pen_sendSuccessNotify = Running;
+  if (rpen_sendSuccessNotify) {
+    pen_sendSuccessNotify = rpen_sendSuccessNotify;
+  } else {
+    pen_sendSuccessNotify = &en_sendSuccess; // if no notify wished, set to intern var, so no NULL-write happens!
+  }
+  *pen_sendSuccessNotify = en_sendSuccess = Running;
   pc_mss = rpc_mss;
 
   // now call timeEvent for first send action
@@ -484,8 +487,11 @@ bool MultiSend_c::timeEvent( void )
         case IsoTarget:
           if (isDelayEnd(i32_time, 1250))
           { // abort send
+            abortSend();
+#if 0
             setSendStateIdle();
             *pen_sendSuccessNotify = en_sendSuccess = SendAborted;
+#endif
           }
           return true;
       }
@@ -499,8 +505,11 @@ bool MultiSend_c::timeEvent( void )
         case IsoBroadcast: // not usual - but to avoid compiler warning
           if (isDelayEnd(i32_time, 1250))
           { // abort send
+            abortSend();
+#if 0
             setSendStateIdle();
             *pen_sendSuccessNotify = en_sendSuccess = SendAborted;
+#endif
           }
           return true;
         case Din:
@@ -522,8 +531,11 @@ bool MultiSend_c::timeEvent( void )
     case SendPauseTillCts:
       if (isDelayEnd(i32_time, 500))
       { // abort send
+        abortSend();
+#if 0
         setSendStateIdle();
         *pen_sendSuccessNotify = en_sendSuccess = SendAborted;
+#endif
       }
       break;
 #if 0

@@ -1,0 +1,975 @@
+/***************************************************************************
+                          multireceive_c.cpp - Implementation of (Extended-)Transport-Protocol
+                          -------------------
+    class                : ::MultiReceive_c
+    project              : IsoAgLib
+    begin                : Tue Jan 25 17:40:11 2005
+    copyright            : (C) 2005 by Martin Wodok (m.wodok@osb-ag.de)
+    email                : m.wodok@osb-ag.de
+    $Id: multireceive_c.cpp 1258 2005-06-07 10:14:39Z wodok $
+
+    $Log$
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ * This file is part of the "IsoAgLib", an object oriented program library *
+ * to serve as a software layer between application specific program and   *
+ * communication protocol details. By providing simple function calls for  *
+ * jobs like starting a measuring program for a process data value on a    *
+ * remote ECU, the main program has not to deal with single CAN telegram   *
+ * formatting. This way communication problems between ECU's which use     *
+ * this library should be prevented.                                       *
+ * Everybody and every company is invited to use this library to make a    *
+ * working plug and play standard out of the printed protocol standard.    *
+ *                                                                         *
+ * Copyright (C) 2000 - 2005 Dipl.-Inform. Achim Spangler                  *
+ *                                                                         *
+ * The IsoAgLib is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU General Public License as published          *
+ * by the Free Software Foundation; either version 2 of the License, or    *
+ * (at your option) any later version.                                     *
+ *                                                                         *
+ * This library is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       *
+ * General Public License for more details.                                *
+ *                                                                         *
+ * You should have received a copy of the GNU General Public License       *
+ * along with IsoAgLib; if not, write to the Free Software Foundation,     *
+ * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
+ *                                                                         *
+ * As a special exception, if other files instantiate templates or use     *
+ * macros or inline functions from this file, or you compile this file and *
+ * link it with other works to produce a work based on this file, this file*
+ * does not by itself cause the resulting work to be covered by the GNU    *
+ * General Public License. However the source code for this file must still*
+ * be made available in accordance with section (3) of the                 *
+ * GNU General Public License.                                             *
+ *                                                                         *
+ * This exception does not invalidate any other reasons why a work based on*
+ * this file might be covered by the GNU General Public License.           *
+ *                                                                         *
+ * Alternative licenses for IsoAgLib may be arranged by contacting         *
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
+
+ /**************************************************************************
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
+ * AS A RULE: Use only classes with names beginning with small letter :i:  *
+ ***************************************************************************/
+
+#ifdef DEBUG
+#include <iostream>
+#endif
+
+#include "multireceive_c.h"
+#include "../multireceiveclient_c.h"
+
+// IsoAgLib
+#include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
+#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/driver/can/impl/filterbox_c.h>
+
+// helper macros
+#define MACRO_pgnFormatOfPGN(mpPgn)     ((mpPgn>>8) & 0xFF)
+#define MACRO_BYTEORDER_toLoMidHi(a)    ((a) & 0xFF), (((a) >> 8) & 0xFF), (((a) >> 16) & 0xFF)
+#define MACRO_BYTEORDER_toLoMidMidHi(a) ((a) & 0xFF), (((a) >> 8) & 0xFF), (((a) >> 16) & 0xFF), (((a) >> 24) & 0xFF)
+#define MACRO_BYTEORDER_toLoHi(a)       ((a) & 0xFF), (((a) >> 8) & 0xFF)
+
+
+
+// Begin Namespace __IsoAgLib
+namespace __IsoAgLib {
+
+
+
+// helper consts
+static const uint8_t scui8_tpPriority=6;
+
+
+/** C-style function, to get access to the unique MultiReceive_c singleton instance */
+MultiReceive_c& getMultiReceiveInstance( void )
+{
+  static MultiReceive_c& c_multiReceive = MultiReceive_c::instance();
+  return c_multiReceive;
+};
+
+
+
+// //////////////////////////////// +X2C Operation 5653 : ~MultiReceive_c
+MultiReceive_c::~MultiReceive_c()
+{ // ~X2C
+  close();
+} // -X2C
+
+
+void
+MultiReceive_c::notifyError (IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent, uint8_t rui8_multiReceiveErrorCode)
+{
+  if (rc_streamIdent.getDa() == 0xFF)
+  { // BAM
+    for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
+    { // // inform all clients that want Broadcast-TP-Messages
+      MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
+      if (curClientWrapper.b_alsoBroadcast) {
+        curClientWrapper.pc_client->notificationOnMultiReceiveError (rc_streamIdent, rui8_multiReceiveErrorCode, false);
+      }
+    }
+  }
+  else
+  { // really destin specific
+    if (getClient(rc_streamIdent)) 
+    {
+      getClient(rc_streamIdent)->notificationOnMultiReceiveError (rc_streamIdent, rui8_multiReceiveErrorCode, false);
+    }
+    else
+    {
+      // global notify for clients who want notification on global errors (which noone else can take ;-))
+      for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
+      { // // inform all clients that want Broadcast-TP-Messages
+        MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
+        if (curClientWrapper.b_alsoGlobalErrors) {
+          curClientWrapper.pc_client->notificationOnMultiReceiveError (rc_streamIdent, rui8_multiReceiveErrorCode, true);
+        }
+      }
+    }
+  }
+}
+
+
+
+// //////////////////////////////// +X2C Operation 193 : processMsg
+//! @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+bool
+MultiReceive_c::processMsg()
+{ // ~X2C
+  #define MACRO_Define_t_streamType_and_checkInvalid \
+    t_streamType = (StreamType_t) (((b_eCmd) ? 0x1:0) + ((b_ePgn) ? 0x2:0)); \
+    if (t_streamType == StreamSpgnEcmdINVALID) { \
+      /* this type is invalid - using Extended commands on Standard-TP PGN */ \
+      /* answer with ConnAbort! */ \
+      notifyError(c_tmpRSI, 1000); \
+      sendConnAbort (t_streamType, c_tmpRSI); \
+      return true; /* no other CAN-Customer should be interested in that one */\
+    }
+
+  bool b_ePgn=false;
+  bool b_eCmd=false;
+  StreamType_t t_streamType; // will be set before used, see MACRO_t_streamType_checkInvalid
+  uint32_t ui32_msgSize;
+  uint32_t ui32_pgn;
+
+  // Always get sure that the can-pkg from "data()" is NOT written to unless it's FULLY PARSED!
+
+  uint8_t ui8_pgnFormat = MACRO_pgnFormatOfPGN(data().isoPgn()); // e.g. 0xC826 >> 8 == 0xC8
+  uint8_t ui8_dataByte0 = data().getUint8Data(0);
+//uint8_t ui8_da = MACRO_pgnSpecificOfPGN(data().isoPgn());
+//uint8_t ui8_sa = data().isoSa();
+  
+  ui32_pgn = data().getUint8Data(5) | (data().getUint8Data(6) << 8) | (data().getUint8Data(7) << 16);
+  IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (ui32_pgn, data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
+
+  switch (ui8_pgnFormat) {
+    case MACRO_pgnFormatOfPGN(ETP_CONN_MANAGE_PGN):
+      b_ePgn = true; // break left out intentionally!
+    case MACRO_pgnFormatOfPGN(TP_CONN_MANAGE_PGN):
+      #ifdef DEBUG
+        std::cout << "\n {CM: " << data().time() << "} ";
+      #endif
+      
+     {// to allow local variables
+      switch (ui8_dataByte0)
+      {
+
+        case 0x14: // decimal 20
+          b_eCmd=true; // break left out intentionally
+
+        case 0x10: // decimal 16
+           /////////////////////////
+          /// RTS (Request To Send)
+          MACRO_Define_t_streamType_and_checkInvalid
+
+          { // to allow local variables!
+
+            // RTS from an SA that has already a Stream running?
+            Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/);
+            if (pc_streamFound != NULL) {
+              // abort, already running stream is interrupted by RTS
+              notifyError(c_tmpRSI, 1001);
+              connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
+              #ifdef DEBUG
+              std::cout << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
+              #endif
+              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+            }
+
+            // otherwise it is a new stream, but before check from the client if he can take it (size is okay)
+
+            // Get Message Size
+            if (ui8_dataByte0 == 0x14) ui32_msgSize = data().getUint32Data(1);
+            else /* 0x10, decimal 16*/ ui32_msgSize = data().getUint16Data(1);
+
+            // Calculate Number of Packets (only for TP-#Pkg-Check!)
+            uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
+            // check for TP-RTS if pkg-count matches the calculated AND if size > 0
+            if (((ui8_dataByte0 == 0x10) && (data().getUint8Data(3) != ui32_numPkg))
+               || (ui32_msgSize < 9)) {
+              // This handles both
+              notifyError(c_tmpRSI, 1002);
+              sendConnAbort (t_streamType, c_tmpRSI);
+              #ifdef DEBUG
+              std::cout << "\n*** ConnectionAbort due to (Wrong Pkg Number || msgSize < 9) ***\n";
+              #endif
+              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+            }
+
+            // First of all, is there a client that handles those (E)TP-Messages?
+            IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(c_tmpRSI);
+            if (pc_clientFound == NULL) {
+              // There's no client registered to take this PGN->thisAddress! */
+              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+            }
+
+            // Send the Request To Send (RTS) to the client - Does he give us a Clear To Send (CTS) ?
+            if (!pc_clientFound->reactOnStreamStart (c_tmpRSI, ui32_msgSize)) {
+              // Client rejects this stream!
+              notifyError(c_tmpRSI, 1003);
+              sendConnAbort (t_streamType, c_tmpRSI);
+              #ifdef DEBUG
+              std::cout << "\n*** ConnectionAbort due to Client Rejecting the stream ***\n";
+              #endif
+              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+            }
+            // else: Client accepts this stream, so create a representation of the stream NOW -
+            // - further handling is done in "timeEvent()" now!*/
+            createStream(t_streamType, c_tmpRSI, ui32_msgSize);
+            // the constructor above sets the Stream to "AwaitCtsSend" and "StreamRunning"
+            // so next timeEvent will send out the CTS and set the pkgRemainingInBurst to a correct value!
+
+          } // end local variables allowment!
+          return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+
+
+        case 0x16: // decimal 22
+          b_eCmd=true;
+           ////////////////////////////
+          /// DPO (Data Packet Offset)
+          MACRO_Define_t_streamType_and_checkInvalid
+
+          { // to allow local variables!
+            IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (ui32_pgn, data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
+
+            Stream_c* pc_streamFound = getStream (c_tmpRSI);
+
+            if ((pc_streamFound == NULL) || (!b_ePgn)) {
+              #ifdef DEBUG
+                std::cout << "\n\n DPO for an unknown/unopened or Standard-TP stream!!\n ";
+              #endif
+              notifyError(c_tmpRSI, 1004);
+              sendConnAbort (t_streamType, c_tmpRSI); // according to Brad: ConnAbort
+              return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
+            }
+
+            // try to set the DPO in this stream - if it's not allowed right now (or timedout), this DPO was not correct
+            if (! (pc_streamFound->setDataPageOffset (data().getUint8Data(2) | (data().getUint8Data(3) << 8) | (data().getUint8Data(4) << 16)))) {
+              notifyError(c_tmpRSI, 1005);
+              connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
+              #ifdef DEBUG
+              std::cout << "\n*** ConnectionAbort due to DPO at wrong 't_awaitStep' - was NOT AwaitDpo ***\n";
+              #endif
+              return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
+            }
+          } // end local variables allowment!
+          return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
+
+
+
+
+        case 0x20: // decimal 32
+           ////////////////////////////////////
+          /// BAM (Broadcast Announce Message)
+          MACRO_Define_t_streamType_and_checkInvalid
+          
+          { // to allow local variables!
+            // Is BAM directed to 0xFF (global) ?
+            if (data().isoPs() != 0xFF)
+            { // we do NOT take BAMs that are NOT directed to the GLOBAL (255) address
+              notifyError(c_tmpRSI, 1012);
+              #ifdef DEBUG
+              std::cout << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) data().isoPs() <<" ***\n";
+              #endif
+              return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
+            }
+            
+            // From now on it is assured that BAM is directed to 0xFF (255)
+            
+            // BAM from an SA that has already a Stream running?
+            Stream_c* pc_streamFound = getStream (data().isoSa(), 255 /* 0xFF, BAM is always to GLOBAL */);
+            if (pc_streamFound != NULL) {
+              // abort already running stream is interrupted by RTS
+              notifyError(c_tmpRSI, 1013);
+              removeStream (pc_streamFound);
+              #ifdef DEBUG
+              std::cout << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
+              #endif
+              // return true;
+              // ^^^ do NOT return, if the old BAM is "aborted" due to this BAM, try with this BAM now...
+            }
+            
+            ui32_msgSize = data().getUint16Data(1);
+          
+            uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
+            // check for TP-RTS if pkg-count matches the calculated AND if size > 0
+            if ((data().getUint8Data(3) != ui32_numPkg) || (ui32_msgSize < 9))
+            { // This handles both
+              notifyError(c_tmpRSI, 1013);
+              #ifdef DEBUG
+              std::cout << "\n*** BAM not taken due to (Wrong Pkg Number || msgSize < 9) ***\n";
+              #endif
+              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+            }
+            
+            // NO client checks as in RTS-case above, as it's for ALL clients, they HAVE to take it =)
+              
+            // "Stream_c"'s constructor will set awaitStep to "awaitData" and timeOut to 250ms!
+            createStream(t_streamType, c_tmpRSI, ui32_msgSize);
+          }
+          
+          return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
+
+
+
+        case 0xFF: // decimal 255
+           ////////////////////////////////
+          /// ConnAbort (Connection Abort)
+          // same for TP and ETP
+          MACRO_Define_t_streamType_and_checkInvalid
+
+          { // to allow local variables!
+            // do NOT allow a BAM to be aborted (by the sender himself).. doesn't make no sense anyway...
+            if (c_tmpRSI.getDa() == 0xFF) return true; // this ConnAbort is not of interest for anybody else...
+            
+            Stream_c* pc_streamFound = getStream (c_tmpRSI);
+
+            if (pc_streamFound) {
+              notifyError (c_tmpRSI, 1007);
+              connAbortTellClientRemoveStream (false /* do not send connAbort-Msg */, pc_streamFound);
+              // here TRUE could be returned, but for unknown safety just let both (MS/MR) process ConnAbort!
+              // Also it "could" happen that MultiReceive & MultiSend are running parallel, so this ConnAbort would be for both!
+            }
+            else
+            {
+              // ignore an incoming ConnAbort for an unopened/unknown stream!
+            }
+          } // end local variables allowment!
+          return false; // ConnAbort is also of interest for MultiSend!!
+
+
+
+        case 0x15: // decimal 21
+        case 0x11: // decimal 17
+           ////////////////////////
+          /// CTS (for MultiSend)
+          // ignore here and simply pass on to MultiSend (using return false)
+          return false;
+          
+        default:
+          #ifdef DEBUG
+            std::cout << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!\n";
+          #endif
+          t_streamType = (StreamType_t) ((b_ePgn) ? 0x2:0); // only care for ePgn or not for ConnAbort
+          notifyError(c_tmpRSI, 1008);
+          sendConnAbort (t_streamType, c_tmpRSI);
+          return true;
+      }
+     }
+     break;
+
+
+    case MACRO_pgnFormatOfPGN(ETP_DATA_TRANSFER_PGN):
+      b_ePgn = true; // break left out intentionally!
+    case MACRO_pgnFormatOfPGN(TP_DATA_TRANSFER_PGN):
+      #ifdef DEBUG
+        std::cout << "{DATA: " << data().time() << "} "; fflush(0);
+      #endif
+       
+       /////////////////////////
+      /// Data Transfer (DATA)
+      { // to allow local variables!
+        // Check if there's already a Stream active from this SA->DA pair (it should ;-)
+        Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/);
+        if (pc_streamFound == NULL) {
+          // There's no stream running for this multi-packet-DATA!, this [DATA] MAY BE for MultiSend, so simply return false!
+          #ifdef DEBUG
+          std::cout << "\n*** (E)TP.DATA, but no open stream! ignoring that... ***\n";
+          #endif
+          notifyError(c_tmpRSI, 1011);
+          return false;
+        }
+        // From this point on the SA/DA pair matches, so that we can return true 
+        if (!(pc_streamFound->handleDataPacket(data().pb_data))) {
+          // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
+          if (data().isoPs() == 0xFF)
+          {
+            notifyError(c_tmpRSI, 1014);
+            removeStream (pc_streamFound);
+            #ifdef DEBUG
+            std::cout << "\n*** BAM sequence error ***\n";
+            #endif
+          } else {
+            notifyError(c_tmpRSI, 1009);
+            connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
+            #ifdef DEBUG
+            std::cout << "\n*** ConnectionAbort due to wrong DATA, see msg before! ***\n";
+            #endif
+          }
+        }
+        // further handling (send next CTS) is moved to timeEvent, so we don't get confused with CM/DATA PGNs, as they come very fast!
+
+        // Stream is now set to either
+        // -- StreamFinished -or- AwaitCtsSend
+        // OR REMOVED!
+
+      } // end local variables allowment!
+      return true; // if code execution comes to here, then the right SA/DA Pair was there so it WAS for MultiReceive, so we can return true safely!
+
+    default:
+      return false; // PGN not managed here, so return false so that other CAN-Customers will "processMsg" them!
+  }
+  
+  // This point should NOT be reached anyway! all "case" statements 
+  return false;
+} // -X2C
+
+
+
+// //////////////////////////////// +X2C Operation 735 : registerClient
+//! Parameter:
+//! @param rui16_pgn:
+//! @param rpc_client:
+void
+MultiReceive_c::registerClient(uint16_t rui16_pgn, uint8_t rui8_clientAddress,
+                               IsoAgLib::MultiReceiveClient_c* rpc_client, bool rb_alsoBroadcast, bool rb_alsoGlobalErrors)
+{ // ~X2C
+  std::list<MultiReceiveClientWrapper_s>::iterator list_clients_i = list_clients.begin();
+  // Already in list?
+  while (list_clients_i != list_clients.end()) {
+    MultiReceiveClientWrapper_s iterMRCW = *list_clients_i;
+    if ((iterMRCW.pc_client == rpc_client) && (iterMRCW.ui8_clientAddress == rui8_clientAddress) && (iterMRCW.ui16_pgn == rui16_pgn))
+      return; // Already in list!!
+    list_clients_i++;
+  }
+  // Not already in list, so insert!
+  list_clients.push_back(MultiReceiveClientWrapper_s(rpc_client, rui8_clientAddress, rui16_pgn, rb_alsoBroadcast, rb_alsoGlobalErrors) );
+} // -X2C
+
+
+// //////////////////////////////// +X2C Operation 845 : createStream
+//! Parameter:
+//! @param rc_streamIdent:
+Stream_c*
+MultiReceive_c::createStream(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent, uint32_t rui32_msgSize)
+{ // ~X2C
+  // check if not already there?? do this here (also) for safety reasons!
+  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+       i_list_streams != list_streams.end();
+       i_list_streams++) {
+    DEF_Stream_c_IMPL* curStream = &*i_list_streams;
+    if (curStream->getIdent() == rc_streamIdent) // .matchRSI (rc_streamIdent)
+      return NULL;
+  }
+
+  // Not there, so create!
+  list_streams.push_back (DEF_Stream_c_IMPL (rt_streamType, rc_streamIdent, rui32_msgSize));
+  list_streams.back().immediateInitAfterConstruction();
+  return &list_streams.back();
+} // -X2C
+
+
+
+// //////////////////////////////// +X2C Operation 849 : getStream (the public one)
+//! Parameter:
+//! @param rc_streamIdent:
+Stream_c*
+MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
+{ // ~X2C
+  std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  while (i_list_streams != list_streams.end()) {
+    DEF_Stream_c_IMPL* curStream = &*i_list_streams;
+    if (curStream->getIdent() == rc_streamIdent) // .matchRSI (rc_streamIdent)
+      return curStream;
+    i_list_streams++;
+  }
+  return NULL;
+} // -X2C
+
+
+//  Operation: getStream (private!)
+//! Parameter:
+//! @param rc_streamIdent:
+//! @return NULL for "doesn't exist", otherwise valid "DEF_Stream_c_IMPL*"
+Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da)
+{
+  std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  while (i_list_streams != list_streams.end()) {
+    DEF_Stream_c_IMPL* curStream = &*i_list_streams;
+    if (curStream->getIdent().matchSaDa (sa, da))
+      return curStream;
+    i_list_streams++;
+  }
+  return NULL;
+}
+
+// //////////////////////////////// +X2C Operation : removeStream
+//! Parameter:
+//! @param rpc_stream:
+//! Only removes the stream from list, won't call any clients or alike...
+void
+MultiReceive_c::removeStream(Stream_c* rpc_stream)
+{ // ~X2C
+  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+       i_list_streams != list_streams.end();
+       i_list_streams++) {
+    if (rpc_stream == (&*i_list_streams)) {
+      list_streams.erase (i_list_streams);
+      return;
+    }
+  }
+} // -X2C
+
+
+
+// //////////////////////////////// +X2C Operation : processStreamDataChunk_ofMatchingClient
+//! Parameter:
+bool /* keep it? */
+MultiReceive_c::processStreamDataChunk_ofMatchingClient(Stream_c* pc_stream, bool b_lastChunk)
+{
+  bool b_firstChunk = false;
+  if (pc_stream->getBurstNumber() == 1) {
+    // For first chunk processing, fill in the "ui8_streamFirstByte" field into the stream, so that the Client will now and later know what type of stream it is and how to handle the later Chunks...
+    uint8_t ui8_firstByte;
+    *pc_stream >> ui8_firstByte;
+    pc_stream->setFirstByte(ui8_firstByte);
+    b_firstChunk = true;
+  }
+
+  // There must be a registered client, we can assume that here!
+  bool b_keepIt = getClient (pc_stream->getIdent())->processPartStreamDataChunk (pc_stream, b_firstChunk, b_lastChunk);
+  if (!b_lastChunk) return false; // result doesn't care if it's not the last chunk
+  return b_keepIt;
+}
+
+// //////////////////////////////// +X2C Operation 2851 : timeEvent
+//! Parameter:
+//! @param ri32_endTime:
+bool
+MultiReceive_c::timeEvent( void )
+{ // ~X2C
+  std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+  while(i_list_streams != list_streams.end())
+  {
+    DEF_Stream_c_IMPL* pc_stream = &*i_list_streams;
+    // BEGIN timeEvent every Stream_c
+
+    // Check how to proceed with this Stream
+    if (pc_stream->getStreamingState() == StreamFinishedJustKept)
+    { // those streams are only stored for later processing, do NOTHING with them!
+      i_list_streams++;
+      continue;
+    }
+    else if (pc_stream->getStreamingState() == StreamFinished)
+    {
+      if (pc_stream->getIdent().getDa() == 0xFF)
+      { // BAM
+        for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
+        { // // inform all clients that want Broadcast-TP-Messages
+          MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
+          if (curClientWrapper.b_alsoBroadcast) {
+            curClientWrapper.pc_client->processPartStreamDataChunk (pc_stream, /*firstChunk*/true/*it's only one, don't care*/, /*b_lastChunk*/true); // don't care about result, as BAMs will NOT be kept anyway!
+          }
+        }
+        // and DO NOT continue, so the stream will be removed, as BAM-streams can NOT be kept!
+      }
+      else
+      { // destination specific
+        #ifdef DEBUG
+          std::cout << "\nSending End of Message Acknowledge out!\n";
+        #endif
+        sendEndOfMessageAck(pc_stream);
+  
+        if (processStreamDataChunk_ofMatchingClient(pc_stream, true))
+        { // keep stream (in "FinishedJustKept" kinda state
+          pc_stream->setStreamFinishedJustKept();
+          i_list_streams++;
+          continue;
+        }
+      }
+      
+      // if not "continue"d, remove Stream
+      i_list_streams = list_streams.erase (i_list_streams);
+      continue;
+    }
+    else if (pc_stream->getNextComing() == AwaitCtsSend)
+    { // this case shouldn't happen for BAM
+      #ifdef DEBUG
+        std::cout << "Processing Burst\n";
+      #endif
+      // CTS after Burst? -> process last Burst!
+      if (pc_stream->getBurstNumber() > 0) { // 0 means that no CTS has been sent, the first incoming burst is nr. 1 !
+        processStreamDataChunk_ofMatchingClient(pc_stream, false);
+        // don't care for result here!
+      }
+      #ifdef DEBUG
+        std::cout << "Send CTS to get first/next burst!\n";
+      #endif
+      sendCurrentCts (pc_stream); // will increase the burstCurrent
+    }
+
+    /// TimeOut-Checks
+    if (pc_stream->timedOut())
+    {
+      #ifdef DEBUG
+        std::cout << "\n *** Stream with SA " << (uint16_t) pc_stream->getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) pc_stream->getNextComing() << " ***\n";
+      #endif
+      notifyError(pc_stream->getIdent(), 1010);
+      connAbortTellClient (/* send Out ConnAbort Msg*/ true, pc_stream);
+      // remove Stream
+      i_list_streams = list_streams.erase (i_list_streams);
+      continue;
+    }
+    
+    // END timeEvent every Stream_c
+    i_list_streams++; // standard weiterschaltung, im "erase" fall wird "continue" gemacht!
+  }
+  return true;
+} // -X2C
+
+
+Stream_c*
+MultiReceive_c::getFinishedJustKeptStream (uint8_t rui8_forSa)
+{
+  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin(); i_list_streams != list_streams.end(); i_list_streams++)
+  {
+    DEF_Stream_c_IMPL* pc_stream = &*i_list_streams;
+    if ( (pc_stream->getStreamingState() == StreamFinishedJustKept)
+         && 
+         (pc_stream->getIdent().getDa() == rui8_forSa))
+    {
+      return &(*i_list_streams);
+    }
+  }
+  return NULL;
+}
+
+
+
+// //////////////////////////////// +X2C Operation 2853 : sendCurrentCts
+//! Parameter:
+//! @param rpc_stream:
+void
+MultiReceive_c::sendCurrentCts(DEF_Stream_c_IMPL* rpc_stream)
+{ // ~X2C
+  // This function actually IS only called if in state "AwaitCtsSend" !
+  
+  /** may also be 0, meaning HOLD CONNECTION OPEN, but we can handle multiple streams, can't we? ;-) */
+
+  uint8_t ui8_pkgsToExpect = rpc_stream->expectBurst(Stream_c::sui8_pkgBurst); // we wish e.g. 20 pkgs (as always), but there're only 6 more missing to complete the stream!
+  uint8_t pgn, cmdByte;
+
+  if (rpc_stream->getStreamType() & StreamEcmdMASK) cmdByte = 0x15 /* decimal: 21 */;
+  else /* -------------------------------------- */ cmdByte = 0x11 /* decimal: 17 */;
+  if (rpc_stream->getStreamType() & StreamEpgnMASK) pgn = ETP_CONN_MANAGE_PGN >> 8;
+  else /* -------------------------------------- */ pgn = TP_CONN_MANAGE_PGN >> 8;
+
+  c_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ rpc_stream->getIdent().getSa(), /* src: */ rpc_stream->getIdent().getDa(),
+                        cmdByte, ui8_pkgsToExpect, MACRO_BYTEORDER_toLoMidHi(rpc_stream->getPkgNextToWrite()), MACRO_BYTEORDER_toLoMidHi(rpc_stream->getIdent().getPgn()));
+  __IsoAgLib::getCanInstance4Comm() << c_data;
+} // -X2C
+
+
+
+// //////////////////////////////// +X2C Operation : sendConnAbort
+//! Parameter:
+//! @param rpc_stream:
+void
+MultiReceive_c::sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi)
+{ // ~X2C
+  uint8_t pgn = (rt_streamType & StreamEpgnMASK) ? (ETP_CONN_MANAGE_PGN >> 8) : (TP_CONN_MANAGE_PGN >> 8);
+
+  c_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ rc_rsi.getSa(), /* src: */ rc_rsi.getDa(),
+                        0xFF /* decimal: 255 */, 0xFF,0xFF,0xFF,0xFF, MACRO_BYTEORDER_toLoMidHi(rc_rsi.getPgn()));
+  __IsoAgLib::getCanInstance4Comm() << c_data;
+} // -X2C
+
+
+void
+MultiReceive_c::connAbortTellClient(bool rb_sendConnAbort, Stream_c* rpc_stream)
+{
+  if (rb_sendConnAbort)
+    sendConnAbort(rpc_stream->getStreamType(), rpc_stream->getIdent());
+
+  // search Client and tell about connAbort
+  IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(rpc_stream->getIdent());
+  if (pc_clientFound) {
+    pc_clientFound->reactOnAbort (rpc_stream->getIdent());
+  }
+}
+
+
+// //////////////////////////////// +X2C Operation 2853 : connAbortTellClientRemoveStream
+//! Parameter:
+//! @param rb_sendConnAbort: send out a connAbort-Msg? (Do this only for receiver-initiated aborts)
+//! @param rpc_stream:
+//! Will send out connAbort (if requested), inform the client via "reactOnAbort" and close/remove the stream from list
+void
+MultiReceive_c::connAbortTellClientRemoveStream(bool rb_sendConnAbort, Stream_c* rpc_stream)
+{ // ~X2C
+  connAbortTellClient (rb_sendConnAbort, rpc_stream);
+
+  removeStream(rpc_stream);
+} // -X2C
+
+
+
+// //////////////////////////////// +X2C Operation : sendEndOfMessageAck
+//! Parameter:
+//! @param rpc_stream:
+void
+MultiReceive_c::sendEndOfMessageAck(DEF_Stream_c_IMPL* rpc_stream)
+{ // ~X2C
+  // NO Check here, this function IS called on purpose and WILL send EoMAck and CLOSE the Stream!
+  uint16_t pgn;
+  if (rpc_stream->getStreamType() & StreamEpgnMASK) pgn = ETP_CONN_MANAGE_PGN >> 8;
+  else /* -------------------------------------- */ pgn = TP_CONN_MANAGE_PGN >> 8;
+
+  if (rpc_stream->getStreamType() & StreamEcmdMASK) {
+    c_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ rpc_stream->getIdent().getSa(), /* src: */ rpc_stream->getIdent().getDa(),
+                          0x17 /* decimal: 23 */, MACRO_BYTEORDER_toLoMidMidHi(rpc_stream->getByteTotalSize()), MACRO_BYTEORDER_toLoMidHi(rpc_stream->getIdent().getPgn()));
+  } else {
+    c_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ rpc_stream->getIdent().getSa(), /* src: */ rpc_stream->getIdent().getDa(),
+                          0x13 /* decimal: 19 */, MACRO_BYTEORDER_toLoHi(rpc_stream->getByteTotalSize()), rpc_stream->getPkgTotalSize(), 0xFF /* reserved */, MACRO_BYTEORDER_toLoMidHi(rpc_stream->getIdent().getPgn()));
+  }
+  __IsoAgLib::getCanInstance4Comm() << c_data;
+} // -X2C
+
+
+
+
+/** the mask is set to 1FF0000, as we're accepting for EVERY destination address first. afterwards list_clients is getting search for matching destination address */
+#define MACRO_insertFilterIfNotYetExists_mask1FF0000_setRef(mpPGN,reconf,ref) \
+  { \
+    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
+    ref = NULL; \
+    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    { /* create FilterBox */ \
+      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x1FF0000UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent); \
+    } \
+  }
+
+#define MACRO_insertFilterIfNotYetExists_mask1FF0000_useRef(mpPGN,reconf,ref) \
+  { \
+    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
+    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    { /* create FilterBox */ \
+      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, ref); \
+    } \
+  }
+
+/** the mask is set to 1FF0000, as we're accepting for EVERY destination address first. afterwards list_clients is getting search for matching destination address */
+#define MACRO_deleteFilterIfExists_mask1FF0000(mpPGN) \
+  { \
+    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
+    if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    { /* delete FilterBox */ \
+      __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent); \
+    } \
+  }
+
+// //////////////////////////////// +X2C Operation 2855 : init
+void
+MultiReceive_c::init()
+{ // ~X2C
+  static bool b_alreadyInitialized = false;
+
+  if ((!b_alreadyInitialized) || checkAlreadyClosed()) {
+    // clear state of b_alreadyClosed, so that close() is called one time
+    clearAlreadyClosed();
+    // register in Scheduler_c to get timeEvents
+    __IsoAgLib::getSchedulerInstance4Comm().registerClient( this );
+
+    /*** Filter Registration Start ***/
+    __IsoAgLib::FilterBox_c* refFB;
+    MACRO_insertFilterIfNotYetExists_mask1FF0000_setRef(TP_CONN_MANAGE_PGN,false,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FF0000_useRef(TP_DATA_TRANSFER_PGN,false,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FF0000_setRef(ETP_CONN_MANAGE_PGN,false,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FF0000_useRef(ETP_DATA_TRANSFER_PGN,true,refFB)
+    /*** Filter Registration End ***/
+
+    // so init() only gets executed once!
+    b_alreadyInitialized = true;
+  }
+
+} // -X2C
+
+
+// //////////////////////////////// +X2C Operation : close
+/** every subsystem of IsoAgLib has explicit function for controlled shutdown */
+void
+MultiReceive_c::close( void )
+{ // ~X2C
+  if ( ! checkAlreadyClosed() ) {
+    // avoid another call
+    setAlreadyClosed();
+    __IsoAgLib::getSchedulerInstance4Comm().unregisterClient( this );
+
+    MACRO_deleteFilterIfExists_mask1FF0000(ETP_DATA_TRANSFER_PGN)
+    MACRO_deleteFilterIfExists_mask1FF0000(ETP_CONN_MANAGE_PGN)
+    MACRO_deleteFilterIfExists_mask1FF0000(TP_DATA_TRANSFER_PGN)
+    MACRO_deleteFilterIfExists_mask1FF0000(TP_CONN_MANAGE_PGN)
+  }
+} // -X2C
+
+
+//  Operation: getClient
+//! Parameter:
+//! @param rc_streamIdent:
+//! @return NULL for "doesn't exist", otherwise valid "MultiReceiveClient_c*"
+IsoAgLib::MultiReceiveClient_c*
+MultiReceive_c::getClient(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
+{
+  std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+  while (i_list_clients != list_clients.end()) {
+    MultiReceiveClientWrapper_s curClientWrapper = *i_list_clients;
+
+    if (rc_streamIdent.matchDaPgn(curClientWrapper.ui8_clientAddress, curClientWrapper.ui16_pgn))
+      return curClientWrapper.pc_client;
+    i_list_clients++;
+  }
+  return NULL;
+}
+
+
+
+/**
+  deliver reference to data pkg as reference to CANPkgExt_c
+  to implement the base virtual function correct
+*/
+__IsoAgLib::CANPkgExt_c&
+MultiReceive_c::dataBase()
+{
+  return c_data;
+}
+
+
+//! return 0x00-0xFF: first byte of the stream!
+//! return 0x100: first byte not yet known!
+//! return 0x101: not a valid index!
+uint16_t
+MultiReceive_c::getStreamFirstByte (uint32_t ui32_index) const
+{
+  uint32_t ui32_curIndex=0;
+  if (ui32_index < list_streams.size()) {
+    for (std::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++)
+    {
+      if (ui32_curIndex == ui32_index) {
+        if ((*pc_iter).getByteAlreadyReceived() > 0)
+          return (*pc_iter).getFirstByte();
+        else
+          return 0x100; // first byte not yet known!
+      }
+      ui32_curIndex++;
+    }
+  }
+  return 0x101; // wrong index
+}
+
+
+bool
+MultiReceive_c::isAtLeastOneWithFirstByte(uint8_t firstByte)
+{
+//  std::cout << "\nisAtLeastOneWithFirstByte dez:" << (uint32_t) firstByte << ": ";
+  for (std::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++) {
+    if ((*pc_iter).getByteAlreadyReceived() > 0)  {
+      if ((*pc_iter).getFirstByte() == firstByte) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+//! giving the data in 1/1000. This implementation works for pools up to 4 MB, which should be enough ;)
+uint32_t
+MultiReceive_c::getStreamCompletion1000 (uint32_t ui32_index, bool b_checkFirstByte, uint8_t ui8_returnNullIfThisIsFirstByte) const
+{
+  uint32_t ui32_curIndex=0;
+  if (ui32_index < list_streams.size()) {
+    // retrieve completion in 1/10..100%
+    for (std::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++)
+    {
+      if (ui32_curIndex == ui32_index) {
+        if ((b_checkFirstByte) && ((*pc_iter).getFirstByte() != ui8_returnNullIfThisIsFirstByte))
+          return 0;
+        // over 4 MB clipping ;) shouldn't occur anyway...
+        if ((*pc_iter).getByteAlreadyReceived() > (4*1024*1024))
+          return 1000;
+        else
+          return ((*pc_iter).getByteAlreadyReceived() * 1000) / (*pc_iter).getByteTotalSize();
+      }
+      ui32_curIndex++;
+    }
+  }
+  return 0; // wrong index or (unlikely) not "found" in list...
+}
+
+//! giving the data in 1/1000. This implementation works for pools up to 4 MB, which should be enough ;)
+uint32_t
+MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_returnNullIfThisIsFirstByte) const
+{
+  uint32_t ui32_maxStreamCompletion1000=0;
+  uint32_t ui32_currentCompletion1000;
+  // retrieve completion in 1/10..100%
+  for (std::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++)
+  {
+    if ((b_checkFirstByte) && ((*pc_iter).getFirstByte() != ui8_returnNullIfThisIsFirstByte))
+      ui32_currentCompletion1000=0; // don't care for this stream
+    else if ((*pc_iter).getByteAlreadyReceived() > (4*1024*1024)) // over 4 MB clipping ;) shouldn't occur anyway...
+      return 1000; // is already max ;)
+    else
+      ui32_currentCompletion1000 = ((*pc_iter).getByteAlreadyReceived() * 1000) / (*pc_iter).getByteTotalSize();
+    
+    if (ui32_currentCompletion1000 > ui32_maxStreamCompletion1000)
+      ui32_maxStreamCompletion1000 = ui32_currentCompletion1000;
+  }
+  return ui32_maxStreamCompletion1000; 
+}
+
+
+} // end namespace __IsoAgLib
