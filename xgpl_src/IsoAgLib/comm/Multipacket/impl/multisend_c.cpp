@@ -110,6 +110,8 @@
   #include <fstream>
 #endif
 
+
+
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique MultiSend_c singleton instance
@@ -180,6 +182,8 @@ void MultiSend_c::init(void)
 	}
 }
 
+
+
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */
 void MultiSend_c::close( void ) {
@@ -195,6 +199,8 @@ void MultiSend_c::close( void ) {
 MultiSend_c::~MultiSend_c(){
 }
 
+
+
 /**
   deliver reference to data pkg as reference to CANPkgExt_c
   to implement the base virtual function correct
@@ -203,6 +209,8 @@ CANPkgExt_c& MultiSend_c::dataBase()
 {
   return c_data;
 }
+
+
 
 #ifdef USE_DIN_TERMINAL
 /**
@@ -258,6 +266,9 @@ bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rh
   return true;
 }
 #endif
+
+
+
 #if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
 /**
   send a ISO target multipacket message with active retrieve of data-parts to send
@@ -278,6 +289,8 @@ bool MultiSend_c::sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, MultiSendStrea
   return sendIsoTargetIntern(rb_send, rb_empf, NULL, rpc_mss->getStreamSize (), ri32_pgn, rpen_sendSuccessNotify, rpc_mss);
 }
 
+
+
 /**
   send a ISO target multipacket message
   @param rb_send dynamic member no of sender
@@ -294,6 +307,8 @@ int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t* rpen_sendSuccessNotify)
 {
   return sendIsoTargetIntern(rb_send, rb_empf, rhpb_data, ri32_dataSize, ri32_pgn, rpen_sendSuccessNotify, NULL);
 }
+
+
 
 /**
   internal function to send a ISO target multipacket message
@@ -348,6 +363,8 @@ bool MultiSend_c::sendIsoTargetIntern(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM
   return true;
 }
 
+
+
 /**
   send a ISO broadcast multipacket message
   @param rb_send dynamic member no of sender
@@ -385,6 +402,8 @@ bool MultiSend_c::sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM ui
 }
 #endif
 
+
+
 /**
   perform periodical actions
   @return true -> all planned activities performed in allowed time
@@ -393,6 +412,8 @@ bool MultiSend_c::sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM ui
 static FILE *iopFile;
 static int iopSequence;
 #endif
+
+
 
 bool MultiSend_c::timeEvent( void )
 {
@@ -488,10 +509,6 @@ bool MultiSend_c::timeEvent( void )
           if (isDelayEnd(i32_time, 1250))
           { // abort send
             abortSend();
-#if 0
-            setSendStateIdle();
-            *pen_sendSuccessNotify = en_sendSuccess = SendAborted;
-#endif
           }
           return true;
       }
@@ -506,10 +523,6 @@ bool MultiSend_c::timeEvent( void )
           if (isDelayEnd(i32_time, 1250))
           { // abort send
             abortSend();
-#if 0
-            setSendStateIdle();
-            *pen_sendSuccessNotify = en_sendSuccess = SendAborted;
-#endif
           }
           return true;
         case Din:
@@ -532,55 +545,8 @@ bool MultiSend_c::timeEvent( void )
       if (isDelayEnd(i32_time, 500))
       { // abort send
         abortSend();
-#if 0
-        setSendStateIdle();
-        *pen_sendSuccessNotify = en_sendSuccess = SendAborted;
-#endif
       }
       break;
-#if 0
-    case DecideAfterSend:
-      if (!isCompleteData())
-      {
-        if (!isCompleteMsg())
-        { // its time to send next packet
-          if (isDelayEnd(i32_time))
-          { //! @todo check if this case is really possible!!!
-            en_sendState = SendData;
-          }
-        }
-        else
-        {  // isCompleteMsg()
-          switch (en_msgType)
-          {
-            case IsoTarget:
-            case IsoBroadcast: // not usual - but to avoid compiler warning
-              // wait for CTS for next part of transfer
-              en_sendState = AwaitCts; // is in #if 0 block!!
-              break;
-            case Din:
-              en_sendState = AwaitEndofmsgack;
-              break;
-          }
-        }
-      }
-      else
-      { // isCompleteData()
-        if (en_msgType != IsoBroadcast)
-        {
-          en_sendState = AwaitEndofmsgack;
-        }
-        else
-        { // ISO Broadcast
-          setSendStateIdle();
-          en_sendSuccess = SendSuccess;
-          *pen_sendSuccessNotify = SendSuccess;
-          return true;
-        }
-      }
-      break;
-
-#endif
 
     case SendData:
       uint8_t ui8_freeCnt;
@@ -631,10 +597,6 @@ bool MultiSend_c::timeEvent( void )
         // break if this message part is finished
         if (isCompleteData() || isCompleteMsg())
         {
-#if 0
-          en_sendState = DecideAfterSend;
-          break;
-#endif
           if (!isCompleteData())
           {
             if (isCompleteMsg())
@@ -691,6 +653,8 @@ bool MultiSend_c::timeEvent( void )
   }
   return true;
 };
+
+
 
 /**
   start processing of a process msg
@@ -865,6 +829,8 @@ bool MultiSend_c::processMsg(){
   return true;
 }
 
+
+
 /**
   abort the multipacket send stream
   (important if original target isn't active any more)
@@ -901,6 +867,8 @@ void MultiSend_c::abortSend()
     }
   }
 }
+
+
 
 /**
   send a message -> set the ident and initiate sending to CAN
@@ -950,6 +918,8 @@ void MultiSend_c::sendIntern()
   }
 }
 
+
+
 /**
   check if actual message is complete
 */
@@ -957,6 +927,9 @@ bool MultiSend_c::isCompleteMsg() const
 {
   return (b_pkgToSend == 0)?true:false;
 }
+
+
+
 /**
   check if send of all data is complete
   this function returns true only if both:<ul>
@@ -967,16 +940,11 @@ bool MultiSend_c::isCompleteMsg() const
 */
 bool MultiSend_c::isCompleteData() const
 {
-#if 0
-  return ( (i32_DC >= i32_dataSize)
-        && ( isCompleteMsg() )
-        )?true:false;
-#endif
   return ( (i32_DC >= i32_dataSize)
         && (isCompleteMsg())
         )?true:false;
-
 }
+
 
 
 /**
@@ -989,6 +957,9 @@ uint16_t MultiSend_c::getMsgCnt()const
   uint16_t ui16_result = i32_dataSize / ui16_msgSize;
   return ((i32_dataSize % ui16_msgSize) != 0)?(ui16_result+1):ui16_result;
 }
+
+
+
 /**
   deliver the amount of CAN pkg per message
   @return CAN pkg amount per message
@@ -998,6 +969,9 @@ uint16_t MultiSend_c::getPkgPerMsg()const
   uint16_t ui16_result = ui16_msgSize / 7;
   return ((ui16_msgSize % 7) != 0)?(ui16_result+1):ui16_result;
 }
+
+
+
 /**
   deliver the message number in LBS+ data stream
   @return message number to insert in CM_RTS
@@ -1006,6 +980,9 @@ uint16_t MultiSend_c::getMsgNr()const
 {
   return ((i32_DC / ui16_msgSize)+1);
 };
+
+
+
 /**
   read the the commanded mesage size from CTS CAN pkg
   (for IsoAgLib+ a change of ui16_msgSize is only accepted, if
@@ -1028,6 +1005,9 @@ uint16_t MultiSend_c::readMsgSize()const
     return ui16_tempSize;
   }
 }
+
+
+
 /**
   read the next to be sent data position from CM_CTS
   @return new i32_DC value
@@ -1049,6 +1029,9 @@ int32_t MultiSend_c::read_DC()
   }
   return i32_temp_DC;
 }
+
+
+
 /**
   read the acknowledged data amount from EndOfMsgAck
   @return amount of correct received data byte
@@ -1060,6 +1043,7 @@ int32_t MultiSend_c::readAck_DC()
   if (en_msgType == Din) i32_tempAck_DC *= constData().getData_2ByteInteger(6);
   return i32_tempAck_DC;
 }
+
 
 
 /**
@@ -1092,6 +1076,7 @@ void MultiSend_c::prepareSendMsg(uint8_t &ui8_nettoDataCnt)
 }
 
 
+
 /**
   set the delay between two sent messages
   @param rui16_delay wanted delay
@@ -1109,6 +1094,8 @@ void MultiSend_c::setDelay(uint16_t rui16_delay)
     getCanInstance4Comm().setSendpause(ui16_delay + 1);
   }
 }
+
+
 
 /**
   set the send state to Idle and set the CAN send pause to 0
