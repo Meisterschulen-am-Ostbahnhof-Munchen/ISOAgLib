@@ -139,7 +139,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t rt_mode )
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
 //	std::ifstream* isp_tmp = static_cast<std::ifstream*>(this);
-	ifstream* isp_tmp = static_cast<ifstream*>(this);
+	std::ifstream* isp_tmp = static_cast<std::ifstream*>(this);
 
 	ui8_data = isp_tmp->get();
 
