@@ -233,7 +233,8 @@ public:
   
   enum uploadType_t { UploadIdle, UploadPool, UploadCommand };
   enum uploadPoolState_t { UploadPoolInit, UploadPoolWaitingForLoadVersionResponse, UploadPoolWaitingForMemoryResponse, UploadPoolUploading, UploadPoolWaitingForEOOResponse, UploadPoolWaitingForStoreVersionResponse, UploadPoolFailed}; /* completely uploaded is now detected by "OPUploadedSuccessfully" */
-  enum uploadCommandState_t { UploadCommandWaitingForCommandResponse, UploadCommandTimedOut, UploadCommandFailed };
+  enum uploadCommandState_t { UploadCommandWaitingForCommandResponse, UploadCommandTimedOut /*, UploadCommandFailed*/ };
+  // UploadCommandFailed is obsolete, as we're not retrying and error-responses any more.
 
   /** struct of the data contained in the "VT Status Message" */
   typedef struct vtState_s {
@@ -459,24 +460,19 @@ public:
 
   bool sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt);
 
-private:
+private: // methods
   friend class SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c);
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of ISOTerminal_c within application
     */
   ISOTerminal_c();
 
-// Private attributes
-  /** temp data where received data is put */
-  ISOTerminalPkg_c c_data;
-
-	/** register is receive filters are already created */
-	bool b_receiveFilterCreated;
-
   /** sends "Get Memory" to start uploading process... */
   void startObjectPoolUploading ();
+  
   /** sets all states to successfull uploading and call the hook function! */
   void finalizeUploading ();
+  
   /** send "End of Object Pool" message */
   void indicateObjectPoolCompletion ();
 
@@ -484,26 +480,38 @@ private:
 
   void finishUploadCommand ();
   
-  
-  /**
-    Command sending stuff...
-  */
+  /** sets state to "OPCannotUpload"... */
+  void vtOutOfMemory();
 
+  
+private: // attributes
+  
+  /** temp data where received data is put */
+  ISOTerminalPkg_c c_data;
+
+  /** register is receive filters are already created */
+  bool b_receiveFilterCreated;
+ 
   bool vtAliveNew;
 
   /** gets set as soon as the first "VT Status Message" gets received */
   uint8_t vtSourceAddress;
+  
   /** stores the last "VT Status Message" */
   vtState_s vtState_a;
+  
   /** gets set as soon as the responses for the requests arrive */
   vtCapabilities_s vtCapabilities_a;
+  
   /** stores the Local Settings like Language, Units, Date Format */
   localSettings_s localSettings_a;
+  
   /**
     has to be set using registerIsoObjectPool (...) so that IsoTerminal
     can interact in the name of the wsMaster
   */
   IdentItem_c* pc_wsMasterIdentItem;
+  
   /**
     here the version number of the terminal gets stored as soon as the
     "VT Get Memory Response" was received
@@ -532,6 +540,7 @@ private:
   uint8_t ui8_uploadError;
   uint8_t ui8_uploadRetry;
   MultiSend_c::sendSuccess_t en_sendSuccess;
+  
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
   // as each SendCommand_c item is just 16Byte large, and an application
@@ -551,7 +560,6 @@ private:
   #endif
 
   ISOTerminalStreamer_c c_streamer;
-
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

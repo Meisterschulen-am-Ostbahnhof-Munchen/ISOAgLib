@@ -161,6 +161,7 @@ namespace IsoAgLib {
 class iIsoTerminalObjectPool_c {
 
 public:
+  
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Soft Key Activation" / "Button Activation" Message
@@ -170,8 +171,8 @@ public:
     @param rui8_keyCode KeyCode as defined in the vtObjectButton / vtObjectSoftKey object
     @param rb_wasButton true if it was a button object, false if it was a soft key
   */
-
   virtual void eventKeyCode (uint8_t rui8_keyActivationCode, uint16_t rui16_objId, uint16_t rui16_objIdMask, uint8_t rui8_keyCode, bool rb_wasButton)=0;
+  
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "VT Change Numeric Value" Message
@@ -194,7 +195,14 @@ public:
   virtual void eventEnterSafeState()=0;
   
   /**
-    this init function has to be idempotent!
+    hook function that gets called immediately after recognizing the success/error
+    of a command-response message. please keep the implementation short as
+    this is directly called from IsoTerminal_c's processMsg();
+  */
+  virtual void eventCommandResponse(uint8_t /*rui8_responseCommandError*/, const uint8_t /*rpui8_responseDataBytes*/[8]) {};
+  
+  /**
+    this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
   virtual void initAllObjectsOnce()=0;
   
@@ -236,12 +244,11 @@ protected:
   bool b_initAllObjects;
 
 public:
-  iVtObject_c** getIVtObjects() { return iVtObjects; };
-  uint16_t getNumObjects() { return numObjects; };
-  uint16_t getDimension() { return dimension; };
-  uint16_t getSkWidth() { return skWidth; };
-  uint16_t getSkHeight() { return skHeight; };
-    
+  iVtObject_c** getIVtObjects() const { return iVtObjects; };
+  uint16_t      getNumObjects() const { return numObjects; };
+  uint16_t      getDimension()  const { return dimension; };
+  uint16_t      getSkWidth()    const { return skWidth; };
+  uint16_t      getSkHeight()   const { return skHeight; };
 };
 
 } // end namespace IsoAgLib

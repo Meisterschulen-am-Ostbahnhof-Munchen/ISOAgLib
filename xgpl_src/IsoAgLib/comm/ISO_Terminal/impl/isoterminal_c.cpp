@@ -307,6 +307,8 @@ SendUpload_c::SendUpload_c (const SendUpload_c& ref_source)
 
 void ISOTerminal_c::finishUploadCommand ()
 {
+  en_uploadType = UploadIdle;
+  
   #ifdef DEBUG
   std::cout << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
   #endif
@@ -675,7 +677,6 @@ bool ISOTerminal_c::timeEvent( void )
      || (en_uploadPoolState == UploadPoolWaitingForMemoryResponse)
      || (en_uploadPoolState == UploadPoolWaitingForEOOResponse)) {
       // timedout
-      /** @todo Do we really have to set to "UploadPoolFailed" and go all from the beginning again???? */
       if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
         en_uploadPoolState = UploadPoolFailed;
         ui32_uploadTimestamp = HAL::getTime();
@@ -809,14 +810,12 @@ bool ISOTerminal_c::timeEvent( void )
     /** @todo Check if "ConnAbort" comes in, in that case? retry?!! */
 
     // Are we in "Upload Command"-State and the last Upload failed?
-    if ( (en_uploadCommandState == UploadCommandTimedOut)
-      || (en_uploadCommandState == UploadCommandFailed) ) {
+    if ( (en_uploadCommandState == UploadCommandTimedOut) /* OBSOLETE: || (en_uploadCommandState == UploadCommandFailed) */) {
       if (ui8_uploadRetry > 0) {
         ui8_uploadRetry--;
-        startUploadCommand ();
+        startUploadCommand();
       } else {
         // No more retries, simply finish this job and go Idle!
-        en_uploadType = UploadIdle;
         finishUploadCommand(); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
       }
     }
@@ -985,30 +984,28 @@ void ISOTerminal_c::indicateObjectPoolCompletion ()
 }
 
 
+
+void
+ISOTerminal_c::vtOutOfMemory()
+{  // can't (up)load the pool.
+  getLbsErrInstance().registerError( LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal );
+  en_uploadPoolState = UploadPoolFailed; // no timeout needed
+  en_objectPoolState = OPCannotBeUploaded;
+}
+
+
+
 /** process received can messages
 	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool ISOTerminal_c::processMsg()
 {
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
-
+  uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
   bool b_result = false;
 
 #define MACRO_setStateDependantOnError(errByte) \
-  if (en_uploadType == UploadCommand) { /* if Waiting or Timedout (or Failed <shouldn't happen>) */ \
-    if (ui8_commandParameter == data().getUint8Data(0)) { \
-      /* okay, right response for our command! */ \
-      ui8_uploadCommandError = data().getUint8Data(errByte-1); \
-      if (ui8_uploadCommandError == 0) { \
-        /* no error */ \
-        en_uploadType = UploadIdle; \
-        finishUploadCommand(); \
-      } else { \
-        /* some error - don't finish upload, maybe retry! */ \
-        en_uploadCommandState = UploadCommandFailed; \
-      } \
-    } \
-  }
+  ui8_errByte = errByte;
 
   // VT_TO_GLOBAL is the only PGN we accept without VT being active, because it marks the VT active!!
 
@@ -1060,7 +1057,8 @@ bool ISOTerminal_c::processMsg()
         //////////////////////////////////////////
        // VT to this ECU? -->VT_TO_ECU_PGN<-- ///
       //////////////////////////////////////////
-  if ( pc_wsMasterIdentItem->getIsoItem() && ((data().isoPgn() & 0x1FFFF) == (uint32_t) (VT_TO_ECU_PGN + pc_wsMasterIdentItem->getIsoItem()->nr())) ) {
+  if ( pc_wsMasterIdentItem->getIsoItem() && ((data().isoPgn() & 0x1FFFF) == (uint32_t) (VT_TO_ECU_PGN + pc_wsMasterIdentItem->getIsoItem()->nr())) )
+  {
 
 
     switch (data().getUint8Data (0)) {
@@ -1177,12 +1175,7 @@ bool ISOTerminal_c::processMsg()
             en_uploadPoolState = UploadPoolUploading;
             getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, &en_sendSuccess);
           } else {
-            // definitely NOT enough memory
-            getLbsErrInstance().registerError( LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal );
-            en_uploadPoolState = UploadPoolFailed;
-            en_objectPoolState = OPCannotBeUploaded;
-            // en_uploadTimestamp = HAL::getTime();
-            // en_uploadTimeout = 5000; // not needed
+            vtOutOfMemory();
           }
         }
         b_result = true;
@@ -1230,40 +1223,54 @@ bool ISOTerminal_c::processMsg()
         break;
       case 0xD1: // Command: "Non Volatile Memory", parameter "Load Version Response"
         if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)) {
-          if ((data().getUint8Data (5) & 0x0F) == 0) {
-            // Successfully loaded
+          if ((data().getUint8Data (5) & 0x0F) == 0)
+          { // Successfully loaded
             finalizeUploading ();
-          } else {
-/** @todo check this... */
-/*        if ((data().getUint8Data (5) & 0x04) == 1) { case 4: // Insufficient memory available
-            getLbsErrInstance().registerError( LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal );
-            en_uploadState = UFailed;
-            en_objectPoolState = OPCannotBeUploaded;
-            // en_uploadTimestamp = HAL::getTime();
-            // en_uploadTimeout = 5000; // not needed
-            break;
           }
-*/
-            // Not used
-            // General error
-            // Version label not known
-            // None stored, so we have to send it! send out "Get Technical Data - Get Memory Size"
-            startObjectPoolUploading ();
+          else
+          {
+            if (data().getUint8Data (5) & (1<<2))
+            { // Bit 2: // Insufficient memory available
+              vtOutOfMemory ();
+            }
+            else
+            { // Not used
+              // General error
+              // Version label not known
+              startObjectPoolUploading (); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
+            }
           }
         }
         b_result = true;
         break;
     } // switch
 
+    // Was it some command that requires queue-deletion & error processing?
+    if (ui8_errByte != 0) {
+      if (en_uploadType == UploadCommand) { /* if Waiting or Timedout (or Failed <shouldn't happen>) */
+        if (ui8_commandParameter == data().getUint8Data(0)) {
+          /* okay, right response for our current command! */
+          ui8_uploadCommandError = data().getUint8Data(ui8_errByte-1);
+          /// Inform user on success/error of this command
+          if (c_streamer.pc_pool) c_streamer.pc_pool->eventCommandResponse (ui8_uploadCommandError, data().name()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "data().name()"
+          #ifdef DEBUG
+          if (ui8_uploadCommandError != 0)
+          { /* error */
+            std::cout << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!\n";
+          }
+          #endif
+/* OBSOLETE: no more retries on failed commands! only on time outs!
+          } else {
+            en_uploadCommandState = UploadCommandFailed;
+          }
+*/        finishUploadCommand(); // finish command no matter if "okay" or "error"...
+        }
+      }
+    }
     /** Acknowledgment of VT->ECU Initiated Messages (Soft Key, Button, VTChangeNumericValue etc.)
        IS >>OPTIONAL<< IN THE FINAL ISO 11783, SO IT IS LEFT OUT HERE <<COMPLETELY>>
      **/
-     #ifdef DEBUG
-     if (en_uploadCommandState == UploadCommandFailed) {
-       std::cout << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!\n";
-     }
-     #endif
-  }
+  } // VT to this ECU
 
   return b_result;
 }

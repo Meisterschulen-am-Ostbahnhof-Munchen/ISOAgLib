@@ -480,6 +480,8 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileF, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
     fprintf (partFileF, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
     fprintf (partFileF, "\n  virtual void eventEnterSafeState ();");
+    fprintf (partFileF, "\n  /* Uncomment the following function if you want to use command-response handling! */");
+    fprintf (partFileF, "\n  //virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);");
     fprintf (partFileF, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
     fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
     fprintf (partFileF, "\n  void initAllObjectsOnce();");
@@ -494,9 +496,6 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileFderived, "\n #define DECL_derived_iObjectPool_%s_c", proName );
     fprintf (partFileFderived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
     fprintf (partFileFderived, "\npublic:");
-  // fprintf (partFileFderived, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
-  // fprintf (partFileFderived, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
-  // fprintf (partFileFderived, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
     fprintf (partFileFderived, "\n  void initAllObjectsOnce();");
     fprintf (partFileFderived, "\n  iObjectPool_%s_c ();", proName);
     fprintf (partFileFderived, "\n};\n");
@@ -3479,18 +3478,16 @@ int main(int argC, char* argV[])
       parser->setFeature(XMLUni::fgXercesSchema, doSchema);
       parser->setFeature(XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);
 
-      if (valScheme == AbstractDOMParser::Val_Auto) {
-        parser->setFeature(XMLUni::fgDOMValidateIfSchema, true);
-      }
-      else if (valScheme == AbstractDOMParser::Val_Never) {
-        parser->setFeature(XMLUni::fgDOMValidation, false);
-      }
-      else if (valScheme == AbstractDOMParser::Val_Always) {
-        parser->setFeature(XMLUni::fgDOMValidation, true);
-      }
+      if (valScheme == AbstractDOMParser::Val_Auto)        parser->setFeature(XMLUni::fgDOMValidateIfSchema, true);
+      else if (valScheme == AbstractDOMParser::Val_Never)  parser->setFeature(XMLUni::fgDOMValidation, false);
+      else if (valScheme == AbstractDOMParser::Val_Always) parser->setFeature(XMLUni::fgDOMValidation, true);
 
       // enable datatype normalization - default is off
       parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
+
+/** @todo Get path of vt2iso and add it to "vt2iso.xsd" */
+//      XMLCh* propertyValue = XMLString::transcode("vt2iso.xsd");
+//      parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
 
       // And create our error handler and install it
       DOMCountErrorHandler errorHandler;
