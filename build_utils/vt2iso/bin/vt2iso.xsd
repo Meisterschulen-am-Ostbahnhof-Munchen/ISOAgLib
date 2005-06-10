@@ -2,60 +2,54 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
+  <!-- ### Attribute-Values as simpleTypes ### -->
+  <xs:simpleType name="attrObjectId">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="65535"/>
+    </xs:restriction>
+  </xs:simpleType>
 
-  <!-- Attribute-Values as simpleTypes -->
+  <xs:simpleType name="attrMacroId">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="positiveInteger0">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:simpleType name="attr1to255">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="[1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]"/>
+    <xs:restriction base="xs:positiveInteger">
+      <xs:maxInclusive value="255"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrColour">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="black"/>
-      <xs:enumeration value="white"/>
-      <xs:enumeration value="green"/>
-      <xs:enumeration value="teal"/>
-      <xs:enumeration value="maroon"/>
-      <xs:enumeration value="purple"/>
-      <xs:enumeration value="olive"/>
-      <xs:enumeration value="silver"/>
-      <xs:enumeration value="grey"/>
-      <xs:enumeration value="blue"/>
-      <xs:enumeration value="lime"/>
-      <xs:enumeration value="cyan"/>
-      <xs:enumeration value="red"/>
-      <xs:enumeration value="magenta"/>
-      <xs:enumeration value="yellow"/>
-      <xs:enumeration value="navy"/>
-      <xs:pattern value="[1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]"/>
+      <xs:pattern value="black|white|green|teal|maroon|purple|olive|silver|grey|blue|lime|cyan|red|magenta|yellow|navy|[1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrFontSize">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="6x8"/>
-      <xs:enumeration value="8x8"/>
-      <xs:enumeration value="8x12"/>
-      <xs:enumeration value="12x16"/>
-      <xs:enumeration value="16x16"/>
-      <xs:enumeration value="16x24"/>
-      <xs:enumeration value="24x32"/>
-      <xs:enumeration value="32x32"/>
-      <xs:enumeration value="32x48"/>
-      <xs:enumeration value="48x64"/>
-      <xs:enumeration value="64x64"/>
-      <xs:enumeration value="64x96"/>
-      <xs:enumeration value="96x128"/>
-      <xs:enumeration value="128x128"/>
-      <xs:enumeration value="128x192"/>
-      <xs:pattern value="1[0-4]|[0-9]"/>
+      <xs:pattern value="6x8|8x8|8x12|12x16|16x16|16x24|24x32|32x32|32x48|48x64|64x64|64x96|96x128|128x128|128x192|1[0-4]|[0-9]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrFontType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="0|9|255|latin1|latin9|proprietary"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrFontStyle">
     <xs:restriction base="xs:string">
-      <xs:pattern value="(bold|crossed|underlined|italic|inverted|flashinginverted|flashinghidden)?(\+(bold|crossed|underlined|italic|inverted|flashinginverted|flashinghidden))*"/>
+      <xs:pattern value="normalxx|(bold|crossed|underlined|italic|inverted|flashinginverted|flashinghidden)?(\+(bold|crossed|underlined|italic|inverted|flashinginverted|flashinghidden))*"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -76,9 +70,11 @@
 
   <xs:simpleType name="attrOptionsPictureGraphic">
     <xs:restriction base="xs:string">
-      <xs:pattern value="(transparent|flashing)?(\+(transparent|flashing))*"/>
+      <xs:pattern value="none|(rle|rle1|rle4|rle8|opaque|normal|transparent|flashing)?(\+(rle|rle1|rle4|rle8|opaque|normal|transparent|flashing))*"/>
     </xs:restriction>
   </xs:simpleType>
+  
+  <!-- RLE1/4/8 from above seems to be obsolete!!!!!!! -->
 
   <xs:simpleType name="attrRle">
     <xs:restriction base="xs:string">
@@ -94,9 +90,7 @@
 
   <xs:simpleType name="attrLineDirection">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="toplefttobottomright"/>
-      <xs:enumeration value="bottomlefttotopright"/>
-      <xs:pattern value="[0-1]"/>
+      <xs:pattern value="toplefttobottomright|bottomlefttotopright|[0-1]"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -108,49 +102,37 @@
 
   <xs:simpleType name="attrEllipseType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="closed"/>
-      <xs:enumeration value="open"/>
-      <xs:enumeration value="closedsegment"/>
-      <xs:enumeration value="closedsection"/>
-      <xs:pattern value="[0-3]"/>
+      <xs:pattern value="closed|open|closedsegment|closedsection|[0-3]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrPolygonType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="convex"/>
-      <xs:enumeration value="nonconvex"/>
-      <xs:enumeration value="complex"/>
-      <xs:enumeration value="open"/>
-      <xs:pattern value="[0-3]"/>
+      <xs:pattern value="convex|nonconvex|complex|open|[0-3]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrOptionsMeter">
     <xs:restriction base="xs:string">
-      <xs:pattern value="((arc|border|ticks|clockwise)(\+(arc|border|ticks|clockwise))*)?"/>
+      <xs:pattern value="none|((arc|border|ticks|clockwise)(\+(arc|border|ticks|clockwise))*)?"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrOptionsLinearBarGraph">
     <xs:restriction base="xs:string">
-      <xs:pattern value="((border|targetline|ticks|nofill|horizontal|growpositive)(\+(border|targetline|ticks|nofill|horizontal|growpositive))*)?"/>
+      <xs:pattern value="none|((border|targetline|ticks|nofill|horizontal|growpositive)(\+(border|targetline|ticks|nofill|horizontal|growpositive))*)?"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrOptionsArchedBarGraph">
     <xs:restriction base="xs:string">
-      <xs:pattern value="((border|targetline|nofill|clockwise)(\+(border|targetline|nofill|clockwise))*)?"/>
+      <xs:pattern value="none|((border|targetline|nofill|clockwise)(\+(border|targetline|nofill|clockwise))*)?"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrFillType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="nofill"/>
-      <xs:enumeration value="linecolour"/>
-      <xs:enumeration value="fillcolour"/>
-      <xs:enumeration value="pattern"/>
-      <xs:pattern value="[0-3]"/>
+      <xs:pattern value="nofill|linecolour|fillcolour|pattern|[0-3]"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -162,32 +144,25 @@
 
   <xs:simpleType name="attrAcousticSignal">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="high"/>
-      <xs:enumeration value="medium"/>
-      <xs:enumeration value="low"/>
-      <xs:enumeration value="none"/>
-      <xs:pattern value="[0-3]"/>
+      <xs:pattern value="high|medium|low|none|[0-3]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrPriority">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="high"/>
-      <xs:enumeration value="medium"/>
-      <xs:enumeration value="low"/>
-      <xs:pattern value="[0-2]"/>
+      <xs:pattern value="high|medium|low|[0-2]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrOptionsOutputString">
     <xs:restriction base="xs:string">
-      <xs:pattern value="((transparent|autowrap)(\+(transparent|autowrap))*)?"/>
+      <xs:pattern value="none|((transparent|autowrap)(\+(transparent|autowrap))*)?"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="attrOptionsOutputNumber">
     <xs:restriction base="xs:string">
-      <xs:pattern value="((transparent|leadingzeros|blankzero)(\+(transparent|leadingzeros|blankzero))*)?"/>
+      <xs:pattern value="none|((transparent|leadingzeros|blankzero)(\+(transparent|leadingzeros|blankzero))*)?"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -226,6 +201,11 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="attrLanguageCode">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="aa|ab|af|am|ar|as|ay|az|ba|be|bg|bh|bi|bn|bo|br|ca|co|cs|cy|da|de|dz|el|en|eo|es|et|eu|fa|fi|fj|fo|fr|fy|ga|gd|gl|gn|gu|ha|hi|hr|hu|hy|ia|ie|ik|in|is|it|iw|ja|ji|jw|ka|kk|kl|km|kn|ko|ks|ku|ky|la|ln|lo|lt|lv|mg|mi|mk|ml|mn|mo|mr|ms|mt|my|na|ne|nl|no|oc|om|or|pa|pl|ps|pt|qu|rm|rn|ro|ru|rw|sa|sd|sg|sh|si|sk|sl|sm|sn|so|sq|sr|ss|st|su|sv|sw|ta|te|tg|th|ti|tk|tl|tn|to|tr|ts|tt|tw|uk|ur|uz|vi|vo|wo|xh|yo|zh|zu"/>
+    </xs:restriction>
+  </xs:simpleType>
 
 
 
@@ -237,33 +217,110 @@
 
 
 
+  <!-- ### All Object-Types as complexTypes ### -->
+  <xs:complexType name="elemWorkingset">
+    <xs:sequence>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="outputstring" type="elemOutputString"/>
+	<xs:element name="language"     type="elemLanguage"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute use="optional" name="name"              type="xs:string"/>
+    <xs:attribute use="optional" name="id"                type="attrObjectId"/>
+    <xs:attribute use="required" name="background_colour" type="attrColour"/>
+    <xs:attribute use="required" name="selectable"        type="attrYesNo"/>
+    <xs:attribute use="required" name="active_mask"       type="xs:string"/>
+  </xs:complexType>
 
-  <!-- ### All Object-Types ### -->
-  <xs:complexType name="workingset">
-    <xs:all/>
-    <xs:attribute name="name"              type="xs:string"/>
-    <xs:attribute name="background_colour" type="attrColour"/>
-    <xs:attribute name="selectable"        type="attrYesNo"/>
-    <xs:attribute name="active_mask"       type="xs:string"/>
+  <xs:complexType name="elemDatamask">
+    <xs:sequence>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="outputstring"   type="elemOutputString"/>
+        <xs:element name="picturegraphic" type="elemPictureGraphic"/>
+	<xs:element name="include_object" type="elemIncludeObject"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute use="optional" name="name"              type="xs:string"/>
+    <xs:attribute use="optional" name="id"                type="attrObjectId"/>
+    <xs:attribute use="required" name="background_colour" type="attrColour"/>
+    <xs:attribute use="optional" name="softkey_mask"      type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="elemOutputString">
+    <xs:attribute use="optional" name="name"                     type="xs:string"/>
+    <xs:attribute use="optional" name="id"                       type="attrObjectId"/>
+    <xs:attribute use="required" name="background_colour"        type="attrColour"/>
+    <xs:attribute use="required" name="width"                    type="xs:positiveInteger"/>
+    <xs:attribute use="required" name="height"                   type="xs:positiveInteger"/>
+    <xs:attribute use="required" name="font_attributes"          type="xs:string"/>
+    <xs:attribute use="optional" name="block_font"               type="xs:string"/>
+    <xs:attribute use="optional" name="options"                  type="attrOptionsOutputString"/>
+    <xs:attribute use="optional" name="length"                   type="positiveInteger0"/>
+    <xs:attribute use="required" name="value"                    type="xs:string"/>
+    <xs:attribute use="optional" name="pos_x"                    type="positiveInteger0"/>
+    <xs:attribute use="optional" name="pos_y"                    type="positiveInteger0"/>
+    <xs:attribute use="required" name="horizontal_justification" type="attrHorizontalJustification"/>
+  </xs:complexType>
+
+  <xs:complexType name="elemPictureGraphic">
+    <xs:attribute use="optional" name="name"                     type="xs:string"/>
+    <xs:attribute use="optional" name="id"                       type="attrObjectId"/>
+    <xs:attribute use="required" name="transparency_colour"      type="attrColour"/>
+    <xs:attribute use="required" name="width"                    type="xs:positiveInteger"/>
+    <xs:attribute use="required" name="actual_width"             type="xs:positiveInteger"/>
+    <xs:attribute use="required" name="actual_height"            type="xs:positiveInteger"/>
+    <xs:attribute use="required" name="format"                   type="attrFormatPictureGraphicFixedBitmap"/>
+    <xs:attribute use="optional" name="options"                  type="attrOptionsPictureGraphic"/>
+    <xs:attribute use="optional" name="pos_x"                    type="positiveInteger0"/>
+    <xs:attribute use="optional" name="pos_y"                    type="positiveInteger0"/>
+    <xs:attribute use="optional" name="file"                     type="xs:string"/>
+    <xs:attribute use="optional" name="file1"                    type="xs:string"/>
+    <xs:attribute use="optional" name="file4"                    type="xs:string"/>
+    <xs:attribute use="optional" name="file8"                    type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="elemFontAttributes">
+    <xs:attribute use="optional" name="name"                     type="xs:string"/>
+    <xs:attribute use="optional" name="id"                       type="attrObjectId"/>
+    <xs:attribute use="required" name="font_colour"              type="attrColour"/>
+    <xs:attribute use="required" name="font_size"                type="attrFontSize"/>
+    <xs:attribute use="optional" name="font_type"                type="attrFontType"/>
+    <xs:attribute use="required" name="font_style"               type="attrFontStyle"/>
   </xs:complexType>
 
 
+  <!-- ### Additional object inclusion ### -->
+  <xs:complexType name="elemIncludeObject">
+    <xs:attribute use="optional" name="name"                     type="xs:string"/>
+    <xs:attribute use="optional" name="id"                       type="attrObjectId"/>
+    <xs:attribute use="required" name="pos_x"                    type="positiveInteger0"/>
+    <xs:attribute use="required" name="pos_y"                    type="positiveInteger0"/>
+  </xs:complexType>
 
 
-
+  <!-- ### Additional nested elements ### -->
+  <xs:complexType name="elemLanguage">
+    <xs:attribute use="required" name="code" type="attrLanguageCode"/>
+  </xs:complexType>
 
 
 
   <!-- ### ROOT ELEMENT ### -->
   <xs:element name="objectpool">
     <xs:complexType>
-      <!--xs:sequence>
-        <xs:element name="" -->
-      <xs:attribute name="dimension"       type="xs:positiveInteger" use="optional"/> <!-- required by FIRST XML file in processing order, so we can't generally check here in .xsd :-( -->
-      <xs:attribute name="std_bitmap_path" type="xs:positiveInteger" use="optional"/> <!-- put some annotation for the above comment there instead! -->
-      <xs:attribute name="fix_bitmap_path" type="xs:positiveInteger" use="optional"/>
-      <xs:attribute name="sk_width"        type="xs:positiveInteger" use="optional"/>
-      <xs:attribute name="sk_height"       type="xs:positiveInteger" use="optional"/>
+      <xs:sequence>
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+          <xs:element name="workingset"     type="elemWorkingset"/>
+	  <xs:element name="datamask"       type="elemDatamask"/>
+          <xs:element name="picturegraphic" type="elemPictureGraphic"/>
+          <xs:element name="fontattributes" type="elemFontAttributes"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute use="optional" name="dimension"       type="xs:positiveInteger" /> <!-- required by FIRST XML file in processing order, so we can't generally check here in .xsd :-( -->
+      <xs:attribute use="optional" name="std_bitmap_path" type="xs:string"          /> <!-- put some annotation for the above comment there instead! -->
+      <xs:attribute use="optional" name="fix_bitmap_path" type="xs:string"          />
+      <xs:attribute use="optional" name="sk_width"        type="xs:positiveInteger" />
+      <xs:attribute use="optional" name="sk_height"       type="xs:positiveInteger" />
     </xs:complexType>
   </xs:element>
 

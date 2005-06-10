@@ -3486,8 +3486,8 @@ int main(int argC, char* argV[])
       parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
 
 /** @todo Get path of vt2iso and add it to "vt2iso.xsd" */
-//      XMLCh* propertyValue = XMLString::transcode("vt2iso.xsd");
-//      parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
+      XMLCh* propertyValue = XMLString::transcode("vt2iso.xsd");
+      parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
 
       // And create our error handler and install it
       DOMCountErrorHandler errorHandler;
