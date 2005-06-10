@@ -92,6 +92,111 @@
 // #include <string>
 namespace __IsoAgLib {
 
+#ifdef ISO_TASK_CONTROLLER
+/**
+  constructor which can set all element vars
+  @param GetyPos_c rc_gtp optional GETY_POS code of this instance
+  @param rui16_DDI optional DDI code of this instance
+  @param rui16_element optional Element code of this instance
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @param rc_ownerGtp optional GETY_POS of the owner
+  @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+  @param rpc_processDataChangeHandler optional pointer to handler class of application
+  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+*/
+ProcDataRemote_c::ProcDataRemote_c(GetyPos_c rc_gtp, uint16_t rui16_DDI,
+      uint16_t rui16_element, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
+      GetyPos_c* rpc_commanderGtp,
+      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+      int ri_singletonVecKey)
+: ProcDataRemoteBase_c(rc_gtp, rui16_DDI, rui16_element, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                          rpc_processDataChangeHandler, ri_singletonVecKey)
+  , c_setpoint(this)
+  , c_measure(this)
+{
+}
+
+/**
+  initialise this ProcDataRemote_c instance to a well defined initial state
+  @param GetyPos_c rc_gtp optional GETY_POS code of this instance
+  @param rui16_DDI optional DDI code of this instance
+  @param rui16_element optional Element code of this instance
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @param rc_ownerGtp optional GETY_POS of the owner
+  @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+  @param rpc_processDataChangeHandler optional pointer to handler class of application
+  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+*/
+void ProcDataRemote_c::init(GetyPos_c rc_gtp, uint16_t rui16_DDI,
+      uint16_t rui16_element, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
+      GetyPos_c* rpc_commanderGtp,
+      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+      int ri_singletonVecKey)
+{
+  ProcDataRemoteBase_c::init(rc_gtp, rui16_DDI, rui16_element, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                                rpc_processDataChangeHandler, ri_singletonVecKey);
+  c_setpoint.init( this );
+  c_measure.init( this );
+}
+/**
+  assignment operator for this object
+  @param rrefc_src source instance
+  @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
+*/
+const ProcDataRemote_c& ProcDataRemote_c::operator=(const ProcDataRemote_c& rrefc_src){
+  // call the assignment operator for the base class
+  ProcDataRemoteBase_c::operator=(rrefc_src);
+
+  // now copy the element var
+  c_setpoint = rrefc_src.c_setpoint;
+  c_measure = rrefc_src.c_measure;
+  // return reference to source
+  return rrefc_src;
+}
+
+/**
+  copy constructor for IsoAgLibProcDataRemote
+  @param rrefc_src source instance
+*/
+ProcDataRemote_c::ProcDataRemote_c(const ProcDataRemote_c& rrefc_src)
+  : ProcDataRemoteBase_c(rrefc_src),
+    c_setpoint(rrefc_src.c_setpoint),
+    c_measure(rrefc_src.c_measure)
+{
+}
+
+/** default destructor which has nothing to do */
+ProcDataRemote_c::~ProcDataRemote_c(){
+}
+/**
+  perform periodic actions
+  @return true -> all planned executions performed
+*/
+bool ProcDataRemote_c::timeEvent( void )
+{
+  // check if remote gtp isn't active any more (>3sec) and stop all
+  // measureing progs
+  // -> checks and reaction performed by SetpointRemote_c::timeEvent and
+  // MeasureProgRemote_c::timeEvent
+  // set gtp for MeasureProgRemote_c if changed
+  prog().setGtp(commanderGtp());
+  if ( ! prog().timeEvent() ) return false;
+
+  if ( ! setpoint().timeEvent() ) return false;
+  return true;
+}
+
+/** process a setpoint message */
+void ProcDataRemote_c::processSetpoint(){
+  setpoint().processMsg();
+}
+/** process a measure prog message for remote process data */
+void ProcDataRemote_c::processProg(){
+  // simply call the process function for the one member object
+  prog().processMsg();
+}
+// End of ISO_TASK_CONTROLLER #ifdef
+#else
 /**
   constructor which can set all element vars
   @param rui8_lis optional LIS code of this instance
@@ -198,6 +303,6 @@ void ProcDataRemote_c::processProg(){
   // simply call the process function for the one member object
   prog().processMsg();
 }
-
+#endif
 
 } // end of namespace __IsoAgLib

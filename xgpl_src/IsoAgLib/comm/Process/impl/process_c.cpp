@@ -146,10 +146,21 @@ void Process_c::init()
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
   i32_lastFilterBoxTime = 0;
-
+#ifdef ISO_TASK_CONTROLLER
+  i32_lastTaskStatusTime = 0;
+  ui8_runningTaskWithSa = 0xFF;         // Initialize to 0xFF because it is an address we can't have. -bac
+  ui8_taskStatus = 0;
+#endif
   c_data.setSingletonKey( getSingletonVecKey() );
 
 }
+
+#ifdef ISO_TASK_CONTROLLER
+void Process_c::setTaskStatus(uint8_t taskStatus)
+{
+    ui8_taskStatus = taskStatus;
+}
+#endif
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */
 void Process_c::close( void ) {
@@ -263,6 +274,28 @@ bool Process_c::timeEvent( void ){
       #endif
   }
   #endif
+
+#ifdef ISO_TASK_CONTROLLER  
+  GetyPos_c c_myGtp( 130, 0 );
+  if(ui8_runningTaskWithSa == 0xFF)
+  {
+    if(getSystemMgmtInstance().existMemberGtp(c_myGtp, true)) //getSystemMgmtInstance().existLocalMemberGtp(c_myGtp))
+    {
+        ui8_runningTaskWithSa = getSystemMgmtInstance().getActiveLocalMember().nr();
+    }
+  }   
+  if (ui8_runningTaskWithSa != 0xFF && (i32_time - i32_lastTaskStatusTime > 2000))
+  {
+      ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+      ISOSystemPkg_c& c_pkg = c_isoMonitor.data();
+      i32_lastTaskStatusTime = i32_time;
+        
+      //Send task status message 
+	  c_pkg.setExtCanPkg8(7, 0, 0xCB, 0xFF, ui8_runningTaskWithSa,   // OxCB == 203dec = Process Data PGN         
+				    0x0E, 0x00, 0x00, 0x00, ui8_taskStatus, 0x00, 0x00, 0x00 );  
+      getCanInstance4Comm() << c_pkg;     // Task Status Message
+  }
+#endif
 
   // call the time event for all local data
   for ( pc_searchCacheC1 = c_arrClientC1.begin();
@@ -432,11 +465,19 @@ bool Process_c::processMsg(){
 //  else
 //  {
     // now check for remote Process Data
+#ifdef ISO_TASK_CONTROLLER
+    if (existProcDataRemote(data().gety(), data().DDI(), data().element(), b_posData))
+    { // there exists an appropriate process data item -> let the item process the msg
+      procDataRemote(data().gety(), data().DDI(), data().element(), b_posData).processMsg();
+      b_result = true;
+    }
+#else
     if (existProcDataRemote(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()))
     { // there exists an appropriate process data item -> let the item process the msg
       procDataRemote(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()).processMsg();
       b_result = true;
     }
+#endif
 // }
  return b_result;
 }
@@ -457,6 +498,11 @@ bool Process_c::existProcDataLocal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t 
   return updateLocalCache(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
 }
 
+#ifdef ISO_TASK_CONTROLLER
+bool Process_c::existProcDataRemote(uint8_t rui8_gety, uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_pos, uint8_t rui8_pri){
+ return updateRemoteCache(rui8_gety, rui16_DDI, rui16_element , rui8_pos, rui8_pri);
+} 
+#else
 /**
   checks if a suitable ProcDataRemote_c item exist
   @param rui8_lis LIS code of searched remote Process Data instance
@@ -473,7 +519,7 @@ bool Process_c::existProcDataLocal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t 
 bool Process_c::existProcDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri){
   return updateRemoteCache(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
 }
-
+#endif
 /**
   search for suitable ProcDataLocal_c item; create on if not found AND if wanted
 
@@ -518,9 +564,17 @@ ProcDataLocalBase_c& Process_c::procDataLocal(uint8_t rui8_lis, uint8_t rui8_get
   @return reference to searched/created ProcDataRemote_c instance
   @exception badAlloc
 */
+#ifdef ISO_TASK_CONTROLLER
+ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_gety, uint16_t rui16_DDI, uint8_t rui16_element, uint8_t rui8_pos, uint8_t rui8_pri){
+#else
 ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
          uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri ){
+#endif
+#ifdef ISO_TASK_CONTROLLER
+ bool b_found = updateRemoteCache( rui8_gety, rui16_DDI, rui16_element , rui8_pos, rui8_pri);
+#else
   bool b_found = updateRemoteCache( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
+#endif
   if (!b_found)
   { // not found and no creation wanted -> error
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
@@ -542,12 +596,14 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_lis, uint8_t rui8_g
 uint8_t Process_c::procDataLocalCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
                                       uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri){
   uint8_t ui8_cnt=0;
+#ifndef ISO_TASK_CONTROLLER
   for ( pc_searchCacheC1 = c_arrClientC1.begin();
        ( pc_searchCacheC1 != c_arrClientC1.end() );
        pc_searchCacheC1++ )
   { // search for all local items which match the searched identity
     if ((*pc_searchCacheC1)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
   }
+#endif
   return ui8_cnt;
 }
 
@@ -565,12 +621,14 @@ uint8_t Process_c::procDataLocalCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t
 uint8_t Process_c::procDataRemoteCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
                                        uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri){
   uint8_t ui8_cnt=0;
+#ifndef ISO_TASK_CONTROLLER
   for ( pc_searchCacheC2 = c_arrClientC2.begin();
        ( pc_searchCacheC2 != c_arrClientC2.end() );
        pc_searchCacheC2++ )
   { // search for all local items which match the searched identity
     if ((*pc_searchCacheC2)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
   }
+#endif
   return ui8_cnt;
 }
 
@@ -587,6 +645,7 @@ uint8_t Process_c::procDataRemoteCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_
 */
 bool Process_c::updateLocalCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri){
   bool b_foundLazy = false;
+#ifndef ISO_TASK_CONTROLLER
   if (!c_arrClientC1.empty())
   {
     if ( pc_searchCacheC1 != c_arrClientC1.end() )
@@ -615,6 +674,7 @@ bool Process_c::updateLocalCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t ru
       } // check lazy match
     }// for
   }
+#endif
   return b_foundLazy;
 }
 
@@ -629,21 +689,33 @@ bool Process_c::updateLocalCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t ru
     (default not used for search)
   @param rui8_pri PRI code of messages with this process data instance (default 2)
 */
+#ifdef ISO_TASK_CONTROLLER
+bool Process_c::updateRemoteCache(uint8_t rui8_gety, uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_pos, uint8_t rui8_pri)
+#else
 bool Process_c::updateRemoteCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri)
+#endif
 {
   bool b_foundLazy = false;
   if (!c_arrClientC2.empty())
   {
     if ( pc_searchCacheC2 != c_arrClientC2.end() )
     {
+#ifdef ISO_TASK_CONTROLLER
+      if ((*pc_searchCacheC2)->match(rui8_gety, rui16_DDI, rui16_element, rui8_pos, rui8_pri)) return true;
+#else
       if ((*pc_searchCacheC2)->match(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos, rui8_pri)) return true;
+#endif
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
     { // check for lazy match with POS == 0xFF (==joker)
+#ifdef ISO_TASK_CONTROLLER
+      if ((*pc_iter)->match(rui8_gety, rui16_DDI, rui16_element, rui8_pos, rui8_pri))                           
+#else
       if ((*pc_iter)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri))
+#endif
       { // matches at least lazy
         if ((*pc_iter)->pos() == rui8_pos)
         { //exact match

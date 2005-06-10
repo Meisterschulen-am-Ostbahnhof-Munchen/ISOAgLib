@@ -126,9 +126,15 @@ namespace __IsoAgLib {
 */
 class Proc_c {
 public:
+
+#ifdef ISO_TASK_CONTROLLER
+      enum type_t{NullType = 0, TimeProp = 1, DistProp = 2, WithinThresholdInterval = 4, OutsideThresholdInterval = 8, DeltaIncr,
+                  AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr, OnChange = 16, Counter = 32};
+#else
   /** enum type definition as part of class */
   enum type_t {TimeProp = 4, DistProp = 1, ValIncr = 8, DeltaIncr,
                   AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr, NullType = 0};
+#endif
 
   /** enum type for distinguish between Local or Remote data */
   enum homeEcu_t {Local = 1, Remote = 2};

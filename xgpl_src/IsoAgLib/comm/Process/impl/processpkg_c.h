@@ -174,6 +174,26 @@ public:
     @return D value of message
   */
   uint8_t d()const{return bit_data.b_d;};
+
+#ifdef ISO_TASK_CONTROLLER
+   /**
+    deliver Cmd of process msg 
+    @return Command value of message
+  */
+  uint8_t cmd()const{return bit_data.ui8_Command;};
+
+  /**
+    deliver Element Number of process msg 
+    @return Element Number value of message
+  */
+  uint16_t element()const{return bit_data.ui16_Element;};
+
+    /**
+    deliver DDI of process msg 
+    @return Data Dictionary Identifier value of message
+  */
+  uint16_t DDI()const{return bit_data.ui16_DDI;};
+#endif
   /**
     deliver the data type of the value in the message
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
@@ -354,6 +374,27 @@ public:
     @param rb_val new D value for message
   */
   void set_d(uint8_t rb_val){bit_data.b_d = rb_val;};
+#ifdef ISO_TASK_CONTROLLER
+   /**
+    set command of process msg
+    @param rb_cmd command value of process data message
+  */
+  void set_Cmd(uint8_t rb_cmd){bit_data.ui8_Command = rb_cmd;};
+
+   /**
+    set DDI of process msg
+    @param rb_DDI Data dictionary Itendifier
+  */
+  void set_DDI(uint16_t rb_DDI){bit_data.ui16_DDI = rb_DDI;};
+
+   /**
+    set Element Number of Process Data Message
+    @param rb_Element command value of process data message
+  */
+  void set_Element(uint16_t rb_Element){bit_data.ui16_Element = rb_Element;};
+
+#endif
+  
   /**
     set value POS of process msg
     @param rb_val new POS value for message
@@ -478,6 +519,12 @@ private: // Private attributes
     uint16_t ui8_inst : 4;
     /** decide about used val type: int32_t, uint32_t, float, cmd */
     uint16_t b_valType : 2;
+
+#ifdef ISO_TASK_CONTROLLER
+    uint16_t ui8_Command : 4;
+    uint16_t ui16_Element : 12;
+    uint16_t ui16_DDI : 16;
+#endif
   } bit_data;
   /** pointer to monitor list item of sender "SEND" (NULL if not claimed address) */
   MonitorItem_c* pc_monitorSend;

@@ -307,6 +307,8 @@ float ProcessPkg_c::dataFloat()const{
 void ProcessPkg_c::setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValType)
 {
   *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = ri32_val;
+
+#ifndef ISO_TASK_CONTROLLER    // no need to do this switch case if new ISO part 10 is used. -bac
   switch (ren_procValType)
   {
     case i32_val:
@@ -326,6 +328,9 @@ void ProcessPkg_c::setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValTyp
     case cmdVal: // only to avoid compiler warning
       break;
   }
+#else
+  bit_data.b_valType = ren_procValType;
+#endif
 }
 
 
@@ -515,6 +520,10 @@ void ProcessPkg_c::string2Flags()
     }
   }
  #endif // USE_DIN_9684
+ 
+
+#ifndef ISO_TASK_CONTROLLER         // The following is the original code for old part 10 -bac
+
  #ifdef USE_ISO_11783
   #ifdef USE_DIN_9684
   else
@@ -578,6 +587,65 @@ void ProcessPkg_c::string2Flags()
   { // sender is special case terminal -> change GETY_POS for data part from terminal GETY_POS to local of empf
     setGtp(pc_monitorEmpf->gtp());
   }
+#else 
+    // New Part 10 code to go here -bac
+  
+   // set pri, empf, send for convenience
+    setPri(2); // signal target message
+    setEmpf(isoPs());
+    setSend(isoSa());
+    setIdentType(Ident_c::ExtendedIdent);
+
+    setLis(0); // ISO doesn't support LIS code -> set to default 0
+
+   //  bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::pb_data[0] >> 5) & 0x3);
+    
+    // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
+    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+    if (bit_data.b_valType == float_val) set_d(1);
+    else
+    #endif
+    set_d(0);
+
+    //Need to replace this call with the getpos from the monitor item. Getypos no longer encapsulated in the message data itself
+    //See new line added below that uses c_isoMonitor. -bac
+    //setGtp( GetyPos_c(((CANPkg_c::pb_data[2] >> 4) & 0xF), (CANPkg_c::pb_data[2] & 0xF) ) );
+
+    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+    setGtp(c_isoMonitor.isoMemberNr(send()).gtp());  // Get the gety and pos (Device Class, Device Class Instance -bac
+
+    // now set pc_monitorSend and pc_monitorEmpf
+    if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
+    { // ISO targeted process msg with empf as defined ISO member
+      pc_monitorEmpf = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
+    }
+    else
+    { // either no target process msg or empf no defined member
+      pc_monitorEmpf = NULL;
+    }
+    if (c_isoMonitor.existIsoMemberNr(send()))
+    { // sender SEND registered as
+      pc_monitorSend = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
+    }
+    else
+    { // send is no defined member
+      pc_monitorSend = NULL;
+    }
+
+    set_Cmd(CANPkg_c::pb_data[0] & 0xf);
+    uint16_t element = 0;
+    element &= CANPkg_c::pb_data[1];
+    element = element << 4;
+    element |= ((CANPkg_c::pb_data[0] & 0xF0)>>4);
+    set_Element(element);
+ 
+    uint16_t newDDI = 0;
+    newDDI |= CANPkg_c::pb_data[3];
+    newDDI = newDDI << 8;
+    newDDI |= CANPkg_c::pb_data[2];
+    set_DDI(newDDI);
+
+#endif  // end of new part 10 code 
 
   CNAMESPACE::memmove(pb_data, (CANPkg_c::pb_data+4), 4);
 };
@@ -623,11 +691,13 @@ void ProcessPkg_c::flags2String()
       CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | gtp().getCombinedDin();
     }
     #endif
+#ifndef ISO_TASK_CONTROLLER
   #ifdef USE_ISO_11783
+    
   }
   else
   { // format for ISO -> set int32_t or float
-    CANPkg_c::pb_data[0] = (valType()) | ((pd() & 0x3) << 3) | (mod() & 0x7);
+      CANPkg_c::pb_data[0] = (valType()) | ((pd() & 0x3) << 3) | (mod() & 0x7);
 	#if 0
     // if ui8_termGtpForLocalProc is specified dependent on gtp receiver of the GETY_POS of this data should be changed
     // to remote gtp
@@ -663,6 +733,23 @@ void ProcessPkg_c::flags2String()
   { // value send with 8 bytes
     setLen(8);
   }
+#else   // code added by Brad Cox to format the message to conform to the latest part 10 Specification. -bac
+ }
+  else
+  { 
+    CANPkg_c::pb_data[0] = (cmd() & 0xf) | ( (element() & 0xf) << 4);
+	CANPkg_c::pb_data[1] = element() >> 4;
+    CANPkg_c::pb_data[2] = DDI() & 0x00FF ; 
+    CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;  
+  }
+  // for ISO the ident is directly read and written
+
+
+  CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_data, 4);
+
+  setLen(8);
+
+#endif  // End of ISO_TASK_CONTROLLER
 };
 
 /**

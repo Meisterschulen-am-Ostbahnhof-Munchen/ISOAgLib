@@ -92,6 +92,171 @@
 
 namespace __IsoAgLib {
 
+#ifdef ISO_TASK_CONTROLLER
+/**
+  initialise this ProcDataRemoteBase_c instance to a well defined initial state
+  @param rc_gtp optional GETY_POS code of this instance
+  @param rui16_DDI optional DDI code of this instance
+  @param rui16_element optional element code of this instance
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @param rc_ownerGtp optional GETY_POS of the owner
+  @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+  @param rpc_processDataChangeHandler optional pointer to handler class of application
+  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+*/
+void ProcDataRemoteBase_c::init(GetyPos_c rc_gtp, uint16_t rui16_DDI,
+      uint16_t rui16_element, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
+      GetyPos_c* rpc_commanderGtp,
+      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+      int ri_singletonVecKey )
+{
+  ProcDataBase_c::init(rc_gtp, rui16_DDI, rui16_element, rui8_pri, rc_ownerGtp, NULL, rpc_processDataChangeHandler);
+  setSingletonKey( ri_singletonVecKey );
+  setCommanderGtp(rpc_commanderGtp);
+
+  // don't register proces data object, as long as it's only created with
+  // default values (PRI and LIS must be in all cases different from 0xFF)
+  if ( rui8_pri != 0xFF ) 
+  { // now register the pointer to this instance in Process_c
+    getProcessInstance4Comm().registerRemoteProcessData( this );
+  }
+}
+
+/**
+  assignment operator for this object
+  @param rrefc_src source instance
+  @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
+*/
+const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemoteBase_c& rrefc_src){
+  // call the assignment operator for the base class
+  ProcDataBase_c::operator=(rrefc_src);
+  pc_gtp = rrefc_src.pc_gtp;
+  // return reference to source
+  return *this;
+}
+
+/**
+  copy constructor for IsoAgLibProcDataRemote
+  @param rrefc_src source instance
+*/
+ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src)
+  : ProcDataBase_c(rrefc_src)
+{ // now copy the element var
+  pc_gtp = rrefc_src.pc_gtp;
+
+  // now register the pointer to this instance in Process_c
+  getProcessInstance4Comm().registerRemoteProcessData( this );
+}
+
+/** default destructor which has nothing to do */
+ProcDataRemoteBase_c::~ProcDataRemoteBase_c(){
+  // now unregister the pointer to this instance in Process_c
+  getProcessInstance4Comm().unregisterRemoteProcessData( this );
+}
+/**
+  set the pointer to the commander ident gtp
+  @param rpbgtp pointer to GETY_POS var of local member used for
+              sending commands to remote owner member
+*/
+void ProcDataRemoteBase_c::setCommanderGtp(GetyPos_c* rpc_gtp)
+{ 
+    pc_gtp = rpc_gtp;
+};
+
+/**
+  perform periodic actions
+  ProcDataRemoteBase_c::timeEvent has nothing to do
+  -> this function must only be defined as base for derived variants which
+  uses simple measurements and thus doesn't need a time event
+  @return true -> all planned executions performed
+*/
+bool ProcDataRemoteBase_c::timeEvent( void )
+{
+  return true;
+}
+
+
+/**
+  virtual function which check dependent on remote/local
+  if send action with given var parameter and address claim state of owner is
+  allowed and resolves the appropriate numbers for sender and receiver (empf)
+
+  possible errors:
+      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
+  @param rui8_pri PRI code of message
+  @param rb_var variable number -> send
+  @param b_empf refernce to EMPF variable which is only checked for address claim state
+  @param b_send refernce to SEND variable which is updated to rb_var
+  @param en_msgProto protocol type to use for the message
+      IState_c::Din or IState_c::Iso (only compiled and used if USE_ISO_11783 is
+      configured) (default: IState_c::Din)
+  @return true -> owner of process data registered as active in Monitor-List
+*/
+bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send
+  #ifdef USE_ISO_11783
+    , IState_c::itemState_t &en_msgProto
+  #endif
+) const
+{ // retreive pointer to according SystemMgmt_c class
+  #ifdef USE_ISO_11783
+  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+  #endif
+  bool b_result = false;
+  rui8_pri += 0; // do something with rui8_pri so that compiler does not complain
+
+  #ifdef USE_DIN_9684
+  DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
+  // check if owner has claimed address AND var paremeter has claimed address
+  // the address claim check for var was done by caller of this function - 0xFF means not claimed address
+  if (
+      #ifdef USE_ISO_11783
+      ((en_msgProto & IState_c::Din) != 0) &&
+      #endif
+      ( (c_din_monitor.existDinMemberNr(rb_var))
+      &&(c_din_monitor.dinMemberNr(rb_var).itemState(IState_c::ClaimedAddress))
+      )
+    &&( (c_din_monitor.existDinMemberGtp(ownerGtp()))
+      &&(c_din_monitor.dinMemberGtp(ownerGtp()).itemState(IState_c::ClaimedAddress))
+      )
+    &&(rb_var != 0xFF)
+     )
+  { // all check was positive -> set b_empf, b_send
+    b_empf = c_din_monitor.dinMemberGtp(ownerGtp()).nr();
+    b_send = rb_var; // for remote data the var parameter is the sender for sending
+    #ifdef USE_ISO_11783
+    en_msgProto = IState_c::Din;
+    #endif
+    b_result = true;
+  }
+  else
+  #endif
+  #if defined( USE_ISO_11783 )
+  // try with ISO 11783
+  if (
+      ((en_msgProto & IState_c::Iso) != 0) &&
+      ( (c_isoMonitor.existIsoMemberNr(rb_var))
+      &&(c_isoMonitor.isoMemberNr(rb_var).itemState(IState_c::ClaimedAddress))
+      )
+    &&( (c_isoMonitor.existIsoMemberGtp(ownerGtp()))
+      &&(c_isoMonitor.isoMemberGtp(ownerGtp()).itemState(IState_c::ClaimedAddress))
+      )
+    &&(rb_var != 0xFF)
+     )
+  { // all check was positive -> set b_empf, b_send
+    b_empf = c_isoMonitor.isoMemberGtp(ownerGtp()).nr();
+    b_send = rb_var; // for remote data the var parameter is the sender for senisog
+    en_msgProto = IState_c::Iso;
+    b_result = true;
+  }
+  else
+  #endif // USE_ISO_11783
+  { // one of EMPF or SEND not registered as having claimed address in monior-list
+    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
+  }
+
+  return b_result;
+}
+#else
 /**
   initialise this ProcDataRemoteBase_c instance to a well defined initial state
   @param rui8_lis optional LIS code of this instance
@@ -258,6 +423,6 @@ bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_
   return b_result;
 }
 
-
+#endif
 
 } // end of namespace __IsoAgLib

@@ -189,6 +189,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
     setProgType(ren_progType);
   }
 
+#ifndef ISO_TASK_CONTROLLER
   // if stored remote gtp isn't valid exit this function
   // error state are set by the function
   if (!verifySetRemoteGtp())return false;
@@ -198,7 +199,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
   { // send the suitable increment creating message to the remote system
     if (pc_subprog->type() == Proc_c::TimeProp)
     { // send msg with wanted type-code, gtp, pd=0, mod=4, -1*increment value
-      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, 4,
+      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, 4,           // -bac this generates a Measuring increment command (Data Modifier = 4) Not needed for Part new 10
           -1* pc_subprog->increment()))
             b_sendResult = false;
     }
@@ -232,8 +233,91 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   // send msg with wanted type-code, gtp, pd=0, mod=6, start command
   // return result -> true if msg claimed address for member with gtp() exist
-  if (!processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0, 6, b_command))
+  if (!processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0, 6, b_command))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
     b_sendResult = false;
+
+#else
+  // if stored remote gtp isn't valid exit this function
+  // error state are set by the function
+  if (!verifySetRemoteGtp())return false;
+  uint8_t b_command = 0; 
+  // send all registered increments to remote ECU 
+  for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
+       pc_subprog != vec_measureSubprog.end(); pc_subprog++)
+  { // send the suitable increment creating message to the remote system
+    if (pc_subprog->type() == Proc_c::TimeProp)
+    { // send msg with wanted type-code, gtp, pd=0, mod=4, -1*increment value
+      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, 0x4, pc_subprog->increment()))
+            b_sendResult = false;
+    }
+    else if (pc_subprog->type() == Proc_c::DistProp)
+    { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
+      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, 0x5, pc_subprog->increment()))
+            b_sendResult = false;
+    }
+    else if (pc_subprog->type() == Proc_c::WithinThresholdInterval)
+    { 
+        if(checkDoSend(Proc_c::DoMin)) b_command |= 0x6;
+        else if(checkDoSend(Proc_c::DoMax)) b_command |= 0x7;
+        if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, b_command, pc_subprog->increment()))
+            b_sendResult = false;
+    }
+    else if (pc_subprog->type() == Proc_c::OnChange)
+    { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
+      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, 0x8, pc_subprog->increment()))
+            b_sendResult = false;
+    }
+    else if (pc_subprog->type() == Proc_c::OutsideThresholdInterval)
+    { 
+        if(checkDoSend(Proc_c::DoMin)) b_command |= 0x9;
+        else if(checkDoSend(Proc_c::DoMax)) b_command |= 0xA;
+        if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, b_command, pc_subprog->increment()))
+            b_sendResult = false;
+    }
+    else if (pc_subprog->type() == Proc_c::Counter)
+    { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
+      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, 0x2, pc_subprog->increment()))
+            b_sendResult = false;
+    }
+    if(b_sendResult == true)
+    {        
+       // Update the state to reflect that the task has started
+       getProcessInstance4Comm().setTaskStatus(1);
+    }
+  }
+
+  // call base function for registering start state
+  MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);
+
+  // store actual time as last receive measure time to
+  // avoid misinterpretation of to int32_t not receive data
+  i32_lastMeasureReceive = System_c::getTime();
+    // Need to set Command bits properly:
+   
+  //TimeInterval = 1, DistanceInterval = 2, WithinThresholdInterval = 4, OutsideThresholdInterval = 8, OnChange = 16, Counter = 32
+  //////if (checkType(Proc_c::TimeProp)) b_command |= 0x4;
+  //////if (checkType(Proc_c::DistProp)) b_command |= 0x5;
+  //////if (checkType(Proc_c::WithinThresholdInterval))
+  //////{
+  //////    if(checkDoSend(Proc_c::DoMin)) b_command |= 0x6;
+  //////    else if(checkDoSend(Proc_c::DoMax)) b_command |= 0x7;
+  //////}
+  //////if (checkType(Proc_c::OnChange)) b_command |= 0x8;
+  //////if (checkType(Proc_c::OutsideThresholdInterval))
+  //////{
+  //////    if(checkDoSend(Proc_c::DoMin)) b_command |= 0x9;
+  //////    else if(checkDoSend(Proc_c::DoMax)) b_command |= 0xa;
+  //////}
+  //////if (checkType(Proc_c::Counter))b_command |= 0x2;
+
+  //////uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
+  ////////if (!processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0, 6, b_command))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
+  ////// if (!processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0, b_command, 2000))        // the 2000 is the time interval. Need a way to pass this in.    
+  //////    b_sendResult = false;
+  ////// else
+  //////     // Update the state to reflect that the task has started
+  //////     getProcessInstance4Comm().setTaskStatus(1);
+#endif
   return b_sendResult;
 }
 
@@ -245,7 +329,11 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
       * dependant error in CAN_IO
   @return true -> command successful sent
 */
+#ifdef ISO_TASK_CONTROLLER
+bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
+#else
 bool MeasureProgRemote_c::stop(){
+#endif
   bool b_result = true;
 
   // if stored remote gtp isn't valid exit this function
@@ -255,15 +343,44 @@ bool MeasureProgRemote_c::stop(){
   // send stop command to remote ECU
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   // at the moment only TimeProp and DistProp are well -> only send them
+  
+#ifdef ISO_TASK_CONTROLLER
+  uint8_t b_command = 0; 
+  if (checkType(Proc_c::TimeProp)) b_command |= 0x4;
+  if (checkType(Proc_c::DistProp)) b_command |= 0x5;
+  if (checkType(Proc_c::WithinThresholdInterval))
+  {
+      if(checkDoSend(Proc_c::DoMin)) b_command |= 0x6;
+      else if(checkDoSend(Proc_c::DoMax)) b_command |= 0x7;
+  }
+  if (checkType(Proc_c::OnChange)) b_command |= 0x8;
+  if (checkType(Proc_c::OutsideThresholdInterval))
+  {
+      if(checkDoSend(Proc_c::DoMin)) b_command |= 0x9;
+      else if(checkDoSend(Proc_c::DoMax)) b_command |= 0xa;
+  }
+  if (checkType(Proc_c::Counter))b_command |= 0x2;
+  
+  if(b_command)
+  {
+        b_result = processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0, b_command, 0);
+        // Set task status to stopped.
+        getProcessInstance4Comm().setTaskStatus(0);
+  }
+#else
   if (checkDoSend(Proc_c::doSend_t(Proc_c::DoVal | Proc_c::DoMed | Proc_c::DoInteg)))
   { // send msg with wanted type-code, gtp, pd=0, mod=6, stop command
     // return result -> true if msg claimed address for member with gtp() exist
     b_result = processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0, 6, 0);
   }
+#endif
   else b_result = true;
 
   // call base function to delete the subprogs
-  MeasureProgBase_c::stop();
+#ifdef ISO_TASK_CONTROLLER
+  if(b_deleteSubProgs)
+#endif
+    MeasureProgBase_c::stop();
 
   return b_result;
 }
@@ -308,6 +425,13 @@ bool MeasureProgRemote_c::processMsg(){
     // only update vars if received msg contains data (PD==1)
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
+#ifdef ISO_TASK_CONTROLLER
+    if ((c_pkg.cmd() == 3) && (c_pkg.memberEmpf().itemState(IState_c::Local)||(b_receiveForeignMeasurement) ) )
+    { // write -> data from remote process data
+      setValFromPkg();
+      b_result = true;
+    }
+#else
     // only use data if:
     // A: PD== 1
     // B: EMPF is number of local member or receiveForeignMeasurement
@@ -323,6 +447,7 @@ bool MeasureProgRemote_c::processMsg(){
       setValFromPkg();
       b_result = true;
     }
+#endif
   }
   return b_result;
 }
@@ -346,6 +471,11 @@ void MeasureProgRemote_c::setValFromPkg(){
 #endif
     // get the int32_t data val; let it convert, if needed
     int32_t i32_new_val = processData().pkgDataLong();
+#ifdef ISO_TASK_CONTROLLER
+    // set val with function, to calc delta and accel
+    if ( val() != i32_new_val ) b_change = true;
+    setVal(i32_new_val);
+ #else
     switch (b_mod)
     {
       case 0: // msg contains measured val
@@ -370,6 +500,9 @@ void MeasureProgRemote_c::setValFromPkg(){
         setMed(i32_new_val);
         break;
     }
+#endif
+
+
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else

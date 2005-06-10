@@ -165,6 +165,156 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
 */
 class ProcDataRemote_c : public ProcDataRemoteBase_c  {
+
+#ifdef ISO_TASK_CONTROLLER
+private:
+public:
+  /**
+    constructor which can set all element vars
+    @param rc_gtp optional GETY_POS code of this instance
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @param rc_ownerGtp optional GETY_POS of the owner
+    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rpc_processDataChangeHandler optional pointer to handler class of application
+    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  */
+  ProcDataRemote_c(GetyPos_c rc_gtp = 0,
+      uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
+      uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
+      GetyPos_c* rpc_commanderGtp = NULL,
+      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+      int ri_singletonVecKey = 0);
+
+  /**
+    initialise this ProcDataRemote_c instance to a well defined initial state
+    @param rc_gtp optional GETY_POS code of this instance
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @param rc_ownerGtp optional GETY_POS of the owner
+    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rpc_processDataChangeHandler optional pointer to handler class of application
+    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  */
+  void init(GetyPos_c rc_gtp = 0,
+      uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
+      uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
+      GetyPos_c* rpc_commanderGtp = NULL,
+      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+      int ri_singletonVecKey = 0);
+
+   /**
+    assignment operator for this object
+    @param rrefc_src source instance
+    @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
+  */
+  const ProcDataRemote_c& operator=(const ProcDataRemote_c& rrefc_src);
+
+  /**
+    copy constructor for IsoAgLibProcDataRemote
+    @param rrefc_src source instance
+  */
+   ProcDataRemote_c(const ProcDataRemote_c& rrefc_src);
+
+  /** default destructor which has nothing to do */
+  ~ProcDataRemote_c();
+
+  /**
+    deliver a reference to the setpoint object
+    @return reference to member object with setpoint informations
+  */
+  SetpointRemote_c& setpoint() { return c_setpoint;};
+
+  /**
+    deliver a reference to the measure prog object
+    @return reference to member object with measure prog informations
+  */
+  MeasureProgRemote_c& prog() { return c_measure;};
+
+    /**
+    deliver the actual percent setpoint
+    @param rb_sendRequest true -> send request for actual value
+    @return percent setpoint value
+  */
+  uint8_t setpointPercentVal(bool rb_sendRequest = false)
+    { return c_setpoint.setpointPercentVal( rb_sendRequest ); };
+  /**
+    send a setpoint cmd with given percent setpoint
+    @param rb_val commanded setpoint percent value
+  */
+  void setSetpointPercentVal(uint8_t rb_val){c_setpoint.setSetpointPercentVal(rb_val);};
+  /**
+    deliver the actual master setpoint
+    @param rb_sendRequest true -> send request for actual value
+    @return setpoint value as long
+  */
+  int32_t setpointMasterVal(bool rb_sendRequest = false)
+    { return c_setpoint.setpointMasterVal( rb_sendRequest ); };
+  /**
+    send a setpoint cmd with given exact setpoint
+    @param ri32_val commanded setpoint value as long
+  */
+  void setSetpointMasterVal(int32_t ri32_val){ c_setpoint.setSetpointMasterVal(ri32_val);};
+  #ifdef USE_FLOAT_DATA_TYPE
+  /**
+    deliver the actual master setpoint
+    @param rb_sendRequest true -> send request for actual value
+    @return setpoint value as float
+  */
+  float setpointMasterValFloat(bool rb_sendRequest = false)
+    { return c_setpoint.setpointMasterValFloat( rb_sendRequest ); };
+  /**
+    send a setpoint cmd with given exact setpoint
+    @param rf_val commanded setpoint value as float
+  */
+  void setSetpointMasterVal(float rf_val){ c_setpoint.setSetpointMasterVal(rf_val);};
+  #endif
+  /**
+    deliver actual measurement value as long
+    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+  */
+  int32_t masterVal(bool rb_sendRequest = false)
+    { return c_measure.masterVal( rb_sendRequest );};
+  /**
+    send reset cmd for the measurement value
+  */
+  void resetMasterVal() { c_measure.resetMasterVal();};
+  #ifdef USE_FLOAT_DATA_TYPE
+  /**
+    deliver actual measurement value as float
+    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+  */
+  float masterValFloat(bool rb_sendRequest = false)
+    { return c_measure.masterValFloat( rb_sendRequest );};
+  #endif
+
+
+  /**
+    perform periodic actions
+    @return true -> all planned executions performed
+  */
+  virtual bool timeEvent( void );
+
+private: // Private methods
+  /** process a measure prog message for remote process data */
+  virtual void processProg();
+  /** processing of a setpoint message */
+  virtual void processSetpoint();
+
+private: // Private attributes
+  /** object for managing jobs of remote setpoints */
+  SetpointRemote_c c_setpoint;
+
+  /** object for managing jobs of remote measure programs */
+  MeasureProgRemote_c c_measure;
+
+};
+
+
+#else
+
 private:
 public:
   /**
@@ -312,6 +462,6 @@ private: // Private attributes
   /** object for managing jobs of remote measure programs */
   MeasureProgRemote_c c_measure;
 };
-
+#endif
 }
 #endif

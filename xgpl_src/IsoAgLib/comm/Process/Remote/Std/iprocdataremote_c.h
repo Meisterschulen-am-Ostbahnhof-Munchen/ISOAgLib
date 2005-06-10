@@ -135,6 +135,242 @@ namespace IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
 */
 class iProcDataRemote_c : private __IsoAgLib::ProcDataRemote_c {
+
+#ifdef ISO_TASK_CONTROLLER
+private:
+  friend class EventSource_c;
+public:
+
+  /**
+    constructor which can set all element vars
+    @param rc_gtp optional GETY_POS code of this instance
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @param rc_ownerGtp optional GETY_POS of the owner
+    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rpc_processDataChangeHandler optional pointer to handler class of application
+    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  */
+  iProcDataRemote_c(iGetyPos_c rc_gtp = 0,
+      uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
+      uint8_t rui8_pri = 2, iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
+      iGetyPos_c* rpc_commanderGtp = NULL,
+      ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL, int ri_singletonVecKey = 0)
+  : ProcDataRemote_c(rc_gtp, rui16_DDI,rui16_element,
+      rui8_pri, rc_ownerGtp, rpc_commanderGtp, rpc_processDataChangeHandler, ri_singletonVecKey){};
+
+  /**
+    initialise this ProcDataRemote_c instance to a well defined initial state
+    @param rc_gtp optional GETY_POS code of this instance
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @param rc_ownerGtp optional GETY_POS of the owner
+    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rpc_processDataChangeHandler optional pointer to handler class of application
+    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  */
+  void init(iGetyPos_c rc_gtp = 0,
+      uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
+      uint8_t rui8_pri = 2, iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
+      iGetyPos_c* rpc_commanderGtp = NULL,
+      ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL, int ri_singletonVecKey = 0)
+   {ProcDataRemote_c::init(rc_gtp, rui16_DDI, rui16_element,
+      rui8_pri, rc_ownerGtp, rpc_commanderGtp, rpc_processDataChangeHandler, ri_singletonVecKey);};
+
+  /** set the poitner to the handler class
+    * @param rpc_processDataChangeHandler pointer to handler class of application
+    */
+  void setProcessDataChangeHandler( ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
+   { ProcDataRemote_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); } ;
+  /** deliver the poitner to the handler class
+    * @return pointer to handler class of application (or NULL if not defined by application)
+    */
+  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const
+   { return ProcDataRemote_c::getProcessDataChangeHandler(); } ;
+
+  /**
+    deliver value PRI of messages with this
+    process data instance
+    @return PRI
+  */
+  uint8_t pri() const{return ProcDataRemote_c::pri();};
+  /**
+    set value PRI of messages with this
+    process data instance (default value is 2 == target message)
+    @param rb_val new PRI value
+  */
+  void setPri(uint8_t rb_val){ProcDataRemote_c::setPri(rb_val);};
+  /**
+    deliver value LIS (list number)
+    @return LIS
+  */
+  uint8_t lis() const{return ProcDataRemote_c::lis();};
+  /**
+    deliver value GETY (machine type specific table of process data types)
+    @return GETY
+  */
+  uint8_t gety() const{return ProcDataRemote_c::gety();};
+  /**
+    deliver value WERT (row of process data table)
+    @return WERT
+  */
+  uint8_t wert() const{return ProcDataRemote_c::wert();};
+  /**
+    deliver value INST (column of process data table)
+    @return INST
+  */
+  uint8_t inst() const{return ProcDataRemote_c::inst();};
+  /**
+    deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
+    @return ZAEHLNUM
+  */
+  uint8_t zaehlnum() const{return ProcDataRemote_c::zaehlnum();};
+  /**
+    deliver value POS (important if more than one machine with equal GETY are active)
+    @return POS
+  */
+  uint8_t pos() const{return ProcDataRemote_c::pos();};
+ 
+  uint16_t DDI() const{return ProcDataRemote_c::DDI();};
+
+  uint16_t element() const {return ProcDataRemote_c::element();};
+
+
+  /**
+    deliver a reference to the setpoint object
+    @return reference to member object with setpoint informations
+  */
+  iSetpointRemote_c& setpoint()
+    {return static_cast<iSetpointRemote_c&>(ProcDataRemote_c::setpoint());};
+  /* ******************************************** *
+   * some convenience functions for master        *
+   * setpoint access with NOT simple setpoint      *
+   * ******************************************** */
+  /**
+    deliver the actual percent setpoint
+    @param rb_sendRequest true -> send request for actual value
+    @return percent setpoint value
+  */
+  uint8_t setpointPercentVal(bool rb_sendRequest = false)
+    {return ProcDataRemote_c::setpointPercentVal(rb_sendRequest);};
+  /**
+    send a setpoint cmd with given percent setpoint
+    @param rb_val commanded setpoint percent value
+  */
+  void setSetpointPercentVal(uint8_t rb_val)
+    {ProcDataRemote_c::setSetpointPercentVal(rb_val);};
+  /**
+    deliver the actual master setpoint
+    @param rb_sendRequest true -> send request for actual value
+    @return setpoint value as long
+  */
+  int32_t setpointMasterVal(bool rb_sendRequest = false)
+    {return ProcDataRemote_c::setpointMasterVal(rb_sendRequest);};
+  /**
+    send a setpoint cmd with given exact setpoint
+    @param ri32_val commanded setpoint value as long
+  */
+  void setSetpointMasterVal(int32_t ri32_val)
+    {ProcDataRemote_c::setSetpointMasterVal(ri32_val);};
+  #ifdef USE_FLOAT_DATA_TYPE
+  /**
+    deliver the actual master setpoint
+    @param rb_sendRequest true -> send request for actual value
+    @return setpoint value as float
+  */
+  float setpointMasterValFloat(bool rb_sendRequest = false)
+    {return ProcDataRemote_c::setpointMasterValFloat(rb_sendRequest);};
+  /**
+    send a setpoint cmd with given exact setpoint
+    @param rf_val commanded setpoint value as float
+  */
+  void setSetpointMasterVal(float rf_val)
+    {ProcDataRemote_c::setSetpointMasterVal(rf_val);};
+  #endif
+  /**
+    deliver a reference to the measure prog object
+    @return reference to member object with measure prog informations
+  */
+  iMeasureProgRemote_c& prog()
+    {return static_cast<iMeasureProgRemote_c&>(ProcDataRemote_c::prog());};
+  /**
+    deliver actual measurement value as long
+    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+  */
+  int32_t masterVal(bool rb_sendRequest = false)
+    {return ProcDataRemote_c::masterVal(rb_sendRequest);};
+  /**
+    send reset cmd for the measurement value
+  */
+  void resetMasterVal(){ProcDataRemote_c::resetMasterVal();};
+  #ifdef USE_FLOAT_DATA_TYPE
+  /**
+    deliver actual measurement value as float
+    @param rb_sendRequest true -> request for new value is sent (optional, default false)
+  */
+  float masterValFloat(bool rb_sendRequest = false)
+    {return ProcDataRemote_c::masterValFloat(rb_sendRequest);};
+  #endif
+
+  /**
+    deliver the commanderGtp (GETY_POS of local member)
+    @return GETY_POS used for sending commands to remote owner member
+  */
+  iGetyPos_c commanderGtp()const{return ProcDataRemote_c::commanderGtp();};
+  /**
+    set the pointer to the commander ident gtp
+    @param rpbgtp pointer to GETY_POS var of local member used for
+                sending commands to remote owner member
+  */
+  void setCommanderGtp(iGetyPos_c* rpc_gtp){ProcDataRemote_c::setCommanderGtp(rpc_gtp);};
+
+
+  /**
+    deliver the internal unit code, which can be requested by remote ECU
+    (important if process data is local managed with different unit than published via ISO11783 or DIN9684
+    BUS; interesting if value update is easier with special unit)
+    @return internal unit
+  */
+  uint16_t internalUnit()const{return ProcDataRemote_c::internalUnit();};
+  /**
+    set the internal unit code, which can be requested by remote ECU
+    (important if process data is local managed with different unit than published via ISO11783 or DIN9684
+    BUS; interesting if value update is easier with special unit)
+    @param rui16_internalUnit new vaue for internal unit
+  */
+  void setInternalUnit(uint16_t rui16_internalUnit)
+      {ProcDataRemote_c::setInternalUnit(rui16_internalUnit);};
+
+  /**
+    deliver the send conversion, which is used to send measuring values
+    @return conversion value
+  */
+  const int32_t& sendConversion()const{return ProcDataRemote_c::sendConversion();};
+  /**
+    set the send conversion, which is used to send measuring values
+    @param ri32_sendConversion new conversion value
+  */
+  void setSendConversion(int32_t ri32_sendConversion)
+      {ProcDataRemote_c::setSendConversion(ri32_sendConversion);};
+
+  /**
+    deliver the central data type of this process data
+    @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
+  */
+  proc_valType_t valType()const
+    {return ProcDataRemote_c::valType();};
+  /**
+    set the central data type of this process data
+    @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
+  */
+  void setValType(proc_valType_t ren_procValType)
+    {ProcDataRemote_c::setValType(ren_procValType);};
+
+};
+
+#else
 private:
   friend class EventSource_c;
 public:
@@ -367,6 +603,6 @@ public:
     {ProcDataRemote_c::setValType(ren_procValType);};
 
 };
-
+#endif
 }
 #endif

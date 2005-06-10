@@ -540,6 +540,8 @@ bool MeasureProgBase_c::processMsg(){
   #endif
   bool b_edited = false;
 
+// Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
+#ifndef ISO_TASK_CONTROLLER
   // check if PD==0 -> SET increment message
   if (b_pd == 0)
   { // mark that msg already edited
@@ -583,6 +585,7 @@ bool MeasureProgBase_c::processMsg(){
       }
     }
   }
+#endif
   return b_edited;
 }
 

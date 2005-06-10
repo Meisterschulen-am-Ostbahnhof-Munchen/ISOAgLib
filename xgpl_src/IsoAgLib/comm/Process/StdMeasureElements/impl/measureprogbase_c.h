@@ -414,6 +414,7 @@ public:
     set the c_gtp code for this measureprog
     @param rc_gtp GETY_POS for exact specification of partner system
   */
+  // This has something to do with the init failing for the iProcDataRemote_c object. -bac
   void setGtp(GetyPos_c rc_gtp){c_gtp = rc_gtp;};
 
   /**

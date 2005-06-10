@@ -134,6 +134,286 @@ namespace __IsoAgLib {
  */
 class ProcDataLocalBase_c : public ProcDataBase_c
 {
+#ifdef ISO_TASK_CONTROLLER
+ public:
+  /**
+    constructor which can set all element vars
+
+    possible errors:
+        * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
+    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @param rc_ownerGtp optional GETY_POS of the owner
+    @param rpc_gtp pointer to updated GETY_POS variable of owner
+    @param rb_cumulativeValue 
+             -# for process data like distance, time, area
+                 the value of the measure prog data sets is updated
+                 on master value update dependent on the value increment 
+                 since the last master value update
+                 -> if a remote member resets his data set copy, datas of
+                    other members aren't changed
+                 -> if this data is saved in EEPROM, the main application
+                    needn't take into account the initial EEPROM value, as
+                     setting of the master val is independent from EEPROM
+             -#  for values like speed, state, rpm aren't updated by increment,
+                  -> the given master value is propagated equally to all
+                      measure prog data sets
+                  -> if this data is saved in EEPROM, the stored value is loaded
+                     as initial master value, and is initially propagated to all 
+                     measure prog data sets
+    @param rui16_eepromAdr optional adress where value is stored in EEPROM
+    @param rpc_processDataChangeHandler optional pointer to handler class of application
+    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  */
+  ProcDataLocalBase_c(GetyPos_c rc_gtp = GetyPos_c(0, 0xF), uint16_t rui16_DDI = 0, 
+      uint16_t rui16_element = 0xFF, uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
+      GetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false
+#ifdef USE_EEPROM_IO
+      , uint16_t rui16_eepromAdr = 0xFFFF
+#endif
+      , IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL
+      , int ri_singletonVecKey = 0
+      ) : ProcDataBase_c(rc_gtp, rui16_DDI, rui16_element, rui8_pri, rc_ownerGtp, rpc_gtp,
+                            rpc_processDataChangeHandler, ri_singletonVecKey )
+    {init(rc_gtp, rui16_DDI, rui16_element, rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue
+      #ifdef USE_EEPROM_IO
+      , rui16_eepromAdr
+      #endif // USE_EEPROM_IO
+      , rpc_processDataChangeHandler
+      , ri_singletonVecKey);};
+
+  /**
+    initialise this ProcDataLocalBase_c instance to a well defined initial state
+
+    possible errors:
+        * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
+    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @param rc_ownerGtp optional GETY_POS of the owner
+    @param rpc_gtp pointer to updated GETY_POS variable of owner
+    @param rb_cumulativeValue
+             -# for process data like distance, time, area
+                 the value of the measure prog data sets is updated
+                 on master value update dependent on the value increment
+                 since the last master value update
+                 -> if a remote member resets his data set copy, datas of
+                    other members aren't changed
+                 -> if this data is saved in EEPROM, the main application
+                    needn't take into account the initial EEPROM value, as
+                     setting of the master val is independent from EEPROM
+             -#  for values like speed, state, rpm aren't updated by increment,
+                  -> the given master value is propagated equally to all
+                      measure prog data sets
+                  -> if this data is saved in EEPROM, the stored value is loaded
+                     as initial master value, and is initially propagated to all
+                     measure prog data sets
+    @param rui16_eepromAdr optional adress where value is stored in EEPROM
+    @param rpc_processDataChangeHandler optional pointer to handler class of application
+    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  */
+  void init(GetyPos_c rc_gtp = GetyPos_c(0, 0xF), uint16_t rui16_DDI = 0,
+      uint16_t rui16_element = 0xFF, uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
+      GetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false
+#ifdef USE_EEPROM_IO
+      , uint16_t rui16_eepromAdr = 0xFFFF
+#endif
+      , IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL
+      , int ri_singletonVecKey = 0
+      );
+  /** copy constructor */
+  ProcDataLocalBase_c( const ProcDataLocalBase_c& rrefc_src );
+  /** assignment operator */
+  const ProcDataLocalBase_c& operator=( const ProcDataLocalBase_c& rrefc_src );
+
+  /** default destructor which has nothing to do */
+  ~ProcDataLocalBase_c();
+
+
+  #ifdef USE_EEPROM_IO
+  /**
+    deliver the eeprom adr for the value
+    @return configured EEPROM adress
+  */
+  uint16_t eepromAdr()const{return ui16_eepromAdr;};
+  /**
+    set the eeprom adr for the value, read in value from EEPROM
+
+    possible errors:
+        * dependent error in EEPROMIO_c on problems during read
+    @param rui16_eepromAdr new EEPROM adress
+  */
+  virtual void setEepromAdr(uint16_t rui16_eepromAdr);
+  #endif
+  /**
+    deliver the master value (central measure value of this process data;
+    can differ from measure vals of measure progs, as these can be reseted
+    independent)
+    @return actual master value
+  */
+  const int32_t& masterVal()const{return i32_masterVal;};
+  /**
+    set the masterVal from main application independent from any measure progs
+    @param ri32_val new measure value
+  */
+  virtual void setMasterVal(int32_t ri32_val);
+  /**
+    increment the value -> update the local and the measuring programs values
+    @param ri32_val size of increment of master value
+  */
+  virtual void incrMasterVal(int32_t ri32_val);
+#ifdef USE_FLOAT_DATA_TYPE
+  /**
+    deliver the master value (central measure value of this process data;
+    can differ from measure vals of measure progs, as these can be reseted
+    independent) as float
+    @return actual master value
+  */
+  const float& masterValFloat()const{return f_masterVal;};
+  /**
+    set the masterVal from main application independent from any measure progs
+    @param rf_val new measure value
+  */
+  virtual void setMasterVal(float rf_val);
+  /**
+    increment the value -> update the local and the measuring programs values
+    @param rf_val size of increment of master value
+  */
+  virtual void incrMasterVal(float rf_val);
+#endif
+  /**
+    perform periodic actions
+    task for ProcDataLocal_c::timeEvent is to store the actual
+    eeprom value in the defined time intervall
+    @return true -> all planned executions performed
+  */
+  virtual bool timeEvent( void );
+  /**
+    send a min-information (selected by MOD) to a specified target (selected by GTP)
+    @param rc_targetGtp GetyPos of target
+    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
+    @return true -> successful sent
+  */
+  bool sendVal( GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
+    
+ protected:
+  /** processing of a setpoint message.
+      this base class variant checks only, if a setpoint cmd was recieved
+      which wants to reset a measurement value (this is wrongly used by some
+      DIN 9684 implementations)
+  */
+  virtual void processSetpoint();
+  /** process a measure prog message for local process data.
+      this variant is only used for simple measurement progam management.
+      derived classes with more flexible management (including measurement programs)
+      use their own overloaded version.
+  */
+  virtual void processProg();
+ private:
+  friend class ManageMeasureProgLocal_c; /**< allow access to eepromVal() and resetEeprom() */
+  friend class ProcDataLocal_c; /**< allow access to eepromVal() and resetEeprom() */
+  friend class ProcDataLocalSimpleSetpoint_c; /**< allow access to eepromVal() and resetEeprom() */
+  /** base function for assignment of element vars for copy constructor and operator= */
+  void assignFromSource( const ProcDataLocalBase_c& rrefc_src );
+#ifdef USE_EEPROM_IO
+  /**
+    deliver the eeprom value
+    @return actual EEPROM value
+  */
+  const int32_t& eepromVal()const{return i32_eepromVal;};
+  #ifdef USE_FLOAT_DATA_TYPE
+  /**
+    deliver the eeprom value
+    @return actual EEPROM value
+  */
+  const float& eepromValFloat()const{return f_eepromVal;};
+  #endif
+  /**
+    set the eeprom value
+    @param ri32_val new EEPROM value
+  */
+  void setEepromVal(int32_t ri32_val){i32_eepromVal = ri32_val;};
+  /**
+    called from MeasureProg item -> if this item is first in list
+    reset eeprom val
+
+    possible errors:
+        * dependent error in EEPROMIO_c on problems during read
+    @param pc_progItem MeasureProgLocal_c instance which wants to reset EEPROM val
+  */
+  void resetEeprom( void );
+#endif
+  /**
+    virtual function which check dependent on remote/local
+    if send action with given var parameter and address claim state of owner is
+    allowed and resolves the appropriate numbers for sender and receiver (empf)
+
+    possible errors:
+        * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
+    @param rui8_pri PRI code of message
+    @param rb_var variable number -> empf
+    @param b_empf refernce to EMPF variable which is updated to rb_var
+    @param b_send refernce to SEND variable which is only check for address claim state
+    @param en_msgProto protocol type to use for the message
+        IState_c::Din or IState_c::Iso (only compiled and used if USE_ISO_11783 is
+        configured) (default: IState_c::Din)
+    @return true -> owner of process data registered as active in Monitor-List
+  */
+  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send
+  #ifdef USE_ISO_11783
+    , IState_c::itemState_t &en_msgProto
+  #endif
+    ) const;
+ private:
+   /** allow explicit MeasureProgLocal_c the access to private elements */
+  friend class MeasureProgLocal_c;
+#ifdef USE_FLOAT_DATA_TYPE
+  /** store the master value of the main programm
+      in anonymous union for dircet access to float or long
+      presentation
+  */
+  union {
+    int32_t i32_masterVal;
+    float f_masterVal;
+  };
+  #ifdef USE_EEPROM_IO
+    /** the eeprom value can differ from main programm value
+      (if value from eeprom has been restored, if value has been
+      resetted); i32_masterVal starts with 0, and can be
+      set disregarding any reset commands from remote;
+      stored in anonymous union for dircet access to float or long
+      presentation
+      */
+    union {
+      int32_t i32_eepromVal;
+      float f_eepromVal;
+    };
+  #endif
+#else
+  /** store the master value of the main programm */
+  int32_t i32_masterVal;
+  #ifdef USE_EEPROM_IO
+    /** the eeprom value can differ from main programm value
+      (if value from eeprom has been restored, if value has been
+      resetted); i32_masterVal starts with 0, and can be
+      set disregarding any reset commands from remote */
+    int32_t i32_eepromVal;
+  #endif
+#endif
+#ifdef USE_EEPROM_IO
+  /** last time, where automatic value store was performed */
+  int32_t i32_lastEepromStore;
+  /** eeprom adress of the value, if this process data
+    information should be stored permanent */
+  uint16_t ui16_eepromAdr;
+#endif
+  /** register if this data is a cumulative type like distance, time, area */
+  bool b_cumulativeValue;
+};
+#else  // End of ISO_TASK_CONTROLLER #ifdef
  public:
   /**
     constructor which can set all element vars
@@ -418,7 +698,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   /** register if this data is a cumulative type like distance, time, area */
   bool b_cumulativeValue;
 };
-
+#endif
 
 }
 #endif

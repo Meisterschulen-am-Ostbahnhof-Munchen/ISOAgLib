@@ -185,8 +185,11 @@ public:
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
+#ifdef ISO_TASK_CONTROLLER
+  virtual bool stop(bool b_deleteSubProgs = true);
+#else
   virtual bool stop();
-
+#endif
   /**
     deliver med val
     @param rb_sendRequest choose wether a request for value update should be

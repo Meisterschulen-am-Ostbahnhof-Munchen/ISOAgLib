@@ -128,8 +128,11 @@ public:
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
+#ifdef ISO_TASK_CONTROLLER
+  bool stop(bool b_deleteSubProgs = true) {return MeasureProgRemote_c::stop(b_deleteSubProgs);};
+#else
   bool stop() {return MeasureProgRemote_c::stop();};
-
+#endif
   /**
     deliver time of last receive of new measurement value
     (val, min, max, integ or med)

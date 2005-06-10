@@ -213,6 +213,10 @@ public:
   */
   bool existProcDataLocal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
           uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
+  
+#ifdef ISO_TASK_CONTROLLER
+  bool existProcDataRemote(uint8_t rui8_gety, uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
+#else
   /**
     checks if a suitable ProcDataRemoteBase_c item exist
     @param rui8_lis LIS code of searched remote Process Data instance
@@ -227,7 +231,9 @@ public:
   */
   bool existProcDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
           uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
+#endif
 
+  
   /**
     search for suitable ProcDataLocalBase_c item; create on if not found AND if wanted
 
@@ -264,9 +270,12 @@ public:
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
+#ifdef ISO_TASK_CONTROLLER
+ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_gety, uint16_t rui16_DDI, uint8_t rui16_element, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
+#else
   ProcDataRemoteBase_c& procDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
         uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2 );
-
+#endif
 
   /**
     delivers count of local process data entries with similar ident
@@ -325,6 +334,10 @@ public:
     */
   void unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
     { unregisterC2( pc_remoteClient );};
+
+#ifdef ISO_TASK_CONTROLLER
+   void setTaskStatus(uint8_t taskStatus);
+#endif
 private: // Private methods
   /**
     update the cache with search for according ProcDataLocalBase_c item
@@ -350,8 +363,12 @@ private: // Private methods
       (default not used for search)
     @param rui8_pri PRI code of messages with this process data instance (default 2)
   */
+#ifdef ISO_TASK_CONTROLLER
+  bool updateRemoteCache(uint8_t rui8_gety, uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_pos, uint8_t rui8_pri);
+#else
   bool updateRemoteCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
                            uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
+#endif
 
   /**
     insert FilterBox_c for receive from remote gtp if needed
@@ -371,6 +388,8 @@ private: // Private methods
     @return true -> member exist and Filter Box deleted
   */
   bool deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t rui8_pri = 2);
+
+
 private: // Private attributes
   friend class SINGLETON_DERIVED(Process_c,ElementBase_c);
   friend class IsoAgLib::iProcess_c;
@@ -385,6 +404,12 @@ private: // Private attributes
   ProcessPkg_c c_data;
   /** last timestamp with FilterBox_c check */
   int32_t i32_lastFilterBoxTime;
+
+#ifdef ISO_TASK_CONTROLLER
+  int32_t i32_lastTaskStatusTime;
+  uint8_t ui8_runningTaskWithSa;
+  uint8_t ui8_taskStatus;
+#endif
 };
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Process_c singleton instance
