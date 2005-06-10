@@ -3486,7 +3486,14 @@ int main(int argC, char* argV[])
       parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
 
 /** @todo Get path of vt2iso and add it to "vt2iso.xsd" */
-      XMLCh* propertyValue = XMLString::transcode("vt2iso.xsd");
+      char xsdLocation[1024+1];
+      strcpy (xsdLocation, argV[0]);
+      // now trim exe filename
+      for (int i=strlen(xsdLocation)-1; i >= 0; i--) {
+        if (xsdLocation[i] == '/') { xsdLocation[i+1]=0x00; break; }
+      }
+      strcat (xsdLocation, "vt2iso.xsd");
+      XMLCh* propertyValue = XMLString::transcode(xsdLocation);
       parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
 
       // And create our error handler and install it

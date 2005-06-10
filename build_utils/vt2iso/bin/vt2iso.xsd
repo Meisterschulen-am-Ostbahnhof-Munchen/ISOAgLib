@@ -49,7 +49,7 @@
 
   <xs:simpleType name="attrFontStyle">
     <xs:restriction base="xs:string">
-      <xs:pattern value="normalxx|(bold|crossed|underlined|italic|inverted|flashinginverted|flashinghidden)?(\+(bold|crossed|underlined|italic|inverted|flashinginverted|flashinghidden))*"/>
+      <xs:pattern value="normal|(bold|crossed|underlined|italic|inverted|flashinginverted|flashinghidden)?(\+(bold|crossed|underlined|italic|inverted|flashinginverted|flashinghidden))*"/>
     </xs:restriction>
   </xs:simpleType>
 
