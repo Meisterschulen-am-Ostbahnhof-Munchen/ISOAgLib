@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 
 #ifndef IVTOBJECTINPUTATTRIBUTES_C_H
@@ -71,8 +71,8 @@ public:
 
   //  Operation: init
   //! Parameter:
-  //! @param vtObjectInputAttributesSROM: 
-  //! @param b_initPointer: 
+  //! @param vtObjectInputAttributesSROM:
+  //! @param b_initPointer:
   void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM) {
     vtObjectInputAttributes_c::init (vtObjectInputAttributesSROM);
   };
@@ -89,18 +89,18 @@ public:
 
   //  Operation: setValidationStringCopy
   //! Parameter:
-  //! @param newValidationString: 
-  //! @param b_updateObject:  
-  void setValidationStringCopy(const char* newValidationString, bool b_updateObject= false) {
-    vtObjectInputAttributes_c::setValidationStringCopy (newValidationString, b_updateObject);
+  //! @param newValidationString:
+  //! @param b_updateObject:
+  void setValidationStringCopy(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputAttributes_c::setValidationStringCopy (newValidationString, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setValidationString
   //! Parameter:
-  //! @param newValidationString: 
-  //! @param b_updateObject:  
-  void setValidationStringRef(const char* newValidationString, bool b_updateObject= false) {
-    vtObjectInputAttributes_c::setValidationStringRef (newValidationString, b_updateObject);
+  //! @param newValidationString:
+  //! @param b_updateObject:
+  void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputAttributes_c::setValidationStringRef (newValidationString, b_updateObject, b_enableReplaceOfCmd);
   };
 
 }; // ~X2C

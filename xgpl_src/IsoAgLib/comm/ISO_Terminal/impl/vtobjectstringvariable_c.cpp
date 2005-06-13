@@ -140,7 +140,7 @@ vtObjectStringVariable_c::fitTerminal()
 //! @param newValue:
 //! @param b_updateObject:
 void
-vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject)
+vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   if (b_updateObject) {
     // check if not already RAM string buffer?
@@ -158,7 +158,7 @@ vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject)
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 236 : setValue
@@ -166,7 +166,7 @@ vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject)
 //! @param newValue:
 //! @param b_updateObject:
 void
-vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject)
+vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
@@ -181,7 +181,7 @@ vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject)
   setStringToStream( newValue ); // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectStringVariable_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectStringVariable_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 

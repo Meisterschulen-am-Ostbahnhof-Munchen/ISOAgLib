@@ -46,37 +46,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
@@ -94,9 +94,9 @@ namespace __IsoAgLib {
 
 // //////////////////////////////// +X2C Operation 168 : stream
 //! Parameter:
-//! @param destMemory: 
+//! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset: 
+//! @param sourceOffset:
 int16_t
 vtObjectFillAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
@@ -135,7 +135,7 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
 // //////////////////////////////// +X2C Operation 171 : vtObjectFillAttributes_c
 vtObjectFillAttributes_c::vtObjectFillAttributes_c()
 { // ~X2C
- 
+
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 205 : size
@@ -146,15 +146,15 @@ vtObjectFillAttributes_c::fitTerminal()
   return 8+vtObjectFillAttributes_a->numberOfMacrosToFollow*2;
 } // -X2C
 
-  
-void vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject)
+
+void vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject, bool b_enableReplaceOfCmd)
 {// ~X2C
   if (b_updateObject) {
     saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType),   sizeof(iVtObjectFillAttributes_s), newFillType);
     saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), newFillColour);
     saveValueP (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s), newFillPattern);
-  }    
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newFillColour, this, IsoAgLib::FillColour), newFillPattern);
+  }
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd);
 }// -X2C
 
 } // end namespace __IsoAgLib

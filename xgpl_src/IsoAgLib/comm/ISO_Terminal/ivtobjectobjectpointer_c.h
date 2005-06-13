@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTOBJECTPOINTER_C_H
 #define IVTOBJECTOBJECTPOINTER_C_H
@@ -83,8 +83,8 @@ public:
   //! Parameter:
   //! @param rpc_newObject:
   //! @param b_updateObject:
-  void setValue(iVtObject_c* rpc_newObject, bool b_updateObject= false) {
-    vtObjectObjectPointer_c::setValue (rpc_newObject, b_updateObject);
+  void setValue(iVtObject_c* rpc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    vtObjectObjectPointer_c::setValue (rpc_newObject, b_updateObject, b_enableReplaceOfCmd);
   };
 
 }; // ~X2C

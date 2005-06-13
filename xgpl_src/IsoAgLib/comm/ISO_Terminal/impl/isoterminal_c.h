@@ -127,36 +127,36 @@ class ISOTerminalStreamer_c : public MultiSendStreamer_c
 {
 
 public:
-  
+
   /** place next data to send direct into send puffer of pointed
       stream send package - MultiSendStreamer_c will send this
       puffer afterwards
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
-  
+
   /** set cache for data source to stream start
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   void resetDataNextStreamPart ();
-  
+
   /** save current send position in data source - neeed for resend on send problem
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   void saveDataNextStreamPart ();
-  
+
   /** reactivate previously stored data source position - used for resend on problem
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   void restoreDataNextStreamPart ();
-  
+
   /** calculate the size of the data source
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   uint32_t getStreamSize () { return ui32_streamSize; };
 
   uint8_t getFirstByte () { return 0x11; } // If ISOTerminal streams out, it's because of an Annex C. Object Pool Upload, so 0x11 can be returned ALWAYS!
-  
+
   uint32_t ui32_objectStreamPosition;
   uint32_t ui32_objectStreamPositionStored;
   uint32_t ui32_streamSize;
@@ -211,10 +211,10 @@ public:
   __IsoAgLib::vtObjectString_c* mssObjectString;
   STL_NAMESPACE::vector<uint8_t> vec_uploadBuffer;  // don't use malloc_alloc for uint8_t values - here the 8byte overhead per malloc item are VERY big
   // ==> chunk allocation which can be shared among instances is alot better
-  
+
   /// Retry some times?
   uint8_t ui8_retryCount;
-  
+
   /// TimeOut value (relative to the time the Upload was started!
   uint32_t ui32_uploadTimeout;
 };
@@ -230,7 +230,7 @@ class ISOTerminal_c : public SingletonISOTerminal_c {
 public:
 
   enum objectPoolState_t { OPNoneRegistered, OPRegistered, OPUploadedSuccessfully, OPCannotBeUploaded };
-  
+
   enum uploadType_t { UploadIdle, UploadPool, UploadCommand };
   enum uploadPoolState_t { UploadPoolInit, UploadPoolWaitingForLoadVersionResponse, UploadPoolWaitingForMemoryResponse, UploadPoolUploading, UploadPoolWaitingForEOOResponse, UploadPoolWaitingForStoreVersionResponse, UploadPoolFailed}; /* completely uploaded is now detected by "OPUploadedSuccessfully" */
   enum uploadCommandState_t { UploadCommandWaitingForCommandResponse, UploadCommandTimedOut /*, UploadCommandFailed*/ };
@@ -382,33 +382,33 @@ public:
   vtState_s*         getVtState () { return &vtState_a; };
   localSettings_s*   getLocalSettings () { return &localSettings_a; };
   uint32_t           getUploadBufferSize ();
-  uint8_t            getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour) { 
+  uint8_t            getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour) {
                        uint8_t colorDepth = getVtCapabilities()->hwGraphicType;
                        if (((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16))) {
                          return c_streamer.pc_pool->convertColour (colorValue, colorDepth, obj, whichColour);
                        } else {
                          return colorValue;
-                       }                         
+                       }
                      };
 
   /** sendCommand... methods */
-  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout);
-  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout);
+  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout, bool b_enableReplaceOfCmd=true);
+  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd=true);
   bool sendCommandForDEBUG (uint8_t* rpui8_buffer, uint32_t ui32_size);
 
-  bool sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
-  bool sendCommandChangeAttribute    (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
-  bool sendCommandChangeSoftKeyMask  (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMaskID);
-  bool sendCommandChangeStringValue  (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength); // no response, no timeout... it's that simple...
-  bool sendCommandChangeStringValue  (IsoAgLib::iVtObjectString_c* rpc_objectstring); // no response, no timeout... it's that simple...
-  
+  bool sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeAttribute    (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeSoftKeyMask  (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeStringValue  (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true); // no response, no timeout... it's that simple...
+  bool sendCommandChangeStringValue  (IsoAgLib::iVtObjectString_c* rpc_objectstring, bool b_enableReplaceOfCmd=true); // no response, no timeout... it's that simple...
+
   //  Operation: sendCommandChangeChildLocation
   //! Parameter:
   //! @param rpc_object:
   //! @param childObjectId:
   //! @param dx:
   //! @param dy:
-  bool sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y);
+  bool sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd=true);
 
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE CHILD LOCATION COMMAND
   //  Operation: sendCommandChangeChildLocation
@@ -417,26 +417,26 @@ public:
   //! @param childObjectId:
   //! @param dx:
   //! @param dy:
-  bool sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy);
+  bool sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_enableReplaceOfCmd=true);
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE BACKGROUND COLOUR COMMAND
   //  Operation: sendCommandChangeBackgroundColor
   //! Parameter:
   //! @param objectId:
   //! @param colorValue:
-  bool sendCommandChangeBackgroundColour(IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour);
+  bool sendCommandChangeBackgroundColour(IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour, bool b_enableReplaceOfCmd=true);
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE PRIORITY COMMAND
   //  Operation: sendCommandChangePriority
   //! Parameter:
   //! @param objectId:
   //! @param colorValue:
-  bool sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority);
+  bool sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority, bool b_enableReplaceOfCmd=true);
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE SIZE COMMAND
   //  Operation: sendCommandChangeSize
   //! Parameter:
   //! @param rpc_object:
   //! @param newWidth:
   //! @param newHeight:
-  bool sendCommandChangeSize(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight);
+  bool sendCommandChangeSize(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
 
   //  Operation: sendCommandChangeEndPoint
   //! Parameter:
@@ -444,7 +444,7 @@ public:
   //! @param newWidth:
   //! @param newHeight:
   //! @param newLineDirection:
-  bool sendCommandChangeEndPoint(IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection);
+  bool sendCommandChangeEndPoint(IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_enableReplaceOfCmd=true);
 
 
 // ADDED BY BRAD COX 17-SEP-2004 TO IMPLEMENT CHANGE FILL ATTRIBUTES COMMAND
@@ -454,13 +454,17 @@ public:
   //! @param newFillType:
   //! @param newFillColour:
   //! @param newFillPatternObject:
-  bool sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject);
+  bool sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
 
-  bool sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle);
+  bool sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
 
-  bool sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt);
+  bool sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
 
-private: // methods
+  bool queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd=true);
+
+  void dumpQueue();
+
+private:
   friend class SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c);
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of ISOTerminal_c within application
@@ -469,49 +473,48 @@ private: // methods
 
   /** sends "Get Memory" to start uploading process... */
   void startObjectPoolUploading ();
-  
+
   /** sets all states to successfull uploading and call the hook function! */
   void finalizeUploading ();
-  
+
   /** send "End of Object Pool" message */
   void indicateObjectPoolCompletion ();
 
   bool startUploadCommand ();
 
   void finishUploadCommand ();
-  
-  /** sets state to "OPCannotUpload"... */
+
+		/** sets state to "OPCannotUpload"... */
   void vtOutOfMemory();
 
-  
 private: // attributes
-  
+
   /** temp data where received data is put */
   ISOTerminalPkg_c c_data;
 
   /** register is receive filters are already created */
   bool b_receiveFilterCreated;
- 
+
   bool vtAliveNew;
 
   /** gets set as soon as the first "VT Status Message" gets received */
   uint8_t vtSourceAddress;
-  
+
   /** stores the last "VT Status Message" */
   vtState_s vtState_a;
-  
+
   /** gets set as soon as the responses for the requests arrive */
   vtCapabilities_s vtCapabilities_a;
-  
+
   /** stores the Local Settings like Language, Units, Date Format */
   localSettings_s localSettings_a;
-  
+
   /**
     has to be set using registerIsoObjectPool (...) so that IsoTerminal
     can interact in the name of the wsMaster
   */
   IdentItem_c* pc_wsMasterIdentItem;
-  
+
   /**
     here the version number of the terminal gets stored as soon as the
     "VT Get Memory Response" was received
@@ -523,24 +526,24 @@ private: // attributes
 
   /// General Object-Pool state (empty, loaded, etc.)
   objectPoolState_t en_objectPoolState;
-  
+
   /**
     Upload-State & Variables
   */
   uploadType_t en_uploadType;
   uploadCommandState_t en_uploadCommandState; // state only used if en_uploadType == "UploadCommand"
   uploadPoolState_t en_uploadPoolState;       // state only used if en_uploadType == "UploadPool"
-   
+
   uint32_t ui32_uploadTimestamp;
   uint32_t ui32_uploadTimeout;
-  
+
   uint8_t ui8_commandParameter; // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
 
-  
+
   uint8_t ui8_uploadError;
   uint8_t ui8_uploadRetry;
   MultiSend_c::sendSuccess_t en_sendSuccess;
-  
+
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
   // as each SendCommand_c item is just 16Byte large, and an application

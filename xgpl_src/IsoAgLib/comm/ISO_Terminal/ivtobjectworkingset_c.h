@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTWORKINGSET_C_H
 #define IVTOBJECTWORKINGSET_C_H
@@ -84,16 +84,16 @@ public:
   //! Parameter:
   //! @param rpc_vtObjectMask:
   //! @param b_updateObject:
-  void changeActiveMask(iVtObjectMask_c* rpc_iVtObjectMask, bool b_updateObject= false) {
-    vtObjectWorkingSet_c::changeActiveMask (rpc_iVtObjectMask, b_updateObject);
+  void changeActiveMask(iVtObjectMask_c* rpc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    vtObjectWorkingSet_c::changeActiveMask (rpc_iVtObjectMask, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: changeBackgroundColour
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void changeBackgroundColour(uint8_t newValue, bool b_updateObject= false) {
-    vtObjectWorkingSet_c::changeBackgroundColour (newValue, b_updateObject);
+  void changeBackgroundColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    vtObjectWorkingSet_c::changeBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: moveChildLocation
@@ -102,8 +102,8 @@ public:
   //! @param dx:
   //! @param dy:
   //! @param b_updateObject:
-  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectWorkingSet_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectWorkingSet_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: setChildPosition
@@ -111,8 +111,8 @@ public:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false) {
-    return vtObjectWorkingSet_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject);
+  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectWorkingSet_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
 }; // ~X2C

@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTAUXILIARYFUNCTION_C_H
 #define IVTOBJECTAUXILIARYFUNCTION_C_H
@@ -77,15 +77,15 @@ public:
 
   //  Operation: get_vtObjectAuxiliaryFunction_a
   iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a() { return vtObjectAuxiliaryFunction_c::get_vtObjectAuxiliaryFunction_a(); };
-  
+
   //  Operation: moveChildLocation
   //! Parameter:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
   //! @param b_updateObject:
-  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectAuxiliaryFunction_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectAuxiliaryFunction_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: setChildPosition
@@ -93,8 +93,8 @@ public:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false) {
-    return vtObjectAuxiliaryFunction_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject);
+  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectAuxiliaryFunction_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
 }; // ~X2C

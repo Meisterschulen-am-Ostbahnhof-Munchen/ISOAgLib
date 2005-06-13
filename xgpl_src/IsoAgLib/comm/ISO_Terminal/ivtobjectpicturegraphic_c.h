@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTPICTUREGRAPHIC_C_H
 #define IVTOBJECTPICTUREGRAPHIC_C_H
@@ -83,24 +83,24 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setWidth(uint16_t newValue, bool b_updateObject=false) {
-    vtObjectPictureGraphic_c::setWidth (newValue, b_updateObject);
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectPictureGraphic_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setOptions
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setOptions(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectPictureGraphic_c::setOptions (newValue, b_updateObject);
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectPictureGraphic_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setTransparencyColour
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setTransparencyColour(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectPictureGraphic_c::setTransparencyColour (newValue, b_updateObject);
+  void setTransparencyColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectPictureGraphic_c::setTransparencyColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
 }; // ~X2C

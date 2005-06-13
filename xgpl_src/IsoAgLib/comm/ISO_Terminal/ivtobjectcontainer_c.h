@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTCONTAINER_C_H
 #define IVTOBJECTCONTAINER_C_H
@@ -82,20 +82,20 @@ public:
   //  Operation: hide
   //! Parameter:
   //! @param b_updateObject:
-  void hide(bool b_updateObject= false) { vtObjectContainer_c::hideShow (0, b_updateObject); };
+  void hide(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { vtObjectContainer_c::hideShow (0, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: show
   //! Parameter:
   //! @param b_updateObject:
-  void show(bool b_updateObject= false) { vtObjectContainer_c::hideShow (1, b_updateObject); };
+  void show(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { vtObjectContainer_c::hideShow (1, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: setSize
   //! Parameter:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false) {
-    vtObjectContainer_c::setSize(newWidth, newHeight, b_updateObject);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectContainer_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: moveChildLocation
@@ -104,8 +104,8 @@ public:
   //! @param dx:
   //! @param dy:
   //! @param b_updateObject:
-  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectContainer_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectContainer_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: setChildPosition
@@ -113,8 +113,8 @@ public:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false) {
-    return vtObjectContainer_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject);
+  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectContainer_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
 }; // ~X2C

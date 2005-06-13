@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTALARMMASK_C_H
 #define IVTOBJECTALARMMASK_C_H
@@ -85,32 +85,33 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectAlarmMask_c::setBackgroundColour (newValue, b_updateObject);
+  //! @param b_enableReplaceOfCmd:
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectAlarmMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
-  
+
   //  Operation: setSoftKeyMask
   //! Parameter:
   //! @param newSoftKeyMask:
   //! @param b_updateObject:
-  void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false) {
-    vtObjectAlarmMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject);
+  void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    vtObjectAlarmMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setPriority
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setPriority(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectAlarmMask_c::setPriority (newValue, b_updateObject);
+  void setPriority(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectAlarmMask_c::setPriority (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
-  
+
   //  Operation: setAcousticSignal
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setAcousticSignal(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectAlarmMask_c::setAcousticSignal (newValue, b_updateObject);
+  void setAcousticSignal(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectAlarmMask_c::setAcousticSignal (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: moveChildLocation
@@ -119,8 +120,8 @@ public:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
-  bool moveChildLocation(iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectAlarmMask_c::moveChildLocation (rpc_childObject, dx, dy, b_updateObject);
+  bool moveChildLocation(iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectAlarmMask_c::moveChildLocation (rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: setChildPosition
@@ -128,8 +129,8 @@ public:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false) {
-    return vtObjectAlarmMask_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject);
+  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectAlarmMask_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
 }; // ~X2C

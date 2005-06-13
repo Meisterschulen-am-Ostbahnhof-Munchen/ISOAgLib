@@ -46,37 +46,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
@@ -94,9 +94,9 @@ namespace __IsoAgLib {
 
 // //////////////////////////////// +X2C Operation 120 : stream
 //! Parameter:
-//! @param destMemory: 
+//! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset: 
+//! @param sourceOffset:
 int16_t
 vtObjectEllipse_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
@@ -121,16 +121,16 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
         destMemory [8] = (((uint32_t) vtObjectEllipse_a->height * factor) >> 20) >> 8;
       } else {
         destMemory [5] = (((uint32_t) vtObjectEllipse_a->width*vtDimension)/opDimension) & 0xFF;
-        destMemory [6] = (((uint32_t) vtObjectEllipse_a->width*vtDimension)/opDimension) >> 8;     
+        destMemory [6] = (((uint32_t) vtObjectEllipse_a->width*vtDimension)/opDimension) >> 8;
         destMemory [7] = (((uint32_t) vtObjectEllipse_a->height*vtDimension)/opDimension) & 0xFF;
-        destMemory [8] = (((uint32_t) vtObjectEllipse_a->height*vtDimension)/opDimension) >> 8;     
+        destMemory [8] = (((uint32_t) vtObjectEllipse_a->height*vtDimension)/opDimension) >> 8;
 
       }
       destMemory [9] = vtObjectEllipse_a->ellipseType;
       destMemory [10] = vtObjectEllipse_a->startAngle;
       destMemory [11] = vtObjectEllipse_a->endAngle;
 
-      if (vtObjectEllipse_a->fillAttributes != NULL) 
+      if (vtObjectEllipse_a->fillAttributes != NULL)
       {
         destMemory [12] = vtObjectEllipse_a->fillAttributes->getID() & 0xFF;
         destMemory [13] = vtObjectEllipse_a->fillAttributes->getID() >> 8;
@@ -138,7 +138,7 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
         destMemory [12] = 0xFF;
         destMemory [13] = 0xFF;
       }
-      
+
       destMemory [14] = vtObjectEllipse_a->numberOfMacrosToFollow;
       sourceOffset += 15;
       curBytes += 15;
@@ -176,13 +176,13 @@ vtObjectEllipse_c::setOriginSKM(bool b_SKM)
 } // -X2C
 
 void
-vtObjectEllipse_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject)
+vtObjectEllipse_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveValue16 (MACRO_getStructOffset(get_vtObjectEllipse_a(), width),  sizeof(iVtObjectEllipse_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectEllipse_a(), height), sizeof(iVtObjectEllipse_s), newHeight);
   }
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end namespace __IsoAgLib

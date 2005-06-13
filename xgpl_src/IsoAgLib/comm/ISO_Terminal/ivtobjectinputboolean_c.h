@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTINPUTBOOLEAN_C_H
 #define IVTOBJECTINPUTBOOLEAN_C_H
@@ -83,40 +83,40 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValue(bool newValue, bool b_updateObject= false) {
-    vtObjectInputBoolean_c::setValue (newValue, b_updateObject);
+  void setValue(bool newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputBoolean_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setBackgroundColour
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectInputBoolean_c::setBackgroundColour (newValue, b_updateObject);
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputBoolean_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setWidth
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setWidth(uint16_t newValue, bool b_updateObject=false) {
-    vtObjectInputBoolean_c::setWidth (newValue, b_updateObject);
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputBoolean_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setForegroundColour
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setForegroundColour(iVtObject_c* newValue, bool b_updateObject=false) {
-    vtObjectInputBoolean_c::setForegroundColour (newValue, b_updateObject);
+  void setForegroundColour(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputBoolean_c::setForegroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setVariableReference
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false) {
-    vtObjectInputBoolean_c::setVariableReference (newValue, b_updateObject);
+  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputBoolean_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
 }; // ~X2C

@@ -96,17 +96,17 @@ namespace __IsoAgLib {
 //! @param attrID: Attribute ID of the object's attribute
 //! @param newValue: New Value of the attribute
 void
-vtObject_c::setAttribute(uint8_t attrID, uint32_t newValue)
+vtObject_c::setAttribute(uint8_t attrID, uint32_t newValue, bool b_enableReplaceOfCmd)
 { // ~X2C
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeAttribute (this, attrID, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeAttribute (this, attrID, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
 } // -X2C
 
 void
-vtObject_c::setAttributeFloat(uint8_t attrID, float newValue)
+vtObject_c::setAttributeFloat(uint8_t attrID, float newValue, bool b_enableReplaceOfCmd)
 { // ~X2C
   uint32_t ui32_convertedFloat;
   float2Int (&newValue, &ui32_convertedFloat);
-  setAttribute (attrID, ui32_convertedFloat);
+  setAttribute (attrID, ui32_convertedFloat, b_enableReplaceOfCmd);
 } // -X2C
 
 
@@ -157,29 +157,29 @@ vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, Iso
 
 // //////////////////////////////// saveValue(8/16/32)SetAttribute
 void
-vtObject_c::saveValue8SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t ui8_newValueSend) {
+vtObject_c::saveValue8SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t ui8_newValueSend, bool b_enableReplaceOfCmd) {
   if (ui16_structOffset != 0) saveValue8 (ui16_structOffset, ui16_structLen, ui8_newValue);
-  setAttribute (ui8_ind, (uint32_t) ui8_newValueSend);
+  setAttribute (ui8_ind, (uint32_t) ui8_newValueSend, b_enableReplaceOfCmd);
 }
 void
-vtObject_c::saveValue16SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue) {
+vtObject_c::saveValue16SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd) {
   if (ui16_structOffset != 0) saveValue16 (ui16_structOffset, ui16_structLen, ui16_newValue);
-  setAttribute (ui8_ind, (uint32_t) ui16_newValue);
+  setAttribute (ui8_ind, (uint32_t) ui16_newValue, b_enableReplaceOfCmd);
 }
 void
-vtObject_c::saveValue32SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint32_t ui32_newValue) {
+vtObject_c::saveValue32SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint32_t ui32_newValue, bool b_enableReplaceOfCmd) {
   if (ui16_structOffset != 0) saveValue32 (ui16_structOffset, ui16_structLen, ui32_newValue);
-  setAttribute (ui8_ind, ui32_newValue);
+  setAttribute (ui8_ind, ui32_newValue, b_enableReplaceOfCmd);
 }
 void
-vtObject_c::saveValueFloatSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, float f_newValue) {
+vtObject_c::saveValueFloatSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, float f_newValue, bool b_enableReplaceOfCmd) {
   if (ui16_structOffset != 0) saveValueFloat (ui16_structOffset, ui16_structLen, f_newValue);
-  setAttributeFloat (ui8_ind, f_newValue);
+  setAttributeFloat (ui8_ind, f_newValue, b_enableReplaceOfCmd);
 }
 void
-vtObject_c::saveValuePSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, IsoAgLib::iVtObject_c* p_newValue) {
+vtObject_c::saveValuePSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, IsoAgLib::iVtObject_c* p_newValue, bool b_enableReplaceOfCmd) {
   if (ui16_structOffset != 0) saveValueP (ui16_structOffset, ui16_structLen, p_newValue);
-  setAttribute (ui8_ind, (p_newValue == NULL) ? 65535 : p_newValue->getID());
+  setAttribute (ui8_ind, (p_newValue == NULL) ? 65535 : p_newValue->getID(), b_enableReplaceOfCmd);
 }
 
 bool
@@ -215,18 +215,18 @@ vtObject_c::genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iV
 } // -X2C
 
 bool
-vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int8_t dx, int8_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
+vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int8_t dx, int8_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd)
 {
   bool b_result = genericChangeChildLocationPosition (true, childObject, dx, dy, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
-  if (b_result) __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildLocation (this, childObject, dx, dy);
+  if (b_result) __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildLocation (this, childObject, dx, dy, b_enableReplaceOfCmd);
   return b_result;
 }
 
 bool
-vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t x, int16_t y, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
+vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t x, int16_t y, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd)
 {
   bool b_result = genericChangeChildLocationPosition (false, childObject, x, y, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
-  if (b_result) __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildPosition (this, childObject, x, y);
+  if (b_result) __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildPosition (this, childObject, x, y, b_enableReplaceOfCmd);
   return b_result;
 }
 

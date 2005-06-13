@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 
 #ifndef IVTOBJECTMASK_C_H
@@ -75,7 +75,7 @@ public:
   //! @param newSoftKeyMask:
   //! @param b_updateObject:
   virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask,
-                              bool b_updateObject= false) = 0;
+                              bool b_updateObject= false, bool b_enableReplaceOfCmd=true) = 0;
 
 }; // ~X2C
 

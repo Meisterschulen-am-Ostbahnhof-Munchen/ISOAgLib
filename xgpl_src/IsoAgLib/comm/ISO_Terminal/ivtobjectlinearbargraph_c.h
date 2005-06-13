@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTLINEARBARGRAPH_C_H
 #define IVTOBJECTLINEARBARGRAPH_C_H
@@ -82,96 +82,96 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValue(uint16_t newValue, bool b_updateObject= false) {
-    vtObjectLinearBarGraph_c::setValue (newValue, b_updateObject);
+  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setWidth
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setWidth(uint16_t newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setWidth (newValue, b_updateObject);
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setHeight
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setHeight(uint16_t newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setHeight (newValue, b_updateObject);
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setColour
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setColour(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setColour (newValue, b_updateObject);
+  void setColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setTargetLineColour
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setTargetLineColour(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setTargetLineColour (newValue, b_updateObject);
+  void setTargetLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setTargetLineColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setOptions
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setOptions(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setOptions (newValue, b_updateObject);
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setNumberOfTicks
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setNumberOfTicks (newValue, b_updateObject);
+  void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setNumberOfTicks (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setMinValue
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setMinValue(uint16_t newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setMinValue (newValue, b_updateObject);
+  void setMinValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setMinValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setMaxValue
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setMaxValue(uint16_t newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setMaxValue (newValue, b_updateObject);
+  void setMaxValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setMaxValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setVariableReference
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setVariableReference (newValue, b_updateObject);
+  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setTargetValueVariableReference
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setTargetValueVariableReference(iVtObject_c* newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setTargetValueVariableReference (newValue, b_updateObject);
+  void setTargetValueVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setTargetValueVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setTargetValue
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setTargetValue(uint16_t newValue, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setTargetValue (newValue, b_updateObject);
+  void setTargetValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setTargetValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setSize
@@ -179,8 +179,8 @@ public:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false) {
-    vtObjectLinearBarGraph_c::setSize(newWidth, newHeight, b_updateObject);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLinearBarGraph_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
 }; // ~X2C

@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTSTRINGVARIABLE_C_H
 #define IVTOBJECTSTRINGVARIABLE_C_H
@@ -83,13 +83,13 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopy(char* newValue, bool b_updateObject=false) { vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject); };
+  void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) { vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: setValueRef
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueRef(char* newValue, bool b_updateObject=false) { vtObjectStringVariable_c::setValueRef (newValue, b_updateObject); };
+  void setValueRef(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) { vtObjectStringVariable_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: getString
   const char* getString() { return vtObjectStringVariable_c::getString(); };

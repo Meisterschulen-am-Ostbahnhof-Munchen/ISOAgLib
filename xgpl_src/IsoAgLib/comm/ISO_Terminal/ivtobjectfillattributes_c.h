@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 
 #ifndef IVTOBJECTFILLATTRIBUTES_C_H
@@ -72,8 +72,8 @@ public:
 
   //  Operation: init
   //! Parameter:
-  //! @param vtObjectFillAttributesSROM: 
-  //! @param b_initPointer: 
+  //! @param vtObjectFillAttributesSROM:
+  //! @param b_initPointer:
   void init(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM) {
     vtObjectFillAttributes_c::init (vtObjectFillAttributesSROM);
   };
@@ -81,39 +81,39 @@ public:
   //  Operation: get_vtObjectFillAttributes_a
   iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a() { return vtObjectFillAttributes_c::get_vtObjectFillAttributes_a(); };
 
-  
+
   //  Operation: setFillType
   //! Parameter:
-  //! @param newFillType: 
-  //! @param b_updateObject:  
-  void setFillType(uint8_t newFillType, bool b_updateObject=false) {
-    vtObjectFillAttributes_c::setFillType(newFillType, b_updateObject);
+  //! @param newFillType:
+  //! @param b_updateObject:
+  void setFillType(uint8_t newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectFillAttributes_c::setFillType(newFillType, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: setFillColour
   //! Parameter:
-  //! @param newFillColour: 
-  //! @param b_updateObject:  
-  void setFillColour(uint8_t newFillColour, bool b_updateObject=false) {
-    vtObjectFillAttributes_c::setFillColour(newFillColour, b_updateObject);
+  //! @param newFillColour:
+  //! @param b_updateObject:
+  void setFillColour(uint8_t newFillColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectFillAttributes_c::setFillColour(newFillColour, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: setFillPattern
   //! Parameter:
-  //! @param newFillPatternObject: 
-  //! @param b_updateObject:   
-  void setFillPattern(iVtObjectPictureGraphic_c* newFillPatternObject, bool b_updateObject=false) {
-    vtObjectFillAttributes_c::setFillPattern(newFillPatternObject, b_updateObject);
+  //! @param newFillPatternObject:
+  //! @param b_updateObject:
+  void setFillPattern(iVtObjectPictureGraphic_c* newFillPatternObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectFillAttributes_c::setFillPattern(newFillPatternObject, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: changeFillAttributes
   //! Parameter:
-  //! @param newFillType: 
-  //! @param newFillColour: 
+  //! @param newFillType:
+  //! @param newFillColour:
   //! @param newFillPatternObject:
-  //! @param b_updateObject:   
-  void setFillAttributes(uint8_t newFillType, uint8_t newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false) {
-    vtObjectFillAttributes_c::setFillAttributes(newFillType, newFillColour, newFillPattern, b_updateObject);
+  //! @param b_updateObject:
+  void setFillAttributes(uint8_t newFillType, uint8_t newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectFillAttributes_c::setFillAttributes(newFillType, newFillColour, newFillPattern, b_updateObject, b_enableReplaceOfCmd);
   };
 
 }; // ~X2C

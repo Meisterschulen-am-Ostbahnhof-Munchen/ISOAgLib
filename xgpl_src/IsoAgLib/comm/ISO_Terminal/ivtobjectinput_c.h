@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTINPUT_C_H
 #define IVTOBJECTINPUT_C_H
@@ -71,12 +71,12 @@ public:
   //  Operation: enable
   //! Parameter:
   //! @param b_updateObject:
-  bool enable(bool b_updateObject= false) { return vtObjectInput_c::able (1, b_updateObject); };
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObjectInput_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: disable
   //! Parameter:
   //! @param b_updateObject:
-  bool disable(bool b_updateObject= false) { return vtObjectInput_c::able (0, b_updateObject); };
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObjectInput_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: select
   bool select() { return vtObjectInput_c::select(); }

@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 
 #ifndef IVTOBJECTPOLYGON_C_H
@@ -72,8 +72,8 @@ public:
 
   //  Operation: init
   //! Parameter:
-  //! @param vtObjectpolygonSROM: 
-  //! @param b_initPointer: 
+  //! @param vtObjectpolygonSROM:
+  //! @param b_initPointer:
   void init(const iVtObjectPolygon_s* vtObjectPolygonSROM) {
     vtObjectPolygon_c::init (vtObjectPolygonSROM);
   };
@@ -83,42 +83,42 @@ public:
 
   //  Operation: setWidth
   //! Parameter:
-  //! @param newWidth: 
-  //! @param b_updateObject: 
-  void setWidth(uint16_t newWidth, bool b_updateObject=false) {
-    vtObjectPolygon_c::setWidth (newWidth, b_updateObject);
+  //! @param newWidth:
+  //! @param b_updateObject:
+  void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectPolygon_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setHeight
   //! Parameter:
-  //! @param newHeight: 
-  //! @param b_updateObject: 
-  void setHeight(uint16_t newHeight, bool b_updateObject=false) {
-    vtObjectPolygon_c::setHeight (newHeight, b_updateObject);
+  //! @param newHeight:
+  //! @param b_updateObject:
+  void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectPolygon_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setLineAttributes
   //! Parameter:
-  //! @param newLineAttributes: 
-  //! @param b_updateObject: 
-  void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false) {
-    vtObjectPolygon_c::setLineAttributes (newLineAttributes, b_updateObject);
+  //! @param newLineAttributes:
+  //! @param b_updateObject:
+  void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectPolygon_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setFillAttributes
   //! Parameter:
-  //! @param newFillAttributes: 
-  //! @param b_updateObject: 
-  void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false) {
-    vtObjectPolygon_c::setFillAttributes (newFillAttributes, b_updateObject);
+  //! @param newFillAttributes:
+  //! @param b_updateObject:
+  void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectPolygon_c::setFillAttributes (newFillAttributes, b_updateObject, b_enableReplaceOfCmd);
   };
-  
+
   //  Operation: setPolygonType
   //! Parameter:
-  //! @param newPolygonType: 
-  //! @param b_updateObject: 
-  void setPolygonType(uint8_t newPolygonType, bool b_updateObject=false) {
-    vtObjectPolygon_c::setPolygonType (newPolygonType, b_updateObject);
+  //! @param newPolygonType:
+  //! @param b_updateObject:
+  void setPolygonType(uint8_t newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectPolygon_c::setPolygonType (newPolygonType, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setSize
@@ -126,8 +126,8 @@ public:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false) {
-    vtObjectPolygon_c::setSize(newWidth, newHeight, b_updateObject);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectPolygon_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
 }; // ~X2C

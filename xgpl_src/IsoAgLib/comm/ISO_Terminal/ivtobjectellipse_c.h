@@ -84,56 +84,56 @@ public:
   //! Parameter:
   //! @param newLineAttributes:
   //! @param b_updateObject:
-  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false) {
-    vtObjectEllipse_c::setLineAttributes (newLineAttributes, b_updateObject);
+  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectEllipse_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setWidth
   //! Parameter:
   //! @param newWidth:
   //! @param b_updateObject:
-  void setWidth(uint16_t newWidth, bool b_updateObject=false) {
-    vtObjectEllipse_c::setWidth (newWidth, b_updateObject);
+  void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectEllipse_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setHeight
   //! Parameter:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setHeight(uint16_t newHeight, bool b_updateObject=false) {
-    vtObjectEllipse_c::setHeight (newHeight, b_updateObject);
+  void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectEllipse_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setEllipseType
   //! Parameter:
   //! @param newEllipseType:
   //! @param b_updateObject:
-  void setEllipseType(uint8_t newEllipseType, bool b_updateObject=false) {
-    vtObjectEllipse_c::setEllipseType (newEllipseType, b_updateObject);
+  void setEllipseType(uint8_t newEllipseType, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectEllipse_c::setEllipseType (newEllipseType, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setStartAngle
   //! Parameter:
   //! @param newStartAngle:
   //! @param b_updateObject:
-  void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false) {
-    vtObjectEllipse_c::setStartAngle (newStartAngle, b_updateObject);
+  void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectEllipse_c::setStartAngle (newStartAngle, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setEndAngle
   //! Parameter:
   //! @param newEndAngle:
   //! @param b_updateObject:
-  void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false) {
-    vtObjectEllipse_c::setEndAngle (newEndAngle, b_updateObject);
+  void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectEllipse_c::setEndAngle (newEndAngle, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setFillAttributes
   //! Parameter:
   //! @param newFillAttribute:
   //! @param b_updateObject:
-  void setFillAttributes(iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false) {
-    vtObjectEllipse_c::setFillAttributes (newFillAttributes, b_updateObject);
+  void setFillAttributes(iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectEllipse_c::setFillAttributes (newFillAttributes, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setSize
@@ -141,8 +141,8 @@ public:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false) {
-    vtObjectEllipse_c::setSize(newWidth, newHeight, b_updateObject);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectEllipse_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   };
 
 }; // ~X2C

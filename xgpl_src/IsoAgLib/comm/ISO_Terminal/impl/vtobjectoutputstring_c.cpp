@@ -188,7 +188,7 @@ vtObjectOutputString_c::setOriginSKM(bool b_SKM)
 //! @param newValue:
 //! @param b_updateObject:
 void
-vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject)
+vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   MACRO_localVars;
   if (vtObjectOutputString_a->variableReference != NULL) {
@@ -212,7 +212,7 @@ vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject)
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 237 : setValueRef
@@ -220,7 +220,7 @@ vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject)
 //! @param newValue:
 //! @param b_updateObject:
 void
-vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject)
+vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   MACRO_localVars;
   if (vtObjectOutputString_a->variableReference != NULL) {
@@ -241,7 +241,7 @@ vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject)
   setStringToStream( newValue ); // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 757 : setVariableReference
@@ -249,7 +249,7 @@ vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject)
 //! @param newVariable:
 //! @param b_updateObject:
 void
-vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newVariable, bool b_updateObject)
+vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newVariable, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   MACRO_localVars;
   if (vtObjectOutputString_a->length != 0) {
@@ -259,18 +259,18 @@ vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c
 
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference),  sizeof(iVtObjectOutputString_s), newVariable);
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeAttribute (this, 6 /* Variable Reference */, newVariable->getID() & 0xFF, newVariable->getID() >> 8, 0, 0);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeAttribute (this, 6 /* Variable Reference */, newVariable->getID() & 0xFF, newVariable->getID() >> 8, 0, 0, b_enableReplaceOfCmd);
 } // -X2C
 
 void
-vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject)
+vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveValue16 (MACRO_getStructOffset(get_vtObjectOutputString_a(), width),  sizeof(iVtObjectOutputString_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 // //////////////////////////////// +X2C Operation 247 : getString

@@ -84,32 +84,32 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setLineAttributes(iVtObjectLineAttributes_c* newValue, bool b_updateObject=false) {
-    vtObjectLine_c::setLineAttributes(newValue, b_updateObject);
+  void setLineAttributes(iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLine_c::setLineAttributes(newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setWidth
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setWidth (int32_t newValue, bool b_updateObject=false) {
-    vtObjectLine_c::setWidth(newValue, b_updateObject);
+  void setWidth (int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLine_c::setWidth(newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setHeight
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setHeight (int32_t newValue, bool b_updateObject=false) {
-    vtObjectLine_c::setHeight(newValue, b_updateObject);
+  void setHeight (int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLine_c::setHeight(newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setLineDirection
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setLineDirection (uint8_t newValue, bool b_updateObject=false) {
-    vtObjectLine_c::setLineDirection(newValue, b_updateObject);
+  void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLine_c::setLineDirection(newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setSize
@@ -117,8 +117,8 @@ public:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false) {
-    vtObjectLine_c::setSize(newWidth, newHeight, b_updateObject);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLine_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   };
 
 }; // ~X2C

@@ -157,7 +157,7 @@ vtObjectInputAttributes_c::fitTerminal()
 //! @param newValidationString:
 //! @param b_updateObject:
 void
-vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationString, bool b_updateObject)
+vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   if (b_updateObject) {
     // check if not already RAM string buffer?
@@ -175,7 +175,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 250 : setValidationStringRef
@@ -183,7 +183,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
 //! @param newValidationString:
 //! @param b_updateObject:
 void
-vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationString, bool b_updateObject)
+vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
@@ -198,7 +198,7 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
   setStringToStream( newValidationString ); // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
 	setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 

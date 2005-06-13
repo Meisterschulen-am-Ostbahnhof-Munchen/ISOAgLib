@@ -56,6 +56,7 @@
 // +X2C includes
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
+#include <iostream>
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -98,24 +99,28 @@ public:
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setFontColour(uint8_t newValue,  bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) : 0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::FontColour));
-  }
-  
-  void setFontSize(uint8_t newValue,  bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize) : 0, sizeof(iVtObjectFontAttributes_s), 2, newValue, newValue);
-  }
-  
-  void setFontType(uint8_t newValue,  bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType) : 0, sizeof(iVtObjectFontAttributes_s), 3, newValue, newValue);
+  void setFontColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    #if 1
+      std::cout << (uint32_t)get_vtObjectFontAttributes_a() << ". . ." << (uint32_t) &get_vtObjectFontAttributes_a()->fontColour << std::endl;
+    #endif
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) :
+    0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
   }
 
-  void setFontStyle(uint8_t newValue,  bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle) : 0, sizeof(iVtObjectFontAttributes_s), 4, newValue, newValue);
+  void setFontSize(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize) : 0, sizeof(iVtObjectFontAttributes_s), 2, newValue, newValue, b_enableReplaceOfCmd);
   }
 
-  void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false);
-  
+  void setFontType(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType) : 0, sizeof(iVtObjectFontAttributes_s), 3, newValue, newValue, b_enableReplaceOfCmd);
+  }
+
+  void setFontStyle(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle) : 0, sizeof(iVtObjectFontAttributes_s), 4, newValue, newValue, b_enableReplaceOfCmd);
+  }
+
+  void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
+
 private:
 
   //  Operation: calcScaledFontDimension

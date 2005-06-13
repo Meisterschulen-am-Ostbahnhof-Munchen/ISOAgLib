@@ -130,23 +130,23 @@ public:
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newValue, bool b_updateObject=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes) : 0, sizeof(iVtObjectLine_s), 1, (IsoAgLib::iVtObject_c*) newValue);
+  void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes) : 0, sizeof(iVtObjectLine_s), 1, (IsoAgLib::iVtObject_c*) newValue, b_enableReplaceOfCmd);
   }
 
-  void setWidth (int32_t newValue, bool b_updateObject=false) {
-    saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), width) : 0, sizeof(iVtObjectLine_s), 2, (uint32_t) newValue);
+  void setWidth (int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), width) : 0, sizeof(iVtObjectLine_s), 2, (uint32_t) newValue, b_enableReplaceOfCmd);
   }
 
-  void setHeight (int32_t newValue, bool b_updateObject=false) {
-    saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), height) : 0, sizeof(iVtObjectLine_s), 3, (uint32_t) newValue);
+  void setHeight (int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), height) : 0, sizeof(iVtObjectLine_s), 3, (uint32_t) newValue, b_enableReplaceOfCmd);
   }
 
-  void setLineDirection (uint8_t newValue, bool b_updateObject=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection) : 0, sizeof(iVtObjectLine_s), 4, newValue, newValue);
+  void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection) : 0, sizeof(iVtObjectLine_s), 4, newValue, newValue, b_enableReplaceOfCmd);
   }
 
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
 
 }; // ~X2C
 

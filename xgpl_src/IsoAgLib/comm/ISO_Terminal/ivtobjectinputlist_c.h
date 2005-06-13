@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTINPUTLIST_C_H
 #define IVTOBJECTINPUTLIST_C_H
@@ -91,40 +91,40 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValue(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectInputList_c::setValue (newValue, b_updateObject);
+  void setValue(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputList_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setItem
   //! Parameter:
   //! @param rui8_index:
   //! @param rpc_object:
-  void setItem(uint8_t rui8_index, iVtObject_c* rpc_object) {
-    vtObjectInputList_c::setItem (rui8_index, rpc_object);
+  void setItem(uint8_t rui8_index, iVtObject_c* rpc_object, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputList_c::setItem (rui8_index, rpc_object, b_enableReplaceOfCmd);
   };
 
   //  Operation: setWidth
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setWidth(uint16_t newValue, bool b_updateObject=false) {
-    vtObjectInputList_c::setWidth (newValue, b_updateObject);
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputList_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setHeight
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setHeight(uint16_t newValue, bool b_updateObject=false) {
-    vtObjectInputList_c::setHeight (newValue, b_updateObject);
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputList_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setVariableReference
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false) {
-    vtObjectInputList_c::setVariableReference(newValue, b_updateObject);
+  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputList_c::setVariableReference(newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setSize
@@ -132,8 +132,8 @@ public:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false) {
-    vtObjectInputList_c::setSize(newWidth, newHeight, b_updateObject);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectInputList_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   };
 
 }; // ~X2C

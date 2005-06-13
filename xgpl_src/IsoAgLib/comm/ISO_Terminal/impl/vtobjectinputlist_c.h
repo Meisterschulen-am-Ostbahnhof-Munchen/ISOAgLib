@@ -46,37 +46,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
@@ -132,35 +132,35 @@ public:
   //  Operation: size
   uint32_t fitTerminal();
 
-  
-  
+
+
   //  Operation: setValue
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValue(uint8_t newValue, bool b_updateObject= false);
+  void setValue(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
   //  Operation: setItem
   //! Parameter:
   //! @param rui8_index:
   //! @param rpc_object:
-  void setItem(uint8_t rui8_index, IsoAgLib::iVtObject_c* rpc_object);
+  void setItem(uint8_t rui8_index, IsoAgLib::iVtObject_c* rpc_object, bool b_enableReplaceOfCmd=true);
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), width) : 0, sizeof(iVtObjectInputList_s), 1, newValue);
-  }
-  
-  void setHeight(uint16_t newValue, bool b_updateObject=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), height) : 0, sizeof(iVtObjectInputList_s), 2, newValue);
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), width) : 0, sizeof(iVtObjectInputList_s), 1, newValue, b_enableReplaceOfCmd);
   }
 
-  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), variableReference) : 0, sizeof(iVtObjectInputList_s), 3, newValue);
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), height) : 0, sizeof(iVtObjectInputList_s), 2, newValue, b_enableReplaceOfCmd);
   }
-  
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false);
+
+  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), variableReference) : 0, sizeof(iVtObjectInputList_s), 3, newValue, b_enableReplaceOfCmd);
+  }
+
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
 
 private:
 

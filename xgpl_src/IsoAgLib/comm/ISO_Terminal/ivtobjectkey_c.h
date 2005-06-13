@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTKEY_C_H
 #define IVTOBJECTKEY_C_H
@@ -83,16 +83,16 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectKey_c::setBackgroundColour (newValue, b_updateObject);
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectKey_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: setKeyCode
   //! Parameter:
   //! @param newValue: Range 1-255, KeyCode 0 is reserved for KeyCode:"ESC"
   //! @param b_initPointer:
-  void setKeyCode(uint8_t newValue, bool b_updateObject=false) {
-    vtObjectKey_c::setKeyCode (newValue, b_updateObject);
+  void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectKey_c::setKeyCode (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: moveChildLocation
@@ -101,8 +101,8 @@ public:
   //! @param dx:
   //! @param dy:
   //! @param b_updateObject:
-  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectKey_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectKey_c::moveChildLocation(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
   //  Operation: setChildPosition
@@ -110,8 +110,8 @@ public:
   //! @param rpc_childObject:
   //! @param dx:
   //! @param dy:
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false) {
-    return vtObjectKey_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject);
+  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    return vtObjectKey_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
 }; // ~X2C

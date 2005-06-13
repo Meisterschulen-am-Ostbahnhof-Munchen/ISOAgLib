@@ -97,6 +97,8 @@
   #include <iostream>
 #endif
 
+#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
+
 #ifdef DEBUG_HEAP_USEAGE
   static uint16_t sui16_lastPrintedBufferCapacity = 0;
   static uint16_t sui16_lastPrintedSendUploadQueueSize = 0;
@@ -104,6 +106,44 @@
   static uint16_t sui16_sendUploadQueueSize = 0;
   static uint16_t sui16_maxSendUploadQueueSize = 0;
 #endif
+
+static const uint8_t scpui8_cmdCompareTable[(0xB4-0x92)+1] = {
+/* 0x92 */ 0 , //not invalid, but no need for compare
+/* 0x93 */ 0 , //invalid command
+/* 0x94 */ 0 , //invalid command
+/* 0x95 */ 0 , //invalid command
+/* 0x96 */ 0 , //invalid command
+/* 0x97 */ 0 , //invalid command
+/* 0x98 */ 0 , //invalid command
+/* 0x99 */ 0 , //invalid command
+/* 0x9A */ 0 , //invalid command
+/* 0x9B */ 0 , //invalid command
+/* 0x9C */ 0 , //invalid command
+/* 0x9D */ 0 , //invalid command
+/* 0x9E */ 0 , //invalid command
+/* 0x9F */ 0 , //invalid command
+/* 0xA0 */ (1<<1) | (1<<2) | (1<<3) ,
+/* 0xA1 */ (1<<1) | (1<<2) | (1<<3) ,
+/* 0xA2 */ (1<<1) | (1<<2) ,
+/* 0xA3 */ (1<<1) | (1<<2) | (1<<3) ,
+/* 0xA4 */ 0 , //not invalid, but no need for compare
+/* 0xA5 */ (1<<1) | (1<<2) | (1<<3) | (1<<4) ,
+/* 0xA6 */ (1<<1) | (1<<2) ,
+/* 0xA7 */ (1<<1) | (1<<2) ,
+/* 0xA8 */ (1<<1) | (1<<2) ,
+/* 0xA9 */ (1<<1) | (1<<2) ,
+/* 0xAA */ (1<<1) | (1<<2) ,
+/* 0xAB */ (1<<1) | (1<<2) ,
+/* 0xAC */ (1<<1) | (1<<2) ,
+/* 0xAD */ (1<<1) | (1<<2) ,
+/* 0xAE */ (1<<1) | (1<<2) | (1<<3) ,
+/* 0xAF */ (1<<1) | (1<<2) | (1<<3) ,
+/* 0xB0 */ (1<<1) | (1<<2) ,
+/* 0xB1 */ (1<<1) | (1<<2) | (1<<3) ,
+/* 0xB2 */ 0 ,
+/* 0xB3 */ (1<<1) | (1<<2) ,
+/* 0xB4 */ (1<<1) | (1<<2) | (1<<3)
+};
 
 // #define LOESCHE_POOL
 
@@ -308,7 +348,7 @@ SendUpload_c::SendUpload_c (const SendUpload_c& ref_source)
 void ISOTerminal_c::finishUploadCommand ()
 {
   en_uploadType = UploadIdle;
-  
+  //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
   #ifdef DEBUG
   std::cout << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
   #endif
@@ -477,6 +517,8 @@ bool ISOTerminal_c::deregisterIsoObjectPool ()
   }
   return true;
 }
+
+
 
 /**
   initialise element which can't be done during construct
@@ -1289,30 +1331,15 @@ CANPkgExt_c& ISOTerminal_c::dataBase()
 /**
   @returns true if there was place in the SendUpload-Buffer (should always be the case now)
 */
-bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout)
+bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd)
 {
-  if (!isVtActive()) return false;
-
   #ifdef DEBUG
-  std::cout << "Enqueued 8-byter: " << q_sendUpload.size() << " -> ";
+  std::cout << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> ";
   #endif
 
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.push_back (SendUpload_c (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout));
-  #else
-  q_sendUpload.push (SendUpload_c (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout));
-  #endif
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize++;
-  if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
-    sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
-  #endif
+  SendUpload_c stringForUpload (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout);
 
-  #ifdef DEBUG
-  std::cout << q_sendUpload.size() << ".\n";
-  #endif
-  return true;  /** @todo return false somewhen???????? buffer tooo full?? */
+  return queueOrReplace(stringForUpload, b_enableReplaceOfCmd);
 }
 
 
@@ -1320,141 +1347,111 @@ bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, ui
   special 9 byte sendCommand function for Change Child Position Command (no one else uses 9 byte commands!)
   @returns true if there was place in the SendUpload-Buffer (should always be the case now)
 */
-bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout)
+bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout, bool b_enableReplaceOfCmd)
 {
-  if (!isVtActive()) return false;
-
   #ifdef DEBUG
-  std::cout << "Enqueued 9-byter: " << q_sendUpload.size() << " -> ";
+  std::cout << "Enqueued 9-bytes: " << q_sendUpload.size() << " -> ";
   #endif
 
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.push_back (SendUpload_c (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout));
-  #else
-  q_sendUpload.push (SendUpload_c (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout));
-  #endif
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize++;
-  if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
-    sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
-  #endif
+  SendUpload_c stringForUpload (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout);
 
-  #ifdef DEBUG
-  std::cout << q_sendUpload.size() << ".\n";
-  #endif
-  return true;  /** @todo return false somewhen???????? buffer tooo full?? */
+  return queueOrReplace(stringForUpload, b_enableReplaceOfCmd);
 }
 
 
 bool ISOTerminal_c::sendCommandForDEBUG (uint8_t* rpui8_buffer, uint32_t ui32_size)
 {
-  if (!isVtActive()) return false;
-
   #ifdef DEBUG
-  std::cout << "Enqueued Debug-TP-byter: " << q_sendUpload.size() << " -> ";
+  std::cout << "Enqueued Debug-TP-bytes: " << q_sendUpload.size() << " -> ";
   #endif
 
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.push_back (SendUpload_c (rpui8_buffer, ui32_size));
-  #else
-  q_sendUpload.push (SendUpload_c (rpui8_buffer, ui32_size));
-  #endif
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize++;
-  if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
-    sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
-  #endif
+  SendUpload_c stringForUpload (rpui8_buffer, ui32_size);
 
-  #ifdef DEBUG
-  std::cout << q_sendUpload.size() << ".\n";
-  #endif
-  return true;  /** @todo return false somewhen???????? buffer tooo full?? */
+  return queueOrReplace(stringForUpload, false);
 }
 
 
-bool ISOTerminal_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y)
+bool ISOTerminal_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
 {
   return sendCommand (180 /* Command: Command --- Parameter: Change Child Position */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       rpc_childObject->getID() & 0xFF, rpc_childObject->getID() >> 8,
                       x & 0xFF, x >> 8,
                       y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 
 // THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE CHILD LOCATION COMMAND
 // //////////////////////////////// +X2C Operation BAC : sendCommandChangeChildLocation
-bool ISOTerminal_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy)
+bool ISOTerminal_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_enableReplaceOfCmd)
 {
   return sendCommand (165 /* Command: Command --- Parameter: Change Child Location */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       rpc_childObject->getID() & 0xFF, rpc_childObject->getID() >> 8,
                       dx+127, dy+127, 0xFF,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 // THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE SIZE COMMAND
 // //////////////////////////////// +X2C Operation BAC :Operation: sendCommandChangeSize
-bool ISOTerminal_c::sendCommandChangeSize(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight)
+bool ISOTerminal_c::sendCommandChangeSize(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 {
   return sendCommand (166 /* Command: Command --- Parameter: Change Size */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       newWidth & 0xFF, newWidth >> 8,
                       newHeight & 0xFF, newHeight >> 8,
                       0xFF,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 // THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE BACKGROUND COLOUR COMMAND
 // //////////////////////////////// +X2C Operation BAC : sendCommandChangeBackgroundColour
-bool ISOTerminal_c::sendCommandChangeBackgroundColour(IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour)
+bool ISOTerminal_c::sendCommandChangeBackgroundColour(IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour, bool b_enableReplaceOfCmd)
 {
   return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       newColour, 0xFF, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
-bool ISOTerminal_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4)
+bool ISOTerminal_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 {
   return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       0x00, byte1, byte2, byte3, byte4,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
-bool ISOTerminal_c::sendCommandChangeEndPoint(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes)
+bool ISOTerminal_c::sendCommandChangeEndPoint(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (169 /* Command: Command --- Parameter: Change Size */,
           rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
           newWidth & 0xFF, newWidth >> 8,
           newHeight & 0xFF, newHeight >> 8,
           newLineAttributes,
-          DEF_TimeOut_NormalCommand);
+          DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
-bool ISOTerminal_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle)
+bool ISOTerminal_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 {
   return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       newFontColour, newFontSize, newFontType, newFontStyle, 0xFF,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
-bool ISOTerminal_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt)
+bool ISOTerminal_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
 {
   return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                      newLineColour, newLineWidth, newLineArt & 0xFF, newLineArt >> 8, 0xFF,
-                     DEF_TimeOut_NormalCommand);
+                     DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 // THIS FUNCTION ADDED BY BRAD COX 17-SEP-2004 TO IMPLEMENT CHANGE FILL ATTRIBUTES COMMAND
 // //////////////////////////////// +X2C Operation BAC :Operation: sendCommandChangeSize
-bool ISOTerminal_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject)
+bool ISOTerminal_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (172 /* Command: Command --- Parameter: Change FillAttributes */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
@@ -1462,85 +1459,170 @@ bool ISOTerminal_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_
                       (newFillType == 3) ? newFillPatternObject->getID() & 0xFF : 0xFF,
                       (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
                       0xFF,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
-bool ISOTerminal_c::sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMask)
+bool ISOTerminal_c::sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
 {
   return sendCommand (174 /* Command: Command --- Parameter: Change Soft Key Mask */,
                       maskType,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       newSoftKeyMask & 0xFF, newSoftKeyMask >> 8,
                       0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
-bool ISOTerminal_c::sendCommandChangeAttribute (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4)
+bool ISOTerminal_c::sendCommandChangeAttribute (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 {
   return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       attrId, byte1, byte2, byte3, byte4,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 // THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE PRIORITY COMMAND
 // //////////////////////////////// +X2C Operation BAC :Operation: sendCommandChangePriority
-bool ISOTerminal_c::sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority)
+bool ISOTerminal_c::sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority, bool b_enableReplaceOfCmd)
 {
   if(newPriority < 3) {
     // only bother to send if priority is a legal value
     return sendCommand (176 /* Command: Command --- Parameter: Change Priority */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       newPriority, 0xFF, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand);
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
   } else {
     return false;
   }
 }
 
-bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength)
+bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
-  if (!isVtActive()) return false;
-
   #ifdef DEBUG
   std::cout << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
   #endif
 
-  /* The SendUpload_c constructor makes a copy of the string! */
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.push_back (SendUpload_c (rpc_object->getID(), rpc_newValue, overrideSendLength));
-  #else
-  q_sendUpload.push (SendUpload_c (rpc_object->getID(), rpc_newValue, overrideSendLength));
-  #endif
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize++;
-  if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
-    sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
-  #endif
+  SendUpload_c stringForUpload (rpc_object->getID(), rpc_newValue, overrideSendLength);
 
-  #ifdef DEBUG
-  std::cout << q_sendUpload.size() << ".\n";
-  #endif
-  /** push(...) has no return value */
-  return true;
+  return queueOrReplace (stringForUpload, b_enableReplaceOfCmd);
 }
 
-bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* rpc_objectString)
+bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* rpc_objectString, bool b_enableReplaceOfCmd)
 {
-  if (!isVtActive()) return false;
-
   #ifdef DEBUG
   std::cout << "Enqueued stringObject-mss: " << q_sendUpload.size() << " -> ";
   #endif
 
-  /* The SendUpload_c constructor only takes a reference, so don't change the string in the meantime!!! */
+  SendUpload_c stringForUpload (rpc_objectString);
+
+  return queueOrReplace (stringForUpload, b_enableReplaceOfCmd);
+}
+
+
+bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)
+{
+  if (!isVtActive())
+  {
+    #ifdef DEBUG
+    std::cout << "--NOT ENQUEUED - VT IS NOT ACTIVE!--\n";
+    #endif
+    return false;
+  }
+  SendUpload_c* p_queue = NULL;
+  uint8_t i = 0;
   #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.push_back (SendUpload_c (rpc_objectString));
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  std::list<SendUpload_c,std::__malloc_alloc_template<0> >::iterator i_sendUpload;
   #else
-  q_sendUpload.push (SendUpload_c (rpc_objectString));
+  std::list<SendUpload_c>::iterator i_sendUpload;
   #endif
+  #else
+  std::queue<SendUpload_c>::iterator i_sendUpload;
+  #endif
+  if (b_enableReplaceOfCmd) {
+    //get first equal command in queue
+    for (i_sendUpload = q_sendUpload.begin(); (p_queue == NULL) && (i_sendUpload != q_sendUpload.end()); i_sendUpload++)
+    {
+      //first check if multisendstreamer is used!
+      /* four cases:
+         1. both use buffer
+         2. both use mssObjectString
+         3. mss is queued and could be replaced by buffer
+         4. buffer is queued and could be replaced by mssObjectString
+       */
+      if ((i_sendUpload->mssObjectString == NULL) && (rref_sendUpload.mssObjectString == NULL))
+      {
+        if (i_sendUpload->vec_uploadBuffer[0] == rref_sendUpload.vec_uploadBuffer[0])
+        {
+          uint8_t ui8_offset = (rref_sendUpload.vec_uploadBuffer[0]);
+          if ( (ui8_offset<0x92) || (ui8_offset > 0xB4))
+          {
+            //not possible by definition, but for being sure :-)
+            #ifdef DEBUG
+            std::cout << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--\n";
+            #endif
+            return false;
+          }
+          //get bitmask for the corresponding command
+          uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-0x92];
+          for (i=1;i<=7;i++)
+          {
+            if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == rref_sendUpload.vec_uploadBuffer[i]))
+            {
+              break;
+            }
+          }
+          if (!(i<=7))
+          { // loop ran through, all to-compare-bytes matched!
+            p_queue = &*i_sendUpload; // so overwrite this SendUpload_c with the new value one
+          }
+        }
+      }
+      if ((i_sendUpload->mssObjectString != NULL) && (rref_sendUpload.mssObjectString != NULL))
+      {
+        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == rref_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+        {
+          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == rref_sendUpload.mssObjectString->getStreamer()->getID())
+          {
+            p_queue = &*i_sendUpload;
+          }
+        }
+      }
+      if ((i_sendUpload->mssObjectString != NULL) && (rref_sendUpload.mssObjectString == NULL))
+      {
+        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == rref_sendUpload.vec_uploadBuffer[0])
+        {
+          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (rref_sendUpload.vec_uploadBuffer[1] | (rref_sendUpload.vec_uploadBuffer[2]<<8)))
+          {
+            p_queue = &*i_sendUpload;
+          }
+        }
+      }
+      if ((i_sendUpload->mssObjectString == NULL) && (rref_sendUpload.mssObjectString != NULL))
+      {
+        if ((*i_sendUpload).vec_uploadBuffer[0] == rref_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+        {
+          if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == rref_sendUpload.mssObjectString->getStreamer()->getID())
+          {
+            p_queue = &*i_sendUpload;
+          }
+        }
+      }
+    } // for
+  }
+  if (p_queue == NULL)
+  {
+    /* The SendUpload_c constructor only takes a reference, so don't change the string in the meantime!!! */
+    #ifdef USE_LIST_FOR_FIFO
+    // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+    q_sendUpload.push_back (rref_sendUpload);
+    #else
+    q_sendUpload.push (rref_sendUpload);
+    #endif
+  }
+  else
+  {
+    *p_queue = rref_sendUpload; // overloaded "operator="
+  }
   #ifdef DEBUG_HEAP_USEAGE
   sui16_sendUploadQueueSize++;
   if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
@@ -1549,10 +1631,55 @@ bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* r
 
   #ifdef DEBUG
   std::cout << q_sendUpload.size() << ".\n";
+  //dumpQueue(); /* to see all enqueued cmds after every enqueued cmd */
   #endif
   /** push(...) has no return value */
   return true;
 }
+
+void ISOTerminal_c::dumpQueue()
+{
+  #ifdef USE_LIST_FOR_FIFO
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  std::list<SendUpload_c,std::__malloc_alloc_template<0> >::iterator i_sendUpload;
+  #else
+  std::list<SendUpload_c>::iterator i_sendUpload;
+  #endif
+  #else
+  std::queue<SendUpload_c>::iterator i_sendUpload;
+  #endif
+
+  for (i_sendUpload = q_sendUpload.begin(); i_sendUpload != q_sendUpload.end(); i_sendUpload++)
+  {
+    if (i_sendUpload->mssObjectString == NULL)
+    {
+      for (uint8_t i=0; i<=7; i++)
+      {
+        #ifdef DEBUG
+        std::cout << " " << (uint16_t)(i_sendUpload->vec_uploadBuffer[i]);
+        #endif
+      }
+    }
+    else
+    {
+      MultiSendPkg_c msp;
+      int i_strSize = i_sendUpload->mssObjectString->getStreamer()->getStreamSize();
+      for (int i=0; i < i_strSize; i+=7) {
+        i_sendUpload->mssObjectString->getStreamer()->setDataNextStreamPart(&msp, (unsigned char) ((i_strSize - i) > 7 ? 7 : (i_strSize-i)));
+        for (uint8_t i=1; i<=7; i++)
+        {
+          #ifdef DEBUG
+          std::cout << " " << (uint16_t)(msp[i]);
+          #endif
+        }
+      }
+    }
+  }
+  #ifdef DEBUG
+  std::cout << "\n";
+  #endif
+}
+
 
 uint32_t ISOTerminal_c::getUploadBufferSize ()
 {

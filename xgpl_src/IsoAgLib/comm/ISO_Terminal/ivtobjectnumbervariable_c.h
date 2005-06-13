@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 #ifndef IVTOBJECTNUMBERVARIABLE_C_H
 #define IVTOBJECTNUMBERVARIABLE_C_H
@@ -83,8 +83,8 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValue(uint32_t newValue, bool b_updateObject= false) {
-    vtObjectNumberVariable_c::setValue (newValue, b_updateObject); };
+  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    vtObjectNumberVariable_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd); };
 
 }; // ~X2C
 

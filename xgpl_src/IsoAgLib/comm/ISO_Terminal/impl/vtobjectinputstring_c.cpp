@@ -191,7 +191,7 @@ vtObjectInputString_c::fitTerminal()
 //! @param newValue:
 //! @param b_updateObject:
 void
-vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject)
+vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   MACRO_localVars;
   if (vtObjectInputString_a->variableReference != NULL) {
@@ -215,7 +215,7 @@ vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject)
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValue, get_vtObjectInputString_a()->length);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValue, get_vtObjectInputString_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 237 : setValueRef
@@ -223,7 +223,7 @@ vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject)
 //! @param newValue:
 //! @param b_updateObject:
 void
-vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject)
+vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   MACRO_localVars;
   if (vtObjectInputString_a->variableReference != NULL) {
@@ -244,7 +244,7 @@ vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject)
   setStringToStream( newValue );  // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length;
 	setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 
@@ -256,14 +256,14 @@ vtObjectInputString_c::getString()
 } // -X2C
 
 void
-vtObjectInputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject)
+vtObjectInputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveValue16 (MACRO_getStructOffset(get_vtObjectInputString_a(), width),  sizeof(iVtObjectInputString_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectInputString_a(), height), sizeof(iVtObjectInputString_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end namespace __IsoAgLib

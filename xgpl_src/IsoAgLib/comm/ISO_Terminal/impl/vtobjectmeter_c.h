@@ -46,37 +46,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
@@ -103,17 +103,17 @@ public:
 
   //  Operation: stream
   //! Parameter:
-  //! @param destMemory: 
+  //! @param destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset: 
+  //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  uint16_t sourceOffset);
 
   //  Operation: init
   //! Parameter:
-  //! @param vtObjectmeterSROM: 
-  //! @param b_initPointer: 
+  //! @param vtObjectmeterSROM:
+  //! @param b_initPointer:
   void init(const iVtObjectMeter_s* vtObjectMeterSROM) { vtObject_c::init ((iVtObject_s*) vtObjectMeterSROM); };
 
   //  Operation: get_vtObjectmeter_a
@@ -125,40 +125,40 @@ public:
   //  Operation: size
   uint32_t fitTerminal();
 
-  void setWidth(uint16_t newValue, bool b_updateObject= false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), width) : 0, sizeof(iVtObjectMeter_s), 1 /* "Width" */, newValue); };
-  
-  void setNeedleColour(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour) : 0, sizeof(iVtObjectMeter_s), 2 /* "Needle Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::NeedleColour)); };
-  
-  void setBorderColour(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour) : 0, sizeof(iVtObjectMeter_s), 3 /* "BorderColour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BorderColour)); };
-  
-  void setArcAndTickColour(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour) : 0, sizeof(iVtObjectMeter_s), 4 /* "Arc and Tick Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::ArcAndTickColour)); };
-  
-  void setOptions(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), options) : 0, sizeof(iVtObjectMeter_s), 5 /* "Options" */, newValue, newValue); };
-  
-  void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks) : 0, sizeof(iVtObjectMeter_s), 6 /* "# of Ticks" */, newValue, newValue); };
-  
-  void setStartAngle(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle) : 0, sizeof(iVtObjectMeter_s), 7 /* "Start Angle" */, newValue, newValue); };
-  
-  void setEndAngle(uint8_t newValue, bool b_updateObject= false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle) : 0, sizeof(iVtObjectMeter_s), 8 /* "End Angle" */, newValue, newValue); };
-  
-  void setMin(uint16_t newMin, bool b_updateObject= false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), minValue) : 0, sizeof(iVtObjectMeter_s), 9 /* "Min value" */, newMin); };
+  void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), width) : 0, sizeof(iVtObjectMeter_s), 1 /* "Width" */, newValue, b_enableReplaceOfCmd); };
 
-  void setMax(uint16_t newMax, bool b_updateObject= false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), maxValue) : 0, sizeof(iVtObjectMeter_s), 10 /* "Max value" */, newMax); };
+  void setNeedleColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour) : 0, sizeof(iVtObjectMeter_s), 2 /* "Needle Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::NeedleColour), b_enableReplaceOfCmd); };
 
-  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject= false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), variableReference) : 0, sizeof(iVtObjectMeter_s), 11 /* "Variable Reference" */, newValue); };
+  void setBorderColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour) : 0, sizeof(iVtObjectMeter_s), 3 /* "BorderColour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd); };
 
-  void setValue(uint16_t newValue, bool b_updateObject= false);
+  void setArcAndTickColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour) : 0, sizeof(iVtObjectMeter_s), 4 /* "Arc and Tick Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::ArcAndTickColour), b_enableReplaceOfCmd); };
+
+  void setOptions(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), options) : 0, sizeof(iVtObjectMeter_s), 5 /* "Options" */, newValue, newValue, b_enableReplaceOfCmd); };
+
+  void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks) : 0, sizeof(iVtObjectMeter_s), 6 /* "# of Ticks" */, newValue, newValue, b_enableReplaceOfCmd); };
+
+  void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle) : 0, sizeof(iVtObjectMeter_s), 7 /* "Start Angle" */, newValue, newValue, b_enableReplaceOfCmd); };
+
+  void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle) : 0, sizeof(iVtObjectMeter_s), 8 /* "End Angle" */, newValue, newValue, b_enableReplaceOfCmd); };
+
+  void setMin(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), minValue) : 0, sizeof(iVtObjectMeter_s), 9 /* "Min value" */, newMin, b_enableReplaceOfCmd); };
+
+  void setMax(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), maxValue) : 0, sizeof(iVtObjectMeter_s), 10 /* "Max value" */, newMax, b_enableReplaceOfCmd); };
+
+  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), variableReference) : 0, sizeof(iVtObjectMeter_s), 11 /* "Variable Reference" */, newValue, b_enableReplaceOfCmd); };
+
+  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
 }; // ~X2C
 

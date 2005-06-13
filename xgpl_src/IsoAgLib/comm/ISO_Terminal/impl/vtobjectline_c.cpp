@@ -160,14 +160,14 @@ vtObjectLine_c::setOriginSKM(bool b_SKM)
 } // -X2C
 
 void
-vtObjectLine_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject)
+vtObjectLine_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), width),  sizeof(iVtObjectLine_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight);
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end of namespace __IsoAgLib
