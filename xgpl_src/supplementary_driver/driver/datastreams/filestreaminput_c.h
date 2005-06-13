@@ -85,7 +85,6 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-
 #ifndef FILESTREAMINPUT_C_H
 #define FILESTREAMINPUT_C_H
 
@@ -95,8 +94,9 @@
 #include <supplementary_driver/hal/datastreams.h>
 #include <stdio.h>
 
-// +X2C includes
-// ~X2C
+#ifdef DEBUG
+#include <iostream>
+#endif
 
 //  +X2C Class 915 : FileStreamInput_c
 class FileStreamInput_c : public StreamInput_c
@@ -120,6 +120,9 @@ public:
   void close(bool b_deleteFile=false) { 
     c_targetHandle.close();
     if (b_deleteFile) {
+      #ifdef DEBUG
+      std::cout << "Removing file " << str_openedFile.c_str() << ".\n";
+      #endif
       remove (str_openedFile.c_str());
     }
   };

@@ -170,11 +170,11 @@ public:
   bool processMsg();
 
   //  Operation: registerClient
-  //! Parameter:
-  //! @param rui16_pgn: 
-  //! @param rpc_client: 
-  void registerClient(uint16_t rui16_pgn, uint8_t rui8_clientAddress, 
-                      IsoAgLib::MultiReceiveClient_c* rpc_client, bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false);
+  void registerClient (uint16_t rui16_pgn, uint8_t rui8_clientAddress, 
+                       IsoAgLib::MultiReceiveClient_c* rpc_client, bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false);
+
+  //  Operation: deregisterClient
+  void deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client);
 
   //  Operation: createStream
   //! Parameter:
@@ -260,20 +260,27 @@ private:
   void connAbortTellClientRemoveStream(bool rb_sendConnAbort, Stream_c* rpc_stream);
   void removeStream(Stream_c* rpc_stream);
 
-  
+ 
   void notifyError (IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent, uint8_t rui8_multiReceiveErrorCode);
 
-  
-//  Attribute: list_stream
+
+private: // attributes
+
   std::list<DEF_Stream_c_IMPL> list_streams;
 
-  //  Attribute: list_clients
   std::list<MultiReceiveClientWrapper_s> list_clients;
 
 }; // ~X2C
 
-/** C-style function, to get access to the unique IsoTerminalServer_c singleton instance */
-MultiReceive_c& getMultiReceiveInstance( void );
+#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
+  /** C-style function, to get access to the unique MultiReceive_c singleton instance
+    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+    */
+  MultiReceive_c& getMultiReceiveInstance( uint8_t rui8_instance = 0 );
+#else
+  /** C-style function, to get access to the unique MultiReceive_c singleton instance */
+  MultiReceive_c& getMultiReceiveInstance( void );
+#endif
 
 } // end namespace __IsoAgLib
 #endif // -X2C

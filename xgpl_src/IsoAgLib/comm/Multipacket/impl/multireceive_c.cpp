@@ -114,13 +114,15 @@ namespace __IsoAgLib {
 static const uint8_t scui8_tpPriority=6;
 
 
-/** C-style function, to get access to the unique MultiReceive_c singleton instance */
-MultiReceive_c& getMultiReceiveInstance( void )
-{
-  static MultiReceive_c& c_multiReceive = MultiReceive_c::instance();
-  return c_multiReceive;
-};
-
+#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
+  /** C-style function, to get access to the unique MultiReceive_c singleton instance
+    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+    */
+  MultiReceive_c& getMultiReceiveInstance( uint8_t rui8_instance ) { return MultiReceive_c::instance( rui8_instance );};
+#else
+  /** C-style function, to get access to the unique MultiReceive_c singleton instance */
+  MultiReceive_c& getMultiReceiveInstance( void ) { return MultiReceive_c::instance();};
+#endif
 
 
 // //////////////////////////////// +X2C Operation 5653 : ~MultiReceive_c
@@ -470,10 +472,7 @@ MultiReceive_c::processMsg()
 
 
 
-// //////////////////////////////// +X2C Operation 735 : registerClient
-//! Parameter:
-//! @param rui16_pgn:
-//! @param rpc_client:
+// Operation: registerClient
 void
 MultiReceive_c::registerClient(uint16_t rui16_pgn, uint8_t rui8_clientAddress,
                                IsoAgLib::MultiReceiveClient_c* rpc_client, bool rb_alsoBroadcast, bool rb_alsoGlobalErrors)
@@ -491,6 +490,36 @@ MultiReceive_c::registerClient(uint16_t rui16_pgn, uint8_t rui8_clientAddress,
 } // -X2C
 
 
+
+//  Operation: deregisterClient
+void
+MultiReceive_c::deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
+{
+  // first of all remove all streams that are for this client!
+  for (std::list<DEF_Stream_c_IMPL>::iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); )
+  {
+    if (getClient(pc_iter->getIdent()) == rpc_client)
+    { // remove stream (do not call any callbacks, as deregister is likely called in the client's destructor
+      pc_iter = list_streams.erase (pc_iter);
+    } else {
+      pc_iter++;
+    }
+  }
+  
+  // then remove all MultiReceiveClientWrappers for this client
+  for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
+  {
+    if (pc_iter->pc_client == rpc_client)
+    { // remove MultiReceiveClientWrapper_s
+      pc_iter = list_clients.erase (pc_iter);
+    } else {
+      pc_iter++;
+    }
+  }
+}
+
+  
+  
 // //////////////////////////////// +X2C Operation 845 : createStream
 //! Parameter:
 //! @param rc_streamIdent:
@@ -849,6 +878,9 @@ MultiReceive_c::close( void )
     setAlreadyClosed();
     __IsoAgLib::getSchedulerInstance4Comm().unregisterClient( this );
 
+    list_streams.clear();
+    list_clients.clear();
+    
     MACRO_deleteFilterIfExists_mask1FF0000(ETP_DATA_TRANSFER_PGN)
     MACRO_deleteFilterIfExists_mask1FF0000(ETP_CONN_MANAGE_PGN)
     MACRO_deleteFilterIfExists_mask1FF0000(TP_DATA_TRANSFER_PGN)
