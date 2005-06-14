@@ -961,6 +961,8 @@ xgpl_src/IsoAgLib/util/icanpkgext_c.h -text
 xgpl_src/IsoAgLib/util/igetypos_c.h -text
 xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp -text
 xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp -text
+xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
+xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
 xgpl_src/supplementary_driver/hal/c2c/actor/actor.h -text
 xgpl_src/supplementary_driver/hal/c2c/actor/actor_target_extensions.cpp -text
 xgpl_src/supplementary_driver/hal/c2c/rs232/rs232.h -text
