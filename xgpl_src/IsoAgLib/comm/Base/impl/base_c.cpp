@@ -900,14 +900,23 @@ bool Base_c::isoTimeEvent( void )
   data().setIsoPri(3);
   data().setIsoSa(b_sa);
 
+#ifdef SYSTEM_PC_VC
+	if ( ( ( abs(ui8_actTime100ms - ui8_lastIsoBase1 ) ) >= 1    )
+		&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
+#else
 	if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastIsoBase1 ) ) >= 1    )
 		&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
+#endif
   { // send actual base1 data: ground/wheel based speed/dist
     c_sendBase1Gtp = *pc_gtp;
     data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
+#ifdef SYSTEM_PC_VC
+    data().setVal12(abs(i16_speedReal));
+#else
     data().setVal12(CNAMESPACE::abs(i16_speedReal));
-    data().setVal36(i32_distReal);
-    switch (i16_speedReal) {
+#endif
+	data().setVal36(i32_distReal);
+	switch (i16_speedReal) {
      case ERROR_VAL_16S:
       data().setVal8(IsoAgLib::IsoError);
       break;
@@ -924,8 +933,12 @@ bool Base_c::isoTimeEvent( void )
     c_can << data();
 
     data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
-    data().setVal12(CNAMESPACE::abs(i16_speedTheor));
-    data().setVal36(i32_distTheor);
+#ifdef SYSTEM_PC_VC
+	data().setVal12(abs(i16_speedTheor));
+#else
+	data().setVal12(CNAMESPACE::abs(i16_speedTheor));
+#endif
+	data().setVal36(i32_distTheor);
 
     data().setVal7(ui8_maxPowerTime);
 
@@ -952,8 +965,13 @@ bool Base_c::isoTimeEvent( void )
     ui8_lastIsoBase1 = ui8_actTime100ms;
   }
 
+#ifdef SYSTEM_PC_VC
+	if ( ( ( abs(ui8_actTime100ms - ui8_lastIsoBase2 ) ) >= 1    )
+		&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
+#else
 	if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastIsoBase2 ) ) >= 1    )
 		&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
+#endif
   { // send actual base2 data
     c_sendBase2Gtp = *pc_gtp;
     data().setIsoPgn(FRONT_HITCH_STATE_PGN);
@@ -1131,9 +1149,15 @@ void Base_c::setOverflowSecure(int32_t& reflVal, int16_t& refiVal, const int16_t
   int16_t i16_diff = rrefiNewVal - refiVal;
 
   // check if there was an overflow = diff is greater than half of def area (per sign side)
+#ifdef SYSTEM_PC_VC
+  if ((abs(i16_diff) > i32_maxDefFendt/2) || (abs(i16_diff) > i32_maxDefDin/2))
+  { // one of the overflow checks triggers
+    if (abs(i16_diff) > i32_maxDefFendt/2)
+#else
   if ((CNAMESPACE::abs(i16_diff) > i32_maxDefFendt/2) || (CNAMESPACE::abs(i16_diff) > i32_maxDefDin/2))
   { // one of the overflow checks triggers
     if (CNAMESPACE::abs(i16_diff) > i32_maxDefFendt/2)
+#endif
     { // the old wrong fendt limit triggers
       if (rrefiNewVal > refiVal)
       { // dist decreased lower than 0 -> lower underflow
@@ -1146,8 +1170,12 @@ void Base_c::setOverflowSecure(int32_t& reflVal, int16_t& refiVal, const int16_t
         i32_newValFendt += rrefiNewVal; // decreased after overflow
       }
     }
+#ifdef SYSTEM_PC_VC
+    if (abs(i16_diff) > i32_maxDefDin/2)
+#else
     if (CNAMESPACE::abs(i16_diff) > i32_maxDefDin/2)
-    { // the correct DIN limit triggers
+#endif
+	{ // the correct DIN limit triggers
       if (rrefiNewVal > refiVal)
       { // dist decreased lower than 0 -> lower underflow
         i32_newValDin -= refiVal; // max reducable before underflow
