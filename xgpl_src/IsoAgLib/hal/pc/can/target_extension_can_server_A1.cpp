@@ -109,7 +109,6 @@ using namespace __HAL;
 
 // CAN Globals
 static int apiversion;
-static int can_device = 0;
 
 // IO address for LPT and ISA ( PCI and PCMCIA use automatic adr )
 const int32_t LptIsaIoAdr = 0x378;
@@ -169,8 +168,8 @@ server_c::server_c()
 
 static int ca_InitApi_1 ();
 static int ca_ResetCanCard_1(void);
-static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1);
-static int ca_TransmitCanCard_1(tSend* ptSend);
+static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1, server_c* pc_serverData);
+static int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData);
 
 /////////////////////////////////////////////////////////////////////////
 // Local Data
@@ -353,7 +352,7 @@ static void* can_write_thread_func(void* ptr)
     }
 
     DEBUG_PRINT("+");
-    i16_rc = ca_TransmitCanCard_1(&(msqWriteBuf.s_sendData));
+    i16_rc = ca_TransmitCanCard_1(&(msqWriteBuf.s_sendData), msqWriteBuf.ui8_bus, pc_serverData);
     DEBUG_PRINT1("send: %d\n", i16_rc);
 
     if (pc_serverData->b_logMode) {
@@ -408,30 +407,46 @@ static void can_read(server_c* pc_serverData)
 
     fd_set rfds;
     int retval;
-    int maxfd = can_device+1;
-    uint32_t channel;
+    uint32_t channel, channel_with_change;
+    int maxfd = 0;
 
-    // only one bus is served!
+    // get maxfd
+    for (channel=0; channel<cui32_maxCanBusCnt; channel++ ) {
+      if (canBusIsOpen[channel] && pc_serverData->can_device[channel]>maxfd)
+        maxfd=pc_serverData->can_device[channel];
+    }
+
+    maxfd++;
+
+    FD_ZERO(&rfds);
+        
     for (channel=0; channel<cui32_maxCanBusCnt; channel++ ) {
       if (canBusIsOpen[channel]) {
-        FD_ZERO(&rfds);
-        FD_SET(can_device, &rfds);
-        retval = select(maxfd, &rfds, NULL, NULL, NULL);	// wait infinitely for next CAN msg
+        FD_SET(pc_serverData->can_device[channel], &rfds);
+      }
+    }
 
-        if(retval == -1) {
-          DEBUG_PRINT("Error Occured in select\n");
-          break;
-        } else if (retval == 0) {
-          break;
-        } else {
-          if(FD_ISSET(can_device, &rfds) != 1) {
-            DEBUG_PRINT("Not selecting right thing\n");
-            break;
+    // we have open devices
+    if (maxfd > 1) {
+      retval = select(maxfd, &rfds, NULL, NULL, NULL);	// wait infinitely for next CAN msg
+
+      if(retval == -1) {
+        DEBUG_PRINT("Error Occured in select\n");
+        break;
+      } else if (retval == 0) {
+        break;
+      } else {
+
+        // get device with changes
+        for (channel_with_change=0; channel_with_change<cui32_maxCanBusCnt; channel_with_change++ ) {
+          if (canBusIsOpen[channel_with_change]) {
+            if (FD_ISSET(pc_serverData->can_device[channel_with_change], &rfds) == 1) {
+              DEBUG_PRINT2("change on channel %d, FD_ISSET %d\n", channel_with_change, FD_ISSET(pc_serverData->can_device[channel_with_change], &rfds));
+              b_processMsg = TRUE;
+              break;
+            }
           }
         }
-
-        b_processMsg = TRUE;
-        break;
       }
     }
 
@@ -444,7 +459,7 @@ static void can_read(server_c* pc_serverData)
       }
       
       CANmsg msg;
-      int ret = ioctl(can_device, CAN_READ_MSG, &msg);
+      int ret = ioctl(pc_serverData->can_device[channel_with_change], CAN_READ_MSG, &msg);
       
       if (ret < 0) {
         /* nothing to read or interrupted system call */
@@ -461,7 +476,7 @@ static void can_read(server_c* pc_serverData)
         }
         
       } else {
-        receiveData.b_bus = channel;
+        receiveData.b_bus = channel_with_change;
         receiveData.msg.i32_ident = msg.id;
         receiveData.msg.b_xtd = (msg.msg_type & MSGTYPE_EXTENDED) == MSGTYPE_EXTENDED;
         receiveData.msg.b_dlc = msg.len;
@@ -650,7 +665,8 @@ static void* command_thread_func(void* ptr)
 
             i16_init_rc = ca_InitCanCard_1(msqCommandBuf.s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
                                            btr0,  // BTR0
-                                           btr1); // BTR1
+                                           btr1, // BTR1
+                                           pc_serverData);
                      
             if (!i16_init_rc) {
               printf("can't initialize CAN\n");
@@ -857,7 +873,7 @@ static int ca_ResetCanCard_1(void)
 //			was set correctly before proceeding.
 //
 /////////////////////////////////////////////////////////////////////////
-static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1)
+static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1, server_c* pc_serverData)
 {
 
   DEBUG_PRINT1("init can channel %d\n", channel);
@@ -874,9 +890,9 @@ static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1)
 
     DEBUG_PRINT1("open( \"%s\", O_RDRWR)\n", fname);
 
-    can_device = open(fname, O_RDWR | O_NONBLOCK);
+    pc_serverData->can_device[channel] = open(fname, O_RDWR | O_NONBLOCK);
 
-    if (!can_device) {
+    if (!pc_serverData->can_device[channel]) {
       DEBUG_PRINT1("Could not open CAN bus%d\n",channel);
       return 0;
     }
@@ -888,15 +904,15 @@ static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1)
       sprintf( buf, "i 0x%2x%2x e\n", btr0 & 0xFF, btr1 & 0xFF );     //, (extended?" e":" ") extended is not being passed in! Don't use it!
 
       DEBUG_PRINT3("write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
-      write(can_device, buf, strlen(buf));
+      write(pc_serverData->can_device[channel], buf, strlen(buf));
     }
     
-    canBusFp[channel] = fdopen( can_device, "w+" );
+    canBusFp[channel] = fdopen( pc_serverData->can_device[channel], "w+" );
     if( !canBusFp[channel] ) {
       // open succeeded, but fdopen failed!!!
       // close the open file handle created with open()
-      if( can_device )
-        close(can_device);
+      if( pc_serverData->can_device[channel] )
+        close(pc_serverData->can_device[channel]);
       
       DEBUG_PRINT1("Could not fdopen CAN bus%d\n",channel);
       
@@ -922,7 +938,7 @@ static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1)
 // NOTES:	In this case, we will simply return 1
 //
 /////////////////////////////////////////////////////////////////////////
-static int ca_TransmitCanCard_1(tSend* ptSend)
+static int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData)
 {
 // Always Transmit to this format:
 //  the letter 'm', extended/standard ID, CAN ID, Data Length, data bytes, timestamp
@@ -955,10 +971,10 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
 #if 0
   fd_set wfds;
   int retval;
-  int maxfd = can_device+1;
+  int maxfd = pc_serverData->can_device[ui8_bus]+1;
 
   FD_ZERO(&wfds);
-  FD_SET(can_device, &wfds);
+  FD_SET(pc_serverData->can_device[ui8_bus], &wfds);
 
   struct timeval tv;
   tv.tv_sec = 0;  	// tv_sec and tv_usec= 0: timeout immediately (only check if data is waiting when on a timer)
@@ -975,7 +991,7 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
     return 0;
   } else
   {
-    if(FD_ISSET(can_device, &wfds) != 1)
+    if(FD_ISSET(pc_serverData->can_device[channel], &wfds) != 1)
     {
       DEBUG_PRINT("Not selecting right thing\n");
       return 0;
@@ -983,7 +999,11 @@ static int ca_TransmitCanCard_1(tSend* ptSend)
   }
 #endif
 
-  int ret = ioctl(can_device, CAN_WRITE_MSG, &msg);
+  int ret;
+
+  if (ui8_bus < HAL_CAN_MAX_BUS_NR)
+    ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+
 #else
   int ret = 0;
 #endif

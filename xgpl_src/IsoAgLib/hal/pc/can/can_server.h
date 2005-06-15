@@ -35,12 +35,14 @@ public:
   std::string inputFile;
   uint16_t ui16_globalMask[cui32_maxCanBusCnt];
   // logging
-  bool b_logMode;
-  FILE* f_canOutput[cui32_maxCanBusCnt];
+  bool     b_logMode;
+  FILE*    f_canOutput[cui32_maxCanBusCnt];
   // replay
-  bool b_inputFileMode;
-  FILE* f_canInput;
-  int32_t i32_lastPipeId;
+  bool     b_inputFileMode;
+  FILE*    f_canInput;
+
+  int32_t  i32_lastPipeId;
+  int16_t  can_device[cui32_maxCanBusCnt];
 };
 
 
