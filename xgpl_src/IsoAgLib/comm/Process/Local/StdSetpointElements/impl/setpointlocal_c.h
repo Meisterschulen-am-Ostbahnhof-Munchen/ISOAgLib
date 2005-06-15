@@ -124,7 +124,7 @@
 #include "../../../StdSetpointElements/impl/setpointregister_c.h"
 #include "../../../impl/proc_c.h"
 
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC)
+#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
   #include <ext/slist>
   namespace std { using __gnu_cxx::slist;};
 #else
