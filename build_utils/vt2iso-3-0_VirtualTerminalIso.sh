@@ -19,8 +19,8 @@ DIR=`dirname $0`
 # export LD_LIBRARY_PATH=/usr/local/lib
 
 ### 4. Now call vt2iso
-# PAR="$CURDIR/$DIR/vt2iso/bin/vt2iso -bitmapmemory=HUGE_MEM simpleVTIsoPool.xml"
+# PAR="$CURDIR/$DIR/vt2iso/bin/vt2iso simpleVTIsoPool.xml"
 
-PAR="$CURDIR/$DIR/vt2iso/bin/vt2iso -bitmapmemory=HUGE_MEM $CURDIR/$DIR/../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool.xml"
+PAR="$CURDIR/$DIR/vt2iso/bin/vt2iso $CURDIR/$DIR/../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool.xml"
 
 exec $PAR
