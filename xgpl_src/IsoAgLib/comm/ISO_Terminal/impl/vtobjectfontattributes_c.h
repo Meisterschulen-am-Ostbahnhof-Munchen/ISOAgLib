@@ -100,9 +100,6 @@ public:
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setFontColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    #if 1
-      std::cout << (uint32_t)get_vtObjectFontAttributes_a() << ". . ." << (uint32_t) &get_vtObjectFontAttributes_a()->fontColour << std::endl;
-    #endif
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) :
     0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
   }
