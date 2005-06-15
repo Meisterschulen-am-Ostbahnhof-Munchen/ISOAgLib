@@ -59,6 +59,11 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectUnnamed16,
   &iVtObjectKeyLessAccel,
   &iVtObjectUnnamed17,
+  &iVtObjectISinitial,
+  &iVtObjectdriver,
+  &iVtObjectresonible,
+  &iVtObjectISdriver,
+  &iVtObjectOSresonible,
   &iVtObjectsoftkeys1,
   &iVtObjectKeyMove,
   &iVtObjectUnnamed18,
@@ -86,4 +91,4 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectsoftkeysAlarm
 };
 
-  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 85, 200, 60, 32) {};
+  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 90, 200, 60, 32) {};

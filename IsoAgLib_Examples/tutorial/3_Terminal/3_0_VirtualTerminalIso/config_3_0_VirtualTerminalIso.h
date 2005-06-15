@@ -6,9 +6,9 @@
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_3_0_VirtualTerminalIso" call,
 //                    if the corresponding value in isoaglib_config.h changed
-#define CAN_BUS_CNT 4 
+#define CAN_BUS_CNT 1 
 
-#define CAN_BUS_USED 2 
+#define CAN_BUS_USED 0 
 
 #define CAN_INSTANCE_CNT 1 
 

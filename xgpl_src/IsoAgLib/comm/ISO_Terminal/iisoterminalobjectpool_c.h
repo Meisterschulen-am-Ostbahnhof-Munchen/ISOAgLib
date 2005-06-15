@@ -59,6 +59,7 @@
 /* *************************************** */
 
 #include "ivttypes.h"
+#include <supplementary_driver/driver/datastreams/streaminput_c.h>
 
 
 /* *************************************** */
@@ -161,7 +162,7 @@ namespace IsoAgLib {
 class iIsoTerminalObjectPool_c {
 
 public:
-  
+
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Soft Key Activation" / "Button Activation" Message
@@ -172,15 +173,33 @@ public:
     @param rb_wasButton true if it was a button object, false if it was a soft key
   */
   virtual void eventKeyCode (uint8_t rui8_keyActivationCode, uint16_t rui16_objId, uint16_t rui16_objIdMask, uint8_t rui8_keyCode, bool rb_wasButton)=0;
-  
+
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "VT Change Numeric Value" Message
-    @param rui16_objId of the object where the user chaged the value
+    @param rui16_objId of the object where the user changed the value
     @param rui8_value the value in 8bit
     @param rui32_value the (same) value in 32bit
   */
   virtual void eventNumericValue (uint16_t rui16_objId, uint8_t rui8_value, uint32_t rui32_value)=0;
+
+  /**
+    hook function that gets called after the ISO_Terminal_c instance
+    receives a "Input String Value" Message
+    @param rui16_objId of the object where the user changed the value
+    @param rui8_length the length in 8bit
+    @param refc_streaminput reference to streaminput
+    @param rui8_unparsedBytes
+    @param b_isFirst
+    @param b_isLast
+  */
+  virtual void eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast)=0;
+
+  /**
+    the abort function is implemented empty by default because
+    it is only needed for on-the-fly parsing of the string value
+  */
+  virtual void eventStringValueAbort() {};
 
   /**
     hook function that gets called immediately after the
@@ -193,19 +212,19 @@ public:
     the loss of the VT (VT Status Msg not coming for >= 3secs.)
   */
   virtual void eventEnterSafeState()=0;
-  
+
   /**
     hook function that gets called immediately after recognizing the success/error
     of a command-response message. please keep the implementation short as
     this is directly called from IsoTerminal_c's processMsg();
   */
   virtual void eventCommandResponse(uint8_t /*rui8_responseCommandError*/, const uint8_t /*rpui8_responseDataBytes*/[8]) {};
-  
+
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
   virtual void initAllObjectsOnce()=0;
-  
+
   iIsoTerminalObjectPool_c(iVtObject_c** r_iVtObjects, uint16_t r_numObjects, uint16_t r_dimension, uint16_t r_skWidth=60, uint16_t r_skHeight=32)
     : iVtObjects (r_iVtObjects)
     , numObjects (r_numObjects)
@@ -213,7 +232,7 @@ public:
     , skWidth (r_skWidth)
     , skHeight (r_skHeight)
     , b_initAllObjects (false) {};
-  
+
   /**
     hook function that gets called every time a color-value
     has to be adapted to VT's color-depth (as it violates the color-range!).
@@ -231,7 +250,7 @@ public:
   {
     if ((whichColour == BackgroundColour) || (whichColour == TransparencyColour))
       return 1; /* white - std. background/transparency colour */
-    else 
+    else
       return 0; /* black - std. drawing colour */
   };
 

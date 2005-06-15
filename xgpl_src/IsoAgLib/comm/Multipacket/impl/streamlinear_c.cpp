@@ -1,5 +1,5 @@
 /***************************************************************************
-                          streamlinear_c.cpp - 
+                          streamlinear_c.cpp -
                              -------------------
     class                : ::StreamLinear_c
     project              : IsoAgLib
@@ -95,7 +95,7 @@ namespace __IsoAgLib {
 
 
 
-StreamLinear_c::StreamLinear_c (StreamType_t rt_streamType, const ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize)
+StreamLinear_c::StreamLinear_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize)
   : Stream_c (rt_streamType, rc_rsi, rui32_msgSize)
   , ui32_parsedCnt (0)
 {

@@ -133,13 +133,13 @@ public:
   uint16_t getPgn() const { return ui16_pgn; };
 
 private:
-  
+
   /** PGN of the stream */
   uint16_t ui16_pgn;
-  
+
   /** Destination of the stream, normall "part" of the PGN, i.e. PS-field */
   uint8_t ui8_da;
-  
+
   /** source address of the corresponding sender */
   uint8_t ui8_sa;
 };
@@ -161,18 +161,20 @@ public:
 
   virtual uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset)=0;
 
+  virtual uint32_t getByteTotalSize() const=0;
+
   virtual ReceiveStreamIdentifier_c& getIdent()=0;
-  
-  virtual uint8_t getFirstByte() const=0; 
+
+  virtual uint8_t getFirstByte() const=0;
 
   virtual void setStreamFinishedJustKept()=0;
-  
+
   void setStreamInvalid()       { b_streamInvalid = true; };
   bool getStreamInvalid() const { return b_streamInvalid; };
 
 
 protected:
-  
+
   // Has this stream been marked invalid while parsing?
   bool b_streamInvalid;
 

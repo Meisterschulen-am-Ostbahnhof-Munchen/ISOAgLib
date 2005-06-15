@@ -147,7 +147,7 @@ MultiReceive_c::notifyError (IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent
   }
   else
   { // really destin specific
-    if (getClient(rc_streamIdent)) 
+    if (getClient(rc_streamIdent))
     {
       getClient(rc_streamIdent)->notificationOnMultiReceiveError (rc_streamIdent, rui8_multiReceiveErrorCode, false);
     }
@@ -194,7 +194,7 @@ MultiReceive_c::processMsg()
   uint8_t ui8_dataByte0 = data().getUint8Data(0);
 //uint8_t ui8_da = MACRO_pgnSpecificOfPGN(data().isoPgn());
 //uint8_t ui8_sa = data().isoSa();
-  
+
   ui32_pgn = data().getUint8Data(5) | (data().getUint8Data(6) << 8) | (data().getUint8Data(7) << 16);
   IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (ui32_pgn, data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
 
@@ -205,7 +205,7 @@ MultiReceive_c::processMsg()
       #ifdef DEBUG
         std::cout << "\n {CM: " << data().time() << "} ";
       #endif
-      
+
      {// to allow local variables
       switch (ui8_dataByte0)
       {
@@ -318,7 +318,7 @@ MultiReceive_c::processMsg()
            ////////////////////////////////////
           /// BAM (Broadcast Announce Message)
           MACRO_Define_t_streamType_and_checkInvalid
-          
+
           { // to allow local variables!
             // Is BAM directed to 0xFF (global) ?
             if (data().isoPs() != 0xFF)
@@ -329,9 +329,9 @@ MultiReceive_c::processMsg()
               #endif
               return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
             }
-            
+
             // From now on it is assured that BAM is directed to 0xFF (255)
-            
+
             // BAM from an SA that has already a Stream running?
             Stream_c* pc_streamFound = getStream (data().isoSa(), 255 /* 0xFF, BAM is always to GLOBAL */);
             if (pc_streamFound != NULL) {
@@ -344,9 +344,9 @@ MultiReceive_c::processMsg()
               // return true;
               // ^^^ do NOT return, if the old BAM is "aborted" due to this BAM, try with this BAM now...
             }
-            
+
             ui32_msgSize = data().getUint16Data(1);
-          
+
             uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
             // check for TP-RTS if pkg-count matches the calculated AND if size > 0
             if ((data().getUint8Data(3) != ui32_numPkg) || (ui32_msgSize < 9))
@@ -357,13 +357,13 @@ MultiReceive_c::processMsg()
               #endif
               return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
             }
-            
+
             // NO client checks as in RTS-case above, as it's for ALL clients, they HAVE to take it =)
-              
+
             // "Stream_c"'s constructor will set awaitStep to "awaitData" and timeOut to 250ms!
             createStream(t_streamType, c_tmpRSI, ui32_msgSize);
           }
-          
+
           return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
 
 
@@ -377,7 +377,7 @@ MultiReceive_c::processMsg()
           { // to allow local variables!
             // do NOT allow a BAM to be aborted (by the sender himself).. doesn't make no sense anyway...
             if (c_tmpRSI.getDa() == 0xFF) return true; // this ConnAbort is not of interest for anybody else...
-            
+
             Stream_c* pc_streamFound = getStream (c_tmpRSI);
 
             if (pc_streamFound) {
@@ -401,7 +401,7 @@ MultiReceive_c::processMsg()
           /// CTS (for MultiSend)
           // ignore here and simply pass on to MultiSend (using return false)
           return false;
-          
+
         default:
           #ifdef DEBUG
             std::cout << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!\n";
@@ -421,7 +421,7 @@ MultiReceive_c::processMsg()
       #ifdef DEBUG
         std::cout << "{DATA: " << data().time() << "} "; fflush(0);
       #endif
-       
+
        /////////////////////////
       /// Data Transfer (DATA)
       { // to allow local variables!
@@ -435,7 +435,7 @@ MultiReceive_c::processMsg()
           notifyError(c_tmpRSI, 1011);
           return false;
         }
-        // From this point on the SA/DA pair matches, so that we can return true 
+        // From this point on the SA/DA pair matches, so that we can return true
         if (!(pc_streamFound->handleDataPacket(data().pb_data))) {
           // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
           if (data().isoPs() == 0xFF)
@@ -465,8 +465,8 @@ MultiReceive_c::processMsg()
     default:
       return false; // PGN not managed here, so return false so that other CAN-Customers will "processMsg" them!
   }
-  
-  // This point should NOT be reached anyway! all "case" statements 
+
+  // This point should NOT be reached anyway! all "case" statements
   return false;
 } // -X2C
 
@@ -505,7 +505,7 @@ MultiReceive_c::deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
       pc_iter++;
     }
   }
-  
+
   // then remove all MultiReceiveClientWrappers for this client
   for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
   {
@@ -518,8 +518,8 @@ MultiReceive_c::deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
   }
 }
 
-  
-  
+
+
 // //////////////////////////////// +X2C Operation 845 : createStream
 //! Parameter:
 //! @param rc_streamIdent:
@@ -652,7 +652,7 @@ MultiReceive_c::timeEvent( void )
           std::cout << "\nSending End of Message Acknowledge out!\n";
         #endif
         sendEndOfMessageAck(pc_stream);
-  
+
         if (processStreamDataChunk_ofMatchingClient(pc_stream, true))
         { // keep stream (in "FinishedJustKept" kinda state
           pc_stream->setStreamFinishedJustKept();
@@ -660,7 +660,7 @@ MultiReceive_c::timeEvent( void )
           continue;
         }
       }
-      
+
       // if not "continue"d, remove Stream
       i_list_streams = list_streams.erase (i_list_streams);
       continue;
@@ -693,7 +693,7 @@ MultiReceive_c::timeEvent( void )
       i_list_streams = list_streams.erase (i_list_streams);
       continue;
     }
-    
+
     // END timeEvent every Stream_c
     i_list_streams++; // standard weiterschaltung, im "erase" fall wird "continue" gemacht!
   }
@@ -708,7 +708,7 @@ MultiReceive_c::getFinishedJustKeptStream (uint8_t rui8_forSa)
   {
     DEF_Stream_c_IMPL* pc_stream = &*i_list_streams;
     if ( (pc_stream->getStreamingState() == StreamFinishedJustKept)
-         && 
+         &&
          (pc_stream->getIdent().getDa() == rui8_forSa))
     {
       return &(*i_list_streams);
@@ -726,7 +726,7 @@ void
 MultiReceive_c::sendCurrentCts(DEF_Stream_c_IMPL* rpc_stream)
 { // ~X2C
   // This function actually IS only called if in state "AwaitCtsSend" !
-  
+
   /** may also be 0, meaning HOLD CONNECTION OPEN, but we can handle multiple streams, can't we? ;-) */
 
   uint8_t ui8_pkgsToExpect = rpc_stream->expectBurst(Stream_c::sui8_pkgBurst); // we wish e.g. 20 pkgs (as always), but there're only 6 more missing to complete the stream!
@@ -880,7 +880,7 @@ MultiReceive_c::close( void )
 
     list_streams.clear();
     list_clients.clear();
-    
+
     MACRO_deleteFilterIfExists_mask1FF0000(ETP_DATA_TRANSFER_PGN)
     MACRO_deleteFilterIfExists_mask1FF0000(ETP_CONN_MANAGE_PGN)
     MACRO_deleteFilterIfExists_mask1FF0000(TP_DATA_TRANSFER_PGN)
@@ -973,7 +973,7 @@ MultiReceive_c::getStreamCompletion1000 (uint32_t ui32_index, bool b_checkFirstB
         if ((*pc_iter).getByteAlreadyReceived() > (4*1024*1024))
           return 1000;
         else
-          return ((*pc_iter).getByteAlreadyReceived() * 1000) / (*pc_iter).getByteTotalSize();
+          return (pc_iter->getByteAlreadyReceived() * 1000) / pc_iter->getByteTotalSize();
       }
       ui32_curIndex++;
     }
@@ -995,12 +995,12 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
     else if ((*pc_iter).getByteAlreadyReceived() > (4*1024*1024)) // over 4 MB clipping ;) shouldn't occur anyway...
       return 1000; // is already max ;)
     else
-      ui32_currentCompletion1000 = ((*pc_iter).getByteAlreadyReceived() * 1000) / (*pc_iter).getByteTotalSize();
-    
+      ui32_currentCompletion1000 = (pc_iter->getByteAlreadyReceived() * 1000) / pc_iter->getByteTotalSize();
+
     if (ui32_currentCompletion1000 > ui32_maxStreamCompletion1000)
       ui32_maxStreamCompletion1000 = ui32_currentCompletion1000;
   }
-  return ui32_maxStreamCompletion1000; 
+  return ui32_maxStreamCompletion1000;
 }
 
 

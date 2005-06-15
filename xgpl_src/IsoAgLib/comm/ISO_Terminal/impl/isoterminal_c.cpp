@@ -85,15 +85,16 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/hal/system.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-
+#include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
+#include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 
 #include "vttypes.h"
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectstring_c.h"
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #include <IsoAgLib/util/impl/util_funcs.h>
   #include <iostream>
 #endif
 
@@ -585,6 +586,10 @@ void ISOTerminal_c::close( void )
     { // delete FilterBox
       getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
     }
+
+    /*** MultiReceive De-Registration ***/
+    __IsoAgLib::getMultiReceiveInstance().deregisterClient(this);
+
     deregisterIsoObjectPool();
   }
 }
@@ -631,6 +636,8 @@ bool ISOTerminal_c::timeEvent( void )
     { // create FilterBox
       getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
     }
+    /*** MultiReceive Registration ***/
+    __IsoAgLib::getMultiReceiveInstance().registerClient(VT_TO_ECU_PGN, pc_wsMasterIdentItem->getIsoItem()->nr(), this);
   }
 /*** Filter Registration End ***/
 
@@ -638,8 +645,6 @@ bool ISOTerminal_c::timeEvent( void )
   if ( !pc_wsMasterIdentItem ) return true;
   if ( pc_wsMasterIdentItem->getIsoItem() == NULL ) return true;
   //if ( !c_isoMonitor.existIsoMemberGtp (pc_wsMasterIdentItem->gtp (), true)) return true;
-
-
 
  /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
 /*******************************************************************************************************/
@@ -707,11 +712,7 @@ bool ISOTerminal_c::timeEvent( void )
 
 
   /// Now from here on the Pool's state is: "OPRegistered" or "OPUploadedSuccessfully"
-
-
-
-
-   ////////////////////////////////
+  ////////////////////////////////
   /// UPLOADING --> OBJECT-POOL<--
   if (en_uploadType == UploadPool) {
     // Do TIME-OUT Checks ALWAYS!
@@ -873,6 +874,41 @@ bool ISOTerminal_c::timeEvent( void )
   return true;
 }
 
+// handle all string value between length of 9 and 259 bytes
+bool ISOTerminal_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen)
+{
+  // if SA is not the address from the vt -> don't react on stream
+  if (rc_ident.getSa()!=getVtSourceAddress ()) return false;
+  //handling string value >= 9 Bytes
+  if (rui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
+    return false;
+  return true;
+}
+
+void ISOTerminal_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident)
+{
+  c_streamer.pc_pool->eventStringValueAbort();
+}
+
+bool ISOTerminal_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk)
+{
+  if (rpc_stream->getStreamInvalid()) return false;
+  if (rb_isFirstChunk)
+  {
+    if (rpc_stream->getFirstByte() != 0x8 ) return false; // check for command input string value H.18
+    ui16_inputStringId = rpc_stream->getNextNotParsed() | (rpc_stream->getNextNotParsed() << 8 );
+    ui8_inputStringLength = rpc_stream->getNextNotParsed();
+
+    const uint16_t ui16_totalstreamsize = rpc_stream->getByteTotalSize();
+    if ( ui16_totalstreamsize != (ui8_inputStringLength + 4) )
+    {
+      rpc_stream->setStreamInvalid();
+      return false;
+    }
+  }
+  c_streamer.pc_pool->eventStringValue(ui16_inputStringId, ui8_inputStringLength, *rpc_stream, rpc_stream->getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
+  return false;
+}
 
 /**
   call to check if at least one vt_statusMessage has arrived so we know if the terminal is there.
@@ -1122,6 +1158,19 @@ bool ISOTerminal_c::processMsg()
           c_streamer.pc_pool->eventNumericValue (uint16_t( data().getUint8Data (1) ) | (uint16_t( data().getUint8Data (2) ) << 8) /* objID */,
                                       data().getUint8Data (4) /* 1 byte value */,
                                       uint32_t( data().getUint8Data (4) ) | (uint32_t( data().getUint8Data (5) ) << 8) | (uint32_t( data().getUint8Data (6) ) << 16)| (uint32_t( data().getUint8Data (7) ) << 24) /* 4 byte value */ );
+        }
+        b_result = true;
+        break;
+      case 0x08:  // Command: "Control Element Function", parameter "VT Input String Value"
+        if (c_streamer.pc_pool)
+        {
+          if (data().getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
+          {
+            VolatileMemory_c c_vmString (((uint8_t*)data().name())+4);
+            c_streamer.pc_pool->eventStringValue (uint16_t( data().getUint8Data (1) ) | (uint16_t( data().getUint8Data (2) ) << 8) /* objID */,
+                                                  data().getUint8Data (3) /* total number of bytes */, c_vmString,
+                                                  data().getUint8Data (3) /* total number of bytes */, true, true);
+          }
         }
         b_result = true;
         break;

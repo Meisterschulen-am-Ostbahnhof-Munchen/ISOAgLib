@@ -6,17 +6,24 @@
 ####### Project specific variables
 TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso 
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso
 BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
 BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
 PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
 
+# for use with can server
+SOURCES_CAN = ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
+
+# for direct can access
+#SOURCES_CAN = ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
 
 first: all
 
 ####### Files
-SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
+SOURCES = \
+	$(SOURCES_CAN) \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
@@ -70,17 +77,21 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp \
+		../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp  
+		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp
 
 
 #Special Sources for CAN Server

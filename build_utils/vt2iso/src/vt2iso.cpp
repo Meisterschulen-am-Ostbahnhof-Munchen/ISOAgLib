@@ -478,6 +478,9 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileF, "\npublic:");
     fprintf (partFileF, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
     fprintf (partFileF, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
+    fprintf (partFileF, "\n  virtual void eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast);");
+    fprintf (partFileF, "\n  /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */");
+    fprintf (partFileF, "\n  //virtual void eventStringValueAbort();");
     fprintf (partFileF, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
     fprintf (partFileF, "\n  virtual void eventEnterSafeState ();");
     fprintf (partFileF, "\n  /* Uncomment the following function if you want to use command-response handling! */");

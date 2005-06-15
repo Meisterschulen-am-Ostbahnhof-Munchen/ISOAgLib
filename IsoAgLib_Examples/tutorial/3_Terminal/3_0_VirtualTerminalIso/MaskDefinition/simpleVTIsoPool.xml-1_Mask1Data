@@ -6,8 +6,7 @@
     <include_object pos_x='0' pos_y='0' name='containerInAllMasks' />
 
     <container name='mask1contentscontainer' pos_x='0' pos_y='30' width='200' height='170'>
-<!-- so we have relative values beginning with (0,0) when changing the upper stuff later on -->
-
+      <!-- so we have relative values beginning with (0,0) when changing the upper stuff later on -->
       <outputstring value="Miles:"        pos_x='4' pos_y='14'  width='66' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8' />
       <outputstring value='Speed is'      pos_x='4' pos_y='27'  width='66' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8' name='speedLabel' />
       <outputstring value="Accel':"       pos_x='4' pos_y='55'  width='66' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8' />
@@ -21,27 +20,21 @@
       <!-- note: field is 7 chars long (see length, width) so we can override the "Color:" with "Colour:" later without anything clipped!! -->
       <outputstring name="ColLabel" value="Color:"       length='7' pos_x='4' pos_y='100'  width='42' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8' />
 
-      <outputstring name="ColOS" width='100' height='8' length='0' pos_x='4' pos_y='100' block_col='9' block_font='FontAttributesNormal6x8' font_attributes='FontAttributesNormal6x8' variable_reference='StrNone' />      
-    
-      
-      
+      <outputstring name="ColOS" width='100' height='8' length='0' pos_x='4' pos_y='100' block_col='9' block_font='FontAttributesNormal6x8' font_attributes='FontAttributesNormal6x8' variable_reference='StrNone' />
+
       <include_object name="dEllipse" pos_x="10" pos_y="120" />
       <include_object name="dPolygon" pos_x="100" pos_y="120" />
       <include_object name="dMeter" pos_x="128" pos_y="10" />
-      
-      
+
       <archedbargraph name='AccelArchedBarGraph' width='40' height='40' pos_x='4' block_col='12' block_font='FontAttributesNormal6x8' pos_y='50' start_angle='10' end_angle='80' colour='olive' target_line_colour='purple' bar_graph_width='5' min_value='0' max_value='30' value='25' target_value='15' options='border+targetline+clockwise'/>
-      
-      
-      
-      
+
       <inputlist name='InputListTypFakeMiles' pos_x='4' pos_y='74' width='24' height='8' block_col='13' block_row='1' block_font='FontAttributesNormal6x8' >
         <outputnumber value='6398' width='24' height='8' font_attributes='FontAttributesNormal6x8' offset='0' scale='1.0' number_of_decimals='0' format='fixed' />
         <outputnumber value='8743' width='24' height='8' font_attributes='FontAttributesNormal6x8' offset='0' scale='1.0' number_of_decimals='0' format='fixed' />
         <outputnumber value='3948' width='24' height='8' font_attributes='FontAttributesNormal6x8' offset='0' scale='1.0' number_of_decimals='0' format='fixed' />
         <outputnumber value='9467' width='24' height='8' font_attributes='FontAttributesNormal6x8' offset='0' scale='1.0' number_of_decimals='0' format='fixed' />
-      </inputlist>      
-        
+      </inputlist>
+
       <outputstring value="Fake Mileage"      pos_x='4' pos_y='70'  width='72' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8R' />
 
       <inputnumber name='InputMiles'
@@ -54,7 +47,7 @@
       <inputboolean name='InputLikeage' value='0' pos_x='4' block_col='18' block_font='FontAttributesNormal6x8' pos_y='4' width='8' foreground_colour='FontAttributesNormal6x8' />
 
       <objectpointer name="LikeageOP" pos_x='4' pos_y='160'/>
-                                              
+
       <button name='KeyMoreAccel' background_colour='white' pos_x='120' pos_y='55' width='60' height='30' latchable='no'>
         <outputstring pos_x='0' pos_y='7' width='60' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8'
             value='SpeedUp' horizontal_justification='middle' />
@@ -65,6 +58,16 @@
             value='Brake' horizontal_justification='middle' />
       </button>
 
+      <inputstring name='ISinitial' pos_x='30' pos_y='140' width='25' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8'
+            options='autowrap' horizontal_justification='middle' length='3' value="ini" enabled='true'/>
+      <outputstring name='driver' pos_x='30' pos_y='150' width='45' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8'
+            value='Driver:' horizontal_justification='middle' />
+      <outputstring name='resonible' pos_x='10' pos_y='160' width='65' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8'
+            value='Resonible:' horizontal_justification='middle' />
+      <inputstring name='ISdriver' pos_x='80' pos_y='150' width='122' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8'
+            options='autowrap' horizontal_justification='middle' length='20' value="put in driver's name" enabled='true'/>
+      <outputstring name='OSresonible' pos_x='80' pos_y='160' width='122' height='8' length='20' background_colour='white' font_attributes='FontAttributesNormal6x8'
+            value='' horizontal_justification='middle' />
     </container>
   </datamask>
 
@@ -104,19 +107,14 @@
       <!--picturegraphic name="PictureGraphicTooBig" width="60" actual_width="60" actual_height="60" format="1bit" rle="auto"
                       transparency_colour="1" options="opaque+normal" file="60x60tooBigBitmap.bmp" pos_x="0" pos_y="0" / -->
     <!-- /key -->
-    
+
   </softkeymask>
 
-    
-  
-  
-  
-  
     <lineattributes name="LineAttributes_Normal" line_colour="0" line_width="1" line_art="1111111111111111" />
     <fillattributes name="FillAttributes" fill_type="fillcolour" fill_colour="2" />
 
     <ellipse name="dEllipse" line_attributes="LineAttributes_Normal" width="64" height="32" ellipse_type="closedsegment" start_angle="0" end_angle="1" fill_attributes="FillAttributes" />
-    
+
     <polygon name="dPolygon" width="41" height="35" line_attributes="LineAttributes_Normal" polygon_type="convex">
         <point pos_x="00" pos_y="20" />
         <point pos_x="10" pos_y="10" />
@@ -128,23 +126,14 @@
         <point pos_x="00" pos_y="20" />
         <point pos_x="10" pos_y="20" />
     </polygon>
-      
+
     <meter name="dMeter" width="40" needle_colour="161" border_colour="0" arc_and_tick_colour="15" options="arc+ticks+clockwise" number_of_ticks="31" start_angle="157" end_angle="112" min_value="0" max_value="100" variable_reference="ValSpeed" />
-      
+
     <macro id="1" name="Macro_1" number_of_bytes="8">
         <command_hide_show_object object_id="3000" hide_show="show" />
     </macro>
-    
+
     <macro id="2" name="Macro_2" number_of_bytes="8">
         <command_hide_show_object object_id="3000" hide_show="hide" />
     </macro>
-
-
-    
-    
-    
-    
-    
-    
-    
 </objectpool>

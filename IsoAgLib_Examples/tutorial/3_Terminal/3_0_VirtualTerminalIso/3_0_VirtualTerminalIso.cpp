@@ -206,10 +206,13 @@
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
+#include <supplementary_driver/driver/datastreams/streaminput_c.h>
+#include <iostream>
 
 /* the following include direction includes
    all generated ISO Terminal Object Pool Definitions */
 #include "MaskDefinition/simpleVTIsoPool.xml_direct.h"
+
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLib namespace
 // -> include all elements of this area for easy access
@@ -242,7 +245,7 @@ uint8_t iObjectPool_simpleVTIsoPool_c::convertColour(uint8_t colorValue, uint8_t
   if (colorDepth == 0 /* 2colored b/w */) {
     if ((whichColour == BackgroundColour) || (whichColour == TransparencyColour))
       return 1; /* white - std. background/transparency colour */
-    else 
+    else
       return 0; /* black - std. drawing colour */
   } else {
     // colorDepth == 1, as there's no color-violation in the case of colorDepth==2 !
@@ -250,7 +253,7 @@ uint8_t iObjectPool_simpleVTIsoPool_c::convertColour(uint8_t colorValue, uint8_t
     // one also could convert using a best-match algorithm to colors 0..15 - this is just to show the principle.
     switch (colorValue) {
       case 16  /* 00,00,00 */: return 0;
-      case 231 /* FF,FF,FF */: return 1; 
+      case 231 /* FF,FF,FF */: return 1;
       case 34  /* 00,99,00 */: return 2;
       case 37  /* 00,99,99 */: return 3;
       case 124 /* 99,00,00 */: return 4;
@@ -268,7 +271,7 @@ uint8_t iObjectPool_simpleVTIsoPool_c::convertColour(uint8_t colorValue, uint8_t
       /* todo: best match the rest also to 0..15 !*/
       default: if ((whichColour == BackgroundColour) || (whichColour == TransparencyColour))
                  return 1; /* white - std. background/transparency colour */
-               else 
+               else
                  return 0; /* black - std. drawing colour */
     }
   }
@@ -313,7 +316,7 @@ void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t 
     case iVtObjectIDInputListTypFakeMiles:
       /* +++ Showing what can be done in one statement: */
       updateMiles (((iVtObjectOutputNumber_c *)iVtObjectInputListTypFakeMiles.getListItem (ui8_value))->get_vtObjectOutputNumber_a()->value);
-      
+
       /* +++ Showing the same in four lines, it may be easier to read/understand this way
       // get the selected object from the input list
       iVtObject_c* selectedObject = iVtObjectInputListTypFakeMiles.getListItem (ui8_value);
@@ -354,14 +357,14 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         updateAccel (10);
         updateMiles (0);
         iVtObjectValSpeed.setValue (valSpeed);
-        iVtObjectColLabel.setValueCopy ("cp", true); // ### REMOVE for RELEASE! ###
+        iVtObjectColLabel.setValueCopy ("cp"); // ### REMOVE for RELEASE! ###
         break;
 
       case vtKeyCodeKeyMove:
         valSpeed += valAccel;
         updateMiles(valMiles + valSpeed);
         iVtObjectValSpeed.setValue (valSpeed);
-        iVtObjectColLabel.setValueRef ("r", true);   // ### REMOVE for RELEASE! ###
+        iVtObjectColLabel.setValueRef ("r");   // ### REMOVE for RELEASE! ###
         break;
 
       case vtKeyCodeKeyMoreAccel:
@@ -388,7 +391,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         break;
 
       case vtKeyCodeKeyChangeLang:
-        iVtObjectColLabel.setValueRef ("Colour:", true);
+        iVtObjectColLabel.setValueRef ("Colour:");
         break;
 
       case vtKeyCodeKeyForbidden:
@@ -405,13 +408,22 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
 void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully ()
 {
-  iVtObjectColLabel.setValueRef ("Color:", true); // this is done so the initial state is up again if VT lost and reconnected!
-  iVtObjectColOS.setVariableReference (colTable [color]);
-  iVtObjectFontAttributesNormal6x8.setFontColour (fgcolTable [color]);
+  iVtObjectColLabel.setValueRef ("Color:"); // this is done so the initial state is up again if VT lost and reconnected!
+  iVtObjectColOS.setVariableReference (colTable [color], true);
+  iVtObjectFontAttributesNormal6x8.setFontColour (fgcolTable [color], true);
   if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden) iVtObjectcontainerInAllMasks.hide ();
-  updateAccel (valAccel);
-  updateMiles(valMiles);
+    updateAccel (valAccel);
+    updateMiles(valMiles);
   iVtObjectValSpeed.setValue (valSpeed);
+
+
+  iVtObjectColOS.setVariableReference (colTable [color]);
+  iVtObjectColLabel.setValueRef ("Colour:");
+  iVtObjectColLabel.setValueCopy ("Colour:");
+  iVtObjectFontAttributesNormal6x8B.setFontColour (fgcolTable [color]);
+  iVtObjectColLabel.setValueCopy ("Height:");
+  iVtObjectspeedLabel.setValueCopy ("Height:");
+  iVtObjectspeedLabel.setValueRef ("Du blöde Kuh:");
 }
 
 void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
@@ -421,6 +433,25 @@ void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
   // But take care of this function if using for real!!!
 }
 
+void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t /*rui8_unparsedBytes*/, bool /*b_isFirst*/, bool b_isLast)
+{
+  if (b_isLast)
+  {
+    // buffer anlegen mit length + 1
+    char ch_buffer[rui8_length+1];
+    uint8_t ui8_index=0;
+    for (;rui8_length > 0;rui8_length--)
+    {
+      ch_buffer[ui8_index]=refc_streaminput.get();
+      ui8_index++;
+    }
+    ch_buffer[ui8_index]=0x0;
+    iVtObjectOSresonible.setValueCopy(ch_buffer);
+    #ifdef DEBUG
+    std::cout << "String: " << ch_buffer << ".\n";
+    #endif
+  }
+}
 
 
 static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
@@ -431,11 +462,10 @@ static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
 /********************/
 
 
-
 int main()
 { // simply call startImi
 
-  getIcanInstance().init( CAN_BUS_USED, 250 );
+  getIcanInstance().init( 0, 250 );
 
   // variable for GETY_POS
   // default with primary cultivation mounted back

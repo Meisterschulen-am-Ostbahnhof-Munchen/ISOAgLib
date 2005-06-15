@@ -1,5 +1,5 @@
 /***************************************************************************
-                          multireceive_c.h - 
+                          multireceive_c.h -
                              -------------------
     class                : ::MultiReceive_c
     project              : IsoAgLib
@@ -131,7 +131,7 @@ namespace __IsoAgLib {
 /** struct for client definition */
 class MultiReceiveClientWrapper_s {
  public:
-  MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client, 
+  MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
                                uint8_t rui8_clientAddress,
                                uint16_t rui16_pgn,
                                bool rb_alsoBroadcast,
@@ -162,15 +162,15 @@ class MultiReceive_c : public SingletonMultiReceive_c
 
 public:
 
-  
+
   //  Operation: ~MultiReceive_c
   ~MultiReceive_c();
-  
+
   //  Operation: processMsg
   bool processMsg();
 
   //  Operation: registerClient
-  void registerClient (uint16_t rui16_pgn, uint8_t rui8_clientAddress, 
+  void registerClient (uint16_t rui16_pgn, uint8_t rui8_clientAddress,
                        IsoAgLib::MultiReceiveClient_c* rpc_client, bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false);
 
   //  Operation: deregisterClient
@@ -178,12 +178,12 @@ public:
 
   //  Operation: createStream
   //! Parameter:
-  //! @param rc_streamIdent: 
+  //! @param rc_streamIdent:
   Stream_c* createStream(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent, uint32_t rui32_msgSize);
 
   //  Operation: getStream
   //! Parameter:
-  //! @param rc_streamIdent: 
+  //! @param rc_streamIdent:
   Stream_c* getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
 
   //  Operation: timeEvent
@@ -212,10 +212,10 @@ public:
   //! return 0x101: not a valid index!
   uint16_t getStreamFirstByte (uint32_t ui32_index) const;
   uint32_t getStreamCount() const { return list_streams.size(); };
-  
+
   uint32_t getStreamCompletion1000 (uint32_t ui32_index, bool b_checkFirstByte=false, uint8_t ui8_returnNullIfThisIsFirstByte=0x00 /*don't care if check=false*/) const;
   uint32_t getMaxStreamCompletion1000 (bool b_checkFirstByte=false, uint8_t ui8_returnNullIfThisIsFirstByte=0x00 /*don't care if check=false*/) const;
-  
+
   bool isAtLeastOneWithFirstByte(uint8_t firstByte);
 
   Stream_c* getFinishedJustKeptStream (uint8_t rui8_forSa);
@@ -228,39 +228,39 @@ private:
 
   /** temp data where received data is put */
   __IsoAgLib::CANPkgExt_c c_data;
-  
+
   //  Operation: getStream
   //! Parameter:
-  //! @param rc_streamIdent: 
+  //! @param rc_streamIdent:
   //! @return NULL for "doesn't exist", otherwise valid "Stream_c*"
   Stream_c* getStream(uint8_t sa, uint8_t da);
-  
+
   //  Operation: getClient
   //! Parameter:
-  //! @param rc_streamIdent: 
+  //! @param rc_streamIdent:
   //! @return NULL for "doesn't exist", otherwise valid "MultiReceiveClient_c*"
   IsoAgLib::MultiReceiveClient_c* getClient(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
-  
+
   //  Operation: sendCurrentCts
   //! Parameter:
-  //! @param rpc_stream: 
+  //! @param rpc_stream:
   void sendCurrentCts(DEF_Stream_c_IMPL* rpc_stream);
 
   //  Operation: sendEndOfMessageAck
   //! Parameter:
-  //! @param rpc_stream: 
+  //! @param rpc_stream:
   void sendEndOfMessageAck(DEF_Stream_c_IMPL* rpc_stream);
-  
-  
+
+
   bool processStreamDataChunk_ofMatchingClient (Stream_c* rpc_stream, bool b_lastChunk);
 
-  
+
   void sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
   void connAbortTellClient(bool rb_sendConnAbort, Stream_c* rpc_stream);
   void connAbortTellClientRemoveStream(bool rb_sendConnAbort, Stream_c* rpc_stream);
   void removeStream(Stream_c* rpc_stream);
 
- 
+
   void notifyError (IsoAgLib::ReceiveStreamIdentifier_c& rc_streamIdent, uint8_t rui8_multiReceiveErrorCode);
 
 

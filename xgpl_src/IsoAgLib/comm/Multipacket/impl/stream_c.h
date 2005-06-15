@@ -151,7 +151,7 @@ public:
 
   bool timedOut();
 
-  
+
   /// Specify here how many packages a CTS requests from the sender in a burst!
   static uint8_t sui8_pkgBurst;
 
@@ -208,12 +208,12 @@ public:
 
   void setStreamFinishedJustKept() { awaitNextStep (AwaitNothing, sci32_timeNever); // no timeOut on own Send-Awaits
                                      t_streamState = StreamFinishedJustKept; }; // from now on NOTHING more should be done with this stream!
-  
+
 private:
 
   void awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut);
 
-  
+
 protected:
 
 private:

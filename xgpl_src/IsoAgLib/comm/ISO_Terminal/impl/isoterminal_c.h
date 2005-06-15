@@ -93,6 +93,8 @@
 #include <IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h>
+#include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 
 
@@ -226,7 +228,7 @@ typedef SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c) SingletonISOTerminal_c;
 /**
   central IsoAgLib terminal management object
   */
-class ISOTerminal_c : public SingletonISOTerminal_c {
+class ISOTerminal_c : public SingletonISOTerminal_c , public IsoAgLib::MultiReceiveClient_c {
 public:
 
   enum objectPoolState_t { OPNoneRegistered, OPRegistered, OPUploadedSuccessfully, OPCannotBeUploaded };
@@ -296,6 +298,9 @@ public:
     uint8_t  uMass;
   } localSettings_s;
 
+  virtual void reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident);
+  virtual bool reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen);
+  virtual bool processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk);
 
   /**
     default destructor, which initiate sending address release for all own identities
@@ -543,6 +548,9 @@ private: // attributes
   uint8_t ui8_uploadError;
   uint8_t ui8_uploadRetry;
   MultiSend_c::sendSuccess_t en_sendSuccess;
+
+  uint16_t ui16_inputStringId;
+  uint8_t ui8_inputStringLength;
 
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front

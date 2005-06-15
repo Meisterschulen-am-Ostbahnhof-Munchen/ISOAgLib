@@ -1,5 +1,5 @@
 /***************************************************************************
-                          streamlinear_c.h - 
+                          streamlinear_c.h -
                              -------------------
     class                : ::StreamLinear_c
     project              : IsoAgLib
@@ -111,13 +111,13 @@ class StreamLinear_c : public Stream_c
 
 public:
 
-  StreamLinear_c (StreamType_t rt_streamType, const ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize);
+  StreamLinear_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize);
 
   virtual ~StreamLinear_c () {};
-  
+
   //  Operation: insert
   //! Parameter:
-  //! @param pui8_data: 
+  //! @param pui8_data:
   void insert7Bytes(uint8_t* pui8_data);
 
   //  Operation: getNextNotParsed
@@ -126,7 +126,7 @@ public:
 
   //  Operation: getNotParsedSize
   inline uint16_t getNotParsedSize();
-  
+
   //  Operation: getNotParsed
   inline uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset);
 
@@ -164,7 +164,7 @@ StreamLinear_c::getNotParsedSize()
   // this occurs as we always insert 7 bytes, even if the last 7byte packet should NOT been taken completely
   if (ui32_byteTotalSize < ui32_bufSize)
     return (ui32_byteTotalSize - ui32_parsedCnt);
-  else 
+  else
     return (ui32_bufSize - ui32_parsedCnt);
 } // -X2C
 
@@ -172,7 +172,7 @@ StreamLinear_c::getNotParsedSize()
 
 // //////////////////////////////// +X2C Operation : getNotParsed
 //! be sure to NOT read from an offset which overflows the unparsed buffer!
-inline uint8_t 
+inline uint8_t
 StreamLinear_c::getNotParsed (uint16_t ui16_notParsedRelativeOffset)
 {
   return vui8_buffer[ui32_parsedCnt + ui16_notParsedRelativeOffset];
