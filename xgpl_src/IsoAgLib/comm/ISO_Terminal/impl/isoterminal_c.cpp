@@ -95,7 +95,11 @@
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #include <IsoAgLib/util/impl/util_funcs.h>
-  #include <iostream>
+	#ifdef SYSTEM_PC
+		#include <iostream>
+	#else
+		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#endif
 #endif
 
 #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
@@ -351,7 +355,7 @@ void ISOTerminal_c::finishUploadCommand ()
   en_uploadType = UploadIdle;
   //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
   #ifdef DEBUG
-  std::cout << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
+  INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
   #endif
 
   #ifdef USE_LIST_FOR_FIFO
@@ -365,7 +369,7 @@ void ISOTerminal_c::finishUploadCommand ()
   #endif
 
   #ifdef DEBUG
-  std::cout << q_sendUpload.size() << ".\n";
+  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << ".\n";
   #endif
 }
 
@@ -732,7 +736,7 @@ bool ISOTerminal_c::timeEvent( void )
       if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
         // we couldn't store for some reason, but don't care, finalize anyway...
         #ifdef DEBUG
-          std::cout << "StoreVersion TimedOut!\n";
+          INTERNAL_DEBUG_DEVICE << "StoreVersion TimedOut!\n";
         #endif
         finalizeUploading ();
       }
@@ -1039,7 +1043,7 @@ void ISOTerminal_c::startObjectPoolUploading ()
 void ISOTerminal_c::finalizeUploading ()
 {
 #ifdef DEBUG
-  std::cout << "now en_objectPoolState = OPUploadedSuccessfully;\n";
+  INTERNAL_DEBUG_DEVICE << "now en_objectPoolState = OPUploadedSuccessfully;\n";
 #endif
   en_uploadType = UploadIdle;
   en_objectPoolState = OPUploadedSuccessfully;
@@ -1347,7 +1351,7 @@ bool ISOTerminal_c::processMsg()
           #ifdef DEBUG
           if (ui8_uploadCommandError != 0)
           { /* error */
-            std::cout << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!\n";
+            INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!\n";
           }
           #endif
 /* OBSOLETE: no more retries on failed commands! only on time outs!
@@ -1383,7 +1387,7 @@ CANPkgExt_c& ISOTerminal_c::dataBase()
 bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd)
 {
   #ifdef DEBUG
-  std::cout << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> ";
   #endif
 
   SendUpload_c stringForUpload (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout);
@@ -1399,7 +1403,7 @@ bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, ui
 bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout, bool b_enableReplaceOfCmd)
 {
   #ifdef DEBUG
-  std::cout << "Enqueued 9-bytes: " << q_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued 9-bytes: " << q_sendUpload.size() << " -> ";
   #endif
 
   SendUpload_c stringForUpload (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout);
@@ -1411,7 +1415,7 @@ bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, ui
 bool ISOTerminal_c::sendCommandForDEBUG (uint8_t* rpui8_buffer, uint32_t ui32_size)
 {
   #ifdef DEBUG
-  std::cout << "Enqueued Debug-TP-bytes: " << q_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued Debug-TP-bytes: " << q_sendUpload.size() << " -> ";
   #endif
 
   SendUpload_c stringForUpload (rpui8_buffer, ui32_size);
@@ -1547,7 +1551,7 @@ bool ISOTerminal_c::sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object,
 bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
   #ifdef DEBUG
-  std::cout << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
   #endif
 
   SendUpload_c stringForUpload (rpc_object->getID(), rpc_newValue, overrideSendLength);
@@ -1558,7 +1562,7 @@ bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_obj
 bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* rpc_objectString, bool b_enableReplaceOfCmd)
 {
   #ifdef DEBUG
-  std::cout << "Enqueued stringObject-mss: " << q_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued stringObject-mss: " << q_sendUpload.size() << " -> ";
   #endif
 
   SendUpload_c stringForUpload (rpc_objectString);
@@ -1572,7 +1576,7 @@ bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableR
   if (!isVtActive())
   {
     #ifdef DEBUG
-    std::cout << "--NOT ENQUEUED - VT IS NOT ACTIVE!--\n";
+    INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - VT IS NOT ACTIVE!--\n";
     #endif
     return false;
   }
@@ -1607,7 +1611,7 @@ bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableR
           {
             //not possible by definition, but for being sure :-)
             #ifdef DEBUG
-            std::cout << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--\n";
+            INTERNAL_DEBUG_DEVICE << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--\n";
             #endif
             return false;
           }
@@ -1679,7 +1683,7 @@ bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableR
   #endif
 
   #ifdef DEBUG
-  std::cout << q_sendUpload.size() << ".\n";
+  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << ".\n";
   //dumpQueue(); /* to see all enqueued cmds after every enqueued cmd */
   #endif
   /** push(...) has no return value */
@@ -1705,7 +1709,7 @@ void ISOTerminal_c::dumpQueue()
       for (uint8_t i=0; i<=7; i++)
       {
         #ifdef DEBUG
-        std::cout << " " << (uint16_t)(i_sendUpload->vec_uploadBuffer[i]);
+        INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(i_sendUpload->vec_uploadBuffer[i]);
         #endif
       }
     }
@@ -1718,14 +1722,14 @@ void ISOTerminal_c::dumpQueue()
         for (uint8_t i=1; i<=7; i++)
         {
           #ifdef DEBUG
-          std::cout << " " << (uint16_t)(msp[i]);
+          INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(msp[i]);
           #endif
         }
       }
     }
   }
   #ifdef DEBUG
-  std::cout << "\n";
+  INTERNAL_DEBUG_DEVICE << "\n";
   #endif
 }
 

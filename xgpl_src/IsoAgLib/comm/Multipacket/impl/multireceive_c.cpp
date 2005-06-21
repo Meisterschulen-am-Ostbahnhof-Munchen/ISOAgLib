@@ -86,7 +86,11 @@
  ***************************************************************************/
 
 #ifdef DEBUG
-#include <iostream>
+	#ifdef SYSTEM_PC
+		#include <iostream>
+	#else
+		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#endif
 #endif
 
 #include "multireceive_c.h"
@@ -203,7 +207,7 @@ MultiReceive_c::processMsg()
       b_ePgn = true; // break left out intentionally!
     case MACRO_pgnFormatOfPGN(TP_CONN_MANAGE_PGN):
       #ifdef DEBUG
-        std::cout << "\n {CM: " << data().time() << "} ";
+        INTERNAL_DEBUG_DEVICE << "\n {CM: " << data().time() << "} ";
       #endif
 
      {// to allow local variables
@@ -227,7 +231,7 @@ MultiReceive_c::processMsg()
               notifyError(c_tmpRSI, 1001);
               connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
               #ifdef DEBUG
-              std::cout << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
               #endif
               return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
             }
@@ -247,7 +251,7 @@ MultiReceive_c::processMsg()
               notifyError(c_tmpRSI, 1002);
               sendConnAbort (t_streamType, c_tmpRSI);
               #ifdef DEBUG
-              std::cout << "\n*** ConnectionAbort due to (Wrong Pkg Number || msgSize < 9) ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (Wrong Pkg Number || msgSize < 9) ***\n";
               #endif
               return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
             }
@@ -265,7 +269,7 @@ MultiReceive_c::processMsg()
               notifyError(c_tmpRSI, 1003);
               sendConnAbort (t_streamType, c_tmpRSI);
               #ifdef DEBUG
-              std::cout << "\n*** ConnectionAbort due to Client Rejecting the stream ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Client Rejecting the stream ***\n";
               #endif
               return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
             }
@@ -292,7 +296,7 @@ MultiReceive_c::processMsg()
 
             if ((pc_streamFound == NULL) || (!b_ePgn)) {
               #ifdef DEBUG
-                std::cout << "\n\n DPO for an unknown/unopened or Standard-TP stream!!\n ";
+                INTERNAL_DEBUG_DEVICE << "\n\n DPO for an unknown/unopened or Standard-TP stream!!\n ";
               #endif
               notifyError(c_tmpRSI, 1004);
               sendConnAbort (t_streamType, c_tmpRSI); // according to Brad: ConnAbort
@@ -304,7 +308,7 @@ MultiReceive_c::processMsg()
               notifyError(c_tmpRSI, 1005);
               connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
               #ifdef DEBUG
-              std::cout << "\n*** ConnectionAbort due to DPO at wrong 't_awaitStep' - was NOT AwaitDpo ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to DPO at wrong 't_awaitStep' - was NOT AwaitDpo ***\n";
               #endif
               return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
             }
@@ -325,7 +329,7 @@ MultiReceive_c::processMsg()
             { // we do NOT take BAMs that are NOT directed to the GLOBAL (255) address
               notifyError(c_tmpRSI, 1012);
               #ifdef DEBUG
-              std::cout << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) data().isoPs() <<" ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) data().isoPs() <<" ***\n";
               #endif
               return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
             }
@@ -339,7 +343,7 @@ MultiReceive_c::processMsg()
               notifyError(c_tmpRSI, 1013);
               removeStream (pc_streamFound);
               #ifdef DEBUG
-              std::cout << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
               #endif
               // return true;
               // ^^^ do NOT return, if the old BAM is "aborted" due to this BAM, try with this BAM now...
@@ -353,7 +357,7 @@ MultiReceive_c::processMsg()
             { // This handles both
               notifyError(c_tmpRSI, 1013);
               #ifdef DEBUG
-              std::cout << "\n*** BAM not taken due to (Wrong Pkg Number || msgSize < 9) ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** BAM not taken due to (Wrong Pkg Number || msgSize < 9) ***\n";
               #endif
               return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
             }
@@ -404,7 +408,7 @@ MultiReceive_c::processMsg()
 
         default:
           #ifdef DEBUG
-            std::cout << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!\n";
+            INTERNAL_DEBUG_DEVICE << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!\n";
           #endif
           t_streamType = (StreamType_t) ((b_ePgn) ? 0x2:0); // only care for ePgn or not for ConnAbort
           notifyError(c_tmpRSI, 1008);
@@ -419,7 +423,7 @@ MultiReceive_c::processMsg()
       b_ePgn = true; // break left out intentionally!
     case MACRO_pgnFormatOfPGN(TP_DATA_TRANSFER_PGN):
       #ifdef DEBUG
-        std::cout << "{DATA: " << data().time() << "} "; fflush(0);
+        INTERNAL_DEBUG_DEVICE << "{DATA: " << data().time() << "} "; fflush(0);
       #endif
 
        /////////////////////////
@@ -430,7 +434,7 @@ MultiReceive_c::processMsg()
         if (pc_streamFound == NULL) {
           // There's no stream running for this multi-packet-DATA!, this [DATA] MAY BE for MultiSend, so simply return false!
           #ifdef DEBUG
-          std::cout << "\n*** (E)TP.DATA, but no open stream! ignoring that... ***\n";
+          INTERNAL_DEBUG_DEVICE << "\n*** (E)TP.DATA, but no open stream! ignoring that... ***\n";
           #endif
           notifyError(c_tmpRSI, 1011);
           return false;
@@ -443,13 +447,13 @@ MultiReceive_c::processMsg()
             notifyError(c_tmpRSI, 1014);
             removeStream (pc_streamFound);
             #ifdef DEBUG
-            std::cout << "\n*** BAM sequence error ***\n";
+            INTERNAL_DEBUG_DEVICE << "\n*** BAM sequence error ***\n";
             #endif
           } else {
             notifyError(c_tmpRSI, 1009);
             connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
             #ifdef DEBUG
-            std::cout << "\n*** ConnectionAbort due to wrong DATA, see msg before! ***\n";
+            INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to wrong DATA, see msg before! ***\n";
             #endif
           }
         }
@@ -649,7 +653,7 @@ MultiReceive_c::timeEvent( void )
       else
       { // destination specific
         #ifdef DEBUG
-          std::cout << "\nSending End of Message Acknowledge out!\n";
+          INTERNAL_DEBUG_DEVICE << "\nSending End of Message Acknowledge out!\n";
         #endif
         sendEndOfMessageAck(pc_stream);
 
@@ -668,7 +672,7 @@ MultiReceive_c::timeEvent( void )
     else if (pc_stream->getNextComing() == AwaitCtsSend)
     { // this case shouldn't happen for BAM
       #ifdef DEBUG
-        std::cout << "Processing Burst\n";
+        INTERNAL_DEBUG_DEVICE << "Processing Burst\n";
       #endif
       // CTS after Burst? -> process last Burst!
       if (pc_stream->getBurstNumber() > 0) { // 0 means that no CTS has been sent, the first incoming burst is nr. 1 !
@@ -676,7 +680,7 @@ MultiReceive_c::timeEvent( void )
         // don't care for result here!
       }
       #ifdef DEBUG
-        std::cout << "Send CTS to get first/next burst!\n";
+        INTERNAL_DEBUG_DEVICE << "Send CTS to get first/next burst!\n";
       #endif
       sendCurrentCts (pc_stream); // will increase the burstCurrent
     }
@@ -685,7 +689,7 @@ MultiReceive_c::timeEvent( void )
     if (pc_stream->timedOut())
     {
       #ifdef DEBUG
-        std::cout << "\n *** Stream with SA " << (uint16_t) pc_stream->getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) pc_stream->getNextComing() << " ***\n";
+        INTERNAL_DEBUG_DEVICE << "\n *** Stream with SA " << (uint16_t) pc_stream->getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) pc_stream->getNextComing() << " ***\n";
       #endif
       notifyError(pc_stream->getIdent(), 1010);
       connAbortTellClient (/* send Out ConnAbort Msg*/ true, pc_stream);
@@ -946,7 +950,7 @@ MultiReceive_c::getStreamFirstByte (uint32_t ui32_index) const
 bool
 MultiReceive_c::isAtLeastOneWithFirstByte(uint8_t firstByte)
 {
-//  std::cout << "\nisAtLeastOneWithFirstByte dez:" << (uint32_t) firstByte << ": ";
+//  INTERNAL_DEBUG_DEVICE << "\nisAtLeastOneWithFirstByte dez:" << (uint32_t) firstByte << ": ";
   for (std::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); pc_iter++) {
     if ((*pc_iter).getByteAlreadyReceived() > 0)  {
       if ((*pc_iter).getFirstByte() == firstByte) {

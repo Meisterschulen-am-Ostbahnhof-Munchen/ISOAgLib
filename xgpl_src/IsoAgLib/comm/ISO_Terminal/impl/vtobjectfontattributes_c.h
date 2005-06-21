@@ -56,7 +56,6 @@
 // +X2C includes
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
-#include <iostream>
 // ~X2C
 
 // Begin Namespace __IsoAgLib

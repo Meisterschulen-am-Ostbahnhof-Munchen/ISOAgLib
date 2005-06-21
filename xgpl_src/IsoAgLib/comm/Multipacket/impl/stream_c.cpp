@@ -1,5 +1,5 @@
 /***************************************************************************
-                          stream_c.cpp - 
+                          stream_c.cpp -
                              -------------------
     class                : ::Stream_c
     project              : IsoAgLib
@@ -92,7 +92,11 @@
 #include <IsoAgLib/hal/system.h>
 
 #ifdef DEBUG
-#include <iostream>
+	#ifdef SYSTEM_PC
+		#include <iostream>
+	#else
+		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+	#endif
 #endif
 
 
@@ -124,7 +128,7 @@ Stream_c::Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifie
   , i32_timeoutLimit (sci32_timeNever)
   , t_streamType (rt_streamType)
  // ui8_pkgRemainingInBurst     // will be set in "expectBurst(wishingPkgs)", don't care here as t_awaitStep == awaitCtsSend!!
-{ 
+{
   if (rc_rsi.getDa() == 0xFF)
   { // if it's a BAM, then directly expect data to be sent!
     expectBurst (255); // We're expecting one big burst directly now without CTS/DPO stuff!
@@ -142,7 +146,7 @@ Stream_c::awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut)
 
 
 
-/** 
+/**
   will be directly called in sendCurrentCts
   (anyway, be sure to only call if in the right state)
   */
@@ -150,17 +154,17 @@ uint8_t
 Stream_c::expectBurst(uint8_t wishingPkgs)
 {
   int32_t i32_timeOutAwaitData = (getIdent().getDa() == 0xFF) ? /* BAM */sci32_timeOutT1 : /* dest-adr. */sci32_timeOutT2;
-  
+
   // Await after is CTS has timeout value of "sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)"
   if (t_streamType & StreamEcmdMASK) awaitNextStep (AwaitDpo,  sci32_timeOutT2);
   else /* ----------------------- */ awaitNextStep (AwaitData, i32_timeOutAwaitData);
-  
+
   // how many pkgs are missing at all? is it more then wished?
   ui8_pkgRemainingInBurst = MACRO_minimum((ui32_pkgTotalSize - (ui32_pkgNextToWrite - 1)), wishingPkgs);
-  
+
   // increase ui32_burstCurrent, the expected Burst is a next new one (of course)...
   ui32_burstCurrent++;
-  
+
   return ui8_pkgRemainingInBurst;
 }
 
@@ -175,41 +179,41 @@ Stream_c::handleDataPacket (uint8_t* rui8_data)
   /** expecting data? at all */
   if (t_awaitStep != AwaitData) {
     #ifdef DEBUG
-      std::cout << "t_awaitStep != AwaitData! --- t_awaitStep ==" << t_awaitStep << " \n";
+      INTERNAL_DEBUG_DEVICE << "t_awaitStep != AwaitData! --- t_awaitStep ==" << t_awaitStep << " \n";
     #endif
     return false;
   }
-  
+
   bool b_pkgNumberWrong=false;
   if (t_streamType & StreamEcmdMASK) {
     if ((rui8_data[0] + ui32_dataPageOffset) != ui32_pkgNextToWrite) b_pkgNumberWrong=true;
   } else {
     if ((rui8_data[0] /* no DPO for TP!! */) != ui32_pkgNextToWrite) b_pkgNumberWrong=true;
   }
-  
+
   if (b_pkgNumberWrong) {
     #ifdef DEBUG
-      std::cout << "wrong pkg-number! ";
+      INTERNAL_DEBUG_DEVICE << "wrong pkg-number! ";
     #endif
     return false;
   }
-  
+
   insert7Bytes (rui8_data+1);
   ui32_byteAlreadyReceived += 7;
   if (ui32_byteAlreadyReceived > ui32_byteTotalSize) ui32_byteAlreadyReceived = ui32_byteTotalSize;
 
   #ifdef DEBUG
-    std::cout << "#" << ui32_pkgNextToWrite << " ";
+    INTERNAL_DEBUG_DEVICE << "#" << ui32_pkgNextToWrite << " ";
   #endif
 
 /// <<UPDATE_ALL>> Pkg counting stuff
   ui32_pkgNextToWrite++;
   ui8_pkgRemainingInBurst--;
-  
+
   if (ui8_pkgRemainingInBurst == 0) {
     // End? or CTS for more?
     if (ui32_pkgNextToWrite > ui32_pkgTotalSize) {
-      // ---END--- was last packet! So 
+      // ---END--- was last packet! So
       awaitNextStep (AwaitNothing, sci32_timeNever); // no timeOut on own Send-Awaits
       t_streamState = StreamFinished;
     } else {
@@ -219,8 +223,8 @@ Stream_c::handleDataPacket (uint8_t* rui8_data)
     // (A complete / The last) chunk is received, handling will be done after this function returns
   } else {
     awaitNextStep (AwaitData, sci32_timeOutT1); // state "AwaitData" was already set until now, but it's about the timeOut!
-  }  
-  
+  }
+
   return true;
 } // -X2C
 
@@ -229,7 +233,7 @@ Stream_c::handleDataPacket (uint8_t* rui8_data)
 
 // //////////////////////////////// +X2C Operation 2861 : setDataPageOffset
 //! Parameter:
-//! @param rui32_dataPageOffset: 
+//! @param rui32_dataPageOffset:
 bool
 Stream_c::setDataPageOffset(uint32_t rui32_dataPageOffset)
 { // ~X2C
@@ -237,12 +241,12 @@ Stream_c::setDataPageOffset(uint32_t rui32_dataPageOffset)
     ui32_dataPageOffset = rui32_dataPageOffset;
     awaitNextStep (AwaitData, sci32_timeOutT5);
     #ifdef DEBUG
-      std::cout << "DPO ";
+      INTERNAL_DEBUG_DEVICE << "DPO ";
     #endif
     return true; // was awaited!
   } else {
     #ifdef DEBUG
-      std::cout << "\n\n DPO was not awaited at this state (" << (uint16_t) t_awaitStep << "), please handle as error! \n ";
+      INTERNAL_DEBUG_DEVICE << "\n\n DPO was not awaited at this state (" << (uint16_t) t_awaitStep << "), please handle as error! \n ";
     #endif
     return false; // DPO was not awaited at this state, please handle as error!
   }
@@ -254,11 +258,11 @@ bool
 Stream_c::timedOut()
 {
   bool b_result=false;
-  
+
   if (i32_timeoutLimit != sci32_timeNever) {
     if (HAL::getTime() > i32_timeoutLimit) b_result = true;
   }
-  
+
   return b_result;
 }
 
