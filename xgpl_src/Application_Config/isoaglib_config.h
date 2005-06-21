@@ -920,6 +920,8 @@
 /** define the debug device to use */
 #ifndef INTERNAL_DEBUG_DEVICE
 	#ifdef SYSTEM_PC
+		#include <iostream>
+		#include <fstream>
 		#define INTERNAL_DEBUG_DEVICE std::cout
 	#else
 		#define INTERNAL_DEBUG_DEVICE __IsoAgLib::getRs232Instance()
