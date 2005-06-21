@@ -153,7 +153,7 @@ class iStream_c : public StreamInput_c
 
 public:
 
-  iStream_c::iStream_c() : b_streamInvalid(false) {};
+  iStream_c() : b_streamInvalid(false) {};
 
   virtual uint16_t getNotParsedSize()=0;
 
