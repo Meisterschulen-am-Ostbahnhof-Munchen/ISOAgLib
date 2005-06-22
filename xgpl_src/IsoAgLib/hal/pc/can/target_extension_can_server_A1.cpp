@@ -279,7 +279,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
             
           DEBUG_PRINT("queueing message\n");
           pc_data = &(msqReadBuf.s_canData);
-          pc_data->i32_time = __HAL::getTime() + iter->i32_runTime_msec;
+          pc_data->i32_time = __HAL::getTime() - iter->i32_runTime_msec;
           pc_data->i32_ident = ui32_id;
           pc_data->b_dlc = DLC;
           pc_data->b_xtd = b_xtd;
@@ -593,7 +593,7 @@ static void* command_thread_func(void* ptr)
         // client process id is used as clientID 
         s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
         // save difference between client runtime and server runtime
-        s_tmpClient.i32_runTime_msec = msqCommandBuf.s_runtime.i32_runTime_msec - __HAL::getTime();
+        s_tmpClient.i32_runTime_msec = __HAL::getTime() - msqCommandBuf.s_runtime.i32_runTime_msec ;
 
         DEBUG_PRINT1("msec diff between can client and server: %d\n", s_tmpClient.i32_runTime_msec);
         
