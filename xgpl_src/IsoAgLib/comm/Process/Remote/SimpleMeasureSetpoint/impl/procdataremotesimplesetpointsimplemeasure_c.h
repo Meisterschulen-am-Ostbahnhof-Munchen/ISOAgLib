@@ -213,20 +213,6 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
   */
   SimpleManageMeasureProgRemote_c& prog() { return c_measure;};
 
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  /**
-    deliver the actual percent setpoint
-    @param rb_sendRequest true -> send request for actual value
-    @return percent setpoint value
-  */
-  uint8_t setpointPercentVal(bool rb_sendRequest = false)
-    { return c_setpoint.setpointPercentVal( rb_sendRequest ); };
-  /**
-    send a setpoint cmd with given percent setpoint
-    @param rb_val commanded setpoint percent value
-  */
-  void setSetpointPercentVal(uint8_t rb_val){c_setpoint.setSetpointPercentVal(rb_val);};
-  #endif
   /**
     deliver the actual master setpoint
     @param rb_sendRequest true -> send request for actual value

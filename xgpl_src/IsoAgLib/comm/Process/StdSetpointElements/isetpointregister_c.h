@@ -82,28 +82,23 @@ public:
   iGetyPos_c gtp()const
   {return SetpointRegister_c::gtp();};
   /**
-    deliver the exact setpoint (if given percent - use it)
+    deliver the exact setpoint
     @return exact setpoint value
   */
   int32_t exact()const{return SetpointRegister_c::exact();};
   /**
-    deliver the percent setpoint
-    @return percentage setpoint value
-  */
-  int32_t percent()const{return SetpointRegister_c::percent();};
-  /**
-    deliver the minimum limit (use percent); if no min is given (~0) return i32_exact
+    deliver the minimum limit; if no min is given (~0) return i32_exact
     @return minimum setpoint value
   */
   int32_t min()const{return SetpointRegister_c::min();};
   /**
-    deliver the maximum limit (use percent); if no max is given (~0) return i32_exact
+    deliver the maximum limit; if no max is given (~0) return i32_exact
     @return maximum setpoint value
   */
   int32_t max()const{return SetpointRegister_c::max();};
   /**
     deliver the setpoint according to the mod type
-    @param rb_mod MOD code of wanted setpoint (exact 0, percent 1, min 2, max 3)
+    @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
     @return setpoint selected by MOD
   */
   int32_t valMod(uint8_t rb_mod)const {return SetpointRegister_c::valMod(rb_mod);};
@@ -129,11 +124,6 @@ public:
   */
   bool existExact()const {return SetpointRegister_c::existExact();};
   /**
-    check if valid percent limit is set
-    @return true -> this setpoint register instance has an percentage setpoint value
-  */
-  bool existPercent()const {return SetpointRegister_c::existPercent();};
-  /**
     check if valid minimum limit is set
     @return true -> this setpoint register instance has an minimum setpoint value
   */
@@ -145,7 +135,7 @@ public:
   bool existMax()const {return SetpointRegister_c::existMax();};
   /**
     checks if setpoint with type rb_mod exists
-    @param rb_mod MOD code of tested setpoint type (exact 0, percent 1, min 2, max 3)
+    @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3)
     @return true -> a MOD type setpoint exist
   */
   bool existValMod(uint8_t rb_mod)const {return SetpointRegister_c::existValMod(rb_mod);};
@@ -165,11 +155,6 @@ public:
     @param ri32_val new exact setpoint value
   */
   void setExact(int32_t ri32_val){SetpointRegister_c::setExact(ri32_val);};
-  /**
-    set the percent setpoint value
-    @param rui16_val new percentage setpoint value
-  */
-  void setPercent(uint16_t rui16_val){SetpointRegister_c::setPercent(rui16_val);};
   /**
     set the minimum setpoint value
     @param ri32_val new minimum setpoint value
@@ -202,7 +187,7 @@ public:
   /**
     set a limit val for type given by rb_mod
     @param ri32_val new setpoint value
-    @param rb_mod MOD code of setpoint type to set (exact 0, percent 1, min 2, max 3)
+    @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
   */
   void setValMod(int32_t ri32_val,uint8_t rb_mod)
       {SetpointRegister_c::setValMod(ri32_val, rb_mod);};

@@ -171,40 +171,6 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @return true -> successful sent
   */
   bool sendSetpointMod( uint8_t rui8_mod, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  /**
-    send a percentual-setpoint to a specified target (selected by GPT)
-    @param rc_targetGtp GetyPos of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-    @return true -> successful sent
-  */
-  bool sendSetpointPercent( GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return sendSetpointMod( 1, rc_targetGtp, ren_progType );};
-  /**
-    retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false)
-    @return actual received setpoint value (calculated with setpoint)
-  */
-  int32_t setpointMasterVal(bool rb_percented = false ) const;
-  /**
-    retrieve percent setpoint value
-    @return percent value (set to initial 100)
-  */
-  uint8_t setpointPercentVal()const {return b_setpointPercentVal;};
-  /**
-    set the setpoint percent value
-    @param rb_percent new percent setpoint value
-  */
-  void setSetpointPercentVal(uint8_t rb_percent){b_setpointPercentVal = rb_percent;};
-    #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false)
-    @return actual received setpoint value (calculated with setpoint)
-  */
-  float setpointMasterValFloat(bool rb_percented = false ) const;
-    #endif
-  #else
   /**
     retreive simple master setpoint
     @return actual received setpoint value
@@ -217,7 +183,6 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
   */
   float setpointMasterValFloat() const;
     #endif
-  #endif
   /**
     set the setpoint value
     @param ri32_val new setpoint value
@@ -244,10 +209,6 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     #endif // USE_FLOAT_DATA_TYPE
   #endif // !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
 
-  #if defined(SIMPLE_SETPOINT_WITH_PERCENT)
-  /** percent setpoint value */
-  uint8_t b_setpointPercentVal;
-  #endif
 };
 
 }

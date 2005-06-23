@@ -249,19 +249,6 @@ public:
    * setpoint access with NOT simple setpoint      *
    * ******************************************** */
   /**
-    deliver the actual percent setpoint
-    @param rb_sendRequest true -> send request for actual value
-    @return percent setpoint value
-  */
-  uint8_t setpointPercentVal(bool rb_sendRequest = false)
-    {return ProcDataRemote_c::setpointPercentVal(rb_sendRequest);};
-  /**
-    send a setpoint cmd with given percent setpoint
-    @param rb_val commanded setpoint percent value
-  */
-  void setSetpointPercentVal(uint8_t rb_val)
-    {ProcDataRemote_c::setSetpointPercentVal(rb_val);};
-  /**
     deliver the actual master setpoint
     @param rb_sendRequest true -> send request for actual value
     @return setpoint value as long
@@ -482,19 +469,6 @@ public:
    * some convenience functions for master        *
    * setpoint access with NOT simple setpoint      *
    * ******************************************** */
-  /**
-    deliver the actual percent setpoint
-    @param rb_sendRequest true -> send request for actual value
-    @return percent setpoint value
-  */
-  uint8_t setpointPercentVal(bool rb_sendRequest = false)
-    {return ProcDataRemote_c::setpointPercentVal(rb_sendRequest);};
-  /**
-    send a setpoint cmd with given percent setpoint
-    @param rb_val commanded setpoint percent value
-  */
-  void setSetpointPercentVal(uint8_t rb_val)
-    {ProcDataRemote_c::setSetpointPercentVal(rb_val);};
   /**
     deliver the actual master setpoint
     @param rb_sendRequest true -> send request for actual value

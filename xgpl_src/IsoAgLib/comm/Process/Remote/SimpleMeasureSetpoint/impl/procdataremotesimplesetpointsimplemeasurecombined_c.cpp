@@ -118,9 +118,6 @@ ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpoin
 : ProcDataRemoteBase_c(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
                           rpc_processDataChangeHandler, ri_singletonVecKey)
 {
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  ui8_setpointPercentVal = 100;
-  #endif
   i32_masterVal = 0;
 }
 
@@ -146,9 +143,6 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::init(
 {
   ProcDataRemoteBase_c::init(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
                                 rpc_processDataChangeHandler, ri_singletonVecKey);
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  ui8_setpointPercentVal = 100;
-  #endif
   i32_masterVal = 0;
 }
 
@@ -180,9 +174,6 @@ ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpoin
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::assignFromSource(
   const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& rrefc_src )
 {
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  ui8_setpointPercentVal = rrefc_src.ui8_setpointPercentVal;
-  #endif
   i32_masterVal = rrefc_src.i32_masterVal;
 }
 
@@ -190,28 +181,6 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::assignFromSource(
 ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::~ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c()
 {}
 
-#ifdef SIMPLE_SETPOINT_WITH_PERCENT
-/**
-  deliver the actual percent setpoint
-  @param rb_sendRequest true -> send request for actual value
-  @return percent setpoint value
-*/
-uint8_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointPercentVal(bool rb_sendRequest)
-{
-  if (rb_sendRequest) sendDataRawCmdGtp(pri(), commanderGtp(), 2, 1, 0);
-  return ui8_setpointPercentVal;
-}
-/**
-  send a setpoint cmd with given percent setpoint
-  @param rb_val commanded setpoint percent value
-  @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
-*/
-void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointPercentVal(uint8_t rb_val, bool rb_onlyStoreOnResponse)
-{
-  sendDataRawCmdGtp(pri(), commanderGtp(), 0, 1, rb_val);
-  if (!rb_onlyStoreOnResponse)ui8_setpointPercentVal = rb_val;
-}
-#endif
 
 /**
   deliver the actual master setpoint
@@ -325,14 +294,6 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processSetpoint(){
           }
           setValType(i32_val);
         }
-        break;
-      case 1: // percent
-        #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-        if ( ui8_setpointPercentVal != c_pkg.dataLong() ){
-          ui8_setpointPercentVal = c_pkg.dataLong();
-          b_change = true;
-        }
-        #endif
         break;
     }
     // call handler function if handler class is registered

@@ -206,18 +206,6 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
    * setpoint access with NOT simple setpoint      *
    * ******************************************** */
   /**
-    deliver the actual percent setpoint
-    @param rb_sendRequest true -> send request for actual value
-    @return percent setpoint value
-  */
-  uint8_t setpointPercentVal(bool rb_sendRequest = false);
-  /**
-    send a setpoint cmd with given percent setpoint
-    @param rb_val commanded setpoint percent value
-    @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
-  */
-  void setSetpointPercentVal(uint8_t rb_val, bool rb_onlyStoreOnResponse = true);
-  /**
     deliver the actual master setpoint
     @param rb_sendRequest true -> send request for actual value
     @return setpoint value as long
@@ -269,10 +257,6 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
   void assignFromSource( const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& rrefc_src );
 
 
- #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  /** percent setpoint value */
-  uint8_t ui8_setpointPercentVal;
- #endif
   #ifdef USE_FLOAT_DATA_TYPE
   /** store the master value of the main programm
       in anonymous union for dircet access to float or long

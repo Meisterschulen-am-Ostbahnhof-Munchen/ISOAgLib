@@ -185,25 +185,6 @@ void SetpointRemote_c::setExact( int32_t ri32_val){
   processData().sendValGtp( Proc_c::Target, processData().commanderGtp(), 0, 0, ri32_val);
 }
 
-/**
-  command a percent setpoint; store value as commanded and send command
-
-  possible errors:
-      * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
-  @return new percantage setpoint to command
-*/
-void SetpointRemote_c::setPercent( int32_t ri32_val){
-  // set value in c_commanded
-  c_commanded.setPercent( ri32_val);
-  c_commanded.setGtp( processData().commanderGtp());
-
-  // set time of command
-  i32_commandedTime = System_c::getTime();
-
-  // send command to owner: PD=0, MOD=1
-  processData().sendValGtp( Proc_c::Target, processData().commanderGtp(), 0, 1, ri32_val);
-}
 
 /**
   command a minimum setpoint; store value as commanded and send command
@@ -251,13 +232,6 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
 void SetpointRemote_c::requestExact() const
 {
   processDataConst().sendDataRawCmdGtp( Proc_c::Target, processDataConst().commanderGtp(), 2, 0, 0);
-}
-/**
-  request remote master setpoint - percent
-*/
-void SetpointRemote_c::requestPercent() const
-{
-  processDataConst().sendDataRawCmdGtp( Proc_c::Target, processDataConst().commanderGtp(), 2, 4, 0);
 }
 /**
   request remote master setpoint - MIN

@@ -94,18 +94,16 @@ namespace __IsoAgLib {
   @param ri32_exact exact setpoint value
   @param ri32_min minimum setpoint value
   @param ri32_max maximum setpoint value
-  @param rui8_percent optional percentage setpoint value
   @param rb_handled true -> this setpoint register nistance was handled by main application
   @param rb_master true -> this setpoint register instance represents the actual master setpoint
   @param rb_valid true -> this setpoint register instance is accepted as valid
 */
-void SetpointRegister_c::init(GetyPos_c rc_gtp, int32_t ri32_exact, int32_t ri32_min, int32_t ri32_max, uint8_t rui8_percent,
+void SetpointRegister_c::init(GetyPos_c rc_gtp, int32_t ri32_exact, int32_t ri32_min, int32_t ri32_max,
         bool rb_handled, bool rb_master, bool rb_valid)
 { // direct value set to avoid special functions of equivalent set functions
   setExact(ri32_exact);
   setMin(ri32_min);
   setMax(ri32_max);
-  setPercent(rui8_percent);
 
   setGtp(rc_gtp);
   setHandled(rb_handled, 0);
@@ -138,7 +136,6 @@ void SetpointRegister_c::assignFromSource( const SetpointRegister_c& rrefc_src )
   data.en_definedSetpoints = rrefc_src.data.en_definedSetpoints;
 
 
-  setPercent(rrefc_src.percent());
   setGtp(rrefc_src.gtp());
   setHandled(rrefc_src.handled(), rrefc_src.i32_lastHandledTime);
   setMaster(rrefc_src.master());
@@ -156,7 +153,6 @@ SetpointRegister_c::~SetpointRegister_c(){
 */
 bool SetpointRegister_c::operator==(const SetpointRegister_c& rrefc_src)const{
   return ((i32_exactOrMin == rrefc_src.i32_exactOrMin)
-        && (percent() == rrefc_src.percent())
         && (i32_max == rrefc_src.i32_max)
         && (data.en_definedSetpoints == rrefc_src.data.en_definedSetpoints)
         && (gtp() == rrefc_src.gtp()))
@@ -169,7 +165,7 @@ bool SetpointRegister_c::operator==(const SetpointRegister_c& rrefc_src)const{
 
 /**
   deliver the setpoint according to the mod type
-  @param rb_mod MOD code of wanted setpoint (exact 0, percent 1, min 2, max 3)
+  @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
   @return setpoint selected by MOD
 */
 int32_t SetpointRegister_c::valMod(uint8_t rb_mod)const{
@@ -177,8 +173,6 @@ int32_t SetpointRegister_c::valMod(uint8_t rb_mod)const{
   {
     case 0:
       return exact();
-    case 1:
-      return percent();
     case 2:
       return min();
     case 3:
@@ -189,7 +183,7 @@ int32_t SetpointRegister_c::valMod(uint8_t rb_mod)const{
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   deliver the setpoint according to the mod type
-  @param rb_mod MOD code of wanted setpoint (exact 0, percent 1, min 2, max 3)
+  @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
   @return setpoint selected by MOD
 */
 float SetpointRegister_c::valModFloat(uint8_t rb_mod)const{
@@ -199,7 +193,7 @@ float SetpointRegister_c::valModFloat(uint8_t rb_mod)const{
 #endif
 /**
   checks if setpoint with type rb_mod exists
-  @param rb_mod MOD code of tested setpoint type (exact 0, percent 1, min 2, max 3)
+  @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3)
   @return true -> a MOD type setpoint exist
 */
 bool SetpointRegister_c::existValMod(uint8_t rb_mod)const{
@@ -212,18 +206,6 @@ bool SetpointRegister_c::existValMod(uint8_t rb_mod)const{
 /* ************************************ */
 
 /**
-  set the percent setpoint value
-  @param rui16_val new percentage setpoint value
-*/
-void SetpointRegister_c::setPercent(uint8_t rui8_val)
-{
-  ui8_percent = rui8_val;
-  if (rui8_val < 0xFF)
-    data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints | percentType);
-};
-
-/**
   set the exact setpoint value
   @param ri32_val new exact setpoint value
 */
@@ -232,15 +214,16 @@ void SetpointRegister_c::setExact(int32_t ri32_val)
   if (ri32_val != NO_VAL_32S)
   {
     i32_exactOrMin = ri32_val;
-    // clear min/max, let percentType unchanged
+    // clear min/max
     // set exactType
+    // @todo: static_cast necessary?
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(exactType | (data.en_definedSetpoints & percentType));
+      = static_cast<definedSetpoints_t>(exactType);
   }
   else
-  { // only let bits of min_type, maxType, percentType
+  { // only let bits of minType, maxType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & min_maxPercentType);
+      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & minMaxType);
   }
   // set the entry to unhandled
   setHandled(false);
@@ -256,15 +239,15 @@ void SetpointRegister_c::setMin(int32_t ri32_val)
   {
     i32_exactOrMin = ri32_val;
     // clear exactType
-    // don't change maxType and percentType
-    // set min_type
+    // don't change maxType
+    // set minType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(min_type | (data.en_definedSetpoints & maxPercentType));
+      = static_cast<definedSetpoints_t>(minType | (data.en_definedSetpoints & maxType));
   }
   else
-  { // clear min_type -> mask with exactMaxPercentType
+  { // clear minType -> mask with exactMaxType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMaxPercentType);
+      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMaxType);
   }
 
   // set the entry to unhandled
@@ -281,15 +264,15 @@ void SetpointRegister_c::setMax(int32_t ri32_val)
   {
     i32_max = ri32_val;
     // set exact to empty
-    // don't change min_type and percentType
+    // don't change minType
     // set maxType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(maxType | (data.en_definedSetpoints & min_percentType));
+      = static_cast<definedSetpoints_t>(maxType | (data.en_definedSetpoints & minType));
   }
   else
-  { // clear min_type -> mask with exactMaxPercentType
+  { // clear maxType -> mask with exactMinType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMinPercentType);
+      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMinType);
   }
   // set the entry to unhandled
   setHandled(false);
@@ -298,16 +281,13 @@ void SetpointRegister_c::setMax(int32_t ri32_val)
 /**
   set a limit val for type given by rb_mod
   @param ri32_val new setpoint value
-  @param rb_mod MOD code of setpoint type to set (exact 0, percent 1, min 2, max 3)
+  @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
 */
 void SetpointRegister_c::setValMod(int32_t ri32_val,uint8_t rb_mod){
   switch (rb_mod)
   {
     case 0:
       setExact(ri32_val);
-      break;
-    case 1:
-      setPercent(ri32_val);
       break;
     case 2:
       setMin(ri32_val);
@@ -349,7 +329,7 @@ void SetpointRegister_c::setMax(float rf_val)
 /**
   set a limit val for type given by rb_mod
   @param rf_val new setpoint value
-  @param rb_mod MOD code of setpoint type to set (exact 0, percent 1, min 2, max 3)
+  @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
 */
 void SetpointRegister_c::setValMod(float rf_val, uint8_t rb_mod)
 {
@@ -357,9 +337,6 @@ void SetpointRegister_c::setValMod(float rf_val, uint8_t rb_mod)
   {
     case 0:
       setExact(rf_val);
-      break;
-    case 1:
-      setPercent(uint8_t(rf_val));
       break;
     case 2:
       setMin(rf_val);
@@ -424,27 +401,5 @@ bool SetpointRegister_c::setValid(bool rb_state)
     return false;
   }
 }
-
-/**
-  return limit val with used percent val (if valid percent val is defined)
-  @param rreflVal reference to wanted setpoint
-  @return (wanted setpoint value * percentage / 100) if percentage setpoint is set
-*/
-int32_t SetpointRegister_c::percentedVal(const int32_t& rreflVal)const
-{
-  return (percent() != NO_VAL_8)?((rreflVal * percent()) / 100):rreflVal;
-};
-
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  return limit val with used percent val (if valid percent val is defined)
-  @param rreff_val reference to wanted setpoint
-  @return (wanted setpoint value * percentage / 100) if percentage setpoint is set
-*/
-float SetpointRegister_c::percentedValFloat(const float& rreff_val)const
-{
-  return (percent() != NO_VAL_8)?((rreff_val * percent()) / 100.0F):rreff_val;
-};
-#endif
 
 } // end of namespace __IsoAgLib

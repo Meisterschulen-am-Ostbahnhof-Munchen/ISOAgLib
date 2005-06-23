@@ -124,20 +124,6 @@ class SimpleManageSetpointRemote_c : public ProcessElementBase_c
   const SimpleManageSetpointRemote_c& operator=( const SimpleManageSetpointRemote_c& rrefc_src );
 
 
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  /**
-    deliver the actual percent setpoint
-    @param rb_sendRequest true -> send request for actual value
-    @return percent setpoint value
-  */
-  uint8_t setpointPercentVal(bool rb_sendRequest = false);
-  /**
-    send a setpoint cmd with given percent setpoint
-    @param rb_val commanded setpoint percent value
-    @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
-  */
-  void setSetpointPercentVal(uint8_t rb_val, bool rb_onlyStoreOnResponse = true);
-  #endif
   /**
     deliver the actual master setpoint
     @param rb_sendRequest true -> send request for actual value
@@ -179,10 +165,6 @@ class SimpleManageSetpointRemote_c : public ProcessElementBase_c
   };
   #else
   int32_t i32_setpointMasterVal;
- #endif
- #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  /** percent setpoint value */
-  uint8_t ui8_setpointPercentVal;
  #endif
 };
 

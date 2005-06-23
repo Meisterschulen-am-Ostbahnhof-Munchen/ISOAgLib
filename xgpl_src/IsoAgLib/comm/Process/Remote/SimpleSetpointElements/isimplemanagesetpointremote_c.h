@@ -73,22 +73,6 @@ namespace IsoAgLib {
 class iSimpleManageSetpointRemote_c : public __IsoAgLib::SimpleManageSetpointRemote_c
 {
  public:
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  /**
-    deliver the actual percent setpoint
-    @param rb_sendRequest true -> send request for actual value
-    @return percent setpoint value
-  */
-  uint8_t setpointPercentVal(bool rb_sendRequest = false)
-    { return SimpleManageSetpointRemote_c::setpointPercentVal( rb_sendRequest);};
-  /**
-    send a setpoint cmd with given percent setpoint
-    @param rb_val commanded setpoint percent value
-    @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
-  */
-  void setSetpointPercentVal(uint8_t rb_val, bool rb_onlyStoreOnResponse = true)
-    { SimpleManageSetpointRemote_c::setSetpointPercentVal( rb_val, rb_onlyStoreOnResponse);};
-  #endif
   /**
     deliver the actual master setpoint
     @param rb_sendRequest true -> send request for actual value

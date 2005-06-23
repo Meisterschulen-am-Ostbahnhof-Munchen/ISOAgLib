@@ -133,19 +133,6 @@ public:
   /** default destructor which has nothing to do */
   ~SetpointRemote_c();
   /**
-    deliver the actual percent setpoint
-    @param rb_sendRequest true -> send request for actual value
-    @return percent setpoint value
-  */
-  uint8_t setpointPercentVal(bool rb_sendRequest = false) const
-    {if (rb_sendRequest) requestPercent();
-     return master().percent();};
-  /**
-    send a setpoint cmd with given percent setpoint
-    @param rb_val commanded setpoint percent value
-  */
-  void setSetpointPercentVal(uint8_t rb_val){ setPercent(rb_val); };
-  /**
     deliver the actual master setpoint
     @param rb_sendRequest true -> send request for actual value
     @return setpoint value as long
@@ -193,15 +180,6 @@ public:
   */
   void setExact(int32_t ri32_val);
   /**
-    command a percent setpoint; store value as commanded and send command
-
-    possible errors:
-        * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-        * dependant error in CANIO_c on CAN send problems
-    @return new percantage setpoint to command
-  */
-  void setPercent(int32_t ri32_val);
-  /**
     command a minimum setpoint; store value as commanded and send command
 
     possible errors:
@@ -223,10 +201,6 @@ public:
     request remote master setpoint - exact
   */
   void requestExact() const;
-  /**
-    request remote master setpoint - percent
-  */
-  void requestPercent() const;
   /**
     request remote master setpoint - MIN
   */

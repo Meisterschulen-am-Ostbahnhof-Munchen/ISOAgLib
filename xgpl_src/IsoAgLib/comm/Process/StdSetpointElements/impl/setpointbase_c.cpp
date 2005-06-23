@@ -242,16 +242,6 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& rrefc_src,
       }
     }
   }
-  if (rrefc_src.existPercent())
-  { // percent setpoint exist -> send it
-    i32_value = (b_override)?ri32_overrideVal:rrefc_src.percent();
-    // never perform transformation for percentual setpoint
-    pprocessData()->sendDataRawCmdGtp( 2, // target msg
-              rrefc_src.gtp(),
-              0, // setpoint value
-              1,
-              i32_value);
-  }
 }
 
 

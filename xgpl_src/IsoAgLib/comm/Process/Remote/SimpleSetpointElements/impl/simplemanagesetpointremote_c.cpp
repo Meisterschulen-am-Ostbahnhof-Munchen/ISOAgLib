@@ -106,9 +106,6 @@ void SimpleManageSetpointRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
   ProcessElementBase_c::set( rpc_processData );
     i32_setpointMasterVal = 0;
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-    ui8_setpointPercentVal = 100;
-  #endif
 }
 /** copy constructor */
 SimpleManageSetpointRemote_c::SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& rrefc_src )
@@ -128,9 +125,6 @@ const SimpleManageSetpointRemote_c& SimpleManageSetpointRemote_c::operator=( con
 void SimpleManageSetpointRemote_c::assignFromSource( const SimpleManageSetpointRemote_c& rrefc_src )
 {
   i32_setpointMasterVal = rrefc_src.i32_setpointMasterVal;
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  ui8_setpointPercentVal = rrefc_src.ui8_setpointPercentVal;
-  #endif
 }
 
 /** processing of a setpoint message */
@@ -165,14 +159,6 @@ void SimpleManageSetpointRemote_c::processSetpoint()
           setValType(i32_val);
         }
         break;
-      case 1: // percent
-        #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-        if ( ui8_setpointPercentVal != c_pkg.dataLong() ) {
-          ui8_setpointPercentVal = c_pkg.dataLong();
-          b_change = true;
-        }
-        #endif
-        break;
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
@@ -182,30 +168,6 @@ void SimpleManageSetpointRemote_c::processSetpoint()
 
 
 
-#ifdef SIMPLE_SETPOINT_WITH_PERCENT
-/**
-  deliver the actual percent setpoint
-  @param rb_sendRequest true -> send request for actual value
-  @return percent setpoint value
-*/
-uint8_t SimpleManageSetpointRemote_c::setpointPercentVal(bool rb_sendRequest)
-{
-  ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  if (rb_sendRequest) c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 2, 1, 0);
-  return ui8_setpointPercentVal;
-}
-/**
-  send a setpoint cmd with given percent setpoint
-  @param rb_val commanded setpoint percent value
-  @param rb_onlyStoreOnResponse true -> the given value is only stored if response arrives
-*/
-void SimpleManageSetpointRemote_c::setSetpointPercentVal(uint8_t rb_val, bool rb_onlyStoreOnResponse)
-{
-  ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0, 1, rb_val);
-  if (!rb_onlyStoreOnResponse) ui8_setpointPercentVal = rb_val;
-}
-#endif
 
 /**
   deliver the actual master setpoint

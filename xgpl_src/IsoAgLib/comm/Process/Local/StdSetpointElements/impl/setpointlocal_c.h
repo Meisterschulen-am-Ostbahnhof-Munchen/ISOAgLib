@@ -179,25 +179,9 @@ public:
 
   /**
     retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false )
     @return actual received setpoint value (calculated with setpoint )
   */
   int32_t setpointMasterVal() const {return pc_master->exact();};
-  /**
-    retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false)
-    @return actual received setpoint value (calculated with setpoint)
-  */
-  int32_t setpointMasterVal(bool rb_percented) const
-  {
-    int32_t i32_masterVal = setpointMasterVal();
-    return (rb_percented)?((i32_masterVal * pc_master->percent())/100):i32_masterVal;
-  }
-  /**
-    retrieve percent setpoint value
-    @return percent value (set to initial 100 )
-  */
-  uint8_t setpointPercentVal() const {return pc_master->percent();};
   /**
     set the setpoint value
     @param ri32_val new setpoint value
@@ -206,32 +190,12 @@ public:
     { if (!existMaster()) setStaticMaster();
       setMasterVal( ri32_val );
     };
-  /**
-    set the setpoint percent value
-    @param rb_percent new percent setpoint value
-  */
-  void setSetpointPercentVal( uint8_t rb_percent )
-    { if (!existMaster()) setStaticMaster();
-      setMasterVal( int32_t(0) );
-      master().setPercent( rb_percent );
-    };
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false )
     @return actual received setpoint value (calculated with setpoint )
   */
   float setpointMasterValFloat() const {return pc_master->exactFloat();};
-  /**
-    retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false)
-    @return actual received setpoint value (calculated with setpoint)
-  */
-  float setpointMasterValFloat(bool rb_percented) const
-  {
-    float f_masterVal = setpointMasterValFloat();
-    return (rb_percented)?((f_masterVal * pc_master->percent())/100):f_masterVal;
-  }
   /**
     set the setpoint value as float value
     @param rf_val new setpoint value
@@ -397,14 +361,6 @@ public:
   */
   bool sendSetpoint( GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
    { return sendSetpointMod( 0, rc_targetGtp, ren_progType );};
-  /**
-    send a percentual-setpoint to a specified target (selected by GPT)
-    @param rc_targetGtp GetyPos of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-    @return true -> successful sent
-  */
-  bool sendSetpointPercent( GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return sendSetpointMod( 1, rc_targetGtp, ren_progType );};
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */

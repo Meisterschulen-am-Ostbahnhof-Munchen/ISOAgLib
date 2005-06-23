@@ -97,10 +97,8 @@
 namespace __IsoAgLib {
 
 /** enum for specification of defined setpoint type */
-enum definedSetpoints_t { exactType = 1, percentType = 2, min_type = 4, maxType = 8, 
-                            min_maxType = 0xC, exactPercentType = 0x3, min_percentType = 0x6,
-                            maxPercentType = 0xA, min_maxPercentType = 0xE, exactMaxPercentType = 0xB,
-                            exactMaxType = 9, exactMinPercentType = 0x7};
+enum definedSetpoints_t { exactType = 1, minType = 4, maxType = 8, 
+                          minMaxType = 0xC, exactMinType = 5, exactMaxType = 9 };
 
 /**
   stores one setpoint with management informations
@@ -115,28 +113,26 @@ public:
     @param ri32_exact exact setpoint value
     @param ri32_min minimum setpoint value
     @param ri32_max maximum setpoint value
-    @param rui8_percent optional percentage setpoint value
     @param rb_handled true -> this setpoint register nistance was handled by main application
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
   SetpointRegister_c(GetyPos_c rc_gtp = 0xFF, int32_t ri32_exact = NO_VAL_32S,
-      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, uint8_t rui8_percent = NO_VAL_8,
+      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true)
-      {  init(rc_gtp, ri32_exact, ri32_min, ri32_max, rui8_percent, rb_handled, rb_master, rb_valid);};
+      {  init(rc_gtp, ri32_exact, ri32_min, ri32_max, rb_handled, rb_master, rb_valid);};
   /**
     initialise this SetpointRegister_c to a well defined starting condition
     @param rc_gtp GET_POS of commander of this setpoint register set
     @param ri32_exact exact setpoint value
     @param ri32_min minimum setpoint value
     @param ri32_max maximum setpoint value
-    @param rui8_percent optional percentage setpoint value
     @param rb_handled true -> this setpoint register nistance was handled by main application
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
   void init(GetyPos_c rc_gtp = 0xFF, int32_t ri32_exact = NO_VAL_32S,
-      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, uint8_t rui8_percent = NO_VAL_8,
+      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true);
 
   /**
@@ -171,52 +167,47 @@ public:
   */
   GetyPos_c gtp()const{return c_requestGtp;};
   /**
-    deliver the exact setpoint (if given percent - use it)
+    deliver the exact setpoint
     @return exact setpoint value
   */
-  int32_t exact()const{return percentedVal(i32_exactOrMin);};
+  int32_t exact()const{return i32_exactOrMin;};
 #ifdef USE_FLOAT_DATA_TYPE
   /**
-    deliver the exact setpoint (if given percent - use it)
+    deliver the exact setpoint
     @return exact setpoint value
   */
-  float exactFloat()const{return percentedValFloat(f_exactOrMin);};
+  float exactFloat()const{return f_exactOrMin;};
 #endif
   /**
-    deliver the percent setpoint 
-    @return percentage setpoint value
-  */
-  int32_t percent()const{return ui8_percent;};
-  /**
-    deliver the minimum limit (use percent); if no min is given (~0) return i32_exactOrMin
+    deliver the minimum limit; if no min is given (~0) return i32_exactOrMin
     @return minimum setpoint value
   */
-  int32_t min()const{return percentedVal(i32_exactOrMin);};
+  int32_t min()const{return i32_exactOrMin;};
   /**
-    deliver the maximum limit (use percent); if no max is given (~0) return i32_exactOrMin
+    deliver the maximum limit ; if no max is given (~0) return i32_exactOrMin
     @return maximum setpoint value
   */
-  int32_t max()const{return (existMax())?(percentedVal(i32_max)):(percentedVal(i32_exactOrMin));};
+  int32_t max()const{return (existMax())?(i32_max):(i32_exactOrMin);};
   /**
     deliver the setpoint according to the mod type
-    @param rb_mod MOD code of wanted setpoint (exact 0, percent 1, min 2, max 3)
+    @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
     @return setpoint selected by MOD
   */
   int32_t valMod(uint8_t rb_mod)const;
 #ifdef USE_FLOAT_DATA_TYPE
   /**
-    deliver the minimum limit (use percent); if no min is given (~0) return f_exactOrMin
+    deliver the minimum limit; if no min is given (~0) return f_exactOrMin
     @return minimum setpoint value
   */
-  float minFloat()const{return percentedValFloat(f_exactOrMin);};
+  float minFloat()const{return f_exactOrMin;};
   /**
-    deliver the maximum limit (use percent); if no max is given (~0) return f_exactOrMin
+    deliver the maximum limit; if no max is given (~0) return f_exactOrMin
     @return maximum setpoint value
   */
-  float maxFloat()const{return (existMax())?(percentedValFloat(f_max)):(percentedValFloat(f_exactOrMin));};
+  float maxFloat()const{return (existMax())?(f_max):(f_exactOrMin);};
   /**
     deliver the setpoint according to the mod type
-    @param rb_mod MOD code of wanted setpoint (exact 0, percent 1, min 2, max 3)
+    @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
     @return setpoint selected by MOD
   */
   float valModFloat(uint8_t rb_mod)const;
@@ -247,15 +238,10 @@ public:
   */
   bool existExact()const{return ((data.en_definedSetpoints & exactType) != 0)?true:false;};
   /**
-    check if valid percent limit is set
-    @return true -> this setpoint register instance has an percentage setpoint value
-  */
-  bool existPercent()const{return ((data.en_definedSetpoints & percentType) != 0)?true:false;};
-  /**
     check if valid minimum limit is set
     @return true -> this setpoint register instance has an minimum setpoint value
   */
-  bool existMin()const{return ((data.en_definedSetpoints & min_type) != 0)?true:false;};
+  bool existMin()const{return ((data.en_definedSetpoints & minType) != 0)?true:false;};
   /**
     check if valid maximum limit is set
     @return true -> this setpoint register instance has an maximum setpoint value
@@ -263,7 +249,7 @@ public:
   bool existMax()const{return ((data.en_definedSetpoints & maxType) != 0)?true:false;};
   /**
     checks if setpoint with type rb_mod exists
-    @param rb_mod MOD code of tested setpoint type (exact 0, percent 1, min 2, max 3)
+    @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3)
     @return true -> a MOD type setpoint exist
   */
   bool existValMod(uint8_t rb_mod)const;
@@ -283,11 +269,6 @@ public:
     @param ri32_val new exact setpoint value
   */
   void setExact(int32_t ri32_val);
-  /**
-    set the percent setpoint value
-    @param rui16_val new percentage setpoint value
-  */
-  void setPercent(uint8_t rui8_val);
   /**
     set the minimum setpoint value
     @param ri32_val new minimum setpoint value
@@ -317,7 +298,7 @@ public:
   /**
     set a limit val for type given by rb_mod
     @param rf_val new setpoint value
-    @param rb_mod MOD code of setpoint type to set (exact 0, percent 1, min 2, max 3)
+    @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
   */
   void setValMod(float rf_val, uint8_t rb_mod);
 #endif
@@ -343,27 +324,13 @@ public:
   /**
     set a limit val for type given by rb_mod
     @param ri32_val new setpoint value
-    @param rb_mod MOD code of setpoint type to set (exact 0, percent 1, min 2, max 3)
+    @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
   */
   void setValMod(int32_t ri32_val,uint8_t rb_mod);
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const SetpointRegister_c& rrefc_src );
-  /**
-    return limit val with used percent val (if valid percent val is defined)
-    @param rreflVal reference to wanted setpoint
-    @return (wanted setpoint value * percentage / 100) if percentage setpoint is set
-  */
-  int32_t percentedVal(const int32_t& rreflVal)const;
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    return limit val with used percent val (if valid percent val is defined)
-    @param rreff_val reference to wanted setpoint
-    @return (wanted setpoint value * percentage / 100) if percentage setpoint is set
-  */
-  float percentedValFloat(const float& rreff_val)const;
-#endif
 private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   union {
@@ -384,8 +351,6 @@ private: // Private attributes
 #endif
   /** tiemstamp of last setXx operation */
   int32_t i32_lastHandledTime;
-  /** percent limit (used automatically in member funcs min(), max() )*/
-  uint8_t ui8_percent;
   /** gtp code of requester */
   GetyPos_c c_requestGtp;
   struct {

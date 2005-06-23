@@ -74,36 +74,6 @@ namespace IsoAgLib {
 class iSimpleManageSetpointLocal_c : public __IsoAgLib::SimpleManageSetpointLocal_c
 {
  public:
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  /**
-    retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false)
-    @return actual received setpoint value (calculated with setpoint)
-  */
-  int32_t setpointMasterVal(bool rb_percented = false) const
-    { return SimpleManageSetpointLocal_c::setpointMasterVal( rb_percented );};
-  /**
-    retrieve percent setpoint value
-    @return percent value (set to initial 100)
-  */
-  uint8_t setpointPercentVal()const
-    { return SimpleManageSetpointLocal_c::setpointPercentVal();};
-  /**
-    set the setpoint percent value
-    @param rb_percent new percent setpoint value
-  */
-  void setSetpointPercentVal(uint8_t rb_percent)
-    { SimpleManageSetpointLocal_c::setSetpointPercentVal( rb_percent );};
-    #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false)
-    @return actual received setpoint value (calculated with setpoint)
-  */
-  float setpointMasterValFloat(bool rb_percented = false) const
-    { return SimpleManageSetpointLocal_c::setpointMasterValFloat( rb_percented );};
-    #endif
-  #else
   /**
     retreive simple master setpoint
     @return actual received setpoint value
@@ -118,7 +88,6 @@ class iSimpleManageSetpointLocal_c : public __IsoAgLib::SimpleManageSetpointLoca
   float setpointMasterValFloat() const
     { return SimpleManageSetpointLocal_c::setpointMasterValFloat();};
     #endif
-  #endif
   /**
     set the setpoint value
     @param ri32_val new setpoint value

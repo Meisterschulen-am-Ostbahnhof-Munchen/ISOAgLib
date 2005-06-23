@@ -300,16 +300,6 @@ public:
   */
   bool sendSetpointMod( uint8_t rui8_mod, iGetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
    { return setpointConst().sendSetpointMod( rui8_mod, rc_targetGtp, ren_progType );};
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  /**
-    send a percentual-setpoint to a specified target (selected by GPT)
-    @param rc_targetGtp GetyPos of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-    @return true -> successful sent
-  */
-  bool sendSetpointPercent( iGetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return setpointConst().sendSetpointPercent( rc_targetGtp, ren_progType );};
-  #endif
 
   #ifdef USE_EEPROM_IO
   /**
@@ -423,36 +413,6 @@ public:
     {ProcDataLocalSimpleSetpointSimpleMeasure_c::setValType(ren_procValType);};
 
 
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-  /**
-    retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false)
-    @return actual received setpoint value (calculated with setpoint)
-  */
-  int32_t setpointMasterVal(bool rb_percented = false) const
-    { return ProcDataLocalSimpleSetpointSimpleMeasure_c::setpointConst().setpointMasterVal(rb_percented);};
-  /**
-    retrieve percent setpoint value
-    @return percent value (set to initial 100)
-  */
-  uint8_t setpointPercentVal()const
-    { return ProcDataLocalSimpleSetpointSimpleMeasure_c::setpointConst().setpointPercentVal();};
-  /**
-    set the setpoint percent value
-    @param rb_percent new percent setpoint value
-  */
-  void setSetpointPercentVal(uint8_t rb_percent)
-    { ProcDataLocalSimpleSetpointSimpleMeasure_c::setpoint().setSetpointPercentVal(rb_percent);};
-    #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    retreive simple master setpoint
-    @param rb_percented optional calculate with percent value (default false)
-    @return actual received setpoint value (calculated with setpoint)
-  */
-  float setpointMasterValFloat(bool rb_percented = false) const
-    { return ProcDataLocalSimpleSetpointSimpleMeasure_c::setpointConst().setpointMasterValFloat(rb_percented);};
-    #endif
-  #else
   /**
     retreive simple master setpoint
     @return actual received setpoint value
@@ -467,7 +427,6 @@ public:
   float setpointMasterValFloat() const
     { return ProcDataLocalSimpleSetpointSimpleMeasure_c::setpointConst().setpointMasterValFloat();};
     #endif
-  #endif
   /**
     set the setpoint value
     @param ri32_val new setpoint value

@@ -85,15 +85,6 @@ public:
   */
   void setExact(int32_t ri32_val) {SetpointRemote_c::setExact(ri32_val);};
   /**
-    command a percent setpoint; store value as commanded and send command
-
-    possible errors:
-        * dependant error in ProcessDataRemote_c if comanded remote system not found in Monitor List
-        * dependant error in CANIO_c on CAN send problems
-    @return new percantage setpoint to command
-  */
-  void setPercent(int32_t ri32_val) {SetpointRemote_c::setPercent(ri32_val);};
-  /**
     command a minimum setpoint; store value as commanded and send command
 
     possible errors:
@@ -115,10 +106,6 @@ public:
     request remote master setpoint - exact
   */
   void requestExact(){SetpointRemote_c::requestExact();};
-  /**
-    request remote master setpoint - percent
-  */
-  void requestPercent(){SetpointRemote_c::requestPercent();};
   /**
     request remote master setpoint - MIN
   */

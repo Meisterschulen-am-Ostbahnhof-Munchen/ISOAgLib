@@ -175,7 +175,7 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
 
   int32_t i32_test = *(static_cast<const int32_t*>(static_cast<const void*>(pb_data)));
   if (pd() == 0)
-  { // setpoint value -> special commands are possible for exact, percent, min, max setpopints
+  { // setpoint value -> special commands are possible for exact, min, max setpopints
     if (mod() < 4)
     { // check for command values
       if ((ren_checkCmd & setpointReleaseCmd != 0)

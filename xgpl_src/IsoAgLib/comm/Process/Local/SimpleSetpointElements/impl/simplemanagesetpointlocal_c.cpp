@@ -136,9 +136,6 @@ void SimpleManageSetpointLocal_c::init( ProcDataBase_c *const rpc_processData )
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
     i32_setpointMasterVal = 0;
   #endif
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-    b_setpointPercentVal = 100;
-  #endif
 }
 /** copy constructor */
 SimpleManageSetpointLocal_c::SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& rrefc_src )
@@ -146,9 +143,6 @@ SimpleManageSetpointLocal_c::SimpleManageSetpointLocal_c( const SimpleManageSetp
 {
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
     i32_setpointMasterVal = rrefc_src.i32_setpointMasterVal;
-  #endif
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-    b_setpointPercentVal = rrefc_src.b_setpointPercentVal;
   #endif
 }
 /** assignment operator */
@@ -159,9 +153,6 @@ const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const
     i32_setpointMasterVal = rrefc_src.i32_setpointMasterVal;
   #endif
 
-  #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-    b_setpointPercentVal = rrefc_src.b_setpointPercentVal;
-  #endif
   return *this;
 }
 /** process a setpoint message */
@@ -191,14 +182,6 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
           b_change = true;
         }
         break;
-      case 1: // percent
-        #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-        if ( setpointPercentVal() != c_pkg.dataLong() ) {
-          setSetpointPercentVal(c_pkg.dataLong());
-          b_change = true;
-        }
-        #endif
-        break;
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
@@ -225,12 +208,8 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   @return true -> successful sent
 */
 bool SimpleManageSetpointLocal_c::sendSetpointMod( uint8_t rui8_mod, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType ) const {
-  if ( rui8_mod == 1 ) {
-    #ifdef SIMPLE_SETPOINT_WITH_PERCENT
-    return processDataConst().sendValGtp(ren_progType, rc_targetGtp,  0, rui8_mod, (int32_t)setpointPercentVal());
-    #endif
-  }
-  else {
+  if ( rui8_mod != 1 ) {
+    // not percent
     #ifdef USE_FLOAT_DATA_TYPE
     if (valType() == float_val)
       return processDataConst().sendValGtp(ren_progType, rc_targetGtp,  0, rui8_mod, setpointMasterValFloat());
@@ -240,41 +219,7 @@ bool SimpleManageSetpointLocal_c::sendSetpointMod( uint8_t rui8_mod, GetyPos_c r
   }
 }
 
-#ifdef SIMPLE_SETPOINT_WITH_PERCENT
-/**
-  retreive simple master setpoint
-  @param rb_percented optional calculate with percent value (default false)
-  @return actual received setpoint value (calculated with setpoint)
-*/
-int32_t SimpleManageSetpointLocal_c::setpointMasterVal(bool rb_percented) const
-{
-#ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT
-return (rb_percented)?((i32_setpointMasterVal * b_setpointPercentVal)/100):i32_setpointMasterVal;
-#else // HANDLE_SETPOINT_MEASURE_EQUIVALENT
-ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
-uint32_t ui32_masterVal = c_localProcBase.masterVal();
-return (rb_percented)?((i32_masterVal * b_setpointPercentVal)/100):i32_masterVal;
-#endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
-}
-  #ifdef USE_FLOAT_DATA_TYPE
-/**
-  retreive simple master setpoint
-  @param rb_percented optional calculate with percent value (default false)
-  @return actual received setpoint value (calculated with setpoint)
-*/
-float SimpleManageSetpointLocal_c::setpointMasterValFloat(bool rb_percented) const
-{
-#ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT
-return (rb_percented)?(f_setpointMasterVal * (float)b_setpointPercentVal /100.0F):f_setpointMasterVal;
-#else // HANDLE_SETPOINT_MEASURE_EQUIVALENT
-ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
-float f_masterVal = c_localProcBase.masterValFloat();
-return (rb_percented)?(f_masterVal * (float)b_setpointPercentVal /100.0F):f_masterVal;;
-#endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
-}
-#endif // USE_FLOAT_DATA_TYPE
 
-#else // SIMPLE_SETPOINT_WITH_PERCENT
 /**
   retreive simple master setpoint
   @return actual received setpoint value
@@ -305,7 +250,7 @@ return f_masterVal;
 #endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 }
   #endif // USE_FLOAT_DATA_TYPE
-#endif // SIMPLE_SETPOINT_WITH_PERCENT
+
 /**
   set the setpoint value
   @param ri32_val new setpoint value
