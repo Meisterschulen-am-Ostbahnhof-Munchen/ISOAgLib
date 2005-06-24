@@ -445,8 +445,10 @@ bool ISOTerminal_c::startUploadCommand ()
   default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
 */
-ISOTerminal_c::ISOTerminal_c():en_uploadType(UploadIdle)
+ISOTerminal_c::ISOTerminal_c()
+: en_uploadType (UploadIdle)
 {
+  localSettings_a.lastReceived = 0; // set this here for safety reasons, as Process_c will read the language from us if "lastReceived != 0"
 }
 
 
@@ -540,6 +542,7 @@ void ISOTerminal_c::init()
     // register in Scheduler_c to get timeEvents
     getSchedulerInstance4Comm().registerClient( this );
 
+    localSettings_a.lastReceived = 0; // no language info received yet
     vtState_a.lastReceived = 0; // no vt_statusMessage received yet
     vtSourceAddress = 254; // shouldn't be read anyway before vt_statusMessage arrived....
 
@@ -665,6 +668,9 @@ bool ISOTerminal_c::timeEvent( void )
     // react on vt alive change "false->true"
     if (vtAliveNew == true) {
       // VT has (re-)entered the System - init all necessary states...
+      #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "VT has entered the system, trying to receive all Properties now...\n";
+      #endif
       vtCapabilities_a.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
       vtCapabilities_a.lastRequestedSoftkeys = 0; // not yet requested vt's capabilities yet
       vtCapabilities_a.lastReceivedHardware = 0; // not yet (queried and) got answer about vt's capabilities yet
@@ -772,6 +778,9 @@ bool ISOTerminal_c::timeEvent( void )
                               194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
         vtCapabilities_a.lastRequestedSoftkeys = HAL::getTime();
+        #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE << "Requested first property (C2)...\n";
+        #endif
       }
       if (vtCapabilities_a.lastReceivedSoftkeys && (!vtCapabilities_a.lastReceivedFont) && ((vtCapabilities_a.lastRequestedFont == 0) || ((HAL::getTime()-vtCapabilities_a.lastRequestedFont) > 1000))) {
         // Get Text Font Data
@@ -817,14 +826,22 @@ bool ISOTerminal_c::timeEvent( void )
                                209, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
                                #endif
           getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
-                               //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
+                                               //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
+        #ifdef LOESCHE_POOL
+          startObjectPoolUploading ();
+        #else
           // start uploading after reception of LoadVersion Response
           en_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
           ui32_uploadTimeout = DEF_TimeOut_LoadVersion;
           ui32_uploadTimestamp = HAL::getTime();
+          #ifdef DEBUG
+          INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1)...\n";
+          #endif
+        #endif
         }
         else
-#endif	// NO_LOAD_VERSION
+#endif
+        // NO_LOAD_VERSION
         { // Start uploading right now, no "LoadVersion" first
           startObjectPoolUploading ();
         }
@@ -1082,6 +1099,10 @@ ISOTerminal_c::vtOutOfMemory()
 */
 bool ISOTerminal_c::processMsg()
 {
+  #ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE << "Incoming Message: data().isoPgn=" << data().isoPgn() << " - HAL::getTime()=" << HAL::getTime()<<" - data[0]="<<(uint16_t)data().getUint8Data (0)<<"...   ";;
+  #endif
+  
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
   uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
   bool b_result = false;
@@ -1098,6 +1119,9 @@ bool ISOTerminal_c::processMsg()
     switch (data().getUint8Data (0)) {
       case 0xFE: // Command: "Status", Parameter: "VT Status Message"
         vtState_a.lastReceived = data().time();
+        #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE << "\nLast VT Status Message encountered: data().time()=" << data().time() << " - now()=" << HAL::getTime()<<".\n";;
+        #endif
         vtState_a.saOfActiveWorkingSetMaster = data().getUint8Data (1);
         vtState_a.dataAlarmMask = data().getUint8Data (2) | (data().getUint8Data (3) << 8);
         vtState_a.softKeyMask = data().getUint8Data (4) | (data().getUint8Data (5) << 8);
@@ -1321,11 +1345,17 @@ bool ISOTerminal_c::processMsg()
           if ((data().getUint8Data (5) & 0x0F) == 0)
           { // Successfully loaded
             finalizeUploading ();
+            #ifdef DEBUG
+            INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) without error...\n";
+            #endif
           }
           else
           {
             if (data().getUint8Data (5) & (1<<2))
             { // Bit 2: // Insufficient memory available
+              #ifdef DEBUG
+              INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem...\n";
+              #endif
               vtOutOfMemory ();
             }
             else
@@ -1333,6 +1363,9 @@ bool ISOTerminal_c::processMsg()
               // General error
               // Version label not known
               startObjectPoolUploading (); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
+              #ifdef DEBUG
+              INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with VersionNotFound...\n";
+              #endif
             }
           }
         }
