@@ -520,7 +520,7 @@ void ProcessPkg_c::string2Flags()
     }
   }
  #endif // USE_DIN_9684
- 
+
 
 #ifndef ISO_TASK_CONTROLLER         // The following is the original code for old part 10 -bac
 
@@ -587,9 +587,9 @@ void ProcessPkg_c::string2Flags()
   { // sender is special case terminal -> change GETY_POS for data part from terminal GETY_POS to local of empf
     setGtp(pc_monitorEmpf->gtp());
   }
-#else 
+#else
     // New Part 10 code to go here -bac
-  
+
    // set pri, empf, send for convenience
     setPri(2); // signal target message
     setEmpf(isoPs());
@@ -599,7 +599,7 @@ void ProcessPkg_c::string2Flags()
     setLis(0); // ISO doesn't support LIS code -> set to default 0
 
    //  bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::pb_data[0] >> 5) & 0x3);
-    
+
     // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
     #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     if (bit_data.b_valType == float_val) set_d(1);
@@ -634,18 +634,17 @@ void ProcessPkg_c::string2Flags()
 
     set_Cmd(CANPkg_c::pb_data[0] & 0xf);
     uint16_t element = 0;
-    element &= CANPkg_c::pb_data[1];
-    element = element << 4;
+		element = uint16_t(CANPkg_c::pb_data[1]) << 4;
     element |= ((CANPkg_c::pb_data[0] & 0xF0)>>4);
     set_Element(element);
- 
+
     uint16_t newDDI = 0;
     newDDI |= CANPkg_c::pb_data[3];
     newDDI = newDDI << 8;
     newDDI |= CANPkg_c::pb_data[2];
     set_DDI(newDDI);
 
-#endif  // end of new part 10 code 
+#endif  // end of new part 10 code
 
   CNAMESPACE::memmove(pb_data, (CANPkg_c::pb_data+4), 4);
 };
@@ -693,7 +692,7 @@ void ProcessPkg_c::flags2String()
     #endif
 #ifndef ISO_TASK_CONTROLLER
   #ifdef USE_ISO_11783
-    
+
   }
   else
   { // format for ISO -> set int32_t or float
@@ -736,11 +735,11 @@ void ProcessPkg_c::flags2String()
 #else   // code added by Brad Cox to format the message to conform to the latest part 10 Specification. -bac
  }
   else
-  { 
+  {
     CANPkg_c::pb_data[0] = (cmd() & 0xf) | ( (element() & 0xf) << 4);
 	CANPkg_c::pb_data[1] = element() >> 4;
-    CANPkg_c::pb_data[2] = DDI() & 0x00FF ; 
-    CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;  
+    CANPkg_c::pb_data[2] = DDI() & 0x00FF ;
+    CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;
   }
   // for ISO the ident is directly read and written
 
