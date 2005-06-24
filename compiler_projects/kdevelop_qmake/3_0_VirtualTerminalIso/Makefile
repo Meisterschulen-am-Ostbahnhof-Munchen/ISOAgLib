@@ -7,8 +7,6 @@
 TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
 APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso
-BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
-BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
 PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
 

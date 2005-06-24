@@ -332,7 +332,7 @@ function create_filelist( )
     if [ -n "$COMM_PROC_FEATURES" ] ; then
       COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o "
     fi
-    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*'"
+    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process/impl/dev*'"
 
 		if [ $PRJ_GPS -gt 0 ] ; then
 			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*gps_c.*'"
