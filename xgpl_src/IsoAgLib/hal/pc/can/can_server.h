@@ -4,13 +4,16 @@
 #include <list>
 #include <string>
 #include "can_msq.h"
+#include <sys/time.h>
+#include <time.h>
+
 
 namespace __HAL {
 
 // client specific data
 typedef struct {
   int32_t  i32_clientID;
-  int32_t  i32_runTime_msec;
+  struct timeval s_startTime;
   bool     b_canBufferLock[cui32_maxCanBusCnt][cui8_maxCanObj];
   bool     b_canObjConfigured[cui32_maxCanBusCnt][cui8_maxCanObj];
   uint8_t  ui8_bufXtd[cui32_maxCanBusCnt][cui8_maxCanObj];

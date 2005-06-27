@@ -67,6 +67,11 @@
 #include "../config.h"
 #include "../typedef.h"
 #include "../errcodes.h"
+#ifndef WIN32
+#include <sys/time.h>
+#include <time.h>
+#endif
+
 namespace __HAL {
    #define  GET_U_C               35        /* UC (Boardspannung)   */
    #define  GET_U_EXT_8_5_V       15        /* U 8,5 V EXT */
@@ -97,6 +102,9 @@ bool isSystemOpened( void );
 int16_t configWatchdog();
 
 int32_t getTime();
+#ifndef WIN32
+struct timeval getStartUpTime();
+#endif
 int16_t getSnr(uint8_t *snrDat);               /* serial number of target */
 
 int16_t  configWd(tWDConfig *tConfigArray); /* configuration of the system supervisor*/

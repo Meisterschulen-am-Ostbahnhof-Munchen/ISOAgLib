@@ -180,6 +180,21 @@ static FILE*	canBusFp[cui32_maxCanBusCnt];
 
 namespace __HAL {
 
+void timeval_add_diff(struct timeval *presult, struct timeval *pa, struct timeval *pb) {
+
+  presult->tv_sec += pa->tv_sec - pb->tv_sec;
+  presult->tv_usec += pa->tv_usec - pb->tv_usec;
+
+  if (presult->tv_usec >= 1000000) {
+    presult->tv_sec++;
+    presult->tv_usec -= 1000000;
+  }
+  if (presult->tv_usec < 0) {
+    presult->tv_sec--;
+    presult->tv_usec += 1000000;
+  }
+}
+
 int32_t getTime()
 {
   // use gettimeofday for native LINUX system
@@ -188,10 +203,10 @@ int32_t getTime()
 
   gettimeofday(&now, 0);
   if ( ( startUpTime.tv_usec == 0) && ( startUpTime.tv_sec == 0) )
-	 {
-	 	startUpTime.tv_usec = now.tv_usec;
-	 	startUpTime.tv_sec = now.tv_sec;
-	 }
+         {
+                startUpTime.tv_usec = now.tv_usec;
+                startUpTime.tv_sec = now.tv_sec;
+         }
   if ((now.tv_usec-= startUpTime.tv_usec) < 0)
     {
       now.tv_usec+= 1000000;
@@ -201,6 +216,7 @@ int32_t getTime()
   return (now.tv_usec / 1000 + now.tv_sec * 1000);
 }
 
+
 } // end namespace
 
 static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t b_xtd, uint8_t* pui8_data, int32_t i32_clientID, server_c* pc_serverData)
@@ -208,6 +224,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
   can_data* pc_data;
   std::list<client_s>::iterator iter, iter_delete = 0;
+  struct timeval s_timeDiff, s_currentTime;
 
   // semaphore to prevent client list modification already set in calling function
 
@@ -279,7 +296,13 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
             
           DEBUG_PRINT("queueing message\n");
           pc_data = &(msqReadBuf.s_canData);
-          pc_data->i32_time = __HAL::getTime() - iter->i32_runTime_msec;
+
+          gettimeofday(&s_currentTime, 0);
+
+          // get difference between now and client start up time
+          timeval_add_diff(&s_timeDiff, &s_currentTime, &(iter->s_startTime));
+          pc_data->i32_time = s_timeDiff.tv_sec * 1000 + s_timeDiff.tv_usec / 1000 ;
+
           pc_data->i32_ident = ui32_id;
           pc_data->b_dlc = DLC;
           pc_data->b_xtd = b_xtd;
@@ -593,9 +616,10 @@ static void* command_thread_func(void* ptr)
         // client process id is used as clientID 
         s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
         // save difference between client runtime and server runtime
-        s_tmpClient.i32_runTime_msec = __HAL::getTime() - msqCommandBuf.s_runtime.i32_runTime_msec ;
+        s_tmpClient.s_startTime.tv_sec = msqCommandBuf.s_startTime.ui32_sec;
+        s_tmpClient.s_startTime.tv_usec = msqCommandBuf.s_startTime.ui32_usec;
 
-        DEBUG_PRINT1("msec diff between can client and server: %d\n", s_tmpClient.i32_runTime_msec);
+        DEBUG_PRINT2("client start up time (absolute value): %d (sec) %d (usec)\n", s_tmpClient.s_startTime.tv_sec, s_tmpClient.s_startTime.tv_usec);
         
         char pipe_name[255];
         sprintf(pipe_name, "%s%d", PIPE_PATH, ++(pc_serverData->i32_lastPipeId));

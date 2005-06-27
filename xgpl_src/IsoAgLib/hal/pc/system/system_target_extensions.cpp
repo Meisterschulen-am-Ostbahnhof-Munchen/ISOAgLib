@@ -197,6 +197,12 @@ int32_t getTime()
    now.tv_sec-= startUpTime.tv_sec;
    return (now.tv_usec / 1000 + now.tv_sec * 1000);
 }
+
+struct timeval getStartUpTime()
+{
+   return startUpTime;
+}
+
 #endif
 
 

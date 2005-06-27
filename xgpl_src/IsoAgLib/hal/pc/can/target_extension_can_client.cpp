@@ -56,6 +56,7 @@
  ***************************************************************************/
 #include "can_target_extensions.h"
 #include <IsoAgLib/hal/pc/system/system.h>
+#include <IsoAgLib/hal/pc/system/system_target_extensions.h>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -102,7 +103,10 @@ int16_t can_startDriver()
   // use process id for own client id
   msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_REGISTER;
-  msqCommandBuf.s_runtime.i32_runTime_msec = getTime();
+  // call getTime just to be sure that start up time is set 
+  getTime();
+  msqCommandBuf.s_startTime.ui32_sec = getStartUpTime().tv_sec;
+  msqCommandBuf.s_startTime.ui32_usec = getStartUpTime().tv_usec;
 
   i16_rc = send_command(&msqCommandBuf, &msqDataClient);
 
@@ -358,6 +362,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   memcpy(ptReceive->abData, pc_data->pb_data, pc_data->b_dlc);
 
 #ifdef DEBUG_CAN
+  printf("Time: %d\n", pc_data->i32_time);
   printf("Empfang: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
          ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
          ptReceive->abData[3], ptReceive->abData[4], ptReceive->abData[5],

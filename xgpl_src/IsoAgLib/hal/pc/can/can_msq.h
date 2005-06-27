@@ -80,11 +80,9 @@ typedef struct {
   int16_t i16_command;
   union {
     struct {
-      int32_t i32_runTime_msec;
-      int32_t i32_fill1;
-      int32_t i32_fill2;
-      int32_t i32_fill3;
-    } s_runtime;
+      uint32_t ui32_sec;
+      uint32_t ui32_usec;
+    } s_startTime;
     struct {
       int32_t i32_pipeId;
       int32_t i32_fill1;
