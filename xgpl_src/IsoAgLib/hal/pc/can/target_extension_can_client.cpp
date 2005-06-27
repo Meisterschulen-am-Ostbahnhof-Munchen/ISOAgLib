@@ -362,7 +362,6 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   memcpy(ptReceive->abData, pc_data->pb_data, pc_data->b_dlc);
 
 #ifdef DEBUG_CAN
-  printf("Time: %d\n", pc_data->i32_time);
   printf("Empfang: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
          ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
          ptReceive->abData[3], ptReceive->abData[4], ptReceive->abData[5],
