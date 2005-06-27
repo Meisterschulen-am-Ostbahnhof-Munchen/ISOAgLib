@@ -705,20 +705,44 @@ MultiReceive_c::timeEvent( void )
 } // -X2C
 
 
-Stream_c*
-MultiReceive_c::getFinishedJustKeptStream (uint8_t rui8_forSa)
+
+IsoAgLib::iStream_c*
+MultiReceive_c::getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStream)
 {
+  // If "last==NULL", take the first to get, else wait for last to occur and take next!
+  bool b_takeIt = (rpc_lastKeptStream == NULL);
+  
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin(); i_list_streams != list_streams.end(); i_list_streams++)
   {
     DEF_Stream_c_IMPL* pc_stream = &*i_list_streams;
-    if ( (pc_stream->getStreamingState() == StreamFinishedJustKept)
-         &&
-         (pc_stream->getIdent().getDa() == rui8_forSa))
-    {
-      return &(*i_list_streams);
+    if (pc_stream->getStreamingState() == StreamFinishedJustKept)
+    { // let's see if we take this kept one..
+      if (b_takeIt)
+        return pc_stream;
+      if (rpc_lastKeptStream == pc_stream)
+        b_takeIt=true; // take the next kept one following this...
     }
   }
   return NULL;
+}
+
+
+
+/// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
+void
+MultiReceive_c::removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream)
+{
+  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin(); i_list_streams != list_streams.end(); i_list_streams++)
+  {
+    if ((&*i_list_streams) == rpc_keptStream)
+    { // delete it. it's a justKept one, as we checked that before!
+      if (i_list_streams->getStreamingState() != StreamFinishedJustKept)
+        return; // do NOT allow any other streams to be deleted
+    
+      list_streams.erase (i_list_streams);
+      return;
+    }
+  }
 }
 
 
@@ -735,14 +759,17 @@ MultiReceive_c::sendCurrentCts(DEF_Stream_c_IMPL* rpc_stream)
 
   uint8_t ui8_pkgsToExpect = rpc_stream->expectBurst(Stream_c::sui8_pkgBurst); // we wish e.g. 20 pkgs (as always), but there're only 6 more missing to complete the stream!
   uint8_t pgn, cmdByte;
+  uint8_t ui8_next2WriteLo =  ((rpc_stream->getPkgNextToWrite()) & 0xFF);
+  uint8_t ui8_next2WriteMid= (((rpc_stream->getPkgNextToWrite()) >> 8) & 0xFF);
+  uint8_t ui8_next2WriteHi = (((rpc_stream->getPkgNextToWrite()) >> 16) & 0xFF);
 
-  if (rpc_stream->getStreamType() & StreamEcmdMASK) cmdByte = 0x15 /* decimal: 21 */;
-  else /* -------------------------------------- */ cmdByte = 0x11 /* decimal: 17 */;
+  if (rpc_stream->getStreamType() & StreamEcmdMASK)   cmdByte = 0x15 /* decimal: 21 */;
+  else /* -------------------------------------- */ { cmdByte = 0x11 /* decimal: 17 */; ui8_next2WriteMid=ui8_next2WriteHi=0xFF; }
   if (rpc_stream->getStreamType() & StreamEpgnMASK) pgn = ETP_CONN_MANAGE_PGN >> 8;
   else /* -------------------------------------- */ pgn = TP_CONN_MANAGE_PGN >> 8;
 
   c_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ rpc_stream->getIdent().getSa(), /* src: */ rpc_stream->getIdent().getDa(),
-                        cmdByte, ui8_pkgsToExpect, MACRO_BYTEORDER_toLoMidHi(rpc_stream->getPkgNextToWrite()), MACRO_BYTEORDER_toLoMidHi(rpc_stream->getIdent().getPgn()));
+                        cmdByte, ui8_pkgsToExpect, ui8_next2WriteLo, ui8_next2WriteMid, ui8_next2WriteHi, MACRO_BYTEORDER_toLoMidHi(rpc_stream->getIdent().getPgn()));
   __IsoAgLib::getCanInstance4Comm() << c_data;
 } // -X2C
 

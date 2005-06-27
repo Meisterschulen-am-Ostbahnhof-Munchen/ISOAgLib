@@ -169,11 +169,9 @@ public:
   //  Operation: processMsg
   bool processMsg();
 
-  //  Operation: registerClient
-  void registerClient (uint16_t rui16_pgn, uint8_t rui8_clientAddress,
-                       IsoAgLib::MultiReceiveClient_c* rpc_client, bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false);
-
-  //  Operation: deregisterClient
+  //  Operation: (de)registerClient
+  void registerClient   (uint16_t rui16_pgn, uint8_t rui8_clientAddress,
+                         IsoAgLib::MultiReceiveClient_c* rpc_client, bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false);
   void deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client);
 
   //  Operation: createStream
@@ -186,6 +184,9 @@ public:
   //! @param rc_streamIdent:
   Stream_c* getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
 
+  /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
+  void removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream);
+  
   //  Operation: timeEvent
   bool timeEvent( void );
 
@@ -218,7 +219,7 @@ public:
 
   bool isAtLeastOneWithFirstByte(uint8_t firstByte);
 
-  Stream_c* getFinishedJustKeptStream (uint8_t rui8_forSa);
+  IsoAgLib::iStream_c* getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStream);
 
 
 protected:

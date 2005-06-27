@@ -1,6 +1,5 @@
 /***************************************************************************
-                             multisend_c.h - transfer of multi message
-                                                data
+                             multisend_c.h - transfer of multi message data
                              -------------------
     begin                : Fri Sep 28 2001
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler

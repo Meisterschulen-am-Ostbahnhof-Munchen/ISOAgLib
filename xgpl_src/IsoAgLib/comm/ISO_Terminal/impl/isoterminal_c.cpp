@@ -1,3 +1,7 @@
+// LOESCHE_POOL will send DeleteVersion INSTEAD of LoadVersion
+//#define LOESCHE_POOL
+//#define GET_VERSIONS
+
 /***************************************************************************
                           isoterminal_c.cpp - central ISO terminal management
                              -------------------
@@ -150,7 +154,6 @@ static const uint8_t scpui8_cmdCompareTable[(0xB4-0x92)+1] = {
 /* 0xB4 */ (1<<1) | (1<<2) | (1<<3)
 };
 
-// #define LOESCHE_POOL
 
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
@@ -818,6 +821,23 @@ bool ISOTerminal_c::timeEvent( void )
 #ifdef NO_LOAD_VERSION
 #else
         if (pc_versionLabel != NULL) {
+          
+          #ifdef GET_VERSIONS
+            static int b_getVersionsSendTime=0;
+            if (b_getVersionsSendTime == 0)
+            { // send out get versions first
+              c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                                    223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+              getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
+              b_getVersionsSendTime = HAL::getTime();
+            }
+            if ((b_getVersionsSendTime+500) > HAL::getTime())
+            { // wait for answer first
+              return true;
+            }
+          #endif
+          
+          
           // Try to "Non Volatile Memory - Load Version" first!
           c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                #ifdef LOESCHE_POOL
@@ -938,9 +958,9 @@ bool ISOTerminal_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, 
 bool ISOTerminal_c::isVtActive ()
 {
   /** @todo connction management expansion: recognize NACKs following the WS Maintenance Message! */
-  uint32_t curTime = HAL::getTime();
   if (vtState_a.lastReceived) {
-    if ((curTime-vtState_a.lastReceived) <= 3000) {
+    if (((int32_t)HAL::getTime() - (int32_t)vtState_a.lastReceived) <= 3000)
+    { // comparing as int, so that in case "NOW-time > CAN-time" NO client-reload happens
       return true;
     } else {
       return false;
