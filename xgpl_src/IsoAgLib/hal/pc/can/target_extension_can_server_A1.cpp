@@ -1,5 +1,5 @@
 /***************************************************************************
-						  target_extension_can_server_A1_binary.cpp - 
+              target_extension_can_server_A1_binary.cpp -
                     can server communicates with clients through message queues
                     read/write operation for /dev/wecan<bus_no>
                     message forwarding to other clients
@@ -174,22 +174,22 @@ static int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_ser
 /////////////////////////////////////////////////////////////////////////
 // Local Data
 
-static int	canBusIsOpen[cui32_maxCanBusCnt];
-static FILE*	canBusFp[cui32_maxCanBusCnt];
+static int  canBusIsOpen[cui32_maxCanBusCnt];
+static FILE*  canBusFp[cui32_maxCanBusCnt];
 
 
 namespace __HAL {
 
 void timeval_add_diff(struct timeval *presult, struct timeval *pa, struct timeval *pb) {
 
-  presult->tv_sec += pa->tv_sec - pb->tv_sec;
-  presult->tv_usec += pa->tv_usec - pb->tv_usec;
+  presult->tv_sec = pa->tv_sec - pb->tv_sec;
+  presult->tv_usec = pa->tv_usec - pb->tv_usec;
 
-  if (presult->tv_usec >= 1000000) {
+  while (presult->tv_usec >= 1000000) {
     presult->tv_sec++;
     presult->tv_usec -= 1000000;
   }
-  if (presult->tv_usec < 0) {
+  while (presult->tv_usec < 0) {
     presult->tv_sec--;
     presult->tv_usec += 1000000;
   }
@@ -240,8 +240,8 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
     }
 
     // now search for MsgObj queue on this b_bus, where new message from b_bus maps
-    for (int32_t i32_obj = 1; i32_obj < cui8_maxCanObj; i32_obj++) { 
-      
+    for (int32_t i32_obj = 1; i32_obj < cui8_maxCanObj; i32_obj++) {
+
       // i32_clientID != 0 in forwarding mode during send, do not enqueue this message for sending client
       if (i32_clientID && (iter->i32_clientID == i32_clientID))
         continue;
@@ -249,12 +249,12 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
       if (!iter->b_canObjConfigured[b_bus][i32_obj])
         continue;
 
-      if ( iter->b_canBufferLock[b_bus][i32_obj] ) { 
+      if ( iter->b_canBufferLock[b_bus][i32_obj] ) {
         // don't even check this MsgObj as it shall not receive messages
         DEBUG_PRINT2("lock bus %d, obj %d\n", b_bus, i32_obj);
         continue;
       }
-       
+
 
       // compare received msg with filter
       if
@@ -293,7 +293,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
         { // received msg fits actual filter
 
           msqRead_s msqReadBuf;
-            
+
           DEBUG_PRINT("queueing message\n");
           pc_data = &(msqReadBuf.s_canData);
 
@@ -307,7 +307,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           pc_data->b_dlc = DLC;
           pc_data->b_xtd = b_xtd;
           for ( uint32_t ind = 0; ind < DLC; ind++ ) pc_data->pb_data[ind] = pui8_data[ind];
-            
+
           DEBUG_PRINT1("mtype: 0x%08x\n", assemble_mtype(iter->i32_clientID, b_bus, i32_obj));
           msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, i32_obj);
           msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
@@ -336,7 +336,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
     if (iter_delete->i32_pipeHandle)
       close(iter_delete->i32_pipeHandle);
-    
+
     pc_serverData->l_clients.erase(iter_delete);
   }
 
@@ -345,7 +345,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
 
 /////////////////////////////////////////////////////////////////////////
-static void* can_write_thread_func(void* ptr) 
+static void* can_write_thread_func(void* ptr)
 {
   int16_t i16_rc;
   int32_t i32_error = 0;
@@ -385,7 +385,7 @@ static void* can_write_thread_func(void* ptr)
     // i16_rc == 1: send was ok
     if (!i16_rc)
       i32_error = HAL_OVERFLOW_ERR;
-    else 
+    else
       // message forwarding
       // get clientID from msqWriteBuf.i32_mtype
       enqueue_msg(msqWriteBuf.s_sendData.bDlc, msqWriteBuf.s_sendData.dwId, msqWriteBuf.ui8_bus, msqWriteBuf.s_sendData.bXtd, &msqWriteBuf.s_sendData.abData[0], disassemble_client_id(msqWriteBuf.i32_mtype), pc_serverData);
@@ -405,7 +405,7 @@ static void* can_write_thread_func(void* ptr)
 
 
 /////////////////////////////////////////////////////////////////////////
-static void can_read(server_c* pc_serverData) 
+static void can_read(server_c* pc_serverData)
 {
   can_recv_data receiveData;
   uint32_t DLC;
@@ -442,7 +442,7 @@ static void can_read(server_c* pc_serverData)
     maxfd++;
 
     FD_ZERO(&rfds);
-        
+
     for (channel=0; channel<cui32_maxCanBusCnt; channel++ ) {
       if (canBusIsOpen[channel]) {
         FD_SET(pc_serverData->can_device[channel], &rfds);
@@ -451,7 +451,7 @@ static void can_read(server_c* pc_serverData)
 
     // we have open devices
     if (maxfd > 1) {
-      retval = select(maxfd, &rfds, NULL, NULL, NULL);	// wait infinitely for next CAN msg
+      retval = select(maxfd, &rfds, NULL, NULL, NULL);  // wait infinitely for next CAN msg
 
       if(retval == -1) {
         DEBUG_PRINT("Error Occured in select\n");
@@ -474,16 +474,16 @@ static void can_read(server_c* pc_serverData)
     }
 
     if (b_processMsg) {
-      
+
       // acquire semaphore to prevent concurrent read/write to can driver
       if (get_semaphore(local_semaphore_id, -1) == -1) {
         perror("aquire semaphore error");
         exit(1);
       }
-      
+
       CANmsg msg;
       int ret = ioctl(pc_serverData->can_device[channel_with_change], CAN_READ_MSG, &msg);
-      
+
       if (ret < 0) {
         /* nothing to read or interrupted system call */
 #ifdef DEBUG
@@ -497,7 +497,7 @@ static void can_read(server_c* pc_serverData)
           perror("release semaphore error");
           exit(1);
         }
-        
+
       } else {
         receiveData.b_bus = channel_with_change;
         receiveData.msg.i32_ident = msg.id;
@@ -506,7 +506,7 @@ static void can_read(server_c* pc_serverData)
         receiveData.msg.i32_time = msg.time;
         for( int i=0; i<msg.len; i++ )
           receiveData.msg.pb_data[i] = msg.data[i];
-      }  
+      }
     }
 
 #else
@@ -525,7 +525,7 @@ static void can_read(server_c* pc_serverData)
       for (;;)
         sleep(1000);
 #endif
-	
+
     if (!b_processMsg) {
       usleep(10000);
       continue;
@@ -556,7 +556,7 @@ static void can_read(server_c* pc_serverData)
 
 
 /////////////////////////////////////////////////////////////////////////
-static void* command_thread_func(void* ptr) 
+static void* command_thread_func(void* ptr)
 {
 
   int16_t i16_rc;
@@ -603,24 +603,24 @@ static void* command_thread_func(void* ptr)
       }
 
     switch (msqCommandBuf.i16_command) {
-      
+
       case COMMAND_REGISTER:
-      
+
         client_s s_tmpClient;
 
         DEBUG_PRINT("command start driver\n");
 
         // initialize
         memset(&s_tmpClient, 0, sizeof(client_s));
-        
-        // client process id is used as clientID 
+
+        // client process id is used as clientID
         s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
         // save difference between client runtime and server runtime
         s_tmpClient.s_startTime.tv_sec = msqCommandBuf.s_startTime.ui32_sec;
         s_tmpClient.s_startTime.tv_usec = msqCommandBuf.s_startTime.ui32_usec;
 
         DEBUG_PRINT2("client start up time (absolute value): %d (sec) %d (usec)\n", s_tmpClient.s_startTime.tv_sec, s_tmpClient.s_startTime.tv_usec);
-        
+
         char pipe_name[255];
         sprintf(pipe_name, "%s%d", PIPE_PATH, ++(pc_serverData->i32_lastPipeId));
 
@@ -631,10 +631,10 @@ static void* command_thread_func(void* ptr)
         // open pipe in read/write mode to allow read access to clean the pipe and to avoid SIGPIPE when client dies and this client was the only reader to the pipe
         if ((s_tmpClient.i32_pipeHandle = open(pipe_name, O_NONBLOCK | O_RDWR, 0)) == -1)
           i32_error = HAL_UNKNOWN_ERR;
-        
+
         if (!i32_error)
           pc_serverData->l_clients.push_back(s_tmpClient);
-        
+
         // transmit current pipeId to client (for composition of pipe name)
         send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer), pc_serverData->i32_lastPipeId);
 
@@ -652,11 +652,11 @@ static void* command_thread_func(void* ptr)
 
           pc_serverData->l_clients.erase(iter_client);
 
-        } else 
+        } else
           i32_error = HAL_CONFIG_ERR;
-        
+
         send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-        
+
         break;
 
 
@@ -672,9 +672,9 @@ static void* command_thread_func(void* ptr)
 
         if (!i32_error && !ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]) {
           // first init command for current bus
-        
+
           memset(fdata, 0, sizeof(fdata));
-        
+
           if (iter_client != NULL) {
 
             btr0 = 0;
@@ -691,18 +691,18 @@ static void* command_thread_func(void* ptr)
                                            btr0,  // BTR0
                                            btr1, // BTR1
                                            pc_serverData);
-                     
+
             if (!i16_init_rc) {
               printf("can't initialize CAN\n");
               i32_error = HAL_CONFIG_ERR;
             }
 
-          } else 
+          } else
             i32_error = HAL_CONFIG_ERR;
 
         }
 
-        
+
         if (!i32_error) {
           iter_client->ui16_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui16_wGlobMask;
           iter_client->ui32_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui32_dwGlobMask;
@@ -718,18 +718,18 @@ static void* command_thread_func(void* ptr)
             }
           }
         }
-        
+
         send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-        
+
         break;
-        
+
 
       case COMMAND_CLOSE:
 
         if (msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR )
           i32_error = HAL_RANGE_ERR;
         else {
-      
+
           if (iter_client != NULL) {
 
             if (ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus])
@@ -740,20 +740,20 @@ static void* command_thread_func(void* ptr)
                 clearReadQueue(i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
                 clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
               }
-            
+
             if (!ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus] && pc_serverData->b_logMode && pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]) {
               fclose(pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus]);
               pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus] = 0;
             }
 
-          } else 
+          } else
             i32_error = HAL_CONFIG_ERR;
         }
 
         send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-        
+
         break;
-        
+
 
       case COMMAND_CONFIG:
       case COMMAND_CHG_CONFIG:
@@ -767,7 +767,7 @@ static void* command_thread_func(void* ptr)
 
             iter_client->ui8_bufXtd[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj] = msqCommandBuf.s_config.ui8_bXtd;
             iter_client->ui32_filter[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj] = msqCommandBuf.s_config.ui32_dwId;
-            
+
             if (msqCommandBuf.i16_command == COMMAND_CONFIG) {
 
               clearReadQueue(msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
@@ -777,10 +777,10 @@ static void* command_thread_func(void* ptr)
               iter_client->ui16_size[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj] = msqCommandBuf.s_config.ui16_wNumberMsgs;
               iter_client->b_canBufferLock[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj] = false;
             }
-          } else 
+          } else
             i32_error = HAL_CONFIG_ERR;
         }
-        
+
         send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
 
         break;
@@ -799,12 +799,12 @@ static void* command_thread_func(void* ptr)
             iter_client->ui16_size[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj] = 0;
             clearReadQueue(msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj, pc_serverData->msqDataServer.i32_rdHandle, iter_client->i32_clientID);
             clearWriteQueue(msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj, pc_serverData->msqDataServer.i32_wrHandle, iter_client->i32_clientID);
-          } else 
+          } else
             i32_error = HAL_CONFIG_ERR;
         }
-        
+
         send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
-        
+
         break;
 
 
@@ -829,23 +829,23 @@ static void* command_thread_func(void* ptr)
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 //
-// METHOD:	ca_InitApi_1
-// PURPOSE:	To load and initialize the CAN driver and return the CAN API version
-// RETURNS:	API version greater than 0
-// 			0 on error (no CAN device available)
-// NOTES:	In this case, we will simply return an API version of 1.0  (0x0100)
-// 			Highversion is in highbyte, Lowversion is in lowbyte
+// METHOD:  ca_InitApi_1
+// PURPOSE: To load and initialize the CAN driver and return the CAN API version
+// RETURNS: API version greater than 0
+//      0 on error (no CAN device available)
+// NOTES: In this case, we will simply return an API version of 1.0  (0x0100)
+//      Highversion is in highbyte, Lowversion is in lowbyte
 //
 // FUTURE:  This should be finished to actually check if /dev/wecan0 and
-//			/dev/wecan1 are available and the drivers installed correctly or not
+//      /dev/wecan1 are available and the drivers installed correctly or not
 //
 /////////////////////////////////////////////////////////////////////////
 static int ca_InitApi_1 ()
 {
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
     {
-		canBusIsOpen[i] = false;
-		canBusFp[i] = NULL;
+    canBusIsOpen[i] = false;
+    canBusFp[i] = NULL;
     }
 
   return 0x0100;
@@ -853,12 +853,12 @@ static int ca_InitApi_1 ()
 
 /////////////////////////////////////////////////////////////////////////
 //
-// METHOD:	ca_ResetCanCard_1
-// PURPOSE:	To reset the alreay initialized CAN driver (especially clear its
-//			buffers and any error conditions)
-// RETURNS:	non-zero if CAN device was reset ok
-// 			0 on error
-// NOTES:	In this case, we will simply return 1
+// METHOD:  ca_ResetCanCard_1
+// PURPOSE: To reset the alreay initialized CAN driver (especially clear its
+//      buffers and any error conditions)
+// RETURNS: non-zero if CAN device was reset ok
+//      0 on error
+// NOTES: In this case, we will simply return 1
 // FUTURE:  This should be finished to actually check the return values of fflush()
 //
 /////////////////////////////////////////////////////////////////////////
@@ -873,28 +873,28 @@ static int ca_ResetCanCard_1(void)
 
 /////////////////////////////////////////////////////////////////////////
 //
-// METHOD:	ca_InitCanCard_1
-// PURPOSE:	To initialize the specified CAN BUS to begin sending/receiving msgs
-// PARAMS:	channel		// 0 for CANLPT/ICAN, else 1 for first BUS
-//			msgnr		// msg-nr / 0 for CANLPT/ICAN
-//			accode		// Acceptance Code to receive everything for ICAN
-//			accmask		// Acceptance Mask to receive everything for ICAN
-//			fullcanmask	// filter array of int[16];
-//			btr0		// BTR0
-//			btr1		// BTR1
-//			octrl		// reserved
-//			typ			// typ 0 = 2 x 32 Bit, 1 = 4 x 16 Bit,
-//						// 2 = 8 x 8 Bit, 3 = kein durchlass
-//			extended	// reserved
-// RETURNS:	non-zero if CAN BUS was initialized ok
-// 			0 on error
-// NOTES:	In this case, we will simply return 1
+// METHOD:  ca_InitCanCard_1
+// PURPOSE: To initialize the specified CAN BUS to begin sending/receiving msgs
+// PARAMS:  channel   // 0 for CANLPT/ICAN, else 1 for first BUS
+//      msgnr   // msg-nr / 0 for CANLPT/ICAN
+//      accode    // Acceptance Code to receive everything for ICAN
+//      accmask   // Acceptance Mask to receive everything for ICAN
+//      fullcanmask // filter array of int[16];
+//      btr0    // BTR0
+//      btr1    // BTR1
+//      octrl   // reserved
+//      typ     // typ 0 = 2 x 32 Bit, 1 = 4 x 16 Bit,
+//            // 2 = 8 x 8 Bit, 3 = kein durchlass
+//      extended  // reserved
+// RETURNS: non-zero if CAN BUS was initialized ok
+//      0 on error
+// NOTES: In this case, we will simply return 1
 //
 // FUTURE:  This should be finished to actually use the parameters like baud
-//			rate and extended IDs during the initialization.  Right now they
-//			are hardcoded and the passed in params are ignored.
-//			Should check return value of write() to make sure the baud rate
-//			was set correctly before proceeding.
+//      rate and extended IDs during the initialization.  Right now they
+//      are hardcoded and the passed in params are ignored.
+//      Should check return value of write() to make sure the baud rate
+//      was set correctly before proceeding.
 //
 /////////////////////////////////////////////////////////////////////////
 static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1, server_c* pc_serverData)
@@ -904,7 +904,7 @@ static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1, server_c* pc_
 
   if( !canBusIsOpen[channel] ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", channel);
-    
+
     char fname[32];
 #ifndef SIMULATE_BUS_MODE
     sprintf( fname, "/dev/wecan%u", channel );
@@ -920,7 +920,7 @@ static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1, server_c* pc_
       DEBUG_PRINT1("Could not open CAN bus%d\n",channel);
       return 0;
     }
-    
+
     // Set baud rate to 250 and turn on extended IDs
     // For Opus A1, it is done by sending the following string to the can_device
     {
@@ -930,43 +930,43 @@ static int ca_InitCanCard_1 (uint32_t channel, int btr0, int btr1, server_c* pc_
       DEBUG_PRINT3("write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
       write(pc_serverData->can_device[channel], buf, strlen(buf));
     }
-    
+
     canBusFp[channel] = fdopen( pc_serverData->can_device[channel], "w+" );
     if( !canBusFp[channel] ) {
       // open succeeded, but fdopen failed!!!
       // close the open file handle created with open()
       if( pc_serverData->can_device[channel] )
         close(pc_serverData->can_device[channel]);
-      
+
       DEBUG_PRINT1("Could not fdopen CAN bus%d\n",channel);
-      
+
       return 0;
     }
-    
+
     canBusIsOpen[channel] = true;
     return 1;
-    
+
   } else
-    return 1;	// already initialized and files are already open
+    return 1; // already initialized and files are already open
 }
 
 /////////////////////////////////////////////////////////////////////////
 //
-// METHOD:	ca_TransmitCanCard_1
-// PURPOSE:	To send a msg on the specified CAN BUS
-// PARAMS:	channel		// 0 for CANLPT/ICAN, else 1 for first BUS
-//			extended	// extended Frame
-//			ptSend		// can object
-// RETURNS:	non-zero if msg was sent ok
-// 			0 on error
-// NOTES:	In this case, we will simply return 1
+// METHOD:  ca_TransmitCanCard_1
+// PURPOSE: To send a msg on the specified CAN BUS
+// PARAMS:  channel   // 0 for CANLPT/ICAN, else 1 for first BUS
+//      extended  // extended Frame
+//      ptSend    // can object
+// RETURNS: non-zero if msg was sent ok
+//      0 on error
+// NOTES: In this case, we will simply return 1
 //
 /////////////////////////////////////////////////////////////////////////
 static int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData)
 {
 // Always Transmit to this format:
 //  the letter 'm', extended/standard ID, CAN ID, Data Length, data bytes, timestamp
-//	m e 0x0cf00300 8  0xff 0xfe 0x0b 0xff 0xff 0xff 0xff 0xff       176600
+//  m e 0x0cf00300 8  0xff 0xfe 0x0b 0xff 0xff 0xff 0xff 0xff       176600
 //
 // Input is in this format:
 // typedef struct
@@ -977,7 +977,7 @@ static int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_ser
 //   uint8_t abData[8];                      /** Datenpuffer */
 // } tSend;
 
-//	fprintf(stderr,"Transmitting data to channel %d\n", channel);
+//  fprintf(stderr,"Transmitting data to channel %d\n", channel);
 
 
   CANmsg msg;
@@ -1001,7 +1001,7 @@ static int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_ser
   FD_SET(pc_serverData->can_device[ui8_bus], &wfds);
 
   struct timeval tv;
-  tv.tv_sec = 0;  	// tv_sec and tv_usec= 0: timeout immediately (only check if data is waiting when on a timer)
+  tv.tv_sec = 0;    // tv_sec and tv_usec= 0: timeout immediately (only check if data is waiting when on a timer)
   tv.tv_usec = 10000;  // wait not more than 10 msec for the state: nonblocking write
   retval = select(maxfd, NULL, &wfds, NULL, &tv);
   if(retval == -1)
@@ -1082,8 +1082,8 @@ int main(int argc, char *argv[])
     DEBUG_PRINT1("FAILURE - No CAN card was found with automatic search with IO address %04X for manually configured cards\r\n", LptIsaIoAdr );
     exit(1);
   }
-  
-  
+
+
   // do the reset
   int i = ca_ResetCanCard_1();
   if (i) {
@@ -1092,9 +1092,9 @@ int main(int argc, char *argv[])
     DEBUG_PRINT("Reset CANLPT not ok\n");
     exit(1);
   }
-  
+
   // wait to be shure that CAN card is clean reset
-  //	usleep(100);
+  //  usleep(100);
 
   int16_t i16_rc = ca_createMsqs(c_serverData.msqDataServer);
 
