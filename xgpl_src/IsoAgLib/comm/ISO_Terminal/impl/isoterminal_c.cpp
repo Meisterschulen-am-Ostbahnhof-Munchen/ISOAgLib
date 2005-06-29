@@ -630,11 +630,16 @@ bool ISOTerminal_c::timeEvent( void )
   }
   #endif
 
-/*** Filter Registration Start ***/
   // register Filter if at least one active ( claimed address )
   // local ISO IdentItem_c exists (so we're working on an ISO-Bus!
   if ( ! getSystemMgmtInstance4Comm().existActiveLocalIsoMember() ) return true;
 
+  // do further activities only if registered ident is initialised as ISO
+  if ( !pc_wsMasterIdentItem ) return true;
+  if ( pc_wsMasterIdentItem->getIsoItem() == NULL ) return true;
+  //if ( !c_isoMonitor.existIsoMemberGtp (pc_wsMasterIdentItem->gtp (), true)) return true;
+
+/*** Filter/MultiReceive Registration Start ***/
   if ( ! b_receiveFilterCreated )
   { // register to get VTStatus Messages
     b_receiveFilterCreated = true;
@@ -651,12 +656,7 @@ bool ISOTerminal_c::timeEvent( void )
     /*** MultiReceive Registration ***/
     __IsoAgLib::getMultiReceiveInstance().registerClient(VT_TO_ECU_PGN, pc_wsMasterIdentItem->getIsoItem()->nr(), this);
   }
-/*** Filter Registration End ***/
-
-  // do further activities only if registered ident is initialised as ISO
-  if ( !pc_wsMasterIdentItem ) return true;
-  if ( pc_wsMasterIdentItem->getIsoItem() == NULL ) return true;
-  //if ( !c_isoMonitor.existIsoMemberGtp (pc_wsMasterIdentItem->gtp (), true)) return true;
+/*** Filter/MultiReceive Registration End ***/
 
  /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
 /*******************************************************************************************************/

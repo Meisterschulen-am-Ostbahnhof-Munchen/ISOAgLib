@@ -1196,4 +1196,26 @@ MultiSend_c::setDelay(uint16_t rui16_delay)
 }
 
 
+
+/** user function for explicit abort of any running matching stream. */
+void
+MultiSend_c::abortSend (uint8_t rb_send, uint8_t rb_empf)
+{
+  // normally there should be only ONE match for this sa/da-pair, but loop anyway to be sure to clear the list ;)
+  for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
+  {
+    if (pc_iter->matchSaDa (rb_send, rb_empf))
+    { // SendStream found in list, abort and erase!
+      pc_iter->abortSend();
+      pc_iter = list_sendStream.erase (pc_iter);
+    }
+    else
+    { // SendStream not yet found
+      pc_iter++;
+    }
+  }
+}
+  
+
+
 } // end namespace __IsoAgLib

@@ -219,7 +219,7 @@ public:
         sent (default false == send no request)
     @return actual medium value
   */
-  int32_t med(bool rb_sendRequest = false){return MeasureProgRemote_c::med(rb_sendRequest);};
+  int32_t med(bool rb_sendRequest = false) const {return MeasureProgRemote_c::med(rb_sendRequest);};
   /**
     deliver min val
     @param rb_sendRequest choose wether a request for value update should be
@@ -265,7 +265,7 @@ public:
         sent (default false == send no request)
     @return actual medium value
   */
-  float medFloat(bool rb_sendRequest = false){return MeasureProgRemote_c::medFloat(rb_sendRequest);};
+  float medFloat(bool rb_sendRequest = false) const {return MeasureProgRemote_c::medFloat(rb_sendRequest);};
   /**
     deliver min val
     @param rb_sendRequest choose wether a request for value update should be

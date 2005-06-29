@@ -246,8 +246,8 @@ bool DINMaskUpload_c::timeEvent( void )
       break;
     case running:
       // test if upload finished
-      if (getMultiSendInstance4Comm().isSuccess()) en_maskUploadState = success;
-      else if (getMultiSendInstance4Comm().isAborted()) {
+      if (en_sendSuccess==MultiSend_c::SendSuccess) en_maskUploadState = success;
+      else if (en_sendSuccess==MultiSend_c::SendAborted) {
         en_maskUploadState = none ; //abort;
       }
       break;
@@ -258,14 +258,19 @@ bool DINMaskUpload_c::timeEvent( void )
 				tryResendMaskSyncData();
 			}
     case success:
-    case abort:
+    case abort: /** @todo This part is never reached (please double check first someone), as above the state is set to "none" instead of "abort" */
       if ( ( c_gtp.isSpecified() ) && (!(getDinMonitorInstance4Comm().existDinMemberGtp(c_gtp, true))) )
       { // lately terminal found - but not active any more -> reset
         c_gtp.setUnspecified();
         pc_terminal = NULL;
         if (en_maskUploadState == running)
         { // abort upload
-          getMultiSendInstance4Comm().abortSend();
+          const uint8_t cui8_termNr = pc_terminal->nr();
+          if (getSystemMgmtInstance4Comm().existActiveLocalDinMember())
+          {
+            const uint8_t cui8_localNr = getSystemMgmtInstance4Comm().getActiveLocalDinMember().nr();
+            getMultiSendInstance4Comm().abortSend(cui8_localNr, cui8_termNr);
+          }
           en_maskUploadState = none;
         }
 				#ifdef DEBUG_RS232
@@ -430,7 +435,7 @@ bool DINMaskUpload_c::processMsg(){
         en_maskUploadState = running;
         bool b_abortOnTimeout = (activeMask().en_terminalType == IsoAgLib::FendtVario)?true:false;
         getMultiSendInstance4Comm().sendDin(ui8_localNr, ui8_termNr, phb_data,
-            i32_dataSize, ui16_bytePerMsg, b_uploadCmd, b_abortOnTimeout);
+            i32_dataSize, ui16_bytePerMsg, en_sendSuccess, b_uploadCmd, b_abortOnTimeout);
       }
 	    return true;
     }

@@ -135,8 +135,8 @@ class MultiSendStreamer_c;
 
   @author Dipl.-Inform. Achim Spangler
 */
-class MultiSend_c : public SINGLETON_DERIVED(MultiSend_c, ElementBase_c)  {
-private:
+class MultiSend_c : public SINGLETON_DERIVED(MultiSend_c, ElementBase_c)
+{
 public: // idle was thrown out as it's now idle if no SendStream is in the list for this specific sa/da-pair!
   enum sendState_t { /*Idle,*/ SendRts, AwaitCts, SendData, SendPauseTillCts, /* DecideAfterSend, */ AwaitEndofmsgack, SendFileEnd };
   enum sendSuccess_t {SendSuccess, SendAborted, Running};
@@ -241,7 +241,7 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
       abort the multipacket send stream
       (important if original target isn't active any more)
     */
-    void abortSend();
+    void abortSend ();
 
     bool matchSaDa (uint8_t rui8_sa, uint8_t rui8_da) { return (rui8_sa == b_send) && (rui8_da == b_empf); };
 
@@ -311,18 +311,19 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
     MultiSend_c* pc_multiSend;
   };
   
-  /** initialisation for MultiSend_c
-  */
+  
+public: // methods  
+  
+  /** initialisation for MultiSend_c */
   void init( void );
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    */
-  void close( void );
+  
+  
   /** default destructor which has nothing to do */
   virtual ~MultiSend_c();
-
-  SendStream_c* getSendStream(uint8_t ui8_sa, uint8_t ui8_da);
   
-  SendStream_c& addSendStream();
+  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
+  void close( void );
+  
   
   #ifdef USE_DIN_TERMINAL
   /**
@@ -419,6 +420,9 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
   */
   bool timeEvent( void );
 
+  /** user function for explicit abort of any running matching stream. */
+  void abortSend (uint8_t rb_send, uint8_t rb_empf);
+  
 private: // Private methods
   friend class SINGLETON_DERIVED(MultiSend_c, ElementBase_c);
   friend class iMultiSend_c;
@@ -430,6 +434,10 @@ private: // Private methods
     in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
     */
   MultiSend_c() { init(); };
+  
+  SendStream_c* getSendStream(uint8_t ui8_sa, uint8_t ui8_da);
+  
+  SendStream_c& addSendStream();
   
   /**
     internal function to send a ISO target multipacket message

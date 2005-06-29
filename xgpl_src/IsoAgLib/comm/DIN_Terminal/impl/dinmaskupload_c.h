@@ -94,6 +94,7 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 
 #include <IsoAgLib/comm/Process/Local/SimpleMeasureSetpoint/impl/procdatalocalsimplesetpointsimplemeasure_c.h>
 
@@ -242,6 +243,8 @@ private: // Private attributes
   /** actual state of mask upload */
   maskUploadState_t en_maskUploadState;
 
+  MultiSend_c::sendSuccess_t en_sendSuccess;
+  
   /** GETY_POS of the connected terminal */
   GetyPos_c c_gtp;
   /** active entry no in psMaskDef */
