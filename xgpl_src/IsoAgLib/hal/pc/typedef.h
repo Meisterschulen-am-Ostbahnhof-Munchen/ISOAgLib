@@ -67,6 +67,8 @@
 #define ON                1
 #define OFF               0
 
+#include <stdint.h>
+#if 0
 typedef unsigned char uint8_t;
 typedef signed char int8_t;
 typedef unsigned short uint16_t;
@@ -74,8 +76,9 @@ typedef short int16_t;
 typedef unsigned int uint32_t;
 typedef int int32_t;
 
-typedef unsigned long int uint64_t;
-typedef long int int64_t;
+typedef unsigned long long int uint64_t;
+typedef long int long int64_t;
+#endif
 
 typedef uint8_t boolean;
 
