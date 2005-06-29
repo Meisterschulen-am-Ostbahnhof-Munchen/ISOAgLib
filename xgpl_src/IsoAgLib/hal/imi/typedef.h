@@ -1,9 +1,9 @@
 /***************************************************************************
                           typedef.h  -  system dependent basic typedef's
-                             -------------------                                         
-    begin                : Thu Aug 08 2002                                           
-    copyright            : (C) 2002 - 2004 Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+                             -------------------
+    begin                : Thu Aug 08 2002
+    copyright            : (C) 2002 - 2004 Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -58,5 +58,8 @@ typedef unsigned int  uint16_t;
 typedef int            int16_t;
 typedef unsigned long uint32_t;
 typedef long           int32_t;
+
+typedef unsigned long long uint64_t;
+typedef long long int64_t;
 
 #endif

@@ -1,13 +1,13 @@
 /***************************************************************************
                           typedef.h  -  system dependent basic typedef's
-                             -------------------                                         
-    begin                : Thu Aug 08 2002                                           
-    copyright            : (C) 2002 - 2004 Dipl.-Inform. Achim Spangler                         
-						 : This file was based on the corresponding file in
-						 : the ESX HAL and modified for the C2C HAL.
-						 : These changes (C) 2004 - 2005 Michael D. Schmidt
+                             -------------------
+    begin                : Thu Aug 08 2002
+    copyright            : (C) 2002 - 2004 Dipl.-Inform. Achim Spangler
+             : This file was based on the corresponding file in
+             : the ESX HAL and modified for the C2C HAL.
+             : These changes (C) 2004 - 2005 Michael D. Schmidt
     email                : a.spangler@osb-ag:de
-						 : mike.schmidt@agcocorp:com
+             : mike.schmidt@agcocorp:com
  ***************************************************************************/
 
 /***************************************************************************
@@ -68,5 +68,8 @@ typedef unsigned int uint16_t;
 typedef int int16_t;
 typedef unsigned long uint32_t;
 typedef long int32_t;
+
+typedef unsigned long long uint64_t;
+typedef long long int64_t;
 
 #endif

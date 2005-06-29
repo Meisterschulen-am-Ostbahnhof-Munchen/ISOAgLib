@@ -56,10 +56,10 @@
 #define DATA_CHANGED            1      /* Returnvalue from config_wd */
 
 #ifndef FALSE
-	#define FALSE             0
+  #define FALSE             0
 #endif
 #ifndef TRUE
-	#define TRUE              1
+  #define TRUE              1
 #endif
 #define HIGH              1
 #define LOW               0
@@ -73,6 +73,9 @@ typedef unsigned short uint16_t;
 typedef short int16_t;
 typedef unsigned int uint32_t;
 typedef int int32_t;
+
+typedef unsigned long int uint64_t;
+typedef long int int64_t;
 
 typedef uint8_t boolean;
 
