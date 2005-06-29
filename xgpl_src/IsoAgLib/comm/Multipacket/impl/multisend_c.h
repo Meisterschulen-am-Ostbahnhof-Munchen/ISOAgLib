@@ -82,8 +82,10 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+
 #ifndef MULTI_SEND_H
 #define MULTI_SEND_H
+
 
 /* *************************************** */
 /* ********** include headers ************ */
@@ -95,6 +97,7 @@
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include "multisendpkg_c.h"
 
+#include <list>
 #include <functional>
 
 /* *************************************** */
@@ -117,8 +120,13 @@
 namespace __IsoAgLib {
 
 /** predeclare some classes from IsoAgLib namespace */
-  class iMultiSend_c;
-  class MultiSendStreamer_c;
+class iMultiSend_c;
+class MultiSendStreamer_c;
+
+
+
+
+
 
 /**
   This class implements the various multi message data
@@ -129,12 +137,180 @@ namespace __IsoAgLib {
 */
 class MultiSend_c : public SINGLETON_DERIVED(MultiSend_c, ElementBase_c)  {
 private:
-public:
-  enum sendState_t { Idle, SendRts, AwaitCts, SendData,
-                      SendPauseTillCts, /* DecideAfterSend, */ AwaitEndofmsgack, SendFileEnd};
+public: // idle was thrown out as it's now idle if no SendStream is in the list for this specific sa/da-pair!
+  enum sendState_t { /*Idle,*/ SendRts, AwaitCts, SendData, SendPauseTillCts, /* DecideAfterSend, */ AwaitEndofmsgack, SendFileEnd };
   enum sendSuccess_t {SendSuccess, SendAborted, Running};
   enum msgType_t {Din = 1, IsoTarget = 2, IsoBroadcast = 6};
 
+  class SendStream_c
+  {
+  public:
+    
+    /// Object construction
+    SendStream_c(MultiSend_c& rrefc_multiSend) : pc_multiSend (&rrefc_multiSend) {}; // does NOT initialize anything, use "init(...)" directly after construction!!!!
+    void initIso (uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType);
+    void initDin (uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rpen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout);
+    void init    (uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rpen_sendSuccessNotify, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType, bool rb_ext, uint16_t rui16_delay);
+
+    /**
+      perform periodical actions
+      @return true -> remove me, I'm finished!
+    */
+    bool timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time );
+
+    /**
+      start processing of a process msg
+      that matches this SendStream
+    */
+    bool processMsg();
+
+    /**
+      check if the forced time delay since last timestamp is over
+      @param ri32_time actual time
+      @return true -> time delay is over
+    */
+    bool isDelayEnd(int32_t ri32_time)const{return ((ri32_time - i32_timestamp)>= pc_multiSend->getMaxDelay())?true:false;};
+    /**
+      check if the forced time delay since last timestamp is over
+      @param ri32_time actual time
+      @param rui16_dynamicDelay individual delay
+      @return true -> time delay is over
+    */
+    bool isDelayEnd(int32_t ri32_time, uint16_t rui16_dynamicDelay)const{return ((ri32_time - i32_timestamp)>= rui16_dynamicDelay)?true:false;};
+    /**
+      check if actual message is complete
+    */
+    bool isCompleteMsg() const;
+    /**
+      check if send of all data is complete
+      @return true -> i32_DC tell that i32_dataSize ist reached
+    */
+    bool isCompleteData() const;
+    /**
+      deliver the amount of messages for IsoAgLib+ data stream
+      (no problem if called for ISO)
+      @return amount of messages for stored complete data size for TP.FileStart
+    */
+    uint16_t getMsgCnt()const;
+    /**
+      deliver the message size in byte
+      @return message size in uint8_t for CM_RTS
+    */
+    uint16_t getMsgSize()const{return ui16_msgSize;};
+    /**
+      deliver the data size in byte
+      @return data size in uint32_t for CM_RTS
+    */
+    uint32_t getDataSize()const{return i32_dataSize;};
+    /**
+      deliver the amunt of CAN pkg per message
+      @return CAN pkg amount per message for CM_RTS
+    */
+    uint16_t getPkgPerMsg()const;
+    /**
+      deliver the message number in LBS+ data stream
+      @return message number to insert in CM_RTS
+    */
+    uint16_t getMsgNr()const;
+    /**
+      read the the commanded mesage size from CTS CAN pkg
+      (for IsoAgLib+ a change of ui16_msgSize is only accepted, if
+      new value results in increase of Pkg amount, because
+      often the commanded ui16_msgSize is not round factor of 7)
+      @return commanded message size
+    */
+    uint16_t readMsgSize()const;
+    /**
+      read the next to be sent data position from CM_CTS
+      @return new i32_DC value
+    */
+    int32_t read_DC();
+    /**
+      read the acknowledged data amount from EndOfMsgAck
+      @return amount of correct received data byte
+    */
+    int32_t readAck_DC();
+    /**
+      calculate the actual sequence number and
+      calculate the amount of data bytes which must be placed in new CAN pkg
+      @param ui8_nettoDataCnt amount of data which should be sent within this msg
+    */
+    void prepareSendMsg(uint8_t &ui8_nettoDataCnt);
+
+    /**
+      abort the multipacket send stream
+      (important if original target isn't active any more)
+    */
+    void abortSend();
+
+    bool matchSaDa (uint8_t rui8_sa, uint8_t rui8_da) { return (rui8_sa == b_send) && (rui8_da == b_empf); };
+
+  private: // methods
+    /**
+      send a message -> set the ident and initiate sending to CAN
+    */
+    void sendIntern();
+    
+  private: // attributes
+  /// Initialized on Init - DIN & ISO
+    /** empf field for the CAN identifier */
+    uint8_t b_empf;
+    /** send field for the CAN identifier */
+    uint8_t b_send; 
+    
+    /** using Extended Transport Protocol? set this flag for DIN to FALSE, it is also used in the DIN case! */
+    bool b_ext;     
+    /** timestamp for time control */
+    int32_t i32_timestamp;
+    /** data counter for data to send */
+    int32_t i32_DC;
+    /** data coutner for acknowledged data */
+    int32_t i32_ack_DC;
+    /** size of the data complete */
+    int32_t i32_dataSize;
+    /** size of one message (DIN: complete mask parted in amount of 'messages'; ISO identical to i32_dataSize) */
+    uint16_t ui16_msgSize;
+    /** standard delay between two sent packets (between 50 and 200)
+    uint16_t ui16_delay; 
+    \__-> now using maxDelay from MultiSend, because not everybody can have its own delay, we'll have to take the max. */
+    /** pointer to the data */
+    HUGE_MEM uint8_t* hpb_data;
+    /** actual send state during Running process */
+    sendState_t en_sendState;
+    /** reference to variable that will be set upon state change */
+    sendSuccess_t* pen_sendSuccessNotify;
+    /** command to initiate file transfer */
+    msgType_t en_msgType;
+    /** decide if direct abort is wanted on timeout from receier ack */
+    bool b_abortOnTimeout;
+    /** DIN transfer cmd */
+    uint8_t b_fileCmd;
+    /** pointer to an IsoAgLib::MultiSendStreamer_c class which streams out parts of the stream step by step */
+    MultiSendStreamer_c* pc_mss;
+    
+  /// Initialized on Init - ISO-Specific
+    /** ISO integrates the PGN of the multipacket message */
+    int32_t i32_pgn;
+  
+  /// Initialized on Init - DIN-Specific
+    /** counter for retries of sending RTS */
+    uint8_t b_try;
+
+  /// Initialized on Runtime
+    /** sequence/offset number */
+    uint32_t ui32_sequenceNr;
+    uint32_t ui32_offset;
+    /** save ... from last CTS so we can see if the CTS was resent... */
+    uint32_t ui32_lastNextPacketNumberToSend;
+    /** cnt of pkg to send in this msg */
+    uint8_t b_pkgToSend;
+    /** cnt of pkg sent since the last DPO */
+    uint8_t b_pkgSent;
+  
+  /// Back reference to MultiSend_c for setting the MAX of all delays, this can only be managed here...
+    MultiSend_c* pc_multiSend;
+  };
+  
   /** initialisation for MultiSend_c
   */
   void init( void );
@@ -144,6 +320,10 @@ public:
   /** default destructor which has nothing to do */
   virtual ~MultiSend_c();
 
+  SendStream_c* getSendStream(uint8_t ui8_sa, uint8_t ui8_da);
+  
+  SendStream_c& addSendStream();
+  
   #ifdef USE_DIN_TERMINAL
   /**
     send a DIN multipacket message for terminal accoring to LBS+
@@ -157,7 +337,7 @@ public:
           (instead of standard resend of last message) (default false)
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, uint16_t rb_fileCmd, bool rb_abortOnTimeout = false);
+  bool sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout = false);
   #endif
   #if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
    /**
@@ -174,7 +354,7 @@ public:
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t* rpen_sendSuccessNotify);
+  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
 
   /**
     send a ISO target multipacket message
@@ -187,25 +367,8 @@ public:
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t* rpen_sendSuccessNotify);
+  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
 
-  /**
-    internal function to send a ISO target multipacket message
-    @param rb_send dynamic member no of sender
-    @param rb_empf dynamic member no of receiver
-    @param rhpb_data HUGE_MEM pointer to the data
-    @param ri32_dataSize size of the complete mask
-    @param ri32_pgn PGN to use for the upload
-    @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
-            is written by MultiSend_c
-    @param rpc_mss allow active build of data stream parts for upload by deriving data source class
-                  from IsoAgLib::MultiSendStreamer_c, which defines virtual functions to control the
-                  retrieve of data to send. This is especially important for ISO_Terminal,
-                  which assembles the data pool dependent on the terminal capabilities during upload
-                  ( e.g. bitmap variants )
-    @return true -> MultiSend_c was ready -> mask is spooled to target
-  */
-  bool sendIsoTargetIntern(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t* rpen_sendSuccessNotify, MultiSendStreamer_c* rpc_mss);
   /**
     send a ISO broadcast multipacket message
     @param rb_send dynamic member no of sender
@@ -215,24 +378,30 @@ public:
     @param ri32_pgn pgn of the following messages that are to be grouped...
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn);
+  bool sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify);
   #endif
 
+  /**
+    set the delay between two sent messages, called by SendStream_c's timeEvent() when neccessary
+    @param rui16_delay wanted delay
+  */
+  void setSendStreamDelay(uint16_t rui16_delay);
+  
   /**
     deliver reference to data pkg
     @return reference to MultiSendPkg_c which handles CAN I/O of process data
   */
-  MultiSendPkg_c& data(){return c_data;};
+  MultiSendPkg_c& data() { return c_data; };
   /**
     deliver reference to data pkg as reference to CANPkgExt_c
     to implement the base virtual function correct
   */
-  virtual CANPkgExt_c& dataBase();
+  virtual CANPkgExt_c& dataBase() { return c_data; }; 
   /**
     deliver reference to data pkg for const read access
     @return const reference to MultiSendPkg_c which handles CAN I/O of process data
   */
-  const MultiSendPkg_c& constData()const{return c_data;};
+  const MultiSendPkg_c& constData() const { return c_data; };
 
   /**
     start processing of a process msg
@@ -249,26 +418,7 @@ public:
     @return true -> all planned activities performed in allowed time
   */
   bool timeEvent( void );
-  /**
-    abort the multipacket send stream
-    (important if original target isn't active any more)
-  */
-  void abortSend();
-  /**
-    check if multipacket send is Running
-    @return true -> multipacket is being sent at the moment
-  */
-  bool isRunning()const{return (en_sendSuccess == Running)?true:false;};
-  /**
-    check if multipacket send is finished with success
-    @return true -> multipacket is finished with success
-  */
-  bool isSuccess()const{return (en_sendSuccess == SendSuccess)?true:false;};
-  /**
-    check if multipacket send is aborted
-    @return true -> multipacket is aborted
-  */
-  bool isAborted()const{return (en_sendSuccess == SendAborted)?true:false;};
+
 private: // Private methods
   friend class SINGLETON_DERIVED(MultiSend_c, ElementBase_c);
   friend class iMultiSend_c;
@@ -279,153 +429,54 @@ private: // Private methods
     in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
     */
   MultiSend_c() { init(); };
+  
   /**
-    send a message -> set the ident and initiate sending to CAN
+    internal function to send a ISO target multipacket message
+    @param rb_send dynamic member no of sender
+    @param rb_empf dynamic member no of receiver
+    @param rhpb_data HUGE_MEM pointer to the data
+    @param ri32_dataSize size of the complete mask
+    @param ri32_pgn PGN to use for the upload
+    @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
+            is written by MultiSend_c
+    @param rpc_mss allow active build of data stream parts for upload by deriving data source class
+                  from IsoAgLib::MultiSendStreamer_c, which defines virtual functions to control the
+                  retrieve of data to send. This is especially important for ISO_Terminal,
+                  which assembles the data pool dependent on the terminal capabilities during upload
+                  ( e.g. bitmap variants )
+    @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  void sendIntern();
+  bool sendIsoIntern(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType);
+  
   /**
-    check if the forced time delay since last timestamp is over
-    @param ri32_time actual time
-    @return true -> time delay is over
-  */
-  bool isDelayEnd(int32_t ri32_time)const{return ((ri32_time - i32_timestamp)>= ui16_delay)?true:false;};
-  /**
-    check if the forced time delay since last timestamp is over
-    @param ri32_time actual time
-    @param rui16_dynamicDelay individual delay
-    @return true -> time delay is over
-  */
-  bool isDelayEnd(int32_t ri32_time, uint16_t rui16_dynamicDelay)const{return ((ri32_time - i32_timestamp)>= rui16_dynamicDelay)?true:false;};
-  /**
-    check if actual message is complete
-  */
-  bool isCompleteMsg() const;
-  /**
-    check if send of all data is complete
-    @return true -> i32_DC tell that i32_dataSize ist reached
-  */
-  bool isCompleteData() const;
-  /**
-    deliver the amount of messages for IsoAgLib+ data stream
-    (no problem if called for ISO)
-    @return amount of messages for stored complete data size for TP.FileStart
-  */
-  uint16_t getMsgCnt()const;
-  /**
-    deliver the message size in byte
-    @return message size in uint8_t for CM_RTS
-  */
-  uint16_t getMsgSize()const{return ui16_msgSize;};
-  /**
-    deliver the data size in byte
-    @return data size in uint32_t for CM_RTS
-  */
-  uint32_t getDataSize()const{return i32_dataSize;};
-  /**
-    deliver the amunt of CAN pkg per message
-    @return CAN pkg amount per message for CM_RTS
-  */
-  uint16_t getPkgPerMsg()const;
-  /**
-    deliver the message number in LBS+ data stream
-    @return message number to insert in CM_RTS
-  */
-  uint16_t getMsgNr()const;
-  /**
-    read the the commanded mesage size from CTS CAN pkg
-    (for IsoAgLib+ a change of ui16_msgSize is only accepted, if
-    new value results in increase of Pkg amount, because
-    often the commanded ui16_msgSize is not round factor of 7)
-    @return commanded message size
-  */
-  uint16_t readMsgSize()const;
-  /**
-    read the next to be sent data position from CM_CTS
-    @return new i32_DC value
-  */
-  int32_t read_DC();
-  /**
-    read the acknowledged data amount from EndOfMsgAck
-    @return amount of correct received data byte
-  */
-  int32_t readAck_DC();
-  /**
-    calculate the actual sequence number and
-    calculate the amount of data bytes which must be placed in new CAN pkg
-    @param ui8_nettoDataCnt amount of data which should be sent within this msg
-  */
-  void prepareSendMsg(uint8_t &ui8_nettoDataCnt);
-  /**
-    set the delay between two sent messages
+    set the delay between two sent messages, no max calculation, only for internal use!
     @param rui16_delay wanted delay
   */
   void setDelay(uint16_t rui16_delay);
-  /**
-    set the send state to Idle and set the CAN send pause to 0
-  */
-  void setSendStateIdle();
+  
+  uint16_t getMaxDelay() const { return ui16_maxDelay; };
+  
 private: // Private attributes
-	#if defined ( _MSC_VER )
-		#if _MSC_VER <= 1200
-			// Visual Studio VC++ 6.0 ANSI conformance is really ugly
-			// it can't handle static const member variables
-			// ( VC++ 7.0 is a lot more ANSI C++ standard conformant )
-			enum { scui8_isoCanPkgDelay = 4 };
-		#else
-			static const unsigned char scui8_isoCanPkgDelay = 4;
-		#endif
-	#else
-		static const unsigned char scui8_isoCanPkgDelay = 4;
-	#endif
-  /** using Extended Transport Protocol? */
-  bool b_ext;
+  #if defined ( _MSC_VER )
+    #if _MSC_VER <= 1200
+      // Visual Studio VC++ 6.0 ANSI conformance is really ugly
+      // it can't handle static const member variables
+      // ( VC++ 7.0 is a lot more ANSI C++ standard conformant )
+      enum { scui8_isoCanPkgDelay = 4 };
+    #else
+      static const unsigned char scui8_isoCanPkgDelay = 4;
+    #endif
+  #else
+    static const unsigned char scui8_isoCanPkgDelay = 4;
+  #endif
+  
   /** msg object for CAN I/O */
   MultiSendPkg_c c_data;
-  /** timestamp for time control */
-  int32_t i32_timestamp;
-  /** data counter for data to send */
-  int32_t i32_DC;
-  /** data coutner for acknowledged data */
-  int32_t i32_ack_DC;
-  /** ISO integrates the PGN of the multipacket message */
-  int32_t i32_pgn;
-  /** size of the data complete */
-  int32_t i32_dataSize;
-  /** size of one message (DIN: complete mask parted in amount of 'messages'; ISO identical to i32_dataSize) */
-  uint16_t ui16_msgSize;
-  /** standard delay between two sent packets (between 50 and 200) */
-  uint16_t ui16_delay;
-  /** pointer to the data */
-  HUGE_MEM uint8_t* hpb_data;
-  /** actual send state during Running process */
-  sendState_t en_sendState;
-  /** state: send success or aborted */
-  sendSuccess_t en_sendSuccess;
-  /** reference to variable that will be set upon state change */
-  sendSuccess_t* pen_sendSuccessNotify;
-  /** command to initiate file transfer */
-  msgType_t en_msgType;
-  /** counter for retries of sending RTS */
-  uint8_t b_try;
-  /** decide if direct abort is wanted on timeout from receier ack */
-  bool b_abortOnTimeout;
-  /** DIN transfer cmd */
-  uint8_t b_fileCmd;
-  /** empf field for the CAN identifier */
-  uint8_t b_empf;
-  /** send field for the CAN identifier */
-  uint8_t b_send;
-  /** sequence/offset number */
-  uint32_t ui32_sequenceNr;
-  uint32_t ui32_offset;
-  /** save ... from last CTS so we can see if the CTS was resent... */
-  uint32_t ui32_lastNextPacketNumberToSend;
-  /** cnt of pkg to send in this msg */
-  uint8_t b_pkgToSend;
-  /** cnt of pkg sent since the last DPO */
-  uint8_t b_pkgSent;
-  /** pointer to an IsoAgLib::MultiSendStreamer_c class which streams out parts of the stream step by step */
-  MultiSendStreamer_c* pc_mss;
+
+  std::list<SendStream_c> list_sendStream;
+    
+  /** maximum of all delay-values, as we can't set the delay  */
+  uint16_t ui16_maxDelay;
 };
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique MultiSend_c singleton instance

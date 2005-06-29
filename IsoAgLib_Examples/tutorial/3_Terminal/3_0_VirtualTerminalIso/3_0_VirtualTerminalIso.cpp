@@ -449,6 +449,7 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, 
     iVtObjectOSresonible.setValueCopy(ch_buffer);
     #ifdef DEBUG
     std::cout << "String: " << ch_buffer << ".\n";
+    fflush(0);
     #endif
   }
 }

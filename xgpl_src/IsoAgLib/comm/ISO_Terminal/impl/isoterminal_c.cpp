@@ -1,7 +1,3 @@
-// LOESCHE_POOL will send DeleteVersion INSTEAD of LoadVersion
-//#define LOESCHE_POOL
-//#define GET_VERSIONS
-
 /***************************************************************************
                           isoterminal_c.cpp - central ISO terminal management
                              -------------------
@@ -83,7 +79,13 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+
+// LOESCHE_POOL will send DeleteVersion INSTEAD of LoadVersion
+//#define LOESCHE_POOL
+//#define GET_VERSIONS
+
 #include "isoterminal_c.h"
+
 
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
@@ -430,13 +432,13 @@ bool ISOTerminal_c::startUploadCommand ()
     ui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
 
     return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
-           &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, &en_sendSuccess);
+           &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, en_sendSuccess);
   } else {
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
     return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
-           (MultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),        ECU_TO_VT_PGN, &en_sendSuccess);
+           (MultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),        ECU_TO_VT_PGN, en_sendSuccess);
   }
   return true;
 }
@@ -926,7 +928,7 @@ bool ISOTerminal_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_id
   return true;
 }
 
-void ISOTerminal_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident)
+void ISOTerminal_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c /*rc_ident*/)
 {
   c_streamer.pc_pool->eventStringValueAbort();
 }
@@ -1312,7 +1314,7 @@ bool ISOTerminal_c::processMsg()
           if (data().getUint8Data (2) == 0) {
             // start uploading, there MAY BE enough memory
             en_uploadPoolState = UploadPoolUploading;
-            getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, &en_sendSuccess);
+            getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
           } else {
             vtOutOfMemory();
           }
