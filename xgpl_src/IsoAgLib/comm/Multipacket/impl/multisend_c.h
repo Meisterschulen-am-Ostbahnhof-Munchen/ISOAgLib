@@ -422,6 +422,7 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
 private: // Private methods
   friend class SINGLETON_DERIVED(MultiSend_c, ElementBase_c);
   friend class iMultiSend_c;
+  friend class SendStream_c;
   /**
     HIDDEN constructor for a MultiSend_c object instance
     NEVER instantiate a variable of type MultiSend_c within application
