@@ -914,6 +914,7 @@ MultiSend_c::SendStream_c::abortSend()
   
   refc_multiSendPkg.setData(0, ConnAbort);
   refc_multiSendPkg.setData(1, uint32_t(0xFFFFFFFFUL));
+//refc_multiSendPkg.setData(1, uint32_t(0x53d0FFFFUL)); // debug-test
   bool b_performAbort = false;
   #ifdef USE_DIN_TERMINAL
   if (en_msgType == Din)

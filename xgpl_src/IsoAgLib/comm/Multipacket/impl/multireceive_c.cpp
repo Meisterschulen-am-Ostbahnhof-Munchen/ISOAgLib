@@ -785,6 +785,9 @@ MultiReceive_c::sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStrea
 
   c_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ rc_rsi.getSa(), /* src: */ rc_rsi.getDa(),
                         0xFF /* decimal: 255 */, 0xFF,0xFF,0xFF,0xFF, MACRO_BYTEORDER_toLoMidHi(rc_rsi.getPgn()));
+  #ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE << "Sending out an ConnAbort!\n";
+  #endif
   __IsoAgLib::getCanInstance4Comm() << c_data;
 } // -X2C
 

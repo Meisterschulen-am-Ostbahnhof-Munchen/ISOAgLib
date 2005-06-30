@@ -720,6 +720,22 @@ bool ISOTerminal_c::timeEvent( void )
   // be kind and wait until "COMPLETE AddressClaim" is finished (WSMaster/Slaves Announce)
   if ( !pc_wsMasterIdentItem->getIsoItem()->isClaimedAddress() ) return true;
 
+  
+  // If our IsoItem has claimed address, immediately try to get the LANGUAGE_PGN from VT/anyone ;-) (regardless of pool-upload!)
+  if ((!localSettings_a.lastReceived) && ((localSettings_a.lastRequested == 0) || ((HAL::getTime()-localSettings_a.lastRequested) > 2000)))
+  { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
+    /** @todo Give up somewhen?? Or retry really every 2 seconds? */
+    // Get Local Settings (may not be reached, when terminal is switched on after ECU, as VT sends LNAGUAGE Info on startup!
+    c_data.setExtCanPkg3 (6, 0, 234, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                          (LANGUAGE_PGN & 0xFF), ((LANGUAGE_PGN >> 8)& 0xFF), ((LANGUAGE_PGN >> 16)& 0xFF));
+    getCanInstance4Comm() << c_data;      // Command: Request_PGN
+    localSettings_a.lastRequested = HAL::getTime();
+  }
+
+  if (!localSettings_a.lastReceived)
+    return true; // do not proceed if LANGUAGE not yet received!
+
+
   // Do nothing if no pool is registered
   if ( (en_objectPoolState == OPNoneRegistered)
     || (en_objectPoolState == OPCannotBeUploaded) ) // if it couldn't be uploaded, only disconnecting/connecting VT helps!
@@ -775,7 +791,7 @@ bool ISOTerminal_c::timeEvent( void )
     // if (UploadPoolInit)
 
     // ### Do we have to request (any) vt capabilities?
-    if (!(vtCapabilities_a.lastReceivedFont && vtCapabilities_a.lastReceivedHardware && vtCapabilities_a.lastReceivedSoftkeys && localSettings_a.lastReceived)) {
+    if (!(vtCapabilities_a.lastReceivedFont && vtCapabilities_a.lastReceivedHardware && vtCapabilities_a.lastReceivedSoftkeys)) {
       /// Pool-Upload: PRE Phase (Get VT-Properties)
       if (!vtCapabilities_a.lastReceivedSoftkeys && ((vtCapabilities_a.lastRequestedSoftkeys == 0) || ((HAL::getTime()-vtCapabilities_a.lastRequestedSoftkeys) > 1000))) {
         // Get Number Of Soft Keys
@@ -800,13 +816,6 @@ bool ISOTerminal_c::timeEvent( void )
                               199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Hardware
         vtCapabilities_a.lastRequestedHardware = HAL::getTime();
-      }
-      if (vtCapabilities_a.lastReceivedSoftkeys && vtCapabilities_a.lastReceivedFont && vtCapabilities_a.lastReceivedHardware && (!localSettings_a.lastReceived) && ((localSettings_a.lastRequested == 0) || ((HAL::getTime()-localSettings_a.lastRequested) > 1000))) {
-        // Get Local Settings (may not be reached, when terminal is switched on after ECU, as VT sends LNAGUAGE Info on startup!
-        c_data.setExtCanPkg3 (6, 0, 234, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                              (LANGUAGE_PGN & 0xFF), ((LANGUAGE_PGN >> 8)& 0xFF), ((LANGUAGE_PGN >> 16)& 0xFF));
-        getCanInstance4Comm() << c_data;      // Command: Request_PGN
-        localSettings_a.lastRequested = HAL::getTime();
       }
     }
     else // if (vtCapabilities_a.lastReceivedFont && vtCapabilities_a.lastReceivedHardware && vtCapabilities_a.lastReceivedSoftkeys && localSettings_a.lastReceived)
