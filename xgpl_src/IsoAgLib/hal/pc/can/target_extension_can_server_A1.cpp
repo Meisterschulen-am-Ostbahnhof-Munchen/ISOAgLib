@@ -180,7 +180,7 @@ static FILE*  canBusFp[cui32_maxCanBusCnt];
 
 namespace __HAL {
 
-void timeval_add_diff(struct timeval *presult, struct timeval *pa, struct timeval *pb) {
+void timeval_diff(struct timeval *presult, struct timeval *pa, struct timeval *pb) {
 
   presult->tv_sec = pa->tv_sec - pb->tv_sec;
   presult->tv_usec = pa->tv_usec - pb->tv_usec;
@@ -300,7 +300,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           gettimeofday(&s_currentTime, 0);
 
           // get difference between now and client start up time
-          timeval_add_diff(&s_timeDiff, &s_currentTime, &(iter->s_startTime));
+          timeval_diff(&s_timeDiff, &s_currentTime, &(iter->s_startTime));
           pc_data->i32_time = s_timeDiff.tv_sec * 1000 + s_timeDiff.tv_usec / 1000 ;
 
           pc_data->i32_ident = ui32_id;
