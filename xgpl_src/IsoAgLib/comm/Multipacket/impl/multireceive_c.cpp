@@ -202,6 +202,11 @@ MultiReceive_c::processMsg()
   ui32_pgn = data().getUint8Data(5) | (data().getUint8Data(6) << 8) | (data().getUint8Data(7) << 16);
   IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (ui32_pgn, data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
 
+  if (!anyMultiReceiveClientRegisteredForThisDa (data().isoPs()))
+  { // we do NOT care for this can-pkg at all, as it's NOT directed to any of the registered clients!
+    return false; // let multisend/others check if it needs this can-pkg...
+  }
+  
   switch (ui8_pgnFormat) {
     case MACRO_pgnFormatOfPGN(ETP_CONN_MANAGE_PGN):
       b_ePgn = true; // break left out intentionally!
@@ -224,7 +229,7 @@ MultiReceive_c::processMsg()
 
           { // to allow local variables!
 
-            // RTS from an SA that has already a Stream running?
+            // RTS from an SA that has already a Stream running? // regardless of PGN
             Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/);
             if (pc_streamFound != NULL) {
               // abort, already running stream is interrupted by RTS
@@ -256,10 +261,15 @@ MultiReceive_c::processMsg()
               return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
             }
 
-            // First of all, is there a client that handles those (E)TP-Messages?
+            // First of all, is there a client registered that handles those PGNs via (E)TP-Messages?
             IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(c_tmpRSI);
-            if (pc_clientFound == NULL) {
-              // There's no client registered to take this PGN->thisAddress! */
+            if (pc_clientFound == NULL)
+            { // There's no client registered to take this PGN->thisAddress! */
+              notifyError(c_tmpRSI, 1015);
+              sendConnAbort (t_streamType, c_tmpRSI);
+              #ifdef DEBUG
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to PGN requested that the MR-Client has not registered to receive ***\n";
+              #endif
               return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
             }
 
@@ -294,17 +304,29 @@ MultiReceive_c::processMsg()
 
             Stream_c* pc_streamFound = getStream (c_tmpRSI);
 
-            if ((pc_streamFound == NULL) || (!b_ePgn)) {
-              #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n\n DPO for an unknown/unopened or Standard-TP stream!!\n ";
-              #endif
+            if (pc_streamFound == NULL)
+            {
               notifyError(c_tmpRSI, 1004);
               sendConnAbort (t_streamType, c_tmpRSI); // according to Brad: ConnAbort
+              #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n\n DPO for an unknown/unopened stream!!\n ";
+              #endif
+              return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
+            }
+            
+            if (!b_ePgn)
+            {
+              notifyError(c_tmpRSI, 1016);
+              connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound); // according to Brad: ConnAbort
+              #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n\n DPO for a Standard-TP stream!!\n ";
+              #endif
               return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
             }
 
             // try to set the DPO in this stream - if it's not allowed right now (or timedout), this DPO was not correct
-            if (! (pc_streamFound->setDataPageOffset (data().getUint8Data(2) | (data().getUint8Data(3) << 8) | (data().getUint8Data(4) << 16)))) {
+            if (! (pc_streamFound->setDataPageOffset (data().getUint8Data(2) | (data().getUint8Data(3) << 8) | (data().getUint8Data(4) << 16))))
+            { // DPO not awaited now!
               notifyError(c_tmpRSI, 1005);
               connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
               #ifdef DEBUG
@@ -339,11 +361,11 @@ MultiReceive_c::processMsg()
             // BAM from an SA that has already a Stream running?
             Stream_c* pc_streamFound = getStream (data().isoSa(), 255 /* 0xFF, BAM is always to GLOBAL */);
             if (pc_streamFound != NULL) {
-              // abort already running stream is interrupted by RTS
-              notifyError(c_tmpRSI, 1013);
-              removeStream (pc_streamFound);
+              // abort already running stream is interrupted by BAM
+              notifyError(c_tmpRSI, 1017);
+              connAbortTellClientRemoveStream (false /* do NOT send ConnAbort msg */, pc_streamFound);
               #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (BAM in between) ***\n";
               #endif
               // return true;
               // ^^^ do NOT return, if the old BAM is "aborted" due to this BAM, try with this BAM now...
@@ -379,9 +401,7 @@ MultiReceive_c::processMsg()
           MACRO_Define_t_streamType_and_checkInvalid
 
           { // to allow local variables!
-            // do NOT allow a BAM to be aborted (by the sender himself).. doesn't make no sense anyway...
-            if (c_tmpRSI.getDa() == 0xFF) return true; // this ConnAbort is not of interest for anybody else...
-
+            // also allow a BAM to be aborted by the sender himself...
             Stream_c* pc_streamFound = getStream (c_tmpRSI);
 
             if (pc_streamFound) {
@@ -445,7 +465,7 @@ MultiReceive_c::processMsg()
           if (data().isoPs() == 0xFF)
           {
             notifyError(c_tmpRSI, 1014);
-            removeStream (pc_streamFound);
+            connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
             #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "\n*** BAM sequence error ***\n";
             #endif
@@ -781,6 +801,11 @@ MultiReceive_c::sendCurrentCts(DEF_Stream_c_IMPL* rpc_stream)
 void
 MultiReceive_c::sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi)
 { // ~X2C
+  if (rc_rsi.getDa() == 0xFF)
+  { // NEVER answer to a packet that was sent to GLOBAL ADDRESS 0xFF !
+    return;
+  }
+  
   uint8_t pgn = (rt_streamType & StreamEpgnMASK) ? (ETP_CONN_MANAGE_PGN >> 8) : (TP_CONN_MANAGE_PGN >> 8);
 
   c_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ rc_rsi.getSa(), /* src: */ rc_rsi.getDa(),
@@ -930,15 +955,31 @@ MultiReceive_c::close( void )
 IsoAgLib::MultiReceiveClient_c*
 MultiReceive_c::getClient(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
 {
-  std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
-  while (i_list_clients != list_clients.end()) {
-    MultiReceiveClientWrapper_s curClientWrapper = *i_list_clients;
-
-    if (rc_streamIdent.matchDaPgn(curClientWrapper.ui8_clientAddress, curClientWrapper.ui16_pgn))
-      return curClientWrapper.pc_client;
-    i_list_clients++;
+  for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+       i_list_clients != list_clients.end();
+       i_list_clients++)
+  {
+    if (rc_streamIdent.matchDaPgn (i_list_clients->ui8_clientAddress, i_list_clients->ui16_pgn))
+      return i_list_clients->pc_client;
   }
   return NULL;
+}
+
+
+
+bool
+MultiReceive_c::anyMultiReceiveClientRegisteredForThisDa (uint8_t ui8_da)
+{
+  if (ui8_da == 0xFF) return true;
+  /** @todo extend this function, so it checks if any of the clients want BAMs! */
+  for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+       i_list_clients != list_clients.end();
+       i_list_clients++)
+  {
+    if (ui8_da == i_list_clients->ui8_clientAddress)
+      return true;
+  }
+  return false;
 }
 
 

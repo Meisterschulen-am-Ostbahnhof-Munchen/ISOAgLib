@@ -236,6 +236,8 @@ private:
   //! @return NULL for "doesn't exist", otherwise valid "Stream_c*"
   Stream_c* getStream(uint8_t sa, uint8_t da);
 
+  bool anyMultiReceiveClientRegisteredForThisDa (uint8_t ui8_da);
+  
   //  Operation: getClient
   //! Parameter:
   //! @param rc_streamIdent:
