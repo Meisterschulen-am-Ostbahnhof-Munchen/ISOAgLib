@@ -408,7 +408,7 @@ bool ISOItem_c::timeEvent( void )
   if (itemState(IState_c::PreAddressClaim))
   { // this item is in prepare address claim state -> wait for sending first adress claim
     int32_t i32_lastAdrRequestTime = c_isoMonitor.lastIsoSaRequest();
-    if (i32_lastAdrRequestTime != 0)
+    if (i32_lastAdrRequestTime != -1)
     {
       if ((i32_time - i32_lastAdrRequestTime) > (1250 + calc_randomWait()))
       { // last iso adress claim request is still valid and should have been

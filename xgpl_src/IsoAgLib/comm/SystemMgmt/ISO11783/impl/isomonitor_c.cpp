@@ -147,7 +147,7 @@ void ISOMonitor_c::init( void )
     #endif
     vec_isoMember.clear();
     pc_isoMemberCache = vec_isoMember.end();
-    i32_lastSaRequest = 0;
+    i32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
     c_tempIsoMemberItem.set( 0, GetyPos_c(0xF, 0xF), 0xFE, IState_c::Active,
             0xFFFF, (ISOName_c*)NULL, getSingletonVecKey() );
 
@@ -217,6 +217,8 @@ bool ISOMonitor_c::timeEvent( void ){
   #if CONFIG_ISO_ITEM_MAX_AGE > 0
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
+  if ( lastIsoSaRequest() == -1) return true;
+  
   int32_t i32_now = Scheduler_c::getLastTimeEventTrigger();
   const int32_t ci32_timeSinceLastAdrClaimRequest = (i32_now - lastIsoSaRequest());
   if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
@@ -723,7 +725,7 @@ uint8_t ISOMonitor_c::unifyIsoSa(const ISOItem_c* rpc_isoItem)
 bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
 { // trigger an initial request for claimed address
 	// ( only if no request was detected )
-	if ( ( lastIsoSaRequest() != 0 ) && ( ! rb_force ) )
+	if ( ( lastIsoSaRequest() != -1 ) && ( ! rb_force ) )
 	{ // at least one request was already detected
 		return false;
 	}
