@@ -176,7 +176,6 @@ namespace __IsoAgLib {
 #endif
 
 
-
 /** @todo set the wanted sensemaking retries/timeout values here!!! */
 #define DEF_WaitFor_Reupload 5000
 #define DEF_TimeOut_LoadVersion 10000
@@ -222,8 +221,7 @@ SendUpload_c::SendUpload_c (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
 /**
   >>StringUpload<< Constructors ( Copy and Reference! )
 */
-
-SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength)
+SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
 {
   // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
   uint16_t strLen = (CNAMESPACE::strlen(rpc_string) < overrideSendLength) ? CNAMESPACE::strlen(rpc_string) : overrideSendLength;
@@ -232,7 +230,7 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
   mssObjectString=NULL;
   vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
 
-  vec_uploadBuffer.push_back (179 /* 0xB3 */); /* Command: Command --- Parameter: Change String Value (TP) */
+  vec_uploadBuffer.push_back (ui8_cmdByte ); /* Default of ui8_cmdByte is: Command: Command --- Parameter: Change String Value (TP) */
   vec_uploadBuffer.push_back (rui16_objId & 0xFF);
   vec_uploadBuffer.push_back (rui16_objId >> 8);
   vec_uploadBuffer.push_back (strLen & 0xFF);
@@ -264,7 +262,6 @@ SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16
 }
 
 
-
 SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
 {
   mssObjectString = rpc_objectString;
@@ -276,7 +273,6 @@ SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
 
   ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
 }
-
 
 
 /**
@@ -300,7 +296,6 @@ SendUpload_c::SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   ui8_retryCount = DEF_Retries_NormalCommands;
   ui32_uploadTimeout = rui32_timeout;
 }
-
 
 
 /**
@@ -329,7 +324,6 @@ SendUpload_c::SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
 }
 
 
-
 const SendUpload_c& SendUpload_c::operator= (const SendUpload_c& ref_source)
 {
   vec_uploadBuffer = ref_source.vec_uploadBuffer;
@@ -340,15 +334,12 @@ const SendUpload_c& SendUpload_c::operator= (const SendUpload_c& ref_source)
 }
 
 
-
 SendUpload_c::SendUpload_c (const SendUpload_c& ref_source)
   : mssObjectString (ref_source.mssObjectString)
   , vec_uploadBuffer (ref_source.vec_uploadBuffer)
   , ui8_retryCount (ref_source.ui8_retryCount)
   , ui32_uploadTimeout (ref_source.ui32_uploadTimeout)
-{
-}
-
+{}
 
 
   /*************************************/
@@ -377,7 +368,6 @@ void ISOTerminal_c::finishUploadCommand ()
   INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << ".\n";
   #endif
 }
-
 
 
 // only being called if there IS a q_sendUpload.front()
@@ -444,8 +434,6 @@ bool ISOTerminal_c::startUploadCommand ()
 }
 
 
-
-
 /**
   default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
@@ -455,7 +443,6 @@ ISOTerminal_c::ISOTerminal_c()
 {
   localSettings_a.lastReceived = 0; // set this here for safety reasons, as Process_c will read the language from us if "lastReceived != 0"
 }
-
 
 
 /**
@@ -506,6 +493,7 @@ bool ISOTerminal_c::registerIsoObjectPool (IdentItem_c* rpc_wsMasterIdentItem, I
   return true;
 }
 
+
 /**
   De-Register the registered object pool and versionLabel string (if one was copied)
 */
@@ -529,7 +517,6 @@ bool ISOTerminal_c::deregisterIsoObjectPool ()
   }
   return true;
 }
-
 
 
 /**
@@ -605,6 +592,7 @@ void ISOTerminal_c::close( void )
     deregisterIsoObjectPool();
   }
 }
+
 
 /**
   periodically event -> call timeEvent for all  identities and parent objects
@@ -715,7 +703,6 @@ bool ISOTerminal_c::timeEvent( void )
 
   // ### Do nothing if there's no VT active ###
   if (!isVtActive()) return true;
-
 
   // be kind and wait until "COMPLETE AddressClaim" is finished (WSMaster/Slaves Announce)
   if ( !pc_wsMasterIdentItem->getIsoItem()->isClaimedAddress() ) return true;
@@ -832,7 +819,7 @@ bool ISOTerminal_c::timeEvent( void )
 #ifdef NO_LOAD_VERSION
 #else
         if (pc_versionLabel != NULL) {
-          
+
           #ifdef GET_VERSIONS
             static int b_getVersionsSendTime=0;
             if (b_getVersionsSendTime == 0)
@@ -847,8 +834,8 @@ bool ISOTerminal_c::timeEvent( void )
               return true;
             }
           #endif
-          
-          
+
+
           // Try to "Non Volatile Memory - Load Version" first!
           c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                #ifdef LOESCHE_POOL
@@ -880,9 +867,7 @@ bool ISOTerminal_c::timeEvent( void )
     }
   }
 
-
-
-   /////////////////////////////
+  /////////////////////////////
   /// UPLOADING --> COMMAND <--
   // Can only be done if the Object-Pool is successfully uploaded!
   if (en_objectPoolState != OPUploadedSuccessfully)
@@ -926,6 +911,7 @@ bool ISOTerminal_c::timeEvent( void )
   return true;
 }
 
+
 // handle all string value between length of 9 and 259 bytes
 bool ISOTerminal_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen)
 {
@@ -941,6 +927,7 @@ void ISOTerminal_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c /*rc_ident*
 {
   c_streamer.pc_pool->eventStringValueAbort();
 }
+
 
 bool ISOTerminal_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk)
 {
@@ -961,6 +948,7 @@ bool ISOTerminal_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, 
   c_streamer.pc_pool->eventStringValue(ui16_inputStringId, ui8_inputStringLength, *rpc_stream, rpc_stream->getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
   return false;
 }
+
 
 /**
   call to check if at least one vt_statusMessage has arrived so we know if the terminal is there.
@@ -996,6 +984,7 @@ void ISOTerminalStreamer_c::saveDataNextStreamPart ()
   }
 }
 
+
 /** reactivate previously stored data source position - used for resend on problem
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
   */
@@ -1009,6 +998,7 @@ void ISOTerminalStreamer_c::restoreDataNextStreamPart ()
     uploadBuffer [i] = uploadBufferStored [i];
   }
 }
+
 
 /** set cache for data source to stream start
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
@@ -1031,9 +1021,6 @@ void ISOTerminalStreamer_c::resetDataNextStreamPart ()
   // ? uploadBufferFilledStored;
   // ? uploadBufferPositionStored;
 }
-
-
-
 
 
 /** place next data to send direct into send puffer of pointed
@@ -1101,6 +1088,7 @@ void ISOTerminal_c::finalizeUploading ()
   }
 }
 
+
 /** Send "End of Object Pool" message */
 void ISOTerminal_c::indicateObjectPoolCompletion ()
 {
@@ -1114,7 +1102,6 @@ void ISOTerminal_c::indicateObjectPoolCompletion ()
 }
 
 
-
 void
 ISOTerminal_c::vtOutOfMemory()
 {  // can't (up)load the pool.
@@ -1122,7 +1109,6 @@ ISOTerminal_c::vtOutOfMemory()
   en_uploadPoolState = UploadPoolFailed; // no timeout needed
   en_objectPoolState = OPCannotBeUploaded;
 }
-
 
 
 /** process received can messages
@@ -1133,7 +1119,7 @@ bool ISOTerminal_c::processMsg()
   #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Incoming Message: data().isoPgn=" << data().isoPgn() << " - HAL::getTime()=" << HAL::getTime()<<" - data[0]="<<(uint16_t)data().getUint8Data (0)<<"...   ";;
   #endif
-  
+
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
   uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
   bool b_result = false;

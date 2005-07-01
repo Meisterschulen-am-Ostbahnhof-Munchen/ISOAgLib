@@ -204,7 +204,7 @@ public:
   SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout);
   SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout);
   SendUpload_c (__IsoAgLib::vtObjectString_c* rpc_objectString);
-  SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength);
+  SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/);
   SendUpload_c (const SendUpload_c& ref_source);
   SendUpload_c (uint8_t* rpui8_buffer, uint32_t bufferSize);
   const SendUpload_c& operator= (const SendUpload_c& ref_source);
