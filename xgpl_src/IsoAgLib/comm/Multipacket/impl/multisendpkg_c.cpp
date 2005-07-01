@@ -191,7 +191,7 @@ void MultiSendPkg_c::setData_2ByteInteger(uint8_t rb_pos, uint16_t rui16_val)
   @param ri32_pos uint8_t position in data string to start
   @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7) {Anyway MAX 7 bytes!!}
 */
-void MultiSendPkg_c::setDataPart( HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize)
+void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize)
 {
   #ifdef USE_HUGE_MEM
   HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;

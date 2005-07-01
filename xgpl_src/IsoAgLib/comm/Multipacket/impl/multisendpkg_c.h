@@ -217,7 +217,7 @@ public:
     @param ri32_pos uint8_t position in data string to start
     @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
   */
-  void setDataPart( HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize = 7);
+  void setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize = 7);
   /**
     set value EMPF of process msg
     @param rb_val new EMPF value for message
