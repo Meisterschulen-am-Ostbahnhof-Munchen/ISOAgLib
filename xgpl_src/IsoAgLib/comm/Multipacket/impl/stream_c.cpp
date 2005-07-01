@@ -92,11 +92,11 @@
 #include <IsoAgLib/hal/system.h>
 
 #ifdef DEBUG
-	#ifdef SYSTEM_PC
-		#include <iostream>
-	#else
-		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#endif
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
 #endif
 
 
@@ -262,6 +262,12 @@ Stream_c::timedOut()
   if (i32_timeoutLimit != sci32_timeNever) {
     if (HAL::getTime() > i32_timeoutLimit) b_result = true;
   }
+  #ifdef DEBUG
+  if ( b_result )
+  {
+    INTERNAL_DEBUG_DEVICE << "\n\n TimeOut with i32_timeoutLimit: " << i32_timeoutLimit << ", and now: " << HAL::getTime() << std::endl;
+  }
+  #endif
 
   return b_result;
 }
