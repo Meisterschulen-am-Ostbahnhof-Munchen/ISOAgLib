@@ -498,15 +498,15 @@ EEPROMIO_c& EEPROMIO_c::readIntern(uint8_t* rpb_data, uint8_t rui8_len) {
 
 EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, GetyPos_c& refc_data )
 {
-  uint8_t ui8_data = refc_data.getCombinedIso();
-  refc_stream.writeIntern(((uint8_t*)(&ui8_data)), sizeof(uint8_t));
+  uint16_t ui16_data = refc_data.getCombinedIso();
+  refc_stream.writeIntern(((uint8_t*)(&ui16_data)), sizeof(uint16_t));
   return refc_stream;
 }
 EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, GetyPos_c& refc_data )
 {
-  uint8_t ui8_data;
-  refc_stream.readIntern(((uint8_t*)(&ui8_data)), sizeof(uint8_t));
-  refc_data.setCombinedIso( ui8_data );
+  uint16_t ui16_data;
+  refc_stream.readIntern(((uint8_t*)(&ui16_data)), sizeof(uint16_t));
+  refc_data.setCombinedIso( ui16_data );
   return refc_stream;
 }
 

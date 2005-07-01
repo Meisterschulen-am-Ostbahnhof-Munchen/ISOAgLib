@@ -67,26 +67,26 @@ namespace IsoAgLib {
 class iGetyPos_c : public __IsoAgLib::GetyPos_c {
  public:
   /** default constructor
-    * @param rui8_gety optional initial GETY (device type)
-    * @param rui8_pos optional initial POS (device number)
+    * @param rui16_gety optional initial GETY (device type)
+    * @param rui16_pos optional initial POS (device number)
     */
-  iGetyPos_c( uint8_t rui8_gety = 0xF, uint8_t rui8_pos = 0xF )
-  : GetyPos_c( rui8_gety, rui8_pos ){};
-	iGetyPos_c( const __IsoAgLib::GetyPos_c& refc_src )
-		: GetyPos_c( refc_src )
-	{};
+  iGetyPos_c( uint16_t rui16_gety = 0xFF, uint16_t rui16_pos = 0xF )
+  : GetyPos_c( rui16_gety, rui16_pos ){};
+  iGetyPos_c( const __IsoAgLib::GetyPos_c& refc_src )
+    : GetyPos_c( refc_src )
+  {};
  /** set GETY and POS with two seperate parameters */
- void set( uint8_t rui8_gety, uint8_t rui8_pos ) { GetyPos_c::set( rui8_gety, rui8_pos );};
+ void set( uint16_t rui16_gety, uint16_t rui16_pos ) { GetyPos_c::set( rui16_gety, rui16_pos );};
  /** deliver GETY (device type ) */
  uint8_t getGety( void ) const { return GetyPos_c::getGety();};
  /** deliver POS ( device type instance number ) */
  uint8_t getPos( void ) const { return GetyPos_c::getPos();};
  /** set GETY (device type ) and POS */
- void setGtp( uint8_t rui8_gety, uint8_t rui8_pos ) { GetyPos_c::setGtp( rui8_gety, rui8_pos );};
+ void setGtp( uint16_t rui16_gety, uint16_t rui16_pos ) { GetyPos_c::setGtp( rui16_gety, rui16_pos );};
  /** set GETY (device type ) */
- void setGety( uint8_t rui8_gety ) { GetyPos_c::setGety( rui8_gety );};
+ void setGety( uint16_t rui16_gety ) { GetyPos_c::setGety( rui16_gety );};
  /** set POS ( device type instance number ) */
- void setPos( uint8_t rui8_pos ) { GetyPos_c::setPos( rui8_pos );};
+ void setPos( uint16_t rui16_pos ) { GetyPos_c::setPos( rui16_pos );};
  /** set data with one combined value of GET and POS from DIN 9684 format
    * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
    */
@@ -98,11 +98,11 @@ class iGetyPos_c : public __IsoAgLib::GetyPos_c {
  /** deliver data as one combined value of GET and POS from DIN 9684 format
    * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
    */
- uint8_t getCombinedDin( void ) const { return GetyPos_c::getCombinedDin();};
+ uint16_t getCombinedDin( void ) const { return GetyPos_c::getCombinedDin();};
  /** deliver data as one combined value of GET and POS from ISO 11783 format
    * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
    */
- uint8_t getCombinedIso( void ) const { return GetyPos_c::getCombinedIso();};
+ uint16_t getCombinedIso( void ) const { return GetyPos_c::getCombinedIso();};
  /** assign value from another iGetyPos_c instance */
  const iGetyPos_c& operator=( const iGetyPos_c& refc_src ) { return static_cast<const iGetyPos_c&>( GetyPos_c::operator=( refc_src ) );};
  /** compare two iGetyPos_c values with operator== */

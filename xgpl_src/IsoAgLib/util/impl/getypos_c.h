@@ -51,37 +51,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef GETYPOS_H
@@ -104,65 +104,64 @@ namespace __IsoAgLib {
 class GetyPos_c {
  public:
   /** default constructor
-    * @param rui8_gety optional initial GETY (device type)
-    * @param rui8_pos optional initial POS (device number)
+    * @param rui16_gety optional initial GETY (device type)
+    * @param rui16_pos optional initial POS (device number)
     */
-  GetyPos_c( uint8_t rui8_gety = 0xF, uint8_t rui8_pos = 0xF )
-  : ui8_data( ( rui8_gety << 4 ) | ( rui8_pos & 0xF ) ){};
+  GetyPos_c( uint16_t rui16_gety = 0xFF, uint16_t rui16_pos = 0xF )
+  : ui16_data( ( rui16_gety << 8 ) | ( rui16_pos & 0xF ) ){};
  /** set GETY and POS with two seperate parameters */
- void set( uint8_t rui8_gety, uint8_t rui8_pos )
-  { ui8_data = ( ( rui8_gety << 4 ) | ( rui8_pos & 0xF ) );};
+ void set( uint16_t rui16_gety, uint16_t rui16_pos )
+  { ui16_data = ( ( rui16_gety << 8 ) | ( rui16_pos & 0xF ) );};
  /** deliver GETY (device type ) */
- uint8_t getGety( void ) const { return ( ui8_data >> 4 );};
+ uint8_t getGety( void ) const { return ( ui16_data >> 8 );};
  /** deliver POS ( device type instance number ) */
- uint8_t getPos( void ) const { return ( ui8_data & 0xF );};
+ uint8_t getPos( void ) const { return ( ui16_data & 0xF );};
  /** set GETY (device type ) and POS */
- void setGtp( uint8_t rui8_gety, uint8_t rui8_pos )
-  { ui8_data = ( ( rui8_gety << 4 ) | ( rui8_pos & 0xF ) );};
+ void setGtp( uint16_t rui16_gety, uint16_t rui16_pos ) { set( rui16_gety, rui16_pos);};
  /** set GETY (device type ) */
- void setGety( uint8_t rui8_gety )
-  { ui8_data = ( ( rui8_gety << 4 ) | ( ui8_data & 0xF ) );};
+ void setGety( uint16_t rui16_gety )
+  { ui16_data = ( ( rui16_gety << 8 ) | ( ui16_data & 0xF ) );};
  /** set POS ( device type instance number ) */
- void setPos( uint8_t rui8_pos )
-  { ui8_data = ( ( ui8_data & 0xF0 ) | ( rui8_pos & 0xF ) );};
+ void setPos( uint16_t rui16_pos )
+  { ui16_data = ( ( ui16_data & 0xFF00 ) | ( rui16_pos & 0xF ) );};
  /** set data with one combined value of GET and POS from DIN 9684 format
    * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
    */
- void setCombinedDin( uint8_t rui8_dinData )
-  { ui8_data = ( ( ( rui8_dinData << 1 ) & 0xF0 ) | ( rui8_dinData & 0x7 ) );};
+ void setCombinedDin( uint16_t rui16_dinData )
+  { ui16_data = ( ( ( rui16_dinData << 9 ) & 0xFF0 ) | ( rui16_dinData & 0x7 ) );};
  /** set data with one combined value of GET and POS from ISO 11783 format
    * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
    */
- void setCombinedIso( uint8_t rui8_isoData ) { ui8_data = rui8_isoData;};
+ void setCombinedIso( uint16_t rui16_isoData ) { ui16_data = rui16_isoData;};
  /** deliver data as one combined value of GET and POS from DIN 9684 format
    * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
    */
- uint8_t getCombinedDin( void ) const { return ( ( getGety() << 3 ) | getPos() );};
+ uint16_t getCombinedDin( void ) const { return ( ( getGety() << 3 ) | getPos() );};
  /** deliver data as one combined value of GET and POS from ISO 11783 format
    * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
    */
- uint8_t getCombinedIso( void ) const { return ui8_data;};
+ uint16_t getCombinedIso( void ) const { return ui16_data;};
  /** assign value from another GetyPos_c instance */
  const GetyPos_c& operator=( const GetyPos_c& refc_src )
-  { ui8_data = refc_src.ui8_data; return *this;};
+  { ui16_data = refc_src.ui16_data; return *this;};
  /** compare two GetyPos_c values with operator== */
  bool operator==( const GetyPos_c& refc_right ) const
-  { return ui8_data == refc_right.ui8_data;};
+  { return ui16_data == refc_right.ui16_data;};
  /** compare two GetyPos_c values with operator!= */
  bool operator!=( const GetyPos_c& refc_right ) const
-  { return ui8_data != refc_right.ui8_data;};
+  { return ui16_data != refc_right.ui16_data;};
  /** compare two GetyPos_c values with operator< */
  bool operator<( const GetyPos_c& refc_right ) const
-  { return ui8_data < refc_right.ui8_data;};
+  { return ui16_data < refc_right.ui16_data;};
  /** set this instance to indicator for unspecified value */
- void setUnspecified( void ) { ui8_data = 0xFF;};
+ void setUnspecified( void ) { ui16_data = 0xFF0F;};
  /** check if this instance has specified value (different from default */
- bool isSpecified( void ) const { return ( ui8_data != 0xFF)?true:false;};
- bool isUnspecified( void ) const { return ( ui8_data == 0xFF)?true:false;};
- bool isSpecifiedPos( void ) const { return ( ( ui8_data & 0xF ) != 0xF )?true:false;};
- bool isUnspecifiedPos( void ) const { return ( ( ui8_data & 0xF ) == 0xF )?true:false;};
+ bool isSpecified( void ) const { return ( ui16_data != 0xFF0F)?true:false;};
+ bool isUnspecified( void ) const { return ( ui16_data == 0xFF0F)?true:false;};
+ bool isSpecifiedPos( void ) const { return ( ( ui16_data & 0xF ) != 0xF )?true:false;};
+ bool isUnspecifiedPos( void ) const { return ( ( ui16_data & 0xFF00 ) == 0xFF00 )?true:false;};
  private:
-  uint8_t ui8_data;
+  uint16_t ui16_data;
 };
 
 } // end namespace __IsoAgLib
