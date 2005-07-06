@@ -240,7 +240,7 @@ using namespace IsoAgLib;
 	- simply write on channel 0, when no connection needed, or the connection is
 	  realized with another external connection
 */
-static const int32_t cui32_canChannel = 2;
+static const int32_t cui32_canChannel = 0;
 
 
 /** dummy function to use the information of the remote device work state */
@@ -276,6 +276,14 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 
 bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, iGetyPos_c /* rc_callerGetyPos */, bool rb_change )
 {
+
+   printf("measure value: %d\n", ri32_val);
+
+   if (ri32_val > 0xa0) {
+		arr_procData[cui8_indexWorkState].prog().stop();
+    printf("measurement stopped\n");
+  }
+   
 	if ( ! rb_change )
 	{ // don't handle values which don't contain new value - maybe still relevant for other applications
 		return false; // indicate that this information is not again handled - just ignored
@@ -332,11 +340,18 @@ int main()
 
 
 	#ifdef USE_PROC_HANDLER
+  // DIN:
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-  arr_procData[cui8_indexWorkState].init(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  //arr_procData[cui8_indexWorkState].init(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-  arr_procData[cui8_indexApplicationRate].init(0, c_remoteDeviceType, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
-	#else
+  //arr_procData[cui8_indexApplicationRate].init(0, c_remoteDeviceType, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  
+  // ISO:
+  // DDI 2, element 2
+  arr_procData[cui8_indexWorkState].init(2, 2, c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  // DDI 1, element 1
+  arr_procData[cui8_indexApplicationRate].init(1, 1, c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  #else
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
 	// of device with device type/subtype=5/0
 	IsoAgLib::iProcDataRemote_c c_workState(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
@@ -378,7 +393,10 @@ int main()
 	while ( iSystem_c::canEn() )
 	{ // run main loop
 		// IMPORTANT: call main timeEvent function for
-		// all time controlled actions of IsoAgLib
+    
+    usleep(50000);
+    
+		// all time controlled actions of IsoAgLib    
 		IsoAgLib::getISchedulerInstance().timeEvent();
 
 		if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) continue;
@@ -387,10 +405,10 @@ int main()
 			b_runningPrograms = true;
 			LOG_INFO << "\r\nRemote ECU found - try to start measurement programs" << "\r\n";
 			#ifdef USE_PROC_HANDLER
-			arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 1000);
+			arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 4000);
 			arr_procData[cui8_indexWorkState].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
-			arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000);
-			arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+			//arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000);
+			//arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
 			#else
 			c_workState.prog().addSubprog(Proc_c::TimeProp, 1000);
 			c_workState.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
@@ -403,7 +421,7 @@ int main()
 			b_runningPrograms = false;
 			#ifdef USE_PROC_HANDLER
 			arr_procData[cui8_indexWorkState].prog().stop();
-			arr_procData[cui8_indexApplicationRate].prog().stop();
+			//arr_procData[cui8_indexApplicationRate].prog().stop();
 			#else
 			c_workState.prog().stop();
 			c_applicationRate.prog().stop();
