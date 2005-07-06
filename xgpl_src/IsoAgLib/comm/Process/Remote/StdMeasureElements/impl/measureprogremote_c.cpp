@@ -195,41 +195,84 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
   
   uint8_t b_command = 0;
   GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand; 
-
-// @todo: unify DIN/ISO
-#ifdef USE_DIN_9684
-
+  int32_t i32_tmpValue = 0;
+  
+  
   // send all registered increments to remote ECU
   for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
        pc_subprog != vec_measureSubprog.end(); pc_subprog++)
   { // send the suitable increment creating message to the remote system
+
+    i32_tmpValue = pc_subprog->increment();
   
     if (pc_subprog->type() == Proc_c::TimeProp)
     { // send msg with wanted type-code, gtp, pd=0, mod=4, -1*increment value
-    
-      // prepare general command in process pkg
-      getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                                  GeneralCommand_c::exactValue,
-                                                                  GeneralCommand_c::measurementTimeValue);
-      // pd=0, mod=4
-      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(),           // -bac this generates a Measuring increment command (Data Modifier = 4) Not needed for Part new 10
-          -1* pc_subprog->increment()))
-            b_sendResult = false;
+  
+#ifdef USE_DIN_9684
+      en_command = GeneralCommand_c::measurementTimeValue;
+      // negative value !
+      i32_tmpValue = -1* pc_subprog->increment();
+#endif 
+#ifdef USE_ISO_11783
+      en_command = GeneralCommand_c::measurementTimeValueStart;
+#endif     
     }
     else if (pc_subprog->type() == Proc_c::DistProp)
     { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
-      
-      // prepare general command in process pkg
-      getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                                  GeneralCommand_c::exactValue,
-                                                                  GeneralCommand_c::measurementDistanceValue);
-      // pd=0, mod=4   
-      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(),
-        pc_subprog->increment()))
+
+#ifdef USE_DIN_9684
+      en_command = GeneralCommand_c::measurementDistanceValue;
+#endif 
+#ifdef USE_ISO_11783
+      en_command = GeneralCommand_c::measurementDistanceValueStart;
+#endif     
+    }
+    else if (pc_subprog->type() == Proc_c::WithinThresholdInterval)
+    { 
+      if(checkDoSend(Proc_c::DoMin))
+        en_command = GeneralCommand_c::measurementMinimumThresholdValueStart; 
+      else if(checkDoSend(Proc_c::DoMax))
+        en_command = GeneralCommand_c::measurementMaximumThresholdValueStart;
+    } 
+    else if (pc_subprog->type() == Proc_c::OnChange)
+    { 
+        en_command = GeneralCommand_c::measurementChangeThresholdValueStart;
+    }
+    // @todo: OutsideThresholdInterval and Counter ?
+#if 0
+    else if (pc_subprog->type() == Proc_c::OutsideThresholdInterval)
+    { 
+        if(checkDoSend(Proc_c::DoMin)) b_command |= 0x9;
+        else if(checkDoSend(Proc_c::DoMax)) b_command |= 0xA;
+        if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, b_command, pc_subprog->increment()))
             b_sendResult = false;
     }
+    else if (pc_subprog->type() == Proc_c::Counter)
+    { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
+      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, 0x2, pc_subprog->increment()))
+            b_sendResult = false;
+    }
+#endif
+  
+    if (en_command != GeneralCommand_c::noCommand)
+    {
+       // prepare general command in process pkg
+       getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+                                                                   GeneralCommand_c::exactValue,
+                                                                   en_command);       
+       if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), i32_tmpValue))
+          b_sendResult = false;
+    }
+
+#ifdef USE_ISO_11783
+    if (b_sendResult == true)
+       // Update the state to reflect that the task has started
+       getProcessInstance4Comm().setTaskStatus(1);
+#endif
+
   }
 
+  
   // call base function for registering start state
   MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);
 
@@ -237,6 +280,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
   // avoid misinterpretation of to int32_t not receive data
   i32_lastMeasureReceive = System_c::getTime();
 
+#ifdef USE_DIN_9684
   // send start command to remote ECU
   // build start comand byte
   uint8_t b_command = 0x80; // start
@@ -260,89 +304,8 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
   // DIN: pd=0, mod=6
   if (!processData().sendDataRawCmdGtp(ui8_pri, gtp(), b_command))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
     b_sendResult = false;
-
 #endif 
 
-#ifdef USE_ISO_11783
-
-  // send all registered increments to remote ECU 
-  for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
-       pc_subprog != vec_measureSubprog.end(); pc_subprog++)
-  { // send the suitable increment creating message to the remote system
-    if (pc_subprog->type() == Proc_c::TimeProp)
-    { // send msg with wanted type-code, gtp
-      // prepare general command in process pkg
-      getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                                  GeneralCommand_c::exactValue,
-                                                                  GeneralCommand_c::measurementTimeValueStart);
-      // DIN pd=0, mod=4   
-      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), pc_subprog->increment()))
-            b_sendResult = false;
-    }
-    else if (pc_subprog->type() == Proc_c::DistProp)
-    { // send msg with wanted type-code, gtp
-      // prepare general command in process pkg
-      getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                                  GeneralCommand_c::exactValue,
-                                                                  GeneralCommand_c::measurementDistanceValueStart);
-      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), pc_subprog->increment()))
-            b_sendResult = false;
-    }
-    else if (pc_subprog->type() == Proc_c::WithinThresholdInterval)
-    { 
-      if(checkDoSend(Proc_c::DoMin))
-        en_command = GeneralCommand_c::measurementMinimumThresholdValueStart; 
-      else if(checkDoSend(Proc_c::DoMax))
-        en_command = GeneralCommand_c::measurementMaximumThresholdValueStart; 
-
-      // prepare general command in process pkg
-      getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                                  GeneralCommand_c::exactValue,
-                                                                  en_command);       
-      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), pc_subprog->increment()))
-        b_sendResult = false;
-    }
-    else if (pc_subprog->type() == Proc_c::OnChange)
-    { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
-      // prepare general command in process pkg
-      getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                                  GeneralCommand_c::exactValue,
-                                                                  GeneralCommand_c::measurementChangeThresholdValueStart);
-     
-      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), pc_subprog->increment()))
-            b_sendResult = false;
-    }
-    // @todo: OutsideThresholdInterval and Counter ?
-#if 0
-    else if (pc_subprog->type() == Proc_c::OutsideThresholdInterval)
-    { 
-        if(checkDoSend(Proc_c::DoMin)) b_command |= 0x9;
-        else if(checkDoSend(Proc_c::DoMax)) b_command |= 0xA;
-        if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, b_command, pc_subprog->increment()))
-            b_sendResult = false;
-    }
-    else if (pc_subprog->type() == Proc_c::Counter)
-    { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
-      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, 0x2, pc_subprog->increment()))
-            b_sendResult = false;
-    }
-#endif
-    if(b_sendResult == true)
-    {        
-       // Update the state to reflect that the task has started
-       getProcessInstance4Comm().setTaskStatus(1);
-    }
-  }
-
-  // call base function for registering start state
-  MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);
-
-  // store actual time as last receive measure time to
-  // avoid misinterpretation of to int32_t not receive data
-  i32_lastMeasureReceive = System_c::getTime();
-    // Need to set Command bits properly:
-  
-#endif
   return b_sendResult;
 }
 

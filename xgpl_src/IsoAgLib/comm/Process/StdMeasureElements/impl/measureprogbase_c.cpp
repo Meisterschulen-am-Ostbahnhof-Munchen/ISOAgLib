@@ -628,8 +628,8 @@ bool MeasureProgBase_c::processMsg(){
     if (en_command == GeneralCommand_c::measurementStart)
     { // start command
       start(static_cast<Proc_c::progType_t>(c_pkg.pri()),
-           static_cast<Proc_c::type_t>(b_cmd & 0x7),
-           static_cast<Proc_c::doSend_t>((b_cmd >> 4) & 0x7));
+            static_cast<Proc_c::type_t>(b_cmd & 0x7),
+            static_cast<Proc_c::doSend_t>((b_cmd >> 4) & 0x7));
     }
         
     if (en_command == GeneralCommand_c::measurementReset)
@@ -652,19 +652,28 @@ bool MeasureProgBase_c::processMsg(){
     {
       // if dataLong() == 0 => stop
       if (c_pkg.dataLong() != 0) {
+        Proc_c::type_t en_type = Proc_c::NullType;
         switch (en_command) {
           case GeneralCommand_c::measurementTimeValueStart:
-            start(static_cast<Proc_c::progType_t>(c_pkg.pri()),
-                  Proc_c::TimeProp,
-                  Proc_c::DoVal);
+            en_type = Proc_c::TimeProp;
             break;
           case GeneralCommand_c::measurementDistanceValueStart:
-            start(static_cast<Proc_c::progType_t>(c_pkg.pri()),
-                  Proc_c::DistProp,
-                  Proc_c::DoVal);
+            en_type = Proc_c::DistProp;
             break;
-            //@todo: implement rest of measurement starts
-        }
+          case GeneralCommand_c::measurementChangeThresholdValueStart:
+            en_type = Proc_c::DeltaIncr; // @todo: correct ?
+            break;
+          case GeneralCommand_c::measurementMaximumThresholdValueStart:
+            en_type = Proc_c::MaxIncr; // @todo: correct ?
+            break;
+          case GeneralCommand_c::measurementMinimumThresholdValueStart:
+            en_type = Proc_c::MinIncr; // @todo: correct ?
+            break;
+          default: ;
+        }            
+        
+        if (en_type != Proc_c::NullType)
+           start(static_cast<Proc_c::progType_t>(c_pkg.pri()), en_type, Proc_c::DoVal);
       }
       else
        stop();
@@ -871,24 +880,28 @@ void MeasureProgBase_c::processIncrementMsg(){
   // mod = 4 || mod == 5
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValue ||
       c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart) 
-  { // time proportional
-      addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(i32_val));
-  }  
+    // time proportional
+    addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(i32_val));
   
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValue ||
       c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart) 
-  { // distance proportional
-      addSubprog(Proc_c::DistProp, i32_val);
-  }  
+    // distance proportional
+    addSubprog(Proc_c::DistProp, i32_val);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValue ||
       c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart) 
-  { // change threshold proportional
-      // @todo: DistProp ?
-      addSubprog(Proc_c::DistProp, i32_val);
-  }  
+    // change threshold proportional
+    // @todo: DistProp ? 
+    addSubprog(Proc_c::DistProp, i32_val);
 
-  // @todo implement other measurement types
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart) 
+    // change threshold proportional
+    addSubprog(Proc_c::MaxIncr, i32_val); // @todo: MaxIncr ?
+
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart) 
+    // change threshold proportional
+    addSubprog(Proc_c::MinIncr, i32_val); // @todo: MinIncr ?
+
 }
 
 /**
