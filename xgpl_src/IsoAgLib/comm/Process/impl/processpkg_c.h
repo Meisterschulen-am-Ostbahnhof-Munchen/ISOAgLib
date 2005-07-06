@@ -100,8 +100,6 @@
 #endif
 
 namespace __IsoAgLib {
-// @todo: declaration necessary?
-class ProcDataBase_c;
 
 /**
   data object for Process-Data messages
