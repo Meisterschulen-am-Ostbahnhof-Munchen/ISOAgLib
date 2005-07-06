@@ -246,7 +246,9 @@ uint32_t ui32_localDummyApplicationRate;
 /** dummy function to decide on acceptance of received setpoint */
 bool localIsAcceptableWorkState( IsoAgLib::iGetyPos_c rc_deviceType, uint32_t rui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
-	if ( rc_deviceType.getGety() < 2 )
+	return true;
+  
+  if ( rc_deviceType.getGety() < 2 )
 	{
 		ui8_localDummyWorkState = rui32_setpointValue;
 		return true;
@@ -301,6 +303,8 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 
 bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, IsoAgLib::iGetyPos_c rc_setpointSender, bool rb_change)
 {
+	printf("new setpoint command\n"); fflush(0);
+
 	if ( ! rb_change )
 	{ // don't handle succeeding setpoints which don't contain new value - maybe still relevant for other applications
 		return false; // indicate that this information is not again handled - just ignored
@@ -371,22 +375,35 @@ int main()
 	// start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the myGtp val through the pointer to myGtp
+  // ISO
   IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+    b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
+    ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+
+  //  DIN:
+  //uint8_t c_myName[] = "Hi-You";
+  //IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
 
 	#ifdef USE_PROC_HANDLER
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
 	#ifdef USE_EEPROM_IO
-  arr_procData[cui8_indexWorkState].init(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false, 0xFFFF, &c_mySetpointHandler);
+  //  arr_procData[cui8_indexWorkState].init(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false, 0xFFFF, &c_mySetpointHandler);
 	#else
-  arr_procData[cui8_indexWorkState].init(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
+  // DIN:
+  //arr_procData[cui8_indexWorkState].init(0, 0x1, 0x0, 0xFF, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
+  // ISO:
+  // DDI 2, element 2
+  arr_procData[cui8_indexWorkState].init(2, 2, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
 	#endif
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
 	#ifdef USE_EEPROM_IO
-  arr_procData[cui8_indexApplicationRate].init(0, myGtp, 0x5, 0x0, 0xFF, 2, myGtp, &myGtp, false, 0xFFFF, &c_mySetpointHandler);
+  //arr_procData[cui8_indexApplicationRate].init(0, myGtp, 0x5, 0x0, 0xFF, 2, myGtp, &myGtp, false, 0xFFFF, &c_mySetpointHandler);
 	#else
-  arr_procData[cui8_indexApplicationRate].init(0, myGtp, 0x5, 0x0, 0xFF, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
+   // DIN
+   //arr_procData[cui8_indexApplicationRate].init(0, 0x5, 0x0, 0xFF, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
+   // ISO:
+   // DDI 1, element 1
+   arr_procData[cui8_indexApplicationRate].init(1, 1, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
 	#endif
 
 	#else
@@ -421,10 +438,16 @@ int main()
 			or
 			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
 	*/
+
+   uint8_t ui8_cnt = 0;
 	while ( iSystem_c::canEn() )
 	{ // run main loop
 		// IMPORTANT: call main timeEvent function for
 		// all time controlled actions of IsoAgLib
+
+      usleep(100000);
+      ui8_cnt++;
+
 		IsoAgLib::getISchedulerInstance().timeEvent();
 
 		#ifndef USE_PROC_HANDLER
@@ -475,7 +498,9 @@ int main()
 		// IsoAgLib can additionally inform setpoint senders if current value is indicating that
 		// setpoints can be realized ( i.e. send NACK or out-of-service information )
 		#ifdef USE_PROC_HANDLER
-		arr_procData[cui8_indexWorkState].setMasterVal( getCurrentWorkState() );
+
+      //		arr_procData[cui8_indexWorkState].setMasterVal( getCurrentWorkState() );
+      arr_procData[cui8_indexWorkState].setMasterVal( ui8_cnt );
 		arr_procData[cui8_indexApplicationRate].setMasterVal( getCurrentApplicationRate() );
 		#else
 		c_workState.setMasterVal( getCurrentWorkState() );
