@@ -94,7 +94,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-// @todo: declaration necessary?
+// forward declaration for ProcDataBase_c (generalcommand_c.h is includede in procdatabase_c.h)
 class ProcDataBase_c;
 
 /**
