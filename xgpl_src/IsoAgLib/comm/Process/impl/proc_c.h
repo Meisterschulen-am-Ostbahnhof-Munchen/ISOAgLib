@@ -128,17 +128,9 @@ class Proc_c {
 public:
 
 /** enum type definition as part of class */
-#if defined(USE_ISO_11783) && !defined(USE_DIN_9684) 
-  enum type_t{NullType = 0, TimeProp = 1, DistProp = 2, WithinThresholdInterval = 4, OutsideThresholdInterval = 8, DeltaIncr,
-              AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr, OnChange = 16, Counter = 32, ValIncr = 64};
-#endif
-#if !defined(USE_ISO_11783) && defined(USE_DIN_9684) 
-  enum type_t {TimeProp = 4, DistProp = 1, ValIncr = 8, DeltaIncr,
-               AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr, NullType = 0};
-#endif
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684) 
-  // @todo: unification of type_t?
-#endif
+  enum type_t {NullType = 0, DistProp = 1, TimeProp = 4, ValIncr = 8, 
+               WithinThresholdInterval = 16, OutsideThresholdInterval, OnChange, Counter,
+               DeltaIncr, AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr};
 
   /** enum type for distinguish between Local or Remote data */
   enum homeEcu_t {Local = 1, Remote = 2};
