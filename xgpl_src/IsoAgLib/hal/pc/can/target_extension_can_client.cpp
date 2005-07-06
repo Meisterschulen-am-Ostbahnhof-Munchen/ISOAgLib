@@ -193,7 +193,7 @@ int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)
 
 int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus)
 {
-  DEBUG_PRINT1("getCanBusStatus, bus %d\n", bBusNumber);
+  //DEBUG_PRINT1("getCanBusStatus, bus %d\n", bBusNumber);
 
 //  fprintf(stderr,"getCanBusStatus fuer BUS %d\n", bBusNumber);
   return HAL_NO_ERR;
@@ -294,7 +294,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 
   if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, NULL, 0, assemble_mtype(msqDataClient.i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT)) == -1)
     if (errno == E2BIG) {
-      DEBUG_PRINT("messages 1\n");
+      //DEBUG_PRINT("messages 1\n");
       return 1;
     }
 
@@ -342,7 +342,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   int16_t i16_rc;
   msqRead_s msqReadBuf;
 
-  DEBUG_PRINT2("getCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
+  //DEBUG_PRINT2("getCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
 
@@ -379,7 +379,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 
   int16_t i16_rc;
 
-  DEBUG_PRINT2("sendCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
+  //DEBUG_PRINT2("sendCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
   msqWrite_s msqWriteBuf;
   msqCommand_s msqCommandBuf;
 
