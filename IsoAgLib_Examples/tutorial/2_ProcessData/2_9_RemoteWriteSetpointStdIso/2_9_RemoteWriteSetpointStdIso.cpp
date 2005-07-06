@@ -324,7 +324,7 @@ IsoAgLib::iGetyPos_c c_remoteDeviceType( 0x5, 0 );
 
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
-  getIcanInstance().init( cui32_canChannel, 250 );
+  getIcanInstance().init( 0, 250 );
   // variable for GETY_POS
 
   // start address claim of the local member "IMI"
@@ -342,17 +342,29 @@ int main()
 	// start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the c_myGtp val through the pointer to c_myGtp
+  // ISO
   IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+    b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
+    ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+  //DIN
+  //uint8_t c_myName[] = "Hi-Me";
+  //IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
 
 
 	#ifdef USE_PROC_HANDLER
+  // DIN
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-  arr_procData[cui8_indexWorkState].init(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  //arr_procData[cui8_indexWorkState].init(0, 0x1, 0x0, 0xFF, c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-  arr_procData[cui8_indexApplicationRate].init(0, c_remoteDeviceType, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
-	#else
+  //arr_procData[cui8_indexApplicationRate].init(0, 0x5, 0x0, 0xFF, c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+   
+  // ISO:
+  // DDI 1, element 1
+  arr_procData[cui8_indexWorkState].init(1, 1, c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  // DDI 2, element 2
+  arr_procData[cui8_indexApplicationRate].init(2, 2, c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+	
+  #else
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
 	// of device with device type/subtype=5/0
 	IsoAgLib::iProcDataRemote_c c_workState(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
@@ -389,14 +401,34 @@ int main()
 			or
 			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
 	*/
+
+  bool b_done1=false;
+  bool b_done2=false;
 	while ( iSystem_c::canEn() )
 	{ // run main loop
 		// IMPORTANT: call main timeEvent function for
 		// all time controlled actions of IsoAgLib
+
+      usleep(50000);
+
 		IsoAgLib::getISchedulerInstance().timeEvent();
 
 		if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) continue;
 		if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) continue;
+
+		if (!b_done1 && (__HAL::getTime() > 3000)) {
+      controlRemoteWorkState(true);
+			std::cout << "SetSetpoint command\n";
+      b_done1=true;
+		}
+    
+    if (!b_done2 && (__HAL::getTime() > 4000) ) {
+      arr_procData[cui8_indexWorkState].setpointMasterVal(true);
+      std::cout << "request setpoint value command\n";
+      b_done2=true;
+    }
+			
+
 		#ifndef USE_PROC_HANDLER
 		if ( ( b_waitingRespWorkState ) && ( c_workState.setpoint().answered() ) )
 		{ // we got a reaction of remote device
@@ -440,6 +472,7 @@ void controlRemoteWorkState( bool rb_isWorking )
 	if ( rb_isWorking ) arr_procData[cui8_indexWorkState].setSetpointMasterVal( 100 );
 	else arr_procData[cui8_indexWorkState].setSetpointMasterVal( 0 );
 	#endif
+  
 }
 /** dummy function which can be called from some other module to control the remote application rate */
 void controlRemoteApplicationRate( int32_t ri32_applicationRate )
