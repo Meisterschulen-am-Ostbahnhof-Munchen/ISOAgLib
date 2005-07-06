@@ -255,6 +255,8 @@ bool ProcDataBase_c::timeEvent( void ){
   format flags corresponding to central data type of this process data
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
+  
+  set general command before sendDataRawCmdGtp !
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
@@ -268,7 +270,6 @@ bool ProcDataBase_c::sendDataRawCmdGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, in
   bool b_result;
   // let resolvGtpSetBasicSendFlags resolv suitable EMPF, SEND codes
   // and set basic flags on success (everything but the value)
-  // @todo: set general command before sendDataRawCmdGtp
   if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp))
   { // now call sendIntern, if var2empfSend was successful
     // now set the 4byte value
@@ -291,6 +292,8 @@ bool ProcDataBase_c::sendDataRawCmdGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, in
   send the given int32_t value with variable GETY_POS rc_varGtp
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
+
+  set general command before sendDataRawCmdGtp !
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
@@ -326,6 +329,8 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t r
   send the given float value with variable GETY_POS rc_varGtp
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
+  
+  set general command before sendDataRawCmdGtp !
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
