@@ -252,7 +252,7 @@ public:
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendValMod( uint8_t rui8_mod, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
+  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
   /**
     process a message: reset command or value requests
 

@@ -1,13 +1,13 @@
 /***************************************************************************
-                          proc_c.h - class with special (enum) types for
-                                   ProcessData management
+                          generalcommand_c.h - extracts general data from DIN/ISO 
+                                               process messages
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
     type                 : Header
-    $LastChangedDate$
-    $LastChangedRevision$
+    $LastChangedDate: 2005-01-11 10:55:57 +0100 (Tue, 11 Jan 2005) $
+    $LastChangedRevision: 805 $
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,7 +15,7 @@
  * This file is part of the "IsoAgLib", an object oriented program library *
  * to serve as a software layer between application specific program and   *
  * communication protocol details. By providing simple function calls for  *
- * starting a measuring program for a process data value on a Remote ECU,  *
+ * jobs like starting a measuring program for a process data value on a    *
  * remote ECU, the main program has not to deal with single CAN telegram   *
  * formatting. This way communication problems between ECU's which use     *
  * this library should be prevented.                                       *
@@ -81,84 +81,98 @@
  * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
  *   __IsoAgLib::Foo_c                                                     * 
  *                                                                         * 
- * AS A RULE: Use only classes with names beginning with small letter :i:  * 
- ***************************************************************************/ 
-
- /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Call of a (member-) function                                          * 
- * - Instantiation of a variable in a datatype from internal namespace     * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable in a datatype from interface namespace,    * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#ifndef PROC_H
-#define PROC_H
+#ifndef GENERAL_COMMAND_H
+#define GENERAL_COMMAND_H
 
+/* *************************************** */
+/* ********** include headers ************ */
+/* *************************************** */
+#include <IsoAgLib/typedef.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
+// @todo: declaration necessary?
+class ProcDataBase_c;
+
 /**
-  class with special (enum) types for ProcessData management
+  extracts general command data from DIN and ISO process messages
   @author Dipl.-Inform. Achim Spangler
 */
-class Proc_c {
-public:
+class GeneralCommand_c {
+public: 
 
-/** enum type definition as part of class */
-#if defined(USE_ISO_11783) && !defined(USE_DIN_9684) 
-  enum type_t{NullType = 0, TimeProp = 1, DistProp = 2, WithinThresholdInterval = 4, OutsideThresholdInterval = 8, DeltaIncr,
-              AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr, OnChange = 16, Counter = 32, ValIncr = 64};
-#endif
-#if !defined(USE_ISO_11783) && defined(USE_DIN_9684) 
-  enum type_t {TimeProp = 4, DistProp = 1, ValIncr = 8, DeltaIncr,
-               AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr, NullType = 0};
-#endif
-#if defined(USE_ISO_11783) && defined(USE_DIN_9684) 
-  // @todo: unification of type_t?
-#endif
+  /** enum for specification of defined setpoint types */
+  enum ValueGroup_t { noValue = 0, exactValue = 1, minValue = 2, maxValue = 4, defaultValue = 8,
+                      integValue = 0x10, medValue = 0x20};
 
-  /** enum type for distinguish between Local or Remote data */
-  enum homeEcu_t {Local = 1, Remote = 2};
+  /** enum for general commands */
+  enum CommandType_t {
+    noCommand                             = 0, 
+    requestConfiguration                  = 0x01,
+    configurationResponse                 = 0x02,
+    setValue                              = 0x03,
+    requestValue                          = 0x04,
+    taskControllerStatus                  = 0x05,
+    workingsetMasterMaintenance           = 0x06,
+    nack                                  = 0x09,
+    measurementStop                       = 0x07,
+    
+    // measurement commands: command & 0x10 != 0
+    // DIN measurement
+    measurementReset                      = 0x10,
+    measurementTimeValue                  = 0x11,
+    measurementDistanceValue              = 0x12,
+    measurementChangeThresholdValue       = 0x13,
+    measurementStart                      = 0x14,
+    
+    // ISO measurement
+    measurementTimeValueStart             = 0x15,
+    measurementDistanceValueStart         = 0x16,
+    measurementMaximumThresholdValueStart = 0x17,
+    measurementMinimumThresholdValueStart = 0x18,
+    measurementChangeThresholdValueStart  = 0x19
 
-  /** enum type for setting test conditions for setpoint validity */
-  enum testSetpoint_t{TestAllowed = 1, TestMaster = 2};
+  };
 
-  /** enum type for possible programm types */
-  enum progType_t {UndefinedProg = 0xFF, Base = 1, Target = 2, Partner = 5 };
+  /** constructor */
+  GeneralCommand_c();
 
-  /** enum type for to sending values */
-  enum doSend_t {DoNone = 0, DoVal = 1, DoMed = 2, DoInteg = 4, DoDelta = 8, DoAccel = 16, DoMin = 32, DoMax = 64};
+  /** read access for isSetpoint */
+  bool checkIsSetpoint() const { return b_isSetpoint; };
 
-  /** enum type for proportional type used for calculating accumulated vaslues */
-  enum accumProp_t {AccumNone, AccumDist = 1, AccumTime = 4};
+  /** read access for isRequest */
+  bool checkIsRequest() const { return b_isRequest; };
 
-  /** default unused constructor */
-  Proc_c(){};
-  /** default unused destructor */
-  ~Proc_c(){};
+  /** read access for en_valueGroup */
+  ValueGroup_t getValueGroup() const { return en_valueGroup; };
+
+  /** read access for en_command */
+  CommandType_t getCommand() const { return en_command; };
+
+  /** read access for pointer to process data */
+  ProcDataBase_c* dataBase() const { return pc_correspondingProcData; };
+
+  /** set values, called in ProcessPkg_c::resolveCommand() */
+  void setValues(bool b_isSetpoint, bool b_isRequest, ValueGroup_t en_valueGroup,
+                 CommandType_t en_command, ProcDataBase_c* pc_correspondingProcData = NULL);
+  
+private:
+
+  bool b_isSetpoint;
+  bool b_isRequest;
+
+  /** command affects min, max or exact value */
+  ValueGroup_t en_valueGroup;
+
+  /** current command */
+  CommandType_t en_command;
+
+  /** pointer to the containing ProcessData item */
+  ProcDataBase_c* pc_correspondingProcData;
+
 };
 
 }

@@ -131,11 +131,17 @@ namespace __IsoAgLib {
 
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
+  ISO parameter
+  @param rui16_DDI optional DDI code of this instance
+  @param rui16_element optional Element code of this instance
+
+  DIN parameter
   @param rui8_lis optional LIS code of this instance
-  @param rc_gtp optional GETY_POS code of Process-Data
   @param rui8_wert optional WERT code of this instance
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+  @param rc_gtp optional GETY_POS code of Process-Data
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerGtp optional GETY_POS of the owner
   @param rpc_gtp pointer to updated GETY_POS variable of owner
@@ -159,17 +165,32 @@ namespace __IsoAgLib {
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataLocalBase_c::init(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert,
-      uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri, GetyPos_c rc_ownerGtp, GetyPos_c *rpc_gtp, bool rb_cumulativeValue
-      #ifdef USE_EEPROM_IO
-      , uint16_t rui16_eepromAdr
-      #endif // USE_EEPROM_IO
-      , IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler
-      , int ri_singletonVecKey
-      )
+void ProcDataLocalBase_c::init(
+#ifdef USE_ISO_11783
+                               uint16_t rui16_DDI, uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                               uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
+#endif
+                               GetyPos_c rc_gtp, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
+                               GetyPos_c *rpc_gtp, bool rb_cumulativeValue,
+#ifdef USE_EEPROM_IO
+                               uint16_t rui16_eepromAdr,
+#endif // USE_EEPROM_IO
+                               IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+                               int ri_singletonVecKey
+                               )
 {
-  ProcDataBase_c::init(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri, rc_ownerGtp, rpc_gtp,
-                          rpc_processDataChangeHandler, ri_singletonVecKey);
+  ProcDataBase_c::init(
+#ifdef USE_ISO_11783
+                       rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                       rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                       rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp,
+                       rpc_processDataChangeHandler, ri_singletonVecKey);
+
   b_cumulativeValue = rb_cumulativeValue;
 #ifdef USE_EEPROM_IO
   setEepromAdr(rui16_eepromAdr);
@@ -179,7 +200,11 @@ void ProcDataLocalBase_c::init(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_
 
   // don't register proces data object, as long as it's only created with
   // default values (PRI and LIS must be in all cases different from 0xFF)
-  if ( ( rui8_pri != 0xFF ) && ( rui8_lis != 0xFF ))
+  if ( ( rui8_pri != 0xFF )
+#ifdef USE_DIN_9684
+       && ( rui8_lis != 0xFF )
+#endif
+      )
   { // now register the pointer to this instance in Process_c
    getProcessInstance4Comm().registerLocalProcessData( this );
   }
@@ -375,16 +400,22 @@ bool ProcDataLocalBase_c::timeEvent( void ){
   @return true -> successful sent
 */
 bool ProcDataLocalBase_c::sendVal( GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType ) const {
+    
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::setValue);
+    // DIN: pd=1, mod=0
     #if defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValGtp(ren_progType, rc_targetGtp, 1, 0, eepromVal());
-    else return sendValGtp(ren_progType, rc_targetGtp,  1, 0, eepromValFloat());
+    if (valType() == i32_val) return sendValGtp(ren_progType, rc_targetGtp, eepromVal());
+    else return sendValGtp(ren_progType, rc_targetGtp, eepromValFloat());
     #elif !defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValGtp(ren_progType, rc_targetGtp, 1, 0, masterVal());
-    else return sendValGtp(ren_progType, rc_targetGtp,  1, 0, masterValFloat());
+    if (valType() == i32_val) return sendValGtp(ren_progType, rc_targetGtp, masterVal());
+    else return sendValGtp(ren_progType, rc_targetGtp, masterValFloat());
     #elif defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
-    return sendValGtp(ren_progType, rc_targetGtp, 1, 0, eepromVal());
+    return sendValGtp(ren_progType, rc_targetGtp, eepromVal());
     #elif !defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
-    return sendValGtp(ren_progType, rc_targetGtp, 1, 0, masterVal());
+    return sendValGtp(ren_progType, rc_targetGtp, masterVal());
     #endif
 }
 
@@ -396,15 +427,16 @@ bool ProcDataLocalBase_c::sendVal( GetyPos_c rc_targetGtp, Proc_c::progType_t re
 void ProcDataLocalBase_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   // handle for simple measurement value
-  if ((c_pkg.pd() == 3) && (c_pkg.mod() == 0))
+  // DIN: pd=3, mod=0
+  if (c_pkg.c_generalCommand.checkIsRequest() && 
+      // c_pkg.c_generalCommand.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
+      c_pkg.c_generalCommand.getValueGroup() == GeneralCommand_c::exactValue)
   { // request for measurement value
     sendVal( c_pkg.memberSend().gtp(), Proc_c::progType_t(c_pkg.pri()) );
   }
   else
-  { // PD == 0 and 1 only accepted for reset cmd
-    if ( ( (c_pkg.pd() == 1) && (c_pkg.mod() == 0) && (c_pkg.dataRawCmdLong() == 0) )
-      || ( (c_pkg.pd() == 0) && (c_pkg.mod() == 6) && ((c_pkg.dataRawCmdLong() & 0xF) == 0x8) )
-        )
+  { // DIN: PD == 0 and 1 only accepted for reset cmd (pd==1 && mod==0 || pd==0 and mod==6
+    if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementReset)
     { // measurement reset cmd
       #ifdef USE_EEPROM_IO
       resetEeprom();

@@ -97,24 +97,49 @@ namespace __IsoAgLib {
 
 /**
   constructor which can set all element vars
+  ISO parameter
+  @param rui16_DDI optional DDI code of this instance
+  @param rui16_element optional Element code of this instance
+
+  DIN parameter
   @param rui8_lis optional LIS code of this instance
-  @param GetyPos_c rc_gtp optional GETY_POS code of this instance
   @param rui8_wert optional WERT code of this instance
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+  @param rc_gtp optional GETY_POS code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerGtp optional GETY_POS of the owner
   @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert,
-      uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
-      GetyPos_c* rpc_commanderGtp,
-      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-      int ri_singletonVecKey)
-: ProcDataRemoteBase_c(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
-                          rpc_processDataChangeHandler, ri_singletonVecKey)
+ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(
+#ifdef USE_ISO_11783
+                                                               uint16_t rui16_DDI,
+                                                               uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                                               uint8_t rui8_lis,
+                                                               uint8_t rui8_wert,
+                                                               uint8_t rui8_inst,
+                                                               uint8_t rui8_zaehlnum,
+#endif
+                                                               GetyPos_c rc_gtp,
+                                                               uint8_t rui8_pri,
+                                                               GetyPos_c rc_ownerGtp,
+                                                               GetyPos_c* rpc_commanderGtp,
+                                                               IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+                                                               int ri_singletonVecKey)
+  : ProcDataRemoteBase_c(
+#ifdef USE_ISO_11783
+                         rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                         rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                         rpc_processDataChangeHandler, ri_singletonVecKey)
   , c_setpoint(this)
   , c_measure(this)
 {
@@ -122,25 +147,50 @@ ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(uint8_t rui8_lis,
 
 /**
   initialise this ProcDataRemoteSimpleSetpoint_c instance to a well defined initial state
+  ISO parameter
+  @param rui16_DDI optional DDI code of this instance
+  @param rui16_element optional Element code of this instance
+
+  DIN parameter
   @param rui8_lis optional LIS code of this instance
-  @param GetyPos_c rc_gtp optional GETY_POS code of this instance
   @param rui8_wert optional WERT code of this instance
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+  @param rc_gtp optional GETY_POS code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerGtp optional GETY_POS of the owner
   @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ProcDataRemoteSimpleSetpoint_c::init(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert,
-      uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
-      GetyPos_c* rpc_commanderGtp,
-      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-      int ri_singletonVecKey)
+void ProcDataRemoteSimpleSetpoint_c::init(
+#ifdef USE_ISO_11783
+                                          uint16_t rui16_DDI,
+                                          uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                          uint8_t rui8_lis,
+                                          uint8_t rui8_wert,
+                                          uint8_t rui8_inst,
+                                          uint8_t rui8_zaehlnum,
+#endif
+                                          GetyPos_c rc_gtp,
+                                          uint8_t rui8_pri,
+                                          GetyPos_c rc_ownerGtp,
+                                          GetyPos_c* rpc_commanderGtp,
+                                          IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+                                          int ri_singletonVecKey)
 {
-  ProcDataRemoteBase_c::init(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
-                                rpc_processDataChangeHandler, ri_singletonVecKey);
+  ProcDataRemoteBase_c::init(
+#ifdef USE_ISO_11783
+                             rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                             rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                             rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                             rpc_processDataChangeHandler, ri_singletonVecKey);
   c_setpoint.init( this );
   c_measure.init( this );
 }

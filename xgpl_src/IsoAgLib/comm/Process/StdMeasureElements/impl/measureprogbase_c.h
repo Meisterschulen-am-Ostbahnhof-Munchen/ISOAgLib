@@ -472,9 +472,9 @@ protected: // Protected methods
 
     possible errors:
         * Err_c:range MOD is not in allowed range [0..4]
-    @param rb_mod MOD of wanted subtype
+    @param en_valueGroup MOD of wanted subtype
   */
-  void resetValMod(uint8_t rb_mod);
+  void resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup);
 
   /**
     internal increment the value
@@ -587,10 +587,10 @@ private: // Private methods
 
     possible errors:
         * Err_c:range MOD is not in allowed range [0..6]
-    @param rb_mod MOD of wanted subtype
+    @param en_valueGroup MOD of wanted subtype
     @return value of specified subtype
   */
-  int32_t valMod(uint8_t rb_mod) const;
+  int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver to rb_mod according measure val type
@@ -598,10 +598,10 @@ private: // Private methods
 
     possible errors:
         * Err_c:range MOD is not in allowed range [0..6]
-    @param rb_mod MOD of wanted subtype
+    @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-  float valModFloat(uint8_t rb_mod) const;
+  float valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
 #endif
   /**
     reset according to the process msg command the appropriate value type

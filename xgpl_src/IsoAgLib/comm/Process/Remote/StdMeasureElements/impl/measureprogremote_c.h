@@ -183,13 +183,10 @@ public:
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given GETY found
         * dependant error in CAN_IO
+    @param b_deleteSubProgs is only used for ISO
     @return true -> command successful sent
   */
-#ifdef ISO_TASK_CONTROLLER
   virtual bool stop(bool b_deleteSubProgs = true);
-#else
-  virtual bool stop();
-#endif
   /**
     deliver med val
     @param rb_sendRequest choose wether a request for value update should be

@@ -92,6 +92,7 @@
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/comm/Process/impl/generalcommand_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -190,10 +191,10 @@ public:
   int32_t max()const{return (existMax())?(i32_max):(i32_exactOrMin);};
   /**
     deliver the setpoint according to the mod type
-    @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
+    @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3)
     @return setpoint selected by MOD
   */
-  int32_t valMod(uint8_t rb_mod)const;
+  int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the minimum limit; if no min is given (~0) return f_exactOrMin
@@ -207,10 +208,10 @@ public:
   float maxFloat()const{return (existMax())?(f_max):(f_exactOrMin);};
   /**
     deliver the setpoint according to the mod type
-    @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
+    @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3)
     @return setpoint selected by MOD
   */
-  float valModFloat(uint8_t rb_mod)const;
+  float valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
 #endif
   /**
     check if setpoint value was already handled
@@ -252,6 +253,7 @@ public:
     @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3)
     @return true -> a MOD type setpoint exist
   */
+  // @todo: use GeneralCommand_c::ValueGroup_t ?
   bool existValMod(uint8_t rb_mod)const;
 
 
@@ -298,9 +300,9 @@ public:
   /**
     set a limit val for type given by rb_mod
     @param rf_val new setpoint value
-    @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
+    @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3)
   */
-  void setValMod(float rf_val, uint8_t rb_mod);
+  void setValMod(float rf_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
 #endif
   /**
     set the handled state; return if state was changed
@@ -324,9 +326,9 @@ public:
   /**
     set a limit val for type given by rb_mod
     @param ri32_val new setpoint value
-    @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
+    @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3)
   */
-  void setValMod(int32_t ri32_val,uint8_t rb_mod);
+  void setValMod(int32_t ri32_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */

@@ -162,15 +162,20 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @return true -> successful sent
   */
   bool sendSetpoint( GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return sendSetpointMod( 0, rc_targetGtp, ren_progType );};
+   { return sendSetpointMod( rc_targetGtp, ren_progType, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
     @param rui8_mod select sub-type of setpoint
     @param rc_targetGtp GetyPos of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
+    @param en_valueGroup: min/max/exact
+    @param en_command
     @return true -> successful sent
   */
-  bool sendSetpointMod( uint8_t rui8_mod, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
+  bool sendSetpointMod(GetyPos_c rc_targetGtp,
+                       Proc_c::progType_t ren_progType,
+                       GeneralCommand_c::ValueGroup_t en_valueGroup,
+                       GeneralCommand_c::CommandType_t en_command ) const;
   /**
     retreive simple master setpoint
     @return actual received setpoint value

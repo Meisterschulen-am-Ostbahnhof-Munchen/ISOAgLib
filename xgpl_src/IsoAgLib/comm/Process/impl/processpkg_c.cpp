@@ -133,36 +133,6 @@ ProcessPkg_c::~ProcessPkg_c(){
 }
 
 /**
-  check if the 4byte value of the message has a convertable value (e.g. is no
-  special command)
-  ((check for special values: SETPOINT_RELEASE_COMMAND, SETPOINT_ERROR_COMMAND,
-  NO_VAL_32S, ERROR_VAL_32S))
-  @return true -> conversions of message value are safe
-*/
-bool ProcessPkg_c::isConvertableVal()const
-{
-  bool b_result = false;
-  int32_t i32_test = *(static_cast<const int32_t*>(static_cast<const void*>(pb_data)));
-  if (pd() == 0)
-  { // setpoint value -> special command
-    if ((mod()==0)||(mod()==2)||(mod()==3))
-    { // conversion is needed
-      if ((i32_test != static_cast<int32_t>(SETPOINT_RELEASE_COMMAND))
-       && (i32_test != static_cast<int32_t>(SETPOINT_ERROR_COMMAND))) b_result = true;
-    }
-  }
-  else
-  { // measure value: conversion if: actual, min, max, integ, med
-    if (mod() < 5)
-    { // conversion is needed
-      if ((i32_test != static_cast<int32_t>(NO_VAL_32S))
-       && (i32_test != static_cast<int32_t>(ERROR_VAL_32S))) b_result = true;
-    }
-  }
-  return b_result;
-}
-
-/**
   check if the 4byte value of the message has a special command of type
   proc_specCmd_t: setpointReleaseCmd, setpointErrCmd, noVal_32s, errVal_32s
   @param ren_checkCmd special command to check for
@@ -174,10 +144,10 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
 
 
   int32_t i32_test = *(static_cast<const int32_t*>(static_cast<const void*>(pb_data)));
-  if (pd() == 0)
+  // DIN: pd = 0 && mod < 4
+  if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
+      c_generalCommand.checkIsSetpoint())
   { // setpoint value -> special commands are possible for exact, min, max setpopints
-    if (mod() < 4)
-    { // check for command values
       if ((ren_checkCmd & setpointReleaseCmd != 0)
        &&(i32_test == static_cast<int32_t>(SETPOINT_RELEASE_COMMAND)))
       {
@@ -188,22 +158,22 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
         if ((ren_checkCmd & setpointErrCmd != 0)
          && (i32_test == static_cast<int32_t>(SETPOINT_ERROR_COMMAND))) b_result = true;
       }
-    }
   }
-  else
+ 
+  // DIN: pd !=0 && mod < 5 
+  if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
+      !c_generalCommand.checkIsSetpoint())
   { // measure value: conversion if: actual, min, max, integ, med
-    if (mod() < 5)
-    { // check for command values
-      if ((ren_checkCmd & noVal_32s != 0)
-       &&(i32_test == static_cast<int32_t>(NO_VAL_32S)))
-      {
-        b_result = true;
-      }
-      else
-      {
-        if ((ren_checkCmd & errVal_32s != 0)
-         && (i32_test == static_cast<int32_t>(ERROR_VAL_32S))) b_result = true;
-      }
+    // check for command values
+    if ((ren_checkCmd & noVal_32s != 0)
+      &&(i32_test == static_cast<int32_t>(NO_VAL_32S)))
+    {
+      b_result = true;
+    }
+    else
+    {
+      if ((ren_checkCmd & errVal_32s != 0)
+      && (i32_test == static_cast<int32_t>(ERROR_VAL_32S))) b_result = true;
     }
   }
   return b_result;
@@ -308,7 +278,7 @@ void ProcessPkg_c::setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValTyp
 {
   *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = ri32_val;
 
-#ifndef ISO_TASK_CONTROLLER    // no need to do this switch case if new ISO part 10 is used. -bac
+#ifndef USE_ISO_11783  // no need to do this switch case if new ISO part 10 is used. -bac
   switch (ren_procValType)
   {
     case i32_val:
@@ -479,11 +449,12 @@ void ProcessPkg_c::setData(float rf_val, proc_valType_t ren_procValType)
 */
 void ProcessPkg_c::string2Flags()
 {
- #ifdef USE_DIN_9684
-  #ifdef USE_ISO_11783
+#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
   if (identType() == Ident_c::StandardIdent)
-  #endif
+#endif
   {
+#ifdef USE_DIN_9684
+
     setPri(((ident() >> 8) & 0xF));
     setEmpf(((ident() >> 4) & 0xF));
     setSend(ident() & 0xF);
@@ -518,79 +489,39 @@ void ProcessPkg_c::string2Flags()
     { // send is no defined member
       pc_monitorSend = NULL;
     }
+
+    setPd(((CANPkg_c::pb_data[0] >> 3) & 0x3));
+    setMod((CANPkg_c::pb_data[0] & 0x7));
+
+    setZaehlnum(CANPkg_c::pb_data[1]);
+
+    setWert(CANPkg_c::pb_data[3] >> 4);
+    setInst((CANPkg_c::pb_data[3] & 0xF));
+
+    // some DIN systems place wrong GETY in data string -> correct GETY, for all requests to GETY of receiver
+    // and correct GETY for all messages from special registered terminal
+    if ( (pc_monitorEmpf != NULL) // receiver must be found in monitor list
+         && (pc_monitorSend != NULL) // sender must be found in monitor list
+         && ( gtp() != GetyPos_c( 0, 0 ) ) // Proc is not of special GetyPos 0,0 case
+         && ( ( ( pd() & 0x2 ) != 0 ) // first alternative: it's a request
+              ||   ( ( c_specialTermGtp ==  pc_monitorSend->gtp() ) && (c_specialTermGtp.isSpecified()) ) // or it's from known special terminal
+              )
+         )
+    { // sender is special case terminal -> change GETY_POS for data part from terminal GETY_POS to local of empf
+      setGtp(pc_monitorEmpf->gtp());
+    }
+#endif //DIN
+
   }
- #endif // USE_DIN_9684
-
-
-#ifndef ISO_TASK_CONTROLLER         // The following is the original code for old part 10 -bac
-
- #ifdef USE_ISO_11783
-  #ifdef USE_DIN_9684
+ 
+#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
   else
-  #endif
-  { // set pri, empf, send for convenience
-    setPri(2); // signal target message
-    setEmpf(isoPs());
-    setSend(isoSa());
-    setIdentType(Ident_c::ExtendedIdent);
+#endif
+  { 
+#ifdef USE_ISO_11783
 
-    setLis(0); // ISO doesn't support LIS code -> set to default 0
-
-    bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::pb_data[0] >> 5) & 0x3);
-    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
-    if (bit_data.b_valType == float_val) set_d(1);
-    else
-    #endif
-    set_d(0);
-
-    setGtp( GetyPos_c(((CANPkg_c::pb_data[2] >> 4) & 0xF), (CANPkg_c::pb_data[2] & 0xF) ) );
-
-    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    // now set pc_monitorSend and pc_monitorEmpf
-    if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
-    { // ISO targeted process msg with empf as defined ISO member
-      pc_monitorEmpf = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
-    }
-    else
-    { // either no target process msg or empf no defined member
-      pc_monitorEmpf = NULL;
-    }
-    if (c_isoMonitor.existIsoMemberNr(send()))
-    { // sender SEND registered as
-      pc_monitorSend = static_cast<MonitorItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
-    }
-    else
-    { // send is no defined member
-      pc_monitorSend = NULL;
-    }
-  }
-  #endif // ISO
-
-  setPd(((CANPkg_c::pb_data[0] >> 3) & 0x3));
-  setMod((CANPkg_c::pb_data[0] & 0x7));
-
-  setZaehlnum(CANPkg_c::pb_data[1]);
-
-  setWert(CANPkg_c::pb_data[3] >> 4);
-  setInst((CANPkg_c::pb_data[3] & 0xF));
-
-
-  // some DIN systems place wrong GETY in data string -> correct GETY, for all requests to GETY of receiver
-  // and correct GETY for all messages from special registered terminal
-  if ( (pc_monitorEmpf != NULL) // receiver must be found in monitor list
-    && (pc_monitorSend != NULL) // sender must be found in monitor list
-    && ( gtp() != GetyPos_c( 0, 0 ) ) // Proc is not of special GetyPos 0,0 case
-    && ( ( ( pd() & 0x2 ) != 0 ) // first alternative: it's a request
-    ||   ( ( c_specialTermGtp ==  pc_monitorSend->gtp() ) && (c_specialTermGtp.isSpecified()) ) // or it's from known special terminal
-       )
-     )
-  { // sender is special case terminal -> change GETY_POS for data part from terminal GETY_POS to local of empf
-    setGtp(pc_monitorEmpf->gtp());
-  }
-#else
     // New Part 10 code to go here -bac
-
-   // set pri, empf, send for convenience
+    // set pri, empf, send for convenience
     setPri(2); // signal target message
     setEmpf(isoPs());
     setSend(isoSa());
@@ -598,8 +529,8 @@ void ProcessPkg_c::string2Flags()
 
     setLis(0); // ISO doesn't support LIS code -> set to default 0
 
-   //  bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::pb_data[0] >> 5) & 0x3);
-
+    // bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::pb_data[0] >> 5) & 0x3);
+    
     // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
     #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     if (bit_data.b_valType == float_val) set_d(1);
@@ -634,17 +565,17 @@ void ProcessPkg_c::string2Flags()
 
     set_Cmd(CANPkg_c::pb_data[0] & 0xf);
     uint16_t element = 0;
-		element = uint16_t(CANPkg_c::pb_data[1]) << 4;
+  	 element = uint16_t(CANPkg_c::pb_data[1]) << 4;
     element |= ((CANPkg_c::pb_data[0] & 0xF0)>>4);
     set_Element(element);
-
+ 
     uint16_t newDDI = 0;
     newDDI |= CANPkg_c::pb_data[3];
     newDDI = newDDI << 8;
     newDDI |= CANPkg_c::pb_data[2];
     set_DDI(newDDI);
-
-#endif  // end of new part 10 code
+#endif  // USE_ISO_11783
+  }
 
   CNAMESPACE::memmove(pb_data, (CANPkg_c::pb_data+4), 4);
 };
@@ -659,10 +590,59 @@ void ProcessPkg_c::string2Flags()
 */
 void ProcessPkg_c::flags2String()
 {
-  #ifdef USE_ISO_11783
+
+
+#ifdef USE_ISO_11783
   if (identType() == Ident_c::StandardIdent)
   {
-  #endif
+#endif
+
+    uint8_t ui8_mod = 0;
+    uint8_t ui8_pd = 0;
+    
+    switch (c_generalCommand.getCommand()) {
+      case GeneralCommand_c::requestValue:
+      case GeneralCommand_c::setValue:
+         if (c_generalCommand.checkIsSetpoint()) {
+            // setpoint
+            switch (c_generalCommand.getValueGroup()) {
+               case GeneralCommand_c::exactValue: ui8_mod = 0; break;
+               case GeneralCommand_c::minValue:   ui8_mod = 2; break;
+               case GeneralCommand_c::maxValue:   ui8_mod = 3; break;
+            }
+         } else {
+           // measure
+           ui8_pd |= 1;
+            switch (c_generalCommand.getValueGroup()) {
+               case GeneralCommand_c::exactValue: ui8_mod = 0; break;
+               case GeneralCommand_c::minValue:   ui8_mod = 1; break;
+               case GeneralCommand_c::maxValue:   ui8_mod = 2; break;
+               case GeneralCommand_c::integValue: ui8_mod = 3; break;
+               case GeneralCommand_c::medValue:   ui8_mod = 4; break;
+            }
+         }
+         break;
+      
+      case GeneralCommand_c::measurementTimeValue:            ui8_pd = 0; ui8_mod = 4; break;
+      case GeneralCommand_c::measurementDistanceValue:        ui8_pd = 0; ui8_mod = 4; break;
+      case GeneralCommand_c::measurementChangeThresholdValue: ui8_pd = 0; ui8_mod = 4; break;
+      
+      case GeneralCommand_c::measurementStart:
+      case GeneralCommand_c::measurementStop:
+      case GeneralCommand_c::measurementReset:
+        ui8_pd = 0; ui8_mod = 6;
+        break;
+      default: ;
+    }          
+
+    if (c_generalCommand.checkIsRequest())
+       ui8_pd |= 1 << 1;
+       
+    // @todo: measurementReset command?
+      
+    setPd(ui8_pd);
+    setMod(ui8_mod);
+
     // build ident dependent on PRI
     if (pri() == 1)
     { // base process msg
@@ -690,65 +670,53 @@ void ProcessPkg_c::flags2String()
       CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | gtp().getCombinedDin();
     }
     #endif
-#ifndef ISO_TASK_CONTROLLER
-  #ifdef USE_ISO_11783
+    
+    CANPkg_c::pb_data[1] = zaehlnum();
+    CANPkg_c::pb_data[3] = (wert() << 4) | (inst() & 0xF);
 
-  }
-  else
-  { // format for ISO -> set int32_t or float
-      CANPkg_c::pb_data[0] = (valType()) | ((pd() & 0x3) << 3) | (mod() & 0x7);
-	#if 0
-    // if ui8_termGtpForLocalProc is specified dependent on gtp receiver of the GETY_POS of this data should be changed
-    // to remote gtp
-    if ( (c_specialTermGtp.isSpecified())
-      && (c_specialTermGtp == getIsoMonitorInstance4Comm().isoMemberNr(empf()).gtp())
-      && ( ( (wert() == 0) && (inst() >= 0xC) ) || ( (wert() == 0xF) &&  ( (inst() == 3) || (inst() == 4) ) ) )
-       )
-    { // sender is special case terminal -> change GETY_POS for data part to terminal GETY_POS to local from empf
-      CANPkg_c::pb_data[2] = c_specialTermUseProcGtp.getCombinedIso();
+    CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_data, 4);
+
+    if ((pd() >> 1) == 1)
+    { // request has only 4 bytes
+        setLen(4);
     }
     else
-    { // standard case
-      CANPkg_c::pb_data[2] = gtp().getCombinedIso();
+    { // value send with 8 bytes
+      setLen(8);
     }
-	#else
-	CANPkg_c::pb_data[2] = gtp().getCombinedIso();
-	#endif
-  }
-  // for ISO the ident is directly read and written
-  #endif
 
-  CANPkg_c::pb_data[1] = zaehlnum();
-
-  CANPkg_c::pb_data[3] = (wert() << 4) | (inst() & 0xF);
-
-  CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_data, 4);
-
-  if ((pd() >> 1) == 1)
-  { // request has only 4 bytes
-    setLen(4);
+#ifdef USE_ISO_11783
   }
   else
-  { // value send with 8 bytes
+  {  // code added by Brad Cox to format the message to conform to the latest part 10 Specification. -bac
+    uint8_t ui8_cmd;
+    switch (c_generalCommand.getCommand()) {
+      case GeneralCommand_c::requestConfiguration:                  ui8_cmd = 0; break;
+      case GeneralCommand_c::configurationResponse:                 ui8_cmd = 1; break;
+      case GeneralCommand_c::requestValue:                          ui8_cmd = 2; break;
+      case GeneralCommand_c::setValue:                              ui8_cmd = 3; break;
+      case GeneralCommand_c::measurementTimeValueStart:             ui8_cmd = 4; break;
+      case GeneralCommand_c::measurementDistanceValueStart:         ui8_cmd = 5; break;
+      case GeneralCommand_c::measurementMinimumThresholdValueStart: ui8_cmd = 6; break;
+      case GeneralCommand_c::measurementMaximumThresholdValueStart: ui8_cmd = 7; break;
+      case GeneralCommand_c::measurementChangeThresholdValueStart:  ui8_cmd = 8; break;
+      case GeneralCommand_c::nack:                                  ui8_cmd = 0xd; break;
+      case GeneralCommand_c::taskControllerStatus:                  ui8_cmd = 0xe; break;
+      case GeneralCommand_c::workingsetMasterMaintenance:           ui8_cmd = 0xf; break;
+      default: ui8_cmd = 0xFF;
+    }          
+    
+    CANPkg_c::pb_data[0] = (ui8_cmd & 0xf) | ( (element() & 0xf) << 4);
+    CANPkg_c::pb_data[1] = element() >> 4;
+    CANPkg_c::pb_data[2] = DDI() & 0x00FF ; 
+    CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;  
+    // for ISO the ident is directly read and written
+
+    CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_data, 4);
+
     setLen(8);
   }
-#else   // code added by Brad Cox to format the message to conform to the latest part 10 Specification. -bac
- }
-  else
-  {
-    CANPkg_c::pb_data[0] = (cmd() & 0xf) | ( (element() & 0xf) << 4);
-	CANPkg_c::pb_data[1] = element() >> 4;
-    CANPkg_c::pb_data[2] = DDI() & 0x00FF ;
-    CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;
-  }
-  // for ISO the ident is directly read and written
-
-
-  CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_data, 4);
-
-  setLen(8);
-
-#endif  // End of ISO_TASK_CONTROLLER
+#endif  // USE_ISO_11783
 };
 
 /**
@@ -808,5 +776,198 @@ void ProcessPkg_c::useTermGtpForLocalProc(GetyPos_c rc_gtp, GetyPos_c rc_useProc
   else c_specialTermUseProcGtp = rc_gtp;
 }
 
+/**
+  extract data from DIN/ISO commands and save it to member class
+  @param pc_procDataBase pointer to ProcessData instance
+*/
+bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
+{
+
+  bool b_isSetpoint = false;
+  bool b_isRequest = false;
+  GeneralCommand_c::ValueGroup_t en_valueGroup;
+  GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
+
+  if ( identType() == Ident_c::StandardIdent) {
+
+#ifdef USE_DIN_9684
+    // DIN command  
+        
+    // make first decision: requestValue / setValue
+    en_command = ( pd() & 0x2 ) ? GeneralCommand_c::requestValue : GeneralCommand_c::setValue;
+    
+    if (((pd() & 0x1) == 0) && (mod() < 4)) {
+      // pd {00, 10} with mod {000,001,010} are setpoint messages
+      b_isSetpoint = true;
+
+      switch (mod()) {
+        case 0x0:
+          en_valueGroup = GeneralCommand_c::exactValue;
+          break;
+        case 0x2:
+          en_valueGroup = GeneralCommand_c::minValue;
+          break;
+        case 0x3:
+          en_valueGroup = GeneralCommand_c::maxValue;
+          break;
+      }      
+    }
+
+    if (((pd() & 0x1) == 1) && (mod() < 5)) {
+      // measure
+      
+      switch (mod()) {
+        case 0x0:
+          en_valueGroup = GeneralCommand_c::exactValue;
+          break;
+        case 0x1:
+          en_valueGroup = GeneralCommand_c::minValue;
+          break;
+        case 0x2:
+          en_valueGroup = GeneralCommand_c::maxValue;
+          break;
+        case 0x3:
+          en_valueGroup = GeneralCommand_c::integValue;
+          break;
+        case 0x4:
+          en_valueGroup = GeneralCommand_c::medValue;
+          break;
+      }
+    }
+
+    if (pd() == 0) {
+      // measure prog commands
+      if (mod() == 4) {
+        if (dataLong() >= 0)
+          en_command = GeneralCommand_c::measurementDistanceValue;
+        else
+          en_command = GeneralCommand_c::measurementTimeValue;
+      }
+      if (mod() == 5) {
+        en_command = GeneralCommand_c::noCommand;
+        if (dataLong() > 0)
+          en_command = GeneralCommand_c::measurementChangeThresholdValue;
+      }
+      if (mod() == 6) {
+        en_command = GeneralCommand_c::noCommand;
+        if (dataLong() & 0xF == 0)
+          en_command = GeneralCommand_c::measurementStop;
+        if (dataLong() & 0xF == 0x1)
+          en_command = GeneralCommand_c::measurementStart;
+        if (dataLong() & 0xF == 0x2)
+          en_command = GeneralCommand_c::measurementStart;
+        if (dataLong() & 0xF == 0x4)
+          en_command = GeneralCommand_c::measurementStart;
+        if (dataLong() & 0xF == 0x8)
+          en_command = GeneralCommand_c::measurementReset;
+      }
+    }
+    
+    // @todo: we need to know if we are local or not!
+    
+    if (existMemberEmpf() && (gety() == memberEmpf().gtp().getGety())) {
+       // we are local
+       // reset (from ProcDataLocalBase_c::processProg())
+       if ((pd() == 1) && (mod() == 0) && (dataRawCmdLong() == 0)  ) {
+          en_command = GeneralCommand_c::measurementReset;
+       }
+
+       // another reset  @todo: unify with reset above?   (from MeasureProgLocal_c::processMsg)
+       if ((pd() == 1) && (dataRawCmdLong() == 0) )
+       {
+          // write - accept only write actions to local data only if this is reset try
+          // (not standard conformant, but practised)
+          en_command = GeneralCommand_c::measurementReset;
+      }
+    }
+        
+    if (pd() & 0x2) {
+      // pd {10, 11} are requests
+      b_isRequest = true;
+    }
+#endif
+
+  } else {
+
+#ifdef USE_ISO_11783
+          
+    // ISO command
+    switch (cmd()) {
+      case 0x00:
+        en_command = GeneralCommand_c::requestConfiguration;
+        break;
+      case 0x01:
+        en_command = GeneralCommand_c::configurationResponse;
+        break;
+      case 0x02:
+        en_command = GeneralCommand_c::requestValue;
+        // @todo: setpoint or measurement?
+        b_isRequest = true; 
+        break;
+      case 0x03:
+        en_command = GeneralCommand_c::setValue;
+        // @todo: setpoint or measurement?
+        break;
+      case 0x04:
+        en_command = GeneralCommand_c::measurementTimeValueStart;
+        break;
+      case 0x05:
+        en_command = GeneralCommand_c::measurementDistanceValueStart;
+        break;
+      case 0x06:
+        en_command = GeneralCommand_c::measurementMinimumThresholdValueStart;
+        break;
+      case 0x07:
+        en_command = GeneralCommand_c::measurementMaximumThresholdValueStart;
+        break;
+      case 0x08:
+        en_command = GeneralCommand_c::measurementChangeThresholdValueStart;
+        break;
+      case 0x0d:
+        en_command = GeneralCommand_c::nack;
+        break;
+      case 0x0e:
+        en_command = GeneralCommand_c::taskControllerStatus;
+        break;
+      case 0x0f:
+        en_command = GeneralCommand_c::workingsetMasterMaintenance;
+        break;
+    }
+    
+    // decide setpoint/measurement
+    
+    // @todo: match DDIs => b_isSetpoint and en_valueGroup
+    b_isSetpoint = true;
+    if ( DDI() < 74 ) {
+      if ( DDI() % 5 == 2 ) {
+        // actual value with DDI 2, 7, 12, 17, ...: measure
+        b_isSetpoint = false;
+        // @todo: treat measurement value as exact value!
+        en_valueGroup = GeneralCommand_c::exactValue;
+      }
+        
+      if ( DDI() % 5 == 1 )
+        en_valueGroup = GeneralCommand_c::exactValue;
+      if ( DDI() % 5 == 3 )
+        en_valueGroup = GeneralCommand_c::defaultValue;
+      if ( DDI() % 5 == 4 )
+        en_valueGroup = GeneralCommand_c::minValue;
+      if ( DDI() % 5 == 0 )
+        en_valueGroup = GeneralCommand_c::maxValue;
+      
+    }
+
+    
+#endif
+
+  }
+  
+  if (en_command != GeneralCommand_c::noCommand) {
+    c_generalCommand.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command, pc_procDataBase);
+    return true;
+  } else
+    return false;
+
+};
 
 } // end of namespace __IsoAgLib

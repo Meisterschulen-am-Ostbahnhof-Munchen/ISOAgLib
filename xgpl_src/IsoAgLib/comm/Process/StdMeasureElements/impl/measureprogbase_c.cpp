@@ -336,7 +336,15 @@ bool MeasureProgBase_c::stop(){
 */
 int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
 {
-  if(rb_sendRequest)processData().sendDataRawCmdGtp(2, gtp(), 3, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd = 3, mod = 0
+    processData().sendDataRawCmdGtp(2, gtp(), 0);
+  }
+  
   return i32_val;
 };
 /**
@@ -347,7 +355,14 @@ int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
 */
 int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
 {
-  if(rb_sendRequest)processData().sendDataRawCmdGtp(2, gtp(), 3, 3, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+                                                                GeneralCommand_c::integValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN pd=3, mod=3
+    processData().sendDataRawCmdGtp(2, gtp(), 0);
+  }
   return i32_integ;
 };
 
@@ -359,7 +374,14 @@ int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
 */
 int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
 {
-  if(rb_sendRequest)processData().sendDataRawCmdGtp(2, gtp(), 3, 1, 0);
+  if(rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+                                                                GeneralCommand_c::minValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd = 3, mod = 1
+    processData().sendDataRawCmdGtp(2, gtp(), 0);
+  }
   return i32_min;
 };
 /**
@@ -370,7 +392,14 @@ int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
 */
 int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
 {
-  if(rb_sendRequest)processData().sendDataRawCmdGtp(2, gtp(), 3, 2, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+                                                                GeneralCommand_c::maxValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd = 3, mod = 2
+    processData().sendDataRawCmdGtp(2, gtp(), 0);
+  }
   return i32_max;
 };
 
@@ -448,7 +477,14 @@ void MeasureProgBase_c::init(
 */
 float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
 {
-  if(rb_sendRequest)processData().sendDataRawCmdGtp(2, gtp(), 3, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd = 3, mod = 0
+    processData().sendDataRawCmdGtp(2, gtp(), 0);
+  }
   return f_val;
 };
 /**
@@ -459,7 +495,14 @@ float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
 */
 float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
 {
-  if(rb_sendRequest)processData().sendDataRawCmdGtp(2, gtp(), 3, 3, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+                                                                GeneralCommand_c::integValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN pd=3, mod=3
+    processData().sendDataRawCmdGtp(2, gtp(), 0);
+  }
   return f_integ;
 };
 
@@ -471,7 +514,14 @@ float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
 */
 float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
 {
-  if(rb_sendRequest)processData().sendDataRawCmdGtp(2, gtp(), 3, 1, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+                                                                GeneralCommand_c::minValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd = 3, mod = 1
+    processData().sendDataRawCmdGtp(2, gtp(), 0);
+  }
   return f_min;
 };
 /**
@@ -482,7 +532,14 @@ float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
 */
 float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
 {
-  if(rb_sendRequest)processData().sendDataRawCmdGtp(2, gtp(), 3, 2, 0);
+  if (rb_sendRequest) {  
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+                                                                GeneralCommand_c::maxValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd = 3, mod = 2
+    processData().sendDataRawCmdGtp(2, gtp(), 0);
+  }
   return f_max;
 };
 
@@ -520,8 +577,7 @@ void MeasureProgBase_c::initVal(float rf_val){
 */
 bool MeasureProgBase_c::processMsg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  uint8_t b_mod = c_pkg.mod(),
-      b_pd = c_pkg.pd();
+  GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
 
 	#ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
@@ -540,20 +596,84 @@ bool MeasureProgBase_c::processMsg(){
   #endif
   bool b_edited = false;
 
+  if (en_command == GeneralCommand_c::setValue)
+    // setValue commands indicate receiving of a measure value => handle this in measure prog remote => return false
+    return false;
+
 // Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
-#ifndef ISO_TASK_CONTROLLER
+//#ifndef USE_ISO_11783
   // check if PD==0 -> SET increment message
-  if (b_pd == 0)
+  if (!c_pkg.c_generalCommand.checkIsRequest())
   { // mark that msg already edited
     b_edited = true;
 
     // programm controlling command
-    if ((b_mod == 4) || (b_mod == 5))
-    { // increment
+    // mod=4 || mod=5
+    if (en_command == GeneralCommand_c::measurementDistanceValue ||
+        en_command == GeneralCommand_c::measurementTimeValue ||
+        en_command == GeneralCommand_c::measurementChangeThresholdValue ||
+        // ISO
+        en_command == GeneralCommand_c::measurementDistanceValueStart ||
+        en_command == GeneralCommand_c::measurementTimeValueStart ||
+        en_command == GeneralCommand_c::measurementChangeThresholdValueStart ||
+        en_command == GeneralCommand_c::measurementMinimumThresholdValueStart ||
+        en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
+      // increment
       processIncrementMsg();
+   
+
+    uint8_t b_cmd = c_pkg.data(0);
+    
+    // DIN mod=6
+    if (en_command == GeneralCommand_c::measurementStart)
+    { // start command
+      start(static_cast<Proc_c::progType_t>(c_pkg.pri()),
+           static_cast<Proc_c::type_t>(b_cmd & 0x7),
+           static_cast<Proc_c::doSend_t>((b_cmd >> 4) & 0x7));
     }
-    else if ( b_mod == 6 )
-    { // program controlling with start, stop or reset
+        
+    if (en_command == GeneralCommand_c::measurementReset)
+    { // reset command
+       reset(b_cmd);
+       // call handler function if handler class is registered
+       if ( processData().getProcessDataChangeHandler() != NULL )
+         processData().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().gtp() );
+    }
+
+    if (en_command == GeneralCommand_c::measurementStop)
+       stop();
+
+    // ISO
+    if (en_command == GeneralCommand_c::measurementDistanceValueStart ||
+        en_command == GeneralCommand_c::measurementTimeValueStart ||
+        en_command == GeneralCommand_c::measurementChangeThresholdValueStart ||
+        en_command == GeneralCommand_c::measurementMinimumThresholdValueStart ||
+        en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
+    {
+      // if dataLong() == 0 => stop
+      if (c_pkg.dataLong() != 0) {
+        switch (en_command) {
+          case GeneralCommand_c::measurementTimeValueStart:
+            start(static_cast<Proc_c::progType_t>(c_pkg.pri()),
+                  Proc_c::TimeProp,
+                  Proc_c::DoVal);
+            break;
+          case GeneralCommand_c::measurementDistanceValueStart:
+            start(static_cast<Proc_c::progType_t>(c_pkg.pri()),
+                  Proc_c::DistProp,
+                  Proc_c::DoVal);
+            break;
+            //@todo: implement rest of measurement starts
+        }
+      }
+      else
+       stop();
+    }
+  }  
+    
+#if 0
+     // old code:     
+     // program controlling with start, stop or reset
       uint8_t b_cmd = c_pkg.data(0);
       #ifdef LAV_COMMENT_MEASUREPROG_CMD
       if ((b_cmd & 0x80) > 0)
@@ -584,8 +704,8 @@ bool MeasureProgBase_c::processMsg(){
         }
       }
     }
-  }
 #endif
+//#endif
   return b_edited;
 }
 
@@ -597,95 +717,98 @@ bool MeasureProgBase_c::timeEvent( void )
 {return true;}
 
 /**
-  deliver to rb_mod according measure val type
+  deliver to en_valueGroup according measure val type
 
   possible errors:
       * Err_c:range MOD is not in allowed range [0..6]
-  @param rb_mod MOD of wanted subtype
+  @param en_valueGroup of wanted subtype
   @return value of specified subtype
 */
-int32_t MeasureProgBase_c::valMod(uint8_t rb_mod) const {
+int32_t MeasureProgBase_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
   int32_t i32_value = val();
-  if (rb_mod < 5)
-  { // correct range
-    switch (rb_mod)
-    {
-      case 0:
-        // set val with function, to calc delta and accel
-        // i32_value = val();
-        break;
-      case 1:
-        i32_value = min();
-        break;
-      case 2:
-        i32_value = max();
-        break;
-      case 3:
-        i32_value = integ();
-        break;
-      case 4:
-        i32_value = med();
-        break;
-      case 5:
-        i32_value = processData().internalUnit();
-        break;
-      case 6:
-        i32_value = processData().sendConversion();
-        break;
-    }
+  switch (en_valueGroup)
+  {
+    case GeneralCommand_c::exactValue:
+      // set val with function, to calc delta and accel
+      // i32_value = val();
+      break;
+    case GeneralCommand_c::minValue:
+      i32_value = min();
+      break;
+    case GeneralCommand_c::maxValue:
+      i32_value = max();
+      break;
+    case GeneralCommand_c::integValue:
+      i32_value = integ();
+      break;
+    case GeneralCommand_c::medValue:
+      i32_value = med();
+      break;
+    // @todo: when is this used?
+#if 0
+    case 5:
+      i32_value = processData().internalUnit();
+      break;
+    case 6:
+      // conversion removed
+      // i32_value = processData().sendConversion();
+      i32_value = 1;
+      break;
+#endif
+    default: 
+      // wrong range
+      getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
   }
-  else
-  { // wrong range
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
-  }
+  
   return i32_value;
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
 /**
-  deliver to rb_mod according measure val type
+  deliver to en_valueGroup according measure val type
   as float value
 
   possible errors:
       * Err_c:range MOD is not in allowed range [0..6]
-  @param rb_mod MOD of wanted subtype
+  @param en_valueGroup of wanted subtype
   @return value of specified subtype
 */
-float MeasureProgBase_c::valModFloat(uint8_t rb_mod) const
+float MeasureProgBase_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup) const
 {
   float f_value = valFloat();
-  if (rb_mod < 5)
-  { // correct range
-    switch (rb_mod)
+    switch (en_valueGroup)
     {
-      case 0:
+      case GeneralCommand_c::exactValue:
         // set val with function, to calc delta and accel
         // i32_value = val();
         break;
-      case 1:
+      case GeneralCommand_c::minValue:
         f_value = minFloat();
         break;
-      case 2:
+      case GeneralCommand_c::maxValue:
         f_value = maxFloat();
         break;
-      case 3:
+      case GeneralCommand_c::integValue:
         f_value = integFloat();
         break;
-      case 4:
+      case GeneralCommand_c::medValue:
         f_value = medFloat();
         break;
+    // @todo: when is this used?
+#if 0
       case 5:
         f_value = processData().internalUnit();
         break;
       case 6:
-        f_value = processData().sendConversion();
+        // conversion removed
+        // i32_value = processData().sendConversion();
+        // f_value = processData().sendConversion();
+        f_value = 1;
         break;
+#endif
+      default:
+        getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
     }
-  }
-  else
-  { // wrong range
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
-  }
   return f_value;
 }
 #endif
@@ -742,20 +865,30 @@ void MeasureProgBase_c::processIncrementMsg(){
   // set c_gtp to caller of prog
   c_gtp = c_pkg.memberSend().gtp();
 
-  if ((c_pkg.mod() == 4) || (c_pkg.mod() == 5))
-  { // time or distance proportional
-    // get the int32_t data val without conversion
-    int32_t i32_val = c_pkg.dataRawCmdLong();
+  // get the int32_t data val without conversion
+  int32_t i32_val = c_pkg.dataRawCmdLong();
 
-    if (i32_val < 0)
-    { // time proportional
+  // mod = 4 || mod == 5
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValue ||
+      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart) 
+  { // time proportional
       addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(i32_val));
-    }
-    else
-    { // distance proportional
+  }  
+  
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValue ||
+      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart) 
+  { // distance proportional
       addSubprog(Proc_c::DistProp, i32_val);
-    }
-  }
+  }  
+
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValue ||
+      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart) 
+  { // change threshold proportional
+      // @todo: DistProp ?
+      addSubprog(Proc_c::DistProp, i32_val);
+  }  
+
+  // @todo implement other measurement types
 }
 
 /**
@@ -765,33 +898,28 @@ void MeasureProgBase_c::processIncrementMsg(){
       * Err_c:range MOD is not in allowed range [0..4]
   @param rb_mod MOD of wanted subtype
 */
-void MeasureProgBase_c::resetValMod(uint8_t rb_mod){
-  if (rb_mod < 5)
-  { // correct range
-    switch (rb_mod)
+void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup){
+    switch (en_valueGroup)
     {
-      case 0:
+      case GeneralCommand_c::exactValue:
         // set val with function, to calc delta and accel
         resetVal();
         break;
-      case 1:
+      case GeneralCommand_c::minValue:
         resetMin();
         break;
-      case 2:
+      case GeneralCommand_c::maxValue:
         resetMax();
         break;
-      case 3:
+      case GeneralCommand_c::integValue:
         resetInteg();
         break;
-      case 4:
+      case GeneralCommand_c::medValue:
         resetMed();
         break;
+      default:
+        getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
     }
-  }
-  else
-  { // wrong range
-    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
-  }
 }
 
 } // end of namespace __IsoAgLib

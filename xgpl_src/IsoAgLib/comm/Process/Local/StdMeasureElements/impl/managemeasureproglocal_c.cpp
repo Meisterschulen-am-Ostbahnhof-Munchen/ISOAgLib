@@ -370,17 +370,26 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
 void ManageMeasureProgLocal_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   GetyPos_c c_callerGtp =  c_pkg.memberSend().gtp();
+  GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
+   
   // call updateProgCache with createIfNeeded if this is a writing action, otherwise don't create if none found
-  if ( ((c_pkg.pd() & 0x1) == 0)
-    || ((c_pkg.pd() == 1) && (c_pkg.mod() == 0))
+  // @todo: verify/simplify if condition
+  // if ( ((c_pkg.pd() & 0x1) == 0)
+  //  || ((c_pkg.pd() == 1) && (c_pkg.mod() == 0))
+  if ( (en_command & 0x10) || /* measurement command indices are >= 0x10 ! */
+      ( ! c_pkg.c_generalCommand.checkIsSetpoint() && en_command == GeneralCommand_c::setValue)
      )
   { // it's a measuring program message -> create new item if none found
     updateProgCache(c_pkg.pri(),c_callerGtp, true);
   }
-  else if ( (c_pkg.pd() != 3) || (c_pkg.mod() != 0) )
-  { // use normal mechanism -> exist function if no entry found
-    if (!updateProgCache(c_pkg.pri(),c_callerGtp, false))return;
-  }
+  else 
+    // @todo: verify/simplify if condition
+    // if ( (c_pkg.pd() != 3) || (c_pkg.mod() != 0) )
+    if ( ! ( c_pkg.c_generalCommand.checkIsRequest() && ! c_pkg.c_generalCommand.checkIsSetpoint() ) || 
+         c_pkg.c_generalCommand.getValueGroup() != GeneralCommand_c::exactValue )
+    { // use normal mechanism -> exist function if no entry found
+      if (!updateProgCache(c_pkg.pri(),c_callerGtp, false))return;
+    }
 
   #ifdef DEBUG_HEAP_USEAGE
   // first real access - print size now if this current size not yet printed

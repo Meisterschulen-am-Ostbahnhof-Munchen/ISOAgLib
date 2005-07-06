@@ -93,12 +93,16 @@
 #include <IsoAgLib/util/impl/getypos_c.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#include "generalcommand_c.h"
 
 #ifdef USE_ISO_11783
   #include <IsoAgLib/driver/can/impl/ident_c.h>
 #endif
 
 namespace __IsoAgLib {
+// @todo: declaration necessary?
+class ProcDataBase_c;
+
 /**
   data object for Process-Data messages
   transforms flag formated information to/from
@@ -175,7 +179,7 @@ public:
   */
   uint8_t d()const{return bit_data.b_d;};
 
-#ifdef ISO_TASK_CONTROLLER
+#ifdef USE_ISO_11783
    /**
     deliver Cmd of process msg 
     @return Command value of message
@@ -200,14 +204,6 @@ public:
   */
   proc_valType_t valType()const{return static_cast<proc_valType_t>(bit_data.b_valType);};
 
-  /**
-    check if the 4byte value of the message has a convertable value (e.g. is no
-    special command)
-    ((check for special values: SETPOINT_RELEASE_COMMAND, SETPOINT_ERROR_COMMAND,
-    NO_VAL_32S, ERROR_VAL_32S))
-    @return true -> conversions of message value are safe
-  */
-  bool isConvertableVal()const;
   /**
     check if the 4byte value of the message has a special command of type
     proc_specCmd_t: setpointReleaseCmd, setpointErrCmd, noVal_32s, errVal_32s
@@ -374,7 +370,7 @@ public:
     @param rb_val new D value for message
   */
   void set_d(uint8_t rb_val){bit_data.b_d = rb_val;};
-#ifdef ISO_TASK_CONTROLLER
+#ifdef USE_ISO_11783
    /**
     set command of process msg
     @param rb_cmd command value of process data message
@@ -462,6 +458,11 @@ public:
   */
   void setData(uint8_t rb_pos, uint8_t rb_val){pb_data[rb_pos] = rb_val;};
   /**
+    extract data from DIN/ISO commands and save it to member class
+    @param pc_procDataBase pointer to ProcessData instance
+  */
+  bool resolveCommandType(ProcDataBase_c* pc_procDataBase);
+  /**
     overloaded virtual function to translate the string data into flag values;
     needed for assigning informations from another CANPkg_c or CANPkgExt
     @see CANPkg_c::operator=
@@ -475,6 +476,10 @@ public:
     @param rui8_useProcGtp GTP for process data (optional, default to terminal gtp)
   */
   void useTermGtpForLocalProc(GetyPos_c rc_gtp, GetyPos_c rc_useProcGtp = GetyPos_c(0xF, 0xF));
+  
+  /** stores the command in generalized form */  
+  GeneralCommand_c c_generalCommand;
+  
 private: // Private methods
   
   /**
@@ -520,7 +525,7 @@ private: // Private attributes
     /** decide about used val type: int32_t, uint32_t, float, cmd */
     uint16_t b_valType : 2;
 
-#ifdef ISO_TASK_CONTROLLER
+#ifdef USE_ISO_11783
     uint16_t ui8_Command : 4;
     uint16_t ui16_Element : 12;
     uint16_t ui16_DDI : 16;
@@ -540,6 +545,7 @@ private: // Private attributes
     data for communication on CAN BUS (default 0xFF for off)
   */
   GetyPos_c c_specialTermUseProcGtp;
+ 
 };
 
 }

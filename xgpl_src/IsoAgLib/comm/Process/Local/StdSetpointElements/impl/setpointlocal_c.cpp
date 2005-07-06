@@ -119,6 +119,7 @@
 #include "setpointlocal_c.h"
 #include "../../../impl/process_c.h"
 #include "../../../processdatachangehandler_c.h"
+#include <IsoAgLib/driver/system/impl/system_c.h>
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
 	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -625,23 +626,32 @@ bool SetpointLocal_c::timeEvent( void ){
 }
 /**
   send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-  @param rui8_mod MOD code of the value type to send
+  @param GeneralCommand_c::ValueGroup_t min/max/excat code of the value type to send
   @param rc_targetGtp GetyPos of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
+  @param en_valueGroup: min/max/exact
+  @param en_command
   @return true -> successful sent
 */
-bool SetpointLocal_c::sendSetpointMod( uint8_t rui8_mod, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType ) const {
+bool SetpointLocal_c::sendSetpointMod(GetyPos_c rc_targetGtp,
+                                      Proc_c::progType_t ren_progType,
+                                      GeneralCommand_c::ValueGroup_t en_valueGroup,
+                                      GeneralCommand_c::CommandType_t en_command) const {   
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
+                                                              en_valueGroup, en_command);
   #ifdef USE_FLOAT_DATA_TYPE
   if (valType() == i32_val) {
   #endif
-    return processDataConst().sendValGtp( ren_progType,rc_targetGtp, 0, rui8_mod, masterConst().valMod( rui8_mod));
+    return processDataConst().sendValGtp(ren_progType, rc_targetGtp, masterConst().valMod(en_valueGroup));
   #ifdef USE_FLOAT_DATA_TYPE
   }
   else {
-    return processDataConst().sendValGtp( ren_progType,rc_targetGtp, 0, rui8_mod, masterConst().valModFloat( rui8_mod));
+    return processDataConst().sendValGtp( ren_progType,rc_targetGtp, masterConst().valModFloat(en_valueGroup));
   }
   #endif
 }
+
 
 /**
   process a setpoint request for local process data
@@ -651,11 +661,11 @@ void SetpointLocal_c::processRequest() const {
 
   // check if master setpoint is defined
   bool b_existMaster = existMaster();
-  uint8_t b_mod = c_pkg.mod();
 
   if (b_existMaster)
   {
-    sendSetpointMod( b_mod, c_pkg.memberSend().gtp(), Proc_c::progType_t( c_pkg.pri() ) );
+    // use the values in general command which are already set
+    sendSetpointMod(c_pkg.memberSend().gtp(), Proc_c::progType_t( c_pkg.pri() ), c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
   }
 }
 
@@ -666,9 +676,6 @@ void SetpointLocal_c::processSet(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   Vec_SetpointRegisterIterator pc_callerIter = vec_register.begin();
 
-  // check if the caller already sent a setpoint
-  uint8_t b_modNotify, b_pdNotify;
-  int32_t i32_dataNotify;
   // detect if something was changed
   bool b_change = false;
 
@@ -729,15 +736,14 @@ void SetpointLocal_c::processSet(){
 		  << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
     #endif
 
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::setValue);
     // notify the caller
-    b_modNotify = c_pkg.mod();
-    b_pdNotify = c_pkg.pd();
-    i32_dataNotify = SETPOINT_RELEASE_COMMAND;
     processData().sendDataRawCmdGtp( c_pkg.pri(),
-              c_pkg.memberSend().gtp() ,
-              b_pdNotify,
-              b_modNotify,
-              i32_dataNotify);
+                c_pkg.memberSend().gtp() ,
+                SETPOINT_RELEASE_COMMAND);
   }
   else
   {
@@ -749,8 +755,8 @@ void SetpointLocal_c::processSet(){
       int32_t i32_val = processData().pkgDataLong();
       // now set according to mod the suitable setpoint type  value
       // simply set the new setpoint vlue
-      if ( pc_callerIter->valMod( c_pkg.mod() ) != i32_val ) b_change = true;
-      pc_callerIter->setValMod( i32_val, c_pkg.mod());
+      if ( pc_callerIter->valMod( c_pkg.c_generalCommand.getValueGroup() ) != i32_val ) b_change = true;
+      pc_callerIter->setValMod( i32_val, c_pkg.c_generalCommand.getValueGroup());
     #ifdef USE_FLOAT_DATA_TYPE
     }
     else
@@ -759,8 +765,8 @@ void SetpointLocal_c::processSet(){
       float f_val = processData().pkgDataFloat();
       // now set according to mod the suitable setpoint type  value
       // simply set the new setpoint vlue
-      if ( pc_callerIter->valModFloat( c_pkg.mod() ) != f_val ) b_change = true;
-      pc_callerIter->setValMod( f_val, c_pkg.mod());
+      if ( pc_callerIter->valModFloat( c_pkg.c_generalCommand.getValueGroup() ) != f_val ) b_change = true;
+      pc_callerIter->setValMod( f_val, c_pkg.c_generalCommand.getValueGroup() );
     }
     #endif
   }

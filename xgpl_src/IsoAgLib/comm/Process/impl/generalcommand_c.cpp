@@ -1,6 +1,6 @@
 /***************************************************************************
-                          setpointbase_c.cpp - base class for management
-                                             of setpoints
+                          generalcommand_c.cpp - extracts general data from DIN/ISO 
+                                               process messages
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
@@ -85,142 +85,31 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "setpointbase_c.h"
-#include "setpointregister_c.h"
-#include "../../impl/process_c.h"
-#include "../../impl/generalcommand_c.h"
+#include "generalcommand_c.h"
+#include <IsoAgLib/driver/can/impl/ident_c.h>
 
 namespace __IsoAgLib {
 
 /**
-  default constructor which can set all member vars
-  @param rpc_processData optional pointer to containing ProcessData instance
+  constructor 
 */
-SetpointBase_c::SetpointBase_c(
-    ProcDataBase_c *const rpc_processData)
-    : ProcessElementBase_c( rpc_processData){
-}
+GeneralCommand_c::GeneralCommand_c()
+  : b_isSetpoint(false), b_isRequest(false),
+    en_valueGroup(noValue), 
+    en_command(noCommand),
+    pc_correspondingProcData(NULL)
+{}
 
-/**
-  default constructor which can set all member vars
-  @param rrefc_processData optional reference to containing ProcessData instance
-*/
-SetpointBase_c::SetpointBase_c(
-    ProcDataBase_c &rrefc_processData)
-    : ProcessElementBase_c( rrefc_processData){
-}
-
-/**
-  assignement from another object
-  @param rrefc_src source SetpointBase_c instance
-  @return reference to source for cmd like "setp1 = setp2 = setp3;"
-*/
-const SetpointBase_c& SetpointBase_c::operator=(const SetpointBase_c& rrefc_src){
-  // call the base class operator
-  ProcessElementBase_c::operator=(rrefc_src);
-
-  // return reference
-  return rrefc_src;
-}
-
-/**
-  copy constructor for SetpointBase
-  @param rrefc_src source SetpointBase_c instance
-*/
-SetpointBase_c::SetpointBase_c( const SetpointBase_c& rrefc_src)
-  : ProcessElementBase_c( rrefc_src){
-}
-
-/** default destructor which has nothing to do */
-SetpointBase_c::~SetpointBase_c(){
-}
-
-/**
-  init this item after the containing object item
-  was inserted in a list completely
-  @param rpc_data pointer to containing ProcessData instance
-*/
-void SetpointBase_c::init( ProcDataBase_c* pc_data)
+/** set values, called in ProcessPkg_c::resolveCommand() */
+void GeneralCommand_c::setValues(bool b_isSetpoint, bool b_isRequest, ValueGroup_t en_valueGroup,
+                                 CommandType_t en_command, ProcDataBase_c* pc_correspondingProcData)
 {
-  set( pc_data);
-}
-
-/**
-  perform periodic actions
-  @return true -> all planned executions performed
-*/
-bool SetpointBase_c::timeEvent( void ){
-  return true;
-}
-
-/** process a setpoint message */
-void SetpointBase_c::processMsg(){
-  // check if its a request for actual setpoint
-  if (getProcessInstance4Comm().data().c_generalCommand.checkIsRequest())
-  {
-    processRequest();
-  }
-  else
-  { // set setpoint value
-    processSet();
-  }
-}
-
-/**
-  send the values of an setpoint entry; if wanted
-  the values can be overridden with a special value
-
-  possible errors:
-      * dependant error in ProcDataBase_c commander of this setpoint isn't found in Monitor List
-      * dependant error in CANIO_c on CAN send problems
-  @param rrefc_src reference to SetpointRegister_c with registered setpoints
-  @param rb_override true -> override registered setpoint with ri32_overrideVal
-  @param ri32_overrideVal value which can override registered setpoint on rb_override == true
-*/
-void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& rrefc_src,
-                                       bool b_override, int32_t ri32_overrideVal) const
-{
-  int32_t i32_value;
-  bool b_isCmd = false;
-  GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue;
-  
-  if ((ri32_overrideVal == SETPOINT_RELEASE_COMMAND)
-   || (ri32_overrideVal == SETPOINT_ERROR_COMMAND)
-      ) b_isCmd = true;
-
-  if (rrefc_src.existExact())
-  { // exact setpoint exist
-    en_valueGroup = GeneralCommand_c::exactValue;  
-    i32_value = (b_override) ? ri32_overrideVal : rrefc_src.exact();
-  } 
-  else if (rrefc_src.existMin())
-  { // min setpoint exist
-    en_valueGroup = GeneralCommand_c::minValue;  
-    i32_value = (b_override) ? ri32_overrideVal : rrefc_src.min();
-  } 
-  else if (rrefc_src.existMax())
-  { // max setpoint exist
-     en_valueGroup = GeneralCommand_c::maxValue;  
-     i32_value = (b_override) ? ri32_overrideVal : rrefc_src.max();
-  }
-  
-  if (en_valueGroup != GeneralCommand_c::noValue) 
-  {
-     // prepare general command in process pkg
-     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */, 
-                                                                 en_valueGroup, GeneralCommand_c::setValue);
-
-     if (b_isCmd){
-       pprocessData()->sendDataRawCmdGtp( 2, // target msg
-                                          rrefc_src.gtp(),
-                                          i32_value);
-     } else {
-       pprocessData()->sendValGtp( 2, // target msg
-                                   rrefc_src.gtp(),
-                                   i32_value);
-     }
-  }
-}
+  this->b_isSetpoint = b_isSetpoint;
+  this->b_isRequest = b_isRequest;
+  this->en_valueGroup = en_valueGroup;
+  this->en_command = en_command;
+  this->pc_correspondingProcData = pc_correspondingProcData;
+};
 
 
 } // end of namespace __IsoAgLib

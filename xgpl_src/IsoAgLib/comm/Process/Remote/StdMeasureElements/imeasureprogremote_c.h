@@ -126,13 +126,10 @@ public:
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given GETY found
         * dependant error in CAN_IO
+    @param b_deleteSubProgs is only used for ISO
     @return true -> command successful sent
   */
-#ifdef ISO_TASK_CONTROLLER
   bool stop(bool b_deleteSubProgs = true) {return MeasureProgRemote_c::stop(b_deleteSubProgs);};
-#else
-  bool stop() {return MeasureProgRemote_c::stop();};
-#endif
   /**
     deliver time of last receive of new measurement value
     (val, min, max, integ or med)

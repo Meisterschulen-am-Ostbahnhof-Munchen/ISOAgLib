@@ -160,14 +160,15 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   // for simple setpoint the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   const GetyPos_c cc_senderGtp = c_pkg.memberSend().gtp();
-  if (c_pkg.pd() == 0)
+  // DIN pd=0
+  if (c_pkg.generalCommand.getCommand() == GeneralCommand_c::setValue)
   { // setpoint set
     bool b_change = false;
-    switch (c_pkg.mod())
+    switch (c_pkg.generalCommand.getValueGroup())
     {
-      case 0: // set actual setpoint
-      case 2: // min -> simply set exact
-      case 3: // max -> simply set exact
+      case GeneralCommand_c::exactValue: // set actual setpoint
+      case GeneralCommand_c::minValue: // min -> simply set exact
+      case GeneralCommand_c::maxValue: // max -> simply set exact
         #ifdef USE_FLOAT_DATA_TYPE
         if ( ( c_pkg.valType() == float_val)
           && ( setpointMasterValFloat() != c_pkg.dataFloat() ) ) {
@@ -195,7 +196,8 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   else
   #endif
   {
-    sendSetpointMod( c_pkg.mod(), cc_senderGtp, Proc_c::progType_t( c_pkg.pri() ) );
+    sendSetpointMod(cc_senderGtp, Proc_c::progType_t( c_pkg.pri() ),
+                    c_pkg.generalCommand_c.getValueGroup(), GeneralCommand_c::setValue );
   }
 
 }
@@ -205,18 +207,27 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   @param rui8_mod select sub-type of setpoint
   @param rc_targetGtp GetyPos of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
+  @param en_valueGroup: min/max/exact
+  @param en_command
   @return true -> successful sent
 */
-bool SimpleManageSetpointLocal_c::sendSetpointMod( uint8_t rui8_mod, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType ) const {
-  if ( rui8_mod != 1 ) {
+bool SimpleManageSetpointLocal_c::sendSetpointMod(GetyPos_c rc_targetGtp,
+                                                  Proc_c::progType_t ren_progType,
+                                                  GeneralCommand_c::ValueGroup_t en_valueGroup,
+                                                  GeneralCommand_c::CommandType_t en_command ) const {
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
+                                                              en_valueGroup, en_command);
+  //if ( rui8_mod != 1 ) {
     // not percent
+    // DIN: pd=0, mod=rui8_mod
     #ifdef USE_FLOAT_DATA_TYPE
     if (valType() == float_val)
-      return processDataConst().sendValGtp(ren_progType, rc_targetGtp,  0, rui8_mod, setpointMasterValFloat());
+      return processDataConst().sendValGtp(ren_progType, rc_targetGtp, setpointMasterValFloat());
     else
     #endif
-      return processDataConst().sendValGtp(ren_progType, rc_targetGtp, 0, rui8_mod, setpointMasterVal());
-  }
+      return processDataConst().sendValGtp(ren_progType, rc_targetGtp, setpointMasterVal());
+  //}
 }
 
 

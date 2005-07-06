@@ -99,11 +99,17 @@ namespace __IsoAgLib {
 
 /**
   constructor which can set all element vars
+  ISO parameter
+  @param rui16_DDI optional DDI code of this instance
+  @param rui16_element optional Element code of this instance
+
+  DIN parameter
   @param rui8_lis optional LIS code of this instance
-  @param rc_gtp optional GETY_POS code of this instance
   @param rui8_wert optional WERT code of this instance
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+  @param rc_gtp optional GETY_POS code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerGtp optional GETY_POS of the owner
   @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
@@ -111,23 +117,47 @@ namespace __IsoAgLib {
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c(
-    uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
-    uint8_t rui8_pri, GetyPos_c rc_ownerGtp, GetyPos_c* rpc_commanderGtp,
-    IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-    int ri_singletonVecKey)
-: ProcDataRemoteBase_c(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
-                          rpc_processDataChangeHandler, ri_singletonVecKey)
+#ifdef USE_ISO_11783
+        uint16_t rui16_DDI,
+        uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+        uint8_t rui8_lis,
+        uint8_t rui8_wert,
+        uint8_t rui8_inst,
+        uint8_t rui8_zaehlnum,
+#endif
+        GetyPos_c rc_gtp,
+        uint8_t rui8_pri,
+        GetyPos_c rc_ownerGtp, GetyPos_c* rpc_commanderGtp,
+        IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+        int ri_singletonVecKey)
+  : ProcDataRemoteBase_c(
+#ifdef USE_ISO_11783
+                         rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                         rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                         rpc_processDataChangeHandler, ri_singletonVecKey)
 {
   i32_masterVal = 0;
 }
 
 /**
   initialise this SimpleManageMeasureProgRemote_c instance to a well defined initial state
+  ISO parameter
+  @param rui16_DDI optional DDI code of this instance
+  @param rui16_element optional Element code of this instance
+
+  DIN parameter
   @param rui8_lis optional LIS code of this instance
-  @param rc_gtp optional GETY_POS code of this instance
   @param rui8_wert optional WERT code of this instance
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+  @param rc_gtp optional GETY_POS code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @param rc_ownerGtp optional GETY_POS of the owner
   @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
@@ -135,14 +165,32 @@ ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpoin
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::init(
-    uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert, uint8_t rui8_inst,
-    uint8_t rui8_zaehlnum, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
-    GetyPos_c* rpc_commanderGtp,
-    IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-    int ri_singletonVecKey)
+#ifdef USE_ISO_11783
+                                                               uint16_t rui16_DDI,
+                                                               uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                                               uint8_t rui8_lis,
+                                                               uint8_t rui8_wert,
+                                                               uint8_t rui8_inst,
+                                                               uint8_t rui8_zaehlnum,
+#endif
+                                                               GetyPos_c rc_gtp,
+                                                               uint8_t rui8_pri,
+                                                               GetyPos_c rc_ownerGtp,
+                                                               GetyPos_c* rpc_commanderGtp,
+                                                               IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+                                                               int ri_singletonVecKey)
 {
-  ProcDataRemoteBase_c::init(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
-                                rpc_processDataChangeHandler, ri_singletonVecKey);
+  ProcDataRemoteBase_c::init(
+#ifdef USE_ISO_11783
+                             rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                             rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                             rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                             rpc_processDataChangeHandler, ri_singletonVecKey);
   i32_masterVal = 0;
 }
 
@@ -190,7 +238,14 @@ ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::~ProcDataRemoteSimpleSetpoi
 int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterVal(bool rb_sendRequest)
 {
   setValType(i32_val);
-  if (rb_sendRequest) sendDataRawCmdGtp(pri(), commanderGtp(), 2, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd=2, mod=0  
+    sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+  }
   return i32_masterVal;
 }
 
@@ -202,7 +257,12 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterVal(b
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointMasterVal(int32_t ri32_val, bool rb_onlyStoreOnResponse)
 {
   setValType(i32_val);
-  sendValGtp(pri(), commanderGtp(), 0, 0, ri32_val);
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::setValue);
+  // DIN: pd=0, mod=0
+  sendValGtp(pri(), commanderGtp(), ri32_val);
   if (!rb_onlyStoreOnResponse) i32_masterVal = ri32_val;
 }
 #ifdef USE_FLOAT_DATA_TYPE
@@ -214,7 +274,14 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointMasterVal(i
 float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterValFloat(bool rb_sendRequest)
 {
   setValType(float_val);
-  if (rb_sendRequest) sendDataRawCmdGtp(pri(), commanderGtp(), 2, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd=2, mod=0
+    sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+  }
   return f_masterVal;
 }
 /**
@@ -225,7 +292,12 @@ float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterValFloa
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointMasterVal(float rf_val, bool rb_onlyStoreOnResponse)
 {
   setValType(float_val);
-  sendValGtp(pri(), commanderGtp(), 0, 0, rf_val);
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::setValue);
+  // DIN: pd=0, mod=0
+  sendValGtp(pri(), commanderGtp(), rf_val);
   if (!rb_onlyStoreOnResponse) f_masterVal = rf_val;
 }
 #endif
@@ -237,7 +309,14 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointMasterVal(f
 int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterVal(bool rb_sendRequest)
 {
   setValType(i32_val);
-  if (rb_sendRequest) sendDataRawCmdGtp(pri(), commanderGtp(), 3, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd=3, mod=0
+    sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+  }
   return i32_masterVal;
 }
 /**
@@ -245,10 +324,26 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterVal(bool rb_s
 */
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::resetMasterVal()
 {
-  sendDataRawCmdGtp(pri(), commanderGtp(), 1, 0, 0);
-  sendDataRawCmdGtp(pri(), commanderGtp(), 0, 6, 0x8);
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
+                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::setValue);
+  // DIN: pd=1, mod=0
+  sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+  
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
+                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::measurementReset);
+  // DIN: pd=0, mod=6
+  sendDataRawCmdGtp(pri(), commanderGtp(), 0x8);
   #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
-  sendDataRawCmdGtp(pri(), commanderGtp(), 0, 0, 0);
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::setValue);
+  // DIN: pd=0, mod=0
+  sendDataRawCmdGtp(pri(), commanderGtp(), 0);
   #endif
 }
 
@@ -260,7 +355,14 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::resetMasterVal()
 float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterValFloat(bool rb_sendRequest)
 {
   setValType(float_val);
-  if (rb_sendRequest) sendDataRawCmdGtp(pri(), commanderGtp(), 3, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd=3, mod=0
+    sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+  }
   return f_masterVal;
 }
 #endif
@@ -270,12 +372,13 @@ float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterValFloat(bool r
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processSetpoint(){
   // for simple setpoint the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  if (c_pkg.pd() == 0)
+  // pd = 0
+  if (!c_pkg.c_generalCommand.checkIsRequest())
   {
     bool b_change = false;
-    switch (c_pkg.mod())
+    switch (c_pkg.c_generalCommand.getValueGroup())
     {
-      case 0: // exact setpoint
+      case GeneralCommand_c::exactValue: // exact setpoint
         #ifdef USE_FLOAT_DATA_TYPE
         if (c_pkg.valType() == float_val)
         {

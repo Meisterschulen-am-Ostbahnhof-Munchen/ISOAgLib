@@ -201,38 +201,70 @@ public:
 
   /**
     checks if a suitable ProcDataLocalBase_c item exist
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
     @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos optional POS code of searched local Process Data instance
                   (only important if more GETY type members are active)
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> suitable instance found
   */
-  bool existProcDataLocal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
-          uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
-  
-#ifdef ISO_TASK_CONTROLLER
-  bool existProcDataRemote(uint8_t rui8_gety, uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
-#else
+  bool existProcDataLocal(
+#ifdef USE_ISO_11783
+                          uint16_t rui16_DDI,
+                          uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                          uint8_t rui8_lis,
+                          uint8_t rui8_wert,
+                          uint8_t rui8_inst,
+                          uint8_t rui8_zaehlnum,
+#endif
+                          uint8_t rui8_gety,
+                          uint8_t rui8_pos = 0xFF,
+                          uint8_t rui8_pri = 2);
+
   /**
     checks if a suitable ProcDataRemoteBase_c item exist
-    @param rui8_lis LIS code of searched remote Process Data instance
-    @param rui8_gety GETY code of searched remote Process Data instance
-    @param rui8_wert WERT code of searched remote Process Data instance
-    @param rui8_inst INST code of searched remote Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
+    @param rui8_lis LIS code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_inst INST code of searched local Process Data instance
+    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    common parameter
+    @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos optional POS code of searched remote Process Data instance
                   (only important if more GETY type members are active)
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> suitable instance found
   */
-  bool existProcDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
-          uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
+  bool existProcDataRemote(
+#ifdef USE_ISO_11783
+                           uint16_t rui16_DDI,
+                           uint16_t rui16_element,
 #endif
-
+#ifdef USE_DIN_9684
+                           uint8_t rui8_lis,
+                           uint8_t rui8_wert,
+                           uint8_t rui8_inst,
+                           uint8_t rui8_zaehlnum,
+#endif
+                           uint8_t rui8_gety,
+                           uint8_t rui8_pos = 0xFF,
+                           uint8_t rui8_pri = 2);
   
   /**
     search for suitable ProcDataLocalBase_c item; create on if not found AND if wanted
@@ -241,17 +273,35 @@ public:
         * Err_c::badAlloc not enough memory to add new ProcDataLocal_c
           (can cause badAlloc exception)
         * Err_c::elNonexistent if element not found and rb_doCreate == false
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
     @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of searched local Process Data instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return reference to searched/created ProcDataLocalBase_c instance
   */
-  ProcDataLocalBase_c& procDataLocal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
-      uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2 );
+  ProcDataLocalBase_c& procDataLocal(
+#ifdef USE_ISO_11783
+                                     uint16_t rui16_DDI,
+                                     uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                     uint8_t rui8_lis,
+                                     uint8_t rui8_wert,
+                                     uint8_t rui8_inst,
+                                     uint8_t rui8_zaehlnum,
+#endif
+                                     uint8_t rui8_gety,
+                                     uint8_t rui8_pos = 0xFF,
+                                     uint8_t rui8_pri = 2 );
 
   /**
     search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
@@ -260,22 +310,38 @@ public:
         * Err_c::badAlloc not enough memory to add new ProcDataRemote_c
           (can cause badAlloc exception)
         * Err_c::elNonexistent if element not found and rb_doCreate == false
-    @param rui8_lis LIS code of searched remote Process Data instance
-    @param rui8_gety GETY code of searched remote Process Data instance
-    @param rui8_wert WERT code of searched remote Process Data instance
-    @param rui8_inst INST code of searched remote Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
+    @param rui8_lis LIS code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_inst INST code of searched local Process Data instance
+    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    common parameter
+    @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of searched remote Process Data instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
-#ifdef ISO_TASK_CONTROLLER
-ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_gety, uint16_t rui16_DDI, uint8_t rui16_element, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
-#else
-  ProcDataRemoteBase_c& procDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
-        uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2 );
+ ProcDataRemoteBase_c& procDataRemote(
+#ifdef USE_ISO_11783
+                                      uint16_t rui16_DDI,
+                                      uint16_t rui16_element,
 #endif
+#ifdef USE_DIN_9684
+                                      uint8_t rui8_lis,
+                                      uint8_t rui8_wert,
+                                      uint8_t rui8_inst,
+                                      uint8_t rui8_zaehlnum,
+#endif
+                                      uint8_t rui8_gety,
+                                      uint8_t rui8_pos = 0xFF,
+                                      uint8_t rui8_pri = 2);
+
 
   /**
     delivers count of local process data entries with similar ident
@@ -335,40 +401,75 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_gety, uint16_t rui1
   void unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
     { unregisterC2( pc_remoteClient );};
 
-#ifdef ISO_TASK_CONTROLLER
+#ifdef USE_ISO_11783
    void setTaskStatus(uint8_t taskStatus);
 #endif
+
 private: // Private methods
   /**
     update the cache with search for according ProcDataLocalBase_c item
-    @param rui8_lis LIS code of created local Process Data instance
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
+    @param rui8_lis LIS code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_inst INST code of searched local Process Data instance
+    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+
     @param rui8_gety GETY code of created local Process Data instance
-    @param rui8_wert WERT code of created local Process Data instance
-    @param rui8_inst INST code of created local Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of created local Process Data instance
     @param rui8_pos optinal POS code of created local Process Data instance
       (default not used for search)
     @param rui8_pri PRI code of messages with this process data instance (default 2)
   */
-  bool updateLocalCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
-                          uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
+  bool updateLocalCache(
+#ifdef USE_ISO_11783
+                        uint16_t rui16_DDI,
+                        uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                        uint8_t rui8_lis,
+                        uint8_t rui8_wert,
+                        uint8_t rui8_inst,
+                        uint8_t rui8_zaehlnum,
+#endif
+                        uint8_t rui8_gety,
+                        uint8_t rui8_pos = 0xFF,
+                        uint8_t rui8_pri = 2);
+
   /**
     update the cache with search for according ProcDataRemoteBase_c item
-    @param rui8_lis LIS code of created remote Process Data instance
-    @param rui8_gety GETY code of created remote Process Data instance
-    @param rui8_wert WERT code of created remote Process Data instance
-    @param rui8_inst INST code of created remote Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of created remote Process Data instance
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
+    @param rui8_lis LIS code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_inst INST code of searched local Process Data instance
+    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    common parameter
+    @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of created remote Process Data instance
       (default not used for search)
     @param rui8_pri PRI code of messages with this process data instance (default 2)
   */
-#ifdef ISO_TASK_CONTROLLER
-  bool updateRemoteCache(uint8_t rui8_gety, uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_pos, uint8_t rui8_pri);
-#else
-  bool updateRemoteCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
-                           uint8_t rui8_zaehlnum, uint8_t rui8_pos = 0xFF, uint8_t rui8_pri = 2);
+  bool updateRemoteCache(
+#ifdef USE_ISO_11783
+                         uint16_t rui16_DDI,
+                         uint16_t rui16_element,
 #endif
+#ifdef USE_DIN_9684
+                         uint8_t rui8_lis,
+                         uint8_t rui8_wert,
+                         uint8_t rui8_inst,
+                         uint8_t rui8_zaehlnum,
+#endif
+                         uint8_t rui8_gety,
+                         uint8_t rui8_pos = 0xFF,
+                         uint8_t rui8_pri = 2);
 
   /**
     insert FilterBox_c for receive from remote gtp if needed
@@ -405,7 +506,7 @@ private: // Private attributes
   /** last timestamp with FilterBox_c check */
   int32_t i32_lastFilterBoxTime;
 
-#ifdef ISO_TASK_CONTROLLER
+#ifdef USE_ISO_11783
   int32_t i32_lastTaskStatusTime;
   uint8_t ui8_runningTaskWithSa;
   uint8_t ui8_taskStatus;

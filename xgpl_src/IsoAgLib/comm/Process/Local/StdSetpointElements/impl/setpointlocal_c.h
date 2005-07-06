@@ -345,14 +345,21 @@ public:
   */
   virtual bool timeEvent( void );
 
+
   /**
-    send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-    @param rui8_mod MOD code of the value type to send
-    @param rc_targetGtp GetyPos of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-    @return true -> successful sent
+     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
+     @param GeneralCommand_c::ValueGroup_t min/max/excat code of the value type to send
+     @param rc_targetGtp GetyPos of target
+     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
+     @param en_valueGroup: min/max/exact
+     @param en_command
+     @return true -> successful sent
   */
-  bool sendSetpointMod( uint8_t rui8_mod, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
+  bool sendSetpointMod(GetyPos_c rc_targetGtp,
+                       Proc_c::progType_t ren_progType,
+                       GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue,
+                       GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand) const;
+
   /**
     send a exact-setpoint to a specified target (selected by GPT)
     @param rc_targetGtp GetyPos of target
@@ -360,7 +367,7 @@ public:
     @return true -> successful sent
   */
   bool sendSetpoint( GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return sendSetpointMod( 0, rc_targetGtp, ren_progType );};
+   { return sendSetpointMod(rc_targetGtp, ren_progType, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */

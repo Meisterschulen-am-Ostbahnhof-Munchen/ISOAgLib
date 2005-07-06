@@ -62,6 +62,7 @@
 #include "../StdMeasureElements/imeasureproglocal_c.h"
 #include "../StdSetpointElements/isetpointlocal_c.h"
 #include "../../proc_c.h"
+#include "../../impl/generalcommand_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -134,11 +135,17 @@ public:
 
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
+    ISO parameter
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+
+    DIN parameter
     @param rui8_lis optional LIS code of this instance
-    @param rc_gtp optional GETY_POS code of Process-Data
     @param rui8_wert optional WERT code of this instance
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+    @param rc_gtp optional GETY_POS code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerGtp optional GETY_POS of the owner
     @param rpc_gtp pointer to updated GETY_POS variable of owner
@@ -162,22 +169,41 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  iProcDataLocal_c(uint8_t rui8_lis = 0,
-      iGetyPos_c rc_gtp = iGetyPos_c(0, 0xF), uint8_t rui8_wert = 0,  uint8_t rui8_inst = 0,
-      uint8_t rui8_zaehlnum = 0xFF, uint8_t rui8_pri = 2, iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
-      iGetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false
-      #ifdef USE_EEPROM_IO
-      , uint16_t rui16_eepromAdr = 0xFFFF
-      #endif
-      , ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL
-      , int ri_singletonVecKey = 0
-  ) : ProcDataLocal_c(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum,
-       rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
-      #ifdef USE_EEPROM_IO
-       rui16_eepromAdr,
-      #endif
-       rpc_processDataChangeHandler,
-       ri_singletonVecKey) {};
+  iProcDataLocal_c(
+#ifdef USE_ISO_11783
+                  uint16_t rui16_DDI = 0,
+                  uint16_t rui16_element = 0xFF,
+#endif
+#ifdef USE_DIN_9684
+                  uint8_t rui8_lis = 0,
+                  uint8_t rui8_wert = 0,
+                  uint8_t rui8_inst = 0,
+                  uint8_t rui8_zaehlnum = 0xFF,
+#endif
+                  iGetyPos_c rc_gtp = iGetyPos_c(0, 0xF), 
+                  uint8_t rui8_pri = 2,
+                  iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
+                  iGetyPos_c *rpc_gtp = NULL, 
+                  bool rb_cumulativeValue = false,
+#ifdef USE_EEPROM_IO
+                  uint16_t rui16_eepromAdr = 0xFFFF,
+#endif
+                  ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+                  int ri_singletonVecKey = 0)
+    : ProcDataLocal_c(
+#ifdef USE_ISO_11783
+                      rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                      rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                      rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
+#ifdef USE_EEPROM_IO
+                      rui16_eepromAdr,
+#endif
+                      rpc_processDataChangeHandler,
+                      ri_singletonVecKey
+                      ) {};
 
   /**
     initialise this ProcDataLocal_c
@@ -185,11 +211,17 @@ public:
 
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
+    ISO parameter
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+
+    DIN parameter
     @param rui8_lis optional LIS code of this instance
-    @param rc_gtp optional GETY_POS code of Process-Data
     @param rui8_wert optional WERT code of this instance
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+    @param rc_gtp optional GETY_POS code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerGtp optional GETY_POS of the owner
     @param rpc_gtp pointer to updated GETY_POS variable of owner
@@ -213,23 +245,41 @@ public:
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(uint8_t rui8_lis = 0,
-      iGetyPos_c rc_gtp = iGetyPos_c(0, 0xF), uint8_t rui8_wert = 0,  uint8_t rui8_inst = 0,
-      uint8_t rui8_zaehlnum = 0xFF, uint8_t rui8_pri = 2, iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
-      iGetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false
-      #ifdef USE_EEPROM_IO
-      , uint16_t rui16_eepromAdr = 0xFFFF
-      #endif
-      , ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL
-      , int ri_singletonVecKey = 0
-      ) {ProcDataLocal_c::init(
-       rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum,
-       rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
-      #ifdef USE_EEPROM_IO
-       rui16_eepromAdr,
-      #endif
-       rpc_processDataChangeHandler,
-       ri_singletonVecKey);};
+  void init(
+#ifdef USE_ISO_11783
+            uint16_t rui16_DDI = 0,
+            uint16_t rui16_element = 0xFF,
+#endif
+#ifdef USE_DIN_9684
+            uint8_t rui8_lis = 0,
+            uint8_t rui8_wert = 0,
+            uint8_t rui8_inst = 0,
+            uint8_t rui8_zaehlnum = 0xFF,
+#endif
+            iGetyPos_c rc_gtp = iGetyPos_c(0, 0xF),
+            uint8_t rui8_pri = 2, 
+            iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
+            iGetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false,
+#ifdef USE_EEPROM_IO
+            uint16_t rui16_eepromAdr = 0xFFFF,
+#endif
+            ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+            int ri_singletonVecKey = 0
+            ) 
+  {ProcDataLocal_c::init(
+#ifdef USE_ISO_11783
+                         rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                         rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
+#ifdef USE_EEPROM_IO
+                         rui16_eepromAdr,
+#endif
+                         rpc_processDataChangeHandler,
+                         ri_singletonVecKey);
+  };
 
   /** set the poitner to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
@@ -315,8 +365,21 @@ public:
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
+  // @todo: user interface for min/max/exact value?
   bool sendSetpointMod( uint8_t rui8_mod, iGetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return setpointConst().sendSetpointMod( rui8_mod, rc_targetGtp, ren_progType );};
+  { // @todo: enable value groups in interface?
+     __IsoAgLib::GeneralCommand_c::ValueGroup_t en_valueGroup;
+     switch (rui8_mod) {
+       case 2: en_valueGroup = __IsoAgLib::GeneralCommand_c::minValue; break;
+       case 3: en_valueGroup = __IsoAgLib::GeneralCommand_c::maxValue; break;
+       case 0:
+       default:
+        en_valueGroup = __IsoAgLib::GeneralCommand_c::exactValue; break;
+    }
+   
+   return setpointConst().sendSetpointMod( rc_targetGtp, ren_progType,
+                                           en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
+  };
   
   #ifdef USE_EEPROM_IO
   /**
@@ -405,17 +468,6 @@ public:
   void setInternalUnit(uint16_t rui16_internalUnit)
       {ProcDataLocal_c::setInternalUnit(rui16_internalUnit);};
 
-  /**
-    deliver the send conversion, which is used to send measuring values
-    @return conversion value
-  */
-  const int32_t& sendConversion()const{return ProcDataLocal_c::sendConversion();};
-  /**
-    set the send conversion, which is used to send measuring values
-    @param ri32_sendConversion new conversion value
-  */
-  void setSendConversion(int32_t ri32_sendConversion)
-      {ProcDataLocal_c::setSendConversion(ri32_sendConversion);};
   /**
     deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal

@@ -165,29 +165,30 @@ bool SetpointRegister_c::operator==(const SetpointRegister_c& rrefc_src)const{
 
 /**
   deliver the setpoint according to the mod type
-  @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
+  @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3)
   @return setpoint selected by MOD
 */
-int32_t SetpointRegister_c::valMod(uint8_t rb_mod)const{
-  switch (rb_mod)
+int32_t SetpointRegister_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
+  switch (en_valueGroup)
   {
-    case 0:
+    case GeneralCommand_c::exactValue:
       return exact();
-    case 2:
+    case GeneralCommand_c::minValue:
       return min();
-    case 3:
+    case GeneralCommand_c::maxValue:
     default:
       return max();
   }
 }
+
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   deliver the setpoint according to the mod type
-  @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
+  @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3)
   @return setpoint selected by MOD
 */
-float SetpointRegister_c::valModFloat(uint8_t rb_mod)const{
-  int32_t i32_temp = valMod(rb_mod);
+float SetpointRegister_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const{
+  int32_t i32_temp = valMod(en_valueGroup);
   return *((float*)(&i32_temp));;
 }
 #endif
@@ -196,6 +197,7 @@ float SetpointRegister_c::valModFloat(uint8_t rb_mod)const{
   @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3)
   @return true -> a MOD type setpoint exist
 */
+// @todo: use GeneralCommand_c::ValueGroup_t as parameter ?
 bool SetpointRegister_c::existValMod(uint8_t rb_mod)const{
   uint8_t b_testMask = (1 << rb_mod);
   return ((data.en_definedSetpoints & b_testMask) != 0)?true:false;
@@ -281,22 +283,23 @@ void SetpointRegister_c::setMax(int32_t ri32_val)
 /**
   set a limit val for type given by rb_mod
   @param ri32_val new setpoint value
-  @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
+  @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3)
 */
-void SetpointRegister_c::setValMod(int32_t ri32_val,uint8_t rb_mod){
-  switch (rb_mod)
+void SetpointRegister_c::setValMod(int32_t ri32_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
+  switch (en_valueGroup)
   {
-    case 0:
+    case GeneralCommand_c::exactValue:
       setExact(ri32_val);
       break;
-    case 2:
+    case GeneralCommand_c::minValue:
       setMin(ri32_val);
       break;
-    case 3:
+    case GeneralCommand_c::maxValue:
       setMax(ri32_val);
       break;
   }
 }
+
 #ifdef USE_FLOAT_DATA_TYPE
 
 /**
@@ -329,23 +332,24 @@ void SetpointRegister_c::setMax(float rf_val)
 /**
   set a limit val for type given by rb_mod
   @param rf_val new setpoint value
-  @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
+  @param en_valueGroup MOD code of setpoint type to set (exact 0, min 2, max 3)
 */
-void SetpointRegister_c::setValMod(float rf_val, uint8_t rb_mod)
-{
-  switch (rb_mod)
+
+void SetpointRegister_c::setValMod(float rf_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
+  switch (en_valueGroup)
   {
-    case 0:
+    case GeneralCommand_c::exactValue:
       setExact(rf_val);
       break;
-    case 2:
+    case GeneralCommand_c::minValue:
       setMin(rf_val);
       break;
-    case 3:
+    case GeneralCommand_c::maxValue:
       setMax(rf_val);
       break;
   }
 }
+
 #endif
 
 /**

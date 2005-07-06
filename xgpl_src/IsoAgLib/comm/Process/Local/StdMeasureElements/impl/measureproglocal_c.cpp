@@ -365,13 +365,16 @@ bool MeasureProgLocal_c::stop(){
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool MeasureProgLocal_c::sendValMod( uint8_t rui8_mod, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType ) const {
+bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType ) const {
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              en_valueGroup, GeneralCommand_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
-      if (processDataConst().valType() != float_val)
-        return processDataConst().sendValGtp(ren_progType, rc_targetGtp, 1, rui8_mod, valMod(rui8_mod));
-      else return processDataConst().sendValGtp(ren_progType, rc_targetGtp, 1, rui8_mod, valModFloat(rui8_mod));
+  if (processDataConst().valType() != float_val)
+     return processDataConst().sendValGtp(ren_progType, rc_targetGtp, valMod(en_valueGroup));
+  else return processDataConst().sendValGtp(ren_progType, rc_targetGtp, valModFloat(en_valueGroup));
 #else
-      return processDataConst().sendValGtp(ren_progType, rc_targetGtp, 1, rui8_mod, valMod(rui8_mod));
+  return processDataConst().sendValGtp(ren_progType, rc_targetGtp, valMod(en_valueGroup));
 #endif
 }
 
@@ -390,29 +393,26 @@ bool MeasureProgLocal_c::processMsg(){
   if (!b_result)
   { // only use the local vars if needed
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-    uint8_t b_mod = c_pkg.mod();
-
-
+    
     // get the int32_t data val; let it convert, if needed
     int32_t i32_val = c_pkg.dataRawCmdLong();
 
-    // the message was a value message -> evaluate it here
-    if (c_pkg.pd() == 1)
+    // the message was a value message -> evaluate it here (DIN: pd=1)
+    if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementReset)
     { // write - accept only write actions to local data only if this is reset try
       // (not standard conformant, but practised)
-      if (i32_val == 0)
-      { // try to reset value
-        resetValMod(b_mod);
-        // resetted val is automatically sent
-        b_result = true;
-        // call handler function if handler class is registered
-        if ( processDataConst().getProcessDataChangeHandler() != NULL )
-          processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().gtp() );
-      }
+      // i32_val == 0 is already checked in ProcessPgk::resolveCommandType()
+      // try to reset value
+      resetValMod(c_pkg.c_generalCommand.getValueGroup());
+      // resetted val is automatically sent
+      b_result = true;
+      // call handler function if handler class is registered
+      if ( processDataConst().getProcessDataChangeHandler() != NULL )
+        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().gtp() );
     } // write
     else
     { // read -> answer wanted value
-      sendValMod( b_mod, c_pkg.memberSend().gtp(), Proc_c::progType_t(c_pkg.pri()));
+      sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().gtp(), Proc_c::progType_t(c_pkg.pri()));
       b_result = true;
     } // read
   }
@@ -622,29 +622,31 @@ bool MeasureProgLocal_c::sendRegisteredVals(){
   if (checkDoSend(Proc_c::DoVal))
   {
     // call send function
-    b_success = (sendValMod( 0, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::exactValue, gtp(), en_progType))?true : b_success;
   }
   if (checkDoSend(Proc_c::DoMin))
   {
     // call send function
-    b_success = (sendValMod( 1, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::minValue, gtp(), en_progType))?true : b_success;
   }
   if (checkDoSend(Proc_c::DoMax))
   {
     // call send function
-    b_success = (sendValMod( 2, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::maxValue, gtp(), en_progType))?true : b_success;
   }
+  
   if (checkDoSend(Proc_c::DoInteg))
   {
     // call send function
-    b_success = (sendValMod( 3, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::integValue, gtp(), en_progType))?true : b_success;
 
   }
   if (checkDoSend(Proc_c::DoMed))
   {
     // call send function
-    b_success = (sendValMod( 4, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::medValue, gtp(), en_progType))?true : b_success;
   }
+
   return b_success;
 }
 
@@ -685,18 +687,23 @@ bool MeasureProgLocal_c::resetVal(){
   uint8_t ui8_pri = progType();
   bool b_sendSuccess;
 
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              GeneralCommand_c::exactValue, GeneralCommand_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
     i32_val = 0;
-    b_sendSuccess = processData().sendValGtp(ui8_pri, c_gtp, 1, 0, val());
+    // DIN: pd=1, mod=0
+    b_sendSuccess = processData().sendValGtp(ui8_pri, c_gtp, val());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_val = 0;
-    b_sendSuccess = processData().sendValGtp(ui8_pri, c_gtp, 1, 0, valFloat());
+    // DIN: pd=1, mod=0
+    b_sendSuccess = processData().sendValGtp(ui8_pri, c_gtp, valFloat());
   }
 #endif
   #ifdef USE_EEPROM_IO
@@ -720,18 +727,24 @@ bool MeasureProgLocal_c::resetVal(){
 bool MeasureProgLocal_c::resetInteg(){
   // send resetted val
   uint8_t ui8_pri = progType();
+
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              GeneralCommand_c::integValue, GeneralCommand_c::setValue);
+  
+  // DIN: pd=1, mod=3
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
   i32_integ = 0;
-  return processData().sendValGtp(ui8_pri, c_gtp, 1, 3, integ());
+  return processData().sendValGtp(ui8_pri, c_gtp, integ());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_integ = 0;
-    return processData().sendValGtp(ui8_pri, c_gtp, 1, 3, integFloat());
+    return processData().sendValGtp(ui8_pri, c_gtp, integFloat());
   }
 #endif
 
@@ -749,18 +762,23 @@ bool MeasureProgLocal_c::resetMed(){
   i32_medCnt = 0;
   // send resetted val
   uint8_t ui8_pri = progType();
+  
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              GeneralCommand_c::medValue, GeneralCommand_c::setValue);
+  //DIN pd=1, mod=4  
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
   i32_medSum = 0;
-  return processData().sendValGtp(ui8_pri, c_gtp, 1, 4, med());
+  return processData().sendValGtp(ui8_pri, c_gtp, med());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_medSum = 0;
-    return processData().sendValGtp(ui8_pri, c_gtp, 1, 4, medFloat());
+    return processData().sendValGtp(ui8_pri, c_gtp, medFloat());
   }
 #endif
 }
@@ -776,19 +794,25 @@ bool MeasureProgLocal_c::resetMed(){
 bool MeasureProgLocal_c::resetMin(){
   // send resetted val
   uint8_t ui8_pri = progType();
+  
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              GeneralCommand_c::minValue, GeneralCommand_c::setValue);
+
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
   i32_min = 0;
-  return processData().sendValGtp(ui8_pri, c_gtp, 1, 1, min());
+  // DIN: pd=1, mod=1
+  return processData().sendValGtp(ui8_pri, c_gtp, min());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
-
     f_min = 0;
-    return processData().sendValGtp(ui8_pri, c_gtp, 1, 1, minFloat());
+    // DIN: pd=1, mod=1
+    return processData().sendValGtp(ui8_pri, c_gtp, minFloat());
   }
 #endif
 }
@@ -805,18 +829,25 @@ bool MeasureProgLocal_c::resetMax(){
 
   // send resetted val
   uint8_t ui8_pri = progType();
+  
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              GeneralCommand_c::maxValue, GeneralCommand_c::setValue);
+
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
 #endif
   i32_max = 0;
-  return processData().sendValGtp(ui8_pri, c_gtp, 1, 2, max());
+  // DIN: pd=1, mod=2
+  return processData().sendValGtp(ui8_pri, c_gtp, max());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_max = 0;
-    return processData().sendValGtp(ui8_pri, c_gtp, 1, 2, maxFloat());
+    // DIN: pd=1, mod=2
+    return processData().sendValGtp(ui8_pri, c_gtp, maxFloat());
   }
 #endif
 }

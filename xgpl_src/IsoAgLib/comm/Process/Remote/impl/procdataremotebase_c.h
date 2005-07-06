@@ -94,9 +94,8 @@
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 
-#ifdef ISO_TASK_CONTROLLER
 /**
-  Common base class for all remote process data independend from the
+  Common base class for all remote process data independent from the
   individual feature set.
   This class is responsible for deduction of dynamic member adresses ( %i.e. SA for ISO 11783 )
   dependend on device type of managing ECU and this local ECU ( which interacts with the remote ECU )
@@ -107,223 +106,144 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
  public:
   /**
     constructor which can set all element vars
-    @param rc_gtp optional GETY_POS code of this instance
+    ISO parameter
     @param rui16_DDI optional DDI code of this instance
     @param rui16_element optional ELEMENT code of this instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-  */
-  ProcDataRemoteBase_c(GetyPos_c rc_gtp = 0,
-      uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
-      uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
-      GetyPos_c* rpc_commanderGtp = NULL,
-      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-      int ri_singletonVecKey = 0)
-  {init(rc_gtp, rui16_DDI, rui16_element, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
-        rpc_processDataChangeHandler, ri_singletonVecKey);};
-  /**
-    initialise this ProcDataRemoteBase_c instance to a well defined initial state
-    @param rc_gtp optional GETY_POS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-  */
-  void init( GetyPos_c rc_gtp = 0,
-      uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
-      uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
-      GetyPos_c* rpc_commanderGtp = NULL,
-      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-      int ri_singletonVecKey = 0);
 
-   /**
-    assignment operator for this object
-    @param rrefc_src source instance
-    @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
-  */
-  const ProcDataRemoteBase_c& operator=(const ProcDataRemoteBase_c& rrefc_src);
-
-  /**
-    copy constructor for IsoAgLibProcDataRemote
-    @param rrefc_src source instance
-  */
-   ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src);
-
-  /** default destructor which has nothing to do */
-  ~ProcDataRemoteBase_c();
-
-
-  /**
-    deliver the commanderGtp (GETY_POS of local member)
-    @return GETY_POS used for sending commands to remote owner member
-  */
-  GetyPos_c commanderGtp()const{return (pc_gtp != NULL)?*pc_gtp:GetyPos_c(0xF, 0xF);};
-  /**
-    set the pointer to the commander ident gtp
-    @param rpbgtp pointer to GETY_POS var of local member used for
-                sending commands to remote owner member
-  */
-  virtual void setCommanderGtp(GetyPos_c* rpc_gtp);
-
-  /**
-    perform periodic actions
-    ProcDataRemoteBase_c::timeEvent has nothing to do
-    -> this function must only be defined as base for derived variants which
-    uses simple measurements and thus doesn't need a time event
-    @return true -> all planned executions performed
-  */
-  virtual bool timeEvent( void );
-private: // Private methods
-  /**
-    virtual function which check dependent on remote/local
-    if send action with given var parameter and address claim state of owner is
-    allowed and resolves the appropriate numbers for sender and receiver (empf)
-
-    possible errors:
-        * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-    @param rui8_pri PRI code of message
-    @param rb_var variable number -> send
-    @param b_empf refernce to EMPF variable which is only checked for address claim state
-    @param b_send refernce to SEND variable which is updated to rb_var
-    @param en_msgProto protocol type to use for the message
-        IState_c::Din or IState_c::Iso (only compiled and used if USE_ISO_11783 is
-        configured) (default: IState_c::Din)
-    @return true -> owner of process data registered as active in Monitor-List
-  */
-  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send
-  #ifdef USE_ISO_11783
-    , IState_c::itemState_t &en_msgProto
-  #endif
-    ) const;
-
-private: // Private attributes
-  /** pointer to the gtp of the local ident, which acts as commanding member */
-  GetyPos_c* pc_gtp;
-};
-#else
-/**
-  Common base class for all remote process data independent from the
-  individual feature set.
-  This class is responsible for deduction of dynamic member adresses ( %i.e. SA for ISO 11783 )
-  dependent on device type of managing ECU and this local ECU ( which interacts with the remote ECU )
-  ( \sa ProcDataRemoteBase_c::var2empfSend ).
- */
-class ProcDataRemoteBase_c : public ProcDataBase_c
-{
- public:
-  /**
-    constructor which can set all element vars
+    DIN parameter
     @param rui8_lis optional LIS code of this instance
-    @param rc_gtp optional GETY_POS code of this instance
     @param rui8_wert optional WERT code of this instance
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+    common parameter
+    @param rc_gtp optional GETY_POS code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerGtp optional GETY_POS of the owner
     @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataRemoteBase_c(uint8_t rui8_lis = 0xFF, GetyPos_c rc_gtp = 0,
-      uint8_t rui8_wert = 0, uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
-      uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
-      GetyPos_c* rpc_commanderGtp = NULL,
-      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-      int ri_singletonVecKey = 0)
-  {init(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
-        rpc_processDataChangeHandler, ri_singletonVecKey);};
-  /**
-    initialise this ProcDataRemoteBase_c instance to a well defined initial state
-    @param rui8_lis optional LIS code of this instance
-    @param rc_gtp optional GETY_POS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-  */
-  void init(uint8_t rui8_lis = 0xFF, GetyPos_c rc_gtp = 0,
-      uint8_t rui8_wert = 0, uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
-      uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
-      GetyPos_c* rpc_commanderGtp = NULL,
-      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-      int ri_singletonVecKey = 0);
-
-   /**
-    assignment operator for this object
-    @param rrefc_src source instance
-    @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
-  */
-  const ProcDataRemoteBase_c& operator=(const ProcDataRemoteBase_c& rrefc_src);
-
-  /**
-    copy constructor for IsoAgLibProcDataRemote
-    @param rrefc_src source instance
-  */
-   ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src);
-
-  /** default destructor which has nothing to do */
-  ~ProcDataRemoteBase_c();
-
-
-  /**
-    deliver the commanderGtp (GETY_POS of local member)
-    @return GETY_POS used for sending commands to remote owner member
-  */
-  GetyPos_c commanderGtp()const{return (pc_gtp != NULL)?*pc_gtp:GetyPos_c(0xF, 0xF);};
-  /**
-    set the pointer to the commander ident gtp
-    @param rpbgtp pointer to GETY_POS var of local member used for
-                sending commands to remote owner member
-  */
-  virtual void setCommanderGtp(GetyPos_c* rpc_gtp);
-
-  /**
-    perform periodic actions
-    ProcDataRemoteBase_c::timeEvent has nothing to do
-    -> this function must only be defined as base for derived variants which
-    uses simple measurements and thus doesn't need a time event
-    @return true -> all planned executions performed
-  */
-  virtual bool timeEvent( void );
-private: // Private methods
-  /**
-    virtual function which check dependent on remote/local
-    if send action with given var parameter and address claim state of owner is
-    allowed and resolves the appropriate numbers for sender and receiver (empf)
-
-    possible errors:
-        * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-    @param rui8_pri PRI code of message
-    @param rb_var variable number -> send
-    @param b_empf refernce to EMPF variable which is only checked for address claim state
-    @param b_send refernce to SEND variable which is updated to rb_var
-    @param en_msgProto protocol type to use for the message
-        IState_c::Din or IState_c::Iso (only compiled and used if USE_ISO_11783 is
-        configured) (default: IState_c::Din)
-    @return true -> owner of process data registered as active in Monitor-List
-  */
-  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send
-  #ifdef USE_ISO_11783
-    , IState_c::itemState_t &en_msgProto
-  #endif
-    ) const;
-
-private: // Private attributes
-  /** pointer to the gtp of the local ident, which acts as commanding member */
-  GetyPos_c* pc_gtp;
-};
-
+  ProcDataRemoteBase_c(
+#ifdef USE_ISO_11783
+                       uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
 #endif
+#ifdef USE_DIN_9684
+                       uint8_t rui8_lis = 0xFF, uint8_t rui8_wert = 0, uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
+#endif
+                       GetyPos_c rc_gtp = 0,
+                       uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
+                       GetyPos_c* rpc_commanderGtp = NULL,
+                       IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+                       int ri_singletonVecKey = 0)
+  { init(
+#ifdef USE_ISO_11783
+         rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+         rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+         rpc_processDataChangeHandler, ri_singletonVecKey);};
+  /**
+    initialise this ProcDataRemoteBase_c instance to a well defined initial state
+    ISO parameter
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional ELEMENT code of this instance
+
+    DIN parameter
+    @param rui8_lis optional LIS code of this instance
+    @param rui8_wert optional WERT code of this instance
+    @param rui8_inst optional INST code of this instance
+    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+    common parameter
+    @param rc_gtp optional GETY_POS code of this instance
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @param rc_ownerGtp optional GETY_POS of the owner
+    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rpc_processDataChangeHandler optional pointer to handler class of application
+    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  */
+  void init(
+#ifdef USE_ISO_11783
+            uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
+#endif
+#ifdef USE_DIN_9684
+            uint8_t rui8_lis = 0xFF, uint8_t rui8_wert = 0, uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
+#endif
+            GetyPos_c rc_gtp = 0,
+            uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
+            GetyPos_c* rpc_commanderGtp = NULL,
+            IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+            int ri_singletonVecKey = 0);
+
+   /**
+    assignment operator for this object
+    @param rrefc_src source instance
+    @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
+  */
+  const ProcDataRemoteBase_c& operator=(const ProcDataRemoteBase_c& rrefc_src);
+
+  /**
+    copy constructor for IsoAgLibProcDataRemote
+    @param rrefc_src source instance
+  */
+   ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src);
+
+  /** default destructor which has nothing to do */
+  ~ProcDataRemoteBase_c();
+
+
+  /**
+    deliver the commanderGtp (GETY_POS of local member)
+    @return GETY_POS used for sending commands to remote owner member
+  */
+  GetyPos_c commanderGtp()const{return (pc_gtp != NULL)?*pc_gtp:GetyPos_c(0xF, 0xF);};
+  /**
+    set the pointer to the commander ident gtp
+    @param rpbgtp pointer to GETY_POS var of local member used for
+                sending commands to remote owner member
+  */
+  virtual void setCommanderGtp(GetyPos_c* rpc_gtp);
+
+  /**
+    perform periodic actions
+    ProcDataRemoteBase_c::timeEvent has nothing to do
+    -> this function must only be defined as base for derived variants which
+    uses simple measurements and thus doesn't need a time event
+    @return true -> all planned executions performed
+  */
+  virtual bool timeEvent( void );
+
+private: // Private methods
+  /**
+    virtual function which check dependent on remote/local
+    if send action with given var parameter and address claim state of owner is
+    allowed and resolves the appropriate numbers for sender and receiver (empf)
+
+    possible errors:
+        * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
+    @param rui8_pri PRI code of message
+    @param rb_var variable number -> send
+    @param b_empf refernce to EMPF variable which is only checked for address claim state
+    @param b_send refernce to SEND variable which is updated to rb_var
+    @param en_msgProto protocol type to use for the message
+        IState_c::Din or IState_c::Iso (only compiled and used if USE_ISO_11783 is
+        configured) (default: IState_c::Din)
+    @return true -> owner of process data registered as active in Monitor-List
+  */
+  virtual bool var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t &b_empf, uint8_t &b_send
+  #ifdef USE_ISO_11783
+    , IState_c::itemState_t &en_msgProto
+  #endif
+    ) const;
+    
+
+private: // Private attributes
+  /** pointer to the gtp of the local ident, which acts as commanding member */
+  GetyPos_c* pc_gtp;
+};
+
 }
 #endif

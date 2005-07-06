@@ -132,12 +132,13 @@ void SimpleManageSetpointRemote_c::processSetpoint()
 {
   // for simple setpoint the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  if (c_pkg.pd() == 0)
+  // pd = 0
+  if (!c_pkg.c_generalCommand.checkIsRequest())
   {
     bool b_change = false;
-    switch (c_pkg.mod())
+    switch (c_pkg.c_generalCommand.getValueGroup())
     {
-      case 0: // exact setpoint
+      case GeneralCommand_c::exactValue: // exact setpoint
         #ifdef USE_FLOAT_DATA_TYPE
         if (c_pkg.valType() == float_val)
         {
@@ -178,7 +179,14 @@ int32_t SimpleManageSetpointRemote_c::setpointMasterVal(bool rb_sendRequest)
 {
   setValType(i32_val);
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  if (rb_sendRequest) c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 2, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd=2, mod=0
+    c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
+  }
   return i32_setpointMasterVal;
 }
 
@@ -191,7 +199,13 @@ void SimpleManageSetpointRemote_c::setSetpointMasterVal(int32_t ri32_val, bool r
 {
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   setValType(i32_val);
-  c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), 0, 0, ri32_val);
+    
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::setValue);
+  // DIN: pd=0, mod=0
+  c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), ri32_val);
   if (!rb_onlyStoreOnResponse) i32_setpointMasterVal = ri32_val;
 }
 #ifdef USE_FLOAT_DATA_TYPE
@@ -204,7 +218,14 @@ float SimpleManageSetpointRemote_c::setpointMasterValFloat(bool rb_sendRequest)
 {
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   setValType(float_val);
-  if (rb_sendRequest) c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 2, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd=2, mod=0
+    c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
+  }
   return f_setpointMasterVal;
 }
 /**
@@ -216,7 +237,12 @@ void SimpleManageSetpointRemote_c::setSetpointMasterVal(float rf_val, bool rb_on
 {
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   setValType(float_val);
-  c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), 0, 0, rf_val);
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::setValue);
+  // DIN: pd=0, mod=0
+  c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), rf_val);
   if (!rb_onlyStoreOnResponse) f_setpointMasterVal = rf_val;
 }
 #endif

@@ -128,7 +128,14 @@ int32_t SimpleManageMeasureProgRemote_c::masterVal(bool rb_sendRequest)
 {
   setValType(i32_val);
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  if (rb_sendRequest) c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 3, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd=3, mod=0
+    c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
+  }
   return i32_masterVal;
 }
 /**
@@ -137,10 +144,26 @@ int32_t SimpleManageMeasureProgRemote_c::masterVal(bool rb_sendRequest)
 void SimpleManageMeasureProgRemote_c::resetMasterVal()
 {
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 1, 0, 0);
-  c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0, 6, 0x8);
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
+                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::setValue);
+  // DIN: pd=1, mod=0
+  c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
+  
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
+                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::measurementReset);
+  // DIN: pd=0, mod=6
+  c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0x8);
   #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
-  c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0, 0, 0);
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::setValue);
+    // DIN: pd=0, mod=0
+    c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
   #endif
 }
 
@@ -153,7 +176,14 @@ float SimpleManageMeasureProgRemote_c::masterValFloat(bool rb_sendRequest)
 {
   setValType(float_val);
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  if (rb_sendRequest) c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 3, 0, 0);
+  if (rb_sendRequest) {
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::requestValue);
+    // DIN: pd=3, mod=0
+    c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
+  }
   return f_masterVal;
 }
 #endif

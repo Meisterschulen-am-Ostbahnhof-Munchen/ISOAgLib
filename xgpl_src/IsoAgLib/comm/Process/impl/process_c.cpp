@@ -146,7 +146,7 @@ void Process_c::init()
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
   i32_lastFilterBoxTime = 0;
-#ifdef ISO_TASK_CONTROLLER
+#ifdef USE_ISO_11783
   i32_lastTaskStatusTime = 0;
   ui8_runningTaskWithSa = 0xFF;         // Initialize to 0xFF because it is an address we can't have. -bac
   ui8_taskStatus = 0;
@@ -155,7 +155,7 @@ void Process_c::init()
 
 }
 
-#ifdef ISO_TASK_CONTROLLER
+#ifdef USE_ISO_11783
 void Process_c::setTaskStatus(uint8_t taskStatus)
 {
     ui8_taskStatus = taskStatus;
@@ -275,7 +275,7 @@ bool Process_c::timeEvent( void ){
   }
   #endif
 
-#ifdef ISO_TASK_CONTROLLER  
+#ifdef USE_ISO_11783
   GetyPos_c c_myGtp( 130, 0 );
   if(ui8_runningTaskWithSa == 0xFF)
   {
@@ -375,7 +375,7 @@ bool Process_c::processMsg(){
   uint8_t b_posData;
   bool b_result = false;
 
-  #ifdef DEBUG
+  #if defined(DEBUG) && defined(USE_DIN_9684)
   if ( ( data().wert() == 0 ) && ( data().inst() == 0 ) ) {
     IsoAgLib::getIrs232Instance()
 
@@ -457,69 +457,148 @@ bool Process_c::processMsg(){
   #endif
   // now b_posData is the best guess for searching the appropriate prcess data item
   // check first for local Process Data
-  if (existProcDataLocal(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()))
+  if (existProcDataLocal(
+#ifdef USE_ISO_11783
+                         data().DDI(), data().element(),
+#endif
+#ifdef USE_DIN_9684
+                         data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+#endif
+                         data().gety(), b_posData, data().pri()))
   { // there exists an appropriate process data item -> let the item process the msg
-    procDataLocal(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()).processMsg();
+    procDataLocal(
+#ifdef USE_ISO_11783
+                  data().DDI(), data().element(),
+#endif
+#ifdef USE_DIN_9684
+                  data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+#endif
+                  data().gety(), b_posData, data().pri()).processMsg();
     b_result = true;
   }
 //  else
 //  {
     // now check for remote Process Data
-#ifdef ISO_TASK_CONTROLLER
-    if (existProcDataRemote(data().gety(), data().DDI(), data().element(), b_posData))
-    { // there exists an appropriate process data item -> let the item process the msg
-      procDataRemote(data().gety(), data().DDI(), data().element(), b_posData).processMsg();
-      b_result = true;
-    }
-#else
-    if (existProcDataRemote(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()))
-    { // there exists an appropriate process data item -> let the item process the msg
-      procDataRemote(data().lis(), data().gety(), data().wert(), data().inst(), data().zaehlnum(), b_posData, data().pri()).processMsg();
-      b_result = true;
-    }
+    if (existProcDataRemote(
+#ifdef USE_ISO_11783
+                            data().DDI(), data().element(),
 #endif
+#ifdef USE_DIN_9684
+                            data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+#endif
+                            data().gety(), b_posData
+#ifdef USE_DIN_9684
+                            ,data().pri()
+#endif
+                            ))
+    { // there exists an appropriate process data item -> let the item process the msg
+      procDataRemote(
+#ifdef USE_ISO_11783
+                     data().DDI(), data().element(),
+#endif
+#ifdef USE_DIN_9684
+                     data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+#endif
+                     data().gety(), b_posData
+#ifdef USE_DIN_9684
+                     ,data().pri()
+#endif
+                     ).processMsg();
+      b_result = true;
+    }
+
 // }
  return b_result;
 }
 
 /**
   checks if a suitable ProcDataLocal_c item exist
+  ISO parameter
+  @param rui16_DDI
+  @param rui16_element
+
+  DIN parameter
   @param rui8_lis LIS code of searched local Process Data instance
-  @param rui8_gety GETY code of searched local Process Data instance
   @param rui8_wert WERT code of searched local Process Data instance
   @param rui8_inst INST code of searched local Process Data instance
   @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+
+  @param rui8_gety GETY code of searched local Process Data instance
   @param rui8_pos optional POS code of searched local Process Data instance
                 (only important if more GETY type members are active)
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return true -> suitable instance found
 */
-bool Process_c::existProcDataLocal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri){
-  return updateLocalCache(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
-}
-
-#ifdef ISO_TASK_CONTROLLER
-bool Process_c::existProcDataRemote(uint8_t rui8_gety, uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_pos, uint8_t rui8_pri){
- return updateRemoteCache(rui8_gety, rui16_DDI, rui16_element , rui8_pos, rui8_pri);
-} 
-#else
-/**
-  checks if a suitable ProcDataRemote_c item exist
-  @param rui8_lis LIS code of searched remote Process Data instance
-
-  @param rui8_gety GETY code of searched remote Process Data instance
-  @param rui8_wert WERT code of searched remote Process Data instance
-  @param rui8_inst INST code of searched remote Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
-  @param rui8_pos optional POS code of searched remote Process Data instance
-                (only important if more GETY type members are active)
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @return true -> suitable instance found
-*/
-bool Process_c::existProcDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri){
-  return updateRemoteCache(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
-}
+bool Process_c::existProcDataLocal(
+#ifdef USE_ISO_11783
+                                   uint16_t rui16_DDI,
+                                   uint16_t rui16_element,
 #endif
+#ifdef USE_DIN_9684
+                                   uint8_t rui8_lis,
+                                   uint8_t rui8_wert,
+                                   uint8_t rui8_inst,
+                                   uint8_t rui8_zaehlnum,
+#endif
+                                   uint8_t rui8_gety,
+                                   uint8_t rui8_pos,
+                                   uint8_t rui8_pri)
+{
+  return updateLocalCache(
+#ifdef USE_ISO_11783
+                          rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                          rui8_gety, rui8_pos, rui8_pri);
+}
+
+  /**
+    checks if a suitable ProcDataRemoteBase_c item exist
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
+    @param rui8_lis LIS code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_inst INST code of searched local Process Data instance
+    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    common parameter
+    @param rui8_gety GETY code of searched local Process Data instance
+    @param rui8_pos optional POS code of searched remote Process Data instance
+                  (only important if more GETY type members are active)
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @return true -> suitable instance found
+  */
+bool Process_c::existProcDataRemote(
+#ifdef USE_ISO_11783
+                           uint16_t rui16_DDI,
+                           uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                           uint8_t rui8_lis,
+                           uint8_t rui8_wert,
+                           uint8_t rui8_inst,
+                           uint8_t rui8_zaehlnum,
+#endif
+                           uint8_t rui8_gety,
+                           uint8_t rui8_pos,
+                           uint8_t rui8_pri)
+{
+ return updateRemoteCache(
+#ifdef USE_ISO_11783
+                          rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                          rui8_gety, rui8_pos, rui8_pri);
+
+}
+
 /**
   search for suitable ProcDataLocal_c item; create on if not found AND if wanted
 
@@ -527,18 +606,44 @@ bool Process_c::existProcDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t
       * Err_c::badAlloc not enough memory to add new ProcDataLocal_c
         (can cause badAlloc exception)
       * Err_c::elNonexistent if element not found and rb_doCreate == false
+  ISO parameter
+  @param rui16_DDI
+  @param rui16_element
+
+  DIN parameter
   @param rui8_lis LIS code of searched local Process Data instance
-  @param rui8_gety GETY code of searched local Process Data instance
   @param rui8_wert WERT code of searched local Process Data instance
   @param rui8_inst INST code of searched local Process Data instance
   @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+
+  @param rui8_gety GETY code of searched local Process Data instance
   @param rui8_pos POS code of searched local Process Data instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return reference to searched/created ProcDataLocal_c instance
 */
-ProcDataLocalBase_c& Process_c::procDataLocal(uint8_t rui8_lis, uint8_t rui8_gety,
-      uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri ){
-  bool b_found = updateLocalCache( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
+ProcDataLocalBase_c& Process_c::procDataLocal(
+#ifdef USE_ISO_11783
+                                     uint16_t rui16_DDI,
+                                     uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                     uint8_t rui8_lis,
+                                     uint8_t rui8_wert,
+                                     uint8_t rui8_inst,
+                                     uint8_t rui8_zaehlnum,
+#endif
+                                     uint8_t rui8_gety,
+                                     uint8_t rui8_pos,
+                                     uint8_t rui8_pri )
+{
+  bool b_found = updateLocalCache(
+#ifdef USE_ISO_11783
+                                  rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                  rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                                  rui8_gety, rui8_pos, rui8_pri);
   if (!b_found)
   { // not found and no creation wanted -> error
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
@@ -546,35 +651,54 @@ ProcDataLocalBase_c& Process_c::procDataLocal(uint8_t rui8_lis, uint8_t rui8_get
   return **pc_searchCacheC1;
 }
 
-/**
-  search for suitable ProcDataRemote_c item; create on if not found AND if wanted
+  /**
+    search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
 
-  possible errors:
-      * Err_c::badAlloc not enough memory to add new ProcDataRemote_c
-        (can cause badAlloc exception)
-      * Err_c::elNonexistent if element not found and rb_doCreate == false
+    possible errors:
+        * Err_c::badAlloc not enough memory to add new ProcDataRemote_c
+          (can cause badAlloc exception)
+        * Err_c::elNonexistent if element not found and rb_doCreate == false
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
 
-  @param rui8_lis LIS code of searched remote Process Data instance
-  @param rui8_gety GETY code of searched remote Process Data instance
-  @param rui8_wert WERT code of searched remote Process Data instance
-  @param rui8_inst INST code of searched remote Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
-  @param rui8_pos POS code of searched remote Process Data instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @return reference to searched/created ProcDataRemote_c instance
-  @exception badAlloc
-*/
-#ifdef ISO_TASK_CONTROLLER
-ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_gety, uint16_t rui16_DDI, uint8_t rui16_element, uint8_t rui8_pos, uint8_t rui8_pri){
-#else
-ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
-         uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri ){
+    DIN parameter
+    @param rui8_lis LIS code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_inst INST code of searched local Process Data instance
+    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    common parameter
+    @param rui8_gety GETY code of searched local Process Data instance
+    @param rui8_pos POS code of searched remote Process Data instance
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @return reference to searched/created ProcDataRemoteBase_c instance
+    @exception badAlloc
+  */
+ProcDataRemoteBase_c& Process_c::procDataRemote(
+#ifdef USE_ISO_11783
+                                                uint16_t rui16_DDI,
+                                                uint16_t rui16_element,
 #endif
-#ifdef ISO_TASK_CONTROLLER
- bool b_found = updateRemoteCache( rui8_gety, rui16_DDI, rui16_element , rui8_pos, rui8_pri);
-#else
-  bool b_found = updateRemoteCache( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum , rui8_pos, rui8_pri);
+#ifdef USE_DIN_9684
+                                                uint8_t rui8_lis,
+                                                uint8_t rui8_wert,
+                                                uint8_t rui8_inst,
+                                                uint8_t rui8_zaehlnum,
 #endif
+                                                uint8_t rui8_gety,
+                                                uint8_t rui8_pos,
+                                                uint8_t rui8_pri)
+{
+  bool b_found = updateRemoteCache(
+#ifdef USE_ISO_11783
+                                   rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                                   rui8_gety, rui8_pos, rui8_pri);
+
   if (!b_found)
   { // not found and no creation wanted -> error
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
@@ -596,12 +720,12 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(uint8_t rui8_lis, uint8_t rui8_g
 uint8_t Process_c::procDataLocalCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
                                       uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri){
   uint8_t ui8_cnt=0;
-#ifndef ISO_TASK_CONTROLLER
+#ifndef USE_ISO_11783
   for ( pc_searchCacheC1 = c_arrClientC1.begin();
        ( pc_searchCacheC1 != c_arrClientC1.end() );
        pc_searchCacheC1++ )
   { // search for all local items which match the searched identity
-    if ((*pc_searchCacheC1)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
+    if ((*pc_searchCacheC1)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
   }
 #endif
   return ui8_cnt;
@@ -621,12 +745,12 @@ uint8_t Process_c::procDataLocalCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t
 uint8_t Process_c::procDataRemoteCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
                                        uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri){
   uint8_t ui8_cnt=0;
-#ifndef ISO_TASK_CONTROLLER
+#ifndef USE_ISO_11783
   for ( pc_searchCacheC2 = c_arrClientC2.begin();
        ( pc_searchCacheC2 != c_arrClientC2.end() );
        pc_searchCacheC2++ )
   { // search for all local items which match the searched identity
-    if ((*pc_searchCacheC2)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
+    if ((*pc_searchCacheC2)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
   }
 #endif
   return ui8_cnt;
@@ -634,30 +758,89 @@ uint8_t Process_c::procDataRemoteCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_
 
 /**
   update the cache with search for according ProcDataLocal_c item
-  @param rui8_lis LIS code of created local Process Data instance
+  ISO parameter
+  @param rui16_DDI
+  @param rui16_element
+
+  DIN parameter
+  @param rui8_lis LIS code of searched local Process Data instance
+  @param rui8_wert WERT code of searched local Process Data instance
+  @param rui8_inst INST code of searched local Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+
   @param rui8_gety GETY code of created local Process Data instance
-  @param rui8_wert WERT code of created local Process Data instance
-  @param rui8_inst INST code of created local Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of created local Process Data instance
   @param rui8_pos optinal POS code of created local Process Data instance
     (default not used for search)
   @param rui8_pri PRI code of messages with this process data instance (default 2)
 */
-bool Process_c::updateLocalCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri){
+bool Process_c::updateLocalCache(
+#ifdef USE_ISO_11783
+                                 uint16_t rui16_DDI,
+                                 uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                 uint8_t rui8_lis,
+                                 uint8_t rui8_wert,
+                                 uint8_t rui8_inst,
+                                 uint8_t rui8_zaehlnum,
+#endif
+                                 uint8_t rui8_gety,
+                                 uint8_t rui8_pos,
+                                 uint8_t rui8_pri)
+{
   bool b_foundLazy = false;
-#ifndef ISO_TASK_CONTROLLER
+
   if (!c_arrClientC1.empty())
   {
     if ( pc_searchCacheC1 != c_arrClientC1.end() )
     {
-      if ((*pc_searchCacheC1)->match(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos, rui8_pri)) return true;
+#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
+      if (data().identType() == Ident_c::StandardIdent) {
+        // DIN
+        if ((*pc_searchCacheC1)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
+      } else {
+        // ISO
+        if ((*pc_searchCacheC1)->matchISO(rui8_gety, rui16_DDI, rui16_element, rui8_pos)) return true;
+      }
+#else
+  #ifdef USE_ISO_11783      
+      if ((*pc_searchCacheC1)->matchISO(rui8_gety, rui16_DDI, rui16_element, rui8_pos)) return true;
+  #endif
+  #ifdef USE_DIN_9684
+      if ((*pc_searchCacheC1)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
+  #endif
+#endif
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
         ( pc_iter != c_arrClientC1.end() );
         pc_iter++ )
     { // check for lazy match with POS == 0xFF (==joker)
-      if ((*pc_iter)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri))
+
+      bool b_matched = false;
+            
+#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
+      if (data().identType() == Ident_c::StandardIdent) {
+        // DIN
+        if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+          b_matched = true;
+      } else {
+        // ISO
+        if ((*pc_iter)->matchISO(rui8_gety, rui16_DDI, rui16_element, 0xFF))
+          b_matched = true;
+      }
+#else
+  #ifdef USE_ISO_11783      
+      if ((*pc_iter)->matchISO(rui8_gety, rui16_DDI, rui16_element, 0xFF))
+        b_matched = true;
+  #endif
+  #ifdef USE_DIN_9684
+      if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+        b_matched = true;
+  #endif
+#endif
+      
+      if (b_matched)
       { // matches at least lazy
         if ((*pc_iter)->pos() == rui8_pos)
         { //exact match
@@ -674,48 +857,96 @@ bool Process_c::updateLocalCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t ru
       } // check lazy match
     }// for
   }
-#endif
+
   return b_foundLazy;
 }
 
-/**
-  update the cache with search for according ProcDataRemote_c item
-  @param rui8_lis LIS code of created remote Process Data instance
-  @param rui8_gety GETY code of created remote Process Data instance
-  @param rui8_wert WERT code of created remote Process Data instance
-  @param rui8_inst INST code of created remote Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of created remote Process Data instance
-  @param rui8_pos POS code of created remote Process Data instance
-    (default not used for search)
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-*/
-#ifdef ISO_TASK_CONTROLLER
-bool Process_c::updateRemoteCache(uint8_t rui8_gety, uint16_t rui16_DDI, uint16_t rui16_element, uint8_t rui8_pos, uint8_t rui8_pri)
-#else
-bool Process_c::updateRemoteCache(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri)
+  /**
+    update the cache with search for according ProcDataRemoteBase_c item
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
+    @param rui8_lis LIS code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_inst INST code of searched local Process Data instance
+    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    common parameter
+    @param rui8_gety GETY code of searched local Process Data instance
+    @param rui8_pos POS code of created remote Process Data instance
+      (default not used for search)
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+  */
+bool Process_c::updateRemoteCache(
+#ifdef USE_ISO_11783
+                         uint16_t rui16_DDI,
+                         uint16_t rui16_element,
 #endif
+#ifdef USE_DIN_9684
+                         uint8_t rui8_lis,
+                         uint8_t rui8_wert,
+                         uint8_t rui8_inst,
+                         uint8_t rui8_zaehlnum,
+#endif
+                         uint8_t rui8_gety,
+                         uint8_t rui8_pos,
+                         uint8_t rui8_pri)
 {
   bool b_foundLazy = false;
   if (!c_arrClientC2.empty())
   {
     if ( pc_searchCacheC2 != c_arrClientC2.end() )
     {
-#ifdef ISO_TASK_CONTROLLER
-      if ((*pc_searchCacheC2)->match(rui8_gety, rui16_DDI, rui16_element, rui8_pos, rui8_pri)) return true;
+#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
+      if (data().identType() == Ident_c::StandardIdent) {
+        // DIN
+        if ((*pc_searchCacheC2)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
+      } else {
+        // ISO
+        if ((*pc_searchCacheC2)->matchISO(rui8_gety, rui16_DDI, rui16_element, rui8_pos)) return true;
+      }
 #else
-      if ((*pc_searchCacheC2)->match(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos, rui8_pri)) return true;
+  #ifdef USE_ISO_11783      
+      if ((*pc_searchCacheC2)->matchISO(rui8_gety, rui16_DDI, rui16_element, rui8_pos)) return true;
+  #endif
+  #ifdef USE_DIN_9684
+      if ((*pc_searchCacheC2)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
+  #endif
 #endif
+    
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
     { // check for lazy match with POS == 0xFF (==joker)
-#ifdef ISO_TASK_CONTROLLER
-      if ((*pc_iter)->match(rui8_gety, rui16_DDI, rui16_element, rui8_pos, rui8_pri))                           
+
+      bool b_matched = false;
+            
+#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
+      if (data().identType() == Ident_c::StandardIdent) {
+        // DIN
+        if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+          b_matched = true;
+      } else {
+        // ISO
+        if ((*pc_iter)->matchISO(rui8_gety, rui16_DDI, rui16_element, 0xFF))
+          b_matched = true;
+      }
 #else
-      if ((*pc_iter)->match( rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri))
+  #ifdef USE_ISO_11783      
+      if ((*pc_iter)->matchISO(rui8_gety, rui16_DDI, rui16_element, 0xFF))
+        b_matched = true;
+  #endif
+  #ifdef USE_DIN_9684
+      if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+        b_matched = true;
+  #endif
 #endif
+      
+      if (b_matched)
       { // matches at least lazy
         if ((*pc_iter)->pos() == rui8_pos)
         { //exact match

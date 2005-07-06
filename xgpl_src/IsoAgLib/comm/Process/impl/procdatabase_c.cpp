@@ -119,29 +119,54 @@
 #include "procdatabase_c.h"
 #include "process_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
+#include "../Remote/Std/impl/procdataremote_c.h"
 
 namespace __IsoAgLib {
 
-#ifdef ISO_TASK_CONTROLLER
 /**
-  initialise this ProcDataBase_c instance to a well defined initial state
-  @param rc_gtp optional GETY_POS code of Process-Data
-  @param rui16_DDI optional DDI code of this instance
-  @param rui16_element optional Element code of this instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerGtp optional GETY_POS of the owner
-  @param rpc_gtp pointer to updated GETY_POS variable of owner
-  @param rpc_processDataChangeHandler optional pointer to handler class of application
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-  */
-void ProcDataBase_c::init(GetyPos_c rc_gtp, uint16_t rui16_DDI,
-      uint16_t rui16_element, uint8_t rui8_pri, GetyPos_c rc_ownerGtp, GetyPos_c *rpc_gtp,
-      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-      int ri_singletonVecKey)
-{
-  ProcIdent_c::init(rc_gtp, rui16_DDI, rui16_element, rui8_pri, rc_ownerGtp, rpc_gtp);
+   initialise this ProcDataBase_c instance to a well defined initial state
+   ISO parameters:
+   @param rui16_DDI optional DDI code of this instance
+   @param rui16_element optional element code of this instance
+
+   DIN parameters:
+   @param rpc_lbs optional pointer to central Scheduler_c instance
+   @param rui8_lis optional LIS code of this instance
+   @param rui8_wert optional WERT code of this instance
+   @param rui8_inst optional INST code of this instance
+   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+   common parameters:
+   @param rc_gtp optional GETY_POS code of Process-Data
+   @param rui8_pri PRI code of messages with this process data instance (default 2)
+   @param rc_ownerGtp optional GETY_POS of the owner
+   @param rpc_gtp pointer to updated GETY_POS variable of owner
+   @param rpc_processDataChangeHandler optional pointer to handler class of application
+   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+*/
+  void ProcDataBase_c::init(
+#ifdef USE_ISO_11783
+                            uint16_t rui16_DDI, uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                            uint8_t rui8_lis, uint8_t rui8_wert,
+                            uint8_t rui8_inst, uint8_t rui8_zaehlnum ,
+#endif
+                            GetyPos_c rc_gtp,
+                            uint8_t rui8_pri, GetyPos_c rc_ownerGtp, GetyPos_c *rpc_gtp,
+                            IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
+                            int ri_singletonVecKey)
+  {
+  ProcIdent_c::init(
+#ifdef USE_ISO_11783
+                    rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                    rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                    rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp);
+
   setSingletonKey(ri_singletonVecKey);
-  i32_sendConversion = 1; // change nothing with using conversion
   ui16_internalUnit = 0;
   en_procValType = i32_val;
   pc_processDataChangeHandler = rpc_processDataChangeHandler;
@@ -172,7 +197,6 @@ ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& rrefc_src)
 /** base function for assignment of element vars for copy constructor and operator= */
 void ProcDataBase_c::assignFromSource( const ProcDataBase_c& rrefc_src )
 { // copy element vars
-  i32_sendConversion = rrefc_src.i32_sendConversion;
   ui16_internalUnit = rrefc_src.ui16_internalUnit;
   en_procValType = rrefc_src.en_procValType;
   pc_processDataChangeHandler = rrefc_src.pc_processDataChangeHandler;
@@ -198,56 +222,6 @@ ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
 }
 
 /**
-  deliver the pkg data value as int32_t;
-  if pd/mod are one of the to be converted one, return converted;
-  the value is read from message in the data type format which is
-  defined in the message; on different types, a conversion by assignment
-  is performed -> %e.g. if message has float val 4.2 the result of this
-  function is 4
-  @return data value as int32_t value (converted if needed)
-*/
-int32_t ProcDataBase_c::pkgDataLong()const
-{
-  int32_t i32_result = getProcessPkg().dataLong();
-  if (getProcessPkg().isConvertableVal())
-    return (i32_result * sendConversion());
-  else
-    return i32_result;
-}
-#ifdef USE_ISO_11783
-/**
-  deliver the pkg data value as uint32_t;
-  if pd/mod are one of the to be converted one, return converted;
-  the value is read from message in the data type format which is
-  defined in the message; on different types, a conversion by assignment
-  is performed -> %e.g. if message has float val 4.2 the result of this
-  function is 4
-  @return data value as uint32_t value (converted if needed)
-*/
-uint32_t ProcDataBase_c::pkgDataUlong()const
-{
-  if (getProcessPkg().isConvertableVal())return (getProcessPkg().dataUlong() * sendConversion());
-  else return getProcessPkg().dataUlong();
-}
-#endif
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  deliver the pkg data value as float;
-  if pd/mod are one of the to be converted one, return converted;
-  the value is read from message in the data type format which is
-  defined in the message; on different types, a conversion by assignment
-  is performed -> %e.g. if message has int32_t 4 the result of this function
-  is float 4.0
-  @return data value as float value (converted if needed)
-*/
-float ProcDataBase_c::pkgDataFloat()const
-{
-  if (getProcessPkg().isConvertableVal())return (getProcessPkg().dataFloat() * static_cast<float>(sendConversion()));
-  else return getProcessPkg().dataFloat();
-}
-#endif
-
-/**
   process a message, which is adressed for this process data item;
   ProcDataBase_c::processMsg() is responsible to delegate the
   processing of setpoint and measurement messages to the appripriate
@@ -255,30 +229,20 @@ float ProcDataBase_c::pkgDataFloat()const
   both functions are virtual, so that depending on loacl or remote
   process data the suitable reaction can be implemented
 */
-void ProcDataBase_c::processMsg(){
-  // check if the message is about setpoint or measure prog
- // printf("pd() returns %d\n", getProcessInstance4Comm().data().pd());
- // printf("mod() returns %d\n", getProcessInstance4Comm().data().mod());
-printf("processDataBase msg pd: %X  mod: %X \n", getProcessInstance4Comm().data().pd(), getProcessInstance4Comm().data().mod() );  // 3 test message Wayne
-//  if (((getProcessInstance4Comm().data().pd() & 0x1) == 0)
-//      && (getProcessInstance4Comm().data().mod() < 4))
-//  { // pd {00, 10} with mod {000,001,010,100} are setpoint messages
-//    processSetpoint();
+void ProcDataBase_c::processMsg() {
 
-//printf("processDataBase processed **wrong** msg \n" );  // 3 test message Wayne
+  // generalize command
+  if (!getProcessInstance4Comm().data().resolveCommandType(this))
+    // failure
+    return;
 
-
-//  }
-//  else
-//  { // otherwise it is an measure prog message
-
-
-printf("processDataBase processed msg \n" );  // 3 test message Wayne
-
-
+  if (getProcessInstance4Comm().data().c_generalCommand.checkIsSetpoint())
+    processSetpoint();
+  else
     processProg();
-//  }
+
 }
+
 
 /** perform periodic acoins */
 bool ProcDataBase_c::timeEvent( void ){
@@ -297,16 +261,15 @@ bool ProcDataBase_c::timeEvent( void ){
       * dependant error in CANIO_c on CAN send problems
   @param rui8_pri PRI code for the msg
   @param rc_varGtp variable GETY_POS
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
   @param ri32_cmdVal int32_t command value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendDataRawCmdGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod, int32_t ri32_val) const{
+bool ProcDataBase_c::sendDataRawCmdGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t ri32_val) const{
   bool b_result;
   // let resolvGtpSetBasicSendFlags resolv suitable EMPF, SEND codes
   // and set basic flags on success (everything but the value)
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp, rb_pd, rb_mod))
+  // @todo: set general command before sendDataRawCmdGtp
+  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp))
   { // now call sendIntern, if var2empfSend was successful
     // now set the 4byte value
     getProcessPkg().setDataRawCmd(ri32_val, en_procValType);
@@ -334,35 +297,17 @@ bool ProcDataBase_c::sendDataRawCmdGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, ui
       * dependant error in CANIO_c on CAN send problems
   @param rui8_pri PRI code for the msg
   @param rc_varGtp variable GETY_POS
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
   @param ri32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod, int32_t ri32_val) const {
+// @todo: unify sendValGtp and sendDataRawCmdGtp?
+bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t ri32_val) const
+{
   bool b_result;
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp, rb_pd, rb_mod))
+  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp))
   { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong -> it uses conversion factor if needed
-    bool b_convert = false;
-    if (rb_pd == 0)
-    { // setpoint value -> conversion if: exact, min or max setpoint
-      if ((rb_mod==0)||(rb_mod==2)||(rb_mod==3))
-      { // conversion is needed
-        if ((ri32_val != static_cast<int32_t>(SETPOINT_RELEASE_COMMAND))
-         && (ri32_val != static_cast<int32_t>(SETPOINT_ERROR_COMMAND))) b_convert = true;
-      }
-    }
-    else
-    { // measure value: conversion if: actual, min, max, integ, med
-      if (rb_mod < 5)
-      { // conversion is needed
-        if ((ri32_val != static_cast<int32_t>(NO_VAL_32S))
-         && (ri32_val != static_cast<int32_t>(ERROR_VAL_32S))) b_convert = true;
-      }
-    }
-    if (b_convert) getProcessPkg().setData( static_cast<int32_t>(ri32_val/sendConversion()), en_procValType);
-    else getProcessPkg().setData( ri32_val, en_procValType);
+    // set PD, MOD, and data with the function setPkgDataLong 
+    getProcessPkg().setData( ri32_val, en_procValType);
 
     // send the msg
     getCanInstance4Comm() << getProcessPkg();
@@ -376,59 +321,6 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t r
   return b_result;
 }
 
-#ifdef USE_ISO_11783
-/**
-  send the given uint32_t value with variable GETY_POS rc_varGtp
-  (local: receiver; remote: sender)
-  (other paramter fixed by ident of process data)
-
-  possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CANIO_c on CAN send problems
-  @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
-  @param ri32_val uint32_t value to send
-  @return true -> sendIntern set successful EMPF and SEND
-*/
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod, uint32_t rulVal) const {
-  bool b_result;
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp, rb_pd, rb_mod))
-  { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong -> it uses conversion factor if needed
-    bool b_convert = false;
-    if (rb_pd == 0)
-    { // setpoint value -> conversion if: exact, min or max setpoint
-      if ((rb_mod==0)||(rb_mod==2)||(rb_mod==3))
-      { // conversion is needed
-        if ((rulVal != static_cast<uint32_t>(SETPOINT_RELEASE_COMMAND))
-         && (rulVal != static_cast<uint32_t>(SETPOINT_ERROR_COMMAND))) b_convert = true;
-      }
-    }
-    else
-    { // measure value: conversion if: actual, min, max, integ, med
-      if (rb_mod < 5)
-      { // conversion is needed
-        if ((rulVal != static_cast<uint32_t>(NO_VAL_32S))
-         && (rulVal != static_cast<uint32_t>(ERROR_VAL_32S))) b_convert = true;
-      }
-    }
-    if (b_convert) getProcessPkg().setData( (rulVal/sendConversion()), en_procValType);
-    else getProcessPkg().setData( rulVal, en_procValType);
-
-    // send the msg
-    getCanInstance4Comm() << getProcessPkg();
-    b_result = true;
-  }
-  else
-  { // EMPF and/or SEND not registered with claimed address in Monitor-List
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-    b_result = false;
-  }
-  return b_result;
-}
-#endif
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   send the given float value with variable GETY_POS rc_varGtp
@@ -440,35 +332,15 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t r
       * dependant error in CANIO_c on CAN send problems
   @param rui8_pri PRI code for the msg
   @param rc_varGtp variable GETY_POS
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
   @param ri32_val float value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod, float rf_val) const {
+bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, float rf_val) const {
   bool b_result;
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp, rb_pd, rb_mod))
+  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp))
   { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong -> it uses conversion factor if needed
-    bool b_convert = false;
-    if (rb_pd == 0)
-    { // setpoint value -> conversion if: exact, min or max setpoint
-      if ((rb_mod==0)||(rb_mod==2)||(rb_mod==3))
-      { // conversion is needed
-        if ((rf_val != static_cast<float>(SETPOINT_RELEASE_COMMAND))
-         && (rf_val != static_cast<float>(SETPOINT_ERROR_COMMAND))) b_convert = true;
-      }
-    }
-    else
-    { // measure value: conversion if: actual, min, max, integ, med
-      if (rb_mod < 5)
-      { // conversion is needed
-        if ((rf_val != static_cast<float>(NO_VAL_32S))
-         && (rf_val != static_cast<float>(ERROR_VAL_32S))) b_convert = true;
-      }
-    }
-    if (b_convert) getProcessPkg().setData( (rf_val/sendConversion()), en_procValType);
-    else getProcessPkg().setData( rf_val, en_procValType);
+    // set PD, MOD, and data with the function setPkgDataLong 
+    getProcessPkg().setData( rf_val, en_procValType);
 
     // send the msg
     getCanInstance4Comm() << getProcessPkg();
@@ -499,7 +371,7 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t r
   @param rb_mod MOD code for the msg
   @return true -> resolvSendGtp successfully resolved EMPF and SEND
 */
-bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod) const {
+bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_varGtp) const {
   uint8_t ui8_empf = 0xFF,
       ui8_send = 0xFF;
   bool b_result = false;
@@ -582,497 +454,25 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_v
     }
     #endif
 
-    uint8_t cmd = 0;
-    c_data.set_Cmd(rb_mod);
+    // general command is already set, use these values:
+
+#ifdef USE_ISO_11783
+    // set command in ProcessPkg::flags2string
     c_data.set_Element(element());    // hard-coded a 2 here. We need to pass in element number somehow. For now, trying the element number 2.
     c_data.set_DDI(DDI());
-
-  }
-  return b_result;
-}
-
-/**
-  process a measure prog message
-  -> fully dependent on children type local/remote
-*/
-void ProcDataBase_c::processProg()
-{
-  return;
-}
-/**
-  virtual base for processing of a setpoint message
-*/
-void ProcDataBase_c::processSetpoint()
-{
-  return;
-}
-#else // else if ISO_TASK_CONTROLLER not defined
-/**
-  initialise this ProcDataBase_c instance to a well defined initial state
-  @param rpc_lbs optional pointer to central Scheduler_c instance
-  @param rui8_lis optional LIS code of this instance
-  @param rc_gtp optional GETY_POS code of Process-Data
-  @param rui8_wert optional WERT code of this instance
-  @param rui8_inst optional INST code of this instance
-  @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerGtp optional GETY_POS of the owner
-  @param rpc_gtp pointer to updated GETY_POS variable of owner
-  @param rpc_processDataChangeHandler optional pointer to handler class of application
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-  */
-void ProcDataBase_c::init(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert,
-      uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri, GetyPos_c rc_ownerGtp, GetyPos_c *rpc_gtp,
-      IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-      int ri_singletonVecKey)
-{
-  ProcIdent_c::init(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri, rc_ownerGtp, rpc_gtp);
-  setSingletonKey(ri_singletonVecKey);
-  i32_sendConversion = 1; // change nothing with using conversion
-  ui16_internalUnit = 0;
-  en_procValType = i32_val;
-  pc_processDataChangeHandler = rpc_processDataChangeHandler;
-}
-/**
-  assignment operator for this base object
-  @param rrefc_src source instance
-  @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
-*/
-const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& rrefc_src)
-{ // call base class operator
-  ProcIdent_c::operator=(rrefc_src);
-
-  assignFromSource(rrefc_src);
-
-  // return source reference
-  return *this;
-}
-
-/**
-  copy constructor for ProcDataBase_c
-  @param rrefc_src source instance
-*/
-ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& rrefc_src)
-   : ProcIdent_c(rrefc_src) {
-  assignFromSource(rrefc_src);
-}
-/** base function for assignment of element vars for copy constructor and operator= */
-void ProcDataBase_c::assignFromSource( const ProcDataBase_c& rrefc_src )
-{ // copy element vars
-  i32_sendConversion = rrefc_src.i32_sendConversion;
-  ui16_internalUnit = rrefc_src.ui16_internalUnit;
-  en_procValType = rrefc_src.en_procValType;
-  pc_processDataChangeHandler = rrefc_src.pc_processDataChangeHandler;
-}
-
-/** default destructor which has nothing to do */
-ProcDataBase_c::~ProcDataBase_c(){
-}
-/** helper function to get reference to process data pkg very quick */
-ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
-{
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  // if more than one CAN BUS is used for IsoAgLib (DIN or ISO)
-  // no single cache value can be used, as each CAN BUS get its
-  // individual ProcessPkg_c (a static functional-variable would
-  // be used for ALL instances of ProcDataBase_c - also from
-  // different CAN BUS'es)
-  return getProcessInstance4Comm().data();
-#else
-  static ProcessPkg_c& c_data = getProcessInstance4Comm().data();
-  return c_data;
-#endif
-}
-
-/**
-  deliver the pkg data value as int32_t;
-  if pd/mod are one of the to be converted one, return converted;
-  the value is read from message in the data type format which is
-  defined in the message; on different types, a conversion by assignment
-  is performed -> %e.g. if message has float val 4.2 the result of this
-  function is 4
-  @return data value as int32_t value (converted if needed)
-*/
-int32_t ProcDataBase_c::pkgDataLong()const
-{
-  int32_t i32_result = getProcessPkg().dataLong();
-  if (getProcessPkg().isConvertableVal())
-    return (i32_result * sendConversion());
-  else
-    return i32_result;
-}
-#ifdef USE_ISO_11783
-/**
-  deliver the pkg data value as uint32_t;
-  if pd/mod are one of the to be converted one, return converted;
-  the value is read from message in the data type format which is
-  defined in the message; on different types, a conversion by assignment
-  is performed -> %e.g. if message has float val 4.2 the result of this
-  function is 4
-  @return data value as uint32_t value (converted if needed)
-*/
-uint32_t ProcDataBase_c::pkgDataUlong()const
-{
-  if (getProcessPkg().isConvertableVal())return (getProcessPkg().dataUlong() * sendConversion());
-  else return getProcessPkg().dataUlong();
-}
-#endif
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  deliver the pkg data value as float;
-  if pd/mod are one of the to be converted one, return converted;
-  the value is read from message in the data type format which is
-  defined in the message; on different types, a conversion by assignment
-  is performed -> %e.g. if message has int32_t 4 the result of this function
-  is float 4.0
-  @return data value as float value (converted if needed)
-*/
-float ProcDataBase_c::pkgDataFloat()const
-{
-  if (getProcessPkg().isConvertableVal())return (getProcessPkg().dataFloat() * static_cast<float>(sendConversion()));
-  else return getProcessPkg().dataFloat();
-}
 #endif
 
-/**
-  process a message, which is adressed for this process data item;
-  ProcDataBase_c::processMsg() is responsible to delegate the
-  processing of setpoint and measurement messages to the appripriate
-  functions processSetpoint and processProg;
-  both functions are virtual, so that depending on loacl or remote
-  process data the suitable reaction can be implemented
-*/
-void ProcDataBase_c::processMsg(){
-  // check if the message is about setpoint or measure prog
-  if (((getProcessInstance4Comm().data().pd() & 0x1) == 0)
-      && (getProcessInstance4Comm().data().mod() < 4))
-  { // pd {00, 10} with mod {000,001,010,100} are setpoint messages
-    processSetpoint();
-  }
-  else
-  { // otherwise it is an measure prog message
-    processProg();
-  }
-}
-
-/** perform periodic acoins */
-bool ProcDataBase_c::timeEvent( void ){
-  return true;
-}
-
-/**
-  send the given int32_t command value with variable GETY_POS rc_varGtp;
-  set the cmd value without conversion in message string and set data
-  format flags corresponding to central data type of this process data
-  (local: receiver; remote: sender)
-  (other paramter fixed by ident of process data)
-
-  possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CANIO_c on CAN send problems
-  @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
-  @param ri32_cmdVal int32_t command value to send
-  @return true -> sendIntern set successful EMPF and SEND
-*/
-bool ProcDataBase_c::sendDataRawCmdGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod, int32_t ri32_val) const{
-  bool b_result;
-  // let resolvGtpSetBasicSendFlags resolv suitable EMPF, SEND codes
-  // and set basic flags on success (everything but the value)
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp, rb_pd, rb_mod))
-  { // now call sendIntern, if var2empfSend was successful
-    // now set the 4byte value
-    getProcessPkg().setDataRawCmd(ri32_val, en_procValType);
-
-    // send the msg
-    getCanInstance4Comm() << getProcessPkg();
-    b_result = true;
-  }
-  else
-  { // EMPF and/or SEND not registered with claimed address in Monitor-List
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-    b_result = false;
-  }
-  return b_result;
-}
-
-
-/**
-  send the given int32_t value with variable GETY_POS rc_varGtp
-  (local: receiver; remote: sender)
-  (other paramter fixed by ident of process data)
-
-  possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CANIO_c on CAN send problems
-  @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
-  @param ri32_val int32_t value to send
-  @return true -> sendIntern set successful EMPF and SEND
-*/
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod, int32_t ri32_val) const {
-  bool b_result;
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp, rb_pd, rb_mod))
-  { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong -> it uses conversion factor if needed
-    bool b_convert = false;
-    if (rb_pd == 0)
-    { // setpoint value -> conversion if: exact, min or max setpoint
-      if ((rb_mod==0)||(rb_mod==2)||(rb_mod==3))
-      { // conversion is needed
-        if ((ri32_val != static_cast<int32_t>(SETPOINT_RELEASE_COMMAND))
-         && (ri32_val != static_cast<int32_t>(SETPOINT_ERROR_COMMAND))) b_convert = true;
-      }
-    }
-    else
-    { // measure value: conversion if: actual, min, max, integ, med
-      if (rb_mod < 5)
-      { // conversion is needed
-        if ((ri32_val != static_cast<int32_t>(NO_VAL_32S))
-         && (ri32_val != static_cast<int32_t>(ERROR_VAL_32S))) b_convert = true;
-      }
-    }
-    if (b_convert) getProcessPkg().setData( static_cast<int32_t>(ri32_val/sendConversion()), en_procValType);
-    else getProcessPkg().setData( ri32_val, en_procValType);
-
-    // send the msg
-    getCanInstance4Comm() << getProcessPkg();
-    b_result = true;
-  }
-  else
-  { // EMPF and/or SEND not registered with claimed address in Monitor-List
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-    b_result = false;
-  }
-  return b_result;
-}
-
-#ifdef USE_ISO_11783
-/**
-  send the given uint32_t value with variable GETY_POS rc_varGtp
-  (local: receiver; remote: sender)
-  (other paramter fixed by ident of process data)
-
-  possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CANIO_c on CAN send problems
-  @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
-  @param ri32_val uint32_t value to send
-  @return true -> sendIntern set successful EMPF and SEND
-*/
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod, uint32_t rulVal) const {
-  bool b_result;
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp, rb_pd, rb_mod))
-  { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong -> it uses conversion factor if needed
-    bool b_convert = false;
-    if (rb_pd == 0)
-    { // setpoint value -> conversion if: exact, min or max setpoint
-      if ((rb_mod==0)||(rb_mod==2)||(rb_mod==3))
-      { // conversion is needed
-        if ((rulVal != static_cast<uint32_t>(SETPOINT_RELEASE_COMMAND))
-         && (rulVal != static_cast<uint32_t>(SETPOINT_ERROR_COMMAND))) b_convert = true;
-      }
-    }
-    else
-    { // measure value: conversion if: actual, min, max, integ, med
-      if (rb_mod < 5)
-      { // conversion is needed
-        if ((rulVal != static_cast<uint32_t>(NO_VAL_32S))
-         && (rulVal != static_cast<uint32_t>(ERROR_VAL_32S))) b_convert = true;
-      }
-    }
-    if (b_convert) getProcessPkg().setData( (rulVal/sendConversion()), en_procValType);
-    else getProcessPkg().setData( rulVal, en_procValType);
-
-    // send the msg
-    getCanInstance4Comm() << getProcessPkg();
-    b_result = true;
-  }
-  else
-  { // EMPF and/or SEND not registered with claimed address in Monitor-List
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-    b_result = false;
-  }
-  return b_result;
-}
-#endif
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  send the given float value with variable GETY_POS rc_varGtp
-  (local: receiver; remote: sender)
-  (other paramter fixed by ident of process data)
-
-  possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CANIO_c on CAN send problems
-  @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
-  @param ri32_val float value to send
-  @return true -> sendIntern set successful EMPF and SEND
-*/
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod, float rf_val) const {
-  bool b_result;
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp, rb_pd, rb_mod))
-  { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong -> it uses conversion factor if needed
-    bool b_convert = false;
-    if (rb_pd == 0)
-    { // setpoint value -> conversion if: exact, min or max setpoint
-      if ((rb_mod==0)||(rb_mod==2)||(rb_mod==3))
-      { // conversion is needed
-        if ((rf_val != static_cast<float>(SETPOINT_RELEASE_COMMAND))
-         && (rf_val != static_cast<float>(SETPOINT_ERROR_COMMAND))) b_convert = true;
-      }
-    }
-    else
-    { // measure value: conversion if: actual, min, max, integ, med
-      if (rb_mod < 5)
-      { // conversion is needed
-        if ((rf_val != static_cast<float>(NO_VAL_32S))
-         && (rf_val != static_cast<float>(ERROR_VAL_32S))) b_convert = true;
-      }
-    }
-    if (b_convert) getProcessPkg().setData( (rf_val/sendConversion()), en_procValType);
-    else getProcessPkg().setData( rf_val, en_procValType);
-
-    // send the msg
-    getCanInstance4Comm() << getProcessPkg();
-    b_result = true;
-  }
-  else
-  { // EMPF and/or SEND not registered with claimed address in Monitor-List
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-    b_result = false;
-  }
-  return b_result;
-}
-#endif
-
-/**
-  resolv SEND|EMPF dependent on GETY_POS rc_varGtp
-  (local: receiver; remote: sender)
-  (other paramter fixed by ident of process data)
-  and set basic value independent flags in ProcessPkg
-
-  the PRI code of the message is set dependent of the ProcIdent_c PRI
-  code for this process data instance, if no basic proc data (rui8_pri == 1)
-  is wanted
-
-  @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
-  @param rb_pd PD code for the msg
-  @param rb_mod MOD code for the msg
-  @return true -> resolvSendGtp successfully resolved EMPF and SEND
-*/
-bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_varGtp, uint8_t rb_pd, uint8_t rb_mod) const {
-  uint8_t ui8_empf = 0xFF,
-      ui8_send = 0xFF;
-  bool b_result = false;
-  #ifdef USE_ISO_11783
-  IState_c::itemState_t en_msgProto = IState_c::Din;
-  #endif
-
-  #ifdef USE_DIN_9684
-  // retreive pointer to te according DINMonitor_c class
-  static DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
-
-  // check is the var parameter has claimed address
-  if ( (c_din_monitor.existDinMemberGtp(rc_varGtp))
-    && (c_din_monitor.dinMemberGtp(rc_varGtp).itemState(IState_c::ClaimedAddress)))
-  { // the member to rc_varGtp has claimed address (virtual function -> worksdependent on child type local/remote)
-    b_result = var2empfSend(rui8_pri, (c_din_monitor.dinMemberGtp(rc_varGtp).nr()),
-                  ui8_empf,
-                  ui8_send
-                  #ifdef USE_ISO_11783
-                  , en_msgProto
-                  #endif
-                  );
-  }
-  #endif
-  #ifdef USE_ISO_11783
-  // retreive pointer to te accorisog ISOMonitor_c class
-  static ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-
-   // try with ISO communication
-   if (!b_result)
-  {
-    if ((c_isoMonitor.existIsoMemberGtp(rc_varGtp))
-     && (c_isoMonitor.isoMemberGtp(rc_varGtp).itemState(IState_c::ClaimedAddress)))
-    { // the member to rc_varGtp has claimed address (virtual function -> worksdependent on child type local/remote)
-      en_msgProto = IState_c::Iso;
-      b_result = var2empfSend(rui8_pri, (c_isoMonitor.isoMemberGtp(rc_varGtp).nr()),
-          ui8_empf, ui8_send, en_msgProto);
-    }
-    else
-    { // the var paramter hasn't claimed address -> signal it by 0xFF to var2empfSend
-      en_msgProto = (IState_c::itemState_t(IState_c::Din | IState_c::Iso));
-  #else
-    else
-    { // the var paramter hasn't claimed address -> signal it by 0xFF to var2empfSend
-  #endif
-      b_result = var2empfSend(rui8_pri, 0xFF, ui8_empf, ui8_send
-        #ifdef USE_ISO_11783
-          , en_msgProto
-        #endif
-        );
-  #ifdef USE_ISO_11783
-    }
-  #endif
-  }
-
-  if (b_result)
-  { // resolv successful -> set basic flags in ProcessPkg
-    ProcessPkg_c& c_data = getProcessPkg();
-    #ifdef USE_ISO_11783
-    if (en_msgProto == IState_c::Din)
-    {
-    #endif
-      // if target message is wanted, send with PRI of this proc data message
-      if (rui8_pri != 1)
-      {
-        c_data.setPri(pri());
-        // set receiver number for target msg
-        c_data.setEmpf(ui8_empf);
-      }
-      else c_data.setPri(1);
-      c_data.setSend(ui8_send);
-    #ifdef USE_ISO_11783
-    }
-    else
-    { // the communicating devices are represented on ISO11783
-      c_data.setIsoPri(3);
-      c_data.setIsoPgn(PROCESS_DATA_PGN);
-      c_data.setIsoPs(ui8_empf);
-      c_data.setIsoSa(ui8_send);
-    }
-    #endif
-
-		#ifdef ISO_TASK_CONTROLLER
-    uint8_t cmd = 0;
-
-    c_data.set_Cmd(rb_mod);
-    c_data.set_Element(element());
-    uint16_t temp = DDI();
-    c_data.set_DDI(temp);
-		#else
-    c_data.setPd(rb_pd);
-    c_data.setMod(rb_mod);
+#ifdef USE_DIN_9684
+    
+    // set pd and mod in ProcessPkg::flags2string
     c_data.setLis(lis());
     c_data.setZaehlnum(zaehlnum());
-    c_data.setGtp(gtp());
     c_data.setWert(wert());
     c_data.setInst(inst());
-		#endif
+#endif
+    
+    c_data.setGtp(gtp());
+
   }
   return b_result;
 }
@@ -1092,6 +492,5 @@ void ProcDataBase_c::processSetpoint()
 {
   return;
 }
-#endif
 
 } // end of namespace __IsoAgLib

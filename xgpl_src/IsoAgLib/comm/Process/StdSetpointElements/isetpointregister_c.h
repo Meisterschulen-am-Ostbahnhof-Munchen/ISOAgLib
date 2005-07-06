@@ -101,7 +101,19 @@ public:
     @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
     @return setpoint selected by MOD
   */
-  int32_t valMod(uint8_t rb_mod)const {return SetpointRegister_c::valMod(rb_mod);};
+  int32_t valMod(uint8_t rb_mod)const 
+  {
+      // @todo: enable value groups in interface?
+    __IsoAgLib::GeneralCommand_c::ValueGroup_t en_valueGroup;
+    switch (rb_mod) {
+      case 2: en_valueGroup = __IsoAgLib::GeneralCommand_c::minValue; break;
+      case 3: en_valueGroup = __IsoAgLib::GeneralCommand_c::maxValue; break;
+      case 0:
+      default:
+        en_valueGroup = __IsoAgLib::GeneralCommand_c::exactValue; break;
+    }
+    return SetpointRegister_c::valMod(en_valueGroup);
+  };
 
   /**
     check if setpoint value was already handled
@@ -138,7 +150,18 @@ public:
     @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3)
     @return true -> a MOD type setpoint exist
   */
-  bool existValMod(uint8_t rb_mod)const {return SetpointRegister_c::existValMod(rb_mod);};
+  bool existValMod(uint8_t rb_mod)const {
+    // @todo: enable value groups in interface?
+    __IsoAgLib::GeneralCommand_c::ValueGroup_t en_valueGroup;
+    switch (rb_mod) {
+      case 2: en_valueGroup = __IsoAgLib::GeneralCommand_c::minValue; break;
+      case 3: en_valueGroup = __IsoAgLib::GeneralCommand_c::maxValue; break;
+      case 0:
+      default:
+        en_valueGroup = __IsoAgLib::GeneralCommand_c::exactValue; break;
+    }
+    return SetpointRegister_c::existValMod(en_valueGroup);
+  };
 
 
   /* ************************************ */
@@ -190,7 +213,18 @@ public:
     @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
   */
   void setValMod(int32_t ri32_val,uint8_t rb_mod)
-      {SetpointRegister_c::setValMod(ri32_val, rb_mod);};
+  {
+    // @todo: enable value groups in interface?
+    __IsoAgLib::GeneralCommand_c::ValueGroup_t en_valueGroup;
+    switch (rb_mod) {
+      case 2: en_valueGroup = __IsoAgLib::GeneralCommand_c::minValue; break;
+      case 3: en_valueGroup = __IsoAgLib::GeneralCommand_c::maxValue; break;
+      case 0:
+      default:
+        en_valueGroup = __IsoAgLib::GeneralCommand_c::exactValue; break;
+    }
+    SetpointRegister_c::setValMod(ri32_val, en_valueGroup);
+  };
 };
 
 }

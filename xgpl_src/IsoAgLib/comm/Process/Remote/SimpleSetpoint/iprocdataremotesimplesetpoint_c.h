@@ -117,45 +117,96 @@ public:
 
   /**
     constructor which can set all element vars
+    ISO parameter
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+
+    DIN parameter
     @param rui8_lis optional LIS code of this instance
-    @param rc_gtp optional GETY_POS code of this instance
     @param rui8_wert optional WERT code of this instance
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+    @param rc_gtp optional GETY_POS code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerGtp optional GETY_POS of the owner
     @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  iProcDataRemoteSimpleSetpoint_c(uint8_t rui8_lis = 0xFF, iGetyPos_c rc_gtp = 0,
-      uint8_t rui8_wert = 0, uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
-      uint8_t rui8_pri = 2, iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
-      iGetyPos_c* rpc_commanderGtp = NULL,
-      ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL, int ri_singletonVecKey = 0)
-  : ProcDataRemoteSimpleSetpoint_c(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum,
-      rui8_pri, rc_ownerGtp, rpc_commanderGtp, rpc_processDataChangeHandler, ri_singletonVecKey){};
+  iProcDataRemoteSimpleSetpoint_c(
+#ifdef USE_ISO_11783
+                                  uint16_t rui16_DDI = 0,
+                                  uint16_t rui16_element = 0xFF,
+#endif
+#ifdef USE_DIN_9684
+                                  uint8_t rui8_lis = 0xFF,
+                                  uint8_t rui8_wert = 0,
+                                  uint8_t rui8_inst = 0,
+                                  uint8_t rui8_zaehlnum = 0xFF,
+#endif
+                                  iGetyPos_c rc_gtp = 0,
+                                  uint8_t rui8_pri = 2,
+                                  iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
+                                  iGetyPos_c* rpc_commanderGtp = NULL,
+                                  ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+                                  int ri_singletonVecKey = 0)
+  : ProcDataRemoteSimpleSetpoint_c(
+#ifdef USE_ISO_11783
+                                   rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                                   rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                                   rpc_processDataChangeHandler, ri_singletonVecKey){};
 
   /**
     initialise this ProcDataRemoteSimpleSetpoint_c instance to a well defined initial state
+    ISO parameter
+    @param rui16_DDI optional DDI code of this instance
+    @param rui16_element optional Element code of this instance
+
+    DIN parameter
     @param rui8_lis optional LIS code of this instance
-    @param rc_gtp optional GETY_POS code of this instance
     @param rui8_wert optional WERT code of this instance
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+    @param rc_gtp optional GETY_POS code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @param rc_ownerGtp optional GETY_POS of the owner
     @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(uint8_t rui8_lis = 0xFF, iGetyPos_c rc_gtp = 0,
-      uint8_t rui8_wert = 0, uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
-      uint8_t rui8_pri = 2, iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
-      iGetyPos_c* rpc_commanderGtp = NULL,
-      ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL, int ri_singletonVecKey = 0)
-    {ProcDataRemoteSimpleSetpoint_c::init(rui8_lis, rc_gtp, rui8_wert, rui8_inst, rui8_zaehlnum,
-      rui8_pri, rc_ownerGtp, rpc_commanderGtp, rpc_processDataChangeHandler, ri_singletonVecKey);};
+  void init(
+#ifdef USE_ISO_11783
+            uint16_t rui16_DDI = 0,
+            uint16_t rui16_element = 0xFF,
+#endif
+#ifdef USE_DIN_9684
+            uint8_t rui8_lis = 0xFF,
+            uint8_t rui8_wert = 0,
+            uint8_t rui8_inst = 0,
+            uint8_t rui8_zaehlnum = 0xFF,
+#endif
+            iGetyPos_c rc_gtp = 0,
+            uint8_t rui8_pri = 2,
+            iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
+            iGetyPos_c* rpc_commanderGtp = NULL,
+            ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+            int ri_singletonVecKey = 0)
+    {ProcDataRemoteSimpleSetpoint_c::init(
+#ifdef USE_ISO_11783
+                                          rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                                          rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                                          rpc_processDataChangeHandler, ri_singletonVecKey);
+    };
 
   /** set the poitner to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
@@ -297,18 +348,6 @@ public:
   */
   void setInternalUnit(uint16_t rui16_internalUnit)
       {ProcDataRemoteSimpleSetpoint_c::setInternalUnit(rui16_internalUnit);};
-
-  /**
-    deliver the send conversion, which is used to send measuring values
-    @return conversion value
-  */
-  const int32_t& sendConversion()const{return ProcDataRemoteSimpleSetpoint_c::sendConversion();};
-  /**
-    set the send conversion, which is used to send measuring values
-    @param ri32_sendConversion new conversion value
-  */
-  void setSendConversion(int32_t ri32_sendConversion)
-      {ProcDataRemoteSimpleSetpoint_c::setSendConversion(ri32_sendConversion);};
 
   /**
     deliver the central data type of this process data
