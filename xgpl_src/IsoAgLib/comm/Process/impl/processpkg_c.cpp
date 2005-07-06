@@ -544,7 +544,7 @@ void ProcessPkg_c::string2Flags()
 
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     setGtp(c_isoMonitor.isoMemberNr(send()).gtp());  // Get the gety and pos (Device Class, Device Class Instance -bac
-
+    
     // now set pc_monitorSend and pc_monitorEmpf
     if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
     { // ISO targeted process msg with empf as defined ISO member
@@ -863,8 +863,7 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
       }
     }
     
-    // @todo: we need to know if we are local or not!
-    
+    // @todo: we need to know if we are local or not!  
     if (existMemberEmpf() && (gety() == memberEmpf().gtp().getGety())) {
        // we are local
        // reset (from ProcDataLocalBase_c::processProg())
