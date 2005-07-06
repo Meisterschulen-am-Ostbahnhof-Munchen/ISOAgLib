@@ -330,6 +330,8 @@ protected: // Protected methods
     format flags corresponding to central data type of this process data
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
+  
+    set general command before sendDataRawCmdGtp !
 
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
@@ -347,6 +349,8 @@ protected: // Protected methods
 
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
+  
+    set general command before sendDataRawCmdGtp !
 
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
@@ -367,6 +371,8 @@ protected: // Protected methods
 
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
+
+    set general command before sendDataRawCmdGtp !
 
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
