@@ -312,9 +312,10 @@ void ProcIdent_c::setOwnerGtp(GetyPos_c* rpc_val)
 */
 bool ProcIdent_c::matchISO(
              uint8_t rui8_gety,
+             uint8_t rui8_getySender,
              uint16_t rui16_DDI,
              uint16_t rui16_element,
-             uint8_t rui8_pos ,
+             uint8_t rui8_pos,
              GetyPos_c rc_ownerGtp
              ) const
 {
@@ -322,9 +323,17 @@ bool ProcIdent_c::matchISO(
   if (element() != rui16_element) return false;
   if (DDI() != rui16_DDI) return false;
 
-  // @todo: gety() check deactivated
- // if (gety() != rui8_gety) return false;
+  // @todo: question: two remote instances control one local and both get response from local ?
   
+  // @todo: is 0xFF a value out of range?
+  if (rui8_getySender != 0xFF) {
+    // check in remote case: check if gety of ownerGtp in procident matches gety of sender
+    if (ownerGtp().getGety() != rui8_getySender) return false;
+  } else {
+    // check in local case: check if procident gety matches gety of empf
+    if (gety() != rui8_gety) return false;
+  }
+    
   // only return false for different pos setting, if rui8_pos != 0xFF -> no lazy match is wanted
   // one of the POS checks must be true to answer positive match
   if ( ( rui8_pos != 0xFF )

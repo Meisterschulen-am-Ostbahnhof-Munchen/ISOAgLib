@@ -382,7 +382,7 @@ bool Process_c::processMsg(){
         << "Process_c::processMsg() mit Alarm ACK\n";
   }
   #endif
-
+    
   // try to aquire exact GETY_POS code for the suitable Process Data Item
   // -> check for POS of the owner of the handled Process Data
   if ((data().pri() == 0x2) || (data().pri() == 0x5))
@@ -424,9 +424,10 @@ bool Process_c::processMsg(){
                                  : ((data().memberEmpf()).gtp().getPos());
     }
   }// if target msg
+  
   // only check for base process data if DIN 9684 is used
-  #ifdef USE_DIN_9684
-  else
+#ifdef USE_DIN_9684  
+  else if (data().identType() == Ident_c::StandardIdent)
   { // for base msg the first try must be the gety/pos of msg
     // first check if SEND is valid according Monitor-List
     if (!(data().existMemberSend()))
@@ -454,7 +455,22 @@ bool Process_c::processMsg(){
       b_posData = data().pos();
     }
   }
-  #endif
+#endif
+
+  // decide which gety to use for matching  
+  uint8_t ui8_getyFromMessage;
+  uint8_t ui8_getySender;
+  if (data().identType() == Ident_c::StandardIdent)
+    // DIN message: use gety from paket for checks
+    ui8_getyFromMessage = data().gety();
+  else 
+  {
+    // ISO message: use gety from corresponding monitor item for checks
+    ui8_getyFromMessage = data().memberEmpf().gtp().getGety();
+    // ISO message: check for sender gety (only in remote)
+    ui8_getySender = data().memberSend().gtp().getGety();
+  }
+      
   // now b_posData is the best guess for searching the appropriate prcess data item
   // check first for local Process Data
   if (existProcDataLocal(
@@ -464,7 +480,8 @@ bool Process_c::processMsg(){
 #ifdef USE_DIN_9684
                          data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                         data().gety(), b_posData, data().pri()))
+                         ui8_getyFromMessage, b_posData, data().pri())
+     )
   { // there exists an appropriate process data item -> let the item process the msg
     procDataLocal(
 #ifdef USE_ISO_11783
@@ -473,42 +490,42 @@ bool Process_c::processMsg(){
 #ifdef USE_DIN_9684
                   data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                  data().gety(), b_posData, data().pri()).processMsg();
+                  ui8_getyFromMessage, b_posData, data().pri()
+                  ).processMsg();
     b_result = true;
   }
-//  else
-//  {
-    // now check for remote Process Data
-    if (existProcDataRemote(
+    
+  // now check for remote Process Data
+  if (existProcDataRemote(
 #ifdef USE_ISO_11783
-                            data().DDI(), data().element(),
+                          data().DDI(), data().element(), ui8_getySender,
 #endif
 #ifdef USE_DIN_9684
-                            data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+                          data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                            data().gety(), b_posData
+                          ui8_getyFromMessage, b_posData
 #ifdef USE_DIN_9684
-                            ,data().pri()
+                          , data().pri()
 #endif
-                            ))
-    { // there exists an appropriate process data item -> let the item process the msg
-      procDataRemote(
+                          )
+      )
+  { // there exists an appropriate process data item -> let the item process the msg
+    procDataRemote(
 #ifdef USE_ISO_11783
-                     data().DDI(), data().element(),
+                   data().DDI(), data().element(), ui8_getySender,
 #endif
 #ifdef USE_DIN_9684
-                     data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+                   data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                     data().gety(), b_posData
+                   ui8_getyFromMessage, b_posData
 #ifdef USE_DIN_9684
-                     ,data().pri()
+                   , data().pri()
 #endif
-                     ).processMsg();
-      b_result = true;
-    }
+                   ).processMsg();
+    b_result = true;
+  }
 
-// }
- return b_result;
+  return b_result;
 }
 
 /**
@@ -577,6 +594,7 @@ bool Process_c::existProcDataRemote(
 #ifdef USE_ISO_11783
                            uint16_t rui16_DDI,
                            uint16_t rui16_element,
+                           uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
                            uint8_t rui8_lis,
@@ -590,7 +608,8 @@ bool Process_c::existProcDataRemote(
 {
  return updateRemoteCache(
 #ifdef USE_ISO_11783
-                          rui16_DDI, rui16_element,
+                          rui16_DDI, rui16_element, rui8_getySender,
+
 #endif
 #ifdef USE_DIN_9684
                           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -720,6 +739,7 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
 uint8_t Process_c::procDataLocalCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
                                       uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri){
   uint8_t ui8_cnt=0;
+  // @todo: use matchISO and matchDIN
 #ifndef USE_ISO_11783
   for ( pc_searchCacheC1 = c_arrClientC1.begin();
        ( pc_searchCacheC1 != c_arrClientC1.end() );
@@ -794,17 +814,20 @@ bool Process_c::updateLocalCache(
   {
     if ( pc_searchCacheC1 != c_arrClientC1.end() )
     {
+
 #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
       if (data().identType() == Ident_c::StandardIdent) {
         // DIN
         if ((*pc_searchCacheC1)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
       } else {
         // ISO
-        if ((*pc_searchCacheC1)->matchISO(rui8_gety, rui16_DDI, rui16_element, rui8_pos)) return true;
+        // don't check sender gety => 0xFF
+        if ((*pc_searchCacheC1)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, rui8_pos)) return true;
       }
 #else
   #ifdef USE_ISO_11783      
-      if ((*pc_searchCacheC1)->matchISO(rui8_gety, rui16_DDI, rui16_element, rui8_pos)) return true;
+      // don't check sender gety => 0xFF
+      if ((*pc_searchCacheC1)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, rui8_pos)) return true;
   #endif
   #ifdef USE_DIN_9684
       if ((*pc_searchCacheC1)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
@@ -818,7 +841,7 @@ bool Process_c::updateLocalCache(
     { // check for lazy match with POS == 0xFF (==joker)
 
       bool b_matched = false;
-            
+
 #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
       if (data().identType() == Ident_c::StandardIdent) {
         // DIN
@@ -826,12 +849,14 @@ bool Process_c::updateLocalCache(
           b_matched = true;
       } else {
         // ISO
-        if ((*pc_iter)->matchISO(rui8_gety, rui16_DDI, rui16_element, 0xFF))
+        // don't check sender gety => 0xFF
+        if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, 0xFF))
           b_matched = true;
       }
 #else
-  #ifdef USE_ISO_11783      
-      if ((*pc_iter)->matchISO(rui8_gety, rui16_DDI, rui16_element, 0xFF))
+  #ifdef USE_ISO_11783
+      // don't check sender gety => 0xFF
+      if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, 0xFF))
         b_matched = true;
   #endif
   #ifdef USE_DIN_9684
@@ -883,6 +908,8 @@ bool Process_c::updateRemoteCache(
 #ifdef USE_ISO_11783
                          uint16_t rui16_DDI,
                          uint16_t rui16_element,
+                         uint8_t rui8_getySender,
+
 #endif
 #ifdef USE_DIN_9684
                          uint8_t rui8_lis,
@@ -905,11 +932,11 @@ bool Process_c::updateRemoteCache(
         if ((*pc_searchCacheC2)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
       } else {
         // ISO
-        if ((*pc_searchCacheC2)->matchISO(rui8_gety, rui16_DDI, rui16_element, rui8_pos)) return true;
+        if ((*pc_searchCacheC2)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, rui8_pos)) return true;
       }
 #else
   #ifdef USE_ISO_11783      
-      if ((*pc_searchCacheC2)->matchISO(rui8_gety, rui16_DDI, rui16_element, rui8_pos)) return true;
+      if ((*pc_searchCacheC2)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, rui8_pos)) return true;
   #endif
   #ifdef USE_DIN_9684
       if ((*pc_searchCacheC2)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
@@ -932,12 +959,12 @@ bool Process_c::updateRemoteCache(
           b_matched = true;
       } else {
         // ISO
-        if ((*pc_iter)->matchISO(rui8_gety, rui16_DDI, rui16_element, 0xFF))
+        if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
           b_matched = true;
       }
 #else
   #ifdef USE_ISO_11783      
-      if ((*pc_iter)->matchISO(rui8_gety, rui16_DDI, rui16_element, 0xFF))
+      if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
         b_matched = true;
   #endif
   #ifdef USE_DIN_9684

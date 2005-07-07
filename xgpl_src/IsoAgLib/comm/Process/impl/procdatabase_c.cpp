@@ -475,7 +475,8 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_v
     c_data.setWert(wert());
     c_data.setInst(inst());
 #endif
-    
+
+    // @todo: setGtp for ISO obsolete?
     c_data.setGtp(gtp());
 
   }

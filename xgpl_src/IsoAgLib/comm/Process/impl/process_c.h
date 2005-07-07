@@ -255,6 +255,7 @@ public:
 #ifdef USE_ISO_11783
                            uint16_t rui16_DDI,
                            uint16_t rui16_element,
+                           uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
                            uint8_t rui8_lis,
@@ -460,6 +461,7 @@ private: // Private methods
 #ifdef USE_ISO_11783
                          uint16_t rui16_DDI,
                          uint16_t rui16_element,
+                         uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
                          uint8_t rui8_lis,

@@ -542,6 +542,7 @@ void ProcessPkg_c::string2Flags()
     //See new line added below that uses c_isoMonitor. -bac
     //setGtp( GetyPos_c(((CANPkg_c::pb_data[2] >> 4) & 0xF), (CANPkg_c::pb_data[2] & 0xF) ) );
 
+    // @todo: question: should the gtp of the send be inserted or of the empf (DIN: empf gtp?)
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     setGtp(c_isoMonitor.isoMemberNr(send()).gtp());  // Get the gety and pos (Device Class, Device Class Instance -bac
     
