@@ -398,7 +398,9 @@ bool MeasureProgLocal_c::processMsg(){
     int32_t i32_val = c_pkg.dataRawCmdLong();
 
     // the message was a value message -> evaluate it here (DIN: pd=1)
-    if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementReset)
+    if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementReset ||
+        // ISO: set value command
+        c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
       // (not standard conformant, but practised)
       // i32_val == 0 is already checked in ProcessPgk::resolveCommandType()

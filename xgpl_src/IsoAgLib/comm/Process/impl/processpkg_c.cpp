@@ -704,6 +704,8 @@ void ProcessPkg_c::flags2String()
       case GeneralCommand_c::nack:                                  ui8_cmd = 0xd; break;
       case GeneralCommand_c::taskControllerStatus:                  ui8_cmd = 0xe; break;
       case GeneralCommand_c::workingsetMasterMaintenance:           ui8_cmd = 0xf; break;
+      // map reset command to setValue command
+      case GeneralCommand_c::measurementReset:                      ui8_cmd = 3; break;
       default: ui8_cmd = 0xFF;
     }          
     
@@ -901,12 +903,12 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
         break;
       case 0x02:
         en_command = GeneralCommand_c::requestValue;
-        // @todo: setpoint or measurement?
+        // @todo: setpoint or measure?
         b_isRequest = true; 
         break;
       case 0x03:
         en_command = GeneralCommand_c::setValue;
-        // @todo: setpoint or measurement?
+        // @todo: setpoint or measure?
         break;
       case 0x04:
         en_command = GeneralCommand_c::measurementTimeValueStart;
@@ -956,7 +958,6 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
         en_valueGroup = GeneralCommand_c::maxValue;
       
     }
-
     
 #endif
 

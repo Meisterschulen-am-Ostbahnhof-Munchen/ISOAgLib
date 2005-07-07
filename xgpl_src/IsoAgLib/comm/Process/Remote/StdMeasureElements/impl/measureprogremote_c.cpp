@@ -668,7 +668,7 @@ bool MeasureProgRemote_c::resetMed(){
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::medValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
   return processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0x28);
@@ -690,7 +690,7 @@ bool MeasureProgRemote_c::resetInteg(){
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::integValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
   return processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0x48);
@@ -712,7 +712,7 @@ bool MeasureProgRemote_c::resetMin(){
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::minValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
   return processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0x8);
@@ -734,7 +734,7 @@ bool MeasureProgRemote_c::resetMax(){
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                              GeneralCommand_c::exactValue,
+                                                              GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
   return processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0x8);

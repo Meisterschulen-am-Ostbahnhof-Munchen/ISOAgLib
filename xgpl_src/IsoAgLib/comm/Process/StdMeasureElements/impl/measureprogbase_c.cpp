@@ -597,7 +597,10 @@ bool MeasureProgBase_c::processMsg(){
   bool b_edited = false;
 
   if (en_command == GeneralCommand_c::setValue)
-    // setValue commands indicate receiving of a measure value => handle this in measure prog remote => return false
+    // setValue commands indicate receiving of a measure value 
+    //    => handle this in measure prog remote => return false
+    // or a reset (ISO)
+    //    => handle this in measure prog local => return false
     return false;
 
 // Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
