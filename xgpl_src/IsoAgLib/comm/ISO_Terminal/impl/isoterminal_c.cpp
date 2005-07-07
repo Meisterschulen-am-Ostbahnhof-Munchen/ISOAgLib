@@ -83,6 +83,8 @@
 // LOESCHE_POOL will send DeleteVersion INSTEAD of LoadVersion
 //#define LOESCHE_POOL
 //#define GET_VERSIONS
+#define USE_SIMPLE_AUX_RESPONSE
+
 
 #include "isoterminal_c.h"
 
@@ -1220,6 +1222,8 @@ bool ISOTerminal_c::processMsg()
         b_result = true;
         break;
 
+     
+     
      /***************************************************/
     /*** ### ECU Initiated Messages (=Responses) ### ***/
       case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
@@ -1256,6 +1260,23 @@ bool ISOTerminal_c::processMsg()
         b_result = true;
         break;
 
+#ifdef USE_SIMPLE_AUX_RESPONSE
+     /***************************************/
+    /*** ### AUX Assignment Messages ### ***/
+      case 0x20: { // Command: "Auxiliary Control", parameter "Auxiliary Assignment"
+        data().setIsoPgn(ECU_TO_VT_PGN);
+        data().setIsoSa (pc_wsMasterIdentItem->getIsoItem()->nr());
+        data().setIsoPs (vtSourceAddress);
+        getCanInstance4Comm() << c_data; 
+
+        /// For now simply response without doing anything else with this information. simply ack the assignment!
+        
+        b_result=true;
+        } break;
+#endif
+     
+     /***************************************************/
+    /*** ### ECU Initiated Messages (=Responses) ### ***/
       // ### Error field is also on byte 2 (index 1)
       case 0xA3: // Command: "Command", parameter "Control Audio Device Response"
       case 0xA4: // Command: "Command", parameter "Set Audio Volume Response"
