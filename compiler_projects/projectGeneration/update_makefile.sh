@@ -332,7 +332,7 @@ function create_filelist( )
     if [ -n "$COMM_PROC_FEATURES" ] ; then
       COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o "
     fi
-    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process/impl/dev*'"
+    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process/impl/dev*' -o -path '*/Process/impl/generalcommand*'"
 
 		if [ $PRJ_GPS -gt 0 ] ; then
 			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*gps_c.*'"
@@ -452,7 +452,7 @@ function create_filelist( )
     COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/*'"
   fi
 
-	DRIVER_FEATURES=" -path '*/driver/can/*' -o  -path '*/hal/"$HAL_PATH"/can/can*'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*' -o -path '*/hal/"$HAL_PATH"/system*' -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'"
+	DRIVER_FEATURES=" -path '*/driver/can/*' -o  -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*' -o -path '*/hal/"$HAL_PATH"/system*' -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'"
 
 
   echo "CAN driver: $USE_CAN_DRIVER"
