@@ -97,6 +97,13 @@ public:
   const uint8_t* outputString() const {return ISOItem_c::outputString();};
 
   /**
+    deliver name
+    @return pointer to the name uint8_t string (7byte)
+  */
+  virtual const uint8_t* name() const { return ISOItem_c::name();};
+
+
+  /**
     get self config mode
     @return self configuration adress state
   */
