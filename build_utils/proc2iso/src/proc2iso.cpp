@@ -73,9 +73,6 @@
 #include <iostream>
 #include <vector>
 
-#define MACRO_16bitToLE(value) (value & 0xFF), ((value >> 8) & 0xFF)
-#define MACRO_32bitToLE(value) (value & 0xFF), ((value >> 8) & 0xFF), ((value >> 16) & 0xFF), ((value >> 24) & 0xFF)
-
 // ### GLOBALS ###
 FILE *partFileA;
 FILE *partFileB;
@@ -102,7 +99,7 @@ std::vector<std::string> vecstr_constructor (5);
 
 static void usage()
 {
-  std::cout << "\nproc2iso BUILD DATE: 16-Jun-2005\n\n"
+  std::cout << "\nproc2iso BUILD DATE: 27-Jun-2005\n\n"
     "Usage:\n"
     " proc2iso [options] <XML file>\n\n"
     "This program invokes the DOMBuilder, builds the DOM tree,\n"
@@ -272,11 +269,13 @@ void init (const char* xmlFile)
   strcat (partFileName, "-bytestream.inc");
   partFileA = fopen (partFileName,"wt");
 
-  fprintf (partFileA, "const HUGE_MEM uint8_t deviceDescription [] = {");
+  fprintf (partFileA, "const HUGE_MEM uint8_t deviceDescription");
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-func.h");
   partFileB = fopen (partFileName,"wt");
+
+  fprintf (partFileB, "#include \"%s\"\n\n", strcat (strncpy (partFileName, xmlFile, 1024), "-bytestream.inc"));
 
   for (int j=0; j<maxAttributeNames; j++)
   {
@@ -440,6 +439,8 @@ char objName [stringLength+1];
 bool is_objName;
 unsigned int objID;
 unsigned int tableID;
+unsigned int buf_length=0;
+char languageCmdCode[2];
 bool is_objID;
 bool deviceElementExists=false;
 bool firstElement=true;
@@ -717,11 +718,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             for (uint8_t ins=0;ins<sizeof(mastername);ins++)
               vecstr_attrString [attrWorkingset_mastername][ins] = mastername[ins];
           }
+          languageCmdCode[0] = vecstr_attrString[attrLocalization_label][0];
+          languageCmdCode[1] = vecstr_attrString[attrLocalization_label][1];
           //output: tableID & objID
           if (firstElement)
           {
             firstElement=false;
-            buffer  << "'" << TableIDTable [objType][0]  << "', "
+            buffer  << "_" << languageCmdCode[0] << languageCmdCode[1] << " [] = {'" << TableIDTable [objType][0]  << "', "
                     << "'" << TableIDTable [objType][1]  << "', "
                     << "'" << TableIDTable [objType][2]  << "', "
                     << uint16_t(objID & 0xFF)            << ", "
@@ -734,37 +737,46 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                     << uint16_t(objID & 0xFF)             << ", "
                     << uint16_t((objID >> 8) & 0xFF)      << ", ";
           }
+          buf_length += 5;
           //length of designator
           buffer << vecstr_attrString[attrDesignator].size() << ", ";
+          buf_length++;
           //designator
           for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
           {
               buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
           }
+          buf_length += vecstr_attrString[attrDesignator].size();
           //length of software_version
           buffer << vecstr_attrString[attrSoftware_version].size() << ", ";
+          buf_length++;
           //software_version
           for (i=0;i<vecstr_attrString[attrSoftware_version].size();i++)
           {
             buffer << "'" << vecstr_attrString[attrSoftware_version][i] << "', ";
           }
+          buf_length += vecstr_attrString[attrSoftware_version].size();
           //workingset_mastername
           for (i=0;i<vecstr_attrString[attrWorkingset_mastername].size();i++)
           {
             buffer << vecstr_attrString[attrWorkingset_mastername][i] << ", ";
           }
+          buf_length += 8;
           //length serialnumber
           buffer << vecstr_attrString[attrSerial_number].size() << ", ";
+          buf_length++;
           //serialnumber
           for (i=0;i<vecstr_attrString[attrSerial_number].size();i++)
           {
             buffer << "'" << vecstr_attrString[attrSerial_number][i] << "', ";
           }
+          buf_length += vecstr_attrString[attrSerial_number].size();
           //structure_label
           for (i=0;i<vecstr_attrString[attrStructure_label].size();i++)
           {
             buffer << "'" << vecstr_attrString[attrStructure_label][i] << "', ";
           }
+          buf_length += 7;
           //localization_label
           for (i=0;i<vecstr_attrString[attrLocalization_label].size();i++)
           {
@@ -773,8 +785,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
               else
                 buffer << "'" << vecstr_attrString[attrLocalization_label][i] << "', ";
           }
-          //DEBUG OUT
-          //std::cout << "TEST\n\n"<<buffer.str() << std::endl;
+          buf_length += 7;
           fprintf( partFileA, "%s", buffer.str().c_str() );
           buffer.str("");
           fprintf( partFileB, "IsoAgLib::iGetyPos_c %sGtp(%x, %x);\n\n",
@@ -801,24 +812,31 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << "'" << TableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
                 << uint16_t((objID >> 8) & 0xFF)      << ", ";
+        buf_length += 5;
         //elementtype
         buffer << elementtypetoi(vecstr_attrString[attrElement_type].c_str()) << ", ";
+        buf_length++;
         //length of designator
         buffer << vecstr_attrString[attrDesignator].size() << ", ";
+        buf_length++;
         //designator
         for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
         {
             buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
         }
+        buf_length += vecstr_attrString[attrDesignator].size();
         //element_number
         buffer  << (atoi(vecstr_attrString[attrElement_number].c_str()) & 0xFF) << ", "
                 << ((atoi(vecstr_attrString[attrElement_number].c_str()) >> 8) & 0xFF) << ", ";
+        buf_length += 2;
         //parent_name
         buffer  << (idOrName_toi(vecstr_attrString[attrParent_name].c_str()) & 0xFF) << ", "
                 << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str()) >> 8) & 0xFF) << ", ";
+        buf_length += 2;
         //number_of_objects_to_follow
         buffer  << uint16_t((objChildObjects+objNextUnnamedName-1) & 0xFF) << ", "
                 << uint16_t(((objChildObjects+objNextUnnamedName-1) >> 8) & 0xFF);
+        buf_length += 2;
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
         break;
@@ -837,23 +855,30 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << "'" << TableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
                 << uint16_t((objID >> 8) & 0xFF)      << ", ";
+        buf_length += 5;
         //ddi
         buffer  << (atoi(vecstr_attrString[attrDdi].c_str()) & 0xFF) << ", "
                 << ((atoi(vecstr_attrString[attrDdi].c_str()) >> 8) & 0xFF)  << ", ";
+        buf_length += 2;
         //properties
         buffer  << propertytoi(vecstr_attrString[attrProperties].c_str()) << ", ";
+        buf_length++;
         //triggermethods
         buffer  << triggermethodtoi(vecstr_attrString[attrTrigger_methods].c_str()) << ", ";
+        buf_length++;
         //length of designator
         buffer << vecstr_attrString[attrDesignator].size() << ", ";
+        buf_length++;
         //designator
         for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
         {
             buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
         }
+        buf_length += vecstr_attrString[attrDesignator].size();
         //device_value_presentation_object_id
         buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str()) & 0xFF) << ", "
                 << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str()) >> 8) & 0xFF);
+        buf_length += 2;
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
         vecstr_constructor[1] = vecstr_attrString[attrFeature_set].c_str();
@@ -871,23 +896,30 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << "'" << TableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
                 << uint16_t((objID >> 8) & 0xFF)      << ", ";
+        buf_length += 5;
         //ddi
         buffer  << (atoi(vecstr_attrString[attrDdi].c_str()) & 0xFF)  << ", "
                 << ((atoi(vecstr_attrString[attrDdi].c_str()) >> 8) & 0xFF)  << ", ";
+        buf_length += 2;
+        //property_value
         buffer  << uint16_t(vecstr_attrString[attrProperty_value][0])  << ", "
                 << uint16_t(vecstr_attrString[attrProperty_value][1])  << ", "
                 << uint16_t(vecstr_attrString[attrProperty_value][2])  << ", "
                 << uint16_t(vecstr_attrString[attrProperty_value][3])  << ", ";
+        buf_length += 4;
         //length of designator
         buffer << vecstr_attrString[attrDesignator].size() << ", ";
+        buf_length++;
         //designator
         for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
         {
             buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
         }
+        buf_length += vecstr_attrString[attrDesignator].size();
         //device_value_presentation_object_id
         buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str()) & 0xFF) << ", "
                 << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str()) >> 8) & 0xFF);
+        buf_length += 2;
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
         break;
@@ -917,11 +949,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << "'" << TableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
                 << uint16_t((objID >> 8) & 0xFF)      << ", ";
+        buf_length += 5;
         //offset
         buffer  << uint16_t(vecstr_attrString[attrOffset][0]) << ", "
                 << uint16_t(vecstr_attrString[attrOffset][1]) << ", "
                 << uint16_t(vecstr_attrString[attrOffset][2]) << ", "
                 << uint16_t(vecstr_attrString[attrOffset][3]) << ", ";
+        buf_length += 4;
         //scale
         float f_temp = atof(vecstr_attrString[attrScale].c_str());
         uint8_t *pui8_temp = (uint8_t*)&f_temp;
@@ -929,10 +963,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << uint16_t(pui8_temp[1]) << ", "
                 << uint16_t(pui8_temp[2]) << ", "
                 << uint16_t(pui8_temp[3]) << ", ";
+        buf_length += 4;
         //number_of_decimals
         buffer << atoi(vecstr_attrString[attrNumber_of_decimals].c_str()) << ", ";
+        buf_length++;
         //length of unitdesignator
         buffer << vecstr_attrString[attrUnitdesignator].size() << ", ";
+        buf_length++;
         //unit_designator
         for (i = 0;i<vecstr_attrString[attrUnitdesignator].size();i++)
         {
@@ -941,7 +978,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             else
               buffer << "'" << vecstr_attrString[attrUnitdesignator][i] << "', ";
         }
+        buf_length += vecstr_attrString[attrUnitdesignator].size();
         fprintf( partFileA, "%s", buffer.str().c_str() );
+
         buffer.str("");
         break;
       }
@@ -1055,7 +1094,6 @@ int main(int argC, char* argV[])
   /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
   std::basic_string<char> c_unwantedType = ".inc";
   std::basic_string<char> c_unwantedType2 = ".h";
-  std::basic_string<char> c_unwantedType3 = ".inc-template";
   std::basic_string<char> c_directoryCompareItem;
   std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
   strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
@@ -1131,7 +1169,6 @@ int main(int argC, char* argV[])
       if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
       if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
       if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
-      if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
 
       if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
         c_directoryCompareItem.insert(0, "/" );
@@ -1274,6 +1311,7 @@ int main(int argC, char* argV[])
         processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otDevice), c_directory.c_str() ); // must all be included in an device tag !
         if (!deviceElementExists) clean_exit(-1, "YOU MUST SPECIFY AT LEAST ONE deviceelement OBJECT! STOPPING PARSER!\n\n");
         fprintf (partFileA, "};\n");
+        fprintf (partFileA, "static const uint32_t ui32_arrayLength_%c%c = %d;\n", languageCmdCode[0], languageCmdCode[1], buf_length);
       }
     }
 

@@ -182,7 +182,7 @@ char DeviceElementTypeTable [maxDeviceElementType] [stringLength+1] = {
 
 #define maxProperty 2
 char PropertyTable [maxProperty] [stringLength+1] = {
-    "default",
+    "defaultset",
     "setable"
 };
 
