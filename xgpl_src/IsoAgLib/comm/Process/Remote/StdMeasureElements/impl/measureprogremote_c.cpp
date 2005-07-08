@@ -204,29 +204,25 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 
    
   uint8_t b_command = 0;
-  GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand; 
-  int32_t i32_tmpValue = 0;
-  
+    
+  // @todo: check loop for DIN
   
   // send all registered increments to remote ECU
   for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
        pc_subprog != vec_measureSubprog.end(); pc_subprog++)
   { // send the suitable increment creating message to the remote system
 
-    i32_tmpValue = pc_subprog->increment();
-  
-    if (pc_subprog->type() == Proc_c::TimeProp)
+    GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand; 
+
+    if (pc_subprog->type() == Proc_c::TimeProp && ren_type == Proc_c::TimeProp)
     { // send msg with wanted type-code, gtp, pd=0, mod=4, -1*increment value
   
-      if (en_msgProto == IState_c::Din) {
+      if (en_msgProto == IState_c::Din)
         en_command = GeneralCommand_c::measurementTimeValue;
-        // negative value !
-        i32_tmpValue = -1* pc_subprog->increment();
-      }
       else
         en_command = GeneralCommand_c::measurementTimeValueStart;
     }
-    else if (pc_subprog->type() == Proc_c::DistProp)
+    else if (pc_subprog->type() == Proc_c::DistProp && ren_type == Proc_c::DistProp)
     { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
 
       if (en_msgProto == IState_c::Din)
@@ -234,14 +230,14 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
       else
         en_command = GeneralCommand_c::measurementDistanceValueStart;
     }
-    else if (pc_subprog->type() == Proc_c::WithinThresholdInterval)
+    else if (pc_subprog->type() == Proc_c::WithinThresholdInterval && ren_type == Proc_c::WithinThresholdInterval)
     { 
       if(checkDoSend(Proc_c::DoMin))
         en_command = GeneralCommand_c::measurementMinimumThresholdValueStart; 
       else if(checkDoSend(Proc_c::DoMax))
         en_command = GeneralCommand_c::measurementMaximumThresholdValueStart;
     } 
-    else if (pc_subprog->type() == Proc_c::OnChange)
+    else if (pc_subprog->type() == Proc_c::OnChange && ren_type == Proc_c::OnChange)
     { 
       if (en_msgProto == IState_c::Din)
         en_command = GeneralCommand_c::measurementChangeThresholdValue;
@@ -265,11 +261,17 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 #endif
   
     if (en_command != GeneralCommand_c::noCommand)
-    {
+    {  
+       int32_t i32_tmpValue = pc_subprog->increment();
+       
+       // DIN time prog: negative value!
+       if (en_command == GeneralCommand_c::measurementTimeValue)
+         i32_tmpValue = -i32_tmpValue;
+         
        // prepare general command in process pkg
        getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
                                                                    GeneralCommand_c::exactValue,
-                                                                   en_command);       
+                                                                   en_command);
        if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), i32_tmpValue))
           b_sendResult = false;
     }
