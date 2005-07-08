@@ -233,6 +233,8 @@ public:
     , skHeight (r_skHeight)
     , b_initAllObjects (false) {};
 
+   virtual ~iIsoTerminalObjectPool_c(){};
+
   /**
     hook function that gets called every time a color-value
     has to be adapted to VT's color-depth (as it violates the color-range!).

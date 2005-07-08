@@ -103,11 +103,11 @@
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #include <IsoAgLib/util/impl/util_funcs.h>
-	#ifdef SYSTEM_PC
-		#include <iostream>
-	#else
-		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#endif
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
 #endif
 
 #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
@@ -650,7 +650,7 @@ bool ISOTerminal_c::timeEvent( void )
 
  /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
 /*******************************************************************************************************/
-	System_c::triggerWd();
+  System_c::triggerWd();
 
   // #######################
   // ### VT Alive checks ###
@@ -709,7 +709,7 @@ bool ISOTerminal_c::timeEvent( void )
   // be kind and wait until "COMPLETE AddressClaim" is finished (WSMaster/Slaves Announce)
   if ( !pc_wsMasterIdentItem->getIsoItem()->isClaimedAddress() ) return true;
 
-  
+
   // If our IsoItem has claimed address, immediately try to get the LANGUAGE_PGN from VT/anyone ;-) (regardless of pool-upload!)
   if ((!localSettings_a.lastReceived) && ((localSettings_a.lastRequested == 0) || ((HAL::getTime()-localSettings_a.lastRequested) > 2000)))
   { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
@@ -1114,7 +1114,7 @@ ISOTerminal_c::vtOutOfMemory()
 
 
 /** process received can messages
-	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool ISOTerminal_c::processMsg()
 {
@@ -1222,8 +1222,8 @@ bool ISOTerminal_c::processMsg()
         b_result = true;
         break;
 
-     
-     
+
+
      /***************************************************/
     /*** ### ECU Initiated Messages (=Responses) ### ***/
       case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
@@ -1267,14 +1267,14 @@ bool ISOTerminal_c::processMsg()
         data().setIsoPgn(ECU_TO_VT_PGN);
         data().setIsoSa (pc_wsMasterIdentItem->getIsoItem()->nr());
         data().setIsoPs (vtSourceAddress);
-        getCanInstance4Comm() << c_data; 
+        getCanInstance4Comm() << c_data;
 
         /// For now simply response without doing anything else with this information. simply ack the assignment!
-        
+
         b_result=true;
         } break;
 #endif
-     
+
      /***************************************************/
     /*** ### ECU Initiated Messages (=Responses) ### ***/
       // ### Error field is also on byte 2 (index 1)

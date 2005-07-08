@@ -100,7 +100,7 @@ class vtObjectDataMask_c : public IsoAgLib::iVtObjectMask_c
 {
 
 public:
-
+  virtual ~vtObjectDataMask_c(){};
   //  Operation: stream
   //! Parameter:
   //! @param:destMemory:

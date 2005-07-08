@@ -456,6 +456,7 @@ public:
 
   // Constructor
   iVtObject_c() : flags (0) {};
+  virtual ~iVtObject_c() {};
 
   //  Operation: getID
   uint16_t getID() { return vtObject_a->ID; };

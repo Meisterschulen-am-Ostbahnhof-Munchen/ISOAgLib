@@ -120,6 +120,7 @@ public:
 
   //  Operation: vtObjectSoftKeyMask_c
   vtObjectSoftKeyMask_c();
+  virtual ~vtObjectSoftKeyMask_c(){};
 
   //  Operation: size
   uint32_t fitTerminal();
@@ -130,10 +131,10 @@ public:
   void setOriginSKM(bool b_SKM);
 
   // //////////////////////////////////
-	// All special Attribute-Set methods
-	void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  // All special Attribute-Set methods
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour) : 0, sizeof(iVtObjectSoftKeyMask_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
-	}
+  }
 
 }; // ~X2C
 

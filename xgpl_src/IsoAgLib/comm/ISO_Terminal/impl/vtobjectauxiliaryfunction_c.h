@@ -113,13 +113,14 @@ public:
   //! Parameter:
   //! @param vtObjectAuxiliaryFunctionSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM, bool b_initPointer){vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunctionSROM);};
+  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM){vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunctionSROM);};
 
   //  Operation: get_vtObjectAuxiliaryFunction_a
   iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a(){return (iVtObjectAuxiliaryFunction_s *)vtObject_a;};
 
   //  Operation: vtObjectAuxiliaryFunction_c
   vtObjectAuxiliaryFunction_c();
+  ~vtObjectAuxiliaryFunction_c(){};
 
   //  Operation: size
   uint32_t fitTerminal();

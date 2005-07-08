@@ -67,7 +67,7 @@ class iVtObjectFontAttributes_c : public __IsoAgLib::vtObjectFontAttributes_c
 {
 
 public:
-
+  virtual ~iVtObjectFontAttributes_c(){};
   //  Operation: init
   //! Parameter:
   //! @param vtObjectFontAttributesSROM:

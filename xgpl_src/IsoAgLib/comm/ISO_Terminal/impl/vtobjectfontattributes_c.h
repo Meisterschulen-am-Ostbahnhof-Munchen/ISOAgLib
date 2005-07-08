@@ -89,7 +89,7 @@ public:
 
   //  Operation: vtObjectFontAttributes_c
   vtObjectFontAttributes_c();
-
+  virtual ~vtObjectFontAttributes_c(){};
   //  Operation: size
   uint32_t fitTerminal();
 

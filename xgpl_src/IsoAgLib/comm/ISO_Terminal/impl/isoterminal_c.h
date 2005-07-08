@@ -101,9 +101,9 @@
 #define USE_LIST_FOR_FIFO
 
 #ifdef USE_LIST_FOR_FIFO
-	#include <list>
+  #include <list>
 #else
-	#include <queue>
+  #include <queue>
 #endif
 
 #include <vector>
@@ -121,15 +121,15 @@ class vtObjectString_c;
 
 
 /** helper class for low level streaming.
-	This function was excluded from ISOTerminal_c,
-	as some STL aware compilers don't support multiple inheritance
-	( e.g. IAR ). So this helper construction was defined.
+  This function was excluded from ISOTerminal_c,
+  as some STL aware compilers don't support multiple inheritance
+  ( e.g. IAR ). So this helper construction was defined.
 */
 class ISOTerminalStreamer_c : public MultiSendStreamer_c
 {
 
 public:
-
+  virtual ~ISOTerminalStreamer_c(){};
   /** place next data to send direct into send puffer of pointed
       stream send package - MultiSendStreamer_c will send this
       puffer afterwards
@@ -489,7 +489,7 @@ private:
 
   void finishUploadCommand ();
 
-		/** sets state to "OPCannotUpload"... */
+    /** sets state to "OPCannotUpload"... */
   void vtOutOfMemory();
 
 private: // attributes

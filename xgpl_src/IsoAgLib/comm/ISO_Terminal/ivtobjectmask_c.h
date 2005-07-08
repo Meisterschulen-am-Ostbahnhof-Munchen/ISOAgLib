@@ -77,6 +77,7 @@ public:
   virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask,
                               bool b_updateObject= false, bool b_enableReplaceOfCmd=true) = 0;
 
+  virtual ~iVtObjectMask_c(){};
 }; // ~X2C
 
 } // end of namespace __IsoAgLib

@@ -67,7 +67,7 @@ class iVtObjectAuxiliaryFunction_c : public __IsoAgLib::vtObjectAuxiliaryFunctio
 {
 
 public:
-
+  ~iVtObjectAuxiliaryFunction_c(){};
   //  Operation: init
   //! Parameter:
   //! @param vtObjectAuxiliaryFunctionSROM:

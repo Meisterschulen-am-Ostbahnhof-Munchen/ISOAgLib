@@ -76,7 +76,7 @@ public:
   void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM) {
     vtObjectAlarmMask_c::init (vtObjectAlarmMaskSROM);
   };
-
+  ~iVtObjectAlarmMask_c(){};
   //  Operation: get_vtObjectAlarmMask_a
   iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a() { return (iVtObjectAlarmMask_s *)vtObject_a; };
 

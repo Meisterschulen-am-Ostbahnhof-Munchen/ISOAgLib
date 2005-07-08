@@ -113,7 +113,7 @@ public:
   //! Parameter:
   //! @param vtObjectAuxiliaryInputSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM, bool b_initPointer){vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryInputSROM);};
+  void init(const iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM){vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryInputSROM);};
 
   //  Operation: get_vtObjectAuxiliaryInput_a
   iVtObjectAuxiliaryInput_s* get_vtObjectAuxiliaryInput_a(){return (iVtObjectAuxiliaryInput_s *)vtObject_a;};

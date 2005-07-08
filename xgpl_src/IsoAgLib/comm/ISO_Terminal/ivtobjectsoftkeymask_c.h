@@ -67,7 +67,7 @@ class iVtObjectSoftKeyMask_c : public __IsoAgLib::vtObjectSoftKeyMask_c
 {
 
 public:
-
+  virtual ~iVtObjectSoftKeyMask_c(){};
   //  Operation: init
   //! Parameter:
   //! @param vtObjectSoftKeyMaskSROM:

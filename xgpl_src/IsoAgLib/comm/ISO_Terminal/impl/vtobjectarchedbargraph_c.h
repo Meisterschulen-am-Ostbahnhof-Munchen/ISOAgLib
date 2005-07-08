@@ -122,6 +122,7 @@ public:
 
   //  Operation: vtObjectArchedBarGraph_c
   vtObjectArchedBarGraph_c();
+  ~vtObjectArchedBarGraph_c(){};
 
   //  Operation: size
   uint32_t fitTerminal();
