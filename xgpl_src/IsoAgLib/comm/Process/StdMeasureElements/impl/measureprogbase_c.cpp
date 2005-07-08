@@ -636,7 +636,7 @@ bool MeasureProgBase_c::processMsg(){
     }
         
     if (en_command == GeneralCommand_c::measurementReset)
-    { // reset command
+    { // reset command (DIN only, ISO reset: setValue command)
        reset(b_cmd);
        // call handler function if handler class is registered
        if ( processData().getProcessDataChangeHandler() != NULL )

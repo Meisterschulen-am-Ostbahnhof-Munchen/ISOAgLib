@@ -397,6 +397,7 @@ bool MeasureProgLocal_c::processMsg(){
     // get the int32_t data val; let it convert, if needed
     int32_t i32_val = c_pkg.dataRawCmdLong();
 
+    // @todo: reset is handled here and in MeasureProgBase_c, unify?
     // the message was a value message -> evaluate it here (DIN: pd=1)
     if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementReset ||
         // ISO: set value command
@@ -431,6 +432,7 @@ bool MeasureProgLocal_c::processMsg(){
   @param ri32_val new measure value
 */
 void MeasureProgLocal_c::setVal(int32_t ri32_val){
+// @todo: b_cumulativeValue == true => negative values possible if local application doesn't set contiously growing values 
   int32_t i32_incr =  ri32_val - i32_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
   int32_t i32_timeDelta = i32_time - i32_lastTime;

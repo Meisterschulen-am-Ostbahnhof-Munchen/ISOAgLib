@@ -322,6 +322,15 @@ public:
     @return true -> all planned executions performed
   */
   virtual bool timeEvent( void );
+  
+#ifdef USE_ISO_11783
+  /**
+    delivers state (DIN/ISO) for given gtp
+    @param rc_gtp compared GETY_POS value
+    @return IState_c::itemState_t
+  */
+  IState_c::itemState_t getIStateForGtp( GetyPos_c rc_gtp );
+#endif
 
 protected: // Protected methods
   /**

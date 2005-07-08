@@ -499,4 +499,40 @@ void ProcDataBase_c::processSetpoint()
   return;
 }
 
+#ifdef USE_ISO_11783
+/**
+  delivers item state (DIN/ISO) for given gtp
+  @param rc_gtp compared GETY_POS value
+  @return IState_c::itemState_t
+*/
+IState_c::itemState_t ProcDataBase_c::getIStateForGtp( GetyPos_c rc_gtp )
+{
+  // @todo: is DIN/ISO selection correct?
+  IState_c::itemState_t en_msgProto = IState_c::IstateNull;
+  
+#ifdef USE_DIN_9684
+  // retreive pointer to te according DINMonitor_c class
+  static DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
+
+  // check is the var parameter has claimed address
+  if ( (c_din_monitor.existDinMemberGtp(rc_gtp) )
+    && (c_din_monitor.dinMemberGtp(rc_gtp).itemState(IState_c::ClaimedAddress)) )
+  { // the member to ownerGtp has claimed address
+    en_msgProto = IState_c::Din;
+  }
+#endif
+  
+  // retreive pointer to te accorisog ISOMonitor_c class
+  static ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+
+  if ( (c_isoMonitor.existIsoMemberGtp(rc_gtp))
+     && (c_isoMonitor.isoMemberGtp(rc_gtp).itemState(IState_c::ClaimedAddress)) )
+  { // the member to ownerGtp has claimed address
+    en_msgProto = IState_c::Iso;
+  }
+
+  return en_msgProto;
+}
+#endif
+
 } // end of namespace __IsoAgLib

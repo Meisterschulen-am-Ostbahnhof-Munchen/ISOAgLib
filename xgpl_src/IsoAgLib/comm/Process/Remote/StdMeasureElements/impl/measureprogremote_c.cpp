@@ -193,6 +193,15 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
   // error state are set by the function
   if (!verifySetRemoteGtp())return false;
   
+#ifdef USE_ISO_11783
+  // check if receiver (local) uses DIN or ISO  
+  IState_c::itemState_t en_msgProto = processData().getIStateForGtp(processData().ownerGtp());
+  
+  if (en_msgProto == IState_c::IstateNull) return false;
+#else  
+  IState_c::itemState_t en_msgProto = IState_c::Din;
+#endif
+  
   uint8_t b_command = 0;
   GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand; 
   int32_t i32_tmpValue = 0;
@@ -208,24 +217,21 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
     if (pc_subprog->type() == Proc_c::TimeProp)
     { // send msg with wanted type-code, gtp, pd=0, mod=4, -1*increment value
   
-#ifdef USE_DIN_9684
-      en_command = GeneralCommand_c::measurementTimeValue;
-      // negative value !
-      i32_tmpValue = -1* pc_subprog->increment();
-#endif 
-#ifdef USE_ISO_11783
-      en_command = GeneralCommand_c::measurementTimeValueStart;
-#endif     
+      if (en_msgProto == IState_c::Din) {
+        en_command = GeneralCommand_c::measurementTimeValue;
+        // negative value !
+        i32_tmpValue = -1* pc_subprog->increment();
+      }
+      else
+        en_command = GeneralCommand_c::measurementTimeValueStart;
     }
     else if (pc_subprog->type() == Proc_c::DistProp)
     { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
 
-#ifdef USE_DIN_9684
-      en_command = GeneralCommand_c::measurementDistanceValue;
-#endif 
-#ifdef USE_ISO_11783
-      en_command = GeneralCommand_c::measurementDistanceValueStart;
-#endif     
+      if (en_msgProto == IState_c::Din)
+        en_command = GeneralCommand_c::measurementDistanceValue;
+      else
+        en_command = GeneralCommand_c::measurementDistanceValueStart;
     }
     else if (pc_subprog->type() == Proc_c::WithinThresholdInterval)
     { 
@@ -236,6 +242,9 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
     } 
     else if (pc_subprog->type() == Proc_c::OnChange)
     { 
+      if (en_msgProto == IState_c::Din)
+        en_command = GeneralCommand_c::measurementChangeThresholdValue;
+      else
         en_command = GeneralCommand_c::measurementChangeThresholdValueStart;
     }
     // @todo: OutsideThresholdInterval and Counter ?
@@ -281,29 +290,33 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
   i32_lastMeasureReceive = System_c::getTime();
 
 #ifdef USE_DIN_9684
-  // send start command to remote ECU
-  // build start comand byte
-  uint8_t b_command = 0x80; // start
 
-  if (checkType(Proc_c::DistProp)) b_command |= 0x1;
-  if (checkType(Proc_c::TimeProp)) b_command |= 0x4;
+  if (en_msgProto == IState_c::Din)
+  {
+    // send start command to remote ECU
+    // build start comand byte
+    uint8_t b_command = 0x80; // start
 
-  if (checkDoSend(Proc_c::DoVal)) b_command |= 0x10;
-  if (checkDoSend(Proc_c::DoMed)) b_command |= 0x20;
-  if (checkDoSend(Proc_c::DoInteg)) b_command |= 0x40;
+    if (checkType(Proc_c::DistProp)) b_command |= 0x1;
+    if (checkType(Proc_c::TimeProp)) b_command |= 0x4;
 
-  // send start command to remote ECU
-  uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
-  // send msg with wanted type-code, gtp, pd=0, mod=6, start command
-  // return result -> true if msg claimed address for member with gtp() exist
+    if (checkDoSend(Proc_c::DoVal)) b_command |= 0x10;
+    if (checkDoSend(Proc_c::DoMed)) b_command |= 0x20;
+    if (checkDoSend(Proc_c::DoInteg)) b_command |= 0x40;
+
+    // send start command to remote ECU
+    uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
+    // send msg with wanted type-code, gtp, pd=0, mod=6, start command
+    // return result -> true if msg claimed address for member with gtp() exist
   
-  // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::measurementStart);
-  // DIN: pd=0, mod=6
-  if (!processData().sendDataRawCmdGtp(ui8_pri, gtp(), b_command))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
-    b_sendResult = false;
+    // prepare general command in process pkg
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+                                                                GeneralCommand_c::exactValue,
+                                                                GeneralCommand_c::measurementStart);
+    // DIN: pd=0, mod=6
+    if (!processData().sendDataRawCmdGtp(ui8_pri, gtp(), b_command))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
+      b_sendResult = false;
+  }
 #endif 
 
   return b_sendResult;
@@ -648,8 +661,22 @@ bool MeasureProgRemote_c::resetVal(){
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
+                                                              
+#ifdef USE_ISO_11783
+  // check if receiver (local) uses DIN or ISO  
+  IState_c::itemState_t en_msgProto = processData().getIStateForGtp(processData().ownerGtp());
+  
+  if (en_msgProto == IState_c::IstateNull) return false;
+#else  
+  IState_c::itemState_t en_msgProto = IState_c::Din;
+#endif
+
+  int32_t i32_valToSend = 0x18; // for DIN
+  if (en_msgProto != IState_c::Din)
+    i32_valToSend = 0; // ISO
+    
   // DIN: pd=0, mod=6
-  return processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0x18);
+  return processData().sendDataRawCmdGtp(ui8_pri, gtp(), i32_valToSend);
 }
 
 /**
