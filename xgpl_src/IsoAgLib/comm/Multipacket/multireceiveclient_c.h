@@ -1,5 +1,5 @@
 /***************************************************************************
-                          multireceiveclient_c.h - 
+                          multireceiveclient_c.h -
                              -------------------
     class                : ::MultiReceiveClient_c
     project              : IsoAgLib
@@ -106,11 +106,11 @@ class MultiReceiveClient_c
 {
 
 public:
-
+  virtual ~MultiReceiveClient_c(){};
   //  Operation: reactOnStreamStart
   //! Parameter:
-  //! @param rc_ident: 
-  //! @param rui32_totalLen: 
+  //! @param rc_ident:
+  //! @param rui32_totalLen:
   virtual bool reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen) = 0;
 
   //  Operation: reactOnAbort
@@ -124,7 +124,7 @@ public:
   virtual bool processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk) = 0;
 
   virtual void notificationOnMultiReceiveError(IsoAgLib::ReceiveStreamIdentifier_c& /*rc_streamIdent*/, uint8_t /*rui8_multiReceiveError*/, bool /*rb_isGlobal*/) {}; // needs not to be overwritten
-  
+
 protected:
 
 private:
