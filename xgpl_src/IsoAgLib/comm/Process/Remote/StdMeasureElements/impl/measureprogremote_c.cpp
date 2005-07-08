@@ -201,7 +201,8 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 #else  
   IState_c::itemState_t en_msgProto = IState_c::Din;
 #endif
-  
+
+   
   uint8_t b_command = 0;
   GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand; 
   int32_t i32_tmpValue = 0;
@@ -280,7 +281,6 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 #endif
 
   }
-
   
   // call base function for registering start state
   MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);

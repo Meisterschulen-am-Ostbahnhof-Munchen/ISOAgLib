@@ -894,8 +894,8 @@ void MeasureProgBase_c::processIncrementMsg(){
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValue ||
       c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart) 
     // change threshold proportional
-    // @todo: DistProp ? 
-    addSubprog(Proc_c::DistProp, i32_val);
+    // @todo: was DistProp ? 
+    addSubprog(Proc_c::OnChange, i32_val);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart) 
     // change threshold proportional

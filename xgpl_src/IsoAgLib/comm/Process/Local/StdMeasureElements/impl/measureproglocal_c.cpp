@@ -432,7 +432,7 @@ bool MeasureProgLocal_c::processMsg(){
   @param ri32_val new measure value
 */
 void MeasureProgLocal_c::setVal(int32_t ri32_val){
-// @todo: b_cumulativeValue == true => negative values possible if local application doesn't set contiously growing values 
+// @todo: b_cumulativeValue == true => negative values possible if local application doesn't set continuously growing values 
   int32_t i32_incr =  ri32_val - i32_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
   int32_t i32_timeDelta = i32_time - i32_lastTime;
@@ -457,6 +457,7 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
     i32_accel = ((i32_delta - i32_oldDelta) * 1000) / i32_timeDelta;
 
   }
+  
   // now check if one subprog triggers
   bool b_singleTest;
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin();
@@ -479,6 +480,10 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumDist))updatePropDepVals();
         break;
 
+      case Proc_c::OnChange:
+        b_singleTest = pc_iter->updateTrigger(val());
+        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
+        break;
       case Proc_c::ValIncr:
         b_singleTest = pc_iter->updateTrigger(val());
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
