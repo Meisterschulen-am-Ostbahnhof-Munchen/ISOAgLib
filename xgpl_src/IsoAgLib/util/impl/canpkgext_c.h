@@ -117,7 +117,7 @@ public:
   virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right);
   */
 
-	/**
+  /**
     simply deliver a uint8_t from a specific position with operator[]
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
@@ -273,8 +273,9 @@ public:
     setIsoPs(ps);
     setIsoSa(sa);
     setLen (len);
+    b_runFlag2String = false;
   }
-  
+
   void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2) {
     CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
@@ -286,8 +287,9 @@ public:
     setUint8Data (1, d1);
     setUint8Data (2, d2);
     setLen (3);
+    b_runFlag2String = false;
   }
-  
+
   void setExtCanPkg8(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7) {
     CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
@@ -304,6 +306,7 @@ public:
     setUint8Data (6, d6);
     setUint8Data (7, d7);
     setLen (8);
+    b_runFlag2String = false;
   }
   // end of block with ISO 11783 specific functions
   #endif
@@ -331,6 +334,11 @@ private:
     @see __IsoAgLib::CANIO_c::operator<<
   */
   virtual void flags2String();
+
+  /** flag to decide if flags2String has to be executed during send.
+      Normally this is needed, but after each call of setExtCanPkg?? all bytes of the stream are already setup.
+    */
+  static bool b_runFlag2String;
 };
 
 }
