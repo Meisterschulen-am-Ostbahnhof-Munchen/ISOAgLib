@@ -54,7 +54,6 @@
 #define CVS_REV "$Revision$"
 #define RTE_CLIENT
 
-#include <rte_global.h>
 #include "can_target_extensions.h"
 #include <stdlib.h>
 #include <ctype.h>
