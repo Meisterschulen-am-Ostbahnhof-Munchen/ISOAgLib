@@ -302,6 +302,7 @@ void ProcIdent_c::setOwnerGtp(GetyPos_c* rpc_val)
    @param rui8_gety compared GETY value
     
    ISO parameter
+   @param rui8_getySender compare this parameter with owner gety (only for remote, local calls: 0xFF)
    @param rui16_DDI compared DDI value
    @param rui16_element compared element value
 
@@ -453,6 +454,7 @@ int32_t calc_identVal(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert,
   i32_result |= ((static_cast<int32_t>(rui8_lis) << 24) | (static_cast<int32_t>(rui8_pri) << 27));
   return i32_result;
 };
+
 
 } // end of namespace __IsoAgLib
 
