@@ -95,11 +95,11 @@
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/impl/cancustomer_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include "../Local/impl/procdatalocalbase_c.h"
 #include "../Remote/impl/procdataremotebase_c.h"
 #include "processpkg_c.h"
+#include "devpropertyhandler_c.h"
 
 #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
   #include <ext/slist>
@@ -108,7 +108,7 @@
   #include <slist>
 #endif
 
-namespace IsoAgLib { class iProcess_c;}
+namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
@@ -180,8 +180,10 @@ public:
   */
   bool processMsg();
 
-	/**
-  	if the amount of created local process data is known, then enough capacity for the
+  DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
+
+  /**
+    if the amount of created local process data is known, then enough capacity for the
     vector with pointers to all of them can be reserved. Otherwise the vector
     will increase with several reallocations, where each reallocation triggers
     increase of capacity by factor 2 ( capacity is the amount of elements,
@@ -189,8 +191,8 @@ public:
     @param rui16_localProcCapacity
   */
   void localProcDataReserveCnt( uint16_t rui16_localProcCapacity );
-	/**
-  	if the amount of created remote process data is known, then enough capacity for the
+  /**
+    if the amount of created remote process data is known, then enough capacity for the
     vector with pointers to all of them can be reserved. Otherwise the vector
     will increase with several reallocations, where each reallocation triggers
     increase of capacity by factor 2 ( capacity is the amount of elements,
@@ -210,7 +212,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos optional POS code of searched local Process Data instance
                   (only important if more GETY type members are active)
@@ -243,7 +245,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos optional POS code of searched remote Process Data instance
@@ -266,7 +268,7 @@ public:
                            uint8_t rui8_gety,
                            uint8_t rui8_pos = 0xFF,
                            uint8_t rui8_pri = 2);
-  
+
   /**
     search for suitable ProcDataLocalBase_c item; create on if not found AND if wanted
 
@@ -283,7 +285,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of searched local Process Data instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
@@ -320,7 +322,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of searched remote Process Data instance
@@ -450,7 +452,7 @@ private: // Private methods
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of created remote Process Data instance
@@ -496,6 +498,7 @@ private: // Private methods
 private: // Private attributes
   friend class SINGLETON_DERIVED(Process_c,ElementBase_c);
   friend class IsoAgLib::iProcess_c;
+  friend class IsoAgLib::iDevPropertyHandler_c;
   /**
     HIDDEN constructor for a Process_c object instance
     NEVER instantiate a variable of type Process_c within application
@@ -505,6 +508,13 @@ private: // Private attributes
 
   /** msg object for CAN I/O */
   ProcessPkg_c c_data;
+
+  /**
+    deliver reference to process pkg as reference to DevPropertyHandler_c which
+    handles sending and processing of messages from can
+  */
+  DevPropertyHandler_c c_devPropertyHandler;
+
   /** last timestamp with FilterBox_c check */
   int32_t i32_lastFilterBoxTime;
 

@@ -88,6 +88,8 @@
 /* *************************************** */
 #include "process_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
+//#include <IsoAgLib/driver/can/impl/ident_c.h>
 
 #ifdef USE_DIN_GPS
   #include "gps_c.h"
@@ -106,8 +108,8 @@
 
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -139,6 +141,11 @@ namespace __IsoAgLib {
   };
 #endif
 
+  DevPropertyHandler_c& Process_c::getDevPropertyHandlerInstance( void )
+  {
+    return c_devPropertyHandler;
+  };
+
 /** initialise element which can't be done during construct */
 void Process_c::init()
 { // clear state of b_alreadyClosed, so that close() is called one time
@@ -151,7 +158,15 @@ void Process_c::init()
   ui8_runningTaskWithSa = 0xFF;         // Initialize to 0xFF because it is an address we can't have. -bac
   ui8_taskStatus = 0;
 #endif
+  c_devPropertyHandler.init(&c_data);
   c_data.setSingletonKey( getSingletonVecKey() );
+
+  // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
+  uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(0xFF)) << 8);
+  if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+  { // create FilterBox
+    getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+  }
 
 }
 
@@ -242,6 +257,9 @@ bool Process_c::timeEvent( void ){
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
 
+  //call DevPropertyHandler_c timeEvent
+  c_devPropertyHandler.timeEvent();
+
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( c_arrClientC1.capacity() != sui16_localProcPointerTotal )
     || ( c_arrClientC2.capacity() != sui16_remoteProcPointerTotal ) )
@@ -250,7 +268,7 @@ bool Process_c::timeEvent( void ){
     sui16_remoteProcPointerTotal = c_arrClientC2.capacity();
 
     getRs232Instance()
-	    << c_arrClientC1.size()
+      << c_arrClientC1.size()
       << "(" << c_arrClientC1.capacity()
       << ") x LocalProcData Pointer: Mal-Alloc: "
       << sizeVectorTWithMalloc( sizeof(void*), c_arrClientC1.capacity() )
@@ -258,7 +276,7 @@ bool Process_c::timeEvent( void ){
       << ", Chunk-Alloc: "
       << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
       << "\r\n"
-	    << c_arrClientC2.size()
+      << c_arrClientC2.size()
       << "(" << c_arrClientC2.capacity()
       << ") x RemoteProcData Pointer: Mal-Alloc: "
       << sizeVectorTWithMalloc( sizeof(uint16_t), c_arrClientC2.capacity() )
@@ -283,16 +301,16 @@ bool Process_c::timeEvent( void ){
     {
         ui8_runningTaskWithSa = getSystemMgmtInstance().getActiveLocalMember().nr();
     }
-  }   
+  }
   if (ui8_runningTaskWithSa != 0xFF && (i32_time - i32_lastTaskStatusTime > 2000))
   {
       ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
       ISOSystemPkg_c& c_pkg = c_isoMonitor.data();
       i32_lastTaskStatusTime = i32_time;
-        
-      //Send task status message 
-	  c_pkg.setExtCanPkg8(7, 0, 0xCB, 0xFF, ui8_runningTaskWithSa,   // OxCB == 203dec = Process Data PGN         
-				    0x0E, 0x00, 0x00, 0x00, ui8_taskStatus, 0x00, 0x00, 0x00 );  
+
+      //Send task status message
+    c_pkg.setExtCanPkg8(7, 0, 0xCB, 0xFF, ui8_runningTaskWithSa,   // OxCB == 203dec = Process Data PGN
+            0x0E, 0x00, 0x00, 0x00, ui8_taskStatus, 0x00, 0x00, 0x00 );
       getCanInstance4Comm() << c_pkg;     // Task Status Message
   }
 #endif
@@ -320,14 +338,14 @@ bool Process_c::timeEvent( void ){
     GetyPos_c c_lastFilterGtp = 0xFF, c_actGtp;
     uint8_t ui8_lastFilterPri = 0, ui8_actPri = 2;
 
-		// create local Base-Proc Filter in case DIN member is active
-		#ifdef USE_DIN_9684
-		if ( getSystemMgmtInstance().existActiveLocalDinMember() )
-		{ // filter for base process data
-		if (!getCanInstance4Comm().existFilter( *this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4) ))
-			getCanInstance4Comm().insertFilter( *this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4), true);
-		}
-  	#endif
+    // create local Base-Proc Filter in case DIN member is active
+    #ifdef USE_DIN_9684
+    if ( getSystemMgmtInstance().existActiveLocalDinMember() )
+    { // filter for base process data
+    if (!getCanInstance4Comm().existFilter( *this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4) ))
+      getCanInstance4Comm().insertFilter( *this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4), true);
+    }
+    #endif
 
 
     // create FilterBoxes for remote ProcessData if needed
@@ -358,9 +376,15 @@ bool Process_c::timeEvent( void ){
 
   possible errors:
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
-	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool Process_c::processMsg(){
+// first check if this is a device property message -> then DevPropertyHandler_c should process this msg
+if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF ) < 2 ) || ( c_data[0] >= 0xD ) ) )
+{
+  if (c_devPropertyHandler.processMsg()) return true;
+}
+
 #if defined(USE_DIN_GPS)
   // check if this is a message from a service
   if (
@@ -387,7 +411,6 @@ bool Process_c::processMsg(){
   // -> check for POS of the owner of the handled Process Data
   if ((data().pri() == 0x2) || (data().pri() == 0x5))
   { // target and partner process data
-    b_result = true;
     bool b_sendOwner = false,
          b_empfOwner = false;
     // first check if both SEND and EMPF are valid according Monitor-List
@@ -949,7 +972,6 @@ bool Process_c::updateRemoteCache(
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
     { // check for lazy match with POS == 0xFF (==joker)
-
       bool b_matched = false;
             
 #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
@@ -1000,10 +1022,10 @@ bool Process_c::updateRemoteCache(
   @return true -> member exist and Filter Box created
 */
 bool Process_c::createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
-	#ifdef USE_DIN_9684
-	rui8_pri
-	#endif
-	)
+  #ifdef USE_DIN_9684
+  rui8_pri
+  #endif
+  )
 {
   bool b_result = false;
   MASK_TYPE t_filter;
@@ -1061,10 +1083,10 @@ bool Process_c::createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
   @return true -> member exist and Filter Box deleted
 */
 bool Process_c::deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
-	#ifdef USE_DIN_9684
-	rui8_pri
-	#endif
-	)
+  #ifdef USE_DIN_9684
+  rui8_pri
+  #endif
+  )
 {
   bool b_result = false,
        b_found = false;

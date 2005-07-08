@@ -159,8 +159,8 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
          && (i32_test == static_cast<int32_t>(SETPOINT_ERROR_COMMAND))) b_result = true;
       }
   }
- 
-  // DIN: pd !=0 && mod < 5 
+
+  // DIN: pd !=0 && mod < 5
   if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
       !c_generalCommand.checkIsSetpoint())
   { // measure value: conversion if: actual, min, max, integ, med
@@ -513,11 +513,11 @@ void ProcessPkg_c::string2Flags()
 #endif //DIN
 
   }
- 
+
 #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
   else
 #endif
-  { 
+  {
 #ifdef USE_ISO_11783
 
     // New Part 10 code to go here -bac
@@ -530,7 +530,7 @@ void ProcessPkg_c::string2Flags()
     setLis(0); // ISO doesn't support LIS code -> set to default 0
 
     // bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::pb_data[0] >> 5) & 0x3);
-    
+
     // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
     #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     if (bit_data.b_valType == float_val) set_d(1);
@@ -545,7 +545,7 @@ void ProcessPkg_c::string2Flags()
     // @todo: question: should the gtp of the send be inserted or of the empf (DIN: empf gtp?)
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     setGtp(c_isoMonitor.isoMemberNr(send()).gtp());  // Get the gety and pos (Device Class, Device Class Instance -bac
-    
+
     // now set pc_monitorSend and pc_monitorEmpf
     if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
     { // ISO targeted process msg with empf as defined ISO member
@@ -566,10 +566,10 @@ void ProcessPkg_c::string2Flags()
 
     set_Cmd(CANPkg_c::pb_data[0] & 0xf);
     uint16_t element = 0;
-  	 element = uint16_t(CANPkg_c::pb_data[1]) << 4;
+     element = uint16_t(CANPkg_c::pb_data[1]) << 4;
     element |= ((CANPkg_c::pb_data[0] & 0xF0)>>4);
     set_Element(element);
- 
+
     uint16_t newDDI = 0;
     newDDI |= CANPkg_c::pb_data[3];
     newDDI = newDDI << 8;
@@ -600,7 +600,7 @@ void ProcessPkg_c::flags2String()
 
     uint8_t ui8_mod = 0;
     uint8_t ui8_pd = 0;
-    
+
     switch (c_generalCommand.getCommand()) {
       case GeneralCommand_c::requestValue:
       case GeneralCommand_c::setValue:
@@ -623,24 +623,24 @@ void ProcessPkg_c::flags2String()
             }
          }
          break;
-      
+
       case GeneralCommand_c::measurementTimeValue:            ui8_pd = 0; ui8_mod = 4; break;
       case GeneralCommand_c::measurementDistanceValue:        ui8_pd = 0; ui8_mod = 4; break;
       case GeneralCommand_c::measurementChangeThresholdValue: ui8_pd = 0; ui8_mod = 4; break;
-      
+
       case GeneralCommand_c::measurementStart:
       case GeneralCommand_c::measurementStop:
       case GeneralCommand_c::measurementReset:
         ui8_pd = 0; ui8_mod = 6;
         break;
       default: ;
-    }          
+    }
 
     if (c_generalCommand.checkIsRequest())
        ui8_pd |= 1 << 1;
-       
+
     // @todo: measurementReset command?
-      
+
     setPd(ui8_pd);
     setMod(ui8_mod);
 
@@ -671,7 +671,7 @@ void ProcessPkg_c::flags2String()
       CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | gtp().getCombinedDin();
     }
     #endif
-    
+
     CANPkg_c::pb_data[1] = zaehlnum();
     CANPkg_c::pb_data[3] = (wert() << 4) | (inst() & 0xF);
 
@@ -707,12 +707,12 @@ void ProcessPkg_c::flags2String()
       // map reset command to setValue command
       case GeneralCommand_c::measurementReset:                      ui8_cmd = 3; break;
       default: ui8_cmd = 0xFF;
-    }          
-    
+    }
+
     CANPkg_c::pb_data[0] = (ui8_cmd & 0xf) | ( (element() & 0xf) << 4);
     CANPkg_c::pb_data[1] = element() >> 4;
-    CANPkg_c::pb_data[2] = DDI() & 0x00FF ; 
-    CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;  
+    CANPkg_c::pb_data[2] = DDI() & 0x00FF ;
+    CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;
     // for ISO the ident is directly read and written
 
     CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_data, 4);
@@ -794,11 +794,11 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
   if ( identType() == Ident_c::StandardIdent) {
 
 #ifdef USE_DIN_9684
-    // DIN command  
-        
+    // DIN command
+
     // make first decision: requestValue / setValue
     en_command = ( pd() & 0x2 ) ? GeneralCommand_c::requestValue : GeneralCommand_c::setValue;
-    
+
     if (((pd() & 0x1) == 0) && (mod() < 4)) {
       // pd {00, 10} with mod {000,001,010} are setpoint messages
       b_isSetpoint = true;
@@ -813,12 +813,12 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
         case 0x3:
           en_valueGroup = GeneralCommand_c::maxValue;
           break;
-      }      
+      }
     }
 
     if (((pd() & 0x1) == 1) && (mod() < 5)) {
       // measure
-      
+
       switch (mod()) {
         case 0x0:
           en_valueGroup = GeneralCommand_c::exactValue;
@@ -865,8 +865,8 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
           en_command = GeneralCommand_c::measurementReset;
       }
     }
-    
-    // @todo: we need to know if we are local or not!  
+
+    // @todo: we need to know if we are local or not!
     if (existMemberEmpf() && (gety() == memberEmpf().gtp().getGety())) {
        // we are local
        // reset (from ProcDataLocalBase_c::processProg())
@@ -882,7 +882,7 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
           en_command = GeneralCommand_c::measurementReset;
       }
     }
-        
+
     if (pd() & 0x2) {
       // pd {10, 11} are requests
       b_isRequest = true;
@@ -892,7 +892,7 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
   } else {
 
 #ifdef USE_ISO_11783
-          
+
     // ISO command
     switch (cmd()) {
       case 0x00:
@@ -904,7 +904,7 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
       case 0x02:
         en_command = GeneralCommand_c::requestValue;
         // @todo: setpoint or measure?
-        b_isRequest = true; 
+        b_isRequest = true;
         break;
       case 0x03:
         en_command = GeneralCommand_c::setValue;
@@ -935,9 +935,9 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
         en_command = GeneralCommand_c::workingsetMasterMaintenance;
         break;
     }
-    
+
     // decide setpoint/measurement
-    
+
     // @todo: match DDIs => b_isSetpoint and en_valueGroup
     b_isSetpoint = true;
     if ( DDI() < 74 ) {
@@ -947,7 +947,7 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
         // @todo: treat measurement value as exact value!
         en_valueGroup = GeneralCommand_c::exactValue;
       }
-        
+
       if ( DDI() % 5 == 1 )
         en_valueGroup = GeneralCommand_c::exactValue;
       if ( DDI() % 5 == 3 )
@@ -956,13 +956,59 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
         en_valueGroup = GeneralCommand_c::minValue;
       if ( DDI() % 5 == 0 )
         en_valueGroup = GeneralCommand_c::maxValue;
-      
+
     }
-    
+    else if ( DDI() < 80 ) {
+      if ( ( DDI() - 74 ) % 3 > 0 ) {
+        // actual value with DDI 75, 76, 78, 79 ...: measure
+        b_isSetpoint = false;
+        // @todo: treat measurement value as exact value!
+        en_valueGroup = GeneralCommand_c::exactValue;
+      }
+
+      if ( ( DDI() - 74 ) % 3 == 0 )
+        en_valueGroup = GeneralCommand_c::exactValue;
+      if ( ( DDI() - 74 ) % 3 == 1 )
+        en_valueGroup = GeneralCommand_c::maxValue;
+    }
+    else if ( DDI() <= 100 ) {
+      b_isSetpoint = false;
+      en_valueGroup = GeneralCommand_c::exactValue;
+    }
+    else if ( DDI() < 116 ) {
+      if ( DDI() % 5 == 2 ) {
+        // actual value with DDI 2, 7, 12, 17, ...: measure
+        b_isSetpoint = false;
+        // @todo: treat measurement value as exact value!
+        en_valueGroup = GeneralCommand_c::exactValue;
+      }
+
+      if ( DDI() % 5 == 1 )
+        en_valueGroup = GeneralCommand_c::exactValue;
+      if ( DDI() % 5 == 3 )
+        en_valueGroup = GeneralCommand_c::defaultValue;
+      if ( DDI() % 5 == 4 )
+        en_valueGroup = GeneralCommand_c::minValue;
+      if ( DDI() % 5 == 0 )
+        en_valueGroup = GeneralCommand_c::maxValue;
+
+    }
+    else if ( DDI() < 124 ) {
+      b_isSetpoint = false;
+      en_valueGroup = GeneralCommand_c::exactValue;
+    }
+    else if ( DDI() < 134 ) {
+      en_valueGroup = GeneralCommand_c::exactValue;
+    }
+    else {
+      b_isSetpoint = false;
+      en_valueGroup = GeneralCommand_c::exactValue;
+    }
+
 #endif
 
   }
-  
+
   if (en_command != GeneralCommand_c::noCommand) {
     c_generalCommand.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command, pc_procDataBase);
     return true;

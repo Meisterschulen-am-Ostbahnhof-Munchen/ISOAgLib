@@ -61,6 +61,7 @@
 /* *************************************** */
 #include "impl/process_c.h"
 #include "proc_c.h"
+#include "idevpropertyhandler_c.h"
 
 
 // Begin Namespace IsoAgLib::iProcess_c
@@ -104,18 +105,21 @@ public:
   */
   void init( void ) { Process_c::init();};
 
-	/**
-  	if the amount of created local process data is known, then enough capacity for the
+  iDevPropertyHandler_c& getDevPropertyHandlerInstance( void )
+  {return static_cast<iDevPropertyHandler_c&>(Process_c::getDevPropertyHandlerInstance());};
+
+  /**
+    if the amount of created local process data is known, then enough capacity for the
     vector with pointers to all of them can be reserved. Otherwise the vector
     will increase with several reallocations, where each reallocation triggers
     increase of capacity by factor 2 ( capacity is the amount of elements,
     which can be stored before reallocation takes place ).
     @param rui16_localProcCapacity
   */
-  void localProcDataReserveCnt( uint16_t rui16_localProcCapacity ) 
+  void localProcDataReserveCnt( uint16_t rui16_localProcCapacity )
   { Process_c::localProcDataReserveCnt( rui16_localProcCapacity );};
-	/**
-  	if the amount of created remote process data is known, then enough capacity for the
+  /**
+    if the amount of created remote process data is known, then enough capacity for the
     vector with pointers to all of them can be reserved. Otherwise the vector
     will increase with several reallocations, where each reallocation triggers
     increase of capacity by factor 2 ( capacity is the amount of elements,
@@ -134,10 +138,35 @@ public:
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> suitable instance found
   */
-  bool existProcDataLocal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
-                             uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rb_pos = 0xFF, uint8_t rui8_pri = 2)
-    {return Process_c::existProcDataLocal(rui8_lis, rui8_gety, rui8_wert,
-                             rui8_inst, rui8_zaehlnum, rb_pos, rui8_pri);};
+  bool existProcDataLocal(
+#ifdef USE_ISO_11783
+                          uint16_t rui16_DDI,
+                          uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                          uint8_t rui8_lis,
+                          uint8_t rui8_wert,
+                          uint8_t rui8_inst,
+                          uint8_t rui8_zaehlnum,
+#endif
+                          uint8_t rui8_gety,
+                          uint8_t rui8_pos = 0xFF,
+                          uint8_t rui8_pri = 2)
+  { return Process_c::existProcDataLocal(
+#ifdef USE_ISO_11783
+                          rui16_DDI,
+                          rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                          rui8_lis,
+                          rui8_wert,
+                          rui8_inst,
+                          rui8_zaehlnum,
+#endif
+                          rui8_gety,
+                          rui8_pos,
+                          rui8_pri
+  );}
   /**
     checks if a suitable iProcessDataRemote_c item exist
     @param rui8_lis LIS code of searched remote Process Data instance
@@ -148,10 +177,38 @@ public:
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> suitable instance found
   */
-  bool existProcDataRemote(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
-                              uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rb_pos = 0xFF, uint8_t rui8_pri = 2)
-    {return Process_c::existProcDataRemote(rui8_lis, rui8_gety, rui8_wert,
-                             rui8_inst, rui8_zaehlnum, rb_pos, rui8_pri);};
+  bool existProcDataRemote(
+#ifdef USE_ISO_11783
+                           uint16_t rui16_DDI,
+                           uint16_t rui16_element,
+                           uint8_t rui8_getySender,
+#endif
+#ifdef USE_DIN_9684
+                           uint8_t rui8_lis,
+                           uint8_t rui8_wert,
+                           uint8_t rui8_inst,
+                           uint8_t rui8_zaehlnum,
+#endif
+                           uint8_t rui8_gety,
+                           uint8_t rui8_pos = 0xFF,
+                           uint8_t rui8_pri = 2)
+  { return Process_c::existProcDataRemote(
+#ifdef USE_ISO_11783
+                           rui16_DDI,
+                           rui16_element,
+                           rui8_getySender,
+#endif
+#ifdef USE_DIN_9684
+                           rui8_lis,
+                           rui8_wert,
+                           rui8_inst,
+                           rui8_zaehlnum,
+#endif
+                           rui8_gety,
+                           rui8_pos,
+                           rui8_pri
+  );};
+
   /**
     delivers count of local process data entries with similar ident
     (which differs only in POS of owner)

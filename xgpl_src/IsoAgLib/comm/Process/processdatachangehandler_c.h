@@ -120,6 +120,7 @@ class EventSource_c {
 */
 class ProcessDataChangeHandler_c {
  public:
+ virtual ~ProcessDataChangeHandler_c(){};
  /** react on new received setpoint for local process data
    * (remote system which wants to control the local system dependent on the setpoint
    *  sent a new setpoint value)
