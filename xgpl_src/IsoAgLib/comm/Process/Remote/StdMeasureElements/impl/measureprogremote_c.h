@@ -138,10 +138,11 @@ public:
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
   int32_t masterVal(bool rb_sendRequest = false) { return val( rb_sendRequest );};
+  
   /**
     send reset cmd for the measurement value
   */
-  void resetMasterVal() { resetVal();};
+  void resetMasterVal() { resetVal(0);}; // call resetVal with integer value (call is ambiguous if not specified!)
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver actual measurement value as float
@@ -241,6 +242,16 @@ public:
     @param ri32_val starting measuring value
   */
   virtual void initVal(int32_t ri32_val);
+  /**
+    send reset command for measure value
+
+    possible errors:
+        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * dependant error in CAN_IO
+    @param ri32_val reset measure value to this value (ISO only)
+    @return true -> command successful sent
+  */
+  virtual bool resetVal(int32_t ri32_val = 0);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set a new measure val
@@ -253,16 +264,17 @@ public:
     @param rf_val starting measuring value
   */
   virtual void initVal(float rf_val);
-#endif
   /**
     send reset command for measure value
 
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given GETY found
         * dependant error in CAN_IO
+    @param rf_val reset measure value to this value (ISO only)
     @return true -> command successful sent
   */
-  virtual bool resetVal();
+  virtual bool resetVal(float rf_val = 0);
+#endif
   /**
     send reset command for medium value
 

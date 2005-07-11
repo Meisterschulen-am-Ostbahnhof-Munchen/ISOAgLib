@@ -130,6 +130,7 @@ class ProcessDataChangeHandler_c {
    * @return true -> handler class reacted on change event
    */
  virtual bool processSetpointSet( EventSource_c rc_src, int32_t ri32_val, iGetyPos_c rc_callerGetyPos, bool rb_change );
+ 
  /** react on measurement reset from external system for local process data
    * @param rc_src general event source class, which provides conversion functions to get needed event source class
    * @param ri32_val new value, which caused the event (for immediate access)
@@ -137,7 +138,7 @@ class ProcessDataChangeHandler_c {
    * @return true -> handler class reacted on change event
    */
  virtual bool processMeasurementReset( EventSource_c rc_src, int32_t ri32_val, iGetyPos_c rc_callerGetyPos );
-
+ 
  /** react on new received measurement update for remote process data
    * (remote system which manages the process data sent new value on request or
    *  during active measurement programm)
@@ -147,6 +148,20 @@ class ProcessDataChangeHandler_c {
    * @return true -> handler class reacted on change event
    */
  virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, iGetyPos_c rc_callerGetyPos, bool rb_change );
+
+#ifdef USE_FLOAT_DATA_TYPE 
+ /** react on new received measurement update for remote process data
+   * (remote system which manages the process data sent new value on request or
+   *  during active measurement programm)
+   * @param rc_src general event source class, which provides conversion functions to get needed event source class
+   * @param rf_val new value, which caused the event (for immediate access)
+   * @param rc_callerGetyPos GetyPos of calling device - i.e. which sent new setpoint
+   * @return true -> handler class reacted on change event
+   */
+ virtual bool processMeasurementUpdate( EventSource_c rc_src, float rf_val, iGetyPos_c rc_callerGetyPos, bool rb_change );
+#endif
+
+   // @todo: setpointResponse for float
  /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
    * (remote system which manages the process data, local or other system sent previously a
    *  new setpoint; commanded manager of process data sent the response with ACK/NACK)

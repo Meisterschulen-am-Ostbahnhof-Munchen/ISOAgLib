@@ -143,9 +143,23 @@ public:
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given GETY found
         * dependant error in CAN_IO
+    @param ri32_val reset measure value to this value (ISO only)
     @return true -> command successful sent
   */
-  bool resetVal() {return MeasureProgRemote_c::resetVal();};
+  bool resetVal(int32_t ri32_val = 0) {return MeasureProgRemote_c::resetVal(ri32_val);};
+#ifdef USE_FLOAT_DATA_TYPE
+  /**
+    send reset command for measure value
+
+    possible errors:
+        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * dependant error in CAN_IO
+    @param rf_val reset measure value to this value (ISO only)
+    @return true -> command successful sent
+  */
+  bool resetValFloat(float rf_val = 0) {return MeasureProgRemote_c::resetVal(rf_val);};
+#endif
+  
   /**
     send reset command for medium value
 

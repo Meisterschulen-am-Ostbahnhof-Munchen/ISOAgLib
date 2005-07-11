@@ -142,6 +142,22 @@ bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_s
   return false;
 }
 
+#ifdef USE_FLOAT_DATA_TYPE
+/** react on new received measurement update for remote process data
+  * (remote system which manages the process data sent new value on request or
+  *  during active measurement programm)
+  * @param rc_src general event source class, which provides conversion functions to get needed event source class
+  * @param rf_val new value, which caused the event (for immediate access)
+  * @param rc_callerGetyPos GetyPos of calling device - i.e. which sent new setpoint
+  * @return true -> handler class reacted on change event
+  */
+bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_src is intentionally unused in base class */, float /* rf_val is intentionally unused in base class */,
+                                                           iGetyPos_c /* rc_callerGetyPos is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
+  // empty body -> allow application class to just implement some of the possible handler methods
+  return false;
+}
+#endif
+
 /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
   * (remote system which manages the process data, local or other system sent previously a
   *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
