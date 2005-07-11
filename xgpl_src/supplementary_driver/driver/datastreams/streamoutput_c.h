@@ -113,6 +113,12 @@ public:
   //  Operation: eof
   virtual bool eof() const=0;
 
+  // Operation: fail
+  virtual bool fail() const=0;
+
+  // Operation: good
+  virtual bool good() const=0;
+
 	virtual ~StreamOutput_c() {};
 protected:
 

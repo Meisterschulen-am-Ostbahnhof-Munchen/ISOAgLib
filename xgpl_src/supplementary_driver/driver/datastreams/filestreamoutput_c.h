@@ -117,6 +117,12 @@ public:
   //  Operation: eof
   virtual bool eof() const { return c_targetHandle.eof();};
 
+  // Operation: fail
+  virtual bool fail() const { return c_targetHandle.fail();};
+
+  // Operation: good
+  virtual bool good() const { return c_targetHandle.good();};
+
 private:
 	TargetFileStreamOutput_c c_targetHandle;
 

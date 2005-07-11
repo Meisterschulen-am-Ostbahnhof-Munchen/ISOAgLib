@@ -117,6 +117,12 @@ public:
 
   //  Operation: eof
   virtual bool eof() const { return static_cast<const std::ofstream*>(this)->eof();};
+
+  // Operation: fail
+  virtual bool fail() const { return static_cast<const std::ofstream*>(this)->fail();};
+
+  // Operation: good
+  virtual bool good() const { return static_cast<const std::ofstream*>(this)->good();};
 }; // ~X2C
 
 
