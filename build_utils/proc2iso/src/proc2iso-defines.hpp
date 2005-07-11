@@ -79,7 +79,7 @@
 #define attrManufacturer_code (27)
 #define attrDevice_class (28)
 #define attrDevice_class_instance (29)
-#define attrIdentity_number (30)
+#define attrWS_serial_number (30)
 #define attrFeature_set (31)
 #define attrPriority (32)
 #define attrDevProgVarName (33)
@@ -150,7 +150,7 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
       "manufacturer_code",
       "device_class",
       "device_class_instance",
-      "identity_number",
+      "ws_serial_number",
       "feature_set",
       "priority",
       "device_program_name",

@@ -47,6 +47,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sstream>
+#include <set>
+#include <iostream>
+#include <algorithm>
 // Includes (findfirst, findnext)
 #include <stddef.h>
 #include <sys/types.h>
@@ -67,11 +70,7 @@
 // Includes (proc2iso)
 #include "proc2iso.hpp"
 #include "proc2iso-defines.hpp"
-
-#include <string>
-#include <set>
-#include <iostream>
-#include <vector>
+#include "../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h"
 
 // ### GLOBALS ###
 FILE *partFileA;
@@ -83,6 +82,7 @@ std::basic_string<char> c_project;
 
 char objNameTable [(stringLength+1)*1000];
 unsigned int objIDTable [1000];
+unsigned int objType=0; //init for happy compiler
 unsigned int objNextAutoID;
 unsigned int kcNextAutoID;
 unsigned int objNextUnnamedName;
@@ -114,7 +114,7 @@ static void usage()
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
     " -?    Show this help.\n\n"
     << std::endl;
-}
+};
 
 
 char proName[1024+1];
@@ -158,7 +158,7 @@ void clean_exit (int return_value, char* error_message=NULL)
   }
 
   exit (return_value);
-}
+};
 
 
 void copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
@@ -170,7 +170,7 @@ void copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
   for (; i<len; i++) *dest++ = ' '; // fill with spaces if necessary
   *dest++ = '"';
   *dest = 0x00;
-}
+};
 
 
 // ---------------------------------------------------------------------------
@@ -221,6 +221,7 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID)
 {
   bool isThere = false;
   unsigned int foundID = 0;
+  static bool b_isFirstDevice = true;
 
   // first check if ID is there already
   for (unsigned int i=0; i<objCount; i++)
@@ -233,6 +234,21 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID)
       break;
     }
   }
+
+  if (objType == otDevice)
+  {
+    if (b_isFirstDevice)
+    {
+      b_isFirstDevice = false;
+      isThere = true;
+      foundID = 0;
+      objIDTable [objCount] = foundID;
+      strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength);
+      objCount++;
+    }
+    else clean_exit (-1, "YOU CAN ONLY SPECIFY ONE <device> OBJECT! STOPPING PARSER! bye.\n\n");
+  }
+
   if (!isThere) {
     // check what's the new ID to be
     if (wishingID) {
@@ -246,8 +262,10 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID)
     strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
     objCount++;
   }
+  //std::cout << "foundID: " << foundID << " " << std::endl;
+  //std::cout << "objName: " << objName << std::endl;
   return (foundID);
-}
+};
 
 
 void init (const char* xmlFile)
@@ -261,7 +279,7 @@ void init (const char* xmlFile)
     objNameTable [i] = 0x00;
   }
   objCount = 0;
-  objNextAutoID = 65534;
+  objNextAutoID = 65354;
   kcNextAutoID = 254; // for safety, 255 should also be okay though...
   objNextUnnamedName = 1;
 
@@ -282,7 +300,7 @@ void init (const char* xmlFile)
     //attrString [j] [stringLength+1-1] = 0x00;
     vecstr_attrString[j].clear();
   }
-}
+};
 
 
 void defaultAttributes ()
@@ -351,7 +369,7 @@ void defaultAttributes ()
     vecstr_attrString [attrCumulative_value] = "false";
     attrIsGiven [attrCumulative_value] = true;
   }
-}
+};
 
 
 unsigned int objectIsType (char* lookup_name)
@@ -362,7 +380,7 @@ unsigned int objectIsType (char* lookup_name)
     }
   }
   return 0xFFFF;
-}
+};
 
 
 unsigned int idOrName_toi(const char* rpc_string)
@@ -372,13 +390,7 @@ unsigned int idOrName_toi(const char* rpc_string)
   if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
   // Starting with a letter, so look up id!
   return getID (rpc_string, false, 0);
-}
-
-
-unsigned int* getTableIDtoi(unsigned int* pi_objType)
-{
-  return (unsigned int*)TableIDTable [*pi_objType];
-}
+};
 
 
 unsigned int booltoi (const char *text_bool)
@@ -397,7 +409,7 @@ unsigned int booltoi (const char *text_bool)
   std::cout << "INVALID TRUTH VALUE '" << text_bool << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   clean_exit (-1);
   return 0; // to make compiler happy
-}
+};
 
 
 unsigned int elementtypetoi (const char *text_elemtype)
@@ -409,7 +421,7 @@ unsigned int elementtypetoi (const char *text_elemtype)
   std::cout << "INVALID DEVICE ELEMENT TYPE VALUE '" << text_elemtype << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   clean_exit (-1);
   return 0; // to make compiler happy
-}
+};
 
 
 unsigned int propertytoi (const char *text_property)
@@ -419,7 +431,7 @@ unsigned int propertytoi (const char *text_property)
     if (strncmp (text_property, PropertyTable [l], stringLength) == 0) retval += (uint64_t(1)<<l);
   }
   return retval;
-}
+};
 
 
 unsigned int triggermethodtoi (const char *text_trigger)
@@ -429,14 +441,75 @@ unsigned int triggermethodtoi (const char *text_trigger)
     if (strstr (text_trigger, TriggerMethodTable [l]) != 0) retval += (uint64_t(1)<<l);
   }
   return retval;
-}
+};
+
+uint32_t stringtonumber(const char *text_number, uint8_t ui8_bitRange, uint8_t ui8_attrIndex)
+{
+  uint32_t ui32_temp;
+  uint8_t ui8_check;
+  char p_text_number[32];
+
+  uint8_t i;
+  for (i=0; i < strlen(text_number); i++)
+  {
+    p_text_number[i] = tolower (text_number[i]);
+  }
+  p_text_number[i] = 0x00;
+  //check if hex or decimal number
+  if (strncmp((p_text_number), "0x", 2) == 0) //yes, it is a hex number
+    ui8_check = sscanf((p_text_number+2), "%x", &ui32_temp);
+  else //it is a decimal number
+    ui8_check = sscanf(p_text_number, "%d", &ui32_temp);
+
+  if (ui8_check != 0)
+  {
+    //test correct range of value
+    if ((ui32_temp >= 0) &&
+    (ui32_temp < ((uint32_t)(1 << ui8_bitRange) - 1)))
+      return ui32_temp;
+    else
+    {
+      switch (ui8_attrIndex)
+      {
+        case attrSelf_conf:
+          clean_exit (-1, "self_configurable_address has a value range of 1 bit! STOPPING PARSER! bye.\n\n");
+          break;
+        case attrIndustry_group:
+          clean_exit (-1, "industry_group has a value range of 3 bits! STOPPING PARSER! bye.\n\n");
+          break;
+        case attrFunction:
+          clean_exit (-1, "function has a value range of 8 bits! STOPPING PARSER! bye.\n\n");
+          break;
+        case attrFunc_Inst:
+          clean_exit (-1, "function_instance has a value range of 5 bits! STOPPING PARSER! bye.\n\n");
+          break;
+        case attrECU_Inst:
+          clean_exit (-1, "ecu_instance has a value range of 3 bits! STOPPING PARSER! bye.\n\n");
+          break;
+        case attrManufacturer_code:
+          clean_exit (-1, "manufacturer_code has a value range of 11 bits! STOPPING PARSER! bye.\n\n");
+          break;
+        case attrDevice_class:
+          clean_exit (-1, "device_class has a value range of 7 bits! STOPPING PARSER! bye.\n\n");
+          break;
+        case attrDevice_class_instance:
+          clean_exit (-1, "device_class_instance has a value range of 4 bits! STOPPING PARSER! bye.\n\n");
+          break;
+        case attrWS_serial_number:
+          clean_exit (-1, "ws_serial_number has a value range of 21 bits! STOPPING PARSER! bye.\n\n");
+          break;
+      }
+    }
+  }
+  else clean_exit (-1, "Error while parsing workingset_mastername! STOPPING PARSER! bye.\n\n");
+  return 0; //for happy compiler
+};
 
 
 static char attr_name [1024+1];
 static char attr_value [1024+1];
 
 char objName [stringLength+1];
-bool is_objName;
 unsigned int objID;
 unsigned int tableID;
 unsigned int buf_length=0;
@@ -444,24 +517,6 @@ char languageCmdCode[2];
 bool is_objID;
 bool deviceElementExists=false;
 bool firstElement=true;
-
-
-/* sets the passed attribute if name matches id */
-void setAttributeValue(int attrID)
-{
-  if (strcmp (attr_name, attrNameTable[attrID]) == 0)
-  {
-    vecstr_attrString [attrID] = attr_value;
-    attrIsGiven [attrID] = true;
-  }
-}
-
-/* cleans the passed attribute value */
-void cleanAttribute(int attrID)
-{
-  vecstr_attrString [attrID].clear();
-  attrIsGiven [attrID] = false;
-}
 
 
 void utf16convert (char* source, char* destin, int count)
@@ -494,6 +549,17 @@ void getAttributesFromNode(DOMNode *node) {
       utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
       utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
+      if (strncmp (attr_name, "designator", stringLength) == 0) {
+          strncpy (objName, attr_value, stringLength);
+          vecstr_attrString[attrDesignator] = attr_value;
+          attrIsGiven[attrDesignator] = true;
+          // DEBUG-OUT
+          //std::cout << "FOUND ATTR: IND " << attrDesignator << ":= " << attrNameTable [attrDesignator] << " -> " << vecstr_attrString[attrDesignator] << ":"
+          //<< attrIsGiven [attrDesignator] << "\n";
+          continue;
+      }
+
+
       int l;
       for (l=0; l<maxAttributeNames; l++) {
         if (strncmp (attr_name, attrNameTable [l], stringLength) == 0) {
@@ -514,12 +580,13 @@ void getAttributesFromNode(DOMNode *node) {
       }
     }
   }
-  if (is_objName == false)
+
+  if (!attrIsGiven[attrDesignator])
   {
     sprintf (objName, "Unnamed%d", objNextUnnamedName);
     ((DOMElement *)node)->setAttribute (X("designator"), X(objName));
     objNextUnnamedName++;
-    is_objName = true;
+    attrIsGiven[attrDesignator] = true;
   }
 }
 
@@ -538,9 +605,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
   DOMNode *child;
   DOMNamedNodeMap *pAttributes;
   char *node_name = XMLString::transcode(node->getNodeName());
+  std::vector<uint16_t> vecstr_childID;
+  std::vector<uint16_t>::iterator it_childID;
 
   // all possible values of the objects
-  unsigned int objType=0; //init for happy compiler
   unsigned int objChildObjects=0; //init for happy compiler
 
   unsigned int objChildID=0; bool is_objChildID=false; //init for happy compiler
@@ -548,10 +616,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
   char tempString [stringLength+1]; tempString [stringLength+1-1] = 0x00;
   char tempString2 [stringLength+1]; tempString2 [stringLength+1-1] = 0x00;
 
+  bool b_lsb = false;
+
   buffer << std::hex << std::showbase;
 
   objName [stringLength+1-1] = 0x00;
-  is_objName=false;
   is_objID=false;
 
   if (!node) return;
@@ -586,8 +655,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
     // get a new ID for this object
     objID = getID (objName, is_objID, objID);
 
-    //if (objType != otDeviceDinProcessData) tableID = TableIDTable[objType];
-
     bool objNeedsName = false;
     switch (objType)
     {
@@ -603,6 +670,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         objHasArrayObject = true;
         deviceElementExists=true;
         break;
+      case otDeviceProcessData:
+      case otDeviceProperty:
+        objHasArrayObject = true;
+        break;
     }
 
     if (objNeedsName)
@@ -617,6 +688,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
     if (objHasArrayObject)
     {
       // Process all Child-Elements
+      vecstr_childID.clear();
       objChildObjects = 0;
       for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
       {   // if NOT Macro insert as normal object!
@@ -654,6 +726,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           }
           // give him an ID, although not necessary now...
           objChildID = getID (objChildName, is_objChildID, objChildID);
+          //store that ID for later output in the bytestream-file
+          vecstr_childID.push_back(objChildID);
           objChildObjects++;
         }
       }
@@ -663,6 +737,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
     // ### Print out inidivual object stuff... ###
     // ###########################################
     uint8_t i = 0;
+    const uint8_t *mastername;
+    __IsoAgLib::ISOName_c c_isoname (mastername);
     switch (objType)
     {
       case otDevice:
@@ -678,65 +754,89 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           clean_exit (-1, "YOU NEED TO SPECIFY device_program_name= ATTRIBUTE FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
         }
-        if (!(attrIsGiven [attrWorkingset_mastername] || (attrIsGiven [attrManufacturer_code] && attrIsGiven [attrIdentity_number] && attrIsGiven [attrDevice_class] && attrIsGiven [attrDevice_class_instance])))
+        if (!(attrIsGiven [attrWorkingset_mastername] || (attrIsGiven [attrManufacturer_code] && attrIsGiven [attrWS_serial_number] && attrIsGiven [attrDevice_class] && attrIsGiven [attrDevice_class_instance])))
         {
-          clean_exit (-1, "YOU NEED TO SPECIFY EITHER the workingset_mastername= ATTRIBUTE OR the manufacturer_code= AND identity_number= AND device_class= AND device_class_instance= ATTRIBUTES FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
-        } else {
+          clean_exit (-1, "YOU NEED TO SPECIFY EITHER the workingset_mastername= ATTRIBUTE OR the manufacturer_code= AND ws_serial_number= AND device_class= AND device_class_instance= ATTRIBUTES FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
+        }
+        else
+        {
           if (!attrIsGiven [attrWorkingset_mastername])
           {
-            if (!(vecstr_attrString[attrSelf_conf].size() == 0))
-              clean_exit (-1, "self_configurable_address has a value range of 1 bit! STOPPING PARSER! bye.\n\n");
-            if (!(vecstr_attrString[attrIndustry_group].size() == 3))
-              clean_exit (-1, "industry_group has a value range of 3 bits! STOPPING PARSER! bye.\n\n");
-            if (!(vecstr_attrString[attrDevice_class_instance].size() == 4))
-              clean_exit (-1, "device_class_instance has a value range of 4 bits! STOPPING PARSER! bye.\n\n");
-            if (!(vecstr_attrString[attrDevice_class].size() == 7))
-              clean_exit (-1, "device_class has a value range of 7 bits! STOPPING PARSER! bye.\n\n");
-            if (!(vecstr_attrString[attrFunction].size() == 8))
-              clean_exit (-1, "function has a value range of 8 bits! STOPPING PARSER! bye.\n\n");
-            if (!(vecstr_attrString[attrFunc_Inst].size() == 5))
-              clean_exit (-1, "function_instance has a value range of 5 bits! STOPPING PARSER! bye.\n\n");
-            if (!(vecstr_attrString[attrECU_Inst].size() == 3))
-              clean_exit (-1, "ecu_instance has a value range of 3 bits! STOPPING PARSER! bye.\n\n");
-            if (!(vecstr_attrString[attrManufacturer_code].size() == 11))
-              clean_exit (-1, "manufacturer_code has a value range of 11 bits! STOPPING PARSER! bye.\n\n");
-            if (!(vecstr_attrString[attrIdentity_number].size() == 21))
-              clean_exit (-1, "identity_number has a value range of 21 bits! STOPPING PARSER! bye.\n\n");
-
             //alle Attribute zum Workingset_mastername zusammensetzen
-            uint8_t mastername[8];
-            mastername[7] = (atoi(vecstr_attrString [attrSelf_conf].c_str()) << 7) |
-                            ((atoi(vecstr_attrString [attrIndustry_group].c_str()) & 0x7) << 4) |
-                            (atoi(vecstr_attrString [attrDevice_class_instance].c_str()));
-            mastername[6] = ((0 /* reserved bit set to zero!*/) | (atoi(vecstr_attrString [attrDevice_class].c_str()) << 1));
-            mastername[5] = atoi(vecstr_attrString [attrFunction].c_str());
-            mastername[4] = (atoi(vecstr_attrString [attrFunc_Inst].c_str()) << 3) | (atoi(vecstr_attrString [attrECU_Inst].c_str()) & 0x7);
-            mastername[3] = (atoi(vecstr_attrString [attrManufacturer_code].c_str()) >> 3);
-            mastername[2] = ((atoi(vecstr_attrString [attrManufacturer_code].c_str()) & 0x7) << 5) | ((atoi(vecstr_attrString [attrIdentity_number].c_str()) >> 16) & 0x1F);
-            mastername[1] = ((atoi(vecstr_attrString [attrIdentity_number].c_str()) >> 8) & 0xFF);
-            mastername[0] = (atoi(vecstr_attrString [attrIdentity_number].c_str()) & 0xFF);
-            for (uint8_t ins=0;ins<sizeof(mastername);ins++)
-              vecstr_attrString [attrWorkingset_mastername][ins] = mastername[ins];
+            c_isoname.set(stringtonumber(vecstr_attrString [attrSelf_conf].c_str(), 1, attrSelf_conf),
+                          stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
+                          stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
+                          stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
+                          stringtonumber(vecstr_attrString [attrFunction].c_str(), 8, attrFunction),
+                          stringtonumber(vecstr_attrString [attrManufacturer_code].c_str(), 11, attrManufacturer_code),
+                          stringtonumber(vecstr_attrString [attrWS_serial_number].c_str(), 21, attrWS_serial_number),
+                          stringtonumber(vecstr_attrString [attrFunc_Inst].c_str(), 5, attrFunc_Inst),
+                          stringtonumber(vecstr_attrString [attrECU_Inst].c_str(), 3, attrECU_Inst));
           }
+          else
+          {
+            for (i=0; i<vecstr_attrString[attrWorkingset_mastername].size(); i++)
+            {
+              vecstr_attrString[attrWorkingset_mastername][i] = tolower(vecstr_attrString[attrWorkingset_mastername][i]);
+            }
+            if (vecstr_attrString[attrWorkingset_mastername][0] != ('l' || 'm'))
+            {
+              clean_exit(-1, "workingset_mastername NEEDS TO START EITHER WITH \n \
+                              L/l ... least signifant byte; see XML definition of device DVC (xs:hexBinary ISO 11783-10) OR \n \
+                              M/m ... most signifant byte; normal definition (highest digit first) \n \
+                              STOPPING PARSER! bye.\n\n");
+            }
+            //handle number least/most signifant byte
+            b_lsb = (vecstr_attrString[attrWorkingset_mastername][0] == 'l');
+
+            if (!(vecstr_attrString[attrWorkingset_mastername].size() == 17))
+              clean_exit (-1, "workingset_mastername NEEDS TO HAVE AN IDENTIFIER \
+                               FOR LEAST OR MOST SIGNIFICANT BIT (L/M) AND AN 8 BYTES LONG NAME! \n \
+                               (EQUALS 16 HEXADECIMAL NUMBERS 0...F) STOPPING PARSER! bye.\n\n");
+
+            for (i = 1; i < vecstr_attrString[attrWorkingset_mastername].size(); i++)
+            {
+              if (!((vecstr_attrString[attrWorkingset_mastername][i] >= '0' &&
+                     vecstr_attrString[attrWorkingset_mastername][i] <= '9') ||
+                    (vecstr_attrString[attrWorkingset_mastername][i] >= 'A' &&
+                     vecstr_attrString[attrWorkingset_mastername][i] <= 'F')))
+                clean_exit (-1, "PLEASE USE HEXADECIMAL FORMAT FOR workingset_mastername! STOPPING PARSER! bye.\n\n");
+            }
+
+            uint8_t ui8_tempName[8];
+            for (i=0; i<8; i++)
+            {
+              uint8_t ui8_digitHi = vecstr_attrString[attrWorkingset_mastername][1+i*2]; // ASCII
+              uint8_t ui8_digitLo = vecstr_attrString[attrWorkingset_mastername][1+i*2+1]; // ASCII
+
+              uint8_t ui8_nibbleHi = (ui8_digitHi <= '9' /* 0..9 */) ? (ui8_digitHi-'0') : (ui8_digitHi-'A' + 10); // 0..9,10..15
+              uint8_t ui8_nibbleLo = (ui8_digitLo <= '9' /* 0..9 */) ? (ui8_digitLo-'0') : (ui8_digitLo-'A' + 10); // 0..9,10..15
+
+              const uint8_t pos = (b_lsb) ? (i) : (7-i);
+              ui8_tempName[pos] = (ui8_nibbleHi << 4) | ui8_nibbleLo;
+            }
+            c_isoname.inputString(ui8_tempName);
+          }
+
           languageCmdCode[0] = vecstr_attrString[attrLocalization_label][0];
           languageCmdCode[1] = vecstr_attrString[attrLocalization_label][1];
+
           //output: tableID & objID
           if (firstElement)
           {
-            firstElement=false;
-            buffer  << "_" << languageCmdCode[0] << languageCmdCode[1] << " [] = {'" << TableIDTable [objType][0]  << "', "
-                    << "'" << TableIDTable [objType][1]  << "', "
-                    << "'" << TableIDTable [objType][2]  << "', "
-                    << uint16_t(objID & 0xFF)            << ", "
-                    << uint16_t((objID >> 8) & 0xFF)     << ", ";
+            firstElement =false;
+            buffer  << "_" << languageCmdCode[0] << languageCmdCode[1] << " [] = {0x61, \n'";
+            buf_length++;
           } else
           {
-            buffer  << ", '" << TableIDTable [objType][0] << "', "
-                    << "'" << TableIDTable [objType][1]   << "', "
-                    << "'" << TableIDTable [objType][2]   << "', "
-                    << uint16_t(objID & 0xFF)             << ", "
-                    << uint16_t((objID >> 8) & 0xFF)      << ", ";
+            buffer  << ", '";
+
           }
+          buffer  <<        TableIDTable [objType][0] << "', "
+                  << "'" << TableIDTable [objType][1] << "', "
+                  << "'" << TableIDTable [objType][2] << "', "
+                  << uint16_t(objID & 0xFF)           << ", "
+                  << uint16_t((objID >> 8) & 0xFF)    << ", ";
           buf_length += 5;
           //length of designator
           buffer << vecstr_attrString[attrDesignator].size() << ", ";
@@ -757,9 +857,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           }
           buf_length += vecstr_attrString[attrSoftware_version].size();
           //workingset_mastername
-          for (i=0;i<vecstr_attrString[attrWorkingset_mastername].size();i++)
+          mastername = c_isoname.outputString();
+          for (i=0; i<8; i++)
           {
-            buffer << vecstr_attrString[attrWorkingset_mastername][i] << ", ";
+            buffer << (uint16_t)mastername[i] << ", ";
           }
           buf_length += 8;
           //length serialnumber
@@ -788,15 +889,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           buf_length += 7;
           fprintf( partFileA, "%s", buffer.str().c_str() );
           buffer.str("");
-          fprintf( partFileB, "IsoAgLib::iGetyPos_c %sGtp(%x, %x);\n\n",
-                   vecstr_attrString[attrDevProgVarName].c_str(), atoi(vecstr_attrString[attrDevice_class].c_str()),
-                   atoi(vecstr_attrString[attrDevice_class_instance].c_str()));
+          fprintf( partFileB, "IsoAgLib::iGetyPos_c %sGtp(0x%x, 0x%x);\n\n",
+                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
           fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sGtp, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x);\n\n",
-                   vecstr_attrString[attrDevProgVarName].c_str(), atoi(vecstr_attrString[attrSelf_conf].c_str()),
-                   atoi(vecstr_attrString[attrIndustry_group].c_str()), atoi(vecstr_attrString[attrFunction].c_str()),
-                   atoi(vecstr_attrString[attrManufacturer_code].c_str()), atoi(vecstr_attrString[attrSerial_number].c_str()),
+                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf(),
+                   c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
                    atoi(vecstr_attrString[attrWanted_SA].c_str()), atoi(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str()),
-                   atoi(vecstr_attrString[attrFunc_Inst].c_str()), atoi(vecstr_attrString[attrECU_Inst].c_str()));
+                   c_isoname.funcInst(),c_isoname.ecuInst());
           vecstr_constructor[0] = vecstr_attrString[attrDevProgVarName].c_str();
           vecstr_constructor[2] = vecstr_attrString[attrPriority].c_str();
         }
@@ -807,7 +906,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           clean_exit (-1, "YOU NEED TO SPECIFY THE element_type= AND parent_name= ATTRIBUTES FOR THE <deviceelement> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         //output: tableID & objID
-        buffer  << ", '" << TableIDTable [objType][0] << "', "
+        buffer  << ", \n'" << TableIDTable [objType][0] << "', "
                 << "'" << TableIDTable [objType][1]   << "', "
                 << "'" << TableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
@@ -834,9 +933,16 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str()) >> 8) & 0xFF) << ", ";
         buf_length += 2;
         //number_of_objects_to_follow
-        buffer  << uint16_t((objChildObjects+objNextUnnamedName-1) & 0xFF) << ", "
-                << uint16_t(((objChildObjects+objNextUnnamedName-1) >> 8) & 0xFF);
+        buffer  << uint16_t(objChildObjects & 0xFF) << ", "
+                << uint16_t((objChildObjects >> 8) & 0xFF);
         buf_length += 2;
+
+        for (it_childID = vecstr_childID.begin(); it_childID != vecstr_childID.end(); it_childID++)
+        {
+            buffer << ", " << uint16_t(*it_childID & 0xFF) << ", "
+                   << uint16_t((*it_childID >> 8) & 0xFF);
+          buf_length += 2;
+        }
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
         break;
@@ -850,7 +956,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           clean_exit (-1, "YOU NEED TO SPECIFY proc_program_name= ATTRIBUTE FOR THE <deviceprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         //output: tableID & objID
-        buffer  << ", '" << TableIDTable [objType][0] << "', "
+        buffer  << ", \n'" << TableIDTable [objType][0] << "', "
                 << "'" << TableIDTable [objType][1]   << "', "
                 << "'" << TableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
@@ -891,7 +997,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= AND property_value= ATTRIBUTES FOR THE <deviceproperty> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         //output: tableID & objID
-        buffer  << ", '" << TableIDTable [objType][0] << "', "
+        buffer  << ", \n'" << TableIDTable [objType][0] << "', "
                 << "'" << TableIDTable [objType][1]   << "', "
                 << "'" << TableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
@@ -929,7 +1035,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE wert_inst= ATTRIBUTE FOR THE <devicedinprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
         }
-        fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(0x%x, %sGtp, 0x%x, 0x%x, 0x%x, 0x%x, %s, &%s, %s);",
+        fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(0x%x, %sGtp, 0x%x, 0x%x, 0x%x, 0x%x, %sGtp, &%sGtp, %s);\n\n",
                  vecstr_constructor[1].c_str(), vecstr_constructor[4].c_str(),
                  atoi(vecstr_attrString[attrLis].c_str()), vecstr_constructor[0].c_str(),
                  (atoi(vecstr_attrString[attrWert_inst].c_str()) & 0xF), ((atoi(vecstr_attrString[attrWert_inst].c_str()) >> 4) & 0xF),
@@ -944,7 +1050,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           clean_exit (-1, "YOU NEED TO SPECIFY THE offset= AND scale= AND number_of_decimals= ATTRIBUTES FOR THE <devicevaluepresentation> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         //output: tableID & objID
-        buffer  << ", '" << TableIDTable [objType][0] << "', "
+        buffer  << ", \n'" << TableIDTable [objType][0] << "', "
                 << "'" << TableIDTable [objType][1]   << "', "
                 << "'" << TableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
@@ -1311,7 +1417,7 @@ int main(int argC, char* argV[])
         processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otDevice), c_directory.c_str() ); // must all be included in an device tag !
         if (!deviceElementExists) clean_exit(-1, "YOU MUST SPECIFY AT LEAST ONE deviceelement OBJECT! STOPPING PARSER!\n\n");
         fprintf (partFileA, "};\n");
-        fprintf (partFileA, "static const uint32_t ui32_arrayLength_%c%c = %d;\n", languageCmdCode[0], languageCmdCode[1], buf_length);
+        fprintf (partFileA, "\nstatic const uint32_t ui32_arrayLength_%c%c = %d;\n", languageCmdCode[0], languageCmdCode[1], buf_length);
       }
     }
 

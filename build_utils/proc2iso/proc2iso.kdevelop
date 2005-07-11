@@ -25,7 +25,7 @@
       <mainprogram>bin/proc2iso</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs>../Device_Description.xml</programargs>
+      <programargs>../../../../src_test/test_pools/firstpool/Device_Description.xml</programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
