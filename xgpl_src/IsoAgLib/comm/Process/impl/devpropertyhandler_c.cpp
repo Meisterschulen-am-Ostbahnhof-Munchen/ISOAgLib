@@ -88,6 +88,7 @@
 #include <IsoAgLib/util/impl/singleton.h>
 
 //define length of every attribute in deviceObject
+#define DEF_Transfer_Code 1
 #define DEF_TableID 3
 #define DEF_ObjectID 2
 #define DEF_Designator_Length 1
@@ -100,7 +101,8 @@
 /** This function delivers the offset to the structurelabel in every device description*/
 uint8_t getLabelOffset (const uint8_t* pc_Array)
 {
-  uint8_t ui8_offsetLabel = (DEF_TableID
+  uint8_t ui8_offsetLabel = ( DEF_Transfer_Code
+                            + DEF_TableID
                             + DEF_ObjectID
                             + DEF_Designator_Length
                             + pc_Array[DEF_TableID + DEF_ObjectID]
