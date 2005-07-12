@@ -676,10 +676,10 @@ bool MeasureProgBase_c::processMsg(){
             en_type = Proc_c::DeltaIncr; // @todo: correct ?
             break;
           case GeneralCommand_c::measurementMaximumThresholdValueStart:
-            en_type = Proc_c::MaxIncr; // @todo: correct ?
+            en_type = Proc_c::MaximumThreshold;
             break;
           case GeneralCommand_c::measurementMinimumThresholdValueStart:
-            en_type = Proc_c::MinIncr; // @todo: correct ?
+            en_type = Proc_c::MinimumThreshold;
             break;
           default: ;
         }            
@@ -908,11 +908,11 @@ void MeasureProgBase_c::processIncrementMsg(){
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart) 
     // change threshold proportional
-    addSubprog(Proc_c::MaxIncr, i32_val); // @todo: MaxIncr ?
+    addSubprog(Proc_c::MaximumThreshold, i32_val); // @todo: MaxIncr ?
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart) 
     // change threshold proportional
-    addSubprog(Proc_c::MinIncr, i32_val); // @todo: MinIncr ?
+    addSubprog(Proc_c::MinimumThreshold, i32_val); // @todo: MinIncr ?
 
 }
 

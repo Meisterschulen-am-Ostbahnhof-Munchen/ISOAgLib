@@ -129,7 +129,8 @@ public:
 
 /** enum type definition as part of class */
   enum type_t {NullType = 0, DistProp = 1, TimeProp = 4, ValIncr = 8, 
-               WithinThresholdInterval = 16, OutsideThresholdInterval, OnChange, Counter,
+               WithinThresholdInterval = 0x10, OutsideThresholdInterval = 0x20,
+               MaximumThreshold = 0x40, MinimumThreshold = 0x80, OnChange = 0x100, Counter,
                DeltaIncr, AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr};
 
   /** enum type for distinguish between Local or Remote data */
