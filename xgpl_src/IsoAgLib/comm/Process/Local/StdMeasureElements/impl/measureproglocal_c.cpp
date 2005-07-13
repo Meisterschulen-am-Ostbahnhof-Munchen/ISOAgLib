@@ -249,6 +249,9 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
       case Proc_c::MinimumThreshold:
         pc_iter->start();
         break;
+      case Proc_c::OnChange:
+        pc_iter->start(val());
+        break;
       case Proc_c::NullType: break; // just to make compiler happy
     } // switch
   } // for
@@ -319,6 +322,9 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         break;
       case Proc_c::MinimumThreshold:
         pc_iter->start(val());
+        break;
+      case Proc_c::OnChange:
+        pc_iter->start(valFloat());
         break;
       case Proc_c::NullType: break; // just to make compiler happy
     } // switch

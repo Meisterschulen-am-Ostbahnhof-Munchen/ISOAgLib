@@ -673,7 +673,7 @@ bool MeasureProgBase_c::processMsg(){
             en_type = Proc_c::DistProp;
             break;
           case GeneralCommand_c::measurementChangeThresholdValueStart:
-            en_type = Proc_c::DeltaIncr; // @todo: correct ?
+            en_type = Proc_c::OnChange; // @todo: correct ?
             break;
           case GeneralCommand_c::measurementMaximumThresholdValueStart:
             en_type = Proc_c::MaximumThreshold;
