@@ -128,7 +128,7 @@ class GetyPos_c {
    * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
    */
  void setCombinedDin( uint16_t rui16_dinData )
-  { ui16_data = ( ( ( rui16_dinData << 9 ) & 0xFF0 ) | ( rui16_dinData & 0x7 ) );};
+  { ui16_data = ( ( ( rui16_dinData << 5 ) & 0xFF00 ) | ( rui16_dinData & 0x7 ) );};
  /** set data with one combined value of GET and POS from ISO 11783 format
    * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
    */
