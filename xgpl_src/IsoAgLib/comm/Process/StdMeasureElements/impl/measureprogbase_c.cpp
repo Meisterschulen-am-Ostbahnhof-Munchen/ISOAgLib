@@ -851,7 +851,7 @@ void MeasureProgBase_c::reset(uint8_t rb_comm){
           switch (b_mask)
           {
             case 1: // value reset
-              resetVal(0); // call resetVal with integer value (call is ambiguous if not specified!)
+              resetVal(); 
               break;
             case 2: // medium reset
               resetMed();
@@ -868,7 +868,7 @@ void MeasureProgBase_c::reset(uint8_t rb_comm){
       resetMin();
       resetMax();
       resetMed();
-      resetVal(0); // call resetVal with integer value (call is ambiguous if not specified!)
+      resetVal();
       resetInteg();
     }
   }
@@ -948,38 +948,5 @@ void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup
     }
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  reset according to the MOD the appropriate value type
-
-  possible errors:
-      * Err_c:range MOD is not in allowed range [0..4]
-  @param rb_mod MOD of wanted subtype
-  @param rf_val reset measure value to this value (ISO remote only)
-*/
-void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, float rf_val){
-    switch (en_valueGroup)
-    {
-      case GeneralCommand_c::exactValue:
-        // set val with function, to calc delta and accel
-        resetVal(rf_val);
-        break;
-      case GeneralCommand_c::minValue:
-        resetMin();
-        break;
-      case GeneralCommand_c::maxValue:
-        resetMax();
-        break;
-      case GeneralCommand_c::integValue:
-        resetInteg();
-        break;
-      case GeneralCommand_c::medValue:
-        resetMed();
-        break;
-      default:
-        getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
-    }
-}
-#endif
 
 } // end of namespace __IsoAgLib

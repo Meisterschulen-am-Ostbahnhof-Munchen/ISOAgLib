@@ -370,11 +370,6 @@ public:
     @param rf_val initial measure val
   */
   virtual void initVal(float rf_val);
-  /**
-    reset the value (pure virtual function)
-    @param rf_val reset measure value to this value (ISO remote only)
-  */
-  virtual bool resetVal(float rf_val = 0) = 0;
 #endif
   /**
     reset the medium (pure virtual function)
@@ -482,17 +477,6 @@ protected: // Protected methods
     @param ri32_val reset measure value to this value (ISO remote only)
   */
   void resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ri32_val = 0);
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    reset according to the MOD the appropriate value type
-
-    possible errors:
-        * Err_c:range MOD is not in allowed range [0..4]
-    @param en_valueGroup MOD of wanted subtype
-    @param rf_val reset measure value to this value (ISO remote only)
-  */
-  void resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, float rf_val = 0);
-#endif
 
   /**
     internal increment the value

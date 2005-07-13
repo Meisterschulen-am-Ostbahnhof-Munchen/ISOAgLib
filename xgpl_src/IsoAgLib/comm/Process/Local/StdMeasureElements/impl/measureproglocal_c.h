@@ -313,16 +313,6 @@ public:
     @param rf_val initial measure val
   */
   virtual void initVal(float rf_val);
-  /**
-    reset the local value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CANIO_c on send problems
-    @param rf_val reset measure value to this value (ISO only)
-    @return true -> reseted measure val sent with success
-  */
-  virtual bool resetVal(float rf_val = 0);
 #endif
   /**
     reset the local intgral value

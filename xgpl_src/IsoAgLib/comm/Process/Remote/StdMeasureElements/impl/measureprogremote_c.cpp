@@ -672,41 +672,6 @@ bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
-/**
-  send reset command for measure value
-
-  possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
-      * dependant error in CAN_IO
-  @param rf_val reset measure value to this value (ISO only)
-  @return true -> command successful sent
-*/
-bool MeasureProgRemote_c::resetVal(float rf_val){
-  // if stored remote gtp isn't valid exit this function
-  // error state are set by the function
-  if (!verifySetRemoteGtp())return false;
-  // get suitable PRI code
-  uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
-  // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::measurementReset);
-                                                              
-#ifdef USE_ISO_11783
-  // check if receiver (local) uses DIN or ISO  
-  IState_c::itemState_t en_msgProto = processData().getIStateForGtp(processData().ownerGtp());
-  
-  if (en_msgProto == IState_c::IstateNull) return false;
-#else  
-  IState_c::itemState_t en_msgProto = IState_c::Din;
-#endif
-
-  if (en_msgProto != IState_c::Din)
-    return processData().sendValGtp(ui8_pri, gtp(), rf_val);
-  else
-    // DIN: pd=0, mod=6
-    return processData().sendValGtp(ui8_pri, gtp(), 0x18);
-}
 
 /**
   set a new measure val

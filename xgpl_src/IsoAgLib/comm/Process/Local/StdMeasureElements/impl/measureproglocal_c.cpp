@@ -424,20 +424,9 @@ bool MeasureProgLocal_c::processMsg(){
       
       if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue) {
         // ISO: value in message contains reset value
-#ifdef USE_FLOAT_DATA_TYPE
-        if (processData().valType() != float_val)
-        {
-#endif
-          // get the int32_t data val; let it convert, if needed
-          int32_t i32_val = c_pkg.dataRawCmdLong();
-          resetValMod(c_pkg.c_generalCommand.getValueGroup(), i32_val);
-#ifdef USE_FLOAT_DATA_TYPE
-        } else {
-          // get the float data val; let it convert, if needed
-          float f_val = c_pkg.dataFloat();
-          resetValMod(c_pkg.c_generalCommand.getValueGroup(), f_val);
-        }
-#endif
+        // get the int32_t data val; let it convert, if needed
+        int32_t i32_val = c_pkg.dataRawCmdLong();
+        resetValMod(c_pkg.c_generalCommand.getValueGroup(), i32_val);
       } else
         // DIN: value in message contains info what value to reset (exact, min, max, ...)
         resetValMod(c_pkg.c_generalCommand.getValueGroup(), 0); // call resetVal with integer value (call is ambiguous if not specified!)
@@ -814,52 +803,6 @@ bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
   return b_sendSuccess;
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  reset the local value
-
-  possible errors:
-    * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-    * dependant error in CANIO_c on send problems
-  @param rf_val reset measure value to this value (ISO only)
-  @return true -> reseted measure val sent with success
-*/
-bool MeasureProgLocal_c::resetVal(float rf_val){
-  // send resetted val
-  uint8_t ui8_pri = progType();
-  bool b_sendSuccess;
-
-  // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                              GeneralCommand_c::exactValue, GeneralCommand_c::setValue);
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val)
-  {
-#endif
-    i32_val = 0;
-    
-    // DIN: pd=1, mod=0
-    b_sendSuccess = processData().sendValGtp(ui8_pri, c_gtp, val());
-#ifdef USE_FLOAT_DATA_TYPE
-  }
-  else
-  {
-    // allow reset with value (ISO only, DIN uses resetVal(int32_t ri32_val=0) )
-    f_val = rf_val;
-    // DIN: pd=1, mod=0
-    b_sendSuccess = processData().sendValGtp(ui8_pri, c_gtp, valFloat());
-  }
-#endif
-  #ifdef USE_EEPROM_IO
-  // call reset function for ProcessData -> if this prog is the first one reset eepromVal
-  // processData().resetEeprom(this);
-  // simply call resetEeprom(void) to get independent from ProcDataLocal_c
-  // -> each active measureprog item can command a reset
-  processData().resetEeprom();
-  #endif
-  return b_sendSuccess;
-}
-#endif
 
 /**
   reset the local intgral value

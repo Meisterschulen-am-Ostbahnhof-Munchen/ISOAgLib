@@ -142,7 +142,7 @@ public:
   /**
     send reset cmd for the measurement value
   */
-  void resetMasterVal() { resetVal(0);}; // call resetVal with integer value (call is ambiguous if not specified!)
+  void resetMasterVal() { resetVal();}; 
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver actual measurement value as float
@@ -264,16 +264,6 @@ public:
     @param rf_val starting measuring value
   */
   virtual void initVal(float rf_val);
-  /**
-    send reset command for measure value
-
-    possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
-        * dependant error in CAN_IO
-    @param rf_val reset measure value to this value (ISO only)
-    @return true -> command successful sent
-  */
-  virtual bool resetVal(float rf_val = 0);
 #endif
   /**
     send reset command for medium value
