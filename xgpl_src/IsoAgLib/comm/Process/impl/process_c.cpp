@@ -141,10 +141,12 @@ namespace __IsoAgLib {
   };
 #endif
 
+#ifdef USE_ISO_11783
   DevPropertyHandler_c& Process_c::getDevPropertyHandlerInstance( void )
   {
     return c_devPropertyHandler;
   };
+#endif
 
 /** initialise element which can't be done during construct */
 void Process_c::init()
@@ -157,8 +159,8 @@ void Process_c::init()
   i32_lastTaskStatusTime = 0;
   ui8_runningTaskWithSa = 0xFF;         // Initialize to 0xFF because it is an address we can't have. -bac
   ui8_taskStatus = 0;
-#endif
   c_devPropertyHandler.init(&c_data);
+#endif
   c_data.setSingletonKey( getSingletonVecKey() );
 
   // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
@@ -257,8 +259,10 @@ bool Process_c::timeEvent( void ){
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
 
+#ifdef USE_ISO_11783 
   //call DevPropertyHandler_c timeEvent
   c_devPropertyHandler.timeEvent();
+#endif
 
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( c_arrClientC1.capacity() != sui16_localProcPointerTotal )
@@ -379,11 +383,14 @@ bool Process_c::timeEvent( void ){
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool Process_c::processMsg(){
+
+#ifdef USE_ISO_11783
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
 if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF ) < 2 ) || ( c_data[0] >= 0xD ) ) )
 {
   if (c_devPropertyHandler.processMsg()) return true;
 }
+#endif
 
 #if defined(USE_DIN_GPS)
   // check if this is a message from a service

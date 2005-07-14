@@ -99,7 +99,9 @@
 #include "../Local/impl/procdatalocalbase_c.h"
 #include "../Remote/impl/procdataremotebase_c.h"
 #include "processpkg_c.h"
-#include "devpropertyhandler_c.h"
+#ifdef USE_ISO_11783
+  #include "devpropertyhandler_c.h"
+#endif
 
 #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
   #include <ext/slist>
@@ -179,8 +181,10 @@ public:
       * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
   */
   bool processMsg();
-
+  
+#ifdef USE_ISO_11783
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
+#endif
 
   /**
     if the amount of created local process data is known, then enough capacity for the
@@ -509,11 +513,13 @@ private: // Private attributes
   /** msg object for CAN I/O */
   ProcessPkg_c c_data;
 
+#ifdef USE_ISO_11783  
   /**
     deliver reference to process pkg as reference to DevPropertyHandler_c which
     handles sending and processing of messages from can
   */
   DevPropertyHandler_c c_devPropertyHandler;
+#endif
 
   /** last timestamp with FilterBox_c check */
   int32_t i32_lastFilterBoxTime;
