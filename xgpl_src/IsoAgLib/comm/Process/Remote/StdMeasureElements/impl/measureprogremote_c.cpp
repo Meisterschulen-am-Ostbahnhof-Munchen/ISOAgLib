@@ -394,9 +394,11 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
         b_result = processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0);
       }
     }
-            
+
+#ifdef USE_ISO_11783   
     // Set task status to stopped.
     getProcessInstance4Comm().setTaskStatus(0);
+#endif
 
   }
 
