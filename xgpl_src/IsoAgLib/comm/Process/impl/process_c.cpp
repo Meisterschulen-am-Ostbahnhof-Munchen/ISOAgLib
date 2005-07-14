@@ -639,7 +639,6 @@ bool Process_c::existProcDataRemote(
  return updateRemoteCache(
 #ifdef USE_ISO_11783
                           rui16_DDI, rui16_element, rui8_getySender,
-
 #endif
 #ifdef USE_DIN_9684
                           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -728,6 +727,7 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
 #ifdef USE_ISO_11783
                                                 uint16_t rui16_DDI,
                                                 uint16_t rui16_element,
+                                                uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
                                                 uint8_t rui8_lis,
@@ -741,7 +741,7 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
 {
   bool b_found = updateRemoteCache(
 #ifdef USE_ISO_11783
-                                   rui16_DDI, rui16_element,
+                                   rui16_DDI, rui16_element, rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
                                    rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -939,7 +939,6 @@ bool Process_c::updateRemoteCache(
                          uint16_t rui16_DDI,
                          uint16_t rui16_element,
                          uint8_t rui8_getySender,
-
 #endif
 #ifdef USE_DIN_9684
                          uint8_t rui8_lis,
