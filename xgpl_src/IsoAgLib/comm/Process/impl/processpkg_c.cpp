@@ -853,15 +853,11 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
       }
       if (mod() == 6) {
         en_command = GeneralCommand_c::noCommand;
-        if (dataLong() & 0xF == 0)
+        if ( (dataLong() & 0xF) == 0)
           en_command = GeneralCommand_c::measurementStop;
-        if (dataLong() & 0xF == 0x1)
+        if ( ((dataLong() & 0xF) > 0) && ((dataLong() & 0xF) < 7) )
           en_command = GeneralCommand_c::measurementStart;
-        if (dataLong() & 0xF == 0x2)
-          en_command = GeneralCommand_c::measurementStart;
-        if (dataLong() & 0xF == 0x4)
-          en_command = GeneralCommand_c::measurementStart;
-        if (dataLong() & 0xF == 0x8)
+        if ( (dataLong() & 0xF) == 0x8)
           en_command = GeneralCommand_c::measurementReset;
       }
     }
