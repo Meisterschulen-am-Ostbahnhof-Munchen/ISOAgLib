@@ -382,7 +382,7 @@ bool Process_c::timeEvent( void ){
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
-bool Process_c::processMsg(){
+ bool Process_c::processMsg(){
 
 #ifdef USE_ISO_11783
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
@@ -987,7 +987,7 @@ bool Process_c::updateRemoteCache(
           b_matched = true;
       } else {
         // ISO
-        if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
+        if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
           b_matched = true;
       }
 #else
