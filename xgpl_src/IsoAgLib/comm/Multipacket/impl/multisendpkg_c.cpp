@@ -194,7 +194,7 @@ void MultiSendPkg_c::setData_2ByteInteger(uint8_t rb_pos, uint16_t rui16_val)
 void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize)
 {
   #ifdef USE_HUGE_MEM
-  HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
+  const HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
   uint8_t ui8_ind=0;
   for (; ui8_ind < rb_partSize; ui8_ind++)
   {
