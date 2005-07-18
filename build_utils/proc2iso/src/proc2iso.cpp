@@ -57,15 +57,15 @@
 #ifdef WIN32
  #include <fstream>
  #include <windows.h>
-// #include <winbase.h>
  #include <stdio.h>
- #include <ostream>
 //        extern "C"
  using namespace std;
 #else
  #include <fstream.h>
  #include <dirent.h>
 #endif
+
+#define USE_ISO_11783
 
 // Includes (proc2iso)
 #include "proc2iso.hpp"
@@ -91,7 +91,7 @@ unsigned int objCount;
 std::vector<std::string> vecstr_attrString (maxAttributeNames);
 std::stringstream buffer;
 bool attrIsGiven [maxAttributeNames];
-std::vector<std::string> vecstr_constructor (5);
+std::vector<std::string> vecstr_constructor (7);
 
 // ---------------------------------------------------------------------------
 //  void usage () --- Prints out usage text.
@@ -897,7 +897,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                    atoi(vecstr_attrString[attrWanted_SA].c_str()), atoi(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str()),
                    c_isoname.funcInst(),c_isoname.ecuInst());
           vecstr_constructor[0] = vecstr_attrString[attrDevProgVarName].c_str();
-          vecstr_constructor[2] = vecstr_attrString[attrPriority].c_str();
+          vecstr_constructor[1] = vecstr_attrString[attrPriority].c_str();
         }
         break;
       case otDeviceElement:
@@ -945,6 +945,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         }
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
+        vecstr_constructor[2] = vecstr_attrString[attrElement_number].c_str();
         break;
       case otDeviceProcessData:
         if (!attrIsGiven [attrDdi])
@@ -987,9 +988,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         buf_length += 2;
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
-        vecstr_constructor[1] = vecstr_attrString[attrFeature_set].c_str();
-        vecstr_constructor[3] = vecstr_attrString[attrCumulative_value].c_str();
-        vecstr_constructor[4] = vecstr_attrString[attrProcProgVarName].c_str();
+        vecstr_constructor[3] = vecstr_attrString[attrFeature_set].c_str();
+        vecstr_constructor[4] = vecstr_attrString[attrCumulative_value].c_str();
+        vecstr_constructor[5] = vecstr_attrString[attrProcProgVarName].c_str();
+        vecstr_constructor[6] = vecstr_attrString[attrDdi].c_str();
         break;
       case otDeviceProperty:
         if (!(attrIsGiven [attrDdi] || attrIsGiven [attrProperty_value]))
@@ -1035,14 +1037,22 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE wert_inst= ATTRIBUTE FOR THE <devicedinprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
         }
-        fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(0x%x, %sGtp, 0x%x, 0x%x, 0x%x, 0x%x, %sGtp, &%sGtp, %s);\n\n",
-                 vecstr_constructor[1].c_str(), vecstr_constructor[4].c_str(),
-                 atoi(vecstr_attrString[attrLis].c_str()), vecstr_constructor[0].c_str(),
-                 (atoi(vecstr_attrString[attrWert_inst].c_str()) & 0xF), ((atoi(vecstr_attrString[attrWert_inst].c_str()) >> 4) & 0xF),
-                 atoi(vecstr_attrString[attrWert_inst].c_str()), atoi(vecstr_constructor[2].c_str()),
-                 vecstr_constructor[0].c_str(), vecstr_constructor[0].c_str(),
-                 vecstr_constructor[3].c_str()
-                 );
+        fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
+        #ifdef USE_ISO_11783
+          fprintf( partFileB, "%d, 0x%x, ", atoi(vecstr_constructor[6].c_str()), atoi(vecstr_constructor[2].c_str()));
+        #endif
+        #ifdef USE_DIN_9684
+          fprintf( partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
+                   (atoi(vecstr_attrString[attrWert_inst].c_str()) & 0x0F), ((atoi(vecstr_attrString[attrWert_inst].c_str()) >> 4) & 0xF),
+                   atoi(vecstr_constructor[2].c_str()));
+        #endif
+          fprintf( partFileB, "%sGtp, 0x%x, %sGtp, &%sGtp, %s",
+                   vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
+                   vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
+        #ifdef USE_EEPROM_IO
+          fprintf( partFileB, ", 0x%x", atoi(vecstr_attrString [attrStore_SA_at_EEPROM_address].c_str()));
+        #endif
+        fprintf( partFileB, ");\n\n" );
         break;
       case otDeviceValuePresentation:
         if (!(attrIsGiven [attrOffset] || attrIsGiven [attrScale] || attrIsGiven [attrNumber_of_decimals]))
@@ -1359,10 +1369,6 @@ int main(int argC, char* argV[])
     // And create our error handler and install it
     DOMCountErrorHandler errorHandler;
     parser->setErrorHandler(&errorHandler);
-
-    //  Get the starting time and kick off the parse of the indicated
-    //  file. Catch any exceptions that might propogate out of it.
-    std::ifstream fin;
 
     char fURI[1000];
     //initialize the array to zeros
