@@ -199,7 +199,9 @@ MultiReceive_c::processMsg()
 //uint8_t ui8_da = MACRO_pgnSpecificOfPGN(data().isoPgn());
 //uint8_t ui8_sa = data().isoSa();
 
-  ui32_pgn = data().getUint8Data(5) | (data().getUint8Data(6) << 8) | (data().getUint8Data(7) << 16);
+  ui32_pgn =  uint32_t (data().getUint8Data(5)) |
+             (uint32_t (data().getUint8Data(6)) << 8) |
+             (uint32_t (data().getUint8Data(7)) << 16);
   IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (ui32_pgn, data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
 
   if (!anyMultiReceiveClientRegisteredForThisDa (data().isoPs()))
@@ -325,7 +327,9 @@ MultiReceive_c::processMsg()
             }
 
             // try to set the DPO in this stream - if it's not allowed right now (or timedout), this DPO was not correct
-            if (! (pc_streamFound->setDataPageOffset (data().getUint8Data(2) | (data().getUint8Data(3) << 8) | (data().getUint8Data(4) << 16))))
+            if (! (pc_streamFound->setDataPageOffset ( uint32_t(data().getUint8Data(2)) |
+                                                      (uint32_t(data().getUint8Data(3)) << 8) |
+                                                      (uint32_t(data().getUint8Data(4)) << 16))))
             { // DPO not awaited now!
               notifyError(c_tmpRSI, 1005);
               connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
