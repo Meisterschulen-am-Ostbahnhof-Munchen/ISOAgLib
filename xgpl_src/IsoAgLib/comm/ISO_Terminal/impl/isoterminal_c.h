@@ -296,6 +296,10 @@ public:
     uint8_t  uArea;
     uint8_t  uVolume;
     uint8_t  uMass;
+    uint8_t  uTemperature;
+    uint8_t  uPressure;
+    uint8_t  uForce;
+    uint8_t  uUnitsSystem;
   } localSettings_s;
 
   virtual void reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident);

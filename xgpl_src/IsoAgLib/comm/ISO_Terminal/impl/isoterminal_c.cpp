@@ -1175,6 +1175,10 @@ bool ISOTerminal_c::processMsg()
     localSettings_a.uArea =        (data().getUint8Data (4) >> 4) & 0x03;
     localSettings_a.uVolume =      (data().getUint8Data (4) >> 2) & 0x03;
     localSettings_a.uMass =         data().getUint8Data (4)       & 0x03;
+    localSettings_a.uTemperature =  data().getUint8Data (5) >> 6;
+    localSettings_a.uPressure =    (data().getUint8Data (5) >> 4) & 0x03;
+    localSettings_a.uForce =       (data().getUint8Data (5) >> 2) & 0x03;
+    localSettings_a.uUnitsSystem =  data().getUint8Data (5)       & 0x03;
     // The other fields are reserved.
     return true;
   }
