@@ -279,7 +279,7 @@ void init (const char* xmlFile)
     objNameTable [i] = 0x00;
   }
   objCount = 0;
-  objNextAutoID = 65354;
+  objNextAutoID = 65534;
   kcNextAutoID = 254; // for safety, 255 should also be okay though...
   objNextUnnamedName = 1;
 
