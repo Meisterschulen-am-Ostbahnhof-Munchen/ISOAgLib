@@ -456,7 +456,6 @@ bool MeasureProgLocal_c::processMsg(){
   @param ri32_val new measure value
 */
 void MeasureProgLocal_c::setVal(int32_t ri32_val){
-  // @todo: b_cumulativeValue == true => negative values possible if local application doesn't set continuously growing values 
   int32_t i32_incr =  ri32_val - i32_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
   int32_t i32_timeDelta = i32_time - i32_lastTime;

@@ -164,7 +164,7 @@ private:
   bool b_isSetpoint;
   bool b_isRequest;
 
-  /** command affects min, max or exact value */
+  /** command affects min, max, exact or default value */
   ValueGroup_t en_valueGroup;
 
   /** current command */

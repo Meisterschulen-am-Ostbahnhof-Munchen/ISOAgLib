@@ -212,31 +212,83 @@ public:
   /**
     delivers count of local process data entries with similar ident
     (which differs only in POS of owner)
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
     @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
+ 
+    common parameter
+    @param rui8_gety GETY code of searched local Process Data instance
     @return count of similar local process data entries
   */
-  uint8_t procDataLocalCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
-                           uint8_t rui8_zaehlnum, uint8_t rui8_pri = 2)
-    {return Process_c::procDataLocalCnt(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri);};
+  uint8_t procDataLocalCnt(
+#ifdef USE_ISO_11783
+                           uint16_t rui16_DDI,
+                           uint16_t rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                           uint8_t rui8_lis,
+                           uint8_t rui8_wert,
+                           uint8_t rui8_inst,
+                           uint8_t rui8_zaehlnum,
+#endif
+                           uint8_t rui8_gety)
+    {return Process_c::procDataLocalCnt(
+#ifdef USE_ISO_11783
+                                        rui16_DDI, rui16_element,
+#endif
+#ifdef USE_DIN_9684
+                                        rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                                        rui8_gety);
+    };
+    
   /**
     delivers count of remote process data entries with similar ident
     (which differs only in POS of owner)
-    @param rui8_lis LIS code of searched remote Process Data instance
-    @param rui8_gety GETY code of searched remote Process Data instance
-    @param rui8_wert WERT code of searched remote Process Data instance
-    @param rui8_inst INST code of searched remote Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+    @param rui8_getySender gety of the sender (used for check against ownerGtp().getGety())
+
+    DIN parameter
+    @param rui8_lis LIS code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_inst INST code of searched local Process Data instance
+    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    common parameter
+    @param rui8_gety GETY code of searched local Process Data instance
     @return count of similar remote process data entries
   */
-  uint8_t procDataRemoteCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
-                            uint8_t rui8_zaehlnum, uint8_t rui8_pri = 2)
-    {return Process_c::procDataRemoteCnt(rui8_lis, rui8_gety, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pri);};
+  uint8_t procDataRemoteCnt(
+#ifdef USE_ISO_11783
+                            uint16_t rui16_DDI,
+                            uint16_t rui16_element,
+                            uint8_t rui8_getySender,
+#endif
+#ifdef USE_DIN_9684
+                            uint8_t rui8_lis,
+                            uint8_t rui8_wert,
+                            uint8_t rui8_inst,
+                            uint8_t rui8_zaehlnum,
+#endif
+                            uint8_t rui8_gety)
+    {return Process_c::procDataRemoteCnt(
+#ifdef USE_ISO_11783
+                                         rui16_DDI, rui16_element, rui8_getySender,
+#endif
+#ifdef USE_DIN_9684
+                                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                                         rui8_gety);
+    };
+    
  private:
   /** allow getIProcessInstance() access to shielded base class.
       otherwise __IsoAgLib::getProcessInstance() wouldn't be accepted by compiler

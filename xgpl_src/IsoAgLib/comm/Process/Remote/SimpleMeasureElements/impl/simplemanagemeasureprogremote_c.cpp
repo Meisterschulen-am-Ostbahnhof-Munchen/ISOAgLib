@@ -134,7 +134,7 @@ int32_t SimpleManageMeasureProgRemote_c::masterVal(bool rb_sendRequest)
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd=3, mod=0
-    c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
+    c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), 0);
   }
   return i32_masterVal;
 }
@@ -149,21 +149,21 @@ void SimpleManageMeasureProgRemote_c::resetMasterVal()
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
   // DIN: pd=1, mod=0
-  c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
+  c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), 0);
   
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0x8);
+  c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), 0x8);
   #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::setValue);
     // DIN: pd=0, mod=0
-    c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
+    c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), 0);
   #endif
 }
 
@@ -182,7 +182,7 @@ float SimpleManageMeasureProgRemote_c::masterValFloat(bool rb_sendRequest)
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd=3, mod=0
-    c_base.sendDataRawCmdGtp(c_base.pri(), c_base.commanderGtp(), 0);
+    c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), 0);
   }
   return f_masterVal;
 }

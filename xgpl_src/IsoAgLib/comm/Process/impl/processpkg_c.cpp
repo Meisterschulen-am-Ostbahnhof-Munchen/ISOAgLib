@@ -147,7 +147,7 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
   // DIN: pd = 0 && mod < 4
   if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
       c_generalCommand.checkIsSetpoint())
-  { // setpoint value -> special commands are possible for exact, min, max setpopints
+  { // setpoint value -> special commands are possible for exact, min, max, default setpopints
       if ((ren_checkCmd & setpointReleaseCmd != 0)
        &&(i32_test == static_cast<int32_t>(SETPOINT_RELEASE_COMMAND)))
       {
@@ -542,9 +542,10 @@ void ProcessPkg_c::string2Flags()
     //See new line added below that uses c_isoMonitor. -bac
     //setGtp( GetyPos_c(((CANPkg_c::pb_data[2] >> 4) & 0xF), (CANPkg_c::pb_data[2] & 0xF) ) );
 
-    // @todo: question: should the gtp of the send be inserted or of the empf (DIN: empf gtp?)
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    setGtp(c_isoMonitor.isoMemberNr(send()).gtp());  // Get the gety and pos (Device Class, Device Class Instance -bac
+    
+    // gtp in ProcessPkg_c is no longer used in ISO (for DIN the message contains the empf gtp!)
+    //setGtp(c_isoMonitor.isoMemberNr(send()).gtp());  // Get the gety and pos (Device Class, Device Class Instance -bac
 
     // now set pc_monitorSend and pc_monitorEmpf
     if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
@@ -592,12 +593,10 @@ void ProcessPkg_c::string2Flags()
 void ProcessPkg_c::flags2String()
 {
 
-
-#ifdef USE_ISO_11783
   if (identType() == Ident_c::StandardIdent)
   {
-#endif
 
+#ifdef USE_DIN_9684
     uint8_t ui8_mod = 0;
     uint8_t ui8_pd = 0;
 
@@ -639,8 +638,6 @@ void ProcessPkg_c::flags2String()
     if (c_generalCommand.checkIsRequest())
        ui8_pd |= 1 << 1;
 
-    // @todo: measurementReset command?
-
     setPd(ui8_pd);
     setMod(ui8_mod);
 
@@ -679,17 +676,19 @@ void ProcessPkg_c::flags2String()
 
     if ((pd() >> 1) == 1)
     { // request has only 4 bytes
-        setLen(4);
+      setLen(4);
     }
     else
     { // value send with 8 bytes
       setLen(8);
     }
+#endif // USE_DIN_9684
 
-#ifdef USE_ISO_11783
   }
   else
   {  // code added by Brad Cox to format the message to conform to the latest part 10 Specification. -bac
+
+#ifdef USE_ISO_11783
     uint8_t ui8_cmd;
     switch (c_generalCommand.getCommand()) {
       case GeneralCommand_c::requestConfiguration:                  ui8_cmd = 0; break;
@@ -862,15 +861,9 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
       }
     }
 
-    // @todo: we need to know if we are local or not!
     if (existMemberEmpf() && (gety() == memberEmpf().gtp().getGety())) {
        // we are local
-       // reset (from ProcDataLocalBase_c::processProg())
-       if ((pd() == 1) && (mod() == 0) && (dataRawCmdLong() == 0)  ) {
-          en_command = GeneralCommand_c::measurementReset;
-       }
-
-       // another reset  @todo: unify with reset above?   (from MeasureProgLocal_c::processMsg)
+       // from MeasureProgLocal_c::processMsg and ProcDataLocalBase_c::processProg())
        if ((pd() == 1) && (dataRawCmdLong() == 0) )
        {
           // write - accept only write actions to local data only if this is reset try
@@ -899,12 +892,10 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
         break;
       case 0x02:
         en_command = GeneralCommand_c::requestValue;
-        // @todo: setpoint or measure?
         b_isRequest = true;
         break;
       case 0x03:
         en_command = GeneralCommand_c::setValue;
-        // @todo: setpoint or measure?
         break;
       case 0x04:
         en_command = GeneralCommand_c::measurementTimeValueStart;
@@ -934,13 +925,11 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
 
     // decide setpoint/measurement
 
-    // @todo: match DDIs => b_isSetpoint and en_valueGroup
-    b_isSetpoint = true;
+   b_isSetpoint = true;
     if ( DDI() < 74 ) {
       if ( DDI() % 5 == 2 ) {
         // actual value with DDI 2, 7, 12, 17, ...: measure
         b_isSetpoint = false;
-        // @todo: treat measurement value as exact value!
         en_valueGroup = GeneralCommand_c::exactValue;
       }
 
@@ -958,7 +947,6 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
       if ( ( DDI() - 74 ) % 3 > 0 ) {
         // actual value with DDI 75, 76, 78, 79 ...: measure
         b_isSetpoint = false;
-        // @todo: treat measurement value as exact value!
         en_valueGroup = GeneralCommand_c::exactValue;
       }
 
@@ -975,7 +963,6 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
       if ( DDI() % 5 == 2 ) {
         // actual value with DDI 2, 7, 12, 17, ...: measure
         b_isSetpoint = false;
-        // @todo: treat measurement value as exact value!
         en_valueGroup = GeneralCommand_c::exactValue;
       }
 

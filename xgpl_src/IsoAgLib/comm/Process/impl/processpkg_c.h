@@ -215,11 +215,15 @@ public:
     @return POS value of message
   */
   uint8_t pos()const{return bit_data.c_gtp.getPos();};
+#ifdef USE_DIN_9684  
   /**
     deliver gety and pos as gtp
+    only used for DIN messages, ISO: gtp not in message
     @return GETY_POS value of message
   */
   GetyPos_c gtp()const{return bit_data.c_gtp;};
+#endif
+
   /**
     deliver the 4byte data as int32_t val without any conversion
     for cmd's like measurement program increment, meas prog start/stop,
@@ -394,11 +398,15 @@ public:
     @param rb_val new POS value for message
   */
   void setPos(uint8_t rb_val){bit_data.c_gtp.setPos(rb_val);};
+
+#ifdef USE_DIN_9684
   /**
     set values gety and pos from gtp
+    only used for DIN messages, ISO: gtp not in message
     @param rc_val new GETY_POS value for message
   */
   void setGtp(GetyPos_c rc_val){bit_data.c_gtp = rc_val;};
+#endif
 
   /**
     set the 4byte data as int32_t val without any conversion

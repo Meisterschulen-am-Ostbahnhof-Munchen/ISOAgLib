@@ -94,6 +94,9 @@
 #include <IsoAgLib/util/config.h>
 #ifdef USE_ISO_11783
   #include <IsoAgLib/comm/SystemMgmt/impl/istate_c.h>
+#if 0
+  #include "procinitelemddi_c.h"
+#endif
 #endif
 #include "procident_c.h"
 #include "processpkg_c.h"
@@ -186,6 +189,41 @@ public:
           );
     };
 
+#if 0
+  ProcDataBase_c(
+#ifdef USE_ISO_11783
+                 list<ProcInitElemDDI_c>& rl_elemDDI,
+#endif
+#ifdef USE_DIN_9684
+                 uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
+                 uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
+#endif
+                 GetyPos_c rc_gtp = GetyPos_c(0, 0xF),
+                 uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF), GetyPos_c *rpc_gtp = NULL,
+                 ::IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+                 int ri_singletonVecKey = 0)
+
+    : ProcIdent_c(
+#ifdef USE_ISO_11783
+                  list<ProcInitElemDDI_c>& rl_elemDDI,
+#endif
+#ifdef USE_DIN_9684
+                  rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                  rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, ri_singletonVecKey)
+
+    { init(
+#ifdef USE_ISO_11783
+           list<ProcInitElemDDI_c>& rl_elemDDI,
+#endif
+#ifdef USE_DIN_9684
+           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+           rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp,
+           rpc_processDataChangeHandler, ri_singletonVecKey
+          );
+    };
+#endif
 
   /**
     initialise this ProcDataBase_c instance to a well defined initial state
@@ -221,6 +259,20 @@ public:
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 
+#if 0
+  void init(
+#ifdef USE_ISO_11783
+            list<ProcInitElemDDI_c>& rl_elemDDI,
+#endif
+#ifdef USE_DIN_9684
+            uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
+            uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
+#endif
+            GetyPos_c rc_gtp = GetyPos_c(0, 0xF),
+            uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF), GetyPos_c *rpc_gtp = NULL,
+            IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+            int ri_singletonVecKey = 0);
+#endif
 
   /**
     assignment operator for this base object
@@ -245,21 +297,6 @@ public:
     * @return pointer to handler class of application (or NULL if not defined by application)
     */
   IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return pc_processDataChangeHandler; } ;
-
-  /**
-    deliver the internal unit code, which can be requested by remote ECU
-    (important if process data is local managed with different unit than published via ISO11783 or DIN9684
-    BUS; interesting if value update is easier with special unit)
-    @return internal unit
-  */
-  uint16_t internalUnit()const{return ui16_internalUnit;};
-  /**
-    set the internal unit code, which can be requested by remote ECU
-    (important if process data is local managed with different unit than published via ISO11783 or DIN9684
-    BUS; interesting if value update is easier with special unit)
-    @param rui16_internalUnit new vaue for internal unit
-  */
-  void setInternalUnit(uint16_t rui16_internalUnit){ui16_internalUnit = rui16_internalUnit;};
 
   /**
     deliver the central data type of this process data
@@ -334,24 +371,6 @@ public:
 
 protected: // Protected methods
   /**
-    send the given int32_t command value with variable GETY_POS rc_varGtp;
-    set the cmd value without conversion in message string and set data
-    format flags corresponding to central data type of this process data
-    (local: receiver; remote: sender)
-    (other paramter fixed by ident of process data)
-  
-    set general command before sendDataRawCmdGtp !
-
-    possible errors:
-        * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-        * dependant error in CANIO_c on CAN send problems
-    @param rui8_pri PRI code for the msg
-    @param rc_varGtp variable GETY_POS
-    @param ri32_cmdVal int32_t command value to send
-    @return true -> sendIntern set successful EMPF and SEND
-  */
-  bool sendDataRawCmdGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t ri32_val) const;
-  /**
     send the given int32_t value with variable GETY_POS rc_varGtp;
     set the int32_t value with conversion (according to central data type) in message
     string and set data format flags corresponding to central data type of this process data
@@ -359,7 +378,7 @@ protected: // Protected methods
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
   
-    set general command before sendDataRawCmdGtp !
+    set general command before sendValGtp !
 
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
@@ -367,7 +386,7 @@ protected: // Protected methods
     @param rui8_pri PRI code for the msg
     @param rc_varGtp variable GETY_POS
     @param ri32_val int32_t value to send
-    @param en_valueGroup: min/max/exact
+    @param en_valueGroup: min/max/exact/default
     @param en_command
     @return true -> sendIntern set successful EMPF and SEND
   */
@@ -381,7 +400,7 @@ protected: // Protected methods
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
 
-    set general command before sendDataRawCmdGtp !
+    set general command before sendValGtp !
 
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
@@ -452,8 +471,6 @@ private: // Private attributes
   friend class IsoAgLib::EventSource_c;
   /** central data type to use for messages: i32_val, ui32_val, float_val */
   proc_valType_t en_procValType;
-  /** code of the internal used unit for the process data value */
-  uint16_t ui16_internalUnit;
   /** pointer to applications handler class, with handler functions
       which shall be called on correltating change events.
       (e.g. new received setpoint for local process data

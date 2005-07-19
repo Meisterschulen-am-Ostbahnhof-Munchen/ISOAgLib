@@ -348,10 +348,10 @@ public:
 
   /**
      send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-     @param GeneralCommand_c::ValueGroup_t min/max/excat code of the value type to send
+     @param GeneralCommand_c::ValueGroup_t min/max/exact/default code of the value type to send
      @param rc_targetGtp GetyPos of target
      @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-     @param en_valueGroup: min/max/exact
+     @param en_valueGroup: min/max/exact/default
      @param en_command
      @return true -> successful sent
   */

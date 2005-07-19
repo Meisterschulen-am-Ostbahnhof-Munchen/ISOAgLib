@@ -373,19 +373,17 @@ void ManageMeasureProgLocal_c::processProg(){
   GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
    
   // call updateProgCache with createIfNeeded if this is a writing action, otherwise don't create if none found
-  // @todo: verify/simplify if condition
-  // if ( ((c_pkg.pd() & 0x1) == 0)
-  //  || ((c_pkg.pd() == 1) && (c_pkg.mod() == 0))
-  if ( (en_command & 0x10) || /* measurement command indices are >= 0x10 ! */
-      ( ! c_pkg.c_generalCommand.checkIsSetpoint() && en_command == GeneralCommand_c::setValue)
+  // if ( ((c_pkg.pd() & 0x1) == 0)  => pd == 0, 2
+  //  || ((c_pkg.pd() == 1) && (c_pkg.mod() == 0)) 
+  if ( (en_command & 0x10) || /* measurement command indices are >= 0x10 < 0x20! */
+       ( en_command == GeneralCommand_c::setValue)
      )
   { // it's a measuring program message -> create new item if none found
     updateProgCache(c_pkg.pri(),c_callerGtp, true);
   }
   else 
-    // @todo: verify/simplify if condition
-    // if ( (c_pkg.pd() != 3) || (c_pkg.mod() != 0) )
-    if ( ! ( c_pkg.c_generalCommand.checkIsRequest() && ! c_pkg.c_generalCommand.checkIsSetpoint() ) || 
+    // if ( (c_pkg.pd() != 3) || (c_pkg.mod() != 0) )  => pd == 1 || (pd == 3 && mod != 0)
+    if ( !c_pkg.c_generalCommand.checkIsRequest() || 
          c_pkg.c_generalCommand.getValueGroup() != GeneralCommand_c::exactValue )
     { // use normal mechanism -> exist function if no entry found
       if (!updateProgCache(c_pkg.pri(),c_callerGtp, false))return;

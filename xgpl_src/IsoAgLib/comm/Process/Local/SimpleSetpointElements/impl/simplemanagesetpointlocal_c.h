@@ -168,7 +168,7 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @param rui8_mod select sub-type of setpoint
     @param rc_targetGtp GetyPos of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-    @param en_valueGroup: min/max/exact
+    @param en_valueGroup: min/max/exact/default
     @param en_command
     @return true -> successful sent
   */

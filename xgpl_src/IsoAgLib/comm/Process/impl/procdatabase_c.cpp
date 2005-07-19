@@ -167,7 +167,6 @@ namespace __IsoAgLib {
                     rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp);
 
   setSingletonKey(ri_singletonVecKey);
-  ui16_internalUnit = 0;
   en_procValType = i32_val;
   pc_processDataChangeHandler = rpc_processDataChangeHandler;
 }
@@ -197,7 +196,6 @@ ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& rrefc_src)
 /** base function for assignment of element vars for copy constructor and operator= */
 void ProcDataBase_c::assignFromSource( const ProcDataBase_c& rrefc_src )
 { // copy element vars
-  ui16_internalUnit = rrefc_src.ui16_internalUnit;
   en_procValType = rrefc_src.en_procValType;
   pc_processDataChangeHandler = rrefc_src.pc_processDataChangeHandler;
 }
@@ -249,51 +247,13 @@ bool ProcDataBase_c::timeEvent( void ){
   return true;
 }
 
-/**
-  send the given int32_t command value with variable GETY_POS rc_varGtp;
-  set the cmd value without conversion in message string and set data
-  format flags corresponding to central data type of this process data
-  (local: receiver; remote: sender)
-  (other paramter fixed by ident of process data)
-  
-  set general command before sendDataRawCmdGtp !
-
-  possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CANIO_c on CAN send problems
-  @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
-  @param ri32_cmdVal int32_t command value to send
-  @return true -> sendIntern set successful EMPF and SEND
-*/
-bool ProcDataBase_c::sendDataRawCmdGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t ri32_val) const{
-  bool b_result;
-  // let resolvGtpSetBasicSendFlags resolv suitable EMPF, SEND codes
-  // and set basic flags on success (everything but the value)
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp))
-  { // now call sendIntern, if var2empfSend was successful
-    // now set the 4byte value
-    getProcessPkg().setDataRawCmd(ri32_val, en_procValType);
-
-    // send the msg
-    getCanInstance4Comm() << getProcessPkg();
-    b_result = true;
-  }
-  else
-  { // EMPF and/or SEND not registered with claimed address in Monitor-List
-    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
-    b_result = false;
-  }
-  return b_result;
-}
-
 
 /**
   send the given int32_t value with variable GETY_POS rc_varGtp
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
 
-  set general command before sendDataRawCmdGtp !
+  set general command before sendValGtp !
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
@@ -303,7 +263,6 @@ bool ProcDataBase_c::sendDataRawCmdGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, in
   @param ri32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-// @todo: unify sendValGtp and sendDataRawCmdGtp?
 bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t ri32_val) const
 {
   bool b_result;
@@ -330,7 +289,7 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t r
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
   
-  set general command before sendDataRawCmdGtp !
+  set general command before sendValGtp !
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
@@ -474,10 +433,8 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_v
     c_data.setZaehlnum(zaehlnum());
     c_data.setWert(wert());
     c_data.setInst(inst());
-#endif
-
-    // @todo: setGtp for ISO obsolete?
     c_data.setGtp(gtp());
+#endif
 
   }
   return b_result;
@@ -507,29 +464,24 @@ void ProcDataBase_c::processSetpoint()
 */
 IState_c::itemState_t ProcDataBase_c::getIStateForGtp( GetyPos_c rc_gtp )
 {
-  // @todo: is DIN/ISO selection correct?
   IState_c::itemState_t en_msgProto = IState_c::IstateNull;
   
-#ifdef USE_DIN_9684
-  // retreive pointer to te according DINMonitor_c class
-  static DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
-
-  // check is the var parameter has claimed address
-  if ( (c_din_monitor.existDinMemberGtp(rc_gtp) )
-    && (c_din_monitor.dinMemberGtp(rc_gtp).itemState(IState_c::ClaimedAddress)) )
-  { // the member to ownerGtp has claimed address
+#if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
+  if ( getSystemMgmtInstance4Comm().existMemberGtp(rc_gtp, true) )
     en_msgProto = IState_c::Din;
-  }
+#endif
+
+#if !defined(USE_DIN_9684) && defined(USE_ISO_11783)
+  if ( getSystemMgmtInstance4Comm().existMemberGtp(rc_gtp, true) )
+    en_msgProto = IState_c::Iso;
 #endif
   
-  // retreive pointer to te accorisog ISOMonitor_c class
-  static ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-
-  if ( (c_isoMonitor.existIsoMemberGtp(rc_gtp))
-     && (c_isoMonitor.isoMemberGtp(rc_gtp).itemState(IState_c::ClaimedAddress)) )
-  { // the member to ownerGtp has claimed address
+#if defined(USE_DIN_9684) && defined(USE_ISO_11783)
+  if ( getSystemMgmtInstance4Comm().existMemberGtp(rc_gtp, true, IState_c::IsoOnly) )
     en_msgProto = IState_c::Iso;
-  }
+  if ( getSystemMgmtInstance4Comm().existMemberGtp(rc_gtp, true, IState_c::DinOnly) )
+    en_msgProto = IState_c::Din;
+#endif
 
   return en_msgProto;
 }

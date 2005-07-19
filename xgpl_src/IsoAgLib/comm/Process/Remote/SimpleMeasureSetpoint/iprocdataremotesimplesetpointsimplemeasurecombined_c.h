@@ -324,23 +324,6 @@ public:
 
 
   /**
-    deliver the internal unit code, which can be requested by remote ECU
-    (important if process data is local managed with different unit than published via ISO11783 or DIN9684
-    BUS; interesting if value update is easier with special unit)
-    @return internal unit
-  */
-  uint16_t internalUnit()const
-    {return ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::internalUnit();};
-  /**
-    set the internal unit code, which can be requested by remote ECU
-    (important if process data is local managed with different unit than published via ISO11783 or DIN9684
-    BUS; interesting if value update is easier with special unit)
-    @param rui16_internalUnit new vaue for internal unit
-  */
-  void setInternalUnit(uint16_t rui16_internalUnit)
-      {ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setInternalUnit(rui16_internalUnit);};
-
-  /**
     deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */

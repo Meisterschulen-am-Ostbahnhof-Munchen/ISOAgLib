@@ -274,7 +274,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
        getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
                                                                    GeneralCommand_c::exactValue,
                                                                    en_command);
-       if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), i32_tmpValue))
+       if (!processData().sendValGtp(ren_progType, gtp(), i32_tmpValue))
           b_sendResult = false;
     }
 
@@ -318,7 +318,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::measurementStart);
     // DIN: pd=0, mod=6
-    if (!processData().sendDataRawCmdGtp(ui8_pri, gtp(), b_command))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
+    if (!processData().sendValGtp(ui8_pri, gtp(), b_command))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
       b_sendResult = false;
   }
 #endif 
@@ -391,7 +391,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
         getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
                                                                     GeneralCommand_c::exactValue,
                                                                     en_command);       
-        b_result = processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0);
+        b_result = processData().sendValGtp(ui8_pri, gtp(), 0);
       }
     }
 
@@ -412,7 +412,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
                                                                   GeneralCommand_c::exactValue,
                                                                   GeneralCommand_c::measurementStop);
       // DIN: pd=0, mod=6
-      b_result = processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0);
+      b_result = processData().sendValGtp(ui8_pri, gtp(), 0);
     }
   }
   
@@ -440,7 +440,7 @@ int32_t MeasureProgRemote_c::med(bool rb_sendRequest) const
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=4
-    processDataConst().sendDataRawCmdGtp(2, gtp(), 0);
+    processDataConst().sendValGtp(2, gtp(), 0);
   }
   return i32_med;
 }
@@ -459,7 +459,7 @@ float MeasureProgRemote_c::medFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=4
-    processDataConst().sendDataRawCmdGtp(2, gtp(), 0);
+    processDataConst().sendValGtp(2, gtp(), 0);
   }
   return f_med;
 }
@@ -478,17 +478,14 @@ bool MeasureProgRemote_c::processMsg(){
     // only update vars if received msg contains data (PD==1)
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
-    // ISO: cmd() == 3
+    // ISO: cmd() == 3; DIN: PD== 1
     if ((c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue) &&
     
     #ifdef USE_DIN_9684
-      // @todo: check condition for DIN:
       // only use data if:
-      // A: PD== 1
       // B: EMPF is number of local member or receiveForeignMeasurement
       //      was set
       //     or msg is base process msg
-        ( !(c_pkg.c_generalCommand.checkIsSetpoint()) ) &&
         ( 
           (c_pkg.pri() == 1) ||
     #else
@@ -670,7 +667,7 @@ bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
     i32_valToSend = ri32_val; // ISO
     
   // DIN: pd=0, mod=6
-  return processData().sendDataRawCmdGtp(ui8_pri, gtp(), i32_valToSend);
+  return processData().sendValGtp(ui8_pri, gtp(), i32_valToSend);
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -731,7 +728,7 @@ bool MeasureProgRemote_c::resetMed(){
                                                               GeneralCommand_c::medValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0x28);
+  return processData().sendValGtp(ui8_pri, gtp(), 0x28);
 }
 
 /**
@@ -753,7 +750,7 @@ bool MeasureProgRemote_c::resetInteg(){
                                                               GeneralCommand_c::integValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0x48);
+  return processData().sendValGtp(ui8_pri, gtp(), 0x48);
 }
 
 /**
@@ -775,7 +772,7 @@ bool MeasureProgRemote_c::resetMin(){
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0x8);
+  return processData().sendValGtp(ui8_pri, gtp(), 0x8);
 }
 
 /**
@@ -797,7 +794,7 @@ bool MeasureProgRemote_c::resetMax(){
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendDataRawCmdGtp(ui8_pri, gtp(), 0x8);
+  return processData().sendValGtp(ui8_pri, gtp(), 0x8);
 }
 
 /**

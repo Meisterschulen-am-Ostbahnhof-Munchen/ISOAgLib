@@ -488,18 +488,10 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
 #endif
 
   // decide which gety to use for matching  
-  uint8_t ui8_getyFromMessage;
-  uint8_t ui8_getySender;
-  if (data().identType() == Ident_c::StandardIdent)
-    // DIN message: use gety from paket for checks
-    ui8_getyFromMessage = data().gety();
-  else 
-  {
-    // ISO message: use gety from corresponding monitor item for checks
-    ui8_getyFromMessage = data().memberEmpf().gtp().getGety();
-    // ISO message: check for sender gety (only in remote)
-    ui8_getySender = data().memberSend().gtp().getGety();
-  }
+  // ISO and DIN message: use gety from corresponding monitor item for checks
+  const uint8_t ui8_getyFromMessage = data().memberEmpf().gtp().getGety();
+  // ISO only message: check for sender gety (only in remote)
+  const uint8_t ui8_getySender = data().memberSend().gtp().getGety();
       
   // now b_posData is the best guess for searching the appropriate prcess data item
   // check first for local Process Data
@@ -758,51 +750,128 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
 /**
   delivers count of local process data entries with similar ident
   (which differs only in POS of owner)
+  ISO parameter
+  @param rui16_DDI
+  @param rui16_element
+
+  DIN parameter
   @param rui8_lis LIS code of searched local Process Data instance
-  @param rui8_gety GETY code of searched local Process Data instance
   @param rui8_wert WERT code of searched local Process Data instance
   @param rui8_inst INST code of searched local Process Data instance
   @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
+ 
+  common parameter
+  @param rui8_gety GETY code of searched local Process Data instance
   @return count of similar local process data entries
 */
-uint8_t Process_c::procDataLocalCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
-                                      uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri){
-  uint8_t ui8_cnt=0;
-  // @todo: use matchISO and matchDIN
-#ifndef USE_ISO_11783
-  for ( pc_searchCacheC1 = c_arrClientC1.begin();
-       ( pc_searchCacheC1 != c_arrClientC1.end() );
-       pc_searchCacheC1++ )
-  { // search for all local items which match the searched identity
-    if ((*pc_searchCacheC1)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
-  }
+uint8_t Process_c::procDataLocalCnt(
+#ifdef USE_ISO_11783
+                                    uint16_t rui16_DDI,
+                                    uint16_t rui16_element,
 #endif
+#ifdef USE_DIN_9684
+                                    uint8_t rui8_lis,
+                                    uint8_t rui8_wert,
+                                    uint8_t rui8_inst,
+                                    uint8_t rui8_zaehlnum,
+#endif
+                                    uint8_t rui8_gety)
+{
+  uint8_t ui8_cnt=0;
+  
+  for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
+       ( pc_iter != c_arrClientC1.end() );
+       pc_iter++ )
+  { // search for all local items which match the searched identity
+  
+#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
+    if (data().identType() == Ident_c::StandardIdent) {
+      // DIN
+      if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+        ui8_cnt++;
+    } else {
+      // ISO
+      // don't check sender gety => 0xFF
+      if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, 0xFF))
+        ui8_cnt++;
+    }
+#else
+  #ifdef USE_ISO_11783
+    // don't check sender gety => 0xFF
+    if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, 0xFF))
+      ui8_cnt++;
+  #endif
+  #ifdef USE_DIN_9684
+    if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+      ui8_cnt++;
+  #endif
+#endif
+  }
   return ui8_cnt;
 }
 
 /**
   delivers count of remote process data entries with similar ident
   (which differs only in POS of owner)
-  @param rui8_lis LIS code of searched remote Process Data instance
-  @param rui8_gety GETY code of searched remote Process Data instance
-  @param rui8_wert WERT code of searched remote Process Data instance
-  @param rui8_inst INST code of searched remote Process Data instance
-  @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  ISO parameter
+  @param rui16_DDI
+  @param rui16_element
+  @param rui8_getySender gety of the sender (used for check against ownerGtp().getGety())
+
+  DIN parameter
+  @param rui8_lis LIS code of searched local Process Data instance
+  @param rui8_wert WERT code of searched local Process Data instance
+  @param rui8_inst INST code of searched local Process Data instance
+  @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+  common parameter
+  @param rui8_gety GETY code of searched local Process Data instance
   @return count of similar remote process data entries
 */
-uint8_t Process_c::procDataRemoteCnt(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
-                                       uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri){
-  uint8_t ui8_cnt=0;
-#ifndef USE_ISO_11783
-  for ( pc_searchCacheC2 = c_arrClientC2.begin();
-       ( pc_searchCacheC2 != c_arrClientC2.end() );
-       pc_searchCacheC2++ )
-  { // search for all local items which match the searched identity
-    if ((*pc_searchCacheC2)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF, rui8_pri)) ui8_cnt++;
-  }
+uint8_t Process_c::procDataRemoteCnt(
+#ifdef USE_ISO_11783
+                                     uint16_t rui16_DDI,
+                                     uint16_t rui16_element,
+                                     uint8_t rui8_getySender,
 #endif
+#ifdef USE_DIN_9684
+                                     uint8_t rui8_lis,
+                                     uint8_t rui8_wert,
+                                     uint8_t rui8_inst,
+                                     uint8_t rui8_zaehlnum,
+#endif
+                                     uint8_t rui8_gety)
+{
+
+  
+  uint8_t ui8_cnt=0;
+  
+  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
+       ( pc_iter != c_arrClientC2.end() );
+       pc_iter++ )
+  { // search for all local items which match the searched identity
+#if defined(USE_ISO_11783) && defined(USE_DIN_9684)
+    if (data().identType() == Ident_c::StandardIdent) {
+      // DIN
+      if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+        ui8_cnt++;
+    } else {
+      // ISO
+      if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
+        ui8_cnt++;
+    }
+#else
+  #ifdef USE_ISO_11783
+    if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
+      ui8_cnt++;
+  #endif
+  #ifdef USE_DIN_9684
+    if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+      ui8_cnt++;
+  #endif
+#endif
+
+  }
   return ui8_cnt;
 }
 

@@ -626,10 +626,10 @@ bool SetpointLocal_c::timeEvent( void ){
 }
 /**
   send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-  @param GeneralCommand_c::ValueGroup_t min/max/excat code of the value type to send
+  @param GeneralCommand_c::ValueGroup_t min/max/exact/default code of the value type to send
   @param rc_targetGtp GetyPos of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-  @param en_valueGroup: min/max/exact
+  @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> successful sent
 */
@@ -741,7 +741,7 @@ void SetpointLocal_c::processSet(){
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::setValue);
     // notify the caller
-    processData().sendDataRawCmdGtp( c_pkg.pri(),
+    processData().sendValGtp( c_pkg.pri(),
                 c_pkg.memberSend().gtp() ,
                 SETPOINT_RELEASE_COMMAND);
   }

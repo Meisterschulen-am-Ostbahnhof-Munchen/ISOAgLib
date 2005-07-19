@@ -141,7 +141,6 @@ void ProcDataRemoteBase_c::init(
   // default values (PRI and LIS must be in all cases different from 0xFF)
   if ( ( rui8_pri != 0xFF )
 #ifdef USE_DIN_9684
-       // @todo: rui8_lis for both modes?
        &&  ( rui8_lis != 0xFF )
 #endif
       ) 

@@ -62,6 +62,7 @@
 #include "impl/procdatalocalsimplesetpoint_c.h"
 #include "../StdMeasureElements/imeasureproglocal_c.h"
 #include "../../proc_c.h"
+#include "../../generalcommand_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -350,17 +351,8 @@ public:
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpointMod( uint8_t rui8_mod, iGetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, iGetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
    {
-     // @todo: enable value groups in interface?
-     __IsoAgLib::GeneralCommand_c::ValueGroup_t en_valueGroup;
-     switch (rui8_mod) {
-       case 2: en_valueGroup = __IsoAgLib::GeneralCommand_c::minValue; break;
-       case 3: en_valueGroup = __IsoAgLib::GeneralCommand_c::maxValue; break;
-       case 0:
-       default:
-         en_valueGroup = __IsoAgLib::GeneralCommand_c::exactValue; break;
-     }
      return setpointConst().sendSetpointMod(rc_targetGtp, ren_progType, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
    };
 
@@ -434,22 +426,6 @@ public:
     {ProcDataLocalSimpleSetpoint_c::incrMasterVal(rf_val);};
 #endif
 
-
-  /**
-    deliver the internal unit code, which can be requested by remote ECU
-    (important if process data is local managed with different unit than published via ISO11783 or DIN9684
-    BUS; interesting if value update is easier with special unit)
-    @return internal unit
-  */
-  uint16_t internalUnit()const{return ProcDataLocalSimpleSetpoint_c::internalUnit();};
-  /**
-    set the internal unit code, which can be requested by remote ECU
-    (important if process data is local managed with different unit than published via ISO11783 or DIN9684
-    BUS; interesting if value update is easier with special unit)
-    @param rui16_internalUnit new vaue for internal unit
-  */
-  void setInternalUnit(uint16_t rui16_internalUnit)
-      {ProcDataLocalSimpleSetpoint_c::setInternalUnit(rui16_internalUnit);};
 
   /**
     deliver the central data type of this process data

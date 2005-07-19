@@ -227,7 +227,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   @param ri32_increment increment value
   @return always true; only relevant for overoaded methods in derived classes
 */
-bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment){
+ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment){
   if (ren_type == Proc_c::TimeProp) en_accumProp = Proc_c::AccumTime;
   else if (ren_type == Proc_c::DistProp) en_accumProp = Proc_c::AccumDist;
 
@@ -239,9 +239,6 @@ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increme
      if (pc_subprog->type() == ren_type) break;
   }
 
-  // @todo: did find() work correctly ?
-  //Vec_MeasureSubprog::iterator pc_subprog = STL_NAMESPACE::find(vec_measureSubprog.begin(), vec_measureSubprog.begin(), ren_type);
-  
   if (pc_subprog != vec_measureSubprog.end())
   { // subprog with same type found -> update val
     pc_subprog->setIncrement(ri32_increment);
@@ -351,7 +348,7 @@ int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 0
-    processData().sendDataRawCmdGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), 0);
   }
   
   return i32_val;
@@ -370,7 +367,7 @@ int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=3
-    processData().sendDataRawCmdGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), 0);
   }
   return i32_integ;
 };
@@ -389,7 +386,7 @@ int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 1
-    processData().sendDataRawCmdGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), 0);
   }
   return i32_min;
 };
@@ -407,7 +404,7 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 2
-    processData().sendDataRawCmdGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), 0);
   }
   return i32_max;
 };
@@ -492,7 +489,7 @@ float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 0
-    processData().sendDataRawCmdGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), 0);
   }
   return f_val;
 };
@@ -510,7 +507,7 @@ float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=3
-    processData().sendDataRawCmdGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), 0);
   }
   return f_integ;
 };
@@ -529,7 +526,7 @@ float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 1
-    processData().sendDataRawCmdGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), 0);
   }
   return f_min;
 };
@@ -547,7 +544,7 @@ float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 2
-    processData().sendDataRawCmdGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), 0);
   }
   return f_max;
 };
@@ -673,7 +670,7 @@ bool MeasureProgBase_c::processMsg(){
             en_type = Proc_c::DistProp;
             break;
           case GeneralCommand_c::measurementChangeThresholdValueStart:
-            en_type = Proc_c::OnChange; // @todo: correct ?
+            en_type = Proc_c::OnChange;
             break;
           case GeneralCommand_c::measurementMaximumThresholdValueStart:
             en_type = Proc_c::MaximumThreshold;
@@ -765,17 +762,6 @@ int32_t MeasureProgBase_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) 
     case GeneralCommand_c::medValue:
       i32_value = med();
       break;
-    // @todo: when is this used?
-#if 0
-    case 5:
-      i32_value = processData().internalUnit();
-      break;
-    case 6:
-      // conversion removed
-      // i32_value = processData().sendConversion();
-      i32_value = 1;
-      break;
-#endif
     default: 
       // wrong range
       getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
@@ -815,18 +801,6 @@ float MeasureProgBase_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGrou
       case GeneralCommand_c::medValue:
         f_value = medFloat();
         break;
-    // @todo: when is this used?
-#if 0
-      case 5:
-        f_value = processData().internalUnit();
-        break;
-      case 6:
-        // conversion removed
-        // i32_value = processData().sendConversion();
-        // f_value = processData().sendConversion();
-        f_value = 1;
-        break;
-#endif
       default:
         getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
     }
@@ -908,11 +882,11 @@ void MeasureProgBase_c::processIncrementMsg(){
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart) 
     // change threshold proportional
-    addSubprog(Proc_c::MaximumThreshold, i32_val); // @todo: MaxIncr ?
+    addSubprog(Proc_c::MaximumThreshold, i32_val);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart) 
     // change threshold proportional
-    addSubprog(Proc_c::MinimumThreshold, i32_val); // @todo: MinIncr ?
+    addSubprog(Proc_c::MinimumThreshold, i32_val);
 
 }
 
@@ -932,10 +906,10 @@ void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup
         resetVal(ri32_val);
         break;
       case GeneralCommand_c::minValue:
-        resetMin();
+        resetMin(); //ri32_val); // @todo: enlarge for ISO reset
         break;
       case GeneralCommand_c::maxValue:
-        resetMax();
+        resetMax(); // @todo: enlarge for ISO reset
         break;
       case GeneralCommand_c::integValue:
         resetInteg();

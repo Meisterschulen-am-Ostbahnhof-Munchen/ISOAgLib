@@ -198,6 +198,15 @@ public:
   */
   void setMax(int32_t ri32_val);
   /**
+    command a default setpoint; store value as commanded and send command
+
+    possible errors:
+        * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
+        * dependant error in CANIO_c on CAN send problems
+    @return new default setpoint to command
+  */
+  void setDefault(int32_t ri32_val);
+  /**
     request remote master setpoint - exact
   */
   void requestExact() const;
@@ -209,6 +218,10 @@ public:
     request remote master setpoint - MAX
   */
   void requestMax() const;
+  /**
+    request remote master setpoint - DEFAULT
+  */
+  void requestDefault() const;
 
   /**
     check if the last commanded setpoint was accepted

@@ -169,6 +169,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
       case GeneralCommand_c::exactValue: // set actual setpoint
       case GeneralCommand_c::minValue: // min -> simply set exact
       case GeneralCommand_c::maxValue: // max -> simply set exact
+      case GeneralCommand_c::defaultValue: // max -> simply set exact
         #ifdef USE_FLOAT_DATA_TYPE
         if ( ( c_pkg.valType() == float_val)
           && ( setpointMasterValFloat() != c_pkg.dataFloat() ) ) {
@@ -207,7 +208,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   @param rui8_mod select sub-type of setpoint
   @param rc_targetGtp GetyPos of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
-  @param en_valueGroup: min/max/exact
+  @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> successful sent
 */

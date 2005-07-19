@@ -94,16 +94,18 @@ namespace __IsoAgLib {
   @param ri32_exact exact setpoint value
   @param ri32_min minimum setpoint value
   @param ri32_max maximum setpoint value
+  @param ri32_default default setpoint value
   @param rb_handled true -> this setpoint register nistance was handled by main application
   @param rb_master true -> this setpoint register instance represents the actual master setpoint
   @param rb_valid true -> this setpoint register instance is accepted as valid
 */
-void SetpointRegister_c::init(GetyPos_c rc_gtp, int32_t ri32_exact, int32_t ri32_min, int32_t ri32_max,
+void SetpointRegister_c::init(GetyPos_c rc_gtp, int32_t ri32_exact, int32_t ri32_min, int32_t ri32_max, int32_t ri32_default,
         bool rb_handled, bool rb_master, bool rb_valid)
 { // direct value set to avoid special functions of equivalent set functions
   setExact(ri32_exact);
   setMin(ri32_min);
   setMax(ri32_max);
+  setDefault(ri32_default);
 
   setGtp(rc_gtp);
   setHandled(rb_handled, 0);
@@ -133,6 +135,7 @@ void SetpointRegister_c::assignFromSource( const SetpointRegister_c& rrefc_src )
 { // direct value set to avoid special functions of equivalent set functions
   i32_exactOrMin = rrefc_src.i32_exactOrMin;
   i32_max = rrefc_src.i32_max;
+  i32_default = rrefc_src.i32_default;
   data.en_definedSetpoints = rrefc_src.data.en_definedSetpoints;
 
 
@@ -154,6 +157,7 @@ SetpointRegister_c::~SetpointRegister_c(){
 bool SetpointRegister_c::operator==(const SetpointRegister_c& rrefc_src)const{
   return ((i32_exactOrMin == rrefc_src.i32_exactOrMin)
         && (i32_max == rrefc_src.i32_max)
+        && (i32_default == rrefc_src.i32_default)
         && (data.en_definedSetpoints == rrefc_src.data.en_definedSetpoints)
         && (gtp() == rrefc_src.gtp()))
         ? true:false;
@@ -165,7 +169,7 @@ bool SetpointRegister_c::operator==(const SetpointRegister_c& rrefc_src)const{
 
 /**
   deliver the setpoint according to the mod type
-  @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3)
+  @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
   @return setpoint selected by MOD
 */
 int32_t SetpointRegister_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
@@ -175,6 +179,8 @@ int32_t SetpointRegister_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)
       return exact();
     case GeneralCommand_c::minValue:
       return min();
+    case GeneralCommand_c::defaultValue:
+      return getDefault();
     case GeneralCommand_c::maxValue:
     default:
       return max();
@@ -184,7 +190,7 @@ int32_t SetpointRegister_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)
 #ifdef USE_FLOAT_DATA_TYPE
 /**
   deliver the setpoint according to the mod type
-  @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3)
+  @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
   @return setpoint selected by MOD
 */
 float SetpointRegister_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const{
@@ -194,13 +200,24 @@ float SetpointRegister_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGro
 #endif
 /**
   checks if setpoint with type rb_mod exists
-  @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3)
+  @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
   @return true -> a MOD type setpoint exist
 */
-// @todo: use GeneralCommand_c::ValueGroup_t as parameter ?
-bool SetpointRegister_c::existValMod(uint8_t rb_mod)const{
-  uint8_t b_testMask = (1 << rb_mod);
-  return ((data.en_definedSetpoints & b_testMask) != 0)?true:false;
+// @todo: rename
+bool SetpointRegister_c::existValMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
+  switch (en_valueGroup)
+  {
+    case GeneralCommand_c::exactValue:
+      return ((data.en_definedSetpoints & exactType) != 0)?true:false;
+    case GeneralCommand_c::minValue:
+      return ((data.en_definedSetpoints & minType) != 0)?true:false;
+    case GeneralCommand_c::defaultValue:
+      return ((data.en_definedSetpoints & defaultType) != 0)?true:false;
+    case GeneralCommand_c::maxValue:
+      return ((data.en_definedSetpoints & maxType) != 0)?true:false;
+    default:
+      return false;
+  }
 }
 
 /* ************************************ */
@@ -218,14 +235,12 @@ void SetpointRegister_c::setExact(int32_t ri32_val)
     i32_exactOrMin = ri32_val;
     // clear min/max
     // set exactType
-    // @todo: static_cast necessary?
-    data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(exactType);
+    data.en_definedSetpoints = exactType;
   }
   else
-  { // only let bits of minType, maxType
+  { // only let bits of minType, maxType, defaultType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & minMaxType);
+      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & minMaxDefaultType);
   }
   // set the entry to unhandled
   setHandled(false);
@@ -247,9 +262,9 @@ void SetpointRegister_c::setMin(int32_t ri32_val)
       = static_cast<definedSetpoints_t>(minType | (data.en_definedSetpoints & maxType));
   }
   else
-  { // clear minType -> mask with exactMaxType
+  { // clear minType -> mask with exactMaxDefaultType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMaxType);
+      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMaxDefaultType);
   }
 
   // set the entry to unhandled
@@ -272,9 +287,30 @@ void SetpointRegister_c::setMax(int32_t ri32_val)
       = static_cast<definedSetpoints_t>(maxType | (data.en_definedSetpoints & minType));
   }
   else
-  { // clear maxType -> mask with exactMinType
+  { // clear maxType -> mask with exactMinDefaultType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMinType);
+      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMinDefaultType);
+  }
+  // set the entry to unhandled
+  setHandled(false);
+};
+
+/**
+  set the default setpoint value
+  @param ri32_val new default setpoint value
+*/
+void SetpointRegister_c::setDefault(int32_t ri32_val)
+{
+  if (ri32_val != NO_VAL_32S)
+  {
+    i32_default = ri32_val;
+    // set defaultType
+    data.en_definedSetpoints = defaultType;
+  }
+  else
+  { // clear defaultType -> mask with exactMinMaxType
+    data.en_definedSetpoints
+      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMinMaxType);
   }
   // set the entry to unhandled
   setHandled(false);
@@ -283,7 +319,7 @@ void SetpointRegister_c::setMax(int32_t ri32_val)
 /**
   set a limit val for type given by rb_mod
   @param ri32_val new setpoint value
-  @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3)
+  @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
 */
 void SetpointRegister_c::setValMod(int32_t ri32_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
   switch (en_valueGroup)
@@ -296,6 +332,9 @@ void SetpointRegister_c::setValMod(int32_t ri32_val, GeneralCommand_c::ValueGrou
       break;
     case GeneralCommand_c::maxValue:
       setMax(ri32_val);
+      break;
+    case GeneralCommand_c::defaultValue:
+      setDefault(ri32_val);
       break;
   }
 }
@@ -330,6 +369,16 @@ void SetpointRegister_c::setMax(float rf_val)
   setMax(i32_temp);
 }
 /**
+  set the default setpoint value
+  @param rf_val new default setpoint value
+*/
+void SetpointRegister_c::setDefault(float rf_val)
+{
+  int32_t i32_temp = (*(int32_t*)(&rf_val));
+  setDefault(i32_temp);
+}
+
+/**
   set a limit val for type given by rb_mod
   @param rf_val new setpoint value
   @param en_valueGroup MOD code of setpoint type to set (exact 0, min 2, max 3)
@@ -346,6 +395,9 @@ void SetpointRegister_c::setValMod(float rf_val, GeneralCommand_c::ValueGroup_t 
       break;
     case GeneralCommand_c::maxValue:
       setMax(rf_val);
+      break;
+    case GeneralCommand_c::defaultValue:
+      setDefault(rf_val);
       break;
   }
 }

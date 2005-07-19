@@ -203,6 +203,11 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& rrefc_src,
      en_valueGroup = GeneralCommand_c::maxValue;  
      i32_value = (b_override) ? ri32_overrideVal : rrefc_src.max();
   }
+  else if (rrefc_src.existDefault())
+  { // default setpoint exist
+     en_valueGroup = GeneralCommand_c::defaultValue;  
+     i32_value = (b_override) ? ri32_overrideVal : rrefc_src.getDefault();
+  }
   
   if (en_valueGroup != GeneralCommand_c::noValue) 
   {
@@ -210,15 +215,9 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& rrefc_src,
      getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */, 
                                                                  en_valueGroup, GeneralCommand_c::setValue);
 
-     if (b_isCmd){
-       pprocessData()->sendDataRawCmdGtp( 2, // target msg
-                                          rrefc_src.gtp(),
-                                          i32_value);
-     } else {
-       pprocessData()->sendValGtp( 2, // target msg
-                                   rrefc_src.gtp(),
-                                   i32_value);
-     }
+     pprocessData()->sendValGtp( 2, // target msg
+                                 rrefc_src.gtp(),
+                                 i32_value);
   }
 }
 

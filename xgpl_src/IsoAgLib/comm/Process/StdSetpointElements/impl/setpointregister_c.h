@@ -99,7 +99,9 @@ namespace __IsoAgLib {
 
 /** enum for specification of defined setpoint type */
 enum definedSetpoints_t { exactType = 1, minType = 4, maxType = 8, 
-                          minMaxType = 0xC, exactMinType = 5, exactMaxType = 9 };
+                          minMaxType = 0xC, exactMinType = 5, exactMaxType = 9,
+                          defaultType = 0x10, minMaxDefaultType = 0x1C, exactMaxDefaultType = 0x19,
+                          exactMinDefaultType = 0x15, exactMinMaxType = 0xD};
 
 /**
   stores one setpoint with management informations
@@ -114,26 +116,28 @@ public:
     @param ri32_exact exact setpoint value
     @param ri32_min minimum setpoint value
     @param ri32_max maximum setpoint value
+    @param ri32_default default setpoint value
     @param rb_handled true -> this setpoint register nistance was handled by main application
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
   SetpointRegister_c(GetyPos_c rc_gtp = 0xFF, int32_t ri32_exact = NO_VAL_32S,
-      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S,
+      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true)
-      {  init(rc_gtp, ri32_exact, ri32_min, ri32_max, rb_handled, rb_master, rb_valid);};
+      {  init(rc_gtp, ri32_exact, ri32_min, ri32_max, ri32_default, rb_handled, rb_master, rb_valid);};
   /**
     initialise this SetpointRegister_c to a well defined starting condition
     @param rc_gtp GET_POS of commander of this setpoint register set
     @param ri32_exact exact setpoint value
     @param ri32_min minimum setpoint value
     @param ri32_max maximum setpoint value
+    @param ri32_default default setpoint value
     @param rb_handled true -> this setpoint register nistance was handled by main application
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
   void init(GetyPos_c rc_gtp = 0xFF, int32_t ri32_exact = NO_VAL_32S,
-      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S,
+      int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true);
 
   /**
@@ -190,8 +194,14 @@ public:
   */
   int32_t max()const{return (existMax())?(i32_max):(i32_exactOrMin);};
   /**
+    deliver the default limit ; if no default is given (~0) return i32_exactOrMin
+    name: getDefault() because default() doesn't compile8
+    @return default setpoint value
+  */
+  int32_t getDefault()const{return (existDefault())?(i32_default):(i32_exactOrMin);};
+  /**
     deliver the setpoint according to the mod type
-    @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3)
+    @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
     @return setpoint selected by MOD
   */
   int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
@@ -207,8 +217,13 @@ public:
   */
   float maxFloat()const{return (existMax())?(f_max):(f_exactOrMin);};
   /**
+    deliver the default value; if no default is given (~0) return f_exactOrMin
+    @return default setpoint value
+  */
+  float defaultFloat()const{return (existDefault())?(f_default):(f_exactOrMin);};
+  /**
     deliver the setpoint according to the mod type
-    @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3)
+    @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
     @return setpoint selected by MOD
   */
   float valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
@@ -249,12 +264,16 @@ public:
   */
   bool existMax()const{return ((data.en_definedSetpoints & maxType) != 0)?true:false;};
   /**
+    check if valid default value is set
+    @return true -> this setpoint register instance has a default setpoint value
+  */
+  bool existDefault()const{return ((data.en_definedSetpoints & defaultType) != 0)?true:false;};
+  /**
     checks if setpoint with type rb_mod exists
-    @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3)
+    @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
     @return true -> a MOD type setpoint exist
   */
-  // @todo: use GeneralCommand_c::ValueGroup_t ?
-  bool existValMod(uint8_t rb_mod)const;
+  bool existValMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
 
 
   /* ************************************ */
@@ -281,6 +300,11 @@ public:
     @param ri32_val new maximum setpoint value
   */
   void setMax(int32_t ri32_val);
+  /**
+    set the default setpoint value
+    @param ri32_val new default setpoint value
+  */
+  void setDefault(int32_t ri32_val);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the exact setpoint value
@@ -298,9 +322,14 @@ public:
   */
   void setMax(float rf_val);
   /**
+    set the default setpoint value
+    @param rf_val new default setpoint value
+  */
+  void setDefault(float rf_val);
+  /**
     set a limit val for type given by rb_mod
     @param rf_val new setpoint value
-    @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3)
+    @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
   */
   void setValMod(float rf_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
 #endif
@@ -326,7 +355,7 @@ public:
   /**
     set a limit val for type given by rb_mod
     @param ri32_val new setpoint value
-    @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3)
+    @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
   */
   void setValMod(int32_t ri32_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
 
@@ -345,11 +374,18 @@ private: // Private attributes
     int32_t i32_max;
     float f_max;
   };
+  union {
+    /** default setpoint */
+    int32_t i32_default;
+    float f_default;
+  };
 #else
   /** minimum limit setpoint */
   int32_t i32_exactOrMin;
   /** maximum limit setpoint */
   int32_t i32_max;
+  /** default setpoint */
+  int32_t i32_default;
 #endif
   /** tiemstamp of last setXx operation */
   int32_t i32_lastHandledTime;
@@ -363,7 +399,7 @@ private: // Private attributes
     /** handled false state == this setpoint wasn't checked by the main application */
     bool b_handled : 1;
     /** defined setpoint types */
-    definedSetpoints_t en_definedSetpoints : 4;
+    definedSetpoints_t en_definedSetpoints : 5;
   } data;
 };
 

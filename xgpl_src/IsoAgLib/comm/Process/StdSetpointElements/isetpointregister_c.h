@@ -60,6 +60,7 @@
 /* *************************************** */
 #include "impl/setpointregister_c.h"
 #include <IsoAgLib/util/igetypos_c.h>
+#include "../generalcommand_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -97,21 +98,17 @@ public:
   */
   int32_t max()const{return SetpointRegister_c::max();};
   /**
+    deliver the default setpoint value; if no default is given (~0) return i32_exact
+    @return default setpoint value
+  */
+  int32_t getDefault()const{return SetpointRegister_c::getDefault();};
+  /**
     deliver the setpoint according to the mod type
-    @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3)
+    @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3, default)
     @return setpoint selected by MOD
   */
-  int32_t valMod(uint8_t rb_mod)const 
+  int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const 
   {
-      // @todo: enable value groups in interface?
-    __IsoAgLib::GeneralCommand_c::ValueGroup_t en_valueGroup;
-    switch (rb_mod) {
-      case 2: en_valueGroup = __IsoAgLib::GeneralCommand_c::minValue; break;
-      case 3: en_valueGroup = __IsoAgLib::GeneralCommand_c::maxValue; break;
-      case 0:
-      default:
-        en_valueGroup = __IsoAgLib::GeneralCommand_c::exactValue; break;
-    }
     return SetpointRegister_c::valMod(en_valueGroup);
   };
 
@@ -146,20 +143,16 @@ public:
   */
   bool existMax()const {return SetpointRegister_c::existMax();};
   /**
+    check if valid default value is set
+    @return true -> this setpoint register instance has an default setpoint value
+  */
+  bool existDefault()const {return SetpointRegister_c::existDefault();};
+  /**
     checks if setpoint with type rb_mod exists
-    @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3)
+    @param rb_mod MOD code of tested setpoint type (exact 0, min 2, max 3, default)
     @return true -> a MOD type setpoint exist
   */
-  bool existValMod(uint8_t rb_mod)const {
-    // @todo: enable value groups in interface?
-    __IsoAgLib::GeneralCommand_c::ValueGroup_t en_valueGroup;
-    switch (rb_mod) {
-      case 2: en_valueGroup = __IsoAgLib::GeneralCommand_c::minValue; break;
-      case 3: en_valueGroup = __IsoAgLib::GeneralCommand_c::maxValue; break;
-      case 0:
-      default:
-        en_valueGroup = __IsoAgLib::GeneralCommand_c::exactValue; break;
-    }
+  bool existValMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
     return SetpointRegister_c::existValMod(en_valueGroup);
   };
 
@@ -188,6 +181,11 @@ public:
     @param ri32_val new maximum setpoint value
   */
   void setMax(int32_t ri32_val){SetpointRegister_c::setMax(ri32_val);};
+  /**
+    set the default setpoint value
+    @param ri32_val new default setpoint value
+  */
+  void setDefault(int32_t ri32_val){SetpointRegister_c::setDefault(ri32_val);};
 
   /**
     set the handled state; return if state was changed
@@ -210,19 +208,10 @@ public:
   /**
     set a limit val for type given by rb_mod
     @param ri32_val new setpoint value
-    @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3)
+    @param rb_mod MOD code of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValMod(int32_t ri32_val,uint8_t rb_mod)
+  void setValMod(int32_t ri32_val, GeneralCommand_c::ValueGroup_t en_valueGroup)
   {
-    // @todo: enable value groups in interface?
-    __IsoAgLib::GeneralCommand_c::ValueGroup_t en_valueGroup;
-    switch (rb_mod) {
-      case 2: en_valueGroup = __IsoAgLib::GeneralCommand_c::minValue; break;
-      case 3: en_valueGroup = __IsoAgLib::GeneralCommand_c::maxValue; break;
-      case 0:
-      default:
-        en_valueGroup = __IsoAgLib::GeneralCommand_c::exactValue; break;
-    }
     SetpointRegister_c::setValMod(ri32_val, en_valueGroup);
   };
 };

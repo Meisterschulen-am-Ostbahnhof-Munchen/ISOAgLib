@@ -401,8 +401,7 @@ public:
              uint16_t rui16_DDI,
              uint16_t rui16_element,
              uint8_t rui8_pos,
-             // @todo correct default value? (call in updateRemoteCache doesn't provide value
-             GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF)
+             GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF) // default values from DIN
              ) const;
 #endif
 

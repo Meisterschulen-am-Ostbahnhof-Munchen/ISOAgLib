@@ -244,7 +244,7 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterVal(b
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd=2, mod=0  
-    sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+    sendValGtp(pri(), commanderGtp(), 0);
   }
   return i32_masterVal;
 }
@@ -280,7 +280,7 @@ float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterValFloa
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd=2, mod=0
-    sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+    sendValGtp(pri(), commanderGtp(), 0);
   }
   return f_masterVal;
 }
@@ -315,7 +315,7 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterVal(bool rb_s
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd=3, mod=0
-    sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+    sendValGtp(pri(), commanderGtp(), 0);
   }
   return i32_masterVal;
 }
@@ -329,21 +329,21 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::resetMasterVal()
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
   // DIN: pd=1, mod=0
-  sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+  sendValGtp(pri(), commanderGtp(), 0);
   
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  sendDataRawCmdGtp(pri(), commanderGtp(), 0x8);
+  sendValGtp(pri(), commanderGtp(), 0x8);
   #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
   // DIN: pd=0, mod=0
-  sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+  sendValGtp(pri(), commanderGtp(), 0);
   #endif
 }
 
@@ -361,7 +361,7 @@ float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterValFloat(bool r
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd=3, mod=0
-    sendDataRawCmdGtp(pri(), commanderGtp(), 0);
+    sendValGtp(pri(), commanderGtp(), 0);
   }
   return f_masterVal;
 }

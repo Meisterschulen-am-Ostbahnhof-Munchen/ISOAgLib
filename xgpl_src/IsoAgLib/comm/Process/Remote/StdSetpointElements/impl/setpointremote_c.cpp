@@ -246,6 +246,30 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
 }
 
 /**
+  command a default setpoint; store value as commanded and send command
+
+  possible errors:
+      * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
+      * dependant error in CANIO_c on CAN send problems
+  @return new default setpoint to command
+*/
+void SetpointRemote_c::setDefault( int32_t ri32_val){
+  // set value in c_commanded
+  c_commanded.setDefault( ri32_val);
+  c_commanded.setGtp( processData().commanderGtp());
+
+  // set time of command
+  i32_commandedTime = System_c::getTime();
+
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
+                                                              GeneralCommand_c::defaultValue,
+                                                              GeneralCommand_c::setValue);
+  // send command to owner:
+  processData().sendValGtp( Proc_c::Target, processData().commanderGtp(), ri32_val);
+}
+
+/**
   request remote master setpoint - exact
 */
 void SetpointRemote_c::requestExact() const
@@ -255,7 +279,7 @@ void SetpointRemote_c::requestExact() const
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::requestValue);
   // DIN: pd = 2, mod = 0
-  processDataConst().sendDataRawCmdGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
+  processDataConst().sendValGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
 }
 /**
   request remote master setpoint - MIN
@@ -266,8 +290,8 @@ void SetpointRemote_c::requestMin() const
   getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */, 
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::requestValue);
-  // DIN: pd = 2, mod = 1 (@todo: not mod = 2 ??)
-  processDataConst().sendDataRawCmdGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
+  // DIN: pd = 2, mod = 2
+  processDataConst().sendValGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
 }
 /**
   request remote master setpoint - MAX
@@ -278,8 +302,19 @@ void SetpointRemote_c::requestMax() const
   getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */, 
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::requestValue);
-  // DIN: pd = 2, mod = 2 (@todo: not mod = 3 ??)
-  processDataConst().sendDataRawCmdGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
+  // DIN: pd = 2, mod = 3
+  processDataConst().sendValGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
+}
+/**
+  request remote master setpoint - DEFAULT
+*/
+void SetpointRemote_c::requestDefault() const
+{
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */, 
+                                                              GeneralCommand_c::defaultValue,
+                                                              GeneralCommand_c::requestValue);
+  processDataConst().sendValGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
 }
 
 /**
@@ -429,9 +464,8 @@ void SetpointRemote_c::processSet(){
     }
   }
   // check if it was a master release command
-  // @todo: copy/paster error?
   if (((c_empfGtp == c_answeredMaster.gtp())
-      ||(c_empfGtp == c_answeredMaster.gtp()))
+      ||(c_sendGtp == processData().ownerGtp()))
     &&(c_pkg.isSpecCmd( setpointReleaseCmd)) )
   { // the actual master setpoint is released
     releaseMasterIntern();

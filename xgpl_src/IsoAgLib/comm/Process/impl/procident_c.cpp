@@ -323,10 +323,7 @@ bool ProcIdent_c::matchISO(
   
   if (element() != rui16_element) return false;
   if (DDI() != rui16_DDI) return false;
-
-  // @todo: question: two remote instances control one local and both get response from local ?
-  
-  // @todo: is 0xFF a value out of range?
+ 
   if (rui8_getySender != 0xFF) {
     // check in remote case: check if gety of ownerGtp in procident matches gety of sender
     if (ownerGtp().getGety() != rui8_getySender) return false;
