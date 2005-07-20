@@ -336,6 +336,7 @@ void SetpointRegister_c::setValMod(int32_t ri32_val, GeneralCommand_c::ValueGrou
     case GeneralCommand_c::defaultValue:
       setDefault(ri32_val);
       break;
+    default: ;
   }
 }
 
@@ -399,6 +400,7 @@ void SetpointRegister_c::setValMod(float rf_val, GeneralCommand_c::ValueGroup_t 
     case GeneralCommand_c::defaultValue:
       setDefault(rf_val);
       break;
+    default: ;
   }
 }
 

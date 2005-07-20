@@ -465,9 +465,8 @@ public:
   void setData(uint8_t rb_pos, uint8_t rb_val){pb_data[rb_pos] = rb_val;};
   /**
     extract data from DIN/ISO commands and save it to member class
-    @param pc_procDataBase pointer to ProcessData instance
   */
-  bool resolveCommandType(ProcDataBase_c* pc_procDataBase);
+  bool resolveCommandType();
   /**
     overloaded virtual function to translate the string data into flag values;
     needed for assigning informations from another CANPkg_c or CANPkgExt

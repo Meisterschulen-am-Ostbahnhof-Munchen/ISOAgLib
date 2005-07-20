@@ -230,7 +230,7 @@ ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
 void ProcDataBase_c::processMsg() {
 
   // generalize command
-  if (!getProcessInstance4Comm().data().resolveCommandType(this))
+  if (!getProcessInstance4Comm().data().resolveCommandType())
     // failure
     return;
 

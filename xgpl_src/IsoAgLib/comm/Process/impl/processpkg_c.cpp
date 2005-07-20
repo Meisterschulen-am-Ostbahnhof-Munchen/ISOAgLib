@@ -717,8 +717,8 @@ void ProcessPkg_c::flags2String()
     CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_data, 4);
 
     setLen(8);
-  }
 #endif  // USE_ISO_11783
+  }
 };
 
 /**
@@ -780,9 +780,8 @@ void ProcessPkg_c::useTermGtpForLocalProc(GetyPos_c rc_gtp, GetyPos_c rc_useProc
 
 /**
   extract data from DIN/ISO commands and save it to member class
-  @param pc_procDataBase pointer to ProcessData instance
 */
-bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
+bool ProcessPkg_c::resolveCommandType()
 {
 
   bool b_isSetpoint = false;
@@ -993,7 +992,7 @@ bool ProcessPkg_c::resolveCommandType(ProcDataBase_c* pc_procDataBase)
   }
 
   if (en_command != GeneralCommand_c::noCommand) {
-    c_generalCommand.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command, pc_procDataBase);
+    c_generalCommand.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command);
     return true;
   } else
     return false;

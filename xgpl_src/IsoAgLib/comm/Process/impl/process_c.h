@@ -220,7 +220,6 @@ public:
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos optional POS code of searched local Process Data instance
                   (only important if more GETY type members are active)
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> suitable instance found
   */
   bool existProcDataLocal(
@@ -235,8 +234,7 @@ public:
                           uint8_t rui8_zaehlnum,
 #endif
                           uint8_t rui8_gety,
-                          uint8_t rui8_pos = 0xFF,
-                          uint8_t rui8_pri = 2);
+                          uint8_t rui8_pos = 0xFF);
 
   /**
     checks if a suitable ProcDataRemoteBase_c item exist
@@ -254,7 +252,6 @@ public:
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos optional POS code of searched remote Process Data instance
                   (only important if more GETY type members are active)
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> suitable instance found
   */
   bool existProcDataRemote(
@@ -270,8 +267,7 @@ public:
                            uint8_t rui8_zaehlnum,
 #endif
                            uint8_t rui8_gety,
-                           uint8_t rui8_pos = 0xFF,
-                           uint8_t rui8_pri = 2);
+                           uint8_t rui8_pos = 0xFF);
 
   /**
     search for suitable ProcDataLocalBase_c item; create on if not found AND if wanted
@@ -292,7 +288,6 @@ public:
 
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of searched local Process Data instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return reference to searched/created ProcDataLocalBase_c instance
   */
   ProcDataLocalBase_c& procDataLocal(
@@ -307,8 +302,7 @@ public:
                                      uint8_t rui8_zaehlnum,
 #endif
                                      uint8_t rui8_gety,
-                                     uint8_t rui8_pos = 0xFF,
-                                     uint8_t rui8_pri = 2 );
+                                     uint8_t rui8_pos = 0xFF);
 
   /**
     search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
@@ -330,7 +324,6 @@ public:
     common parameter
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of searched remote Process Data instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
@@ -347,8 +340,7 @@ public:
                                       uint8_t rui8_zaehlnum,
 #endif
                                       uint8_t rui8_gety,
-                                      uint8_t rui8_pos = 0xFF,
-                                      uint8_t rui8_pri = 2);
+                                      uint8_t rui8_pos = 0xFF);
 
 
   /**
@@ -464,7 +456,6 @@ private: // Private methods
     @param rui8_gety GETY code of created local Process Data instance
     @param rui8_pos optinal POS code of created local Process Data instance
       (default not used for search)
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
   */
   bool updateLocalCache(
 #ifdef USE_ISO_11783
@@ -478,8 +469,7 @@ private: // Private methods
                         uint8_t rui8_zaehlnum,
 #endif
                         uint8_t rui8_gety,
-                        uint8_t rui8_pos = 0xFF,
-                        uint8_t rui8_pri = 2);
+                        uint8_t rui8_pos = 0xFF);
 
   /**
     update the cache with search for according ProcDataRemoteBase_c item
@@ -497,7 +487,6 @@ private: // Private methods
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of created remote Process Data instance
       (default not used for search)
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
   */
   bool updateRemoteCache(
 #ifdef USE_ISO_11783
@@ -512,8 +501,7 @@ private: // Private methods
                          uint8_t rui8_zaehlnum,
 #endif
                          uint8_t rui8_gety,
-                         uint8_t rui8_pos = 0xFF,
-                         uint8_t rui8_pri = 2);
+                         uint8_t rui8_pos = 0xFF);
 
   /**
     insert FilterBox_c for receive from remote gtp if needed

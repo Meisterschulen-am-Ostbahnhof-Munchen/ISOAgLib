@@ -502,7 +502,7 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
 #ifdef USE_DIN_9684
                          data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                         ui8_getyFromMessage, b_posData, data().pri())
+                         ui8_getyFromMessage, b_posData)
      )
   { // there exists an appropriate process data item -> let the item process the msg
     procDataLocal(
@@ -512,7 +512,7 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
 #ifdef USE_DIN_9684
                   data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                  ui8_getyFromMessage, b_posData, data().pri()
+                  ui8_getyFromMessage, b_posData
                   ).processMsg();
     b_result = true;
   }
@@ -526,9 +526,6 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
                           data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
                           ui8_getyFromMessage, b_posData
-#ifdef USE_DIN_9684
-                          , data().pri()
-#endif
                           )
       )
   { // there exists an appropriate process data item -> let the item process the msg
@@ -540,9 +537,6 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
                    data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
                    ui8_getyFromMessage, b_posData
-#ifdef USE_DIN_9684
-                   , data().pri()
-#endif
                    ).processMsg();
     b_result = true;
   }
@@ -565,7 +559,6 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
   @param rui8_gety GETY code of searched local Process Data instance
   @param rui8_pos optional POS code of searched local Process Data instance
                 (only important if more GETY type members are active)
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return true -> suitable instance found
 */
 bool Process_c::existProcDataLocal(
@@ -580,8 +573,7 @@ bool Process_c::existProcDataLocal(
                                    uint8_t rui8_zaehlnum,
 #endif
                                    uint8_t rui8_gety,
-                                   uint8_t rui8_pos,
-                                   uint8_t rui8_pri)
+                                   uint8_t rui8_pos)
 {
   return updateLocalCache(
 #ifdef USE_ISO_11783
@@ -590,7 +582,7 @@ bool Process_c::existProcDataLocal(
 #ifdef USE_DIN_9684
                           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                          rui8_gety, rui8_pos, rui8_pri);
+                          rui8_gety, rui8_pos);
 }
 
   /**
@@ -609,7 +601,6 @@ bool Process_c::existProcDataLocal(
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos optional POS code of searched remote Process Data instance
                   (only important if more GETY type members are active)
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> suitable instance found
   */
 bool Process_c::existProcDataRemote(
@@ -625,8 +616,7 @@ bool Process_c::existProcDataRemote(
                            uint8_t rui8_zaehlnum,
 #endif
                            uint8_t rui8_gety,
-                           uint8_t rui8_pos,
-                           uint8_t rui8_pri)
+                           uint8_t rui8_pos)
 {
  return updateRemoteCache(
 #ifdef USE_ISO_11783
@@ -635,7 +625,7 @@ bool Process_c::existProcDataRemote(
 #ifdef USE_DIN_9684
                           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                          rui8_gety, rui8_pos, rui8_pri);
+                          rui8_gety, rui8_pos);
 
 }
 
@@ -658,7 +648,6 @@ bool Process_c::existProcDataRemote(
 
   @param rui8_gety GETY code of searched local Process Data instance
   @param rui8_pos POS code of searched local Process Data instance
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return reference to searched/created ProcDataLocal_c instance
 */
 ProcDataLocalBase_c& Process_c::procDataLocal(
@@ -673,8 +662,7 @@ ProcDataLocalBase_c& Process_c::procDataLocal(
                                      uint8_t rui8_zaehlnum,
 #endif
                                      uint8_t rui8_gety,
-                                     uint8_t rui8_pos,
-                                     uint8_t rui8_pri )
+                                     uint8_t rui8_pos)
 {
   bool b_found = updateLocalCache(
 #ifdef USE_ISO_11783
@@ -683,7 +671,7 @@ ProcDataLocalBase_c& Process_c::procDataLocal(
 #ifdef USE_DIN_9684
                                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                  rui8_gety, rui8_pos, rui8_pri);
+                                  rui8_gety, rui8_pos);
   if (!b_found)
   { // not found and no creation wanted -> error
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
@@ -711,7 +699,6 @@ ProcDataLocalBase_c& Process_c::procDataLocal(
     common parameter
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of searched remote Process Data instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
@@ -728,8 +715,7 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
                                                 uint8_t rui8_zaehlnum,
 #endif
                                                 uint8_t rui8_gety,
-                                                uint8_t rui8_pos,
-                                                uint8_t rui8_pri)
+                                                uint8_t rui8_pos)
 {
   bool b_found = updateRemoteCache(
 #ifdef USE_ISO_11783
@@ -738,7 +724,7 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
 #ifdef USE_DIN_9684
                                    rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                   rui8_gety, rui8_pos, rui8_pri);
+                                   rui8_gety, rui8_pos);
 
   if (!b_found)
   { // not found and no creation wanted -> error
@@ -890,7 +876,6 @@ uint8_t Process_c::procDataRemoteCnt(
   @param rui8_gety GETY code of created local Process Data instance
   @param rui8_pos optinal POS code of created local Process Data instance
     (default not used for search)
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
 */
 bool Process_c::updateLocalCache(
 #ifdef USE_ISO_11783
@@ -904,8 +889,7 @@ bool Process_c::updateLocalCache(
                                  uint8_t rui8_zaehlnum,
 #endif
                                  uint8_t rui8_gety,
-                                 uint8_t rui8_pos,
-                                 uint8_t rui8_pri)
+                                 uint8_t rui8_pos)
 {
   bool b_foundLazy = false;
 
@@ -1001,7 +985,6 @@ bool Process_c::updateLocalCache(
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos POS code of created remote Process Data instance
       (default not used for search)
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
   */
 bool Process_c::updateRemoteCache(
 #ifdef USE_ISO_11783
@@ -1016,8 +999,7 @@ bool Process_c::updateRemoteCache(
                          uint8_t rui8_zaehlnum,
 #endif
                          uint8_t rui8_gety,
-                         uint8_t rui8_pos,
-                         uint8_t rui8_pri)
+                         uint8_t rui8_pos)
 {
   bool b_foundLazy = false;
   if (!c_arrClientC2.empty())

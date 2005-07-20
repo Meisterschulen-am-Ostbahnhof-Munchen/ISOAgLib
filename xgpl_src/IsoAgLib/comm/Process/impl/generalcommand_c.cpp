@@ -96,19 +96,17 @@ namespace __IsoAgLib {
 GeneralCommand_c::GeneralCommand_c()
   : b_isSetpoint(false), b_isRequest(false),
     en_valueGroup(noValue), 
-    en_command(noCommand),
-    pc_correspondingProcData(NULL)
+    en_command(noCommand)
 {}
 
 /** set values, called in ProcessPkg_c::resolveCommand() */
 void GeneralCommand_c::setValues(bool b_isSetpoint, bool b_isRequest, ValueGroup_t en_valueGroup,
-                                 CommandType_t en_command, ProcDataBase_c* pc_correspondingProcData)
+                                 CommandType_t en_command)
 {
   this->b_isSetpoint = b_isSetpoint;
   this->b_isRequest = b_isRequest;
   this->en_valueGroup = en_valueGroup;
   this->en_command = en_command;
-  this->pc_correspondingProcData = pc_correspondingProcData;
 };
 
 

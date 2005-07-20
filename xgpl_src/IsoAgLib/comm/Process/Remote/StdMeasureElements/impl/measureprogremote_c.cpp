@@ -546,6 +546,7 @@ void MeasureProgRemote_c::setValFromPkg(){
         if ( med() != i32_new_val ) b_change = true;
         setMed(i32_new_val);
         break;
+      default: ;
     }
 
     // call handler function if handler class is registered
@@ -581,6 +582,7 @@ void MeasureProgRemote_c::setValFromPkg(){
         if ( medFloat() != f_new_val ) b_change = true;
         setMed(f_new_val);
         break;
+      default: ;
     }
   
     // call handler function if handler class is registered

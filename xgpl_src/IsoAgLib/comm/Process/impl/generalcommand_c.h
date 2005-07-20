@@ -94,9 +94,6 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-// forward declaration for ProcDataBase_c (generalcommand_c.h is includede in procdatabase_c.h)
-class ProcDataBase_c;
-
 /**
   extracts general command data from DIN and ISO process messages
   @author Dipl.-Inform. Achim Spangler
@@ -152,12 +149,9 @@ public:
   /** read access for en_command */
   CommandType_t getCommand() const { return en_command; };
 
-  /** read access for pointer to process data */
-  ProcDataBase_c* dataBase() const { return pc_correspondingProcData; };
-
   /** set values, called in ProcessPkg_c::resolveCommand() */
   void setValues(bool b_isSetpoint, bool b_isRequest, ValueGroup_t en_valueGroup,
-                 CommandType_t en_command, ProcDataBase_c* pc_correspondingProcData = NULL);
+                 CommandType_t en_command);
   
 private:
 
@@ -169,9 +163,6 @@ private:
 
   /** current command */
   CommandType_t en_command;
-
-  /** pointer to the containing ProcessData item */
-  ProcDataBase_c* pc_correspondingProcData;
 
 };
 

@@ -61,8 +61,9 @@
 /* *************************************** */
 #include "impl/process_c.h"
 #include "proc_c.h"
-#include "idevpropertyhandler_c.h"
-
+#ifdef USE_ISO_11783
+  #include "idevpropertyhandler_c.h"
+#endif
 
 // Begin Namespace IsoAgLib::iProcess_c
 namespace IsoAgLib {
@@ -105,8 +106,10 @@ public:
   */
   void init( void ) { Process_c::init();};
 
+#ifdef USE_ISO_11783
   iDevPropertyHandler_c& getDevPropertyHandlerInstance( void )
   {return static_cast<iDevPropertyHandler_c&>(Process_c::getDevPropertyHandlerInstance());};
+#endif
 
   /**
     if the amount of created local process data is known, then enough capacity for the
@@ -130,12 +133,19 @@ public:
   { Process_c::remoteProcDataReserveCnt( rui16_remoteProcCapacity );};
   /**
     checks if a suitable iProcessDataLocal_c item exist
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
     @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
+ 
+    common parameter
+    @param rui8_gety GETY code of searched local Process Data instance
+    @param rui8_pos optional POS
     @return true -> suitable instance found
   */
   bool existProcDataLocal(
@@ -150,8 +160,7 @@ public:
                           uint8_t rui8_zaehlnum,
 #endif
                           uint8_t rui8_gety,
-                          uint8_t rui8_pos = 0xFF,
-                          uint8_t rui8_pri = 2)
+                          uint8_t rui8_pos = 0xFF)
   { return Process_c::existProcDataLocal(
 #ifdef USE_ISO_11783
                           rui16_DDI,
@@ -164,17 +173,23 @@ public:
                           rui8_zaehlnum,
 #endif
                           rui8_gety,
-                          rui8_pos,
-                          rui8_pri
+                          rui8_pos
   );}
   /**
     checks if a suitable iProcessDataRemote_c item exist
-    @param rui8_lis LIS code of searched remote Process Data instance
+    ISO parameter
+    @param rui16_DDI
+    @param rui16_element
+
+    DIN parameter
+    @param rui8_lis LIS code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_inst INST code of searched local Process Data instance
+    @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
+ 
+    common parameter
     @param rui8_gety GETY code of searched remote Process Data instance
-    @param rui8_wert WERT code of searched remote Process Data instance
-    @param rui8_inst INST code of searched remote Process Data instance
-    @param rui8_zaehlnum ZAEHLNUM  code of searched remote Process Data instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @param rui8_pos optional POS
     @return true -> suitable instance found
   */
   bool existProcDataRemote(
@@ -190,8 +205,7 @@ public:
                            uint8_t rui8_zaehlnum,
 #endif
                            uint8_t rui8_gety,
-                           uint8_t rui8_pos = 0xFF,
-                           uint8_t rui8_pri = 2)
+                           uint8_t rui8_pos = 0xFF)
   { return Process_c::existProcDataRemote(
 #ifdef USE_ISO_11783
                            rui16_DDI,
@@ -205,8 +219,7 @@ public:
                            rui8_zaehlnum,
 #endif
                            rui8_gety,
-                           rui8_pos,
-                           rui8_pri
+                           rui8_pos
   );};
 
   /**

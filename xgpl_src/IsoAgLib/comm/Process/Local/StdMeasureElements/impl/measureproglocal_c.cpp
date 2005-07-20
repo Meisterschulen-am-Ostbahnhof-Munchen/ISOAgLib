@@ -412,24 +412,13 @@ bool MeasureProgLocal_c::processMsg(){
   { // only use the local vars if needed
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
     
-    // @todo: reset is handled here and in MeasureProgBase_c, unify?
-    // the message was a value message -> evaluate it here (DIN: pd=1)
-    if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementReset ||
-        // ISO: set value command
-        c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
+    // the message was a value message -> evaluate it here 
+    // ISO: set value command, DIN: i32_val == 0 is already checked in ProcessPgk::resolveCommandType() => command measurementReset, handled in measureprogbase
+    if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
-      // (not standard conformant, but practised)
-      // i32_val == 0 is already checked in ProcessPgk::resolveCommandType()
-      // try to reset value
-      
-      if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue) {
-        // ISO: value in message contains reset value
-        // get the int32_t data val; let it convert, if needed
-        int32_t i32_val = c_pkg.dataRawCmdLong();
-        resetValMod(c_pkg.c_generalCommand.getValueGroup(), i32_val);
-      } else
-        // DIN: value in message contains info what value to reset (exact, min, max, ...)
-        resetValMod(c_pkg.c_generalCommand.getValueGroup(), 0); // call resetVal with integer value (call is ambiguous if not specified!)
+      // ISO: value in message contains reset value
+      int32_t i32_val = c_pkg.dataRawCmdLong();
+      resetValMod(c_pkg.c_generalCommand.getValueGroup(), i32_val);
         
       // resetted val is automatically sent
       b_result = true;
@@ -549,6 +538,7 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
         i32_minVal = pc_iter->increment();
         break;
       case Proc_c::NullType: break; // just to make compiler happy
+      default: ;
     } // switch
   } // for
   // if b_triggeredIncrement == true the registered values should be sent
@@ -671,6 +661,7 @@ void MeasureProgLocal_c::setVal(float rf_val){
         f_minVal = pc_iter->increment();
         break;
       case Proc_c::NullType: break; // just to make compiler happy
+      default: ;
     } // switch
   } // for
   // if b_triggeredIncrement == true the registered values should be sent
