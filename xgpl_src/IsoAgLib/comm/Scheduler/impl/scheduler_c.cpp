@@ -361,7 +361,12 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   // define flag to detect amount of executed tasks
   uint8_t ui8_execCnt = 0;
   // check if immediate return is needed
-  if ( getAvailableExecTime( i16_canExecTime ) == 0 ) return false;
+  if ( getAvailableExecTime( i16_canExecTime ) == 0 ) 
+  {
+     // reset awaited can processing execution time to prevent dead lock
+     i16_canExecTime = 0;
+     return false;
+  }
 
   // process CAN messages
   if ( getCanInstance4Comm().timeEvent() )
