@@ -326,19 +326,9 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
     } // for objNr
   }// for iter
 
-  if (iter_delete != 0) {
-
-    for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
-      for (uint8_t j=0; j<cui8_maxCanObj; j++) {
-        clearReadQueue(i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->i32_clientID);
-        clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->i32_clientID);
-      }
-
-    if (iter_delete->i32_pipeHandle)
-      close(iter_delete->i32_pipeHandle);
-
-    pc_serverData->l_clients.erase(iter_delete);
-  }
+  if (iter_delete != 0)
+    // clear read/write queue for this client, close pipe, remove from client list
+    releaseClient(pc_serverData, iter_delete);
 
 }
 
@@ -609,6 +599,19 @@ static void* command_thread_func(void* ptr)
         client_s s_tmpClient;
 
         DEBUG_PRINT("command start driver\n");
+
+        // do check for dead clients before queueing any new message
+        for (std::list<client_s>::iterator iter_deadClient = pc_serverData->l_clients.begin(); 
+             iter_deadClient != pc_serverData->l_clients.end();
+             iter_deadClient++) {
+          // send signal 0 (no signal is send, but error handling is done) to check is process is alive
+          if (kill(iter_deadClient->i32_clientID, 0) == -1) {
+            // client dead!
+            DEBUG_PRINT1("client with ID %d no longer alive!\n", iter_deadClient->i32_clientID);
+            // clear read/write queue for this client, close pipe, remove from client list
+            releaseClient(pc_serverData, iter_deadClient);
+          }
+        }
 
         // initialize
         memset(&s_tmpClient, 0, sizeof(client_s));

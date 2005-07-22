@@ -213,5 +213,18 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
   return TRUE;
 }
 
+void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator iter_delete) {
+
+  for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
+    for (uint8_t j=0; j<cui8_maxCanObj; j++) {
+      clearReadQueue(i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->i32_clientID);
+      clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->i32_clientID);
+    }
+
+  if (iter_delete->i32_pipeHandle)
+    close(iter_delete->i32_pipeHandle);
+
+  pc_serverData->l_clients.erase(iter_delete);
+}
 
 } // end namespace __HAL

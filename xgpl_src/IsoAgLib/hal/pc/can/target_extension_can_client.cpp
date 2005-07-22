@@ -182,7 +182,8 @@ int16_t closeCan ( uint8_t bBusNumber )
 
 int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)
 {
-
+  // just to remove compiler warnings
+  bBusNumber = bBusNumber; bMsgObj = bMsgObj; wPause = wPause; 
   DEBUG_PRINT2("chgCanObjPause, bus %d, obj %d\n", bBusNumber, bMsgObj);
 /*
   fprintf(stderr,"sende Pause auf BUS %d fuer CAN Objekt %d auf %d eingestellt\n",
