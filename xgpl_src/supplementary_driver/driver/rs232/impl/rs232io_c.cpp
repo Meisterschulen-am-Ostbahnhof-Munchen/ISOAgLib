@@ -535,7 +535,7 @@ int16_t RS232IO_c::getLine( uint8_t* pui8_data, uint8_t ui8_lastChar )
 RS232IO_c& RS232IO_c::operator>>(std::basic_string<char>& refc_data)
 {
   uint8_t b_data;
-  char pc_tempArray[50];
+//  char pc_tempArray[50];
 
   // first eat white space (including \t,\n) - stop if puffer is empty
   for (HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST); (((b_data == ' ' ) || (b_data == '\t' )) && (!eof()));
