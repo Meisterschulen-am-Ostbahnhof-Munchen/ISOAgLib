@@ -259,7 +259,7 @@ int16_t resetCounter()
 */
 uint16_t getCounterPeriod()
 {
-  uint16_t ui16_timebase, ui16_result = 0xFFFF, ui16_counter;
+  uint16_t ui16_result = 0xFFFF, ui16_counter;
 
 get_digin_period(&ui16_result, &ui16_counter);
 _pulDiginCounter += ( ui16_counter - _prevCounter );
@@ -267,7 +267,7 @@ _prevCounter = ui16_counter;
 
     ui16_result = (((2 << (_b_prescale_1_Index + 2)) * ui16_result )/ (get_cpu_freq() * 1000));
 #if 0
-  ui16_timebase = _puiDiginTimebase;
+  uint16_t ui16_timebase = _puiDiginTimebase;
   if (ui16_timebase == 0) ui16_result = 0xFFFF;
   else if (ui16_timebase < (1024 * 65534 / (get_cpu_freq() * 1000)))
   { /* use standard BIOS method because timebase is short enough */
@@ -293,10 +293,11 @@ _prevCounter = ui16_counter;
 */
 uint16_t getCounterFrequency()
 {
-  uint16_t ui16_timebase, ui16_result = 0;
-  uint16_t ui16_lastSignalAge = 0;
-  uint16_t ui16_lastPeriod;
-  ui16_timebase = _puiDiginTimebase;
+  uint16_t ui16_result = 0;
+
+#if 0
+  uint16_t ui16_timebase = _puiDiginTimebase;
+#endif
 
     get_digin_freq(&ui16_result);
 
@@ -309,10 +310,10 @@ uint16_t getCounterFrequency()
   else
   { /* use extension method */
     /* vars are accessible */
-    ui16_lastSignalAge = getCounterLastSignalAge();
+    uint16_t ui16_lastSignalAge = getCounterLastSignalAge();
     if (ui16_lastSignalAge < ui16_timebase)
     { // handle overflow between uiLast and uiAct
-      ui16_lastPeriod = _pt_diginTriggerTime.uiPeriod;
+      uint16_t ui16_lastPeriod = _pt_diginTriggerTime.uiPeriod;
       if (ui16_lastPeriod == 0)
         ui16_result = 0;
       else
