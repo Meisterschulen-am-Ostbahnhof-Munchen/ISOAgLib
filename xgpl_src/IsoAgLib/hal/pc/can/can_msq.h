@@ -8,11 +8,11 @@
 #define DEBUG_PRINT3(str,a,b,c) printf(str,a,b,c); fflush(0)
 #define DEBUG_PRINT4(str,a,b,c,d) printf(str,a,b,c,d); fflush(0)
 #else
-#define DEBUG_PRINT
-#define DEBUG_PRINT1
-#define DEBUG_PRINT2
-#define DEBUG_PRINT3
-#define DEBUG_PRINT4
+#define DEBUG_PRINT(str)
+#define DEBUG_PRINT1(str,a)
+#define DEBUG_PRINT2(str,a,b)
+#define DEBUG_PRINT3(str,a,b,c)
+#define DEBUG_PRINT4(str,a,b,c,d)
 #endif
 
 namespace __HAL {
