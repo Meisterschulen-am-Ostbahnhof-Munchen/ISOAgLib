@@ -487,6 +487,8 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileF, "\n  //virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);");
     fprintf (partFileF, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
     fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
+    fprintf (partFileF, "\n  /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */");
+    fprintf (partFileF, "\n  //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);");
     fprintf (partFileF, "\n  void initAllObjectsOnce();");
     fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName);
     fprintf (partFileF, "\n};\n");
@@ -1986,7 +1988,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             }
             fprintf (partFileB, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
           } else {
-            // Added this if statement to account for InputList objects who might have NULL Object IDs in there list of objects. (Which is legal per the standard!)
+            // Added this if statement to account for InputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
             // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
             if (objChildID == 65535)
             {
@@ -1994,7 +1996,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             }
             else
             {
-              fprintf (partFileB, "{&iVtObject%s}", objChildName, objChildX, objChildY);
+              fprintf (partFileB, "{&iVtObject%s}", objChildName);
             }
           }
           objChildObjects++;

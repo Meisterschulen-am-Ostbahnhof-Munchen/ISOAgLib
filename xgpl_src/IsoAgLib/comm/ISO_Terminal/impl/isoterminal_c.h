@@ -82,10 +82,43 @@
 #ifndef ISO_TERMINAL_H
 #define ISO_TERMINAL_H
 
+
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
+
+
+
+/// MOVE OUT TO "localsettings_s.h" !!!!!!!!
+  /**
+    struct that stores the Language and Units information
+    received from the LANGUAGE_PGN
+  */
+  typedef struct localSettings_s {
+    uint32_t lastReceived; /* Timestamp of last reception */
+    uint32_t lastRequested;
+
+    /* the following data is extracted from one "VT Status Message" */
+    uint16_t languageCode; /* 2 ASCII chars packed into 16 bit! "en", "de", etc. */
+    // Number Formats
+    uint8_t  nDecimalPoint;
+    uint8_t  nTimeFormat;
+    // Date Formats
+    uint8_t  dFormat;
+    // Unit Formats
+    uint8_t  uDistance;
+    uint8_t  uArea;
+    uint8_t  uVolume;
+    uint8_t  uMass;
+    uint8_t  uTemperature;
+    uint8_t  uPressure;
+    uint8_t  uForce;
+    uint8_t  uUnitsSystem;
+  } localSettings_s;
+
+
+
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
@@ -275,32 +308,6 @@ public:
     uint8_t  skHeight;
   } vtCapabilities_s;
 
-
-  /**
-    struct that stores the Language and Units information
-    received from the LANGUAGE_PGN
-  */
-  typedef struct localSettings_s {
-    uint32_t lastReceived; /* Timestamp of last reception */
-    uint32_t lastRequested;
-
-    /* the following data is extracted from one "VT Status Message" */
-    uint16_t languageCode; /* 2 ASCII chars packed into 16 bit! "en", "de", etc. */
-    // Number Formats
-    uint8_t  nDecimalPoint;
-    uint8_t  nTimeFormat;
-    // Date Formats
-    uint8_t  dFormat;
-    // Unit Formats
-    uint8_t  uDistance;
-    uint8_t  uArea;
-    uint8_t  uVolume;
-    uint8_t  uMass;
-    uint8_t  uTemperature;
-    uint8_t  uPressure;
-    uint8_t  uForce;
-    uint8_t  uUnitsSystem;
-  } localSettings_s;
 
   virtual void reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident);
   virtual bool reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen);

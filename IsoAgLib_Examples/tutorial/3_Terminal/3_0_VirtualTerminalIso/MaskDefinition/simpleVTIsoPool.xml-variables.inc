@@ -58,6 +58,7 @@ IsoAgLib::iVtObjectButton_c iVtObjectKeyMoreAccel;
 IsoAgLib::iVtObjectOutputString_c iVtObjectUnnamed16;
 IsoAgLib::iVtObjectButton_c iVtObjectKeyLessAccel;
 IsoAgLib::iVtObjectOutputString_c iVtObjectUnnamed17;
+IsoAgLib::iVtObjectOutputString_c iVtObjectOSlanguage;
 IsoAgLib::iVtObjectInputString_c iVtObjectISinitial;
 IsoAgLib::iVtObjectOutputString_c iVtObjectdriver;
 IsoAgLib::iVtObjectOutputString_c iVtObjectresonible;

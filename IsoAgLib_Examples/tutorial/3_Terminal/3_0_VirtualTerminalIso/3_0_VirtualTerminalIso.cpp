@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          3_0_VirtualTerminalIso.cpp - tutorial for pure ISO address claim
+                          3_0_VirtualTerminalIso.cpp
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -415,15 +415,9 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully ()
     updateAccel (valAccel);
     updateMiles(valMiles);
   iVtObjectValSpeed.setValue (valSpeed);
-
-
-  iVtObjectColOS.setVariableReference (colTable [color]);
-  iVtObjectColLabel.setValueRef ("Colour:");
-  iVtObjectColLabel.setValueCopy ("Colour:");
-  iVtObjectFontAttributesNormal6x8B.setFontColour (fgcolTable [color]);
-  iVtObjectColLabel.setValueCopy ("Height:");
-  iVtObjectspeedLabel.setValueCopy ("Height:");
-  iVtObjectspeedLabel.setValueRef ("Du blöde Kuh:");
+  #ifdef DEBUG
+  std::cout << "-->eventObjectPoolUploadedSuccessfully<--\n";
+  #endif
 }
 
 void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
@@ -452,6 +446,19 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, 
     fflush(0);
     #endif
   }
+}
+
+
+void
+iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_localSettings)
+{
+  char languageCode[2+1]; languageCode[2+1-1] = 0x00;
+  languageCode[0] = rrefs_localSettings.languageCode >> 8;
+  languageCode[1] = rrefs_localSettings.languageCode & 0xFF;
+  iVtObjectOSlanguage.setValueCopy (languageCode);
+  #ifdef DEBUG
+  std::cout << "-->eventLanguagePgn("<<languageCode<<")<--\n";
+  #endif
 }
 
 

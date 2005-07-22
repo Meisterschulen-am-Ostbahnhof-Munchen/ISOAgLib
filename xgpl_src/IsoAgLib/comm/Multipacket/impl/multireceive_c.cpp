@@ -181,7 +181,7 @@ MultiReceive_c::processMsg()
     if (t_streamType == StreamSpgnEcmdINVALID) { \
       /* this type is invalid - using Extended commands on Standard-TP PGN */ \
       /* answer with ConnAbort! */ \
-      notifyError(c_tmpRSI, 1000); \
+      notifyError(c_tmpRSI, 100); \
       sendConnAbort (t_streamType, c_tmpRSI); \
       return true; /* no other CAN-Customer should be interested in that one */\
     }
@@ -235,7 +235,7 @@ MultiReceive_c::processMsg()
             Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/);
             if (pc_streamFound != NULL) {
               // abort, already running stream is interrupted by RTS
-              notifyError(c_tmpRSI, 1001);
+              notifyError(c_tmpRSI, 101);
               connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
@@ -255,7 +255,7 @@ MultiReceive_c::processMsg()
             if (((ui8_dataByte0 == 0x10) && (data().getUint8Data(3) != ui32_numPkg))
                || (ui32_msgSize < 9)) {
               // This handles both
-              notifyError(c_tmpRSI, 1002);
+              notifyError(c_tmpRSI, 102);
               sendConnAbort (t_streamType, c_tmpRSI);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (Wrong Pkg Number || msgSize < 9) ***\n";
@@ -267,7 +267,7 @@ MultiReceive_c::processMsg()
             IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(c_tmpRSI);
             if (pc_clientFound == NULL)
             { // There's no client registered to take this PGN->thisAddress! */
-              notifyError(c_tmpRSI, 1015);
+              notifyError(c_tmpRSI, 115);
               sendConnAbort (t_streamType, c_tmpRSI);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to PGN requested that the MR-Client has not registered to receive ***\n";
@@ -278,7 +278,7 @@ MultiReceive_c::processMsg()
             // Send the Request To Send (RTS) to the client - Does he give us a Clear To Send (CTS) ?
             if (!pc_clientFound->reactOnStreamStart (c_tmpRSI, ui32_msgSize)) {
               // Client rejects this stream!
-              notifyError(c_tmpRSI, 1003);
+              notifyError(c_tmpRSI, 103);
               sendConnAbort (t_streamType, c_tmpRSI);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Client Rejecting the stream ***\n";
@@ -302,13 +302,11 @@ MultiReceive_c::processMsg()
           MACRO_Define_t_streamType_and_checkInvalid
 
           { // to allow local variables!
-            IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (ui32_pgn, data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
-
             Stream_c* pc_streamFound = getStream (c_tmpRSI);
 
             if (pc_streamFound == NULL)
             {
-              notifyError(c_tmpRSI, 1004);
+              notifyError(c_tmpRSI, 104);
               sendConnAbort (t_streamType, c_tmpRSI); // according to Brad: ConnAbort
               #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << "\n\n DPO for an unknown/unopened stream!!\n ";
@@ -318,7 +316,7 @@ MultiReceive_c::processMsg()
             
             if (!b_ePgn)
             {
-              notifyError(c_tmpRSI, 1016);
+              notifyError(c_tmpRSI, 116);
               connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound); // according to Brad: ConnAbort
               #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << "\n\n DPO for a Standard-TP stream!!\n ";
@@ -331,7 +329,7 @@ MultiReceive_c::processMsg()
                                                       (uint32_t(data().getUint8Data(3)) << 8) |
                                                       (uint32_t(data().getUint8Data(4)) << 16))))
             { // DPO not awaited now!
-              notifyError(c_tmpRSI, 1005);
+              notifyError(c_tmpRSI, 105);
               connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to DPO at wrong 't_awaitStep' - was NOT AwaitDpo ***\n";
@@ -353,7 +351,7 @@ MultiReceive_c::processMsg()
             // Is BAM directed to 0xFF (global) ?
             if (data().isoPs() != 0xFF)
             { // we do NOT take BAMs that are NOT directed to the GLOBAL (255) address
-              notifyError(c_tmpRSI, 1012);
+              notifyError(c_tmpRSI, 112);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) data().isoPs() <<" ***\n";
               #endif
@@ -366,7 +364,7 @@ MultiReceive_c::processMsg()
             Stream_c* pc_streamFound = getStream (data().isoSa(), 255 /* 0xFF, BAM is always to GLOBAL */);
             if (pc_streamFound != NULL) {
               // abort already running stream is interrupted by BAM
-              notifyError(c_tmpRSI, 1017);
+              notifyError(c_tmpRSI, 117);
               connAbortTellClientRemoveStream (false /* do NOT send ConnAbort msg */, pc_streamFound);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (BAM in between) ***\n";
@@ -381,7 +379,7 @@ MultiReceive_c::processMsg()
             // check for TP-RTS if pkg-count matches the calculated AND if size > 0
             if ((data().getUint8Data(3) != ui32_numPkg) || (ui32_msgSize < 9))
             { // This handles both
-              notifyError(c_tmpRSI, 1013);
+              notifyError(c_tmpRSI, 113);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** BAM not taken due to (Wrong Pkg Number || msgSize < 9) ***\n";
               #endif
@@ -409,7 +407,7 @@ MultiReceive_c::processMsg()
             Stream_c* pc_streamFound = getStream (c_tmpRSI);
 
             if (pc_streamFound) {
-              notifyError (c_tmpRSI, 1007);
+              notifyError (c_tmpRSI, 107);
               connAbortTellClientRemoveStream (false /* do not send connAbort-Msg */, pc_streamFound);
               // here TRUE could be returned, but for unknown safety just let both (MS/MR) process ConnAbort!
               // Also it "could" happen that MultiReceive & MultiSend are running parallel, so this ConnAbort would be for both!
@@ -435,12 +433,12 @@ MultiReceive_c::processMsg()
             INTERNAL_DEBUG_DEVICE << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!\n";
           #endif
           t_streamType = (StreamType_t) ((b_ePgn) ? 0x2:0); // only care for ePgn or not for ConnAbort
-          notifyError(c_tmpRSI, 1008);
+          notifyError(c_tmpRSI, 108);
           sendConnAbort (t_streamType, c_tmpRSI);
           return true;
-      }
-     }
-     break;
+      }//end switch (ui8_dataByte)
+     }//end allowment of local variables...
+     break; // not reachable, but leave it here because if the above is changed, it's better to have the break here...
 
 
     case MACRO_pgnFormatOfPGN(ETP_DATA_TRANSFER_PGN):
@@ -460,7 +458,7 @@ MultiReceive_c::processMsg()
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "\n*** (E)TP.DATA, but no open stream! ignoring that... ***\n";
           #endif
-          notifyError(c_tmpRSI, 1011);
+          notifyError(c_tmpRSI, 111);
           return false;
         }
         // From this point on the SA/DA pair matches, so that we can return true
@@ -468,13 +466,13 @@ MultiReceive_c::processMsg()
           // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
           if (data().isoPs() == 0xFF)
           {
-            notifyError(c_tmpRSI, 1014);
+            notifyError(c_tmpRSI, 114);
             connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
             #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "\n*** BAM sequence error ***\n";
             #endif
           } else {
-            notifyError(c_tmpRSI, 1009);
+            notifyError(c_tmpRSI, 109);
             connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
             #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to wrong DATA, see msg before! ***\n";
@@ -715,7 +713,7 @@ MultiReceive_c::timeEvent( void )
       #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "\n *** Stream with SA " << (uint16_t) pc_stream->getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) pc_stream->getNextComing() << " ***\n";
       #endif
-      notifyError(pc_stream->getIdent(), 1010);
+      notifyError(pc_stream->getIdent(), 110);
       connAbortTellClient (/* send Out ConnAbort Msg*/ true, pc_stream);
       // remove Stream
       i_list_streams = list_streams.erase (i_list_streams);
@@ -1049,7 +1047,7 @@ MultiReceive_c::getStreamCompletion1000 (uint32_t ui32_index, bool b_checkFirstB
         if ((b_checkFirstByte) && ((*pc_iter).getFirstByte() != ui8_returnNullIfThisIsFirstByte))
           return 0;
         // over 4 MB clipping ;) shouldn't occur anyway...
-        if ((*pc_iter).getByteAlreadyReceived() > (4*1024*1024))
+        if ((*pc_iter).getByteAlreadyReceived() > 0x400000 /*(4*1024*1024)*/)
           return 1000;
         else
           return (pc_iter->getByteAlreadyReceived() * 1000) / pc_iter->getByteTotalSize();
@@ -1071,7 +1069,7 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
   {
     if ((b_checkFirstByte) && ((*pc_iter).getFirstByte() != ui8_returnNullIfThisIsFirstByte))
       ui32_currentCompletion1000=0; // don't care for this stream
-    else if ((*pc_iter).getByteAlreadyReceived() > (4*1024*1024)) // over 4 MB clipping ;) shouldn't occur anyway...
+    else if ((*pc_iter).getByteAlreadyReceived() > 0x400000 /*(4*1024*1024)*/) // over 4 MB clipping ;) shouldn't occur anyway...
       return 1000; // is already max ;)
     else
       ui32_currentCompletion1000 = (pc_iter->getByteAlreadyReceived() * 1000) / pc_iter->getByteTotalSize();

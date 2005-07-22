@@ -1,5 +1,6 @@
 /***************************************************************************
-                             iisoterminalobjectpool.h - class for managing an object pool with softkey/button activation event handling
+                             iisoterminalobjectpool.h - class for managing
+                             an object pool with softkey/button activation event handling
                              -------------------
     begin                : Tue Jul 22 2003
     copyright            : (C) 2003 by Dipl.-Inform. Achim Spangler
@@ -60,6 +61,7 @@
 
 #include "ivttypes.h"
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
+#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 
 
 /* *************************************** */
@@ -220,6 +222,15 @@ public:
   */
   virtual void eventCommandResponse(uint8_t /*rui8_responseCommandError*/, const uint8_t /*rpui8_responseDataBytes*/[8]) {};
 
+  /**
+    hook function that gets called immediately after recognizing an incoming
+    LANGUAGE_PGN. react on any change by adjusting your pool to the
+    new language/units/etc. please keep the implementation short as
+    this is directly called from IsoTerminal_c's processMsg();
+    VERY IMPORTANT: THIS FUNCTION CALL MAY OCCUR PRIOR TO AN SUCCESSFULLY UPLOADED POOL !!!!!!!
+  */
+  virtual void eventLanguagePgn(const localSettings_s& /*rrefs_localSettings*/) {};
+  
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */

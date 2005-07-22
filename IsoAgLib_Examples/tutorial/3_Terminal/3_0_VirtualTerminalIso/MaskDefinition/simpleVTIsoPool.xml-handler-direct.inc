@@ -10,6 +10,8 @@ public:
   virtual void eventEnterSafeState ();
   /* Uncommented the following function because I want to use a special colour-conversion! */
   virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
+  /* Uncommented the following function because I want to got notified on any LANGUAGE_PGN */
+  virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);
   void initAllObjectsOnce();
   iObjectPool_simpleVTIsoPool_c ();
 };

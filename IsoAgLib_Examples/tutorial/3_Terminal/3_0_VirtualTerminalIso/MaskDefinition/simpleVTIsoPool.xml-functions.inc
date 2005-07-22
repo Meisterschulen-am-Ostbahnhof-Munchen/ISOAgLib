@@ -61,6 +61,7 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce ()
   iVtObjectUnnamed16.init (&iVtObjectUnnamed16_sROM);
   iVtObjectKeyLessAccel.init (&iVtObjectKeyLessAccel_sROM);
   iVtObjectUnnamed17.init (&iVtObjectUnnamed17_sROM);
+  iVtObjectOSlanguage.init (&iVtObjectOSlanguage_sROM);
   iVtObjectISinitial.init (&iVtObjectISinitial_sROM);
   iVtObjectdriver.init (&iVtObjectdriver_sROM);
   iVtObjectresonible.init (&iVtObjectresonible_sROM);

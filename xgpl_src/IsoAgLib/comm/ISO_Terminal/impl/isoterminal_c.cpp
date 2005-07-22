@@ -927,7 +927,9 @@ bool ISOTerminal_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_id
 
 void ISOTerminal_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c /*rc_ident*/)
 {
-  c_streamer.pc_pool->eventStringValueAbort();
+  if (c_streamer.pc_pool != NULL) {
+    c_streamer.pc_pool->eventStringValueAbort();
+  }
 }
 
 
@@ -947,7 +949,9 @@ bool ISOTerminal_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, 
       return false;
     }
   }
-  c_streamer.pc_pool->eventStringValue(ui16_inputStringId, ui8_inputStringLength, *rpc_stream, rpc_stream->getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
+  if (c_streamer.pc_pool != NULL) {
+    c_streamer.pc_pool->eventStringValue(ui16_inputStringId, ui8_inputStringLength, *rpc_stream, rpc_stream->getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
+  }
   return false;
 }
 
@@ -1179,7 +1183,10 @@ bool ISOTerminal_c::processMsg()
     localSettings_a.uPressure =    (data().getUint8Data (5) >> 4) & 0x03;
     localSettings_a.uForce =       (data().getUint8Data (5) >> 2) & 0x03;
     localSettings_a.uUnitsSystem =  data().getUint8Data (5)       & 0x03;
-    // The other fields are reserved.
+    // The other fields are reserved. (yet ;-)
+    if (c_streamer.pc_pool != NULL) {
+      c_streamer.pc_pool->eventLanguagePgn(localSettings_a);
+    }
     return true;
   }
 
