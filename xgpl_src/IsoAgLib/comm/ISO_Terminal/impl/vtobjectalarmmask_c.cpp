@@ -102,7 +102,7 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectAlarmMask_s
     MACRO_streamLocalVars;
     MACRO_scaleLocalVars;
-    uint32_t factor=1<<20; // should never happen
+    uint32_t factor=((uint32_t)1)<<20; // should never happen
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObjectAlarmMask_a->ID & 0xFF;

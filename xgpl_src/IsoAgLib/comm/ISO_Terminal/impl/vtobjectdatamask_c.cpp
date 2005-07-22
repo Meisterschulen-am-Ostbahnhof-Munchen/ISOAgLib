@@ -104,7 +104,7 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectDataMask_s
     MACRO_streamLocalVars;
     MACRO_scaleLocalVars;
-    uint32_t factor = 1<<20; // will never be used, datamasks cannot be included in softkey masks...
+    uint32_t factor=((uint32_t)1)<<20; // will never be used, datamasks cannot be included in softkey masks...
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObjectDataMask_a->ID & 0xFF;
