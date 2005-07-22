@@ -422,11 +422,11 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
   uint8_t b_count = 0;
   int32_t i32_ident;
   bool b_processed = false,
-    b_toProcess = true,
-		b_detectedOverflow = false;
+    b_toProcess = true;
 	bool b_forceProcessAll = rb_forceProcessAll;
 
 	#ifdef DEBUG_CAN_BUFFER_FILLING
+	bool b_detectedOverflow = false;
 		#if CAN_INSTANCE_CNT == 1
 		static uint16_t sui16_maxBufferUseage = 0;
 		uint16_t &ref_maxCnt = sui16_maxBufferUseage;
@@ -523,8 +523,8 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
           	<< " with Ident: " << c_filter.ident()
 				  	<< "\r\n";
 				}
-        #endif
         b_detectedOverflow = true;
+        #endif
         b_forceProcessAll = true;
         break;
     }
