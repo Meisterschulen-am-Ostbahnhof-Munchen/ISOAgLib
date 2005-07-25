@@ -58,25 +58,25 @@
  * <H1>What is demonstrated</H1>
  * <ol>
  * <li>Create some local standard process data and update their data so that
- *		a remote device can request current data
+ *    a remote device can request current data
  * <ul>
- *	<li>Standard local process data class IsoAgLib::iProcDataLocal_c
- *	<li>Use constructor IsoAgLib::iProcDataLocal_c::iProcDataLocal_c to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataLocal_c::setMasterVal() to set current measurement data
+ *  <li>Standard local process data class IsoAgLib::iProcDataLocal_c
+ *  <li>Use constructor IsoAgLib::iProcDataLocal_c::iProcDataLocal_c to create variable with defined property
+ *  <li>Use IsoAgLib::iProcDataLocal_c::setMasterVal() to set current measurement data
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
- * 	<ul>
- *	<li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
- *	<li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *		<li>Perform activities until defined rl_endTime is reached, which is important
- *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
- *		<li>Process all received CAN messages until all receive buffers are empty
- *			-> simple call, but can lead to deadlock on to high CAN load
- *		</ul>
- *	</ul>
+ *  <ul>
+ *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
+ *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
+ *    <li>Perform activities until defined rl_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Process all received CAN messages until all receive buffers are empty
+ *      -> simple call, but can lead to deadlock on to high CAN load
+ *    </ul>
+ *  </ul>
  * <li>Create local identity, for which the ISO<i><sub>AgLib</sub></i> performs an address claim,
- *		so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
- *		and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
+ *    so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
+ *    and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
  * </ol>
  * <H1>Where to look for further information</H1>
  * <ol>
@@ -113,28 +113,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__rte__rte
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__rte__simulating
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__rte__sys
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__simulating__rte
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__simulating__simulating
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__rte__rte
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__rte__simulating
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__rte__sys
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__simulating__rte
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__vector_canlib__simulating
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__vector_canlib__sys
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__simulating__simulating
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__esx__sys__sys
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__imi__sys__sys
- *		<li> \ref PrjSpec2_0_LocalReadDataStdIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__esx__sys__sys
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__imi__sys__sys
+ *    <li> \ref PrjSpec2_0_LocalReadDataStdIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
@@ -147,28 +147,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__rte__rte
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__rte__simulating
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__rte__sys
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__simulating__rte
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__simulating__simulating
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__rte__rte
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__rte__simulating
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__rte__sys
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__simulating__rte
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__simulating__simulating
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__vector_canlib__simulating
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__vector_canlib__sys
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__simulating__simulating
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__vector_canlib__sys
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__simulating__simulating
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__esx__sys__sys
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__imi__sys__sys
- *		<li> \ref FileLists2_0_LocalReadDataStdIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__esx__sys__sys
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__imi__sys__sys
+ *    <li> \ref FileLists2_0_LocalReadDataStdIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
@@ -180,11 +180,11 @@
 
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
     to include project specific configuration settings.
-		Set this define in the project file or Makefile of the whole
-		project, so that each source file is compiled with this setting
-	*/
+    Set this define in the project file or Makefile of the whole
+    project, so that each source file is compiled with this setting
+  */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-	#define PRJ_USE_AUTOGEN_CONFIG config_2_0_LocalReadDataStdIso.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_2_0_LocalReadDataStdIso.h
 #endif
 
 // include the central interface header for the hardware adaption layer part
@@ -237,7 +237,7 @@ int main()
   uint16_t ui16_manufCode = 0x7FF;
   uint32_t ui32_serNo = 27;
 
-	// start address claim of the local member "IMI"
+  // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the myGtp val through the pointer to myGtp
   IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
@@ -248,49 +248,70 @@ int main()
   // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=1, INST=0)
   // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
   // the pointer to myGtp helps automatic update of GETY_POS, mark this value as NOT cumulated (default)
-  IsoAgLib::iProcDataLocal_c c_myOnoff(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false);
+  IsoAgLib::iProcDataLocal_c c_myOnoff(
+    #ifdef USE_ISO_11783
+    141 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x1, 0x0, 0xFF,
+    #endif
+    myGtp, 2, myGtp, &myGtp, false);
   // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=3, INST=1)
-  IsoAgLib::iProcDataLocal_c c_myWorkWidth( 0, myGtp, 0x3, 0x1, 0xFF, 2, myGtp, &myGtp, false);
+  IsoAgLib::iProcDataLocal_c c_myWorkWidth(
+    #ifdef USE_ISO_11783
+    67 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x3, 0x1, 0xFF,
+    #endif
+    myGtp, 2, myGtp, &myGtp, false);
   // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=5, INST=0)
-  IsoAgLib::iProcDataLocal_c c_myApplicationRate( 0, myGtp, 0x5, 0x0, 0xFF, 2, myGtp, &myGtp, false);
+  IsoAgLib::iProcDataLocal_c c_myApplicationRate(
+    #ifdef USE_ISO_11783
+    0x0007 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x5, 0x0, 0xFF,
+    #endif
+    myGtp, 2, myGtp, &myGtp, false);
 
   /** IMPORTANT:
-	  - The following loop could be replaced of any repeating call of
-			IsoAgLib::getISchedulerInstance().timeEvent();
-			which is needed to perform all internal activities of the IsoAgLib.
-		- Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
-			in a way, that allows IsoAgLib to trigger all reactions on BUS
-			in the ISO 11783 defined time resolution - especially the address
-			claim process has some tight time restrictions, that suggest
-			a trigger rate of at least 100msec ( you could call the function
-			only during address claim, mask updload and other special
-			circumstances in a high repetition rate )
-		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-			in isoaglib_config.h to ignore short CAN_EN loss.
-		- This explicit control of power state without automatic powerdown on CanEn loss
-			can be controled with the central config define
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-			or
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
-		- This can be also controlled during runtime with the function call:
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
-			or
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
-	*/
-	while ( iSystem_c::canEn() )
-	{ // run main loop
-		// IMPORTANT: call main timeEvent function for
-		// all time controlled actions of IsoAgLib
-		IsoAgLib::getISchedulerInstance().timeEvent();
+    - The following loop could be replaced of any repeating call of
+      IsoAgLib::getISchedulerInstance().timeEvent();
+      which is needed to perform all internal activities of the IsoAgLib.
+    - Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
+      in a way, that allows IsoAgLib to trigger all reactions on BUS
+      in the ISO 11783 defined time resolution - especially the address
+      claim process has some tight time restrictions, that suggest
+      a trigger rate of at least 100msec ( you could call the function
+      only during address claim, mask updload and other special
+      circumstances in a high repetition rate )
+    - The main loop is running until iSystem_c::canEn() is returning false.
+      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      in isoaglib_config.h to ignore short CAN_EN loss.
+    - This explicit control of power state without automatic powerdown on CanEn loss
+      can be controled with the central config define
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      or
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      in the header xgpl_src/Application_Config/isoaglib_config.h
+    - This can be also controlled during runtime with the function call:
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
+      or
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
+  */
+  while ( iSystem_c::canEn() )
+  { // run main loop
+    // IMPORTANT: call main timeEvent function for
+    // all time controlled actions of IsoAgLib
+    IsoAgLib::getISchedulerInstance().timeEvent();
 
-		// update local value for local process data so that remote ECUs can get the current
-		// value from IsoAgLib
-		c_myOnoff.setMasterVal( localIsWorking() );
-		c_myWorkWidth.setMasterVal( localGetWorkingWidth() );
-		c_myApplicationRate.setMasterVal( localGetApplicationRate() );
-	}
+    // update local value for local process data so that remote ECUs can get the current
+    // value from IsoAgLib
+    c_myOnoff.setMasterVal( localIsWorking() );
+    c_myWorkWidth.setMasterVal( localGetWorkingWidth() );
+    c_myApplicationRate.setMasterVal( localGetApplicationRate() );
+  }
   return 1;
 }
 

@@ -58,27 +58,27 @@
  * <H1>What is demonstrated</H1>
  * <ol>
  * <li>Check if some other device is sending calendar information, and
- *		start send of these information in case this is currently lacking
+ *    start send of these information in case this is currently lacking
  * <ul>
- *	<li>Data storage class IsoAgLib::iBase_c
- *	<li>Use IsoAgLib::iBase_c::isCalendarReceived() to detect if some other device is sending calendar
- *	<li>configure the sending of calendar with IsoAgLib::iBase_c::config() , if no other device is
- *		sending calendar
- *	<li>Update data with IsoAgLib::iBase_c::setCalendar()
+ *  <li>Data storage class IsoAgLib::iBase_c
+ *  <li>Use IsoAgLib::iBase_c::isCalendarReceived() to detect if some other device is sending calendar
+ *  <li>configure the sending of calendar with IsoAgLib::iBase_c::config() , if no other device is
+ *    sending calendar
+ *  <li>Update data with IsoAgLib::iBase_c::setCalendar()
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
- * 	<ul>
- *	<li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
- *	<li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *		<li>Perform activities until defined rl_endTime is reached, which is important
- *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
- *		<li>Process all received CAN messages until all receive buffers are empty
- *			-> simple call, but can lead to deadlock on to high CAN load
- *		</ul>
- *	</ul>
+ *  <ul>
+ *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
+ *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
+ *    <li>Perform activities until defined rl_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Process all received CAN messages until all receive buffers are empty
+ *      -> simple call, but can lead to deadlock on to high CAN load
+ *    </ul>
+ *  </ul>
  * <li>Create local identity, for which the ISO<i><sub>AgLib</sub></i> performs an address claim,
- *		so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
- *		and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
+ *    so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
+ *    and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
  * </ol>
  * <H1>Where to look for further information</H1>
  * <ol>
@@ -116,28 +116,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__rte__rte
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__rte__simulating
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__rte__sys
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__simulating__rte
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__simulating__simulating
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__rte__rte
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__rte__simulating
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__rte__sys
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__simulating__rte
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__vector_canlib__simulating
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__vector_canlib__sys
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__simulating__simulating
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__esx__sys__sys
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__imi__sys__sys
- *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__esx__sys__sys
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__imi__sys__sys
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
@@ -150,28 +150,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__rte__rte
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__rte__simulating
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__rte__sys
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__simulating__rte
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__simulating__simulating
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__rte__rte
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__rte__simulating
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__rte__sys
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__simulating__rte
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__simulating__simulating
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__vector_canlib__simulating
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__vector_canlib__sys
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__simulating__simulating
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__vector_canlib__sys
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__simulating__simulating
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref FileLists1_4_WriteFlexibleIso__esx__sys__sys
- *		<li> \ref FileLists1_4_WriteFlexibleIso__imi__sys__sys
- *		<li> \ref FileLists1_4_WriteFlexibleIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__esx__sys__sys
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__imi__sys__sys
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
@@ -183,11 +183,11 @@
 
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
     to include project specific configuration settings.
-		Set this define in the project file or Makefile of the whole
-		project, so that each source file is compiled with this setting
-	*/
+    Set this define in the project file or Makefile of the whole
+    project, so that each source file is compiled with this setting
+  */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-	#define PRJ_USE_AUTOGEN_CONFIG config_1_4_WriteFlexibleIso.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_1_4_WriteFlexibleIso.h
 #endif
 
 
@@ -218,11 +218,11 @@ using namespace IsoAgLib;
 /** define channel to write:
  - provide data for tutorial example 1_0_ReadIso which reads on channel 0
     -> select here the corresponding channel in your configuration
-			 ( e.g. select channel 1 for a 2-channel CAN-Hardware )
-	- simply write on channel 0, when no connection needed, or the connection is
-	  realized with another external connection
+       ( e.g. select channel 1 for a 2-channel CAN-Hardware )
+  - simply write on channel 0, when no connection needed, or the connection is
+    realized with another external connection
 */
-static const int32_t cui32_canChannel = 1;
+static const int32_t cui32_canChannel = 0;
 
 
 /** dummy function to serve a year information - in reality a local RTC element could be used */
@@ -258,76 +258,76 @@ int main()
   uint16_t ui16_manufCode = 0x7FF;
   uint32_t ui32_serNo = 27;
 
-	// start address claim of the local member "IMI"
+  // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the myGtp val through the pointer to myGtp
   IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
-	// configure BaseData_c to send nothing on BUS
-	getIBaseInstance().config(&myGtp, IsoAgLib::BaseDataNothing );
+  // configure BaseData_c to send nothing on BUS
+  getIBaseInstance().config(&myGtp, IsoAgLib::BaseDataNothing );
 
-	// timestamp when local ECU will start to send calendar
-	// -> 3000msec after own address claim without any calendar
-	int32_t i32_decideOnCalendar = -1;
-	// flag to quickly detect if calendar shall be sent
-	bool b_sendCalendar = false;
+  // timestamp when local ECU will start to send calendar
+  // -> 3000msec after own address claim without any calendar
+  int32_t i32_decideOnCalendar = -1;
+  // flag to quickly detect if calendar shall be sent
+  bool b_sendCalendar = false;
 
   /** IMPORTANT:
-	  - The following loop could be replaced of any repeating call of
-			getISchedulerInstance().timeEvent();
-			which is needed to perform all internal activities of the IsoAgLib.
-		- Define the time intervall for getISchedulerInstance().timeEvent()
-			in a way, that allows IsoAgLib to trigger all reactions on BUS
-			in the ISO 11783 defined time resolution - especially the address
-			claim process has some tight time restrictions, that suggest
-			a trigger rate of at least 100msec ( you could call the function
-			only during address claim, mask updload and other special
-			circumstances in a high repetition rate )
-		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-			in isoaglib_config.h to ignore short CAN_EN loss.
-		- This explicit control of power state without automatic powerdown on CanEn loss
-			can be controled with the central config define
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-			or
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
-		- This can be also controlled during runtime with the function call:
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
-			or
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
-	*/
-	while ( iSystem_c::canEn() )
-	{ // run main loop
-		// IMPORTANT: call main timeEvent function for
-		// all time controlled actions of IsoAgLib
-		getISchedulerInstance().timeEvent();
+    - The following loop could be replaced of any repeating call of
+      getISchedulerInstance().timeEvent();
+      which is needed to perform all internal activities of the IsoAgLib.
+    - Define the time intervall for getISchedulerInstance().timeEvent()
+      in a way, that allows IsoAgLib to trigger all reactions on BUS
+      in the ISO 11783 defined time resolution - especially the address
+      claim process has some tight time restrictions, that suggest
+      a trigger rate of at least 100msec ( you could call the function
+      only during address claim, mask updload and other special
+      circumstances in a high repetition rate )
+    - The main loop is running until iSystem_c::canEn() is returning false.
+      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      in isoaglib_config.h to ignore short CAN_EN loss.
+    - This explicit control of power state without automatic powerdown on CanEn loss
+      can be controled with the central config define
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      or
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      in the header xgpl_src/Application_Config/isoaglib_config.h
+    - This can be also controlled during runtime with the function call:
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
+      or
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
+  */
+  while ( iSystem_c::canEn() )
+  { // run main loop
+    // IMPORTANT: call main timeEvent function for
+    // all time controlled actions of IsoAgLib
+    getISchedulerInstance().timeEvent();
 
-		if ( ! b_sendCalendar )
-		{ // check if local item has already claimed address
-			if (getISystemMgmtInstance().existMemberGtp(myGtp, true))
-			{ // local item has claimed address
-				if ( i32_decideOnCalendar < 0 )
-				{ // set time for decision
-					i32_decideOnCalendar = iSystem_c::getTime() + 3000;
-				}
-				else if ( ( i32_decideOnCalendar > 0                  )
-								&& ( iSystem_c::getTime() >= i32_decideOnCalendar      )
-								&& ( ! getIBaseInstance().isCalendarReceived() ) )
-				{ // still no calendar received -> start sending of calendar
-					// first set config in BaseData_c
-					getIBaseInstance().config(&myGtp, BaseDataCalendar );
-					b_sendCalendar = true;
-				}
-			}
-		}
-		else
-		{ // we are currently sending calendar
-			getIBaseInstance().setCalendar( localGetYear(), localGetMonth(), localGetDay(), localGetHour(), localGetMinute(), localGetSecond() );
-		}
-	}
+    if ( ! b_sendCalendar )
+    { // check if local item has already claimed address
+      if (getISystemMgmtInstance().existMemberGtp(myGtp, true))
+      { // local item has claimed address
+        if ( i32_decideOnCalendar < 0 )
+        { // set time for decision
+          i32_decideOnCalendar = iSystem_c::getTime() + 3000;
+        }
+        else if ( ( i32_decideOnCalendar > 0                  )
+                && ( iSystem_c::getTime() >= i32_decideOnCalendar      )
+                && ( ! getIBaseInstance().isCalendarReceived() ) )
+        { // still no calendar received -> start sending of calendar
+          // first set config in BaseData_c
+          getIBaseInstance().config(&myGtp, BaseDataCalendar );
+          b_sendCalendar = true;
+        }
+      }
+    }
+    else
+    { // we are currently sending calendar
+      getIBaseInstance().setCalendar( localGetYear(), localGetMonth(), localGetDay(), localGetHour(), localGetMinute(), localGetSecond() );
+    }
+  }
   return 1;
 }
 

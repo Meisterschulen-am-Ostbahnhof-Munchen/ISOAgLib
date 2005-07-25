@@ -59,41 +59,41 @@
  * <ol>
  * <li>Create some local standard process data and handle received setpoints
  * <li>Use the posibility to check for device type of setpoints sender to decide on
- *		 accept or deny of setpoint value
+ *     accept or deny of setpoint value
  * <ul>
- *	<li>Standard local process data class IsoAgLib::iProcDataLocal_c
- *	<li>Use constructor IsoAgLib::iProcDataLocal_c::iProcDataLocal_c to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataLocal_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
- *	<li>Use IsoAgLib::iProcDataLocal_c::setMasterVal() to set current measurement data
- *	<li>Use IsoAgLib::iProcDataLocal_c::setpoint to get access to the setpoint handling part of the process data of type IsoAgLib::iSetpointLocal_c
- *	<li>Use IsoAgLib::iSetpointLocal_c::existUnhandledMaster , IsoAgLib::iSetpointLocal_c::master , IsoAgLib::iSetpointLocal_c::unhandledMaster ,
- *			IsoAgLib::iSetpointLocal_c::acceptNewMaster to check for current master setpoint sender ( master == ECU which sent first accepted setpoint, and which
- *			should be able to rule the further work of the controlled ECU --> later setpoints of other ECUs should never cause a deviation from the control of the master
- *	<li>Use IsoAgLib::iSetpointLocal_c::unhandledCnt and unhandledInd to access the not yet handled received setpoints
- *	<li>Use IsoAgLib::iSetpointLocal_c::answerAllUnhandled to notify all not yet handled setpoint senders of acceptance or deny
- *	<li>Use IsoAgLib::iSetpointLocal_c::setAllowedDeltaPercent to control the allowed deviation between setpoint and measurement -> send problem indication to controlling
- *			ECU if current setpoint can't be realized at the moment ( IsoAgLib sends this indication automatically if call of IsoAgLib::iProcDataLocal_c::setMasterVal
- *			indicates this problem --> application don't have to do this )
- *	<li>Use IsoAgLib::iSetpointRegister_c::gtp to get device type of corresponding setpoint sender
- *	<li>Use IsoAgLib::iSetpointRegister_c::existExact , IsoAgLib::iSetpointRegister_c::existPercent , IsoAgLib::iSetpointRegister_c::existMin and
- *			IsoAgLib::iSetpointRegister_c::existMax to check which setpoint type was used
- *	<li>Use IsoAgLib::iSetpointRegister_c::exact , IsoAgLib::iSetpointRegister_c::percent , IsoAgLib::iSetpointRegister_c::min and
- *			IsoAgLib::iSetpointRegister_c::max to access the setpoint value
- *	<li>Use IsoAgLib::iSetpointRegister_c::setMaster( bool ) to dedicate the corresponding setpoint and its sending ECU as master
+ *  <li>Standard local process data class IsoAgLib::iProcDataLocal_c
+ *  <li>Use constructor IsoAgLib::iProcDataLocal_c::iProcDataLocal_c to create variable with defined property
+ *  <li>Use IsoAgLib::iProcDataLocal_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
+ *  <li>Use IsoAgLib::iProcDataLocal_c::setMasterVal() to set current measurement data
+ *  <li>Use IsoAgLib::iProcDataLocal_c::setpoint to get access to the setpoint handling part of the process data of type IsoAgLib::iSetpointLocal_c
+ *  <li>Use IsoAgLib::iSetpointLocal_c::existUnhandledMaster , IsoAgLib::iSetpointLocal_c::master , IsoAgLib::iSetpointLocal_c::unhandledMaster ,
+ *      IsoAgLib::iSetpointLocal_c::acceptNewMaster to check for current master setpoint sender ( master == ECU which sent first accepted setpoint, and which
+ *      should be able to rule the further work of the controlled ECU --> later setpoints of other ECUs should never cause a deviation from the control of the master
+ *  <li>Use IsoAgLib::iSetpointLocal_c::unhandledCnt and unhandledInd to access the not yet handled received setpoints
+ *  <li>Use IsoAgLib::iSetpointLocal_c::answerAllUnhandled to notify all not yet handled setpoint senders of acceptance or deny
+ *  <li>Use IsoAgLib::iSetpointLocal_c::setAllowedDeltaPercent to control the allowed deviation between setpoint and measurement -> send problem indication to controlling
+ *      ECU if current setpoint can't be realized at the moment ( IsoAgLib sends this indication automatically if call of IsoAgLib::iProcDataLocal_c::setMasterVal
+ *      indicates this problem --> application don't have to do this )
+ *  <li>Use IsoAgLib::iSetpointRegister_c::gtp to get device type of corresponding setpoint sender
+ *  <li>Use IsoAgLib::iSetpointRegister_c::existExact , IsoAgLib::iSetpointRegister_c::existPercent , IsoAgLib::iSetpointRegister_c::existMin and
+ *      IsoAgLib::iSetpointRegister_c::existMax to check which setpoint type was used
+ *  <li>Use IsoAgLib::iSetpointRegister_c::exact , IsoAgLib::iSetpointRegister_c::percent , IsoAgLib::iSetpointRegister_c::min and
+ *      IsoAgLib::iSetpointRegister_c::max to access the setpoint value
+ *  <li>Use IsoAgLib::iSetpointRegister_c::setMaster( bool ) to dedicate the corresponding setpoint and its sending ECU as master
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
- * 	<ul>
- *	<li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
- *	<li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *		<li>Perform activities until defined rl_endTime is reached, which is important
- *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
- *		<li>Process all received CAN messages until all receive buffers are empty
- *			-> simple call, but can lead to deadlock on to high CAN load
- *		</ul>
- *	</ul>
+ *  <ul>
+ *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
+ *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
+ *    <li>Perform activities until defined rl_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Process all received CAN messages until all receive buffers are empty
+ *      -> simple call, but can lead to deadlock on to high CAN load
+ *    </ul>
+ *  </ul>
  * <li>Create local identity, for which the ISO<i><sub>AgLib</sub></i> performs an address claim,
- *		so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
- *		and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
+ *    so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
+ *    and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
  * </ol>
  * <H1>Where to look for further information</H1>
  * <ol>
@@ -130,28 +130,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__rte__rte
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__rte__simulating
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__rte__sys
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__simulating__rte
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__simulating__simulating
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__rte__rte
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__rte__simulating
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__rte__sys
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__simulating__rte
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__vector_canlib__simulating
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__vector_canlib__sys
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__simulating__simulating
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__esx__sys__sys
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__imi__sys__sys
- *		<li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__esx__sys__sys
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__imi__sys__sys
+ *    <li> \ref PrjSpec2_4_LocalWriteSetpointStdIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
@@ -164,28 +164,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__rte__rte
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__rte__simulating
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__rte__sys
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__simulating__rte
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__simulating__simulating
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__rte__rte
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__rte__simulating
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__rte__sys
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__simulating__rte
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__simulating__simulating
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__vector_canlib__simulating
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__vector_canlib__sys
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__simulating__simulating
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__vector_canlib__sys
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__simulating__simulating
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__esx__sys__sys
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__imi__sys__sys
- *		<li> \ref FileLists2_4_LocalWriteSetpointStdIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__esx__sys__sys
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__imi__sys__sys
+ *    <li> \ref FileLists2_4_LocalWriteSetpointStdIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
@@ -197,11 +197,11 @@
 
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
     to include project specific configuration settings.
-		Set this define in the project file or Makefile of the whole
-		project, so that each source file is compiled with this setting
-	*/
+    Set this define in the project file or Makefile of the whole
+    project, so that each source file is compiled with this setting
+  */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-	#define PRJ_USE_AUTOGEN_CONFIG config_2_4_LocalWriteSetpointStdIso.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_2_4_LocalWriteSetpointStdIso.h
 #endif
 
 // include the central interface header for the hardware adaption layer part
@@ -227,7 +227,7 @@
 #define USE_PROC_HANDLER
 
 #ifdef USE_PROC_HANDLER
-	#include <IsoAgLib/comm/Process/processdatachangehandler_c.h>
+  #include <IsoAgLib/comm/Process/processdatachangehandler_c.h>
 #endif
 
 
@@ -244,32 +244,32 @@ uint8_t ui8_localDummyWorkState;
 uint32_t ui32_localDummyApplicationRate;
 
 /** dummy function to decide on acceptance of received setpoint */
-bool localIsAcceptableWorkState( IsoAgLib::iGetyPos_c rc_deviceType, uint32_t rui32_setpointValue )
+bool localIsAcceptableWorkState( const IsoAgLib::iGetyPos_c& rc_deviceType, uint32_t rui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
-	return true;
-  
+  return true;
+
   if ( rc_deviceType.getGety() < 2 )
-	{
-		ui8_localDummyWorkState = rui32_setpointValue;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+  {
+    ui8_localDummyWorkState = rui32_setpointValue;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
-bool localIsAcceptableApplicationRate( IsoAgLib::iGetyPos_c rc_deviceType, uint32_t rui32_setpointValue )
+bool localIsAcceptableApplicationRate( const IsoAgLib::iGetyPos_c& rc_deviceType, uint32_t rui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
-	if ( ( rc_deviceType.getGety() == 1 ) || ( rui32_setpointValue < 255 ) )
-	{
-		ui32_localDummyApplicationRate = rui32_setpointValue;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+  if ( ( rc_deviceType.getGety() == 1 ) || ( rui32_setpointValue < 255 ) )
+  {
+    ui32_localDummyApplicationRate = rui32_setpointValue;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 /** dummy function to retrieve if the implement is at the moment in working state */
@@ -285,67 +285,67 @@ IsoAgLib::iProcDataLocal_c arr_procData[2];
 
 class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 {
-	public:
-		//! This handler function is called if one of the process data
-		//! entries received a setpoint.
-		//! Derive with the help of pointer to the triggered process data
-		//! instance the corresponding variable and reacte then specific for this type.
-		//! Parameter:
-		//! @param rc_src encapsulated pointer to triggered process data variable
-		//! @param ri32_val new received setpoint value ( raw from CAN msg; independent interpretation on Exact/Min/Max needed )
-		//! @param rc_setpointSender device type of setpoint sender
-		//! @param rb_change display if value change or if just new msg arrived, which could be important for handling
-		virtual bool processSetpointSet(IsoAgLib::EventSource_c rc_src,
-																		int32_t ri32_val,
-																		IsoAgLib::iGetyPos_c rc_setpointSender,
-																		bool rb_change);
+  public:
+    //! This handler function is called if one of the process data
+    //! entries received a setpoint.
+    //! Derive with the help of pointer to the triggered process data
+    //! instance the corresponding variable and reacte then specific for this type.
+    //! Parameter:
+    //! @param rc_src encapsulated pointer to triggered process data variable
+    //! @param ri32_val new received setpoint value ( raw from CAN msg; independent interpretation on Exact/Min/Max needed )
+    //! @param rc_setpointSender device type of setpoint sender
+    //! @param rb_change display if value change or if just new msg arrived, which could be important for handling
+    virtual bool processSetpointSet(IsoAgLib::EventSource_c rc_src,
+                                    int32_t ri32_val,
+                                    const IsoAgLib::iGetyPos_c& rc_setpointSender,
+                                    bool rb_change);
 };
 
-bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, IsoAgLib::iGetyPos_c rc_setpointSender, bool rb_change)
+bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iGetyPos_c& rc_setpointSender, bool rb_change)
 {
-	printf("new setpoint command\n"); fflush(0);
+  printf("new setpoint command\n"); fflush(0);
 
-	if ( ! rb_change )
-	{ // don't handle succeeding setpoints which don't contain new value - maybe still relevant for other applications
-		return false; // indicate that this information is not again handled - just ignored
-	}
+  if ( ! rb_change )
+  { // don't handle succeeding setpoints which don't contain new value - maybe still relevant for other applications
+    return false; // indicate that this information is not again handled - just ignored
+  }
 
-	// use helper function to get automatically casted pointer to used process data type
-	uint16_t ui16_index = rc_src.makeIProcDataLocal() - arr_procData;
-	switch ( ui16_index )
-	{
-		case cui8_indexWorkState:
-			if ( ! arr_procData[cui8_indexWorkState].setpoint().existMaster() ) {
-				if ( localIsAcceptableWorkState( rc_setpointSender, ri32_val ) )
-				{ // accept this setpoint and regard from now on the sender as master setpoint sender
-					arr_procData[cui8_indexWorkState].setpoint().unhandledFirst().setMaster( true );
-				}
-			}
-			else if ( arr_procData[cui8_indexWorkState].setpoint().existUnhandledMaster() )
-			{ // an already existing master sent this new value
-				arr_procData[cui8_indexWorkState].setpoint().acceptNewMaster();
-			}
-			// send answer for all received setpoints
-			arr_procData[cui8_indexWorkState].setpoint().answerAllUnhandled();
-			break;
-		case cui8_indexApplicationRate:
-			if ( ! arr_procData[cui8_indexApplicationRate].setpoint().existMaster() ) {
-				if ( localIsAcceptableApplicationRate( rc_setpointSender, ri32_val ) )
-				{ // accept this setpoint and regard from now on the sender as master setpoint sender
-					arr_procData[cui8_indexApplicationRate].setpoint().unhandledFirst().setMaster( true );
-				}
-			}
-			else if ( ( arr_procData[cui8_indexApplicationRate].setpoint().existUnhandledMaster() )
-						 && ( localIsAcceptableApplicationRate( rc_setpointSender, ri32_val )           ) )
-			{ // an already existing master sent this new value
-				arr_procData[cui8_indexApplicationRate].setpoint().acceptNewMaster();
-			}
-			// send answer for all received setpoints
-			arr_procData[cui8_indexApplicationRate].setpoint().answerAllUnhandled();
-			break;
-	}
-	// answer to IsoAgLib that this new setpoint is handled
-	return true;
+  // use helper function to get automatically casted pointer to used process data type
+  uint16_t ui16_index = rc_src.makeIProcDataLocal() - arr_procData;
+  switch ( ui16_index )
+  {
+    case cui8_indexWorkState:
+      if ( ! arr_procData[cui8_indexWorkState].setpoint().existMaster() ) {
+        if ( localIsAcceptableWorkState( rc_setpointSender, ri32_val ) )
+        { // accept this setpoint and regard from now on the sender as master setpoint sender
+          arr_procData[cui8_indexWorkState].setpoint().unhandledFirst().setMaster( true );
+        }
+      }
+      else if ( arr_procData[cui8_indexWorkState].setpoint().existUnhandledMaster() )
+      { // an already existing master sent this new value
+        arr_procData[cui8_indexWorkState].setpoint().acceptNewMaster();
+      }
+      // send answer for all received setpoints
+      arr_procData[cui8_indexWorkState].setpoint().answerAllUnhandled();
+      break;
+    case cui8_indexApplicationRate:
+      if ( ! arr_procData[cui8_indexApplicationRate].setpoint().existMaster() ) {
+        if ( localIsAcceptableApplicationRate( rc_setpointSender, ri32_val ) )
+        { // accept this setpoint and regard from now on the sender as master setpoint sender
+          arr_procData[cui8_indexApplicationRate].setpoint().unhandledFirst().setMaster( true );
+        }
+      }
+      else if ( ( arr_procData[cui8_indexApplicationRate].setpoint().existUnhandledMaster() )
+             && ( localIsAcceptableApplicationRate( rc_setpointSender, ri32_val )           ) )
+      { // an already existing master sent this new value
+        arr_procData[cui8_indexApplicationRate].setpoint().acceptNewMaster();
+      }
+      // send answer for all received setpoints
+      arr_procData[cui8_indexApplicationRate].setpoint().answerAllUnhandled();
+      break;
+  }
+  // answer to IsoAgLib that this new setpoint is handled
+  return true;
 }
 
 // create one class instance for the handler
@@ -372,7 +372,7 @@ int main()
   uint16_t ui16_manufCode = 0x7FF;
   uint32_t ui32_serNo = 27;
 
-	// start address claim of the local member "IMI"
+  // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the myGtp val through the pointer to myGtp
   // ISO
@@ -384,129 +384,129 @@ int main()
   //uint8_t c_myName[] = "Hi-You";
   //IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
 
-	#ifdef USE_PROC_HANDLER
+  #ifdef USE_PROC_HANDLER
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-	#ifdef USE_EEPROM_IO
+  #ifdef USE_EEPROM_IO
   //  arr_procData[cui8_indexWorkState].init(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false, 0xFFFF, &c_mySetpointHandler);
-	#else
+  #else
   // DIN:
   //arr_procData[cui8_indexWorkState].init(0, 0x1, 0x0, 0xFF, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
   // ISO:
   // DDI 2, element 2
   arr_procData[cui8_indexWorkState].init(2, 2, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
-	#endif
+  #endif
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-	#ifdef USE_EEPROM_IO
+  #ifdef USE_EEPROM_IO
   //arr_procData[cui8_indexApplicationRate].init(0, myGtp, 0x5, 0x0, 0xFF, 2, myGtp, &myGtp, false, 0xFFFF, &c_mySetpointHandler);
-	#else
+  #else
    // DIN
    //arr_procData[cui8_indexApplicationRate].init(0, 0x5, 0x0, 0xFF, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
    // ISO:
    // DDI 1, element 1
    arr_procData[cui8_indexApplicationRate].init(1, 1, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
-	#endif
+  #endif
 
-	#else
+  #else
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-	IsoAgLib::iProcDataLocal_c c_workState(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false);
+  IsoAgLib::iProcDataLocal_c c_workState(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false);
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   IsoAgLib::iProcDataLocal_c c_applicationRate(0, myGtp, 0x5, 0x0, 0xFF, 2, myGtp, &myGtp, false);
-	#endif
+  #endif
 
   /** IMPORTANT:
-	  - The following loop could be replaced of any repeating call of
-			IsoAgLib::getISchedulerInstance().timeEvent();
-			which is needed to perform all internal activities of the IsoAgLib.
-		- Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
-			in a way, that allows IsoAgLib to trigger all reactions on BUS
-			in the ISO 11783 defined time resolution - especially the address
-			claim process has some tight time restrictions, that suggest
-			a trigger rate of at least 100msec ( you could call the function
-			only during address claim, mask updload and other special
-			circumstances in a high repetition rate )
-		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-			in isoaglib_config.h to ignore short CAN_EN loss.
-		- This explicit control of power state without automatic powerdown on CanEn loss
-			can be controled with the central config define
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-			or
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
-		- This can be also controlled during runtime with the function call:
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
-			or
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
-	*/
+    - The following loop could be replaced of any repeating call of
+      IsoAgLib::getISchedulerInstance().timeEvent();
+      which is needed to perform all internal activities of the IsoAgLib.
+    - Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
+      in a way, that allows IsoAgLib to trigger all reactions on BUS
+      in the ISO 11783 defined time resolution - especially the address
+      claim process has some tight time restrictions, that suggest
+      a trigger rate of at least 100msec ( you could call the function
+      only during address claim, mask updload and other special
+      circumstances in a high repetition rate )
+    - The main loop is running until iSystem_c::canEn() is returning false.
+      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      in isoaglib_config.h to ignore short CAN_EN loss.
+    - This explicit control of power state without automatic powerdown on CanEn loss
+      can be controled with the central config define
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      or
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      in the header xgpl_src/Application_Config/isoaglib_config.h
+    - This can be also controlled during runtime with the function call:
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
+      or
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
+  */
 
    uint8_t ui8_cnt = 0;
-	while ( iSystem_c::canEn() )
-	{ // run main loop
-		// IMPORTANT: call main timeEvent function for
-		// all time controlled actions of IsoAgLib
+  while ( iSystem_c::canEn() )
+  { // run main loop
+    // IMPORTANT: call main timeEvent function for
+    // all time controlled actions of IsoAgLib
 
       usleep(100000);
       ui8_cnt++;
 
-		IsoAgLib::getISchedulerInstance().timeEvent();
+    IsoAgLib::getISchedulerInstance().timeEvent();
 
-		#ifndef USE_PROC_HANDLER
-		// if no handler is used to react on received setpoints, each process data must be polled for new
-		// received setpoints
-		if ( c_workState.setpoint().unhandledCnt() > 0 ) {
-			if ( ! c_workState.setpoint().existMaster() ) {
-				for ( uint8_t ind = 0; ind < c_workState.setpoint().unhandledCnt(); ind++ )
-				{ // now decide on all received setpoints
-					if ( localIsAcceptableWorkState( c_workState.setpoint().unhandledInd( ind ).exact() ) )
-					{ // this setpoint is regarded as acceptable
-						c_workState.setpoint().unhandledInd( ind ).setMaster( true );
-						break; // ignore all others
-					}
-				}
-			}
-			else if ( localIsAcceptableWorkState( c_workState.setpoint().unhandledMaster().exact() ) )
-			{ // simply accept new master if 0 or 100
-				c_workState.setpoint().acceptNewMaster();
-			}
-			// send answer for all received setpoints
-			c_workState.setpoint().answerAllUnhandled();
-		}
+    #ifndef USE_PROC_HANDLER
+    // if no handler is used to react on received setpoints, each process data must be polled for new
+    // received setpoints
+    if ( c_workState.setpoint().unhandledCnt() > 0 ) {
+      if ( ! c_workState.setpoint().existMaster() ) {
+        for ( uint8_t ind = 0; ind < c_workState.setpoint().unhandledCnt(); ind++ )
+        { // now decide on all received setpoints
+          if ( localIsAcceptableWorkState( c_workState.setpoint().unhandledInd( ind ).exact() ) )
+          { // this setpoint is regarded as acceptable
+            c_workState.setpoint().unhandledInd( ind ).setMaster( true );
+            break; // ignore all others
+          }
+        }
+      }
+      else if ( localIsAcceptableWorkState( c_workState.setpoint().unhandledMaster().exact() ) )
+      { // simply accept new master if 0 or 100
+        c_workState.setpoint().acceptNewMaster();
+      }
+      // send answer for all received setpoints
+      c_workState.setpoint().answerAllUnhandled();
+    }
 
-		if ( c_applicationRate.setpoint().unhandledCnt() > 0 ) {
-			if ( ! c_applicationRate.setpoint().existMaster() ) {
-				for ( uint8_t ind = 0; ind < c_applicationRate.setpoint().unhandledCnt(); ind++ )
-				{ // now decide on all received setpoints
-					if ( localIsAcceptableApplicationRate( c_applicationRate.setpoint().unhandledInd( ind ).exact() ) )
-					{ // this setpoint is regarded as acceptable
-						c_applicationRate.setpoint().unhandledInd( ind ).setMaster( true );
-						break; // ignore all others
-					}
-				}
-			}
-			else if ( localIsAcceptableApplicationRate( c_applicationRate.setpoint().unhandledMaster().exact() ) )
-			{ // simply accept new master if 0 or 100
-				c_applicationRate.setpoint().acceptNewMaster();
-			}
-			// send answer for all received setpoints
-			c_applicationRate.setpoint().answerAllUnhandled();
-		}
-		#endif
+    if ( c_applicationRate.setpoint().unhandledCnt() > 0 ) {
+      if ( ! c_applicationRate.setpoint().existMaster() ) {
+        for ( uint8_t ind = 0; ind < c_applicationRate.setpoint().unhandledCnt(); ind++ )
+        { // now decide on all received setpoints
+          if ( localIsAcceptableApplicationRate( c_applicationRate.setpoint().unhandledInd( ind ).exact() ) )
+          { // this setpoint is regarded as acceptable
+            c_applicationRate.setpoint().unhandledInd( ind ).setMaster( true );
+            break; // ignore all others
+          }
+        }
+      }
+      else if ( localIsAcceptableApplicationRate( c_applicationRate.setpoint().unhandledMaster().exact() ) )
+      { // simply accept new master if 0 or 100
+        c_applicationRate.setpoint().acceptNewMaster();
+      }
+      // send answer for all received setpoints
+      c_applicationRate.setpoint().answerAllUnhandled();
+    }
+    #endif
 
 
-		// update local value for local process data so that remote ECUs can get the current
-		// value from IsoAgLib
-		// IsoAgLib can additionally inform setpoint senders if current value is indicating that
-		// setpoints can be realized ( i.e. send NACK or out-of-service information )
-		#ifdef USE_PROC_HANDLER
+    // update local value for local process data so that remote ECUs can get the current
+    // value from IsoAgLib
+    // IsoAgLib can additionally inform setpoint senders if current value is indicating that
+    // setpoints can be realized ( i.e. send NACK or out-of-service information )
+    #ifdef USE_PROC_HANDLER
 
-      //		arr_procData[cui8_indexWorkState].setMasterVal( getCurrentWorkState() );
+      //    arr_procData[cui8_indexWorkState].setMasterVal( getCurrentWorkState() );
       arr_procData[cui8_indexWorkState].setMasterVal( ui8_cnt );
-		arr_procData[cui8_indexApplicationRate].setMasterVal( getCurrentApplicationRate() );
-		#else
-		c_workState.setMasterVal( getCurrentWorkState() );
-		c_applicationRate.setMasterVal( getCurrentApplicationRate() );
-		#endif
-	}
+    arr_procData[cui8_indexApplicationRate].setMasterVal( getCurrentApplicationRate() );
+    #else
+    c_workState.setMasterVal( getCurrentWorkState() );
+    c_applicationRate.setMasterVal( getCurrentApplicationRate() );
+    #endif
+  }
   return 1;
 }
 

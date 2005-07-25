@@ -205,7 +205,7 @@ using namespace IsoAgLib;
 
 int main()
 { // simply call startImi
-  getIcanInstance().init( 0, 250 );
+  getIcanInstance().init( 0, 125 );
   // variable for GETY_POS
   // default with primary cultivation mounted back
   IsoAgLib::iGetyPos_c myGtp( 2, 0 );

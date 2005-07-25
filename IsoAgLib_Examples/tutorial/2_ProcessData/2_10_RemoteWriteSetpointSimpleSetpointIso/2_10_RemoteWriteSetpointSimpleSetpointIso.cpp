@@ -62,24 +62,24 @@
  * <ol>
  * <li>Create some remote standard process data and request measurement data from remote device
  * <ul>
- *	<li>Standard remote process data class IsoAgLib::iProcDataRemoteSimpleSetpoint_c
- *	<li>Use constructor IsoAgLib::iProcDataRemoteSimpleSetpoint_c::iProcDataRemoteSimpleSetpoint_c to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataRemoteSimpleSetpoint_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
- *	<li>Use IsoAgLib::iProcDataRemoteSimpleSetpoint_c::setSetpointMasterVal to send setpoint
+ *  <li>Standard remote process data class IsoAgLib::iProcDataRemoteSimpleSetpoint_c
+ *  <li>Use constructor IsoAgLib::iProcDataRemoteSimpleSetpoint_c::iProcDataRemoteSimpleSetpoint_c to create variable with defined property
+ *  <li>Use IsoAgLib::iProcDataRemoteSimpleSetpoint_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
+ *  <li>Use IsoAgLib::iProcDataRemoteSimpleSetpoint_c::setSetpointMasterVal to send setpoint
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
- * 	<ul>
- *	<li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
- *	<li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *		<li>Perform activities until defined rl_endTime is reached, which is important
- *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
- *		<li>Process all received CAN messages until all receive buffers are empty
- *			-> simple call, but can lead to deadlock on to high CAN load
- *		</ul>
- *	</ul>
+ *  <ul>
+ *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
+ *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
+ *    <li>Perform activities until defined rl_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Process all received CAN messages until all receive buffers are empty
+ *      -> simple call, but can lead to deadlock on to high CAN load
+ *    </ul>
+ *  </ul>
  * <li>Create local identity, for which the ISO<i><sub>AgLib</sub></i> performs an address claim,
- *		so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
- *		and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
+ *    so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
+ *    and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
  * </ol>
  * <H1>Where to look for further information</H1>
  * <ol>
@@ -116,28 +116,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__rte
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__simulating
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__sys
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__rte
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__simulating
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__rte
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__simulating
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__sys
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__rte
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_canlib__simulating
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_canlib__sys
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__simulating__simulating
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__esx__sys__sys
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__imi__sys__sys
- *		<li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__esx__sys__sys
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__imi__sys__sys
+ *    <li> \ref PrjSpec2_10_RemoteWriteSetpointSimpleSetpointIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
@@ -150,28 +150,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__rte
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__simulating
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__sys
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__rte
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__simulating
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__rte
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__simulating
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__rte__sys
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__rte
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__simulating
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_canlib__simulating
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_canlib__sys
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__simulating__simulating
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_canlib__sys
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__simulating__simulating
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__esx__sys__sys
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__imi__sys__sys
- *		<li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__esx__sys__sys
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__imi__sys__sys
+ *    <li> \ref FileLists2_10_RemoteWriteSetpointSimpleSetpointIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
@@ -183,11 +183,11 @@
 
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
     to include project specific configuration settings.
-		Set this define in the project file or Makefile of the whole
-		project, so that each source file is compiled with this setting
-	*/
+    Set this define in the project file or Makefile of the whole
+    project, so that each source file is compiled with this setting
+  */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-	#define PRJ_USE_AUTOGEN_CONFIG config_2_10_RemoteWriteSetpointSimpleSetpointIso.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_2_10_RemoteWriteSetpointSimpleSetpointIso.h
 #endif
 
 // include the central interface header for the hardware adaption layer part
@@ -215,14 +215,14 @@
 #define USE_PROC_HANDLER
 
 #ifdef USE_PROC_HANDLER
-	#include <IsoAgLib/comm/Process/processdatachangehandler_c.h>
+  #include <IsoAgLib/comm/Process/processdatachangehandler_c.h>
 #endif
 
 #ifdef WIN32
-	#define LOG_INFO std::cout
-	#include <iostream>
+  #define LOG_INFO std::cout
+  #include <iostream>
 #else
-	#define LOG_INFO getIrs232Instance()
+  #define LOG_INFO getIrs232Instance()
 #endif
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
@@ -234,9 +234,9 @@ using namespace IsoAgLib;
 /** define channel to write:
  - access data from tutorial examples 2_0_xy to 2_6_nm which listen to requests on channel 0
     -> select here the corresponding channel in your configuration
-			 ( e.g. select channel 1 for a 2-channel CAN-Hardware )
-	- simply write on channel 0, when no connection needed, or the connection is
-	  realized with another external connection
+       ( e.g. select channel 1 for a 2-channel CAN-Hardware )
+  - simply write on channel 0, when no connection needed, or the connection is
+    realized with another external connection
 */
 static const int32_t cui32_canChannel = 1;
 
@@ -252,20 +252,20 @@ uint8_t ui8_mySetpointWorkState = 0;
 int32_t i32_mySetpointApplicationRate = 0;
 
 /** dummy function which is called upon reaction from to be controlled remote device
-		- for work state
-	*/
+    - for work state
+  */
 void indicateRemoteWorkStateResponse( bool rb_work )
 { // perform some reaction based on result
-	if ( rb_work ) LOG_INFO << "Remote ECU switched to WORK-STATE\r\n";
-	else LOG_INFO << "Remote ECU switched to NO-WORK\r\n";
+  if ( rb_work ) LOG_INFO << "Remote ECU switched to WORK-STATE\r\n";
+  else LOG_INFO << "Remote ECU switched to NO-WORK\r\n";
 }
 /** dummy function which is called upon reaction from to be controlled remote device
-		- for Application Rate
-	*/
+    - for Application Rate
+  */
 void indicateRemoteApplicationRateResponse( bool rb_accepted )
 { // perform some reaction based on result
-	if ( rb_accepted ) LOG_INFO << "FINE - Remote ECU accepted our last setpoint\r\n";
-	else LOG_INFO << "SAD - Remote ECU didn't accept our last setpoint\r\n";
+  if ( rb_accepted ) LOG_INFO << "FINE - Remote ECU accepted our last setpoint\r\n";
+  else LOG_INFO << "SAD - Remote ECU didn't accept our last setpoint\r\n";
 }
 
 #ifdef USE_PROC_HANDLER
@@ -276,47 +276,47 @@ IsoAgLib::iProcDataRemoteSimpleSetpoint_c arr_procData[2];
 
 class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 {
-	public:
-		/** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
-			* (remote system which manages the process data, local or other system sent previously a
-			*  new setpoint; commanded manager of process data sent the response with ACK/NACK)
-			* @param rc_src general event source class, which provides conversion functions to get needed event source class
-			* @param ri32_val new value, which caused the event (for immediate access)
-			* @param rc_callerGetyPos GetyPos of calling device - i.e. which sent new setpoint
-			* @return true -> handler class reacted on change event
-			*/
-		virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, iGetyPos_c rc_callerGetyPos );
+  public:
+    /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
+      * (remote system which manages the process data, local or other system sent previously a
+      *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
+      * @param rc_src general event source class, which provides conversion functions to get needed event source class
+      * @param ri32_val new value, which caused the event (for immediate access)
+      * @param rc_callerGetyPos GetyPos of calling device - i.e. which sent new setpoint
+      * @return true -> handler class reacted on change event
+      */
+    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iGetyPos_c& rc_callerGetyPos );
 };
 
-bool MyProcDataHandler_c::processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, iGetyPos_c /* rc_callerGetyPos */ )
+bool MyProcDataHandler_c::processSetpointResponse( EventSource_c rc_src, int32_t ri32_val,  const iGetyPos_c& /* rc_callerGetyPos */ )
 {
-	// use helper function to get automatically casted pointer to used process data type
-	uint16_t ui16_index = rc_src.makeIProcDataRemoteSimpleSetpoint() - arr_procData;
-	switch ( ui16_index )
-	{
-		case cui8_indexWorkState:
-			if ( ui8_mySetpointWorkState == ri32_val )
-			{ // FINE!! - maybe trigger positive reaction here
-				indicateRemoteWorkStateResponse( true );
-			}
-			else
-			{ // SAD
-				indicateRemoteWorkStateResponse( false );
-			}
-			break;
-		case cui8_indexApplicationRate:
-			if ( i32_mySetpointApplicationRate == ri32_val )
-			{ // FINE!! - maybe trigger positive reaction here
-				indicateRemoteApplicationRateResponse( true );
-			}
-			else
-			{
-				indicateRemoteApplicationRateResponse( false );
-			}
-			break;
-	}
-	// answer to IsoAgLib that this new setpoint is handled
-	return true;
+  // use helper function to get automatically casted pointer to used process data type
+  uint16_t ui16_index = rc_src.makeIProcDataRemoteSimpleSetpoint() - arr_procData;
+  switch ( ui16_index )
+  {
+    case cui8_indexWorkState:
+      if ( ui8_mySetpointWorkState == ri32_val )
+      { // FINE!! - maybe trigger positive reaction here
+        indicateRemoteWorkStateResponse( true );
+      }
+      else
+      { // SAD
+        indicateRemoteWorkStateResponse( false );
+      }
+      break;
+    case cui8_indexApplicationRate:
+      if ( i32_mySetpointApplicationRate == ri32_val )
+      { // FINE!! - maybe trigger positive reaction here
+        indicateRemoteApplicationRateResponse( true );
+      }
+      else
+      {
+        indicateRemoteApplicationRateResponse( false );
+      }
+      break;
+  }
+  // answer to IsoAgLib that this new setpoint is handled
+  return true;
 }
 
 // create one class instance for the handler
@@ -345,108 +345,108 @@ int main()
   uint16_t ui16_manufCode = 0x7FF;
   uint32_t ui32_serNo = 27;
 
-	// start address claim of the local member "IMI"
+  // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the c_myGtp val through the pointer to c_myGtp
   IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
-	#ifdef USE_PROC_HANDLER
+  #ifdef USE_PROC_HANDLER
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
   arr_procData[cui8_indexWorkState].init(0, c_myGtp, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   arr_procData[cui8_indexApplicationRate].init(0, c_myGtp, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
-	#else
+  #else
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-	// of device with device type/subtype=5/0
-	IsoAgLib::iProcDataRemoteSimpleSetpoint_c c_workState(0, c_myGtp, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
-	bool b_waitingRespWorkState = false;
+  // of device with device type/subtype=5/0
+  IsoAgLib::iProcDataRemoteSimpleSetpoint_c c_workState(0, c_myGtp, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
+  bool b_waitingRespWorkState = false;
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-	// of device with device type/subtype=5/0
+  // of device with device type/subtype=5/0
   IsoAgLib::iProcDataRemoteSimpleSetpoint_c c_applicationRate(0, c_myGtp, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
-	bool b_waitingRespApplicationRate = false;
-	#endif
+  bool b_waitingRespApplicationRate = false;
+  #endif
 
 
   /** IMPORTANT:
-	  - The following loop could be replaced of any repeating call of
-			IsoAgLib::getISchedulerInstance().timeEvent();
-			which is needed to perform all internal activities of the IsoAgLib.
-		- Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
-			in a way, that allows IsoAgLib to trigger all reactions on BUS
-			in the ISO 11783 defined time resolution - especially the address
-			claim process has some tight time restrictions, that suggest
-			a trigger rate of at least 100msec ( you could call the function
-			only during address claim, mask updload and other special
-			circumstances in a high repetition rate )
-		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-			in isoaglib_config.h to ignore short CAN_EN loss.
-		- This explicit control of power state without automatic powerdown on CanEn loss
-			can be controled with the central config define
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-			or
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
-		- This can be also controlled during runtime with the function call:
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
-			or
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
-	*/
-	while ( iSystem_c::canEn() )
-	{ // run main loop
-		// IMPORTANT: call main timeEvent function for
-		// all time controlled actions of IsoAgLib
-		IsoAgLib::getISchedulerInstance().timeEvent();
+    - The following loop could be replaced of any repeating call of
+      IsoAgLib::getISchedulerInstance().timeEvent();
+      which is needed to perform all internal activities of the IsoAgLib.
+    - Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
+      in a way, that allows IsoAgLib to trigger all reactions on BUS
+      in the ISO 11783 defined time resolution - especially the address
+      claim process has some tight time restrictions, that suggest
+      a trigger rate of at least 100msec ( you could call the function
+      only during address claim, mask updload and other special
+      circumstances in a high repetition rate )
+    - The main loop is running until iSystem_c::canEn() is returning false.
+      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      in isoaglib_config.h to ignore short CAN_EN loss.
+    - This explicit control of power state without automatic powerdown on CanEn loss
+      can be controled with the central config define
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      or
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      in the header xgpl_src/Application_Config/isoaglib_config.h
+    - This can be also controlled during runtime with the function call:
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
+      or
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
+  */
+  while ( iSystem_c::canEn() )
+  { // run main loop
+    // IMPORTANT: call main timeEvent function for
+    // all time controlled actions of IsoAgLib
+    IsoAgLib::getISchedulerInstance().timeEvent();
 
-		if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) continue;
-		if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) continue;
-		#ifndef USE_PROC_HANDLER
-		if ( ( b_waitingRespWorkState ) && ( c_workState.setpointMasterVal( false ) == ui8_mySetpointWorkState ) )
-		{ // FINE - the current reported setpoint is the same we commanded lastly
-			b_waitingRespWorkState = false;
-			indicateRemoteWorkStateResponse( true );
-			// an explicit detection of DENY is not possible - or at least not easy
-		}
-		if ( ( b_waitingRespApplicationRate ) && ( c_applicationRate.setpointMasterVal( false ) == i32_mySetpointApplicationRate ) )
-		{ // FINE - the current reported setpoint is the same we commanded lastly
-			b_waitingRespApplicationRate = false;
-			indicateRemoteApplicationRateResponse( true );
-			// an explicit detection of DENY is not possible - or at least not easy
-		}
-		#endif
-	}
+    if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) continue;
+    if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) continue;
+    #ifndef USE_PROC_HANDLER
+    if ( ( b_waitingRespWorkState ) && ( c_workState.setpointMasterVal( false ) == ui8_mySetpointWorkState ) )
+    { // FINE - the current reported setpoint is the same we commanded lastly
+      b_waitingRespWorkState = false;
+      indicateRemoteWorkStateResponse( true );
+      // an explicit detection of DENY is not possible - or at least not easy
+    }
+    if ( ( b_waitingRespApplicationRate ) && ( c_applicationRate.setpointMasterVal( false ) == i32_mySetpointApplicationRate ) )
+    { // FINE - the current reported setpoint is the same we commanded lastly
+      b_waitingRespApplicationRate = false;
+      indicateRemoteApplicationRateResponse( true );
+      // an explicit detection of DENY is not possible - or at least not easy
+    }
+    #endif
+  }
   return 1;
 }
 
 /** dummy function which can be called from some other module to control the remote work state */
 void controlRemoteWorkState( bool rb_isWorking )
 {
-	if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) return;
-	if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) return;
+  if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) return;
+  if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) return;
 
-	if ( rb_isWorking ) ui8_mySetpointWorkState = 100;
-	else ui8_mySetpointWorkState = 0;
+  if ( rb_isWorking ) ui8_mySetpointWorkState = 100;
+  else ui8_mySetpointWorkState = 0;
 
-	#ifndef USE_PROC_HANDLER
-	b_waitingRespWorkState = true;
-	c_workState.setSetpointMasterVal( ui8_mySetpointWorkState );
-	#else
-	arr_procData[cui8_indexWorkState].setSetpointMasterVal( ui8_mySetpointWorkState );
-	#endif
+  #ifndef USE_PROC_HANDLER
+  b_waitingRespWorkState = true;
+  c_workState.setSetpointMasterVal( ui8_mySetpointWorkState );
+  #else
+  arr_procData[cui8_indexWorkState].setSetpointMasterVal( ui8_mySetpointWorkState );
+  #endif
 }
 /** dummy function which can be called from some other module to control the remote application rate */
 void controlRemoteApplicationRate( int32_t ri32_applicationRate )
 {
-	if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) return;
-	if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) return;
+  if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) return;
+  if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) return;
 
-	i32_mySetpointApplicationRate = ri32_applicationRate;
-	#ifndef USE_PROC_HANDLER
-	b_waitingRespApplicationRate = true;
-	c_applicationRate.setSetpointMasterVal( ri32_applicationRate );
-	#else
-	arr_procData[cui8_indexApplicationRate].setSetpointMasterVal( ri32_applicationRate );
-	#endif
+  i32_mySetpointApplicationRate = ri32_applicationRate;
+  #ifndef USE_PROC_HANDLER
+  b_waitingRespApplicationRate = true;
+  c_applicationRate.setSetpointMasterVal( ri32_applicationRate );
+  #else
+  arr_procData[cui8_indexApplicationRate].setSetpointMasterVal( ri32_applicationRate );
+  #endif
 }

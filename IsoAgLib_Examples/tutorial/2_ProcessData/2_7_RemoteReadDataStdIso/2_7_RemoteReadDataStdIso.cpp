@@ -61,27 +61,27 @@
  * <ol>
  * <li>Create some remote standard process data and request measurement data from remote device
  * <ul>
- *	<li>Standard remote process data class IsoAgLib::iProcDataRemote_c
- *	<li>Use constructor IsoAgLib::iProcDataRemote_c::iProcDataRemote_c to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataRemote_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
- *	<li>Use IsoAgLib::iProcDataRemote_c::prog() to retrive measurement program information as class IsoAgLib::iMeasureProgRemote_c
- *	<li>USe IsoAgLib::iProcDataRemote_c::masterVal to access current measurement value
- *	<li>Use IsoAgLib::iMeasureProgRemote_c::addSubprog , IsoAgLib::iMeasureProgRemote_c::start and IsoAgLib::iMeasureProgRemote_c::stop to control programs
- *	<li>Use IsoAgLib::iMeasureProgRemote_c::lastMeasurementReceive to check for last receive time
+ *  <li>Standard remote process data class IsoAgLib::iProcDataRemote_c
+ *  <li>Use constructor IsoAgLib::iProcDataRemote_c::iProcDataRemote_c to create variable with defined property
+ *  <li>Use IsoAgLib::iProcDataRemote_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
+ *  <li>Use IsoAgLib::iProcDataRemote_c::prog() to retrive measurement program information as class IsoAgLib::iMeasureProgRemote_c
+ *  <li>USe IsoAgLib::iProcDataRemote_c::masterVal to access current measurement value
+ *  <li>Use IsoAgLib::iMeasureProgRemote_c::addSubprog , IsoAgLib::iMeasureProgRemote_c::start and IsoAgLib::iMeasureProgRemote_c::stop to control programs
+ *  <li>Use IsoAgLib::iMeasureProgRemote_c::lastMeasurementReceive to check for last receive time
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
- * 	<ul>
- *	<li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
- *	<li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *		<li>Perform activities until defined rl_endTime is reached, which is important
- *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
- *		<li>Process all received CAN messages until all receive buffers are empty
- *			-> simple call, but can lead to deadlock on to high CAN load
- *		</ul>
- *	</ul>
+ *  <ul>
+ *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
+ *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
+ *    <li>Perform activities until defined rl_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Process all received CAN messages until all receive buffers are empty
+ *      -> simple call, but can lead to deadlock on to high CAN load
+ *    </ul>
+ *  </ul>
  * <li>Create local identity, for which the ISO<i><sub>AgLib</sub></i> performs an address claim,
- *		so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
- *		and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
+ *    so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
+ *    and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
  * </ol>
  * <H1>Where to look for further information</H1>
  * <ol>
@@ -118,28 +118,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__rte__rte
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__rte__simulating
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__rte__sys
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__rte
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__simulating
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__rte__rte
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__rte__simulating
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__rte__sys
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__rte
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__simulating
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__sys
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__simulating__simulating
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__esx__sys__sys
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__imi__sys__sys
- *		<li> \ref PrjSpec2_7_RemoteReadDataStdIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__esx__sys__sys
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__imi__sys__sys
+ *    <li> \ref PrjSpec2_7_RemoteReadDataStdIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
@@ -152,28 +152,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__rte__rte
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__rte__simulating
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__rte__sys
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__simulating__rte
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__simulating__simulating
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__rte__rte
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__rte__simulating
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__rte__sys
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__simulating__rte
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__simulating__simulating
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__simulating
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__sys
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__simulating__simulating
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__sys
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__simulating__simulating
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__esx__sys__sys
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__imi__sys__sys
- *		<li> \ref FileLists2_7_RemoteReadDataStdIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__esx__sys__sys
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__imi__sys__sys
+ *    <li> \ref FileLists2_7_RemoteReadDataStdIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
@@ -185,11 +185,11 @@
 
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
     to include project specific configuration settings.
-		Set this define in the project file or Makefile of the whole
-		project, so that each source file is compiled with this setting
-	*/
+    Set this define in the project file or Makefile of the whole
+    project, so that each source file is compiled with this setting
+  */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-	#define PRJ_USE_AUTOGEN_CONFIG config_2_7_RemoteReadDataStdIso.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_2_7_RemoteReadDataStdIso.h
 #endif
 
 // include the central interface header for the hardware adaption layer part
@@ -216,14 +216,14 @@
 #define USE_PROC_HANDLER
 
 #ifdef USE_PROC_HANDLER
-	#include <IsoAgLib/comm/Process/processdatachangehandler_c.h>
+  #include <IsoAgLib/comm/Process/processdatachangehandler_c.h>
 #endif
 
 #if defined(WIN32) || defined(SYSTEM_PC)
-	#define LOG_INFO std::cout
-	#include <iostream>
+  #define LOG_INFO std::cout
+  #include <iostream>
 #else
-	#define LOG_INFO getIrs232Instance()
+  #define LOG_INFO getIrs232Instance()
 #endif
 
 
@@ -236,9 +236,9 @@ using namespace IsoAgLib;
 /** define channel to write:
  - access data from tutorial examples 2_0_xy to 2_6_nm which listen to requests on channel 0
     -> select here the corresponding channel in your configuration
-			 ( e.g. select channel 1 for a 2-channel CAN-Hardware )
-	- simply write on channel 0, when no connection needed, or the connection is
-	  realized with another external connection
+       ( e.g. select channel 1 for a 2-channel CAN-Hardware )
+  - simply write on channel 0, when no connection needed, or the connection is
+    realized with another external connection
 */
 static const int32_t cui32_canChannel = 0;
 
@@ -246,12 +246,12 @@ static const int32_t cui32_canChannel = 0;
 /** dummy function to use the information of the remote device work state */
 void handleRemoteWorkState( bool rb_isWorking )
 { // do something
-	LOG_INFO << "Received New Working State: " << rb_isWorking << "\r\n";
+  LOG_INFO << "Received New Working State: " << rb_isWorking << "\r\n";
 }
 /** dummy function to use the information of the remote device application rate */
 void handleRemoteApplicationRate( uint32_t rui32_applicationRate )
 { // do something
-	LOG_INFO << "Received New Application Rate: " << rui32_applicationRate << "\r\n";
+  LOG_INFO << "Received New Application Rate: " << rui32_applicationRate << "\r\n";
 }
 
 #ifdef USE_PROC_HANDLER
@@ -262,46 +262,47 @@ IsoAgLib::iProcDataRemote_c arr_procData[2];
 
 class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 {
-	public:
-		/** react on new received measurement update for remote process data
-			* (remote system which manages the process data sent new value on request or
-			*  during active measurement programm)
-			* @param rc_src general event source class, which provides conversion functions to get needed event source class
-			* @param ri32_val new value, which caused the event (for immediate access)
-			* @param rc_callerGetyPos GetyPos of calling device - i.e. which sent new setpoint
-			* @return true -> handler class reacted on change event
-			*/
-		virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, iGetyPos_c rc_callerGetyPos, bool rb_change );
+  public:
+    /** react on new received measurement update for remote process data
+      * (remote system which manages the process data sent new value on request or
+      *  during active measurement programm)
+      * @param rc_src general event source class, which provides conversion functions to get needed event source class
+      * @param ri32_val new value, which caused the event (for immediate access)
+      * @param rc_callerGetyPos GetyPos of calling device - i.e. which sent new setpoint
+      * @return true -> handler class reacted on change event
+      */
+    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iGetyPos_c& rc_callerGetyPos, bool rb_change );
 };
 
-bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, iGetyPos_c /* rc_callerGetyPos */, bool rb_change )
+bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iGetyPos_c& /* rc_callerGetyPos */, bool rb_change )
 {
 
    printf("measure value: %d\n", ri32_val);
-
+  #if 0
    if (ri32_val > 0xa0) {
-		arr_procData[cui8_indexWorkState].prog().stop();
+    arr_procData[cui8_indexWorkState].prog().stop();
     printf("measurement stopped\n");
   }
-   
-	if ( ! rb_change )
-	{ // don't handle values which don't contain new value - maybe still relevant for other applications
-		return false; // indicate that this information is not again handled - just ignored
-	}
+  #endif
 
-	// use helper function to get automatically casted pointer to used process data type
-	uint16_t ui16_index = rc_src.makeIProcDataRemote() - arr_procData;
-	switch ( ui16_index )
-	{
-		case cui8_indexWorkState:
-			handleRemoteWorkState( ri32_val );
-			break;
-		case cui8_indexApplicationRate:
-			handleRemoteApplicationRate( ri32_val );
-			break;
-	}
-	// answer to IsoAgLib that this new setpoint is handled
-	return true;
+  if ( ! rb_change )
+  { // don't handle values which don't contain new value - maybe still relevant for other applications
+    return false; // indicate that this information is not again handled - just ignored
+  }
+
+  // use helper function to get automatically casted pointer to used process data type
+  uint16_t ui16_index = rc_src.makeIProcDataRemote() - arr_procData;
+  switch ( ui16_index )
+  {
+    case cui8_indexWorkState:
+      handleRemoteWorkState( ri32_val );
+      break;
+    case cui8_indexApplicationRate:
+      handleRemoteApplicationRate( ri32_val );
+      break;
+  }
+  // answer to IsoAgLib that this new setpoint is handled
+  return true;
 }
 
 // create one class instance for the handler
@@ -328,118 +329,146 @@ int main()
   uint16_t ui16_manufCode = 0x7FF;
   uint32_t ui32_serNo = 27;
 
-	// start address claim of the local member "IMI"
+  // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the c_myGtp val through the pointer to c_myGtp
   IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
-	// device type of remote ECU
-	IsoAgLib::iGetyPos_c c_remoteDeviceType( 0x5, 0 );
+  // device type of remote ECU
+  IsoAgLib::iGetyPos_c c_remoteDeviceType( 0x5, 0 );
 
 
-	#ifdef USE_PROC_HANDLER
+  #ifdef USE_PROC_HANDLER
   // DIN:
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
   //arr_procData[cui8_indexWorkState].init(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   //arr_procData[cui8_indexApplicationRate].init(0, c_remoteDeviceType, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
-  
+
   // ISO:
   // DDI 2, element 2
-  arr_procData[cui8_indexWorkState].init(2, 2, c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  arr_procData[cui8_indexWorkState].init(
+    #ifdef USE_ISO_11783
+    141 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x1, 0x0, 0xFF,
+    #endif
+    c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
   // DDI 1, element 1
-  arr_procData[cui8_indexApplicationRate].init(1, 1, c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
+  arr_procData[cui8_indexApplicationRate].init(
+    #ifdef USE_ISO_11783
+    7 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x5, 0x0, 0xFF,
+    #endif
+    c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
   #else
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-	// of device with device type/subtype=5/0
-	IsoAgLib::iProcDataRemote_c c_workState(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
-	int32_t i32_lastWorkStateReceive = 0;
+  // of device with device type/subtype=5/0
+  IsoAgLib::iProcDataRemote_c c_workState(
+    #ifdef USE_ISO_11783
+    141 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x1, 0x0, 0xFF,
+    #endif
+    c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp);
+  int32_t i32_lastWorkStateReceive = 0;
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-	// of device with device type/subtype=5/0
-  IsoAgLib::iProcDataRemote_c c_applicationRate(0, c_remoteDeviceType, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
-	int32_t i32_lastApplicationRateReceive = 0;
-	#endif
+  // of device with device type/subtype=5/0
+  IsoAgLib::iProcDataRemote_c c_applicationRate(
+    #ifdef USE_ISO_11783
+    7 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x5, 0x0, 0xFF,
+    #endif
+    c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp);
+  int32_t i32_lastApplicationRateReceive = 0;
+  #endif
 
-	// variable to control if programs are running at the moment
-	bool b_runningPrograms = false;
+  // variable to control if programs are running at the moment
+  bool b_runningPrograms = false;
 
   /** IMPORTANT:
-	  - The following loop could be replaced of any repeating call of
-			IsoAgLib::getISchedulerInstance().timeEvent();
-			which is needed to perform all internal activities of the IsoAgLib.
-		- Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
-			in a way, that allows IsoAgLib to trigger all reactions on BUS
-			in the ISO 11783 defined time resolution - especially the address
-			claim process has some tight time restrictions, that suggest
-			a trigger rate of at least 100msec ( you could call the function
-			only during address claim, mask updload and other special
-			circumstances in a high repetition rate )
-		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-			in isoaglib_config.h to ignore short CAN_EN loss.
-		- This explicit control of power state without automatic powerdown on CanEn loss
-			can be controled with the central config define
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-			or
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
-		- This can be also controlled during runtime with the function call:
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
-			or
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
-	*/
-	while ( iSystem_c::canEn() )
-	{ // run main loop
-		// IMPORTANT: call main timeEvent function for
-    
-    usleep(50000);
-    
-		// all time controlled actions of IsoAgLib    
-		IsoAgLib::getISchedulerInstance().timeEvent();
+    - The following loop could be replaced of any repeating call of
+      IsoAgLib::getISchedulerInstance().timeEvent();
+      which is needed to perform all internal activities of the IsoAgLib.
+    - Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
+      in a way, that allows IsoAgLib to trigger all reactions on BUS
+      in the ISO 11783 defined time resolution - especially the address
+      claim process has some tight time restrictions, that suggest
+      a trigger rate of at least 100msec ( you could call the function
+      only during address claim, mask updload and other special
+      circumstances in a high repetition rate )
+    - The main loop is running until iSystem_c::canEn() is returning false.
+      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      in isoaglib_config.h to ignore short CAN_EN loss.
+    - This explicit control of power state without automatic powerdown on CanEn loss
+      can be controled with the central config define
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      or
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      in the header xgpl_src/Application_Config/isoaglib_config.h
+    - This can be also controlled during runtime with the function call:
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
+      or
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
+  */
+  while ( iSystem_c::canEn() )
+  { // run main loop
+    // IMPORTANT: call main timeEvent function for
 
-		if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) continue;
-		if ( ( ! b_runningPrograms ) && ( getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) )
-		{ // remote device is active and no program is running
-			b_runningPrograms = true;
-			LOG_INFO << "\r\nRemote ECU found - try to start measurement programs" << "\r\n";
-			#ifdef USE_PROC_HANDLER
-			arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 4000);
-			arr_procData[cui8_indexWorkState].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
-			//arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000);
-			//arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
-			#else
-			c_workState.prog().addSubprog(Proc_c::TimeProp, 1000);
-			c_workState.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
-			c_applicationRate.prog().addSubprog(Proc_c::TimeProp, 1000);
-			c_applicationRate.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
-			#endif
-		}
-		else if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) )
-		{ // no more active -> stop
-			b_runningPrograms = false;
-			#ifdef USE_PROC_HANDLER
-			arr_procData[cui8_indexWorkState].prog().stop();
-			//arr_procData[cui8_indexApplicationRate].prog().stop();
-			#else
-			c_workState.prog().stop();
-			c_applicationRate.prog().stop();
-			#endif
-		}
-		#ifndef USE_PROC_HANDLER
-		// poll for current measurement val -> check for receive time
-		if ( c_workState.prog().lastMeasurementReceive() > i32_lastWorkStateReceive )
-		{ // new measurement received
-			i32_lastWorkStateReceive = c_workState.prog().lastMeasurementReceive();
-			handleRemoteWorkState( c_workState.masterVal() );
-		}
-		if ( c_applicationRate.prog().lastMeasurementReceive() > i32_lastApplicationRateReceive )
-		{ // new measurement received
-			i32_lastApplicationRateReceive = c_applicationRate.prog().lastMeasurementReceive();
-			handleRemoteApplicationRate( c_applicationRate.masterVal() );
-		}
-		#endif
-	}
+    usleep(50000);
+
+    // all time controlled actions of IsoAgLib
+    IsoAgLib::getISchedulerInstance().timeEvent();
+
+    if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) continue;
+    if ( ( ! b_runningPrograms ) && ( getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) )
+    { // remote device is active and no program is running
+      b_runningPrograms = true;
+      LOG_INFO << "\r\nRemote ECU found - try to start measurement programs" << "\r\n";
+      #ifdef USE_PROC_HANDLER
+      arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 4000);
+      arr_procData[cui8_indexWorkState].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+      //arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000);
+      //arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+      #else
+      c_workState.prog().addSubprog(Proc_c::TimeProp, 1000);
+      c_workState.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+      c_applicationRate.prog().addSubprog(Proc_c::TimeProp, 1000);
+      c_applicationRate.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+      #endif
+    }
+    else if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) )
+    { // no more active -> stop
+      b_runningPrograms = false;
+      #ifdef USE_PROC_HANDLER
+      arr_procData[cui8_indexWorkState].prog().stop();
+      //arr_procData[cui8_indexApplicationRate].prog().stop();
+      #else
+      c_workState.prog().stop();
+      c_applicationRate.prog().stop();
+      #endif
+    }
+    #ifndef USE_PROC_HANDLER
+    // poll for current measurement val -> check for receive time
+    if ( c_workState.prog().lastMeasurementReceive() > i32_lastWorkStateReceive )
+    { // new measurement received
+      i32_lastWorkStateReceive = c_workState.prog().lastMeasurementReceive();
+      handleRemoteWorkState( c_workState.masterVal() );
+    }
+    if ( c_applicationRate.prog().lastMeasurementReceive() > i32_lastApplicationRateReceive )
+    { // new measurement received
+      i32_lastApplicationRateReceive = c_applicationRate.prog().lastMeasurementReceive();
+      handleRemoteApplicationRate( c_applicationRate.masterVal() );
+    }
+    #endif
+  }
   return 1;
 }
