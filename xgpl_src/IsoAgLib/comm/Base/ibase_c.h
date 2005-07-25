@@ -87,18 +87,18 @@ public:
     possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
     @param rpc_gtp optional pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-		@param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  void init(iGetyPos_c* rpc_gtp = NULL, BaseDataGroup_t rt_mySendSelection = BaseDataNothing )
+  void init(const iGetyPos_c* rpc_gtp = NULL, BaseDataGroup_t rt_mySendSelection = BaseDataNothing )
   {Base_c::init(rpc_gtp, rt_mySendSelection);};
 
   /**
     config the Base_c object after init -> set pointer to gtp and
     config send/receive of different base msg types
     @param rpc_gtp pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-		@param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  void config(iGetyPos_c* rpc_gtp, BaseDataGroup_t rt_mySendSelection )
+  void config(const iGetyPos_c* rpc_gtp, BaseDataGroup_t rt_mySendSelection )
   {Base_c::config(rpc_gtp, rt_mySendSelection );};
 
   #ifdef USE_ISO_11783
@@ -113,12 +113,12 @@ public:
     @see CANPkgExt_c::getData
     @see CANIO_c::operator<<
   */
-  void isoSendCalendar(iGetyPos_c rc_gtp) { Base_c::isoSendCalendar(rc_gtp);};
+  void isoSendCalendar(const iGetyPos_c& rc_gtp) { Base_c::isoSendCalendar(rc_gtp);};
   #endif
 
   /* ******************************************* */
   /** \name Set Values for periodic send on BUS  */
-	/*@{*/
+  /*@{*/
   /**
     set the value of real speed (measured by radar)
     @param ri16_val value to store as real radar measured speed
@@ -167,7 +167,7 @@ public:
   */
   void setPtoFront(int16_t ri16_val) { Base_c::setPtoFront( ri16_val );};
 
-	#ifdef USE_DIN_9684
+  #ifdef USE_DIN_9684
   /** deliver rear left draft */
   void setRearLeftDraft( int16_t ri16_val ) { Base_c::setRearLeftDraft( ri16_val );};
   /** deliver rear right draft */
@@ -180,7 +180,7 @@ public:
   void setFuelRate( int16_t ri16_val ) { Base_c::setFuelRate( ri16_val );};
   /** deliver fuel temperature °C */
   void setFuelTemperature( uint8_t rui8_val ) { Base_c::setFuelTemperature( rui8_val );};
-	#endif
+  #endif
   #ifdef USE_ISO_11783
   /** set front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
@@ -272,11 +272,11 @@ public:
   */
   void setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second)
   {Base_c::setCalendar(ri16_year, rb_month, rb_day, rb_hour, rb_minute, rb_second);};
-	/*@}*/
+  /*@}*/
 
-	/* ****************************************************** */
+  /* ****************************************************** */
   /** \name Retrieve Values which are sent from other ECUs  */
-	/*@{*/
+  /*@{*/
 
   /**
     get the value of real speed (measured by radar)
@@ -399,9 +399,9 @@ public:
     @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
     @return GETY_POS code of member who is sending the intereested base msg type
   */
-  iGetyPos_c senderGtp(BaseDataGroup_t rt_typeGrp) { return Base_c::senderGtp( rt_typeGrp );};
+  const iGetyPos_c& senderGtp(BaseDataGroup_t rt_typeGrp) { return Base_c::senderGtp( rt_typeGrp );};
 
-	#ifdef USE_DIN_9684
+  #ifdef USE_DIN_9684
   /** deliver rear left draft */
   int rearLeftDraft() const { return Base_c::rearLeftDraft();};
   /** deliver rear right draft */
@@ -414,7 +414,7 @@ public:
   int fuelRate() const { return Base_c::fuelRate();};
   /** deliver fuel temperature °C */
   int fuelTemperature() const { return Base_c::fuelTemperature();};
-	#endif
+  #endif
   #ifdef USE_ISO_11783
   /** deliver front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
@@ -487,33 +487,33 @@ public:
     * for implement in work state was requested */
   bool maintainPowerForImplInWork() const { return Base_c::maintainPowerForImplInWork();};
 
-	/** deliver raw GPS Latitude */
-	int32_t getGpsLatitudeRaw( void ) const { return Base_c::getGpsLatitudeRaw(); };
-	/** deliver raw GPS Longitude */
-	int32_t getGpsLongitudeRaw( void ) const { return Base_c::getGpsLongitudeRaw(); };
-	#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
-	/** deliver Minute GPS Latitude */
-	float getGpsLatitudeMinute( void ) const { return Base_c::getGpsLatitudeMinute(); };
-	/** deliver Minute GPS Longitude */
-	float getGpsLongitudeMinute( void ) const { return Base_c::getGpsLongitudeMinute(); };
-	#endif
-	/** deliver GPS altitude - ?? [cm] ??
-		\todo check for correct altitude unit
-		*/
-	uint32_t getGpsAltitude( void ) const { return Base_c::getGpsAltitude(); };
-	/** deliver GPS receive qualitiy
-		\todo probably wrong decoded -> please correct decoding in case you have better sources
-	*/
-	IsoGpsRecMode_t getGpsMode( void ) const { return Base_c::getGpsMode();};
-	/** deliver GPS speed
-		\todo probably wrong decoded -> please correct decoding in case you have better sources
-		*/
-	int16_t getGpsSpeed( void ) const { return Base_c::getGpsSpeed();};
-	/** deliver GPS Heading
-		\todo probably wrong decoded -> please correct decoding in case you have better sources
-		*/
-	int16_t getGpsHeading( void ) const { return Base_c::getGpsHeading(); };
-	/*@}*/
+  /** deliver raw GPS Latitude */
+  int32_t getGpsLatitudeRaw( void ) const { return Base_c::getGpsLatitudeRaw(); };
+  /** deliver raw GPS Longitude */
+  int32_t getGpsLongitudeRaw( void ) const { return Base_c::getGpsLongitudeRaw(); };
+  #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+  /** deliver Minute GPS Latitude */
+  float getGpsLatitudeMinute( void ) const { return Base_c::getGpsLatitudeMinute(); };
+  /** deliver Minute GPS Longitude */
+  float getGpsLongitudeMinute( void ) const { return Base_c::getGpsLongitudeMinute(); };
+  #endif
+  /** deliver GPS altitude - ?? [cm] ??
+    \todo check for correct altitude unit
+    */
+  uint32_t getGpsAltitude( void ) const { return Base_c::getGpsAltitude(); };
+  /** deliver GPS receive qualitiy
+    \todo probably wrong decoded -> please correct decoding in case you have better sources
+  */
+  IsoGpsRecMode_t getGpsMode( void ) const { return Base_c::getGpsMode();};
+  /** deliver GPS speed
+    \todo probably wrong decoded -> please correct decoding in case you have better sources
+    */
+  int16_t getGpsSpeed( void ) const { return Base_c::getGpsSpeed();};
+  /** deliver GPS Heading
+    \todo probably wrong decoded -> please correct decoding in case you have better sources
+    */
+  int16_t getGpsHeading( void ) const { return Base_c::getGpsHeading(); };
+  /*@}*/
 
   #endif
  private:

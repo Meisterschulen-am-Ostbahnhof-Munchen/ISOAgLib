@@ -92,7 +92,10 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
-
+#include <IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h>
+#ifdef USE_ISO_11783
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -103,65 +106,176 @@ namespace __IsoAgLib {
   */
 class GetyPos_c {
  public:
-  /** default constructor
-    * @param rui16_gety optional initial GETY (device type)
-    * @param rui16_pos optional initial POS (device number)
-    */
-  GetyPos_c( uint16_t rui16_gety = 0xFF, uint16_t rui16_pos = 0xF )
-  : ui16_data( ( rui16_gety << 8 ) | ( rui16_pos & 0xF ) ){};
- /** set GETY and POS with two seperate parameters */
- void set( uint16_t rui16_gety, uint16_t rui16_pos )
-  { ui16_data = ( ( rui16_gety << 8 ) | ( rui16_pos & 0xF ) );};
- /** deliver GETY (device type ) */
- uint8_t getGety( void ) const { return ( ui16_data >> 8 );};
- /** deliver POS ( device type instance number ) */
- uint8_t getPos( void ) const { return ( ui16_data & 0xF );};
- /** set GETY (device type ) and POS */
- void setGtp( uint16_t rui16_gety, uint16_t rui16_pos ) { set( rui16_gety, rui16_pos);};
- /** set GETY (device type ) */
- void setGety( uint16_t rui16_gety )
-  { ui16_data = ( ( rui16_gety << 8 ) | ( ui16_data & 0xF ) );};
- /** set POS ( device type instance number ) */
- void setPos( uint16_t rui16_pos )
-  { ui16_data = ( ( ui16_data & 0xFF00 ) | ( rui16_pos & 0xF ) );};
- /** set data with one combined value of GET and POS from DIN 9684 format
-   * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
-   */
- void setCombinedDin( uint16_t rui16_dinData )
-  { ui16_data = ( ( ( rui16_dinData << 5 ) & 0xFF00 ) | ( rui16_dinData & 0x7 ) );};
- /** set data with one combined value of GET and POS from ISO 11783 format
-   * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
-   */
- void setCombinedIso( uint16_t rui16_isoData ) { ui16_data = rui16_isoData;};
- /** deliver data as one combined value of GET and POS from DIN 9684 format
-   * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
-   */
- uint16_t getCombinedDin( void ) const { return ( ( getGety() << 3 ) | getPos() );};
- /** deliver data as one combined value of GET and POS from ISO 11783 format
-   * (DIN 90684 uses 3 bit POS, whereas ISO 11783 uses 4 bits)
-   */
- uint16_t getCombinedIso( void ) const { return ui16_data;};
- /** assign value from another GetyPos_c instance */
- const GetyPos_c& operator=( const GetyPos_c& refc_src )
-  { ui16_data = refc_src.ui16_data; return *this;};
- /** compare two GetyPos_c values with operator== */
- bool operator==( const GetyPos_c& refc_right ) const
-  { return ui16_data == refc_right.ui16_data;};
- /** compare two GetyPos_c values with operator!= */
- bool operator!=( const GetyPos_c& refc_right ) const
-  { return ui16_data != refc_right.ui16_data;};
- /** compare two GetyPos_c values with operator< */
- bool operator<( const GetyPos_c& refc_right ) const
-  { return ui16_data < refc_right.ui16_data;};
- /** set this instance to indicator for unspecified value */
- void setUnspecified( void ) { ui16_data = 0xFF0F;};
- /** check if this instance has specified value (different from default */
- bool isSpecified( void ) const { return ( ui16_data != 0xFF0F)?true:false;};
- bool isUnspecified( void ) const { return ( ui16_data == 0xFF0F)?true:false;};
- bool isSpecifiedPos( void ) const { return ( ( ui16_data & 0xF ) != 0xF )?true:false;};
- bool isUnspecifiedPos( void ) const { return ( ( ui16_data & 0xFF00 ) == 0xFF00 )?true:false;};
+    /** constant for default parameters and initialization, where the device type is not yet spcified.
+        the instantiation of this constant variable is located in the module cancustomer_c.cpp
+      */
+    static const GetyPos_c GetyPosUnspecified;
+    /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
+        the instantiation of this constant variable is located in the module cancustomer_c.cpp
+      */
+    static const GetyPos_c GetyPosInitialProcessData;
+    /** default constructor
+      * @param rui16_gety optional initial GETY (device type)
+      * @param rui16_pos optional initial POS (device number)
+      */
+    GetyPos_c( uint16_t rui16_gety = 0x7F, uint16_t rui16_pos = 0xF )
+    #ifdef USE_ISO_11783
+    : c_isoName( true, 2, rui16_gety, rui16_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {};
+    #else
+    : ui16_data( ( rui16_gety << 8 ) | ( rui16_pos & 0xF ) ){};
+    #endif
+
+    #ifdef USE_ISO_11783
+    /** default constructor
+      * @param rui16_gety optional initial GETY (device type)
+      * @param rui16_pos optional initial POS (device number)
+      */
+    GetyPos_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_devClass, uint8_t rb_devClassInst,
+        uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0)
+    : c_isoName( rb_selfConf, rui8_indGroup, rb_devClass, rb_devClassInst,
+        rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst) {};
+    /** default constructor
+      * @param rui16_gety optional initial GETY (device type)
+      * @param rui16_pos optional initial POS (device number)
+      */
+    GetyPos_c( const ISOName_c& rrefc_src )
+    : c_isoName(rrefc_src) {};
+    GetyPos_c( const uint8_t* rpui8_dataName ) : c_isoName( rpui8_dataName ) {};
+    #endif
+
+    /** default constructor
+      * @param rui16_gety optional initial GETY (device type)
+      * @param rui16_pos optional initial POS (device number)
+      */
+    GetyPos_c( const GetyPos_c& rrefc_src )
+    #ifdef USE_ISO_11783
+    : c_isoName(rrefc_src.c_isoName) {};
+    #else
+    : ui16_data(rrefc_src.ui16_data) {};
+    #endif
+
+
+    /** set GETY and POS with two seperate parameters */
+    void set( uint16_t rui16_gety, uint16_t rui16_pos )
+    #ifdef USE_ISO_11783
+      { setGety( rui16_gety); setPos( rui16_pos ); };
+    #else
+      { ui16_data = ( ( rui16_gety << 8 ) | ( rui16_pos & 0xF ) ); };
+    #endif
+
+    #ifdef USE_ISO_11783
+    /** set GETY and POS with two seperate parameters */
+    void set( const ISOName_c& rrefc_isoName ) { c_isoName = rrefc_isoName;};
+    /** set GETY and POS with two seperate parameters */
+    void set( const uint8_t* rpui8_dataName ){ c_isoName.inputString(rpui8_dataName);};
+    #endif
+
+    /** set GETY (device type ) */
+    void setGety( uint16_t rui16_gety )
+    #ifdef USE_ISO_11783
+      { c_isoName.setDevClass( rui16_gety );};
+    #else
+      { ui16_data = ( ( rui16_gety << 8 ) | ( ui16_data & 0xF ) );};
+    #endif
+    /** set POS ( device type instance number ) */
+    void setPos( uint16_t rui16_pos )
+    #ifdef USE_ISO_11783
+      { c_isoName.setDevClassInst( rui16_pos );};
+    #else
+      { ui16_data = ( ( ui16_data & 0xFF00 ) | ( rui16_pos & 0xF ) );};
+    #endif
+
+
+    /** deliver GETY (device type ) */
+    uint8_t getGety( void ) const
+    #ifdef USE_ISO_11783
+      { return c_isoName.devClass();};
+    #else
+      { return ( ui16_data >> 8 );};
+    #endif
+    /** deliver POS ( device type instance number ) */
+    uint8_t getPos( void ) const
+    #ifdef USE_ISO_11783
+      { return c_isoName.devClassInst();};
+    #else
+      { return ( ui16_data & 0xF );};
+    #endif
+
+    #ifdef USE_ISO_11783
+    /** provide pointer to second level compare NAME */
+    ISOName_c& getName() { return c_isoName;};
+    /** provide pointer to second level compare NAME */
+    const ISOName_c& getConstName() const { return c_isoName;};
+    #endif
+
+
+    /** assign value from another GetyPos_c instance */
+    const GetyPos_c& operator=( const GetyPos_c& refc_src )
+    #ifdef USE_ISO_11783
+      {c_isoName = refc_src.c_isoName;return refc_src;};
+    #else
+      { ui16_data = refc_src.ui16_data; return *this;};
+    #endif
+    /** compare two GetyPos_c values with operator== */
+    bool operator==( const GetyPos_c& refc_right ) const
+    #ifdef USE_ISO_11783
+      { return ( c_isoName == refc_right.c_isoName )?true:false;};
+    #else
+      { return ui16_data == refc_right.ui16_data;};
+    #endif
+    /** compare two GetyPos_c values with operator!= */
+    bool operator!=( const GetyPos_c& refc_right ) const
+    #ifdef USE_ISO_11783
+      { return ( c_isoName != refc_right.c_isoName )?true:false;};
+    #else
+      { return ui16_data != refc_right.ui16_data;};
+    #endif
+    /** compare two GetyPos_c values with operator< */
+    bool operator<( const GetyPos_c& refc_right ) const
+    #ifdef USE_ISO_11783
+      { return ( c_isoName < refc_right.c_isoName )?true:false;};
+    #else
+      { return ui16_data < refc_right.ui16_data;};
+    #endif
+
+    /** set this instance to indicator for unspecified value */
+    void setUnspecified( void )
+    #ifdef USE_ISO_11783
+      { c_isoName.setDevClass( 0x7F ); c_isoName.setDevClassInst( 0xF );};
+    #else
+      { ui16_data = 0x7F0F;};
+    #endif
+    /** check if this instance has specified value (different from default */
+    bool isSpecified( void )   const
+    #ifdef USE_ISO_11783
+      { return ( ( getGety() != 0x7F ) || ( getPos() != 0xF ) )?true:false;};
+    #else
+      { return ( ui16_data != 0x7F0F)?true:false;};
+    #endif
+    bool isUnspecified( void ) const
+    #ifdef USE_ISO_11783
+      { return ( ( getGety() == 0x7F ) && ( getPos() == 0xF ) )?true:false;};
+    #else
+      { return ( ui16_data == 0x7F0F)?true:false;};
+    #endif
+    bool isSpecifiedPos( void ) const
+    #ifdef USE_ISO_11783
+      { return ( getPos()  == 0xF  )?true:false;};
+    #else
+      { return ( ( ui16_data & 0xF ) != 0xF )?true:false;};
+    #endif
+    bool isUnspecifiedPos( void ) const
+    #ifdef USE_ISO_11783
+      { return ( getGety() == 0x7F )?true:false;};
+    #else
+      { return ( ( ui16_data & 0x7F00 ) == 0x7F00 )?true:false;};
+    #endif
  private:
-  uint16_t ui16_data;
+    #ifdef USE_ISO_11783
+    ISOName_c c_isoName;
+    #else
+    uint16_t ui16_data;
+    #endif
 };
 
 } // end namespace __IsoAgLib

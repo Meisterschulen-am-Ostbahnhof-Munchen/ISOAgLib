@@ -90,6 +90,7 @@
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
+#include "isoname_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -110,7 +111,7 @@ public:
     ==> OBSOLETE, because now all can-pkg-data is STATIC!
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      
+
     assign operator to insert informations from one CANPkg_c into another
     @see __IsoAgLib::FilterBox_c::operator>>
     @see CANPkgExt_c::operator=
@@ -133,10 +134,9 @@ public:
     deliver GETY_POS of sender
     @return GETY_POS of sender
   */
-  GetyPos_c gtp() const
+  const GetyPos_c& gtp() const
   { // read on extended ident ISO msg the GTP from NAME setting
-//    return GetyPos_c( ( pb_data[6] & 0xF ), ( pb_data[7] & 0xF ) );
-    return GetyPos_c( ( pb_data[6] >> 1 ), ( pb_data[7] & 0xF ) );
+    return c_isoGtp;
   };
   /**
     deliver member name string of message
@@ -185,6 +185,8 @@ protected: // protected methods
     @see CANPkgExt_c::getData
   */
   virtual void flags2String();
+  private:
+    GetyPos_c c_isoGtp;
 };
 
 }

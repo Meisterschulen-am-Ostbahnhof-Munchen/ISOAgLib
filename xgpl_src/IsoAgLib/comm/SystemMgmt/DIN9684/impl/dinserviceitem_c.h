@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef SERVICE_ITEM_H
@@ -103,7 +103,7 @@ namespace __IsoAgLib {
 */
 class DINServiceItem_c : public MonitorItem_c  {
 private:
-public: 
+public:
   /**
     constructor which can set optional all ident data
     @param ri32_time creation time of this item instance
@@ -113,7 +113,7 @@ public:
     @param rui16_adrVect ADRESSBELVEKT used by this item
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  DINServiceItem_c(int32_t ri32_time = 0, GetyPos_c rc_gtp = GetyPos_c( 0xF, 0xF ), uint8_t rui8_nr = 0xF,
+  DINServiceItem_c(int32_t ri32_time = 0, const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, uint8_t rui8_nr = 0xF,
                uint8_t rb_status = 0, uint16_t rui16_adrVect = 0, int ri_singletonVecKey = 0);
   /**
     copy constructor for ServiceItem
@@ -130,7 +130,7 @@ public:
   */
   virtual ~DINServiceItem_c();
 
-  /** 
+  /**
     deliver name
     @return pointer to the name uint8_t string (7byte)
   */
@@ -140,7 +140,7 @@ public:
     @return true -> no name received
   */
   virtual bool isEmptyName() const;
-  /** 
+  /**
     deliver name as pure ASCII string
     @param pc_name string where ASCII string is inserted
     @param rui8_maxLen max length for name
@@ -155,24 +155,24 @@ public:
     @param rui16_adrVect ADRESSBELVEKT used by this item
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time = 0, GetyPos_c rc_gtp = GetyPos_c( 0xF, 0xF ), uint8_t rui8_nr = 0xF,
+  void set(int32_t ri32_time = 0, const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, uint8_t rui8_nr = 0xF,
            itemState_t ren_status = IState_c::Active, uint16_t rui16_adrVect = 0, int ri_singletonVecKey = 0);
 
-  
-  /** 
+
+  /**
     periodically time evented actions: send alive if needed
-  
+
     possible errors:
       * dependant error in CANIO_c during send
     @return true -> all planned time event activitie performed
   */
   bool timeEvent( void );
-  /** 
+  /**
     process received CAN pkg to update data and react if needed
     reacts on: member/service alive, member/service error notification,
                member stop command, state indication
     reactions of DINItem_c: adress claim, alive, name request, name msg,
-                              status command, 
+                              status command,
     reactions delegated to DINServiceItem_c: status information, nromal alive,
                                         error information
     @return true -> a reaction on the received/processed msg was sent
@@ -180,13 +180,13 @@ public:
   bool processMsg();
 
 
-  /** 
+  /**
     deliver status in STA format
     @return 0 == OFF, 1 == STANDBY, 2 == ACTIVE
   */
   uint8_t sta();
 
-  
+
   /**
     deliver reference to c_adrvect
     @return reference to the ADRESSBELEGVEKT of this ServiceItem
@@ -194,7 +194,7 @@ public:
   AdrVect_c& adrvect(){return c_adrvect;};
 
 
-protected: 
+protected:
 // Protected Methods
 
    /**
@@ -203,7 +203,7 @@ protected:
     @return VERW code dependent on state IState_c::Member or IState_c::Service
   */
    uint8_t getAliveVerw(){return (itemState(IState_c::Member)? 1:4);};
-   
+
 // Protected attributes
   /** adress usage vector with 1 for every used adress */
   AdrVect_c c_adrvect;

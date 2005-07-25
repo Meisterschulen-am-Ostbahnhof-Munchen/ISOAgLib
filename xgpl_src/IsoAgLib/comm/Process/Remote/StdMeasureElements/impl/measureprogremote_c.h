@@ -1,5 +1,5 @@
 /***************************************************************************
-                          measureprogremote_c.h - object for managing of 
+                          measureprogremote_c.h - object for managing of
                                                   remote measure programs
                              -------------------
     begin                : Fri Apr 07 2000
@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef MEASUREPROG_REMOTE_H
@@ -103,7 +103,7 @@ class ProcDataRemoteBase_c;
   @author Dipl.-Inform. Achim Spangler
 */
 class MeasureProgRemote_c : public MeasureProgBase_c  {
-public: 
+public:
   /**
     constructor of MeasureProgRemote_c which can needed pointers to containing
     Scheduler_c and Process_c instances
@@ -111,7 +111,7 @@ public:
   */
   MeasureProgRemote_c(
     ProcDataBase_c *const rpc_processData = NULL )
-  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, GetyPos_c(0xF, 0xF) )
+  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, GetyPos_c::GetyPosUnspecified )
   {init( rpc_processData );};
   /**
     initialise this MeasureProgRemote_c instance to well defined initial condition
@@ -138,7 +138,7 @@ public:
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
   int32_t masterVal(bool rb_sendRequest = false) { return val( rb_sendRequest );};
-  
+
   /**
     send reset cmd for the measurement value
   */
@@ -225,7 +225,7 @@ public:
   void receiveForeignMeasurement(bool rb_useForeign = true);
 
   /**
-    set according to values of the package the accoring value 
+    set according to values of the package the accoring value
     (uses function, wich converts if needed)
   */
   void setValFromPkg();
@@ -318,7 +318,7 @@ private: // Private methods
     @return true -> everything o.k.
   */
   bool verifySetRemoteGtp();
-  
+
   /**
     set medium val
     @param ri32_val new medium value

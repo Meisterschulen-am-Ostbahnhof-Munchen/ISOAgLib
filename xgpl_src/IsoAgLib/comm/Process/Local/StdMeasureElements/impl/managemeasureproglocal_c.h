@@ -112,13 +112,13 @@ namespace __IsoAgLib {
 class ManageMeasureProgLocal_c : public ProcessElementBase_c
 {
 private:
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::slist<MeasureProgLocal_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_MeasureProgLocal;
   typedef STL_NAMESPACE::slist<MeasureProgLocal_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_MeasureProgLocalIterator;
-	#else
+  #else
   typedef STL_NAMESPACE::slist<MeasureProgLocal_c> Vec_MeasureProgLocal;
   typedef STL_NAMESPACE::slist<MeasureProgLocal_c>::iterator Vec_MeasureProgLocalIterator;
-	#endif
+  #endif
  public:
   /**
     constructor which initialse both pointers if given
@@ -127,7 +127,7 @@ private:
   ManageMeasureProgLocal_c( ProcDataBase_c *const rpc_processData = NULL )
   : ProcessElementBase_c( rpc_processData )
   { init( rpc_processData );};
-	virtual ~ManageMeasureProgLocal_c();
+  virtual ~ManageMeasureProgLocal_c();
   /**
     initialise this ManageMeasureProgLocal_c instance to a well defined initial state
     @param rpc_processData optional pointer to containing ProcessData instance
@@ -152,7 +152,7 @@ private:
     @param rc_gtp GETY code of searched measure program
     @return true -> found item
   */
-  bool existProg(uint8_t rui8_pri, GetyPos_c rc_gtp)
+  bool existProg(uint8_t rui8_pri, const GetyPos_c& rc_gtp)
       {return updateProgCache(rui8_pri, rc_gtp, false);};
 
   /**
@@ -165,7 +165,7 @@ private:
     @param rc_gtp GETY code of searched measure program
     @param rb_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(uint8_t rui8_pri, GetyPos_c rc_gtp, bool rb_doCreate);
+  MeasureProgLocal_c& prog(uint8_t rui8_pri, const GetyPos_c& rc_gtp, bool rb_doCreate);
   /** initialise value for all registered Measure Progs */
   void initGlobalVal( int32_t ri32_val );
   /** set value for all registered Measure Progs */
@@ -199,7 +199,7 @@ private:
     @param rui8_type program type: Proc_c::Base, Proc_c::Target
     @param rc_gtp commanding GETY_POS
   */
-  void insertMeasureprog(uint8_t rui8_type, GetyPos_c rc_gtp);
+  void insertMeasureprog(uint8_t rui8_type, const GetyPos_c& rc_gtp);
   /**
     update the programm cache, create an programm item, if wanted
 
@@ -210,7 +210,7 @@ private:
     @param rb_createIfNotFound true -> create new item if not found
     @return true -> instance found
   */
-  bool updateProgCache(uint8_t rui8_type, GetyPos_c rc_gtp, bool rb_createIfNotFound);
+  bool updateProgCache(uint8_t rui8_type, const GetyPos_c& rc_gtp, bool rb_createIfNotFound);
  protected:
   /** container of objects for managing jobs of local measure programs */
   Vec_MeasureProgLocal c_vec_prog;

@@ -115,14 +115,6 @@ public:
   */
   uint8_t nr() const { return isoSa(); };
   /**
-    deliver GETY_POS of sender
-    @return GETY_POS of sender
-  */
-  GetyPos_c gtp() const
-  { // read on extended ident ISO msg the GTP from NAME setting
-    return GetyPos_c( ( pb_data[6] & 0xF ), ( pb_data[7] & 0xF ) );
-  };
-  /**
     deliver member name string of message
     @return member name string of message
   */

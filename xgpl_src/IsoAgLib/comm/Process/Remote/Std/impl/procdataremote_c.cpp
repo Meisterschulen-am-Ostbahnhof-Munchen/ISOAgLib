@@ -123,9 +123,9 @@ ProcDataRemote_c::ProcDataRemote_c(
                    uint8_t rui8_inst,
                    uint8_t rui8_zaehlnum,
 #endif
-                   GetyPos_c rc_gtp,
-                   uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
-                   GetyPos_c* rpc_commanderGtp,
+                   const GetyPos_c& rc_gtp,
+                   uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp,
+                   const GetyPos_c* rpc_commanderGtp,
                    IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                    int ri_singletonVecKey)
 
@@ -170,7 +170,7 @@ void ProcDataRemote_c::init(
 #ifdef USE_DIN_9684
                                 uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
 #endif
-                                GetyPos_c rc_gtp, uint8_t rui8_pri, GetyPos_c rc_ownerGtp, GetyPos_c* rpc_commanderGtp,
+                                const GetyPos_c& rc_gtp, uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp, const GetyPos_c* rpc_commanderGtp,
                                 IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                 int ri_singletonVecKey)
 {

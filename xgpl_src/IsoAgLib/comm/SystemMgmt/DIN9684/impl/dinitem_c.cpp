@@ -91,17 +91,17 @@
 #include <IsoAgLib/hal/system.h>
 
 #if defined( __TSW_CPP__ ) && !defined( isprint ) && !defined( __W )
-	#define	__W	0x01
-	#define	__C	0x02
-	#define	__S	0x04
-	#define	__U	0x08
-	#define	__L	0x10
-	#define	__N	0x20
-	#define	__P	0x40
-	#define	__X	0x80
-	#define	isprint(_c)	((_c)&(__P|__U|__L|__N|__S))
+  #define __W 0x01
+  #define __C 0x02
+  #define __S 0x04
+  #define __U 0x08
+  #define __L 0x10
+  #define __N 0x20
+  #define __P 0x40
+  #define __X 0x80
+  #define isprint(_c) ((_c)&(__P|__U|__L|__N|__S))
 #else
-	#include <cctype>
+  #include <cctype>
 #endif
 
 namespace __IsoAgLib {
@@ -118,7 +118,7 @@ namespace __IsoAgLib {
   @param rpb_name uint8_t string with the name of the ident (max. 7 uint8_t; default empty)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-DINItem_c::DINItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
+DINItem_c::DINItem_c(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
             uint16_t rui16_adrVect, const uint8_t* rpb_name, int ri_singletonVecKey)
 : DINServiceItem_c(ri32_time, rc_gtp, rui8_nr, rb_status, rui16_adrVect, ri_singletonVecKey )
 {
@@ -171,7 +171,7 @@ DINItem_c::~DINItem_c(){
   @param rpb_name uint8_t string with the name of the ident (max. 7 uint8_t; default empty)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void DINItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
+void DINItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
         itemState_t ren_status, uint16_t rui16_adrVect, const uint8_t* rpb_name, int ri_singletonVecKey)
 {
   DINServiceItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, rui16_adrVect, ri_singletonVecKey);
@@ -307,7 +307,7 @@ bool DINItem_c::timeEvent( void ){
       if (internAddressClaimCnt >= 3)
       {
         bool b_forceClear = ( internAddressClaimCnt >= 10 )?true:false;
-				freeAvailCode = c_din_monitor.freeNrAvailable( b_forceClear );
+        freeAvailCode = c_din_monitor.freeNrAvailable( b_forceClear );
         if (freeAvailCode == 2) return false;
 
         if ((c_din_monitor.canClaimNr(gtp())) && freeAvailCode == 1)
@@ -328,18 +328,18 @@ bool DINItem_c::timeEvent( void ){
         // build address claim msg
         c_pkg.set_a(1);
 
-				if (internAddressClaimCnt < 3)
+        if (internAddressClaimCnt < 3)
         { // increment address claim counter
 
           addressClaimCnt(internAddressClaimCnt + 1);
           internAddressClaimCnt++;
-					c_pkg.setNr(internAddressClaimCnt);
+          c_pkg.setNr(internAddressClaimCnt);
         }
-				else
-				{ // use 3 as cnt for external usage and increase cnt until 10 is reached
-					if ( internAddressClaimCnt < 10 ) addressClaimCnt(internAddressClaimCnt + 1);
-					c_pkg.setNr( 3 );
-				}
+        else
+        { // use 3 as cnt for external usage and increase cnt until 10 is reached
+          if ( internAddressClaimCnt < 10 ) addressClaimCnt(internAddressClaimCnt + 1);
+          c_pkg.setNr( 3 );
+        }
 
       }
       // start send
@@ -369,7 +369,7 @@ bool DINItem_c::processMsg()
     setItemState(IState_c::AddressClaim);
     addressClaimCnt(c_pkg.nr());
     updateTime(c_pkg.time());
-		result = true;
+    result = true;
   }
   else
   {

@@ -140,7 +140,7 @@ public:
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existIsoMemberGtp(iGetyPos_c rc_gtp, bool rb_forceClaimedAddress = false)
+  bool existIsoMemberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
   { return ISOMonitor_c::existIsoMemberGtp(rc_gtp, rb_forceClaimedAddress );};
 
   /**
@@ -148,12 +148,10 @@ public:
     which optional (!!) match the condition of address claim state
     and update local pc_isoMemberCache
     @param rui8_nr searched member number
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return true -> item found
   */
-  bool existIsoMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress = false)
-  { return ISOMonitor_c::existIsoMemberNr( rui8_nr, rb_forceClaimedAddress );};
+  bool existIsoMemberNr(uint8_t rui8_nr)
+  { return ISOMonitor_c::existIsoMemberNr( rui8_nr );};
 
   /**
     check if member is in member list with wanted GETY_POS,
@@ -174,7 +172,8 @@ public:
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  iISOItem_c& isoMemberGtp(iGetyPos_c rc_gtp) { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberGtp( rc_gtp));};
+  iISOItem_c& isoMemberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
+    { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberGtp( rc_gtp, rb_forceClaimedAddress));};
 
   /**
     deliver member item with given nr
@@ -197,8 +196,8 @@ public:
     @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
     @return reference to the searched item
   */
-  iISOItem_c& isoMemberGtp(iGetyPos_c rc_gtp, bool *const pb_success )
-  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberGtp( rc_gtp, pb_success ));};
+  iISOItem_c& isoMemberGtp(const iGetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress = false )
+  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberGtp( rc_gtp, pb_success, rb_forceClaimedAddress ));};
 private:
   /** allow getIisoMonitorInstance() access to shielded base class.
       otherwise __IsoAgLib::getIsoMonitorInstance() wouldn't be accepted by compiler

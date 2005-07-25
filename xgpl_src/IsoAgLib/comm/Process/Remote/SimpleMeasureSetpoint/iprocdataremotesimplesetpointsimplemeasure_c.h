@@ -131,7 +131,7 @@ public:
   iProcDataRemoteSimpleSetpointSimpleMeasure_c(
 #ifdef USE_ISO_11783
                                   uint16_t rui16_DDI = 0,
-                                  uint16_t rui16_element = 0xFF,
+                                  uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
                                   uint8_t rui8_lis = 0xFF,
@@ -139,10 +139,10 @@ public:
                                   uint8_t rui8_inst = 0,
                                   uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                                  iGetyPos_c rc_gtp = 0,
-                                  uint8_t rui8_pri = 2, 
-                                  iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
-                                  iGetyPos_c* rpc_commanderGtp = NULL,
+                                  const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
+                                  uint8_t rui8_pri = 2,
+                                  const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
+                                  const iGetyPos_c* rpc_commanderGtp = NULL,
                                   ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                   int ri_singletonVecKey = 0)
   : ProcDataRemoteSimpleSetpointSimpleMeasure_c(
@@ -177,7 +177,7 @@ public:
   void init(
 #ifdef USE_ISO_11783
             uint16_t rui16_DDI = 0,
-            uint16_t rui16_element = 0xFF,
+            uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0xFF,
@@ -185,10 +185,10 @@ public:
             uint8_t rui8_inst = 0,
             uint8_t rui8_zaehlnum = 0xFF,
 #endif
-            iGetyPos_c rc_gtp = 0,
+            const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
             uint8_t rui8_pri = 2,
-            iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
-            iGetyPos_c* rpc_commanderGtp = NULL,
+            const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
+            const iGetyPos_c* rpc_commanderGtp = NULL,
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0)
     {ProcDataRemoteSimpleSetpointSimpleMeasure_c::init(
@@ -312,13 +312,13 @@ public:
     deliver the commanderGtp (GETY_POS of local member)
     @return GETY_POS used for sending commands to remote owner member
   */
-  iGetyPos_c commanderGtp()const{return ProcDataRemoteSimpleSetpointSimpleMeasure_c::commanderGtp();};
+  const iGetyPos_c& commanderGtp()const{return ProcDataRemoteSimpleSetpointSimpleMeasure_c::commanderGtp();};
   /**
     set the pointer to the commander ident gtp
     @param rpbgtp pointer to GETY_POS var of local member used for
                 sending commands to remote owner member
   */
-  void setCommanderGtp(iGetyPos_c* rpc_gtp){ProcDataRemoteSimpleSetpointSimpleMeasure_c::setCommanderGtp(rpc_gtp);};
+  void setCommanderGtp(const iGetyPos_c* rpc_gtp){ProcDataRemoteSimpleSetpointSimpleMeasure_c::setCommanderGtp(rpc_gtp);};
 
 
   /**

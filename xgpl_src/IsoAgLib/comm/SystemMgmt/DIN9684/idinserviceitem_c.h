@@ -75,7 +75,7 @@ public:
     deliver the GETY_POS code of this item
     @return GETY_POS code
   */
-  iGetyPos_c gtp()const{return static_cast<iGetyPos_c>(DINServiceItem_c::gtp());};
+  const iGetyPos_c& gtp()const{return static_cast<const iGetyPos_c&>(DINServiceItem_c::gtp());};
   /**
     deliver the GETY code alone (derived from gtp)
     @return GETY code
@@ -106,7 +106,7 @@ public:
   */
   bool itemState(itemState_t ren_itemState) const
     {return DINServiceItem_c::itemState(ren_itemState);};
-    
+
   /**
     deliver the state information
     @return state information of type itemState_t (with state informations coded by OR in enum)

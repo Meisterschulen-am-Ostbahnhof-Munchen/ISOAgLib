@@ -88,17 +88,17 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
 #ifdef USE_PROCESS
-	#include <IsoAgLib/comm/Process/impl/process_c.h>
+  #include <IsoAgLib/comm/Process/impl/process_c.h>
 #endif
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <IsoAgLib/util/impl/util_funcs.h>
-	#ifdef SYSTEM_PC
-		#include <iostream>
-	#else
-		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#endif
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #include <IsoAgLib/util/impl/util_funcs.h>
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 
@@ -148,8 +148,8 @@ void ISOMonitor_c::init( void )
     vec_isoMember.clear();
     pc_isoMemberCache = vec_isoMember.end();
     i32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
-    c_tempIsoMemberItem.set( 0, GetyPos_c(0xF, 0xF), 0xFE, IState_c::Active,
-            0xFFFF, (ISOName_c*)NULL, getSingletonVecKey() );
+    c_tempIsoMemberItem.set( 0, GetyPos_c::GetyPosUnspecified, 0xFE, IState_c::Active,
+            0xFFFF, getSingletonVecKey() );
 
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
@@ -218,7 +218,7 @@ bool ISOMonitor_c::timeEvent( void ){
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   if ( lastIsoSaRequest() == -1) return true;
-  
+
   int32_t i32_now = Scheduler_c::getLastTimeEventTrigger();
   const int32_t ci32_timeSinceLastAdrClaimRequest = (i32_now - lastIsoSaRequest());
   if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
@@ -324,20 +324,24 @@ ISOItem_c& ISOMonitor_c::isoMemberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, boo
         (optional, default false)
   @return true -> searched member exist
 */
-bool ISOMonitor_c::existIsoMemberGtp(GetyPos_c rc_gtp, bool rb_forceClaimedAddress)
+bool ISOMonitor_c::existIsoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress)
 {
   if (!vec_isoMember.empty() && (pc_isoMemberCache != vec_isoMember.end()))
   {
-    if ((pc_isoMemberCache->gtp() == rc_gtp )&&(!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress)))  return true;
+    if ( (pc_isoMemberCache->gtp() == rc_gtp )
+      && (!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
+        )  return true;
   }
   for (pc_isoMemberCache = vec_isoMember.begin();
        pc_isoMemberCache != vec_isoMember.end();
        pc_isoMemberCache++)
-  { if (pc_isoMemberCache->gtp() == rc_gtp) break;};
-  return ((pc_isoMemberCache != vec_isoMember.end())
-        &&(pc_isoMemberCache->gtp() == rc_gtp)
-        &&(!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
-        );
+  {
+    if ( (pc_isoMemberCache->gtp() == rc_gtp )
+      && (!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
+        )  return true;
+  };
+  // if reaching here -> nothing found
+  return false;
 };
 
 /**
@@ -345,32 +349,21 @@ bool ISOMonitor_c::existIsoMemberGtp(GetyPos_c rc_gtp, bool rb_forceClaimedAddre
   which optional (!!) match the condition of address claim state
   and update local pc_isoMemberCache
   @param rui8_nr searched member number
-  @param rb_forceClaimedAddress true -> only members with claimed address are used
-        (optional, default false)
   @return true -> item found
 */
-bool ISOMonitor_c::existIsoMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress)
+bool ISOMonitor_c::existIsoMemberNr(uint8_t rui8_nr)
 {
   if (!vec_isoMember.empty() && (pc_isoMemberCache != vec_isoMember.end()))
   {
-    if (( pc_isoMemberCache->nr() == rui8_nr )&&(!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress)))  return true;
+    if ( pc_isoMemberCache->nr() == rui8_nr ) return true;
   }
-  uint8_t b_size = vec_isoMember.size();
-  uint8_t b_act = 0;
   for (pc_isoMemberCache = vec_isoMember.begin();
        pc_isoMemberCache != vec_isoMember.end();
        pc_isoMemberCache++)
   {
-    if (b_act == b_size) break;
-    if (pc_isoMemberCache->equalNr(rui8_nr))
-    {
-      break;
-    }
-    b_act += 1;
+    if (pc_isoMemberCache->equalNr(rui8_nr)) return true;
   }
-  return ( (pc_isoMemberCache != vec_isoMember.end())
-         &&(!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
-        );
+  return false;
 };
 
 
@@ -382,21 +375,29 @@ bool ISOMonitor_c::existIsoMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress
 */
 bool ISOMonitor_c::isoGety2GtpClaimedAddress(GetyPos_c &refc_gtp)
 {
-    bool b_result = false;
-    if (!(existIsoMemberGtp(refc_gtp)))
-    { // no item with GETY_POS found -> adapt POS
-      // search for member with claimed address with same GETY
-      if (isoMemberGetyCnt(refc_gtp.getGety(), true) > 0)
-      { // member with claimed address with other POS exist
-        refc_gtp = isoMemberGetyInd(refc_gtp.getGety(), 0, true).gtp();
-        b_result = true;
-      }
+  if (existIsoMemberGtp(refc_gtp, true))
+  { // there exists a device with exact NAME in claimed address state
+    return true;
+  }
+  else
+  { // no item with GETY_POS found -> adapt POS
+    // search for member with claimed address with same GETY
+    if (isoMemberGetyCnt(refc_gtp.getGety(), true) > 0)
+    { // member with wanted device class exists -> store the GTP
+      refc_gtp = isoMemberGetyInd(refc_gtp.getGety(), 0, true).gtp();
+      return true;
+    }
+    else if (isoMemberGetyCnt(refc_gtp.getGety(), false) > 0)
+    { // member with wanted device class exists -> store the GTP
+      refc_gtp = isoMemberGetyInd(refc_gtp.getGety(), 0, false).gtp();
+      // even if a device with wanted GTP exist - it is not claimed
+      return false;
     }
     else
-    { // member with given GTP exist
-      if (isoMemberGtp(refc_gtp).itemState(IState_c::ClaimedAddress)) b_result = true;
+    {
+      return false;
     }
-    return b_result;
+  }
 }
 
 
@@ -409,13 +410,12 @@ bool ISOMonitor_c::isoGety2GtpClaimedAddress(GetyPos_c &refc_gtp)
     * busy another member with same ident exists already in the list
 
   @param rc_gtp GETY_POS of the member
-  @param rpui8_name ISO11783 64-bit NAME as pointer to 8 uint8_t string
   @param rui8_nr member number
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ren_status wanted status
   @return true -> the ISOItem_c was inserted
 */
-bool ISOMonitor_c::insertIsoMember(GetyPos_c rc_gtp, const uint8_t* rpui8_name,
+bool ISOMonitor_c::insertIsoMember(const GetyPos_c& rc_gtp,
       uint8_t rui8_nr, IState_c::itemState_t ren_state, uint16_t rui16_saEepromAdr)
 {
   bool b_result = true;
@@ -432,7 +432,7 @@ bool ISOMonitor_c::insertIsoMember(GetyPos_c rc_gtp, const uint8_t* rpui8_name,
     // prepare temp item with wanted data
     c_tempIsoMemberItem.set(System_c::getTime(), rc_gtp, rui8_nr,
         IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Iso | IState_c::Active),
-        rui16_saEepromAdr, rpui8_name, getSingletonVecKey() );
+        rui16_saEepromAdr, getSingletonVecKey() );
 
     // now insert element
     const uint8_t b_oldSize = vec_isoMember.size();
@@ -449,7 +449,7 @@ bool ISOMonitor_c::insertIsoMember(GetyPos_c rc_gtp, const uint8_t* rpui8_name,
       sui16_isoItemTotal++;
 
       getRs232Instance()
-	      << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
+        << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
         <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
         << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
         << ", Chunk-Alloc: "
@@ -474,9 +474,9 @@ bool ISOMonitor_c::insertIsoMember(GetyPos_c rc_gtp, const uint8_t* rpui8_name,
   @return reference to searched ISOItem
   @exception containerElementNonexistant
 */
-ISOItem_c& ISOMonitor_c::isoMemberGtp(GetyPos_c rc_gtp)
+ISOItem_c& ISOMonitor_c::isoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress)
 {
-  if (existIsoMemberGtp(rc_gtp))
+  if (existIsoMemberGtp(rc_gtp, rb_forceClaimedAddress))
   { // no error
     return static_cast<ISOItem_c&>(*pc_isoMemberCache);
   }
@@ -529,9 +529,9 @@ ISOItem_c& ISOMonitor_c::isoMemberNr(uint8_t rui8_nr)
   @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
   @return reference to the searched item
 */
-ISOItem_c& ISOMonitor_c::isoMemberGtp(GetyPos_c rc_gtp, bool *const pb_success, Vec_ISOIterator *const pbc_iter)
+ISOItem_c& ISOMonitor_c::isoMemberGtp(const GetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
 {
-  *pb_success = (existIsoMemberGtp(rc_gtp))?true:false;
+  *pb_success = (existIsoMemberGtp(rc_gtp, rb_forceClaimedAddress))?true:false;
 
   if (pbc_iter != NULL)
   {
@@ -548,7 +548,7 @@ ISOItem_c& ISOMonitor_c::isoMemberGtp(GetyPos_c rc_gtp, bool *const pb_success, 
 
   @param rc_gtp GETY_POS of to be deleted member
 */
-bool ISOMonitor_c::deleteIsoMemberGtp(GetyPos_c rc_gtp)
+bool ISOMonitor_c::deleteIsoMemberGtp(const GetyPos_c& rc_gtp)
 {
   if (existIsoMemberGtp(rc_gtp))
   { // set correct state
@@ -696,7 +696,7 @@ uint8_t ISOMonitor_c::unifyIsoSa(const ISOItem_c* rpc_isoItem)
   // now wished SA isn't free or no SA wished
   for (ui8_wishSa = 128; ui8_wishSa <= 207; ui8_wishSa++)
   { // try all possible self conf adresses
-	  b_free = true;
+    b_free = true;
     for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
           pc_iterItem != vec_isoMember.end(); pc_iterItem++)
     {
@@ -709,50 +709,52 @@ uint8_t ISOMonitor_c::unifyIsoSa(const ISOItem_c* rpc_isoItem)
     }
 
     if (b_free)
-		{ // free SA found
-			return ui8_wishSa;
-		}
+    { // free SA found
+      return ui8_wishSa;
+    }
   }
   // no free SA found -> return 254 as signal
   return 254;
 }
 
 /**
-	trigger a request for claimed addreses
-	@param rb_force false -> send request only if no request was detected until now
-	@return true -> request was sent
-	*/
+  trigger a request for claimed addreses
+  @param rb_force false -> send request only if no request was detected until now
+  @return true -> request was sent
+  */
 bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
 { // trigger an initial request for claimed address
-	// ( only if no request was detected )
-	if ( ( lastIsoSaRequest() != -1 ) && ( ! rb_force ) )
-	{ // at least one request was already detected
-		return false;
-	}
-	// now it's needed to send
+  // send no request if CANIO_c is not yet ready for send
+  if ( ! getCanInstance4Comm().isReady2Send() ) return false;
+  // ( only if no request was detected )
+  if ( ( lastIsoSaRequest() != -1 ) && ( ! rb_force ) )
+  { // at least one request was already detected
+    return false;
+  }
+  // now it's needed to send
 //  int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
-  int32_t i32_time = System_c::getTime();
+  const int32_t i32_time = System_c::getTime();
 
 //  getRs232Instance() << "_time in sendReq4AdrCl: " << HAL::getTime() <<"_";
 
-	data().setIsoPri(6);
-	// PGN is equivalent to definition of PF and DP in this case
-	//data().setIsoPgn(REQUEST_PGN_MSG_PGN);
-	data().setIsoDp(0);
-	data().setIsoPf(234);
-	data().setIsoPs(255); // global request
-	data().setIsoSa(254); // special flag for "no SA yet"
-	// built request data string
-	uint8_t pb_requestString[4];
-	pb_requestString[0] = (ADRESS_CLAIM_PGN & 0xFF);
-	pb_requestString[1] = ((ADRESS_CLAIM_PGN >> 8)& 0xFF);
-	pb_requestString[2] = ((ADRESS_CLAIM_PGN >> 16)& 0xFF);
-	data().setDataString(pb_requestString, 3);
-	// now ISOSystemPkg_c has right data -> send
-	getCanInstance4Comm() << data();
-	// store adress claim request time
-	setLastIsoSaRequest(i32_time);
-	return true;
+  data().setIsoPri(6);
+  // PGN is equivalent to definition of PF and DP in this case
+  //data().setIsoPgn(REQUEST_PGN_MSG_PGN);
+  data().setIsoDp(0);
+  data().setIsoPf(234);
+  data().setIsoPs(255); // global request
+  data().setIsoSa(254); // special flag for "no SA yet"
+  // built request data string
+  uint8_t pb_requestString[4];
+  pb_requestString[0] = (ADRESS_CLAIM_PGN & 0xFF);
+  pb_requestString[1] = ((ADRESS_CLAIM_PGN >> 8)& 0xFF);
+  pb_requestString[2] = ((ADRESS_CLAIM_PGN >> 16)& 0xFF);
+  data().setDataString(pb_requestString, 3);
+  // now ISOSystemPkg_c has right data -> send
+  getCanInstance4Comm() << data();
+  // store adress claim request time
+  setLastIsoSaRequest(i32_time);
+  return true;
 }
 
 
@@ -789,7 +791,7 @@ bool ISOMonitor_c::processMsg(){
       { // create new item from received msg
         // (ISOMonitor_c::insertIsoMember set state bits for member and ISO
         //  additionally)
-        insertIsoMember(data().gtp(), data().name(), data().isoSa(),
+        insertIsoMember(data().gtp(), data().isoSa(),
           IState_c::itemState_t(IState_c::ClaimedAddress));
         if ( isoMemberNr(data().isoSa()).processMsg() ) b_processed = true;
       }

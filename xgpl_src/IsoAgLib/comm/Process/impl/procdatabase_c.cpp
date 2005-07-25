@@ -152,8 +152,8 @@ namespace __IsoAgLib {
                             uint8_t rui8_lis, uint8_t rui8_wert,
                             uint8_t rui8_inst, uint8_t rui8_zaehlnum ,
 #endif
-                            GetyPos_c rc_gtp,
-                            uint8_t rui8_pri, GetyPos_c rc_ownerGtp, GetyPos_c *rpc_gtp,
+                            const GetyPos_c& rc_gtp,
+                            uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp, const GetyPos_c *rpc_gtp,
                             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                             int ri_singletonVecKey)
   {
@@ -263,12 +263,12 @@ bool ProcDataBase_c::timeEvent( void ){
   @param ri32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t ri32_val) const
+bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, int32_t ri32_val) const
 {
   bool b_result;
   if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp))
   { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong 
+    // set PD, MOD, and data with the function setPkgDataLong
     getProcessPkg().setData( ri32_val, en_procValType);
 
     // send the msg
@@ -288,7 +288,7 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t r
   send the given float value with variable GETY_POS rc_varGtp
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
-  
+
   set general command before sendValGtp !
 
   possible errors:
@@ -299,11 +299,11 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t r
   @param ri32_val float value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, float rf_val) const {
+bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, float rf_val) const {
   bool b_result;
   if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp))
   { // now call sendIntern, if var2empfSend was successful
-    // set PD, MOD, and data with the function setPkgDataLong 
+    // set PD, MOD, and data with the function setPkgDataLong
     getProcessPkg().setData( rf_val, en_procValType);
 
     // send the msg
@@ -335,7 +335,7 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, float rf_
   @param rb_mod MOD code for the msg
   @return true -> resolvSendGtp successfully resolved EMPF and SEND
 */
-bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_varGtp) const {
+bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_c& rc_varGtp) const {
   uint8_t ui8_empf = 0xFF,
       ui8_send = 0xFF;
   bool b_result = false;
@@ -347,11 +347,10 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_v
   // retreive pointer to te according DINMonitor_c class
   static DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
 
-  // check is the var parameter has claimed address
-  if ( (c_din_monitor.existDinMemberGtp(rc_varGtp))
-    && (c_din_monitor.dinMemberGtp(rc_varGtp).itemState(IState_c::ClaimedAddress)))
+  // check is the var parameter has claimed address - the variable device is totally known by GTP: the requesting device for local proc, the commanding for remote proc
+  if (c_din_monitor.existDinMemberGtp(rc_varGtp, true))
   { // the member to rc_varGtp has claimed address (virtual function -> worksdependent on child type local/remote)
-    b_result = var2empfSend(rui8_pri, (c_din_monitor.dinMemberGtp(rc_varGtp).nr()),
+    b_result = var2empfSend(rui8_pri, (c_din_monitor.dinMemberGtp(rc_varGtp, true).nr()),
                   ui8_empf,
                   ui8_send
                   #ifdef USE_ISO_11783
@@ -364,31 +363,26 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_v
   // retreive pointer to te accorisog ISOMonitor_c class
   static ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
-   // try with ISO communication
-   if (!b_result)
+  // try with ISO communication
+  if (!b_result)
   {
-    if ((c_isoMonitor.existIsoMemberGtp(rc_varGtp))
-     && (c_isoMonitor.isoMemberGtp(rc_varGtp).itemState(IState_c::ClaimedAddress)))
+    if (c_isoMonitor.existIsoMemberGtp(rc_varGtp, true ))
     { // the member to rc_varGtp has claimed address (virtual function -> worksdependent on child type local/remote)
       en_msgProto = IState_c::Iso;
-      b_result = var2empfSend(rui8_pri, (c_isoMonitor.isoMemberGtp(rc_varGtp).nr()),
+      b_result = var2empfSend(rui8_pri, (c_isoMonitor.isoMemberGtp(rc_varGtp, true).nr()),
           ui8_empf, ui8_send, en_msgProto);
     }
-    else
-    { // the var paramter hasn't claimed address -> signal it by 0xFF to var2empfSend
-      en_msgProto = (IState_c::itemState_t(IState_c::Din | IState_c::Iso));
-  #else
-    else
-    { // the var paramter hasn't claimed address -> signal it by 0xFF to var2empfSend
+  }
   #endif
-      b_result = var2empfSend(rui8_pri, 0xFF, ui8_empf, ui8_send
-        #ifdef USE_ISO_11783
-          , en_msgProto
-        #endif
-        );
-  #ifdef USE_ISO_11783
-    }
-  #endif
+
+  if ( !b_result )
+  { // the var paramter hasn't claimed address -> signal it by 0xFF to var2empfSend
+    en_msgProto = (IState_c::itemState_t(IState_c::Din | IState_c::Iso));
+    b_result = var2empfSend(rui8_pri, 0xFF, ui8_empf, ui8_send
+      #ifdef USE_ISO_11783
+        , en_msgProto
+      #endif
+      );
   }
 
   if (b_result)
@@ -427,7 +421,7 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_v
 #endif
 
 #ifdef USE_DIN_9684
-    
+
     // set pd and mod in ProcessPkg::flags2string
     c_data.setLis(lis());
     c_data.setZaehlnum(zaehlnum());
@@ -462,20 +456,20 @@ void ProcDataBase_c::processSetpoint()
   @param rc_gtp compared GETY_POS value
   @return IState_c::itemState_t
 */
-IState_c::itemState_t ProcDataBase_c::getIStateForGtp( GetyPos_c rc_gtp )
+IState_c::itemState_t ProcDataBase_c::getIStateForGtp( const GetyPos_c& rc_gtp )
 {
   IState_c::itemState_t en_msgProto = IState_c::IstateNull;
-  
+
 #if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
-  if ( getSystemMgmtInstance4Comm().existMemberGtp(rc_gtp, true) )
+  if ( getDinMonitorInstance4Comm().existDinMemberGtp(rc_gtp, true) )
     en_msgProto = IState_c::Din;
 #endif
 
 #if !defined(USE_DIN_9684) && defined(USE_ISO_11783)
-  if ( getSystemMgmtInstance4Comm().existMemberGtp(rc_gtp, true) )
+  if ( getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_gtp, true) )
     en_msgProto = IState_c::Iso;
 #endif
-  
+
 #if defined(USE_DIN_9684) && defined(USE_ISO_11783)
   if ( getSystemMgmtInstance4Comm().existMemberGtp(rc_gtp, true, IState_c::IsoOnly) )
     en_msgProto = IState_c::Iso;

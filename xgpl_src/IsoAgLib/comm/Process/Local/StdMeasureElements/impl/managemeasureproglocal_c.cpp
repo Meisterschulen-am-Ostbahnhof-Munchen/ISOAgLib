@@ -88,8 +88,8 @@
 #include "../../../impl/process_c.h"
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -193,7 +193,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
         << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
         << ", Chunk-Alloc: "
         << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
-	      << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
+        << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
       #ifndef MASSERT
         << "\r\n\r\n";
       #else
@@ -257,7 +257,7 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
   SystemMgmt_c& c_lbsSystem = getSystemMgmtInstance4Comm();
 
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  GetyPos_c c_callerGtp;
+  const GetyPos_c *pc_callerGtp;
 
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
@@ -290,12 +290,12 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
   }
   else if ( cui16_size == 1)
   { // only one measure prog -> set it to undefined prog type if gtp inactive
-    c_callerGtp = vec_prog().begin()->gtp();
+    pc_callerGtp = &(vec_prog().begin()->gtp());
     if ((!vec_prog().begin()->checkProgType(Proc_c::UndefinedProg))
-      &&((!c_lbsSystem.existMemberGtp(c_callerGtp))
+      &&((!c_lbsSystem.existMemberGtp(*pc_callerGtp, true))
       ||(
-          (c_lbsSystem.memberGtp(c_callerGtp).lastedTime() > 3000)
-        &&(c_lbsSystem.memberGtp(c_callerGtp).itemState(IState_c::Din))
+          (c_lbsSystem.memberGtp(*pc_callerGtp, true).lastedTime() > 3000)
+        &&(c_lbsSystem.memberGtp(*pc_callerGtp, true).itemState(IState_c::Din))
         )
         )
       )
@@ -314,10 +314,10 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
       for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
           pc_iter != vec_prog().end(); pc_iter++)
       { // check if this item has inactive gtp
-        if ((!c_lbsSystem.existMemberGtp(pc_iter->gtp()))
+        if ((!c_lbsSystem.existMemberGtp(pc_iter->gtp(), true))
           ||(
-            (c_lbsSystem.memberGtp(pc_iter->gtp()).lastedTime() > 3000)
-          &&(c_lbsSystem.memberGtp(pc_iter->gtp()).itemState(IState_c::Din))
+            (c_lbsSystem.memberGtp(pc_iter->gtp(), true).lastedTime() > 3000)
+          &&(c_lbsSystem.memberGtp(pc_iter->gtp(), true).itemState(IState_c::Din))
             )
           )
         { // item isn't active any more -> stop entries and erase it
@@ -335,14 +335,14 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
             {
               sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
               sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
-				      getRs232Instance()
-				        << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
-				        <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
-				        << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
-				        << ", Chunk-Alloc: "
-				        << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
+              getRs232Instance()
+                << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
+                <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
+                << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
+                << ", Chunk-Alloc: "
+                << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
                 << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-				      #ifndef MASSERT
+              #ifndef MASSERT
                 << "\r\n\r\n";
               #else
                 << ", __mall tot:" << AllocateHeapMalloc
@@ -369,21 +369,21 @@ bool ManageMeasureProgLocal_c::timeEvent( void ){
 /** process a measure prog message for local process data */
 void ManageMeasureProgLocal_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  GetyPos_c c_callerGtp =  c_pkg.memberSend().gtp();
+  const GetyPos_c& c_callerGtp =  c_pkg.memberSend().gtp();
   GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
-   
+
   // call updateProgCache with createIfNeeded if this is a writing action, otherwise don't create if none found
   // if ( ((c_pkg.pd() & 0x1) == 0)  => pd == 0, 2
-  //  || ((c_pkg.pd() == 1) && (c_pkg.mod() == 0)) 
+  //  || ((c_pkg.pd() == 1) && (c_pkg.mod() == 0))
   if ( (en_command & 0x10) || /* measurement command indices are >= 0x10 < 0x20! */
        ( en_command == GeneralCommand_c::setValue)
      )
   { // it's a measuring program message -> create new item if none found
     updateProgCache(c_pkg.pri(),c_callerGtp, true);
   }
-  else 
+  else
     // if ( (c_pkg.pd() != 3) || (c_pkg.mod() != 0) )  => pd == 1 || (pd == 3 && mod != 0)
-    if ( !c_pkg.c_generalCommand.checkIsRequest() || 
+    if ( !c_pkg.c_generalCommand.checkIsRequest() ||
          c_pkg.c_generalCommand.getValueGroup() != GeneralCommand_c::exactValue )
     { // use normal mechanism -> exist function if no entry found
       if (!updateProgCache(c_pkg.pri(),c_callerGtp, false))return;
@@ -426,7 +426,7 @@ void ManageMeasureProgLocal_c::processProg(){
   @param rc_gtp GETY code of searched measure program
   @param rb_doCreated true -> create suitable measure program if not found
 */
-MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(uint8_t rui8_pri, GetyPos_c rc_gtp, bool rb_doCreate){
+MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(uint8_t rui8_pri, const GetyPos_c& rc_gtp, bool rb_doCreate){
   // update the prog cache
   if (!updateProgCache(rui8_pri, rc_gtp, rb_doCreate) && (!rb_doCreate))
   { // not found and no creation wanted
@@ -477,7 +477,7 @@ void ManageMeasureProgLocal_c::setGlobalVal( float rf_val )
   @param rui8_type program type: Proc_c::Base, Proc_c::Target
   @param rc_gtp commanding GETY_POS
 */
-void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, GetyPos_c rc_gtp){
+void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, const GetyPos_c& rc_gtp){
 // only create new item if first isn't undefined
   const uint8_t b_oldSize = vec_prog().size();
 
@@ -565,7 +565,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(uint8_t rui8_type, GetyPos_c rc
   @param rb_createIfNotFound true -> create new item if not found
   @return true -> instance found
 */
-bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, GetyPos_c rc_gtp, bool rb_createIfNotFound)
+bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const GetyPos_c& rc_gtp, bool rb_createIfNotFound)
 {
   bool b_result = false;
   // insert first default element, if list is empty

@@ -93,8 +93,8 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -124,7 +124,7 @@ namespace __IsoAgLib {
 */
 void DINMonitor_c::init( void )
 {
-  c_tempDinMemberItem.set(0, GetyPos_c(0xF, 0xF), 0xFF, IState_c::Active, 0, NULL, getSingletonVecKey() );
+  c_tempDinMemberItem.set(0, GetyPos_c::GetyPosUnspecified, 0xFF, IState_c::Active, 0, NULL, getSingletonVecKey() );
   c_data.setSingletonKey( getSingletonVecKey() );
   #ifdef DEBUG_HEAP_USEAGE
   sui16_dinItemTotal -= vec_dinMember.size();
@@ -260,7 +260,7 @@ bool DINMonitor_c::timeEvent( void ){
           sui16_dinItemTotal--;
 
           getRs232Instance()
-	          << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
+            << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
             <<  sizeSlistTWithMalloc( sizeof(DINItem_c), sui16_dinItemTotal )
             << "/" << sizeSlistTWithMalloc( sizeof(DINItem_c), 1 )
             << ", Chunk-Alloc: "
@@ -484,19 +484,24 @@ DINItem_c& DINMonitor_c::dinMemberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, boo
         (optional, default false)
   @return true -> searched member exist
 */
-bool DINMonitor_c::existDinMemberGtp(GetyPos_c rc_gtp, bool rb_forceClaimedAddress)
+bool DINMonitor_c::existDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress)
 {
   if (!vec_dinMember.empty() && (pc_dinMemberCache != vec_dinMember.end()))
   {
-    if ((pc_dinMemberCache->gtp() == rc_gtp)&&(!rb_forceClaimedAddress || pc_dinMemberCache->itemState(IState_c::ClaimedAddress))) return true;
+    if ( (pc_dinMemberCache->gtp() == rc_gtp )
+      && (!rb_forceClaimedAddress || pc_dinMemberCache->itemState(IState_c::ClaimedAddress))
+        )  return true;
   }
   for (pc_dinMemberCache = vec_dinMember.begin();
-       pc_dinMemberCache != vec_dinMember.end(); pc_dinMemberCache++)
-  {if (pc_dinMemberCache->gtp() == rc_gtp)break;}
-  return ((pc_dinMemberCache != vec_dinMember.end())
-        &&(pc_dinMemberCache->gtp() == rc_gtp)
-        &&(!rb_forceClaimedAddress || pc_dinMemberCache->itemState(IState_c::ClaimedAddress))
-        );
+       pc_dinMemberCache != vec_dinMember.end();
+       pc_dinMemberCache++)
+  {
+    if ( (pc_dinMemberCache->gtp() == rc_gtp )
+      && (!rb_forceClaimedAddress || pc_dinMemberCache->itemState(IState_c::ClaimedAddress))
+        )  return true;
+  };
+  // if reaching here -> nothing found
+  return false;
 };
 
 /**
@@ -504,22 +509,18 @@ bool DINMonitor_c::existDinMemberGtp(GetyPos_c rc_gtp, bool rb_forceClaimedAddre
   which optional (!!) match the condition of address claim state
   and update local pc_dinMemberCache
   @param rui8_nr searched member number
-  @param rb_forceClaimedAddress true -> only members with claimed address are used
-        (optional, default false)
   @return true -> item found
 */
-bool DINMonitor_c::existDinMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress)
+bool DINMonitor_c::existDinMemberNr(uint8_t rui8_nr )
 {
   if (!vec_dinMember.empty() && (pc_dinMemberCache != vec_dinMember.end()))
   {
-      if ((pc_dinMemberCache->nr() == rui8_nr)&&(!rb_forceClaimedAddress || pc_dinMemberCache->itemState(IState_c::ClaimedAddress))) return true;
+      if (pc_dinMemberCache->nr() == rui8_nr) return true;
   }
   for (pc_dinMemberCache = vec_dinMember.begin();
        pc_dinMemberCache != vec_dinMember.end(); pc_dinMemberCache++)
-  {if (pc_dinMemberCache->equalNr(rui8_nr))break;}
-  return ( (pc_dinMemberCache != vec_dinMember.end())
-         &&(!rb_forceClaimedAddress || pc_dinMemberCache->itemState(IState_c::ClaimedAddress))
-        );
+  {if (pc_dinMemberCache->equalNr(rui8_nr))return true;}
+  return false;
 };
 
 /**
@@ -530,21 +531,29 @@ bool DINMonitor_c::existDinMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress
 */
 bool DINMonitor_c::dinGety2GtpClaimedAddress(GetyPos_c &refc_gtp)
 {
-    bool b_result = false;
-    if (!(existDinMemberGtp(refc_gtp)))
-    { // no item with GETY_POS found -> adapt POS
-      // search for member with claimed address with same GETY
-      if (dinMemberGetyCnt((refc_gtp.getGety()), true) > 0)
-      { // member with claimed address with other POS exist
-        refc_gtp = dinMemberGetyInd((refc_gtp.getGety()), 0, true).gtp();
-        b_result = true;
-      }
+  if (existDinMemberGtp(refc_gtp, true))
+  { // there exists a device with exact NAME in claimed address state
+    return true;
+  }
+  else
+  { // no item with GETY_POS found -> adapt POS
+    // search for member with claimed address with same GETY
+    if (dinMemberGetyCnt(refc_gtp.getGety(), true) > 0)
+    { // member with wanted device class exists -> store the GTP
+      refc_gtp = dinMemberGetyInd(refc_gtp.getGety(), 0, true).gtp();
+      return true;
+    }
+    else if (dinMemberGetyCnt(refc_gtp.getGety(), false) > 0)
+    { // member with wanted device class exists -> store the GTP
+      refc_gtp = dinMemberGetyInd(refc_gtp.getGety(), 0, false).gtp();
+      // even if a device with wanted GTP exist - it is not claimed
+      return false;
     }
     else
-    { // member with given GTP exist
-      if (dinMemberGtp(refc_gtp).itemState(IState_c::ClaimedAddress)) b_result = true;
+    {
+      return false;
     }
-    return b_result;
+  }
 }
 
 
@@ -563,7 +572,7 @@ bool DINMonitor_c::dinGety2GtpClaimedAddress(GetyPos_c &refc_gtp)
   @param ren_status wanted status
   @return true -> the DINItem_c was inserted
 */
-bool DINMonitor_c::insertDinMember(GetyPos_c rc_gtp, const uint8_t* rpb_name, uint8_t rui8_nr, uint16_t rui16_adrvect, IState_c::itemState_t ren_state)
+bool DINMonitor_c::insertDinMember(const GetyPos_c& rc_gtp, const uint8_t* rpb_name, uint8_t rui8_nr, uint16_t rui16_adrvect, IState_c::itemState_t ren_state)
 {
   bool b_result = true;
 
@@ -611,7 +620,7 @@ bool DINMonitor_c::insertDinMember(GetyPos_c rc_gtp, const uint8_t* rpb_name, ui
     {
       sui16_dinItemTotal++;
       getRs232Instance()
-	      << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
+        << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
         <<  sizeSlistTWithMalloc( sizeof(DINItem_c), sui16_dinItemTotal )
         << "/" << sizeSlistTWithMalloc( sizeof(DINItem_c), 1 )
         << ", Chunk-Alloc: "
@@ -635,9 +644,9 @@ bool DINMonitor_c::insertDinMember(GetyPos_c rc_gtp, const uint8_t* rpb_name, ui
   @return reference to searched MemberItem
   @exception containerElementNonexistant
 */
-DINItem_c& DINMonitor_c::dinMemberGtp(GetyPos_c rc_gtp)
+DINItem_c& DINMonitor_c::dinMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress)
 {
-  if (existDinMemberGtp(rc_gtp))
+  if (existDinMemberGtp(rc_gtp, rb_forceClaimedAddress))
   { // no error
     return static_cast<DINItem_c&>(*pc_dinMemberCache);
   }
@@ -690,9 +699,9 @@ DINItem_c& DINMonitor_c::dinMemberNr(uint8_t rui8_nr)
   @param pbc_iter optional member array iterator which points to searched DINItem_c on success
   @return reference to the searched item
 */
-DINItem_c& DINMonitor_c::dinMemberGtp(GetyPos_c rc_gtp, bool *const pb_success, Vec_MemberIterator *const pbc_iter)
+DINItem_c& DINMonitor_c::dinMemberGtp(const GetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress, Vec_MemberIterator *const pbc_iter)
 {
-  *pb_success = (existDinMemberGtp(rc_gtp))?true:false;
+  *pb_success = (existDinMemberGtp(rc_gtp, rb_forceClaimedAddress))?true:false;
 
   if (pbc_iter != NULL)
   {
@@ -710,7 +719,7 @@ DINItem_c& DINMonitor_c::dinMemberGtp(GetyPos_c rc_gtp, bool *const pb_success, 
   @param rc_gtp GETY_POS of to be deleted member
   @param rb_send-release true -> send adress release msg (optional, default = false)
 */
-bool DINMonitor_c::deleteDinMemberGtp(GetyPos_c rc_gtp, bool rb_sendRelease)
+bool DINMonitor_c::deleteDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_sendRelease)
 { // only delete local items, if send of adress release is requested - otherwise
   // this is not triggered by local software
   if ( ( existDinMemberGtp(rc_gtp)                                                    )
@@ -737,7 +746,7 @@ bool DINMonitor_c::deleteDinMemberGtp(GetyPos_c rc_gtp, bool rb_sendRelease)
     sui16_dinItemTotal--;
 
     getRs232Instance()
-	    << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
+      << sui16_dinItemTotal << " x DINItem_c: Mal-Alloc: "
       <<  sizeSlistTWithMalloc( sizeof(DINItem_c), sui16_dinItemTotal )
       << "/" << sizeSlistTWithMalloc( sizeof(DINItem_c), 1 )
       << ", Chunk-Alloc: "
@@ -745,7 +754,7 @@ bool DINMonitor_c::deleteDinMemberGtp(GetyPos_c rc_gtp, bool rb_sendRelease)
       << "\r\n\r\n";
     #endif
 
-		return true;
+    return true;
   }
   else
   { // to be deleted member GETY_POS does not exist
@@ -781,7 +790,7 @@ bool DINMonitor_c::deleteDinMemberNr(uint8_t rui8_nr, bool rb_sendRelease)
   @param rc_gtp GETY_POS of member which is tested
   @return true -> member is allowed to claim number
 */
-bool DINMonitor_c::canClaimNr(GetyPos_c rc_gtp)
+bool DINMonitor_c::canClaimNr(const GetyPos_c& rc_gtp)
 { GetyPos_c min_gtp = rc_gtp;
 
   // search announcing list item with lowest gtp
@@ -939,7 +948,7 @@ bool DINMonitor_c::unifyDinGtp(GetyPos_c& refc_gtp){
   @param rui8_nr number to register as used for the given member
   @return true -> the wanted nr was registered successful in AdrVect
 */
-bool DINMonitor_c::setUsedAdr(GetyPos_c rc_gtp, uint8_t rui8_nr){
+bool DINMonitor_c::setUsedAdr(const GetyPos_c& rc_gtp, uint8_t rui8_nr){
   bool b_result = false;
   if ((canClaimNr(rc_gtp)) || (System_c::getTime() < 3000))
   { // claim is allowed -> update trusted (it updates internal too)
@@ -1047,7 +1056,7 @@ bool DINMonitor_c::processMsg(){
         if ( ( dinMemberGtp(data().gtp()).lastedTime() > 10000            )
           && ( ! dinMemberGtp(data().gtp()).itemState( IState_c::Local )  )
           && ( ! getSystemMgmtInstance().existLocalMemberGtp( data().gtp()
-          			#ifdef USE_ISO_11783
+                #ifdef USE_ISO_11783
                 , IState_c::DinOnly
                 #endif
                 ) )
@@ -1056,11 +1065,11 @@ bool DINMonitor_c::processMsg(){
           b_result = true;
         }
       }
-			else if ( ( c_adrVectTrusted.isAdrUsedTrusted( data().send() ) ) || ( c_adrVectTrusted.isAdrUsed( data().send() ) ) )
-			{ // given number is marked as used in AdrVect_c -> clear it there
-				c_adrVectTrusted.clearUsedAdr( data().send() );
-				b_result = true;
-			}
+      else if ( ( c_adrVectTrusted.isAdrUsedTrusted( data().send() ) ) || ( c_adrVectTrusted.isAdrUsed( data().send() ) ) )
+      { // given number is marked as used in AdrVect_c -> clear it there
+        c_adrVectTrusted.clearUsedAdr( data().send() );
+        b_result = true;
+      }
       break;
      case 8: // claim for sending the own ECU name
       // simply send own name - it has no risk -> let all
@@ -1069,7 +1078,7 @@ bool DINMonitor_c::processMsg(){
       {
         if (pc_iter->itemState(IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::Local))) pc_iter->processMsg();
       }
-			b_result = true;
+      b_result = true;
       break;
      case 4: case 7:
       b_result = getDinServiceMonitorInstance4Comm().processMsg();
@@ -1081,7 +1090,7 @@ bool DINMonitor_c::processMsg(){
       {
         if (data().nae() == 1) b_globalSystemState = true; // on
         else b_globalSystemState = false; // off
-				b_result = true;
+        b_result = true;
       }
       break;
       #endif
@@ -1233,7 +1242,7 @@ bool DINMonitor_c::adressConflict(){
   @param rb_toStop true -> start sending STOP commands; false -> release STOP sending mode
   @return true -> stop command sent without errors
 */
-bool DINMonitor_c::commandStop(GetyPos_c rc_gtpTarget, bool rb_toStop){
+bool DINMonitor_c::commandStop(const GetyPos_c& rc_gtpTarget, bool rb_toStop){
   /* ******************************** */
   /* perform some precondition checks */
   /* ******************************** */
@@ -1315,7 +1324,7 @@ bool DINMonitor_c::commandStop(GetyPos_c rc_gtpTarget, bool rb_toStop){
   @param ren_itemState wanted state of item
   @return true -> stop command sent without errors
 */
-bool DINMonitor_c::commandItemState(GetyPos_c rc_gtp, IState_c::itemState_t ren_itemState)
+bool DINMonitor_c::commandItemState(const GetyPos_c& rc_gtp, IState_c::itemState_t ren_itemState)
 {
   /* ******************************** */
   /* perform some precondition checks */

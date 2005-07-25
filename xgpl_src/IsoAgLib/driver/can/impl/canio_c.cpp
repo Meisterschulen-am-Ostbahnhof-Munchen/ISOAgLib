@@ -91,12 +91,12 @@
 #include <IsoAgLib/hal/eeprom.h>
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#ifdef SYSTEM_PC
-		#include <iostream>
-	#else
-		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#endif
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -309,7 +309,7 @@ void CANIO_c::close( void )
       break;
     case HAL_CONFIG_ERR:
       // ignore this type also, as this is only the indication of try to close an already closed channel
-			#if defined(DEBUG)
+      #if defined(DEBUG)
       INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " was already closed before close call\r\n";
       #endif
       break;
@@ -419,8 +419,8 @@ uint8_t CANIO_c::sendCanFreecnt(Ident_c::identType_t ren_identType)
     ui8_sendObjNr += 1;
   }
   const int16_t i16_result = HAL::can_stateMsgobjFreecnt(ui8_busNumber, ui8_sendObjNr);
-	if ( i16_result >= 0 ) return uint8_t(i16_result);
-	else return 0;
+  if ( i16_result >= 0 ) return uint8_t(i16_result);
+  else return 0;
 }
 
 
@@ -437,10 +437,10 @@ void CANIO_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
   {
     ui8_sendObjNr += 1;
   }
-	#ifdef DEBUG
+  #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE
    << "CANIO_c::sendCanClearbuf for MsgObj: " << uint16_t(ui8_sendObjNr) << "\r\n";
-	#endif
+  #endif
 
   HAL::can_useMsgobjClear(ui8_busNumber, ui8_sendObjNr);
 }
@@ -449,7 +449,7 @@ void CANIO_c::sendCanClearbuf(Ident_c::identType_t ren_identType)
 /**
   test if a FilterBox_c definition already exist
   (version expecial for standard ident, chosen at compile time)
-	@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
+  @param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
   @param rt_mask individual mask for this filter box
   @param rt_filter individual filter
   @param ren_identType type of searched ident: standard 11bit (default) or extended 29bit
@@ -472,7 +472,7 @@ bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
 /**
   test if a FilterBox_c definition already exist
   (version expecial for extended ident, chosen at compile time)
-	@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
+  @param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
   @param rt_mask individual mask for this filter box
   @param rt_filter individual filter
   @param ren_identType type of searched ident: standard 11bit (default) or extended 29bit
@@ -496,7 +496,7 @@ bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
 /**
   test if a FilterBox_c definition already exist
   (version with comper items as Ident_c class instances, chosen by compiler)
-	@param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
+  @param rref_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
   @param rc_compMask individual mask for this filter box
   @param rc_compFilter individual filter
   @param rpc_iter optional pointer Iterator to result FilterBox
@@ -516,7 +516,7 @@ bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
   for (; pc_iter != arrFilterBox.end(); pc_iter++)
   {
     if ( ( pc_iter->equalFilterMask(rc_compMask, rc_compFilter ) )
-		  && ( pc_iter->equalCustomer( rref_customer )               ) )
+      && ( pc_iter->equalCustomer( rref_customer )               ) )
     { // FilterBox_c with equal def found
       //-> don't insert complete ident def two times
       b_identDefFound = true;
@@ -732,26 +732,26 @@ bool CANIO_c::verifyBusMsgobjNr(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
   check all active MsgObj_c for received CAN msg and
   initiate their processing
   @return <0 --> not enough time to process all messages.
-	       ==0 --> no messages were received.
-				 >0  --> all messages are processed, number of messages
+         ==0 --> no messages were received.
+         >0  --> all messages are processed, number of messages
 */
 int16_t CANIO_c::processMsg(){
   ui8_processedMsgCnt = 0;
 
-	// first check if last Message Object is open,
-	// and process these messages first
-	// - this happens, if this is first processMsg call after
-	//   reconfigureMsgObj
-	if ( c_lastMsgObj.isOpen() )
-	{ // process all messages which where placed during the reconfig in the last message object
-		ui8_processedMsgCnt += c_lastMsgObj.processMsg( ui8_busNumber, true );
-		c_lastMsgObj.close();
-	}
+  // first check if last Message Object is open,
+  // and process these messages first
+  // - this happens, if this is first processMsg call after
+  //   reconfigureMsgObj
+  if ( c_lastMsgObj.isOpen() )
+  { // process all messages which where placed during the reconfig in the last message object
+    ui8_processedMsgCnt += c_lastMsgObj.processMsg( ui8_busNumber, true );
+    c_lastMsgObj.close();
+  }
 
-	for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
+  for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
   { // stop processing of message buffers, if not enough time
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return -1;
-		System_c::triggerWd();
+    System_c::triggerWd();
     ui8_processedMsgCnt += pc_iter->processMsg(ui8_busNumber);
   }
 
@@ -774,7 +774,9 @@ int16_t CANIO_c::processMsg(){
   @return reference to this CANIO_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
 */
 CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
-{ // set send MsgObj ID
+{ // immediately return if CAN is not yet configured for send
+  if ( ! isReady2Send() ) return *this;
+  // set send MsgObj ID
   uint8_t ui8_sendObjNr = minMsgObjNr();
   #if 0
   if ( ui8_busNumber == 1 ) {
@@ -807,10 +809,10 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
     // exit loop, if CAN BUS is blocked and exit function
     if (HAL::can_stateGlobalBlocked(ui8_busNumber))
     {  // clear MsgObj CAN queue
-		  #ifdef DEBUG
-			INTERNAL_DEBUG_DEVICE
-		   << "CANIO_c::operator<< Blocked BUS Nr: " << uint16_t(ui8_busNumber) << "\r\n";
-		  #endif
+      #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE
+       << "CANIO_c::operator<< Blocked BUS Nr: " << uint16_t(ui8_busNumber) << "\r\n";
+      #endif
 
       HAL::can_useMsgobjClear(ui8_busNumber,ui8_sendObjNr);
       return *this;
@@ -823,54 +825,54 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
   #ifdef DEBUG
   bool b_bit1err = HAL::can_stateGlobalBit1err(ui8_busNumber);
   bool b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, ui8_sendObjNr);
-	bool b_warnState = HAL::can_stateGlobalWarn(ui8_busNumber);
+  bool b_warnState = HAL::can_stateGlobalWarn(ui8_busNumber);
 
-	if ( b_bit1err )
-	{
-			INTERNAL_DEBUG_DEVICE
-			<< "BITERR VOR HAL::can_useMsgobjSend BUS: "
-			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
-			<< "\r\n";
-	}
-	if ( b_sendproblem )
-	{
-		INTERNAL_DEBUG_DEVICE << "SENDPROBLEM VOR HAL::can_useMsgobjSend BUS: "
-			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
-			<< "\r\n";
-	}
-	if ( b_warnState )
-	{	INTERNAL_DEBUG_DEVICE
-			<< "CAN_WARN VOR HAL::can_useMsgobjSend BUS: "
-			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
-			<< "\r\n";
-	}
-	#endif
+  if ( b_bit1err )
+  {
+      INTERNAL_DEBUG_DEVICE
+      << "BITERR VOR HAL::can_useMsgobjSend BUS: "
+      << uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+      << "\r\n";
+  }
+  if ( b_sendproblem )
+  {
+    INTERNAL_DEBUG_DEVICE << "SENDPROBLEM VOR HAL::can_useMsgobjSend BUS: "
+      << uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+      << "\r\n";
+  }
+  if ( b_warnState )
+  { INTERNAL_DEBUG_DEVICE
+      << "CAN_WARN VOR HAL::can_useMsgobjSend BUS: "
+      << uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+      << "\r\n";
+  }
+  #endif
   int16_t i16_sendFuncState = HAL::can_useMsgobjSend(ui8_busNumber, ui8_sendObjNr, &refc_src);
 
   #ifdef DEBUG
   b_bit1err = HAL::can_stateGlobalBit1err(ui8_busNumber);
   b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, ui8_sendObjNr);
-	b_warnState = HAL::can_stateGlobalWarn(ui8_busNumber);
+  b_warnState = HAL::can_stateGlobalWarn(ui8_busNumber);
 
-	if ( b_bit1err )
-	{	INTERNAL_DEBUG_DEVICE
-			<< "BITERR NACH HAL::can_useMsgobjSend BUS: "
-			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
-			<< "\r\n";
-	}
-	if ( b_sendproblem )
-	{
-		INTERNAL_DEBUG_DEVICE << "SENDPROBLEM NACH HAL::can_useMsgobjSend BUS: "
-			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
-			<< "\r\n";
-	}
-	if ( b_warnState )
-	{	INTERNAL_DEBUG_DEVICE
-			<< "CAN_WARN NACH HAL::can_useMsgobjSend BUS: "
-			<< uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
-			<< "\r\n";
-	}
-	#endif
+  if ( b_bit1err )
+  { INTERNAL_DEBUG_DEVICE
+      << "BITERR NACH HAL::can_useMsgobjSend BUS: "
+      << uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+      << "\r\n";
+  }
+  if ( b_sendproblem )
+  {
+    INTERNAL_DEBUG_DEVICE << "SENDPROBLEM NACH HAL::can_useMsgobjSend BUS: "
+      << uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+      << "\r\n";
+  }
+  if ( b_warnState )
+  { INTERNAL_DEBUG_DEVICE
+      << "CAN_WARN NACH HAL::can_useMsgobjSend BUS: "
+      << uint16_t(ui8_busNumber) << ", MsgObj: " << uint16_t(ui8_sendObjNr)
+      << "\r\n";
+  }
+  #endif
   // it's time to trigger the watchdog
   HAL::wdTriggern();
   // BIOS CAN send function with lowest configured msg-obj, which was
@@ -884,9 +886,9 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       // no send obj or BUS not initialized -> should not happen, cause this is done
       // on init of this object
       // (and is done if timeEvent notices that CAN wasn't configured by init)
-			#if defined(DEBUG)
+      #if defined(DEBUG)
       INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(ui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj\r\n";
-			#endif
+      #endif
       getLbsErrInstance().registerError( LibErr_c::HwConfig, LibErr_c::Can );
       break;
     case HAL_NOACT_ERR:
@@ -903,9 +905,9 @@ CANIO_c& CANIO_c::operator<<(CANPkg_c& refc_src)
       break;
     case HAL_WARN_ERR:
       // signal for BUS-WARN problem
-			#if defined(DEBUG)
+      #if defined(DEBUG)
       INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(ui8_busNumber) << " in WARN STATE\r\n";
-			#endif
+      #endif
       getLbsErrInstance().registerError( LibErr_c::CanWarn, LibErr_c::Can );
       break;
   } //switch
@@ -944,7 +946,7 @@ void CANIO_c::getCommonFilterMask(){
 }
 
 /** correct global masks after merge based on merged IDs of all
-		resulting MsgObj_c instances
+    resulting MsgObj_c instances
  */
 void CANIO_c::getCommonFilterMaskAfterMerge(){
 
@@ -953,11 +955,11 @@ void CANIO_c::getCommonFilterMaskAfterMerge(){
        pc_iter != arrMsgObj.end();
        pc_iter++
       )
-	{
-		if (pc_iter->filter().identType() == Ident_c::StandardIdent)
-			pc_iter->commonFilterAfterMerge( c_maskStd );
-		else pc_iter->commonFilterAfterMerge( c_maskExt );
-	}
+  {
+    if (pc_iter->filter().identType() == Ident_c::StandardIdent)
+      pc_iter->commonFilterAfterMerge( c_maskStd );
+    else pc_iter->commonFilterAfterMerge( c_maskExt );
+  }
 }
 
 /**
@@ -979,13 +981,13 @@ int16_t CANIO_c::FilterBox2MsgObj(){
   for (pc_iterMsgObj = arrMsgObj.begin(); pc_iterMsgObj != arrMsgObj.end(); pc_iterMsgObj++)
   { // first process all messages in the buffer IF OPEN, and then close
     HAL::wdTriggern();
-		if ( pc_iterMsgObj->isOpen() )
+    if ( pc_iterMsgObj->isOpen() )
     { // process received messages
-			pc_iterMsgObj->lock( true );
+      pc_iterMsgObj->lock( true );
       pc_iterMsgObj->processMsg( ui8_busNumber, true );
     }
     pc_iterMsgObj->close();
-		pc_iterMsgObj->lock( false );
+    pc_iterMsgObj->lock( false );
   }
 
   HAL::wdTriggern();
@@ -1072,7 +1074,7 @@ int16_t CANIO_c::FilterBox2MsgObj(){
   if ( i16_result >= 0) i16_result = arrMsgObj.size();
   #ifdef DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
-	  << "MsgObj: " << sui16_msgObjTotal << " -> ";
+    << "MsgObj: " << sui16_msgObjTotal << " -> ";
   #endif
   return i16_result;
 }
@@ -1199,19 +1201,19 @@ bool CANIO_c::reconfigureMsgObj()
   // build suitable global t_mask
   getCommonFilterMask();
 
-	if ( c_lastMsgObj.isOpen() )
-	{ // process all messages which where placed during the reconfig in the last message object
-		c_lastMsgObj.processMsg( ui8_busNumber, true );
-		// unlock it in any case
-		c_lastMsgObj.lock( false );
-	}
-	else
-	{ // not yet open -> open it now
-		Ident_c tmp ( 0, Ident_c::ExtendedIdent );
-		// configure the last MsgObj_c
-		c_lastMsgObj.setFilter( tmp );
-		c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
-	}
+  if ( c_lastMsgObj.isOpen() )
+  { // process all messages which where placed during the reconfig in the last message object
+    c_lastMsgObj.processMsg( ui8_busNumber, true );
+    // unlock it in any case
+    c_lastMsgObj.lock( false );
+  }
+  else
+  { // not yet open -> open it now
+    Ident_c tmp ( 0, Ident_c::ExtendedIdent );
+    // configure the last MsgObj_c
+    c_lastMsgObj.setFilter( tmp );
+    c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
+  }
 
   // create according to new global t_mask all MsgObj_c with
   // unique filter settings -> merge all filter settings where
@@ -1222,8 +1224,8 @@ bool CANIO_c::reconfigureMsgObj()
   // [min_msgObjNr; maxMsgObjNr]
   CheckSetCntMsgObj();
 
-	// check and correct global masks after merge in CheckSetCntMsgObj()
-	getCommonFilterMaskAfterMerge();
+  // check and correct global masks after merge in CheckSetCntMsgObj()
+  getCommonFilterMaskAfterMerge();
 
   if ((oldMaskStd != c_maskStd) || (oldMaskExt != c_maskExt))
   {
@@ -1231,7 +1233,7 @@ bool CANIO_c::reconfigureMsgObj()
     baseCanInit(ui16_bitrate);
   }
 
-	int16_t i = 0;
+  int16_t i = 0;
   // config the hardware -> config all MsgObj_c in CAN hardware
   for (ArrMsgObj::iterator pc_iterMsgObj = arrMsgObj.begin();
        pc_iterMsgObj != arrMsgObj.end();
@@ -1242,10 +1244,10 @@ bool CANIO_c::reconfigureMsgObj()
     i++;
   }
 
-	// lock the MsgObj_c to avoid receive of further messages
-	c_lastMsgObj.lock( true );
+  // lock the MsgObj_c to avoid receive of further messages
+  c_lastMsgObj.lock( true );
 
-	// clear any CAN BUFFER OVERFLOW error that might occure
+  // clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object
   getLbsErrInstance().clear( LibErr_c::CanOverflow, LibErr_c::Can );
 
@@ -1253,14 +1255,14 @@ bool CANIO_c::reconfigureMsgObj()
 }
 
 /**
-	helper function to search all FilterBoxes for matching
-	instance which maps to received CAN messages
-	( needed if the coordinated FilterBoxes don't match,
-		especially important to process messages from global
-		CAN MsgObj which doesn't have explicit connected FilterBox
-		instances )
-	@param rui32_ident Ident of received CAN message
-	@return pointer to matching FilterBox instance or NULL if no matching found
+  helper function to search all FilterBoxes for matching
+  instance which maps to received CAN messages
+  ( needed if the coordinated FilterBoxes don't match,
+    especially important to process messages from global
+    CAN MsgObj which doesn't have explicit connected FilterBox
+    instances )
+  @param rui32_ident Ident of received CAN message
+  @return pointer to matching FilterBox instance or NULL if no matching found
 */
 FilterBox_c* CANIO_c::canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type )
 {
@@ -1268,14 +1270,14 @@ FilterBox_c* CANIO_c::canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType
        pc_iterFilterBox != arrFilterBox.end();
        pc_iterFilterBox++
       )
-	{
-		if ( pc_iterFilterBox->matchMsgId( rui32_ident, rt_type ) )
-		{ // matching FilterBox_c found
-			return &(*pc_iterFilterBox);
-		}
-	}
-	// if execution reaches this point, no matching FilterBox_c found
-	return NULL;
+  {
+    if ( pc_iterFilterBox->matchMsgId( rui32_ident, rt_type ) )
+    { // matching FilterBox_c found
+      return &(*pc_iterFilterBox);
+    }
+  }
+  // if execution reaches this point, no matching FilterBox_c found
+  return NULL;
 }
 
 
@@ -1337,64 +1339,64 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
   }
 
   bool b_lastMsgObjWasOpen = false;
-	if ( c_lastMsgObj.isOpen() )
-	{ // the last MsgObj_c is open -> so it may contain some unprocessed messages
-		// ==>> process all messages which where placed during the reconfig in the last message object
-		c_lastMsgObj.processMsg( ui8_busNumber, true );
-		c_lastMsgObj.close();
-		b_lastMsgObjWasOpen = true;
-	}
+  if ( c_lastMsgObj.isOpen() )
+  { // the last MsgObj_c is open -> so it may contain some unprocessed messages
+    // ==>> process all messages which where placed during the reconfig in the last message object
+    c_lastMsgObj.processMsg( ui8_busNumber, true );
+    c_lastMsgObj.close();
+    b_lastMsgObjWasOpen = true;
+  }
 
 
-	// store wanted bitrate for CAN communication
-	ui16_bitrate = rui16_bitrate;
+  // store wanted bitrate for CAN communication
+  ui16_bitrate = rui16_bitrate;
 
-	// to prevent double re-init of can close it first
-	HAL::can_configGlobalClose(ui8_busNumber);
-	#ifdef DEBUG
-	INTERNAL_DEBUG_DEVICE
-			<< "CANIO_c::baseCanInit( " << rui16_bitrate << " ) vor HAL::can_configGlobalInit\n";
-	#endif
-	// init CAN BUS (BIOS function)
-	int16_t i16_retvalInit = HAL::can_configGlobalInit(ui8_busNumber, ui16_bitrate, c_maskStd.ident(), c_maskExt.ident(),
-											c_maskLastmsg.ident());
+  // to prevent double re-init of can close it first
+  HAL::can_configGlobalClose(ui8_busNumber);
+  #ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE
+      << "CANIO_c::baseCanInit( " << rui16_bitrate << " ) vor HAL::can_configGlobalInit\n";
+  #endif
+  // init CAN BUS (BIOS function)
+  int16_t i16_retvalInit = HAL::can_configGlobalInit(ui8_busNumber, ui16_bitrate, c_maskStd.ident(), c_maskExt.ident(),
+                      c_maskLastmsg.ident());
 
-	#ifdef USE_CAN_EEPROM_EDITOR
-		/* if CAN init with success init CAN EEEditor */
-		if ( ( i16_retvalInit == HAL_NO_ERR) && ( ui8_busNumber == CONFIG_EEPROM_USE_CAN_BUS ) )
-		{
-			uint8_t b_eepromType;
-			if ((en_identType == Ident_c::BothIdent) || (en_identType == Ident_c::StandardIdent))
-			{
-				b_eepromType = Ident_c::StandardIdent;
-			}
-			else
-			{
-				b_eepromType = Ident_c::ExtendedIdent;
-			}
-			HAL::InitEEEditor( CONFIG_EEPROM_USE_CAN_BUS, maxMsgObjNr(),
-					(maxMsgObjNr() - 1), CONFIG_EEPROM_USE_CAN_REC_IDENT, b_eepromType,
-					CONFIG_EEPROM_USE_CAN_BUFFER_SIZE, CONFIG_CAN_SEND_BUFFER_SIZE);
-		}
-	#endif
+  #ifdef USE_CAN_EEPROM_EDITOR
+    /* if CAN init with success init CAN EEEditor */
+    if ( ( i16_retvalInit == HAL_NO_ERR) && ( ui8_busNumber == CONFIG_EEPROM_USE_CAN_BUS ) )
+    {
+      uint8_t b_eepromType;
+      if ((en_identType == Ident_c::BothIdent) || (en_identType == Ident_c::StandardIdent))
+      {
+        b_eepromType = Ident_c::StandardIdent;
+      }
+      else
+      {
+        b_eepromType = Ident_c::ExtendedIdent;
+      }
+      HAL::InitEEEditor( CONFIG_EEPROM_USE_CAN_BUS, maxMsgObjNr(),
+          (maxMsgObjNr() - 1), CONFIG_EEPROM_USE_CAN_REC_IDENT, b_eepromType,
+          CONFIG_EEPROM_USE_CAN_BUFFER_SIZE, CONFIG_CAN_SEND_BUFFER_SIZE);
+    }
+  #endif
 
-	// check for error state
-	if (i16_retvalInit == HAL_RANGE_ERR)
-	{ // BIOS complains about limits of BUSnr or msgObj
-		// seldom, because before checked with defined LIMITS
-		getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
-		return false;
-	}
+  // check for error state
+  if (i16_retvalInit == HAL_RANGE_ERR)
+  { // BIOS complains about limits of BUSnr or msgObj
+    // seldom, because before checked with defined LIMITS
+    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+    return false;
+  }
 
 
-	if ( b_lastMsgObjWasOpen )
-	{ // open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
-		// --> avoid loss of CAN messages which would normally be stored in the already active MsgObj_c instances
-		Ident_c tmp ( 0, Ident_c::ExtendedIdent );
-		// configure the last MsgObj_c
-		c_lastMsgObj.setFilter( tmp );
-		c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
-	}
+  if ( b_lastMsgObjWasOpen )
+  { // open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
+    // --> avoid loss of CAN messages which would normally be stored in the already active MsgObj_c instances
+    Ident_c tmp ( 0, Ident_c::ExtendedIdent );
+    // configure the last MsgObj_c
+    c_lastMsgObj.setFilter( tmp );
+    c_lastMsgObj.configCan(ui8_busNumber, HAL_CAN_LAST_MSG_OBJ_NR );
+  }
 
   // init of BUS without error -> continue with send obj configuration
 
@@ -1447,7 +1449,7 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
     if (en_identType != Ident_c::BothIdent) break;
   } // end for
 
-	// return true -> must be set according success
+  // return true -> must be set according success
   return b_configSuccess;
 }
 
@@ -1465,26 +1467,26 @@ bool CANIO_c::stopSendRetryOnErr()
 
   if (b_bit1err && b_sendproblem)
   { // only send 1 has bit1 err -> clear msg obj
-	  #ifdef DEBUG
-	  INTERNAL_DEBUG_DEVICE
-	   << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
-		 << ", ObjNr: " << minMsgObjNr()
-		 << "\r\n";
-		#endif
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE
+     << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
+     << ", ObjNr: " << minMsgObjNr()
+     << "\r\n";
+    #endif
     HAL::can_useMsgobjClear(ui8_busNumber, minMsgObjNr());
     b_result = true;
   }
   else if ( en_identType == Ident_c::BothIdent )
   {
-	  b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, (minMsgObjNr()+1));
+    b_sendproblem = HAL::can_stateMsgobjSendproblem(ui8_busNumber, (minMsgObjNr()+1));
     if (b_bit1err && b_sendproblem)
     { // only send 1 has bit1 err -> clear msg obj
-		  #ifdef DEBUG
-		  INTERNAL_DEBUG_DEVICE
-		   << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
-			 << ", ObjNr: " << (minMsgObjNr()+1)
-			 << "\r\n";
-			#endif
+      #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE
+       << "CANIO_c::stopSendRetryOnErr() Blocked BUS Nr: " << uint16_t(ui8_busNumber)
+       << ", ObjNr: " << (minMsgObjNr()+1)
+       << "\r\n";
+      #endif
       HAL::can_useMsgobjClear(ui8_busNumber, (minMsgObjNr()+1));
       b_result = true;
     }

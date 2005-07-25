@@ -91,8 +91,8 @@
 #include <algorithm>
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -112,16 +112,16 @@ namespace __IsoAgLib {
 */
 void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType, int32_t ri32_val,
-  GetyPos_c rc_gtp)
+  const GetyPos_c& rc_gtp)
 { // set the dynamic list to a well defined cleared starting condition
-	#ifdef DEBUG_HEAP_USEAGE
+  #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
   if ( b_doPrint )
   {
     b_doPrint = false;
-  	getRs232Instance()
-	  	<< "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
-	  	<< " Bytes\r\n";
+    getRs232Instance()
+      << "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
+      << " Bytes\r\n";
   }
   if ( sui16_MeasureProgBaseTotal > 0 )
   {
@@ -129,7 +129,7 @@ void MeasureProgBase_c::init( ProcDataBase_c *const rpc_processData,
   }
   #endif
 
-	vec_measureSubprog.clear();
+  vec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
   set(rpc_processData);
   // store the parameter init vals
@@ -193,10 +193,10 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& rrefc_src )
   {
     sui16_MeasureProgBaseTotal += vec_measureSubprog.size();
 
-	  if ( vec_measureSubprog.size() > 0 )
+    if ( vec_measureSubprog.size() > 0 )
     {
       getRs232Instance()
-	      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
+        << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
         <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
         << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
         << ", Chunk-Alloc: "
@@ -212,10 +212,10 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   #ifdef DEBUG_HEAP_USEAGE
   if ( vec_measureSubprog.size() > 0 )
   {
-	  sui16_deconstructMeasureProgBaseTotal++;
+    sui16_deconstructMeasureProgBaseTotal++;
     sui16_MeasureProgBaseTotal -= vec_measureSubprog.size();
   }
-	#endif
+  #endif
 }
 
 /**
@@ -235,7 +235,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.end();
   for (pc_subprog = vec_measureSubprog.begin();
        pc_subprog != vec_measureSubprog.end(); pc_subprog++)
-  { 
+  {
      if (pc_subprog->type() == ren_type) break;
   }
 
@@ -257,7 +257,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
       sui16_MeasureProgBaseTotal++;
 
       getRs232Instance()
-	      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
+        << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
         <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
         << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
         << ", Chunk-Alloc: "
@@ -312,7 +312,7 @@ bool MeasureProgBase_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t re
 */
 bool MeasureProgBase_c::stop(){
   // clear the array with all subprogs -> no trigger test is done on value set
-	#ifdef DEBUG_HEAP_USEAGE
+  #ifdef DEBUG_HEAP_USEAGE
   sui16_MeasureProgBaseTotal -= vec_measureSubprog.size();
 
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
@@ -344,13 +344,13 @@ int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 0
     processData().sendValGtp(2, gtp(), 0);
   }
-  
+
   return i32_val;
 };
 /**
@@ -363,7 +363,7 @@ int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=3
@@ -382,7 +382,7 @@ int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
 {
   if(rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 1
@@ -400,7 +400,7 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 2
@@ -415,7 +415,7 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
   @param ri32_val initial measure val
 */
 void MeasureProgBase_c::initVal(int32_t ri32_val){
-	#ifdef DEBUG_HEAP_USEAGE
+  #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
   || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
   {
@@ -445,20 +445,20 @@ void MeasureProgBase_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType,
   float rf_val,
-  GetyPos_c rc_gtp)
+  const GetyPos_c& rc_gtp)
 { // set the dynamic list to a well defined cleared starting condition
-	#ifdef DEBUG_HEAP_USEAGE
+  #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
   if ( b_doPrint )
   {
     b_doPrint = false;
-  	getRs232Instance()
-	  	<< "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
-	  	<< " Bytes\r\n";
+    getRs232Instance()
+      << "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
+      << " Bytes\r\n";
   }
 
   sui16_MeasureProgBaseTotal -= ( vec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
-	#endif
+  #endif
 
   vec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
@@ -468,7 +468,7 @@ void MeasureProgBase_c::init(
   f_val = rf_val;
   en_progType = ren_progType;
 
-	// set the rest of element vals to defined init
+  // set the rest of element vals to defined init
   en_accumProp = Proc_c::AccumNone;
   en_doSend = Proc_c::DoNone;
   en_type = Proc_c::DistProp;
@@ -485,7 +485,7 @@ float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 0
@@ -503,7 +503,7 @@ float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=3
@@ -522,7 +522,7 @@ float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 1
@@ -538,9 +538,9 @@ float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
 */
 float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
 {
-  if (rb_sendRequest) {  
+  if (rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 2
@@ -555,7 +555,7 @@ float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
   @param rf_val initial measure val
 */
 void MeasureProgBase_c::initVal(float rf_val){
-	#ifdef DEBUG_HEAP_USEAGE
+  #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
   || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
   {
@@ -585,7 +585,7 @@ bool MeasureProgBase_c::processMsg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   GeneralCommand_c::CommandType_t en_command = c_pkg.c_generalCommand.getCommand();
 
-	#ifdef DEBUG_HEAP_USEAGE
+  #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
   || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
   {
@@ -603,7 +603,7 @@ bool MeasureProgBase_c::processMsg(){
   bool b_edited = false;
 
   if (en_command == GeneralCommand_c::setValue)
-    // setValue command indicates receiving of a measure value 
+    // setValue command indicates receiving of a measure value
     //    => handle this in measure prog remote => return false
     // or a reset (ISO)
     //    => handle this in measure prog local => return false
@@ -629,10 +629,10 @@ bool MeasureProgBase_c::processMsg(){
         en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
       // increment
       processIncrementMsg();
-   
+
 
     uint8_t b_cmd = c_pkg.data(0);
-    
+
     // DIN mod=6
     if (en_command == GeneralCommand_c::measurementStart)
     { // start command
@@ -640,7 +640,7 @@ bool MeasureProgBase_c::processMsg(){
             static_cast<Proc_c::type_t>(b_cmd & 0x7),
             static_cast<Proc_c::doSend_t>((b_cmd >> 4) & 0x7));
     }
-        
+
     if (en_command == GeneralCommand_c::measurementReset)
     { // reset command (DIN only, ISO reset: setValue command)
        reset(b_cmd);
@@ -679,18 +679,18 @@ bool MeasureProgBase_c::processMsg(){
             en_type = Proc_c::MinimumThreshold;
             break;
           default: ;
-        }            
-        
+        }
+
         if (en_type != Proc_c::NullType)
            start(static_cast<Proc_c::progType_t>(c_pkg.pri()), en_type, Proc_c::DoVal);
       }
       else
        stop();
     }
-  }  
-    
+  }
+
 #if 0
-     // old code:     
+     // old code:
      // program controlling with start, stop or reset
       uint8_t b_cmd = c_pkg.data(0);
       #ifdef LAV_COMMENT_MEASUREPROG_CMD
@@ -762,11 +762,11 @@ int32_t MeasureProgBase_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) 
     case GeneralCommand_c::medValue:
       i32_value = med();
       break;
-    default: 
+    default:
       // wrong range
       getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
   }
-  
+
   return i32_value;
 }
 
@@ -865,26 +865,26 @@ void MeasureProgBase_c::processIncrementMsg(){
 
   // mod = 4 || mod == 5
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValue ||
-      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart) 
+      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart)
     // time proportional
     addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(i32_val));
-  
+
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValue ||
-      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart) 
+      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart)
     // distance proportional
     addSubprog(Proc_c::DistProp, i32_val);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValue ||
-      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart) 
+      c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
     // change threshold proportional
-    // @todo: was DistProp ? 
+    // @todo: was DistProp ?
     addSubprog(Proc_c::OnChange, i32_val);
 
-  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart) 
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart)
     // change threshold proportional
     addSubprog(Proc_c::MaximumThreshold, i32_val);
 
-  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart) 
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart)
     // change threshold proportional
     addSubprog(Proc_c::MinimumThreshold, i32_val);
 

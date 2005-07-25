@@ -120,13 +120,13 @@ namespace __IsoAgLib {
 class DINServiceMonitor_c : public SINGLETON_DERIVED(DINServiceMonitor_c, ElementBase_c)
 {
 private:
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::slist<DINServiceItem_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrService;
   typedef STL_NAMESPACE::slist<DINServiceItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator ArrServiceIterator;
-	#else
+  #else
   typedef STL_NAMESPACE::slist<DINServiceItem_c> ArrService;
   typedef STL_NAMESPACE::slist<DINServiceItem_c>::iterator ArrServiceIterator;
-	#endif
+  #endif
 
 public:
   /** basic intialisation */
@@ -157,7 +157,7 @@ public:
         enough memory to store new entry in ServiceMonitor)
      @exception badAlloc preconditionViolation
   */
-  bool createLocalService(GetyPos_c rc_gtp, uint8_t rui8_nr= 0xFF);
+  bool createLocalService(const GetyPos_c& rc_gtp, uint8_t rui8_nr= 0xFF);
 
   /**
     create a service ident, for which the library
@@ -176,7 +176,7 @@ public:
         enough memory to store new entry in ServiceMonitor)
      @exception badAlloc preconditionViolation
   */
-  bool createLocalDinService(GetyPos_c rc_gtp, uint8_t rui8_nr= 0xFF)
+  bool createLocalDinService(const GetyPos_c& rc_gtp, uint8_t rui8_nr= 0xFF)
     {return createLocalService(rc_gtp, rui8_nr);};
 
   /**
@@ -184,7 +184,7 @@ public:
     @param rc_gtp GETY_POS code of the service
     @return true -> wanted item found and deleted
   */
-  bool deleteLocalService(GetyPos_c rc_gtp);
+  bool deleteLocalService(const GetyPos_c& rc_gtp);
 
   /**
     delete a local service;
@@ -194,13 +194,13 @@ public:
     @param rc_gtp GETY_POS code of the service
     @return true -> wanted item found and deleted
   */
-  bool deleteLocalDinService(GetyPos_c rc_gtp) {return deleteLocalService(rc_gtp);};
+  bool deleteLocalDinService(const GetyPos_c& rc_gtp) {return deleteLocalService(rc_gtp);};
 
   /**
     check if service with given gtp exist
     @param rc_gtp GETY_POS code of the searched service
   */
-  bool existDinServiceGtp(GetyPos_c rc_gtp);
+  bool existDinServiceGtp(const GetyPos_c& rc_gtp);
 
   /**
     deliver service item with given gtp
@@ -212,7 +212,7 @@ public:
     @return reference to the searched DINServiceItem_c or first item, if search failed
      @exception containerElementNonexistant
   */
-  DINServiceItem_c& dinServiceGtp(GetyPos_c rc_gtp);
+  DINServiceItem_c& dinServiceGtp(const GetyPos_c& rc_gtp);
 
   /**
     check if service with given service number exist
@@ -244,7 +244,7 @@ public:
     @param rc_gtp GETY_POS code of Service
     @return true if new item inserted
   */
-  bool insertDinService(GetyPos_c rc_gtp);
+  bool insertDinService(const GetyPos_c& rc_gtp);
 
   /**
     delete a service with given GETY_POS from the list
@@ -255,7 +255,7 @@ public:
     @param rc_gtp GETY_POS of the deleted item
     @return true -> an item weas deleted
   */
-  bool deleteDinServiceGtp(GetyPos_c rc_gtp);
+  bool deleteDinServiceGtp(const GetyPos_c& rc_gtp);
   /**
     delete a service with given service number from the list
     (uses deleteDinServiceGtp as GETY_POS and number of services are equal)

@@ -123,9 +123,35 @@ namespace __IsoAgLib {
 class iMultiSend_c;
 class MultiSendStreamer_c;
 
+// forward declarations
+class vtObjectString_c;
 
+#ifdef USE_ISO_11783
 
+class SendUploadBase_c {
+public:
+  /**
+    StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands)
+  */
+  SendUploadBase_c () : ui8_retryCount(0), ui32_uploadTimeout(0) {};
+  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout);
+  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout);
+  SendUploadBase_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/);
+  SendUploadBase_c (const SendUploadBase_c& ref_source);
+  SendUploadBase_c (uint8_t* rpui8_buffer, uint32_t bufferSize);
+  const SendUploadBase_c& operator= (const SendUploadBase_c& ref_source);
 
+  /// Use either an MultiSendStreamer or a direct ui8-Buffer
+  STL_NAMESPACE::vector<uint8_t> vec_uploadBuffer;  // don't use malloc_alloc for uint8_t values - here the 8byte overhead per malloc item are VERY big
+  // ==> chunk allocation which can be shared among instances is alot better
+
+  /// Retry some times?
+  uint8_t ui8_retryCount;
+
+  /// TimeOut value (relative to the time the Upload was started!
+  uint32_t ui32_uploadTimeout;
+};
+#endif
 
 
 /**
@@ -340,7 +366,7 @@ public: // methods
   */
   bool sendDin(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout = false);
   #endif
-  #if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
+  #ifdef USE_ISO_11783
    /**
     send a ISO target multipacket message with active retrieve of data-parts to send
     @param rb_send dynamic member no of sender

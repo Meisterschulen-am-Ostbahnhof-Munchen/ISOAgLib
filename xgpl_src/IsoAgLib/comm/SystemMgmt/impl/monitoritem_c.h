@@ -51,37 +51,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef MONITOR_ITEM_H
@@ -116,7 +116,7 @@ public:
     @param rb_status state of this ident (off, claimed address, ...) (default: off)
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  MonitorItem_c(int32_t ri32_time = 0, GetyPos_c rc_gtp = GetyPos_c(0xF, 0xF), uint8_t rui8_nr = 0xF,
+  MonitorItem_c(int32_t ri32_time = 0, const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, uint8_t rui8_nr = 0xF,
               IState_c::itemState_t rb_status = IState_c::IstateNull, int ri_singletonVecKey = 0);
   /**
     copy constructor which takes it initial values from another MonitorItem_c instance
@@ -143,14 +143,14 @@ public:
         (default: IState_c::Active)
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time = 0, GetyPos_c rc_gtp = GetyPos_c(0xF, 0xF), uint8_t rui8_nr = 0xF,
+  void set(int32_t ri32_time = 0, const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, uint8_t rui8_nr = 0xF,
            itemState_t ren_status = IState_c::Active, int ri_singletonVecKey = 0);
 
   /**
     set GETY_POS code of this item
     @param rc_gtp GETY_POS
   */
-  void setGtp(GetyPos_c rc_gtp){c_gtp = rc_gtp;};
+  void setGtp(const GetyPos_c& rc_gtp){c_gtp = rc_gtp;};
   /**
     set number of this item
     @param rc_gtp number
@@ -161,7 +161,7 @@ public:
     deliver the GETY_POS code of this item
     @return GETY_POS code
   */
-  GetyPos_c gtp()const{return c_gtp;};
+  const GetyPos_c& gtp()const{return c_gtp;};
   /**
     deliver the GETY code alone (derived from gtp)
     @return GETY code
@@ -203,40 +203,41 @@ public:
     lower comparison with GETY_POS uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator<(const GetyPos_c rc_gtp)const{return (gtp() < rc_gtp)?true:false;};
+  bool operator<(const GetyPos_c& rc_gtp)const{return (gtp() < rc_gtp)?true:false;};
   /**
     lower comparison between left GETY_POS uint8_t and right MonitorItem
     @param rb_left GETY_POS uint8_t left parameter
     @param rrefc_right rigth DINServiceItem_c parameter
   */
-  friend bool operator<(const GetyPos_c rc_left, const MonitorItem_c& rrefc_right);
+  friend bool operator<(const GetyPos_c& rc_left, const MonitorItem_c& rrefc_right);
   /**
     lower comparison between left MonitorItem_c and right GETY_POS uint8_t
     @param rrefc_left left DINServiceItem_c parameter
     @param rb_right GETY_POS uint8_t right parameter
   */
-  friend bool lessThan(const MonitorItem_c& rrefc_left, const GetyPos_c rc_right);
+  friend bool lessThan(const MonitorItem_c& rrefc_left, const GetyPos_c& rc_right);
 
   /**
     equality comparison with GETY_POS uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator==(const GetyPos_c rc_right)const { return (gtp() == rc_right)?true:false;};
+  bool operator==(const GetyPos_c& rc_right)const { return (gtp() == rc_right)?true:false;};
   /**
     difference comparison with GETY_POS uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator!=(const GetyPos_c rc_right) const{ return (gtp() != rc_right)?true:false;};
+  bool operator!=(const GetyPos_c& rc_right) const{ return (gtp() != rc_right)?true:false;};
   /**
     compare given number to nr of this item and return result
     @param rui8_nr compared number
     @return true -> given number equal to nr of this item
   */
   bool equalNr(const uint8_t rui8_nr)const{return (nr() == rui8_nr)?true:false;};
-private:
-// Private attributes
+protected:
   /** GETY_POS of element */
   GetyPos_c c_gtp;
+private:
+// Private attributes
   /** number of element */
   uint8_t ui8_nr : 8;
 };
@@ -246,7 +247,7 @@ private:
   @param rrefc_left left DINServiceItem_c parameter
   @param rb_right GETY_POS uint8_t right parameter
 */
-bool lessThan(const MonitorItem_c& rrefc_left, const GetyPos_c rc_right);
+bool lessThan(const MonitorItem_c& rrefc_left, const GetyPos_c& rc_right);
 
 }
 #endif

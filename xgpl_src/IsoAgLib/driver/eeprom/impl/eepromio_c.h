@@ -98,9 +98,9 @@
 
 // workaround for 8.0Beta bug
 #if defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__)
-	#include <stl/_string.h>
+  #include <stl/_string.h>
 #else
-	#include <string>
+  #include <string>
 #endif
 
 // Begin Namespace __IsoAgLib
@@ -295,7 +295,7 @@ public:
 private:
 // Private methods
   friend class Singleton<EEPROMIO_c>;
-  friend EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, GetyPos_c& refc_data );
+  friend EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const GetyPos_c& refc_data );
   friend EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, GetyPos_c& refc_data );
 
   /** private constructor which prevents direct instantiation in user application
@@ -469,7 +469,7 @@ bool EEPROMIO_c::write(uint16_t rui16_adress, T rTemplateVal)
 
 /** C-style function, to get access to the unique EEPROMIO_c singleton instance */
 EEPROMIO_c& getEepromInstance( void );
-EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, GetyPos_c& refc_data );
+EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const GetyPos_c& refc_data );
 EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, GetyPos_c& refc_data );
 
 

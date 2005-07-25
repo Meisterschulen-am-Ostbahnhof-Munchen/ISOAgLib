@@ -169,7 +169,7 @@ public:
   iProcDataLocalSimpleMeasure_c(
 #ifdef USE_ISO_11783
                                 uint16_t rui16_DDI = 0,
-                                uint16_t rui16_element = 0xFF,
+                                uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
                                 uint8_t rui8_lis = 0xFF,
@@ -177,10 +177,10 @@ public:
                                 uint8_t rui8_inst = 0,
                                 uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                                iGetyPos_c rc_gtp = iGetyPos_c(0, 0xF),
-                                uint8_t rui8_pri = 2, 
-                                iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
-                                iGetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false,
+                                const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
+                                uint8_t rui8_pri = 2,
+                                const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
+                                const iGetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                                 uint16_t rui16_eepromAdr = 0xFFFF,
 #endif
@@ -243,7 +243,7 @@ public:
   void init(
 #ifdef USE_ISO_11783
             uint16_t rui16_DDI = 0,
-            uint16_t rui16_element = 0xFF,
+            uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0xFF,
@@ -251,10 +251,10 @@ public:
             uint8_t rui8_inst = 0,
             uint8_t rui8_zaehlnum = 0xFF,
 #endif
-            iGetyPos_c rc_gtp = iGetyPos_c(0, 0xF),
-            uint8_t rui8_pri = 2, 
-            iGetyPos_c rc_ownerGtp = iGetyPos_c(0xF, 0xF),
-            iGetyPos_c *rpc_gtp = NULL,
+            const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
+            uint8_t rui8_pri = 2,
+            const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
+            const iGetyPos_c *rpc_gtp = NULL,
             bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t rui16_eepromAdr = 0xFFFF,
@@ -315,7 +315,7 @@ public:
     use everytime the GETY from the ident part, and take the POS from the owner
     @return GETY_POS
   */
-  iGetyPos_c gtp() const {return ProcDataLocalSimpleMeasure_c::gtp();};
+  const iGetyPos_c& gtp() const {return ProcDataLocalSimpleMeasure_c::gtp();};
   /**
     deliver value WERT (row of process data table)
     @return WERT
@@ -345,7 +345,7 @@ public:
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendVal( iGetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendVal( const iGetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
     { return ProcDataLocalSimpleMeasure_c::sendVal( rc_targetGtp, ren_progType );};
 
   /**
@@ -354,7 +354,7 @@ public:
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpoint( iGetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendSetpoint( const iGetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
    { return setpointConst().sendSetpoint( rc_targetGtp, ren_progType );};
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
@@ -363,8 +363,8 @@ public:
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, iGetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-  { 
+  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iGetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  {
    return setpointConst().sendSetpointMod( rc_targetGtp, ren_progType, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
   };
   #ifdef USE_EEPROM_IO

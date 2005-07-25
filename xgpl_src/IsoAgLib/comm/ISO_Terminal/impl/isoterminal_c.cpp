@@ -177,91 +177,15 @@ namespace __IsoAgLib {
   };
 #endif
 
-
-/** @todo set the wanted sensemaking retries/timeout values here!!! */
-#define DEF_WaitFor_Reupload 5000
-#define DEF_TimeOut_LoadVersion 10000
-#define DEF_TimeOut_StoreVersion 10000
-#define DEF_TimeOut_EndOfObjectPool 10000
-#define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
-#define DEF_TimeOut_ChangeChildPosition 1500 /* 1,5 seconds are stated in F.1 (page 96) */
 #define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
-#define DEF_Retries_TPCommands 2
+#define DEF_TimeOut_EndOfObjectPool 10000
+#define DEF_TimeOut_StoreVersion 10000
+#define DEF_TimeOut_LoadVersion 10000
+#define DEF_WaitFor_Reupload 5000
 #define DEF_Retries_NormalCommands 2
+#define DEF_Retries_TPCommands 2
+#define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
 
-
-/** This is mostly used for debugging now... */
-SendUpload_c::SendUpload_c (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
-{
-  /// Use BUFFER - NOT MultiSendStreamer!
-  mssObjectString=NULL;
-  vec_uploadBuffer.reserve (rui32_bufferSize);
-
-  uint32_t i=0;
-  for (; i < rui32_bufferSize; i++) {
-    vec_uploadBuffer.push_back (*rpui8_buffer);
-    rpui8_buffer++;
-  }
-  for (; i < 8; i++) {
-    vec_uploadBuffer.push_back (0xFF);
-  }
-
-  ui8_retryCount = 0; // hacked, no retry here!!!
-
-  ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
-
-  #ifdef DEBUG_HEAP_USEAGE
-  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
-  {
-    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << "\r\n";
-  }
-  #endif
-}
-
-
-/**
-  >>StringUpload<< Constructors ( Copy and Reference! )
-*/
-SendUpload_c::SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
-{
-  // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
-  uint16_t strLen = (CNAMESPACE::strlen(rpc_string) < overrideSendLength) ? CNAMESPACE::strlen(rpc_string) : overrideSendLength;
-
-  /// Use BUFFER - NOT MultiSendStreamer!
-  mssObjectString=NULL;
-  vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
-
-  vec_uploadBuffer.push_back (ui8_cmdByte ); /* Default of ui8_cmdByte is: Command: Command --- Parameter: Change String Value (TP) */
-  vec_uploadBuffer.push_back (rui16_objId & 0xFF);
-  vec_uploadBuffer.push_back (rui16_objId >> 8);
-  vec_uploadBuffer.push_back (strLen & 0xFF);
-  vec_uploadBuffer.push_back (strLen >> 8);
-  int i=0;
-  for (; i < strLen; i++) {
-    vec_uploadBuffer.push_back (*rpc_string);
-    rpc_string++;
-  }
-  for (; i < 3; i++) {
-    // at least 3 bytes from the string have to be written, if not, fill with 0xFF, so the pkg-len is 8!
-    vec_uploadBuffer.push_back (0xFF);
-  }
-
-  if ((5+strLen) < 9)
-    ui8_retryCount = DEF_Retries_NormalCommands;
-  else
-    ui8_retryCount = DEF_Retries_TPCommands;
-
-  ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
-
-  #ifdef DEBUG_HEAP_USEAGE
-  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
-  {
-    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << "\r\n";
-  }
-  #endif
-}
 
 
 SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
@@ -275,73 +199,6 @@ SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
 
   ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
 }
-
-
-/**
-  Constructor used for "normal" 8-byte CAN-Pkgs!
-*/
-SendUpload_c::SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout)
-{
-  /// Use BUFFER - NOT MultiSendStreamer!
-  mssObjectString=NULL;
-  vec_uploadBuffer.reserve (8);
-
-  vec_uploadBuffer.push_back (byte1);
-  vec_uploadBuffer.push_back (byte2);
-  vec_uploadBuffer.push_back (byte3);
-  vec_uploadBuffer.push_back (byte4);
-  vec_uploadBuffer.push_back (byte5);
-  vec_uploadBuffer.push_back (byte6);
-  vec_uploadBuffer.push_back (byte7);
-  vec_uploadBuffer.push_back (byte8);
-
-  ui8_retryCount = DEF_Retries_NormalCommands;
-  ui32_uploadTimeout = rui32_timeout;
-}
-
-
-/**
-  Constructor used for "ChangeChildPosition" >> 9 <<-byte CAN-Pkgs!
-  -- Parameter "timeOut" only there as else the signature would be the same compared to 8byte+timeOut constructor!
-  -- simply always pass "DEF_TimeOut_ChangeChildPosition"
-*/
-SendUpload_c::SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
-{
-  /// Use BUFFER - NOT MultiSendStreamer!
-  mssObjectString=NULL;
-  vec_uploadBuffer.reserve (9);
-
-  vec_uploadBuffer.push_back (byte1);
-  vec_uploadBuffer.push_back (byte2);
-  vec_uploadBuffer.push_back (byte3);
-  vec_uploadBuffer.push_back (byte4);
-  vec_uploadBuffer.push_back (byte5);
-  vec_uploadBuffer.push_back (byte6);
-  vec_uploadBuffer.push_back (byte7);
-  vec_uploadBuffer.push_back (byte8);
-  vec_uploadBuffer.push_back (byte9);
-
-  ui8_retryCount = DEF_Retries_TPCommands;
-  ui32_uploadTimeout = rui32_timeout;
-}
-
-
-const SendUpload_c& SendUpload_c::operator= (const SendUpload_c& ref_source)
-{
-  vec_uploadBuffer = ref_source.vec_uploadBuffer;
-  ui8_retryCount = ref_source.ui8_retryCount;
-  mssObjectString = ref_source.mssObjectString;
-  ui32_uploadTimeout = ref_source.ui32_uploadTimeout;
-  return ref_source;
-}
-
-
-SendUpload_c::SendUpload_c (const SendUpload_c& ref_source)
-  : mssObjectString (ref_source.mssObjectString)
-  , vec_uploadBuffer (ref_source.vec_uploadBuffer)
-  , ui8_retryCount (ref_source.ui8_retryCount)
-  , ui32_uploadTimeout (ref_source.ui32_uploadTimeout)
-{}
 
 
   /*************************************/

@@ -181,7 +181,7 @@ public:
       * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
   */
   bool processMsg();
-  
+
 #ifdef USE_ISO_11783
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
 #endif
@@ -212,14 +212,15 @@ public:
     @param rui16_element
 
     DIN parameter
+    @param rui8_dataGety GETY of process data as specified in DIN process data message
+    @param rui8_pos optional POS code of searched local Process Data instance
+                  (only important if more GETY type members are active)
     @param rui8_lis LIS code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
-    @param rui8_gety GETY code of searched local Process Data instance
-    @param rui8_pos optional POS code of searched local Process Data instance
-                  (only important if more GETY type members are active)
+    @param rui8_getyReceiver GETY code of searched local Process Data instance
     @return true -> suitable instance found
   */
   bool existProcDataLocal(
@@ -228,13 +229,14 @@ public:
                           uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
+                          uint8_t rui8_dataGety,
+                          uint8_t rui8_pos,
                           uint8_t rui8_lis,
                           uint8_t rui8_wert,
                           uint8_t rui8_inst,
                           uint8_t rui8_zaehlnum,
 #endif
-                          uint8_t rui8_gety,
-                          uint8_t rui8_pos = 0xFF);
+                          uint8_t rui8_getyReceiver);
 
   /**
     checks if a suitable ProcDataRemoteBase_c item exist
@@ -243,15 +245,16 @@ public:
     @param rui16_element
 
     DIN parameter
+    @param rui8_dataGety GETY of process data as specified in DIN process data message
+    @param rui8_pos optional POS code of searched remote Process Data instance
+                  (only important if more GETY type members are active)
     @param rui8_lis LIS code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
     common parameter
-    @param rui8_gety GETY code of searched local Process Data instance
-    @param rui8_pos optional POS code of searched remote Process Data instance
-                  (only important if more GETY type members are active)
+    @param rui8_getyReceiver GETY code of searched local Process Data instance
     @return true -> suitable instance found
   */
   bool existProcDataRemote(
@@ -261,13 +264,14 @@ public:
                            uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
+                           uint8_t rui8_dataGety,
+                           uint8_t rui8_pos,
                            uint8_t rui8_lis,
                            uint8_t rui8_wert,
                            uint8_t rui8_inst,
                            uint8_t rui8_zaehlnum,
 #endif
-                           uint8_t rui8_gety,
-                           uint8_t rui8_pos = 0xFF);
+                           uint8_t rui8_getyReceiver);
 
   /**
     search for suitable ProcDataLocalBase_c item; create on if not found AND if wanted
@@ -281,13 +285,14 @@ public:
     @param rui16_element
 
     DIN parameter
+    @param rui8_dataGety GETY of process data as specified in DIN process data message
+    @param rui8_pos POS code of searched local Process Data instance
     @param rui8_lis LIS code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
-    @param rui8_gety GETY code of searched local Process Data instance
-    @param rui8_pos POS code of searched local Process Data instance
+    @param rui8_getyReceiver GETY code of searched local Process Data instance
     @return reference to searched/created ProcDataLocalBase_c instance
   */
   ProcDataLocalBase_c& procDataLocal(
@@ -296,13 +301,14 @@ public:
                                      uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
+                                     uint8_t rui8_dataGety,
+                                     uint8_t rui8_pos,
                                      uint8_t rui8_lis,
                                      uint8_t rui8_wert,
                                      uint8_t rui8_inst,
                                      uint8_t rui8_zaehlnum,
 #endif
-                                     uint8_t rui8_gety,
-                                     uint8_t rui8_pos = 0xFF);
+                                     uint8_t rui8_getyReceiver);
 
   /**
     search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
@@ -316,14 +322,15 @@ public:
     @param rui16_element
 
     DIN parameter
+    @param rui8_dataGety GETY of process data as specified in DIN process data message
+    @param rui8_pos POS code of searched remote Process Data instance
     @param rui8_lis LIS code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
     common parameter
-    @param rui8_gety GETY code of searched local Process Data instance
-    @param rui8_pos POS code of searched remote Process Data instance
+    @param rui8_getyReceiver GETY code of searched local Process Data instance
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
@@ -334,13 +341,14 @@ public:
                                       uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
+                                      uint8_t rui8_dataGety,
+                                      uint8_t rui8_pos,
                                       uint8_t rui8_lis,
                                       uint8_t rui8_wert,
                                       uint8_t rui8_inst,
                                       uint8_t rui8_zaehlnum,
 #endif
-                                      uint8_t rui8_gety,
-                                      uint8_t rui8_pos = 0xFF);
+                                      uint8_t rui8_getyReceiver);
 
 
   /**
@@ -355,7 +363,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
     @param rui8_gety GETY code of searched local Process Data instance
     @return count of similar local process data entries
@@ -372,7 +380,7 @@ public:
                                       uint8_t rui8_zaehlnum,
 #endif
                                       uint8_t rui8_gety);
-                                       
+
   /**
     delivers count of remote process data entries with similar ident
     (which differs only in POS of owner)
@@ -386,7 +394,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
     @param rui8_gety GETY code of searched remote Process Data instance
     @return count of similar remote process data entries
@@ -433,12 +441,20 @@ public:
   /** unregister pointer to a already registered remote process data instance
     * this function is called within destruction of remote process data instance
     */
-  void unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
-    { unregisterC2( pc_remoteClient );};
+  void unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient);
 
 #ifdef USE_ISO_11783
    void setTaskStatus(uint8_t taskStatus);
 #endif
+  /**
+    delete FilterBox_c for receive from remote gtp if needed
+    (important to delete old Filter Boxes after deletion of
+    of remote device from monitor list or after re-adressclaim with different SA)
+    @param rc_ownerGtp GTP code of remote owner who sent the message
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @return true -> member exist and Filter Box deleted
+  */
+  bool deleteRemoteFilter(const GetyPos_c& rc_ownerGtp, uint8_t rui8_pri = 2);
 
 private: // Private methods
   /**
@@ -448,14 +464,15 @@ private: // Private methods
     @param rui16_element
 
     DIN parameter
+    @param rui8_dataGety GETY of process data as specified in DIN process data message
+    @param rui8_pos optinal POS code of created local Process Data instance
+      (default not used for search)
     @param rui8_lis LIS code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
-    @param rui8_gety GETY code of created local Process Data instance
-    @param rui8_pos optinal POS code of created local Process Data instance
-      (default not used for search)
+    @param rui8_getyReceiver GETY code of created local Process Data instance
   */
   bool updateLocalCache(
 #ifdef USE_ISO_11783
@@ -463,13 +480,14 @@ private: // Private methods
                         uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
+                        uint8_t rui8_dataGety,
+                        uint8_t rui8_pos,
                         uint8_t rui8_lis,
                         uint8_t rui8_wert,
                         uint8_t rui8_inst,
                         uint8_t rui8_zaehlnum,
 #endif
-                        uint8_t rui8_gety,
-                        uint8_t rui8_pos = 0xFF);
+                        uint8_t rui8_getyReceiver);
 
   /**
     update the cache with search for according ProcDataRemoteBase_c item
@@ -478,15 +496,16 @@ private: // Private methods
     @param rui16_element
 
     DIN parameter
+    @param rui8_dataGety GETY of process data as specified in DIN process data message
+    @param rui8_pos POS code of created remote Process Data instance
+      (default not used for search)
     @param rui8_lis LIS code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
     common parameter
-    @param rui8_gety GETY code of searched local Process Data instance
-    @param rui8_pos POS code of created remote Process Data instance
-      (default not used for search)
+    @param rui8_getyReceiver GETY code of searched local Process Data instance
   */
   bool updateRemoteCache(
 #ifdef USE_ISO_11783
@@ -495,13 +514,14 @@ private: // Private methods
                          uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
+                         uint8_t rui8_dataGety,
+                         uint8_t rui8_pos,
                          uint8_t rui8_lis,
                          uint8_t rui8_wert,
                          uint8_t rui8_inst,
                          uint8_t rui8_zaehlnum,
 #endif
-                         uint8_t rui8_gety,
-                         uint8_t rui8_pos = 0xFF);
+                         uint8_t rui8_getyReceiver);
 
   /**
     insert FilterBox_c for receive from remote gtp if needed
@@ -509,18 +529,7 @@ private: // Private methods
     @param rui8_pri PRI code of messages with this process data instance (default 2)
     @return true -> member exist and Filter Box created
   */
-  bool createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t rui8_pri = 2);
-  /**
-    delete FilterBox_c for receive from remote gtp if needed
-    (important to delete old Filter Boxes after deletion of
-     ProcDataRemoteBase_c - called from within deleteProcDataRemote
-     - only delete FilterBox_c if NO other remote proc data with same
-     ownerGtp exist)
-    @param rc_ownerGtp GTP code of remote owner who sent the message
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @return true -> member exist and Filter Box deleted
-  */
-  bool deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t rui8_pri = 2);
+  bool createRemoteFilter(const GetyPos_c& rc_ownerGtp, uint8_t rui8_pri = 2);
 
 
 private: // Private attributes
@@ -537,7 +546,7 @@ private: // Private attributes
   /** msg object for CAN I/O */
   ProcessPkg_c c_data;
 
-#ifdef USE_ISO_11783  
+#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
   /**
     deliver reference to process pkg as reference to DevPropertyHandler_c which
     handles sending and processing of messages from can

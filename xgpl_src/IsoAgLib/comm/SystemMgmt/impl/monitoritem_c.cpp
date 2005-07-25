@@ -95,7 +95,7 @@ namespace __IsoAgLib {
   @param rb_status state of this ident (off, claimed address, ...) (default: off)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-MonitorItem_c::MonitorItem_c( int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
+MonitorItem_c::MonitorItem_c( int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
   IState_c::itemState_t rb_status, int ri_singletonVecKey)
   : BaseItem_c(ri32_time, rb_status, ri_singletonVecKey), c_gtp(rc_gtp), ui8_nr(rui8_nr)
 {}
@@ -122,7 +122,7 @@ MonitorItem_c::~MonitorItem_c(){
   @param ren_status status information of this ident (IState_c::Off, IState_c::Active, ...) (default: IState_c::Active)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void MonitorItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
+void MonitorItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
         itemState_t ren_status, int ri_singletonVecKey)
 {
   BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
@@ -144,7 +144,7 @@ MonitorItem_c& MonitorItem_c::operator=(const MonitorItem_c& src){
   @param rb_left GETY_POS uint8_t left parameter
   @param rrefc_right rigth DINServiceItem_c parameter
 */
-bool operator<(const GetyPos_c rc_left, const MonitorItem_c& rrefc_right)
+bool operator<(const GetyPos_c& rc_left, const MonitorItem_c& rrefc_right)
 {
   return (rc_left < rrefc_right.gtp())?true:false;
 }
@@ -154,7 +154,7 @@ bool operator<(const GetyPos_c rc_left, const MonitorItem_c& rrefc_right)
   @param rrefc_left left DINServiceItem_c parameter
   @param rb_right GETY_POS uint8_t right parameter
 */
-bool lessThan(const MonitorItem_c& rrefc_left, const GetyPos_c rc_right)
+bool lessThan(const MonitorItem_c& rrefc_left, const GetyPos_c& rc_right)
 {
   return (rrefc_left.gtp() < rc_right)?true:false;
 }

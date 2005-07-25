@@ -496,17 +496,16 @@ EEPROMIO_c& EEPROMIO_c::readIntern(uint8_t* rpb_data, uint8_t rui8_len) {
   return *this;
 }
 
-EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, GetyPos_c& refc_data )
+EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const GetyPos_c& refc_data )
 {
-  uint16_t ui16_data = refc_data.getCombinedIso();
-  refc_stream.writeIntern(((uint8_t*)(&ui16_data)), sizeof(uint16_t));
+  refc_stream.writeIntern(refc_data.getName().outputString(), 8);
   return refc_stream;
 }
 EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, GetyPos_c& refc_data )
 {
-  uint16_t ui16_data;
-  refc_stream.readIntern(((uint8_t*)(&ui16_data)), sizeof(uint16_t));
-  refc_data.setCombinedIso( ui16_data );
+  uint8_t tempName[8];
+  refc_stream.readIntern(tempName, sizeof(8));
+  refc_data.set( tempName );
   return refc_stream;
 }
 

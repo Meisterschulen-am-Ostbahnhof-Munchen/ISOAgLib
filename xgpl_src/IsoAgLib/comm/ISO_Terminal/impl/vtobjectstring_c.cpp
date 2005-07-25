@@ -80,9 +80,8 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-
-
 #include "vtobjectstring_c.h"
+#include "IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h"
 
 
 namespace __IsoAgLib {
@@ -154,13 +153,13 @@ vtObjectStringStreamer_c::getStreamSize()
 
 void vtObjectString_c::setStringToStream( const char* rpc_stringToStream )
 {
-	c_streamer.setStringToStream( rpc_stringToStream );
-	// additionally set the ID
-	c_streamer.setID( getID() );
+  c_streamer.setStringToStream( rpc_stringToStream );
+  // additionally set the ID
+  c_streamer.setID( getID() );
 }
 void vtObjectString_c::setStrLenToSend( uint16_t rui16_strLenToSend )
 {
-	c_streamer.setStrLenToSend( rui16_strLenToSend );
+  c_streamer.setStrLenToSend( rui16_strLenToSend );
 }
 
 

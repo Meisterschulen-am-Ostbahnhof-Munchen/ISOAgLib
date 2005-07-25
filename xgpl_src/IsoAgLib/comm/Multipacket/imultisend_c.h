@@ -88,7 +88,7 @@ public:
   bool sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, uint16_t rb_fileCmd, bool rb_abortOnTimeout = false)
     {return MultiSend_c::sendDin(rb_send, rb_empf, rhpb_data, ri32_dataSize, rui16_msgSize, rb_fileCmd, rb_abortOnTimeout);};
 #endif
-#ifdef USE_ISO_TERMINAL
+#ifdef USE_ISO_11783
 
   /**
     send a ISO target multipacket message with active retrieve of data-parts to send

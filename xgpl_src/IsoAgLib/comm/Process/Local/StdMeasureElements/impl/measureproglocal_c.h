@@ -1,5 +1,5 @@
 /***************************************************************************
-                          measureproglocal_c.h - object for managing local 
+                          measureproglocal_c.h - object for managing local
                                                  measure progs and values
                              -------------------
     begin                : Fri Apr 07 2000
@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef MEASUREPROG_LOCAL_H
@@ -105,7 +105,7 @@ class ProcDataLocalBase_c;
 */
 class MeasureProgLocal_c : public MeasureProgBase_c  {
 private:
-public: 
+public:
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
     @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
@@ -119,7 +119,7 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_masterVal = 0,
     int32_t ri32_initialVal = 0,
-    GetyPos_c rc_callerGtp = GetyPos_c(0xF, 0xF) )
+    const GetyPos_c& rc_callerGtp = GetyPos_c::GetyPosUnspecified )
     : MeasureProgBase_c(rpc_processData, ren_progType, ri32_initialVal, rc_callerGtp )
     {init(rpc_processData, ren_progType, ri32_masterVal, ri32_initialVal, rc_callerGtp  );};
   /**
@@ -135,7 +135,7 @@ public:
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_masterVal = 0,
     int32_t ri32_initialVal = 0,
-    GetyPos_c rc_callerGtp = GetyPos_c(0xF, 0xF) );
+    const GetyPos_c& rc_callerGtp = GetyPos_c::GetyPosUnspecified );
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
@@ -150,7 +150,7 @@ public:
     Proc_c::progType_t ren_progType,
     float rf_masterVal,
     float rf_eepromVal = 0.0F,
-    GetyPos_c rc_callerGtp = GetyPos_c(0xF, 0xF))
+    const GetyPos_c& rc_callerGtp = GetyPos_c::GetyPosUnspecified)
     : MeasureProgBase_c(rpc_processData, ren_progType, 0, rc_callerGtp )
     {init(rpc_processData, ren_progType, rf_masterVal, rf_eepromVal, rc_callerGtp  );};
   /**
@@ -166,7 +166,7 @@ public:
     Proc_c::progType_t ren_progType,
     float rf_masterVal,
     float rf_eepromVal = 0.0F,
-    GetyPos_c rc_callerGtp = GetyPos_c(0xF, 0xF) );
+    const GetyPos_c& rc_callerGtp = GetyPos_c::GetyPosUnspecified );
 #endif
   /**
     assignment of MeasureProgLocal_c objects
@@ -252,7 +252,7 @@ public:
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
+  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const GetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
   /**
     process a message: reset command or value requests
 
@@ -366,7 +366,7 @@ private: // Private methods
   void assignFromSource( const MeasureProgLocal_c& rrefc_src );
   /**  update proportional dependent values */
   void updatePropDepVals();
-  
+
   /**
     set medium val
     @param ri32_val initial medium value
@@ -392,7 +392,7 @@ private: // Private methods
     @param rf_val new measure val to use for calculating the medium value
   */
   void incrMedSum(float rf_val){f_medSum += rf_val;};
-#endif  
+#endif
   /**
     deliver a reference to ProcDataLocal_c
     (the base function only delivers ProcDataBase_c)
@@ -411,7 +411,7 @@ private: // Private methods
   {
     return ((ProcDataLocalBase_c*)((void*)ProcessElementBase_c::pprocessData()));
   };
-  
+
 private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   union {
@@ -422,12 +422,12 @@ private: // Private attributes
   };
   union {
     /**
-      sum of values which are used to calculate the medium 
+      sum of values which are used to calculate the medium
       (only defined if one proportional prog is active)
     */
     int32_t i32_medSum;
     /**
-      sum of values which are used to calculate the medium 
+      sum of values which are used to calculate the medium
       (only defined if one proportional prog is active)
     */
     float f_medSum;
@@ -436,7 +436,7 @@ private: // Private attributes
   /** last master (eg. main prog or sensor) val  */
   int32_t i32_lastMasterVal;
   /**
-    sum of values which are used to calculate the medium 
+    sum of values which are used to calculate the medium
     (only defined if one proportional prog is active)
   */
   int32_t i32_medSum;

@@ -147,7 +147,7 @@ public:
     @return true -> command successful sent
   */
   bool resetVal(int32_t ri32_val = 0) {return MeasureProgRemote_c::resetVal(ri32_val);};
-  
+
   /**
     send reset command for medium value
 
@@ -294,7 +294,7 @@ public:
     return the c_gtp code for this measureProg
     @return GETY_POS of this measureProg
   */
-  iGetyPos_c gtp(){return MeasureProgRemote_c::gtp();};
+  const iGetyPos_c& gtp(){return MeasureProgRemote_c::gtp();};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types
@@ -341,7 +341,7 @@ public:
     set the c_gtp code for this measureProg
     @param rc_gtp GETY_POS for exact specification of partner system
   */
-  void setGtp(iGetyPos_c rc_gtp) {MeasureProgRemote_c::setGtp(rc_gtp);};
+  void setGtp(const iGetyPos_c& rc_gtp) {MeasureProgRemote_c::setGtp(rc_gtp);};
  private:
   friend class iProcDataRemote_c;
   friend class iProcDataRemoteSimpleMeasure_c;

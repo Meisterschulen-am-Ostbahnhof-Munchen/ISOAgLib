@@ -89,7 +89,6 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -213,14 +212,6 @@ public:
   uint32_t serNo() const;
 
   /**
-    deliver deviceClass and deviceClassInst in format of
-    DIN GETY_POS
-    @return ((deviceClass << 3) | deviceClassInst)
-  */
-  GetyPos_c gtp() const {return GetyPos_c(devClass(), devClassInst());};
-
-
-  /**
     set the NAME data from 8 uint8_t string
     @param rpb_src pointer to 8byte source string
   */
@@ -277,18 +268,21 @@ public:
   void setSerNo(uint32_t rui32_serNo);
 
   /**
-    set deviceClass and deviceClassInst in format of
-    DIN GETY_POS
-    @param rc_gtp == ((deviceClass << 3) | deviceClassInst)
-  */
-  void setGtp(GetyPos_c rc_gtp) {setDevClass(rc_gtp.getGety()); setDevClassInst(rc_gtp.getPos());};
-  /**
     check if this NAME has higher prio
     than the given NAME 8-uint8_t string
     @param rpb_compare
-		@return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
+    @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
   */
-  int8_t higherPriThanPar(const uint8_t* rpb_compare);
+  int8_t higherPriThanPar(const uint8_t* rpb_compare) const;
+  /** compare two ISOName_c values with operator== */
+  bool operator==( const ISOName_c& refc_right ) const
+    { return (higherPriThanPar( refc_right.outputString() ) == 0)?true:false;};
+  /** compare two ISOName_c values with operator!= */
+  bool operator!=( const ISOName_c& refc_right ) const
+    { return (higherPriThanPar( refc_right.outputString() ) != 0)?true:false;};
+  /** compare two ISOName_c values with operator< */
+  bool operator<( const ISOName_c& refc_right ) const
+    { return (higherPriThanPar( refc_right.outputString() ) == -1)?true:false;};
 protected:
 // Protected Methods
 
@@ -297,7 +291,7 @@ private: // private methods
 
 private:
   /** ISO 8-uint8_t NAME field */
-  uint8_t pb_data[9];
+  uint8_t pb_data[8];
 };
 
 }

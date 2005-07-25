@@ -172,8 +172,8 @@ void ProcDataLocalBase_c::init(
 #ifdef USE_DIN_9684
                                uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
 #endif
-                               GetyPos_c rc_gtp, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
-                               GetyPos_c *rpc_gtp, bool rb_cumulativeValue,
+                               const GetyPos_c& rc_gtp, uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp,
+                               const GetyPos_c *rpc_gtp, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                uint16_t rui16_eepromAdr,
 #endif // USE_EEPROM_IO
@@ -399,8 +399,8 @@ bool ProcDataLocalBase_c::timeEvent( void ){
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool ProcDataLocalBase_c::sendVal( GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType ) const {
-    
+bool ProcDataLocalBase_c::sendVal( const GetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType ) const {
+
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                                 GeneralCommand_c::exactValue,
@@ -428,7 +428,7 @@ void ProcDataLocalBase_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   // handle for simple measurement value
   // DIN: pd=3, mod=0
-  if (c_pkg.c_generalCommand.checkIsRequest() && 
+  if (c_pkg.c_generalCommand.checkIsRequest() &&
       // c_pkg.c_generalCommand.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
       c_pkg.c_generalCommand.getValueGroup() == GeneralCommand_c::exactValue)
   { // request for measurement value
@@ -520,12 +520,10 @@ bool ProcDataLocalBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t
   #endif // USE_ISO_11783
 ) const
 { // retreive pointer to according SystemMgmt_c class
-  #ifdef USE_ISO_11783
-  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  #endif
   bool b_result = false;
   #ifdef USE_ISO_11783
   uint8_t b_msgProto = static_cast<uint8_t>(en_msgProto);
+  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
   #endif // USE_ISO_11783
 
   #ifdef USE_DIN_9684
@@ -536,19 +534,15 @@ bool ProcDataLocalBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t
   #ifdef USE_ISO_11783
       ((b_msgProto & (uint8_t)IState_c::Din) != 0) &&
   #endif // USE_ISO_11783
-      ( (c_din_monitor.existDinMemberNr(rb_var))
-      &&(c_din_monitor.dinMemberNr(rb_var).itemState(IState_c::ClaimedAddress))
-      )
-    &&( (c_din_monitor.existDinMemberGtp(ownerGtp()))
-      &&(c_din_monitor.dinMemberGtp(ownerGtp()).itemState(IState_c::ClaimedAddress))
-      )
+      (c_din_monitor.existDinMemberNr(rb_var))
+    &&(c_din_monitor.existDinMemberGtp(ownerGtp(), true))
     &&( (rb_var != 0xFF)
       ||(rui8_pri == 1)
       )
      )
   { // all check was positive -> set b_empf, b_send
     b_empf = rb_var; // for locel data the var parameter is the receiver for sending
-    b_send = c_din_monitor.dinMemberGtp(ownerGtp()).nr();
+    b_send = c_din_monitor.dinMemberGtp(ownerGtp(), true).nr();
     #ifdef USE_ISO_11783
     en_msgProto = IState_c::Din;
     #endif // USE_ISO_11783
@@ -560,19 +554,15 @@ bool ProcDataLocalBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t
   // try with ISO 11783
   if (
         ((b_msgProto & (uint8_t)IState_c::Iso) != 0) &&
-        ( (c_isoMonitor.existIsoMemberNr(rb_var))
-        &&(c_isoMonitor.isoMemberNr(rb_var).itemState(IState_c::ClaimedAddress))
-        )
-      &&( (c_isoMonitor.existIsoMemberGtp(ownerGtp()))
-        &&(c_isoMonitor.isoMemberGtp(ownerGtp()).itemState(IState_c::ClaimedAddress))
-        )
+        ( c_isoMonitor.existIsoMemberNr(rb_var))
+      &&(c_isoMonitor.existIsoMemberGtp(ownerGtp(), true))
       &&( (rb_var != 0xFF)
         ||(rui8_pri == 1)
         )
        )
   { // all check was positive -> set b_empf, b_send
     b_empf = rb_var; // for locel data the var parameter is the receiver for senisog
-    b_send = c_isoMonitor.isoMemberGtp(ownerGtp()).nr();
+    b_send = c_isoMonitor.isoMemberGtp(ownerGtp(), true).nr();
     en_msgProto = IState_c::Iso;
     b_result = true;
   }

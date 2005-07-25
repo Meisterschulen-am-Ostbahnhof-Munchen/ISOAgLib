@@ -100,9 +100,9 @@ void SetpointRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
   SetpointBase_c::init( rpc_processData );
   i32_answeredTime = i32_commandedTime = 0;
-  c_answeredMaster.setGtp( GetyPos_c( 0xF, 0xF ) );
-  c_answeredMe.setGtp( GetyPos_c( 0xF, 0xF ) );
-  c_commanded.setGtp( GetyPos_c( 0xF, 0xF ) );
+  c_answeredMaster.setGtp( GetyPos_c::GetyPosUnspecified );
+  c_answeredMe.setGtp( GetyPos_c::GetyPosUnspecified );
+  c_commanded.setGtp( GetyPos_c::GetyPosUnspecified );
 
 
 }
@@ -275,7 +275,7 @@ void SetpointRemote_c::setDefault( int32_t ri32_val){
 void SetpointRemote_c::requestExact() const
 {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */, 
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::requestValue);
   // DIN: pd = 2, mod = 0
@@ -287,7 +287,7 @@ void SetpointRemote_c::requestExact() const
 void SetpointRemote_c::requestMin() const
 {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */, 
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::requestValue);
   // DIN: pd = 2, mod = 2
@@ -299,7 +299,7 @@ void SetpointRemote_c::requestMin() const
 void SetpointRemote_c::requestMax() const
 {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */, 
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::requestValue);
   // DIN: pd = 2, mod = 3
@@ -311,7 +311,7 @@ void SetpointRemote_c::requestMax() const
 void SetpointRemote_c::requestDefault() const
 {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */, 
+  getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                               GeneralCommand_c::defaultValue,
                                                               GeneralCommand_c::requestValue);
   processDataConst().sendValGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
@@ -442,8 +442,8 @@ void SetpointRemote_c::processSet(){
   bool b_change = false;
 
   // retreive the gtp of send and empf
-  GetyPos_c c_empfGtp = c_pkg.memberEmpf().gtp(),
-      c_sendGtp = c_pkg.memberSend().gtp();
+  const GetyPos_c& c_empfGtp = c_pkg.memberEmpf().gtp();
+  const GetyPos_c& c_sendGtp = c_pkg.memberSend().gtp();
 
   if (c_sendGtp == processData().ownerGtp())
   { // the owner sent the value
@@ -523,7 +523,7 @@ void SetpointRemote_c::processSet(){
   if this action is allowed
 */
 void SetpointRemote_c::releaseMasterIntern(){
-  c_answeredMaster.setGtp( GetyPos_c( 0xF, 0xF ) );
+  c_answeredMaster.setGtp( GetyPos_c::GetyPosUnspecified );
   c_answeredMaster.setMaster( false);
 }
 
@@ -536,22 +536,23 @@ void SetpointRemote_c::releaseMasterIntern(){
 bool SetpointRemote_c::timeEvent( void )
 {
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  GetyPos_c c_ownerGtp = processData().ownerGtp();
-  if ((!getSystemMgmtInstance4Comm().existMemberGtp( c_ownerGtp))
-    ||(
-       (getSystemMgmtInstance4Comm().memberGtp( c_ownerGtp).lastedTime() > 3000)
-#ifdef USE_ISO_11783
-     &&(getSystemMgmtInstance4Comm().memberGtp( c_ownerGtp).itemState( IState_c::Din))
-#endif
+  const GetyPos_c& c_ownerGtp = processData().ownerGtp();
+  if ( (!getSystemMgmtInstance4Comm().existMemberGtp( c_ownerGtp, true))
+    #if  defined( USE_DIN_9687 )
+    || ( (getSystemMgmtInstance4Comm().memberGtp( c_ownerGtp, true).lastedTime() > 3000)
+         #if defined( USE_ISO_11783 )
+         (getSystemMgmtInstance4Comm().memberGtp( c_ownerGtp, true).itemState( IState_c::Din))
+         #endif
+       )
+    #endif
       )
-     )
   { // remote owner of this process data isn't active any more
     // -> reset all entries
     i32_answeredTime = i32_commandedTime = 0;
-    c_answeredMaster.setGtp( GetyPos_c( 0xF, 0xF ) );
+    c_answeredMaster.setGtp( GetyPos_c::GetyPosUnspecified );
     c_answeredMaster.setMaster( false);
-    c_answeredMe.setGtp( GetyPos_c( 0xF, 0xF ) );
-    c_commanded.setGtp( GetyPos_c( 0xF, 0xF ) );
+    c_answeredMe.setGtp( GetyPos_c::GetyPosUnspecified );
+    c_commanded.setGtp( GetyPos_c::GetyPosUnspecified );
   }
   return true;
 }

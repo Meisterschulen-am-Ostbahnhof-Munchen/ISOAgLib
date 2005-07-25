@@ -157,14 +157,14 @@ public:
   */
   ProcDataBase_c(
 #ifdef USE_ISO_11783
-                 uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
+                 uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
                  uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
                  uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                 GetyPos_c rc_gtp = GetyPos_c(0, 0xF),
-                 uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF), GetyPos_c *rpc_gtp = NULL,
+                 const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
+                 uint8_t rui8_pri = 2, const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified, const GetyPos_c *rpc_gtp = NULL,
                  ::IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                  int ri_singletonVecKey = 0)
 
@@ -248,14 +248,14 @@ public:
     */
   void init(
 #ifdef USE_ISO_11783
-            uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFF,
+            uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
             uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
 #endif
-            GetyPos_c rc_gtp = GetyPos_c(0, 0xF),
-            uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF), GetyPos_c *rpc_gtp = NULL,
+            const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
+            uint8_t rui8_pri = 2, const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified, const GetyPos_c *rpc_gtp = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 
@@ -359,14 +359,14 @@ public:
     @return true -> all planned executions performed
   */
   virtual bool timeEvent( void );
-  
+
 #ifdef USE_ISO_11783
   /**
     delivers state (DIN/ISO) for given gtp
     @param rc_gtp compared GETY_POS value
     @return IState_c::itemState_t
   */
-  IState_c::itemState_t getIStateForGtp( GetyPos_c rc_gtp );
+  IState_c::itemState_t getIStateForGtp( const GetyPos_c& rc_gtp );
 #endif
 
 protected: // Protected methods
@@ -377,7 +377,7 @@ protected: // Protected methods
 
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
-  
+
     set general command before sendValGtp !
 
     possible errors:
@@ -390,7 +390,7 @@ protected: // Protected methods
     @param en_command
     @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, int32_t ri32_val = 0) const;
+  bool sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, int32_t ri32_val = 0) const;
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     send the given float value with variable GETY_POS rc_varGtp;
@@ -412,7 +412,7 @@ protected: // Protected methods
     @param ri32_val float value to send
     @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValGtp(uint8_t rui8_pri, GetyPos_c rc_varGtp, float rf_val = 0.0F) const;
+  bool sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, float rf_val = 0.0F) const;
 #endif
 
 private: // Private methods
@@ -434,7 +434,7 @@ private: // Private methods
     @param rc_varGtp variable GETY_POS
     @return true -> resolvSendGtp successfully resolved EMPF and SEND
   */
-  bool resolvGtpSetBasicSendFlags(uint8_t rui8_pri, GetyPos_c rc_varGtp) const;
+  bool resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_c& rc_varGtp) const;
   /**
     virtual function which check dependent on remote/local
     if send action with given var parameter and address claim state of owner is
@@ -466,7 +466,7 @@ private: // Private methods
     virtual base for processing of a setpoint message
   */
   virtual void processSetpoint();
-  
+
 private: // Private attributes
   friend class IsoAgLib::EventSource_c;
   /** central data type to use for messages: i32_val, ui32_val, float_val */

@@ -86,12 +86,12 @@
 
 // +X2C includes
 #include <IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h>
-#include "IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h"
 #include "vtobject_c.h"
 // ~X2C
 
 
 namespace __IsoAgLib {
+class MultiSendPkg_c;
 
 /** helper class to avoid multiple inheritance by vtObjectString_c */
 class vtObjectStringStreamer_c : public MultiSendStreamer_c
@@ -102,7 +102,7 @@ class vtObjectStringStreamer_c : public MultiSendStreamer_c
   //! Parameter:
   //! @param mspData:
   //! @param bytes:
-  void setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspData,
+  void setDataNextStreamPart(MultiSendPkg_c* mspData,
                              uint8_t bytes);
 
   //  Operation: resetDataNextStreamPart
@@ -141,7 +141,7 @@ class vtObjectStringStreamer_c : public MultiSendStreamer_c
   uint32_t streamPosition;
 
   //  Attribute: uploadBuffer [7+1]
-  uint8_t uploadBuffer [7+1]; /* "+1" for safety only */ 
+  uint8_t uploadBuffer [7+1]; /* "+1" for safety only */
 
   //  Attribute: streamPositionStored
   uint32_t streamPositionStored;
@@ -150,19 +150,19 @@ class vtObjectStringStreamer_c : public MultiSendStreamer_c
 
 //  +X2C Class 241 : vtObjectString
 //!  Stereotype: class
-class vtObjectString_c : public __IsoAgLib::vtObject_c
+class vtObjectString_c : public vtObject_c
 {
  public:
-	vtObjectStringStreamer_c* getStreamer( void ) { return &c_streamer;};
+  vtObjectStringStreamer_c* getStreamer( void ) { return &c_streamer;};
  protected:
 
   // those both will be set before multisending is getting started.
-	void setStringToStream( const char* rpc_stringToStream );
-	void setStrLenToSend( uint16_t rui16_strLenToSend );
+  void setStringToStream( const char* rpc_stringToStream );
+  void setStrLenToSend( uint16_t rui16_strLenToSend );
 
  private:
-	// streaming helper class which is called by the sending class
-	vtObjectStringStreamer_c c_streamer;
+  // streaming helper class which is called by the sending class
+  vtObjectStringStreamer_c c_streamer;
 }; // ~X2C
 
 } // end namespace __IsoAgLib

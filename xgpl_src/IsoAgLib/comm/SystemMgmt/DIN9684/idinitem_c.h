@@ -83,7 +83,7 @@ public:
     deliver the GETY_POS code of this item
     @return GETY_POS code
   */
-  iGetyPos_c gtp()const{return static_cast<iGetyPos_c>(DINItem_c::gtp());};
+  const iGetyPos_c& gtp()const{return static_cast<const iGetyPos_c&>(DINItem_c::gtp());};
   /**
     deliver the GETY code alone (derived from gtp)
     @return GETY code

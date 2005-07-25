@@ -129,9 +129,9 @@ uint8_t dec2bcd(uint8_t rb_dec);
   possible errors:
       * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
   @param rpc_gtp optional pointer to the GETY_POS variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-	@param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+  @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
 */
-void Base_c::init(GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
+void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
 { // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
   // first register in Scheduler_c
@@ -157,14 +157,14 @@ void Base_c::init(GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelecti
 
   // set the timestamps to 0
   ui8_lastBase1 = ui8_lastBase2 = ui8_lastBase3 = ui8_lastFuel
-		= ui8_lastCalendar = 0;
-	#ifdef USE_DIN_9684
-	i16_rearLeftDraft = i16_rearRightDraft = i16_rearDraftNewton = NO_VAL_16S;
-	ui8_rearDraftNominal = NO_VAL_8;
-	i16_fuelRate = NO_VAL_16S;
-	ui8_fuelTemperature = NO_VAL_8;
-	b_dinFilterCreated = false;
-	#endif
+    = ui8_lastCalendar = 0;
+  #ifdef USE_DIN_9684
+  i16_rearLeftDraft = i16_rearRightDraft = i16_rearDraftNewton = NO_VAL_16S;
+  ui8_rearDraftNominal = NO_VAL_8;
+  i16_fuelRate = NO_VAL_16S;
+  ui8_fuelTemperature = NO_VAL_8;
+  b_dinFilterCreated = false;
+  #endif
   #ifdef USE_ISO_11783
   ui8_lastIsoBase1 = ui8_lastIsoBase2 = ui8_lastIsoCalendar = 0;
   t_frontPtoEngaged = t_rearPtoEngaged
@@ -176,8 +176,8 @@ void Base_c::init(GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelecti
   b_maintainEcuPower = b_maintainActuatorPower = b_maintainPowerForImplInTransport
     = b_maintainPowerForImplInPark = b_maintainPowerForImplInWork = false;
 
-	b_isoFilterCreated = false;
-	#endif
+  b_isoFilterCreated = false;
+  #endif
   i32_lastCalendarSet = 0;
 
   // set configure values with call for config
@@ -208,13 +208,13 @@ __IsoAgLib::CANPkgExt_c& Base_c::dataBase()
   config the Base_c object after init -> set pointer to gtp and
   config send/receive of different base msg types
   @param rpc_gtp pointer to the GETY_POS variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-	@param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+  @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
 */
-void Base_c::config(GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
+void Base_c::config(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
 {
   // set configure values
   pc_gtp = rpc_gtp;
-	t_mySendSelection = rt_mySendSelection;
+  t_mySendSelection = rt_mySendSelection;
 
 
   // set ui8_sendGtp to the pointed value, if pointer is valid
@@ -239,11 +239,11 @@ void Base_c::config(GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelec
       * LibErr_c::LbsBaseSenderConflict base msg recevied from different member than before
   @see FilterBox_c::processMsg
   @see CANIO_c::processMsg
-	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool Base_c::processMsg(){
   bool b_result = false;
-  GetyPos_c c_tempGtp( 0xF, 0xF );
+  GetyPos_c c_tempGtp( GetyPos_c::GetyPosUnspecified );
   uint16_t ui16_actTime100ms = (data().time() / 100);
 
   #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
@@ -344,7 +344,7 @@ bool Base_c::processMsg(){
             )
            )
         { // sender is allowed to send
-					// reaer left draft
+          // reaer left draft
           i16_rearLeftDraft = data().val12();
           // reaer right draft
           i16_rearRightDraft = data().val34();
@@ -375,7 +375,7 @@ bool Base_c::processMsg(){
             )
            )
         { // sender is allowed to send
-					// fuel rate
+          // fuel rate
           i16_fuelRate =  data().val12();
           // fuel temperature
           ui8_fuelTemperature =  data().val3();
@@ -453,14 +453,13 @@ bool Base_c::timeEvent( void ) {
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   uint8_t ui8_actTime100ms = (Scheduler_c::getLastTimeEventTrigger()/100);
 
-	checkCreateReceiveFilter();
+  checkCreateReceiveFilter();
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
 
-	#ifdef USE_ISO_11783
+  #ifdef USE_ISO_11783
   ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  if ((pc_gtp != NULL)&& (c_isoMonitor.existIsoMemberGtp(*pc_gtp))
-       && (c_isoMonitor.isoMemberGtp(*pc_gtp).itemState(IState_c::ClaimedAddress)))
+  if ((pc_gtp != NULL)&& (c_isoMonitor.existIsoMemberGtp(*pc_gtp, true)))
   { // stored base information sending ISO member has claimed address
     isoTimeEvent();
   }
@@ -468,14 +467,13 @@ bool Base_c::timeEvent( void ) {
   #endif
   #ifdef USE_DIN_9684
   DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
-  if ((pc_gtp != NULL)&& (c_din_monitor.existDinMemberGtp(*pc_gtp))
-       && (c_din_monitor.dinMemberGtp(*pc_gtp).itemState(IState_c::ClaimedAddress)))
+  if ((pc_gtp != NULL)&& (c_din_monitor.existDinMemberGtp(*pc_gtp, true)))
   {
     // retreive the actual dynamic sender no of the member with the registered gtp
-    uint8_t b_send = c_din_monitor.dinMemberGtp(*pc_gtp).nr();
+    uint8_t b_send = c_din_monitor.dinMemberGtp(*pc_gtp, true).nr();
 
-		if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastBase1 ) ) >= 1 )
-			&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0       ) )
+    if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastBase1 ) ) >= 1 )
+      && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0       ) )
     { // send actual base1 data
       c_sendBase1Gtp = *pc_gtp;
       data().setBabo(4);
@@ -493,8 +491,8 @@ bool Base_c::timeEvent( void ) {
       ui8_lastBase1 = ui8_actTime100ms;
     }
 
-		if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastBase2 ) ) >= 1 )
-			&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0       ) )
+    if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastBase2 ) ) >= 1 )
+      && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0       ) )
     { // send actual base2 data
       c_sendBase2Gtp = *pc_gtp;
       data().setBabo(5);
@@ -513,8 +511,8 @@ bool Base_c::timeEvent( void ) {
       ui8_lastBase2 = ui8_actTime100ms;
     }
 
-		if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastBase3 ) ) >= 1 )
-			&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup3 ) != 0       ) )
+    if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastBase3 ) ) >= 1 )
+      && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup3 ) != 0       ) )
     { // send actual base3 data
       c_sendBase3Gtp = *pc_gtp;
       data().setBabo(6);
@@ -532,8 +530,8 @@ bool Base_c::timeEvent( void ) {
       ui8_lastBase3 = ui8_actTime100ms;
     }
 
-		if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastFuel ) ) >= 1 )
-			&& ( ( t_mySendSelection & IsoAgLib::BaseDataFuel ) != 0        ) )
+    if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastFuel ) ) >= 1 )
+      && ( ( t_mySendSelection & IsoAgLib::BaseDataFuel ) != 0        ) )
     { // send actual base3 data
       c_sendFuelGtp = *pc_gtp;
       data().setBabo(0xC);
@@ -549,20 +547,20 @@ bool Base_c::timeEvent( void ) {
       ui8_lastFuel = ui8_actTime100ms;
     }
 
-		if (
+    if (
         (
          ( ( ui8_actTime100ms - ui8_lastCalendar) >= 10 )
       || (
-			     ( ( ( 0xFF - ui8_lastCalendar ) + ui8_actTime100ms ) >= 10 )
-			  && ( ui8_actTime100ms < ui8_lastCalendar )
-				 )
+           ( ( ( 0xFF - ui8_lastCalendar ) + ui8_actTime100ms ) >= 10 )
+        && ( ui8_actTime100ms < ui8_lastCalendar )
+         )
         )
        && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 ) )
     { // send actual calendar data
       c_sendCalendarGtp = *pc_gtp;
       data().setBabo(0xF);
       data().setSend(b_send);
-			data().setVal1(dec2bcd(year() / 100));
+      data().setVal1(dec2bcd(year() / 100));
       data().setVal2(dec2bcd(year() % 100));
       data().setVal3(dec2bcd(month()));
       data().setVal4(dec2bcd(day()));
@@ -583,76 +581,76 @@ bool Base_c::timeEvent( void ) {
 }
 
 /** check if filter boxes shall be created - create only ISO or DIN filters based
-		on active local idents which has already claimed an address
-		--> avoid to much Filter Boxes
-	*/
+    on active local idents which has already claimed an address
+    --> avoid to much Filter Boxes
+  */
 void Base_c::checkCreateReceiveFilter( void )
 {
   SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance();
   CANIO_c &c_can = getCanInstance4Comm();
   #ifdef USE_DIN_9684
-	if ( ( !b_dinFilterCreated ) && (c_systemMgmt.existActiveLocalDinMember() ) )
-	{ // check if needed receive filters for DIN are active
-		b_dinFilterCreated = true;
-		// filter for base data 1
-		c_can.insertFilter(*this, (0x7F << 4),(0x14 << 4), false);
-		// filter for base data 2
-		c_can.insertFilter(*this, (0x7F << 4),(0x15 << 4), false);
-		// NEW filter for base data 3
-		c_can.insertFilter(*this, (0x7F << 4),(0x16 << 4), false);
-		// filter for lower priority base data fuel consumption & base data data calendar
-		c_can.insertFilter(*this, (0x7C << 4),(0x1C << 4), true);
-	}
-	#endif
+  if ( ( !b_dinFilterCreated ) && (c_systemMgmt.existActiveLocalDinMember() ) )
+  { // check if needed receive filters for DIN are active
+    b_dinFilterCreated = true;
+    // filter for base data 1
+    c_can.insertFilter(*this, (0x7F << 4),(0x14 << 4), false);
+    // filter for base data 2
+    c_can.insertFilter(*this, (0x7F << 4),(0x15 << 4), false);
+    // NEW filter for base data 3
+    c_can.insertFilter(*this, (0x7F << 4),(0x16 << 4), false);
+    // filter for lower priority base data fuel consumption & base data data calendar
+    c_can.insertFilter(*this, (0x7C << 4),(0x1C << 4), true);
+  }
+  #endif
   #ifdef USE_ISO_11783
 
-	if ( ( ! b_isoFilterCreated ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
-	{ // check if needed receive filters for ISO are active
-		b_isoFilterCreated = true;
-		// create FilterBox_c for PGN TIME_DATE_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(TIME_DATE_PGN) << 8), false, Ident_c::ExtendedIdent);
-		// create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(GROUND_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
-		// create FilterBox_c for PGN WHEEL_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(WHEEL_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
-		// create FilterBox_c for PGN FRONT_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(FRONT_HITCH_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
-		// create FilterBox_c for PGN BACK_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(BACK_HITCH_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
-		// create FilterBox_c for PGN FRONT_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(FRONT_PTO_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
-		// create FilterBox_c for PGN BACK_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(BACK_PTO_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+  if ( ( ! b_isoFilterCreated ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+  { // check if needed receive filters for ISO are active
+    b_isoFilterCreated = true;
+    // create FilterBox_c for PGN TIME_DATE_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(TIME_DATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+    // create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(GROUND_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
+    // create FilterBox_c for PGN WHEEL_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(WHEEL_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
+    // create FilterBox_c for PGN FRONT_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(FRONT_HITCH_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+    // create FilterBox_c for PGN BACK_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(BACK_HITCH_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+    // create FilterBox_c for PGN FRONT_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(FRONT_PTO_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+    // create FilterBox_c for PGN BACK_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(BACK_PTO_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
 
-		// create FilterBox_c for PGN GPS_STATE_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (GPS_STATE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(GPS_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
-		// create FilterBox_c for PGN GPS_LATITUDE_LONGITUDE_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (GPS_LATITUDE_LONGITUDE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(GPS_LATITUDE_LONGITUDE_PGN) << 8), false, Ident_c::ExtendedIdent);
-		// create FilterBox_c for PGN GPS_SPEED_HEADING_ALTITUDE_PGN, PF 254 - mask for DP, PF and PS
-		// mask: (0x1FFFF << 8) filter: (GPS_SPEED_HEADING_ALTITUDE_PGN << 8)
-		c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(GPS_SPEED_HEADING_ALTITUDE_PGN) << 8), true, Ident_c::ExtendedIdent);
+    // create FilterBox_c for PGN GPS_STATE_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (GPS_STATE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(GPS_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+    // create FilterBox_c for PGN GPS_LATITUDE_LONGITUDE_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (GPS_LATITUDE_LONGITUDE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(GPS_LATITUDE_LONGITUDE_PGN) << 8), false, Ident_c::ExtendedIdent);
+    // create FilterBox_c for PGN GPS_SPEED_HEADING_ALTITUDE_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (GPS_SPEED_HEADING_ALTITUDE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(GPS_SPEED_HEADING_ALTITUDE_PGN) << 8), true, Ident_c::ExtendedIdent);
 
-	}
-	#endif
+  }
+  #endif
 }
 
 
@@ -665,7 +663,7 @@ void Base_c::checkCreateReceiveFilter( void )
 bool Base_c::isoProcessMsg()
 {
   bool b_result = false;
-  GetyPos_c c_tempGtp( 0xF, 0xF );
+  GetyPos_c c_tempGtp( GetyPos_c::GetyPosUnspecified );
   uint16_t ui16_actTime100ms = (data().time()/100);
   // store the gtp of the sender of base data
   if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
@@ -862,24 +860,24 @@ bool Base_c::isoProcessMsg()
       ui32_lastMaintainPowerRequest = data().time();
       b_result = true;
       break;
-		case GPS_STATE_PGN:
-			/** \todo check for correct GPS mode position in CAN msg - try with Byte1 */
-			t_gpsMode = IsoAgLib::IsoGpsRecMode_t( data().val1() );
+    case GPS_STATE_PGN:
+      /** \todo check for correct GPS mode position in CAN msg - try with Byte1 */
+      t_gpsMode = IsoAgLib::IsoGpsRecMode_t( data().val1() );
       b_result = true;
-			break;
-		case GPS_LATITUDE_LONGITUDE_PGN:
-			/** \todo check if open accessible example for Long/Lat was a correct source */
-			i32_latitudeRaw  = data().getInt32Data( 0 );
-			i32_longitudeRaw = data().getInt32Data( 4 );
+      break;
+    case GPS_LATITUDE_LONGITUDE_PGN:
+      /** \todo check if open accessible example for Long/Lat was a correct source */
+      i32_latitudeRaw  = data().getInt32Data( 0 );
+      i32_longitudeRaw = data().getInt32Data( 4 );
       b_result = true;
-			break;
-		case GPS_SPEED_HEADING_ALTITUDE_PGN:
-			/** \todo check and correct decoding of GPS-Speed, GPS-Heading and Altitude */
-			i16_speedGps   = data().getInt16Data( 0 );
-			i16_headingGps = data().getInt16Data( 2 );
-			ui32_altitude  = data().getUint32Data( 4 );
+      break;
+    case GPS_SPEED_HEADING_ALTITUDE_PGN:
+      /** \todo check and correct decoding of GPS-Speed, GPS-Heading and Altitude */
+      i16_speedGps   = data().getInt16Data( 0 );
+      i16_headingGps = data().getInt16Data( 2 );
+      ui32_altitude  = data().getUint32Data( 4 );
       b_result = true;
-			break;
+      break;
   }
   return b_result;
 }
@@ -895,17 +893,17 @@ bool Base_c::isoTimeEvent( void )
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   // retreive the actual dynamic sender no of the member with the registered gtp
-  uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberGtp(*pc_gtp).nr();
+  uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberGtp(*pc_gtp, true).nr();
   data().setIdentType(Ident_c::ExtendedIdent);
   data().setIsoPri(3);
   data().setIsoSa(b_sa);
 
 #ifdef SYSTEM_PC_VC
-	if ( ( ( abs(ui8_actTime100ms - ui8_lastIsoBase1 ) ) >= 1    )
-		&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
+  if ( ( ( abs(ui8_actTime100ms - ui8_lastIsoBase1 ) ) >= 1    )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
 #else
-	if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastIsoBase1 ) ) >= 1    )
-		&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
+  if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastIsoBase1 ) ) >= 1    )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
 #endif
   { // send actual base1 data: ground/wheel based speed/dist
     c_sendBase1Gtp = *pc_gtp;
@@ -915,8 +913,8 @@ bool Base_c::isoTimeEvent( void )
 #else
     data().setVal12(CNAMESPACE::abs(i16_speedReal));
 #endif
-	data().setVal36(i32_distReal);
-	switch (i16_speedReal) {
+  data().setVal36(i32_distReal);
+  switch (i16_speedReal) {
      case ERROR_VAL_16S:
       data().setVal8(IsoAgLib::IsoError);
       break;
@@ -934,11 +932,11 @@ bool Base_c::isoTimeEvent( void )
 
     data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
 #ifdef SYSTEM_PC_VC
-	data().setVal12(abs(i16_speedTheor));
+  data().setVal12(abs(i16_speedTheor));
 #else
-	data().setVal12(CNAMESPACE::abs(i16_speedTheor));
+  data().setVal12(CNAMESPACE::abs(i16_speedTheor));
 #endif
-	data().setVal36(i32_distTheor);
+  data().setVal36(i32_distTheor);
 
     data().setVal7(ui8_maxPowerTime);
 
@@ -966,11 +964,11 @@ bool Base_c::isoTimeEvent( void )
   }
 
 #ifdef SYSTEM_PC_VC
-	if ( ( ( abs(ui8_actTime100ms - ui8_lastIsoBase2 ) ) >= 1    )
-		&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
+  if ( ( ( abs(ui8_actTime100ms - ui8_lastIsoBase2 ) ) >= 1    )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
 #else
-	if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastIsoBase2 ) ) >= 1    )
-		&& ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
+  if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastIsoBase2 ) ) >= 1    )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
 #endif
   { // send actual base2 data
     c_sendBase2Gtp = *pc_gtp;
@@ -1075,10 +1073,10 @@ bool Base_c::isoTimeEvent( void )
   @see CANPkgExt_c::getData
   @see CANIO_c::operator<<
 */
-void Base_c::isoSendCalendar(GetyPos_c rc_gtp)
+void Base_c::isoSendCalendar(const GetyPos_c& rc_gtp)
 {
   if ( ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 )
-		&& ( c_sendCalendarGtp == rc_gtp                   ) )
+    && ( c_sendCalendarGtp == rc_gtp                   ) )
   { // this item (identified by GETY_POS is configured to send
     data().setIsoPgn(TIME_DATE_PGN);
     data().setVal1(second() * 4);
@@ -1175,7 +1173,7 @@ void Base_c::setOverflowSecure(int32_t& reflVal, int16_t& refiVal, const int16_t
 #else
     if (CNAMESPACE::abs(i16_diff) > i32_maxDefDin/2)
 #endif
-	{ // the correct DIN limit triggers
+  { // the correct DIN limit triggers
       if (rrefiNewVal > refiVal)
       { // dist decreased lower than 0 -> lower underflow
         i32_newValDin -= refiVal; // max reducable before underflow
@@ -1213,15 +1211,15 @@ void Base_c::setOverflowSecure(int32_t& reflVal, int16_t& refiVal, const int16_t
   @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
   @return GETY_POS code of member who is sending the intereested base msg type
 */
-GetyPos_c Base_c::senderGtp(IsoAgLib::BaseDataGroup_t rt_typeGrp) {
-  GetyPos_c c_result( 0xF, 0xF );
-	// simply answer first matching result if more than one type is selected
-	if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup1   ) != 0 ) return c_sendBase1Gtp;
-	if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup2   ) != 0 ) return c_sendBase2Gtp;
-	if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup3   ) != 0 ) return c_sendBase3Gtp;
-	if ( ( rt_typeGrp & IsoAgLib::BaseDataFuel     ) != 0 ) return c_sendFuelGtp;
-	if ( ( rt_typeGrp & IsoAgLib::BaseDataCalendar ) != 0 ) return c_sendCalendarGtp;
-	else return c_result;
+const GetyPos_c& Base_c::senderGtp(IsoAgLib::BaseDataGroup_t rt_typeGrp) {
+  GetyPos_c c_result( GetyPos_c::GetyPosUnspecified );
+  // simply answer first matching result if more than one type is selected
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup1   ) != 0 ) return c_sendBase1Gtp;
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup2   ) != 0 ) return c_sendBase2Gtp;
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup3   ) != 0 ) return c_sendBase3Gtp;
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataFuel     ) != 0 ) return c_sendFuelGtp;
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataCalendar ) != 0 ) return c_sendCalendarGtp;
+  else return c_result;
 }
 
 /**
@@ -1236,9 +1234,9 @@ uint8_t bcd2dec(uint8_t rb_bcd)
 */
 uint8_t dec2bcd(uint8_t rb_dec)
 {
-	const uint8_t ui8_v10 = rb_dec / 10;
-	const uint8_t ui8_v0  = rb_dec % 10;
-	const uint8_t ui8_result = ( ui8_v10 << 4 ) + ui8_v0;
+  const uint8_t ui8_v10 = rb_dec / 10;
+  const uint8_t ui8_v0  = rb_dec % 10;
+  const uint8_t ui8_result = ( ui8_v10 << 4 ) + ui8_v0;
   return ui8_result;
 }
 

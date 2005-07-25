@@ -59,8 +59,8 @@
 #include "istate_c.h"
 
 #ifdef USE_DIN_9684
-	#include "DIN9684/idinitem_c.h"
-	#include "DIN9684/idinserviceitem_c.h"
+  #include "DIN9684/idinitem_c.h"
+  #include "DIN9684/idinserviceitem_c.h"
 #endif
 #ifdef USE_ISO_11783
   #include "ISO11783/iisoitem_c.h"
@@ -185,8 +185,6 @@ public:
       which optional (!!) match the condition of address claim state;
     search MemberMonitor and ISOMonitor in order defined by ren_searchOrder
     @param rui8_nr member no to search for
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @param ren_searchOrder define search order
       (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
       (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
@@ -195,11 +193,11 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  bool existMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress = false
+  bool existMemberNr(uint8_t rui8_nr
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
-  ) {return SystemMgmt_c::existMemberNr(rui8_nr, rb_forceClaimedAddress
+  ) {return SystemMgmt_c::existMemberNr(rui8_nr
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , ren_protoOrder
     #endif
@@ -220,7 +218,7 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  bool existMemberGtp(iGetyPos_c rc_gtp, bool rb_forceClaimedAddress = false
+  bool existMemberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
@@ -278,12 +276,12 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  iMonitorItem_c& memberGtp(iGetyPos_c rc_gtp
+  iMonitorItem_c& memberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
   )
-  {return ((iMonitorItem_c&)(SystemMgmt_c::memberGtp(rc_gtp
+  {return ((iMonitorItem_c&)(SystemMgmt_c::memberGtp(rc_gtp, rb_forceClaimedAddress
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
   , ren_protoOrder
   #endif
@@ -365,7 +363,7 @@ public:
     )));};
 
 
-	#ifdef USE_DIN_9684
+  #ifdef USE_DIN_9684
   /**
     check if one of the own local DIN members is active with claimed address at ISO11783 or DIN9684;
     this variant is replaced during compile time by direct call to existActiveLocalMember,

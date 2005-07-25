@@ -112,13 +112,13 @@ namespace __IsoAgLib {
 */
 class MeasureProgBase_c : public ProcessElementBase_c {
 private:
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::slist<MeasureSubprog_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_MeasureSubprog;
   typedef STL_NAMESPACE::slist<MeasureSubprog_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_MeasureSubprogIterator;
-	#else
+  #else
   typedef STL_NAMESPACE::slist<MeasureSubprog_c> Vec_MeasureSubprog;
   typedef STL_NAMESPACE::slist<MeasureSubprog_c>::iterator Vec_MeasureSubprogIterator;
-	#endif
+  #endif
 
 public:
   /** allow explicit MeasureProgLocal_c the access to private elements */
@@ -137,7 +137,7 @@ public:
     ProcDataBase_c *const rpc_processData = NULL,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    GetyPos_c rc_gtp = GetyPos_c(0xF, 0xF) ) : ProcessElementBase_c(rpc_processData),
+    const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified ) : ProcessElementBase_c(rpc_processData),
       vec_measureSubprog() {init(rpc_processData, ren_progType, ri32_val, rc_gtp);};
   /**
     constructor which can optional set most element vars
@@ -150,7 +150,7 @@ public:
     ProcDataBase_c &rrefc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    GetyPos_c rc_gtp = GetyPos_c(0xF, 0xF)) : ProcessElementBase_c(rrefc_processData),
+    const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified) : ProcessElementBase_c(rrefc_processData),
       vec_measureSubprog() {init(&rrefc_processData, ren_progType, ri32_val, rc_gtp);};
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
@@ -163,7 +163,7 @@ public:
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    GetyPos_c rc_gtp = GetyPos_c(0xF, 0xF));
+    const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified);
   /**
     assignment of MeasureProgBase_c objects
     @param rrefc_src source MeasureProgBase_c instance
@@ -271,7 +271,7 @@ public:
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType,
     float rf_val,
-    GetyPos_c rc_gtp = GetyPos_c(0xF, 0xF));
+    const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified);
   /**
     deliver actual last received value
     @param rb_sendRequest choose wether a request for value update should be
@@ -321,7 +321,7 @@ public:
     return the c_gtp code for this measureprog
     @return GETY_POS of this measureprog
   */
-  const GetyPos_c gtp() const{return c_gtp;};
+  const GetyPos_c& gtp() const{return c_gtp;};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types
@@ -416,7 +416,7 @@ public:
     @param rc_gtp GETY_POS for exact specification of partner system
   */
   // This has something to do with the init failing for the iProcDataRemote_c object. -bac
-  void setGtp(GetyPos_c rc_gtp){c_gtp = rc_gtp;};
+  void setGtp(const GetyPos_c& rc_gtp){c_gtp = rc_gtp;};
 
   /**
     process a message;
@@ -583,7 +583,7 @@ private: // Private methods
     (for easy <,>,...)
     @return single comparison value (depends on GETY_POS and Prog-Type)
   */
-  int32_t calcCompVal()const {return (c_gtp.getCombinedIso() * en_progType);};
+  int32_t calcCompVal()const {return ( ( (c_gtp.getGety() << 4) | (c_gtp.getPos()) ) * en_progType);};
   /**
     deliver to rb_mod according measure val type
 

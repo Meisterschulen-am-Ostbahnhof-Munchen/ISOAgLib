@@ -120,9 +120,9 @@ typedef SINGLETON_DERIVED(Base_c,ElementBase_c) SingletonBase_c;
 */
 class Base_c : public SingletonBase_c {
 public: // Public methods
-	/* ********************************************* */
+  /* ********************************************* */
   /** \name Management Functions for class Base_c  */
-	/*@{*/
+  /*@{*/
 
   /**
     initialise element which can't be done during construct;
@@ -132,9 +132,9 @@ public: // Public methods
     possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
     @param rpc_gtp optional pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-		@param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  void init(GetyPos_c* rpc_gtp = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing );
+  void init(const GetyPos_c* rpc_gtp = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing );
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
@@ -153,19 +153,19 @@ public: // Public methods
     @return true -> all planned activities performed in allowed time
   */
   bool timeEvent( void );
-	/** check if filter boxes shall be created - create only ISO or DIN filters based
-			on active local idents which has already claimed an address
-			--> avoid to much Filter Boxes
-		*/
-	void checkCreateReceiveFilter( void );
+  /** check if filter boxes shall be created - create only ISO or DIN filters based
+      on active local idents which has already claimed an address
+      --> avoid to much Filter Boxes
+    */
+  void checkCreateReceiveFilter( void );
 
   /**
     config the Base_c object after init -> set pointer to gtp and
     config send/receive of different base msg types
     @param rpc_gtp pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-		@param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  void config(GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection);
+  void config(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection);
 
   /** destructor for Base_c which has nothing to do */
   virtual ~Base_c() { close();};
@@ -176,7 +176,7 @@ public: // Public methods
     possible errors:
         * Err_c::lbsBaseSenderConflict base msg recevied from different member than before
     @see CANIO_c::processMsg
-		@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+    @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
   */
   virtual bool processMsg();
 
@@ -200,13 +200,13 @@ public: // Public methods
     @see CANPkgExt_c::getData
     @see CANIO_c::operator<<
   */
-  void isoSendCalendar(GetyPos_c rc_gtp);
+  void isoSendCalendar(const GetyPos_c& rc_gtp);
   #endif
-	/*@}*/
+  /*@}*/
 
   /* ******************************************* */
   /** \name Set Values for periodic send on BUS  */
-	/*@{*/
+  /*@{*/
 
   /**
     set the value of real speed (measured by radar)
@@ -259,7 +259,7 @@ public: // Public methods
   */
   void setPtoFront(int16_t ri16_val){i16_ptoFront = ri16_val;};
 
-	#ifdef USE_DIN_9684
+  #ifdef USE_DIN_9684
   /** deliver rear left draft */
   void setRearLeftDraft( int16_t ri16_val ) { i16_rearLeftDraft = ri16_val;};
   /** deliver rear right draft */
@@ -272,7 +272,7 @@ public: // Public methods
   void setFuelRate( int16_t ri16_val ) { i16_fuelRate = ri16_val;};
   /** deliver fuel temperature °C */
   void setFuelTemperature( uint8_t rui8_val ) { ui8_fuelTemperature = rui8_val;};
-	#endif
+  #endif
   #ifdef USE_ISO_11783
   /** set front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
@@ -367,11 +367,11 @@ public: // Public methods
   */
   void setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second);
 
-	/*@}*/
+  /*@}*/
 
-	/* ****************************************************** */
+  /* ****************************************************** */
   /** \name Retrieve Values which are sent from other ECUs  */
-	/*@{*/
+  /*@{*/
 
   /**
     get the value of real speed (measured by radar)
@@ -497,9 +497,9 @@ public: // Public methods
     @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
     @return GETY_POS code of member who is sending the intereested base msg type
   */
-  GetyPos_c senderGtp(IsoAgLib::BaseDataGroup_t rt_typeGrp);
+  const GetyPos_c& senderGtp(IsoAgLib::BaseDataGroup_t rt_typeGrp);
 
-	#ifdef USE_DIN_9684
+  #ifdef USE_DIN_9684
   /** deliver rear left draft */
   int rearLeftDraft() const { return i16_rearLeftDraft;};
   /** deliver rear right draft */
@@ -512,8 +512,8 @@ public: // Public methods
   int fuelRate() const { return i16_fuelRate;};
   /** deliver fuel temperature °C */
   int fuelTemperature() const { return ui8_fuelTemperature;};
-	#endif
-	#ifdef USE_ISO_11783
+  #endif
+  #ifdef USE_ISO_11783
   /** deliver front hitch draft
     * @return front hitch draft [-320.000N;322.550N]; 1N/bit
     */
@@ -591,36 +591,36 @@ public: // Public methods
   bool maintainPowerForImplInWork() const
     { return b_maintainPowerForImplInWork;};
 
-	/** deliver raw GPS Latitude */
-	int32_t getGpsLatitudeRaw( void ) const { return i32_latitudeRaw; };
-	/** deliver raw GPS Longitude */
-	int32_t getGpsLongitudeRaw( void ) const { return i32_longitudeRaw; };
-	#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
-	/** deliver Minute GPS Latitude */
-	float getGpsLatitudeMinute( void ) const { return ( ( float( i32_latitudeRaw ) / 1000000.0F ) - 210.0F ); };
-	/** deliver Minute GPS Longitude */
-	float getGpsLongitudeMinute( void ) const { return ( ( float( i32_longitudeRaw ) / 1000000.0F ) - 210.0F ); };
-	#endif
-	/** deliver GPS altitude - ?? [cm] ??
-		\todo check for correct altitude unit
-		*/
-	uint32_t getGpsAltitude( void ) const { return ui32_altitude; };
-	/** deliver GPS receive qualitiy
-		\todo probably wrong decoded -> please correct decoding in case you have better sources
-	*/
-	IsoAgLib::IsoGpsRecMode_t getGpsMode( void ) const { return t_gpsMode;};
-	/** deliver GPS speed
-		\todo probably wrong decoded -> please correct decoding in case you have better sources
-		*/
-	int16_t getGpsSpeed( void ) const { return i16_speedGps;};
-	/** deliver GPS Heading
-		\todo probably wrong decoded -> please correct decoding in case you have better sources
-		*/
-	int16_t getGpsHeading( void ) const { return i16_headingGps; };
+  /** deliver raw GPS Latitude */
+  int32_t getGpsLatitudeRaw( void ) const { return i32_latitudeRaw; };
+  /** deliver raw GPS Longitude */
+  int32_t getGpsLongitudeRaw( void ) const { return i32_longitudeRaw; };
+  #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+  /** deliver Minute GPS Latitude */
+  float getGpsLatitudeMinute( void ) const { return ( ( float( i32_latitudeRaw ) / 1000000.0F ) - 210.0F ); };
+  /** deliver Minute GPS Longitude */
+  float getGpsLongitudeMinute( void ) const { return ( ( float( i32_longitudeRaw ) / 1000000.0F ) - 210.0F ); };
+  #endif
+  /** deliver GPS altitude - ?? [cm] ??
+    \todo check for correct altitude unit
+    */
+  uint32_t getGpsAltitude( void ) const { return ui32_altitude; };
+  /** deliver GPS receive qualitiy
+    \todo probably wrong decoded -> please correct decoding in case you have better sources
+  */
+  IsoAgLib::IsoGpsRecMode_t getGpsMode( void ) const { return t_gpsMode;};
+  /** deliver GPS speed
+    \todo probably wrong decoded -> please correct decoding in case you have better sources
+    */
+  int16_t getGpsSpeed( void ) const { return i16_speedGps;};
+  /** deliver GPS Heading
+    \todo probably wrong decoded -> please correct decoding in case you have better sources
+    */
+  int16_t getGpsHeading( void ) const { return i16_headingGps; };
 
-	#endif
+  #endif
 
-	/*@}*/
+  /*@}*/
 
 
 private:
@@ -633,10 +633,10 @@ private:
     NEVER instantiate a variable of type Base_c within application
     only access Base_c via getBaseInstance() or getBaseInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
     @param rpc_gtp optional pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-		@param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  Base_c(GetyPos_c* rpc_gtp = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing )
-		{ init( rpc_gtp, rt_mySendSelection );};
+  Base_c(const GetyPos_c* rpc_gtp = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing )
+    { init( rpc_gtp, rt_mySendSelection );};
   /**
     deliver reference to data pkg
     @return reference to the member BasePkg_c, which encapsulates the CAN send structure
@@ -688,9 +688,9 @@ private:
     -> use this to calculate new time
   */
   int32_t i32_lastCalendarSet;
-	#ifdef USE_DIN_9684
-	/** flag to detect, if receive filters for DIN are created */
-	bool b_dinFilterCreated;
+  #ifdef USE_DIN_9684
+  /** flag to detect, if receive filters for DIN are created */
+  bool b_dinFilterCreated;
   /** NEW from AGCO Fendt Vario: rear left draft */
   int16_t i16_rearLeftDraft;
   /** NEW from AGCO Fendt Vario: rear right draft */
@@ -703,10 +703,10 @@ private:
   int16_t i16_fuelRate;
   /** NEW from AGCO Fendt Vario: fuel temperature °C */
   uint8_t ui8_fuelTemperature;
-	#endif
+  #endif
   #ifdef USE_ISO_11783
-	/** flag to detect, if receive filters for ISO are created */
-	bool b_isoFilterCreated;
+  /** flag to detect, if receive filters for ISO are created */
+  bool b_isoFilterCreated;
   /** last time of ISO base_1 msg [100ms] */
   uint8_t ui8_lastIsoBase1;
   /** last time of ISO base_2 msg [100ms] */
@@ -754,24 +754,24 @@ private:
     * for implement in work state was requested */
   bool b_maintainPowerForImplInWork;
 
-	/** raw GPS latitude - Lat_Minute := ( Lat_Raw / 1000000 ) - 210; Lat_Min < 0 --> South */
-	int32_t i32_latitudeRaw;
-	/** raw GPS longitude - Long_Minute := ( Long_Raw / 1000000 ) - 210; Long_Min < 0 --> West */
-	int32_t i32_longitudeRaw;
-	/** raw GPS speed (int16_t) - [m/s]??
-		\todo check for correct decoding of GPS speed
-		*/
-	int16_t i16_speedGps;
-	/** raw GPS heading ( ?? )
-		\todo check for correct decoding of GPS heading
-		*/
-	int16_t i16_headingGps;
-	/** GPS altitude - ?? [cm] ??
-		\todo check for correct altitude unit
-		*/
-	uint32_t ui32_altitude;
-	/** GPS receive qualitiy */
-	IsoAgLib::IsoGpsRecMode_t t_gpsMode;
+  /** raw GPS latitude - Lat_Minute := ( Lat_Raw / 1000000 ) - 210; Lat_Min < 0 --> South */
+  int32_t i32_latitudeRaw;
+  /** raw GPS longitude - Long_Minute := ( Long_Raw / 1000000 ) - 210; Long_Min < 0 --> West */
+  int32_t i32_longitudeRaw;
+  /** raw GPS speed (int16_t) - [m/s]??
+    \todo check for correct decoding of GPS speed
+    */
+  int16_t i16_speedGps;
+  /** raw GPS heading ( ?? )
+    \todo check for correct decoding of GPS heading
+    */
+  int16_t i16_headingGps;
+  /** GPS altitude - ?? [cm] ??
+    \todo check for correct altitude unit
+    */
+  uint32_t ui32_altitude;
+  /** GPS receive qualitiy */
+  IsoAgLib::IsoGpsRecMode_t t_gpsMode;
   #endif
 
   /** distance */
@@ -798,7 +798,7 @@ private:
   int16_t i16_engine;
 
   /** gtp which act as sender of base msg */
-  GetyPos_c* pc_gtp;
+  const GetyPos_c* pc_gtp;
 
   /** bit_calendar */
   struct {
@@ -810,8 +810,8 @@ private:
     uint16_t second : 6;
   } bit_calendar;
 
-	/** bitmask with selection of all base data types to send */
-	IsoAgLib::BaseDataGroup_t t_mySendSelection;
+  /** bitmask with selection of all base data types to send */
+  IsoAgLib::BaseDataGroup_t t_mySendSelection;
   /** GTP of base1 sender */
   GetyPos_c c_sendBase1Gtp;
   /** GTP of base2 sender */

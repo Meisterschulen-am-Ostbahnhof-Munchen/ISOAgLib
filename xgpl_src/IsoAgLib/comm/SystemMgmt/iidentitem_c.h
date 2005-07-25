@@ -62,7 +62,7 @@
 #include <IsoAgLib/util/igetypos_c.h>
 
 #ifdef USE_DIN_9684
-	#include "DIN9684/idinitem_c.h"
+  #include "DIN9684/idinitem_c.h"
 #endif
 
 #ifdef USE_ISO_11783
@@ -116,27 +116,27 @@ public:
     @param rpc_gtp optional pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
     @param rpb_name optional pointer to the name of this identity (DIN or ISO)
     @param ren_protoOrder optional selection of wanted protocol type ( IState_c::DinOnly, IState_c::IsoOnly)
-		@param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
-			in case an address claim for the slave devices shall be sent by this ECU, they
-			must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-		@param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-			IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+    @param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
+      in case an address claim for the slave devices shall be sent by this ECU, they
+      must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
+    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
+      IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iIdentItem_c(iGetyPos_c* rpc_gtp = NULL,
       const uint8_t* rpb_name = NULL
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       ,IState_c::protoOrder_t ren_protoOrder = IState_c::DinOnly
-			#endif
-			#ifdef USE_ISO_11783
-      ,int8_t ri8_slaveCount = -1, iISOName_c* rpc_slaveIsoNameList = NULL
+      #endif
+      #ifdef USE_ISO_11783
+      ,int8_t ri8_slaveCount = -1, const iGetyPos_c* rpc_slaveIsoNameList = NULL
       #endif
       , int ri_singletonVecKey = 0
       ) : IdentItem_c(rpc_gtp, rpb_name
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       , ren_protoOrder
-			#endif
-			#ifdef USE_ISO_11783
+      #endif
+      #ifdef USE_ISO_11783
       , ri8_slaveCount, rpc_slaveIsoNameList
       #endif
       , ri_singletonVecKey) {};
@@ -151,18 +151,18 @@ public:
         SA for self conf ISO device) (default 254 for free self-conf)
     @param rui16_saEepromAdr optional adress in EEPROM, where the according SA is stored
         (default 0xFFFF for NO EEPROM store)
-		@param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
-			in case an address claim for the slave devices shall be sent by this ECU, they
-			must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-		@param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-			IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+    @param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
+      in case an address claim for the slave devices shall be sent by this ECU, they
+      must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
+    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
+      IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iIdentItem_c(iGetyPos_c* rpc_gtp,
       const uint8_t* rpb_name,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa = 254, uint16_t rui16_saEepromAdr = 0xFFFF,
-      int8_t ri8_slaveCount = -1, iISOName_c* rpc_slaveIsoNameList = NULL,
+      int8_t ri8_slaveCount = -1, const iGetyPos_c* rpc_slaveIsoNameList = NULL,
       int ri_singletonVecKey = 0
       ) : IdentItem_c(rpc_gtp, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey) {};
 #endif
@@ -176,17 +176,17 @@ public:
         SA for self conf ISO device) (default 254 for free self-conf)
     @param rui16_saEepromAdr optional adress in EEPROM, where the according SA is stored
         (default 0xFFFF for NO EEPROM store)
-		@param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
-			in case an address claim for the slave devices shall be sent by this ECU, they
-			must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-		@param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-			IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+    @param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
+      in case an address claim for the slave devices shall be sent by this ECU, they
+      must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
+    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
+      IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iIdentItem_c(iGetyPos_c* rpc_gtp,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr = 0xFFFF,
-      int8_t ri8_slaveCount = -1, iISOName_c* rpc_slaveIsoNameList = NULL,
+      int8_t ri8_slaveCount = -1, const iGetyPos_c* rpc_slaveIsoNameList = NULL,
       int ri_singletonVecKey = 0
       ) : IdentItem_c(rpc_gtp, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey) {};
   /**
@@ -204,17 +204,17 @@ public:
         (default 0xFFFF for NO EEPROM store)
     @param rb_funcInst function instance of this member (default 0)
     @param rb_ecuInst ECU instance of this member (default 0)
-		@param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
-			in case an address claim for the slave devices shall be sent by this ECU, they
-			must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-		@param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-			IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+    @param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
+      in case an address claim for the slave devices shall be sent by this ECU, they
+      must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
+    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
+      IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iIdentItem_c(iGetyPos_c* rpc_gtp, const uint8_t* rpb_dinName,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
     uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, iISOName_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
+    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const iGetyPos_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
    : IdentItem_c(rpc_gtp, rpb_dinName, rb_selfConf, rui8_indGroup, rb_func, rui16_manufCode, rui32_serNo,
       rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey) {};
   /**
@@ -237,7 +237,7 @@ public:
   iIdentItem_c(iGetyPos_c* rpc_gtp,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
     uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, iISOName_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
+    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const iGetyPos_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
    : IdentItem_c(rpc_gtp, rb_selfConf, rui8_indGroup, rb_func, rui16_manufCode, rui32_serNo,
       rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey) {};
 #endif
@@ -271,18 +271,18 @@ public:
         SA for self conf ISO device) (default 254 for free self-conf)
     @param rui16_saEepromAdr optional adress in EEPROM, where the according SA is stored
         (default 0xFFFF for NO EEPROM store)
-		@param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
-			in case an address claim for the slave devices shall be sent by this ECU, they
-			must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-		@param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-			IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+    @param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
+      in case an address claim for the slave devices shall be sent by this ECU, they
+      must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
+    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
+      IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void start(iGetyPos_c* rpc_gtp,
       const uint8_t* rpb_name,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa = 254, uint16_t rui16_saEepromAdr = 0xFFFF,
-			int8_t ri8_slaveCount = -1, iISOName_c* rpc_slaveIsoNameList = NULL,
+      int8_t ri8_slaveCount = -1, const iGetyPos_c* rpc_slaveIsoNameList = NULL,
       int ri_singletonVecKey = 0
       ) { IdentItem_c::start(rpc_gtp, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey);};
   /**
@@ -293,17 +293,17 @@ public:
         SA for self conf ISO device) (default 254 for free self-conf)
     @param rui16_saEepromAdr optional adress in EEPROM, where the according SA is stored
         (default 0xFFFF for NO EEPROM store)
-		@param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
-			in case an address claim for the slave devices shall be sent by this ECU, they
-			must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-		@param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-			IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+    @param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
+      in case an address claim for the slave devices shall be sent by this ECU, they
+      must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
+    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
+      IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void start(iGetyPos_c* rpc_gtp,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr = 0xFFFF,
-			int8_t ri8_slaveCount = -1, iISOName_c* rpc_slaveIsoNameList = NULL,
+      int8_t ri8_slaveCount = -1, const iGetyPos_c* rpc_slaveIsoNameList = NULL,
       int ri_singletonVecKey = 0
       ) { IdentItem_c::start(rpc_gtp, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey);};
   /**
@@ -321,17 +321,17 @@ public:
         (default 0xFFFF for NO EEPROM store)
     @param rb_funcInst function instance of this member (default 0)
     @param rb_ecuInst ECU instance of this member (default 0)
-		@param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
-			in case an address claim for the slave devices shall be sent by this ECU, they
-			must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-		@param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-			IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+    @param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
+      in case an address claim for the slave devices shall be sent by this ECU, they
+      must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
+    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
+      IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void start(iGetyPos_c* rpc_gtp, const uint8_t* rpb_dinName,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
     uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, iISOName_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
+    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const iGetyPos_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
    { IdentItem_c::start(rpc_gtp, rpb_dinName, rb_selfConf, rui8_indGroup, rb_func, rui16_manufCode, rui32_serNo,
       rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey);};
   /**
@@ -349,17 +349,17 @@ public:
         (default 0xFFFF for NO EEPROM store)
     @param rb_funcInst function instance of this member (default 0)
     @param rb_ecuInst ECU instance of this member (default 0)
-		@param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
-			in case an address claim for the slave devices shall be sent by this ECU, they
-			must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
-		@param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
-			IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+    @param ri8_slaveCount amount of attached slave devices; default -1 == no master state;
+      in case an address claim for the slave devices shall be sent by this ECU, they
+      must get their own IdentItem_c instance ( then with default value -1 for ri8_slaveCount )
+    @param rpc_slaveIsoNameList pointer to list of iISOName_c values, where the slave devices are defined.
+      IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void start(iGetyPos_c* rpc_gtp,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
     uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, iISOName_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
+    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const iGetyPos_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
    { IdentItem_c::start(rpc_gtp, rb_selfConf, rui8_indGroup, rb_func, rui16_manufCode, rui32_serNo,
       rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey);};
 #endif

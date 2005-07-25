@@ -99,7 +99,7 @@ namespace __IsoAgLib {
   @param rui16_adrVect ADRESSBELVEKT used by this item
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-DINServiceItem_c::DINServiceItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, uint8_t rb_status, uint16_t rui16_adrVect, int ri_singletonVecKey)
+DINServiceItem_c::DINServiceItem_c(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr, uint8_t rb_status, uint16_t rui16_adrVect, int ri_singletonVecKey)
   : MonitorItem_c(ri32_time, rc_gtp, rui8_nr, (IState_c::itemState_t)rb_status, ri_singletonVecKey ), c_adrvect(rui16_adrVect)
 {}
 
@@ -164,7 +164,7 @@ void DINServiceItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLe
   @param rui16_adrVect ADRESSBELVEKT used by this item
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void DINServiceItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
+void DINServiceItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
         itemState_t ren_status, uint16_t rui16_adrVect,  int ri_singletonVecKey )
 {
    MonitorItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, ri_singletonVecKey);

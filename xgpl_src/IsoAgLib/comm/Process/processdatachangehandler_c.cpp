@@ -111,7 +111,7 @@ iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c* EventSource_c::makeIProcDa
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processSetpointSet( EventSource_c /* rc_src is intentionally unused in base class */, int32_t /* ri32_val is intentionally unused in base class */,
-                                                     iGetyPos_c /* rc_callerGetyPos is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
+                                                     const iGetyPos_c& /* rc_callerGetyPos is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }
@@ -123,7 +123,7 @@ bool ProcessDataChangeHandler_c::processSetpointSet( EventSource_c /* rc_src is 
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processMeasurementReset( EventSource_c /* rc_src is intentionally unused in base class */, int32_t /* ri32_val is intentionally unused in base class */,
-                                                          iGetyPos_c /* rc_callerGetyPos is intentionally unused in base class */ ) {
+                                                          const iGetyPos_c& /* rc_callerGetyPos is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }
@@ -137,7 +137,7 @@ bool ProcessDataChangeHandler_c::processMeasurementReset( EventSource_c /* rc_sr
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_src is intentionally unused in base class */, int32_t /* ri32_val is intentionally unused in base class */,
-                                                           iGetyPos_c /* rc_callerGetyPos is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
+                                                           const iGetyPos_c& /* rc_callerGetyPos is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }
@@ -152,7 +152,7 @@ bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_s
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_src is intentionally unused in base class */, float /* rf_val is intentionally unused in base class */,
-                                                           iGetyPos_c /* rc_callerGetyPos is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
+                                                           const iGetyPos_c& /* rc_callerGetyPos is intentionally unused in base class */, bool /* rb_change is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }
@@ -167,7 +167,7 @@ bool ProcessDataChangeHandler_c::processMeasurementUpdate( EventSource_c /* rc_s
   * @return true -> handler class reacted on change event
   */
 bool ProcessDataChangeHandler_c::processSetpointResponse( EventSource_c /* rc_src is intentionally unused in base class */, int32_t /* ri32_val is intentionally unused in base class */,
-                                                          iGetyPos_c /* rc_callerGetyPos is intentionally unused in base class */ ) {
+                                                          const iGetyPos_c& /* rc_callerGetyPos is intentionally unused in base class */ ) {
   // empty body -> allow application class to just implement some of the possible handler methods
   return false;
 }

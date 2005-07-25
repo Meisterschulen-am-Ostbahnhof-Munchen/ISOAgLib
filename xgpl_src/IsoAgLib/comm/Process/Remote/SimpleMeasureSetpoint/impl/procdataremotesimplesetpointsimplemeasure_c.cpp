@@ -126,10 +126,10 @@ ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleM
        uint8_t rui8_inst,
        uint8_t rui8_zaehlnum,
 #endif
-       GetyPos_c rc_gtp,
+       const GetyPos_c& rc_gtp,
        uint8_t rui8_pri,
-       GetyPos_c rc_ownerGtp,
-       GetyPos_c* rpc_commanderGtp,
+       const GetyPos_c& rc_ownerGtp,
+       const GetyPos_c* rpc_commanderGtp,
        IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
        int ri_singletonVecKey)
   : ProcDataRemoteBase_c(
@@ -175,10 +175,10 @@ void ProcDataRemoteSimpleSetpointSimpleMeasure_c::init(
                                                        uint8_t rui8_inst,
                                                        uint8_t rui8_zaehlnum,
 #endif
-                                                       GetyPos_c rc_gtp,
+                                                       const GetyPos_c& rc_gtp,
                                                        uint8_t rui8_pri,
-                                                       GetyPos_c rc_ownerGtp,
-                                                       GetyPos_c* rpc_commanderGtp,
+                                                       const GetyPos_c& rc_ownerGtp,
+                                                       const GetyPos_c* rpc_commanderGtp,
                                                        IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                                        int ri_singletonVecKey)
 {

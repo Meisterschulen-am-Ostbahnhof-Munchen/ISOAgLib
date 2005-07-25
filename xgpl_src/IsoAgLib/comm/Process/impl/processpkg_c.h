@@ -1,7 +1,7 @@
 /***************************************************************************
-                          processpkg_c.h - data object for Process-Data 
+                          processpkg_c.h - data object for Process-Data
                                           messages
-                             -------------------                                         
+                             -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef PROCESS_PKG_H
@@ -141,11 +141,6 @@ public:
   */
   uint8_t lis()const{return bit_data.ui8_lis;};
   /**
-    deliver GETY of process msg (machine type specific number of Proces-Data table)
-    @return GETY value of message
-  */
-  uint8_t gety()const{return bit_data.c_gtp.getGety();};
-  /**
     deliver WERT of process msg (row of Process-Data table)
     @return  value of message
   */
@@ -179,19 +174,19 @@ public:
 
 #ifdef USE_ISO_11783
    /**
-    deliver Cmd of process msg 
+    deliver Cmd of process msg
     @return Command value of message
   */
   uint8_t cmd()const{return bit_data.ui8_Command;};
 
   /**
-    deliver Element Number of process msg 
+    deliver Element Number of process msg
     @return Element Number value of message
   */
   uint16_t element()const{return bit_data.ui16_Element;};
 
     /**
-    deliver DDI of process msg 
+    deliver DDI of process msg
     @return Data Dictionary Identifier value of message
   */
   uint16_t DDI()const{return bit_data.ui16_DDI;};
@@ -210,18 +205,23 @@ public:
   */
   bool isSpecCmd(proc_specCmd_t ren_checkCmd)const;
 
+#ifdef USE_DIN_9684
   /**
     deliver POS of process msg (mounting position; important for more active members of same GETY)
     @return POS value of message
   */
   uint8_t pos()const{return bit_data.c_gtp.getPos();};
-#ifdef USE_DIN_9684  
+  /**
+    deliver GETY of process msg (machine type specific number of Proces-Data table)
+    @return GETY value of message
+  */
+  uint8_t gety()const{return bit_data.c_gtp.getGety();};
   /**
     deliver gety and pos as gtp
     only used for DIN messages, ISO: gtp not in message
     @return GETY_POS value of message
   */
-  GetyPos_c gtp()const{return bit_data.c_gtp;};
+  const GetyPos_c& gtp()const{return bit_data.c_gtp;};
 #endif
 
   /**
@@ -301,7 +301,7 @@ public:
      @exception containerElementNonexistant
   */
   MonitorItem_c& memberSend()const;
-      
+
 
   /* *********************** */
   /* ***setting of values*** */
@@ -311,7 +311,7 @@ public:
     @param rb_val new PRI value for message
   */
   void setPri(uint8_t rb_val) {
-    bit_data.ui8_pri = rb_val; 
+    bit_data.ui8_pri = rb_val;
     setIdentType(Ident_c::StandardIdent);
   };
   /**
@@ -337,11 +337,6 @@ public:
     @param rb_val new LIS value for message
   */
   void setLis(uint8_t rb_val){bit_data.ui8_lis = rb_val;};
-  /**
-    set value GETY of process msg
-    @param rb_val new GETY value for message
-  */
-  void setGety(uint8_t rb_val){bit_data.c_gtp.setGety(rb_val);};
   /**
     set value WERT of process msg
     @param rb_val new WERT value for message
@@ -392,20 +387,25 @@ public:
   void set_Element(uint16_t rb_Element){bit_data.ui16_Element = rb_Element;};
 
 #endif
-  
+
+
+#ifdef USE_DIN_9684
   /**
     set value POS of process msg
     @param rb_val new POS value for message
   */
   void setPos(uint8_t rb_val){bit_data.c_gtp.setPos(rb_val);};
-
-#ifdef USE_DIN_9684
+  /**
+    set value GETY of process msg
+    @param rb_val new GETY value for message
+  */
+  void setGety(uint8_t rb_val){bit_data.c_gtp.setGety(rb_val);};
   /**
     set values gety and pos from gtp
     only used for DIN messages, ISO: gtp not in message
     @param rc_val new GETY_POS value for message
   */
-  void setGtp(GetyPos_c rc_val){bit_data.c_gtp = rc_val;};
+  void setGtp(const GetyPos_c& rc_val){bit_data.c_gtp = rc_val;};
 #endif
 
   /**
@@ -480,13 +480,13 @@ public:
     @param rc_gtp GETY_POS of terminal, for which the GETY_POS of data is converted
     @param rui8_useProcGtp GTP for process data (optional, default to terminal gtp)
   */
-  void useTermGtpForLocalProc(GetyPos_c rc_gtp, GetyPos_c rc_useProcGtp = GetyPos_c(0xF, 0xF));
-  
-  /** stores the command in generalized form */  
+  void useTermGtpForLocalProc(const GetyPos_c& rc_gtp, const GetyPos_c& rc_useProcGtp = GetyPos_c::GetyPosUnspecified);
+
+  /** stores the command in generalized form */
   GeneralCommand_c c_generalCommand;
-  
+
 private: // Private methods
-  
+
   /**
     overloaded virtual function to translate flag values to data string;
     needed for sending informations from this object via CANIO_c on CAN BUS,
@@ -514,10 +514,11 @@ private: // Private attributes
     uint16_t ui8_lis : 3;
     /** PD for data */
     uint16_t b_pd : 2;
-
+    #ifdef USE_DIN_9684
     /** GetyPos for data */
     GetyPos_c c_gtp;
-    
+    #endif
+
     /** MOD for data */
     uint16_t b_mod : 3;
     /** D for data */
@@ -550,7 +551,7 @@ private: // Private attributes
     data for communication on CAN BUS (default 0xFF for off)
   */
   GetyPos_c c_specialTermUseProcGtp;
- 
+
 };
 
 }

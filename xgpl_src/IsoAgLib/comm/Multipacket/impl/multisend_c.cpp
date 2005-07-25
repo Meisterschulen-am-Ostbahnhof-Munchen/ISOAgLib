@@ -94,15 +94,19 @@
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 
 #ifdef DEBUG
-	#ifdef SYSTEM_PC
-		#include <iostream>
-	#else
-		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#endif
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
 #endif
 
 #ifdef USE_DIN_TERMINAL
   #include <IsoAgLib/comm/DIN_Terminal/impl/dinmaskupload_c.h>
+#endif
+
+#ifdef USE_ISO_11783
+//  #include <IsoAgLib/comm/ISO_Terminal/ivtobjectstring_c.h>
 #endif
 
 #if defined( IOP_OUTPUT ) && defined( SYSTEM_PC )
@@ -123,6 +127,154 @@ namespace __IsoAgLib {
 #endif
 
 
+#ifdef USE_ISO_11783
+
+/** @todo set the wanted sensemaking retries/timeout values here!!! */
+#define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
+#define DEF_TimeOut_ChangeChildPosition 1500 /* 1,5 seconds are stated in F.1 (page 96) */
+#define DEF_Retries_TPCommands 2
+#define DEF_Retries_NormalCommands 2
+
+
+/** This is mostly used for debugging now... */
+SendUploadBase_c::SendUploadBase_c (uint8_t* rpui8_buffer, uint32_t rui32_bufferSize)
+{
+  /// Use BUFFER - NOT MultiSendStreamer!
+  vec_uploadBuffer.reserve (rui32_bufferSize);
+
+  uint32_t i=0;
+  for (; i < rui32_bufferSize; i++) {
+    vec_uploadBuffer.push_back (*rpui8_buffer);
+    rpui8_buffer++;
+  }
+  for (; i < 8; i++) {
+    vec_uploadBuffer.push_back (0xFF);
+  }
+
+  ui8_retryCount = 0; // hacked, no retry here!!!
+
+  ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
+
+  #ifdef DEBUG_HEAP_USEAGE
+  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
+  {
+    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
+    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << "\r\n";
+  }
+  #endif
+}
+
+
+/**
+  >>StringUpload<< Constructors ( Copy and Reference! )
+*/
+SendUploadBase_c::SendUploadBase_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
+{
+  // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
+  uint16_t strLen = (CNAMESPACE::strlen(rpc_string) < overrideSendLength) ? CNAMESPACE::strlen(rpc_string) : overrideSendLength;
+
+  /// Use BUFFER - NOT MultiSendStreamer!
+  vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
+
+  vec_uploadBuffer.push_back (ui8_cmdByte ); /* Default of ui8_cmdByte is: Command: Command --- Parameter: Change String Value (TP) */
+  vec_uploadBuffer.push_back (rui16_objId & 0xFF);
+  vec_uploadBuffer.push_back (rui16_objId >> 8);
+  vec_uploadBuffer.push_back (strLen & 0xFF);
+  vec_uploadBuffer.push_back (strLen >> 8);
+  int i=0;
+  for (; i < strLen; i++) {
+    vec_uploadBuffer.push_back (*rpc_string);
+    rpc_string++;
+  }
+  for (; i < 3; i++) {
+    // at least 3 bytes from the string have to be written, if not, fill with 0xFF, so the pkg-len is 8!
+    vec_uploadBuffer.push_back (0xFF);
+  }
+
+  if ((5+strLen) < 9)
+    ui8_retryCount = DEF_Retries_NormalCommands;
+  else
+    ui8_retryCount = DEF_Retries_TPCommands;
+
+  ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
+
+  #ifdef DEBUG_HEAP_USEAGE
+  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
+  {
+    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
+    getRs232Instance() << "ISOTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << "\r\n";
+  }
+  #endif
+}
+
+
+
+/**
+  Constructor used for "normal" 8-byte CAN-Pkgs!
+*/
+SendUploadBase_c::SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout)
+{
+  vec_uploadBuffer.reserve (8);
+
+  vec_uploadBuffer.push_back (byte1);
+  vec_uploadBuffer.push_back (byte2);
+  vec_uploadBuffer.push_back (byte3);
+  vec_uploadBuffer.push_back (byte4);
+  vec_uploadBuffer.push_back (byte5);
+  vec_uploadBuffer.push_back (byte6);
+  vec_uploadBuffer.push_back (byte7);
+  vec_uploadBuffer.push_back (byte8);
+
+  ui8_retryCount = DEF_Retries_NormalCommands;
+  ui32_uploadTimeout = rui32_timeout;
+}
+
+
+/**
+  Constructor used for "ChangeChildPosition" >> 9 <<-byte CAN-Pkgs!
+  -- Parameter "timeOut" only there as else the signature would be the same compared to 8byte+timeOut constructor!
+  -- simply always pass "DEF_TimeOut_ChangeChildPosition"
+*/
+SendUploadBase_c::SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
+{
+  /// Use BUFFER - NOT MultiSendStreamer!
+  vec_uploadBuffer.reserve (9);
+
+  vec_uploadBuffer.push_back (byte1);
+  vec_uploadBuffer.push_back (byte2);
+  vec_uploadBuffer.push_back (byte3);
+  vec_uploadBuffer.push_back (byte4);
+  vec_uploadBuffer.push_back (byte5);
+  vec_uploadBuffer.push_back (byte6);
+  vec_uploadBuffer.push_back (byte7);
+  vec_uploadBuffer.push_back (byte8);
+  vec_uploadBuffer.push_back (byte9);
+
+  ui8_retryCount = DEF_Retries_TPCommands;
+  ui32_uploadTimeout = rui32_timeout;
+}
+
+
+const SendUploadBase_c& SendUploadBase_c::operator= (const SendUploadBase_c& ref_source)
+{
+  vec_uploadBuffer = ref_source.vec_uploadBuffer;
+  ui8_retryCount = ref_source.ui8_retryCount;
+  ui32_uploadTimeout = ref_source.ui32_uploadTimeout;
+  return ref_source;
+}
+
+
+SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& ref_source)
+  : vec_uploadBuffer (ref_source.vec_uploadBuffer)
+  , ui8_retryCount (ref_source.ui8_retryCount)
+  , ui32_uploadTimeout (ref_source.ui32_uploadTimeout)
+{}
+
+#endif ///< block for SendUploadBase_c only in case of USE_ISO_11783
+
+  /*************************************/
+ /**** MultiSend_c Implementation ****/
+/*************************************/
 
 /// SendStream subclass implementation
 //////////////////////////////////////
@@ -199,7 +351,7 @@ MultiSend_c::init(void)
   // must be done at the end of this function
   bool b_isReconfigNeeded = false;
 
-#if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
+#if defined(USE_ISO_11783)
   // register to get TP/ETP Messages
   uint32_t ui32_filter = (static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) << 8);
   if (!getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
@@ -315,7 +467,7 @@ bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rh
 
 
 
-#if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
+#if defined(USE_ISO_11783)
 /**
   send a ISO target multipacket message with active retrieve of data-parts to send
   @param rb_send dynamic member no of sender
@@ -924,7 +1076,7 @@ MultiSend_c::SendStream_c::abortSend()
     b_performAbort = true;
   }
   #endif
-  #if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
+  #if defined(USE_ISO_11783)
   if ( en_msgType != Din )
   { // send ISO abort message
     refc_multiSendPkg.setData(5, static_cast<uint8_t>(i32_pgn & 0xFF));
@@ -964,7 +1116,7 @@ MultiSend_c::SendStream_c::sendIntern()
     b_performSend = true;
   }
   #endif
-  #if defined(USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
+  #if defined(USE_ISO_11783)
   if ( en_msgType != Din )
   { // ISO
     refc_multiSendPkg.setIsoPri(6);

@@ -80,7 +80,7 @@ public:
     deliver gtp of commanding member
     @return GETY_POS of setpoint commander
   */
-  iGetyPos_c gtp()const
+  const iGetyPos_c& gtp()const
   {return SetpointRegister_c::gtp();};
   /**
     deliver the exact setpoint

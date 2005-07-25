@@ -86,25 +86,51 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "cancustomer_c.h"
+#include "getypos_c.h"
+#include "../igetypos_c.h"
+
+namespace IsoAgLib {
+/** constant for default parameters and initialization, where the device type is not yet spcified.
+    the instantiation of this constant variable is located in the module cancustomer_c.cpp
+  */
+const iGetyPos_c iGetyPos_c::GetyPosUnspecified( 0x7F, 0xF );
+/** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
+    the instantiation of this constant variable is located in the module cancustomer_c.cpp
+  */
+const iGetyPos_c iGetyPos_c::GetyPosInitialProcessData( 0x0, 0xF );
+};
+
 
 namespace __IsoAgLib {
+
+/** constant for default parameters and initialization, where the device type is not yet spcified.
+    the instantiation of this constant variable is located in the module cancustomer_c.cpp
+  */
+const GetyPos_c GetyPos_c::GetyPosUnspecified( 0x7F, 0xF );
+/** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
+    the instantiation of this constant variable is located in the module cancustomer_c.cpp
+  */
+const GetyPos_c GetyPos_c::GetyPosInitialProcessData( 0x0, 0xF );
+
+
+
 /**
   process a message -> the specialized/derived version of this virtual
   function is called during processing of received CAN telegrams in CANIO_c::processMsg
   @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
   @see __IsoAgLib::CANIO_c::processMsg
-	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool CANCustomer_c::processMsg()
 { // dummy function - just to allow classes to (inderectly) derive from
-	// CANCustomer_c without the need to implement this function
-	return false;
+  // CANCustomer_c without the need to implement this function
+  return false;
 }
 
 /** create dummy instance to return something
     in the dummy implementation of CANCustomer_c::dataBase();
-		YOU SHOULD NEVER CALL THIS BASE FUNCTION!
-	*/
+    YOU SHOULD NEVER CALL THIS BASE FUNCTION!
+  */
 static CANPkgExt_c c_dummyPkg;
 /**
   virtual function which delivers a pointer to the CANCustomer
@@ -112,14 +138,14 @@ static CANPkgExt_c c_dummyPkg;
 */
 CANPkgExt_c& CANCustomer_c::dataBase()
 { // dummy function - just to allow classes to (inderectly) derive from
-	// CANCustomer_c without the need to implement this function
-	return c_dummyPkg;
+  // CANCustomer_c without the need to implement this function
+  return c_dummyPkg;
 }
 
 /** virtual destructor */
 CANCustomer_c::~CANCustomer_c()
 { // dummy function - just to allow classes to (inderectly) derive from
-	// CANCustomer_c without the need to implement this function
+  // CANCustomer_c without the need to implement this function
 }
 
 } // end of namespace __IsoAgLib

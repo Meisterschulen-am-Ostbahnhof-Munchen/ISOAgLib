@@ -228,7 +228,7 @@ public:
   ProcDataLocal_c(
 #ifdef USE_ISO_11783
                   uint16_t rui16_DDI = 0,
-                  uint16_t rui16_element = 0xFF,
+                  uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
                   uint8_t rui8_lis = 0xFF,
@@ -236,10 +236,10 @@ public:
                   uint8_t rui8_inst = 0,
                   uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                  GetyPos_c rc_gtp = 0, 
-                  uint8_t rui8_pri = 2, 
-                  GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
-                  GetyPos_c *rpc_gtp = NULL,
+                  const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
+                  uint8_t rui8_pri = 2,
+                  const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
+                  const GetyPos_c *rpc_gtp = NULL,
                   bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                   uint16_t rui16_eepromAdr = 0xFFFF,
@@ -290,7 +290,7 @@ public:
   void init(
 #ifdef USE_ISO_11783
             uint16_t rui16_DDI = 0,
-            uint16_t rui16_element = 0xFF,
+            uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0xFF,
@@ -298,10 +298,10 @@ public:
             uint8_t rui8_inst = 0,
             uint8_t rui8_zaehlnum = 0xFF,
 #endif
-            GetyPos_c rc_gtp = 0,
+            const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
             uint8_t rui8_pri = 2,
-            GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
-            GetyPos_c *rpc_gtp = NULL,
+            const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
+            const GetyPos_c *rpc_gtp = NULL,
             bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t rui16_eepromAdr = 0xFFFF,
@@ -322,7 +322,7 @@ public:
     @param rc_gtp GETY code of searched measure program
     @return true -> found item
   */
-  bool existProg(uint8_t rui8_pri, GetyPos_c rc_gtp)
+  bool existProg(uint8_t rui8_pri, const GetyPos_c& rc_gtp)
       {return c_measureprog.existProg(rui8_pri, rc_gtp);};
 
   /**
@@ -335,7 +335,7 @@ public:
     @param rc_gtp GETY code of searched measure program
     @param rb_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(uint8_t rui8_pri, GetyPos_c rc_gtp, bool rb_doCreate)
+  MeasureProgLocal_c& prog(uint8_t rui8_pri, const GetyPos_c& rc_gtp, bool rb_doCreate)
     { return c_measureprog.prog(rui8_pri, rc_gtp, rb_doCreate);};
 
 

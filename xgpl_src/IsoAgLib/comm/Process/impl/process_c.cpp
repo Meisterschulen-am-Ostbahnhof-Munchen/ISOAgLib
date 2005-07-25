@@ -141,7 +141,7 @@ namespace __IsoAgLib {
   };
 #endif
 
-#ifdef USE_ISO_11783
+#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
   DevPropertyHandler_c& Process_c::getDevPropertyHandlerInstance( void )
   {
     return c_devPropertyHandler;
@@ -159,7 +159,9 @@ void Process_c::init()
   i32_lastTaskStatusTime = 0;
   ui8_runningTaskWithSa = 0xFF;         // Initialize to 0xFF because it is an address we can't have. -bac
   ui8_taskStatus = 0;
+  #ifdef USE_PROC_DATA_DESCRIPTION_POOL
   c_devPropertyHandler.init(&c_data);
+  #endif
 #endif
   c_data.setSingletonKey( getSingletonVecKey() );
 
@@ -259,7 +261,7 @@ bool Process_c::timeEvent( void ){
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
 
-#ifdef USE_ISO_11783 
+#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
   //call DevPropertyHandler_c timeEvent
   c_devPropertyHandler.timeEvent();
 #endif
@@ -298,24 +300,24 @@ bool Process_c::timeEvent( void ){
   #endif
 
 #ifdef USE_ISO_11783
-  GetyPos_c c_myGtp( 130, 0 );
+  static const GetyPos_c c_taskControllerGtp( 130, 0 );
   if(ui8_runningTaskWithSa == 0xFF)
   {
-    if(getSystemMgmtInstance().existMemberGtp(c_myGtp, true)) //getSystemMgmtInstance().existLocalMemberGtp(c_myGtp))
+    if(getSystemMgmtInstance().existMemberGtp(c_taskControllerGtp, true)) //getSystemMgmtInstance().existLocalMemberGtp(c_myGtp))
     {
-        ui8_runningTaskWithSa = getSystemMgmtInstance().getActiveLocalMember().nr();
+        ui8_runningTaskWithSa = getSystemMgmtInstance().memberGtp(c_taskControllerGtp, true).nr();
     }
   }
   if (ui8_runningTaskWithSa != 0xFF && (i32_time - i32_lastTaskStatusTime > 2000))
   {
-      ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-      ISOSystemPkg_c& c_pkg = c_isoMonitor.data();
-      i32_lastTaskStatusTime = i32_time;
+    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+    ISOSystemPkg_c& c_pkg = c_isoMonitor.data();
+    i32_lastTaskStatusTime = i32_time;
 
-      //Send task status message
+    //Send task status message
     c_pkg.setExtCanPkg8(7, 0, 0xCB, 0xFF, ui8_runningTaskWithSa,   // OxCB == 203dec = Process Data PGN
-            0x0E, 0x00, 0x00, 0x00, ui8_taskStatus, 0x00, 0x00, 0x00 );
-      getCanInstance4Comm() << c_pkg;     // Task Status Message
+          0x0E, 0x00, 0x00, 0x00, ui8_taskStatus, 0x00, 0x00, 0x00 );
+    getCanInstance4Comm() << c_pkg;     // Task Status Message
   }
 #endif
 
@@ -339,7 +341,8 @@ bool Process_c::timeEvent( void ){
   // filters for targeted or partner process data should be created
   if ((i32_time - i32_lastFilterBoxTime) > 1000)  {
     i32_lastFilterBoxTime = i32_time;
-    GetyPos_c c_lastFilterGtp = 0xFF, c_actGtp;
+    const GetyPos_c *pc_lastFilterGtp = NULL;
+    const GetyPos_c *pc_actGtp = NULL;
     uint8_t ui8_lastFilterPri = 0, ui8_actPri = 2;
 
     // create local Base-Proc Filter in case DIN member is active
@@ -358,14 +361,16 @@ bool Process_c::timeEvent( void ){
         pc_searchCacheC2++ )
     { // delete item at pc_timeIter, if pc_searchCacheC2 points to pc_client
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-      c_actGtp = (*pc_searchCacheC2)->ownerGtp();
+      pc_actGtp = &((*pc_searchCacheC2)->ownerGtp());
       ui8_actPri = (*pc_searchCacheC2)->pri();
-      if ((c_actGtp != c_lastFilterGtp) && (ui8_actPri != ui8_lastFilterPri) && (c_actGtp != 0xFF))
+      if ( (ui8_actPri != ui8_lastFilterPri) && (*pc_actGtp != GetyPos_c::GetyPosUnspecified)
+        && ( ( pc_lastFilterGtp == NULL ) || (*pc_actGtp != *pc_lastFilterGtp) )
+         )
       { // last FilterBox_c call with other gtp
         // -> avoid unneccessary calls with search
-        c_lastFilterGtp = c_actGtp;
+        pc_lastFilterGtp = pc_actGtp;
         ui8_lastFilterPri = ui8_actPri;
-        createRemoteFilter(c_actGtp, ui8_actPri);
+        createRemoteFilter(*pc_actGtp, ui8_actPri);
       }
     }
   }
@@ -384,7 +389,7 @@ bool Process_c::timeEvent( void ){
 */
  bool Process_c::processMsg(){
 
-#ifdef USE_ISO_11783
+#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
 if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF ) < 2 ) || ( c_data[0] >= 0xD ) ) )
 {
@@ -403,7 +408,7 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
   }
 #endif
 
-  uint8_t b_posData;
+  uint8_t ui8_posData = 0xFF;
   bool b_result = false;
 
   #if defined(DEBUG) && defined(USE_DIN_9684)
@@ -413,7 +418,7 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
         << "Process_c::processMsg() mit Alarm ACK\n";
   }
   #endif
-    
+  #ifdef USE_DIN_9684
   // try to aquire exact GETY_POS code for the suitable Process Data Item
   // -> check for POS of the owner of the handled Process Data
   if ((data().pri() == 0x2) || (data().pri() == 0x5))
@@ -439,24 +444,22 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
     }
     if (b_sendOwner == b_empfOwner)
     { // both could be or could be not the owner of the data -> use POS of the msg
-      if (!getSystemMgmtInstance4Comm().existMemberGtp( GetyPos_c( data().gety(), data().pos() ) ) )
+      if (!getSystemMgmtInstance4Comm().existMemberGtp( data().gtp() ) )
       { // no member with msg gety/pos exist -> ignore pos for search
-        b_posData = 0XFF;
+        ui8_posData = 0XFF;
       }
       else
       {
-        b_posData = data().pos();
+        ui8_posData = data().pos();
       }
     }
     else
     { // only one could be the owner -> use its pos
-      b_posData = (b_sendOwner)? ((data().memberSend()).gtp().getPos())
+      ui8_posData = (b_sendOwner)? ((data().memberSend()).gtp().getPos())
                                  : ((data().memberEmpf()).gtp().getPos());
     }
   }// if target msg
-  
-  // only check for base process data if DIN 9684 is used
-#ifdef USE_DIN_9684  
+
   else if (data().identType() == Ident_c::StandardIdent)
   { // for base msg the first try must be the gety/pos of msg
     // first check if SEND is valid according Monitor-List
@@ -473,36 +476,36 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
     { // no member with get/pos of msg exist -> try gety/pos of sender, if sender.gety is equiv to msg.gety
       if (data().gety() == (c_din_monitor.dinMemberNr(data().send()).gtp().getGety()) )
       { // the gety of the sender is equivalent to the gety of the data
-        b_posData = ((data().memberSend()).gtp().getPos());
+        ui8_posData = ((data().memberSend()).gtp().getPos());
       }
       else
       { // ignore pos for searching process data item
-        b_posData = 0xFF;
+        ui8_posData = 0xFF;
       }
     } // if gety/pos of msg does not exist as member
     else
     { // use gety/pos of msg
-      b_posData = data().pos();
+      ui8_posData = data().pos();
     }
   }
-#endif
+  #endif
 
-  // decide which gety to use for matching  
+  // decide which gety to use for matching
   // ISO and DIN message: use gety from corresponding monitor item for checks
-  const uint8_t ui8_getyFromMessage = data().memberEmpf().gtp().getGety();
+  const uint8_t ui8_getyReceiver = data().memberEmpf().gtp().getGety();
   // ISO only message: check for sender gety (only in remote)
   const uint8_t ui8_getySender = data().memberSend().gtp().getGety();
-      
-  // now b_posData is the best guess for searching the appropriate prcess data item
+
+  // now ui8_posData is the best guess for searching the appropriate prcess data item
   // check first for local Process Data
   if (existProcDataLocal(
 #ifdef USE_ISO_11783
                          data().DDI(), data().element(),
 #endif
 #ifdef USE_DIN_9684
-                         data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+                         data().gety(), ui8_posData, data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                         ui8_getyFromMessage, b_posData)
+                         ui8_getyReceiver)
      )
   { // there exists an appropriate process data item -> let the item process the msg
     procDataLocal(
@@ -510,22 +513,22 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
                   data().DDI(), data().element(),
 #endif
 #ifdef USE_DIN_9684
-                  data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+                  data().gety(), ui8_posData, data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                  ui8_getyFromMessage, b_posData
+                  ui8_getyReceiver
                   ).processMsg();
     b_result = true;
   }
-    
+
   // now check for remote Process Data
   if (existProcDataRemote(
 #ifdef USE_ISO_11783
                           data().DDI(), data().element(), ui8_getySender,
 #endif
 #ifdef USE_DIN_9684
-                          data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+                          data().gety(), ui8_posData, data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                          ui8_getyFromMessage, b_posData
+                          ui8_getyReceiver
                           )
       )
   { // there exists an appropriate process data item -> let the item process the msg
@@ -534,9 +537,9 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
                    data().DDI(), data().element(), ui8_getySender,
 #endif
 #ifdef USE_DIN_9684
-                   data().lis(), data().wert(), data().inst(), data().zaehlnum(),
+                   data().gety(), ui8_posData, data().lis(), data().wert(), data().inst(), data().zaehlnum(),
 #endif
-                   ui8_getyFromMessage, b_posData
+                   ui8_getyReceiver
                    ).processMsg();
     b_result = true;
   }
@@ -551,14 +554,15 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
   @param rui16_element
 
   DIN parameter
+  @param rui8_dataGety GETY of process data as specified in DIN process data message
+  @param rui8_pos optional POS code of searched local Process Data instance
+                (only important if more GETY type members are active)
   @param rui8_lis LIS code of searched local Process Data instance
   @param rui8_wert WERT code of searched local Process Data instance
   @param rui8_inst INST code of searched local Process Data instance
   @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
-  @param rui8_gety GETY code of searched local Process Data instance
-  @param rui8_pos optional POS code of searched local Process Data instance
-                (only important if more GETY type members are active)
+  @param rui8_getyReceiver GETY code of searched local Process Data instance
   @return true -> suitable instance found
 */
 bool Process_c::existProcDataLocal(
@@ -567,22 +571,23 @@ bool Process_c::existProcDataLocal(
                                    uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
+                                   uint8_t rui8_dataGety,
+                                   uint8_t rui8_pos,
                                    uint8_t rui8_lis,
                                    uint8_t rui8_wert,
                                    uint8_t rui8_inst,
                                    uint8_t rui8_zaehlnum,
 #endif
-                                   uint8_t rui8_gety,
-                                   uint8_t rui8_pos)
+                                   uint8_t rui8_getyReceiver)
 {
   return updateLocalCache(
 #ifdef USE_ISO_11783
                           rui16_DDI, rui16_element,
 #endif
 #ifdef USE_DIN_9684
-                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+                          rui8_dataGety, rui8_pos, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                          rui8_gety, rui8_pos);
+                          rui8_getyReceiver);
 }
 
   /**
@@ -592,15 +597,16 @@ bool Process_c::existProcDataLocal(
     @param rui16_element
 
     DIN parameter
+    @param rui8_dataGety GETY of process data as specified in DIN process data message
+    @param rui8_pos optional POS code of searched local Process Data instance
+                  (only important if more GETY type members are active)
     @param rui8_lis LIS code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
-    @param rui8_gety GETY code of searched local Process Data instance
-    @param rui8_pos optional POS code of searched remote Process Data instance
-                  (only important if more GETY type members are active)
+    @param rui8_getyReceiver GETY code of searched local Process Data instance
     @return true -> suitable instance found
   */
 bool Process_c::existProcDataRemote(
@@ -610,22 +616,23 @@ bool Process_c::existProcDataRemote(
                            uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
+                           uint8_t rui8_dataGety,
+                           uint8_t rui8_pos,
                            uint8_t rui8_lis,
                            uint8_t rui8_wert,
                            uint8_t rui8_inst,
                            uint8_t rui8_zaehlnum,
 #endif
-                           uint8_t rui8_gety,
-                           uint8_t rui8_pos)
+                           uint8_t rui8_getyReceiver)
 {
  return updateRemoteCache(
 #ifdef USE_ISO_11783
                           rui16_DDI, rui16_element, rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
-                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+                          rui8_dataGety, rui8_pos, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                          rui8_gety, rui8_pos);
+                          rui8_getyReceiver);
 
 }
 
@@ -641,13 +648,15 @@ bool Process_c::existProcDataRemote(
   @param rui16_element
 
   DIN parameter
+  @param rui8_dataGety GETY of process data as specified in DIN process data message
+  @param rui8_pos optional POS code of searched local Process Data instance
+                (only important if more GETY type members are active)
   @param rui8_lis LIS code of searched local Process Data instance
   @param rui8_wert WERT code of searched local Process Data instance
   @param rui8_inst INST code of searched local Process Data instance
   @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
-  @param rui8_gety GETY code of searched local Process Data instance
-  @param rui8_pos POS code of searched local Process Data instance
+  @param rui8_getyReceiver GETY code of searched local Process Data instance
   @return reference to searched/created ProcDataLocal_c instance
 */
 ProcDataLocalBase_c& Process_c::procDataLocal(
@@ -656,22 +665,23 @@ ProcDataLocalBase_c& Process_c::procDataLocal(
                                      uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
+                                     uint8_t rui8_dataGety,
+                                     uint8_t rui8_pos,
                                      uint8_t rui8_lis,
                                      uint8_t rui8_wert,
                                      uint8_t rui8_inst,
                                      uint8_t rui8_zaehlnum,
 #endif
-                                     uint8_t rui8_gety,
-                                     uint8_t rui8_pos)
+                                     uint8_t rui8_getyReceiver)
 {
   bool b_found = updateLocalCache(
 #ifdef USE_ISO_11783
                                   rui16_DDI, rui16_element,
 #endif
 #ifdef USE_DIN_9684
-                                  rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+                                  rui8_dataGety, rui8_pos, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                  rui8_gety, rui8_pos);
+                                  rui8_getyReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsProcess );
@@ -691,14 +701,16 @@ ProcDataLocalBase_c& Process_c::procDataLocal(
     @param rui16_element
 
     DIN parameter
+    @param rui8_dataGety GETY of process data as specified in DIN process data message
+    @param rui8_pos optional POS code of searched local Process Data instance
+                  (only important if more GETY type members are active)
     @param rui8_lis LIS code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
-    @param rui8_gety GETY code of searched local Process Data instance
-    @param rui8_pos POS code of searched remote Process Data instance
+    @param rui8_getyReceiver GETY code of searched local Process Data instance
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
@@ -709,22 +721,23 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
                                                 uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
+                                                uint8_t rui8_dataGety,
+                                                uint8_t rui8_pos,
                                                 uint8_t rui8_lis,
                                                 uint8_t rui8_wert,
                                                 uint8_t rui8_inst,
                                                 uint8_t rui8_zaehlnum,
 #endif
-                                                uint8_t rui8_gety,
-                                                uint8_t rui8_pos)
+                                                uint8_t rui8_getyReceiver)
 {
   bool b_found = updateRemoteCache(
 #ifdef USE_ISO_11783
                                    rui16_DDI, rui16_element, rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
-                                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+                                   rui8_dataGety, rui8_pos, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                   rui8_gety, rui8_pos);
+                                   rui8_getyReceiver);
 
   if (!b_found)
   { // not found and no creation wanted -> error
@@ -745,7 +758,7 @@ ProcDataRemoteBase_c& Process_c::procDataRemote(
   @param rui8_wert WERT code of searched local Process Data instance
   @param rui8_inst INST code of searched local Process Data instance
   @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
   common parameter
   @param rui8_gety GETY code of searched local Process Data instance
   @return count of similar local process data entries
@@ -764,12 +777,12 @@ uint8_t Process_c::procDataLocalCnt(
                                     uint8_t rui8_gety)
 {
   uint8_t ui8_cnt=0;
-  
+
   for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
        ( pc_iter != c_arrClientC1.end() );
        pc_iter++ )
   { // search for all local items which match the searched identity
-  
+
 #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
     if (data().identType() == Ident_c::StandardIdent) {
       // DIN
@@ -778,13 +791,13 @@ uint8_t Process_c::procDataLocalCnt(
     } else {
       // ISO
       // don't check sender gety => 0xFF
-      if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, 0xFF))
+      if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element))
         ui8_cnt++;
     }
 #else
   #ifdef USE_ISO_11783
     // don't check sender gety => 0xFF
-    if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, 0xFF))
+    if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element))
       ui8_cnt++;
   #endif
   #ifdef USE_DIN_9684
@@ -809,7 +822,7 @@ uint8_t Process_c::procDataLocalCnt(
   @param rui8_wert WERT code of searched local Process Data instance
   @param rui8_inst INST code of searched local Process Data instance
   @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
   common parameter
   @param rui8_gety GETY code of searched local Process Data instance
   @return count of similar remote process data entries
@@ -829,9 +842,9 @@ uint8_t Process_c::procDataRemoteCnt(
                                      uint8_t rui8_gety)
 {
 
-  
+
   uint8_t ui8_cnt=0;
-  
+
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
        ( pc_iter != c_arrClientC2.end() );
        pc_iter++ )
@@ -843,12 +856,12 @@ uint8_t Process_c::procDataRemoteCnt(
         ui8_cnt++;
     } else {
       // ISO
-      if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
+      if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element))
         ui8_cnt++;
     }
 #else
   #ifdef USE_ISO_11783
-    if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
+    if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element))
       ui8_cnt++;
   #endif
   #ifdef USE_DIN_9684
@@ -868,14 +881,15 @@ uint8_t Process_c::procDataRemoteCnt(
   @param rui16_element
 
   DIN parameter
+  @param rui8_dataGety GETY of process data as specified in DIN process data message
+  @param rui8_pos optional POS code of searched local Process Data instance
+                (only important if more GETY type members are active)
   @param rui8_lis LIS code of searched local Process Data instance
   @param rui8_wert WERT code of searched local Process Data instance
   @param rui8_inst INST code of searched local Process Data instance
   @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
-  @param rui8_gety GETY code of created local Process Data instance
-  @param rui8_pos optinal POS code of created local Process Data instance
-    (default not used for search)
+  @param rui8_getyReceiver GETY code of created local Process Data instance
 */
 bool Process_c::updateLocalCache(
 #ifdef USE_ISO_11783
@@ -883,13 +897,14 @@ bool Process_c::updateLocalCache(
                                  uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
+                                 uint8_t rui8_dataGety,
+                                 uint8_t rui8_pos,
                                  uint8_t rui8_lis,
                                  uint8_t rui8_wert,
                                  uint8_t rui8_inst,
                                  uint8_t rui8_zaehlnum,
 #endif
-                                 uint8_t rui8_gety,
-                                 uint8_t rui8_pos)
+                                 uint8_t rui8_getyReceiver)
 {
   bool b_foundLazy = false;
 
@@ -901,19 +916,19 @@ bool Process_c::updateLocalCache(
 #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
       if (data().identType() == Ident_c::StandardIdent) {
         // DIN
-        if ((*pc_searchCacheC1)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
+        if ((*pc_searchCacheC1)->matchDIN(rui8_dataGety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
       } else {
         // ISO
         // don't check sender gety => 0xFF
-        if ((*pc_searchCacheC1)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, rui8_pos)) return true;
+        if ((*pc_searchCacheC1)->matchISO(rui8_getyReceiver, 0xFF, rui16_DDI, rui16_element)) return true;
       }
 #else
-  #ifdef USE_ISO_11783      
+  #ifdef USE_ISO_11783
       // don't check sender gety => 0xFF
-      if ((*pc_searchCacheC1)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, rui8_pos)) return true;
+      if ((*pc_searchCacheC1)->matchISO(rui8_getyReceiver, 0xFF, rui16_DDI, rui16_element)) return true;
   #endif
   #ifdef USE_DIN_9684
-      if ((*pc_searchCacheC1)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
+      if ((*pc_searchCacheC1)->matchDIN(rui8_dataGety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
   #endif
 #endif
     }
@@ -928,28 +943,29 @@ bool Process_c::updateLocalCache(
 #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
       if (data().identType() == Ident_c::StandardIdent) {
         // DIN
-        if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+        if ((*pc_iter)->matchDIN(rui8_dataGety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
           b_matched = true;
       } else {
         // ISO
         // don't check sender gety => 0xFF
-        if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, 0xFF))
+        if ((*pc_iter)->matchISO(rui8_getyReceiver, 0xFF, rui16_DDI, rui16_element))
           b_matched = true;
       }
 #else
   #ifdef USE_ISO_11783
       // don't check sender gety => 0xFF
-      if ((*pc_iter)->matchISO(rui8_gety, 0xFF, rui16_DDI, rui16_element, 0xFF))
+      if ((*pc_iter)->matchISO(rui8_getyReceiver, 0xFF, rui16_DDI, rui16_element))
         b_matched = true;
   #endif
   #ifdef USE_DIN_9684
-      if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+      if ((*pc_iter)->matchDIN(rui8_dataGety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
         b_matched = true;
   #endif
 #endif
-      
+
       if (b_matched)
       { // matches at least lazy
+        #ifdef USE_DIN_9684
         if ((*pc_iter)->pos() == rui8_pos)
         { //exact match
           b_foundLazy = true;
@@ -962,6 +978,11 @@ bool Process_c::updateLocalCache(
           b_foundLazy = true;
           pc_searchCacheC1 = pc_iter;
         } //first lazy match for this search
+        #else
+        // for ISO - no exact compare including POS is possible, as this is not transfered in data message
+        b_foundLazy = true;
+        pc_searchCacheC1 = pc_iter;
+        #endif
       } // check lazy match
     }// for
   }
@@ -976,30 +997,32 @@ bool Process_c::updateLocalCache(
     @param rui16_element
 
     DIN parameter
+    @param rui8_dataGety GETY of process data as specified in DIN process data message
+    @param rui8_pos optional POS code of searched local Process Data instance
+                  (only important if more GETY type members are active)
     @param rui8_lis LIS code of searched local Process Data instance
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
-    @param rui8_gety GETY code of searched local Process Data instance
-    @param rui8_pos POS code of created remote Process Data instance
-      (default not used for search)
+    @param rui8_getyReceiver GETY code of searched local Process Data instance
   */
 bool Process_c::updateRemoteCache(
 #ifdef USE_ISO_11783
                          uint16_t rui16_DDI,
                          uint16_t rui16_element,
-                         uint8_t rui8_getySender,
+                         uint8_t rui8_getyReceiverSender,
 #endif
 #ifdef USE_DIN_9684
+                         uint8_t rui8_dataGety,
+                         uint8_t rui8_pos,
                          uint8_t rui8_lis,
                          uint8_t rui8_wert,
                          uint8_t rui8_inst,
                          uint8_t rui8_zaehlnum,
 #endif
-                         uint8_t rui8_gety,
-                         uint8_t rui8_pos)
+                         uint8_t rui8_getyReceiver)
 {
   bool b_foundLazy = false;
   if (!c_arrClientC2.empty())
@@ -1009,20 +1032,20 @@ bool Process_c::updateRemoteCache(
 #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
       if (data().identType() == Ident_c::StandardIdent) {
         // DIN
-        if ((*pc_searchCacheC2)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
+        if ((*pc_searchCacheC2)->matchDIN(rui8_dataGety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
       } else {
         // ISO
-        if ((*pc_searchCacheC2)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, rui8_pos)) return true;
+        if ((*pc_searchCacheC2)->matchISO(rui8_getyReceiver, rui8_getyReceiverSender, rui16_DDI, rui16_element)) return true;
       }
 #else
-  #ifdef USE_ISO_11783      
-      if ((*pc_searchCacheC2)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, rui8_pos)) return true;
+  #ifdef USE_ISO_11783
+      if ((*pc_searchCacheC2)->matchISO(rui8_getyReceiver, rui8_getyReceiverSender, rui16_DDI, rui16_element)) return true;
   #endif
   #ifdef USE_DIN_9684
-      if ((*pc_searchCacheC2)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
+      if ((*pc_searchCacheC2)->matchDIN(rui8_dataGety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_pos)) return true;
   #endif
 #endif
-    
+
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
@@ -1030,30 +1053,31 @@ bool Process_c::updateRemoteCache(
         pc_iter++ )
     { // check for lazy match with POS == 0xFF (==joker)
       bool b_matched = false;
-            
+
 #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
       if (data().identType() == Ident_c::StandardIdent) {
         // DIN
-        if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+        if ((*pc_iter)->matchDIN(rui8_dataGety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
           b_matched = true;
       } else {
         // ISO
-        if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
+        if ((*pc_iter)->matchISO(rui8_getyReceiver, rui8_getyReceiverSender, rui16_DDI, rui16_element))
           b_matched = true;
       }
 #else
-  #ifdef USE_ISO_11783      
-      if ((*pc_iter)->matchISO(rui8_gety, rui8_getySender, rui16_DDI, rui16_element, 0xFF))
+  #ifdef USE_ISO_11783
+      if ((*pc_iter)->matchISO(rui8_getyReceiver, rui8_getyReceiverSender, rui16_DDI, rui16_element))
         b_matched = true;
   #endif
   #ifdef USE_DIN_9684
-      if ((*pc_iter)->matchDIN(rui8_gety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
+      if ((*pc_iter)->matchDIN(rui8_dataGety, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, 0xFF))
         b_matched = true;
   #endif
 #endif
-      
+
       if (b_matched)
       { // matches at least lazy
+        #ifdef USE_DIN_9684
         if ((*pc_iter)->pos() == rui8_pos)
         { //exact match
           b_foundLazy = true;
@@ -1066,6 +1090,10 @@ bool Process_c::updateRemoteCache(
           b_foundLazy = true;
           pc_searchCacheC2 = pc_iter;
         } //first lazy match for this search
+        #else
+        b_foundLazy = true;
+        pc_searchCacheC2 = pc_iter;
+        #endif
       } // check lazy match
     }// for
   }
@@ -1078,7 +1106,7 @@ bool Process_c::updateRemoteCache(
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return true -> member exist and Filter Box created
 */
-bool Process_c::createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
+bool Process_c::createRemoteFilter(const GetyPos_c& rc_ownerGtp, uint8_t
   #ifdef USE_DIN_9684
   rui8_pri
   #endif
@@ -1087,37 +1115,31 @@ bool Process_c::createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
   bool b_result = false;
   MASK_TYPE t_filter;
   #ifdef USE_DIN_9684
-  if (getDinMonitorInstance4Comm().existDinMemberGtp(rc_ownerGtp))
-  {
-    if (getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).itemState(IState_c::ClaimedAddress))
-    { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
-      uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).nr();
-      t_filter = (ui8_recNr | (rui8_pri << 8));
-      #ifdef USE_ISO_11783
-      if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter, Ident_c::StandardIdent))
-      #else
-      if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter))
-      #endif
-      { // no suitable FilterBox_c exist -> create it
-        getCanInstance4Comm().insertFilter( *this, 0x70F, t_filter, false);
-        b_result = true;
-      }
+  if (getDinMonitorInstance4Comm().existDinMemberGtp(rc_ownerGtp, true))
+  { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
+    const uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp, true).nr();
+    t_filter = (ui8_recNr | (rui8_pri << 8));
+    #ifdef USE_ISO_11783
+    if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter, Ident_c::StandardIdent))
+    #else
+    if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter))
+    #endif
+    { // no suitable FilterBox_c exist -> create it
+      getCanInstance4Comm().insertFilter( *this, 0x70F, t_filter, false);
+      b_result = true;
     }
   }
   #endif
   #ifdef USE_ISO_11783
-  if (getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_ownerGtp))
-  {
-    if (getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).itemState(IState_c::ClaimedAddress))
-    { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
-      uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).nr();
-      // only receive msg from ui8_recNr / rc_ownerGtp to all other devices
-      t_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-      if (!getCanInstance4Comm().existFilter( *this, 0x1FF00FFUL, t_filter, Ident_c::ExtendedIdent))
-      { // no suitable FilterBox_c exist -> create it
-        getCanInstance4Comm().insertFilter( *this, 0x1FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
-        b_result = true;
-      }
+  if (getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_ownerGtp, true))
+  { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
+    const uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp, true).nr();
+    // only receive msg from ui8_recNr / rc_ownerGtp to all other devices
+    t_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
+    if (!getCanInstance4Comm().existFilter( *this, 0x1FF00FFUL, t_filter, Ident_c::ExtendedIdent))
+    { // no suitable FilterBox_c exist -> create it
+      getCanInstance4Comm().insertFilter( *this, 0x1FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
+      b_result = true;
     }
   }
   #endif
@@ -1132,14 +1154,12 @@ bool Process_c::createRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
 /**
   delete FilterBox_c for receive from remote gtp if needed
   (important to delete old Filter Boxes after deletion of
-   ProcDataRemote_c - called from within deleteProcDataRemote
-   - only delete FilterBox_c if NO other remote proc data with same
-   ownerGtp exist)
+  of remote device from monitor list or after re-adressclaim with different SA)
   @param rc_ownerGtp GTP code of remote owner who sent the message
   @param rui8_pri PRI code of messages with this process data instance (default 2)
   @return true -> member exist and Filter Box deleted
 */
-bool Process_c::deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
+bool Process_c::deleteRemoteFilter(const GetyPos_c& rc_ownerGtp, uint8_t
   #ifdef USE_DIN_9684
   rui8_pri
   #endif
@@ -1148,46 +1168,39 @@ bool Process_c::deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
   bool b_result = false,
        b_found = false;
   MASK_TYPE ui32_filter;
-  // create FilterBoxes for remote ProcessData if needed
+
   for ( pc_searchCacheC2 = c_arrClientC2.begin();
       ( pc_searchCacheC2 != c_arrClientC2.end() );
       pc_searchCacheC2++ )
   {
     if ((*pc_searchCacheC2)->ownerGtp() == rc_ownerGtp) b_found = true;
   }
-  if (!b_found)
-  { // no other remote proc data has given onwerGtp
+  if (b_found)
+  { // remote proc data has given onwerGtp
     // -> delete according FilterBox
     #ifdef USE_DIN_9684
-    if (getDinMonitorInstance4Comm().existDinMemberGtp(rc_ownerGtp))
-    {
-      if (getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).itemState(IState_c::ClaimedAddress))
-      { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
-        uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp).nr();
-        ui32_filter = (ui8_recNr | (rui8_pri << 8));
-        if (getCanInstance4Comm().existFilter( *this, 0x70F, ui32_filter))
-        { // corresponding FilterBox_c exist -> delete it
-          getCanInstance4Comm().deleteFilter( *this, 0x70F, ui32_filter);
-          b_result = true;
-        }
-
-      } // owner has claimed address
-    } // owner exist in memberMonitor
+    if (getDinMonitorInstance4Comm().existDinMemberGtp(rc_ownerGtp, true))
+    { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
+      uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(rc_ownerGtp, true).nr();
+      ui32_filter = (ui8_recNr | (rui8_pri << 8));
+      if (getCanInstance4Comm().existFilter( *this, 0x70F, ui32_filter))
+      { // corresponding FilterBox_c exist -> delete it
+        getCanInstance4Comm().deleteFilter( *this, 0x70F, ui32_filter);
+        b_result = true;
+      }
+    } // owner exist with claimed address in memberMonitor
     #endif
     #ifdef USE_ISO_11783
-    if (getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_ownerGtp))
-    {
-      if (getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).itemState(IState_c::ClaimedAddress))
-      { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
-        uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp).nr();
-        ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-        if (getCanInstance4Comm().existFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent))
-        { // corresponding FilterBox_c exist -> delete it
-          getCanInstance4Comm().deleteFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent);
-          b_result = true;
-        }
-      } // owner has claimed address
-    } // owner exist in isoMonitor
+    if (getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_ownerGtp, true))
+    { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
+      uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(rc_ownerGtp, true).nr();
+      ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
+      if (getCanInstance4Comm().existFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent))
+      { // corresponding FilterBox_c exist -> delete it
+        getCanInstance4Comm().deleteFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent);
+        b_result = true;
+      }
+    } // owner exist with claimed address in isoMonitor
     #endif
   } // not other remote proc data with ownerGtp found
   // only reconfigure if new FilterBox_c created -> signalled by b_result == true
@@ -1198,5 +1211,55 @@ bool Process_c::deleteRemoteFilter(GetyPos_c rc_ownerGtp, uint8_t
   }
   return b_result;
 }
+
+/** unregister pointer to a already registered remote process data instance
+  * this function is called within destruction of remote process data instance
+  */
+void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
+{
+  // check if the remote owner GTP is used for any other remote proc
+  const GetyPos_c& c_toBeDeletedOwnerGtp = pc_remoteClient->ownerGtp();
+  bool b_otherRemoteWithSameOwner = false;
+  bool b_result = false;
+  MASK_TYPE ui32_filter;
+
+  for ( pc_searchCacheC2 = c_arrClientC2.begin();
+      ( pc_searchCacheC2 != c_arrClientC2.end() );
+      pc_searchCacheC2++ )
+  {
+    if ( (*pc_searchCacheC2) == pc_remoteClient ) continue;
+    if ((*pc_searchCacheC2)->ownerGtp() == c_toBeDeletedOwnerGtp) b_otherRemoteWithSameOwner = true;
+  }
+  if ( !b_otherRemoteWithSameOwner )
+  { // delete the remote filter that was created to receive messages from that owner
+    #ifdef USE_DIN_9684
+    if (getDinMonitorInstance4Comm().existDinMemberGtp(c_toBeDeletedOwnerGtp, true))
+    { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
+      uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(c_toBeDeletedOwnerGtp, true).nr();
+      ui32_filter = (ui8_recNr | (rui8_pri << 8));
+      if (getCanInstance4Comm().existFilter( *this, 0x70F, ui32_filter))
+      { // corresponding FilterBox_c exist -> delete it
+        getCanInstance4Comm().deleteFilter( *this, 0x70F, ui32_filter);
+        b_result = true;
+      }
+    } // owner exist with claimed address in memberMonitor
+    #endif
+    #ifdef USE_ISO_11783
+    if (getIsoMonitorInstance4Comm().existIsoMemberGtp(c_toBeDeletedOwnerGtp, true))
+    { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
+      uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(c_toBeDeletedOwnerGtp, true).nr();
+      ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
+      if (getCanInstance4Comm().existFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent))
+      { // corresponding FilterBox_c exist -> delete it
+        getCanInstance4Comm().deleteFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent);
+        b_result = true;
+      }
+    } // owner exist with claimed address in isoMonitor
+    #endif
+  }
+
+  unregisterC2( pc_remoteClient );
+};
+
 
 } // end of namespace __IsoAgLib

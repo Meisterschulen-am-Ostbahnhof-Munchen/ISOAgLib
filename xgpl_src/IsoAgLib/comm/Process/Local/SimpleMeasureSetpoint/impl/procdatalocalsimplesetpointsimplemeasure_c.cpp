@@ -143,10 +143,10 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
      uint8_t rui8_inst,
      uint8_t rui8_zaehlnum,
 #endif
-     GetyPos_c rc_gtp,
+     const iGetyPos_c& rc_gtp,
      uint8_t rui8_pri,
-     GetyPos_c rc_ownerGtp,
-     GetyPos_c *rpc_gtp,
+     const iGetyPos_c& rc_ownerGtp,
+     const GetyPos_c *rpc_gtp,
      bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
      uint16_t rui16_eepromAdr,
@@ -221,10 +221,10 @@ void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(
                                                       uint8_t rui8_inst,
                                                       uint8_t rui8_zaehlnum,
 #endif
-                                                      GetyPos_c rc_gtp,
-                                                      uint8_t rui8_pri, 
-                                                      GetyPos_c rc_ownerGtp,
-                                                      GetyPos_c *rpc_gtp,
+                                                      const iGetyPos_c& rc_gtp,
+                                                      uint8_t rui8_pri,
+                                                      const iGetyPos_c& rc_ownerGtp,
+                                                      const GetyPos_c *rpc_gtp,
                                                       bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                                       uint16_t rui16_eepromAdr,

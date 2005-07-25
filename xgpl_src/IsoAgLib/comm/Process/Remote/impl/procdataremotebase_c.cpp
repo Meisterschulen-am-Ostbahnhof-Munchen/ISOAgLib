@@ -119,9 +119,9 @@ void ProcDataRemoteBase_c::init(
 #ifdef USE_DIN_9684
                                 uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
 #endif
-                                GetyPos_c rc_gtp,
-                                uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
-                                GetyPos_c* rpc_commanderGtp,
+                                const GetyPos_c& rc_gtp,
+                                uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp,
+                                const GetyPos_c* rpc_commanderGtp,
                                 IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                 int ri_singletonVecKey)
 {
@@ -143,7 +143,7 @@ void ProcDataRemoteBase_c::init(
 #ifdef USE_DIN_9684
        &&  ( rui8_lis != 0xFF )
 #endif
-      ) 
+      )
   { // now register the pointer to this instance in Process_c
     getProcessInstance4Comm().registerRemoteProcessData( this );
   }
@@ -185,16 +185,16 @@ ProcDataRemoteBase_c::~ProcDataRemoteBase_c(){
   @param rpbgtp pointer to GETY_POS var of local member used for
               sending commands to remote owner member
 */
-void ProcDataRemoteBase_c::setCommanderGtp(GetyPos_c* rpc_gtp)
-{ 
+void ProcDataRemoteBase_c::setCommanderGtp(const GetyPos_c* rpc_gtp)
+{
     pc_gtp = rpc_gtp;
 };
 
 /**
   perform periodic actions
-  ProcDataRemoteBase_c::timeEvent has nothing to do
-  -> this function must only be defined as base for derived variants which
-  uses simple measurements and thus doesn't need a time event
+  ProcDataRemoteBase_c::timeEvent
+  -> adopt here the ownerGtp to an existing item, when DevClass/-Instance are matching, but the other fields are
+     differen ( don't change anything, if there is an item with identic GTP setting
   @return true -> all planned executions performed
 */
 bool ProcDataRemoteBase_c::timeEvent( void )
@@ -239,16 +239,12 @@ bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_
       #ifdef USE_ISO_11783
       ((en_msgProto & IState_c::Din) != 0) &&
       #endif
-      ( (c_din_monitor.existDinMemberNr(rb_var))
-      &&(c_din_monitor.dinMemberNr(rb_var).itemState(IState_c::ClaimedAddress))
-      )
-    &&( (c_din_monitor.existDinMemberGtp(ownerGtp()))
-      &&(c_din_monitor.dinMemberGtp(ownerGtp()).itemState(IState_c::ClaimedAddress))
-      )
+      ( c_din_monitor.existDinMemberNr(rb_var))
+    &&(c_din_monitor.existDinMemberGtp(ownerGtp(), true))
     &&(rb_var != 0xFF)
      )
   { // all check was positive -> set b_empf, b_send
-    b_empf = c_din_monitor.dinMemberGtp(ownerGtp()).nr();
+    b_empf = c_din_monitor.dinMemberGtp(ownerGtp(), true).nr();
     b_send = rb_var; // for remote data the var parameter is the sender for sending
     #ifdef USE_ISO_11783
     en_msgProto = IState_c::Din;
@@ -261,16 +257,12 @@ bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_
   // try with ISO 11783
   if (
       ((en_msgProto & IState_c::Iso) != 0) &&
-      ( (c_isoMonitor.existIsoMemberNr(rb_var))
-      &&(c_isoMonitor.isoMemberNr(rb_var).itemState(IState_c::ClaimedAddress))
-      )
-    &&( (c_isoMonitor.existIsoMemberGtp(ownerGtp()))
-      &&(c_isoMonitor.isoMemberGtp(ownerGtp()).itemState(IState_c::ClaimedAddress))
-      )
+      (c_isoMonitor.existIsoMemberNr(rb_var ))
+    &&(c_isoMonitor.existIsoMemberGtp(ownerGtp(), true))
     &&(rb_var != 0xFF)
      )
   { // all check was positive -> set b_empf, b_send
-    b_empf = c_isoMonitor.isoMemberGtp(ownerGtp()).nr();
+    b_empf = c_isoMonitor.isoMemberGtp(ownerGtp(), true).nr();
     b_send = rb_var; // for remote data the var parameter is the sender for senisog
     en_msgProto = IState_c::Iso;
     b_result = true;

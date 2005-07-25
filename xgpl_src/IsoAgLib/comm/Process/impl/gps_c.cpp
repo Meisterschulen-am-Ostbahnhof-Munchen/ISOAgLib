@@ -215,13 +215,13 @@ bool GPS_c::timeEvent( void )
 
   possible errors:
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
-	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool GPS_c::processMsg(){
   int32_t i32_tempVal = data().dataRawCmdLong();
   #ifdef USE_BASE
-	Base_c& c_lbsBase = getBaseInstance4Comm();
-	#endif
+  Base_c& c_lbsBase = getBaseInstance4Comm();
+  #endif
   bool b_result = false;
 
   #ifdef USE_DIN_9684
@@ -267,7 +267,7 @@ bool GPS_c::processMsg(){
           b_minute = ((i32_tempVal >> 8) & 0xFF);
           // add +1h because GPS time is in UTC
           b_hour = ((i32_tempVal >> 16) & 0xFF) + 1;
-					#ifdef USE_BASE
+          #ifdef USE_BASE
           // consider summer time
           uint8_t b_day = c_lbsBase.day(),
           b_month = c_lbsBase.month();
@@ -286,13 +286,13 @@ bool GPS_c::processMsg(){
               b_hour = c_lbsBase.hour();
             }
           }
-					#endif
+          #endif
         }
         else
         { // no second change -> decrement validity of time
           if (b_isGpsTime > 0) b_isGpsTime -= 1;
         }
-				#ifdef USE_BASE
+        #ifdef USE_BASE
         if ( (b_isGpsTime == 0) || (b_hour > 24) || (b_minute > 60) || (b_second > 60) )
         { // if time note valid because of no sec change or because of invalid settings use
           // Base_c
@@ -361,7 +361,7 @@ bool GPS_c::processMsg(){
             b_hour = (i32_tempVal / 3600);
 
             // consider summer time
-						#ifdef USE_BASE
+            #ifdef USE_BASE
             uint8_t b_day = c_lbsBase.day(),
             b_month = c_lbsBase.month();
             if ( ( (b_month > 3) && (b_month < 10) )
@@ -388,7 +388,7 @@ bool GPS_c::processMsg(){
           if ( (b_isGpsTime == 0) || (b_hour > 24) || (b_minute > 60) || (b_second > 60) )
           { // if time note valid because of no sec change or because of invalid settings use
             // Base_c
-						#ifdef USE_BASE
+            #ifdef USE_BASE
             b_hour = c_lbsBase.hour();
             b_minute = c_lbsBase.minute();
             b_second = c_lbsBase.second();

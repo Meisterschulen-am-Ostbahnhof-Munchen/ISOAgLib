@@ -93,6 +93,9 @@
 #ifdef USE_ISO_TERMINAL
 #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 #endif
+#ifdef USE_PROCESS
+  #include <IsoAgLib/comm/Process/impl/process_c.h>
+#endif
 
 
 
@@ -105,100 +108,15 @@ namespace __IsoAgLib {
   @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
   @param rb_status state of this ident (off, claimed address, ...) (default: off)
-  @param rpb_name ISO 11783 8-uint8_t NAME setting for a member
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
-      const uint8_t* rpb_name, uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
+ISOItem_c::ISOItem_c(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
+      uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
   : MonitorItem_c(0, rc_gtp, rui8_nr, rb_status, ri_singletonVecKey ),
-    c_isoName(rpb_name), ui16_saEepromAdr(rui16_saEepromAdr)
-{ // mark this item as prepare address claim if local
-  setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
-  wsClaimedAddress = false;
-
-  // define this item as standalone by default
-  pc_masterItem = NULL;
-
-  // just use ri32_time to make compiler happy
-  // an ISO11783 item must start with timestamp 0
-  // but as it uses the same parameter signature start as the DIN9684
-  // constructors, the parameter ri32_time must be defined
-  if ( ri32_time == 0 ) updateTime( ri32_time );
-  else updateTime(0); // state that this item didn't send an adress claim
-
-  readEepromSa();
-  // set give GTP in NAME field
-  c_isoName.setGtp(rc_gtp);
-  if (itemState(IState_c::Local))
-  {
-    setItemState(IState_c::PreAddressClaim);
-    timeEvent(); // call time for further init
-  }
-}
-
-/**
-  constructor which can set optional all ident data
-  @param ri32_time creation time of this item instance
-  @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
-  @param rui8_nr number of this item
-  @param rb_status state of this ident (off, claimed address, ...) (default: off)
-  @param rpc_name ISO 11783 NAME setting for a member as pointer to ISOName
-  @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-*/
-ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
-      const ISOName_c* rpc_name, uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
-  : MonitorItem_c(0, rc_gtp, rui8_nr, rb_status, ri_singletonVecKey ),
-    c_isoName(*rpc_name), ui16_saEepromAdr(rui16_saEepromAdr)
-{ // mark this item as prepare address claim if local
-
-  wsClaimedAddress = false;
-
-  // define this item as standalone by default
-  pc_masterItem = NULL;
-
-  // just use ri32_time to make compiler happy
-  // an ISO11783 item must start with timestamp 0
-  // but as it uses the same parameter signature start as the DIN9684
-  // constructors, the parameter ri32_time must be defined
-  if ( ri32_time == 0 ) updateTime( ri32_time );
-  else updateTime(0); // state that this item didn't send an adress claim
-
-  readEepromSa();
-  // set give GTP in NAME field
-  c_isoName.setGtp(rc_gtp);
-  setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
-  if (itemState(IState_c::Local))
-  {
-    setItemState(IState_c::PreAddressClaim);
-    timeEvent(); // call time for further init
-  }
-}
-
-/**
-  constructor which can set the 64bit NAME from single flags
-  @param ri32_time creation time of this item instance
-  @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
-  @param rui8_nr number of this item
-  @param rb_status state of this ident (off, claimed address, ...) (default: off)
-  @param rb_selfConf true -> the item has a self configurable source adress
-  @param rui8_indGroup industry group code (2 for agriculture)
-  @param rb_func function code (25 = network interconnect)
-  @param rui16_manufCode manufactor code
-  @param rui32_serNo serial no specific for one ECU of one manufactor
-  @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-  @param rb_funcInst counter for devices with same function (default 0)
-  @param rb_ecuInst counter for ECU with same function and function instance (default 0)
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-*/
-ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
-        bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-        uint32_t rui32_serNo, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst, int ri_singletonVecKey )
-    : MonitorItem_c(0, rc_gtp, rui8_nr, rb_status, ri_singletonVecKey ),
-      c_isoName(rb_selfConf, rui8_indGroup, (rc_gtp.getGety()), (rc_gtp.getPos()),
-        rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst), ui16_saEepromAdr(rui16_saEepromAdr)
-{ // mark this item as prepare address claim if local
+    ui16_saEepromAdr(rui16_saEepromAdr)
+{
+  // mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
   wsClaimedAddress = false;
 
@@ -222,30 +140,30 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr, IStat
 
 /**
   copy constructor for ISOItem
-	The copy constructor checks if the source item is
-	a master ( i.e. the pc_masterItem pointer points to this )
-	-> it doesn't simply copy the pointer, but sets its
-	own pointer also to the this-pointer of the new instance
+  The copy constructor checks if the source item is
+  a master ( i.e. the pc_masterItem pointer points to this )
+  -> it doesn't simply copy the pointer, but sets its
+  own pointer also to the this-pointer of the new instance
   @param rrefc_src source ISOItem_c instance
 */
 ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
-  : MonitorItem_c(rrefc_src), c_isoName(rrefc_src.c_isoName), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr)
-{ // mark this item as prepare address claim if local
+  : MonitorItem_c(rrefc_src), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr)
+{// mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
   wsClaimedAddress = false;
 
   // check if the master item pointer of the source item
-	// is pointing to itself, as then this new created instance shall
-	// not copy the pointer, but set the pointer to itself, as this
-	// indicates the Master State
-	if ( rrefc_src.isMaster() )
-	{ // set our pc_masterItem also to this, to indicate master state
-		pc_masterItem = this;
-	}
-	else
-	{ // just copy the master pointer from source
-		pc_masterItem = rrefc_src.getMaster ();
-	}
+  // is pointing to itself, as then this new created instance shall
+  // not copy the pointer, but set the pointer to itself, as this
+  // indicates the Master State
+  if ( rrefc_src.isMaster() )
+  { // set our pc_masterItem also to this, to indicate master state
+    pc_masterItem = this;
+  }
+  else
+  { // just copy the master pointer from source
+    pc_masterItem = rrefc_src.getMaster ();
+  }
 
   updateTime(0); // state that this item didn't send an adress claim
   readEepromSa();
@@ -263,7 +181,6 @@ ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
 ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
 {
   MonitorItem_c::operator=(rrefc_src);
-	c_isoName = rrefc_src.c_isoName;
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
   wsClaimedAddress = false;
   updateTime(0); // state that this item didn't send an adress claim
@@ -289,7 +206,7 @@ ISOItem_c::~ISOItem_c(){
   @return pointer to the name uint8_t string (8byte)
 */
 const uint8_t* ISOItem_c::name() const {
-  return c_isoName.outputString();
+  return gtp().getConstName().outputString();
 }
 /**
   check if the name field is empty (no name received)
@@ -305,7 +222,7 @@ bool ISOItem_c::isEmptyName() const {
 */
 void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen){
   char c_temp[30];
-  const uint8_t* pb_src = c_isoName.outputString();
+  const uint8_t* pb_src = name();
   CNAMESPACE::sprintf(c_temp, "0x%02x%02x%02x%02x%02x%02x%02x%02x", pb_src[0],pb_src[1],pb_src[2],pb_src[3],
       pb_src[4],pb_src[5],pb_src[6],pb_src[7]);
 
@@ -322,41 +239,17 @@ void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen){
   @param rui8_nr number of this item
   @param rb_status state of this ident (off, claimed address, ...)
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-  @param rpb_name ISO 11783 8-uint8_t NAME setting for a member
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ISOItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
-        itemState_t ren_status, uint16_t rui16_saEepromAdr, const uint8_t* rpb_name, int ri_singletonVecKey )
+void ISOItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
+        itemState_t ren_status, uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
 {
   MonitorItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, ri_singletonVecKey);
-  if (rpb_name != NULL) c_isoName.inputString(rpb_name);
   ui16_saEepromAdr = rui16_saEepromAdr;
   readEepromSa();
-  // set give GTP in NAME field
-  c_isoName.setGtp(rc_gtp);
 };
 
-/**
-  set all element data with one call
-  @param ri32_time creation time of this item instance
-  @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
-  @param rui8_nr number of this item
-  @param rb_status state of this ident (off, claimed address, ...)
-  @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-  @param rpc_name ISO 11783 NAME setting for a member as pointer to ISOName
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-*/
-void ISOItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
-        itemState_t ren_status, uint16_t rui16_saEepromAdr, const ISOName_c* rpc_name, int ri_singletonVecKey )
-{
-  MonitorItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, ri_singletonVecKey);
-  if (rpc_name != NULL) c_isoName.operator=(*rpc_name);
-  ui16_saEepromAdr = rui16_saEepromAdr;
-  readEepromSa();
-  // set give GTP in NAME field
-  c_isoName.setGtp(rc_gtp);
-};
-
+#if 0
 /**
   set all element data with one call
   @param ri32_time creation time of this item instance
@@ -385,8 +278,10 @@ void ISOItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
   readEepromSa();
   // set give GTP in NAME field
   c_isoName.setGtp(rc_gtp);
+  // set ISOName_c pointer inside GetyPos_c to ISOName_c of ISOItem_c
+  c_gtp.setName( &c_isoName );
 }
-
+#endif
 /**
   periodically time evented actions:
     * find free SA or check if last SA is available
@@ -458,7 +353,7 @@ bool ISOItem_c::timeEvent( void )
     }
     else
     { // no adress claim request sent till now
-			getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true );
+      getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true );
     }
   }
   else if (itemState(IState_c::AddressClaim))
@@ -547,7 +442,7 @@ bool ISOItem_c::timeEvent( void )
 */
 bool ISOItem_c::processMsg(){
   bool b_result = false;
-	ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
+  ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   int32_t i32_pkgTime = c_pkg.time(),
       i32_now = Scheduler_c::getLastTimeEventTrigger();
   if ((i32_now - i32_pkgTime) > 100) updateTime(i32_now);
@@ -565,22 +460,22 @@ bool ISOItem_c::processMsg(){
         { // local item has already claimed the same adress
           // -> react suitable for this contention
           // -> check for NAME
-					int8_t i8_higherPrio = c_isoName.higherPriThanPar(c_pkg.name());
+          int8_t i8_higherPrio = gtp().getConstName().higherPriThanPar(c_pkg.name());
           if ( ( i8_higherPrio == 1                                                )
-					  || ( ( i8_higherPrio == 0 ) && ( itemState(IState_c::ClaimedAddress) ) ) )
+            || ( ( i8_higherPrio == 0 ) && ( itemState(IState_c::ClaimedAddress) ) ) )
           { // this item has higher prio (lower val) -> send adr claim
-						// OR both items have same prio and this item is already claimed -> stay
+            // OR both items have same prio and this item is already claimed -> stay
             c_pkg.setIsoSa(nr());
           }
-					else if ( c_pkg.gtp() == gtp() )
-					{ // address claim has same GTP ( device class and -instance )
-						// -> give this instance to the remote one
-						clearItemState(IState_c::Local);
-						setItemState(IState_c::ClaimedAddress);
-						setNr(c_pkg.isoSa());
-						inputString(c_pkg.name());
-					}
-					else
+          else if ( c_pkg.gtp() == gtp() )
+          { // address claim has same GTP ( device class and -instance )
+            // -> give this instance to the remote one
+            clearItemState(IState_c::Local);
+            setItemState(IState_c::ClaimedAddress);
+            setNr(c_pkg.isoSa());
+            inputString(c_pkg.name());
+          }
+          else
           { // local item has lower prio -> search free SA and claim this
             // or set nr to the code 254 %e.g. no suitbla nr found -> error
             setNr(getIsoMonitorInstance4Comm().unifyIsoSa(this));
@@ -606,6 +501,22 @@ bool ISOItem_c::processMsg(){
           getCanInstance4Comm() << c_pkg;
         } // end if for local item after already sent claim
       } // end if for local item with same SA
+      else if ( (!itemState(IState_c::Local) )
+             && (itemState(IState_c::ClaimedAddress) )
+             && ( nr() != c_pkg.isoSa() ) )
+      { // this item was already used by other remote ISOItem_c with another SA
+        //  -> possibility to clear any connections to the old SA
+        #ifdef USE_PROCESS
+        Process_c& c_process = getProcessInstance4Comm();
+        // delete any receive filters that are connected to the old SA of this item first,
+        // before the new SA is written
+        c_process.deleteRemoteFilter( gtp() );
+        #endif
+        clearItemState(IState_c::Local);
+        setItemState(IState_c::ClaimedAddress);
+        setNr(c_pkg.isoSa());
+        inputString(c_pkg.name());
+      }
       else if ( (!itemState(IState_c::Local))
              || (!itemState(IState_c::ClaimedAddress)) )
       { // no local item or local item not yet performed complete address claim
@@ -618,7 +529,7 @@ bool ISOItem_c::processMsg(){
         setNr(c_pkg.isoSa());
         inputString(c_pkg.name());
       }
-			b_result = true;
+      b_result = true;
     break;
     case REQUEST_PGN_MSG_PGN: // request for PGN
       int32_t i32_reqPgn = (
@@ -630,28 +541,28 @@ bool ISOItem_c::processMsg(){
       { // this item should answer the request
         switch (i32_reqPgn)
         {
-					case ADRESS_CLAIM_PGN: // request for adress claim
-						if ( ! itemState(IState_c::ClaimedAddress) ) break; ///< send no answer, if not yet ready claimed
-						c_pkg.setIsoPri(6);
-						c_pkg.setIsoSa(nr());
-						c_pkg.setIsoPgn(ADRESS_CLAIM_PGN); // doppelt gemoppelt ;)
-						c_pkg.setIsoPf(238);
-						c_pkg.setIsoPs(255); // global information
-						// set NAME to CANPkg
-						c_pkg.setName(outputString());
-						// now ISOSystemPkg_c has right data -> send
-						getCanInstance4Comm() << c_pkg;
-						b_result = true;
-						break;
-					#ifdef USE_BASE
-					case TIME_DATE_PGN: // request for calendar
-						// call Base_c function to send calendar
-						// isoSendCalendar checks if this item (identified by GETY_POS)
-						// is configured to send calendar
-						getBaseInstance4Comm().isoSendCalendar(gtp());
-						b_result = true;
-						break;
-					#endif
+          case ADRESS_CLAIM_PGN: // request for adress claim
+            if ( ! itemState(IState_c::ClaimedAddress) ) break; ///< send no answer, if not yet ready claimed
+            c_pkg.setIsoPri(6);
+            c_pkg.setIsoSa(nr());
+            c_pkg.setIsoPgn(ADRESS_CLAIM_PGN); // doppelt gemoppelt ;)
+            c_pkg.setIsoPf(238);
+            c_pkg.setIsoPs(255); // global information
+            // set NAME to CANPkg
+            c_pkg.setName(outputString());
+            // now ISOSystemPkg_c has right data -> send
+            getCanInstance4Comm() << c_pkg;
+            b_result = true;
+            break;
+          #ifdef USE_BASE
+          case TIME_DATE_PGN: // request for calendar
+            // call Base_c function to send calendar
+            // isoSendCalendar checks if this item (identified by GETY_POS)
+            // is configured to send calendar
+            getBaseInstance4Comm().isoSendCalendar(gtp());
+            b_result = true;
+            break;
+          #endif
         }
       }
     break;

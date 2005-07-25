@@ -131,25 +131,25 @@ class DINMonitor_c : public SingletonDINMonitor_c
 {
 private:
   #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
-		#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-		typedef STL_NAMESPACE::slist<DINStopManager_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrStop;
-		typedef STL_NAMESPACE::slist<DINStopManager_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator ArrStopIterator;
-		#else
-		typedef STL_NAMESPACE::slist<DINStopManager_c> ArrStop;
-		typedef STL_NAMESPACE::slist<DINStopManager_c>::iterator ArrStopIterator;
-		#endif
-	#endif
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+    #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+    typedef STL_NAMESPACE::slist<DINStopManager_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrStop;
+    typedef STL_NAMESPACE::slist<DINStopManager_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator ArrStopIterator;
+    #else
+    typedef STL_NAMESPACE::slist<DINStopManager_c> ArrStop;
+    typedef STL_NAMESPACE::slist<DINStopManager_c>::iterator ArrStopIterator;
+    #endif
+  #endif
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::slist<DINItem_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_Member;
-	#else
+  #else
   typedef STL_NAMESPACE::slist<DINItem_c> Vec_Member;
-	#endif
+  #endif
 protected:
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::slist<DINItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_MemberIterator;
-	#else
+  #else
   typedef STL_NAMESPACE::slist<DINItem_c>::iterator Vec_MemberIterator;
-	#endif
+  #endif
 
 public:
   /** initialisation for DINMonitor_c
@@ -199,7 +199,7 @@ public:
   */
   bool clearUsedAdr(uint8_t rui8_nr) { return c_adrVectTrusted.clearUsedAdr(rui8_nr);};
 
-	/**
+  /**
     sends system message, which requests all active
     members to send their names (send own name too, as protocol demands)
 
@@ -290,18 +290,16 @@ public:
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existDinMemberGtp(GetyPos_c rc_gtp, bool rb_forceClaimedAddress = false);
+  bool existDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false);
 
   /**
     check if a member with given number exist
     which optional (!!) match the condition of address claim state
     and update local pc_dinMemberCache
     @param rui8_nr searched member number
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return true -> item found
   */
-  bool existDinMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress = false);
+  bool existDinMemberNr(uint8_t rui8_nr );
 
   /**
     check if member is in member list with wanted GETY_POS,
@@ -327,7 +325,7 @@ public:
     @param ren_status wanted status
     @return true -> the DINItem_c was inserted
   */
-  bool insertDinMember(GetyPos_c rc_gtp, const uint8_t* rpb_name = NULL, uint8_t rui8_nr = 0xFF,
+  bool insertDinMember(const GetyPos_c& rc_gtp, const uint8_t* rpb_name = NULL, uint8_t rui8_nr = 0xFF,
                      uint16_t rAdrvect = 0, IState_c::itemState_t ren_state = IState_c::Active);
 
   /**
@@ -341,7 +339,7 @@ public:
     @return reference to searched MemberItem
      @exception containerElementNonexistant
   */
-  DINItem_c& dinMemberGtp(GetyPos_c rc_gtp);
+  DINItem_c& dinMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false);
 
   /**
     deliver member item with given nr
@@ -364,7 +362,7 @@ public:
     @param pbc_iter optional member array iterator which points to searched DINItem_c on success
     @return reference to the searched item
   */
-  DINItem_c& dinMemberGtp(GetyPos_c rc_gtp, bool *const pb_success, Vec_MemberIterator *const pbc_iter = NULL);
+  DINItem_c& dinMemberGtp(const GetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_MemberIterator *const pbc_iter = NULL);
 
   /**
     delete item with specified gtp
@@ -375,7 +373,7 @@ public:
     @param rc_gtp GETY_POS of to be deleted member
     @param rb_send-release true -> send adress release msg (optional, default = false)
   */
-  bool deleteDinMemberGtp(GetyPos_c rc_gtp, bool rb_sendRelease = false);
+  bool deleteDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_sendRelease = false);
   /**
     delete item with specified member number
 
@@ -402,7 +400,7 @@ public:
     @param rc_gtp GETY_POS of member which is tested
     @return true -> member is allowed to claim number
   */
-  bool canClaimNr(GetyPos_c rc_gtp);
+  bool canClaimNr(const GetyPos_c& rc_gtp);
 
   /**
     change gtp if actual gtp isn't unique
@@ -427,7 +425,7 @@ public:
     @param rui8_nr number to register as used for the given member
     @return true -> the wanted nr was registered successful in AdrVect
   */
-  bool setUsedAdr(GetyPos_c rc_gtp, uint8_t rui8_nr);
+  bool setUsedAdr(const GetyPos_c& rc_gtp, uint8_t rui8_nr);
 #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
   /* *********************************************************** */
   /** \name Seldom used DIN 9684 system cmds
@@ -448,7 +446,7 @@ public:
     @param rb_toStop true -> start sending STOP commands; false -> release STOP sending mode
     @return true -> stop command sent without errors
   */
-  bool commandStop(GetyPos_c rc_gtpTarget, bool rb_toStop = true);
+  bool commandStop(const GetyPos_c& rc_gtpTarget, bool rb_toStop = true);
 
   /**
     starts or release stop command for all system members;
@@ -471,7 +469,7 @@ public:
     @param ren_itemState wanted state of item
     @return true -> stop command sent without errors
   */
-  bool commandItemState(GetyPos_c rc_gtp, IState_c::itemState_t ren_itemState);
+  bool commandItemState(const GetyPos_c& rc_gtp, IState_c::itemState_t ren_itemState);
   /*\@}*/
 #endif
 private:
@@ -527,8 +525,8 @@ private: // Private attributes
   /** system global state */
   bool b_globalSystemState;
   #endif
-	/** ADRBELVECT for DIN cmds */
-	AdrVectTrusted_c c_adrVectTrusted;
+  /** ADRBELVECT for DIN cmds */
+  AdrVectTrusted_c c_adrVectTrusted;
   /** temp data where received and to be sent data is put */
   DINSystemPkg_c c_data;
   /** temporary memberItem instance for better inserting of new elements */

@@ -148,12 +148,12 @@ namespace __IsoAgLib {
                            uint8_t rui8_inst,
                            uint8_t rui8_zaehlnum,
 #endif
-                           GetyPos_c rc_gtp,
+                           const GetyPos_c& rc_gtp,
                            uint8_t rui8_pri,
-                           GetyPos_c rc_ownerGtp,
-                           GetyPos_c *rpc_ownerGtp, 
+                           const GetyPos_c& rc_ownerGtp,
+                           const GetyPos_c *rpc_ownerGtp,
                            int ri_singletonVecKey)
-	: ClientBase( ri_singletonVecKey )
+  : ClientBase( ri_singletonVecKey )
 {
   init(
 #ifdef USE_ISO_11783
@@ -174,9 +174,9 @@ namespace __IsoAgLib {
 
 /** copy constructor */
 ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
-	: ClientBase( rrefc_src )
+  : ClientBase( rrefc_src )
 {
-	assignFromSource( rrefc_src );
+  assignFromSource( rrefc_src );
 }
 
 /**
@@ -190,7 +190,7 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
     @param rui8_wert WERT code of Process-Data
     @param rui8_inst INST code of Process-Data
     @param rui8_zaehlnum ZAEHLNUM  code of Process-Data
- 
+
     common parameter
     @param rc_gtp GETY_POS code of Process-Data
     @param rui8_pri optional PRI code of messages with this process data instance (default 2)
@@ -212,10 +212,10 @@ void ProcIdent_c::init(
             uint8_t rui8_inst,
             uint8_t rui8_zaehlnum,
 #endif
-            GetyPos_c rc_gtp,
+            const GetyPos_c& rc_gtp,
             uint8_t rui8_pri,
-            GetyPos_c rc_ownerGtp,
-            GetyPos_c *rpc_ownerGtp)
+            const GetyPos_c& rc_ownerGtp,
+            const GetyPos_c *rpc_ownerGtp)
 {
 #ifdef USE_ISO_11783
   setDDI(rui16_DDI);
@@ -235,7 +235,7 @@ void ProcIdent_c::init(
   // the GETY_POS of ident is best defined by pointed value of rpc_ownerGtp
   if ( rpc_ownerGtp != 0 ) data.c_ownerGtp = *rpc_ownerGtp;
   // second choicer is explicit (not default) setting in rc_ownerGtp
-  else if ( rc_ownerGtp != GetyPos_c( 0xF, 0xF ) ) data.c_ownerGtp = rc_ownerGtp;
+  else if ( rc_ownerGtp.isSpecified() ) data.c_ownerGtp = rc_ownerGtp;
   // last choice is definition of c_ownerGtp by process data identiy
   else data.c_ownerGtp = rc_gtp;
 }
@@ -246,10 +246,10 @@ void ProcIdent_c::init(
   @return reference to source for cmd like "proc1 = proc2 = proc3;"
 */
 ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& rrefc_src){
-	// first assign base class
-	ClientBase::operator=(rrefc_src);
+  // first assign base class
+  ClientBase::operator=(rrefc_src);
   // now assign flags of this class
-	assignFromSource( rrefc_src );
+  assignFromSource( rrefc_src );
 
   return *this;
 }
@@ -257,7 +257,7 @@ ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& rrefc_src){
 /** internal base function for copy constructor and assignement */
 void ProcIdent_c::assignFromSource( const ProcIdent_c& rrefc_src )
 {
-	setLis(rrefc_src.lis());
+  setLis(rrefc_src.lis());
   data.c_gtp = rrefc_src.data.c_gtp;
   data.c_ownerGtp = rrefc_src.data.c_ownerGtp;
   pc_ownerGtp = rrefc_src.pc_ownerGtp;
@@ -281,7 +281,7 @@ ProcIdent_c::~ProcIdent_c(){
   set GETY and POS of owner by giving pointer to owner GETY_POS
   @param rpc_val pointer to owner GETY_POS
 */
-void ProcIdent_c::setOwnerGtp(GetyPos_c* rpc_val)
+void ProcIdent_c::setOwnerGtp(const GetyPos_c* rpc_val)
 {
   pc_ownerGtp = rpc_val;
   data.c_ownerGtp = *rpc_val;
@@ -299,45 +299,32 @@ void ProcIdent_c::setOwnerGtp(GetyPos_c* rpc_val)
    <li>parameter rc_ownerGtp == ownerGtp()
    </ul>
 
-   @param rui8_gety compared GETY value
-    
+   @param rui8_getyReceiver compared GETY value
+
    ISO parameter
    @param rui8_getySender compare this parameter with owner gety (only for remote, local calls: 0xFF)
    @param rui16_DDI compared DDI value
    @param rui16_element compared element value
 
-   common parameter
-   @param rui8_pos optional compared POS
-   @param rc_ownerGtp optional compared GETY_POS of owner
    @return true -> this instance has same Process-Data identity
 */
 bool ProcIdent_c::matchISO(
-             uint8_t rui8_gety,
+             uint8_t rui8_getyReceiver,
              uint8_t rui8_getySender,
              uint16_t rui16_DDI,
-             uint16_t rui16_element,
-             uint8_t rui8_pos,
-             GetyPos_c rc_ownerGtp
+             uint16_t rui16_element
              ) const
 {
-  
+
   if (element() != rui16_element) return false;
   if (DDI() != rui16_DDI) return false;
- 
   if (rui8_getySender != 0xFF) {
     // check in remote case: check if gety of ownerGtp in procident matches gety of sender
     if (ownerGtp().getGety() != rui8_getySender) return false;
   } else {
     // check in local case: check if procident gety matches gety of empf
-    if (gety() != rui8_gety) return false;
+    if (gety() != rui8_getyReceiver) return false;
   }
-    
-  // only return false for different pos setting, if rui8_pos != 0xFF -> no lazy match is wanted
-  // one of the POS checks must be true to answer positive match
-  if ( ( rui8_pos != 0xFF )
-    && ( pos() != rui8_pos )
-    && (ownerGtp().getPos() != rui8_pos)
-    && (ownerGtp() != rc_ownerGtp)) return false;
 
   // all previous tests are positive -> answer positive match
   return true;
@@ -357,13 +344,13 @@ bool ProcIdent_c::matchISO(
    </ul>
 
    @param rui8_gety compared GETY value
-    
+
    DIN parameter
    @param rui8_lis compared LIS value
    @param rui8_wert compared WERT value
    @param rui8_inst compared INST value
    @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
-   
+
    @param rui8_pos optional compared POS
    @param rc_ownerGtp optional compared GETY_POS of owner
    @return true -> this instance has same Process-Data identity
@@ -371,11 +358,11 @@ bool ProcIdent_c::matchISO(
 bool ProcIdent_c::matchDIN(
              uint8_t rui8_gety,
              uint8_t rui8_lis,
-             uint8_t rui8_wert, 
+             uint8_t rui8_wert,
              uint8_t rui8_inst,
              uint8_t rui8_zaehlnum ,
              uint8_t rui8_pos ,
-             GetyPos_c rc_ownerGtp
+             const GetyPos_c& rc_ownerGtp
              ) const
 {
 
@@ -385,7 +372,7 @@ bool ProcIdent_c::matchDIN(
   if (inst() != rui8_inst) return false;
 
   if (gety() != rui8_gety) return false;
-  
+
   // only return false for different pos setting, if rui8_pos != 0xFF -> no lazy match is wanted
   // one of the POS checks must be true to answer positive match
   if ( ( rui8_pos != 0xFF )
@@ -403,52 +390,30 @@ bool ProcIdent_c::matchDIN(
   claculates ident value for quick comparison
   @return single comparison value
 */
-int32_t ProcIdent_c::calc_identVal() const {
-  int32_t i32_result = ( (gtp().getCombinedIso())  | (static_cast<int32_t>(zaehlnum()) << 8)| (static_cast<int32_t>(inst()) << 16)
-                       | (static_cast<int32_t>(wert()) << 20));
-  i32_result |= ((static_cast<int32_t>(lis()) << 24) | (static_cast<int32_t>(pri()) << 27));
-  return i32_result;
-};
+int32_t ProcIdent_c::calcIdentVal() const {
+  int32_t i32_result = (static_cast<int32_t>(gtp().getGety()) & 0x7F   );
 
-
-/**
-  claculates ident value for quick comparison with given values
-  @param rui8_lis compared LIS value
-  @param rui8_gety compared GETY value
-  @param rui8_wert compared WERT value
-  @param rui8_inst compared INST value
-  @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
-  @param rc_ownerGtp optional compared GETY_POS of owner
-  @param rui8_pos optional compared POS
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @return single comparison value
-*/
-int32_t calc_identVal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert,
-                                uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pos, uint8_t rui8_pri)
-{
-  int32_t i32_result = ( (rui8_pos) | (static_cast<int32_t>(rui8_gety) << 4) | (static_cast<int32_t>(rui8_zaehlnum) << 8)
-                       | (static_cast<int32_t>(rui8_inst) << 16) | (static_cast<int32_t>(rui8_wert) << 20));
-  i32_result |= ((static_cast<int32_t>(rui8_lis) << 24) | (static_cast<int32_t>(rui8_pri) << 27));
-  return i32_result;
-};
-
-/**
-  claculates ident value for quick comparison with given values
-  @param rui8_lis compared LIS value
-  @param rc_gtp compared GETY_POS value
-  @param rui8_wert compared WERT value
-  @param rui8_inst compared INST value
-  @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
-  @param rc_ownerGtp optional compared GETY_POS of owner
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @return single comparison value
-*/
-int32_t calc_identVal(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert,
-                                uint8_t rui8_inst, uint8_t rui8_zaehlnum, uint8_t rui8_pri)
-{
-  int32_t i32_result = ( (rc_gtp.getCombinedIso())  | (static_cast<int32_t>(rui8_zaehlnum) << 8)
-                       | (static_cast<int32_t>(rui8_inst) << 16) | (static_cast<int32_t>(rui8_wert) << 20));
-  i32_result |= ((static_cast<int32_t>(rui8_lis) << 24) | (static_cast<int32_t>(rui8_pri) << 27));
+    #ifdef USE_ISO_11783
+    #ifdef USE_DIN_9684
+    if ( element() != 0xFFFF )
+    #endif;
+    { // take ISO ident settings for compare
+      i32_result |=
+      (
+        (static_cast<int32_t>(element() & 0x1FF) << 7   ) // len 12 bit -> reduce to 9 Bit
+      | (static_cast<int32_t>(DDI())             << 16  )
+      );
+    }
+    #else
+      i32_result |=
+      (
+        (static_cast<int32_t>(gtp().getPos())    << 8   )
+      | (static_cast<int32_t>(lis())             << 12  )
+      | (static_cast<int32_t>(inst())            << 16  )
+      | (static_cast<int32_t>(wert())            << 20  )
+      | (static_cast<int32_t>(zaehlnum())        << 24  )
+      );
+    #endif
   return i32_result;
 };
 

@@ -355,7 +355,7 @@ public:
      @param en_command
      @return true -> successful sent
   */
-  bool sendSetpointMod(GetyPos_c rc_targetGtp,
+  bool sendSetpointMod(const GetyPos_c& rc_targetGtp,
                        Proc_c::progType_t ren_progType,
                        GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue,
                        GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand) const;
@@ -366,7 +366,7 @@ public:
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpoint( GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendSetpoint( const GetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
    { return sendSetpointMod(rc_targetGtp, ren_progType, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
 
 private: // Private methods

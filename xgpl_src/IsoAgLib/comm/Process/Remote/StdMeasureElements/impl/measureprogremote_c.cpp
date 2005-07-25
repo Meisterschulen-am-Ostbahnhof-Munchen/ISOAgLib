@@ -99,7 +99,7 @@ namespace __IsoAgLib {
 */
 void MeasureProgRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
-  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), GetyPos_c(0xF, 0xF) );
+  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), GetyPos_c::GetyPosUnspecified );
   b_receiveForeignMeasurement = false;
 }
 
@@ -188,67 +188,67 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
     // set the program type: Proc_c::Base or Proc_c::Target
     setProgType(ren_progType);
   }
-  
+
   // if stored remote gtp isn't valid exit this function
   // error state are set by the function
   if (!verifySetRemoteGtp())return false;
-  
+
 #ifdef USE_ISO_11783
-  // check if receiver (local) uses DIN or ISO  
+  // check if receiver (local) uses DIN or ISO
   IState_c::itemState_t en_msgProto = processData().getIStateForGtp(processData().ownerGtp());
-  
+
   if (en_msgProto == IState_c::IstateNull) return false;
-#else  
+#else
   IState_c::itemState_t en_msgProto = IState_c::Din;
 #endif
 
-     
+
   // send all registered increments to remote ECU
   for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
        pc_subprog != vec_measureSubprog.end(); pc_subprog++)
   { // send the suitable increment creating message to the remote system
 
-    GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand; 
+    GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
 
     if (en_msgProto == IState_c::Din) {
-      
-      // DIN: send values for each program type !    
+
+      // DIN: send values for each program type !
       if (pc_subprog->type() == Proc_c::TimeProp)
         // send msg with wanted type-code, gtp, pd=0, mod=4, -1*increment value
         en_command = GeneralCommand_c::measurementTimeValue;
-    
+
       if (pc_subprog->type() == Proc_c::DistProp)
         // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
         en_command = GeneralCommand_c::measurementDistanceValue;
-    
+
       if (pc_subprog->type() == Proc_c::OnChange)
         en_command = GeneralCommand_c::measurementChangeThresholdValue;
-    
+
     }
 
-    // ISO: send command (value and start) only if program type matches!    
+    // ISO: send command (value and start) only if program type matches!
     if ( (en_msgProto == IState_c::Iso) && (pc_subprog->type() == ren_type) )
     {
-      
+
       if (ren_type == Proc_c::TimeProp)
           en_command = GeneralCommand_c::measurementTimeValueStart;
- 
+
       if (ren_type == Proc_c::DistProp)
         en_command = GeneralCommand_c::measurementDistanceValueStart;
-    
+
       if (ren_type == Proc_c::MaximumThreshold)
-        en_command = GeneralCommand_c::measurementMaximumThresholdValueStart; 
-        
+        en_command = GeneralCommand_c::measurementMaximumThresholdValueStart;
+
       if (ren_type == Proc_c::MinimumThreshold)
         en_command = GeneralCommand_c::measurementMinimumThresholdValueStart;
-      
+
       if (ren_type == Proc_c::OnChange)
         en_command = GeneralCommand_c::measurementChangeThresholdValueStart;
-    
+
     // @todo: OutsideThresholdInterval and Counter ?
 #if 0
     else if (pc_subprog->type() == Proc_c::OutsideThresholdInterval)
-    { 
+    {
         if(checkDoSend(Proc_c::DoMin)) b_command |= 0x9;
         else if(checkDoSend(Proc_c::DoMax)) b_command |= 0xA;
         if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, b_command, pc_subprog->increment()))
@@ -261,17 +261,17 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
     }
 #endif
     }
-    
+
     if (en_command != GeneralCommand_c::noCommand)
-    {  
+    {
        int32_t i32_tmpValue = pc_subprog->increment();
-       
+
        // DIN time prog: negative value!
        if (en_command == GeneralCommand_c::measurementTimeValue)
          i32_tmpValue = -i32_tmpValue;
-         
+
        // prepare general command in process pkg
-       getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+       getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                                    GeneralCommand_c::exactValue,
                                                                    en_command);
        if (!processData().sendValGtp(ren_progType, gtp(), i32_tmpValue))
@@ -285,7 +285,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 #endif
 
   }
-  
+
   // call base function for registering start state
   MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);
 
@@ -312,16 +312,16 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
     uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
     // send msg with wanted type-code, gtp, pd=0, mod=6, start command
     // return result -> true if msg claimed address for member with gtp() exist
-  
+
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::measurementStart);
     // DIN: pd=0, mod=6
     if (!processData().sendValGtp(ui8_pri, gtp(), b_command))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
       b_sendResult = false;
   }
-#endif 
+#endif
 
   return b_sendResult;
 }
@@ -347,21 +347,21 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
   // at the moment only TimeProp and DistProp are well -> only send them
 
 #ifdef USE_ISO_11783
-  // check if receiver (local) uses DIN or ISO  
+  // check if receiver (local) uses DIN or ISO
   IState_c::itemState_t en_msgProto = processData().getIStateForGtp(processData().ownerGtp());
-  
+
   if (en_msgProto == IState_c::IstateNull) return false;
-#else  
+#else
   IState_c::itemState_t en_msgProto = IState_c::Din;
 #endif
 
   if (en_msgProto == IState_c::Iso) {
-  
+
     // send stop command for each program
     for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
          pc_subprog != vec_measureSubprog.end(); pc_subprog++)
     {
-      GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand; 
+      GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
 
       switch (pc_subprog->type())
       {
@@ -381,21 +381,21 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
            en_command = GeneralCommand_c::measurementMinimumThresholdValueStart;
            break;
          default: ;
-      
+
          // @todo: Proc_c::Counter Proc_c::OutsideThresholdInterval
       }
-        
+
       if (en_command != GeneralCommand_c::noCommand)
       {
         // prepare general command in process pkg
-        getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+        getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                                     GeneralCommand_c::exactValue,
-                                                                    en_command);       
+                                                                    en_command);
         b_result = processData().sendValGtp(ui8_pri, gtp(), 0);
       }
     }
 
-#ifdef USE_ISO_11783   
+#ifdef USE_ISO_11783
     // Set task status to stopped.
     getProcessInstance4Comm().setTaskStatus(0);
 #endif
@@ -408,14 +408,14 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
     { // send msg with wanted type-code, gtp, pd=0, mod=6, stop command
       // return result -> true if msg claimed address for member with gtp() exist
       // prepare general command in process pkg
-      getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+      getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                                   GeneralCommand_c::exactValue,
                                                                   GeneralCommand_c::measurementStop);
       // DIN: pd=0, mod=6
       b_result = processData().sendValGtp(ui8_pri, gtp(), 0);
     }
   }
-  
+
   // call base function to delete the subprogs (always true for DIN)
   if(b_deleteSubProgs)
     MeasureProgBase_c::stop();
@@ -436,7 +436,7 @@ int32_t MeasureProgRemote_c::med(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=4
@@ -455,7 +455,7 @@ float MeasureProgRemote_c::medFloat(bool rb_sendRequest) const
 {
   if (rb_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */, 
+    getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=4
@@ -480,18 +480,18 @@ bool MeasureProgRemote_c::processMsg(){
 
     // ISO: cmd() == 3; DIN: PD== 1
     if ((c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue) &&
-    
+
     #ifdef USE_DIN_9684
       // only use data if:
       // B: EMPF is number of local member or receiveForeignMeasurement
       //      was set
       //     or msg is base process msg
-        ( 
+        (
           (c_pkg.pri() == 1) ||
     #else
         (
     #endif
-    
+
           (c_pkg.memberEmpf().itemState(IState_c::Local)
         )
         ||(b_receiveForeignMeasurement) ) )
@@ -519,10 +519,10 @@ void MeasureProgRemote_c::setValFromPkg(){
   if (processData().valType() != float_val)
   {
 #endif
-    
+
     // get the int32_t data val; let it convert, if needed
     int32_t i32_new_val = processData().pkgDataLong();
-    
+
     switch (c_pkg.c_generalCommand.getValueGroup())
     {
       case GeneralCommand_c::exactValue: // msg contains measured val
@@ -584,7 +584,7 @@ void MeasureProgRemote_c::setValFromPkg(){
         break;
       default: ;
     }
-  
+
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
       processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), masterValFloat(), c_pkg.memberSend().gtp(), b_change );
@@ -651,23 +651,23 @@ bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::measurementReset);
-                                                              
+
 #ifdef USE_ISO_11783
-  // check if receiver (local) uses DIN or ISO  
+  // check if receiver (local) uses DIN or ISO
   IState_c::itemState_t en_msgProto = processData().getIStateForGtp(processData().ownerGtp());
-  
+
   if (en_msgProto == IState_c::IstateNull) return false;
-#else  
+#else
   IState_c::itemState_t en_msgProto = IState_c::Din;
 #endif
 
   int32_t i32_valToSend = 0x18; // for DIN
   if (en_msgProto != IState_c::Din)
     i32_valToSend = ri32_val; // ISO
-    
+
   // DIN: pd=0, mod=6
   return processData().sendValGtp(ui8_pri, gtp(), i32_valToSend);
 }
@@ -726,7 +726,7 @@ bool MeasureProgRemote_c::resetMed(){
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::medValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
@@ -748,7 +748,7 @@ bool MeasureProgRemote_c::resetInteg(){
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::integValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
@@ -770,7 +770,7 @@ bool MeasureProgRemote_c::resetMin(){
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
@@ -792,7 +792,7 @@ bool MeasureProgRemote_c::resetMax(){
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
-  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */, 
+  getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6

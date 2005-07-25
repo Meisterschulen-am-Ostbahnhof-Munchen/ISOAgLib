@@ -127,9 +127,9 @@ ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpoin
         uint8_t rui8_inst,
         uint8_t rui8_zaehlnum,
 #endif
-        GetyPos_c rc_gtp,
+        const GetyPos_c& rc_gtp,
         uint8_t rui8_pri,
-        GetyPos_c rc_ownerGtp, GetyPos_c* rpc_commanderGtp,
+        const GetyPos_c& rc_ownerGtp, const GetyPos_c* rpc_commanderGtp,
         IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
         int ri_singletonVecKey)
   : ProcDataRemoteBase_c(
@@ -175,10 +175,10 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::init(
                                                                uint8_t rui8_inst,
                                                                uint8_t rui8_zaehlnum,
 #endif
-                                                               GetyPos_c rc_gtp,
+                                                               const GetyPos_c& rc_gtp,
                                                                uint8_t rui8_pri,
-                                                               GetyPos_c rc_ownerGtp,
-                                                               GetyPos_c* rpc_commanderGtp,
+                                                               const GetyPos_c& rc_ownerGtp,
+                                                               const GetyPos_c* rpc_commanderGtp,
                                                                IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                                                int ri_singletonVecKey)
 {
@@ -243,7 +243,7 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterVal(b
     getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
-    // DIN: pd=2, mod=0  
+    // DIN: pd=2, mod=0
     sendValGtp(pri(), commanderGtp(), 0);
   }
   return i32_masterVal;
@@ -330,7 +330,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::resetMasterVal()
                                                               GeneralCommand_c::setValue);
   // DIN: pd=1, mod=0
   sendValGtp(pri(), commanderGtp(), 0);
-  
+
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::exactValue,

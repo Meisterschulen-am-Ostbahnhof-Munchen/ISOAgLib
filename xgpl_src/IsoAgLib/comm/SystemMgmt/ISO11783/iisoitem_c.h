@@ -84,7 +84,7 @@ public:
     deliver the GETY_POS code of this item
     @return GETY_POS code
   */
-  iGetyPos_c gtp()const{return static_cast<iGetyPos_c>(ISOItem_c::gtp());};
+  const iGetyPos_c& gtp()const{return static_cast<const iGetyPos_c&>(ISOItem_c::gtp());};
   /**
     deliver the number/adress of this item
     @return number

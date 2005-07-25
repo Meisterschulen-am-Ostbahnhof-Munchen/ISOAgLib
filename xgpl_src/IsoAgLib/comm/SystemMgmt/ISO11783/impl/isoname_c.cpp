@@ -359,14 +359,30 @@ void ISOName_c::setSerNo(uint32_t rui32_serNo)
   check if this NAME has higher prio
   than the given NAME 8-uint8_t string
   @param rpb_compare
-	@return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
+  @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
 */
-int8_t ISOName_c::higherPriThanPar(const uint8_t* rpb_compare)
+int8_t ISOName_c::higherPriThanPar(const uint8_t* rpb_compare) const
 {
   int8_t i8_result = +1;
   int8_t i8_cnt;
 
-  for (i8_cnt = 8; i8_cnt >= 0; i8_cnt -= 1)
+
+  // if one of the both comparison parameters have 0xFF in the byte 0..5, then only compare
+  // device class, -instance and industry group
+  static const uint8_t lazyEvaluationIndicator[] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+  if ( ( memcmp( pb_data, lazyEvaluationIndicator, 6 ) == 0 ) || ( memcmp( rpb_compare, lazyEvaluationIndicator, 6 ) == 0 ) )
+  { // perform only lazy evaluation
+    // compare device class
+    if ( (pb_data[6] >> 1) > (rpb_compare[6] >> 1) ) return -1;
+    else if ( (pb_data[6] >> 1) < (rpb_compare[6] >> 1) ) return +1;
+    // compare device class instance and industry group
+    if ( (pb_data[7] & 0x7F) > (rpb_compare[7] & 0x7F) ) return -1;
+    else if ( (pb_data[7] & 0x7F) < (rpb_compare[7] & 0x7F) ) return +1;
+    // if still here -> both should be regarded as equal for this compare level
+    return 0;
+  }
+
+  for (i8_cnt = 7; i8_cnt >= 0; i8_cnt-- )
   { // compare starting with self_conf and indGroup flag
     // in parts of uint16_t (2-uint8_t)
     if (pb_data[i8_cnt] > rpb_compare[i8_cnt])
@@ -374,12 +390,17 @@ int8_t ISOName_c::higherPriThanPar(const uint8_t* rpb_compare)
       i8_result = -1;
       break;
     }
+    if (pb_data[i8_cnt] < rpb_compare[i8_cnt])
+    { // compared value has higher or val -> %e.g. higher prio
+      i8_result = +1;
+      break;
+    }
   }
 
   if (i8_cnt < 0)
   { // all values equal => same prio, return false
     i8_result = 0;
-	}
+  }
 
   return i8_result;
 }

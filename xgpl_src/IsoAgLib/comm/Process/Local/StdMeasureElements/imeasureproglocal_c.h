@@ -157,7 +157,7 @@ public:
     return the c_gtp code for this measureProg
     @return GETY_POS of this measureProg
   */
-  iGetyPos_c gtp(){return MeasureProgLocal_c::gtp();};
+  const iGetyPos_c& gtp(){return MeasureProgLocal_c::gtp();};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types

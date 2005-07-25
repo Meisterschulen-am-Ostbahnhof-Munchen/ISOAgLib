@@ -128,7 +128,7 @@ public:
   ProcIdent_c(
 #ifdef USE_ISO_11783
               uint16_t rui16_DDI = 0,
-              uint16_t rui16_element = 0xFF,
+              uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
               uint8_t rui8_lis = 0,
@@ -136,14 +136,14 @@ public:
               uint8_t rui8_inst = 0,
               uint8_t rui8_zaehlnum = 0xFF,
 #endif
-              GetyPos_c rc_gtp = GetyPos_c(0, 0xF),
+              const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
               uint8_t rui8_pri = 2,
-              GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
-              GetyPos_c *rpc_ownerGtp = 0, 
+              const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
+              const GetyPos_c *rpc_ownerGtp = NULL,
               int ri_singletonVecKey = 0);
 
   /** copy constructor */
-	ProcIdent_c( const ProcIdent_c& rrefc_src );
+  ProcIdent_c( const ProcIdent_c& rrefc_src );
 
   /**
     initialisation which can set this process data instance to a defined intial state
@@ -156,7 +156,7 @@ public:
     @param rui8_wert WERT code of Process-Data
     @param rui8_inst INST code of Process-Data
     @param rui8_zaehlnum ZAEHLNUM  code of Process-Data
- 
+
     common parameter
     @param rc_gtp GETY_POS code of Process-Data
     @param rui8_pri optional PRI code of messages with this process data instance (default 2)
@@ -178,12 +178,12 @@ public:
             uint8_t rui8_inst,
             uint8_t rui8_zaehlnum,
 #endif
-            GetyPos_c rc_gtp,
+            const GetyPos_c& rc_gtp,
             uint8_t rui8_pri = 2,
-            GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF),
-            GetyPos_c *rpc_ownerGtp = 0);
+            const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
+            const GetyPos_c *rpc_ownerGtp = NULL);
 
-	/**
+  /**
     copy constructor for class instance
     @param rrefc_src source ProcIdent_c instance
     @return reference to source for cmd like "proc1 = proc2 = proc3;"
@@ -198,40 +198,40 @@ public:
     @return true -> this instance is equal to the other
   */
   bool operator==(const ProcIdent_c& rrfec_right) const
-    {return (calc_identVal() == rrfec_right.calc_identVal());};
+    {return (calcIdentVal() == rrfec_right.calcIdentVal());};
   /**
     differ comparison operator with another ProcIdent_c instance
     @param rrefc_right compared object
     @return true -> this indstance is different from the other
   */
   bool operator!=(const ProcIdent_c& rrfec_right) const
-    {return (calc_identVal() != rrfec_right.calc_identVal());};
+    {return (calcIdentVal() != rrfec_right.calcIdentVal());};
   /**
     lower than comparison with another ProcIdent_c instance
     @param rrefc_right compared object
     @return true -> this instance is < than the other
   */
   bool operator<(const ProcIdent_c& rrfec_right) const
-    {return (calc_identVal() < rrfec_right.calc_identVal());};
+    {return (calcIdentVal() < rrfec_right.calcIdentVal());};
   /**
     greater than comparison with another ProcIdent_c instance
     @param rrefc_right compared object
     @return true -> this indstance is > than the other
   */
   bool operator>(const ProcIdent_c& rrfec_right) const
-    {return (calc_identVal() > rrfec_right.calc_identVal());};
+    {return (calcIdentVal() > rrfec_right.calcIdentVal());};
 
   // member variable access
 
 #ifdef USE_ISO_11783
   /**
-    deliver Element Number of process msg 
+    deliver Element Number of process msg
     @return Element Number value of message
   */
   uint16_t element()const{return data.ui16_Element;};
 
     /**
-    deliver DDI of process msg 
+    deliver DDI of process msg
     @return Data Dictionary Identifier value of message
   */
   uint16_t DDI()const{return data.ui16_DDI;};
@@ -262,9 +262,14 @@ public:
     stored value
     @return GETY_POS
   */
-  GetyPos_c gtp() const {return ( data.c_gtp == GetyPos_c( 0, 0 ) )
+  const GetyPos_c& gtp() const
+  #ifdef USE_DIN_9684
+  {return ( ( data.c_gtp.getGety() == 0 ) &&  ( data.c_gtp.getPos() == 0 ) )
                                 ?data.c_gtp
                                 :GetyPos_c(data.c_gtp.getGety(), ownerGtp().getPos());};
+  #else
+  {return ownerGtp();};
+  #endif
   /**
     deliver value WERT (row of process data table)
     @return WERT
@@ -291,7 +296,7 @@ public:
     deliver the owner gtp (retrieved from pointed gtp value, if valid pointer)
     @return actual GETY_POS of owner
   */
-  GetyPos_c ownerGtp() const
+  const GetyPos_c& ownerGtp() const
     { return ((pc_ownerGtp != 0)?(*pc_ownerGtp):(data.c_ownerGtp));};
 
 #ifdef USE_ISO_11783
@@ -305,7 +310,7 @@ public:
     set Element Number of Process Data Message
     @param rb_Element command value of process data message
   */
-  void setElement(uint16_t rb_Element){data.ui16_Element = rb_Element;};
+  void setElement(uint16_t rui16_Element){data.ui16_Element = rui16_Element;};
 #endif
 
   /**
@@ -328,7 +333,7 @@ public:
     set value GETY_POS (machine type specific table of process data types)
     @param rc_val new GETY_POS val
   */
-  void setGtp(GetyPos_c rc_val){data.c_gtp = rc_val;};
+  void setGtp(const GetyPos_c& rc_val){data.c_gtp = rc_val;};
   /**
     set value WERT (row of process data table)
     @param rui8_val new WERT val
@@ -354,7 +359,7 @@ public:
     set the owner gtp
     @param rc_val new GETY_POS of owner
   */
-  void setOwnerGtp(GetyPos_c rc_val){data.c_ownerGtp = rc_val;};
+  void setOwnerGtp(const GetyPos_c& rc_val){data.c_ownerGtp = rc_val;};
   /**
     set the GETY of the owner
     @param rui8_val new GETY of owner
@@ -364,7 +369,7 @@ public:
     set GETY and POS of owner by giving pointer to owner GETY_POS
     @param rpc_val pointer to owner GETY_POS
   */
-  void setOwnerGtp(GetyPos_c* rpc_val);
+  void setOwnerGtp(const GetyPos_c* rpc_val);
 
   /**
     check if this item has the same identity as defined by the parameters,
@@ -376,9 +381,9 @@ public:
     <li>parameter rc_ownerGtp == ownerGtp()
     </ul>
 
-    @param rui8_gety compared GETY value
-    
+
     ISO parameter
+    @param rui8_getyReceiver compared GETY value
     @param rui8_getySender compare this parameter with owner gety (only for remote, local calls: 0xFF)
     @param rui16_DDI compared DDI value
     @param rui16_element compared element value
@@ -389,19 +394,14 @@ public:
     @param rui8_inst compared INST value
     @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
 
-    common parameter
-    @param rui8_pos optional compared POS
-    @param rc_ownerGtp optional compared GETY_POS of owner
     @return true -> this instance has same Process-Data identity
   */
 #ifdef USE_ISO_11783
   bool matchISO(
-             uint8_t rui8_gety,
+             uint8_t rui8_getyReceiver,
              uint8_t rui8_getySender,
              uint16_t rui16_DDI,
-             uint16_t rui16_element,
-             uint8_t rui8_pos,
-             GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF) // default values from DIN
+             uint16_t rui16_element
              ) const;
 #endif
 
@@ -409,20 +409,20 @@ public:
   bool matchDIN(
              uint8_t rui8_gety,
              uint8_t rui8_lis,
-             uint8_t rui8_wert, 
+             uint8_t rui8_wert,
              uint8_t rui8_inst,
              uint8_t rui8_zaehlnum = 0xFF,
              uint8_t rui8_pos = 0xFF,  // default values from DIN
-             GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF) // default values from DIN
+             const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified // default values from DIN
              ) const;
 #endif
 
 private: // Private attributes
-	/** internal base function for copy constructor and assignement */
-	void assignFromSource( const ProcIdent_c& rrefc_src );
+  /** internal base function for copy constructor and assignement */
+  void assignFromSource( const ProcIdent_c& rrefc_src );
 
   /** GETY code of process data identity */
-  GetyPos_c* pc_ownerGtp; // only defined for own local data, otherwise NULL
+  const GetyPos_c* pc_ownerGtp; // only defined for own local data, otherwise NULL
   struct _data {
     /**
       in most cases equivalent with ((gety << 3) | pos);
@@ -449,47 +449,19 @@ private: // Private attributes
     uint16_t ui8_pri : 3;
 
 #ifdef USE_ISO_11783
-    uint16_t ui16_Element : 12;
+    uint16_t ui16_Element : 16; //12;
     uint16_t ui16_DDI : 16;
-#endif    
+#endif
 
   } data;
 private: // Private methods
-   
+
 /**
     claculates ident value for quick comparison
     @return single comparison value
   */
-  int32_t calc_identVal() const;
+  int32_t calcIdentVal() const;
 };
-/**
-  claculates ident value for quick comparison with given values
-  @param rui8_lis compared LIS value
-  @param rui8_gety compared GETY value
-  @param rui8_wert compared WERT value
-  @param rui8_inst compared INST value
-  @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
-  @param rc_ownerGtp optional compared GETY_POS of owner
-  @param rui8_pos optional compared POS
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @return single comparison value
-*/
-int32_t calc_identVal(uint8_t rui8_lis, uint8_t rui8_gety, uint8_t rui8_wert, uint8_t rui8_inst,
-                    uint8_t rui8_zaehlnum = 0, uint8_t rui8_pos = 0xF, uint8_t rui8_pri = 2);
-
-/**
-  claculates ident value for quick comparison with given values
-  @param rui8_lis compared LIS value
-  @param rc_gtp compared GETY_POS value
-  @param rui8_wert compared WERT value
-  @param rui8_inst compared INST value
-  @param rui8_zaehlnum compared ZAEHLNUM value (default 0xFF == complete working width)
-  @param rc_ownerGtp optional compared GETY_POS of owner
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @return single comparison value
-*/
-int32_t calc_identVal(uint8_t rui8_lis, GetyPos_c rc_gtp, uint8_t rui8_wert, uint8_t rui8_inst,
-                    uint8_t rui8_zaehlnum = 0, uint8_t rui8_pri = 2);   
 
 }
 #endif

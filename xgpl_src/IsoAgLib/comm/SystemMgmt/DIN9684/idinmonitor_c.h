@@ -154,7 +154,7 @@ public:
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existDinMemberGtp(iGetyPos_c rc_gtp, bool rb_forceClaimedAddress = false)
+  bool existDinMemberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
     { return DINMonitor_c::existDinMemberGtp(rc_gtp, rb_forceClaimedAddress);};
 
   /**
@@ -162,12 +162,10 @@ public:
     which optional (!!) match the condition of address claim state
     and update local pc_dinMemberCache
     @param rui8_nr searched member number
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return true -> item found
   */
-  bool existDinMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress = false)
-  { return DINMonitor_c::existDinMemberNr(rui8_nr, rb_forceClaimedAddress);};
+  bool existDinMemberNr(uint8_t rui8_nr )
+  { return DINMonitor_c::existDinMemberNr(rui8_nr);};
 
   /**
     check if member is in member list with wanted GETY_POS,
@@ -189,7 +187,8 @@ public:
     @return reference to searched MemberItem
      @exception containerElementNonexistant
   */
-  iDINItem_c& dinMemberGtp(iGetyPos_c rc_gtp) { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberGtp(rc_gtp));};
+  iDINItem_c& dinMemberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
+    { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberGtp(rc_gtp, rb_forceClaimedAddress));};
 
   /**
     deliver member item with given nr
@@ -212,8 +211,8 @@ public:
     @param pbc_iter optional member array iterator which points to searched DINItem_c on success
     @return reference to the searched item
   */
-  iDINItem_c& dinMemberGtp(iGetyPos_c rc_gtp, bool *const pb_success, Vec_MemberIterator *const pbc_iter = NULL)
-  { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberGtp(rc_gtp, pb_success, pbc_iter));};
+  iDINItem_c& dinMemberGtp(const iGetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_MemberIterator *const pbc_iter = NULL)
+  { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberGtp(rc_gtp, pb_success, rb_forceClaimedAddress, pbc_iter));};
 
 #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
   /* *********************************************************** */
@@ -235,7 +234,7 @@ public:
     @param rb_toStop true -> start sending STOP commands; false -> release STOP sending mode
     @return true -> stop command sent without errors
   */
-  bool commandStop(iGetyPos_c rc_gtpTarget, bool rb_toStop = true)
+  bool commandStop(const iGetyPos_c& rc_gtpTarget, bool rb_toStop = true)
   { return DINMonitor_c::commandStop(rc_gtpTarget, rb_toStop);};
 
   /**
@@ -260,7 +259,7 @@ public:
     @param ren_itemState wanted state of item
     @return true -> stop command sent without errors
   */
-  bool commandItemState(iGetyPos_c rc_gtp, IState_c::itemState_t ren_itemState)
+  bool commandItemState(const iGetyPos_c& rc_gtp, IState_c::itemState_t ren_itemState)
   { return DINMonitor_c::commandItemState(rc_gtp, ren_itemState);};
   /*\@}*/
 #endif

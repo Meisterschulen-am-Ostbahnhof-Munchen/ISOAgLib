@@ -89,7 +89,7 @@
 #include "processpkg_c.h"
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
+//#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 
 #include <map>
 #include <list>
@@ -251,7 +251,7 @@ private:
   uint8_t ui8_uploadRetry;
   uint8_t ui8_commandParameter;
 
-  STL_NAMESPACE::list<SendUpload_c>  l_sendUpload;
+  STL_NAMESPACE::list<SendUploadBase_c>  l_sendUpload;
 
   MultiSend_c::sendSuccess_t en_sendSuccess;
 };

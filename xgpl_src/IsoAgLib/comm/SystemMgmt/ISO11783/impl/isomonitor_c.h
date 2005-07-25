@@ -122,13 +122,13 @@ class ISOMonitor_c : public SingletonISOMonitor_c
 {
 private:
   // private typedef alias names
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::slist<ISOItem_c,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_ISO;
   typedef STL_NAMESPACE::slist<ISOItem_c,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_ISOIterator;
-	#else
+  #else
   typedef STL_NAMESPACE::slist<ISOItem_c> Vec_ISO;
   typedef STL_NAMESPACE::slist<ISOItem_c>::iterator Vec_ISOIterator;
-	#endif
+  #endif
 
 public:
   /** initialisation for ISOMonitor_c which can store optional pointer to central Scheduler_c instance
@@ -224,18 +224,16 @@ public:
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existIsoMemberGtp(GetyPos_c rc_gtp, bool rb_forceClaimedAddress = false);
+  bool existIsoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false);
 
   /**
     check if a member with given number exist
     which optional (!!) match the condition of address claim state
     and update local pc_isoMemberCache
     @param rui8_nr searched member number
-    @param rb_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return true -> item found
   */
-  bool existIsoMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress = false);
+  bool existIsoMemberNr(uint8_t rui8_nr);
 
   /**
     check if member is in member list with wanted GETY_POS,
@@ -254,13 +252,12 @@ public:
       * Err_c::busy another member with same ident exists already in the list
 
     @param rc_gtp GETY_POS of the member
-    @param rpui8_name ISO11783 64-bit NAME as pointer to 8 uint8_t string
     @param rui8_nr member number
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ren_status wanted status
     @return true -> the ISOItem_c was inserted
   */
-  bool insertIsoMember(GetyPos_c rc_gtp, const uint8_t* rpui8_name, uint8_t rui8_nr = 0xFF,
+  bool insertIsoMember(const GetyPos_c& rc_gtp, uint8_t rui8_nr = 0xFF,
                      IState_c::itemState_t ren_state = IState_c::Active, uint16_t rui16_saEepromAdr = 0xFFFF);
 
   /**
@@ -274,7 +271,7 @@ public:
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  ISOItem_c& isoMemberGtp(GetyPos_c rc_gtp);
+  ISOItem_c& isoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false);
 
   /**
     deliver member item with given nr
@@ -297,7 +294,7 @@ public:
     @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
     @return reference to the searched item
   */
-  ISOItem_c& isoMemberGtp(GetyPos_c rc_gtp, bool *const pb_success, Vec_ISOIterator *const pbc_iter = NULL);
+  ISOItem_c& isoMemberGtp(const GetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_ISOIterator *const pbc_iter = NULL);
 
   /**
     delete item with specified gtp
@@ -307,7 +304,7 @@ public:
 
     @param rc_gtp GETY_POS of to be deleted member
   */
-  bool deleteIsoMemberGtp(GetyPos_c rc_gtp);
+  bool deleteIsoMemberGtp(const GetyPos_c& rc_gtp);
   /**
     delete item with specified member number
 
@@ -355,12 +352,12 @@ public:
         should be used here instead!! */
     {i32_lastSaRequest = /*(ri32_time != -1)?*/ri32_time/*:System_c::getTime()*/;};
 
-	/**
-		trigger a request for claimed addreses
-		@param rb_force false -> send request only if no request was detected until now
-		@return true -> request was sent
-	 */
-	bool sendRequestForClaimedAddress( bool rb_force = false );
+  /**
+    trigger a request for claimed addreses
+    @param rb_force false -> send request only if no request was detected until now
+    @return true -> request was sent
+   */
+  bool sendRequestForClaimedAddress( bool rb_force = false );
 
   /**
     get the Xth slave of the master isoItem

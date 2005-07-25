@@ -167,8 +167,8 @@ ProcDataLocal_c::ProcDataLocal_c(
 #ifdef USE_DIN_9684
                   uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
 #endif
-                  GetyPos_c rc_gtp, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
-                  GetyPos_c *rpc_gtp, bool rb_cumulativeValue,
+                  const GetyPos_c& rc_gtp, uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp,
+                  const GetyPos_c *rpc_gtp, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                   uint16_t rui16_eepromAdr,
 #endif
@@ -240,8 +240,8 @@ void ProcDataLocal_c::init(
 #ifdef USE_DIN_9684
                            uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
 #endif
-                           GetyPos_c rc_gtp, uint8_t rui8_pri, GetyPos_c rc_ownerGtp,
-                           GetyPos_c *rpc_gtp, bool rb_cumulativeValue,
+                           const GetyPos_c& rc_gtp, uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp,
+                           const GetyPos_c *rpc_gtp, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                            uint16_t rui16_eepromAdr,
 #endif

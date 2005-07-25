@@ -88,8 +88,8 @@
 #include "dinmonitor_c.h"
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -153,7 +153,7 @@ void DINServiceMonitor_c::close( void ) {
   @return true -> service was created successfully (no equal service exist, enough memory to store new entry in DINServiceMonitor_c)
    @exception badAlloc
 */
-bool DINServiceMonitor_c::createLocalService(GetyPos_c rc_gtp, uint8_t rui8_nr)
+bool DINServiceMonitor_c::createLocalService(const GetyPos_c& rc_gtp, uint8_t rui8_nr)
 {
   bool b_result = false;
 
@@ -197,7 +197,7 @@ bool DINServiceMonitor_c::createLocalService(GetyPos_c rc_gtp, uint8_t rui8_nr)
   @param rc_gtp getyPos code of the service
   @return true -> wanted item found and deleted
 */
-bool DINServiceMonitor_c::deleteLocalService(GetyPos_c rc_gtp)
+bool DINServiceMonitor_c::deleteLocalService(const GetyPos_c& rc_gtp)
 {
   if (existDinServiceGtp(rc_gtp) && dinServiceGtp(rc_gtp).itemState(IState_c::Local))
   { // wanted local serice exist
@@ -215,7 +215,7 @@ bool DINServiceMonitor_c::deleteLocalService(GetyPos_c rc_gtp)
   check if service with given gtp exist
   @param rc_gtp GETY_POS code of the searched service
 */
-bool DINServiceMonitor_c::existDinServiceGtp(GetyPos_c rc_gtp)
+bool DINServiceMonitor_c::existDinServiceGtp(const GetyPos_c& rc_gtp)
 {
    bool b_result = false;
    if (!vec_dinService.empty())
@@ -240,7 +240,7 @@ bool DINServiceMonitor_c::existDinServiceGtp(GetyPos_c rc_gtp)
   @return reference to the DINItem_c of the first active own identity
   @exception containerElementNonexistant
 */
-DINServiceItem_c& DINServiceMonitor_c::dinServiceGtp(GetyPos_c rc_gtp)
+DINServiceItem_c& DINServiceMonitor_c::dinServiceGtp(const GetyPos_c& rc_gtp)
 {
   if (existDinServiceGtp(rc_gtp))
   { // return reference to the pointed ident element
@@ -269,7 +269,7 @@ DINServiceItem_c& DINServiceMonitor_c::dinServiceGtp(GetyPos_c rc_gtp)
   @param rc_gtp GETY_POS code of Service
   @return true if new item inserted
 */
-bool DINServiceMonitor_c::insertDinService(GetyPos_c rc_gtp){
+bool DINServiceMonitor_c::insertDinService(const GetyPos_c& rc_gtp){
   bool b_result = false;
   if (!existDinServiceGtp(rc_gtp))
   { // update manage info
@@ -316,7 +316,7 @@ bool DINServiceMonitor_c::insertDinService(GetyPos_c rc_gtp){
   @param rc_gtp GETY_POS of the deleted item
   @return true -> an item weas deleted
 */
-bool DINServiceMonitor_c::deleteDinServiceGtp(GetyPos_c rc_gtp)
+bool DINServiceMonitor_c::deleteDinServiceGtp(const GetyPos_c& rc_gtp)
 {
   if (existDinServiceGtp(rc_gtp))
   { // erase it from list with cpServiceCache set to be deleted item (by existDinServiceGtp)
@@ -368,13 +368,13 @@ bool DINServiceMonitor_c::timeEvent( void ){
           #ifdef DEBUG_HEAP_USEAGE
           sui16_dinServiceItemTotal--;
 
-		      getRs232Instance()
-		        << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
-		        <<  sizeSlistTWithMalloc( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
-		        << "/" << sizeSlistTWithMalloc( sizeof(DINServiceItem_c), 1 )
-		        << ", Chunk-Alloc: "
-		        << sizeSlistTWithChunk( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
-		        << "\r\n\r\n";
+          getRs232Instance()
+            << sui16_dinServiceItemTotal << " x DINServiceItem_c: Mal-Alloc: "
+            <<  sizeSlistTWithMalloc( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
+            << "/" << sizeSlistTWithMalloc( sizeof(DINServiceItem_c), 1 )
+            << ", Chunk-Alloc: "
+            << sizeSlistTWithChunk( sizeof(DINServiceItem_c), sui16_dinServiceItemTotal )
+            << "\r\n\r\n";
           #endif
           b_repeat = true;
           break;

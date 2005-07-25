@@ -179,13 +179,6 @@ public:
   */
   uint32_t serNo() const { return ISOName_c::serNo();};
 
-  /**
-    deliver deviceClass and deviceClassIsnt in format of
-    DIN GETY_POS
-    @return ((deviceClass << 3) | deviceClassInst)
-  */
-  iGetyPos_c gtp() const {return ISOName_c::gtp();};
-
 
   /**
     set the NAME data from 8 uint8_t string
@@ -244,16 +237,10 @@ public:
   void setSerNo(uint32_t rui32_serNo) { ISOName_c::setSerNo( rui32_serNo );};
 
   /**
-    set deviceClass and deviceClassInst in format of
-    DIN GETY_POS
-    @param rc_gtp == ((deviceClass << 3) | deviceClassInst)
-  */
-  void setGtp(iGetyPos_c rc_gtp) { ISOName_c::setGtp( rc_gtp );};
-  /**
     check if this NAME has higher prio
     than the given NAME 8-uint8_t string
     @param rpb_compare
-		@return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
+    @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
   */
   int8_t higherPriThanPar(const uint8_t* rpb_compare) { return ISOName_c::higherPriThanPar( rpb_compare );};
 };

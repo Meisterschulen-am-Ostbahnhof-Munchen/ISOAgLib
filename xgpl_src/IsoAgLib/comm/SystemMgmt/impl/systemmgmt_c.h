@@ -247,7 +247,7 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  bool existMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress = false
+  bool existMemberNr(uint8_t rui8_nr
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
@@ -267,7 +267,7 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  bool existMemberGtp(GetyPos_c rc_gtp, bool rb_forceClaimedAddress = false
+  bool existMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
@@ -314,7 +314,7 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  MonitorItem_c& memberGtp(GetyPos_c rc_gtp
+  MonitorItem_c& memberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
@@ -409,10 +409,10 @@ public:
   */
   uint8_t localIsoMemberCnt()
     {return localMemberCnt(
-			#if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-			IState_c::IsoOnly
-			#endif
-			);};
+      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
+      IState_c::IsoOnly
+      #endif
+      );};
   /**
     deliver pointer to local ISO member by index
     @see localIsoMemberCnt
@@ -421,10 +421,10 @@ public:
   */
   ISOItem_c* localIsoMemberInd(uint8_t rui8_ind)
     {return static_cast<ISOItem_c*>(localMemberInd(rui8_ind
-		#if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-		, IState_c::IsoOnly
-		#endif
-		));};
+    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
+    , IState_c::IsoOnly
+    #endif
+    ));};
 
   #endif
 
@@ -498,7 +498,7 @@ public:
       #endif
       ));};
 
-	#endif
+  #endif
   #ifdef USE_ISO_11783
   /**
     check if one of the own local ISO members is active with claimed address at ISO11783 or DIN9684;
@@ -510,10 +510,10 @@ public:
   */
   bool existActiveLocalIsoMember()
     {return existActiveLocalMember(
-			#if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-			IState_c::IsoOnly
-			#endif
-			);};
+      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
+      IState_c::IsoOnly
+      #endif
+      );};
   /**
     delivers reference to the first active local ISO member;
     -> using the number of the first active member serves as default
@@ -526,10 +526,10 @@ public:
   */
   ISOItem_c& getActiveLocalIsoMember()
     {return static_cast<ISOItem_c&>(getActiveLocalMember(
-			#if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-			IState_c::IsoOnly
-			#endif
-			));};
+      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
+      IState_c::IsoOnly
+      #endif
+      ));};
 
   #endif
 
@@ -555,7 +555,7 @@ public:
       (this parameter is only used if USE_ISO_11783 is defined, default check both)
     @return true -> one of the own identities has the wanted GETY_POS
   */
-  bool existLocalMemberGtp(GetyPos_c rc_gtp
+  bool existLocalMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
@@ -584,13 +584,13 @@ public:
     @param rc_gtp GETY_POS to search for
     @return true -> one of the own din identities has the wanted GETY_POS
   */
-  bool existLocalDinMemberGtp(GetyPos_c rc_gtp)
-    {return existLocalMemberGtp(rc_gtp
+  bool existLocalDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
+    {return existLocalMemberGtp(rc_gtp, rb_forceClaimedAddress
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       , IState_c::DinOnly
       #endif
       );};
-	#endif
+  #endif
   #ifdef USE_ISO_11783
   /**
     check for own iso ident with given member no;
@@ -602,10 +602,10 @@ public:
   */
   bool existLocalIsoMemberNr(uint8_t rui8_nr)
     {return existLocalMemberNr(rui8_nr
-			#if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-			, IState_c::IsoOnly
-			#endif
-			);};
+      #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
+      , IState_c::IsoOnly
+      #endif
+      );};
   /**
     check for own din ident with given GETY_POS;
     this variant of existLocalMemberNr is replaced during compile time by a direct
@@ -614,12 +614,12 @@ public:
     @param rc_gtp GETY_POS to search for
     @return true -> one of the own iso identities has the wanted GETY_POS
   */
-  bool existLocalIsoMemberGtp(GetyPos_c rc_gtp)
-    {return existLocalMemberGtp(rc_gtp
-		#if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-		, IState_c::IsoOnly
-		#endif
-		);};
+  bool existLocalIsoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
+    {return existLocalMemberGtp(rc_gtp, rb_forceClaimedAddress
+    #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
+    , IState_c::IsoOnly
+    #endif
+    );};
   #endif
 
   /*\@}*/

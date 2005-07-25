@@ -159,7 +159,7 @@ const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const
 void SimpleManageSetpointLocal_c::processSetpoint(){
   // for simple setpoint the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  const GetyPos_c cc_senderGtp = c_pkg.memberSend().gtp();
+  const GetyPos_c& cc_senderGtp = c_pkg.memberSend().gtp();
   // DIN pd=0
   if (c_pkg.generalCommand.getCommand() == GeneralCommand_c::setValue)
   { // setpoint set
@@ -212,7 +212,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   @param en_command
   @return true -> successful sent
 */
-bool SimpleManageSetpointLocal_c::sendSetpointMod(GetyPos_c rc_targetGtp,
+bool SimpleManageSetpointLocal_c::sendSetpointMod(const GetyPos_c& rc_targetGtp,
                                                   Proc_c::progType_t ren_progType,
                                                   GeneralCommand_c::ValueGroup_t en_valueGroup,
                                                   GeneralCommand_c::CommandType_t en_command ) const {

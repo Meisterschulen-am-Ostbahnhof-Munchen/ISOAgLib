@@ -98,8 +98,8 @@
 // project, if RS232 debug of mask upload is wanted
 // #define DEBUG_RS232
 #if defined(DEBUG_RS232) || defined(DEBUG_HEAP_USEAGE)
-	#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -157,7 +157,7 @@ void DINMaskUpload_c::close( void ) {
     setAlreadyClosed();
     // clear vector of sync proc
     arrSyncproc.clear();
-  	#ifdef DEBUG_HEAP_USEAGE
+    #ifdef DEBUG_HEAP_USEAGE
     sui16_syncProcTotal = 0;
     #endif
     en_maskUploadState = none;
@@ -196,52 +196,52 @@ bool DINMaskUpload_c::timeEvent( void )
       // check if one of the registered terminals is active
       for (ui8_testInd = 0; ui8_testInd < ui8_maskDefCnt; ui8_testInd++)
       {
-        if ( (getDinMonitorInstance4Comm().existDinMemberGtp( psMaskDef[ui8_testInd]->c_gtp, true ))
-          && ( (CNAMESPACE::memcmp(getDinMonitorInstance4Comm().dinMemberGtp(psMaskDef[ui8_testInd]->c_gtp).name(), psMaskDef[ui8_testInd]->pb_termName, 7) == 0)
-//            || ( ( ui8_maskDefCnt > 0 ) && ( getSystemMgmtInstance4Comm().existActiveLocalDinMember() ) )
-          )
-           )
-        { // registered terminal at index ui8_testInd is found
-          pc_terminal = &(getDinMonitorInstance4Comm().dinMemberGtp(psMaskDef[ui8_testInd]->c_gtp));
-          c_gtp = pc_terminal->gtp();
-          ui8_maskDefInd = ui8_testInd;
+        if (getDinMonitorInstance4Comm().existDinMemberGtp( psMaskDef[ui8_testInd]->c_gtp, true ))
+        {
+          const DINItem_c* pc_dinTerminalItem = &(getDinMonitorInstance4Comm().dinMemberGtp(psMaskDef[ui8_testInd]->c_gtp, true));
+          if (CNAMESPACE::memcmp(pc_dinTerminalItem->name(), psMaskDef[ui8_testInd]->pb_termName, 7) == 0)
+          { // registered terminal at index ui8_testInd is found
+            pc_terminal = pc_dinTerminalItem;
+            c_gtp = pc_terminal->gtp();
+            ui8_maskDefInd = ui8_testInd;
 
-          // check if terminal wants syncronisation process data with GETY_POS of terminal
-          switch (activeMask().en_terminalType)
-          {
-            case IsoAgLib::FendtVario:
-            case IsoAgLib::AgrocomACT:
-              // activate in ProcessPkg_c the automatic conversion of GETY_POS
-              // sent/received process data msgs so that GETY_POS can be normally handled
-              // in higher level algorithms
-              getProcessInstance4Comm().data().useTermGtpForLocalProc(c_gtp);
-              break;
-            case IsoAgLib::FieldstarOld:
-              getProcessInstance4Comm().data().useTermGtpForLocalProc(c_gtp, 0);
-              break;
-            default:
-              break;
-          }
-          // request immediately names of other members
-          // -> trigger terminal to start sync-procedure
-          getDinMonitorInstance4Comm().requestDinMemberNames();
+            // check if terminal wants syncronisation process data with GETY_POS of terminal
+            switch (activeMask().en_terminalType)
+            {
+              case IsoAgLib::FendtVario:
+              case IsoAgLib::AgrocomACT:
+                // activate in ProcessPkg_c the automatic conversion of GETY_POS
+                // sent/received process data msgs so that GETY_POS can be normally handled
+                // in higher level algorithms
+                getProcessInstance4Comm().data().useTermGtpForLocalProc(c_gtp);
+                break;
+              case IsoAgLib::FieldstarOld:
+                getProcessInstance4Comm().data().useTermGtpForLocalProc(c_gtp, 0);
+                break;
+              default:
+                break;
+            }
+            // request immediately names of other members
+            // -> trigger terminal to start sync-procedure
+            getDinMonitorInstance4Comm().requestDinMemberNames();
 
-          // only create new entries if terminal changed or if no synproc
-          // entries exist ( avoid double creation if several tries are needed )
-          if ( ( c_oldTerminalGtp !=  c_gtp ) || ( ! arrSyncproc.empty() ) )
-          { // now create the process data for syncronisation values
-            if ( activeMask().en_terminalType != IsoAgLib::FieldstarOld) createLbsplusProcdata();
-            else createFieldstarProcdata();
-          }
-          #if defined(DEBUG_RS232) || defined(DEBUG_HEAP_USEAGE)
-          getRs232Instance() << "Starte DIN Upload zu Terminal Gety: "
-            << uint16_t( c_gtp.getGety() )
-            << ", Pos: " << uint16_t( c_gtp.getPos() )
-            << "\n\r";
-          #endif
-          en_maskUploadState = await_start;
+            // only create new entries if terminal changed or if no synproc
+            // entries exist ( avoid double creation if several tries are needed )
+            if ( ( c_oldTerminalGtp !=  c_gtp ) || ( ! arrSyncproc.empty() ) )
+            { // now create the process data for syncronisation values
+              if ( activeMask().en_terminalType != IsoAgLib::FieldstarOld) createLbsplusProcdata();
+              else createFieldstarProcdata();
+            }
+            #if defined(DEBUG_RS232) || defined(DEBUG_HEAP_USEAGE)
+            getRs232Instance() << "Starte DIN Upload zu Terminal Gety: "
+              << uint16_t( c_gtp.getGety() )
+              << ", Pos: " << uint16_t( c_gtp.getPos() )
+              << "\n\r";
+            #endif
+            en_maskUploadState = await_start;
 
-        } // if registered terminal at index ui8_testInd is active
+          } // if registered terminal at index ui8_testInd is active
+        } // exist DINItem_c with tested gtp
       } // for all registered terminals
       break;
     case running:
@@ -252,11 +252,11 @@ bool DINMaskUpload_c::timeEvent( void )
       }
       break;
     case await_start:
-			if ( ( ( c_gtp.isSpecified() ) && (getDinMonitorInstance4Comm().existDinMemberGtp(c_gtp, true)) )
-			  && ( getSystemMgmtInstance4Comm().existActiveLocalDinMember()                                 ) )
-			{ // resend the mask sync data every 500msec
-				tryResendMaskSyncData();
-			}
+      if ( ( ( c_gtp.isSpecified() ) && (getDinMonitorInstance4Comm().existDinMemberGtp(c_gtp, true)) )
+        && ( getSystemMgmtInstance4Comm().existActiveLocalDinMember()                                 ) )
+      { // resend the mask sync data every 500msec
+        tryResendMaskSyncData();
+      }
     case success:
     case abort: /** @todo This part is never reached (please double check first someone), as above the state is set to "none" instead of "abort" */
       if ( ( c_gtp.isSpecified() ) && (!(getDinMonitorInstance4Comm().existDinMemberGtp(c_gtp, true))) )
@@ -273,9 +273,9 @@ bool DINMaskUpload_c::timeEvent( void )
           }
           en_maskUploadState = none;
         }
-				#ifdef DEBUG_RS232
+        #ifdef DEBUG_RS232
         getRs232Instance() << "Terminal ging verloren\n\r";
-				#endif
+        #endif
       }
       break;
   } // switch
@@ -284,12 +284,12 @@ bool DINMaskUpload_c::timeEvent( void )
     // -> clear array of process data, reset terminal pointer
     if ( ! arrSyncproc.empty() ) {
       arrSyncproc.clear();
-  	  #ifdef DEBUG_HEAP_USEAGE
+      #ifdef DEBUG_HEAP_USEAGE
       sui16_syncProcTotal = 0;
       #endif
-			#ifdef DEBUG_RS232
+      #ifdef DEBUG_RS232
       getRs232Instance() << "loesche zuvor aktiven Eintrag\n\r";
-			#endif
+      #endif
     }
     #ifdef DEBUG_RS232
     getRs232Instance() << "loesche zuvor aktiven Eintrag\n\r";
@@ -303,24 +303,24 @@ bool DINMaskUpload_c::timeEvent( void )
 };
 
 /**
-	in some cases the Varioterminal doesn't detect the implement.
-	Retrigger send of sync data every 500 msec.
+  in some cases the Varioterminal doesn't detect the implement.
+  Retrigger send of sync data every 500 msec.
 */
 void DINMaskUpload_c::tryResendMaskSyncData()
 {
-	static int32_t si32_nextSyncRetrigger = 0;
-	if ( System_c::getTime() >= si32_nextSyncRetrigger )
-	{ // resend mask data sync informations
-		si32_nextSyncRetrigger = System_c::getTime() + 1000;
-		getDinMonitorInstance4Comm().requestDinMemberNames();
-		for ( Vec_SyncProcIterator pc_iter = arrSyncproc.begin();
-					pc_iter != arrSyncproc.end();
-					pc_iter++ )
-		{ // send proc data at pos
-			if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) pc_iter->sendVal( c_gtp );
-			else pc_iter->setpoint().sendSetpoint( c_gtp );
-		}
-	}
+  static int32_t si32_nextSyncRetrigger = 0;
+  if ( System_c::getTime() >= si32_nextSyncRetrigger )
+  { // resend mask data sync informations
+    si32_nextSyncRetrigger = System_c::getTime() + 1000;
+    getDinMonitorInstance4Comm().requestDinMemberNames();
+    for ( Vec_SyncProcIterator pc_iter = arrSyncproc.begin();
+          pc_iter != arrSyncproc.end();
+          pc_iter++ )
+    { // send proc data at pos
+      if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) pc_iter->sendVal( c_gtp );
+      else pc_iter->setpoint().sendSetpoint( c_gtp );
+    }
+  }
 }
 
 
@@ -354,7 +354,7 @@ bool DINMaskUpload_c::registerLbsPlusMask(IsoAgLib::t_maskDefinition* rpsMask)
 
   possible errors:
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
-	@return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool DINMaskUpload_c::processMsg(){
   if (pc_terminal == NULL) return false;
@@ -437,7 +437,7 @@ bool DINMaskUpload_c::processMsg(){
         getMultiSendInstance4Comm().sendDin(ui8_localNr, ui8_termNr, phb_data,
             i32_dataSize, ui16_bytePerMsg, en_sendSuccess, b_uploadCmd, b_abortOnTimeout);
       }
-	    return true;
+      return true;
     }
   }
   return false;
@@ -491,7 +491,7 @@ void DINMaskUpload_c::createLbsplusProcdata()
       #endif
     }
   }
-	#ifdef DEBUG_HEAP_USEAGE
+  #ifdef DEBUG_HEAP_USEAGE
   sui16_syncProcTotal += ( activeMask().ui8_syncCnt + 1 );
 
   getRs232Instance()
@@ -501,7 +501,7 @@ void DINMaskUpload_c::createLbsplusProcdata()
     << ", Chunk-Alloc: "
     << sizeSlistTWithChunk( sizeof(syncproc_t), sui16_syncProcTotal )
     << "\r\n\r\n";
-	#endif
+  #endif
 }
 
 /**
@@ -551,7 +551,7 @@ void DINMaskUpload_c::createFieldstarProcdata()
     arrSyncproc.begin()->setpoint().sendSetpoint( c_gtp );
   }
 #endif
-	#ifdef DEBUG_HEAP_USEAGE
+  #ifdef DEBUG_HEAP_USEAGE
   sui16_syncProcTotal += ( activeMask().ui8_syncCnt + 1 );
 
   getRs232Instance()
@@ -561,7 +561,7 @@ void DINMaskUpload_c::createFieldstarProcdata()
     << ", Chunk-Alloc: "
     << sizeSlistTWithChunk( sizeof(syncproc_t), sui16_syncProcTotal )
     << "\r\n\r\n";
-	#endif
+  #endif
 }
 
 } // end namespace __IsoAgLib

@@ -150,17 +150,16 @@ void DINSystemPkg_c::string2Flags()
 */
 void DINSystemPkg_c::flags2String()
 {
-//  setIdent(((a() << 7) | ( gtp().getCombinedDin() )), Ident_c::StandardIdent); // PRI system is always 0
   if (a() == 1)
   {  // address claim telegramm
     pb_data[0] = nr();
     setLen(1);
-    setIdent( MASK_TYPE( (a() << 7) | ( gtp().getCombinedDin() ) ), Ident_c::StandardIdent); // PRI system is always 0
+    setIdent( MASK_TYPE( (a() << 7) | ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 ) ), Ident_c::StandardIdent); // PRI system is always 0
   }
   else
   {
     pb_data[0] = ((verw() << 4)| (send()));
-    setIdent( MASK_TYPE( gtp().getCombinedDin() ), Ident_c::StandardIdent); // PRI system is always 0
+    setIdent( MASK_TYPE( ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 ) ), Ident_c::StandardIdent); // PRI system is always 0
     switch (verw())
     {
       case 8: // request name

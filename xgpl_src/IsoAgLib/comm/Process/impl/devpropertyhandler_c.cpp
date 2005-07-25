@@ -84,8 +84,12 @@
 
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
+
+#ifdef USE_ISO_TERMINAL
+  #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
+#endif
 
 //define length of every attribute in deviceObject
 #define DEF_Transfer_Code 1
@@ -735,9 +739,11 @@ DevPropertyHandler_c::initUploading()
   {
     if (b_receivedLocalizationLabel)
     {
-      char ch_temp[2];
+      char ch_temp[2] = { 'e', 'n' };
+      #ifdef USE_ISO_TERMINAL
       ch_temp[0] = ((getIsoTerminalInstance().getLocalSettings()->languageCode) >> 8) & 0xFF;
       ch_temp[1] = (getIsoTerminalInstance().getLocalSettings()->languageCode) & 0xFF;
+      #endif
       if (strncmp(pch_localizationLabel, ch_temp, 2) == 0)
       {
         en_uploadState = StateIdle;
@@ -756,6 +762,7 @@ DevPropertyHandler_c::initUploading()
 void
 DevPropertyHandler_c::getPoolForUpload()
 {
+  #ifdef USE_ISO_TERMINAL
   //if there are no local settings in ISOTerminal just take the default pool from the map
   if (getIsoTerminalInstance().getLocalSettings()->lastReceived != 0) {
     //get local language from ISOTerminal
@@ -817,6 +824,7 @@ DevPropertyHandler_c::getPoolForUpload()
       }
     }
   }
+  #endif
   //if no matching pool was found just take the default pool
   if (pc_devPoolForUpload == NULL) pc_devPoolForUpload = pc_devDefaultDeviceDescription;
 }
@@ -863,7 +871,7 @@ DevPropertyHandler_c::sendCommandChangeDesignator(uint16_t rui16_objectID, const
   uint8_t strLen = (CNAMESPACE::strlen(rpc_newString) < stringLength) ? CNAMESPACE::strlen(rpc_newString) : stringLength;
   if (CNAMESPACE::strlen(rpc_newString) <= 32)
   {
-    l_sendUpload.push_back(SendUpload_c (rui16_objectID, rpc_newString, strLen, procCmdPar_ChangeDesignatorMsg));
+    l_sendUpload.push_back(SendUploadBase_c (rui16_objectID, rpc_newString, strLen, procCmdPar_ChangeDesignatorMsg));
     return true;
   }
   //DEBUG OUT
@@ -882,7 +890,7 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
   en_uploadState = StateUploadCommand;
 
   // Get first element from queue
-  SendUpload_c* actSend = &l_sendUpload.front();
+  SendUploadBase_c* actSend = &l_sendUpload.front();
 
   // Set time-out values
   ui32_uploadTimeout = actSend->ui32_uploadTimeout;

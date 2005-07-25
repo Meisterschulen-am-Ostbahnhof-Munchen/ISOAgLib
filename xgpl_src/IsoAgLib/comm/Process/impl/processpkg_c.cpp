@@ -469,7 +469,8 @@ void ProcessPkg_c::string2Flags()
     #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     else bit_data.b_valType = float_val;
     #endif
-    setGtp( GetyPos_c(((CANPkg_c::pb_data[2] >> 3) & 0xF), (CANPkg_c::pb_data[2] & 0x7) ) );
+    setGety((CANPkg_c::pb_data[2] >> 3) & 0xF);
+    setPos(CANPkg_c::pb_data[2] & 0x7);
 
     DINMonitor_c &c_din_monitor = getDinMonitorInstance4Comm();
     // now set pc_monitorSend and pc_monitorEmpf
@@ -502,13 +503,15 @@ void ProcessPkg_c::string2Flags()
     // and correct GETY for all messages from special registered terminal
     if ( (pc_monitorEmpf != NULL) // receiver must be found in monitor list
          && (pc_monitorSend != NULL) // sender must be found in monitor list
-         && ( gtp() != GetyPos_c( 0, 0 ) ) // Proc is not of special GetyPos 0,0 case
+         && ( gety() != 0 ) // Proc is not of special GetyPos 0,0 case
+         && ( pos() != 0 ) // Proc is not of special GetyPos 0,0 case
          && ( ( ( pd() & 0x2 ) != 0 ) // first alternative: it's a request
               ||   ( ( c_specialTermGtp ==  pc_monitorSend->gtp() ) && (c_specialTermGtp.isSpecified()) ) // or it's from known special terminal
               )
          )
     { // sender is special case terminal -> change GETY_POS for data part from terminal GETY_POS to local of empf
-      setGtp(pc_monitorEmpf->gtp());
+      setGety(pc_monitorEmpf->gtp()->getGety());
+      setPos(pc_monitorEmpf->gtp()->getPos());
     }
 #endif //DIN
 
@@ -543,7 +546,7 @@ void ProcessPkg_c::string2Flags()
     //setGtp( GetyPos_c(((CANPkg_c::pb_data[2] >> 4) & 0xF), (CANPkg_c::pb_data[2] & 0xF) ) );
 
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    
+
     // gtp in ProcessPkg_c is no longer used in ISO (for DIN the message contains the empf gtp!)
     //setGtp(c_isoMonitor.isoMemberNr(send()).gtp());  // Get the gety and pos (Device Class, Device Class Instance -bac
 
@@ -652,20 +655,20 @@ void ProcessPkg_c::flags2String()
     }
     CANPkg_c::pb_data[0] = ((lis() & 0x7) << 5) |((pd() & 0x3) << 3) | (mod() & 0x7);
 
-    // if c_specialTermGtp != GetyPos_c(0xF, 0xF) dependent on gtp receiver of the GETY_POS of this data should be changed
+    // if c_specialTermGtp != GetyPos_c::GetyPosUnspecified dependent on gtp receiver of the GETY_POS of this data should be changed
     // to remote gtp
-    CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | gtp().getCombinedDin();
+    CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 );
     #if 0
     if ( (c_specialTermGtp.isSpecified())
       && (c_specialTermGtp == getDinMonitorInstance4Comm().dinMemberNr(empf()).gtp())
       && ( ( (wert() == 0) && (inst() >= 0xC) ) || ( (wert() == 0xF) &&  ( (inst() == 3) || (inst() == 4) ) ) )
        )
     { // sender is special case terminal -> change GETY_POS for data part to terminal GETY_POS to local from empf
-      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | (c_specialTermUseProcGtp.getCombinedDin());
+      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 );
     }
     else
     { // standard case
-      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | gtp().getCombinedDin();
+      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 );
     }
     #endif
 
@@ -771,7 +774,7 @@ MonitorItem_c& ProcessPkg_c::memberSend() const
   @param rc_gtp GETY_POS of terminal, for which the GETY_POS of data is converted
   @param rc_useProcGtp GTP for process data (optional, default to terminal gtp)
 */
-void ProcessPkg_c::useTermGtpForLocalProc(GetyPos_c rc_gtp, GetyPos_c rc_useProcGtp)
+void ProcessPkg_c::useTermGtpForLocalProc(const GetyPos_c& rc_gtp, const GetyPos_c& rc_useProcGtp)
 {
   c_specialTermGtp = rc_gtp;
   if (rc_useProcGtp.isSpecified())c_specialTermUseProcGtp = rc_useProcGtp;

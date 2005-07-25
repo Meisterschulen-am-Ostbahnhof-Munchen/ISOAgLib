@@ -1,5 +1,5 @@
 /***************************************************************************
-                          setpointregister_c.h  - stores one setpoint with 
+                          setpointregister_c.h  - stores one setpoint with
                                                  management informations
                              -------------------
     begin                : Fri Apr 07 2000
@@ -50,37 +50,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef SETPOINT_REGISTER_H
@@ -98,7 +98,7 @@
 namespace __IsoAgLib {
 
 /** enum for specification of defined setpoint type */
-enum definedSetpoints_t { exactType = 1, minType = 4, maxType = 8, 
+enum definedSetpoints_t { exactType = 1, minType = 4, maxType = 8,
                           minMaxType = 0xC, exactMinType = 5, exactMaxType = 9,
                           defaultType = 0x10, minMaxDefaultType = 0x1C, exactMaxDefaultType = 0x19,
                           exactMinDefaultType = 0x15, exactMinMaxType = 0xD};
@@ -121,7 +121,7 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(GetyPos_c rc_gtp = 0xFF, int32_t ri32_exact = NO_VAL_32S,
+  SetpointRegister_c(const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true)
       {  init(rc_gtp, ri32_exact, ri32_min, ri32_max, ri32_default, rb_handled, rb_master, rb_valid);};
@@ -136,7 +136,7 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(GetyPos_c rc_gtp = 0xFF, int32_t ri32_exact = NO_VAL_32S,
+  void init(const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true);
 
@@ -151,10 +151,10 @@ public:
     @param rrefc_src source SetpointRegister_c instance
   */
   SetpointRegister_c(const SetpointRegister_c& rrefc_src);
-  
+
   /** default destructor which has nothing to do */
   ~SetpointRegister_c();
-  
+
   /**
     compare two Setpoint Register items by value
     @param rrefc_src compared instance
@@ -170,7 +170,7 @@ public:
     deliver gtp of commanding member
     @return GETY_POS of setpoint commander
   */
-  GetyPos_c gtp()const{return c_requestGtp;};
+  const GetyPos_c& gtp()const{return c_requestGtp;};
   /**
     deliver the exact setpoint
     @return exact setpoint value
@@ -284,7 +284,12 @@ public:
     set gtp of cammanding member
     @param rc_gtp GETY_POS of commanding member
   */
-  void setGtp(GetyPos_c rc_val){c_requestGtp = rc_val;};
+  void setGtp(const GetyPos_c& rc_val){c_requestGtp = rc_val;};
+  /**
+    set gtp of cammanding member
+    @param rc_gtp GETY_POS of commanding member
+  */
+  void setGtp(uint8_t rui8_gety, uint8_t rui8_pos){c_requestGtp.set( rui8_gety, rui8_pos );};
   /**
     set the exact setpoint value
     @param ri32_val new exact setpoint value

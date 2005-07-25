@@ -148,9 +148,33 @@ class iVtObjectString_c;
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+class SendUpload_c : public SendUploadBase_c{
+public:
+  /**
+    StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands)
+  */
+  SendUpload_c (vtObjectString_c* rpc_objectString);
 
-// forward declarations
-class vtObjectString_c;
+  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout)
+    : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, rui32_timeout ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
+    {};
+  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout)
+    : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rui32_timeout ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
+    {};
+  SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/)
+    : SendUploadBase_c( rui16_objId, rpc_string, overrideSendLength, ui8_cmdByte ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
+    {};
+  SendUpload_c (const SendUpload_c& ref_source) : SendUploadBase_c(ref_source), mssObjectString(ref_source.mssObjectString) {};
+  SendUpload_c (uint8_t* rpui8_buffer, uint32_t bufferSize)
+    : SendUploadBase_c( rpui8_buffer, bufferSize ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
+    {};
+
+  const SendUpload_c& operator= (const SendUpload_c& ref_source)
+  { SendUploadBase_c::operator=(ref_source);mssObjectString= ref_source.mssObjectString;return ref_source;};
+
+  /// Use either an MultiSendStreamer or a direct ui8-Buffer
+  __IsoAgLib::vtObjectString_c* mssObjectString;
+};
 
 
 /** helper class for low level streaming.
@@ -228,33 +252,6 @@ public:
   uint8_t arr_commandBuffer [8];
 };
 #endif
-
-class SendUpload_c {
-public:
-  /**
-    StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands)
-  */
-  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t rui32_timeout);
-  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t rui32_timeout);
-  SendUpload_c (__IsoAgLib::vtObjectString_c* rpc_objectString);
-  SendUpload_c (uint16_t rui16_objId, const char* rpc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/);
-  SendUpload_c (const SendUpload_c& ref_source);
-  SendUpload_c (uint8_t* rpui8_buffer, uint32_t bufferSize);
-  const SendUpload_c& operator= (const SendUpload_c& ref_source);
-
-  /// Use either an MultiSendStreamer or a direct ui8-Buffer
-  __IsoAgLib::vtObjectString_c* mssObjectString;
-  STL_NAMESPACE::vector<uint8_t> vec_uploadBuffer;  // don't use malloc_alloc for uint8_t values - here the 8byte overhead per malloc item are VERY big
-  // ==> chunk allocation which can be shared among instances is alot better
-
-  /// Retry some times?
-  uint8_t ui8_retryCount;
-
-  /// TimeOut value (relative to the time the Upload was started!
-  uint32_t ui32_uploadTimeout;
-};
-
-
 
 class ISOTerminal_c;
 typedef SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c) SingletonISOTerminal_c;

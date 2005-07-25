@@ -248,25 +248,25 @@ MonitorItem_c& SystemMgmt_c::memberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, bo
     (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
   @return true -> one of the devices in the searched Monitor lists has the wanted member no
 */
-bool SystemMgmt_c::existMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress
+bool SystemMgmt_c::existMemberNr(uint8_t rui8_nr
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
   , IState_c::protoOrder_t ren_protoOrder
   #endif
 )
 {
   #if (!defined(USE_ISO_11783)) && defined(USE_DIN_9684)
-  return getDinMonitorInstance4Comm().existDinMemberNr(rui8_nr, rb_forceClaimedAddress);
+  return getDinMonitorInstance4Comm().existDinMemberNr(rui8_nr);
   #elif (defined(USE_ISO_11783)) && (!defined(USE_DIN_9684))
-  return getIsoMonitorInstance4Comm().existIsoMemberNr(rui8_nr, rb_forceClaimedAddress);
+  return getIsoMonitorInstance4Comm().existIsoMemberNr(rui8_nr);
   #else
   bool b_result = false;
   if (ren_protoOrder != IState_c::IsoOnly)
   {
-    if (getDinMonitorInstance4Comm().existDinMemberNr(rui8_nr, rb_forceClaimedAddress)) b_result = true;
+    if (getDinMonitorInstance4Comm().existDinMemberNr(rui8_nr)) b_result = true;
   }
   if (ren_protoOrder != IState_c::DinOnly)
   {
-    if (getIsoMonitorInstance4Comm().existIsoMemberNr(rui8_nr, rb_forceClaimedAddress)) b_result = true;
+    if (getIsoMonitorInstance4Comm().existIsoMemberNr(rui8_nr)) b_result = true;
   }
   return b_result;
   #endif
@@ -283,7 +283,7 @@ bool SystemMgmt_c::existMemberNr(uint8_t rui8_nr, bool rb_forceClaimedAddress
     (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
   @return true -> one of the devices in the searched Monitor lists has the wanted member gtp
 */
-bool SystemMgmt_c::existMemberGtp(GetyPos_c rc_gtp, bool rb_forceClaimedAddress
+bool SystemMgmt_c::existMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
   , IState_c::protoOrder_t ren_protoOrder
   #endif
@@ -364,30 +364,30 @@ MonitorItem_c& SystemMgmt_c::memberNr(uint8_t rui8_nr
   @return reference to iMonitorItem_c with wanted number
    @exception containerElementNonexistant
 */
-MonitorItem_c& SystemMgmt_c::memberGtp(GetyPos_c rc_gtp
+MonitorItem_c& SystemMgmt_c::memberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
   , IState_c::protoOrder_t ren_protoOrder
   #endif
 )
 {
   #if (!defined(USE_ISO_11783)) && defined(USE_DIN_9684)
-  return static_cast<MonitorItem_c&>(getDinMonitorInstance4Comm().dinMemberGtp(rc_gtp));
+  return static_cast<MonitorItem_c&>(getDinMonitorInstance4Comm().dinMemberGtp(rc_gtp, rb_forceClaimedAddress));
   #elif (defined(USE_ISO_11783)) && (!defined(USE_DIN_9684))
-  return static_cast<MonitorItem_c&>(getIsoMonitorInstance4Comm().isoMemberGtp(rc_gtp));
+  return static_cast<MonitorItem_c&>(getIsoMonitorInstance4Comm().isoMemberGtp(rc_gtp, rb_forceClaimedAddress));
   #else
   if ((ren_protoOrder == IState_c::DinIso) || (ren_protoOrder == IState_c::DinOnly))
   { // try with DIN if member exist or if DIN only is forced
-    if ((getDinMonitorInstance4Comm().existDinMemberGtp(rc_gtp)) || (ren_protoOrder == IState_c::DinOnly))
-      return static_cast<MonitorItem_c&>(getDinMonitorInstance4Comm().dinMemberGtp(rc_gtp));
+    if ((getDinMonitorInstance4Comm().existDinMemberGtp(rc_gtp, rb_forceClaimedAddress)) || (ren_protoOrder == IState_c::DinOnly))
+      return static_cast<MonitorItem_c&>(getDinMonitorInstance4Comm().dinMemberGtp(rc_gtp, rb_forceClaimedAddress));
   }
   // this point is reached for DinIso with no DIN found or with IsoDin, IsoOnly
   // -> try with ISO: if ISO found or IsoOnly is forced
-  if ((getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_gtp)) || (ren_protoOrder == IState_c::IsoOnly))
-      return static_cast<MonitorItem_c&>(getIsoMonitorInstance4Comm().isoMemberGtp(rc_gtp));
+  if ((getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_gtp, rb_forceClaimedAddress)) || (ren_protoOrder == IState_c::IsoOnly))
+      return static_cast<MonitorItem_c&>(getIsoMonitorInstance4Comm().isoMemberGtp(rc_gtp, rb_forceClaimedAddress));
 
   // this point is reached if IsoDin with no ISO found
   // -> have last try with DIN
-  return static_cast<MonitorItem_c&>(getDinMonitorInstance4Comm().dinMemberGtp(rc_gtp));
+  return static_cast<MonitorItem_c&>(getDinMonitorInstance4Comm().dinMemberGtp(rc_gtp, rb_forceClaimedAddress));
   #endif
 }
 
@@ -412,17 +412,19 @@ bool SystemMgmt_c::gety2gtpClaimedAddress(GetyPos_c &refc_gtp
   #elif (defined(USE_ISO_11783)) && (!defined(USE_DIN_9684))
   return getIsoMonitorInstance4Comm().isoGety2GtpClaimedAddress(refc_gtp);
   #else
-  if (!existMemberGtp(refc_gtp, ren_protoOrder))
+  if (!existMemberGtp(refc_gtp, false, ren_protoOrder))
   { // no member with given GETY_POS in one of the lists
     if ((ren_protoOrder == IState_c::DinIso) || (ren_protoOrder == IState_c::DinOnly))
     { // try with DIN if member exist or if DIN only is forced
-      if ((getDinMonitorInstance4Comm().dinGety2GtpClaimedAddress(refc_gtp)) || (ren_protoOrder == IState_c::DinOnly))
-        return true;
+      const bool b_existDin = getDinMonitorInstance4Comm().dinGety2GtpClaimedAddress(refc_gtp);
+      if ((b_existDin) || (ren_protoOrder == IState_c::DinOnly))
+        return b_existDin;
     }
     // this point is reached for DinIso with no DIN found or with IsoDin, IsoOnly
     // -> try with ISO: if ISO found or IsoOnly is forced
-    if ((getIsoMonitorInstance4Comm().isoGety2GtpClaimedAddress(refc_gtp)) || (ren_protoOrder == IState_c::IsoOnly))
-        return true;
+    const bool b_existIso = getIsoMonitorInstance4Comm().isoGety2GtpClaimedAddress(refc_gtp);
+    if ((b_existIso) || (ren_protoOrder == IState_c::IsoOnly))
+        return b_existIso;
 
     // this point is reached if IsoDin with no ISO found
     // -> have last try with DIN
@@ -430,7 +432,7 @@ bool SystemMgmt_c::gety2gtpClaimedAddress(GetyPos_c &refc_gtp
   }
   else
   {
-    if (memberGtp(refc_gtp, ren_protoOrder).itemState(IState_c::ClaimedAddress)) return true;
+    if (existMemberGtp(refc_gtp, true, ren_protoOrder)) return true;
     else return false;
   }
   #endif
@@ -454,7 +456,7 @@ uint8_t SystemMgmt_c::localMemberCnt(
   uint8_t b_count = 0;
   for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
   {  // increase reult count if local ident is already registered in MemberList
-    if (existMemberGtp((*pc_searchCacheC1)->gtp()
+    if (existMemberGtp((*pc_searchCacheC1)->gtp(), false
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       , ren_protoOrder
       #endif
@@ -485,7 +487,7 @@ MonitorItem_c* SystemMgmt_c::localMemberInd(uint8_t rui8_ind
   uint8_t b_count = 0;
   for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
   {  // increase reult count if local ident is already registered in MemberList
-    if (existMemberGtp((*pc_searchCacheC1)->gtp()
+    if (existMemberGtp((*pc_searchCacheC1)->gtp(), false
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       , ren_protoOrder
       #endif
@@ -493,7 +495,7 @@ MonitorItem_c* SystemMgmt_c::localMemberInd(uint8_t rui8_ind
     {
       if (b_count == rui8_ind)
       { // wanted item found
-        pc_result = &(memberGtp((*pc_searchCacheC1)->gtp()
+        pc_result = &(memberGtp((*pc_searchCacheC1)->gtp(), false
           #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
           , ren_protoOrder
           #endif
@@ -523,24 +525,23 @@ bool SystemMgmt_c::existActiveLocalMember(
 {
   bool b_result = false; // set default to no success
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-	if ( ( ren_protoOrder == IState_c::DinOnly )
-		&& ( IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::IsoOnly)) )
-	{ // cache points to wrong type -> invalidate to force search
-		pc_activeLocalMember = NULL;
-	}
-	else if ( ( ren_protoOrder == IState_c::IsoOnly )
-		&& ( IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::DinOnly)) )
-	{ // cache points to wrong type -> invalidate to force search
-		pc_activeLocalMember = NULL;
-	}
-	#endif
+  if ( ( ren_protoOrder == IState_c::DinOnly )
+    && ( IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::IsoOnly)) )
+  { // cache points to wrong type -> invalidate to force search
+    pc_activeLocalMember = NULL;
+  }
+  else if ( ( ren_protoOrder == IState_c::IsoOnly )
+    && ( IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::DinOnly)) )
+  { // cache points to wrong type -> invalidate to force search
+    pc_activeLocalMember = NULL;
+  }
+  #endif
 
   // check if actual cache pointer points to active ident
   if ((pc_activeLocalMember == NULL)
    || (!pc_activeLocalMember->itemState(IState_c::ClaimedAddress)))
   { // the actual cache pointer isn't correct -> search new one
-    GetyPos_c useGtp;
-    useGtp.setUnspecified();
+    const GetyPos_c *pc_useGtp = NULL;
     MonitorItem_c* pc_monitorItem = NULL;
 
     for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
@@ -550,22 +551,22 @@ bool SystemMgmt_c::existActiveLocalMember(
         #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
         if (existMemberGtp((*pc_searchCacheC1)->gtp(), true, ren_protoOrder))
         {
-          pc_monitorItem = &(memberGtp((*pc_searchCacheC1)->gtp(), ren_protoOrder));
+          pc_monitorItem = &(memberGtp((*pc_searchCacheC1)->gtp(), true, ren_protoOrder));
           if (pc_monitorItem->itemState(IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::Local)))
         #else
         if (existMemberGtp((*pc_searchCacheC1)->gtp(), true ))
         {
-          pc_monitorItem = &(memberGtp((*pc_searchCacheC1)->gtp()));
+          pc_monitorItem = &(memberGtp((*pc_searchCacheC1)->gtp(), true));
           if (pc_monitorItem->itemState(IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::Local)))
         #endif
           {
-            useGtp = (*pc_searchCacheC1)->gtp();
+            pc_useGtp = &((*pc_searchCacheC1)->gtp());
             break;
           } // end if claimed address and local
         } // end if existMemberGtp
       } // end if ident_item has claimed address
     } // searching for loop
-    if (useGtp.isSpecified())
+    if (pc_useGtp != NULL)
     { // active own identity found
       b_result = true;
       pc_activeLocalMember = pc_monitorItem;
@@ -621,9 +622,9 @@ MonitorItem_c& SystemMgmt_c::getActiveLocalMember(
 
     //return reference to the first ident in DINMonitor_c
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-    return memberGtp(c_arrClientC1.front()->gtp(), IState_c::DinIso);
+    return memberGtp(c_arrClientC1.front()->gtp(), true, IState_c::DinIso);
     #else
-    return memberGtp(c_arrClientC1.front()->gtp());
+    return memberGtp(c_arrClientC1.front()->gtp(), true);
     #endif
   }
 }
@@ -668,24 +669,28 @@ bool SystemMgmt_c::existLocalMemberNr(uint8_t rui8_nr
     (this parameter is only used if USE_ISO_11783 is defined, default check both)
   @return true -> one of the own din identities has the wanted GETY_POS
 */
-bool SystemMgmt_c::existLocalMemberGtp(GetyPos_c rc_gtp
+bool SystemMgmt_c::existLocalMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
   , IState_c::protoOrder_t ren_protoOrder
   #endif
 )
 {
-  if ( (!c_arrClientC1.empty()) && (pc_searchCacheC1 != c_arrClientC1.end()) && (rc_gtp == (*pc_searchCacheC1)->gtp()) ) return true;
+  if ( (!c_arrClientC1.empty()) && (pc_searchCacheC1 != c_arrClientC1.end()) )
+  { // try to use current cache as it points to valid entry
+    if ( ((*pc_searchCacheC1)->gtp() == rc_gtp )
+      && (!rb_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
+        )  return true;
+  }
   // if last cache is still vald the function is exited -> start new search
   for (pc_searchCacheC1 = c_arrClientC1.begin();
         pc_searchCacheC1 != c_arrClientC1.end(); pc_searchCacheC1++)
-  {if (rc_gtp == (*pc_searchCacheC1)->gtp()) break;}
-  return ((pc_searchCacheC1 != c_arrClientC1.end())
-        &&((*pc_searchCacheC1)->gtp() == rc_gtp)
-        #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
-        &&((*pc_searchCacheC1)->matchSearchedProto(ren_protoOrder))
-        #endif
-        )?true:false;
-
+  {
+    if ( ((*pc_searchCacheC1)->gtp() == rc_gtp )
+      && (!rb_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
+        )  return true;
+  }
+  // if reaching here -> nothing found
+  return false;
 };
 
 } // end namespace __IsoAgLib

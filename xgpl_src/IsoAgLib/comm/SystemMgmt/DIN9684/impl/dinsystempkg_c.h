@@ -2,10 +2,10 @@
                           dinsystempkg_c.h - object for transformation of CAN
                                         uint8_t string to and from System
                                         data structure
-                             -------------------                                         
+                             -------------------
     begin                : Fri Apr 07 2000
-    copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+    copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -48,37 +48,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef DIN_SYSTEM_PKG_H
@@ -103,7 +103,7 @@ namespace __IsoAgLib {
 */
 
 class DINSystemPkg_c : public CANPkgExt_c  {
-public: 
+public:
   /** default constructor */
   DINSystemPkg_c();
   /** default destructor */
@@ -126,7 +126,7 @@ public:
     deliver GETY_POS of sender
     @return GETY_POS of sender
   */
-  GetyPos_c gtp() const { return data.c_gtp; };
+  const GetyPos_c& gtp() const { return c_gtp; };
   /**
     deliver VERW code of message
     @return VERW code of message
@@ -200,8 +200,8 @@ public:
     set value of GETY_POS flag in identifier
     @param rc_gtp value of GETY_POS flag
   */
-  void setGtp(GetyPos_c rc_gtp){
-  	data.c_gtp = rc_gtp;
+  void setGtp(const GetyPos_c& rc_gtp){
+    c_gtp = rc_gtp;
     setIdentType(Ident_c::StandardIdent);
   };
   /**
@@ -209,7 +209,7 @@ public:
     @param rb_val value of GETY_POS flag
   */
   void setDinGtp(uint8_t rui8_gtp){
-  	data.c_gtp.setCombinedDin( rui8_gtp );
+    c_gtp.set( ( rui8_gtp >> 3 ), ( rui8_gtp & 0x7 ) );
     setIdentType(Ident_c::StandardIdent);
   };
   /**
@@ -272,7 +272,7 @@ public:
   */
   virtual void string2Flags();
 protected: // protected methods
-  
+
   /**
     overloaded virtual function to translate flag values to data string;
     needed for sending informations from this object via CANIO_c on CAN BUS,
@@ -286,10 +286,10 @@ private: // Private attributes
   /** address vector (16 bit) with 1 on all positions
       with used number */
   AdrVect_c c_adrVect;
+  /** GETY_POS of sender */
+  GetyPos_c c_gtp;
   struct
   {
-    /** GETY_POS of sender */
-    GetyPos_c c_gtp;
     /** VERW command subtype of system message */
     uint8_t b_verw : 4;
     /** send tnr of sender */

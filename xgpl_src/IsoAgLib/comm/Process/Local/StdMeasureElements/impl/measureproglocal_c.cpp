@@ -105,7 +105,7 @@ void MeasureProgLocal_c::init(
   Proc_c::progType_t ren_progType,
   int32_t ri32_masterVal,
   int32_t ri32_initialVal,
-  GetyPos_c rc_callerGtp)
+  const GetyPos_c& rc_callerGtp)
 {
   MeasureProgBase_c::init( rpc_processData, ren_progType, ri32_initialVal, rc_callerGtp  );
 
@@ -134,7 +134,7 @@ void MeasureProgLocal_c::init(
 void MeasureProgLocal_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType, float rf_masterVal,
-  float rf_eepromVal, GetyPos_c rc_callerGtp)
+  float rf_eepromVal, const GetyPos_c& rc_callerGtp)
 {
   MeasureProgBase_c::init( rpc_processData, ren_progType, rf_eepromVal, rc_callerGtp  );
 
@@ -217,11 +217,11 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         en_accumProp = Proc_c::AccumTime;
         break;
       #ifdef USE_BASE
-			case Proc_c::DistProp:
+      case Proc_c::DistProp:
         pc_iter->start(getBaseInstance4Comm().distTheor());
         en_accumProp = Proc_c::AccumDist;
         break;
-			#endif
+      #endif
       case Proc_c::ValIncr:
         pc_iter->start(val());
         break;
@@ -291,11 +291,11 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         en_accumProp = Proc_c::AccumTime;
         break;
       #ifdef USE_BASE
-			case Proc_c::DistProp:
+      case Proc_c::DistProp:
         pc_iter->start(getBaseInstance4Comm().distTheor());
         en_accumProp = Proc_c::AccumDist;
         break;
-			#endif
+      #endif
       case Proc_c::ValIncr:
         pc_iter->start(valFloat());
         break;
@@ -383,7 +383,7 @@ bool MeasureProgLocal_c::stop(){
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, GetyPos_c rc_targetGtp, Proc_c::progType_t ren_progType ) const {
+bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const GetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType ) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
@@ -406,12 +406,12 @@ bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGrou
 */
 bool MeasureProgLocal_c::processMsg(){
   bool b_result = MeasureProgBase_c::processMsg();
-  
+
   // call base function - if base function returns true, nothing else must be done
   if (!b_result)
   { // only use the local vars if needed
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-    
+
     // the message was a value message -> evaluate it here 
     // ISO: set value command, DIN: i32_val == 0 is already checked in ProcessPgk::resolveCommandType() => command measurementReset, handled in measureprogbase
     if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
@@ -419,7 +419,7 @@ bool MeasureProgLocal_c::processMsg(){
       // ISO: value in message contains reset value
       int32_t i32_val = c_pkg.dataRawCmdLong();
       resetValMod(c_pkg.c_generalCommand.getValueGroup(), i32_val);
-        
+
       // resetted val is automatically sent
       b_result = true;
       // call handler function if handler class is registered
@@ -469,7 +469,7 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
     i32_accel = ((i32_delta - i32_oldDelta) * 1000) / i32_timeDelta;
 
   }
-  
+
   int32_t i32_minVal = 0;
   int32_t i32_maxVal = 0;
   bool b_checkMin = false;
@@ -490,8 +490,8 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
         break;
       case Proc_c::DistProp:
         #ifdef USE_BASE
-				b_singleTest = pc_iter->updateTrigger(getBaseInstance4Comm().distTheor());
-				#endif
+        b_singleTest = pc_iter->updateTrigger(getBaseInstance4Comm().distTheor());
+        #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumDist))updatePropDepVals();
@@ -612,9 +612,9 @@ void MeasureProgLocal_c::setVal(float rf_val){
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
         break;
       case Proc_c::DistProp:
-				#ifdef USE_BASE
+        #ifdef USE_BASE
         b_singleTest = pc_iter->updateTrigger(getBaseInstance4Comm().distTheor());
-				#endif
+        #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumDist))updatePropDepVals();
@@ -707,7 +707,7 @@ bool MeasureProgLocal_c::sendRegisteredVals(){
     // call send function
     b_success = (sendValMod( GeneralCommand_c::maxValue, gtp(), en_progType))?true : b_success;
   }
-  
+
   if (checkDoSend(Proc_c::DoInteg))
   {
     // call send function
@@ -771,7 +771,7 @@ bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
     // allow reset with value (ISO only, DIN: ri32_val=0)
     //i32_val = 0;
     i32_val = ri32_val;
-    
+
     // DIN: pd=1, mod=0
     b_sendSuccess = processData().sendValGtp(ui8_pri, c_gtp, val());
 #ifdef USE_FLOAT_DATA_TYPE
@@ -809,7 +809,7 @@ bool MeasureProgLocal_c::resetInteg(){
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::integValue, GeneralCommand_c::setValue);
-  
+
   // DIN: pd=1, mod=3
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
@@ -840,11 +840,11 @@ bool MeasureProgLocal_c::resetMed(){
   i32_medCnt = 0;
   // send resetted val
   uint8_t ui8_pri = progType();
-  
+
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::medValue, GeneralCommand_c::setValue);
-  //DIN pd=1, mod=4  
+  //DIN pd=1, mod=4
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
@@ -872,7 +872,7 @@ bool MeasureProgLocal_c::resetMed(){
 bool MeasureProgLocal_c::resetMin(){
   // send resetted val
   uint8_t ui8_pri = progType();
-  
+
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::minValue, GeneralCommand_c::setValue);
@@ -907,7 +907,7 @@ bool MeasureProgLocal_c::resetMax(){
 
   // send resetted val
   uint8_t ui8_pri = progType();
-  
+
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::maxValue, GeneralCommand_c::setValue);
@@ -964,9 +964,9 @@ bool MeasureProgLocal_c::timeEvent( void )
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
         break;
       case Proc_c::DistProp:
-				#ifdef USE_BASE
+        #ifdef USE_BASE
         b_singleTest = pc_iter->updateTrigger(getBaseInstance4Comm().distTheor());
-				#endif
+        #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
