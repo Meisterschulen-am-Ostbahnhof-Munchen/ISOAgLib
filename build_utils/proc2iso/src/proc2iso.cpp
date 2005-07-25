@@ -65,8 +65,6 @@
  #include <dirent.h>
 #endif
 
-#define USE_ISO_11783
-
 // Includes (proc2iso)
 #include "proc2iso.hpp"
 #include "proc2iso-defines.hpp"
@@ -285,6 +283,9 @@ void init (const char* xmlFile)
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-bytestream.inc");
+  char FileName[200];
+  char *tempFileName = strrchr(partFileName, '/');
+  for (uint8_t i=0; i<strlen(tempFileName); i++) FileName[i]=tempFileName[i];
   partFileA = fopen (partFileName,"wt");
 
   fprintf (partFileA, "const HUGE_MEM uint8_t deviceDescription");
@@ -293,11 +294,10 @@ void init (const char* xmlFile)
   strcat (partFileName, "-func.h");
   partFileB = fopen (partFileName,"wt");
 
-  fprintf (partFileB, "#include \"%s\"\n\n", strcat (strncpy (partFileName, xmlFile, 1024), "-bytestream.inc"));
+  fprintf (partFileB, "#include \"%s\"\n\n", FileName+1);
 
   for (int j=0; j<maxAttributeNames; j++)
   {
-    //attrString [j] [stringLength+1-1] = 0x00;
     vecstr_attrString[j].clear();
   }
 };
@@ -1038,20 +1038,20 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           clean_exit (-1, "YOU NEED TO SPECIFY THE wert_inst= ATTRIBUTE FOR THE <devicedinprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
-        #ifdef USE_ISO_11783
+        fprintf( partFileB, "\n#ifdef USE_ISO_11783\n");
           fprintf( partFileB, "%d, 0x%x, ", atoi(vecstr_constructor[6].c_str()), atoi(vecstr_constructor[2].c_str()));
-        #endif
-        #ifdef USE_DIN_9684
+        fprintf( partFileB, "\n#endif\n");
+        fprintf( partFileB, "#ifdef USE_DIN_9684\n");
           fprintf( partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
                    (atoi(vecstr_attrString[attrWert_inst].c_str()) & 0x0F), ((atoi(vecstr_attrString[attrWert_inst].c_str()) >> 4) & 0xF),
                    atoi(vecstr_constructor[2].c_str()));
-        #endif
+        fprintf( partFileB, "\n#endif\n");
           fprintf( partFileB, "%sGtp, 0x%x, %sGtp, &%sGtp, %s",
                    vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
                    vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
-        #ifdef USE_EEPROM_IO
+        fprintf( partFileB, "\n#ifdef USE_EEPROM_IO\n");
           fprintf( partFileB, ", 0x%x", atoi(vecstr_attrString [attrStore_SA_at_EEPROM_address].c_str()));
-        #endif
+        fprintf( partFileB, "\n#endif\n");
         fprintf( partFileB, ");\n\n" );
         break;
       case otDeviceValuePresentation:
