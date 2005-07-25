@@ -359,7 +359,7 @@ public:
     deliver the commanderGtp (GETY_POS of local member)
     @return GETY_POS used for sending commands to remote owner member
   */
-  const iGetyPos_c& commanderGtp()const{return ProcDataRemote_c::commanderGtp();};
+  const iGetyPos_c& commanderGtp()const{return static_cast<const iGetyPos_c&>(ProcDataRemote_c::commanderGtp());};
   /**
     set the pointer to the commander ident gtp
     @param rpbgtp pointer to GETY_POS var of local member used for

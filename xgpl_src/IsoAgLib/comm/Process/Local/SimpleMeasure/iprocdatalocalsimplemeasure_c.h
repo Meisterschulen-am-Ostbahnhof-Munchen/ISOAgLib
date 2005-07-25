@@ -315,7 +315,7 @@ public:
     use everytime the GETY from the ident part, and take the POS from the owner
     @return GETY_POS
   */
-  const iGetyPos_c& gtp() const {return ProcDataLocalSimpleMeasure_c::gtp();};
+  const iGetyPos_c& gtp() const {return static_cast<const iGetyPos_c&>(ProcDataLocalSimpleMeasure_c::gtp());};
   /**
     deliver value WERT (row of process data table)
     @return WERT

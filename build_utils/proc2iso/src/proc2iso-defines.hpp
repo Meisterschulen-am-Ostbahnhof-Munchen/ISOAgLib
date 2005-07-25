@@ -210,6 +210,6 @@ char falseTable [maxFalseTable] [stringLength+1] = {
 #define maxFeatureSet 3
 char featureSetTable [maxFeatureSet] [stringLength+1] = {
     "SimpleMeasure",
-    "SimpleSetPoint",
-    "SimpleMeasureSetPoint"
+    "SimpleSetpoint",
+    "SimpleMeasureSetpoint"
 };

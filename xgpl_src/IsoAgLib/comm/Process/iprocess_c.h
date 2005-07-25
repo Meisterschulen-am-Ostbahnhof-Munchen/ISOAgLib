@@ -106,7 +106,7 @@ public:
   */
   void init( void ) { Process_c::init();};
 
-#ifdef USE_ISO_11783
+#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
   iDevPropertyHandler_c& getDevPropertyHandlerInstance( void )
   {return static_cast<iDevPropertyHandler_c&>(Process_c::getDevPropertyHandlerInstance());};
 #endif
@@ -142,7 +142,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
     @param rui8_gety GETY code of searched local Process Data instance
     @param rui8_pos optional POS
@@ -154,26 +154,28 @@ public:
                           uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
+                          uint8_t rui8_dataGety,
+                          uint8_t rui8_pos,
                           uint8_t rui8_lis,
                           uint8_t rui8_wert,
                           uint8_t rui8_inst,
                           uint8_t rui8_zaehlnum,
 #endif
-                          uint8_t rui8_gety,
-                          uint8_t rui8_pos = 0xFF)
+                          uint8_t rui8_getyReceiver)
   { return Process_c::existProcDataLocal(
 #ifdef USE_ISO_11783
                           rui16_DDI,
                           rui16_element,
 #endif
 #ifdef USE_DIN_9684
+                          rui8_dataGety,
+                          rui8_pos,
                           rui8_lis,
                           rui8_wert,
                           rui8_inst,
                           rui8_zaehlnum,
 #endif
-                          rui8_gety,
-                          rui8_pos
+                          rui8_getyReceiver
   );}
   /**
     checks if a suitable iProcessDataRemote_c item exist
@@ -186,7 +188,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
     @param rui8_gety GETY code of searched remote Process Data instance
     @param rui8_pos optional POS
@@ -199,13 +201,14 @@ public:
                            uint8_t rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
+                           uint8_t rui8_dataGety,
+                           uint8_t rui8_pos,
                            uint8_t rui8_lis,
                            uint8_t rui8_wert,
                            uint8_t rui8_inst,
                            uint8_t rui8_zaehlnum,
 #endif
-                           uint8_t rui8_gety,
-                           uint8_t rui8_pos = 0xFF)
+                           uint8_t rui8_getyReceiver)
   { return Process_c::existProcDataRemote(
 #ifdef USE_ISO_11783
                            rui16_DDI,
@@ -213,13 +216,14 @@ public:
                            rui8_getySender,
 #endif
 #ifdef USE_DIN_9684
+                           rui8_dataGety,
+                           rui8_pos,
                            rui8_lis,
                            rui8_wert,
                            rui8_inst,
                            rui8_zaehlnum,
 #endif
-                           rui8_gety,
-                           rui8_pos
+                           rui8_getyReceiver
   );};
 
   /**
@@ -234,7 +238,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
     @param rui8_gety GETY code of searched local Process Data instance
     @return count of similar local process data entries
@@ -260,7 +264,7 @@ public:
 #endif
                                         rui8_gety);
     };
-    
+
   /**
     delivers count of remote process data entries with similar ident
     (which differs only in POS of owner)
@@ -274,7 +278,7 @@ public:
     @param rui8_wert WERT code of searched local Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
- 
+
     common parameter
     @param rui8_gety GETY code of searched local Process Data instance
     @return count of similar remote process data entries
@@ -301,7 +305,7 @@ public:
 #endif
                                          rui8_gety);
     };
-    
+
  private:
   /** allow getIProcessInstance() access to shielded base class.
       otherwise __IsoAgLib::getProcessInstance() wouldn't be accepted by compiler

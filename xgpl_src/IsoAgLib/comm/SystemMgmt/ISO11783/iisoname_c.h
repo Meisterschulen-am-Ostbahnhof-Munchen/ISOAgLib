@@ -58,7 +58,6 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/isoname_c.h"
-#include <IsoAgLib/util/igetypos_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

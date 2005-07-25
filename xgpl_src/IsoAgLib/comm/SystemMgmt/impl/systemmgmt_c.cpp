@@ -477,7 +477,7 @@ uint8_t SystemMgmt_c::localMemberCnt(
      adress, gtp, itemState)
   @return pointer to wanted local din member (NULL if no suitable DINItem_c found)
 */
-MonitorItem_c* SystemMgmt_c::localMemberInd(uint8_t rui8_ind
+MonitorItem_c& SystemMgmt_c::localMemberInd(uint8_t rui8_ind
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
   , IState_c::protoOrder_t ren_protoOrder
   #endif
@@ -505,7 +505,7 @@ MonitorItem_c* SystemMgmt_c::localMemberInd(uint8_t rui8_ind
       b_count++;
     }
   } // for
-  return pc_result;
+  return *pc_result;
 }
 
 

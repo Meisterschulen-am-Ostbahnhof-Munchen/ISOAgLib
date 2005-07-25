@@ -300,12 +300,25 @@ bool Process_c::timeEvent( void ){
   #endif
 
 #ifdef USE_ISO_11783
-  static const GetyPos_c c_taskControllerGtp( 130, 0 );
+  const ISOItem_c *pc_checkLocal = NULL;
+  SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance();
+
+  for ( int ind = 0; ind < c_systemMgmt.localIsoMemberCnt(); ind++ )
+  {
+    pc_checkLocal = &(c_systemMgmt.localIsoMemberInd( ind ));
+    if ( ( pc_checkLocal->gtp().getConstName().devClass() == 0 )
+      && ( pc_checkLocal->gtp().getConstName().func() == 130   )
+      && ( pc_checkLocal->itemState(IState_c::ClaimedAddress)  ) )
+    { // local ident has identity of TC and has already claimed an address
+      ui8_runningTaskWithSa = pc_checkLocal->nr();
+      break;
+    }
+  }
   if(ui8_runningTaskWithSa == 0xFF)
   {
-    if(getSystemMgmtInstance().existMemberGtp(c_taskControllerGtp, true)) //getSystemMgmtInstance().existLocalMemberGtp(c_myGtp))
+    if(getSystemMgmtInstance().existMemberNr(ui8_runningTaskWithSa)) //getSystemMgmtInstance().existLocalMemberGtp(c_myGtp))
     {
-        ui8_runningTaskWithSa = getSystemMgmtInstance().memberGtp(c_taskControllerGtp, true).nr();
+        ui8_runningTaskWithSa = getSystemMgmtInstance().memberNr(ui8_runningTaskWithSa).nr();
     }
   }
   if (ui8_runningTaskWithSa != 0xFF && (i32_time - i32_lastTaskStatusTime > 2000))
@@ -459,7 +472,6 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
                                  : ((data().memberEmpf()).gtp().getPos());
     }
   }// if target msg
-
   else if (data().identType() == Ident_c::StandardIdent)
   { // for base msg the first try must be the gety/pos of msg
     // first check if SEND is valid according Monitor-List

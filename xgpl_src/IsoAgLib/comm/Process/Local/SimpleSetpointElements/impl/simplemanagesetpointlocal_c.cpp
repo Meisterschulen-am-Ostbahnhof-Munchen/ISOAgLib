@@ -161,10 +161,10 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   const GetyPos_c& cc_senderGtp = c_pkg.memberSend().gtp();
   // DIN pd=0
-  if (c_pkg.generalCommand.getCommand() == GeneralCommand_c::setValue)
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
   { // setpoint set
     bool b_change = false;
-    switch (c_pkg.generalCommand.getValueGroup())
+    switch (c_pkg.c_generalCommand.getValueGroup())
     {
       case GeneralCommand_c::exactValue: // set actual setpoint
       case GeneralCommand_c::minValue: // min -> simply set exact
@@ -198,7 +198,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   #endif
   {
     sendSetpointMod(cc_senderGtp, Proc_c::progType_t( c_pkg.pri() ),
-                    c_pkg.generalCommand_c.getValueGroup(), GeneralCommand_c::setValue );
+                    c_pkg.c_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
   }
 
 }

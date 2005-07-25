@@ -100,13 +100,13 @@ class iGetyPos_c : public __IsoAgLib::GetyPos_c {
   void set( uint16_t rui16_gety, uint16_t rui16_pos ) { GetyPos_c::set( rui16_gety, rui16_pos );};
   #ifdef USE_ISO_11783
   /** set GETY and POS with two seperate parameters */
-  void set( const IsoAgLib::iISOName_c& rrefc_isoName ) { GetyPos_c::set( rrefc_isoName );};
+  void set( const iISOName_c& rrefc_isoName ) { GetyPos_c::set( rrefc_isoName );};
   /** set GETY and POS with two seperate parameters */
   void set( const uint8_t* rpui8_dataName ) { GetyPos_c::set( rpui8_dataName );};
   /** provide pointer to second level compare NAME */
-  IsoAgLib::iISOName_c& getName() { return static_cast<IsoAgLib::iISOName_c&>(GetyPos_c::getName());};
+  iISOName_c& getName() { return static_cast<IsoAgLib::iISOName_c&>(GetyPos_c::getName());};
   /** provide pointer to second level compare NAME */
-  const IsoAgLib::iISOName_c& getConstName() const { return static_cast<const IsoAgLib::iISOName_c&>(GetyPos_c::getConstName());};
+  const iISOName_c& getConstName() const { return static_cast<const IsoAgLib::iISOName_c&>(GetyPos_c::getConstName());};
   #endif
  /** deliver GETY (device type ) */
  uint8_t getGety( void ) const { return GetyPos_c::getGety();};

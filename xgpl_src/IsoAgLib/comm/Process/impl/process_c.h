@@ -182,7 +182,7 @@ public:
   */
   bool processMsg();
 
-#ifdef USE_ISO_11783
+#if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
 #endif
 

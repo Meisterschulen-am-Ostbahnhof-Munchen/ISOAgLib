@@ -371,7 +371,7 @@ public:
       (MonitorItem_c is bas class of both ISOItem_c or DINItem_c which serves
        adress, gtp, itemState)
   */
-  MonitorItem_c* localMemberInd(uint8_t rui8_ind
+  MonitorItem_c& localMemberInd(uint8_t rui8_ind
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
@@ -395,8 +395,8 @@ public:
     @param rui8_ind index of wanted member (first item == 0)
     @return pointer to wanted local din member (NULL if no suitable DINItem_c found)
   */
-  DINItem_c* localDinMemberInd(uint8_t rui8_ind)
-    {return static_cast<DINItem_c*>(localMemberInd(rui8_ind
+  DINItem_c& localDinMemberInd(uint8_t rui8_ind)
+    {return static_cast<DINItem_c&>(localMemberInd(rui8_ind
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       , IState_c::DinOnly
       #endif
@@ -419,8 +419,8 @@ public:
     @param rui8_ind index of wanted member (first item == 0)
     @return pointer to wanted local ISO member (NULL if no suitable ISOItem_c found)
   */
-  ISOItem_c* localIsoMemberInd(uint8_t rui8_ind)
-    {return static_cast<ISOItem_c*>(localMemberInd(rui8_ind
+  ISOItem_c& localIsoMemberInd(uint8_t rui8_ind)
+    {return static_cast<ISOItem_c&>(localMemberInd(rui8_ind
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::IsoOnly
     #endif

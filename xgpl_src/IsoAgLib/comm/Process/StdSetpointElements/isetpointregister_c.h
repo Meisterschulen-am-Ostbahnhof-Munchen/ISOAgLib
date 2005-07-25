@@ -81,7 +81,7 @@ public:
     @return GETY_POS of setpoint commander
   */
   const iGetyPos_c& gtp()const
-  {return SetpointRegister_c::gtp();};
+  {return static_cast<const iGetyPos_c&>(SetpointRegister_c::gtp());};
   /**
     deliver the exact setpoint
     @return exact setpoint value
@@ -107,7 +107,7 @@ public:
     @param rb_mod MOD code of wanted setpoint (exact 0, min 2, max 3, default)
     @return setpoint selected by MOD
   */
-  int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const 
+  int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const
   {
     return SetpointRegister_c::valMod(en_valueGroup);
   };
