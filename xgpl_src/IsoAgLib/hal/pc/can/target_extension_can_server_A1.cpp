@@ -595,24 +595,26 @@ static void* command_thread_func(void* ptr)
     switch (msqCommandBuf.i16_command) {
 
       case COMMAND_REGISTER:
-
+      {
         client_s s_tmpClient;
 
         DEBUG_PRINT("command start driver\n");
-
+      
         // do check for dead clients before queueing any new message
-        for (std::list<client_s>::iterator iter_deadClient = pc_serverData->l_clients.begin(); 
-             iter_deadClient != pc_serverData->l_clients.end();
-             iter_deadClient++) {
+        for (std::list<client_s>::iterator iter_deadClient = pc_serverData->l_clients.begin(); iter_deadClient != pc_serverData->l_clients.end();) {
+            
           // send signal 0 (no signal is send, but error handling is done) to check is process is alive
           if (kill(iter_deadClient->i32_clientID, 0) == -1) {
             // client dead!
             DEBUG_PRINT1("client with ID %d no longer alive!\n", iter_deadClient->i32_clientID);
-            // clear read/write queue for this client, close pipe, remove from client list
+            // clear read/write queue for this client, close pipe, remove from client list, iter_deadClient is incremented
             releaseClient(pc_serverData, iter_deadClient);
-          }
+          } else 
+            // increment iter_deadClient manually (not in for statement)
+            iter_deadClient++;
         }
 
+  
         // initialize
         memset(&s_tmpClient, 0, sizeof(client_s));
 
@@ -642,7 +644,7 @@ static void* command_thread_func(void* ptr)
         send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer), pc_serverData->i32_lastPipeId);
 
         break;
-
+      }
       case COMMAND_DEREGISTER:
 
         DEBUG_PRINT("command stop driver\n");

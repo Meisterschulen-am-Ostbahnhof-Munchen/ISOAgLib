@@ -55,7 +55,8 @@ int open_semaphore_set(int sema_proj_id);
 int get_semaphore(int sid, int operation);
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_handle);
 bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData);
-void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator iter_delete);
+// iterator reference because releaseClient erases client
+void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_delete);
 
 } // end namespace
 
