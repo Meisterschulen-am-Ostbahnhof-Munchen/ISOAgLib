@@ -332,14 +332,14 @@ function create_filelist( )
     if [ -n "$COMM_PROC_FEATURES" ] ; then
       COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o "
     fi
-    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process/impl/dev*' -o -path '*/Process/impl/generalcommand*'"
+    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process/impl/generalcommand*'"
 
 		if [ $PRJ_GPS -gt 0 ] ; then
 			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*gps_c.*'"
 		fi
 
     if [ $PROC_LOCAL -gt 0 ] ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/impl/*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/impl/dev*' -o -path '*/Process/Local/impl/*'"
 
       if [ $PROC_LOCAL_STD -gt 0 ] ; then
         COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/Std/*'"
@@ -448,7 +448,8 @@ function create_filelist( )
     COMM_FEATURES="$COMM_FEATURES -o -path '*/DIN_Terminal/*'"
     PRJ_MULTIPACKET=1
   fi
-  if [ $PRJ_MULTIPACKET -gt 0 ] ; then
+  if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
+  	PRJ_MULTIPACKET=1
     COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/*'"
   fi
 
@@ -791,6 +792,9 @@ function create_autogen_project_config()
 	echo -e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+	if [ $PROC_LOCAL -gt 0 ] ; then
+		echo -e "#ifndef USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE\t#define USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE#endif" >> $CONFIG_NAME
 	fi
 
 
