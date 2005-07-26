@@ -498,7 +498,7 @@ EEPROMIO_c& EEPROMIO_c::readIntern(uint8_t* rpb_data, uint8_t rui8_len) {
 
 EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const GetyPos_c& refc_data )
 {
-  refc_stream.writeIntern(refc_data.getName().outputString(), 8);
+  refc_stream.writeIntern(refc_data.getConstName().outputString(), 8);
   return refc_stream;
 }
 EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, GetyPos_c& refc_data )

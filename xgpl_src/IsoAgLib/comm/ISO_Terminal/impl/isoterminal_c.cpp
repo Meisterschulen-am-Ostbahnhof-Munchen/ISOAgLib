@@ -979,9 +979,9 @@ ISOTerminal_c::vtOutOfMemory()
 */
 bool ISOTerminal_c::processMsg()
 {
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Incoming Message: data().isoPgn=" << data().isoPgn() << " - HAL::getTime()=" << HAL::getTime()<<" - data[0]="<<(uint16_t)data().getUint8Data (0)<<"...   ";;
-  #endif
+//  #ifdef DEBUG
+//  INTERNAL_DEBUG_DEVICE << "Incoming Message: data().isoPgn=" << data().isoPgn() << " - HAL::getTime()=" << HAL::getTime()<<" - data[0]="<<(uint16_t)data().getUint8Data (0)<<"...   ";;
+//  #endif
 
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
   uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
@@ -999,9 +999,9 @@ bool ISOTerminal_c::processMsg()
     switch (data().getUint8Data (0)) {
       case 0xFE: // Command: "Status", Parameter: "VT Status Message"
         vtState_a.lastReceived = data().time();
-        #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "\nLast VT Status Message encountered: data().time()=" << data().time() << " - now()=" << HAL::getTime()<<".\n";;
-        #endif
+//        #ifdef DEBUG
+//        INTERNAL_DEBUG_DEVICE << "\nLast VT Status Message encountered: data().time()=" << data().time() << " - now()=" << HAL::getTime()<<".\n";;
+//        #endif
         vtState_a.saOfActiveWorkingSetMaster = data().getUint8Data (1);
         vtState_a.dataAlarmMask = data().getUint8Data (2) | (data().getUint8Data (3) << 8);
         vtState_a.softKeyMask = data().getUint8Data (4) | (data().getUint8Data (5) << 8);
