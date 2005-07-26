@@ -91,14 +91,6 @@
 #define StreamLinear 0
 #define StreamChunk 1
 
-
-// first line is for the include directive
-// following line is for class definitions
-#define DEF_Stream_IMPL   StreamChunk
-#define DEF_Stream_c_IMPL StreamChunk_c
-
-
-
 // forward declarations
 namespace IsoAgLib {
   class ReceiveStreamIdentifier_c;
@@ -113,6 +105,15 @@ namespace IsoAgLib {
 
 // stl
 #include <list>
+
+// first line is for the include directive
+// following line is for class definitions
+#ifndef DEF_Stream_IMPL
+  #define DEF_Stream_IMPL   StreamChunk
+#endif
+#ifndef DEF_Stream_c_IMPL
+  #define DEF_Stream_c_IMPL StreamChunk_c
+#endif
 
 // include/define wanted Stream-Implementation
 #if DEF_Stream_IMPL == StreamLinear
@@ -186,7 +187,7 @@ public:
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream);
-  
+
   //  Operation: timeEvent
   bool timeEvent( void );
 
@@ -237,7 +238,7 @@ private:
   Stream_c* getStream(uint8_t sa, uint8_t da);
 
   bool anyMultiReceiveClientRegisteredForThisDa (uint8_t ui8_da);
-  
+
   //  Operation: getClient
   //! Parameter:
   //! @param rc_streamIdent:
