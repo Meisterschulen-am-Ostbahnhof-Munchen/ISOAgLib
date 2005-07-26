@@ -100,10 +100,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="esx"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sys"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -121,7 +121,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -129,7 +129,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -148,6 +148,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -251,6 +259,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -283,15 +294,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -498,10 +500,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="imi"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sys"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -519,7 +521,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -527,7 +529,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -546,6 +548,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -649,6 +659,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -681,15 +694,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -896,10 +900,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -917,7 +921,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -925,7 +929,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -944,6 +948,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -1047,6 +1059,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -1079,15 +1094,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -1294,10 +1300,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -1315,7 +1321,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -1323,7 +1329,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -1342,6 +1348,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -1445,6 +1459,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -1477,15 +1494,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -1692,10 +1700,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -1713,7 +1721,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -1721,7 +1729,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -1740,6 +1748,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -1843,6 +1859,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -1875,15 +1894,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -2090,10 +2100,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -2111,7 +2121,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -2119,7 +2129,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -2138,6 +2148,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -2241,6 +2259,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -2273,15 +2294,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -2488,10 +2500,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -2509,7 +2521,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -2517,7 +2529,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -2536,6 +2548,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -2639,6 +2659,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -2671,15 +2694,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -2886,10 +2900,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -2907,7 +2921,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -2915,7 +2929,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -2934,6 +2948,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -3037,6 +3059,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -3069,15 +3094,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -3284,10 +3300,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -3305,7 +3321,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -3313,7 +3329,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -3332,6 +3348,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -3435,6 +3459,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -3467,15 +3494,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -3682,10 +3700,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -3703,7 +3721,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -3711,7 +3729,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -3730,6 +3748,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -3833,6 +3859,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -3865,15 +3894,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -4080,10 +4100,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sontheim"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -4101,7 +4121,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -4109,7 +4129,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -4128,6 +4148,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -4231,6 +4259,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -4263,15 +4294,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -4478,10 +4500,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sontheim"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -4499,7 +4521,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -4507,7 +4529,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -4526,6 +4548,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -4629,6 +4659,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -4661,15 +4694,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -4876,10 +4900,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="vector_canlib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -4897,7 +4921,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -4905,7 +4929,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -4924,6 +4948,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -5027,6 +5059,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -5059,15 +5094,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -5274,10 +5300,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="vector_canlib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -5295,7 +5321,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -5303,7 +5329,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -5322,6 +5348,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -5425,6 +5459,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -5457,15 +5494,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -5672,10 +5700,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="vector_xl_drv_lib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -5693,7 +5721,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -5701,7 +5729,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -5720,6 +5748,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -5823,6 +5859,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -5855,15 +5894,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -6070,10 +6100,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="vector_xl_drv_lib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -6091,7 +6121,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -6099,7 +6129,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -6118,6 +6148,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -6221,6 +6259,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -6253,15 +6294,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -6468,10 +6500,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pm167"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sys"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -6489,7 +6521,7 @@ CAN_BUS_USED=0
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-	# if more than one CAN BUS is defined, the selected
+  # if more than one CAN BUS is defined, the selected
   # protocol(s) can be executed as independent instances
   # at more than one channel
   # ( if more than one CAN instance is used, but
@@ -6497,7 +6529,7 @@ if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
   #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-	# default is to run only one protocol instance
+  # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -6516,6 +6548,14 @@ PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -6619,6 +6659,9 @@ PRJ_ISO_TERMINAL=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
@@ -6651,15 +6694,6 @@ PRJ_ISO_TERMINAL=1
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -6827,6 +6861,12 @@ PRJ_ISO_TERMINAL=1
 #endif
 #ifndef USE_ISO_TERMINAL 
 	#define USE_ISO_TERMINAL 
+#endif
+#ifndef DEF_Stream_IMPL   
+	#define DEF_Stream_IMPL   StreamChunk   
+#endif
+#ifndef DEF_Stream_c_IMPL 
+	#define DEF_Stream_c_IMPL StreamChunk_c 
 #endif
 
 // The following configuration values can be overwritten.
@@ -7027,12 +7067,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/esx/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/esx/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7163,15 +7203,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/esx/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/esx/can/hal_can_interface.h
@@ -7250,12 +7286,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/imi/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/imi/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7386,15 +7422,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/imi/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/imi/can/hal_can_interface.h
@@ -7473,12 +7505,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
@@ -7611,15 +7643,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -7702,12 +7730,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
@@ -7840,15 +7868,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -7931,12 +7955,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
@@ -8069,15 +8093,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -8160,12 +8180,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -8297,15 +8317,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -8388,12 +8404,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -8525,15 +8541,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -8616,12 +8628,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -8753,15 +8765,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -8844,12 +8852,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -8981,15 +8989,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -9072,12 +9076,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -9209,15 +9213,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -9300,12 +9300,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -9437,15 +9437,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -9528,12 +9524,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -9665,15 +9661,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -9756,12 +9748,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -9893,15 +9885,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -9984,12 +9972,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -10121,15 +10109,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -10212,12 +10196,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -10349,15 +10333,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -10440,12 +10420,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
@@ -10577,15 +10557,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -10668,12 +10644,12 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
+../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pm167/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pm167/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -10804,15 +10780,11 @@ PRJ_ISO_TERMINAL=1
 ../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectpolygon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/can.h
 ../../../xgpl_src/IsoAgLib/hal/pm167/can/can.h

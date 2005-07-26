@@ -44,6 +44,12 @@
 #ifndef USE_ISO_TERMINAL 
 	#define USE_ISO_TERMINAL 
 #endif
+#ifndef DEF_Stream_IMPL   
+	#define DEF_Stream_IMPL   StreamChunk   
+#endif
+#ifndef DEF_Stream_c_IMPL 
+	#define DEF_Stream_c_IMPL StreamChunk_c 
+#endif
 
 // The following configuration values can be overwritten.
 // These settings are initially defined in isoaglib_config.h .
