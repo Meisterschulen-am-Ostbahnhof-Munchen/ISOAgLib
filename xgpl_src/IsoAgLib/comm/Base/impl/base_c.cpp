@@ -177,6 +177,13 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
     = b_maintainPowerForImplInPark = b_maintainPowerForImplInWork = false;
 
   b_isoFilterCreated = false;
+
+    // *************************************************************************************************
+    // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
+    // Set GPS Lat/Lon values to 0
+    i32_latitudeRaw = 0;
+    i32_longitudeRaw = 0;
+    // *************************************************************************************************
   #endif
   i32_lastCalendarSet = 0;
 
@@ -647,8 +654,17 @@ void Base_c::checkCreateReceiveFilter( void )
     // create FilterBox_c for PGN GPS_SPEED_HEADING_ALTITUDE_PGN, PF 254 - mask for DP, PF and PS
     // mask: (0x1FFFF << 8) filter: (GPS_SPEED_HEADING_ALTITUDE_PGN << 8)
     c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                      (static_cast<MASK_TYPE>(GPS_SPEED_HEADING_ALTITUDE_PGN) << 8), true, Ident_c::ExtendedIdent);
+											(static_cast<MASK_TYPE>(GPS_SPEED_HEADING_ALTITUDE_PGN) << 8), false, Ident_c::ExtendedIdent);
 
+        // *************************************************************************************************
+        // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
+
+        // GNSS Position Rapid Update
+        // mask: (0x1FFFF << 8) filter: (NMEA_GPS_POSITON_RAPID_UPDATE_PGN << 8)
+        c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+											(static_cast<MASK_TYPE>(NMEA_GPS_POSITON_RAPID_UPDATE_PGN) << 8), true, Ident_c::ExtendedIdent);
+
+        // *************************************************************************************************
   }
   #endif
 }
@@ -878,6 +894,16 @@ bool Base_c::isoProcessMsg()
       ui32_altitude  = data().getUint32Data( 4 );
       b_result = true;
       break;
+
+      // **********************************************************
+      // Added by Brad Cox for NMEA 2000 GPS Messages:
+        case NMEA_GPS_POSITON_RAPID_UPDATE_PGN:
+			/** \todo check if open accessible example for Long/Lat was a correct source */
+			i32_latitudeRaw  = data().getInt32Data( 0 );
+			i32_longitudeRaw = data().getInt32Data( 4 );
+            b_result = true;
+			break;
+      // **********************************************************
   }
   return b_result;
 }
