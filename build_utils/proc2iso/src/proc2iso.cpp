@@ -746,7 +746,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE software_version= AND structure_label= AND localization_label= ATTRIBUTES FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
         }
-        if (vecstr_attrString[attrStructure_label].size() != 7 || vecstr_attrString[attrLocalization_label].size() != 7)
+        if (!(vecstr_attrString[attrStructure_label].size() == 7 || vecstr_attrString[attrStructure_label].size() == 7 && vecstr_attrString[attrLocalization_label].size() == 7 || vecstr_attrString[attrLocalization_label].size() == 14))
         {
           clean_exit (-1, "structure_label= AND localization_label= ATTRIBUTES FOR THE <device> OBJECT NEED A LENGTH OF 7 BYTES! STOPPING PARSER! bye.\n\n");
         }
@@ -783,7 +783,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             {
               vecstr_attrString[attrWorkingset_mastername][i] = tolower(vecstr_attrString[attrWorkingset_mastername][i]);
             }
-            if (vecstr_attrString[attrWorkingset_mastername][0] != ('l' || 'm'))
+            if ((vecstr_attrString[attrWorkingset_mastername][0] != 'l') && (vecstr_attrString[attrWorkingset_mastername][0] != 'm'))
             {
               clean_exit(-1, "workingset_mastername NEEDS TO START EITHER WITH \n \
                               L/l ... least signifant byte; see XML definition of device DVC (xs:hexBinary ISO 11783-10) OR \n \
@@ -802,8 +802,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             {
               if (!((vecstr_attrString[attrWorkingset_mastername][i] >= '0' &&
                      vecstr_attrString[attrWorkingset_mastername][i] <= '9') ||
-                    (vecstr_attrString[attrWorkingset_mastername][i] >= 'A' &&
-                     vecstr_attrString[attrWorkingset_mastername][i] <= 'F')))
+                    (vecstr_attrString[attrWorkingset_mastername][i] >= 'a' &&
+                     vecstr_attrString[attrWorkingset_mastername][i] <= 'f')))
                 clean_exit (-1, "PLEASE USE HEXADECIMAL FORMAT FOR workingset_mastername! STOPPING PARSER! bye.\n\n");
             }
 
