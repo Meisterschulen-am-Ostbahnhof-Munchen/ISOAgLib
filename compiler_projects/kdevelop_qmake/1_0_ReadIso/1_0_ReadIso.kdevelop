@@ -6,7 +6,9 @@
     <version>$VERSION$</version>
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
-    <ignoreparts/>
+    <ignoreparts>
+      <part>kdevrbdebugger</part>
+    </ignoreparts>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <description/>
@@ -16,7 +18,7 @@
     <run>
       <mainprogram>1_0_ReadIso</mainprogram>
       <directoryradio>build</directoryradio>
-      <customdirectory>.</customdirectory>
+      <customdirectory>/</customdirectory>
       <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>

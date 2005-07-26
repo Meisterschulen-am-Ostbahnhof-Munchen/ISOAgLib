@@ -16,8 +16,8 @@
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>/home/wodokm/Projects/AGCO/VtServer/IsoAgLib/compiler_projects/kdevelop_qmake/0_0_AddressClaimIso/0_0_AddressClaimIso</mainprogram>
-      <directoryradio>custom</directoryradio>
+      <mainprogram>0_0_AddressClaimIso</mainprogram>
+      <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>
       <terminal>false</terminal>

@@ -40,16 +40,21 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleSetpointElements/impl/simplemanagesetpointlocal_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleMeasureSetpoint/impl/procdatalocalsimplesetpointsimplemeasure_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/DIN_Terminal/impl/dinmaskupload_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
@@ -86,8 +91,8 @@ CC       = gcc
 CXX      = g++
 LEX      = flex
 YACC     = yacc
-CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith -Wstrict-prototypes $(PROJ_DEFINES)
-CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith -Wstrict-prototypes $(PROJ_DEFINES)
+CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
 LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
