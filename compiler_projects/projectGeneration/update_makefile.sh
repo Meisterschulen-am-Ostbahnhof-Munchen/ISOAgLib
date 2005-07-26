@@ -1262,6 +1262,7 @@ function create_EdePrj()
 	CMDLINE=`echo "sed -e 's#=_=_[0-9a-zA-Z_+\-]+=_=_\.\.##g'  $EdePrjFilelist.1 > $EdePrjFilelist"`
 	echo $CMDLINE | sh
   cat $EdePrjFilelist >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+  rm -f $EdePrjFilelist.1
 
 	# insert specific BIOS/OS sources
 	for BiosSrc in $USE_EMBED_BIOS_SRC ; do
@@ -1281,10 +1282,12 @@ function create_EdePrj()
   rm -f $PROJECT_FILE_NAME.1
 
 	sed -e 's#=_=_#\\#g'  $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+	sed -e 's#=_=_#\\#g'  $EdePrjFilelist > $EdePrjFilelist.1
 	echo "Convert UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
 	cat $PROJECT_FILE_NAME.1 | gawk '{ sub("\r", ""); print $0;}' > $PROJECT_FILE_NAME
 	cat $PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $PROJECT_FILE_NAME.1
 	mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
+	mv $EdePrjFilelist.1    $EdePrjFilelist
 }
 
 function create_VCPrj()
@@ -1376,6 +1379,7 @@ function create_VCPrj()
 	echo $CMDLINE | sh
 
   sed -e 's#=_=_#\\#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+  rm -f $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
 
 
 	SOURCES=`grep -E "\.cc|\.cpp|\.c|\.lib" $DspPrjFilelist`
