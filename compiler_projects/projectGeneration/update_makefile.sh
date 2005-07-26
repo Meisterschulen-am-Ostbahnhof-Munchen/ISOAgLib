@@ -231,6 +231,11 @@ function check_set_correct_variables()
 		PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
   fi
 
+
+  if [ "A$PRJ_MULTIPACKET_STREAM_CHUNK" = "A" ] ; then
+  	PRJ_MULTIPACKET_STREAM_CHUNK=1
+  fi
+
   if [ "A$PRJ_BASE" = "A" ] ; then
   	PRJ_BASE=0
   fi
@@ -441,7 +446,7 @@ function create_filelist( )
     PRJ_MULTIPACKET=1
   fi
   if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*'"
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*' -o -path '*/driver/datastreams/volatilememory_c.cpp'"
     PRJ_MULTIPACKET=1
   fi
   if [ $PRJ_DIN_TERMINAL -gt 0 ] ; then
@@ -450,7 +455,12 @@ function create_filelist( )
   fi
   if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
   	PRJ_MULTIPACKET=1
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/*'"
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/m*' -o -path '*/Multipacket/impl/stream_c.*'"
+    if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
+	    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamchunk_c.*' -o -path '*/Multipacket/impl/chunk_c.*'"
+	  else
+	  	COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamlinear_c.*'"
+    fi
   fi
 
 	DRIVER_FEATURES=" -path '*/driver/can/*' -o  -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*' -o -path '*/hal/"$HAL_PATH"/system*' -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'"
@@ -850,6 +860,16 @@ function create_autogen_project_config()
 		echo -e "#ifndef USE_ISO_11783 $ENDLINE\t#define USE_ISO_11783 $ENDLINE#endif" >> $CONFIG_NAME
   	if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
 			echo -e "#ifndef USE_ISO_TERMINAL $ENDLINE\t#define USE_ISO_TERMINAL $ENDLINE#endif" >> $CONFIG_NAME
+    fi
+
+	  if [ $PRJ_MULTIPACKET -gt 0 ] ; then
+			if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
+				echo -e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamChunk   $ENDLINE#endif" >> $CONFIG_NAME
+				echo -e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamChunk_c $ENDLINE#endif" >> $CONFIG_NAME
+			else
+				echo -e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamLinear   $ENDLINE#endif" >> $CONFIG_NAME
+				echo -e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamLinear_c $ENDLINE#endif" >> $CONFIG_NAME
+			fi
     fi
   	if [ $PRJ_ISO_TERMINAL_SERVER -gt 0 ] ; then
 			echo -e "#ifndef USE_ISO_TERMINAL_SERVER $ENDLINE\t#define USE_ISO_TERMINAL_SERVER $ENDLINE#endif" >> $CONFIG_NAME

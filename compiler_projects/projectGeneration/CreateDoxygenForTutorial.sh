@@ -1,11 +1,15 @@
 #!/bin/sh
 DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
 
-# EXAMPLE_LIST="conf_imi_iso"
+#EXAMPLE_LIST="conf_imi_iso"
+#EXAMPLE_LIST=`ls conf_3_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32:pc_linux:esx:imi:pm167"
+#TARGET_LIST="pc_linux"
 CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim"
 RS232_LIST="simulating:sys:rte"
+#CAN_LIST="sys"
+#RS232_LIST="simulating"
 for conf_example in $EXAMPLE_LIST ; do
   EXAMPLE_DIR=""
   case "$conf_example" in
