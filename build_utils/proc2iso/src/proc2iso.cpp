@@ -443,7 +443,7 @@ unsigned int triggermethodtoi (const char *text_trigger)
   return retval;
 };
 
-uint32_t stringtonumber(const char *text_number, uint8_t ui8_bitRange, uint8_t ui8_attrIndex)
+uint32_t stringtonumber(const char *text_number, int8_t ui8_bitRange, int8_t i8_attrIndex)
 {
   uint32_t ui32_temp;
   uint8_t ui8_check;
@@ -464,12 +464,12 @@ uint32_t stringtonumber(const char *text_number, uint8_t ui8_bitRange, uint8_t u
   if (ui8_check != 0)
   {
     //test correct range of value
-    if ((ui32_temp >= 0) &&
-    (ui32_temp < ((uint32_t)(1 << ui8_bitRange) - 1)))
+    if (i8_attrIndex == -1) return ui32_temp;
+    if ((ui32_temp >= 0) && (ui32_temp < ((uint32_t)(1 << ui8_bitRange) - 1)))
       return ui32_temp;
     else
     {
-      switch (ui8_attrIndex)
+      switch (i8_attrIndex)
       {
         case attrSelf_conf:
           clean_exit (-1, "self_configurable_address has a value range of 1 bit! STOPPING PARSER! bye.\n\n");
@@ -762,8 +762,12 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           if (!attrIsGiven [attrWorkingset_mastername])
           {
+            if (strlen(vecstr_attrString [attrSelf_conf].c_str()) > 1)
+            {
+              vecstr_attrString [attrSelf_conf] = booltoi(vecstr_attrString [attrSelf_conf].c_str());
+            }
             //alle Attribute zum Workingset_mastername zusammensetzen
-            c_isoname.set(stringtonumber(vecstr_attrString [attrSelf_conf].c_str(), 1, attrSelf_conf),
+            c_isoname.set(vecstr_attrString [attrSelf_conf].c_str(),
                           stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
                           stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
                           stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
@@ -891,10 +895,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           buffer.str("");
           fprintf( partFileB, "IsoAgLib::iGetyPos_c %sGtp(0x%x, 0x%x);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
-          fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sGtp, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x);\n\n",
-                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf(),
+          fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sGtp, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISOTERMINAL \n , 0, NULL\n #endif\n);\n\n",
+                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "false" : "true",
                    c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
-                   atoi(vecstr_attrString[attrWanted_SA].c_str()), atoi(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str()),
+                   atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
                    c_isoname.funcInst(),c_isoname.ecuInst());
           vecstr_constructor[0] = vecstr_attrString[attrDevProgVarName].c_str();
           vecstr_constructor[1] = vecstr_attrString[attrPriority].c_str();
@@ -925,8 +929,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         }
         buf_length += vecstr_attrString[attrDesignator].size();
         //element_number
-        buffer  << (atoi(vecstr_attrString[attrElement_number].c_str()) & 0xFF) << ", "
-                << ((atoi(vecstr_attrString[attrElement_number].c_str()) >> 8) & 0xFF) << ", ";
+        buffer  << (stringtonumber(vecstr_attrString[attrElement_number].c_str(), 0, -1) & 0xFF) << ", "
+                << ((stringtonumber(vecstr_attrString[attrElement_number].c_str(), 0, -1) >> 8) & 0xFF) << ", ";
         buf_length += 2;
         //parent_name
         buffer  << (idOrName_toi(vecstr_attrString[attrParent_name].c_str()) & 0xFF) << ", "
@@ -964,8 +968,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << uint16_t((objID >> 8) & 0xFF)      << ", ";
         buf_length += 5;
         //ddi
-        buffer  << (atoi(vecstr_attrString[attrDdi].c_str()) & 0xFF) << ", "
-                << ((atoi(vecstr_attrString[attrDdi].c_str()) >> 8) & 0xFF)  << ", ";
+        buffer  << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF) << ", "
+                << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF)  << ", ";
         buf_length += 2;
         //properties
         buffer  << propertytoi(vecstr_attrString[attrProperties].c_str()) << ", ";
@@ -1006,8 +1010,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << uint16_t((objID >> 8) & 0xFF)      << ", ";
         buf_length += 5;
         //ddi
-        buffer  << (atoi(vecstr_attrString[attrDdi].c_str()) & 0xFF)  << ", "
-                << ((atoi(vecstr_attrString[attrDdi].c_str()) >> 8) & 0xFF)  << ", ";
+        buffer  << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF)  << ", "
+                << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF)  << ", ";
         buf_length += 2;
         //property_value
         buffer  << uint16_t(vecstr_attrString[attrProperty_value][0])  << ", "
@@ -1039,7 +1043,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         }
         fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
         fprintf( partFileB, "\n#ifdef USE_ISO_11783\n");
-          fprintf( partFileB, "%d, 0x%x, ", atoi(vecstr_constructor[6].c_str()), atoi(vecstr_constructor[2].c_str()));
+          fprintf( partFileB, "0x%x, 0x%x, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_constructor[2].c_str(), 0, -1));
         fprintf( partFileB, "\n#endif\n");
         fprintf( partFileB, "#ifdef USE_DIN_9684\n");
           fprintf( partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
@@ -1050,7 +1054,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                    vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
                    vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
         fprintf( partFileB, "\n#ifdef USE_EEPROM_IO\n");
-          fprintf( partFileB, ", 0x%x", atoi(vecstr_attrString [attrStore_SA_at_EEPROM_address].c_str()));
+          fprintf( partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
         fprintf( partFileB, "\n#endif\n");
         fprintf( partFileB, ");\n\n" );
         break;
