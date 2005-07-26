@@ -113,9 +113,6 @@
 /// erase ISO 11783 items after time (>0), on missing address claim after request - can be manually overridden in project config file
 // #define CONFIG_ISO_ITEM_MAX_AGE 3000
 
-/// erase DIN 9684 devices from monitor list after given dead time ( 0 == no delete ) - can be manually overridden in project config file
-// #define CONFIG_DIN_ITEM_MAX_AGE 0
-
 /// erase DIN 9684 services from monitor list after given dead time ( 0 == no delete ) - can be manually overridden in project config file
 // #define CONFIG_DIN_SERVICE_MAX_AGE 3000
 
@@ -176,3 +173,7 @@
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
+
+/// erase DIN 9684 devices from monitor list after given dead time ( 0 == no delete ) - can be manually overridden in project config file
+#define CONFIG_DIN_ITEM_MAX_AGE 3000
+

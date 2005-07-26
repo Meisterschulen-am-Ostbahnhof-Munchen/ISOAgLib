@@ -50,9 +50,9 @@ of process data for writing by Task Controller
   */
 class ProcDataManager_c {
 public:
-	ProcDataManager_c(uint8_t rui8_cnt = 0);
-	ProcDataManager_c(const ProcDataManager_c& rrefc_src);
-	virtual ~ProcDataManager_c();
+  ProcDataManager_c(uint8_t rui8_cnt = 0);
+  ProcDataManager_c(const ProcDataManager_c& rrefc_src);
+  virtual ~ProcDataManager_c();
   /**
     activate with creating the needed ProcessData
     @param rpc_monitor pointer to member_item of data delivering member
@@ -78,20 +78,20 @@ public:
   virtual void writeHeader();
   /** perform periodic actions */
   virtual void timeEvent(long rl_time = -1);
-	/** set count of process data */
-	void set_proc_cnt(uint8_t rui8_cnt) {ui8_cnt = rui8_cnt;};
-	/** get count of process data */
-	uint8_t proc_cnt()const {return ui8_cnt;};
-	/**
-		deliver remote gtp of this recording set
-		@return c_remoteGtp
-	*/
-	IsoAgLib::iGetyPos_c gtp() const { return c_remoteGtp;};
+  /** set count of process data */
+  void set_proc_cnt(uint8_t rui8_cnt) {ui8_cnt = rui8_cnt;};
+  /** get count of process data */
+  uint8_t proc_cnt()const {return ui8_cnt;};
+  /**
+    deliver remote gtp of this recording set
+    @return c_remoteGtp
+  */
+  const IsoAgLib::iGetyPos_c& gtp() const { return c_remoteGtp;};
 protected: // Protected attributes
   /** set activated mode of this instance  */
   void setActivated(bool rb_state = true){b_activated = rb_state;};
   /** pointer to Member_Item of which the
-			remote data is recorded */
+      remote data is recorded */
   IsoAgLib::iDINItem_c *pc_monitor;
   /** pointer to array of pointers to remote process data entries */
   IsoAgLib::iProcDataRemote_c *pc_data;
@@ -99,8 +99,8 @@ protected: // Protected attributes
   bool b_activated;
   /** amount of managed process data */
   uint8_t ui8_cnt;
-	/** gtp of remote item */
-	IsoAgLib::iGetyPos_c c_remoteGtp;
+  /** gtp of remote item */
+  IsoAgLib::iGetyPos_c c_remoteGtp;
 };
 
 #endif

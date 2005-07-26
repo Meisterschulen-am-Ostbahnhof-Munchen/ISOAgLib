@@ -361,9 +361,9 @@ int main()
         { // first time with claimed address -> do some initial actions
           // send request for member names of other systems
           // (and send own name as demanded by standard)
-					#ifdef USE_DIN_9684
+          #ifdef USE_DIN_9684
           getIdinMonitorInstance().requestDinMemberNames();
-					#endif
+          #endif
           // get the i32_distanceOffset to calculate distance from address claim on
           i32_distanceOffset = getIBaseInstance().distTheor();
           // set the i32_lastDist for getting the working dist to the actual base dist
@@ -379,9 +379,9 @@ int main()
         { // inkrement b_sendNameTime to send every 2 sec
           if (b_sendNameTime < 9) b_sendNameTime += 2;
           else b_sendNameTime = 0;
-					#ifdef USE_DIN_9684
-          getIdinMonitorInstance().dinMemberGtp(myGtp).sendName();
-					#endif
+          #ifdef USE_DIN_9684
+          getIdinMonitorInstance().dinMemberGtp(myGtp, true).sendName();
+          #endif
         }
 
         if (getISystemMgmtInstance().existMemberGtp(c_autodatacollectorGtp, true))

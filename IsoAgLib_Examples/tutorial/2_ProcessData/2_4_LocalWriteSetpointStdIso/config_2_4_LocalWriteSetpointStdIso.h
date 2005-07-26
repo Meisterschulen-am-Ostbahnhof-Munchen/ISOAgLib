@@ -16,6 +16,9 @@
 
 #define RS232_INSTANCE_CNT 1 
 
+#ifndef USE_PROC_DATA_DESCRIPTION_POOL 
+	#define USE_PROC_DATA_DESCRIPTION_POOL 
+#endif
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
 // Initialization of CAN filters and of local process data might get too slow under worst case conditions

@@ -6943,6 +6943,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -7006,6 +7007,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -7070,6 +7072,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -7133,6 +7136,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -7197,6 +7201,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -7208,7 +7213,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7263,6 +7267,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -7331,6 +7336,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -7342,7 +7348,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7397,6 +7402,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -7465,6 +7471,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -7476,7 +7483,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7531,6 +7537,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -7599,6 +7606,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -7609,7 +7617,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7664,6 +7671,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -7732,6 +7740,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -7742,7 +7751,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7797,6 +7805,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -7865,6 +7874,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -7875,7 +7885,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7930,6 +7939,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -7998,6 +8008,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -8008,7 +8019,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8063,6 +8073,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -8131,6 +8142,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -8141,7 +8153,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8196,6 +8207,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -8264,6 +8276,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -8274,7 +8287,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8329,6 +8341,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -8397,6 +8410,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -8407,7 +8421,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8462,6 +8475,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -8530,6 +8544,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -8540,7 +8555,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8595,6 +8609,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -8663,6 +8678,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -8673,7 +8689,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8728,6 +8743,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -8796,6 +8812,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -8806,7 +8823,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8861,6 +8877,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -8929,6 +8946,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -8939,7 +8957,6 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8994,6 +9011,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
@@ -9062,6 +9080,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp
@@ -9125,6 +9144,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h

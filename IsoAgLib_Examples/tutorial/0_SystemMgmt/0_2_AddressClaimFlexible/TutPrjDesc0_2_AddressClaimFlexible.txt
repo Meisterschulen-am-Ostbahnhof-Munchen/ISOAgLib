@@ -7172,7 +7172,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7291,7 +7290,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7410,7 +7408,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7528,7 +7525,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7646,7 +7642,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7764,7 +7759,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -7882,7 +7876,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8000,7 +7993,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8118,7 +8110,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8236,7 +8227,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8354,7 +8344,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8472,7 +8461,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8590,7 +8578,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -8708,7 +8695,6 @@ PRJ_DIN9684=1
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp

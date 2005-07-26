@@ -47,17 +47,17 @@
 */
 class GetyFlexManager_c : public ProcDataManager_c  {
 public:
-	GetyFlexManager_c(DefaultRecordConfig_c* rpc_defaultRecordConfig = NULL, uint16_t rui16_eepromOffsetAdr = 0xFFFF);
-	GetyFlexManager_c(const GetyFlexManager_c& rrefc_src);
-	virtual ~GetyFlexManager_c();
+  GetyFlexManager_c(DefaultRecordConfig_c* rpc_defaultRecordConfig = NULL, uint16_t rui16_eepromOffsetAdr = 0xFFFF);
+  GetyFlexManager_c(const GetyFlexManager_c& rrefc_src);
+  virtual ~GetyFlexManager_c();
   void init(DefaultRecordConfig_c* rpc_defaultRecordConfig);
-	bool operator==(const GetyFlexManager_c& rrefc_comp)const{return (c_remoteGtp == rrefc_comp.c_remoteGtp)?true:false;};
+  bool operator==(const GetyFlexManager_c& rrefc_comp)const{return (c_remoteGtp == rrefc_comp.c_remoteGtp)?true:false;};
   bool operator!=(const GetyFlexManager_c& rrefc_comp)const{return (c_remoteGtp != rrefc_comp.c_remoteGtp)?true:false;};
   bool operator<(const GetyFlexManager_c& rrefc_comp)const{return (c_remoteGtp < rrefc_comp.c_remoteGtp)?true:false;};
 
-  bool operator==(IsoAgLib::iGetyPos_c rc_comp)const{return (c_remoteGtp == rc_comp)?true:false;};
-  bool operator!=(IsoAgLib::iGetyPos_c rc_comp)const{return (c_remoteGtp != rc_comp)?true:false;};
-  bool operator<(IsoAgLib::iGetyPos_c rc_comp)const{return (c_remoteGtp < rc_comp)?true:false;};
+  bool operator==(const IsoAgLib::iGetyPos_c& rc_comp)const{return (c_remoteGtp == rc_comp)?true:false;};
+  bool operator!=(const IsoAgLib::iGetyPos_c& rc_comp)const{return (c_remoteGtp != rc_comp)?true:false;};
+  bool operator<(const IsoAgLib::iGetyPos_c& rc_comp)const{return (c_remoteGtp < rc_comp)?true:false;};
   /**
     activate with creating the needed ProcessData
     @param rpc_monitor pointer to member_item of data delivering member
@@ -79,57 +79,57 @@ public:
 
 
 private:
-	/**
-		check if working width should be recorded
-		@return true --> record working width
-	*/
-	bool recordWidth()const
-	{return ((pc_monitor->gety() != 11)||(configField.transportDummyWidth == 1))?true:false;};
-	/**
-		check if a single measurement request should be sent on every local
-		value access
-	*/
-	bool sendRequest()const{return (configField.requestSingleVals == 1)?true:false;};
-	/** NEW: 14-10-2004
-		check if a single measurement request should be sent on every local
-		value access.
-		@param rb_procInd index of process data to check
-	*/
-	bool sendRequest( uint8_t rb_procInd )const;
-	/**
-		deliver the GETY for time, dist, area values
-	*/
-	uint8_t timeDistGety()const{return configField.timeDistGety;};
+  /**
+    check if working width should be recorded
+    @return true --> record working width
+  */
+  bool recordWidth()const
+  {return ((pc_monitor->gety() != 11)||(configField.transportDummyWidth == 1))?true:false;};
+  /**
+    check if a single measurement request should be sent on every local
+    value access
+  */
+  bool sendRequest()const{return (configField.requestSingleVals == 1)?true:false;};
+  /** NEW: 14-10-2004
+    check if a single measurement request should be sent on every local
+    value access.
+    @param rb_procInd index of process data to check
+  */
+  bool sendRequest( uint8_t rb_procInd )const;
+  /**
+    deliver the GETY for time, dist, area values
+  */
+  uint8_t timeDistGety()const{return configField.timeDistGety;};
 
-	/** EEPROM adress of offset values */
-	uint16_t ui16_eepromOffsetAdr;
+  /** EEPROM adress of offset values */
+  uint16_t ui16_eepromOffsetAdr;
 
   /** internal data string */
   IsoAgLib::iProcDataRemote_c *_pc_proc;
 
-	struct {
-		uint8_t timeWert : 4;
-		uint8_t recordAsGety : 4;
+  struct {
+    uint8_t timeWert : 4;
+    uint8_t recordAsGety : 4;
 
-		uint8_t applrateXHa : 1;
-		uint8_t applrateXMin : 1;
-		uint8_t applrateX : 1;
-		uint8_t applrateTankX : 1;
-		uint8_t transportDummyWidth : 1;
-		uint8_t recordWorkDist : 1;
-		uint8_t fieldstarSend : 1;
-		uint8_t useMeasureProgs : 1;
+    uint8_t applrateXHa : 1;
+    uint8_t applrateXMin : 1;
+    uint8_t applrateX : 1;
+    uint8_t applrateTankX : 1;
+    uint8_t transportDummyWidth : 1;
+    uint8_t recordWorkDist : 1;
+    uint8_t fieldstarSend : 1;
+    uint8_t useMeasureProgs : 1;
 
-		uint8_t workWertInst : 8;
+    uint8_t workWertInst : 8;
 
-		uint8_t posApplrateX : 4;
-		uint8_t timeDistGety : 4;
+    uint8_t posApplrateX : 4;
+    uint8_t timeDistGety : 4;
 
-		uint8_t requestSingleVals : 1;
-	} configField;
+    uint8_t requestSingleVals : 1;
+  } configField;
 
-	std::basic_string<char> c_flexibleHeader;
-	DefaultRecordConfig_c* pc_defaultRecordConfig;
+  std::basic_string<char> c_flexibleHeader;
+  DefaultRecordConfig_c* pc_defaultRecordConfig;
 };
 
 #endif
