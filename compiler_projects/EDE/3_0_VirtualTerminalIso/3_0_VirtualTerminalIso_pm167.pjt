@@ -172,8 +172,13 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\isoterminal_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\impl\vtobjectpolygon_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobject_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\chunk_c.cpp
+..\..\..\xgpl_src\supplementary_driver\driver\datastreams\volatilememory_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\can\hal_can_interface.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\system\system_target_extensions.cpp
 ..\..\..\xgpl_src\IsoAgLib\driver\can\impl\ident_c.cpp
@@ -298,8 +303,11 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobjectpolygon_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendstreamer_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\chunk_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\imultisend_c.h
 ..\..\..\xgpl_src\IsoAgLib\typedef.h
 ..\..\..\xgpl_src\IsoAgLib\hal\can.h
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\can\can.h

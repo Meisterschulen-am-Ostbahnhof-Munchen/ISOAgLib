@@ -18,6 +18,7 @@
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_processelementbase_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_procident_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_process_c.cpp
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_generalcommand_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_StdSetpointElements=_=_impl=_=_setpointbase_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_StdSetpointElements=_=_impl=_=_setpointregister_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_Remote=_=_Std=_=_impl=_=_procdataremote_c.cpp
@@ -76,6 +77,7 @@
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_process_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_procdatabase_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_processpkg_c.h
+..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_generalcommand_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_impl=_=_proc_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_StdSetpointElements=_=_impl=_=_setpointbase_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Process=_=_StdSetpointElements=_=_impl=_=_setpointregister_c.h

@@ -293,7 +293,19 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\ISO_Terminal\ivtobject_c.cpp
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.cpp
 # End Source File
 
 # Begin Source File
@@ -301,11 +313,15 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.cpp
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\chunk_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server_helper.cpp
+SOURCE=..\..\..\xgpl_src\supplementary_driver\driver\datastreams\volatilememory_c.cpp
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.cpp
 # End Source File
 
 # Begin Source File
@@ -814,11 +830,23 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendstreamer_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\chunk_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\imultisend_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.h
 # End Source File
 
 # Begin Source File

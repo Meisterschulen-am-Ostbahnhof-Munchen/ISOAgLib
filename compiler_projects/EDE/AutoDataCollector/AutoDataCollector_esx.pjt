@@ -149,6 +149,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procident_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\process_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\gps_c.cpp
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\generalcommand_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointbase_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointregister_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\Remote\Std\impl\procdataremote_c.cpp
@@ -228,6 +229,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procdatabase_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\gps_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\generalcommand_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\proc_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointbase_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointregister_c.h

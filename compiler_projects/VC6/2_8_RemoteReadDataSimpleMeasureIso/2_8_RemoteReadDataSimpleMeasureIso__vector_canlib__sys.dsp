@@ -165,6 +165,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\process_c.cpp
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\generalcommand_c.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl\setpointbase_c.cpp
 # End Source File
 
@@ -194,10 +198,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\processdatachangehandler_c.cpp
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.cpp
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server_helper.cpp
 # End Source File
 
 # Begin Source File
@@ -407,6 +407,10 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\procdatabase_c.h
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\processpkg_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Process\impl\generalcommand_c.h
 # End Source File
 
 # Begin Source File

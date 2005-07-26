@@ -181,10 +181,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\can_server_helper.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\can\target_extension_can_simulating.cpp
 # End Source File
 
