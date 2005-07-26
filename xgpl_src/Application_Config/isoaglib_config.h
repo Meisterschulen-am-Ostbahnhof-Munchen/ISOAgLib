@@ -827,6 +827,19 @@
   */
 #define GPS_SPEED_HEADING_ALTITUDE_PGN 0x00FEE8LU
 
+//********************************************************************
+// Added by Brad Cox for support of NMEA 2000 GPS messages:
+
+// GNSS Position Rapid Update
+#define NMEA_GPS_POSITON_RAPID_UPDATE_PGN 0x01F801LU
+
+// GNSS Position Data. ** This is done with Fast Packet Protocol and will require MultiReceive I think! **
+#define NMEA_GPS_POSITON_DATA_PGN 0x01F805LU
+
+// GNSS Pseudo Range Noise Statistic ** This is done with Fast Packet Protocol and will require MultiReceive I think! **
+#define NMEA_GPS_PSEUDO_RANGE_NOISE_PGN 0x01FA06LU
+//********************************************************************
+
 /*@}*/
 
 
