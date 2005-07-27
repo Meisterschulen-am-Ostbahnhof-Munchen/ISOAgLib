@@ -86,6 +86,7 @@
 #ifndef MULTI_SEND_H
 #define MULTI_SEND_H
 
+#define NMEA_2000_FAST_PACKET
 
 /* *************************************** */
 /* ********** include headers ************ */
@@ -164,7 +165,11 @@ public:
 class MultiSend_c : public SINGLETON_DERIVED(MultiSend_c, ElementBase_c)
 {
 public: // idle was thrown out as it's now idle if no SendStream is in the list for this specific sa/da-pair!
-  enum sendState_t { /*Idle,*/ SendRts, AwaitCts, SendData, SendPauseTillCts, /* DecideAfterSend, */ AwaitEndofmsgack, SendFileEnd };
+  enum sendState_t { /*Idle,*/ SendRts, AwaitCts, SendData, SendPauseTillCts, /* DecideAfterSend, */ AwaitEndofmsgack, SendFileEnd
+                    #if defined (NMEA_2000_FAST_PACKET)
+                    ,SendFpFirstFrame, SendFpDataFrame
+                    #endif
+  };
   enum sendSuccess_t {SendSuccess, SendAborted, Running};
   enum msgType_t {Din = 1, IsoTarget = 2, IsoBroadcast = 6};
 
@@ -174,7 +179,11 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
 
     /// Object construction
     SendStream_c(MultiSend_c& rrefc_multiSend) : pc_multiSend (&rrefc_multiSend) {}; // does NOT initialize anything, use "init(...)" directly after construction!!!!
-    void initIso (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType);
+    void initIso (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
+      #if defined(NMEA_2000_FAST_PACKET)
+      , bool rb_useFastPacket = false
+      #endif
+    );
     void initDin (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rpen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout);
     void init    (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rpen_sendSuccessNotify, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType, bool rb_ext, uint16_t rui16_delay);
 
@@ -286,6 +295,11 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
 
     /** using Extended Transport Protocol? set this flag for DIN to FALSE, it is also used in the DIN case! */
     bool b_ext;
+    #if defined (NMEA_2000_FAST_PACKET)
+    bool b_fp;
+    uint8_t ui8_FpSequenceCounter;
+    uint8_t ui8_FpFrameNr;
+    #endif
     /** timestamp for time control */
     int32_t i32_timestamp;
     /** data counter for data to send */
@@ -395,6 +409,9 @@ public: // methods
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
   bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
+  #if defined(NMEA_2000_FAST_PACKET)
+  bool MultiSend_c::sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify, MultiSendStreamer_c* rpc_mss);
+  #endif
 
   /**
     send a ISO broadcast multipacket message
@@ -481,7 +498,11 @@ private: // Private methods
                   ( e.g. bitmap variants )
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoIntern(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType);
+  bool sendIsoIntern(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
+  #if defined(NMEA_2000_FAST_PACKET)
+  , bool rb_useFastPacket = false
+  #endif
+  );
 
   /**
     set the delay between two sent messages, no max calculation, only for internal use!
