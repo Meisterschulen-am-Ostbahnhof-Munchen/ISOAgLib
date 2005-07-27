@@ -104,10 +104,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="esx"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sys"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -150,6 +150,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -253,6 +261,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -286,14 +297,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -505,10 +508,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="imi"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sys"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -551,6 +554,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -654,6 +665,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -687,14 +701,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -906,10 +912,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -952,6 +958,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -1055,6 +1069,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -1088,14 +1105,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -1307,10 +1316,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -1353,6 +1362,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -1456,6 +1473,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -1489,14 +1509,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -1708,10 +1720,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -1754,6 +1766,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -1857,6 +1877,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -1890,14 +1913,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -2109,10 +2124,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -2155,6 +2170,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -2258,6 +2281,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -2291,14 +2317,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -2510,10 +2528,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -2556,6 +2574,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -2659,6 +2685,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -2692,14 +2721,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -2911,10 +2932,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -2957,6 +2978,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -3060,6 +3089,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -3093,14 +3125,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -3312,10 +3336,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -3358,6 +3382,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -3461,6 +3493,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -3494,14 +3529,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -3713,10 +3740,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -3759,6 +3786,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -3862,6 +3897,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -3895,14 +3933,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -4114,10 +4144,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sontheim"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -4160,6 +4190,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -4263,6 +4301,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -4296,14 +4337,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -4515,10 +4548,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sontheim"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -4561,6 +4594,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -4664,6 +4705,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -4697,14 +4741,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -4916,10 +4952,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="vector_canlib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -4962,6 +4998,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -5065,6 +5109,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -5098,14 +5145,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -5317,10 +5356,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="vector_canlib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -5363,6 +5402,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -5466,6 +5513,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -5499,14 +5549,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -5718,10 +5760,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="vector_xl_drv_lib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -5764,6 +5806,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -5867,6 +5917,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -5900,14 +5953,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -6119,10 +6164,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_win32"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="vector_xl_drv_lib"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -6165,6 +6210,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -6268,6 +6321,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -6301,14 +6357,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -6520,10 +6568,10 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pm167"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="sys"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -6566,6 +6614,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -6669,6 +6725,9 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 PRJ_RS232=1
@@ -6702,14 +6761,6 @@ PRJ_RS232=1
 # Build System Configuration for LINUX
 # ###############################################################
 
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
