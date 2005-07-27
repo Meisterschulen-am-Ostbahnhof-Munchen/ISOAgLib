@@ -159,7 +159,6 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\base_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Base\impl\basepkg_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.cpp
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamlinear_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.cpp
@@ -249,15 +248,11 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\comm\Base\ibasetypes.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendstreamer_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamlinear_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\chunk_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\istream_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\multireceiveclient_c.h
-..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\imultisend_c.h
 ..\..\..\xgpl_src\IsoAgLib\typedef.h
 ..\..\..\xgpl_src\Application_Config\eeprom_adr.h
 ..\..\..\xgpl_src\IsoAgLib\hal\esx\can\can.h

@@ -37,7 +37,6 @@
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Base=_=_impl=_=_base_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Base=_=_impl=_=_basepkg_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_streamchunk_c.cpp
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_streamlinear_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_stream_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multisendpkg_c.cpp
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multireceive_c.cpp
@@ -127,15 +126,11 @@
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Base=_=_ibasetypes.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multisend_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multisendstreamer_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_streamlinear_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_chunk_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_streamchunk_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multireceive_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_stream_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_impl=_=_multisendpkg_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_istream_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_multireceiveclient_c.h
-..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_comm=_=_Multipacket=_=_imultisend_c.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_typedef.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_Application_Config=_=_eeprom_adr.h
 ..=_=_..=_=_..=_=_xgpl_src=_=_IsoAgLib=_=_hal=_=_can.h
