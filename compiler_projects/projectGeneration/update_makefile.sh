@@ -455,7 +455,7 @@ function create_filelist( )
   fi
   if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
   	PRJ_MULTIPACKET=1
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/m*' -o -path '*/Multipacket/impl/stream_c.*'"
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/i*multi*' -o -path '*/Multipacket/impl/stream_c.*' -o -path '*/Multipacket/istream_c.*'"
     if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
 	    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamchunk_c.*' -o -path '*/Multipacket/impl/chunk_c.*'"
 	  else
@@ -1283,6 +1283,7 @@ function create_EdePrj()
 
 	sed -e 's#=_=_#\\#g'  $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
 	sed -e 's#=_=_#\\#g'  $EdePrjFilelist > $EdePrjFilelist.1
+	mv $EdePrjFilelist.1 $EdePrjFilelist
 	echo "Convert UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
 	cat $PROJECT_FILE_NAME.1 | gawk '{ sub("\r", ""); print $0;}' > $PROJECT_FILE_NAME
 	cat $PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $PROJECT_FILE_NAME.1
