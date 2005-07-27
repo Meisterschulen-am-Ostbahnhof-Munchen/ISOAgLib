@@ -30,7 +30,6 @@
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
@@ -107,15 +106,11 @@
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/multireceiveclient_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h

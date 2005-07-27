@@ -37,16 +37,13 @@
       <environments>
         <default/>
       </environments>
-      <prio>0</prio>
-      <defaulttarget/>
-      <makeoptions/>
     </make>
   </kdevcustomproject>
   <kdevdebugger>
     <general>
       <dbgshell/>
       <programargs/>
-      <gdbpath>/usr/bin/</gdbpath>
+      <gdbpath/>
       <configGdbScript/>
       <runShellScript/>
       <runGdbScript/>
@@ -57,7 +54,6 @@
     <display>
       <staticmembers>true</staticmembers>
       <demanglenames>true</demanglenames>
-      <outputradix>10</outputradix>
     </display>
   </kdevdebugger>
   <kdevfilecreate>
@@ -98,14 +94,6 @@
       <headerCompletionDelay>250</headerCompletionDelay>
     </codecompletion>
     <references/>
-    <creategettersetter>
-      <prefixGet/>
-      <prefixSet>set</prefixSet>
-      <prefixVariable>m_,_</prefixVariable>
-      <parameterName>theValue</parameterName>
-      <inlineGet>true</inlineGet>
-      <inlineSet>true</inlineSet>
-    </creategettersetter>
   </kdevcppsupport>
   <kdevfileview>
     <groups>
@@ -117,13 +105,4 @@
       <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>
-  <kdevvisualadvance>
-    <emulator>VisualBoyAdvance</emulator>
-    <binary/>
-    <addOptions/>
-    <terminal>false</terminal>
-    <fullscreen>false</fullscreen>
-    <graphicFilter>-f0</graphicFilter>
-    <scaling>-1</scaling>
-  </kdevvisualadvance>
 </kdevelop>

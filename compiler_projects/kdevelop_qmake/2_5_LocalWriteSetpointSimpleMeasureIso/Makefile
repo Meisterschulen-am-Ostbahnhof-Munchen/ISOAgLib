@@ -45,7 +45,6 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamlinear_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
