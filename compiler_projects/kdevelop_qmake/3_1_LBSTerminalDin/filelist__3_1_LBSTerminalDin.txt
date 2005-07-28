@@ -111,6 +111,8 @@
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
+../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/comm/DIN_Terminal/impl/dinmaskupload_c.h
 ../../../xgpl_src/IsoAgLib/comm/DIN_Terminal/idinmaskupload_c.h
 ../../../xgpl_src/IsoAgLib/comm/DIN_Terminal/dinmaskuploadstructures_t.h
