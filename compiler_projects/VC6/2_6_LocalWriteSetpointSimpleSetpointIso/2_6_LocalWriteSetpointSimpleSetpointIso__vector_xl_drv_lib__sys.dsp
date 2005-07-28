@@ -209,10 +209,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamchunk_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamlinear_c.cpp
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.cpp
 # End Source File
 
@@ -530,10 +526,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendstreamer_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\streamlinear_c.h
-# End Source File
-
-# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\chunk_c.h
 # End Source File
 
@@ -555,10 +547,6 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.h
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\istream_c.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\multireceiveclient_c.h
 # End Source File
 
 # Begin Source File
