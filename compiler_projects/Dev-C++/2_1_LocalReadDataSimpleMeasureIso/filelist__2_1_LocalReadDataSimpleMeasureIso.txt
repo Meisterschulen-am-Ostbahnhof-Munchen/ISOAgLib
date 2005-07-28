@@ -33,7 +33,7 @@
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -105,6 +105,8 @@
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
+../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 ../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
@@ -126,4 +128,5 @@
 ../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
-C:\Development\Sontheim=_=CANAPI.H
+C:\Development\CANLIB\dll\vcandm32.lib
+C:\Development\CANLIB\dll\VCanD.h

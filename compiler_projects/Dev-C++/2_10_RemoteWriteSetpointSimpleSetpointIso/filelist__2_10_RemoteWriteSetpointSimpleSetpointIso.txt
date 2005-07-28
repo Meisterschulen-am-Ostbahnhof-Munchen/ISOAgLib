@@ -27,7 +27,7 @@
 ../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -119,4 +119,3 @@
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
 ../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
-C:\Development\Sontheim=_=CANAPI.H
