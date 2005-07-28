@@ -446,7 +446,10 @@ function create_filelist( )
     PRJ_MULTIPACKET=1
   fi
   if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*' -o -path '*/driver/datastreams/volatilememory_c.cpp'"
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*'"
+    if [ $PRJ_DATASTREAMS -lt 1 ] ; then
+    	COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.cpp'"
+    fi
     PRJ_MULTIPACKET=1
   fi
   if [ $PRJ_DIN_TERMINAL -gt 0 ] ; then
