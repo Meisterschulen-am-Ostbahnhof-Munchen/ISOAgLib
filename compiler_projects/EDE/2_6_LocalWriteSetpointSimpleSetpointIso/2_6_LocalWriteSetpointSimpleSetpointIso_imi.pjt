@@ -230,6 +230,8 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\istream_c.h
+..\..\..\xgpl_src\IsoAgLib\comm\Multipacket\imultisend_c.h
 ..\..\..\xgpl_src\IsoAgLib\typedef.h
 ..\..\..\xgpl_src\IsoAgLib\hal\imi\can\can.h
 ..\..\..\xgpl_src\IsoAgLib\hal\imi\can\hal_can_interface.h
