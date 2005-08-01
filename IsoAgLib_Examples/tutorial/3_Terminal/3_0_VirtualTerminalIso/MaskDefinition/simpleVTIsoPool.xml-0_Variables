@@ -7,11 +7,11 @@
   <workingset name='imiIsoMaskupload' background_colour='white' selectable='yes' active_mask='MainMask'>
     <outputstring pos_x='0' pos_y='0' width='60' height='8'
       background_colour='white' font_attributes='FontAttributesSKM6x8'
-      options='autowrap' value='LBS Lib' />
-    <outputstring pos_x='0' pos_y='8' width='60' height='8'
+      options='autowrap' value='IsoAgLib' />
+    <outputstring pos_x='0' pos_y='8' width='60' height='16'
       background_colour='white' font_attributes='FontAttributesSKM6x8'
-      options='autowrap' value='WorkingSet' />
-      
+      options='autowrap' value='Tutorial 3.0' />
+
     <language code="ro" />
   </workingset>
 
@@ -30,7 +30,7 @@
   <fontattributes name='FontAttributesSKM12x16' font_colour='black' font_size='12x16' />
   <lineattributes name='LineAttributesSKM' line_colour='black' line_width='1' line_art='1111111111111111'/>
 
-  
+
 <!-- Variables -->
 
   <numbervariable name='ValSpeed' value='0' />
@@ -46,25 +46,25 @@
   <stringvariable name='StrMagenta' value='magenta' />
   <stringvariable name='StrBlack' value='black' />
   <stringvariable name='StrWhite' value='white' />
- 
+
   <outputstring name='LikeIt' value='That makes me happy.' width='200' height='8' font_attributes='FontAttributesNormal6x8' />
   <outputstring name='LikeItNot' value='What did I do wrong?' width='200' height='8' font_attributes='FontAttributesNormal6x8' />
-  
+
   <container name='containerInAllMasks' width='200' height='30'>
     <rectangle pos_x='5' pos_y='5' width='190' height='15' line_attributes='LineAttributesDotted'/>
-    
-    
+
+
 
     <!-- file1='simpleBitmapManuellSchwarzWeiss' -->
     <!-- file4='' tells to disable 16 bit output! -->
-    <picturegraphic name='BigLogo' pos_x='0' pos_y='0' width='100' transparency_colour='white' options='transparent+flashing' 
+    <picturegraphic name='BigLogo' pos_x='0' pos_y='0' width='100' transparency_colour='white' options='transparent+flashing'
                    format='8bit' rle='auto' file='simpleBitmap.bmp' file4='' >
       <fixedbitmap format='4bit' rle='auto' file='simpleBitmap240.bmp' file1='' />
     </picturegraphic>
-    
-    
-    
-    
+
+
+
+
     <line name='leine' pos_x='0' pos_y='27' width='200' height='1' line_attributes='LineAttributesNormal' />
   </container>
 
