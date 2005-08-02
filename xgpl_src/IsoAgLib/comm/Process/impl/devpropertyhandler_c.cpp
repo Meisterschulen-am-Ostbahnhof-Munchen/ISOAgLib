@@ -199,7 +199,9 @@ DevPropertyHandler_c::processMsg()
       tcState_lastReceived = data().time();
       //tcState_saOfActiveWorkingSetMaster = data().getUint8Data (1); //do we need it???
       tcSourceAddress = data().isoSa();
+      #ifdef DEBUG
       std::cout << "Received status message..." << std::endl;
+      #endif
     }
 
     //handling of nack
@@ -217,7 +219,9 @@ DevPropertyHandler_c::processMsg()
           {
             en_uploadStep = UploadWaitForUploadInit;
             b_receivedStructureLabel = false;
+            #ifdef DEBUG
             std::cout << "Received NACK for structure label..." << std::endl;
+            #endif
           }
           break;
         case 0x2: //NACK Request LocalizationLabel
@@ -225,7 +229,9 @@ DevPropertyHandler_c::processMsg()
           {
             en_uploadStep = UploadWaitForUploadInit;
             b_receivedLocalizationLabel = false;
+            #ifdef DEBUG
             std::cout << "Received NACK for localization label..." << std::endl;
+            #endif
           }
           break;
       }
@@ -238,7 +244,9 @@ DevPropertyHandler_c::processMsg()
         if (en_uploadState == StateUploadInit && en_uploadStep == UploadWaitForVersionResponse)
         {
           ui8_versionLabel = data().getUint8Data(1);
+          #ifdef DEBUG
           std::cout << "Received version response..." << std::endl;
+          #endif
           startUpload();
         }
         break;
@@ -254,7 +262,9 @@ DevPropertyHandler_c::processMsg()
           getCanInstance4Comm() << *pc_data;
           ui32_uploadTimestamp = HAL::getTime();
           ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+          #ifdef DEBUG
           std::cout << "Received structure label response..." << std::endl;
+          #endif
         }
         break;
       case procCmdPar_LocalizationLabelMsg:
@@ -263,7 +273,9 @@ DevPropertyHandler_c::processMsg()
           //store localizationLabel for later compare in StateUploadInit
           for (i=1; i<8; i++) pch_localizationLabel[i] = char(data().getUint8Data(i));
           b_receivedLocalizationLabel = true;
+          #ifdef DEBUG
           std::cout << "Received localization response..." << std::endl;
+          #endif
         }
         break;
       case procCmdPar_RequestOPTransferRespMsg:
@@ -280,7 +292,9 @@ DevPropertyHandler_c::processMsg()
             ui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
             outOfMemory();
           }
+          #ifdef DEBUG
           std::cout << "Received response for request OP transfer..." << std::endl;
+          #endif
         }
         break;
       case procCmdPar_OPTransferRespMsg:
@@ -294,16 +308,24 @@ DevPropertyHandler_c::processMsg()
             getCanInstance4Comm() << *pc_data;
             ui32_uploadTimestamp = HAL::getTime();
             ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+            #ifdef DEBUG
+            std::cout << "Received positive response for OP transfer..." << std::endl;
+            #endif
           }
           else
           {
             ui8_commandParameter = procCmdPar_OPTransferRespMsg;
             outOfMemory();
+            #ifdef DEBUG
+            std::cout << "Received negative response for OP transfer..." << std::endl;
+            #endif
           }
-          std::cout << "Received response for OP transfer..." << std::endl;
         }
         break;
       case procCmdPar_OPActivateRespMsg:
+        #ifdef DEBUG
+        std::cout << "Received activate response..." << std::endl;
+        #endif
         if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForOPActivateResponse)
         {
           if (data().getUint8Data(1) == 0)
@@ -318,9 +340,11 @@ DevPropertyHandler_c::processMsg()
             en_uploadStep = UploadFailed;
             en_poolState = OPCannotBeUploaded;
             ui8_commandParameter = procCmdPar_OPActivateRespMsg;
+            std::cout << (uint16_t) data().getUint8Data(1) << std::endl;
+            #ifdef DEBUG
             std::cout << "upload failed, activate with error..." << std::endl;
+            #endif
           }
-          std::cout << "Received activate response..." << std::endl;
         }
         break;
       case procCmdPar_OPDeleteMsg:
@@ -345,7 +369,9 @@ DevPropertyHandler_c::processMsg()
             ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
             en_uploadStep = UploadWaitForVersionResponse;
           }
+          #ifdef DEBUG
           std::cout << "Received delete response..." << std::endl;
+          #endif
         }
         break;
       /* UploadCommandWaitingForCommandResponse and UploadMultiSendCommandWaitingForCommandResponse
@@ -425,13 +451,17 @@ DevPropertyHandler_c::timeEvent( void )
       ui32_uploadTimestamp = HAL::getTime();
       ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
       en_uploadStep = UploadWaitForStructureLabelResponse;
+      #ifdef DEBUG
       std::cout << "Wait for structure label..." << std::endl;
+      #endif
       break;
     case UploadWaitForVersionResponse:
       if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
       {
         /** @todo set versionLabel to a default??? */
+        #ifdef DEBUG
         std::cout << "No version available..." << std::endl;
+        #endif
         startUpload();
       }
       //else std::cout << "still waiting for timeout or response..." << std::endl;
@@ -442,7 +472,9 @@ DevPropertyHandler_c::timeEvent( void )
       {
         b_receivedStructureLabel = false;
         en_uploadStep = UploadWaitForUploadInit;
+        #ifdef DEBUG
         std::cout << "Wait for structure label timed out, go to wait for upload init..." << std::endl;
+        #endif
       }
       break;
     case UploadWaitForLocalizationLabelResponse:
@@ -451,7 +483,9 @@ DevPropertyHandler_c::timeEvent( void )
       {
         b_receivedLocalizationLabel = false;
         en_uploadStep = UploadWaitForUploadInit;
+        #ifdef DEBUG
         std::cout << "Wait for upload init..." << std::endl;
+        #endif
       }
       break;
     case UploadWaitForUploadInit:
@@ -461,12 +495,16 @@ DevPropertyHandler_c::timeEvent( void )
         en_uploadState = StateUploadInit;
         if (!b_receivedStructureLabel)
         {
+          #ifdef DEBUG
           std::cout << "get pool from isoterminal or via default..." << std::endl;
+          #endif
           getPoolForUpload();
         }
         else
         {
+          #ifdef DEBUG
           std::cout << "init upload..." << std::endl;
+          #endif
           initUploading();
         }
 
@@ -478,7 +516,9 @@ DevPropertyHandler_c::timeEvent( void )
           ui32_uploadTimestamp = HAL::getTime();
           ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           en_uploadStep = UploadWaitForDeleteResponse;
+          #ifdef DEBUG
           std::cout << "Wait for delete response..." << std::endl;
+          #endif
         }
         else
         {
@@ -488,7 +528,9 @@ DevPropertyHandler_c::timeEvent( void )
           ui32_uploadTimestamp = HAL::getTime();
           ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           en_uploadStep = UploadWaitForVersionResponse;
+          #ifdef DEBUG
           std::cout << "Wait for version response..." << std::endl;
+          #endif
         }
       }
       break;
@@ -500,7 +542,9 @@ DevPropertyHandler_c::timeEvent( void )
         ui8_commandParameter = procCmdPar_OPDeleteRespMsg;
         ui32_uploadTimestamp = HAL::getTime();
         ui32_uploadTimeout = DEF_WaitFor_Reupload;
+        #ifdef DEBUG
         std::cout << "Upload timed out when deleting old pool, wait for re-upload..." << std::endl;
+        #endif
       }
       break;
     case UploadWaitForRequestOPTransferResponse:
@@ -511,7 +555,9 @@ DevPropertyHandler_c::timeEvent( void )
         ui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
         ui32_uploadTimestamp = HAL::getTime();
         ui32_uploadTimeout = DEF_WaitFor_Reupload;
+        #ifdef DEBUG
         std::cout << "Upload timed out, wait for re-upload..." << std::endl;
+        #endif
       }
       break;
     case UploadRetryUpload:
@@ -534,7 +580,9 @@ DevPropertyHandler_c::timeEvent( void )
           en_uploadStep = UploadWaitForOPTransferResponse;
           ui32_uploadTimestamp = HAL::getTime();
           ui32_uploadTimeout = DEF_TimeOut_EndOfDevicePool;
+          #ifdef DEBUG
           std::cout << "Upload successful, wait for transfer response..." << std::endl;
+          #endif
         }
       }
       break;
@@ -546,7 +594,9 @@ DevPropertyHandler_c::timeEvent( void )
         ui8_commandParameter = procCmdPar_OPTransferRespMsg;
         ui32_uploadTimestamp = HAL::getTime();
         ui32_uploadTimeout = DEF_WaitFor_Reupload;
+        #ifdef DEBUG
         std::cout << "Upload failed, timeout when waiting for transfer response,wait for re-upload..." << std::endl;
+        #endif
       }
       break;
     case UploadWaitForOPActivateResponse:
@@ -557,7 +607,9 @@ DevPropertyHandler_c::timeEvent( void )
         ui8_commandParameter = procCmdPar_OPActivateMsg;
         ui32_uploadTimestamp = HAL::getTime();
         ui32_uploadTimeout = DEF_WaitFor_Reupload;
+        #ifdef DEBUG
         std::cout << "Upload failed when waiting for activating pool, wait for re-upload..." << std::endl;
+        #endif
       }
       break;
     case UploadFailed:
@@ -845,7 +897,9 @@ DevPropertyHandler_c::startUpload()
 
   en_uploadState = StateUploadPool;
   en_uploadStep = UploadWaitForRequestOPTransferResponse;
+  #ifdef DEBUG
   std::cout << "Wait for response for request OP transfer..." << std::endl;
+  #endif
 }
 
 
@@ -857,7 +911,9 @@ DevPropertyHandler_c::outOfMemory()
   getLbsErrInstance().registerError( LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal );
   en_uploadStep = UploadFailed; // no timeout needed
   en_poolState = OPCannotBeUploaded;
+  #ifdef DEBUG
   std::cout << "upload failed, no retry" << std::endl;
+  #endif
 }
 
 
