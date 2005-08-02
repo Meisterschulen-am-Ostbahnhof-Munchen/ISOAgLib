@@ -396,7 +396,7 @@ int32_t ProcIdent_c::calcIdentVal() const {
     #ifdef USE_ISO_11783
     #ifdef USE_DIN_9684
     if ( element() != 0xFFFF )
-    #endif;
+    #endif
     { // take ISO ident settings for compare
       i32_result |=
       (
