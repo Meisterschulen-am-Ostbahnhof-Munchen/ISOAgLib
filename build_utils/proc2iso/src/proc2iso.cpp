@@ -80,13 +80,18 @@ std::basic_string<char> c_project;
 
 char objNameTable [(stringLength+1)*1000];
 unsigned int objIDTable [1000];
-unsigned int objType=0; //init for happy compiler
+unsigned int countDVCID = 0;
+unsigned int countDETID = 0;
+unsigned int countDVPID = 0;
+unsigned int countDPTID = 0;
+unsigned int countDPDID = 0;
 unsigned int objNextAutoID;
 unsigned int kcNextAutoID;
 unsigned int objNextUnnamedName;
 unsigned int objCount;
 
 std::vector<std::string> vecstr_attrString (maxAttributeNames);
+std::vector<std::string> vecstr_objTableIDTable;
 std::stringstream buffer;
 bool attrIsGiven [maxAttributeNames];
 std::vector<std::string> vecstr_constructor (7);
@@ -215,7 +220,7 @@ class XStr
 // ---------------------------------------------------------------------------
 //  unsigned int getID (char* objName, bool wishingID, unsigned int wishID=0)
 // ---------------------------------------------------------------------------
-unsigned int getID (const char* objName, bool wishingID, unsigned int wishID)
+unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, unsigned int objType)
 {
   bool isThere = false;
   unsigned int foundID = 0;
@@ -227,38 +232,74 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID)
     // std::cout << "comparing " << objName << " with " << &objNameTable [i*(stringLength+1)] << "\n";
     if (strncmp (objName, &objNameTable [i*(stringLength+1)], stringLength) == 0)
     {
-      foundID = objIDTable [i];
-      isThere = true;
-      break;
+      //get objType by entry in objTabelIDTable
+      char objTypeByTableID[3];
+      unsigned int objTypeFound;
+      strncpy(objTypeByTableID, vecstr_objTableIDTable[i].c_str(), 3);
+      for (uint8_t cnt=0; cnt<maxTableID; cnt++)
+      {
+        if (strncmp(objTypeByTableID, TableIDTable[cnt], 3) == 0) objTypeFound = cnt;
+      }
+      //cmp with that of given object
+      if (objTypeFound == objType)
+      {
+        foundID = objIDTable [i];
+        isThere = true;
+        break;
+      }
     }
-  }
-
-  if (objType == otDevice)
-  {
-    if (b_isFirstDevice)
-    {
-      b_isFirstDevice = false;
-      isThere = true;
-      foundID = 0;
-      objIDTable [objCount] = foundID;
-      strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength);
-      objCount++;
-    }
-    else clean_exit (-1, "YOU CAN ONLY SPECIFY ONE <device> OBJECT! STOPPING PARSER! bye.\n\n");
   }
 
   if (!isThere) {
-    // check what's the new ID to be
-    if (wishingID) {
-      foundID = wishID;
-    } else {
-      foundID = objNextAutoID;
-      objNextAutoID--;
+    if (objType == otDevice)
+    {
+      if (b_isFirstDevice)
+      {
+        b_isFirstDevice = false;
+        foundID = 0;
+      }
+      else clean_exit (-1, "YOU CAN ONLY SPECIFY ONE <device> OBJECT! STOPPING PARSER! bye.\n\n");
+    }
+    else
+    {
+      // check what's the new ID to be
+      if (wishingID) {
+        foundID = wishID;
+      } else {
+        foundID = objNextAutoID;
+        objNextAutoID--;
+      }
     }
     // insert new name-id pair now!
     objIDTable [objCount] = foundID;
     strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
     objCount++;
+    // insert TableID and number to vecstr_objTableIDTable
+    char tempBuffer[6];
+    switch (objType)
+    {
+      case otDevice:
+        sprintf(tempBuffer, "DVC%d", countDVCID);
+        countDVCID++;
+        break;
+      case otDeviceElement:
+        sprintf(tempBuffer, "DET%d", countDETID);
+        countDETID++;
+        break;
+      case otDeviceProcessData:
+        sprintf(tempBuffer, "DPD%d", countDPDID);
+        countDPDID++;
+        break;
+      case otDeviceProperty:
+        sprintf(tempBuffer, "DPT%d", countDPTID);
+        countDPTID++;
+        break;
+      case otDeviceValuePresentation:
+        sprintf(tempBuffer, "DVP%d", countDVPID);
+        countDVPID++;
+        break;
+    }
+    vecstr_objTableIDTable.push_back(std::string(tempBuffer));
   }
   //std::cout << "foundID: " << foundID << " " << std::endl;
   //std::cout << "objName: " << objName << std::endl;
@@ -383,13 +424,13 @@ unsigned int objectIsType (char* lookup_name)
 };
 
 
-unsigned int idOrName_toi(const char* rpc_string)
+unsigned int idOrName_toi(const char* rpc_string, unsigned int parentObjType)
 {
   if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
   /** @todo check if all chars in the string are numbers, not only the first! */
   if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
   // Starting with a letter, so look up id!
-  return getID (rpc_string, false, 0);
+  return getID (rpc_string, false, 0, parentObjType);
 };
 
 
@@ -529,7 +570,7 @@ void utf16convert (char* source, char* destin, int count)
 }
 
 
-void getAttributesFromNode(DOMNode *node) {
+void getAttributesFromNode(DOMNode *node, unsigned int objType) {
   DOMNamedNodeMap *pAttributes;
   if (node->hasAttributes()) { // parse through all attributes
     pAttributes = node->getAttributes();
@@ -537,9 +578,7 @@ void getAttributesFromNode(DOMNode *node) {
 
     // empty all possible attribute-values...
     for (int j=0; j<maxAttributeNames; j++) {
-      for (int k=0; k<stringLength+1; k++) {
-        vecstr_attrString [j].clear();
-      }
+      vecstr_attrString [j].clear();
       attrIsGiven [j] = false;
     }
 
@@ -558,7 +597,6 @@ void getAttributesFromNode(DOMNode *node) {
           //<< attrIsGiven [attrDesignator] << "\n";
           continue;
       }
-
 
       int l;
       for (l=0; l<maxAttributeNames; l++) {
@@ -592,14 +630,14 @@ void getAttributesFromNode(DOMNode *node) {
 
 // ---------------------------------------------------------------------------
 //
-//  static void processElement (DOMNode *n, unsigned int omb, const char* rc_workDir) --- Recursively process all ELEMENT XML-Tags...
+//  static void processElement (DOMNode *n, unsigned int omb, const char* rc_workDir, signed int parentObjType) --- Recursively process all ELEMENT XML-Tags...
 // we're in an element here, not text or something else...
 //
 // ---------------------------------------------------------------------------
 #ifdef WIN32
-void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir)
+void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1)
 #else
-static void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir)
+static void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1)
 #endif
 {
   DOMNode *child;
@@ -613,8 +651,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
   unsigned int objChildID=0; bool is_objChildID=false; //init for happy compiler
   char objChildName [stringLength+1]; bool is_objChildName=false; //init for happy compiler
-  char tempString [stringLength+1]; tempString [stringLength+1-1] = 0x00;
-  char tempString2 [stringLength+1]; tempString2 [stringLength+1-1] = 0x00;
+  unsigned int objType=0; //init for happy compiler
 
   bool b_lsb = false;
 
@@ -647,88 +684,96 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
       std::cout << "\n\n";
       clean_exit (-1);
     }
-    getAttributesFromNode(node);
 
-    // set all non-set attributes to default values
-    defaultAttributes ();
-
-    // get a new ID for this object
-    objID = getID (objName, is_objID, objID);
-
-    bool objNeedsName = false;
-    switch (objType)
+    if (objType != otDeviceDinProcessData)
     {
-      case otDevice:
-      case otDeviceProcessData:
-        objNeedsName=true;
-    }
+      getAttributesFromNode(node, objType);
 
-    bool objHasArrayObject = false;
-    switch (objType)
-    {
-      case otDeviceElement:
-        objHasArrayObject = true;
-        deviceElementExists=true;
-        break;
-      case otDeviceProcessData:
-      case otDeviceProperty:
-        objHasArrayObject = true;
-        break;
-    }
+      // set all non-set attributes to default values
+      defaultAttributes ();
 
-    if (objNeedsName)
-    {
-      if (!attrIsGiven[attrDesignator])
+      // get a new ID for this object
+      objID = getID (objName, is_objID, objID, objType);
+
+      bool objNeedsName = false;
+      switch (objType)
       {
-        std::cout << "\n\nYOU MUST SPECIFIY THE ATTRIBUTE designator= FOR <"<< node_name <<"> OBJECT! STOPPING PARSER! bye.\n\n";
-        clean_exit (-1);
+        case otDevice:
+        case otDeviceProcessData:
+          objNeedsName=true;
       }
-    }
 
-    if (objHasArrayObject)
-    {
-      // Process all Child-Elements
-      vecstr_childID.clear();
-      objChildObjects = 0;
-      for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
-      {   // if NOT Macro insert as normal object!
-        if (child->getNodeType() == DOMNode::ELEMENT_NODE)
+      bool objHasArrayObject = false;
+      switch (objType)
+      {
+        case otDeviceElement:
+          objHasArrayObject = true;
+          deviceElementExists=true;
+          break;
+        case otDevice:
+        case otDeviceProcessData:
+        case otDeviceProperty:
+          objHasArrayObject = true;
+          break;
+      }
+
+      if (objNeedsName)
+      {
+        if (!attrIsGiven[attrDesignator])
         {
-          // get NAME attributes out of child
-          if(child->hasAttributes()) {
-            // parse through all attributes
-            pAttributes = child->getAttributes();
-            int nSize = pAttributes->getLength();
+          std::cout << "\n\nYOU MUST SPECIFIY THE ATTRIBUTE designator= FOR <"<< node_name <<"> OBJECT! STOPPING PARSER! bye.\n\n";
+          clean_exit (-1);
+        }
+      }
 
-            objChildName [stringLength+1-1] = 0x00;
-            is_objChildName = false;
-            is_objChildID = false;
+      if (objHasArrayObject)
+      {
+        // Process all Child-Elements
+        vecstr_childID.clear();
+        objChildObjects = 0;
+        for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
+        {   // if NOT Macro insert as normal object!
+          if (objectIsType(XMLString::transcode(child->getNodeName())) != otDeviceDinProcessData)
+          {
+            if (child->getNodeType() == DOMNode::ELEMENT_NODE)
+            {
+              // get NAME attributes out of child
+              if(child->hasAttributes()) {
+                // parse through all attributes
+                pAttributes = child->getAttributes();
+                int nSize = pAttributes->getLength();
 
-            for(int i=0;i<nSize;++i) {
-              DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-              utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-              utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+                objChildName [stringLength+1-1] = 0x00;
+                is_objChildName = false;
+                is_objChildID = false;
 
-              // Get NAME directly
-              if (strncmp (attr_name, "designator", stringLength) == 0) {
-                strncpy (objChildName, attr_value, stringLength);
+                for(int i=0;i<nSize;++i) {
+                  DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                  utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                  utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                  // Get NAME directly
+                  if (strncmp (attr_name, "designator", stringLength) == 0) {
+                    strncpy (objChildName, attr_value, stringLength);
+                    is_objChildName = true;
+                  }
+                }
+              }
+              if (is_objChildName == false)
+              {
+                // create auto-named NAME attribute
+                sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
+                ((DOMElement *)child)->setAttribute (X("designator"), X(objChildName));
+                objNextUnnamedName++;
                 is_objChildName = true;
               }
+              // give him an ID, although not necessary now...
+              objChildID = getID (objChildName, is_objChildID, objChildID, objectIsType(XMLString::transcode(child->getNodeName())));
+              //store that ID for later output in the bytestream-file
+              vecstr_childID.push_back(objChildID);
+              objChildObjects++;
             }
           }
-          if (is_objChildName == false)
-          {
-            // create auto-named NAME attribute
-            sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
-            ((DOMElement *)child)->setAttribute (X("designator"), X(objChildName));
-            objNextUnnamedName++;
-            is_objChildName = true;
-          }
-          // give him an ID, although not necessary now...
-          objChildID = getID (objChildName, is_objChildID, objChildID);
-          //store that ID for later output in the bytestream-file
-          vecstr_childID.push_back(objChildID);
-          objChildObjects++;
         }
       }
     }
@@ -813,8 +858,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
               uint8_t ui8_digitHi = vecstr_attrString[attrWorkingset_mastername][1+i*2]; // ASCII
               uint8_t ui8_digitLo = vecstr_attrString[attrWorkingset_mastername][1+i*2+1]; // ASCII
 
-              uint8_t ui8_nibbleHi = (ui8_digitHi <= '9' /* 0..9 */) ? (ui8_digitHi-'0') : (ui8_digitHi-'A' + 10); // 0..9,10..15
-              uint8_t ui8_nibbleLo = (ui8_digitLo <= '9' /* 0..9 */) ? (ui8_digitLo-'0') : (ui8_digitLo-'A' + 10); // 0..9,10..15
+              uint8_t ui8_nibbleHi = (ui8_digitHi <= '9' /* 0..9 */) ? (ui8_digitHi-'0') : (ui8_digitHi-'a' + 10); // 0..9,10..15
+              uint8_t ui8_nibbleLo = (ui8_digitLo <= '9' /* 0..9 */) ? (ui8_digitLo-'0') : (ui8_digitLo-'a' + 10); // 0..9,10..15
 
               const uint8_t pos = (b_lsb) ? (i) : (7-i);
               ui8_tempName[pos] = (ui8_nibbleHi << 4) | ui8_nibbleLo;
@@ -825,6 +870,19 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           languageCmdCode[0] = vecstr_attrString[attrLocalization_label][0];
           languageCmdCode[1] = vecstr_attrString[attrLocalization_label][1];
 
+          uint8_t ui8_tempLocalName[5];
+          for (i=0; i<5; i++)
+          {
+            uint8_t ui8_digitHi = vecstr_attrString[attrLocalization_label][2+i*2]; // ASCII
+            uint8_t ui8_digitLo = vecstr_attrString[attrLocalization_label][2+i*2+1]; // ASCII
+
+            uint8_t ui8_nibbleHi = (ui8_digitHi <= '9' /* 0..9 */) ? (ui8_digitHi-'0') : (ui8_digitHi-'a' + 10); // 0..9,10..15
+            uint8_t ui8_nibbleLo = (ui8_digitLo <= '9' /* 0..9 */) ? (ui8_digitLo-'0') : (ui8_digitLo-'a' + 10); // 0..9,10..15
+
+            const uint8_t pos = (b_lsb) ? (i) : (7-i);
+            ui8_tempLocalName[pos] = (ui8_nibbleHi << 4) | ui8_nibbleLo;
+          }
+
           //output: tableID & objID
           if (firstElement)
           {
@@ -834,7 +892,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           } else
           {
             buffer  << ", '";
-
           }
           buffer  <<        TableIDTable [objType][0] << "', "
                   << "'" << TableIDTable [objType][1] << "', "
@@ -883,12 +940,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           }
           buf_length += 7;
           //localization_label
-          for (i=0;i<vecstr_attrString[attrLocalization_label].size();i++)
+          buffer  << "'" << languageCmdCode[0] << "', '" << languageCmdCode[1] << "', ";
+          for (i=0;i<5;i++)
           {
-              if (!((i+1)<(uint8_t)vecstr_attrString[attrLocalization_label].size()))
-                buffer << "'" << vecstr_attrString[attrLocalization_label][i] << "'";
-              else
-                buffer << "'" << vecstr_attrString[attrLocalization_label][i] << "', ";
+            if ((i+1)<5)
+              buffer << (uint16_t) ui8_tempLocalName[i] << ", ";
+            else
+              buffer << (uint16_t) ui8_tempLocalName[i];
           }
           buf_length += 7;
           fprintf( partFileA, "%s", buffer.str().c_str() );
@@ -933,8 +991,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << ((stringtonumber(vecstr_attrString[attrElement_number].c_str(), 0, -1) >> 8) & 0xFF) << ", ";
         buf_length += 2;
         //parent_name
-        buffer  << (idOrName_toi(vecstr_attrString[attrParent_name].c_str()) & 0xFF) << ", "
-                << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str()) >> 8) & 0xFF) << ", ";
+        buffer  << (idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType) & 0xFF) << ", "
+                << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType) >> 8) & 0xFF) << ", ";
         buf_length += 2;
         //number_of_objects_to_follow
         buffer  << uint16_t(objChildObjects & 0xFF) << ", "
@@ -943,8 +1001,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
         for (it_childID = vecstr_childID.begin(); it_childID != vecstr_childID.end(); it_childID++)
         {
-            buffer << ", " << uint16_t(*it_childID & 0xFF) << ", "
-                   << uint16_t((*it_childID >> 8) & 0xFF);
+          buffer << ", " << uint16_t(*it_childID & 0xFF) << ", " << uint16_t((*it_childID >> 8) & 0xFF);
           buf_length += 2;
         }
         fprintf( partFileA, "%s", buffer.str().c_str() );
@@ -983,12 +1040,12 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         //designator
         for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
         {
-            buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
+          buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
         }
         buf_length += vecstr_attrString[attrDesignator].size();
         //device_value_presentation_object_id
-        buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str()) & 0xFF) << ", "
-                << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str()) >> 8) & 0xFF);
+        buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) & 0xFF) << ", "
+                << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) >> 8) & 0xFF);
         buf_length += 2;
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
@@ -1029,8 +1086,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         }
         buf_length += vecstr_attrString[attrDesignator].size();
         //device_value_presentation_object_id
-        buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str()) & 0xFF) << ", "
-                << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str()) >> 8) & 0xFF);
+        buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) & 0xFF) << ", "
+                << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) >> 8) & 0xFF);
         buf_length += 2;
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
@@ -1043,18 +1100,18 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         }
         fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
         fprintf( partFileB, "\n#ifdef USE_ISO_11783\n");
-          fprintf( partFileB, "0x%x, 0x%x, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_constructor[2].c_str(), 0, -1));
+        fprintf( partFileB, "0x%x, 0x%x, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_constructor[2].c_str(), 0, -1));
         fprintf( partFileB, "\n#endif\n");
         fprintf( partFileB, "#ifdef USE_DIN_9684\n");
-          fprintf( partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
+        fprintf( partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
                    (atoi(vecstr_attrString[attrWert_inst].c_str()) & 0x0F), ((atoi(vecstr_attrString[attrWert_inst].c_str()) >> 4) & 0xF),
                    atoi(vecstr_constructor[2].c_str()));
         fprintf( partFileB, "\n#endif\n");
-          fprintf( partFileB, "%sGtp, 0x%x, %sGtp, &%sGtp, %s",
+        fprintf( partFileB, "%sGtp, 0x%x, %sGtp, &%sGtp, %s",
                    vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
                    vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
         fprintf( partFileB, "\n#ifdef USE_EEPROM_IO\n");
-          fprintf( partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
+        fprintf( partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
         fprintf( partFileB, "\n#endif\n");
         fprintf( partFileB, ");\n\n" );
         break;
@@ -1093,10 +1150,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         //unit_designator
         for (i = 0;i<vecstr_attrString[attrUnitdesignator].size();i++)
         {
-            if (!((i+1) < (uint8_t)vecstr_attrString[attrUnitdesignator].size()))
-              buffer << "'" << vecstr_attrString[attrUnitdesignator][i] << "'";
-            else
-              buffer << "'" << vecstr_attrString[attrUnitdesignator][i] << "', ";
+          if (!((i+1) < (uint8_t)vecstr_attrString[attrUnitdesignator].size()))
+            buffer << "'" << vecstr_attrString[attrUnitdesignator][i] << "'";
+          else
+            buffer << "'" << vecstr_attrString[attrUnitdesignator][i] << "', ";
         }
         buf_length += vecstr_attrString[attrUnitdesignator].size();
         fprintf( partFileA, "%s", buffer.str().c_str() );
@@ -1113,7 +1170,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
   {
     if (child->getNodeType() == DOMNode::ELEMENT_NODE)
     {
-      processElement (child, omcType, rc_workDir);
+      processElement (child, omcType, rc_workDir, objType);
     }
   }
 }
@@ -1272,7 +1329,7 @@ int main(int argC, char* argV[])
   }
   else
   {
-    std::cerr <<  "Couldn't open the directory.";
+    std::cerr <<  "Couldn't open the directory." << std::endl;
     return 0;
   }
   SetCurrentDirectory(szCurDir);
@@ -1300,7 +1357,7 @@ int main(int argC, char* argV[])
     closedir(dp);
   } else
   {
-    std::cerr <<  "Couldn't open the directory.";
+    std::cerr <<  "Couldn't open the directory." << std::endl;
     return 0;
   }
   #endif
