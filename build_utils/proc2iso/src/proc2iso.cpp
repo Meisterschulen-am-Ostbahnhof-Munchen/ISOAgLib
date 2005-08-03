@@ -1,4 +1,3 @@
-// This file is a version with hard-coded xml file path!!!
 /***************************************************************************
  *                                                                         *
  * This file is part of the "IsoAgLib", an object oriented program library *
@@ -96,7 +95,7 @@ std::vector<std::string> vecstr_objTableIDTable;
 std::stringstream buffer;
 bool attrIsGiven [maxAttributeNames];
 std::vector<std::string> vecstr_constructor (7);
-static bool b_isFirstDevice = true;
+bool b_isFirstDevice = true;
 
 // ---------------------------------------------------------------------------
 //  void usage () --- Prints out usage text.
@@ -689,11 +688,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
       // set all non-set attributes to default values
       defaultAttributes ();
 
-      // if more than one device is specified, stop parsing. Only one DVC is allowed by definition
-      if (!b_isFirstDevice && objType == otDevice) clean_exit (-1, "YOU CAN ONLY SPECIFY ONE <device> OBJECT! STOPPING PARSER! bye.\n\n");
-
       // get a new ID for this object
       objID = getID (objName, is_objID, objID, objType);
+
+      // if more than one device is specified, stop parsing. Only one DVC is allowed by definition
+      if (!b_isFirstDevice && objType == otDevice) clean_exit (-1, "YOU CAN ONLY SPECIFY ONE <device> OBJECT! STOPPING PARSER! bye.\n\n");
 
       bool objNeedsName = false;
       switch (objType)
@@ -954,7 +953,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           fprintf( partFileB, "IsoAgLib::iGetyPos_c %sGtp(0x%x, 0x%x);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
           fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sGtp, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISOTERMINAL \n , 0, NULL\n #endif\n);\n\n",
-                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "true" : "false",
+                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "false" : "true",
                    c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
                    atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
                    c_isoname.funcInst(),c_isoname.ecuInst());
@@ -1181,8 +1180,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 int main(int argC, char* argV[])
 {
   // Check command line and extract arguments.
-  if (argC < 2) { //usage(); return 1;
-  }
+  if (argC < 2) { usage(); return 1; }
 
   const char* xmlFile = 0;
   AbstractDOMParser::ValSchemes valScheme = AbstractDOMParser::Val_Auto;
@@ -1259,13 +1257,9 @@ int main(int argC, char* argV[])
 
   //  There should be only one parameter left, and that
   //  should be the file name.
-  std::basic_string<char> c_fileName;
-  if (argInd != argC - 1) {
-    c_fileName = "../../../src_test/test_pools/firstpool/Device_Description.xml";
-  }
-  else
+  if (argInd != argC - 1) { usage(); return 1; }
   // get file list with matching files!
-    c_fileName = argV [argInd];
+  std::basic_string<char> c_fileName( argV [argInd] );
   #ifdef WIN32
   int lastDirPos = c_fileName.find_last_of( "\\" );
   std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
@@ -1295,7 +1289,7 @@ int main(int argC, char* argV[])
   // go to new working directory
   if (SetCurrentDirectory(c_directory.c_str()) == 0)
   {
-    std::cerr <<  "Couldn't open the directory." << std::endl;
+    std::cerr <<  "Couldn't open the directory."<< std::endl;
 
     CHAR szBuf[80];
       DWORD dw = GetLastError();
@@ -1386,7 +1380,7 @@ int main(int argC, char* argV[])
   std::cout << "\n";
 
   // Do INITIALIZATION STUFF
-  init (c_fileName.c_str());
+  init (argV [argInd]);
 
   for (indexXmlFile = 0; indexXmlFile < amountXmlFiles; indexXmlFile++)
   { // loop all xmlFiles!
