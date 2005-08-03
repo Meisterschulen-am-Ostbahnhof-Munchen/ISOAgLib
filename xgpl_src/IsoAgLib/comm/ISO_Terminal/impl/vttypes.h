@@ -157,13 +157,13 @@ class vtObjectAuxiliaryInput_c;
     MACRO_scaleLocalVarVtDimension
 
 #define MACRO_scaleSKLocalVars \
-    uint32_t opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance().getVtObjectPoolSoftKeyWidth(); \
-    uint32_t opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance().getVtObjectPoolSoftKeyHeight(); \
-    uint32_t vtSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skWidth; \
-    uint32_t vtSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skHeight; \
-    uint32_t factorX = (vtSoftKeyWidth  << 20) / opSoftKeyWidth; \
-    uint32_t factorY = (vtSoftKeyHeight << 20) / opSoftKeyHeight; \
-    uint32_t factor  = (factorX < factorY) ? factorX : factorY;
+    int32_t opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance().getVtObjectPoolSoftKeyWidth(); \
+    int32_t opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance().getVtObjectPoolSoftKeyHeight(); \
+    int32_t vtSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skWidth; \
+    int32_t vtSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance().getVtCapabilities ()->skHeight; \
+    int32_t factorX = (vtSoftKeyWidth  << 20) / opSoftKeyWidth; \
+    int32_t factorY = (vtSoftKeyHeight << 20) / opSoftKeyHeight; \
+    int32_t factor  = (factorX < factorY) ? factorX : factorY;
 
 
 #define MACRO_streamObject(bytesBefore) \
@@ -197,15 +197,15 @@ class vtObjectAuxiliaryInput_c;
         yBlock = 0; \
       } \
       if (flags & FLAG_ORIGIN_SKM) { \
-        destMemory [curBytes+2] = ((((uint32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((uint32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) >> 8; \
-        destMemory [curBytes+4] = ((((uint32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) & 0xFF; \
-        destMemory [curBytes+5] = ((((uint32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) >> 8; \
+        destMemory [curBytes+2] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) >> 8; \
+        destMemory [curBytes+4] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) & 0xFF; \
+        destMemory [curBytes+5] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) >> 8; \
       } else { \
-        destMemory [curBytes+2] = ((((uint32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((uint32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \
-        destMemory [curBytes+4] = ((((uint32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) & 0xFF; \
-        destMemory [curBytes+5] = ((((uint32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) >> 8; \
+        destMemory [curBytes+2] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \
+        destMemory [curBytes+4] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) & 0xFF; \
+        destMemory [curBytes+5] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) >> 8; \
       } \
       nrObjectXY++; \
       curBytes += 6; \
@@ -215,8 +215,8 @@ class vtObjectAuxiliaryInput_c;
 #define MACRO_streamObjectXYcenteredInSoftKey(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
     MACRO_scaleSKLocalVars \
-    uint16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factor) >> 20)) >>1; \
-    uint16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factor) >> 20)) >>1; \
+    int16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factor) >> 20)) >>1; \
+    int16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factor) >> 20)) >>1; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
@@ -281,11 +281,11 @@ class vtObjectAuxiliaryInput_c;
       curBytes += 4; \
       sourceOffset += 4; \
     }
-    
-    
-    
-    
-    
+
+
+
+
+
 #define MACRO_getStructOffset(structPointer,structElement) \
   ((uint16_t) ((uint8_t*)(&structPointer->structElement) - ((uint8_t*)structPointer)))
 

@@ -1374,9 +1374,10 @@ bool ISOTerminal_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_o
 }
 
 
+//! should only be called with valid values ranging -127..0..128 (according to ISO!!!)
 // THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE CHILD LOCATION COMMAND
 // //////////////////////////////// +X2C Operation BAC : sendCommandChangeChildLocation
-bool ISOTerminal_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_enableReplaceOfCmd)
+bool ISOTerminal_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
 {
   return sendCommand (165 /* Command: Command --- Parameter: Change Child Location */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,

@@ -430,7 +430,7 @@ public:
   //! @param childObjectId:
   //! @param dx:
   //! @param dy:
-  bool sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd=true);
 // ADDED BY BRAD COX 26-AUG-2004 FOR CHANGE BACKGROUND COLOUR COMMAND
   //  Operation: sendCommandChangeBackgroundColor
   //! Parameter:

@@ -144,8 +144,8 @@ struct repeat_iVtObject_s {
 // +++ (attribute list) struct declarations
 struct repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s {
   iVtObject_c* vtObject;
-  uint16_t x;
-  uint16_t y;
+  int16_t x;
+  int16_t y;
   iVtObjectFontAttributes_c* vtObjectBlockFont;
   int16_t row;
   int16_t col;
@@ -157,8 +157,8 @@ struct repeat_event_iVtObjectMacro_s {
 };
 
 struct repeat_x_y_s {
-  uint16_t x;
-  uint16_t y;
+  int16_t x;
+  int16_t y;
 };
 
 struct repeat_vtLanguage_s {

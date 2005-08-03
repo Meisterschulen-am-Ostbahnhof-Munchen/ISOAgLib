@@ -358,6 +358,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         updateMiles (0);
         iVtObjectValSpeed.setValue (valSpeed);
         iVtObjectColLabel.setValueCopy ("cp"); // ### REMOVE for RELEASE! ###
+        iVtObjectdPolygon.setFillAttributes(&iVtObjectFillAttributes);
         break;
 
       case vtKeyCodeKeyMove:

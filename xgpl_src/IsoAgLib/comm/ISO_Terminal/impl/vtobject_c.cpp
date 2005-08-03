@@ -214,9 +214,13 @@ vtObject_c::genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iV
   return false; // Object was not child object --> return FALSE!
 } // -X2C
 
+// only using int16_t because ISO's offset is -127 and hence the range is -127..0..+128 :-(((
 bool
-vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int8_t dx, int8_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd)
+vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd)
 {
+  if (dx > 128) dx = 128;  /** @todo throw a warning here?! log to Err_c ?! */
+  if (dy < -127)dy = -127; /** @todo throw a warning here?! log to Err_c ?! */
+
   bool b_result = genericChangeChildLocationPosition (true, childObject, dx, dy, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
   if (b_result) __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildLocation (this, childObject, dx, dy, b_enableReplaceOfCmd);
   return b_result;
