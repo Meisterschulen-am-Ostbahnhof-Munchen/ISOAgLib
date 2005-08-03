@@ -75,7 +75,7 @@ public:
     constructor which can read in initial data from uint8_t string
     @param rpb_src 64bit input data string
   */
-  iISOName_c(const uint8_t* rpb_src) : ISOName_c( rpb_src ) {};
+  iISOName_c(const uint8_t* rpb_src = NULL) : ISOName_c( rpb_src ) {};
   /**
     constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU
