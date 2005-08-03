@@ -1,3 +1,4 @@
+// This file is a version with hard-coded xml file path!!!
 /***************************************************************************
  *                                                                         *
  * This file is part of the "IsoAgLib", an object oriented program library *
@@ -95,6 +96,7 @@ std::vector<std::string> vecstr_objTableIDTable;
 std::stringstream buffer;
 bool attrIsGiven [maxAttributeNames];
 std::vector<std::string> vecstr_constructor (7);
+static bool b_isFirstDevice = true;
 
 // ---------------------------------------------------------------------------
 //  void usage () --- Prints out usage text.
@@ -224,7 +226,6 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
 {
   bool isThere = false;
   unsigned int foundID = 0;
-  static bool b_isFirstDevice = true;
 
   // first check if ID is there already
   for (unsigned int i=0; i<objCount; i++)
@@ -253,12 +254,8 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
   if (!isThere) {
     if (objType == otDevice)
     {
-      if (b_isFirstDevice)
-      {
-        b_isFirstDevice = false;
-        foundID = 0;
-      }
-      else clean_exit (-1, "YOU CAN ONLY SPECIFY ONE <device> OBJECT! STOPPING PARSER! bye.\n\n");
+      b_isFirstDevice = false;
+      foundID = 0;
     }
     else
     {
@@ -692,6 +689,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
       // set all non-set attributes to default values
       defaultAttributes ();
 
+      // if more than one device is specified, stop parsing. Only one DVC is allowed by definition
+      if (!b_isFirstDevice && objType == otDevice) clean_exit (-1, "YOU CAN ONLY SPECIFY ONE <device> OBJECT! STOPPING PARSER! bye.\n\n");
+
       // get a new ID for this object
       objID = getID (objName, is_objID, objID, objType);
 
@@ -783,7 +783,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
     // ###########################################
     uint8_t i = 0;
     const uint8_t *mastername;
-    __IsoAgLib::ISOName_c c_isoname (mastername);
+    __IsoAgLib::ISOName_c c_isoname;
     switch (objType)
     {
       case otDevice:
@@ -852,7 +852,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 clean_exit (-1, "PLEASE USE HEXADECIMAL FORMAT FOR workingset_mastername! STOPPING PARSER! bye.\n\n");
             }
 
-            uint8_t ui8_tempName[8];
+            uint8_t pui8_tempName[8];
             for (i=0; i<8; i++)
             {
               uint8_t ui8_digitHi = vecstr_attrString[attrWorkingset_mastername][1+i*2]; // ASCII
@@ -862,9 +862,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
               uint8_t ui8_nibbleLo = (ui8_digitLo <= '9' /* 0..9 */) ? (ui8_digitLo-'0') : (ui8_digitLo-'a' + 10); // 0..9,10..15
 
               const uint8_t pos = (b_lsb) ? (i) : (7-i);
-              ui8_tempName[pos] = (ui8_nibbleHi << 4) | ui8_nibbleLo;
+              pui8_tempName[pos] = (ui8_nibbleHi << 4) | ui8_nibbleLo;
             }
-            c_isoname.inputString(ui8_tempName);
+            c_isoname.inputString(pui8_tempName);
           }
 
           languageCmdCode[0] = vecstr_attrString[attrLocalization_label][0];
@@ -954,7 +954,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           fprintf( partFileB, "IsoAgLib::iGetyPos_c %sGtp(0x%x, 0x%x);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
           fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sGtp, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISOTERMINAL \n , 0, NULL\n #endif\n);\n\n",
-                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "false" : "true",
+                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "true" : "false",
                    c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
                    atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
                    c_isoname.funcInst(),c_isoname.ecuInst());
@@ -1181,7 +1181,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 int main(int argC, char* argV[])
 {
   // Check command line and extract arguments.
-  if (argC < 2) { usage(); return 1; }
+  if (argC < 2) { //usage(); return 1;
+  }
 
   const char* xmlFile = 0;
   AbstractDOMParser::ValSchemes valScheme = AbstractDOMParser::Val_Auto;
@@ -1258,9 +1259,13 @@ int main(int argC, char* argV[])
 
   //  There should be only one parameter left, and that
   //  should be the file name.
-  if (argInd != argC - 1) { usage(); return 1; }
+  std::basic_string<char> c_fileName;
+  if (argInd != argC - 1) {
+    c_fileName = "../../../src_test/test_pools/firstpool/Device_Description.xml";
+  }
+  else
   // get file list with matching files!
-  std::basic_string<char> c_fileName( argV [argInd] );
+    c_fileName = argV [argInd];
   #ifdef WIN32
   int lastDirPos = c_fileName.find_last_of( "\\" );
   std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
@@ -1290,7 +1295,7 @@ int main(int argC, char* argV[])
   // go to new working directory
   if (SetCurrentDirectory(c_directory.c_str()) == 0)
   {
-    std::cerr <<  "Couldn't open the directory."<< std::endl;
+    std::cerr <<  "Couldn't open the directory." << std::endl;
 
     CHAR szBuf[80];
       DWORD dw = GetLastError();
@@ -1381,7 +1386,7 @@ int main(int argC, char* argV[])
   std::cout << "\n";
 
   // Do INITIALIZATION STUFF
-  init (argV [argInd]);
+  init (c_fileName.c_str());
 
   for (indexXmlFile = 0; indexXmlFile < amountXmlFiles; indexXmlFile++)
   { // loop all xmlFiles!
