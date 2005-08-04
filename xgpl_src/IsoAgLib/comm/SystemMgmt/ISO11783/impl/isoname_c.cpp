@@ -370,7 +370,7 @@ int8_t ISOName_c::higherPriThanPar(const uint8_t* rpb_compare) const
   // if one of the both comparison parameters have 0xFF in the byte 0..5, then only compare
   // device class, -instance and industry group
   static const uint8_t lazyEvaluationIndicator[] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-  if ( ( memcmp( pb_data, lazyEvaluationIndicator, 5 ) == 0 ) || ( memcmp( rpb_compare, lazyEvaluationIndicator, 5 ) == 0 ) )
+  if ( ( CNAMESPACE::memcmp( pb_data, lazyEvaluationIndicator, 5 ) == 0 ) || ( CNAMESPACE::memcmp( rpb_compare, lazyEvaluationIndicator, 5 ) == 0 ) )
   { // perform only lazy evaluation
     // compare device class instance and industry group
     if ( (pb_data[7] & 0x7F) > (rpb_compare[7] & 0x7F) ) return -1;
