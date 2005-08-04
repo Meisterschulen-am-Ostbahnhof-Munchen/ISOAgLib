@@ -239,8 +239,10 @@ SetpointLocal_c::~SetpointLocal_c(){
 bool SetpointLocal_c::existUnhandledMaster() {
   int8_t i8_result = -1;
 
-  if (pc_registerCache == vec_register.end()) pc_registerCache = vec_register.begin();
-  for (; pc_registerCache != vec_register.end(); pc_registerCache++)
+  if (pc_registerCache == vec_register.end())
+    pc_registerCache = vec_register.begin();
+
+  while (pc_registerCache != vec_register.end())
   {
     if ( ( ((existMaster()) && (pc_registerCache->gtp() == masterConst().gtp()))
         || ((existMaster()) && (masterConst().gtp() == 0xFF) )
@@ -252,11 +254,14 @@ bool SetpointLocal_c::existUnhandledMaster() {
       i8_result = 1;
       break;
     } // if
+       
     if (i8_result < 0)
     { // first run with check for old cache
       i8_result = 0;
       pc_registerCache = vec_register.begin();
-    }
+    } else
+      pc_registerCache++;
+    
   } // for
   return ( i8_result > 0 )?true:false;
 }
@@ -297,11 +302,21 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
     {
       if (rb_accept)
       { // accept
-        // erase old master entry if this is handled
+        // if handled: copy valid data (existMin(), existDefault() ...) from pc_registerCache (pointer to newly created SetpointRegister_c)
+        // and release pc_registerCache and keep pc_master!
         // (e.g. different from new received unhandled one)
         if (pc_master->handled())
-        {
-          vec_register.erase( pc_master);
+        { 
+          if (pc_registerCache->existExact())
+            pc_master->setExact(pc_registerCache->exact());
+          if (pc_registerCache->existMin())
+            pc_master->setMin(pc_registerCache->min());
+          if (pc_registerCache->existMax())
+            pc_master->setMax(pc_registerCache->max());
+          if (pc_registerCache->existDefault())
+            pc_master->setDefault(pc_registerCache->getDefault());
+              
+          vec_register.erase( pc_registerCache );
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
@@ -309,10 +324,6 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
             << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << "\r\n";
           #endif
         }
-        // pc_registerCache points to new master entry (set in existUnhandledMaster)
-        pc_master = pc_registerCache;
-        pc_master->setValid( true);
-        pc_master->setMaster( true);
       }
       else
       { // don't accept
@@ -680,7 +691,10 @@ void SetpointLocal_c::processSet(){
   { // check if c_callerGtp already set the item at ui8_callerIndex
     // ignore item of actual acepted master, as this should be handled as new
     // item
-    if ((pc_callerIter->gtp() == c_callerGtp) && (!pc_callerIter->master())) break;
+    if (pc_callerIter->gtp() == c_callerGtp)
+       // @todo: disable check?
+       if (!pc_callerIter->master())
+         break;
   }
   // check if caller was found
   if (pc_callerIter == vec_register.end())
