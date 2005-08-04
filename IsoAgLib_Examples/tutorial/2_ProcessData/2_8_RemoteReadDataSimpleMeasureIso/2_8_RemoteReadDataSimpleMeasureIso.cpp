@@ -319,29 +319,87 @@ int main()
   // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the c_myGtp val through the pointer to c_myGtp
+  // ISO
+#ifdef USE_ISO_11783 
   IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+    b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
+    ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+#endif
 
+  //  DIN:
+#if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
+  uint8_t c_myName[] = "Hi-You";
+  IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
+#endif
+  
   // device type of remote ECU
   IsoAgLib::iGetyPos_c c_remoteDeviceType( 0x5, 0 );
 
+#if defined(USE_ISO_11783)
+  const ElementDDI_s s_WorkStateElementDDI[2] = 
+  { 
+    // element 0, DDI 141
+    {0, 141, true, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
+  const ElementDDI_s s_ApplicationRateElementDDI[3] = 
+  { 
+    // element 2, DDI 1 
+    {2, 1, true, GeneralCommand_c::exactValue},
+    // element 4, DDI 2 
+    {4, 2, false, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  }; 
+#endif
 
-  #ifdef USE_PROC_HANDLER
+#ifdef USE_PROC_HANDLER
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-  arr_procData[cui8_indexWorkState].init(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
-  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-  arr_procData[cui8_indexApplicationRate].init(0, c_remoteDeviceType, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp, &c_myMeasurementHandler);
-  #else
-  // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-  // of device with device type/subtype=5/0
-  IsoAgLib::iProcDataRemoteSimpleMeasure_c c_workState(0, c_remoteDeviceType, 0x1, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
-  int32_t i32_lastWorkStateReceive = 0;
-  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-  // of device with device type/subtype=5/0
-  IsoAgLib::iProcDataRemoteSimpleMeasure_c c_applicationRate(0, c_remoteDeviceType, 0x5, 0x0, 0xFF, 2, c_remoteDeviceType, &c_myGtp);
-  int32_t i32_lastApplicationRateReceive = 0;
+  arr_procData[cui8_indexWorkState].init(
+  #if defined(USE_ISO_11783)
+                                         s_WorkStateElementDDI,
   #endif
+  #if defined(USE_DIN_9684)
+                                         0, 0x1, 0x0, 0xFF,
+  #endif
+                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, 
+                                         &c_myMeasurementHandler);
+  
+  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
+  arr_procData[cui8_indexApplicationRate].init(
+  #if defined(USE_ISO_11783)
+                                               s_ApplicationRateElementDDI,
+  #endif
+  #if defined(USE_DIN_9684)
+                                               0, 0x5, 0x0, 0xFF,
+  #endif
+                                               c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp,
+                                               &c_myMeasurementHandler);
+    
+#else
+  // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
+  IsoAgLib::iProcDataRemoteSimpleMeasure_c c_workState(
+  #if defined(USE_ISO_11783)
+                                         s_WorkStateElementDDI,
+  #endif
+  #if defined(USE_DIN_9684)
+                                         0, 0x1, 0x0, 0xFF,
+  #endif
+                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp
+                                         );
+
+  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
+  IsoAgLib::iProcDataRemoteSimpleMeasure_c c_applicationRate(
+  #if defined(USE_ISO_11783)
+                                                s_ApplicationRateElementDDI,
+  #endif
+  #if defined(USE_DIN_9684)
+                                                0, 0x5, 0x0, 0xFF,
+  #endif
+                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp
+                                                );
+#endif
 
   // variable to control if programs are running at the moment
   int32_t i32_lastRequestTime = 0;

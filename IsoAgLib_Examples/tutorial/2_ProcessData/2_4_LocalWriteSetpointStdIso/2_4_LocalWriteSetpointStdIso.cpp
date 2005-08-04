@@ -246,7 +246,6 @@ uint32_t ui32_localDummyApplicationRate;
 /** dummy function to decide on acceptance of received setpoint */
 bool localIsAcceptableWorkState( const IsoAgLib::iGetyPos_c& rc_deviceType, uint32_t rui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
-  return true;
 
   if ( rc_deviceType.getGety() < 2 )
   {
@@ -303,7 +302,6 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 
 bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iGetyPos_c& rc_setpointSender, bool rb_change)
 {
-  printf("new setpoint command\n"); fflush(0);
 
   if ( ! rb_change )
   { // don't handle succeeding setpoints which don't contain new value - maybe still relevant for other applications
@@ -376,42 +374,100 @@ int main()
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the myGtp val through the pointer to myGtp
   // ISO
+#ifdef USE_ISO_11783 
   IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+#endif
 
   //  DIN:
-  //uint8_t c_myName[] = "Hi-You";
-  //IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
+#if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
+  uint8_t c_myName[] = "Hi-You";
+  IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
+#endif
 
-  #ifdef USE_PROC_HANDLER
-  // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-  #ifdef USE_EEPROM_IO
-  //  arr_procData[cui8_indexWorkState].init(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false, 0xFFFF, &c_mySetpointHandler);
-  #else
-  // DIN:
-  //arr_procData[cui8_indexWorkState].init(0, 0x1, 0x0, 0xFF, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
-  // ISO:
-  // DDI 2, element 2
-  arr_procData[cui8_indexWorkState].init(2, 2, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
-  #endif
-  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-  #ifdef USE_EEPROM_IO
-  //arr_procData[cui8_indexApplicationRate].init(0, myGtp, 0x5, 0x0, 0xFF, 2, myGtp, &myGtp, false, 0xFFFF, &c_mySetpointHandler);
-  #else
-   // DIN
-   //arr_procData[cui8_indexApplicationRate].init(0, 0x5, 0x0, 0xFF, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
-   // ISO:
-   // DDI 1, element 1
-   arr_procData[cui8_indexApplicationRate].init(1, 1, myGtp, 2, myGtp, &myGtp, false, &c_mySetpointHandler);
-  #endif
 
-  #else
+#if defined(USE_ISO_11783)
+  const ElementDDI_s s_WorkStateElementDDI[2] = 
+  { 
+    // element 0, DDI 141
+    {0, 141, true, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
+  const ElementDDI_s s_ApplicationRateElementDDI[5] = 
+  { 
+    // element 2, DDI 1
+    {2, 1, true, GeneralCommand_c::exactValue},
+    // element 4, DDI 2
+    {4, 2, false, GeneralCommand_c::exactValue},
+    // element 6, DDI 3 
+    {6, 3, true, GeneralCommand_c::defaultValue},
+    // element 8, DDI 4 
+    {8, 4, true, GeneralCommand_c::minValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  }; 
+#endif
+
+#ifdef USE_PROC_HANDLER
   // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
-  IsoAgLib::iProcDataLocal_c c_workState(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false);
-  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-  IsoAgLib::iProcDataLocal_c c_applicationRate(0, myGtp, 0x5, 0x0, 0xFF, 2, myGtp, &myGtp, false);
+  arr_procData[cui8_indexWorkState].init(
+  #if defined(USE_ISO_11783)
+                                         s_WorkStateElementDDI,
   #endif
+  #if defined(USE_DIN_9684)
+                                         0, 0x1, 0x0, 0xFF,
+  #endif
+                                         myGtp, 2, myGtp, &myGtp, 
+  #ifdef USE_EEPROM_IO 
+                                         0xFFFF,
+  #endif 
+                                         &c_mySetpointHandler);
+  
+  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
+  arr_procData[cui8_indexApplicationRate].init(
+  #if defined(USE_ISO_11783)
+                                               s_ApplicationRateElementDDI,
+  #endif
+  #if defined(USE_DIN_9684)
+                                               0, 0x5, 0x0, 0xFF,
+  #endif
+                                               myGtp, 2, myGtp, &myGtp,
+  #ifdef USE_EEPROM_IO
+                                               0xFFFF,
+  #endif
+                                               &c_mySetpointHandler);
+    
+#else
+  // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
+  IsoAgLib::iProcDataLocal_c c_workState(
+  #if defined(USE_ISO_11783)
+                                         s_WorkStateElementDDI,
+  #endif
+  #if defined(USE_DIN_9684)
+                                         0, 0x1, 0x0, 0xFF,
+  #endif
+                                         myGtp, 2, myGtp, &myGtp
+  #ifdef USE_EEPROM_IO 
+                                         ,0xFFFF
+  #endif
+                                         );
+
+  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
+  IsoAgLib::iProcDataLocal_c c_applicationRate(
+  #if defined(USE_ISO_11783)
+                                                s_ApplicationRateElementDDI,
+  #endif
+  #if defined(USE_DIN_9684)
+                                                0, 0x5, 0x0, 0xFF,
+  #endif
+                                                myGtp, 2, myGtp, &myGtp
+  #ifdef USE_EEPROM_IO 
+                                                ,0xFFFF
+  #endif
+                                                );
+#endif
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -439,14 +495,10 @@ int main()
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
 
-   uint8_t ui8_cnt = 0;
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-
-      usleep(100000);
-      ui8_cnt++;
 
     IsoAgLib::getISchedulerInstance().timeEvent();
 
@@ -499,8 +551,7 @@ int main()
     // setpoints can be realized ( i.e. send NACK or out-of-service information )
     #ifdef USE_PROC_HANDLER
 
-      //    arr_procData[cui8_indexWorkState].setMasterVal( getCurrentWorkState() );
-      arr_procData[cui8_indexWorkState].setMasterVal( ui8_cnt );
+    arr_procData[cui8_indexWorkState].setMasterVal( getCurrentWorkState() );
     arr_procData[cui8_indexApplicationRate].setMasterVal( getCurrentApplicationRate() );
     #else
     c_workState.setMasterVal( getCurrentWorkState() );

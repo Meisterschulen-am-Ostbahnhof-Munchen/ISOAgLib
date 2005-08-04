@@ -243,7 +243,7 @@ int main()
   IsoAgLib::getIcanInstance().init( 0, 250 );
   // variable for GETY_POS
   // default with fertilizer spreader mounted back
-  IsoAgLib::iGetyPos_c myGtp( 5, 0 );
+  IsoAgLib::iGetyPos_c c_myGtp( 5, 0 );
 
   // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
@@ -260,19 +260,92 @@ int main()
 	// start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+  //  ISO:
+#ifdef USE_ISO_11783 
+  IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp,
+    b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
+    ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+#endif
+
+  //  DIN:
+#if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
+  uint8_t c_myName[] = "Hi-Me";
+  IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
+#endif
+
+#if defined(USE_ISO_11783)
+  const ElementDDI_s s_onOff[2] = 
+  { 
+    // element 0, DDI 141
+    {0, 141, true, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
+  const ElementDDI_s s_workWidth[3] = 
+  { 
+    // element 0, DDI 66
+    {0, 66, true, GeneralCommand_c::exactValue},
+    // element 0, DDI 67
+    {0, 67, false, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  }; 
+  const ElementDDI_s s_applicationRate[3] = 
+  { 
+    // element 0, DDI 1
+    {0, 1, true, GeneralCommand_c::exactValue},
+    // element 0, DDI 2
+    {0, 2, false, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  }; 
+#endif
 
 
   // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=1, INST=0)
   // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
   // the pointer to myGtp helps automatic update of GETY_POS, mark this value as NOT cumulated (default)
-  IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c c_myOnoff(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false);
+  IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c c_myOnoff(
+  #if defined(USE_ISO_11783)
+                                         s_onOff,
+  #endif
+  #if defined(USE_DIN_9684)
+                                         0, 0x1, 0x0, 0xFF,
+  #endif
+                                         c_myGtp, 2, c_myGtp, &c_myGtp, false
+  #ifdef USE_EEPROM_IO 
+                                         ,0xFFFF
+  #endif
+                                         );
+
   // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=3, INST=1)
-  IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c c_myWorkWidth( 0, myGtp, 0x3, 0x1, 0xFF, 2, myGtp, &myGtp, false);
+  IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c c_myWorkWidth(
+  #if defined(USE_ISO_11783)
+                                         s_workWidth,
+  #endif
+  #if defined(USE_DIN_9684)
+                                         0, 0x3, 0x1, 0xFF,
+  #endif
+                                         c_myGtp, 2, c_myGtp, &c_myGtp, false
+  #ifdef USE_EEPROM_IO 
+                                         ,0xFFFF
+  #endif
+                                         );
+  
   // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=5, INST=0)
-  IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c c_myApplicationRate( 0, myGtp, 0x5, 0x0, 0xFF, 2, myGtp, &myGtp, false);
+  IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c c_myApplicationRate(
+  #if defined(USE_ISO_11783)
+                                         s_applicationRate,
+  #endif
+  #if defined(USE_DIN_9684)
+                                         0, 0x5, 0x0, 0xFF,
+  #endif
+                                         c_myGtp, 2, c_myGtp, &c_myGtp, false
+  #ifdef USE_EEPROM_IO 
+                                         ,0xFFFF
+  #endif
+                                         );
+  
 
   /** IMPORTANT:
 	  - The following loop could be replaced of any repeating call of
