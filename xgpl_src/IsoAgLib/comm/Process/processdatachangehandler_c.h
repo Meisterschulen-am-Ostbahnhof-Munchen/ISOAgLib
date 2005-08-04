@@ -161,7 +161,6 @@ class ProcessDataChangeHandler_c {
  virtual bool processMeasurementUpdate( EventSource_c rc_src, float rf_val, const iGetyPos_c& rc_callerGetyPos, bool rb_change );
 #endif
 
-   // @todo: setpointResponse for float
  /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
    * (remote system which manages the process data, local or other system sent previously a
    *  new setpoint; commanded manager of process data sent the response with ACK/NACK)

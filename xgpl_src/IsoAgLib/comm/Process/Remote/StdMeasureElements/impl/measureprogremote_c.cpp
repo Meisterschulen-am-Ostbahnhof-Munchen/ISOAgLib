@@ -773,7 +773,7 @@ bool MeasureProgRemote_c::resetMin(){
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::measurementReset);
-  // DIN: pd=0, mod=6
+      // DIN: pd=0, mod=6
   return processData().sendValGtp(ui8_pri, gtp(), 0x8);
 }
 

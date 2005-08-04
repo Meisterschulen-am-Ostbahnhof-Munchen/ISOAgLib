@@ -143,8 +143,8 @@ public:
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
     ISO parameter
-    @param rui16_DDI optional DDI code of this instance
-    @param rui16_element optional Element code of this instance
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis optional LIS code of this instance
@@ -178,8 +178,7 @@ public:
   */
   ProcDataLocalSimpleSetpointSimpleMeasure_c(
 #ifdef USE_ISO_11783
-                                             uint16_t rui16_DDI = 0,
-                                             uint16_t rui16_element = 0xFFFF,
+                                             const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
 #endif
 #ifdef USE_DIN_9684
                                              uint8_t rui8_lis = 0xFF,
@@ -206,8 +205,8 @@ public:
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
     ISO parameter
-    @param rui16_DDI optional DDI code of this instance
-    @param rui16_element optional Element code of this instance
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis optional LIS code of this instance
@@ -241,8 +240,7 @@ public:
   */
   void init(
 #ifdef USE_ISO_11783
-            uint16_t rui16_DDI = 0,
-            uint16_t rui16_element = 0xFFFF,
+            const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0xFF,

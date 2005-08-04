@@ -95,8 +95,8 @@ namespace __IsoAgLib {
 /**
   initialise this ProcDataRemoteBase_c instance to a well defined initial state
     ISO parameter
-    @param rui16_DDI optional DDI code of this instance
-    @param rui16_element optional ELEMENT code of this instance
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis optional LIS code of this instance
@@ -114,7 +114,7 @@ namespace __IsoAgLib {
   */
 void ProcDataRemoteBase_c::init(
 #ifdef USE_ISO_11783
-                                uint16_t rui16_DDI, uint16_t rui16_element,
+                                const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                                 uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
@@ -127,7 +127,7 @@ void ProcDataRemoteBase_c::init(
 {
   ProcDataBase_c::init(
 #ifdef USE_ISO_11783
-                       rui16_DDI, rui16_element,
+                       ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                        rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,

@@ -118,8 +118,8 @@ namespace __IsoAgLib {
 /**
   constructor which can optional set all member values
     ISO parameter
-    @param rui16_DDI optional DDI code of Process-Data
-    @param rui8_element optional element code of Process-Data
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis optional LIS code of Process-Data
@@ -139,8 +139,7 @@ namespace __IsoAgLib {
   */
   ProcIdent_c::ProcIdent_c(
 #ifdef USE_ISO_11783
-                           uint16_t rui16_DDI,
-                           uint16_t rui16_element,
+                           const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                            uint8_t rui8_lis,
@@ -157,8 +156,7 @@ namespace __IsoAgLib {
 {
   init(
 #ifdef USE_ISO_11783
-            rui16_DDI,
-            rui16_element,
+            ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
             rui8_lis,
@@ -182,8 +180,8 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
 /**
     initialisation which can set this process data instance to a defined intial state
     ISO parameter
-    @param rui16_DDI DDI code of Process-Data
-    @param rui16_element Element code of Process-Data
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis LIS code of Process-Data
@@ -203,8 +201,7 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
 */
 void ProcIdent_c::init(
 #ifdef USE_ISO_11783
-            uint16_t rui16_DDI,
-            uint16_t rui16_element,
+            const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis,
@@ -218,8 +215,7 @@ void ProcIdent_c::init(
             const GetyPos_c *rpc_ownerGtp)
 {
 #ifdef USE_ISO_11783
-  setDDI(rui16_DDI);
-  setElement(rui16_element);
+  setElementDDI(ps_elementDDI);
 #endif
 #ifdef USE_DIN_9684
   setLis(rui8_lis);
@@ -262,8 +258,8 @@ void ProcIdent_c::assignFromSource( const ProcIdent_c& rrefc_src )
   data.c_ownerGtp = rrefc_src.data.c_ownerGtp;
   pc_ownerGtp = rrefc_src.pc_ownerGtp;
 #ifdef USE_ISO_11783
-  setDDI(rrefc_src.DDI());
-  setElement(rrefc_src.element());
+  // elementDDI() returns list reference, setElementDDI() expects pointer to list
+  setElementDDI(&(rrefc_src.elementDDI()));
 #endif
 #ifdef USE_DIN_9684
   setWert(rrefc_src.wert());
@@ -315,9 +311,15 @@ bool ProcIdent_c::matchISO(
              uint16_t rui16_element
              ) const
 {
+  // check wether current element/DDI combination matches one list element in process data element/DDI list
+  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = NULL;
+  for (iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+    if ( (iter->ui16_DDI == rui16_DDI) && (iter->ui16_element == rui16_element) )
+      break;
+      
+  if (iter == data.l_elementDDI.end())
+    return false;
 
-  if (element() != rui16_element) return false;
-  if (DDI() != rui16_DDI) return false;
   if (rui8_getySender != 0xFF) {
     // check in remote case: check if gety of ownerGtp in procident matches gety of sender
     if (ownerGtp().getGety() != rui8_getySender) return false;
@@ -385,7 +387,32 @@ bool ProcIdent_c::matchDIN(
 }
 #endif
 
+#ifdef USE_ISO_11783
+void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
+{
+  // check if pointer to strcut (array) is set (constructor call with NULL possible!)
+  if (ps_elementDDI) {
+    data.l_elementDDI.clear();
+    // in last struct element == 0xFFFF
+    while (ps_elementDDI->ui16_element != 0xFFFF)
+      data.l_elementDDI.push_back(*ps_elementDDI++);
+  }
+}
 
+void ProcIdent_c::setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI)
+{
+  // check if pointer to strcut (array) is set (constructor call with NULL possible!)
+  if (pl_elementDDI) {
+    data.l_elementDDI.clear();
+    for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = pl_elementDDI->begin(); 
+         iter != pl_elementDDI->end(); iter++)
+        data.l_elementDDI.push_back(*iter);
+  }
+}
+
+#endif
+
+#if 0
 /**
   claculates ident value for quick comparison
   @return single comparison value
@@ -400,6 +427,7 @@ int32_t ProcIdent_c::calcIdentVal() const {
     { // take ISO ident settings for compare
       i32_result |=
       (
+        // @todo: find algorithm for handling element/DDI list
         (static_cast<int32_t>(element() & 0x1FF) << 7   ) // len 12 bit -> reduce to 9 Bit
       | (static_cast<int32_t>(DDI())             << 16  )
       );
@@ -416,6 +444,7 @@ int32_t ProcIdent_c::calcIdentVal() const {
     #endif
   return i32_result;
 };
+#endif
 
 
 } // end of namespace __IsoAgLib

@@ -94,9 +94,6 @@
 #include <IsoAgLib/util/config.h>
 #ifdef USE_ISO_11783
   #include <IsoAgLib/comm/SystemMgmt/impl/istate_c.h>
-#if 0
-  #include "procinitelemddi_c.h"
-#endif
 #endif
 #include "procident_c.h"
 #include "processpkg_c.h"
@@ -136,8 +133,8 @@ public:
   /**
     constructor which can set all element vars
     ISO parameters:
-    @param rui16_DDI optional DDI code of this instance
-    @param rui16_element optional element code of this instance
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameters:
     @param rpc_lbs optional pointer to central Scheduler_c instance
@@ -157,7 +154,7 @@ public:
   */
   ProcDataBase_c(
 #ifdef USE_ISO_11783
-                 uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFFFF,
+                 const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
 #endif
 #ifdef USE_DIN_9684
                  uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
@@ -165,12 +162,12 @@ public:
 #endif
                  const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
                  uint8_t rui8_pri = 2, const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified, const GetyPos_c *rpc_gtp = NULL,
-                 ::IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+                 IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                  int ri_singletonVecKey = 0)
 
     : ProcIdent_c(
 #ifdef USE_ISO_11783
-                  rui16_DDI, rui16_element,
+                  ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -179,7 +176,7 @@ public:
 
     { init(
 #ifdef USE_ISO_11783
-           rui16_DDI, rui16_element,
+           ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
            rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -189,47 +186,12 @@ public:
           );
     };
 
-#if 0
-  ProcDataBase_c(
-#ifdef USE_ISO_11783
-                 list<ProcInitElemDDI_c>& rl_elemDDI,
-#endif
-#ifdef USE_DIN_9684
-                 uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
-                 uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
-#endif
-                 GetyPos_c rc_gtp = GetyPos_c(0, 0xF),
-                 uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF), GetyPos_c *rpc_gtp = NULL,
-                 ::IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-                 int ri_singletonVecKey = 0)
-
-    : ProcIdent_c(
-#ifdef USE_ISO_11783
-                  list<ProcInitElemDDI_c>& rl_elemDDI,
-#endif
-#ifdef USE_DIN_9684
-                  rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                  rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, ri_singletonVecKey)
-
-    { init(
-#ifdef USE_ISO_11783
-           list<ProcInitElemDDI_c>& rl_elemDDI,
-#endif
-#ifdef USE_DIN_9684
-           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-           rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp,
-           rpc_processDataChangeHandler, ri_singletonVecKey
-          );
-    };
-#endif
 
   /**
     initialise this ProcDataBase_c instance to a well defined initial state
     ISO parameters:
-    @param rui16_DDI optional DDI code of this instance
-    @param rui16_element optional element code of this instance
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameters:
     @param rpc_lbs optional pointer to central Scheduler_c instance
@@ -248,7 +210,7 @@ public:
     */
   void init(
 #ifdef USE_ISO_11783
-            uint16_t rui16_DDI = 0, uint16_t rui16_element = 0xFFFF,
+            const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
@@ -259,20 +221,6 @@ public:
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 
-#if 0
-  void init(
-#ifdef USE_ISO_11783
-            list<ProcInitElemDDI_c>& rl_elemDDI,
-#endif
-#ifdef USE_DIN_9684
-            uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
-            uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
-#endif
-            GetyPos_c rc_gtp = GetyPos_c(0, 0xF),
-            uint8_t rui8_pri = 2, GetyPos_c rc_ownerGtp = GetyPos_c(0xF, 0xF), GetyPos_c *rpc_gtp = NULL,
-            IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
-            int ri_singletonVecKey = 0);
-#endif
 
   /**
     assignment operator for this base object

@@ -1,13 +1,12 @@
 /***************************************************************************
-                          procdataremote_c.cpp - managing of remote
-                                                       process data object
+                          elementddi_s.h - struct for defining ISO element/DDI pairs
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
     type                 : Header
-    $LastChangedDate$
-    $LastChangedRevision$
+    $LastChangedDate: 2005-07-25 18:06:13 +0200 (Mon, 25 Jul 2005) $
+    $LastChangedRevision: 1143 $
  ***************************************************************************/
 
 /***************************************************************************
@@ -83,165 +82,27 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+#ifndef ELEMENTDDI_H
+#define ELEMENTDDI_H
 
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "procdataremote_c.h"
+#include "generalcommand_c.h"
 
-// #include <string>
-namespace __IsoAgLib {
-
-  /**
-    constructor which can set all element vars
-    ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
-    common parameter
-    @param rc_gtp optional GETY_POS code of this instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-  */
-ProcDataRemote_c::ProcDataRemote_c(
-#ifdef USE_ISO_11783
-                   const IsoAgLib::ElementDDI_s* ps_elementDDI,
-#endif
-#ifdef USE_DIN_9684
-                   uint8_t rui8_lis,
-                   uint8_t rui8_wert,
-                   uint8_t rui8_inst,
-                   uint8_t rui8_zaehlnum,
-#endif
-                   const GetyPos_c& rc_gtp,
-                   uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp,
-                   const GetyPos_c* rpc_commanderGtp,
-                   IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-                   int ri_singletonVecKey)
-
-  : ProcDataRemoteBase_c(
-#ifdef USE_ISO_11783
-                         ps_elementDDI,
-#endif
-#ifdef USE_DIN_9684
-                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                         rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
-                         rpc_processDataChangeHandler, ri_singletonVecKey)
-  , c_setpoint(this)
-  , c_measure(this)
-{
-}
-
-  /**
-    initialise this ProcDataRemote_c instance to a well defined initial state
-    ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
-    DIN parameter
-    @param rui8_lis optional LIS code of this instance
-    @param rui8_wert optional WERT code of this instance
-    @param rui8_inst optional INST code of this instance
-    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
-
-    common parameter
-    @param rc_gtp optional GETY_POS code of this instance
-    @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
-    @param rpc_processDataChangeHandler optional pointer to handler class of application
-    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-  */
-void ProcDataRemote_c::init(
-#ifdef USE_ISO_11783
-                            const IsoAgLib::ElementDDI_s* ps_elementDDI,
-#endif
-#ifdef USE_DIN_9684
-                            uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
-#endif
-                            const GetyPos_c& rc_gtp, uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp, const GetyPos_c* rpc_commanderGtp,
-                            IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
-                            int ri_singletonVecKey)
-{
-  ProcDataRemoteBase_c::init(
-#ifdef USE_ISO_11783
-                             ps_elementDDI,
-#endif
-#ifdef USE_DIN_9684
-                             rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
-#endif
-                             rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
-                             rpc_processDataChangeHandler, ri_singletonVecKey);
-  c_setpoint.init( this );
-  c_measure.init( this );
-}
-/**
-  assignment operator for this object
-  @param rrefc_src source instance
-  @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
-*/
-const ProcDataRemote_c& ProcDataRemote_c::operator=(const ProcDataRemote_c& rrefc_src){
-  // call the assignment operator for the base class
-  ProcDataRemoteBase_c::operator=(rrefc_src);
-
-  // now copy the element var
-  c_setpoint = rrefc_src.c_setpoint;
-  c_measure = rrefc_src.c_measure;
-  // return reference to source
-  return rrefc_src;
-}
+// Begin Namespace IsoAgLib
+namespace IsoAgLib {
 
 /**
-  copy constructor for IsoAgLibProcDataRemote
-  @param rrefc_src source instance
+  struct for defining ISO element/DDI pairs (with additional info about sepoint/measurement and value group (min, max, exact, default)
+  @author Dipl.-Inform. Achim Spangler
 */
-ProcDataRemote_c::ProcDataRemote_c(const ProcDataRemote_c& rrefc_src)
-  : ProcDataRemoteBase_c(rrefc_src),
-    c_setpoint(rrefc_src.c_setpoint),
-    c_measure(rrefc_src.c_measure)
-{
-}
+struct ElementDDI_s {
+  uint16_t ui16_element;
+  uint16_t ui16_DDI;
+  bool b_isSetpoint;
+  GeneralCommand_c::ValueGroup_t en_valueGroup;
+};
 
-/** default destructor which has nothing to do */
-ProcDataRemote_c::~ProcDataRemote_c(){
 }
-/**
-  perform periodic actions
-  @return true -> all planned executions performed
-*/
-bool ProcDataRemote_c::timeEvent( void )
-{
-  // check if remote gtp isn't active any more (>3sec) and stop all
-  // measureing progs
-  // -> checks and reaction performed by SetpointRemote_c::timeEvent and
-  // MeasureProgRemote_c::timeEvent
-  // set gtp for MeasureProgRemote_c if changed
-  prog().setGtp(commanderGtp());
-  if ( ! prog().timeEvent() ) return false;
-
-  if ( ! setpoint().timeEvent() ) return false;
-  return true;
-}
-
-/** process a setpoint message */
-void ProcDataRemote_c::processSetpoint(){
-  setpoint().processMsg();
-}
-
-/** process a measure prog message for remote process data */
-void ProcDataRemote_c::processProg(){
-  // simply call the process function for the one member object
-  prog().processMsg();
-}
-
-} // end of namespace __IsoAgLib
+#endif

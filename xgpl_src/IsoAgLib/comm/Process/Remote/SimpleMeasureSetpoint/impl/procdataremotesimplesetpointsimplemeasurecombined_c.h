@@ -146,8 +146,8 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
   /**
     constructor which can set all element vars
     ISO parameter
-    @param rui16_DDI optional DDI code of this instance
-    @param rui16_element optional Element code of this instance
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis optional LIS code of this instance
@@ -164,8 +164,7 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
   */
   ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c(
 #ifdef USE_ISO_11783
-                                                      uint16_t rui16_DDI = 0,
-                                                      uint16_t rui16_element = 0xFFFF,
+                                                      const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
 #endif
 #ifdef USE_DIN_9684
                                                       uint8_t rui8_lis = 0xFF,
@@ -183,8 +182,8 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
   /**
     initialise this SimpleManageMeasureProgRemote_c instance to a well defined initial state
     ISO parameter
-    @param rui16_DDI optional DDI code of this instance
-    @param rui16_element optional Element code of this instance
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis optional LIS code of this instance
@@ -201,8 +200,7 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
   */
   void init(
 #ifdef USE_ISO_11783
-            uint16_t rui16_DDI = 0,
-            uint16_t rui16_element = 0xFFFF,
+            const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0xFF,

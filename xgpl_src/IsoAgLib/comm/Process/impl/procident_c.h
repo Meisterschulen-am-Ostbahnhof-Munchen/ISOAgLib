@@ -92,6 +92,11 @@
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
+#include "generalcommand_c.h"
+#ifdef USE_ISO_11783
+  #include "../elementddi_s.h"
+  #include <list>
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -103,12 +108,12 @@ namespace __IsoAgLib {
 */
 class ProcIdent_c : public ClientBase {
 public:
+
   /**
     constructor which can optional set all member values
     ISO parameter
-    @param rui16_DDI optional DDI code of Process-Data
-    @param rui8_element optional element code of Process-Data
-
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
     DIN parameter
     @param rui8_lis optional LIS code of Process-Data
     @param rui8_wert optional WERT code of Process-Data
@@ -127,8 +132,7 @@ public:
   */
   ProcIdent_c(
 #ifdef USE_ISO_11783
-              uint16_t rui16_DDI = 0,
-              uint16_t rui16_element = 0xFFFF,
+              const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
 #endif
 #ifdef USE_DIN_9684
               uint8_t rui8_lis = 0,
@@ -148,8 +152,8 @@ public:
   /**
     initialisation which can set this process data instance to a defined intial state
     ISO parameter
-    @param rui16_DDI DDI code of Process-Data
-    @param rui16_element Element code of Process-Data
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis LIS code of Process-Data
@@ -169,8 +173,7 @@ public:
   */
   void init(
 #ifdef USE_ISO_11783
-            uint16_t rui16_DDI,
-            uint16_t rui16_element,
+            const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis,
@@ -192,6 +195,7 @@ public:
   /** default destructor which has nothing to do */
   ~ProcIdent_c();
 
+#if 0  
   /**
     comparison of two process ident instances
     @param rrefc_right compared object
@@ -220,21 +224,38 @@ public:
   */
   bool operator>(const ProcIdent_c& rrfec_right) const
     {return (calcIdentVal() > rrfec_right.calcIdentVal());};
+#endif
 
   // member variable access
 
 #ifdef USE_ISO_11783
   /**
-    deliver Element Number of process msg
-    @return Element Number value of message
+     deliver list of ElementDDI_s      
+     @return std::list<IsoAgLib::ElementDDI_s>
   */
-  uint16_t element()const{return data.ui16_Element;};
+  const std::list<IsoAgLib::ElementDDI_s>& elementDDI()const {return data.l_elementDDI;};
+  
+  /**
+    deliver value DDI (only possible if only one elementDDI in list)
+    @return DDI
+  */
+  uint16_t DDI() const{
+    if (data.l_elementDDI.size() == 1)
+      return data.l_elementDDI.begin()->ui16_DDI;
+    else
+      return 0;
+  };
+  /**
+    deliver value element (only possible if only one elementDDI in list)
+    @return element
+  */
+  uint16_t element() const{
+   if (data.l_elementDDI.size() == 1)
+      return data.l_elementDDI.begin()->ui16_element;
+    else
+      return 0;
+  };
 
-    /**
-    deliver DDI of process msg
-    @return Data Dictionary Identifier value of message
-  */
-  uint16_t DDI()const{return data.ui16_DDI;};
 #endif
 
 
@@ -299,18 +320,20 @@ public:
   const GetyPos_c& ownerGtp() const
     { return ((pc_ownerGtp != 0)?(*pc_ownerGtp):(data.c_ownerGtp));};
 
-#ifdef USE_ISO_11783
-   /**
-    set DDI of process msg
-    @param rb_DDI Data dictionary Itendifier
+#ifdef USE_ISO_11783 
+  
+  /**
+    set DDI, element, value group and setpoint/measure type of process msg
+    @param rl_elementDDI 
   */
-  void setDDI(uint16_t rb_DDI){data.ui16_DDI = rb_DDI  ;};
+  void setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI);
+  
+  /**
+    set DDI, element, value group and setpoint/measure type of process msg (used in assignFromSource)
+    @param pl_elementDDI 
+  */
+  void setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI);
 
-   /**
-    set Element Number of Process Data Message
-    @param rb_Element command value of process data message
-  */
-  void setElement(uint16_t rui16_Element){data.ui16_Element = rui16_Element;};
 #endif
 
   /**
@@ -449,18 +472,21 @@ private: // Private attributes
     uint16_t ui8_pri : 3;
 
 #ifdef USE_ISO_11783
-    uint16_t ui16_Element : 16; //12;
-    uint16_t ui16_DDI : 16;
+     std::list<IsoAgLib::ElementDDI_s> l_elementDDI;
 #endif
 
   } data;
+
 private: // Private methods
 
+#if 0
 /**
     claculates ident value for quick comparison
     @return single comparison value
   */
   int32_t calcIdentVal() const;
+#endif
+
 };
 
 }

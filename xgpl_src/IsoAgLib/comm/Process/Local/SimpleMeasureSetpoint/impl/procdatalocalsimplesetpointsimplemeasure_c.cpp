@@ -99,8 +99,8 @@ namespace __IsoAgLib {
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
   ISO parameter
-  @param rui16_DDI optional DDI code of this instance
-  @param rui16_element optional Element code of this instance
+  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                       (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   DIN parameter
   @param rui8_lis optional LIS code of this instance
@@ -134,8 +134,7 @@ namespace __IsoAgLib {
 */
 ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMeasure_c(
 #ifdef USE_ISO_11783
-     uint16_t rui16_DDI,
-     uint16_t rui16_element,
+     const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
      uint8_t rui8_lis,
@@ -143,9 +142,9 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
      uint8_t rui8_inst,
      uint8_t rui8_zaehlnum,
 #endif
-     const iGetyPos_c& rc_gtp,
+     const GetyPos_c& rc_gtp,
      uint8_t rui8_pri,
-     const iGetyPos_c& rc_ownerGtp,
+     const GetyPos_c& rc_ownerGtp,
      const GetyPos_c *rpc_gtp,
      bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
@@ -156,7 +155,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
      )
   : ProcDataLocalBase_c(
 #ifdef USE_ISO_11783
-                        rui16_DDI, rui16_element,
+                        ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -177,8 +176,8 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
   ISO parameter
-  @param rui16_DDI optional DDI code of this instance
-  @param rui16_element optional Element code of this instance
+  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                       (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   DIN parameter
   @param rui8_lis optional LIS code of this instance
@@ -212,8 +211,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
 */
 void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(
 #ifdef USE_ISO_11783
-                                                      uint16_t rui16_DDI,
-                                                      uint16_t rui16_element,
+                                                      const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                                                       uint8_t rui8_lis,
@@ -221,9 +219,9 @@ void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(
                                                       uint8_t rui8_inst,
                                                       uint8_t rui8_zaehlnum,
 #endif
-                                                      const iGetyPos_c& rc_gtp,
+                                                      const GetyPos_c& rc_gtp,
                                                       uint8_t rui8_pri,
-                                                      const iGetyPos_c& rc_ownerGtp,
+                                                      const GetyPos_c& rc_ownerGtp,
                                                       const GetyPos_c *rpc_gtp,
                                                       bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
@@ -235,7 +233,7 @@ void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(
 {
   ProcDataLocalBase_c::init(
 #ifdef USE_ISO_11783
-                            rui16_DDI, rui16_element,
+                            ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                             rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,

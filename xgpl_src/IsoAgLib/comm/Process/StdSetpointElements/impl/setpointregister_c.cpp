@@ -235,7 +235,9 @@ void SetpointRegister_c::setExact(int32_t ri32_val)
     i32_exactOrMin = ri32_val;
     // clear min/max
     // set exactType
-    data.en_definedSetpoints = exactType;
+    // keep defaultType
+    data.en_definedSetpoints
+      = static_cast<definedSetpoints_t>(exactType | (data.en_definedSetpoints & defaultType));
   }
   else
   { // only let bits of minType, maxType, defaultType
@@ -256,10 +258,10 @@ void SetpointRegister_c::setMin(int32_t ri32_val)
   {
     i32_exactOrMin = ri32_val;
     // clear exactType
-    // don't change maxType
+    // don't change maxType and defaultType
     // set minType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(minType | (data.en_definedSetpoints & maxType));
+      = static_cast<definedSetpoints_t>(minType | (data.en_definedSetpoints & maxDefaultType));
   }
   else
   { // clear minType -> mask with exactMaxDefaultType
@@ -281,10 +283,10 @@ void SetpointRegister_c::setMax(int32_t ri32_val)
   {
     i32_max = ri32_val;
     // set exact to empty
-    // don't change minType
+    // don't change minType and defaultType
     // set maxType
     data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(maxType | (data.en_definedSetpoints & minType));
+      = static_cast<definedSetpoints_t>(maxType | (data.en_definedSetpoints & minDefaultType));
   }
   else
   { // clear maxType -> mask with exactMinDefaultType
@@ -305,7 +307,9 @@ void SetpointRegister_c::setDefault(int32_t ri32_val)
   {
     i32_default = ri32_val;
     // set defaultType
-    data.en_definedSetpoints = defaultType;
+    // don't change minType, maxType, exactType
+    data.en_definedSetpoints
+      = static_cast<definedSetpoints_t>(defaultType | (data.en_definedSetpoints & exactMinMaxType));
   }
   else
   { // clear defaultType -> mask with exactMinMaxType

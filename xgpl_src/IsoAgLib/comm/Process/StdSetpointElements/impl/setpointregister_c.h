@@ -101,7 +101,8 @@ namespace __IsoAgLib {
 enum definedSetpoints_t { exactType = 1, minType = 4, maxType = 8,
                           minMaxType = 0xC, exactMinType = 5, exactMaxType = 9,
                           defaultType = 0x10, minMaxDefaultType = 0x1C, exactMaxDefaultType = 0x19,
-                          exactMinDefaultType = 0x15, exactMinMaxType = 0xD};
+                          exactMinDefaultType = 0x15, exactMinMaxType = 0xD,
+                          maxDefaultType = 0x18, minDefaultType = 0x14};
 
 /**
   stores one setpoint with management informations
@@ -195,7 +196,7 @@ public:
   int32_t max()const{return (existMax())?(i32_max):(i32_exactOrMin);};
   /**
     deliver the default limit ; if no default is given (~0) return i32_exactOrMin
-    name: getDefault() because default() doesn't compile8
+    name: getDefault() because default() doesn't compile
     @return default setpoint value
   */
   int32_t getDefault()const{return (existDefault())?(i32_default):(i32_exactOrMin);};

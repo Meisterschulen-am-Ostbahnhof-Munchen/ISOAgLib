@@ -63,7 +63,6 @@
 #include "../StdSetpointElements/isetpointlocal_c.h"
 #include "../../proc_c.h"
 #include "../../generalcommand_c.h"
-#include "../../impl/generalcommand_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -137,8 +136,8 @@ public:
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
     ISO parameter
-    @param rui16_DDI optional DDI code of this instance
-    @param rui16_element optional Element code of this instance
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis optional LIS code of this instance
@@ -172,8 +171,7 @@ public:
   */
   iProcDataLocal_c(
 #ifdef USE_ISO_11783
-                  uint16_t rui16_DDI = 0,
-                  uint16_t rui16_element = 0xFFFF,
+                  const ElementDDI_s* ps_elementDDI = NULL,
 #endif
 #ifdef USE_DIN_9684
                   uint8_t rui8_lis = 0,
@@ -193,7 +191,7 @@ public:
                   int ri_singletonVecKey = 0)
     : ProcDataLocal_c(
 #ifdef USE_ISO_11783
-                      rui16_DDI, rui16_element,
+                      ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                       rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -206,6 +204,60 @@ public:
                       ri_singletonVecKey
                       ) {};
 
+#ifdef USE_ISO_11783
+  /**
+    constructor whith alternative parameter list (ISO only)
+    @param rui16_DDI
+    @param rui16_element
+    ...
+  */
+  iProcDataLocal_c(
+                   uint16_t rui16_DDI,
+                   uint16_t rui16_element,
+#ifdef USE_DIN_9684
+                   uint8_t rui8_lis = 0,
+                   uint8_t rui8_wert = 0,
+                   uint8_t rui8_inst = 0,
+                   uint8_t rui8_zaehlnum = 0xFF,
+#endif
+                   const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
+                   uint8_t rui8_pri = 2,
+                   const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
+                   const iGetyPos_c *rpc_gtp = NULL,
+                   bool rb_cumulativeValue = false,
+#ifdef USE_EEPROM_IO
+                   uint16_t rui16_eepromAdr = 0xFFFF,
+#endif
+                   ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+                   int ri_singletonVecKey = 0)
+  {
+    const ElementDDI_s s_tmpElementDDI[2] = 
+    { 
+      // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
+      // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
+      // ignores theses parameters and takes to the (only) ones which are present
+      {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
+      {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+    };
+
+    ProcDataLocal_c::ProcDataLocal_c(
+#ifdef USE_ISO_11783
+                      s_tmpElementDDI,
+#endif
+#ifdef USE_DIN_9684
+                      rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                      rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
+#ifdef USE_EEPROM_IO
+                      rui16_eepromAdr,
+#endif
+                      rpc_processDataChangeHandler,
+                      ri_singletonVecKey
+                      );
+   };
+  
+#endif
+  
   /**
     initialise this ProcDataLocal_c
     instance to a well defined initial state
@@ -213,8 +265,8 @@ public:
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
     ISO parameter
-    @param rui16_DDI optional DDI code of this instance
-    @param rui16_element optional Element code of this instance
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
     DIN parameter
     @param rui8_lis optional LIS code of this instance
@@ -248,8 +300,7 @@ public:
   */
   void init(
 #ifdef USE_ISO_11783
-            uint16_t rui16_DDI = 0,
-            uint16_t rui16_element = 0xFFFF,
+            const ElementDDI_s* ps_elementDDI = NULL,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0,
@@ -269,7 +320,7 @@ public:
             )
   {ProcDataLocal_c::init(
 #ifdef USE_ISO_11783
-                         rui16_DDI, rui16_element,
+                         ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -282,6 +333,92 @@ public:
                          ri_singletonVecKey);
   };
 
+  
+#ifdef USE_ISO_11783
+  /**
+    ISO only: initialise this ProcDataLocal_c instance to a well defined initial state
+              this alternative uses DDI and element number as parameter and not pointer to list of ElementDDI_s
+
+    possible errors:
+        * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
+    ISO parameter
+    @param rui16_DDI 
+    @param rui16_element 
+
+    DIN parameter
+    @param rui8_lis optional LIS code of this instance
+    @param rui8_wert optional WERT code of this instance
+    @param rui8_inst optional INST code of this instance
+    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
+
+    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rui8_pri PRI code of messages with this process data instance (default 2)
+    @param rc_ownerGtp optional GETY_POS of the owner
+    @param rpc_gtp pointer to updated GETY_POS variable of owner
+    @param rb_cumulativeValue
+             -# for process data like distance, time, area
+                 the value of the measure prog data sets is updated
+                 on master value update dependent on the value increment
+                 since the last master value update
+                 -> if a remote member resets his data set copy, datas of
+                    other members aren't changed
+                 -> if this data is saved in EEPROM, the main application
+                    needn't take into account the initial EEPROM value, as
+                     setting of the master val is independent from EEPROM
+             -#  for values like speed, state, rpm aren't updated by increment,
+                  -> the given master value is propagated equally to all
+                      measure prog data sets
+                  -> if this data is saved in EEPROM, the stored value is loaded
+                     as initial master value, and is initially propagated to all
+                     measure prog data sets
+    @param rui16_eepromAdr optional adress where value is stored in EEPROM
+    @param rpc_processDataChangeHandler optional pointer to handler class of application
+    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  */
+  void init(
+            uint16_t rui16_DDI,
+            uint16_t rui16_element,
+#ifdef USE_DIN_9684
+            uint8_t rui8_lis = 0,
+            uint8_t rui8_wert = 0,
+            uint8_t rui8_inst = 0,
+            uint8_t rui8_zaehlnum = 0xFF,
+#endif
+            const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
+            uint8_t rui8_pri = 2,
+            const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
+            const iGetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false,
+#ifdef USE_EEPROM_IO
+            uint16_t rui16_eepromAdr = 0xFFFF,
+#endif
+            ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
+            int ri_singletonVecKey = 0
+            )
+  {
+     const ElementDDI_s s_tmpElementDDI[2] = 
+     { 
+       // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
+       // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
+       // ignores theses parameters and takes to the (only) ones which are present
+       {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
+       {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+     };
+       
+     ProcDataLocal_c::init(
+                           s_tmpElementDDI,
+#ifdef USE_DIN_9684
+                           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                           rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
+#ifdef USE_EEPROM_IO
+                           rui16_eepromAdr,
+#endif
+                           rpc_processDataChangeHandler,
+                           ri_singletonVecKey);
+  };
+#endif
+
+    
   /** set the poitner to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */

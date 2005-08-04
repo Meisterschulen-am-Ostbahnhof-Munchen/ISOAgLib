@@ -126,8 +126,8 @@ namespace __IsoAgLib {
 /**
    initialise this ProcDataBase_c instance to a well defined initial state
    ISO parameters:
-   @param rui16_DDI optional DDI code of this instance
-   @param rui16_element optional element code of this instance
+   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                        (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
    DIN parameters:
    @param rpc_lbs optional pointer to central Scheduler_c instance
@@ -146,7 +146,7 @@ namespace __IsoAgLib {
 */
   void ProcDataBase_c::init(
 #ifdef USE_ISO_11783
-                            uint16_t rui16_DDI, uint16_t rui16_element,
+                            const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                             uint8_t rui8_lis, uint8_t rui8_wert,
@@ -159,7 +159,7 @@ namespace __IsoAgLib {
   {
   ProcIdent_c::init(
 #ifdef USE_ISO_11783
-                    rui16_DDI, rui16_element,
+                    ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                     rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -416,8 +416,37 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_
 
 #ifdef USE_ISO_11783
     // set command in ProcessPkg::flags2string
-    c_data.set_Element(element());    // hard-coded a 2 here. We need to pass in element number somehow. For now, trying the element number 2.
-    c_data.set_DDI(DDI());
+
+    const GeneralCommand_c::ValueGroup_t en_valueGroup = getProcessInstance4Comm().data().c_generalCommand.getValueGroup();
+    const bool b_isSetpoint = getProcessInstance4Comm().data().c_generalCommand.checkIsSetpoint();
+
+    // @todo: in case no element/DDI fits send 0 
+    c_data.set_Element(0);
+    c_data.set_DDI(0);
+    
+    std::list<IsoAgLib::ElementDDI_s>::const_iterator iter_elementDDI;
+    
+    if (elementDDI().size() == 1) {
+      // we have only one DDI/element pair
+      // interface process data init was possibly called with parameter DDI and element and not with ElementDDI_s
+      // => we don't have reliable infos about en_valueGroup and b_isSetpoint
+      // => don't check for en_valueGroup and b_isSetpoint but use this single entry in list
+      iter_elementDDI = elementDDI().begin();
+      c_data.set_Element(iter_elementDDI->ui16_element);
+      c_data.set_DDI(iter_elementDDI->ui16_DDI);
+    }
+    else
+    {
+      // get corresponding element/DDI
+      for (iter_elementDDI = elementDDI().begin();
+           iter_elementDDI != elementDDI().end(); iter_elementDDI++)
+        if ( (iter_elementDDI->en_valueGroup == en_valueGroup) && (iter_elementDDI->b_isSetpoint == b_isSetpoint) ) {
+          c_data.set_Element(iter_elementDDI->ui16_element);
+          c_data.set_DDI(iter_elementDDI->ui16_DDI);
+          break;
+        }
+    }
+    
 #endif
 
 #ifdef USE_DIN_9684

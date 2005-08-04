@@ -906,10 +906,10 @@ void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup
         resetVal(ri32_val);
         break;
       case GeneralCommand_c::minValue:
-        resetMin(); //ri32_val); // @todo: enlarge for ISO reset
+        resetMin();
         break;
       case GeneralCommand_c::maxValue:
-        resetMax(); // @todo: enlarge for ISO reset
+        resetMax();
         break;
       case GeneralCommand_c::integValue:
         resetInteg();

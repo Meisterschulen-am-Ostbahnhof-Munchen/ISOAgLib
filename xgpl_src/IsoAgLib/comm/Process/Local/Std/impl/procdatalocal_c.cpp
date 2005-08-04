@@ -127,8 +127,8 @@ namespace __IsoAgLib {
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
   ISO parameter
-  @param rui16_DDI optional DDI code of this instance
-  @param rui16_element optional Element code of this instance
+  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                       (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   DIN parameter
   @param rui8_lis optional LIS code of this instance
@@ -162,7 +162,7 @@ namespace __IsoAgLib {
 */
 ProcDataLocal_c::ProcDataLocal_c(
 #ifdef USE_ISO_11783
-                  uint16_t rui16_DDI, uint16_t rui16_element,
+                  const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                   uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
@@ -177,7 +177,7 @@ ProcDataLocal_c::ProcDataLocal_c(
                   )
     : ProcDataLocalBase_c(
 #ifdef USE_ISO_11783
-                          rui16_DDI, rui16_element,
+                          ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -200,8 +200,8 @@ ProcDataLocal_c::ProcDataLocal_c(
   possible errors:
       * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
   ISO parameter
-  @param rui16_DDI optional DDI code of this instance
-  @param rui16_element optional Element code of this instance
+  @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
+                       (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
 
   DIN parameter
   @param rui8_lis optional LIS code of this instance
@@ -235,7 +235,7 @@ ProcDataLocal_c::ProcDataLocal_c(
 */
 void ProcDataLocal_c::init(
 #ifdef USE_ISO_11783
-                           uint16_t rui16_DDI, uint16_t rui16_element,
+                           const IsoAgLib::ElementDDI_s* ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                            uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
@@ -251,7 +251,7 @@ void ProcDataLocal_c::init(
 {
   ProcDataLocalBase_c::init(
 #ifdef USE_ISO_11783
-                            rui16_DDI, rui16_element,
+                            ps_elementDDI,
 #endif
 #ifdef USE_DIN_9684
                             rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
