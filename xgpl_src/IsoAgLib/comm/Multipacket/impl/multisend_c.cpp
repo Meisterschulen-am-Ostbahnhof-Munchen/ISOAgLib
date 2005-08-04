@@ -678,7 +678,7 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
             }
             else
             {
-                printf("Data is not complete!\n");
+                CNAMESPACE::printf("Data is not complete!\n");
             }
         } // for
       }
