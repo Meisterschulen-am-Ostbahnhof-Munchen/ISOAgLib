@@ -1,3 +1,4 @@
+// This file is a version with hard-coded xml file path!!!
 /***************************************************************************
  *                                                                         *
  * This file is part of the "IsoAgLib", an object oriented program library *
@@ -95,7 +96,7 @@ std::vector<std::string> vecstr_objTableIDTable;
 std::stringstream buffer;
 bool attrIsGiven [maxAttributeNames];
 std::vector<std::string> vecstr_constructor (7);
-bool b_isFirstDevice = true;
+static bool b_isFirstDevice = true;
 
 // ---------------------------------------------------------------------------
 //  void usage () --- Prints out usage text.
@@ -688,11 +689,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
       // set all non-set attributes to default values
       defaultAttributes ();
 
-      // get a new ID for this object
-      objID = getID (objName, is_objID, objID, objType);
-
       // if more than one device is specified, stop parsing. Only one DVC is allowed by definition
       if (!b_isFirstDevice && objType == otDevice) clean_exit (-1, "YOU CAN ONLY SPECIFY ONE <device> OBJECT! STOPPING PARSER! bye.\n\n");
+
+      // get a new ID for this object
+      objID = getID (objName, is_objID, objID, objType);
 
       bool objNeedsName = false;
       switch (objType)
@@ -869,6 +870,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           languageCmdCode[0] = vecstr_attrString[attrLocalization_label][0];
           languageCmdCode[1] = vecstr_attrString[attrLocalization_label][1];
 
+          for (i=0; i<vecstr_attrString[attrLocalization_label].size(); i++)
+          {
+            vecstr_attrString[attrLocalization_label][i] = tolower(vecstr_attrString[attrLocalization_label][i]);
+          }
+
           uint8_t ui8_tempLocalName[5];
           for (i=0; i<5; i++)
           {
@@ -878,8 +884,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             uint8_t ui8_nibbleHi = (ui8_digitHi <= '9' /* 0..9 */) ? (ui8_digitHi-'0') : (ui8_digitHi-'a' + 10); // 0..9,10..15
             uint8_t ui8_nibbleLo = (ui8_digitLo <= '9' /* 0..9 */) ? (ui8_digitLo-'0') : (ui8_digitLo-'a' + 10); // 0..9,10..15
 
-            const uint8_t pos = (b_lsb) ? (i) : (7-i);
-            ui8_tempLocalName[pos] = (ui8_nibbleHi << 4) | ui8_nibbleLo;
+            ui8_tempLocalName[i] = (ui8_nibbleHi << 4) | ui8_nibbleLo;
           }
 
           //output: tableID & objID
@@ -953,7 +958,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           fprintf( partFileB, "IsoAgLib::iGetyPos_c %sGtp(0x%x, 0x%x);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
           fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sGtp, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISOTERMINAL \n , 0, NULL\n #endif\n);\n\n",
-                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "false" : "true",
+                   vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "true" : "false",
                    c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
                    atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
                    c_isoname.funcInst(),c_isoname.ecuInst());
