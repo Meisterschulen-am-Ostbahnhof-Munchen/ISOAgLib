@@ -143,7 +143,7 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
   bool b_result = false;
 
 
-  int32_t i32_test = *(static_cast<const int32_t*>(static_cast<const void*>(pb_data)));
+  int32_t i32_test = *(static_cast<const int32_t*>(static_cast<const void*>(pb_procData)));
   // DIN: pd = 0 && mod < 4
   if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
       c_generalCommand.checkIsSetpoint())
@@ -195,14 +195,14 @@ int32_t ProcessPkg_c::dataLong()const{
   {
     case i32_val:
     case cmdVal:
-      i32_result = *(static_cast<const int32_t*>(static_cast<const void*>(pb_data)));
+      i32_result = *(static_cast<const int32_t*>(static_cast<const void*>(pb_procData)));
       break;
     case ui32_val:
-      i32_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_data)));
+      i32_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      int2Float(pb_data, ((float*)(&i32_result)));
+      int2Float(pb_procData, ((float*)(&i32_result)));
       break;
 #endif
   }
@@ -223,14 +223,14 @@ uint32_t ProcessPkg_c::dataUlong()const{
   {
     case i32_val:
     case cmdVal:
-      ulResult = *(static_cast<const int32_t*>(static_cast<const void*>(pb_data)));
+      ulResult = *(static_cast<const int32_t*>(static_cast<const void*>(pb_procData)));
       break;
     case ui32_val:
-      ulResult = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_data)));
+      ulResult = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      int2Float(pb_data, ((float*)(&ulResult)));
+      int2Float(pb_procData, ((float*)(&ulResult)));
       break;
 #endif
   }
@@ -250,16 +250,16 @@ float ProcessPkg_c::dataFloat()const{
   switch (valType())
   {
     case i32_val:
-      f_result = *(static_cast<const int32_t*>(static_cast<const void*>(pb_data)));
+      f_result = *(static_cast<const int32_t*>(static_cast<const void*>(pb_procData)));
       break;
     case ui32_val:
-      f_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_data)));
+      f_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
       break;
     case float_val:
-      int2Float(pb_data, &f_result);
+      int2Float(pb_procData, &f_result);
       break;
     case cmdVal:
-      f_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_data)));
+      f_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
       break;
   }
   return f_result;
@@ -276,7 +276,7 @@ float ProcessPkg_c::dataFloat()const{
 */
 void ProcessPkg_c::setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValType)
 {
-  *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = ri32_val;
+  *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
 
 #ifndef USE_ISO_11783  // no need to do this switch case if new ISO part 10 is used. -bac
   switch (ren_procValType)
@@ -318,18 +318,18 @@ void ProcessPkg_c::setData(int32_t ri32_val, proc_valType_t ren_procValType)
   switch (ren_procValType)
   {
     case i32_val:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = ri32_val;
+      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case ui32_val:
-      *(static_cast<uint32_t*>(static_cast<void*>(pb_data))) = ri32_val;
+      *(static_cast<uint32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      float2Int( ((float *const)(&ri32_val)), pb_data);
+      float2Int( ((float *const)(&ri32_val)), pb_procData);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;
@@ -353,16 +353,16 @@ void ProcessPkg_c::setData(uint32_t ri32_val, proc_valType_t ren_procValType)
   switch (ren_procValType)
   {
     case i32_val:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = ri32_val;
+      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
       set_d(0);
       break;
     case ui32_val:
-      *(static_cast<uint32_t*>(static_cast<void*>(pb_data))) = ri32_val;
+      *(static_cast<uint32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
       set_d(0);
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      float2Int( ((float *const)(&ri32_val)), pb_data);
+      float2Int( ((float *const)(&ri32_val)), pb_procData);
       set_d(1);
       break;
 #endif
@@ -383,16 +383,16 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_pr
   switch (ren_procSpecCmd)
   {
     case setpointReleaseCmd:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = SETPOINT_RELEASE_COMMAND;
+      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = SETPOINT_RELEASE_COMMAND;
       break;
     case setpointErrCmd:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = SETPOINT_ERROR_COMMAND;
+      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = SETPOINT_ERROR_COMMAND;
       break;
     case noVal_32s:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = NO_VAL_32S;
+      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = NO_VAL_32S;
       break;
     case errVal_32s:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = ERROR_VAL_32S;
+      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = ERROR_VAL_32S;
       break;
   }
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
@@ -419,17 +419,17 @@ void ProcessPkg_c::setData(float rf_val, proc_valType_t ren_procValType)
   switch (ren_procValType)
   {
     case i32_val:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_data))) = static_cast<int32_t>(rf_val);
+      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = static_cast<int32_t>(rf_val);
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case ui32_val:
-      *(static_cast<uint32_t*>(static_cast<void*>(pb_data))) = static_cast<uint32_t>(rf_val);
+      *(static_cast<uint32_t*>(static_cast<void*>(pb_procData))) = static_cast<uint32_t>(rf_val);
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case float_val:
-      float2Int(&rf_val, pb_data);
+      float2Int(&rf_val, pb_procData);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;
@@ -579,10 +579,11 @@ void ProcessPkg_c::string2Flags()
     newDDI = newDDI << 8;
     newDDI |= CANPkg_c::pb_data[2];
     set_DDI(newDDI);
+
 #endif  // USE_ISO_11783
   }
 
-  CNAMESPACE::memmove(pb_data, (CANPkg_c::pb_data+4), 4);
+  CNAMESPACE::memmove(pb_procData, (CANPkg_c::pb_data+4), 4);
 };
 
 /**
@@ -675,7 +676,7 @@ void ProcessPkg_c::flags2String()
     CANPkg_c::pb_data[1] = zaehlnum();
     CANPkg_c::pb_data[3] = (wert() << 4) | (inst() & 0xF);
 
-    CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_data, 4);
+    CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_procData, 4);
 
     if ((pd() >> 1) == 1)
     { // request has only 4 bytes
@@ -717,7 +718,7 @@ void ProcessPkg_c::flags2String()
     CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;
     // for ISO the ident is directly read and written
 
-    CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_data, 4);
+    CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_procData, 4);
 
     setLen(8);
 #endif  // USE_ISO_11783

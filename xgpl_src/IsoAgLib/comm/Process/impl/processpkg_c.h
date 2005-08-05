@@ -232,8 +232,8 @@ public:
     @return data value of message
   */
   int32_t dataRawCmdLong()const
-    {return *((int32_t*)pb_data);};
-//    {return *(static_cast<int32_t*>(static_cast<void*>(pb_data)));};
+    {return *((int32_t*)pb_procData);};
+//    {return *(static_cast<int32_t*>(static_cast<void*>(pb_procData)));};
   /**
     deliver data value as int32_t; the 4byte data of the message are
     accessed with the type defined by the format flags
@@ -269,7 +269,7 @@ public:
     deliver data value as single uint8_t from position rb_pos
     @return uint8_t of wanted data position of message
   */
-  uint8_t data(uint8_t rb_pos)const{return pb_data[rb_pos];};
+  uint8_t data(uint8_t rb_pos)const{return pb_procData[rb_pos];};
 
   /**
     check if SEND member number is valid (e.g. there has claimed address member in
@@ -462,7 +462,7 @@ public:
     @param rb_pos position of written uint8_t in data string
     @param rb_val uint8_t data value
   */
-  void setData(uint8_t rb_pos, uint8_t rb_val){pb_data[rb_pos] = rb_val;};
+  void setData(uint8_t rb_pos, uint8_t rb_val){pb_procData[rb_pos] = rb_val;};
   /**
     extract data from DIN/ISO commands and save it to member class
   */
@@ -499,7 +499,7 @@ private: // Private methods
 
 private: // Private attributes
   /** data value as uint8_t string */
-  uint8_t pb_data[5];
+  uint8_t pb_procData[5];
   struct _bit_data {
     /** ZAEHLNUM for data */
     uint16_t ui8_zaehlnum : 8;

@@ -89,7 +89,6 @@
 #include "processpkg_c.h"
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-//#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 
 #include <map>
 #include <list>
@@ -180,9 +179,6 @@ public:
 
   bool timeEvent( void );
 
-  /**
-    Pointer auf das Byte-Array entgegennehmen, LanguageLabel herzaubern, das alte in der Map ersetzen oder neu einfügen
-    */
   bool registerDevicePool (const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault);
   bool sendCommandChangeDesignator(uint16_t rpui16_objectID, const char* rpc_newString, uint8_t stringLength);
 
