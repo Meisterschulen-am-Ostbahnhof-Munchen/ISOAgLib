@@ -230,17 +230,31 @@ public:
 #endif
                    ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                    int ri_singletonVecKey = 0)
+    : ProcDataLocal_c(
+#ifdef USE_ISO_11783
+                      NULL,
+#endif
+#ifdef USE_DIN_9684
+                      rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                      rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
+#ifdef USE_EEPROM_IO
+                      rui16_eepromAdr,
+#endif
+                      rpc_processDataChangeHandler,
+                      ri_singletonVecKey
+                      )
   {
-    const ElementDDI_s s_tmpElementDDI[2] = 
-    { 
+    const ElementDDI_s s_tmpElementDDI[2] =
+    {
       // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
       // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
       // ignores theses parameters and takes to the (only) ones which are present
-      {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
+      {rui16_element, rui16_DDI, true, GeneralCommand_c::exactValue},
       {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
     };
 
-    ProcDataLocal_c::ProcDataLocal_c(
+    ProcDataLocal_c::init(
 #ifdef USE_ISO_11783
                       s_tmpElementDDI,
 #endif
@@ -255,9 +269,9 @@ public:
                       ri_singletonVecKey
                       );
    };
-  
+
 #endif
-  
+
   /**
     initialise this ProcDataLocal_c
     instance to a well defined initial state
@@ -333,7 +347,7 @@ public:
                          ri_singletonVecKey);
   };
 
-  
+
 #ifdef USE_ISO_11783
   /**
     ISO only: initialise this ProcDataLocal_c instance to a well defined initial state
@@ -342,8 +356,8 @@ public:
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
     ISO parameter
-    @param rui16_DDI 
-    @param rui16_element 
+    @param rui16_DDI
+    @param rui16_element
 
     DIN parameter
     @param rui8_lis optional LIS code of this instance
@@ -395,15 +409,15 @@ public:
             int ri_singletonVecKey = 0
             )
   {
-     const ElementDDI_s s_tmpElementDDI[2] = 
-     { 
+     const ElementDDI_s s_tmpElementDDI[2] =
+     {
        // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
        // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
        // ignores theses parameters and takes to the (only) ones which are present
-       {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
+       {rui16_element, rui16_DDI, true, GeneralCommand_c::exactValue},
        {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
      };
-       
+
      ProcDataLocal_c::init(
                            s_tmpElementDDI,
 #ifdef USE_DIN_9684
@@ -418,7 +432,7 @@ public:
   };
 #endif
 
-    
+
   /** set the poitner to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */

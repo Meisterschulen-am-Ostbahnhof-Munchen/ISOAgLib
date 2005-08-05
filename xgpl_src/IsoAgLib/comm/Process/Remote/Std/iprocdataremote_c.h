@@ -192,7 +192,7 @@ public:
     alternative parameter list (ISO only)
     @param rui16_DDI
     @param rui16_element
-    ... 
+    ...
   */
   iProcDataRemote_c(
                     uint16_t rui16_DDI,
@@ -209,27 +209,35 @@ public:
                     const iGetyPos_c* rpc_commanderGtp = NULL,
                     ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                     int ri_singletonVecKey = 0)
-  {
-  
-    const ElementDDI_s s_tmpElementDDI[2] = 
-    { 
-      // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
-      // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
-      // ignores theses parameters and takes to the (only) ones which are present
-      {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
-      {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-    };
-
-    ProcDataRemote_c::ProcDataRemote_c(
-                     s_tmpElementDDI,
+  : ProcDataRemote_c(
+                     NULL,
 #ifdef USE_DIN_9684
                      rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                     rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp, rpc_processDataChangeHandler, ri_singletonVecKey);
+                     rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp, rpc_processDataChangeHandler, ri_singletonVecKey)
+
+  {
+
+    const ElementDDI_s s_tmpElementDDI[2] =
+    {
+      // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
+      // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
+      // ignores theses parameters and takes to the (only) ones which are present
+      {rui16_element, rui16_DDI, true, GeneralCommand_c::exactValue},
+      {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+    };
+
+   ProcDataRemote_c::init(
+                          s_tmpElementDDI,
+#ifdef USE_DIN_9684
+                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
+#endif
+                          rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp, rpc_processDataChangeHandler, ri_singletonVecKey);
+
   };
 #endif
 
-                       
+
   /**
     initialise this ProcDataRemote_c instance to a well defined initial state
     ISO parameter
@@ -280,8 +288,8 @@ public:
     ISO only: initialise this ProcDataRemote_c instance to a well defined initial state
               this alternative uses DDI and element number as parameter and not pointer to list of ElementDDI_s
     ISO parameter
-    @param rui16_DDI 
-    @param rui16_element 
+    @param rui16_DDI
+    @param rui16_element
 
     DIN parameter
     @param rui8_lis optional LIS code of this instance
@@ -312,16 +320,16 @@ public:
             const iGetyPos_c* rpc_commanderGtp = NULL,
             ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0)
-  {  
-     const ElementDDI_s s_tmpElementDDI[2] = 
-     { 
+  {
+     const ElementDDI_s s_tmpElementDDI[2] =
+     {
        // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
        // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
        // ignores theses parameters and takes to the (only) ones which are present
-       {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
+       {rui16_element, rui16_DDI, true, GeneralCommand_c::exactValue},
        {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
      };
-   
+
      ProcDataRemote_c::init(
                             s_tmpElementDDI,
 #ifdef USE_DIN_9684
@@ -330,7 +338,7 @@ public:
                             rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp, rpc_processDataChangeHandler, ri_singletonVecKey);
   };
 #endif
-                           
+
   /** set the poitner to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */
