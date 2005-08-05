@@ -420,12 +420,12 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_
     const GeneralCommand_c::ValueGroup_t en_valueGroup = getProcessInstance4Comm().data().c_generalCommand.getValueGroup();
     const bool b_isSetpoint = getProcessInstance4Comm().data().c_generalCommand.checkIsSetpoint();
 
-    // @todo: in case no element/DDI fits send 0 
-    c_data.set_Element(0);
+    // @todo: in case no element/DDI fits send default values
+    c_data.set_Element(0xFFFF);
     c_data.set_DDI(0);
-    
+
     std::list<IsoAgLib::ElementDDI_s>::const_iterator iter_elementDDI;
-    
+
     if (elementDDI().size() == 1) {
       // we have only one DDI/element pair
       // interface process data init was possibly called with parameter DDI and element and not with ElementDDI_s
@@ -446,7 +446,7 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_
           break;
         }
     }
-    
+
 #endif
 
 #ifdef USE_DIN_9684
