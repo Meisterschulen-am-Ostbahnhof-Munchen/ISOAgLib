@@ -469,10 +469,10 @@ int main()
       b_runningPrograms = true;
       LOG_INFO << "\r\nRemote ECU found - try to start measurement programs" << "\r\n";
       #ifdef USE_PROC_HANDLER
-      arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 4000);
-      arr_procData[cui8_indexWorkState].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
-      //arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000);
-      //arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+      //arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 4000);
+      //arr_procData[cui8_indexWorkState].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+      arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 4000);
+      arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
       #else
       c_workState.prog().addSubprog(Proc_c::TimeProp, 4000);
       c_workState.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
