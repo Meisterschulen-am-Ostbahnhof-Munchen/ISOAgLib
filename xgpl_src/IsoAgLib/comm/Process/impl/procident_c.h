@@ -195,7 +195,7 @@ public:
   /** default destructor which has nothing to do */
   ~ProcIdent_c();
 
-#if 0  
+#if 0
   /**
     comparison of two process ident instances
     @param rrefc_right compared object
@@ -230,11 +230,11 @@ public:
 
 #ifdef USE_ISO_11783
   /**
-     deliver list of ElementDDI_s      
+     deliver list of ElementDDI_s
      @return std::list<IsoAgLib::ElementDDI_s>
   */
   const std::list<IsoAgLib::ElementDDI_s>& elementDDI()const {return data.l_elementDDI;};
-  
+
   /**
     deliver value DDI (only possible if only one elementDDI in list)
     @return DDI
@@ -253,7 +253,7 @@ public:
    if (data.l_elementDDI.size() == 1)
       return data.l_elementDDI.begin()->ui16_element;
     else
-      return 0;
+      return 0xFFFF;
   };
 
 #endif
@@ -320,17 +320,17 @@ public:
   const GetyPos_c& ownerGtp() const
     { return ((pc_ownerGtp != 0)?(*pc_ownerGtp):(data.c_ownerGtp));};
 
-#ifdef USE_ISO_11783 
-  
+#ifdef USE_ISO_11783
+
   /**
     set DDI, element, value group and setpoint/measure type of process msg
-    @param rl_elementDDI 
+    @param rl_elementDDI
   */
   void setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI);
-  
+
   /**
     set DDI, element, value group and setpoint/measure type of process msg (used in assignFromSource)
-    @param pl_elementDDI 
+    @param pl_elementDDI
   */
   void setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI);
 
