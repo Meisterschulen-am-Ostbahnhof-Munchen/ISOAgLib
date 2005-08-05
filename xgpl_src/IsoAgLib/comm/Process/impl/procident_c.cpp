@@ -316,7 +316,7 @@ bool ProcIdent_c::matchISO(
   for (iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
     if ( (iter->ui16_DDI == rui16_DDI) && (iter->ui16_element == rui16_element) )
       break;
-      
+
   if (iter == data.l_elementDDI.end())
     return false;
 
@@ -390,9 +390,9 @@ bool ProcIdent_c::matchDIN(
 #ifdef USE_ISO_11783
 void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
 {
+  data.l_elementDDI.clear();
   // check if pointer to strcut (array) is set (constructor call with NULL possible!)
   if (ps_elementDDI) {
-    data.l_elementDDI.clear();
     // in last struct element == 0xFFFF
     while (ps_elementDDI->ui16_element != 0xFFFF)
       data.l_elementDDI.push_back(*ps_elementDDI++);
@@ -401,10 +401,10 @@ void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
 
 void ProcIdent_c::setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI)
 {
+  data.l_elementDDI.clear();
   // check if pointer to strcut (array) is set (constructor call with NULL possible!)
   if (pl_elementDDI) {
-    data.l_elementDDI.clear();
-    for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = pl_elementDDI->begin(); 
+    for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = pl_elementDDI->begin();
          iter != pl_elementDDI->end(); iter++)
         data.l_elementDDI.push_back(*iter);
   }
