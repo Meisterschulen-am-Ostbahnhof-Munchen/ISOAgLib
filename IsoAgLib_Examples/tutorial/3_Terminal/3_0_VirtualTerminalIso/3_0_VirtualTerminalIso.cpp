@@ -331,7 +331,7 @@ void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t 
   }
 }
 
-static int x=0; // ### REMOVE for RELEASE! ###
+static int xy=0;
 
 // incoming key-events
 void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/ )
@@ -357,26 +357,27 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         updateAccel (10);
         updateMiles (0);
         iVtObjectValSpeed.setValue (valSpeed);
-        iVtObjectColLabel.setValueCopy ("cp"); // ### REMOVE for RELEASE! ###
         iVtObjectdPolygon.setFillAttributes(&iVtObjectFillAttributes);
+        xy = 0;
+        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
         break;
 
       case vtKeyCodeKeyMove:
         valSpeed += valAccel;
         updateMiles(valMiles + valSpeed);
         iVtObjectValSpeed.setValue (valSpeed);
-        iVtObjectColLabel.setValueRef ("r");   // ### REMOVE for RELEASE! ###
         break;
 
       case vtKeyCodeKeyMoreAccel:
         updateAccel (valAccel + 1);
-        x+=10; // ### REMOVE for RELEASE! ###
-        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, -20,-20); // ### REMOVE for RELEASE! ###
+        xy += 5;
+        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
         break;
 
       case vtKeyCodeKeyLessAccel:
         updateAccel (valAccel - 1);
-        iVtObjectcontainerInAllMasks.moveChildLocation (&iVtObjectBigLogo, -20,-20); // ### REMOVE for RELEASE! ###
+        xy -= 5;
+        iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
         break;
 
       // Use b_updateObject here to save and access the hidden state directly via the object!
