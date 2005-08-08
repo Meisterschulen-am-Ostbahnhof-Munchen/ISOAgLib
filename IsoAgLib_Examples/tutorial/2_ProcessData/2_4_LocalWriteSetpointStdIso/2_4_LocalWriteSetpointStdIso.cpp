@@ -390,21 +390,21 @@ int main()
 #if defined(USE_ISO_11783)
   const ElementDDI_s s_WorkStateElementDDI[2] = 
   { 
-    // element 0, DDI 141
-    {0, 141, true, GeneralCommand_c::exactValue},
+    // DDI 141, element 0
+    {141, 0, true, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   };
   const ElementDDI_s s_ApplicationRateElementDDI[5] = 
   { 
-    // element 2, DDI 1
-    {2, 1, true, GeneralCommand_c::exactValue},
-    // element 4, DDI 2
-    {4, 2, false, GeneralCommand_c::exactValue},
-    // element 6, DDI 3 
-    {6, 3, true, GeneralCommand_c::defaultValue},
-    // element 8, DDI 4 
-    {8, 4, true, GeneralCommand_c::minValue},
+    // DDI 1, element 2 
+    {1, 2, true, GeneralCommand_c::exactValue},
+    // DDI 2, element 4
+    {2, 4, false, GeneralCommand_c::exactValue},
+    // DDI 3, element 6
+    {3, 6, true, GeneralCommand_c::defaultValue},
+    // DDI 4, element 8
+    {4, 8, true, GeneralCommand_c::minValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   }; 

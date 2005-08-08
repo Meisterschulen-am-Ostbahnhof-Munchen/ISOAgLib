@@ -268,26 +268,26 @@ int main()
 #if defined(USE_ISO_11783)
   const ElementDDI_s s_onOff[2] = 
   { 
-    // element 0, DDI 141
-    {0, 141, true, GeneralCommand_c::exactValue},
+    // DDI 141, element 0
+    {141, 0, true, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   };
   const ElementDDI_s s_workWidth[3] = 
   { 
-    // element 0, DDI 66
-    {0, 66, true, GeneralCommand_c::exactValue},
-    // element 0, DDI 67
-    {0, 67, false, GeneralCommand_c::exactValue},
+    // DDI 66, element 0
+    {66, 0, true, GeneralCommand_c::exactValue},
+    // DDI 67, element 0
+    {67, 0, false, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   }; 
   const ElementDDI_s s_applicationRate[3] = 
   { 
-    // element 0, DDI 1
-    {0, 1, true, GeneralCommand_c::exactValue},
-    // element 0, DDI 2
-    {0, 2, false, GeneralCommand_c::exactValue},
+    // DDI 1, element 0
+    {1, 0, true, GeneralCommand_c::exactValue},
+    // DDI 2, element 0
+    {2, 0, false, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   }; 
