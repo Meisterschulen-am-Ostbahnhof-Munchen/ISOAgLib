@@ -605,7 +605,7 @@ bool MeasureProgBase_c::processMsg(){
   if (en_command == GeneralCommand_c::setValue)
     // setValue command indicates receiving of a measure value
     //    => handle this in measure prog remote => return false
-    // or a reset (ISO)
+    // or a reset (ISO and DIN)
     //    => handle this in measure prog local => return false
     return false;
 

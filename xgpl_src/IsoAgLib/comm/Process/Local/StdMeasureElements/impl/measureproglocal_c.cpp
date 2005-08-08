@@ -413,10 +413,10 @@ bool MeasureProgLocal_c::processMsg(){
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
     // the message was a value message -> evaluate it here 
-    // ISO: set value command, DIN: i32_val == 0 is already checked in ProcessPgk::resolveCommandType() => command measurementReset, handled in measureprogbase
+    // ISO: set value command, DIN: i32_val == 0
     if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
-      // ISO: value in message contains reset value
+      // ISO: value in message contains reset value (DIN: value = 0 is already checked in ProcessPgk::resolveCommandType() => command setValue)
       int32_t i32_val = c_pkg.dataRawCmdLong();
       resetValMod(c_pkg.c_generalCommand.getValueGroup(), i32_val);
 

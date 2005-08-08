@@ -871,7 +871,8 @@ bool ProcessPkg_c::resolveCommandType()
        {
           // write - accept only write actions to local data only if this is reset try
           // (not standard conformant, but practised)
-          en_command = GeneralCommand_c::measurementReset;
+          // setValue command for measure value is treated as reset (DIN: new values are 0, ISO: new value is value from message
+          en_command = GeneralCommand_c::setValue;
       }
     }
 
