@@ -223,7 +223,7 @@ public:
       // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
       // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
       // ignores theses parameters and takes to the (only) ones which are present
-      {rui16_element, rui16_DDI, true, GeneralCommand_c::exactValue},
+      {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
       {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
     };
 
@@ -326,7 +326,7 @@ public:
        // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
        // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
        // ignores theses parameters and takes to the (only) ones which are present
-       {rui16_element, rui16_DDI, true, GeneralCommand_c::exactValue},
+       {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
        {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
      };
 
