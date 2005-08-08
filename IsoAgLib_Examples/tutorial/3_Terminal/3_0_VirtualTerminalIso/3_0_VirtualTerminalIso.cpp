@@ -211,7 +211,7 @@
 
 /* the following include direction includes
    all generated ISO Terminal Object Pool Definitions */
-#include "MaskDefinition/simpleVTIsoPool.xml_direct.h"
+#include "MaskDefinition/simpleVTIsoPool_direct.h"
 
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLib namespace
@@ -500,7 +500,7 @@ int main()
 
   #else
   uint64_t ui64_isoName = 0xa00e840000000000ULL;
-	                      //0x0000000000840ea0;
+                        //0x0000000000840ea0;
 
   IsoAgLib::iIdentItem_c c_myIdent(&myGtp, (const uint8_t*)&ui64_isoName, b_wantedSa, 0xFFFF, 0, NULL );
   #endif
