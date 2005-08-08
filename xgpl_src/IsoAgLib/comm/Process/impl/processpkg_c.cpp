@@ -510,8 +510,8 @@ void ProcessPkg_c::string2Flags()
               )
          )
     { // sender is special case terminal -> change GETY_POS for data part from terminal GETY_POS to local of empf
-      setGety(pc_monitorEmpf->gtp()->getGety());
-      setPos(pc_monitorEmpf->gtp()->getPos());
+      setGety((pc_monitorEmpf->gtp()).getGety());
+      setPos((pc_monitorEmpf->gtp()).getPos());
     }
 #endif //DIN
 
