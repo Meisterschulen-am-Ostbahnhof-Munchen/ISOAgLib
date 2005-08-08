@@ -147,10 +147,10 @@ class vtObjectAuxiliaryInput_c;
     uint16_t curBytes=0;
 
 #define MACRO_scaleLocalVarVtDimension \
-    uint32_t vtDimension=__IsoAgLib::getIsoTerminalInstance().getVtHardwareDimension();
+    int32_t vtDimension=__IsoAgLib::getIsoTerminalInstance().getVtHardwareDimension();
 
 #define MACRO_scaleLocalVarOpDimension \
-    uint32_t opDimension=__IsoAgLib::getIsoTerminalInstance().getVtObjectPoolDimension();
+    int32_t opDimension=__IsoAgLib::getIsoTerminalInstance().getVtObjectPoolDimension();
 
 #define MACRO_scaleLocalVars \
     MACRO_scaleLocalVarOpDimension \
@@ -197,15 +197,15 @@ class vtObjectAuxiliaryInput_c;
         yBlock = 0; \
       } \
       if (flags & FLAG_ORIGIN_SKM) { \
-        destMemory [curBytes+2] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) >> 8; \
-        destMemory [curBytes+4] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) & 0xFF; \
-        destMemory [curBytes+5] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) >> 8; \
+        destMemory [curBytes+2] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) >> 8; \
+        destMemory [curBytes+4] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) & 0xFF; \
+        destMemory [curBytes+5] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) >> 8; \
       } else { \
-        destMemory [curBytes+2] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \
-        destMemory [curBytes+4] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) & 0xFF; \
-        destMemory [curBytes+5] = ((((int32_t) (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) >> 8; \
+        destMemory [curBytes+2] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \
+        destMemory [curBytes+4] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) & 0xFF; \
+        destMemory [curBytes+5] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) >> 8; \
       } \
       nrObjectXY++; \
       curBytes += 6; \

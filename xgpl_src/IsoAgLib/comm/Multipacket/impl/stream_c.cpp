@@ -114,7 +114,7 @@ uint8_t Stream_c::sui8_pkgBurst=0x10;
 
 
 
-Stream_c::Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi, uint32_t rui32_msgSize)
+Stream_c::Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait)
   : iStream_c()
   , c_ident (rc_rsi)
   , t_streamState (StreamRunning)
@@ -129,8 +129,8 @@ Stream_c::Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifie
   , t_streamType (rt_streamType)
  // ui8_pkgRemainingInBurst     // will be set in "expectBurst(wishingPkgs)", don't care here as t_awaitStep == awaitCtsSend!!
 {
-  if (rc_rsi.getDa() == 0xFF)
-  { // if it's a BAM, then directly expect data to be sent!
+  if ((rc_rsi.getDa() == 0xFF) || rb_skipCtsAwait)
+  { // if it's a BAM, then directly expect data to be sent! --- or if we directly wanna expect data (for fake streams..)
     expectBurst (255); // We're expecting one big burst directly now without CTS/DPO stuff!
   }
 };

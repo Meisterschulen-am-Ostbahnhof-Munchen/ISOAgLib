@@ -101,8 +101,9 @@ namespace __IsoAgLib {
 //! init pc_iterWriteChunk, pc_iterParsedChunk, ui32_writeCnt, ui32_parsedCnt
 StreamChunk_c::StreamChunk_c (StreamType_t rt_streamType,
                               const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi,
-                              uint32_t rui32_msgSize)
-    : Stream_c (rt_streamType, rc_rsi, rui32_msgSize)
+                              uint32_t rui32_msgSize,
+                              bool rb_skipCtsAwait)
+    : Stream_c (rt_streamType, rc_rsi, rui32_msgSize, rb_skipCtsAwait)
 {
   /// Do NOTHING more here
   /// User HAS TO call "immediateInitAfterConstruction" **immediately** AFTER Construction!

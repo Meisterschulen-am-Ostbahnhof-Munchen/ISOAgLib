@@ -146,7 +146,7 @@ class Stream_c : public IsoAgLib::iStream_c
 
 public:
 
-  Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi, uint32_t rui32_msgSize);
+  Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait=false);
 
 
   bool timedOut();
