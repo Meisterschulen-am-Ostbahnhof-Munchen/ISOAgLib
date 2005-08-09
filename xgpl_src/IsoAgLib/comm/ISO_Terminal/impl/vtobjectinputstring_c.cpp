@@ -145,7 +145,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
         destMemory [14] = 0xFF;
       }
       destMemory [15] = vtObjectInputString_a->horizontalJustification;
-      destMemory [16] = vtObjectInputString_a->length;	// Length not greater than 255!
+      destMemory [16] = vtObjectInputString_a->length;  // Length not greater than 255!
       sourceOffset += 17;
       curBytes += 17;
     }
@@ -242,8 +242,9 @@ vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject, bo
   }
 
   setStringToStream( newValue );  // use MultiSendStreamer with pc_stringToStream set!
-  const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length;
-	setStrLenToSend( ui16_tempLen );
+  uint16_t ui16_tempLen = 0;
+  if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length;
+  setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 

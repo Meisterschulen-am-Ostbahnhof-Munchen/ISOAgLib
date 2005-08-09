@@ -239,7 +239,8 @@ vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject, b
   }
 
   setStringToStream( newValue ); // use MultiSendStreamer with pc_stringToStream set!
-  const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length;
+  uint16_t ui16_tempLen = 0;
+  if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length;
   setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
