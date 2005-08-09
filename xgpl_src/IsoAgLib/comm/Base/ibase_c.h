@@ -399,7 +399,7 @@ public:
     @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
     @return GETY_POS code of member who is sending the intereested base msg type
   */
-  const iGetyPos_c& senderGtp(BaseDataGroup_t rt_typeGrp) { return Base_c::senderGtp( rt_typeGrp );};
+  const iGetyPos_c& senderGtp(BaseDataGroup_t rt_typeGrp) { return static_cast<const iGetyPos_c&>(Base_c::senderGtp( rt_typeGrp ));};
 
   #ifdef USE_DIN_9684
   /** deliver rear left draft */
