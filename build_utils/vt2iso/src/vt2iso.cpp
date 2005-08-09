@@ -2848,16 +2848,17 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       {
         if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
         {
-          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT IF NO VALUE IS GIVEN! STOPPING PARSER! bye.\n\n");
         }
         sprintf (attrString [attrValue], "NULL");
       }
       else
       {
+        //auto-calculate string length
         if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true; }
-        if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength] && attrIsGiven [attrEnabled]))
+        if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrEnabled]))
         {
-          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled = ATTRIBUTES FOR THE <inputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND enabled = ATTRIBUTES FOR THE <inputstring> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
   //      sprintf (tempString, "\"%s\"", attrString [attrValue]);
@@ -2901,7 +2902,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       if (!attrIsGiven [attrValue]) {
         // Variable Reference
         if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength])) {
-          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
+          clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT WHEN VALUE IS SET BY REFERENCE! STOPPING PARSER! bye.\n\n");
         }
         sprintf (attrString [attrValue], "NULL");
       } else {
@@ -3054,6 +3055,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <stringvariable> OBJECT! STOPPING PARSER! bye.\n\n");
         sprintf (attrString [attrValue], "NULL");
       } else {
+        //auto-calculate length
         if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true; }
         copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
     //     sprintf (tempString, "\"%s\"", attrString [attrValue]);
@@ -3102,10 +3104,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <inputattribute> OBJECT! STOPPING PARSER! bye.\n\n");
         sprintf (attrString [attrValidation_string], "NULL");
       } else {
-        if (!attrIsGiven [attrLength]) {
-          sprintf (attrString [attrLength], "%d", strlen (attrString [attrValidation_string]));
-          attrIsGiven [attrLength] = true;
-        }
+        // auto-calculate string-length
+        if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValidation_string])); attrIsGiven [attrLength] = true; }
         sprintf (tempString, "\"%s\"", attrString [attrValidation_string]);
         sprintf (attrString [attrValidation_string], "%s", tempString);
       }
@@ -3113,7 +3113,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       break;
 
     case otObjectpointer:
-      if ( (!attrIsGiven [attrValue]) ||(strcmp( attrString[attrValue], "65535")==0) )
+      if ( (!attrIsGiven [attrValue]) || (strcmp( attrString[attrValue], "65535")==0) )
       {
         sprintf (attrString [attrValue], "NULL");
         attrIsGiven [attrValue] = true;
