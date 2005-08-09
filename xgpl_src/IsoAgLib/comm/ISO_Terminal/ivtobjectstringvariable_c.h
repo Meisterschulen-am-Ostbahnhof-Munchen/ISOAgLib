@@ -89,7 +89,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueRef(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) { vtObjectStringVariable_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd); };
+  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) { vtObjectStringVariable_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: getString
   const char* getString() { return vtObjectStringVariable_c::getString(); };

@@ -133,7 +133,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueRef(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
   //  Operation: getString
   const char* getString();

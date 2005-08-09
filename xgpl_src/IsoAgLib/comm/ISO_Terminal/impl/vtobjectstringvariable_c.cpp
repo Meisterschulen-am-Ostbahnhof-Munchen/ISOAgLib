@@ -166,7 +166,7 @@ vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject, bool
 //! @param newValue:
 //! @param b_updateObject:
 void
-vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
