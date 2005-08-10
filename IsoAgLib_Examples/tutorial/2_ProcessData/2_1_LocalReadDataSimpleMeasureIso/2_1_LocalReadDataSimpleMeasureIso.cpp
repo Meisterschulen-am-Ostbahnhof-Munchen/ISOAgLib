@@ -61,28 +61,28 @@
  * <H1>What is demonstrated</H1>
  * <ol>
  * <li>Create some local process data which don't support measurement programs
- *		and update their data so that remote device can only perform one shot
- *		data requests ( start of a periodical send of data isn't supported -
- *		look at IsoAgLib::iProcDataLocal_c for this )
+ *    and update their data so that remote device can only perform one shot
+ *    data requests ( start of a periodical send of data isn't supported -
+ *    look at IsoAgLib::iProcDataLocal_c for this )
  * <ul>
- *	<li>Local process data class IsoAgLib::iProcDataLocalSimpleMeasure_c without measurement programs
- *	<li>Use constructor IsoAgLib::iProcDataLocalSimpleMeasure_c::iProcDataLocalSimpleMeasure_c
- *		to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataLocalSimpleMeasure_c::setMasterVal() to set current measurement data
+ *  <li>Local process data class IsoAgLib::iProcDataLocalSimpleMeasure_c without measurement programs
+ *  <li>Use constructor IsoAgLib::iProcDataLocalSimpleMeasure_c::iProcDataLocalSimpleMeasure_c
+ *    to create variable with defined property
+ *  <li>Use IsoAgLib::iProcDataLocalSimpleMeasure_c::setMasterVal() to set current measurement data
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
- * 	<ul>
- *	<li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
- *	<li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
- *		<li>Perform activities until defined rl_endTime is reached, which is important
- *			for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
- *		<li>Process all received CAN messages until all receive buffers are empty
- *			-> simple call, but can lead to deadlock on to high CAN load
- *		</ul>
- *	</ul>
+ *  <ul>
+ *  <li>Core class IsoAgLib::iScheduler_c for scheduling of all periodic activities
+ *  <li>Method IsoAgLib::iScheduler_c::timeEvent() which can<ul>
+ *    <li>Perform activities until defined rl_endTime is reached, which is important
+ *      for scheduling purposes of whole system - call by IsoAgLib::iScheduler_c::timeEvent( rl_endTime )
+ *    <li>Process all received CAN messages until all receive buffers are empty
+ *      -> simple call, but can lead to deadlock on to high CAN load
+ *    </ul>
+ *  </ul>
  * <li>Create local identity, for which the ISO<i><sub>AgLib</sub></i> performs an address claim,
- *		so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
- *		and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
+ *    so that the ECU can access the <b><i>ISO11783</i></b> BUS with IsoAgLib::iIdentItem_c
+ *    and its constructor IsoAgLib::iIdentItem_c::iIdentItem_c
  * </ol>
  * <H1>Where to look for further information</H1>
  * <ol>
@@ -119,28 +119,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__rte
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__simulating
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__sys
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__rte
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__simulating
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__rte
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__simulating
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__sys
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__rte
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_canlib__simulating
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_canlib__sys
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__simulating__simulating
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__esx__sys__sys
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__imi__sys__sys
- *		<li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__esx__sys__sys
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__imi__sys__sys
+ *    <li> \ref PrjSpec2_1_LocalReadDataSimpleMeasureIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
@@ -153,28 +153,28 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__rte
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__simulating
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__sys
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__rte
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__simulating
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__sys
- *	</ul>
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__rte
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__simulating
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__rte__sys
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__rte
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__simulating
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_linux__simulating__sys
+ *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_canlib__simulating
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_xl_drv_lib__simulating
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_canlib__sys
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_xl_drv_lib__sys
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__simulating__simulating
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__simulating__sys
- * 	</ul>
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_canlib__sys
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__simulating__simulating
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pc_win32__simulating__sys
+ *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__esx__sys__sys
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__imi__sys__sys
- *		<li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pm167__sys__sys
- *	</ul>
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__esx__sys__sys
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__imi__sys__sys
+ *    <li> \ref FileLists2_1_LocalReadDataSimpleMeasureIso__pm167__sys__sys
+ *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
@@ -186,11 +186,11 @@
 
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
     to include project specific configuration settings.
-		Set this define in the project file or Makefile of the whole
-		project, so that each source file is compiled with this setting
-	*/
+    Set this define in the project file or Makefile of the whole
+    project, so that each source file is compiled with this setting
+  */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-	#define PRJ_USE_AUTOGEN_CONFIG config_2_1_LocalReadDataSimpleMeasureIso.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_2_1_LocalReadDataSimpleMeasureIso.h
 #endif
 
 // include the central interface header for the hardware adaption layer part
@@ -243,11 +243,11 @@ int main()
   uint16_t ui16_manufCode = 0x7FF;
   uint32_t ui32_serNo = 27;
 
-	// start address claim of the local member "IMI"
+  // start address claim of the local member "IMI"
   // if GETY_POS conflicts forces change of POS, the
   // IsoAgLib can change the myGtp val through the pointer to myGtp
   //  ISO:
-#ifdef USE_ISO_11783 
+#ifdef USE_ISO_11783
   IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
@@ -259,112 +259,75 @@ int main()
   IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
 #endif
 
-#if defined(USE_ISO_11783)
-  const ElementDDI_s s_onOff[2] = 
-  { 
-    // DDI 141, element 0
-    {141, 0, true, GeneralCommand_c::exactValue},
-    // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  };
-  const ElementDDI_s s_workWidth[2] = 
-  { 
-    // DDI 67, element 0
-    {67, 0 false, GeneralCommand_c::exactValue},
-    // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  }; 
-  const ElementDDI_s s_applicationRate[2] = 
-  { 
-    // DDI 2, element 0
-    {2, 0, false, GeneralCommand_c::exactValue},
-    // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  }; 
-#endif
-
-
   // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=1, INST=0)
   // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
   // the pointer to myGtp helps automatic update of GETY_POS, mark this value as NOT cumulated (default)
   IsoAgLib::iProcDataLocalSimpleMeasure_c c_myOnoff(
-  #if defined(USE_ISO_11783)
-                                         s_onOff,
-  #endif
-  #if defined(USE_DIN_9684)
-                                         0, 0x1, 0x0, 0xFF,
-  #endif
-                                         c_myGtp, 2, c_myGtp, &c_myGtp, false
-  #ifdef USE_EEPROM_IO 
-                                         ,0xFFFF
-  #endif
-                                         );
+    #ifdef USE_ISO_11783
+    141 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x1, 0x0, 0xFF,
+    #endif
+    c_myGtp, 2, c_myGtp, &c_myGtp, false);
 
   // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=3, INST=1)
   IsoAgLib::iProcDataLocalSimpleMeasure_c c_myWorkWidth(
-  #if defined(USE_ISO_11783)
-                                         s_workWidth,
-  #endif
-  #if defined(USE_DIN_9684)
-                                         0, 0x3, 0x1, 0xFF,
-  #endif
-                                         c_myGtp, 2, c_myGtp, &c_myGtp, false
-  #ifdef USE_EEPROM_IO 
-                                         ,0xFFFF
-  #endif
-                                         );
-  
+    #ifdef USE_ISO_11783
+    67 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x3, 0x1, 0xFF,
+    #endif
+    c_myGtp, 2, c_myGtp, &c_myGtp, false);
+
   // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=5, INST=0)
   IsoAgLib::iProcDataLocalSimpleMeasure_c c_myApplicationRate(
-  #if defined(USE_ISO_11783)
-                                         s_applicationRate,
-  #endif
-  #if defined(USE_DIN_9684)
-                                         0, 0x5, 0x0, 0xFF,
-  #endif
-                                         c_myGtp, 2, c_myGtp, &c_myGtp, false
-  #ifdef USE_EEPROM_IO 
-                                         ,0xFFFF
-  #endif
-                                         );
+    #ifdef USE_ISO_11783
+    0x0007 /*DDI*/, 0 /*element*/,
+    #endif
+    #ifdef USE_DIN_9687
+    0, 0x5, 0x0, 0xFF,
+    #endif
+    c_myGtp, 2, c_myGtp, &c_myGtp, false);
 
   /** IMPORTANT:
-	  - The following loop could be replaced of any repeating call of
-			IsoAgLib::getISchedulerInstance().timeEvent();
-			which is needed to perform all internal activities of the IsoAgLib.
-		- Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
-			in a way, that allows IsoAgLib to trigger all reactions on BUS
-			in the ISO 11783 defined time resolution - especially the address
-			claim process has some tight time restrictions, that suggest
-			a trigger rate of at least 100msec ( you could call the function
-			only during address claim, mask updload and other special
-			circumstances in a high repetition rate )
-		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-			in isoaglib_config.h to ignore short CAN_EN loss.
-		- This explicit control of power state without automatic powerdown on CanEn loss
-			can be controled with the central config define
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-			or
-			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
-		- This can be also controlled during runtime with the function call:
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
-			or
-			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
-	*/
-	while ( iSystem_c::canEn() )
-	{ // run main loop
-		// IMPORTANT: call main timeEvent function for
-		// all time controlled actions of IsoAgLib
-		IsoAgLib::getISchedulerInstance().timeEvent();
+    - The following loop could be replaced of any repeating call of
+      IsoAgLib::getISchedulerInstance().timeEvent();
+      which is needed to perform all internal activities of the IsoAgLib.
+    - Define the time intervall for IsoAgLib::getISchedulerInstance().timeEvent()
+      in a way, that allows IsoAgLib to trigger all reactions on BUS
+      in the ISO 11783 defined time resolution - especially the address
+      claim process has some tight time restrictions, that suggest
+      a trigger rate of at least 100msec ( you could call the function
+      only during address claim, mask updload and other special
+      circumstances in a high repetition rate )
+    - The main loop is running until iSystem_c::canEn() is returning false.
+      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      in isoaglib_config.h to ignore short CAN_EN loss.
+    - This explicit control of power state without automatic powerdown on CanEn loss
+      can be controled with the central config define
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      or
+      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      in the header xgpl_src/Application_Config/isoaglib_config.h
+    - This can be also controlled during runtime with the function call:
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
+      or
+      getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
+  */
+  while ( iSystem_c::canEn() )
+  { // run main loop
+    // IMPORTANT: call main timeEvent function for
+    // all time controlled actions of IsoAgLib
+    IsoAgLib::getISchedulerInstance().timeEvent();
 
-		// update local value for local process data so that remote ECUs can get the current
-		// value from IsoAgLib
-		c_myOnoff.setMasterVal( localIsWorking() );
-		c_myWorkWidth.setMasterVal( localGetWorkingWidth() );
-		c_myApplicationRate.setMasterVal( localGetApplicationRate() );
-	}
+    // update local value for local process data so that remote ECUs can get the current
+    // value from IsoAgLib
+    c_myOnoff.setMasterVal( localIsWorking() );
+    c_myWorkWidth.setMasterVal( localGetWorkingWidth() );
+    c_myApplicationRate.setMasterVal( localGetApplicationRate() );
+  }
   return 1;
 }
 
