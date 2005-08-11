@@ -259,7 +259,6 @@ int main()
   IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
 #endif
 
-
 #if defined(USE_ISO_11783)
   const ElementDDI_s s_onOff[2] =
   {
@@ -268,26 +267,21 @@ int main()
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   };
-  const ElementDDI_s s_workWidth[3] =
+  const ElementDDI_s s_workWidth[2] =
   {
-    // DDI 66, element 0
-    {66, 0, true, GeneralCommand_c::exactValue},
     // DDI 67, element 0
     {67, 0, false, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   };
-  const ElementDDI_s s_applicationRate[3] =
+  const ElementDDI_s s_applicationRate[2] =
   {
-    // DDI 1, element 0
-    {1, 0, true, GeneralCommand_c::exactValue},
     // DDI 2, element 0
     {2, 0, false, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   };
 #endif
-
 
 
   // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=1, INST=0)
