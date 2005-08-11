@@ -259,12 +259,43 @@ int main()
   IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
 #endif
 
+
+#if defined(USE_ISO_11783)
+  const ElementDDI_s s_onOff[2] =
+  {
+    // DDI 141, element 0
+    {141, 0, true, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
+  const ElementDDI_s s_workWidth[3] =
+  {
+    // DDI 66, element 0
+    {66, 0, true, GeneralCommand_c::exactValue},
+    // DDI 67, element 0
+    {67, 0, false, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
+  const ElementDDI_s s_applicationRate[3] =
+  {
+    // DDI 1, element 0
+    {1, 0, true, GeneralCommand_c::exactValue},
+    // DDI 2, element 0
+    {2, 0, false, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
+#endif
+
+
+
   // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=1, INST=0)
   // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
   // the pointer to myGtp helps automatic update of GETY_POS, mark this value as NOT cumulated (default)
   IsoAgLib::iProcDataLocalSimpleMeasure_c c_myOnoff(
     #ifdef USE_ISO_11783
-    141 /*DDI*/, 0 /*element*/,
+    s_onOff /*DDI*/,
     #endif
     #ifdef USE_DIN_9687
     0, 0x1, 0x0, 0xFF,
@@ -274,7 +305,7 @@ int main()
   // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=3, INST=1)
   IsoAgLib::iProcDataLocalSimpleMeasure_c c_myWorkWidth(
     #ifdef USE_ISO_11783
-    67 /*DDI*/, 0 /*element*/,
+    s_workWidth /*DDI*/,
     #endif
     #ifdef USE_DIN_9687
     0, 0x3, 0x1, 0xFF,
@@ -284,7 +315,7 @@ int main()
   // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=5, INST=0)
   IsoAgLib::iProcDataLocalSimpleMeasure_c c_myApplicationRate(
     #ifdef USE_ISO_11783
-    0x0007 /*DDI*/, 0 /*element*/,
+    s_applicationRate /*DDI*/,
     #endif
     #ifdef USE_DIN_9687
     0, 0x5, 0x0, 0xFF,
