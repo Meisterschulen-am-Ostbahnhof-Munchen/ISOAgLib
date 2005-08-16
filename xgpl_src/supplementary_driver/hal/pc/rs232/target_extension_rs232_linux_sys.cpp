@@ -1,4 +1,8 @@
 #include "target_extension_rs232_linux_sys.h"
+
+#include <IsoAgLib/hal/pc/errcodes.h>
+
+
 #include <cstdio>
 #include <cstdlib>
 #include <cctype>
@@ -24,24 +28,36 @@ std::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
 
 int8_t c_read;
 boolean b_getRead;
-
+static uint32_t configuredComport = 0xFFFF;
 
 void SioExit(uint32_t comport)
 {
+  if ( comport >= RS232_INSTANCE_CNT ) return;
   tcsetattr(0, TCSANOW, &t_0);
   tcsetattr(0, TCSANOW, &t_com);
   close(f_com[comport]);
 }
 
+void SioExit()
+{
+  if ( configuredComport >= RS232_INSTANCE_CNT ) return;
+  tcsetattr(0, TCSANOW, &t_0);
+  tcsetattr(0, TCSANOW, &t_com);
+  close(f_com[configuredComport]);
+}
+
 int16_t SioInit(uint32_t comport, uint32_t baudrate)
 {
   if ( comport >= RS232_INSTANCE_CNT ) return 0;
-	int32_t i32_time = 0,
+  int32_t i32_time = 0,
       i32_time_2 = 0;
   static char com[] = "/dev/ttySx";
   struct termios t;
   struct T_BAUD *b;
   uint32_t  baudflag;
+
+  // first close if already configured
+  if ( configuredComport != 0xFFFF ) SioExit(configuredComport);
 
   b_getRead = false;
   b = t_baud;
@@ -79,13 +95,13 @@ int16_t SioInit(uint32_t comport, uint32_t baudrate)
   while ((i32_time + 500) > i32_time_2)
     i32_time_2 = (clock()/(CLOCKS_PER_SEC/1000));
 
-	// reset read puffer
-	deq_readPuff[comport].clear();
+  // reset read puffer
+  deq_readPuff[comport].clear();
 
   return 1;
 }
 
-int16_t SioPutBuffer(uint32_t comport, uint8_t *p, int16_t n)
+int16_t SioPutBuffer(uint32_t comport, const uint8_t *p, int16_t n)
 {
   if ( comport >= RS232_INSTANCE_CNT ) return 0;
   n = write(f_com[comport], p, n) == n;
@@ -99,7 +115,7 @@ int16_t SioRecPuffCnt(uint32_t comport)
   int8_t c_temp[300];
   int16_t tempLen = read(f_com[comport], c_temp, (299));
 
-	for ( uint16_t ind = 0; ind < tempLen; ind++ ) deq_readPuff[comport].push_back( c_temp[ind] );
+  for ( uint16_t ind = 0; ind < tempLen; ind++ ) deq_readPuff[comport].push_back( c_temp[ind] );
 
   return deq_readPuff[comport].size();
 }
@@ -110,14 +126,14 @@ int16_t SioGetString(uint32_t comport, uint8_t *p, uint8_t len)
   SioRecPuffCnt(comport);
   if (deq_readPuff[comport].size() > 0)
   {
-		uint16_t ind = 0;
-		for ( ; ind < len; ind++ )
-		{
-			p[ind] = deq_readPuff[comport].front();
-			deq_readPuff[comport].pop_front();
-		}
-		// terminate
-		p[ind] = '\0';
+    uint16_t ind = 0;
+    for ( ; ind < len; ind++ )
+    {
+      p[ind] = deq_readPuff[comport].front();
+      deq_readPuff[comport].pop_front();
+    }
+    // terminate
+    p[ind] = '\0';
     return 1;
   }
   else
@@ -132,22 +148,22 @@ int16_t SioGetTerminatedString(uint32_t comport, uint8_t *p, uint8_t ui8_termina
   SioRecPuffCnt(comport);
   if (deq_readPuff[comport].size() > 0)
   {
-		for ( std::deque<int8_t>::iterator iter = deq_readPuff[comport].begin(); iter != deq_readPuff[comport].end(); iter++ )
-		{ // check if terminating char is found
-			if ( *iter == ui8_terminateChar )
-			{ // found -> copy area from begin to iterator
-				uint16_t ind = 0;
-				for ( ; ( ( deq_readPuff[comport].front() != ui8_terminateChar) && ( ind < len ) ); ind++ )
-				{
-					p[ind] = deq_readPuff[comport].front();
-					deq_readPuff[comport].pop_front();
-				}
-				// lastly pop the termination char and terminate the result string
-				deq_readPuff[comport].pop_front();
-				p[ind] = '\0';
-				return HAL_NO_ERR;
-			}
-		}
+    for ( std::deque<int8_t>::iterator iter = deq_readPuff[comport].begin(); iter != deq_readPuff[comport].end(); iter++ )
+    { // check if terminating char is found
+      if ( *iter == ui8_terminateChar )
+      { // found -> copy area from begin to iterator
+        uint16_t ind = 0;
+        for ( ; ( ( deq_readPuff[comport].front() != ui8_terminateChar) && ( ind < len ) ); ind++ )
+        {
+          p[ind] = deq_readPuff[comport].front();
+          deq_readPuff[comport].pop_front();
+        }
+        // lastly pop the termination char and terminate the result string
+        deq_readPuff[comport].pop_front();
+        p[ind] = '\0';
+        return HAL_NO_ERR;
+      }
+    }
   }
   return HAL_NOACT_ERR;
 }
