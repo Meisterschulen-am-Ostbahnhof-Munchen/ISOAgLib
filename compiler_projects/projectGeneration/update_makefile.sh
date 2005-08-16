@@ -530,6 +530,8 @@ function create_filelist( )
 			else
 				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
 			fi
+			PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
+			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
 		else
 			echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
 			echo 'Current Setting is $USE_RS232_DRIVER'
