@@ -225,7 +225,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
       * Err_c::badAlloc not enough memory to add new subprog
   @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
   @param ri32_increment increment value
-  @return always true; only relevant for overoaded methods in derived classes
+  @return true -> subprog was created successfully; fals -> out-of-memory error
 */
  bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment){
   if (ren_type == Proc_c::TimeProp) en_accumProp = Proc_c::AccumTime;
@@ -250,6 +250,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     if (b_oldSize >= vec_measureSubprog.size())
     { // array didn't grow
       getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
+      return false;
     }
     #ifdef DEBUG_HEAP_USEAGE
     else
@@ -825,7 +826,7 @@ void MeasureProgBase_c::reset(uint8_t rb_comm){
           switch (b_mask)
           {
             case 1: // value reset
-              resetVal(); 
+              resetVal();
               break;
             case 2: // medium reset
               resetMed();

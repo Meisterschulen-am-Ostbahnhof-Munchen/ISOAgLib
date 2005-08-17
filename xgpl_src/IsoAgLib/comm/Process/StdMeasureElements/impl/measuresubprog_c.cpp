@@ -167,7 +167,11 @@ void MeasureSubprog_c::start(int32_t ri32_lastVal, int32_t ri32_increment){
    @return true -> this subprog triggers (e.g. send actual value)
  */
 bool MeasureSubprog_c::updateTrigger(int32_t ri32_val){
-  if (CNAMESPACE::labs(ri32_val - i32_lastVal) >= i32_increment)
+  if ( ( type() == Proc_c::OnChange ) && ( i32_increment == 0 ) )
+  { // special case: OnChange with value 0 means: SEND NO value; 1 meanse: send any change; ...
+    return false;
+  }
+  else if (CNAMESPACE::labs(ri32_val - i32_lastVal) >= i32_increment)
   {
     i32_lastVal = ri32_val;
     return true;
