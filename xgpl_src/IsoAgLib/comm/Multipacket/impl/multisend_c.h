@@ -205,6 +205,7 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
       @return true -> time delay is over
     */
     bool isDelayEnd(int32_t ri32_time)const{return ((ri32_time - i32_timestamp)>= pc_multiSend->getMaxDelay())?true:false;};
+
     /**
       check if the forced time delay since last timestamp is over
       @param ri32_time actual time
@@ -212,41 +213,49 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
       @return true -> time delay is over
     */
     bool isDelayEnd(int32_t ri32_time, uint16_t rui16_dynamicDelay)const{return ((ri32_time - i32_timestamp)>= rui16_dynamicDelay)?true:false;};
+
     /**
       check if actual message is complete
     */
     bool isCompleteMsg() const;
+
     /**
       check if send of all data is complete
       @return true -> i32_DC tell that i32_dataSize ist reached
     */
     bool isCompleteData() const;
+
     /**
       deliver the amount of messages for IsoAgLib+ data stream
       (no problem if called for ISO)
       @return amount of messages for stored complete data size for TP.FileStart
     */
     uint16_t getMsgCnt()const;
+
     /**
       deliver the message size in byte
       @return message size in uint8_t for CM_RTS
     */
     uint16_t getMsgSize()const{return ui16_msgSize;};
+
     /**
       deliver the data size in byte
       @return data size in uint32_t for CM_RTS
     */
     uint32_t getDataSize()const{return i32_dataSize;};
+
     /**
       deliver the amunt of CAN pkg per message
       @return CAN pkg amount per message for CM_RTS
     */
     uint16_t getPkgPerMsg()const;
+
     /**
       deliver the message number in LBS+ data stream
       @return message number to insert in CM_RTS
     */
     uint16_t getMsgNr()const;
+
     /**
       read the the commanded mesage size from CTS CAN pkg
       (for IsoAgLib+ a change of ui16_msgSize is only accepted, if
@@ -255,16 +264,21 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
       @return commanded message size
     */
     uint16_t readMsgSize()const;
+
+    bool isFinished() const { return (*pen_sendSuccessNotify == SendAborted) || (*pen_sendSuccessNotify == SendSuccess); };
+
     /**
       read the next to be sent data position from CM_CTS
       @return new i32_DC value
     */
     int32_t read_DC();
+
     /**
       read the acknowledged data amount from EndOfMsgAck
       @return amount of correct received data byte
     */
     int32_t readAck_DC();
+
     /**
       calculate the actual sequence number and
       calculate the amount of data bytes which must be placed in new CAN pkg
@@ -478,9 +492,9 @@ private: // Private methods
     */
   MultiSend_c() { init(); };
 
-  SendStream_c* getSendStream(uint8_t ui8_sa, uint8_t ui8_da);
+  SendStream_c* getSendStream(uint8_t rui8_sa, uint8_t rui8_da);
 
-  SendStream_c& addSendStream();
+  SendStream_c* addSendStream(uint8_t rui8_sa, uint8_t rui8_da);
 
   /**
     internal function to send a ISO target multipacket message

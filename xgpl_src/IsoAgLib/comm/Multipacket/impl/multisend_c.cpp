@@ -431,15 +431,31 @@ MultiSend_c::getSendStream(uint8_t rui8_sa, uint8_t rui8_da)
   IMPORTANT: Assure that the added SendStream is initialized right after this call!!
   @return reference to added SendStream ==> HAS TO BE INITIALIZED, because it may be a copy of the first (to avoid stack creation of new object)
 */
-MultiSend_c::SendStream_c&
-MultiSend_c::addSendStream()
+MultiSend_c::SendStream_c*
+MultiSend_c::addSendStream(uint8_t rb_send, uint8_t rb_empf)
 {
+  SendStream_c* const pc_foundStream = getSendStream(rb_send, rb_empf);
+  if (pc_foundStream)
+  {
+    if (!pc_foundStream->isFinished())
+    {
+      return NULL; // can't start a sendStream, one already active for this one..
+    }
+    else // use this finished one because it would be deleted anyway...
+    {
+      #ifdef DEBUG
+      std::cout << "Using Stream from list which is already finished but not yet kicked from MultiSend_c::timeEvent()."<<std::endl;
+      #endif
+      return pc_foundStream;
+    }
+  }
+
   if (list_sendStream.empty()) {
     list_sendStream.push_back (SendStream_c(*this));
   } else {
     list_sendStream.insert (list_sendStream.end(), list_sendStream.back()); // insert a copy of the first element (for performance reasons)
   }
-  return list_sendStream.back();
+  return &list_sendStream.back();
 }
 
 
@@ -459,19 +475,24 @@ MultiSend_c::addSendStream()
 */
 bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout)
 {
-  /// first check if new transfer can be started - check if there's already a SA/DA pair active
-  if (getSendStream(rb_send, rb_empf)) return false; // yes, already a multisend running for this sa/da-pair!
-
   #if defined( DEBUG )
   INTERNAL_DEBUG_DEVICE << "MultiSend_c::sendDin with Len " << ri32_dataSize << "\n";
   #endif
 
-  // No stream running yet, so create a SendStream in the list!
-  SendStream_c& refc_newSendStream = addSendStream();
+  /// first check if new transfer can be started
+  /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
+  /// - if not NULL is returned, it points to the newly generated stream.
+  SendStream_c* pc_newSendStream = addSendStream();
 
-  refc_newSendStream.initDin (rb_send, rb_empf, rhpb_data, ri32_dataSize, rui16_msgSize, rrefen_sendSuccessNotify, rb_fileCmd, rb_abortOnTimeout);
-
-  return true;
+  if (pc_newSendStream)
+  {
+    pc_newSendStream->initDin (rb_send, rb_empf, rhpb_data, ri32_dataSize, rui16_msgSize, rrefen_sendSuccessNotify, rb_fileCmd, rb_abortOnTimeout);
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 #endif
 
@@ -535,7 +556,7 @@ MultiSend_c::sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM u
 
 #if defined(NMEA_2000_FAST_PACKET)
 bool MultiSend_c::sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify, MultiSendStreamer_c* rpc_mss)
-{
+{ /** todo check MSS! */
   return sendIsoIntern(rb_send, rb_empf, rhpb_data, ri32_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL, IsoTarget);
 }
 #endif
@@ -565,19 +586,24 @@ MultiSend_c::sendIsoIntern (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uin
   #endif
 )
 {
-  /// first check if new transfer can be started - check if there's already a SA/DA pair active
-  if (getSendStream(rb_send, rb_empf)) return false; // yes, already a multisend running for this sa/da-pair!
+  /// first check if new transfer can be started
+  /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
+  /// - if not NULL is returned, it points to the newly generated stream.
+  SendStream_c* pc_newSendStream = addSendStream(rb_send, rb_empf);
 
-  // No stream running yet, so create a SendStream in the list!
-  SendStream_c& refc_newSendStream = addSendStream();
-
-  refc_newSendStream.initIso (rb_send, rb_empf, rhpb_data, ri32_dataSize, rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, ren_msgType
-  #if defined(NMEA_2000_FAST_PACKET)
-  , rb_useFastPacket
-  #endif
-  );
-
-  return true;
+  if (pc_newSendStream)
+  {
+    pc_newSendStream->initIso (rb_send, rb_empf, rhpb_data, ri32_dataSize, rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, ren_msgType
+    #if defined(NMEA_2000_FAST_PACKET)
+    , rb_useFastPacket
+    #endif
+    );
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 #endif
 
@@ -604,12 +630,12 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
   uint8_t ui8_nettoDataCnt;
   uint8_t ui8_pkgInd;
 
-  MultiSendPkg_c& refc_multiSendPkg = pc_multiSend->data();
-
-  if ((*pen_sendSuccessNotify == SendAborted) || (*pen_sendSuccessNotify == SendSuccess))
+  if (isFinished ())
   { // SendStream finished in processMsg(), so return true for deletion of SendStream.
     return true;
   }
+
+  MultiSendPkg_c& refc_multiSendPkg = pc_multiSend->data();
 
   switch (en_sendState)
   {
@@ -934,6 +960,9 @@ MultiSend_c::timeEvent( void )
     if (pc_iter->timeEvent (cui8_pkgCntForEach, i32_time))
     { // SendStream finished
       pc_iter = list_sendStream.erase (pc_iter);
+      #ifdef DEBUG
+      std::cout << "Kicked SendStream because it finished!\n";
+      #endif
       b_listShrunk = true;
     }
     else
