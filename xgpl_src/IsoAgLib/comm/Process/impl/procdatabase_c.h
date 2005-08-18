@@ -308,6 +308,8 @@ public:
   */
   virtual bool timeEvent( void );
 
+  virtual const GetyPos_c& commanderGtp()const{return GetyPos_c::GetyPosUnspecified;};
+
 #ifdef USE_ISO_11783
   /**
     delivers state (DIN/ISO) for given gtp

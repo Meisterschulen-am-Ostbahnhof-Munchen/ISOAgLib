@@ -267,6 +267,10 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     }
     #endif
   }
+
+  if (pprocessDataConst()->commanderGtp() != GetyPos_c::GetyPosUnspecified)
+    setGtp(pprocessDataConst()->commanderGtp());
+    
   return true;
 }
 

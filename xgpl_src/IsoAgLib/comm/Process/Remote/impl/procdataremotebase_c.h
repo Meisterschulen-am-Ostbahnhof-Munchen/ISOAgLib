@@ -199,7 +199,7 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
     deliver the commanderGtp (GETY_POS of local member)
     @return GETY_POS used for sending commands to remote owner member
   */
-  const GetyPos_c& commanderGtp()const{return (pc_gtp != NULL)?*pc_gtp:GetyPos_c::GetyPosUnspecified;};
+  virtual const GetyPos_c& commanderGtp()const{return (pc_gtp != NULL)?*pc_gtp:GetyPos_c::GetyPosUnspecified;};
   /**
     set the pointer to the commander ident gtp
     @param rpbgtp pointer to GETY_POS var of local member used for
