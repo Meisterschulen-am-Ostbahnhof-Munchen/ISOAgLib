@@ -268,6 +268,10 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     #endif
   }
 
+  // setting of gtp in MeasureProg is normally done via ProcDataRemote_c::timeEvent( void )
+  // if start follows immedeately addSubprog timeEvent is not called yet => do it here
+  // remote: virtual ProcDataRemote::commanderGtp() can give a value different to GetyPos_c::GetyPosUnspecified
+  // local: virtual ProcDataLocal::commanderGtp() gives GetyPos_c::GetyPosUnspecified
   if (pprocessDataConst()->commanderGtp() != GetyPos_c::GetyPosUnspecified)
     setGtp(pprocessDataConst()->commanderGtp());
     
