@@ -170,4 +170,17 @@ vtObjectLine_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObje
   __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
+void
+vtObjectLine_c::setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject, bool b_enableReplaceOfCmd)
+{
+  if (b_updateObject) {
+    saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), width), sizeof(iVtObjectLine_s), newWidth);
+    saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), newHeight);
+    saveValue8  (MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s), newLineDirection);
+  }
+
+  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeEndPoint (this, newWidth, newHeight, newLineDirection, b_enableReplaceOfCmd);
+}
+
+
 } // end of namespace __IsoAgLib

@@ -112,6 +112,14 @@ public:
     vtObjectLine_c::setLineDirection(newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
+  //  Operation: setLineDirection
+  //! Parameter:
+  //! @param newValue:
+  //! @param b_updateObject:
+  void setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+    vtObjectLine_c::setEndPoint(newWidth, newHeight, newLineDirection, b_updateObject, b_enableReplaceOfCmd);
+  };
+
   //  Operation: setSize
   //! Parameter:
   //! @param newWidth:

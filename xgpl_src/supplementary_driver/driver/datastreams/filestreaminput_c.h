@@ -117,14 +117,15 @@ public:
     return b_result;
   };
   //! close an input stream
-  void close(bool b_deleteFile=false) { 
+  bool close(bool b_deleteFile=false) {
     c_targetHandle.close();
     if (b_deleteFile) {
       #ifdef DEBUG
       std::cout << "Removing file " << str_openedFile.c_str() << ".\n";
       #endif
-      remove (str_openedFile.c_str());
+      return (remove (str_openedFile.c_str()) == 0);
     }
+    return true; // success
   };
 
   //  Operation: operator>>
