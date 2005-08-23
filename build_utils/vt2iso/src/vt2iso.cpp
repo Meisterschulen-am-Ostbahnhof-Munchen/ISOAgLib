@@ -2883,7 +2883,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       }
       if (!attrIsGiven [attrValue])
         sprintf (attrString [attrValue], "0");
-      fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d", attrString [attrWidth], attrString [attrHeight],
+      fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %s, %s, %sUL, %s, %s, %s, %d, %d, %d", attrString [attrWidth], attrString [attrHeight],
         colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
         attrString [attrValue], attrString [attrMin_value], attrString [attrMax_value], attrString [attrOffset], attrString [attrScale],
         attrString [attrNumber_of_decimals], formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]),
@@ -3339,6 +3339,7 @@ int main(int argC, char* argV[])
     std::basic_string<char> c_unwantedType = ".inc";
     std::basic_string<char> c_unwantedType2 = ".h";
     std::basic_string<char> c_unwantedType3 = ".inc-template";
+    std::basic_string<char> c_unwantedType4 = ".iop";
     std::basic_string<char> c_directoryCompareItem;
     std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
     strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
@@ -3384,6 +3385,7 @@ int main(int argC, char* argV[])
           if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
           if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
           if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
+          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) continue;
 
           if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
             c_directoryCompareItem.insert(0, "\\" );
@@ -3417,6 +3419,7 @@ int main(int argC, char* argV[])
         if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
         if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
         if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
+        if ( (c_directoryCompareItem.length() > 4 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) ) continue;
 
         if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
           c_directoryCompareItem.insert(0, "/" );
