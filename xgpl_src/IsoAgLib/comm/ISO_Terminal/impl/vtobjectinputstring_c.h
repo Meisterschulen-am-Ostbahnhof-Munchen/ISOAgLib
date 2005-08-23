@@ -214,6 +214,13 @@ public:
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification) : 0, sizeof(iVtObjectInputString_s), 8 /* "Horizontal justification" */, newHorizontalJustification, newHorizontalJustification, b_enableReplaceOfCmd);
   }
 
+private:
+
+  //  Operation: updateEnable
+  //! Parameter:
+  //! @param b_enableOrDisable:
+  void updateEnable(bool b_enableOrDisable);
+
 }; // ~X2C
 
 } // end namespace __IsoAgLib

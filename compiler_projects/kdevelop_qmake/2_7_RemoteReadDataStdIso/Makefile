@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = 2_7_RemoteReadDataStdIso
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso 
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso
 BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
 BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
@@ -26,6 +26,9 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
@@ -36,7 +39,13 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp  \
+<<<<<<< .mine
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
+=======
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp  \
+>>>>>>> .r1159
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp  \
@@ -55,7 +64,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso/2_7_RemoteReadDataStdIso.cpp  
+		../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso/2_7_RemoteReadDataStdIso.cpp
 
 
 #Special Sources for CAN Server

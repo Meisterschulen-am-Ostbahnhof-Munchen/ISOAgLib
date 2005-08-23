@@ -112,6 +112,9 @@ public:
   //  Operation: fitTerminal
   virtual uint32_t fitTerminal() = 0;
 
+  //  Operation: select
+  bool select();
+
 protected:
 
   /** @todo check for double initialization via flags & STRUCT_IN_RAM etc. */
@@ -140,8 +143,18 @@ protected:
   bool genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen,bool b_enableReplaceOfCmd=true);
   bool genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd=true);
 
+  //  Operation: able
+  //! Parameter:
+  //! @param b_updateObject:
+  bool able (uint8_t enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+
 private:
   bool genericChangeChildLocationPosition (bool rb_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen);
+
+    //  Operation: updateEnable
+  //! Parameter:
+  //! @param b_enableOrDisable:
+  virtual void updateEnable(bool /*b_enableOrDisable*/) {};
 
 }; // ~X2C
 

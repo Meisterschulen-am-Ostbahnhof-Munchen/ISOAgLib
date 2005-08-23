@@ -186,6 +186,16 @@ vtObjectInputString_c::fitTerminal()
   return 19+vtObjectInputString_a->length+vtObjectInputString_a->numberOfMacrosToFollow*2;
 } // -X2C
 
+// //////////////////////////////// +X2C Operation 220 : updateEnable
+//! Parameter:
+//! @param b_enableOrDisable:
+void
+vtObjectInputString_c::updateEnable(bool b_enableOrDisable)
+{ // ~X2C
+  MACRO_localVars;
+  vtObjectInputString_a->enabled=b_enableOrDisable;
+} // -X2C
+
 // //////////////////////////////// +X2C Operation 237 : setValueCopy
 //! Parameter:
 //! @param newValue:
