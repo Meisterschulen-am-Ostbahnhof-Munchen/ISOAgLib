@@ -796,6 +796,7 @@
 #define TP_DATA_TRANSFER_PGN   0x00EB00LU
 #define TP_CONN_MANAGE_PGN     0x00EC00LU
 #define ADRESS_CLAIM_PGN       0x00EE00LU
+#define PROPRIETARY_A_PGN      0x00EF00LU
 
 // <NO DESTINATION> PGNs
 
@@ -810,6 +811,8 @@
 #define WHEEL_BASED_SPEED_DIST_PGN  0x00FE48LU
 #define GROUND_BASED_SPEED_DIST_PGN 0x00FE49LU
 #define TIME_DATE_PGN               0x00FEE6LU
+// PROPRIETARY_B_PGN ranges from 0x00FF00 to 0x00FFFF !
+#define PROPRIETARY_B_PGN           0x00FF00LU
 
 /** PGN for GPS state information - according to open accessible sources
   -> might be wrong
