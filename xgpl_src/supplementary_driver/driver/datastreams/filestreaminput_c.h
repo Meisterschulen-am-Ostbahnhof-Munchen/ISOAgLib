@@ -104,37 +104,25 @@ class FileStreamInput_c : public StreamInput_c
 
 public:
 
+  //  Operation: open
   //! open an input stream
-  bool open( std::string& filename, FileMode_t rt_mode ) {
-    bool b_result = c_targetHandle.open( filename, rt_mode );
-    if (b_result) str_openedFile = filename;
-    return b_result;
-  };
+  bool open (std::string& filename, FileMode_t rt_mode);
+
+  //  Operation: open
   //! open an input stream
-  bool open( const char* filename, FileMode_t rt_mode ) {
-    bool b_result = c_targetHandle.open( filename, rt_mode);
-    if (b_result) str_openedFile = filename;
-    return b_result;
-  };
+  bool open (const char* filename, FileMode_t rt_mode);
+
+  //  Operation: close
   //! close an input stream
-  bool close(bool b_deleteFile=false) {
-    c_targetHandle.close();
-    if (b_deleteFile) {
-      #ifdef DEBUG
-      std::cout << "Removing file " << str_openedFile.c_str() << ".\n";
-      #endif
-      return (remove (str_openedFile.c_str()) == 0);
-    }
-    return true; // success
-  };
+  bool close (bool b_deleteFile=false);
 
   //  Operation: operator>>
-  //! Parameter:
-  //! @param ui8_data:
+  //! read from input stream
   virtual StreamInput_c& operator>>(uint8_t& ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const { return c_targetHandle.eof();};
+  //! check for end of input stream
+  virtual bool eof() const { return c_targetHandle.eof(); };
 
 private:
   TargetFileStreamInput_c c_targetHandle;

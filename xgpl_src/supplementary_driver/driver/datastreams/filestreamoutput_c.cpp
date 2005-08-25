@@ -84,13 +84,52 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+
 #include "filestreamoutput_c.h"
 
-//  Operation: operator<<
-//! Parameter:
-//! @param ui8_data:
-StreamOutput_c& FileStreamOutput_c::operator<<(uint8_t ui8_data)
+
+
+//  Operation: open
+bool
+FileStreamOutput_c::open (std::string& filename, FileMode_t rt_mode)
 {
-	c_targetHandle.operator<<( ui8_data );
-	return *this;
+  bool b_result = c_targetHandle.open( filename, rt_mode );
+  if (b_result) str_openedFile = filename;
+  return b_result;
+};
+
+
+
+//  Operation: open
+bool
+FileStreamOutput_c::open (const char* filename, FileMode_t rt_mode)
+{
+  bool b_result = c_targetHandle.open( filename, rt_mode);
+  if (b_result) str_openedFile = filename;
+  return b_result;
+};
+
+
+
+//  Operation: close
+bool
+FileStreamOutput_c::close (bool b_deleteFile)
+{
+  c_targetHandle.close();
+  if (b_deleteFile) {
+    #ifdef DEBUG
+    std::cout << "Removing file " << str_openedFile.c_str() << ".\n";
+    #endif
+    return (remove (str_openedFile.c_str()) == 0);
+  }
+  return true; // success
+};
+
+
+//  Operation: operator<<
+StreamOutput_c&
+FileStreamOutput_c::operator<<(uint8_t ui8_data)
+{
+  c_targetHandle.operator<<( ui8_data );
+  return *this;
 }

@@ -102,30 +102,38 @@ class FileStreamOutput_c : public StreamOutput_c
 
 public:
 
-	//! open a output stream
-	bool open( std::string& filename, FileMode_t rt_mode ) { return c_targetHandle.open( filename, rt_mode );};
-	//! open a output stream
-	bool open( const char* filename, FileMode_t rt_mode ) { return c_targetHandle.open( filename, rt_mode); };
-	//! close a output stream
-	void close() { c_targetHandle.close();};
+  //  Operation: open
+  //! open an output stream
+  bool open (std::string& filename, FileMode_t rt_mode);
+
+  //  Operation: open
+  //! open an output stream
+  bool open (const char* filename, FileMode_t rt_mode);
+
+  //  Operation: close
+  //! close an output stream
+  bool close (bool b_deleteFile=false);
 
   //  Operation: operator<<
-  //! Parameter:
-  //! @param ui8_data:
+  //! write to output stream
   virtual StreamOutput_c& operator<<(uint8_t ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const { return c_targetHandle.eof();};
+  //! check for end of output stream
+  virtual bool eof() const { return c_targetHandle.eof(); };
 
-  // Operation: fail
-  virtual bool fail() const { return c_targetHandle.fail();};
+  //  Operation: fail
+  //! check for failure of output stream
+  virtual bool fail() const { return c_targetHandle.fail(); };
 
-  // Operation: good
-  virtual bool good() const { return c_targetHandle.good();};
+  //  Operation: good
+  //! check if output stream is good
+  virtual bool good() const { return c_targetHandle.good(); };
 
 private:
-	TargetFileStreamOutput_c c_targetHandle;
+  TargetFileStreamOutput_c c_targetHandle;
 
+  std::string str_openedFile;
 }; // ~X2C
 
 

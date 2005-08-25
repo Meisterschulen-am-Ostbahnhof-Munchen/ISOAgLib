@@ -86,11 +86,50 @@
  ***************************************************************************/
 
 #include "filestreaminput_c.h"
-//  Operation: operator>>
-//! Parameter:
-//! @param ui8_data:
-StreamInput_c& FileStreamInput_c::operator>>(uint8_t& ui8_data)
+
+
+//  Operation: open
+bool
+FileStreamInput_c::open (std::string& filename, FileMode_t rt_mode)
 {
-	c_targetHandle.operator>>( ui8_data );
-	return *this;
+  bool b_result = c_targetHandle.open( filename, rt_mode );
+  if (b_result) str_openedFile = filename;
+  return b_result;
+};
+
+
+
+//  Operation: open
+bool
+FileStreamInput_c::open (const char* filename, FileMode_t rt_mode)
+{
+  bool b_result = c_targetHandle.open( filename, rt_mode);
+  if (b_result) str_openedFile = filename;
+  return b_result;
+};
+
+
+
+//  Operation: close
+bool
+FileStreamInput_c::close(bool b_deleteFile)
+{
+  c_targetHandle.close();
+  if (b_deleteFile) {
+    #ifdef DEBUG
+    std::cout << "Removing file " << str_openedFile.c_str() << ".\n";
+    #endif
+    return (remove (str_openedFile.c_str()) == 0);
+  }
+  return true; // success
+};
+
+
+
+//  Operation: operator>>
+StreamInput_c&
+FileStreamInput_c::operator>>(uint8_t& ui8_data)
+{
+  c_targetHandle.operator>>( ui8_data );
+  return *this;
 }
