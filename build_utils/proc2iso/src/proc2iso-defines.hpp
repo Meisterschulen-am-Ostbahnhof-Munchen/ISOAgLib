@@ -31,22 +31,24 @@
 
 
 // Object Types
-#define otDevice                  (0)
-#define otDeviceElement           (1)
-#define otDeviceProcessData       (2)
-#define otDeviceProperty          (3)
-#define otDeviceDinProcessData    (4)
-#define otDeviceValuePresentation (5)
-#define maxObjectTypes            (6) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
+#define otDevice                       (0)
+#define otDeviceElement                (1)
+#define otDeviceProcessData            (2)
+#define otDeviceProperty               (3)
+#define otDeviceDinProcessData         (4)
+#define otDeviceProcessDataCombination (5)
+#define otDeviceValuePresentation      (6)
+#define maxObjectTypes                 (7) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
 
 
 // Object May Be
-#define ombDevice                   (uint64_t(1)<<0)
-#define ombDeviceElement            (uint64_t(1)<<1)
-#define ombDeviceProcessData        (uint64_t(1)<<2)
-#define ombDeviceProperty           (uint64_t(1)<<3)
-#define ombDeviceDinProcessData     (uint64_t(1)<<4)
-#define ombDeviceValuePresentation  (uint64_t(1)<<5)
+#define ombDevice                       (uint64_t(1)<<0)
+#define ombDeviceElement                (uint64_t(1)<<1)
+#define ombDeviceProcessData            (uint64_t(1)<<2)
+#define ombDeviceProperty               (uint64_t(1)<<3)
+#define ombDeviceDinProcessData         (uint64_t(1)<<4)
+#define ombDeviceProcessDataCombination (uint64_t(1)<<5)
+#define ombDeviceValuePresentation      (uint64_t(1)<<6)
 
 // Attributes
 #define attrDesignator (0)
@@ -85,8 +87,10 @@
 #define attrDevProgVarName (33)
 #define attrProcProgVarName (34)
 #define attrCumulative_value (35)
+#define attrCommand_type (36)
+#define attrSetpoint (37)
 
-#define maxAttributeNames (36)
+#define maxAttributeNames (38)
 
 
 #define maxObjectTypesToCompare (maxObjectTypes)
@@ -96,16 +100,18 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
     "deviceprocessdata",
     "deviceproperty",
     "devicedinprocessdata",
+    "deviceprocessdatacombination",
     "devicevaluepresentation"
 };
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
-    /* "device", */                  ombDeviceElement,
-    /* "deviceelement" */            ombDeviceProcessData | ombDeviceProperty,
-    /* "deviceprocessdata" */        ombDeviceDinProcessData | ombDeviceValuePresentation,
-    /* "deviceproperty" */           ombDeviceValuePresentation,
-    /* "devicedinprocessdata" */     0,
-    /* "devicevaluepresentation" */  0
+    /* "device", */                       ombDeviceElement,
+    /* "deviceelement" */                 ombDeviceProcessData | ombDeviceProperty,
+    /* "deviceprocessdata" */             ombDeviceDinProcessData | ombDeviceValuePresentation | ombDeviceProcessDataCombination,
+    /* "deviceproperty" */                ombDeviceValuePresentation,
+    /* "devicedinprocessdata" */          0,
+    /* "deviceprocessdatacombination" */  0,
+    /* "devicevaluepresentation" */       0
 
 };
 
@@ -115,6 +121,7 @@ char otClassnameTable [maxObjectTypes] [stringLength+1] = {
     "DeviceProcessData",
     "DeviceProperty",
     "DeviceDinProcessData",
+    "DeviceProcessDataCombination",
     "DeviceValuePresentation",
 };
 
@@ -155,17 +162,19 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
       "priority",
       "device_program_name",
       "proc_program_name",
-      "cumulative_value"
+      "cumulative_value",
+      "command_type",
+      "is_setpoint"
 };
 
-
-#define maxTableID 6
+#define maxTableID 7
 char TableIDTable [maxTableID] [stringLength+1] = {
     "DVC",
     "DET",
     "DPD",
     "DPT",
     "DDP",
+    "DPD",
     "DVP"
 };
 
@@ -212,4 +221,12 @@ char featureSetTable [maxFeatureSet] [stringLength+1] = {
     "SimpleMeasure",
     "SimpleSetpoint",
     "SimpleMeasureSetpoint"
+};
+
+#define maxCommandoTypes 4
+char CommandoTypeTable [maxCommandoTypes] [stringLength+1] = {
+    "exact",
+    "default",
+    "min",
+    "max"
 };
