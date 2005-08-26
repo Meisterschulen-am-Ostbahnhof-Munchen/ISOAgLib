@@ -995,12 +995,12 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             uint8_t ui8_amount = vecstr_dataForCombination.size();
             ui8_amount = (ui8_amount-2) / 3;
             // output to header-file
-            fprintf(partFileB, "#if defined(USE_ISO_11783)\nconst ElementDDI_s s_%sElementDDI[%d] =\n{\n", vecstr_dataForCombination[1].c_str(), ui8_amount);
+            fprintf(partFileB, "#if defined(USE_ISO_11783)\nconst IsoAgLib::ElementDDI_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
             for (uint8_t i=0; i<ui8_amount; i++)
             {
-              fprintf(partFileB, "\t{%s, %s, %s, GeneralCommand_c::%svalue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_dataForCombination[0].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
+              fprintf(partFileB, "\t{%s, %s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_dataForCombination[0].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
             }
-            fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}\n};\n#endif");
+            fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, 0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}\n};\n#endif\n\n");
             vecstr_dataForCombination.clear();
             b_dpdCombination = false;
           } else {
