@@ -88,6 +88,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "procdataremote_c.h"
+#include "../../../impl/process_c.h"
 
 // #include <string>
 namespace __IsoAgLib {
@@ -214,6 +215,8 @@ ProcDataRemote_c::ProcDataRemote_c(const ProcDataRemote_c& rrefc_src)
 
 /** default destructor which has nothing to do */
 ProcDataRemote_c::~ProcDataRemote_c(){
+  // now unregister the pointer to this instance in Process_c
+  getProcessInstance4Comm().unregisterRemoteProcessData( this );
 }
 /**
   perform periodic actions

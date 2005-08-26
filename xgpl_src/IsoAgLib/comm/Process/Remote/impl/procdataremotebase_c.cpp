@@ -177,8 +177,7 @@ ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src
 
 /** default destructor which has nothing to do */
 ProcDataRemoteBase_c::~ProcDataRemoteBase_c(){
-  // now unregister the pointer to this instance in Process_c
-  getProcessInstance4Comm().unregisterRemoteProcessData( this );
+  // call unregisterRemoteProcessData in last derived class because unregister does again message processing!
 }
 /**
   set the pointer to the commander ident gtp
