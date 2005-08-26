@@ -86,7 +86,7 @@
  ***************************************************************************/
 
 #include "filestreamoutput_c.h"
-
+#include "stdio.h"
 
 
 //  Operation: open
