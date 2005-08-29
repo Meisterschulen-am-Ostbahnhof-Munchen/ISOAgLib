@@ -266,6 +266,19 @@ bool Process_c::timeEvent( void ){
   c_devPropertyHandler.timeEvent();
 #endif
 
+  if ( l_filtersToDelete.size() > 0)
+  {
+    for (std::list<uint32_t>::const_iterator iter = l_filtersToDelete.begin();
+         iter != l_filtersToDelete.end();
+         iter++)
+    {
+      if (getCanInstance4Comm().existFilter( *this, 0x1FF00FF, *iter, Ident_c::ExtendedIdent))
+        // corresponding FilterBox_c exist -> delete it
+        getCanInstance4Comm().deleteFilter( *this, 0x1FF00FF, *iter, Ident_c::ExtendedIdent);
+    }
+    l_filtersToDelete.clear();
+  }
+     
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( c_arrClientC1.capacity() != sui16_localProcPointerTotal )
     || ( c_arrClientC2.capacity() != sui16_remoteProcPointerTotal ) )
@@ -1242,6 +1255,12 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
     if ( (*pc_searchCacheC2) == pc_remoteClient ) continue;
     if ((*pc_searchCacheC2)->ownerGtp() == c_toBeDeletedOwnerGtp) b_otherRemoteWithSameOwner = true;
   }
+  
+  unregisterC2( pc_remoteClient );
+
+  // set ptr to a defined position => avoid use of this pc_searchCacheC2 in deleteFilter(), where received CAN msgs are evtl. processed 
+  pc_searchCacheC2 = c_arrClientC2.end();
+  
   if ( !b_otherRemoteWithSameOwner )
   { // delete the remote filter that was created to receive messages from that owner
     #ifdef USE_DIN_9684
@@ -1261,16 +1280,12 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
     { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
       uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberGtp(c_toBeDeletedOwnerGtp, true).nr();
       ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-      if (getCanInstance4Comm().existFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent))
-      { // corresponding FilterBox_c exist -> delete it
-        getCanInstance4Comm().deleteFilter( *this, 0x1FF00FF, ui32_filter, Ident_c::ExtendedIdent);
-        b_result = true;
-      }
+      // delete corresponding FilterBox_c in timeEvent() to avoid problems when called in procdata cestructor
+      l_filtersToDelete.push_back(ui32_filter);
     } // owner exist with claimed address in isoMonitor
     #endif
   }
 
-  unregisterC2( pc_remoteClient );
 };
 
 

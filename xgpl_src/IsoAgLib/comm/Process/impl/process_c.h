@@ -110,6 +110,7 @@
   #include <slist>
 #endif
 
+
 namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
 
 // Begin Namespace IsoAgLib
@@ -562,6 +563,9 @@ private: // Private attributes
   uint8_t ui8_runningTaskWithSa;
   uint8_t ui8_taskStatus;
 #endif
+
+  std::list<uint32_t> l_filtersToDelete;
+
 };
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Process_c singleton instance
