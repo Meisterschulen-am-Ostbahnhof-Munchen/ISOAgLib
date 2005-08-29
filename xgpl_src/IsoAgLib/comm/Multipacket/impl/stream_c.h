@@ -148,6 +148,7 @@ public:
 
   Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi, uint32_t rui32_msgSize, bool rb_skipCtsAwait=false);
 
+  virtual ~Stream_c();
 
   bool timedOut();
 

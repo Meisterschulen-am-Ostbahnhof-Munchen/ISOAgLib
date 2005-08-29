@@ -102,6 +102,9 @@ StreamLinear_c::StreamLinear_c (StreamType_t rt_streamType, const IsoAgLib::Rece
   vui8_buffer.reserve (rui32_msgSize); // as reactOnStreamStart told we have enough memory!
 };
 
+StreamLinear_c::~StreamLinear_c()
+{
+}
 
 
 // //////////////////////////////// +X2C Operation 772 : insert

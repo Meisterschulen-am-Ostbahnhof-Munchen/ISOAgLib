@@ -110,17 +110,17 @@ class StreamChunk_c : public Stream_c
 public:
 
   StreamChunk_c (StreamType_t rt_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi, uint32_t rui32_msgSize, bool b_skipCtsAwait=false);
-  
+
   StreamChunk_c( const StreamChunk_c& rrefc_src );
-  
+
   //! Important!! Call this after Construction!
   void immediateInitAfterConstruction();
-  
+
+  //! Destructor: deletes the list
+  virtual ~StreamChunk_c();
+
   const StreamChunk_c& operator=( const StreamChunk_c& rrefc_src );
 
-  
-  //! Destructor: deletes the list
-  virtual inline ~StreamChunk_c() { list_chunks.clear(); }
 
   //  Operation: insert
   //! Parameter:
@@ -133,7 +133,7 @@ public:
 
   //  Operation: getNotParsedSize
   uint16_t getNotParsedSize();
-  
+
   //  Operation: getNotParsed
   uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset);
 

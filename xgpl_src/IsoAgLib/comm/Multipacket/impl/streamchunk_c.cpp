@@ -110,6 +110,11 @@ StreamChunk_c::StreamChunk_c (StreamType_t rt_streamType,
 };
 
 
+StreamChunk_c::~StreamChunk_c()
+{
+  list_chunks.clear();
+}
+
 
 void
 StreamChunk_c::immediateInitAfterConstruction()

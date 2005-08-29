@@ -136,6 +136,10 @@ Stream_c::Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifie
 };
 
 
+Stream_c::~Stream_c()
+{
+}
+
 
 void
 Stream_c::awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut)
