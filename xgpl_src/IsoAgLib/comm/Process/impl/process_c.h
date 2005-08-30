@@ -564,7 +564,12 @@ private: // Private attributes
   uint8_t ui8_taskStatus;
 #endif
 
-  std::list<uint32_t> l_filtersToDelete;
+#ifdef USE_ISO_11783
+  std::list<uint32_t> l_filtersToDeleteISO;
+#endif
+#ifdef USE_DIN_9684
+  std::list<uint32_t> l_filtersToDeleteDIN;
+#endif
 
 };
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
