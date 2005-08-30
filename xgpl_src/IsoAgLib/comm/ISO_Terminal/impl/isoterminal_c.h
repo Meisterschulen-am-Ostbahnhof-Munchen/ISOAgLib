@@ -306,7 +306,7 @@ public:
   } vtCapabilities_s;
 
 
-  virtual void reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident);
+  virtual void reactOnAbort(IsoAgLib::iStream_c* rpc_stream);
   virtual bool reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen);
   virtual bool processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk);
 

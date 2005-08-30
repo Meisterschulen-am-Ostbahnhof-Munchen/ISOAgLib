@@ -782,7 +782,7 @@ bool ISOTerminal_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_id
   return true;
 }
 
-void ISOTerminal_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c /*rc_ident*/)
+void ISOTerminal_c::reactOnAbort(IsoAgLib::iStream_c* /*rpc_stream*/)
 {
   if (c_streamer.pc_pool != NULL) {
     c_streamer.pc_pool->eventStringValueAbort();
