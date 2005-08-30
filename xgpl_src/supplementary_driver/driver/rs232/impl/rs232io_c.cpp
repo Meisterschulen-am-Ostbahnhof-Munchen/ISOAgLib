@@ -218,7 +218,7 @@ bool RS232IO_c::setBaudrate(uint16_t rui16_baudrate)
 
   // check if rui16_baudrate is one of the allowed settings
   int16_t pi16_allowed[] = HAL_RS232_BAUDRATE_LIST;
-  for (uint8_t ui8_index = 0; ui8_index < HAL_CAN_BITRATE_CNT; ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < HAL_RS232_BITRATE_CNT; ui8_index++)
   {
     if (pi16_allowed[ui8_index] == rui16_baudrate)
     { // given baudrate is in allowed list at position ui8_index
