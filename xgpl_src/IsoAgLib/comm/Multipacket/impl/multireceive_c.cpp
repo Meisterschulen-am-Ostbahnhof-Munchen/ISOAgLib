@@ -733,7 +733,7 @@ MultiReceive_c::getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStre
 {
   // If "last==NULL", take the first to get, else wait for last to occur and take next!
   bool b_takeIt = (rpc_lastKeptStream == NULL);
-  
+
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin(); i_list_streams != list_streams.end(); i_list_streams++)
   {
     DEF_Stream_c_IMPL* pc_stream = &*i_list_streams;
@@ -760,7 +760,7 @@ MultiReceive_c::removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream)
     { // delete it. it's a justKept one, as we checked that before!
       if (i_list_streams->getStreamingState() != StreamFinishedJustKept)
         return; // do NOT allow any other streams to be deleted
-    
+
       list_streams.erase (i_list_streams);
       return;
     }
@@ -807,7 +807,7 @@ MultiReceive_c::sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStrea
   { // NEVER answer to a packet that was sent to GLOBAL ADDRESS 0xFF !
     return;
   }
-  
+
   uint8_t pgn = (rt_streamType & StreamEpgnMASK) ? (ETP_CONN_MANAGE_PGN >> 8) : (TP_CONN_MANAGE_PGN >> 8);
 
   c_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ rc_rsi.getSa(), /* src: */ rc_rsi.getDa(),
@@ -828,7 +828,7 @@ MultiReceive_c::connAbortTellClient(bool rb_sendConnAbort, Stream_c* rpc_stream)
   // search Client and tell about connAbort
   IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(rpc_stream->getIdent());
   if (pc_clientFound) {
-    pc_clientFound->reactOnAbort (rpc_stream->getIdent());
+    pc_clientFound->reactOnAbort (rpc_stream);
   }
 }
 

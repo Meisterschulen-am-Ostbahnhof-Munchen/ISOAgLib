@@ -114,7 +114,7 @@ public:
   virtual bool reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen) = 0;
 
   //  Operation: reactOnAbort
-  virtual void reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident) = 0;
+  virtual void reactOnAbort(IsoAgLib::iStream_c* rpc_stream) = 0;
 
   //  Operation: processPartStreamDataChunk
   //! Parameter:

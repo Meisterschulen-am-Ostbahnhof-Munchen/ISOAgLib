@@ -163,6 +163,8 @@ public:
 
   virtual uint32_t getByteTotalSize() const=0;
 
+  virtual uint32_t getByteAlreadyReceived() const=0;
+
   virtual ReceiveStreamIdentifier_c& getIdent()=0;
 
   virtual uint8_t getFirstByte() const=0;
