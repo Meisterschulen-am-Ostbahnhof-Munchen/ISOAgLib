@@ -240,8 +240,7 @@ void ProcDataLocalBase_c::assignFromSource( const ProcDataLocalBase_c& rrefc_src
 
 /** default destructor which has nothing to do */
 ProcDataLocalBase_c::~ProcDataLocalBase_c(){
-  // now unregister the pointer to this instance in Process_c
-  getProcessInstance4Comm().unregisterLocalProcessData( this );
+  // call unregisterLocalProcessData in last derived class because unregister does again message processing!
 }
 
 #ifdef USE_EEPROM_IO

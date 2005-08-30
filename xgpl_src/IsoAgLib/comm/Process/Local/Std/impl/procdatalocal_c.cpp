@@ -115,6 +115,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "procdatalocal_c.h"
+#include "../../../impl/process_c.h"
 
 namespace __IsoAgLib {
 // ****************************************************************************************
@@ -266,8 +267,10 @@ void ProcDataLocal_c::init(
   c_measureprog.init( this );
 }
 
-/** default destructor which has nothing to do */
+/** destructor */
 ProcDataLocal_c::~ProcDataLocal_c(){
+  // now unregister the pointer to this instance in Process_c
+  getProcessInstance4Comm().unregisterLocalProcessData( this );
 }
 
 
