@@ -185,6 +185,9 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
           uint8_t rui8_minObjNr,  uint8_t rui8_maxObjNr)
 { // first make shure that the base system is initialized
   getSystemInstance().init();
+  // if FilterBox_c instances were created before the CAN_IO was
+  // explicitly initialized, we must call reconfigureMsgObj NOW
+  bool b_callReconfigureMsgObj = false;
 
   #ifdef DEBUG
   static bool firstDefaultInitCallStart = true;
@@ -227,6 +230,15 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     c_maskStd.set(~0, Ident_c::StandardIdent);
     c_maskExt.set(~0, Ident_c::ExtendedIdent);
     c_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
+    // check if some FilterBox_c instances were already created, so that
+    // we must call reconfigureMsgObj NOW
+    if ( arrFilterBox.size() > 0 )
+    {
+      b_callReconfigureMsgObj = true;
+      INTERNAL_DEBUG_DEVICE
+         << "Call reconfigureMsgObj as some FilterBox_c instances are already  created"
+         << "\n";
+    }
   }
   if ( rui8_busNumber == 0xFF )
   { // called with default value -> do nothing till called with normal parameter
@@ -291,7 +303,9 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
   // even for call of init without parameter the base can init
   // should be repeated
   // check and store bitrate, config CAN and send object(s)
-  return baseCanInit(rui16_bitrate);
+  const bool b_result = baseCanInit(rui16_bitrate);
+  if ( b_callReconfigureMsgObj ) reconfigureMsgObj();
+  return b_result;
 }
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */
