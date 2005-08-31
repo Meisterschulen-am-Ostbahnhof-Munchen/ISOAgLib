@@ -235,9 +235,11 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
     if ( arrFilterBox.size() > 0 )
     {
       b_callReconfigureMsgObj = true;
+      #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE
          << "Call reconfigureMsgObj as some FilterBox_c instances are already  created"
          << "\n";
+      #endif
     }
   }
   if ( rui8_busNumber == 0xFF )
