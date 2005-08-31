@@ -132,7 +132,7 @@ public:
   uint8_t getNextNotParsed();
 
   //  Operation: getNotParsedSize
-  uint16_t getNotParsedSize();
+  uint32_t getNotParsedSize();
 
   //  Operation: getNotParsed
   uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset);

@@ -205,7 +205,7 @@ StreamChunk_c::insert7Bytes(uint8_t* pui8_data)
 //! Checks the number of unparsed bytes
 //! Parameter:
 //! @return number of unparsed bytes
-uint16_t
+uint32_t
 StreamChunk_c::getNotParsedSize()
 { // ~X2C
   // if the buffer is larger than our totalMsgSize, clip at totalMsgSize.

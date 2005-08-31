@@ -168,7 +168,7 @@ public:
   virtual void insert7Bytes(uint8_t* pui8_data)=0;
 
   //  Operation: getNotParsedSize
-//  virtual uint16_t getNotParsedSize()=0;
+//  virtual uint32_t getNotParsedSize()=0;
 
   //  Operation: getNextNotParsed
 //  virtual uint8_t getNextNotParsed()=0;

@@ -155,7 +155,7 @@ public:
 
   iStream_c() : b_streamInvalid(false) {};
 
-  virtual uint16_t getNotParsedSize()=0;
+  virtual uint32_t getNotParsedSize()=0;
 
   virtual uint8_t getNextNotParsed()=0;
 

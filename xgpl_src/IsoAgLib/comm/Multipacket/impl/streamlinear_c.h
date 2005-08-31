@@ -125,7 +125,7 @@ public:
   inline uint8_t getNextNotParsed();
 
   //  Operation: getNotParsedSize
-  inline uint16_t getNotParsedSize();
+  inline uint32_t getNotParsedSize();
 
   //  Operation: getNotParsed
   inline uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset);
@@ -156,10 +156,10 @@ StreamLinear_c::getNextNotParsed()
 
 
 // //////////////////////////////// +X2C Operation 838 : getNotParsedSize
-inline uint16_t
+inline uint32_t
 StreamLinear_c::getNotParsedSize()
 { // ~X2C
-  uint16_t ui32_bufSize = vui8_buffer.size();
+  uint32_t ui32_bufSize = vui8_buffer.size();
   // if the buffer is larger than our totalMsgSize, clip at totalMsgSize.
   // this occurs as we always insert 7 bytes, even if the last 7byte packet should NOT been taken completely
   if (ui32_byteTotalSize < ui32_bufSize)
