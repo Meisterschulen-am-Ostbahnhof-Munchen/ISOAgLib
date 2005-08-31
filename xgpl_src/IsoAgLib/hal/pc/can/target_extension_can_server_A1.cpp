@@ -255,40 +255,39 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
         continue;
       }
 
+
       // compare received msg with filter
       if
         (
          (
           ( i32_obj < cui8_maxCanObj - 1 )
-          && (
+          &&  (
                ( (iter->ui8_bufXtd[b_bus][i32_obj] == 1)
-                  && (b_xtd == 1)
-                  && (iter->ui8_bMsgType[b_bus][i32_obj] == RX )
-                  && ( (ui32_id & iter->ui32_globalMask[b_bus]) == ((iter->ui32_filter[b_bus][i32_obj]) & iter->ui32_globalMask[b_bus]) )
-               )
-               ||
-               ( (iter->ui8_bufXtd[b_bus][i32_obj] == 0)
-                  && (b_xtd == 0)
-                  && (iter->ui8_bMsgType[b_bus][i32_obj] == RX )
-                  && ( (ui32_id & iter->ui16_globalMask[b_bus]) == (iter->ui32_filter[b_bus][i32_obj] & iter->ui16_globalMask[b_bus]) )
+                 && (b_xtd == 1)
+                 && (iter->ui16_size[b_bus][i32_obj] > 0)
+                 && ( (ui32_id & iter->ui32_globalMask[b_bus]) == ((iter->ui32_filter[b_bus][i32_obj]) & iter->ui32_globalMask[b_bus]) )
                  )
+               || ( (iter->ui8_bufXtd[b_bus][i32_obj] == 0)
+                    && (b_xtd == 0)
+                    && (iter->ui16_size > 0)
+                    && ( (ui32_id & iter->ui16_globalMask[b_bus]) == (iter->ui32_filter[b_bus][i32_obj] & iter->ui16_globalMask[b_bus]) )
+                    )
                )
           )
          || (
              ( i32_obj == cui8_maxCanObj - 1)
-             && (
+             &&  (
                   ( (iter->ui8_bufXtd[b_bus][i32_obj] == 1)
                     && (b_xtd == 1)
-                    && (iter->ui8_bMsgType[b_bus][i32_obj] == RX)
+                    && (iter->ui16_size > 0)
                     && ( (ui32_id & iter->ui32_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) ==  ((iter->ui32_filter[b_bus][i32_obj]) & iter->ui32_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) )
                     )
-                  ||
-                  ( (iter->ui8_bufXtd[b_bus][i32_obj] == 0)
-                     && (b_xtd == 0)
-                     && (iter->ui8_bMsgType[b_bus][i32_obj] == RX)
-                     && ( (ui32_id & iter->ui16_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) ==  (iter->ui32_filter[b_bus][i32_obj] & iter->ui16_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) )
+                  || ( (iter->ui8_bufXtd[b_bus][i32_obj] == 0)
+                       && (b_xtd == 0)
+                       && (iter->ui16_size > 0)
+                       && ( (ui32_id & iter->ui16_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) ==  (iter->ui32_filter[b_bus][i32_obj] & iter->ui16_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) )
+                       )
                   )
-                )
              )
          )
         { // received msg fits actual filter
