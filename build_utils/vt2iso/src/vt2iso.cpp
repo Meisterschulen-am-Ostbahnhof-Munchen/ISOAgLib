@@ -384,8 +384,8 @@ char fix_bitmap_path [1024+1];
 
 std::basic_string<char> c_project;
 
-char objNameTable [(stringLength+1)*1000];
-unsigned int objIDTable [1000];
+char objNameTable [(stringLength+1)*4000];
+unsigned int objIDTable [4000];
 unsigned int objNextAutoID;
 unsigned int objNextMacroAutoID;
 unsigned int kcNextAutoID;
