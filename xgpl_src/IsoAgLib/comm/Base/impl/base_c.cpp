@@ -343,7 +343,7 @@ void getDegree10Minus7FromStream( IsoAgLib::iStream_c& refc_stream, int32_t& ref
   // --> Byte5 needs scaling factor 0x100000000 in relation to complete 64Bit number to get same base scaling factor as
   //     complete 64Bit number
   // ==> the 64Bit value would have 10.0e-16 while we want 10.0e-7 --> multiply the result afterwards with 10.0e-9
-  refi32_result += int32_t(double(i32_temp) * (10.0e-9 * pow(2.0,32.0)));
+  refi32_result += int32_t(double(i32_temp) * (10.0e-9 * CNAMESPACE::pow(2.0,32.0)));
 }
 
 void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& refc_stream, uint32_t& refui32_result )
