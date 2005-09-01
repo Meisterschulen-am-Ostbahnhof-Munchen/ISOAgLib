@@ -102,6 +102,7 @@
   #include <IsoAgLib/comm/Multipacket/istream_c.h>
 #endif
 #include <IsoAgLib/util/config.h>
+#include <cmath>
 #include "base_c.h"
 
 namespace __IsoAgLib {
