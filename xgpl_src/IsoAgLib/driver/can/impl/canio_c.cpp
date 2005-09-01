@@ -88,7 +88,9 @@
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/hal/system.h>
-#include <IsoAgLib/hal/eeprom.h>
+#ifdef USE_CAN_EEPROM_EDITOR
+  #include <IsoAgLib/hal/eeprom.h>
+#endif
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #ifdef SYSTEM_PC
