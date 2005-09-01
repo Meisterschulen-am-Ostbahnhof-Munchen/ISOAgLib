@@ -99,6 +99,7 @@
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
 
 #include "basepkg_c.h"
 
@@ -118,7 +119,7 @@ typedef SINGLETON_DERIVED(Base_c,ElementBase_c) SingletonBase_c;
    per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   *@author Dipl.-Inform. Achim Spangler
 */
-class Base_c : public SingletonBase_c {
+class Base_c : public SingletonBase_c, public IsoAgLib::MultiReceiveClient_c {
 public: // Public methods
   /* ********************************************* */
   /** \name Management Functions for class Base_c  */
@@ -338,7 +339,26 @@ public: // Public methods
   void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoActiveFlag_t rt_implTransport,
     IsoAgLib::IsoActiveFlag_t rt_implPark, IsoAgLib::IsoActiveFlag_t rt_implWork);
 
-  #endif
+
+    //  Operation: reactOnStreamStart
+  //! Parameter:
+  //! @param rc_ident:
+  //! @param rui32_totalLen:
+  virtual bool reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
+                                  uint32_t rui32_totalLen);
+
+  //  Operation: processPartStreamDataChunk
+  //! Parameter:
+  //! @param rpc_stream:
+  //! @param rb_isFirstChunk:
+  //! @param rb_isLastChunkAndACKd:
+  virtual bool processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream,
+                                          bool rb_isFirstChunk,
+                                          bool rb_isLastChunkAndACKd);
+
+  //  Operation: reactOnAbort
+  virtual void reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident);
+#endif
   /**
     set engine speed
     @param ri16_val value to store as engine rpm value
@@ -365,7 +385,7 @@ public: // Public methods
     @param rb_minute value to store as minute
     @param rb_second value to store as second
   */
-  void setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second);
+  void setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
 
   /*@}*/
 
@@ -488,6 +508,11 @@ public: // Public methods
     @param rb_second actual calendar second value
   */
   void setSecond(uint8_t rb_second){i32_lastCalendarSet = System_c::getTime();bit_calendar.second = rb_second;};
+  /**
+    set the calendar second value
+    @param rb_second actual calendar second value
+   */
+  void setMillisecond(uint16_t rui16_millisecond){i32_lastCalendarSet = System_c::getTime();bit_calendar.msec = rui16_millisecond;};
 
   /**
     deliver the gtp of the sender of the base data
@@ -591,34 +616,25 @@ public: // Public methods
   bool maintainPowerForImplInWork() const
     { return b_maintainPowerForImplInWork;};
 
-  /** deliver raw GPS Latitude */
-  int32_t getGpsLatitudeRaw( void ) const { return i32_latitudeRaw; };
-  /** deliver raw GPS Longitude */
-  int32_t getGpsLongitudeRaw( void ) const { return i32_longitudeRaw; };
+  /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
+  int32_t getGpsLatitudeDegree10Minus7( void ) const { return i32_latitudeDegree10Minus7; };
+  /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
+  int32_t getGpsLongitudeDegree10Minus710Minus7( void ) const { return i32_longitudeDegree10Minus7; };
   #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   /** deliver Minute GPS Latitude */
-  float getGpsLatitudeMinute( void ) const { return ( ( float( i32_latitudeRaw ) / 1000000.0F ) - 210.0F ); };
+  float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-5  ); };
   /** deliver Minute GPS Longitude */
-  float getGpsLongitudeMinute( void ) const { return ( ( float( i32_longitudeRaw ) / 1000000.0F ) - 210.0F ); };
+  float getGpsLongitudeMinute( void ) const { return ( i32_longitudeDegree10Minus7 * 6.0e-5 ); };
   #endif
-  /** deliver GPS altitude - ?? [cm] ??
-    \todo check for correct altitude unit
-    */
-  uint32_t getGpsAltitude( void ) const { return ui32_altitude; };
-  /** deliver GPS receive qualitiy
-    \todo probably wrong decoded -> please correct decoding in case you have better sources
-  */
+  /** deliver GPS altitude - [cm] */
+  uint32_t getGpsAltitudeCm( void ) const { return ui32_altitudeCm; };
+  /** deliver GPS receive qualitiy */
   IsoAgLib::IsoGpsRecMode_t getGpsMode( void ) const { return t_gpsMode;};
-  /** deliver GPS speed
-    \todo probably wrong decoded -> please correct decoding in case you have better sources
-    */
-  int16_t getGpsSpeed( void ) const { return i16_speedGps;};
-  /** deliver GPS Heading
-    \todo probably wrong decoded -> please correct decoding in case you have better sources
-    */
-  int16_t getGpsHeading( void ) const { return i16_headingGps; };
-
-  #endif
+  /** deliver GPS speed as [cm/s] */
+  uint16_t getGpsSpeedCmSec( void ) const { return ui16_speedCmSec;};
+  /** deliver GPS Heading [1x10E-4rad] */
+  uint16_t getGpsHeadingRad10Minus4( void ) const { return ui16_headingRad10Minus4; };
+#endif
 
   /*@}*/
 
@@ -701,7 +717,7 @@ private:
   uint8_t ui8_rearDraftNominal;
   /** NEW: fuel consumption L/h */
   int16_t i16_fuelRate;
-  /** NEW from AGCO Fendt Vario: fuel temperature °C */
+  /** NEW from AGCO Fendt Vario: fuel temperature C */
   uint8_t ui8_fuelTemperature;
   #endif
   #ifdef USE_ISO_11783
@@ -754,25 +770,38 @@ private:
     * for implement in work state was requested */
   bool b_maintainPowerForImplInWork;
 
-  /** raw GPS latitude - Lat_Minute := ( Lat_Raw / 1000000 ) - 210; Lat_Min < 0 --> South */
-  int32_t i32_latitudeRaw;
-  /** raw GPS longitude - Long_Minute := ( Long_Raw / 1000000 ) - 210; Long_Min < 0 --> West */
-  int32_t i32_longitudeRaw;
-  /** raw GPS speed (int16_t) - [m/s]??
-    \todo check for correct decoding of GPS speed
-    */
-  int16_t i16_speedGps;
-  /** raw GPS heading ( ?? )
-    \todo check for correct decoding of GPS heading
-    */
-  int16_t i16_headingGps;
-  /** GPS altitude - ?? [cm] ??
-    \todo check for correct altitude unit
-    */
-  uint32_t ui32_altitude;
+  /** raw GPS latitude [degree] ; Lat_Min < 0 --> South */
+  int32_t i32_latitudeDegree10Minus7;
+  /** raw GPS longitude [degree]; Long_Min < 0 --> West */
+  int32_t i32_longitudeDegree10Minus7;
+  /** GPS speed - [cm/s] */
+  uint16_t ui16_speedCmSec;
+  /** GPS heading [1x10E-4rad] */
+  uint16_t ui16_headingRad10Minus4;
+  /** GPS altitude - [cm] */
+  uint32_t ui32_altitudeCm;
   /** GPS receive qualitiy */
   IsoAgLib::IsoGpsRecMode_t t_gpsMode;
-  #endif
+  /** GTP of GPS data sender */
+  GetyPos_c c_sendGpsGtp;
+  /** number of received satellites */
+  uint8_t ui8_satelliteCnt;
+  /** HDOP with scaling [1x10E-2] */
+  int16_t i16_hdop;
+  /** PDOP with scaling [1x10E-2] */
+  int16_t i16_pdop;
+
+
+  //  Operation: reactOnLastChunk
+  //! Parameter:
+  //! @param rc_ident:
+  //! @param rpc_stream:
+  bool reactOnLastChunk(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
+                        IsoAgLib::iStream_c& rpc_stream);
+
+  //  Operation: reactOnAbort
+  virtual void reactOnAbort(IsoAgLib::iStream_c* rpc_stream);
+#endif
 
   /** distance */
   /** real distance as int32_t value (cumulates 16bit overflows) */
@@ -808,6 +837,7 @@ private:
     uint16_t hour : 6;
     uint16_t minute : 6;
     uint16_t second : 6;
+    uint16_t msec   : 10;
   } bit_calendar;
 
   /** bitmask with selection of all base data types to send */

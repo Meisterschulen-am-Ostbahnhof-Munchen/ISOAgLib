@@ -96,6 +96,10 @@
 #endif
 #ifdef USE_ISO_11783
   #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+
+  // IsoAgLib_Extension
+  #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
+  #include <IsoAgLib/comm/Multipacket/istream_c.h>
 #endif
 #include <IsoAgLib/util/config.h>
 #include "base_c.h"
@@ -181,8 +185,12 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
     // *************************************************************************************************
     // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
     // Set GPS Lat/Lon values to 0
-    i32_latitudeRaw = 0;
-    i32_longitudeRaw = 0;
+    i32_latitudeDegree10Minus7 = 0;
+    i32_longitudeDegree10Minus7 = 0;
+    ui8_satelliteCnt = 0;
+    __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true);
+    __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true);
+
     // *************************************************************************************************
   #endif
   i32_lastCalendarSet = 0;
@@ -236,7 +244,211 @@ void Base_c::config(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySen
   else c_sendBase3Gtp.setUnspecified();
   if ((rpc_gtp != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataFuel     ) != 0 ) ) c_sendFuelGtp = *rpc_gtp;
   else c_sendFuelGtp.setUnspecified();
+
+  #ifdef USE_ISO_11783
+  if ((rpc_gtp != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataGps     ) != 0 ) )
+  {
+    c_sendGpsGtp = *rpc_gtp;
+    // also remove any previously registered MultiReceive connections
+    __IsoAgLib::getMultiReceiveInstance().deregisterClient( this );
+  }
+  else
+  {
+    c_sendGpsGtp.setUnspecified();
+    // make sure that the needed multi receive are registered
+    __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_POSITON_DATA_PGN,       0xFF, this, true);
+    __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true);
+
+  }
+  #endif
 };
+
+// //////////////////////////////// +X2C Operation 2432 : reactOnStreamStart
+//! Parameter:
+//! @param rc_ident:
+//! @param rui32_totalLen:
+bool Base_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
+                                uint32_t /*rui32_totalLen */)
+{ // ~X2C
+  if ( ( rc_ident.getPgn() == NMEA_GPS_POSITON_DATA_PGN       )
+    || ( rc_ident.getPgn() == NMEA_GPS_DIRECTION_DATA_PGN ) )
+  { // this a NMEA multi stream of interest
+    return true;
+  }
+  else
+  { // this is not of interest for us
+    return false;
+  }
+} // -X2C
+
+// //////////////////////////////// +X2C Operation 5692 : reactOnAbort
+void Base_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c /*rc_ident*/)
+{ // ~X2C
+  // as we don't perform an on-the-fly parse of the pool, nothing has to be done here
+  // - this is only important with on-the-fly parse, where everything parsed already has to be invalidated
+} // -X2C
+
+// //////////////////////////////// +X2C Operation 5688 : processPartStreamDataChunk
+//! Parameter:
+//! @param rc_ident:
+//! @param rb_isFirstChunk:
+//! @param rb_isLastChunkAndACKd:
+bool Base_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream,
+    bool rb_isFirstChunk,
+    bool rb_isLastChunkAndACKd)
+{ // ~X2C
+  IsoAgLib::ReceiveStreamIdentifier_c rc_ident = rpc_stream->getIdent();
+
+  // >>>First Chunk<<< Processing
+  if (rb_isFirstChunk)
+  {  /** return value is only used on receive of last data chunk */
+    return false;
+  }
+
+  // as process data property description pool is quite small, the complete pool
+  // is parsed at the end of the transfer
+
+  // >>>Last Chunk<<< Processing
+  if (rb_isLastChunkAndACKd)
+  {  /** let reactOnLastChunk decide whether the pool should be kept in memory */
+    return reactOnLastChunk(rc_ident, *rpc_stream);
+  }
+  // default - don't keep it
+  return false;
+} // -X2C
+
+
+//  Operation: reactOnAbort
+void Base_c::reactOnAbort(IsoAgLib::iStream_c* /*rpc_stream*/)
+{ // as we don't perform on-the-fly parse, there is nothing special to do
+}
+
+void getDegree10Minus7FromStream( IsoAgLib::iStream_c& refc_stream, int32_t& refi32_result )
+{
+  uint8_t tempValue[4];
+  int32_t i32_temp;
+
+  // first read first 3Byte away - we don't need them, as resolution with 10e-7 is enough
+  refc_stream >> tempValue[0]; refc_stream >> tempValue[0];refc_stream >> tempValue[0];
+  // only take Byte4 to get enough resolution
+  refc_stream >> tempValue[0];
+  refi32_result = int32_t(double(tempValue[0]) * (10.0e-9 * double(0x1000000)));
+  refc_stream >> tempValue[0];
+  refc_stream >> tempValue[1];
+  refc_stream >> tempValue[2];
+  refc_stream >> tempValue[3];
+  i32_temp = ( int32_t(tempValue[0]) | ( int32_t(tempValue[1]) << 8 ) | ( int32_t(tempValue[2]) << 16 ) | ( int32_t(tempValue[3]) << 24 ) );
+  // we take only the higher 4 Bytes
+  // --> Byte5 needs scaling factor 0x100000000 in relation to complete 64Bit number to get same base scaling factor as
+  //     complete 64Bit number
+  // ==> the 64Bit value would have 10.0e-16 while we want 10.0e-7 --> multiply the result afterwards with 10.0e-9
+  refi32_result += int32_t(double(i32_temp) * (10.0e-9 * pow(2.0,32.0)));
+}
+
+void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& refc_stream, uint32_t& refui32_result )
+{
+  uint8_t tempValue[4];
+  uint32_t ui32_temp;
+
+  // first read first 3Byte away - we don't need them, as resolution with 10e-7 is enough
+  refc_stream >> tempValue[0]; refc_stream >> tempValue[0];refc_stream >> tempValue[0];
+  // only take Byte4 to get enough resolution
+  refc_stream >> tempValue[0];
+  refui32_result = uint32_t(double(tempValue[0]) * (10.0e-4 * double(0x1000000)));
+  refc_stream >> tempValue[0];
+  refc_stream >> tempValue[1];
+  refc_stream >> tempValue[2];
+  refc_stream >> tempValue[3];
+  ui32_temp = ( uint32_t(tempValue[0]) | ( uint32_t(tempValue[1]) << 8 ) | ( uint32_t(tempValue[2]) << 16 ) | ( uint32_t(tempValue[3]) << 24 ) );
+  // we take only the higher 4 Bytes
+  // --> Byte5 needs scaling factor 0x100000000 in relation to complete 64Bit number to get same base scaling factor as
+  //     complete 64Bit number
+  // ==> the 64Bit value would have 10.0e-6 while we want 10.0e-2 --> multiply the result afterwards with 10.0e-4
+  refui32_result += uint32_t(double(ui32_temp) * (10.0e-4 * pow(2.0,32.0)));
+}
+
+// //////////////////////////////// +X2C Operation 5703 : reactOnLastChunk
+//! Parameter:
+//! @param rc_ident:
+//! @param rpc_stream:
+bool Base_c::reactOnLastChunk( IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
+                                          IsoAgLib::iStream_c& refc_stream)
+{ // ~X2C
+  // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
+  const uint8_t cui8_sa = refc_stream.getIdent().getSa();
+
+  uint8_t tempValue[4];
+  int16_t i16_temp;
+
+  switch ( rc_ident.getPgn() )
+  {
+    case NMEA_GPS_POSITON_DATA_PGN: // 0x01F805LU -> 129 029
+    { // Sequence ID was already read with refc_stream.getFirstByte()
+      // --> continue with Byte2 ...
+      uint16_t ui16_daysSince1970;
+      uint32_t ui32_milliseconds;
+      static time_t t_tempUnixTime = 0;
+      // read 2-bytes of Generic date as days since 1-1-1970 ( UNIX date )
+      refc_stream >> tempValue[0];
+      refc_stream >> tempValue[1];
+      ui16_daysSince1970 = ( uint16_t(tempValue[1]) << 8 ) + tempValue[0];
+      refc_stream >> tempValue[0];
+      refc_stream >> tempValue[1];
+      refc_stream >> tempValue[2];
+      refc_stream >> tempValue[3];
+      ui32_milliseconds = uint32_t(tempValue[0]) + (uint32_t(tempValue[1]) << 8)
+                       + (uint32_t(tempValue[2]) << 16) + (uint32_t(tempValue[3]) << 24);
+      // NMEA NMEA_GPS_POSITON_DATA_PGN sends with 0.1 msec
+      ui32_milliseconds /= 10;
+
+      t_tempUnixTime = ( time_t(ui16_daysSince1970) * time_t(60 * 60 * 24) ) + (ui32_milliseconds/1000);
+      tm* UtcNow = gmtime( &t_tempUnixTime );
+      if ( UtcNow != NULL )
+      { // now read the tm data strcture
+        setCalendar((UtcNow->tm_year+1900), UtcNow->tm_mon, UtcNow->tm_mday,
+                     UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
+      }
+      // now read Latitude --> convert into double [degree]
+      getDegree10Minus7FromStream( refc_stream, i32_latitudeDegree10Minus7 );
+      // now read Longitude --> convert into double [degree]
+      getDegree10Minus7FromStream( refc_stream, i32_longitudeDegree10Minus7 );
+      // now read Altitude --> convert into double [meter]
+      getAltitude10Minus2FromStream( refc_stream, ui32_altitudeCm );
+      // now fetch Quality - gps-mode
+      refc_stream >> tempValue[0];
+      t_gpsMode = IsoAgLib::IsoGpsRecMode_t(tempValue[0] >> 4);
+      // ignore the next byte as GNSS Integrity is not interesting for our use
+      refc_stream >> tempValue[0]; // just read the byte out
+      // now fetch the number of satelites
+      refc_stream >> ui8_satelliteCnt;
+      // now fetch HDOP from raw uint16_t to float [1.0*10.0e-2)
+      refc_stream >> tempValue[0];
+      refc_stream >> tempValue[1];
+      i16_hdop = int16_t( uint16_t(tempValue[0]) | (uint16_t(tempValue[1]) << 8 ) );
+      // now fetch PDOP from raw uint16_t to float [1.0*10.0e-2)
+      refc_stream >> tempValue[0];
+      refc_stream >> tempValue[1];
+      i16_pdop = int16_t( uint16_t(tempValue[0]) | (uint16_t(tempValue[1]) << 8 ) );
+      // ignore the rest
+    }
+      break;
+    case NMEA_GPS_DIRECTION_DATA_PGN: // 0x01FA06LU - 130577 with Heading and Speed
+      for ( unsigned int ind = 2; ind < 7; ind++ )
+      { // read the bytes 2,3,4,5,6 into nirwana
+        refc_stream >> tempValue[0];
+      }
+      refc_stream >> tempValue[0];
+      refc_stream >> tempValue[1];
+      ui16_headingRad10Minus4 = uint16_t(tempValue[0]) | ( uint16_t(tempValue[1]) << 8 );
+      refc_stream >> tempValue[0];
+      refc_stream >> tempValue[1];
+      ui16_speedCmSec = uint16_t(tempValue[0]) | ( uint16_t(tempValue[1]) << 8 );
+      break;
+  }
+
+  return false;
+} // -X2C
+
 
 /**
   process received base msg and store updated value for later reading access;
@@ -251,7 +463,6 @@ void Base_c::config(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySen
 bool Base_c::processMsg(){
   bool b_result = false;
   GetyPos_c c_tempGtp( GetyPos_c::GetyPosUnspecified );
-  uint16_t ui16_actTime100ms = (data().time() / 100);
 
   #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
   if (c_data.identType() == Ident_c::ExtendedIdent)
@@ -267,6 +478,7 @@ bool Base_c::processMsg(){
   #ifdef USE_DIN_9684
   { // a DIN9684 base information msg received
     // store the gtp of the sender of base data
+    const uint16_t ui16_actTime100ms = (data().time() / 100);
     if (getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
     { // the corresponding sender entry exist in the monitor list
       c_tempGtp = getDinMonitorInstance4Comm().dinMemberNr(data().send()).gtp();
@@ -455,10 +667,8 @@ bool Base_c::processMsg(){
   @return true -> all planned activities performed in allowed time
 */
 bool Base_c::timeEvent( void ) {
-  CANIO_c& c_can = getCanInstance4Comm();
 
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  uint8_t ui8_actTime100ms = (Scheduler_c::getLastTimeEventTrigger()/100);
 
   checkCreateReceiveFilter();
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
@@ -473,6 +683,8 @@ bool Base_c::timeEvent( void ) {
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   #endif
   #ifdef USE_DIN_9684
+  const uint8_t ui8_actTime100ms = (Scheduler_c::getLastTimeEventTrigger()/100);
+  CANIO_c& c_can = getCanInstance4Comm();
   DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
   if ((pc_gtp != NULL)&& (c_din_monitor.existDinMemberGtp(*pc_gtp, true)))
   {
@@ -643,28 +855,15 @@ void Base_c::checkCreateReceiveFilter( void )
     c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
                       (static_cast<MASK_TYPE>(BACK_PTO_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
 
-    // create FilterBox_c for PGN GPS_STATE_PGN, PF 254 - mask for DP, PF and PS
-    // mask: (0x1FFFF << 8) filter: (GPS_STATE_PGN << 8)
-    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                      (static_cast<MASK_TYPE>(GPS_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
-    // create FilterBox_c for PGN GPS_LATITUDE_LONGITUDE_PGN, PF 254 - mask for DP, PF and PS
-    // mask: (0x1FFFF << 8) filter: (GPS_LATITUDE_LONGITUDE_PGN << 8)
-    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                      (static_cast<MASK_TYPE>(GPS_LATITUDE_LONGITUDE_PGN) << 8), false, Ident_c::ExtendedIdent);
-    // create FilterBox_c for PGN GPS_SPEED_HEADING_ALTITUDE_PGN, PF 254 - mask for DP, PF and PS
-    // mask: (0x1FFFF << 8) filter: (GPS_SPEED_HEADING_ALTITUDE_PGN << 8)
-    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(GPS_SPEED_HEADING_ALTITUDE_PGN) << 8), false, Ident_c::ExtendedIdent);
+    // *************************************************************************************************
+    // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
 
-        // *************************************************************************************************
-        // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
+    // GNSS Position Rapid Update
+    // mask: (0x1FFFF << 8) filter: (NMEA_GPS_POSITON_RAPID_UPDATE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                  (static_cast<MASK_TYPE>(NMEA_GPS_POSITON_RAPID_UPDATE_PGN) << 8), true, Ident_c::ExtendedIdent);
 
-        // GNSS Position Rapid Update
-        // mask: (0x1FFFF << 8) filter: (NMEA_GPS_POSITON_RAPID_UPDATE_PGN << 8)
-        c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-											(static_cast<MASK_TYPE>(NMEA_GPS_POSITON_RAPID_UPDATE_PGN) << 8), true, Ident_c::ExtendedIdent);
-
-        // *************************************************************************************************
+    // *************************************************************************************************
   }
   #endif
 }
@@ -680,7 +879,7 @@ bool Base_c::isoProcessMsg()
 {
   bool b_result = false;
   GetyPos_c c_tempGtp( GetyPos_c::GetyPosUnspecified );
-  uint16_t ui16_actTime100ms = (data().time()/100);
+  const uint16_t ui16_actTime100ms = (data().time()/100);
   // store the gtp of the sender of base data
   if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
   { // the corresponding sender entry exist in the monitor list
@@ -876,33 +1075,13 @@ bool Base_c::isoProcessMsg()
       ui32_lastMaintainPowerRequest = data().time();
       b_result = true;
       break;
-    case GPS_STATE_PGN:
-      /** \todo check for correct GPS mode position in CAN msg - try with Byte1 */
-      t_gpsMode = IsoAgLib::IsoGpsRecMode_t( data().val1() );
+    // **********************************************************
+    // Added by Brad Cox for NMEA 2000 GPS Messages:
+    case NMEA_GPS_POSITON_RAPID_UPDATE_PGN:
+      i32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
+      i32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
       b_result = true;
       break;
-    case GPS_LATITUDE_LONGITUDE_PGN:
-      /** \todo check if open accessible example for Long/Lat was a correct source */
-      i32_latitudeRaw  = data().getInt32Data( 0 );
-      i32_longitudeRaw = data().getInt32Data( 4 );
-      b_result = true;
-      break;
-    case GPS_SPEED_HEADING_ALTITUDE_PGN:
-      /** \todo check and correct decoding of GPS-Speed, GPS-Heading and Altitude */
-      i16_speedGps   = data().getInt16Data( 0 );
-      i16_headingGps = data().getInt16Data( 2 );
-      ui32_altitude  = data().getUint32Data( 4 );
-      b_result = true;
-      break;
-
-      // **********************************************************
-      // Added by Brad Cox for NMEA 2000 GPS Messages:
-        case NMEA_GPS_POSITON_RAPID_UPDATE_PGN:
-			/** \todo check if open accessible example for Long/Lat was a correct source */
-			i32_latitudeRaw  = data().getInt32Data( 0 );
-			i32_longitudeRaw = data().getInt32Data( 4 );
-            b_result = true;
-			break;
       // **********************************************************
   }
   return b_result;
@@ -915,7 +1094,7 @@ bool Base_c::isoTimeEvent( void )
   CANIO_c& c_can = getCanInstance4Comm();
 
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  uint8_t ui8_actTime100ms = (Scheduler_c::getLastTimeEventTrigger()/100);
+  const uint8_t ui8_actTime100ms = (Scheduler_c::getLastTimeEventTrigger()/100);
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   // retreive the actual dynamic sender no of the member with the registered gtp
@@ -1238,14 +1417,13 @@ void Base_c::setOverflowSecure(int32_t& reflVal, int16_t& refiVal, const int16_t
   @return GETY_POS code of member who is sending the intereested base msg type
 */
 const GetyPos_c& Base_c::senderGtp(IsoAgLib::BaseDataGroup_t rt_typeGrp) {
-  GetyPos_c c_result( GetyPos_c::GetyPosUnspecified );
   // simply answer first matching result if more than one type is selected
   if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup1   ) != 0 ) return c_sendBase1Gtp;
   if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup2   ) != 0 ) return c_sendBase2Gtp;
   if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup3   ) != 0 ) return c_sendBase3Gtp;
   if ( ( rt_typeGrp & IsoAgLib::BaseDataFuel     ) != 0 ) return c_sendFuelGtp;
   if ( ( rt_typeGrp & IsoAgLib::BaseDataCalendar ) != 0 ) return c_sendCalendarGtp;
-  else return c_result;
+  else return GetyPos_c::GetyPosUnspecified;
 }
 
 /**
@@ -1297,15 +1475,16 @@ void Base_c::setDistTheor(const int32_t& rreflVal)
   @param rb_minute value to store as minute
   @param rb_second value to store as second
 */
-void Base_c::setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second)
+void Base_c::setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec)
 {
   i32_lastCalendarSet = System_c::getTime();
-  setYear(ri16_year);
-  setMonth(rb_month);
-  setDay(rb_day);
-  setHour(rb_hour);
-  setMinute(rb_minute);
-  setSecond(rb_second);
+  bit_calendar.year   = ri16_year;
+  bit_calendar.month  = rb_month;
+  bit_calendar.day    = rb_day;
+  bit_calendar.hour   = rb_hour;
+  bit_calendar.minute = rb_minute;
+  bit_calendar.second = rb_second;
+  bit_calendar.msec   = rui16_msec;
 };
 
 /**

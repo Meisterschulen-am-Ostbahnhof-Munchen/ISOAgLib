@@ -487,32 +487,24 @@ public:
     * for implement in work state was requested */
   bool maintainPowerForImplInWork() const { return Base_c::maintainPowerForImplInWork();};
 
-  /** deliver raw GPS Latitude */
-  int32_t getGpsLatitudeRaw( void ) const { return Base_c::getGpsLatitudeRaw(); };
-  /** deliver raw GPS Longitude */
-  int32_t getGpsLongitudeRaw( void ) const { return Base_c::getGpsLongitudeRaw(); };
+  /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
+  int32_t getGpsLatitudeDegree10Minus7( void ) const { return Base_c::getGpsLatitudeDegree10Minus7(); };
+  /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
+  int32_t getGpsLongitudeDegree10Minus710Minus7( void ) const { return Base_c::getGpsLongitudeDegree10Minus710Minus7(); };
   #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   /** deliver Minute GPS Latitude */
   float getGpsLatitudeMinute( void ) const { return Base_c::getGpsLatitudeMinute(); };
   /** deliver Minute GPS Longitude */
   float getGpsLongitudeMinute( void ) const { return Base_c::getGpsLongitudeMinute(); };
   #endif
-  /** deliver GPS altitude - ?? [cm] ??
-    \todo check for correct altitude unit
-    */
-  uint32_t getGpsAltitude( void ) const { return Base_c::getGpsAltitude(); };
-  /** deliver GPS receive qualitiy
-    \todo probably wrong decoded -> please correct decoding in case you have better sources
-  */
-  IsoGpsRecMode_t getGpsMode( void ) const { return Base_c::getGpsMode();};
-  /** deliver GPS speed
-    \todo probably wrong decoded -> please correct decoding in case you have better sources
-    */
-  int16_t getGpsSpeed( void ) const { return Base_c::getGpsSpeed();};
-  /** deliver GPS Heading
-    \todo probably wrong decoded -> please correct decoding in case you have better sources
-    */
-  int16_t getGpsHeading( void ) const { return Base_c::getGpsHeading(); };
+  /** deliver GPS altitude - [cm] */
+  uint32_t getGpsAltitudeCm( void ) const { return Base_c::getGpsAltitudeCm(); };
+  /** deliver GPS receive qualitiy */
+  IsoAgLib::IsoGpsRecMode_t getGpsMode( void ) const { return Base_c::getGpsMode();};
+  /** deliver GPS speed as [cm/s] */
+  uint16_t getGpsSpeedCmSec( void ) const { return Base_c::getGpsSpeedCmSec();};
+  /** deliver GPS Heading [1x10E-4rad] */
+  uint16_t getGpsHeadingRad10Minus4( void ) const { return Base_c::getGpsHeadingRad10Minus4(); };
   /*@}*/
 
   #endif

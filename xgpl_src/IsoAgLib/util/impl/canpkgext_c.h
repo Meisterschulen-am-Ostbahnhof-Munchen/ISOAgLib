@@ -171,25 +171,25 @@ public:
     @param rb_pos position of dellivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint16_t getUint16Data(uint8_t rb_pos) const {return (uint16_t(pb_data[rb_pos]) + (uint16_t(pb_data[rb_pos+1])<<8));};
+  uint16_t getUint16Data(uint8_t rb_pos) const {return (uint16_t(pb_data[rb_pos]) | (uint16_t(pb_data[rb_pos+1])<<8));};
   /**
     simply deliver a int16_t from a specific starting position with
     @param rb_pos position of dellivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int16_t getInt16Data(uint8_t rb_pos) const {return (uint16_t(pb_data[rb_pos]) + (int16_t(pb_data[rb_pos+1])<<8));};
+  int16_t getInt16Data(uint8_t rb_pos) const {return int16_t( uint16_t(pb_data[rb_pos]) | ( uint16_t(pb_data[rb_pos+1]) << 8 ) );};
   /**
     simply deliver a uint32_t from a specific starting position with
     @param rb_pos position of dellivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint32_t getUint32Data(uint8_t rb_pos) const {return (uint32_t(getUint16Data(rb_pos)) + (uint32_t(getUint16Data(rb_pos+2))<<16));};
+  uint32_t getUint32Data(uint8_t rb_pos) const {return (uint32_t(getUint16Data(rb_pos)) | (uint32_t(getUint16Data(rb_pos+2))<<16));};
   /**
     simply deliver a int32_t from a specific starting position with
     @param rb_pos position of dellivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int32_t getInt32Data(uint8_t rb_pos) const {return (int32_t(getUint16Data(rb_pos)) + (int32_t(getInt16Data(rb_pos+2))<<16));};
+  int32_t getInt32Data(uint8_t rb_pos) const {return int32_t( uint32_t(getUint16Data(rb_pos)) | ( uint32_t(getUint16Data(rb_pos+2)) << 16 ) );};
 
   /**
     put data into given reference to BIOS related data structure with data, len

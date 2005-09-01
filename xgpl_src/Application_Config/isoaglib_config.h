@@ -814,22 +814,6 @@
 // PROPRIETARY_B_PGN ranges from 0x00FF00 to 0x00FFFF !
 #define PROPRIETARY_B_PGN           0x00FF00LU
 
-/** PGN for GPS state information - according to open accessible sources
-  -> might be wrong
-  -> please test and indicate correction need or successfull usage back to autthor
-  */
-#define GPS_STATE_PGN 0x00FFF3LU
-/** PGN for GPS latitude and longitude - according to open accessible sources
-  -> might be wrong
-  -> please test and indicate correction need or successfull usage back to autthor
-  */
-#define GPS_LATITUDE_LONGITUDE_PGN 0x00FEF3LU
-/** PGN for GPS speed, heading and altitude - according to open accessible sources
-  -> might be wrong
-  -> please test and indicate correction need or successfull usage back to autthor
-  */
-#define GPS_SPEED_HEADING_ALTITUDE_PGN 0x00FEE8LU
-
 //********************************************************************
 // Added by Brad Cox for support of NMEA 2000 GPS messages:
 
@@ -839,8 +823,8 @@
 // GNSS Position Data. ** This is done with Fast Packet Protocol and will require MultiReceive I think! **
 #define NMEA_GPS_POSITON_DATA_PGN 0x01F805LU
 
-// GNSS Pseudo Range Noise Statistic ** This is done with Fast Packet Protocol and will require MultiReceive I think! **
-#define NMEA_GPS_PSEUDO_RANGE_NOISE_PGN 0x01FA06LU
+// NMEA Direction Data with Heading and Speed ** This is done with Fast Packet Protocol and will require MultiReceive I think! **
+#define NMEA_GPS_DIRECTION_DATA_PGN 0x01FE11LU
 //********************************************************************
 
 /*@}*/

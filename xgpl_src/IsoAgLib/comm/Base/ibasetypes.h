@@ -57,44 +57,46 @@
 #include <IsoAgLib/typedef.h>
 
 namespace IsoAgLib {
-	#ifdef USE_ISO_11783
-	/** use an enum typedef for the different states of ISO flags */
-	typedef enum {
-		IsoInactive = 0,    ///< Flag is marked explicit as not active
-		IsoActive = 1,      ///< corresponding function is active
-		IsoError = 2,       ///< correspnding function is in error state, and thus not useable
-		IsoNotAvailable = 3 ///< corresponding function is not available/not implemented in service provider
-	} IsoActiveFlag_t;
+  #ifdef USE_ISO_11783
+  /** use an enum typedef for the different states of ISO flags */
+  typedef enum {
+    IsoInactive = 0,    ///< Flag is marked explicit as not active
+    IsoActive = 1,      ///< corresponding function is active
+    IsoError = 2,       ///< correspnding function is in error state, and thus not useable
+    IsoNotAvailable = 3 ///< corresponding function is not available/not implemented in service provider
+  } IsoActiveFlag_t;
 
-	/** GPS receive mode */
-	typedef enum {
-		IsoNoGps        = 0,
-		IsoGPS          = 1,
-		IsoDGPS         = 2,
-		IsoPrecisePos   = 3,
-		IsoRtkInt       = 4,
-		IsoRtkFloat     = 5,
-		IsoEstimatedPos = 6,
-		IsoManualPos    = 7,
-		IsoSimulatePos  = 8,
-		IsoErrorPos     = 0xE,
-		IsoNullPos      = 0xF
-	} IsoGpsRecMode_t ;
-	#endif
+  /** GPS receive mode */
+  typedef enum {
+    IsoNoGps            = 0,
+    IsoGPS              = 1,
+    IsoDGPS             = 2,
+    IsoPreciseGps       = 3,
+    IsoRtkInt           = 4,
+    IsoRtkFloat         = 5,
+    IsoEstimatedModePos = 6,
+    IsoManualInputPos   = 7,
+    IsoSimulatePos      = 8,
+    IsoErrorPos         = 14,
+    IsoNullPos          = 15
+  } IsoGpsRecMode_t ;
+  #endif
 
-	/** define the main groups of base data types */
-	typedef enum {
-		BaseDataNothing  = 0x00, ///< select no base data type
-		BaseDataGroup1   = 0x01, ///< real and gear based speed and distance; for ISO: also key_switch_state and max power time
-		BaseDataGroup2   = 0x02, ///< front and rear PTO, engine RPM, front and rear hitch information
-		BaseDataCalendar = 0x04, ///< calendar data
-		BaseDataGroup3   = 0x08, ///< Fendt Vario DIN 9684 specific detailet read link force information
-		BaseDataFuel     = 0x10, ///< Fendt Vario DIN 9684 specific fuel consumption and temp info
-		BaseDataGroup12  = 0x03, ///< Combination of Groups 1+2
-		BaseDataGroup123 = 0x0B, ///< Combination of Groups 1+2+3
-		BaseDataGroup12Cal = 0x07, ///< Combination of Goups 1+2 with Calendar
-		BaseDataGroupAll = 0x1F  ///< Combination of all possible base data
-	} BaseDataGroup_t;
+  /** define the main groups of base data types */
+  typedef enum {
+    BaseDataNothing  = 0x00, ///< select no base data type
+    BaseDataGroup1   = 0x01, ///< real and gear based speed and distance; for ISO: also key_switch_state and max power time
+    BaseDataGroup2   = 0x02, ///< front and rear PTO, engine RPM, front and rear hitch information
+    BaseDataCalendar = 0x04, ///< calendar data
+    BaseDataGroup3   = 0x08, ///< Fendt Vario DIN 9684 specific detailet read link force information
+    BaseDataFuel     = 0x10, ///< Fendt Vario DIN 9684 specific fuel consumption and temp info
+    BaseDataGps      = 0x20, ///< ISO NMEA 2000 GPS information
+    BaseDataGroup12  = 0x03, ///< Combination of Groups 1+2
+    BaseDataGroup123 = 0x0B, ///< Combination of Groups 1+2+3
+    BaseDataGroup12Cal = 0x07, ///< Combination of Goups 1+2 with Calendar
+    BaseDataGroups12CalGps = 0x27, ///< Combination of Groups 1+2 with Calendar and NMEA 2000 GPS
+    BaseDataGroupAll = 0x3F  ///< Combination of all possible base data
+  } BaseDataGroup_t;
 
 }; // end namespace
 
