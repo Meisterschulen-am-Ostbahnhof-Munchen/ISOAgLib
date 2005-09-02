@@ -105,6 +105,10 @@
 #include <cmath>
 #include "base_c.h"
 
+#ifdef WIN32
+#include <time.h>
+#endif
+
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Base_c singleton instance
