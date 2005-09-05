@@ -201,23 +201,28 @@ int32_t getTime()
 {
   // use gettimeofday for native LINUX system
   static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
-  // set the StartUpTime as static const variable which is initialized just with scaled clock_t value
-  // --> resulting accuracy is enough for StartUpTime requirements
-  static const struct timeval startUpTime = {(times(NULL) / clock_t_per_sec), (suseconds_t((times(NULL)*1000000.0) / float(clock_t_per_sec))%1000000)};
+  static const clock_t myStartUpTime = times(NULL);
 
   struct timeval now;
 
   gettimeofday(&now, 0);
+
   // we use the resulting clock_t from times() call to get SECONDS
   // as these are independend from settimeofday calls
-  now.tv_sec = times(NULL) / clock_t_per_sec;
-  if ((now.tv_usec-= startUpTime.tv_usec) < 0)
-  {
-    now.tv_usec+= 1000000;
-    now.tv_sec-= 1;
+  const uint32_t cui32_now_clock_t = times(NULL)-myStartUpTime;
+
+  int32_t i32_result =
+      ( ((uint64_t(cui32_now_clock_t)*10ULL) / clock_t_per_sec ) * 100 )
+      + ( ( now.tv_usec / 1000 ) % 100 );
+  static int32_t si32_lastTime = 0;
+
+  while ( si32_lastTime > i32_result )
+  { // make sure that our timestamp FROM TWO SOURCES is monotonic
+    // --> add 100msec so that the intersection problems of the two sources are avoided
+    i32_result += 100;
   }
-  now.tv_sec-= startUpTime.tv_sec;
-  return (now.tv_usec / 1000 + now.tv_sec * 1000);
+  si32_lastTime = i32_result;
+  return i32_result;
 }
 
 
