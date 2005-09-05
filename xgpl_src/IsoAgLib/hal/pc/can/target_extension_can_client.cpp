@@ -1,9 +1,9 @@
 /***************************************************************************
-						  target_extension_can_A1_binary.cpp - source for the
-									   PSEUDO BIOS for development and test on
-									   the Opus A1 with CAN communication using
-									   the Binary can drivers for /dev/wecan0
-									   and /dev/wecan1
+              target_extension_can_A1_binary.cpp - source for the
+                     PSEUDO BIOS for development and test on
+                     the Opus A1 with CAN communication using
+                     the Binary can drivers for /dev/wecan0
+                     and /dev/wecan1
 
                              -------------------
     begin                : Tue Oct 2 2001
@@ -103,7 +103,7 @@ int16_t can_startDriver()
   // use process id for own client id
   msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_REGISTER;
-  // call getTime just to be sure that start up time is set 
+  // call getTime just to be sure that start up time is set
   getTime();
   msqCommandBuf.s_startTime.ui32_sec = getStartUpTime().tv_sec;
   msqCommandBuf.s_startTime.ui32_usec = getStartUpTime().tv_usec;
@@ -111,7 +111,7 @@ int16_t can_startDriver()
   i16_rc = send_command(&msqCommandBuf, &msqDataClient);
 
   if (i16_rc == HAL_NO_ERR) {
-    
+
     char pipe_name[255];
     sprintf(pipe_name, "%s%d", PIPE_PATH, msqCommandBuf.s_startAck.i32_pipeId);
 
@@ -183,7 +183,7 @@ int16_t closeCan ( uint8_t bBusNumber )
 int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)
 {
   // just to remove compiler warnings
-  bBusNumber = bBusNumber; bMsgObj = bMsgObj; wPause = wPause; 
+  bBusNumber = bBusNumber; bMsgObj = bMsgObj; wPause = wPause;
   DEBUG_PRINT2("chgCanObjPause, bus %d, obj %d\n", bBusNumber, bMsgObj);
 /*
   fprintf(stderr,"sende Pause auf BUS %d fuer CAN Objekt %d auf %d eingestellt\n",
@@ -192,7 +192,7 @@ int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)
   return HAL_NO_ERR;
 }
 
-int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus)
+int16_t getCanBusStatus(uint8_t /*bBusNumber*/, tCanBusStatus* /*ptStatus*/)
 {
   //DEBUG_PRINT1("getCanBusStatus, bus %d\n", bBusNumber);
 
@@ -316,7 +316,7 @@ void waitUntilCanReceive(int32_t i32_endThisLoop)
     DEBUG_PRINT("*");
     return;
   }
-  
+
   FD_ZERO(&rfds);
   FD_SET(msqDataClient.i32_pipeHandle, &rfds);
 
@@ -324,7 +324,7 @@ void waitUntilCanReceive(int32_t i32_endThisLoop)
   s_timeout.tv_usec = (i32_endThisLoop - i32_now) * 1000;
 
   i16_rc = select(msqDataClient.i32_pipeHandle+1, &rfds, NULL, NULL, &s_timeout);
-  
+
   if(i16_rc > 0 && FD_ISSET(msqDataClient.i32_pipeHandle, &rfds) > 0)
     // clear pipe (is done also in can server before next write)
     i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16);

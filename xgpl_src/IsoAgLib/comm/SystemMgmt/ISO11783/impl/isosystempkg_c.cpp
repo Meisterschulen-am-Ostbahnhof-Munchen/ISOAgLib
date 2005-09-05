@@ -114,7 +114,6 @@ void ISOSystemPkg_c::string2Flags()
   @see CANPkgExt_c::getData
 */
 void ISOSystemPkg_c::flags2String()
-{
-  // for ISO use direct write access with setIsoPgn, setIndGroup, etc
+{ // for ISO use direct write access with setIsoPgn, setIndGroup, etc
 };
 } // end of namespace __IsoAgLib

@@ -72,24 +72,33 @@
 #ifndef PC_OS_Linux
 #include <conio.h>
 #else
-	#include <unistd.h>
+  #include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <iostream>
 
 #ifdef WIN32
-	#if defined( _MSC_VER )
-		#include <windows.h>
-		#include <MMSYSTEM.H>
-	#else
-		#include <time.h>
-	#endif
+  #if defined( _MSC_VER )
+    #include <windows.h>
+    #include <MMSYSTEM.H>
+  #else
+    #include <time.h>
+#endif
 #else
-	#include <sys/time.h>
+  #include <sys/time.h>
+  #include <sys/times.h>
+  #include <unistd.h>
 #endif
 
 namespace __HAL {
 static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
+
+#ifndef WIN32
+static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
+// set the StartUpTime as static const variable which is initialized just with scaled clock_t value
+// --> resulting accuracy is enough for StartUpTime requirements
+static const struct timeval startUpTime = {(times(NULL) / clock_t_per_sec), (suseconds_t((times(NULL)*1000000.0) / float(clock_t_per_sec))%1000000)};
+#endif
 
 /**
   open the system with system specific function call
@@ -97,10 +106,12 @@ static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 */
 int16_t open_system()
 { // init system start time
-	getTime();
+  #ifdef WIN32
+  getTime();
+  #endif
   t_biosextSysdata.wRAMSize = 1000;
   printf("open_esx aufgerufen\n");
-	printf("\n\nPRESS RETURN TO STOP PROGRAM!!!\n\n");
+  printf("\n\nPRESS RETURN TO STOP PROGRAM!!!\n\n");
   return can_startDriver();
 }
 /**
@@ -160,35 +171,33 @@ int16_t configWatchdog()
 }
 
 #ifdef WIN32
-	#if defined( _MSC_VER )
-	// VC++ with native Win32 API provides very accurate
-	// msec timer - use that
-	int32_t getTime()
-	{ // returns time in msec
-  	return timeGetTime();
-	}
-	#else
-	// MinGW has neither simple access to timeGetTime()
-	// nor to gettimeofday()
-	// - but beware: at least in LINUX clock() measures
-	//   only the times of the EXE in CPU core
-	int32_t getTime()
-	{ // returns time in msec
-	  return (clock()/(CLOCKS_PER_SEC/1000));
-	}
+  #if defined( _MSC_VER )
+  // VC++ with native Win32 API provides very accurate
+  // msec timer - use that
+  int32_t getTime()
+  { // returns time in msec
+    return timeGetTime();
+  }
+  #else
+  // MinGW has neither simple access to timeGetTime()
+  // nor to gettimeofday()
+  // - but beware: at least in LINUX clock() measures
+  //   only the times of the EXE in CPU core
+  int32_t getTime()
+  { // returns time in msec
+    return (clock()/(CLOCKS_PER_SEC/1000));
+  }
   #endif
 #else
 // use gettimeofday for native LINUX system
-static struct timeval startUpTime = {0,0};
 int32_t getTime()
 {
    struct timeval now;
+
    gettimeofday(&now, 0);
-	 if ( ( startUpTime.tv_usec == 0) && ( startUpTime.tv_sec == 0) )
-	 {
-	 	startUpTime.tv_usec = now.tv_usec;
-	 	startUpTime.tv_sec = now.tv_sec;
-	 }
+   // we use the resulting clock_t from times() call to get SECONDS
+   // as these are independend from settimeofday calls
+   now.tv_sec = times(NULL) / clock_t_per_sec;
    if ((now.tv_usec-= startUpTime.tv_usec) < 0)
      {
        now.tv_usec+= 1000000;
@@ -250,10 +259,10 @@ void stayingAlive(void)
 void powerDown(void)
 {
   if ( getOn_offSwitch() == 0 )
-	{ // CAN_EN is OFF -> stop now system
-		can_stopDriver();
-		printf("System Stop aufgerufen\n");
-	}
+  { // CAN_EN is OFF -> stop now system
+    can_stopDriver();
+    printf("System Stop aufgerufen\n");
+  }
 }
 
 #if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
@@ -284,22 +293,22 @@ int16_t  getOn_offSwitch(void)
     }
   }
 #endif
-	#if 0
-		// old style execution stop detection when
-		// application shoul stop if all CAN messages of
-		// FILE based CAN simulation were processed
-  	return (getTime() - can_lastReceiveTime() < 1000)?1:0;
+  #if 0
+    // old style execution stop detection when
+    // application shoul stop if all CAN messages of
+    // FILE based CAN simulation were processed
+    return (getTime() - can_lastReceiveTime() < 1000)?1:0;
   #elif 0
-		uint8_t b_temp;
-  	// exit function if key typed
-		if (KeyGetByte(&b_temp) ==1) return 0;
-		else return 1;
-	#else
-		// use std C++ cin function to check for unprocessed input
-		// -> as soon as RETURN is hit, the programm stops
-		if ( std::cin.rdbuf()->in_avail() > 0 ) return 0;
-		else return 1;
-	#endif
+    uint8_t b_temp;
+    // exit function if key typed
+    if (KeyGetByte(&b_temp) ==1) return 0;
+    else return 1;
+  #else
+    // use std C++ cin function to check for unprocessed input
+    // -> as soon as RETURN is hit, the programm stops
+    if ( std::cin.rdbuf()->in_avail() > 0 ) return 0;
+    else return 1;
+  #endif
 }
 
 /* switch relais on or off*/

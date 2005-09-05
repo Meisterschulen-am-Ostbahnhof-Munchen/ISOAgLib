@@ -79,6 +79,8 @@
 #include <sys/msg.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
+#include <sys/times.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <signal.h>
@@ -198,20 +200,22 @@ void timeval_diff(struct timeval *presult, struct timeval *pa, struct timeval *p
 int32_t getTime()
 {
   // use gettimeofday for native LINUX system
-  static struct timeval startUpTime = {0,0};
+  static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
+  // set the StartUpTime as static const variable which is initialized just with scaled clock_t value
+  // --> resulting accuracy is enough for StartUpTime requirements
+  static const struct timeval startUpTime = {(times(NULL) / clock_t_per_sec), (suseconds_t((times(NULL)*1000000.0) / float(clock_t_per_sec))%1000000)};
+
   struct timeval now;
 
   gettimeofday(&now, 0);
-  if ( ( startUpTime.tv_usec == 0) && ( startUpTime.tv_sec == 0) )
-         {
-                startUpTime.tv_usec = now.tv_usec;
-                startUpTime.tv_sec = now.tv_sec;
-         }
+  // we use the resulting clock_t from times() call to get SECONDS
+  // as these are independend from settimeofday calls
+  now.tv_sec = times(NULL) / clock_t_per_sec;
   if ((now.tv_usec-= startUpTime.tv_usec) < 0)
-    {
-      now.tv_usec+= 1000000;
-      now.tv_sec-= 1;
-    }
+  {
+    now.tv_usec+= 1000000;
+    now.tv_sec-= 1;
+  }
   now.tv_sec-= startUpTime.tv_sec;
   return (now.tv_usec / 1000 + now.tv_sec * 1000);
 }
@@ -227,6 +231,17 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
   struct timeval s_timeDiff, s_currentTime;
 
   // semaphore to prevent client list modification already set in calling function
+
+  // prepare msqRead_s for each potential broadcast send
+  msqRead_s msqReadBuf;
+  pc_data = &(msqReadBuf.s_canData);
+  // preset constant fields of msqReadBuf
+  pc_data->i32_ident = ui32_id;
+  pc_data->b_dlc = DLC;
+  pc_data->b_xtd = b_xtd;
+  memcpy( pc_data->pb_data, pui8_data, DLC );
+  gettimeofday(&s_currentTime, 0);
+
 
   for (iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++) {
 
@@ -255,6 +270,12 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
         continue;
       }
 
+      if ( (iter->ui8_bMsgType[b_bus][i32_obj] != RX )
+        || (iter->ui16_size[b_bus][i32_obj] == 0     ) )
+      { // this MsgObj is no candidate for message receive
+        continue;
+      }
+
       // compare received msg with filter
       if
         (
@@ -263,15 +284,11 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           && (
                ( (iter->ui8_bufXtd[b_bus][i32_obj] == 1)
                   && (b_xtd == 1)
-                  && (iter->ui8_bMsgType[b_bus][i32_obj] == RX )
-                  && (iter->ui16_size[b_bus][i32_obj] > 0 )
                   && ( (ui32_id & iter->ui32_globalMask[b_bus]) == ((iter->ui32_filter[b_bus][i32_obj]) & iter->ui32_globalMask[b_bus]) )
                )
                ||
                ( (iter->ui8_bufXtd[b_bus][i32_obj] == 0)
                   && (b_xtd == 0)
-                  && (iter->ui8_bMsgType[b_bus][i32_obj] == RX )
-                  && (iter->ui16_size[b_bus][i32_obj] > 0 )
                   && ( (ui32_id & iter->ui16_globalMask[b_bus]) == (iter->ui32_filter[b_bus][i32_obj] & iter->ui16_globalMask[b_bus]) )
                  )
                )
@@ -281,37 +298,23 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
              && (
                   ( (iter->ui8_bufXtd[b_bus][i32_obj] == 1)
                     && (b_xtd == 1)
-                    && (iter->ui8_bMsgType[b_bus][i32_obj] == RX)
-                    && (iter->ui16_size[b_bus][i32_obj] > 0 )
                     && ( (ui32_id & iter->ui32_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) ==  ((iter->ui32_filter[b_bus][i32_obj]) & iter->ui32_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) )
                     )
                   ||
                   ( (iter->ui8_bufXtd[b_bus][i32_obj] == 0)
                      && (b_xtd == 0)
-                     && (iter->ui8_bMsgType[b_bus][i32_obj] == RX)
-                     && (iter->ui16_size[b_bus][i32_obj] > 0 )
                      && ( (ui32_id & iter->ui16_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) ==  (iter->ui32_filter[b_bus][i32_obj] & iter->ui16_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) )
                   )
                 )
              )
          )
         { // received msg fits actual filter
-
-          msqRead_s msqReadBuf;
-
           DEBUG_PRINT("queueing message\n");
-          pc_data = &(msqReadBuf.s_canData);
 
-          gettimeofday(&s_currentTime, 0);
 
           // get difference between now and client start up time
           timeval_diff(&s_timeDiff, &s_currentTime, &(iter->s_startTime));
           pc_data->i32_time = s_timeDiff.tv_sec * 1000 + s_timeDiff.tv_usec / 1000 ;
-
-          pc_data->i32_ident = ui32_id;
-          pc_data->b_dlc = DLC;
-          pc_data->b_xtd = b_xtd;
-          for ( uint32_t ind = 0; ind < DLC; ind++ ) pc_data->pb_data[ind] = pui8_data[ind];
 
           DEBUG_PRINT1("mtype: 0x%08x\n", assemble_mtype(iter->i32_clientID, b_bus, i32_obj));
           msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, i32_obj);
@@ -404,9 +407,6 @@ static void can_read(server_c* pc_serverData)
 {
   can_recv_data receiveData;
   uint32_t DLC;
-  uint8_t b_xtd;
-  uint32_t ui32_id;
-  uint32_t b_bus;
   bool b_moreToRead = TRUE;
   int local_semaphore_id;
 
@@ -499,8 +499,7 @@ static void can_read(server_c* pc_serverData)
         receiveData.msg.b_xtd = (msg.msg_type & MSGTYPE_EXTENDED) == MSGTYPE_EXTENDED;
         receiveData.msg.b_dlc = msg.len;
         receiveData.msg.i32_time = msg.time;
-        for( int i=0; i<msg.len; i++ )
-          receiveData.msg.pb_data[i] = msg.data[i];
+        memcpy( receiveData.msg.pb_data, msg.data, msg.len );
       }
     }
 
@@ -528,9 +527,9 @@ static void can_read(server_c* pc_serverData)
 
     DLC = ( receiveData.msg.b_dlc & 0xF );
     if ( DLC > 8 ) DLC = 8;
-    ui32_id = receiveData.msg.i32_ident;
-    b_bus = receiveData.b_bus;
-    b_xtd = receiveData.msg.b_xtd;
+    const uint32_t ui32_id = receiveData.msg.i32_ident;
+    const uint32_t b_bus = receiveData.b_bus;
+    const uint8_t b_xtd = receiveData.msg.b_xtd;
 
     DEBUG_PRINT4("DLC %d, ui32_id 0x%08x, b_bus %d, b_xtd %d\n", DLC, ui32_id, b_bus, b_xtd);
 
@@ -604,22 +603,22 @@ static void* command_thread_func(void* ptr)
         client_s s_tmpClient;
 
         DEBUG_PRINT("command start driver\n");
-      
+
         // do check for dead clients before queueing any new message
         for (std::list<client_s>::iterator iter_deadClient = pc_serverData->l_clients.begin(); iter_deadClient != pc_serverData->l_clients.end();) {
-            
+
           // send signal 0 (no signal is send, but error handling is done) to check is process is alive
           if (kill(iter_deadClient->i32_clientID, 0) == -1) {
             // client dead!
             DEBUG_PRINT1("client with ID %d no longer alive!\n", iter_deadClient->i32_clientID);
             // clear read/write queue for this client, close pipe, remove from client list, iter_deadClient is incremented
             releaseClient(pc_serverData, iter_deadClient);
-          } else 
+          } else
             // increment iter_deadClient manually (not in for statement)
             iter_deadClient++;
         }
 
-  
+
         // initialize
         memset(&s_tmpClient, 0, sizeof(client_s));
 
