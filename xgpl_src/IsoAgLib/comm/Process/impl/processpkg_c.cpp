@@ -956,7 +956,7 @@ bool ProcessPkg_c::resolveCommandType()
 
       if ( ( DDI() - 74 ) % 3 == 0 )
         en_valueGroup = GeneralCommand_c::exactValue;
-      if ( ( DDI() - 74 ) % 3 == 1 )
+      if ( ( DDI() - 74 ) % 3 == 2 )
         en_valueGroup = GeneralCommand_c::maxValue;
     }
     else if ( DDI() <= 100 ) {
