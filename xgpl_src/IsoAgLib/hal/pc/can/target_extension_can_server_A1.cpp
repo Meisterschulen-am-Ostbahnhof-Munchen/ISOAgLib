@@ -84,6 +84,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <signal.h>
+#include <errno.h>
 
 #include <pthread.h>
 #include <linux/version.h>
@@ -259,12 +260,12 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
       continue;
     }
 
+    // i32_clientID != 0 in forwarding mode during send, do not enqueue this message for sending client
+    if (i32_clientID && (iter->i32_clientID == i32_clientID))
+      continue;
+
     // now search for MsgObj queue on this b_bus, where new message from b_bus maps
     for (int32_t i32_obj = 1; i32_obj < cui8_maxCanObj; i32_obj++) {
-
-      // i32_clientID != 0 in forwarding mode during send, do not enqueue this message for sending client
-      if (i32_clientID && (iter->i32_clientID == i32_clientID))
-        continue;
 
       if (!iter->b_canObjConfigured[b_bus][i32_obj])
         continue;
@@ -323,7 +324,27 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
           DEBUG_PRINT1("mtype: 0x%08x\n", assemble_mtype(iter->i32_clientID, b_bus, i32_obj));
           msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, i32_obj);
-          msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
+          
+          int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
+          if (i_rcSnd == -1)
+          {
+            DEBUG_PRINT1("error in msgsnd (errno: %d)\n", errno);
+            if (errno == EAGAIN)
+            { // queue is full => remove oldest msg and try again
+              msqWrite_s msqWriteBuf;
+              DEBUG_PRINT("message queue full => try to remove oldest msg and send again!!\n");
+              int i_rcRcv = msgrcv(pc_serverData->msqDataServer.i32_rdHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0,IPC_NOWAIT);
+              if ( i_rcRcv > 0 )
+              { // number of received bytes > 0 => msgrcv successfull => try again
+                DEBUG_PRINT("oldest msg from queue removed!!\n");
+                int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
+                if (i_rcSnd == 0)
+                {
+                  DEBUG_PRINT("message sent again after queue full!!\n");
+                }
+              }
+            }
+          }
 
           if (iter->i32_pipeHandle) {
             uint8_t ui8_buf[16];
@@ -335,6 +356,9 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
             rc=write(iter->i32_pipeHandle, &ui8_buf, 1);
           }
 
+          // don't check following objects if message is already enqueued for this client
+          break;
+          
         } // if fit
     } // for objNr
   }// for iter
