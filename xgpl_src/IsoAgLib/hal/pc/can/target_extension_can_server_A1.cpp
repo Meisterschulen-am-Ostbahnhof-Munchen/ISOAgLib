@@ -824,6 +824,45 @@ static void* command_thread_func(void* ptr)
         break;
 
 
+      case COMMAND_LOCK:
+      case COMMAND_UNLOCK:
+
+        if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > cui8_maxCanObj-1 ))
+          i32_error = HAL_RANGE_ERR;
+        else {
+          if (iter_client != NULL) {
+            if (msqCommandBuf.i16_command == COMMAND_LOCK) {
+              iter_client->b_canBufferLock[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj] = TRUE;
+              DEBUG_PRINT2("locked buf %d, obj %d\n", msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj);
+            } else {
+              iter_client->b_canBufferLock[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj] = FALSE;
+              DEBUG_PRINT2("unlocked buf %d, obj %d\n", msqCommandBuf.s_config.ui8_bus, msqCommandBuf.s_config.ui8_obj);
+            }
+          } else
+            i32_error = HAL_CONFIG_ERR;
+        }
+
+        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
+
+        break;
+
+
+      case COMMAND_QUERYLOCK:
+
+        if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > cui8_maxCanObj-1 ))
+          i32_error = HAL_RANGE_ERR;
+        else {
+          if (iter_client != NULL) {
+            msqCommandBuf.s_config.ui16_queryLockResult = iter_client->b_canBufferLock[msqCommandBuf.s_config.ui8_bus][msqCommandBuf.s_config.ui8_obj];
+          } else
+            i32_error = HAL_CONFIG_ERR;
+        }
+
+        send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));
+
+        break;
+
+
       case COMMAND_CLOSEOBJ:
 
         if ((msqCommandBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( msqCommandBuf.s_config.ui8_obj > cui8_maxCanObj-1 ))

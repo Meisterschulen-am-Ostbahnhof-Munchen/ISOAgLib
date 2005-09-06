@@ -263,7 +263,71 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   return send_command(&msqCommandBuf, &msqDataClient);
 
 }
+/**
+       lock a MsgObj to avoid further placement of messages into buffer.
+  @param rui8_busNr number of the BUS to config
+  @param rui8_msgobjNr number of the MsgObj to config
+       @param rb_doLock true==lock(default); false==unlock
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+       */
+int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+{
 
+  msqCommand_s msqCommandBuf;
+
+  DEBUG_PRINT3("lockCanObj, bus %d, obj %d, lock %d\n", rui8_busNr, rui8_msgobjNr, rb_doLock);
+
+  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+
+  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+
+  if (rb_doLock)
+    msqCommandBuf.i16_command = COMMAND_LOCK;
+  else
+    msqCommandBuf.i16_command = COMMAND_UNLOCK;
+
+  msqCommandBuf.s_config.ui8_bus = rui8_busNr;
+  msqCommandBuf.s_config.ui8_obj = rui8_msgobjNr;
+
+  return send_command(&msqCommandBuf, &msqDataClient);
+
+}
+
+/**
+       check if MsgObj is currently locked
+  @param rui8_busNr number of the BUS to check
+  @param rui8_msgobjNr number of the MsgObj to check
+       @return true -> MsgObj is currently locked
+*/
+bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+{
+
+  int16_t i16_rc;
+  msqCommand_s msqCommandBuf;
+
+  DEBUG_PRINT2("getCanMsgObjLocked, bus %d, obj %d\n", rui8_busNr, rui8_msgobjNr);
+
+  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > cui8_maxCanObj - 1 ) ) return true;
+  else {
+
+    msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+    msqCommandBuf.i16_command = COMMAND_QUERYLOCK;
+    msqCommandBuf.s_config.ui8_bus = rui8_busNr;
+    msqCommandBuf.s_config.ui8_obj = rui8_msgobjNr;
+
+    i16_rc = send_command(&msqCommandBuf, &msqDataClient);
+
+    if (!i16_rc)
+      return msqCommandBuf.s_config.ui16_queryLockResult;
+    else
+      return false;
+  }
+
+}
 
 
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)

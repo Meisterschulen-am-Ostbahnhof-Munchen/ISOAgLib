@@ -60,21 +60,22 @@
 namespace __HAL {
 
 // globale Filehandle fuer simulierte CAN Input
-static FILE* can_input[2][15];
-static FILE* can_output[2][2];
-static tReceive pRead[2][15];
-static tIRQ_FUNCTION can_irq[2][15];
-static uint8_t pOpen[2][15];
-static uint8_t pSendOpen[2][15];
-static uint8_t dateiende[2][15];
-static int32_t lastCloseTimeArr[2][15];
-static bool b_canBufferLock[2][15];
+static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
+static FILE* can_input[cui32_maxCanBusCnt][15];
+static FILE* can_output[cui32_maxCanBusCnt][2];
+static tReceive pRead[cui32_maxCanBusCnt][15];
+static tIRQ_FUNCTION can_irq[cui32_maxCanBusCnt][15];
+static uint8_t pOpen[cui32_maxCanBusCnt][15];
+static uint8_t pSendOpen[cui32_maxCanBusCnt][15];
+static uint8_t dateiende[cui32_maxCanBusCnt][15];
+static int32_t lastCloseTimeArr[cui32_maxCanBusCnt][15];
+static bool b_canBufferLock[cui32_maxCanBusCnt][15];
 int32_t i32_lastSendTime;
 int32_t i32_lastReceiveTime;
 int32_t i32_lastCloseTime = 0;
 uint16_t ui16_sendPause;
 
-static boolean pb_bXtd[2][15];
+static boolean pb_bXtd[cui32_maxCanBusCnt][15];
 
 int16_t can_startDriver()
 {
@@ -117,6 +118,19 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   }
   firstCall = false;
   return HAL_NO_ERR;
+}
+
+/**
+	check if MsgObj is currently locked
+  @param rui8_busNr number of the BUS to check
+  @param rui8_msgobjNr number of the MsgObj to check
+	@return true -> MsgObj is currently locked
+*/
+bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+{
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
+	else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
+	else return false;
 }
 
 int16_t closeCan ( uint8_t bBusNumber )
@@ -300,6 +314,21 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 	scanCanMsgLine( bBusNumber, bMsgObj );
   return HAL_NO_ERR;
 }
+/**
+	lock a MsgObj to avoid further placement of messages into buffer.
+  @param rui8_busNr number of the BUS to config
+  @param rui8_msgobjNr number of the MsgObj to config
+	@param rb_doLock true==lock(default); false==unlock
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+	*/
+int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+{ // first get waiting messages
+	checkMsg();
+	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+  return HAL_NO_ERR;
+}
 
 int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)
 {
@@ -407,8 +436,14 @@ int16_t checkMsg()
   int16_t result = 0;
   int16_t empfangen = 0;
   int16_t flag = 1;
-  bool b_received[2][15] = { {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-                             {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}};
+  bool b_received[cui32_maxCanBusCnt][15];
+	for ( unsigned int indBus = 0; indBus < cui32_maxCanBusCnt; indBus++ )
+	{
+		for ( unsigned int indObj = 0; indObj < 15; indObj++ )
+		{
+			b_received[indBus][indObj] = false;
+		}
+	}
   while (flag == 1)
   {
     result = i = j = 0;
