@@ -84,6 +84,9 @@ typedef struct {
       uint32_t ui32_usec;
     } s_startTime;
     struct {
+      clock_t t_clock;
+    } s_startTimeClock;
+    struct {
       int32_t i32_pipeId;
       int32_t i32_fill1;
       int32_t i32_fill2;

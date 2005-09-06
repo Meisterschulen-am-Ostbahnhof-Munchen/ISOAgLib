@@ -13,7 +13,8 @@ namespace __HAL {
 // client specific data
 typedef struct {
   int32_t  i32_clientID;
-  struct timeval s_startTime;
+  clock_t  t_startTimeClock;
+  int32_t  i32_lastTimeStamp_msec;
   bool     b_canBufferLock[cui32_maxCanBusCnt][cui8_maxCanObj];
   bool     b_canObjConfigured[cui32_maxCanBusCnt][cui8_maxCanObj];
   uint8_t  ui8_bufXtd[cui32_maxCanBusCnt][cui8_maxCanObj];
@@ -49,7 +50,6 @@ public:
 };
 
 
-int32_t getTime();
 void usage();
 int open_semaphore_set(int sema_proj_id);
 int get_semaphore(int sid, int operation);

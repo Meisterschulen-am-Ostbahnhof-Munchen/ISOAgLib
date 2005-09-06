@@ -103,7 +103,7 @@ int16_t configWatchdog();
 
 int32_t getTime();
 #ifndef WIN32
-const struct timeval& getStartUpTime();
+clock_t getStartUpTime();
 #endif
 int16_t getSnr(uint8_t *snrDat);               /* serial number of target */
 

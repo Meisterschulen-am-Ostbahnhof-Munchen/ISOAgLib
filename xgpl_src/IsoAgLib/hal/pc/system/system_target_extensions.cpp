@@ -94,11 +94,9 @@ namespace __HAL {
 static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 
 #ifndef WIN32
-const struct timeval& getStartUpTime()
+clock_t getStartUpTime()
 {
-  // set the StartUpTime as static const variable which is initialized just with scaled clock_t value
-  // --> resulting accuracy is enough for StartUpTime requirements
-  static const struct timeval startUpTime = {(times(NULL) / sysconf(_SC_CLK_TCK)), (((times(NULL)*1000000UL) / (sysconf(_SC_CLK_TCK)))%1000000UL)};
+  static const clock_t startUpTime = times(NULL);
   return startUpTime;
 }
 #endif
@@ -198,12 +196,11 @@ int16_t configWatchdog()
 int32_t getTime()
 {
   static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
-  static const clock_t myStartUpTime = times(NULL);
   struct timeval now;
 
   gettimeofday(&now, 0);
 
-  const uint32_t cui32_now_clock_t = times(NULL)-myStartUpTime;
+  const uint32_t cui32_now_clock_t = times(NULL)-getStartUpTime();
 
   int32_t i32_result =
       ( ((uint64_t(cui32_now_clock_t)*10ULL) / clock_t_per_sec ) * 100 )

@@ -68,6 +68,7 @@
 #include <sys/msg.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
+#include <sys/times.h>
 #include <time.h>
 
 #include "can_target_extensions.h"
@@ -125,13 +126,13 @@ int get_semaphore(int sid, int operation ) {
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, tSend* ptSend, FILE* f_handle)
 {
   uint8_t data[8] = {0,0,0,0,0,0,0,0};
-  int32_t i32_sendTimestamp = getTime();
+  clock_t t_sendTimestamp = times(NULL);
   memcpy(data, ptSend->abData, ptSend->bDlc);
 
   if (f_handle) {
     fprintf(f_handle,
             "%05d %d %d %d %d %d %-8x   %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx\n",
-            i32_sendTimestamp, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, (ptSend->dwId >> 26) & 7 /* priority */, ptSend->dwId,
+            t_sendTimestamp, bBusNumber, bMsgObj, ptSend->bXtd, ptSend->bDlc, (ptSend->dwId >> 26) & 7 /* priority */, ptSend->dwId,
             data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
     fflush(f_handle);
   }

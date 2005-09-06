@@ -105,8 +105,8 @@ int16_t can_startDriver()
   msqCommandBuf.i16_command = COMMAND_REGISTER;
   // call getTime just to be sure that start up time is set
   getTime();
-  msqCommandBuf.s_startTime.ui32_sec = getStartUpTime().tv_sec;
-  msqCommandBuf.s_startTime.ui32_usec = getStartUpTime().tv_usec;
+
+  msqCommandBuf.s_startTimeClock.t_clock = getStartUpTime();
 
   i16_rc = send_command(&msqCommandBuf, &msqDataClient);
 

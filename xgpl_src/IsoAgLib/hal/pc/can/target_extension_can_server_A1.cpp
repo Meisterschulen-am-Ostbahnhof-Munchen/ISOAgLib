@@ -183,46 +183,31 @@ static FILE*  canBusFp[cui32_maxCanBusCnt];
 
 namespace __HAL {
 
-void timeval_diff(struct timeval *presult, struct timeval *pa, struct timeval *pb) {
-
-  presult->tv_sec = pa->tv_sec - pb->tv_sec;
-  presult->tv_usec = pa->tv_usec - pb->tv_usec;
-
-  while (presult->tv_usec >= 1000000) {
-    presult->tv_sec++;
-    presult->tv_usec -= 1000000;
-  }
-  while (presult->tv_usec < 0) {
-    presult->tv_sec--;
-    presult->tv_usec += 1000000;
-  }
-}
-
-int32_t getTime()
+int32_t getClientTime( client_s& ref_receiveClient )
 {
   // use gettimeofday for native LINUX system
   static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
-  static const clock_t myStartUpTime = times(NULL);
 
   struct timeval now;
-
   gettimeofday(&now, 0);
 
   // we use the resulting clock_t from times() call to get SECONDS
   // as these are independend from settimeofday calls
-  const uint32_t cui32_now_clock_t = times(NULL)-myStartUpTime;
+  const uint32_t cui32_now_clock_t = times(NULL)-ref_receiveClient.t_startTimeClock;
 
   int32_t i32_result =
       ( ((uint64_t(cui32_now_clock_t)*10ULL) / clock_t_per_sec ) * 100 )
       + ( ( now.tv_usec / 1000 ) % 100 );
+
   static int32_t si32_lastTime = 0;
 
-  while ( si32_lastTime > i32_result )
+  while ( ref_receiveClient.i32_lastTimeStamp_msec > i32_result )
   { // make sure that our timestamp FROM TWO SOURCES is monotonic
     // --> add 100msec so that the intersection problems of the two sources are avoided
     i32_result += 100;
   }
-  si32_lastTime = i32_result;
+  ref_receiveClient.i32_lastTimeStamp_msec = i32_result;
+
   return i32_result;
 }
 
@@ -234,7 +219,6 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
   can_data* pc_data;
   std::list<client_s>::iterator iter, iter_delete = 0;
-  struct timeval s_timeDiff, s_currentTime;
 
   // semaphore to prevent client list modification already set in calling function
 
@@ -246,8 +230,6 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
   pc_data->b_dlc = DLC;
   pc_data->b_xtd = b_xtd;
   memcpy( pc_data->pb_data, pui8_data, DLC );
-  gettimeofday(&s_currentTime, 0);
-
 
   for (iter = pc_serverData->l_clients.begin(); iter != pc_serverData->l_clients.end(); iter++) {
 
@@ -317,10 +299,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
         { // received msg fits actual filter
           DEBUG_PRINT("queueing message\n");
 
-
-          // get difference between now and client start up time
-          timeval_diff(&s_timeDiff, &s_currentTime, &(iter->s_startTime));
-          pc_data->i32_time = s_timeDiff.tv_sec * 1000 + s_timeDiff.tv_usec / 1000 ;
+          pc_data->i32_time = getClientTime(*iter);
 
           DEBUG_PRINT1("mtype: 0x%08x\n", assemble_mtype(iter->i32_clientID, b_bus, i32_obj));
           msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, i32_obj);
@@ -653,11 +632,11 @@ static void* command_thread_func(void* ptr)
 
         // client process id is used as clientID
         s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
-        // save difference between client runtime and server runtime
-        s_tmpClient.s_startTime.tv_sec = msqCommandBuf.s_startTime.ui32_sec;
-        s_tmpClient.s_startTime.tv_usec = msqCommandBuf.s_startTime.ui32_usec;
 
-        DEBUG_PRINT2("client start up time (absolute value): %d (sec) %d (usec)\n", s_tmpClient.s_startTime.tv_sec, s_tmpClient.s_startTime.tv_usec);
+        s_tmpClient.t_startTimeClock = msqCommandBuf.s_startTimeClock.t_clock;
+        s_tmpClient.i32_lastTimeStamp_msec = 0;
+        
+        DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
 
         char pipe_name[255];
         sprintf(pipe_name, "%s%d", PIPE_PATH, ++(pc_serverData->i32_lastPipeId));
