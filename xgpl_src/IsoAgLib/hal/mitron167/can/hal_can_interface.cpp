@@ -95,20 +95,22 @@ extern "C" {
 /* ************************************* */
 /* **** Some Modul Global Variables **** */
 /* ************************************* */
-static uint16_t ui16_lastCanBusState[CAN_BUS_CNT];
-static int32_t i32_cinterfBeginBusWarnOff[CAN_BUS_CNT];
-static int32_t i32_cinterfBeginBit1err[CAN_BUS_CNT];
+static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
+
+static uint16_t ui16_lastCanBusState[cui32_maxCanBusCnt];
+static int32_t i32_cinterfBeginBusWarnOff[cui32_maxCanBusCnt];
+static int32_t i32_cinterfBeginBit1err[cui32_maxCanBusCnt];
 
 /** report if active running IRQ controlled send process is active */
-static bool b_runningIrqSendProcess[CAN_BUS_CNT] = { false, false };
+static bool b_runningIrqSendProcess[cui32_maxCanBusCnt] = { false, false };
 
-static int32_t i32_cinterfLastSuccSend[CAN_BUS_CNT];
-static int32_t i32_cinterfLastSuccReceive[CAN_BUS_CNT];
+static int32_t i32_cinterfLastSuccSend[cui32_maxCanBusCnt];
+static int32_t i32_cinterfLastSuccReceive[cui32_maxCanBusCnt];
 
 /** array of 100msec. timeslice conters of received and sent msg per BUS [uint8_t] */
-static uint16_t gwCinterfBusLoad[CAN_BUS_CNT][10];
+static uint16_t gwCinterfBusLoad[cui32_maxCanBusCnt][10];
 /** actual index in gwBusLoad */
-static uint8_t gb_cinterfBusLoadSlice[CAN_BUS_CNT];
+static uint8_t gb_cinterfBusLoadSlice[cui32_maxCanBusCnt];
 
 static uint32_t sui32_lastIdent;
 
