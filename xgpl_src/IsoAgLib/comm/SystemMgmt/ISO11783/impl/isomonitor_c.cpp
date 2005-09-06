@@ -463,6 +463,30 @@ bool ISOMonitor_c::insertIsoMember(const GetyPos_c& rc_gtp,
   return b_result;
 };
 
+/** register a SaClaimHandler_c */
+bool ISOMonitor_c::registerSaClaimHandler( SaClaimHandler_c* rpc_client )
+{
+  for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
+  { // check if it points to the same client
+    if ( *iter == rpc_client ) return true; // already in multimap -> don't insert again
+  }
+  const unsigned int oldSize = vec_saClaimHandler.size();
+  // if this position is reached, a new item must be inserted
+  vec_saClaimHandler.push_back( rpc_client );
+
+  return ( vec_saClaimHandler.size() > oldSize )?true:false;
+}
+
+
+/** this function is used to broadcast a ISO monitor list change to all registered clients */
+void ISOMonitor_c::broadcastSaChange2Clients( const GetyPos_c& rc_gtp, const ISOItem_c* rpc_isoItem )
+{
+  for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
+  { // call the handler function of the client
+    (*iter)->reactOnMonitorListChange( rc_gtp, rpc_isoItem );
+  }
+}
+
 /**
   deliver member item with given gtp
   (check with existIsoMemberGtp before access to not defined item)

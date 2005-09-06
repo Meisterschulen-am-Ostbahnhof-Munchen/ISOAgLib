@@ -99,6 +99,7 @@
 #include "isosystempkg_c.h"
 #include "isoitem_c.h"
 
+#include <map>
 #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
   #include <ext/slist>
   namespace std { using __gnu_cxx::slist;};
@@ -109,6 +110,25 @@ namespace IsoAgLib { class iISOMonitor_c;}
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
+/** Handler class which can be used to react on SA claims and esp. conflicts */
+class SaClaimHandler_c
+{
+ public:
+   SaClaimHandler_c(){};
+   /** this function is called by ISOMonitor_c when the ISOItem_c of the
+     * registered device has changed.
+     * @param refc_gtp const reference to the item which ISOItem_c state is changed
+     * @param rpc_newItem pointer to the currently corresponding ISOItem_c ( NULL == this item has no (more) and ISOItem_c )
+     */
+   virtual void reactOnMonitorListChange( const GetyPos_c& refc_gtp, const ISOItem_c* rpc_newItem ) = 0;
+};
+
+/** type of map which is used to store SaClaimHandler_c clients corresponding to a GetyPos_c reference */
+typedef std::vector<SaClaimHandler_c*> SaClaimHandlerVector_t;
+typedef std::vector<SaClaimHandler_c*>::iterator SaClaimHandlerVectorIterator_t;
+typedef std::vector<SaClaimHandler_c*>::const_iterator SaClaimHandlerVectorConstIterator_t;
+
 class ISOMonitor_c;
 typedef SINGLETON_DERIVED(ISOMonitor_c, ElementBase_c) SingletonISOMonitor_c;
 /**
@@ -260,6 +280,10 @@ public:
   bool insertIsoMember(const GetyPos_c& rc_gtp, uint8_t rui8_nr = 0xFF,
                      IState_c::itemState_t ren_state = IState_c::Active, uint16_t rui16_saEepromAdr = 0xFFFF);
 
+  /** register a SaClaimHandler_c */
+  bool registerSaClaimHandler( SaClaimHandler_c* rpc_client );
+  /** this function is used to broadcast a ISO monitor list change to all registered clients */
+  void broadcastSaChange2Clients( const GetyPos_c& rc_gtp, const ISOItem_c* rpc_isoItem );
   /**
     deliver member item with given gtp
     (check with existIsoMemberGtp before access to not defined item)
@@ -403,6 +427,8 @@ private: // Private attributes
     to the same ISOItem
   */
   Vec_ISOIterator pc_isoMemberCache;
+  /** map of SaClaimHandler_c clients that want to be informed on monitor list changes */
+  SaClaimHandlerVector_t vec_saClaimHandler;
 };
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique ISOMonitor_c singleton instance

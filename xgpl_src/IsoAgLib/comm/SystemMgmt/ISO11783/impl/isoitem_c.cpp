@@ -373,6 +373,8 @@ bool ISOItem_c::timeEvent( void )
         #ifdef USE_ISO_TERMINAL
         b_oldVtState = false; // means send out master message out first, but wait for VT Status Message to arrive first!
         #endif
+        // now inform the ISO monitor list change clients on NEW client use
+        getIsoMonitorInstance4Comm().broadcastSaChange2Clients( gtp(), this );
       }
     }
   }
@@ -470,13 +472,21 @@ bool ISOItem_c::processMsg(){
           else if ( c_pkg.gtp() == gtp() )
           { // address claim has same GTP ( device class and -instance )
             // -> give this instance to the remote one
+            // FIRST INFORM REGISTERED ISO Monitor List change clients
+            // indicate with NULL, that this GetyPos_c is no more inside the monitor list
+            getIsoMonitorInstance4Comm().broadcastSaChange2Clients( gtp(), NULL );
             clearItemState(IState_c::Local);
             setItemState(IState_c::ClaimedAddress);
             setNr(c_pkg.isoSa());
             inputString(c_pkg.name());
+            // now inform the ISO monitor list change clients on NEW client use
+            getIsoMonitorInstance4Comm().broadcastSaChange2Clients( gtp(), this );
           }
           else
-          { // local item has lower prio -> search free SA and claim this
+          { // FIRST INFORM REGISTERED ISO Monitor List change clients
+            // indicate with NULL, that this GetyPos_c is no more inside the monitor list
+            getIsoMonitorInstance4Comm().broadcastSaChange2Clients( gtp(), NULL );
+            // local item has lower prio -> search free SA and claim this
             // or set nr to the code 254 %e.g. no suitbla nr found -> error
             setNr(getIsoMonitorInstance4Comm().unifyIsoSa(this));
             c_pkg.setIsoSa(nr());
@@ -512,10 +522,15 @@ bool ISOItem_c::processMsg(){
         // before the new SA is written
         c_process.deleteRemoteFilter( gtp() );
         #endif
+        // INFORM REGISTERED ISO Monitor List change clients
+        // indicate with NULL, that this GetyPos_c is no more inside the monitor list
+        getIsoMonitorInstance4Comm().broadcastSaChange2Clients( gtp(), NULL );
         clearItemState(IState_c::Local);
         setItemState(IState_c::ClaimedAddress);
         setNr(c_pkg.isoSa());
         inputString(c_pkg.name());
+        // now inform the ISO monitor list change clients on NEW client use
+        getIsoMonitorInstance4Comm().broadcastSaChange2Clients( gtp(), this );
       }
       else if ( (!itemState(IState_c::Local))
              || (!itemState(IState_c::ClaimedAddress)) )
@@ -524,10 +539,15 @@ bool ISOItem_c::processMsg(){
         // (in case this item was local item in address claim state,
         //  Ident_Item::timeEvent will look for new POS/Device Class Instance
         //  to unify GTP -> if possible it will insert new item for local ident)
+        // INFORM REGISTERED ISO Monitor List change clients
+        // indicate with NULL, that this GetyPos_c is no more inside the monitor list
+        getIsoMonitorInstance4Comm().broadcastSaChange2Clients( gtp(), NULL );
         clearItemState(IState_c::Local);
         setItemState(IState_c::ClaimedAddress);
         setNr(c_pkg.isoSa());
         inputString(c_pkg.name());
+        // now inform the ISO monitor list change clients on NEW client use
+        getIsoMonitorInstance4Comm().broadcastSaChange2Clients( gtp(), this );
       }
       b_result = true;
     break;
