@@ -1125,7 +1125,7 @@ bool Base_c::isoProcessMsg()
         default: // don't care for other language pgns...
           break;
       }
-      b_result = true;
+      b_result = false; // so that IsoTerminal_c can also receive the LANGUAGE_PGN
       break;
     // **********************************************************
   }
