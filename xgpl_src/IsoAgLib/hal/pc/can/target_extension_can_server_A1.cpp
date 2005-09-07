@@ -201,12 +201,8 @@ int32_t getClientTime( client_s& ref_receiveClient )
 
   static int32_t si32_lastTime = 0;
 
-  while ( ref_receiveClient.i32_lastTimeStamp_msec > i32_result )
-  { // make sure that our timestamp FROM TWO SOURCES is monotonic
-    // --> add 100msec so that the intersection problems of the two sources are avoided
-    i32_result += 100;
-  }
-  ref_receiveClient.i32_lastTimeStamp_msec = i32_result;
+  if (  ref_receiveClient.i32_lastTimeStamp_msec > i32_result ) i32_result = ref_receiveClient.i32_lastTimeStamp_msec;
+  else ref_receiveClient.i32_lastTimeStamp_msec = i32_result;
 
   return i32_result;
 }
@@ -303,7 +299,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
           DEBUG_PRINT1("mtype: 0x%08x\n", assemble_mtype(iter->i32_clientID, b_bus, i32_obj));
           msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, i32_obj);
-          
+
           int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
           if (i_rcSnd == -1)
           {
@@ -337,7 +333,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
           // don't check following objects if message is already enqueued for this client
           break;
-          
+
         } // if fit
     } // for objNr
   }// for iter
@@ -635,7 +631,7 @@ static void* command_thread_func(void* ptr)
 
         s_tmpClient.t_startTimeClock = msqCommandBuf.s_startTimeClock.t_clock;
         s_tmpClient.i32_lastTimeStamp_msec = 0;
-        
+
         DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
 
         char pipe_name[255];

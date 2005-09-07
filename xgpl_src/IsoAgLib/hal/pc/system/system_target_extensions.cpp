@@ -202,17 +202,25 @@ int32_t getTime()
 
   const uint32_t cui32_now_clock_t = times(NULL)-getStartUpTime();
 
+
+  static int32_t i32_secOffset = 0;
+  int32_t i32_newOffset = ( ( times(NULL) / clock_t_per_sec ) - now.tv_sec );
+  if ( abs(i32_newOffset - i32_secOffset) > 2 )
+  {
+    std::cerr << "\n\nTIME-OFFSET CHANGED from " << i32_secOffset << " TO " << i32_newOffset
+        << " --> DELTA: " << abs(i32_newOffset - i32_secOffset)
+        << "\n\n" << std::endl;
+    i32_secOffset = i32_newOffset;
+  }
+
   int32_t i32_result =
       ( ((uint64_t(cui32_now_clock_t)*10ULL) / clock_t_per_sec ) * 100 )
       + ( ( now.tv_usec / 1000 ) % 100 );
   static int32_t si32_lastTime = 0;
 
-  while ( si32_lastTime > i32_result )
-  { // make sure that our timestamp FROM TWO SOURCES is monotonic
-    // --> add 100msec so that the intersection problems of the two sources are avoided
-    i32_result += 100;
-  }
-  si32_lastTime = i32_result;
+  if ( si32_lastTime > i32_result ) i32_result = si32_lastTime;
+  else si32_lastTime = i32_result;
+
   return i32_result;
 }
 
