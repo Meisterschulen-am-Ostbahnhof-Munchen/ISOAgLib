@@ -195,13 +195,20 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
     ui8_satelliteCnt = 0;
     __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true);
     __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true);
+    // *************************************************************************************************
 
     // *************************************************************************************************
+    // Added by Martin Wodok to accomodate LANGUAGE_PGN Messages:
+    b_languageVtReceived = false;
+    b_languageTecuReceived = false;
+    // *************************************************************************************************
+
   #endif
   i32_lastCalendarSet = 0;
 
   // set configure values with call for config
   config(rpc_gtp, rt_mySendSelection);
+  /** @todo check if the above doesn't registerClient for a second time! */
 };
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */
@@ -307,6 +314,7 @@ bool Base_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream,
   // >>>First Chunk<<< Processing
   if (rb_isFirstChunk)
   {  /** return value is only used on receive of last data chunk */
+     /** @todo this may be wrong, if it's also the last chunk we shouldn't break out here!! */
     return false;
   }
 
@@ -861,6 +869,13 @@ void Base_c::checkCreateReceiveFilter( void )
                       (static_cast<MASK_TYPE>(BACK_PTO_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
 
     // *************************************************************************************************
+    // Added by Martin Wodok to accomodate LANGUAGE_PGN Messages:
+    // create FilterBox_c for LANGUAGE_PGN, PF 254 - mask for DP, PF and PS
+    // mask: (0x1FFFF << 8) filter: (LANGUAGE_PGN << 8)
+    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                      (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8), false, Ident_c::ExtendedIdent);
+
+    // *************************************************************************************************
     // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
 
     // GNSS Position Rapid Update
@@ -1088,6 +1103,31 @@ bool Base_c::isoProcessMsg()
       b_result = true;
       break;
       // **********************************************************
+    // **********************************************************
+    // Added by Martin Wodok for LANGUAGE_PGN:
+    case LANGUAGE_PGN:
+      switch (data().isoSa())
+      {
+        case 0x26:
+          b_languageVtReceived = true;
+          for (int i=0; i<8; i++)
+          {
+            p8ui8_languageVt[i] = data().getInt32Data(i);
+          }
+          break;
+        case 0xF0:
+          b_languageTecuReceived = true;
+          for (int i=0; i<8; i++)
+          {
+            p8ui8_languageTecu[i] = data().getInt32Data(i);
+          }
+          break;
+        default: // don't care for other language pgns...
+          break;
+      }
+      b_result = true;
+      break;
+    // **********************************************************
   }
   return b_result;
 }

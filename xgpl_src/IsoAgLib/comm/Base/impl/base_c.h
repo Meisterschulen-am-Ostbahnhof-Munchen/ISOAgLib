@@ -634,6 +634,13 @@ public: // Public methods
   uint16_t getGpsSpeedCmSec( void ) const { return ui16_speedCmSec;};
   /** deliver GPS Heading [1x10E-4rad] */
   uint16_t getGpsHeadingRad10Minus4( void ) const { return ui16_headingRad10Minus4; };
+
+  bool isVtLanguageReceived()   const { return b_languageVtReceived; };
+  bool isTecuLanguageReceived() const { return b_languageTecuReceived; };
+
+  const uint8_t* getVtLanguage()   const { return p8ui8_languageVt; };
+  const uint8_t* getTecuLanguage() const { return p8ui8_languageTecu; };
+
 #endif
 
   /*@}*/
@@ -790,6 +797,15 @@ private:
   int16_t i16_hdop;
   /** PDOP with scaling [1x10E-2] */
   int16_t i16_pdop;
+
+  /** VT language information */
+  uint8_t p8ui8_languageVt[8];
+  /** TECU language information */
+  uint8_t p8ui8_languageTecu[8];
+  /** VT language reception information */
+  bool b_languageVtReceived;
+  /** TECU language reception information */
+  bool b_languageTecuReceived;
 
 
   //  Operation: reactOnLastChunk

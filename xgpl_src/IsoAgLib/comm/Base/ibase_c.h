@@ -505,6 +505,13 @@ public:
   uint16_t getGpsSpeedCmSec( void ) const { return Base_c::getGpsSpeedCmSec();};
   /** deliver GPS Heading [1x10E-4rad] */
   uint16_t getGpsHeadingRad10Minus4( void ) const { return Base_c::getGpsHeadingRad10Minus4(); };
+
+  bool isVtLanguageReceived()   const { return Base_c::isVtLanguageReceived(); };
+  bool isTecuLanguageReceived() const { return Base_c::isTecuLanguageReceived(); };
+
+  const uint8_t* getVtLanguage()   const { return Base_c::getVtLanguage(); };
+  const uint8_t* getTecuLanguage() const { return Base_c::getTecuLanguage(); };
+
   /*@}*/
 
   #endif
