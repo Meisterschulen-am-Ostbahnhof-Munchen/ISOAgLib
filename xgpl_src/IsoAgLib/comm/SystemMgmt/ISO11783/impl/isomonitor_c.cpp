@@ -479,11 +479,19 @@ bool ISOMonitor_c::registerSaClaimHandler( SaClaimHandler_c* rpc_client )
 
 
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
-void ISOMonitor_c::broadcastSaChange2Clients( const GetyPos_c& rc_gtp, const ISOItem_c* rpc_isoItem )
+void ISOMonitor_c::broadcastSaAdd2Clients( const GetyPos_c& rc_gtp, const ISOItem_c* rpc_isoItem ) const
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
-    (*iter)->reactOnMonitorListChange( rc_gtp, rpc_isoItem );
+    (*iter)->reactOnMonitorListAdd( rc_gtp, rpc_isoItem );
+  }
+}
+/** this function is used to broadcast a ISO monitor list change to all registered clients */
+void ISOMonitor_c::broadcastSaRemove2Clients( const GetyPos_c& rc_gtp, uint8_t rui8_oldSa ) const
+{
+  for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
+  { // call the handler function of the client
+    (*iter)->reactOnMonitorListRemove( rc_gtp, rui8_oldSa );
   }
 }
 
@@ -816,7 +824,7 @@ bool ISOMonitor_c::processMsg(){
         // (ISOMonitor_c::insertIsoMember set state bits for member and ISO
         //  additionally)
         insertIsoMember(data().gtp(), data().isoSa(),
-          IState_c::itemState_t(IState_c::ClaimedAddress));
+                        IState_c::itemState_t(IState_c::AddressClaim));
         if ( isoMemberNr(data().isoSa()).processMsg() ) b_processed = true;
       }
       else

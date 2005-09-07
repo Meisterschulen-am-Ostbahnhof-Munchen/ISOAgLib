@@ -116,12 +116,16 @@ class SaClaimHandler_c
 {
  public:
    SaClaimHandler_c(){};
-   /** this function is called by ISOMonitor_c when the ISOItem_c of the
-     * registered device has changed.
+   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
      * @param refc_gtp const reference to the item which ISOItem_c state is changed
-     * @param rpc_newItem pointer to the currently corresponding ISOItem_c ( NULL == this item has no (more) and ISOItem_c )
+     * @param rpc_newItem pointer to the currently corresponding ISOItem_c
      */
-   virtual void reactOnMonitorListChange( const GetyPos_c& refc_gtp, const ISOItem_c* rpc_newItem ) = 0;
+   virtual void reactOnMonitorListAdd( const GetyPos_c& refc_gtp, const ISOItem_c* rpc_newItem ) = 0;
+   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+    * @param refc_gtp const reference to the item which ISOItem_c state is changed
+    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+    */
+   virtual void reactOnMonitorListRemove( const GetyPos_c& refc_gtp, uint8_t rui8_oldSa ) = 0;
 };
 
 /** type of map which is used to store SaClaimHandler_c clients corresponding to a GetyPos_c reference */
@@ -283,7 +287,9 @@ public:
   /** register a SaClaimHandler_c */
   bool registerSaClaimHandler( SaClaimHandler_c* rpc_client );
   /** this function is used to broadcast a ISO monitor list change to all registered clients */
-  void broadcastSaChange2Clients( const GetyPos_c& rc_gtp, const ISOItem_c* rpc_isoItem );
+  void broadcastSaAdd2Clients( const GetyPos_c& rc_gtp, const ISOItem_c* rpc_isoItem ) const;
+  /** this function is used to broadcast a ISO monitor list change to all registered clients */
+  void broadcastSaRemove2Clients( const GetyPos_c& rc_gtp, uint8_t rui8_oldSa ) const;
   /**
     deliver member item with given gtp
     (check with existIsoMemberGtp before access to not defined item)
