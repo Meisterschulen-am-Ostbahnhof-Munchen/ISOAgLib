@@ -202,16 +202,17 @@ int32_t getTime()
 
   const uint32_t cui32_now_clock_t = times(NULL)-getStartUpTime();
 
-
+  #ifdef DEBUG
   static int32_t i32_secOffset = 0;
   int32_t i32_newOffset = ( ( times(NULL) / clock_t_per_sec ) - now.tv_sec );
-  if ( abs(i32_newOffset - i32_secOffset) > 2 )
+  if ( abs(i32_newOffset - i32_secOffset) > 1 )
   {
-    std::cerr << "\n\nTIME-OFFSET CHANGED from " << i32_secOffset << " TO " << i32_newOffset
+    std::cerr << "\n\n\n\nTIME-OFFSET CHANGED from " << i32_secOffset << " TO " << i32_newOffset
         << " --> DELTA: " << abs(i32_newOffset - i32_secOffset)
-        << "\n\n" << std::endl;
+        << "\n\n\n\n" << std::endl;
     i32_secOffset = i32_newOffset;
   }
+  #endif
 
   int32_t i32_result =
       ( ((uint64_t(cui32_now_clock_t)*10ULL) / clock_t_per_sec ) * 100 )
