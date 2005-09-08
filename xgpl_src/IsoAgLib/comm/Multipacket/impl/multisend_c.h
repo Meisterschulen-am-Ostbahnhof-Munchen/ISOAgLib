@@ -86,7 +86,6 @@
 #ifndef MULTI_SEND_H
 #define MULTI_SEND_H
 
-#define NMEA_2000_FAST_PACKET
 
 /* *************************************** */
 /* ********** include headers ************ */

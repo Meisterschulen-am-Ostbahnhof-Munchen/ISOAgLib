@@ -105,6 +105,7 @@ static const int32_t sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)
 static const int32_t sci32_timeOutT3=1250; // data/rts -> cts (not needed for checking here)
 static const int32_t sci32_timeOutT4=550;  // cts(0)<->cts
 static const int32_t sci32_timeOutT5=750;  // dpo -> data (ETP only, naming "T5" done by Martin)
+static const int32_t sci32_timeOutFP=750;  // FPdata <-> FPdata
 static const int32_t sci32_timeNever=-1;
 
 
@@ -136,6 +137,9 @@ typedef enum {
   StreamSpgnEcmdINVALID = 1, // invalid, not allowed!
   StreamEpgnScmd        = 2, // Extended TP with Standard CommandSet
   StreamEpgnEcmd        = 3
+  #ifdef NMEA_2000_FAST_PACKET
+ ,StreamFastPacket      = 4 /// Fast-Packet addition: Check stream for Fast-Packet before proceeding anything!
+  #endif
 } StreamType_t;
 
 
@@ -166,6 +170,9 @@ public:
 /// Begin Additional Abstract methods handled by StreamLinear_c/StreamChunk_c
   //  Operation: insert
   virtual void insert7Bytes(uint8_t* pui8_data)=0;
+#ifdef NMEA_2000_FAST_PACKET
+  virtual void insertFirst6Bytes(uint8_t* pui8_data)=0;
+#endif
 
   //  Operation: getNotParsedSize
 //  virtual uint32_t getNotParsedSize()=0;

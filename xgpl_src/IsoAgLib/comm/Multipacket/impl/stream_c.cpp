@@ -124,13 +124,24 @@ Stream_c::Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifie
   , ui32_pkgNextToWrite (1)
   , ui32_pkgTotalSize ((rui32_msgSize + 6) / 7)
   , ui32_burstCurrent (0) // so we know that it's the first burst when calling the processBurst from the client
-  , ui8_streamFirstByte (0) // meaning: not yet identified!! (when you check it, it's already set!
+  , ui8_streamFirstByte (0) // meaning: not yet identified!! (when you check it, it's already set!)
   , i32_timeoutLimit (sci32_timeNever)
   , t_streamType (rt_streamType)
  // ui8_pkgRemainingInBurst     // will be set in "expectBurst(wishingPkgs)", don't care here as t_awaitStep == awaitCtsSend!!
 {
-  if ((rc_rsi.getDa() == 0xFF) || rb_skipCtsAwait)
-  { // if it's a BAM, then directly expect data to be sent! --- or if we directly wanna expect data (for fake streams..)
+  #ifdef NMEA_2000_FAST_PACKET
+  if (rt_streamType == StreamFastPacket)
+  { // other calculation for FastPacket, as the first package only has 6 netto data bytes AND first package begins with frame count 0
+    ui32_pkgNextToWrite = 0;
+    ui32_pkgTotalSize = (rui32_msgSize + 7) / 7;
+  }
+
+  if ((rt_streamType == StreamFastPacket) ||
+  #else
+  if (
+  #endif
+   (rc_rsi.getDa() == 0xFF) || rb_skipCtsAwait)
+  { // if it's FastPacket or BAM, then directly expect data to be sent! --- or if we directly wanna expect data (for fake streams..)
     expectBurst (255); // We're expecting one big burst directly now without CTS/DPO stuff!
   }
 };
@@ -157,14 +168,20 @@ Stream_c::awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut)
 uint8_t
 Stream_c::expectBurst(uint8_t wishingPkgs)
 {
-  int32_t i32_timeOutAwaitData = (getIdent().getDa() == 0xFF) ? /* BAM */sci32_timeOutT1 : /* dest-adr. */sci32_timeOutT2;
-
-  // Await after is CTS has timeout value of "sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)"
-  if (t_streamType & StreamEcmdMASK) awaitNextStep (AwaitDpo,  sci32_timeOutT2);
-  else /* ----------------------- */ awaitNextStep (AwaitData, i32_timeOutAwaitData);
-
-  // how many pkgs are missing at all? is it more then wished?
-  ui8_pkgRemainingInBurst = MACRO_minimum((ui32_pkgTotalSize - (ui32_pkgNextToWrite - 1)), wishingPkgs);
+  #ifdef NMEA_2000_FAST_PACKET
+  if (t_streamType == StreamFastPacket)
+  {
+    awaitNextStep (AwaitData, sci32_timeOutFP);
+    ui8_pkgRemainingInBurst = ui32_pkgTotalSize; // for Fast-Packet there's only one burst!
+  }
+  else
+  #endif
+  { // Await after is CTS has timeout value of "sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)"
+    if (t_streamType & StreamEcmdMASK) awaitNextStep (AwaitDpo,  sci32_timeOutT2);
+    else /* ----------------------- */ awaitNextStep (AwaitData, (getIdent().getDa() == 0xFF) ? sci32_timeOutT1 /* BAM */
+                                                                                              : sci32_timeOutT2 /* dest-adr. */);
+    ui8_pkgRemainingInBurst = MACRO_minimum((ui32_pkgTotalSize - (ui32_pkgNextToWrite - 1)), wishingPkgs); // how many pkgs are missing at all? is it more than wished?
+  }
 
   // increase ui32_burstCurrent, the expected Burst is a next new one (of course)...
   ui32_burstCurrent++;
@@ -180,7 +197,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
 bool
 Stream_c::handleDataPacket (uint8_t* rui8_data)
 { // ~X2C
-  /** expecting data? at all */
+  // expecting data at all?
   if (t_awaitStep != AwaitData) {
     #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "t_awaitStep != AwaitData! --- t_awaitStep ==" << t_awaitStep << " \n";
@@ -189,10 +206,15 @@ Stream_c::handleDataPacket (uint8_t* rui8_data)
   }
 
   bool b_pkgNumberWrong=false;
-  if (t_streamType & StreamEcmdMASK) {
-    if ((rui8_data[0] + ui32_dataPageOffset) != ui32_pkgNextToWrite) b_pkgNumberWrong=true;
-  } else {
-    if ((rui8_data[0] /* no DPO for TP!! */) != ui32_pkgNextToWrite) b_pkgNumberWrong=true;
+  switch (t_streamType)
+  {
+    case StreamSpgnEcmdINVALID: // shouldn't occur, but catch that case anyway. (so break left out intentionally!)
+    case StreamEpgnEcmd:   if ((rui8_data[0] + ui32_dataPageOffset) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamSpgnScmd:
+    case StreamEpgnScmd:   if ((rui8_data[0] /* no DPO for TP!! */) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    #ifdef NMEA_2000_FAST_PACKET
+    case StreamFastPacket: if ((rui8_data[0] & (0x1FU)) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    #endif
   }
 
   if (b_pkgNumberWrong) {
@@ -202,9 +224,20 @@ Stream_c::handleDataPacket (uint8_t* rui8_data)
     return false;
   }
 
-  insert7Bytes (rui8_data+1);
-  ui32_byteAlreadyReceived += 7;
-  if (ui32_byteAlreadyReceived > ui32_byteTotalSize) ui32_byteAlreadyReceived = ui32_byteTotalSize;
+  #ifdef NMEA_2000_FAST_PACKET
+  if ((t_streamType == StreamFastPacket) && (ui32_pkgNextToWrite == 0))
+  { // special FastPacket first-frame handling
+    insertFirst6Bytes (rui8_data+2);
+    ui32_byteAlreadyReceived += 6;
+  }
+  else
+  #endif
+  {
+    insert7Bytes (rui8_data+1);
+    ui32_byteAlreadyReceived += 7;
+  }
+
+  if (ui32_byteAlreadyReceived > ui32_byteTotalSize) ui32_byteAlreadyReceived = ui32_byteTotalSize; // cut any padded (0xFF) bytes...
 
   #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "#" << ui32_pkgNextToWrite << " ";
@@ -216,7 +249,12 @@ Stream_c::handleDataPacket (uint8_t* rui8_data)
 
   if (ui8_pkgRemainingInBurst == 0) {
     // End? or CTS for more?
-    if (ui32_pkgNextToWrite > ui32_pkgTotalSize) {
+    if (
+        #ifdef NMEA_2000_FAST_PACKET
+        (t_streamType == StreamFastPacket) ||
+        #endif
+        (ui32_pkgNextToWrite > ui32_pkgTotalSize))
+    {
       // ---END--- was last packet! So
       awaitNextStep (AwaitNothing, sci32_timeNever); // no timeOut on own Send-Awaits
       t_streamState = StreamFinished;

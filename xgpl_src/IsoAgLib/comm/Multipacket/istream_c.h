@@ -104,15 +104,15 @@ namespace IsoAgLib {
 */
 class ReceiveStreamIdentifier_c {
 public:
-  ReceiveStreamIdentifier_c (uint16_t rui16_pgn, uint8_t rui8_da, uint8_t rui8_sa)
-                          : ui16_pgn (rui16_pgn), ui8_da (rui8_da), ui8_sa (rui8_sa) {};
+  ReceiveStreamIdentifier_c (uint32_t rui32_pgn, uint8_t rui8_da, uint8_t rui8_sa)
+                          : ui32_pgn (rui32_pgn), ui8_da (rui8_da), ui8_sa (rui8_sa) {};
 
   ReceiveStreamIdentifier_c (const ReceiveStreamIdentifier_c& rc_rsi)
-                          : ui16_pgn (rc_rsi.ui16_pgn), ui8_da (rc_rsi.ui8_da), ui8_sa (rc_rsi.ui8_sa) {};
+                          : ui32_pgn (rc_rsi.ui32_pgn), ui8_da (rc_rsi.ui8_da), ui8_sa (rc_rsi.ui8_sa) {};
 
   bool operator == (const ReceiveStreamIdentifier_c& rc_rsi)
   {
-    return (rc_rsi.ui8_sa == ui8_sa) && (rc_rsi.ui8_da == ui8_da) && (rc_rsi.ui16_pgn == ui16_pgn);
+    return (rc_rsi.ui8_sa == ui8_sa) && (rc_rsi.ui8_da == ui8_da) && (rc_rsi.ui32_pgn == ui32_pgn);
   };
 
   bool matchSaDa(uint8_t sa, uint8_t da)
@@ -123,19 +123,19 @@ public:
   /** test if the client's da/pgn match this RCI, so the incoming stream is to be handled by this client.
       the client also HAS to handle Broadcasts, so in case of (da==0xFF) he's also responsible!
     */
-  bool matchDaPgn(uint8_t da, uint16_t pgn)
+  bool matchDaPgn(uint8_t da, uint32_t pgn)
   {
-    return ((da == 0xFF) || (da == ui8_da)) && (pgn == ui16_pgn);
+    return ((da == 0xFF) || (da == ui8_da)) && (pgn == ui32_pgn);
   };
 
   uint8_t  getSa()  const { return ui8_sa; };
   uint8_t  getDa()  const { return ui8_da; };
-  uint16_t getPgn() const { return ui16_pgn; };
+  uint32_t getPgn() const { return ui32_pgn; };
 
 private:
 
   /** PGN of the stream */
-  uint16_t ui16_pgn;
+  uint32_t ui32_pgn;
 
   /** Destination of the stream, normall "part" of the PGN, i.e. PS-field */
   uint8_t ui8_da;

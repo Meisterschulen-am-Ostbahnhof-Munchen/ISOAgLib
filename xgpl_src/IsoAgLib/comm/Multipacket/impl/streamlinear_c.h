@@ -120,6 +120,10 @@ public:
   //! @param pui8_data:
   void insert7Bytes(uint8_t* pui8_data);
 
+  #ifdef NMEA_2000_FAST_PACKET
+  void insertFirst6Bytes(uint8_t* pui8_data);
+  #endif
+
   //  Operation: getNextNotParsed
   //! Also moves one byte forward!
   inline uint8_t getNextNotParsed();

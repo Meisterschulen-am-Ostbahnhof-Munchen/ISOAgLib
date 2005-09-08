@@ -107,7 +107,23 @@ StreamLinear_c::~StreamLinear_c()
 }
 
 
-// //////////////////////////////// +X2C Operation 772 : insert
+#ifdef NMEA_2000_FAST_PACKET
+// //////////////////////////////// +X2C Operation : insert6Bytes
+//! Parameter:
+//! @param pui8_data: pointer to 6 bytes of data!
+void
+StreamLinear_c::insertFirst6Bytes(uint8_t* pui8_data)
+{
+  vui8_buffer.push_back (pui8_data[0]);
+  vui8_buffer.push_back (pui8_data[1]);
+  vui8_buffer.push_back (pui8_data[2]);
+  vui8_buffer.push_back (pui8_data[3]);
+  vui8_buffer.push_back (pui8_data[4]);
+  vui8_buffer.push_back (pui8_data[5]);
+}
+#endif
+
+// //////////////////////////////// +X2C Operation : insert7Bytes
 //! Parameter:
 //! @param pui8_data: pointer to 7 bytes of data!
 void

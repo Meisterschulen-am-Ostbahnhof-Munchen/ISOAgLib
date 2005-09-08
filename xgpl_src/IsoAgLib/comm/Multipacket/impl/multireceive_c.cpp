@@ -1,5 +1,7 @@
 /***************************************************************************
-                          multireceive_c.cpp - Implementation of (Extended-)Transport-Protocol
+                          multireceive_c.cpp - Implementation of
+                          ISO 11783-Part 3 (Extended-)Transport-Protocol and
+                          NMEA 2000 Fast-Packet Protocol
                           -------------------
     class                : ::MultiReceive_c
     project              : IsoAgLib
@@ -129,6 +131,38 @@ static const uint8_t scui8_tpPriority=6;
 #endif
 
 
+
+/** the mask is set to 1FF0000, as we're accepting for EVERY destination address first. afterwards list_clients is getting search for matching destination address */
+#define MACRO_insertFilterIfNotYetExists_mask1FF0000_setRef(mpPGN,reconf,ref) \
+  { \
+    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
+    ref = NULL; \
+    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    { /* create FilterBox */ \
+      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x1FF0000UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent); \
+    } \
+  }
+
+#define MACRO_insertFilterIfNotYetExists_mask1FF0000_useRef(mpPGN,reconf,ref) \
+  { \
+    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
+    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    { /* create FilterBox */ \
+      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, ref); \
+    } \
+  }
+
+/** the mask is set to 1FF0000, as we're accepting for EVERY destination address first. afterwards list_clients is getting search for matching destination address */
+#define MACRO_deleteFilterIfExists_mask1FF0000(mpPGN) \
+  { \
+    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
+    if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    { /* delete FilterBox */ \
+      __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent); \
+    } \
+  }
+
+
 // //////////////////////////////// +X2C Operation 5653 : ~MultiReceive_c
 MultiReceive_c::~MultiReceive_c()
 { // ~X2C
@@ -208,7 +242,7 @@ MultiReceive_c::processMsg()
   { // we do NOT care for this can-pkg at all, as it's NOT directed to any of the registered clients!
     return false; // let multisend/others check if it needs this can-pkg...
   }
-  
+
   switch (ui8_pgnFormat) {
     case MACRO_pgnFormatOfPGN(ETP_CONN_MANAGE_PGN):
       b_ePgn = true; // break left out intentionally!
@@ -232,7 +266,11 @@ MultiReceive_c::processMsg()
           { // to allow local variables!
 
             // RTS from an SA that has already a Stream running? // regardless of PGN
-            Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/);
+            Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/
+            #ifdef NMEA_2000_FAST_PACKET
+            , /* Fast-Packet:*/ false
+            #endif
+            );
             if (pc_streamFound != NULL) {
               // abort, already running stream is interrupted by RTS
               notifyError(c_tmpRSI, 101);
@@ -302,7 +340,11 @@ MultiReceive_c::processMsg()
           MACRO_Define_t_streamType_and_checkInvalid
 
           { // to allow local variables!
-            Stream_c* pc_streamFound = getStream (c_tmpRSI);
+            Stream_c* pc_streamFound = getStream (c_tmpRSI
+            #ifdef NMEA_2000_FAST_PACKET
+            , /* Fast-Packet: */ false
+            #endif
+            );
 
             if (pc_streamFound == NULL)
             {
@@ -313,7 +355,7 @@ MultiReceive_c::processMsg()
               #endif
               return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
             }
-            
+
             if (!b_ePgn)
             {
               notifyError(c_tmpRSI, 116);
@@ -361,7 +403,11 @@ MultiReceive_c::processMsg()
             // From now on it is assured that BAM is directed to 0xFF (255)
 
             // BAM from an SA that has already a Stream running?
-            Stream_c* pc_streamFound = getStream (data().isoSa(), 255 /* 0xFF, BAM is always to GLOBAL */);
+            Stream_c* pc_streamFound = getStream (data().isoSa(), 255 /* 0xFF, BAM is always to GLOBAL */
+            #ifdef NMEA_2000_FAST_PACKET
+            , false
+            #endif
+            );
             if (pc_streamFound != NULL) {
               // abort already running stream is interrupted by BAM
               notifyError(c_tmpRSI, 117);
@@ -404,7 +450,11 @@ MultiReceive_c::processMsg()
 
           { // to allow local variables!
             // also allow a BAM to be aborted by the sender himself...
-            Stream_c* pc_streamFound = getStream (c_tmpRSI);
+            Stream_c* pc_streamFound = getStream (c_tmpRSI
+            #ifdef NMEA_2000_FAST_PACKET
+            , false
+            #endif
+            );
 
             if (pc_streamFound) {
               notifyError (c_tmpRSI, 107);
@@ -452,7 +502,11 @@ MultiReceive_c::processMsg()
       /// Data Transfer (DATA)
       { // to allow local variables!
         // Check if there's already a Stream active from this SA->DA pair (it should ;-)
-        Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/);
+        Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/
+        #ifdef NMEA_2000_FAST_PACKET
+        , false
+        #endif
+        );
         if (pc_streamFound == NULL) {
           // There's no stream running for this multi-packet-DATA!, this [DATA] MAY BE for MultiSend, so simply return false!
           #ifdef DEBUG
@@ -467,7 +521,9 @@ MultiReceive_c::processMsg()
           if (data().isoPs() == 0xFF)
           {
             notifyError(c_tmpRSI, 114);
-            connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
+            /// Do NOT propagate abortion of BAM to client!
+            //connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
+            removeStream (pc_streamFound);
             #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "\n*** BAM sequence error ***\n";
             #endif
@@ -489,30 +545,106 @@ MultiReceive_c::processMsg()
       return true; // if code execution comes to here, then the right SA/DA Pair was there so it WAS for MultiReceive, so we can return true safely!
 
     default:
+      #ifdef NMEA_2000_FAST_PACKET
+      break; // let's see if it's a fast-packet registered pgn
+      #else
       return false; // PGN not managed here, so return false so that other CAN-Customers will "processMsg" them!
+      #endif
   }
 
+  #ifndef NMEA_2000_FAST_PACKET
   // This point should NOT be reached anyway! all "case" statements
   return false;
+  #else
+  // Check if it's registered for fast-packet receive
+  for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
+  { // is it fast-packet, and is it this pgn?
+    /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
+    if ((pc_iter->b_isFastPacket) && (pc_iter->ui32_pgn == data().isoPgn()))
+    {
+      uint8_t ui8_counterFrame = data().getUint8Data (0) & 0x1F;
+      uint8_t ui8_counterSequence = (data().getUint8Data (0) >> 5) & 0x7;
+
+      bool b_handleData=false;
+
+      /** @todo determine if Fast-Packet is always addressed to GLOBAL 255, 0xFF */
+      Stream_c* pc_streamFound = getStream(data().isoSa(), 0xFF, /* Fast-Packet: */ true);
+      if (!pc_streamFound)
+      { // stream not there. create a new one if it's the first frame
+        if (ui8_counterFrame == 0)
+        { // First Frame => okay, create new Stream!
+          /** @todo check for range of 0..223 */
+          /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
+          IsoAgLib::ReceiveStreamIdentifier_c c_fpRSI (data().isoPgn(), 0xFF /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
+          createStream (StreamFastPacket, c_fpRSI, data().getUint8Data (1));
+        }
+        else
+        { // else no stream open and wrong packeted number comes in.
+          notifyError(c_tmpRSI, 118);
+          #ifdef DEBUG
+          INTERNAL_DEBUG_DEVICE << "\n*** FastPacket-Frame "<<(uint16_t)ui8_counterFrame<<", but no open stream! ignoring that... ***\n";
+          #endif
+          return true;
+        }
+      } // else stream there, so pass on data, just like for first frame
+
+      if (!(pc_streamFound->handleDataPacket(data().pb_data))) {
+        // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
+        notifyError(c_tmpRSI, 119);
+        /// Do NOT tell client on Abort of something it doesn't know about.
+        //connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
+        removeStream (pc_streamFound);
+        #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE << "\n*** FastPacket sequence error ***\n";
+        #endif
+      }
+
+      return true;
+    }
+  }
+
+  return false; // PGN not managed here, so return false so that other CAN-Customers will "processMsg" them!
+  #endif
 } // -X2C
 
 
 
 // Operation: registerClient
 void
-MultiReceive_c::registerClient(uint16_t rui16_pgn, uint8_t rui8_clientAddress,
-                               IsoAgLib::MultiReceiveClient_c* rpc_client, bool rb_alsoBroadcast, bool rb_alsoGlobalErrors)
+MultiReceive_c::registerClient(uint32_t rui32_pgn, uint8_t rui8_clientAddress,
+                               IsoAgLib::MultiReceiveClient_c* rpc_client, bool rb_alsoBroadcast, bool rb_alsoGlobalErrors
+                               #ifdef NMEA_2000_FAST_PACKET
+                               , bool rb_isFastPacket
+                               #endif
+                               )
 { // ~X2C
   std::list<MultiReceiveClientWrapper_s>::iterator list_clients_i = list_clients.begin();
   // Already in list?
   while (list_clients_i != list_clients.end()) {
     MultiReceiveClientWrapper_s iterMRCW = *list_clients_i;
-    if ((iterMRCW.pc_client == rpc_client) && (iterMRCW.ui8_clientAddress == rui8_clientAddress) && (iterMRCW.ui16_pgn == rui16_pgn))
+    if ((iterMRCW.pc_client == rpc_client) && (iterMRCW.ui8_clientAddress == rui8_clientAddress) && (iterMRCW.ui32_pgn == rui32_pgn))
       return; // Already in list!!
     list_clients_i++;
   }
   // Not already in list, so insert!
-  list_clients.push_back(MultiReceiveClientWrapper_s(rpc_client, rui8_clientAddress, rui16_pgn, rb_alsoBroadcast, rb_alsoGlobalErrors) );
+  list_clients.push_back(MultiReceiveClientWrapper_s(rpc_client, rui8_clientAddress, rui32_pgn, rb_alsoBroadcast, rb_alsoGlobalErrors
+                         #ifdef NMEA_2000_FAST_PACKET
+                         , rb_isFastPacket
+                         #endif
+                         ) );
+  #ifdef NMEA_2000_FAST_PACKET
+  /// Fast-Packet additions
+  if (rb_isFastPacket)
+  {
+    const uint32_t ui32_mask = (0x1FFFF00UL);
+    const uint32_t ui32_filter = (static_cast<MASK_TYPE>(rui32_pgn << 8));
+    /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
+    if (!__IsoAgLib::getCanInstance4Comm().existFilter(*this, ui32_mask, ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent))
+    { /* create FilterBox */
+      __IsoAgLib::getCanInstance4Comm().insertFilter(*this, ui32_mask, ui32_filter, true, __IsoAgLib::Ident_c::ExtendedIdent);
+    }
+  }
+  #endif
 } // -X2C
 
 
@@ -537,6 +669,18 @@ MultiReceive_c::deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
   {
     if (pc_iter->pc_client == rpc_client)
     { // remove MultiReceiveClientWrapper_s
+      #ifdef NMEA_2000_FAST_PACKET
+      /// Fast-Packet additions
+      if (pc_iter->b_isFastPacket) {
+        const uint32_t cui32_mask = (0x1FFFF00UL);
+        const uint32_t cui32_filter = (static_cast<MASK_TYPE>(pc_iter->ui32_pgn << 8));
+        /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
+        if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent))
+        { /* delete FilterBox */
+          __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, cui32_mask, cui32_filter, __IsoAgLib::Ident_c::ExtendedIdent);
+        }
+      }
+      #endif
       pc_iter = list_clients.erase (pc_iter);
     } else {
       pc_iter++;
@@ -548,11 +692,13 @@ MultiReceive_c::deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
 
 // //////////////////////////////// +X2C Operation 845 : createStream
 //! Parameter:
+//! ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
 //! @param rc_streamIdent:
 Stream_c*
 MultiReceive_c::createStream(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent, uint32_t rui32_msgSize)
 { // ~X2C
-  // check if not already there?? do this here (also) for safety reasons!
+/**
+  // check if not already there?? not any more!
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end();
        i_list_streams++) {
@@ -560,7 +706,7 @@ MultiReceive_c::createStream(StreamType_t rt_streamType, IsoAgLib::ReceiveStream
     if (curStream->getIdent() == rc_streamIdent) // .matchRSI (rc_streamIdent)
       return NULL;
   }
-
+*/
   // Not there, so create!
   list_streams.push_back (DEF_Stream_c_IMPL (rt_streamType, rc_streamIdent, rui32_msgSize));
   list_streams.back().immediateInitAfterConstruction();
@@ -573,12 +719,20 @@ MultiReceive_c::createStream(StreamType_t rt_streamType, IsoAgLib::ReceiveStream
 //! Parameter:
 //! @param rc_streamIdent:
 Stream_c*
-MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
+MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent
+                          #ifdef NMEA_2000_FAST_PACKET
+                          , bool rb_fastPacket
+                          #endif
+                          )
 { // ~X2C
   std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
   while (i_list_streams != list_streams.end()) {
     DEF_Stream_c_IMPL* curStream = &*i_list_streams;
+    #ifdef NMEA_2000_FAST_PACKET
+    if ((curStream->getIdent() == rc_streamIdent) && (rb_fastPacket == (curStream->getStreamType() == StreamFastPacket))) // .matchRSI (rc_streamIdent) and either "rb_fastPacket == false and Stream not FP" or "rb_fastPacket == true and Stream is FP"!
+    #else
     if (curStream->getIdent() == rc_streamIdent) // .matchRSI (rc_streamIdent)
+    #endif
       return curStream;
     i_list_streams++;
   }
@@ -590,12 +744,20 @@ MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
 //! Parameter:
 //! @param rc_streamIdent:
 //! @return NULL for "doesn't exist", otherwise valid "DEF_Stream_c_IMPL*"
-Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da)
+Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
+                                    #ifdef NMEA_2000_FAST_PACKET
+                                    , bool rb_fastPacket
+                                    #endif
+                                    )
 {
   std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
   while (i_list_streams != list_streams.end()) {
     DEF_Stream_c_IMPL* curStream = &*i_list_streams;
+    #ifdef NMEA_2000_FAST_PACKET
+    if ((curStream->getIdent().matchSaDa (sa, da))  && (rb_fastPacket == (curStream->getStreamType() == StreamFastPacket)))
+    #else
     if (curStream->getIdent().matchSaDa (sa, da))
+    #endif
       return curStream;
     i_list_streams++;
   }
@@ -661,13 +823,26 @@ MultiReceive_c::timeEvent( void )
     }
     else if (pc_stream->getStreamingState() == StreamFinished)
     {
+      #ifdef NMEA_2000_FAST_PACKET
+      if ((pc_stream->getStreamType() == StreamFastPacket) || (pc_stream->getIdent().getDa() == 0xFF))
+      { // FastPacket or BAM
+      #else
       if (pc_stream->getIdent().getDa() == 0xFF)
       { // BAM
+      #endif
         for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
         { // // inform all clients that want Broadcast-TP-Messages
           MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
-          if (curClientWrapper.b_alsoBroadcast) {
-            curClientWrapper.pc_client->processPartStreamDataChunk (pc_stream, /*firstChunk*/true/*it's only one, don't care*/, /*b_lastChunk*/true); // don't care about result, as BAMs will NOT be kept anyway!
+          if (curClientWrapper.ui32_pgn == pc_stream->getIdent().getPgn())
+          {
+            if (
+                #ifdef NMEA_2000_FAST_PACKET
+                curClientWrapper.b_isFastPacket ||
+                #endif
+                curClientWrapper.b_alsoBroadcast)
+            {
+              curClientWrapper.pc_client->processPartStreamDataChunk (pc_stream, /*firstChunk*/true/*it's only one, don't care*/, /*b_lastChunk*/true); // don't care about result, as BAMs will NOT be kept anyway!
+            }
           }
         }
         // and DO NOT continue, so the stream will be removed, as BAM-streams can NOT be kept!
@@ -692,7 +867,7 @@ MultiReceive_c::timeEvent( void )
       continue;
     }
     else if (pc_stream->getNextComing() == AwaitCtsSend)
-    { // this case shouldn't happen for BAM
+    { // this case shouldn't happen for BAM / FastPacket
       #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Processing Burst\n";
       #endif
@@ -711,7 +886,13 @@ MultiReceive_c::timeEvent( void )
     if (pc_stream->timedOut())
     {
       #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "\n *** Stream with SA " << (uint16_t) pc_stream->getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) pc_stream->getNextComing() << " ***\n";
+        #ifdef NMEA_2000_FAST_PACKET
+        if (pc_stream->getStreamType() == StreamFastPacket)
+          INTERNAL_DEBUG_DEVICE << "\n *** Fast-Packet-";
+        else
+        #endif
+          INTERNAL_DEBUG_DEVICE << "\n *** (E)TP-";
+        INTERNAL_DEBUG_DEVICE << "Stream with SA " << (uint16_t) pc_stream->getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) pc_stream->getNextComing() << " ***\n";
       #endif
       notifyError(pc_stream->getIdent(), 110);
       connAbortTellClient (/* send Out ConnAbort Msg*/ true, pc_stream);
@@ -855,7 +1036,7 @@ void
 MultiReceive_c::sendEndOfMessageAck(DEF_Stream_c_IMPL* rpc_stream)
 { // ~X2C
   // NO Check here, this function IS called on purpose and WILL send EoMAck and CLOSE the Stream!
-  uint16_t pgn;
+  uint8_t pgn;
   if (rpc_stream->getStreamType() & StreamEpgnMASK) pgn = ETP_CONN_MANAGE_PGN >> 8;
   else /* -------------------------------------- */ pgn = TP_CONN_MANAGE_PGN >> 8;
 
@@ -871,36 +1052,6 @@ MultiReceive_c::sendEndOfMessageAck(DEF_Stream_c_IMPL* rpc_stream)
 
 
 
-
-/** the mask is set to 1FF0000, as we're accepting for EVERY destination address first. afterwards list_clients is getting search for matching destination address */
-#define MACRO_insertFilterIfNotYetExists_mask1FF0000_setRef(mpPGN,reconf,ref) \
-  { \
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
-    ref = NULL; \
-    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
-    { /* create FilterBox */ \
-      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x1FF0000UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent); \
-    } \
-  }
-
-#define MACRO_insertFilterIfNotYetExists_mask1FF0000_useRef(mpPGN,reconf,ref) \
-  { \
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
-    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
-    { /* create FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, ref); \
-    } \
-  }
-
-/** the mask is set to 1FF0000, as we're accepting for EVERY destination address first. afterwards list_clients is getting search for matching destination address */
-#define MACRO_deleteFilterIfExists_mask1FF0000(mpPGN) \
-  { \
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
-    if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
-    { /* delete FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent); \
-    } \
-  }
 
 // //////////////////////////////// +X2C Operation 2855 : init
 void
@@ -961,7 +1112,7 @@ MultiReceive_c::getClient(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent)
        i_list_clients != list_clients.end();
        i_list_clients++)
   {
-    if (rc_streamIdent.matchDaPgn (i_list_clients->ui8_clientAddress, i_list_clients->ui16_pgn))
+    if (rc_streamIdent.matchDaPgn (i_list_clients->ui8_clientAddress, i_list_clients->ui32_pgn))
       return i_list_clients->pc_client;
   }
   return NULL;

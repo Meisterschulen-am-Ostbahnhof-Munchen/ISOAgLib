@@ -134,21 +134,31 @@ class MultiReceiveClientWrapper_s {
  public:
   MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
                                uint8_t rui8_clientAddress,
-                               uint16_t rui16_pgn,
+                               uint32_t rui32_pgn,
                                bool rb_alsoBroadcast,
-                               bool rb_alsoGlobalErrors )
+                               bool rb_alsoGlobalErrors
+                              #ifdef NMEA_2000_FAST_PACKET
+                              ,bool rb_isFastPacket
+                              #endif
+                              )
     : pc_client(rpc_client)
     , ui8_clientAddress(rui8_clientAddress)
-    , ui16_pgn(rui16_pgn)
+    , ui32_pgn(rui32_pgn)
     , b_alsoBroadcast (rb_alsoBroadcast)
     , b_alsoGlobalErrors (rb_alsoGlobalErrors)
+    #ifdef NMEA_2000_FAST_PACKET
+    , b_isFastPacket (rb_isFastPacket) // means the PGN has to be "insertFilter"/"removeFilter"ed
+    #endif
   {};
 
   IsoAgLib::MultiReceiveClient_c* pc_client;
   uint8_t ui8_clientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
-  uint16_t ui16_pgn;
+  uint32_t ui32_pgn;
   bool b_alsoBroadcast;
   bool b_alsoGlobalErrors;
+#ifdef NMEA_2000_FAST_PACKET
+  bool b_isFastPacket;
+#endif
 };
 
 
@@ -171,8 +181,12 @@ public:
   bool processMsg();
 
   //  Operation: (de)registerClient
-  void registerClient   (uint16_t rui16_pgn, uint8_t rui8_clientAddress,
-                         IsoAgLib::MultiReceiveClient_c* rpc_client, bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false);
+  void registerClient   (uint32_t rui32_pgn, uint8_t rui8_clientAddress,
+                         IsoAgLib::MultiReceiveClient_c* rpc_client, bool b_alsoBroadcast=false, bool rb_alsoGlobalErrors=false
+                         #ifdef NMEA_2000_FAST_PACKET
+                         , bool rb_isFastPacket=false
+                         #endif
+                         );
   void deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client);
 
   //  Operation: createStream
@@ -183,7 +197,11 @@ public:
   //  Operation: getStream
   //! Parameter:
   //! @param rc_streamIdent:
-  Stream_c* getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent);
+  Stream_c* getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent
+  #ifdef NMEA_2000_FAST_PACKET
+  , bool rb_fastPacket=false
+  #endif
+  );
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream);
@@ -235,7 +253,11 @@ private:
   //! Parameter:
   //! @param rc_streamIdent:
   //! @return NULL for "doesn't exist", otherwise valid "Stream_c*"
-  Stream_c* getStream(uint8_t sa, uint8_t da);
+  Stream_c* getStream(uint8_t sa, uint8_t da
+  #ifdef NMEA_2000_FAST_PACKET
+  , bool rb_fastPacket
+  #endif
+  );
 
   bool anyMultiReceiveClientRegisteredForThisDa (uint8_t ui8_da);
 

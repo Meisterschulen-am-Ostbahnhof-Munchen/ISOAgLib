@@ -685,7 +685,7 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
         for (ui8_pkgInd = 0; ui8_pkgInd < rui8_pkgCnt; ui8_pkgInd++)
         {
             prepareSendMsg(ui8_nettoDataCnt);
-            refc_multiSendPkg.setData(0, ((ui8_FpSequenceCounter << 5) |(ui8_FpFrameNr & 0x0F)) );
+            refc_multiSendPkg.setData(0, ((ui8_FpSequenceCounter << 5) |(ui8_FpFrameNr & 0x1F)) );
             // only hpb_data is supported, as the MultiSendStreamer_c supports ONLY write of full data frames
             // - and that is against the first frame layout
             refc_multiSendPkg.setDataPart(hpb_data, i32_DC, ui8_nettoDataCnt);
@@ -1252,6 +1252,7 @@ MultiSend_c::SendStream_c::sendIntern()
     {
         refc_multiSendPkg.setIsoPgn(i32_pgn);  // For fast packet, the PGN itself tells us that the message is a fast packet message.
         // Since this is a non-destination specific PGN, not sure if we need to set b_empf or not -bac
+        /** @todo determine when to set the b_empf for IsoPs and when not... */
         //data().setIsoPs(b_empf);
     }
     else

@@ -124,12 +124,12 @@ StreamChunk_c::immediateInitAfterConstruction()
   pc_iterParsedChunk = list_chunks.begin();
   ui32_writeCnt  = 0;
   ui32_parsedCnt = 0;
-  
+
   pc_iterWriteChunk->init();
 }
 
 
-  
+
 StreamChunk_c::StreamChunk_c( const StreamChunk_c& rrefc_src )
   : Stream_c( rrefc_src ),
     list_chunks( rrefc_src.list_chunks ),
@@ -145,7 +145,7 @@ StreamChunk_c::StreamChunk_c( const StreamChunk_c& rrefc_src )
 const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& rrefc_src )
 {
   Stream_c::operator=( rrefc_src );
-  
+
   list_chunks = rrefc_src.list_chunks;
   copyIterator (rrefc_src.list_chunks, rrefc_src.pc_iterWriteChunk,  list_chunks, pc_iterWriteChunk);
   copyIterator (rrefc_src.list_chunks, rrefc_src.pc_iterParsedChunk, list_chunks, pc_iterParsedChunk);
@@ -154,6 +154,20 @@ const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& rrefc_src )
   return rrefc_src;
 }
 
+
+#ifdef NMEA_2000_FAST_PACKET
+//! use this function only for the first 6 bytes. this exception is for fast-packet protocol's FirstFrame
+//! *** ATTENTION *** THIS FUNCTION ASSUMES TO BE CALLED ON A FRESH STREAM, SO NO OVERFLOW CHECKS ARE DONE!
+void
+StreamChunk_c::insertFirst6Bytes(uint8_t* pui8_data)
+{
+  // write bytes into current chunk, assuming it's the first one so NO checks for full chunk are performed!!!!
+  int nbr = 0;
+  while (nbr < 6)
+    if (pc_iterWriteChunk->insert( pui8_data[nbr++] ))
+      ui32_writeCnt++;
+}
+#endif
 
 
 // //////////////////////////////// +X2C Operation 772 : insert
@@ -179,7 +193,7 @@ StreamChunk_c::insert7Bytes(uint8_t* pui8_data)
     pc_iterTmpChunk++;
     if (pc_iterTmpChunk == list_chunks.end()) 
       pc_iterTmpChunk = list_chunks.begin();
-   
+
     if (pc_iterTmpChunk->free())
     {
       pc_iterWriteChunk = pc_iterTmpChunk;
@@ -191,12 +205,12 @@ StreamChunk_c::insert7Bytes(uint8_t* pui8_data)
       pc_iterWriteChunk->init();
     }
   }
-  
+
   // 3) write remaining bytes into the next writeChunk if necessary
   while (nbr < 7)
     if (pc_iterWriteChunk->insert( pui8_data[nbr++] ))
       ui32_writeCnt++;
-  
+
 } // -X2C
 
 
