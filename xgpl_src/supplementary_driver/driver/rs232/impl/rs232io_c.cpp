@@ -81,10 +81,11 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include "rs232io_c.h"
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/hal/system.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
+
+#include "rs232io_c.h"
 
 #if defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__)
 // #if 0
