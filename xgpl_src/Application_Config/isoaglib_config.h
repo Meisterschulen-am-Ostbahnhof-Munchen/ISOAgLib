@@ -859,6 +859,16 @@
     #define SYSTEM_ESX
   #endif
 
+/** @def SYSTEM_ESXu_YN
+  * set this define to YES if IsoAgLib is used for the ECU "ESX Micro" of STW
+  */
+  #ifndef SYSTEM_ESXu_YN
+    #define SYSTEM_ESXu_YN NO
+  #endif
+  #if SYSTEM_ESXu_YN == YES && !defined(SYSTEM_ESXu)
+    #define SYSTEM_ESXu
+  #endif
+
 /** @def SYSTEM_C2C_YN
   * set this define to YES if IsoAgLib is used for the ECU "C2C" of STW
   */
@@ -954,6 +964,9 @@
 #elif defined(SYSTEM_ESX)
   /// set subdirectory name to "esx" for ESX platform
   #define HAL_SUBDIR esx
+#elif defined(SYSTEM_ESXu)
+  /// set subdirectory name to "esxu" for ESX Micro platform
+  #define HAL_SUBDIR esxu
 #elif defined(SYSTEM_C2C)
   /// set subdirectory name to "c2c" for C2C platform
   #define HAL_SUBDIR c2c

@@ -73,6 +73,8 @@
 	#include "pc/rs232/rs232.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/rs232/rs232.h"
+#elif defined(SYSTEM_ESXu)
+	#include "esxu/rs232/rs232.h"
 #elif defined(SYSTEM_C2C)
 	#include "c2c/rs232/rs232.h"
 #elif defined(SYSTEM_IMI)
@@ -81,8 +83,6 @@
 	#include "pm167/rs232/rs232.h"
 #elif defined(SYSTEM_MITRON167)
 	#include "mitron167/rs232/rs232.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/rs232/rs232.h"
 #endif
 
 

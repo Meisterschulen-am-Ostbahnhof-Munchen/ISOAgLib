@@ -72,6 +72,8 @@
 	#include "pc/system/system.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/system/system.h"
+#elif defined(SYSTEM_ESXu)
+	#include "esxu/system/system.h"
 #elif defined(SYSTEM_C2C)
 	#include "c2c/system/system.h"
 #elif defined(SYSTEM_IMI)

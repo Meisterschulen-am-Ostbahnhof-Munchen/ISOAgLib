@@ -72,14 +72,14 @@
 	#include "pc/actor/actor.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/actor/actor.h"
+#elif defined(SYSTEM_ESXu)
+	#include "esxu/actor/actor.h"
 #elif defined(SYSTEM_C2C)
 	#include "c2c/actor/actor.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/actor/actor.h"
 #elif defined(SYSTEM_PM167)
 	#include "pm167/actor/actor.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/actor/actor.h"
 #endif
 
 
