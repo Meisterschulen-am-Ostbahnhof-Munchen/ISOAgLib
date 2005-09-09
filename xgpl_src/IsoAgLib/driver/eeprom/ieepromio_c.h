@@ -257,7 +257,7 @@ private:
 
 /** C-style function, to get access to the unique EEPROMIO_c singleton instance */
 inline iEEPROMIO_c& getIeepromInstance( void ) { return static_cast<iEEPROMIO_c&>(__IsoAgLib::getEepromInstance());};
-inline iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iiGetyPos_c& refc_data )
+inline iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iGetyPos_c& refc_data )
   { return static_cast<iEEPROMIO_c&>(operator<<(static_cast<__IsoAgLib::EEPROMIO_c&>(refc_stream), refc_data ) );};
 inline iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iGetyPos_c& refc_data )
   { return static_cast<iEEPROMIO_c&>(operator>>(static_cast<__IsoAgLib::EEPROMIO_c&>(refc_stream), refc_data ) );};
