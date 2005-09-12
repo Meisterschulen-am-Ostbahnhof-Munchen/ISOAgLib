@@ -6,11 +6,11 @@
                              -------------------
     begin                : Wed Jun 29 2001
     copyright            : (C) 2001 - 2004 Dipl.-Inform. Achim Spangler
-						 : This file was based on the corresponding file in
-						 : the ESX HAL and modified for the ESXu HAL.
-						 : These changes (C) 2004 - 2005 Michael D. Schmidt
+             : This file was based on the corresponding file in
+             : the ESX HAL and modified for the ESXu HAL.
+             : These changes (C) 2004 - 2005 Michael D. Schmidt
     email                : a.spangler@osb-ag:de
-						 : mike.schmidt@agcocorp:com
+             : mike.schmidt@agcocorp:com
     type                 : Source
  ***************************************************************************/
 
@@ -360,7 +360,7 @@ int16_t can_stateMsgobjBuffercnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 */
 int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 { // add offset 1 to rui8_msgobjNr as ESXu BIOS starts counting with 1
-	// whereas IsoAgLib starts with 0
+  // whereas IsoAgLib starts with 0
   int16_t i16_msgcnt = get_can_msg_buf_count(rui8_busNr, (rui8_msgobjNr+1));
   if ((i16_msgcnt == HAL_CONFIG_ERR) || (i16_msgcnt == HAL_RANGE_ERR)) return i16_msgcnt;
   else return ( ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr-1] - i16_msgcnt);
@@ -419,6 +419,8 @@ int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t 
 int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rb_maskStd, uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg)
 {
   get_can_bus_status(rui8_busNr, &t_cinterfCanState);
+  // the STW BIOS init_can simply changes the global masks, and ignores the bitrate, when init_can is called for an already
+  // configured CAN BUS
   int16_t i16_retVal = init_can(rui8_busNr, rb_maskStd, rui32_maskExt, rui32_maskLastmsg, t_cinterfCanState.wBitrate);
   if (i16_retVal == HAL_WARN_ERR) i16_retVal = HAL_NO_ERR;
   return i16_retVal;
@@ -469,16 +471,16 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
   { // receive
     ui8_cinterfLastSendBufCnt[rui8_busNr][rui8_msgobjNr] = 0xFF;
     pt_config->bMsgType = RX;
-		pt_config->wNumberMsgs = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
-		const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
-		for ( uint8_t ind = 0; ind < CONFIG_CAN_HIGH_LOAD_IDENT_CNT; ind++ )
-		{
-			if ( highLoadCheckList[ind] == pt_config->dwId )
-			{
-				pt_config->wNumberMsgs = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
-				break;
-		    }
-	    }
+    pt_config->wNumberMsgs = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
+    const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
+    for ( uint8_t ind = 0; ind < CONFIG_CAN_HIGH_LOAD_IDENT_CNT; ind++ )
+    {
+      if ( highLoadCheckList[ind] == pt_config->dwId )
+      {
+        pt_config->wNumberMsgs = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
+        break;
+        }
+      }
   }
   else
   { // send
@@ -507,8 +509,8 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
 int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident)
-{	// add offset 1 to rui8_msgobjNr as ESXu BIOS starts counting with 1
-	// whereas IsoAgLib starts with 0
+{ // add offset 1 to rui8_msgobjNr as ESXu BIOS starts counting with 1
+  // whereas IsoAgLib starts with 0
   return chg_can_obj_id(rui8_busNr, (rui8_msgobjNr+1), rrefc_ident.ident(), rrefc_ident.identType());
 }
 
@@ -626,22 +628,22 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
   #if 0
   int16_t retval = send_can_msg(rui8_busNr, (rui8_msgobjNr+1), pt_send);
   char testString[500];
-	  sprintf( testString, "ret = %d, send_can_msg( %d, %d, { { %ld, %d }, len=%d { %d, %d, %d, %d, %d, %d, %d, %d } } )\r"
-		, (int) retval
-		, (int)rui8_busNr, (int)rui8_msgobjNr
-		, (long int)pt_send->dwId, (int)pt_send->bXtd
-		, (int)pt_send->bDlc
-		, (int)pt_send->abData[0]
-		, (int)pt_send->abData[1]
-		, (int)pt_send->abData[2]
-		, (int)pt_send->abData[3]
-		, (int)pt_send->abData[4]
-		, (int)pt_send->abData[5]
-		, (int)pt_send->abData[6]
-		, (int)pt_send->abData[7]
-	    );
+    sprintf( testString, "ret = %d, send_can_msg( %d, %d, { { %ld, %d }, len=%d { %d, %d, %d, %d, %d, %d, %d, %d } } )\r"
+    , (int) retval
+    , (int)rui8_busNr, (int)rui8_msgobjNr
+    , (long int)pt_send->dwId, (int)pt_send->bXtd
+    , (int)pt_send->bDlc
+    , (int)pt_send->abData[0]
+    , (int)pt_send->abData[1]
+    , (int)pt_send->abData[2]
+    , (int)pt_send->abData[3]
+    , (int)pt_send->abData[4]
+    , (int)pt_send->abData[5]
+    , (int)pt_send->abData[6]
+    , (int)pt_send->abData[7]
+      );
       put_rs232_string( RS232_1, (__HAL::byte*)testString );
-	return retval;
+  return retval;
   #endif
 
   // add offset 1 to rui8_msgobjNr as ESXu BIOS starts counting with 1
@@ -670,10 +672,10 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   // only take new msg from BIOS buffer if not previously
   // buffered for detecting of the received ident
   if (!b_cinterfBufferedReceivedMsg)
-	{ // add offset 1 to rui8_msgobjNr as ESXu BIOS starts counting with 1
-		// whereas IsoAgLib starts with 0
+  { // add offset 1 to rui8_msgobjNr as ESXu BIOS starts counting with 1
+    // whereas IsoAgLib starts with 0
     i16_retVal = get_can_msg(rui8_busNr, (rui8_msgobjNr+1), pt_receive);
-	}
+  }
   if ((i16_retVal == HAL_NO_ERR) || (HAL_OVERFLOW_ERR) || (HAL_WARN_ERR))
   {
     if (pt_receive->tReceiveTime.l1ms == 0)
@@ -687,9 +689,9 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
 }
 
 /**
-	transfer front element in buffer into the pointed CANPkg_c;
-	DON'T clear this item from buffer.
-	@see can_useMsgobjPopFront for explicit clear of this front item
+  transfer front element in buffer into the pointed CANPkg_c;
+  DON'T clear this item from buffer.
+  @see can_useMsgobjPopFront for explicit clear of this front item
   functions:
   * void setIdent(MASK_TYPE rt_ident, Ident_c::identType_t rt_type)
     -> set ident rrefc_ident of received msg in CANPkg_c
@@ -713,14 +715,14 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
   // only take new msg from BIOS buffer if not previously
   // buffered for detecting of the received ident
   if (!b_cinterfBufferedReceivedMsg)
-	{ // add offset 1 to rui8_msgobjNr as ESXu BIOS starts counting with 1
-	  // whereas IsoAgLib starts with 0
+  { // add offset 1 to rui8_msgobjNr as ESXu BIOS starts counting with 1
+    // whereas IsoAgLib starts with 0
       i16_retVal = get_can_msg(rui8_busNr, (rui8_msgobjNr+1), pt_receive);
-	}
+  }
 
   if ((i16_retVal == HAL_NO_ERR) || (HAL_OVERFLOW_ERR) || (HAL_WARN_ERR))
   {
-		b_cinterfBufferedReceivedMsg = true;
+    b_cinterfBufferedReceivedMsg = true;
     if (pt_receive->tReceiveTime.l1ms == 0)
     {
       i32_cinterfLastSuccReceive[rui8_busNr] = get_time();
@@ -756,11 +758,11 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
 }
 
 /**
-	Either register the currenct front item of buffer as not relevant,
-	or just pop the front item, as it was processed.
-	This explicit pop is needed, as one CAN message shall be served to
-	several CANCustomer_c instances, as long as one of them indicates a
-	succesfull process of the received message.
+  Either register the currenct front item of buffer as not relevant,
+  or just pop the front item, as it was processed.
+  This explicit pop is needed, as one CAN message shall be served to
+  several CANCustomer_c instances, as long as one of them indicates a
+  succesfull process of the received message.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
 */

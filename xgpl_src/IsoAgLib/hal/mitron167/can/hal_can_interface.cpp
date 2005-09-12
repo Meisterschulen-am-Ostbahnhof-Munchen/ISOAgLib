@@ -85,7 +85,7 @@ extern "C" {
   #include <commercial_BIOS/bios_mitron167/CanDriver/CAN.H>
   #include <C166.h>
   #include <reg167cs.h>
-  #include "canr_16x.h"							/* CAN register definitions		*/
+  #include "canr_16x.h"             /* CAN register definitions   */
 
   /** some prototypes from Mitron CAN example */
   unsigned char CAN1TxReady;
@@ -138,7 +138,7 @@ static canBuffer_t arr_canBuffer[2][15] =
    (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL } };
 
 /** lock state
-	@todo directly use CAN controller register to lock a MsgObj */
+  @todo directly use CAN controller register to lock a MsgObj */
 static bool b_canBufferLock[2][15] =
 { { false, false, false, false, false, false, false,
    false, false, false, false, false, false, false, false },
@@ -590,16 +590,16 @@ bool can_stateMsgobjOverflow(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
   return ( can_stateMsgobjFreecnt( rui8_busNr, rui8_msgobjNr ) == 0 )?true:false;
 }
 /**
-	check if MsgObj is currently locked
+  check if MsgObj is currently locked
   @param rui8_busNr number of the BUS to check
   @param rui8_msgobjNr number of the MsgObj to check
-	@return true -> MsgObj is currently locked
+  @return true -> MsgObj is currently locked
 */
 bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 {
   if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
-	else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
-	else return false;
+  else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
+  else return false;
 }
 
 /**
@@ -660,8 +660,8 @@ int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t 
     char tempString[80];
     sprintf( tempString, "\n\rVerlasse can_configGlobalInit() wegen RangeErr durch BusNr %hd\n\r", rui8_busNr );
     put_rs232String( (const uint8_t *) tempString );
-	  int32_t i32_waitEnd = HAL::getTime() + 1000;
-	  while ( i32_waitEnd > HAL::getTime() ) _nop();
+    int32_t i32_waitEnd = HAL::getTime() + 1000;
+    while ( i32_waitEnd > HAL::getTime() ) _nop();
     return HAL_RANGE_ERR;
   }
   // init variables
@@ -673,126 +673,26 @@ int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t 
   i32_cinterfLastSuccReceive[rui8_busNr] = i32_now;
   for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++) {
     ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
-	  ui8_canBufferXtd[rui8_busNr][ui8_ind] = 0;
-	  ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
-	  ui16_canBufferMaxSize[rui8_busNr][ui8_ind] = 0;
+    ui8_canBufferXtd[rui8_busNr][ui8_ind] = 0;
+    ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
+    ui16_canBufferMaxSize[rui8_busNr][ui8_ind] = 0;
     resetCanRingBuffer( rui8_busNr, ui8_ind);
-	  b_appLock[rui8_busNr][ui8_ind] = false;
+    b_appLock[rui8_busNr][ui8_ind] = false;
   }
 
   gb_cinterfBusLoadSlice[rui8_busNr] = 0;
   b_runningIrqSendProcess[rui8_busNr] = false;
   CNAMESPACE::memset((gwCinterfBusLoad[rui8_busNr]),0,10);
-  #if 0
-  char tempString[80];
-  sprintf( tempString, "\n\n\rGCo %hd, %hd, 0x%x, 0x%lx\n\r",
-           rui8_busNr, rb_baudrate, rui16_maskStd, rui32_maskExt );
-  put_rs232String( (const uint8_t *) tempString );
-  int32_t i32_waitEnd = HAL::getTime() + 500;
-  while ( i32_waitEnd > HAL::getTime() ) tempString[0] = tempString[1] + 1;
-  #endif
 
-  // avoid problems with to big values for masks
-  #if 0
-  const uint16_t cui16_shortMask = ( rui16_maskStd & 0x7FF );
-  const uint32_t cui32_longMask = ( rui32_maskExt & 0x1FFFFFFF );
-  uint16_t ui16_buildShortMask = ( ( cui16_shortMask & 0x7 ) << 13 ) | ( ( cui16_shortMask >> 3 ) & 0xFF );
-  uint32_t ui32_buildLongMaskLower = ( ( cui32_longMask & 0x1F ) << 11 ) | ( ( cui32_longMask >> 5 ) & 0xFF );
-  uint32_t ui32_buildLongMaskUpper = ( ( ( cui32_longMask << 3 ) & 0xFF0000UL ) >> 8 ) | ( ( ( cui32_longMask << 3 ) & 0xFF000000UL ) >> 24 );
-  const uint16_t cui16_longMaskLower = ( ui32_buildLongMaskLower & 0xFFFF );
-  const uint16_t cui16_longMaskUpper = ( ui32_buildLongMaskUpper & 0xFFFF );
-	#else
-  const uint16_t cui16_shortMask = ( rui16_maskStd & 0x7FF );
-  const uint32_t cui32_longMask = ( rui32_maskExt & 0x1FFFFFFF );
-  uint16_t ui16_temp = 0;
-  ui16_temp  = ( ( cui16_shortMask & 0x007 ) << 13 ); // ID 18..20
-  ui16_temp += ( ( cui16_shortMask & 0x7F8 ) >>  3 ); // ID 21..28
-  const uint16_t cui16_buildShortMask = ui16_temp;
-
-  ui16_temp  = ( cui32_longMask & 0x001FE000 ) >>  5; // ID 13..20
-  ui16_temp += ( cui32_longMask & 0x1FE00000 ) >> 21; // ID 21..28
-  const uint16_t cui16_longMaskUpper = ui16_temp;
-
-  ui16_temp  = ( cui32_longMask & 0x0000001F ) << 11; // ID 4..0
-  ui16_temp += ( cui32_longMask & 0x00001FE0 ) >> 5; //  ID 12..5
-  const uint16_t cui16_longMaskLower = ui16_temp;
-  #endif
-
-  // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
-  IEN = 0;      // defined in reg167cs.h
   // now config BUS
   if ( rui8_busNr == 0 ) {
-    // option bits: ErrInfoIrq := 0,  StatusInfoIrq := 0, CanIrq := 1
-    // deactivate ITQ and state
-    XP0IC = 0x0000;
-	  // set control register to config mode
-	  C1CSR = ( C1CSR | 0x41 ); // set CCE and INIT to indicate config
-    // set 11bit mask for CAN1 in register
-    C1GMS = cui16_buildShortMask;
-    // set upper part of 29bit mask
-    C1UGML = cui16_longMaskUpper;
-    // set lower part of 29 bit mask
-    C1LGML = cui16_longMaskLower;
-    // reinit CAN with new settings
     CAN1_Init( ui8_currentBaudrate[0], EIE_BIT, SIE_BIT, IE_BIT );
-    // double set the mask values, as it's not shure where
-    // Mitron CAN init function takes the mask values
-    // set 11bit mask for CAN1 in register
-    C1GMS = cui16_buildShortMask;
-    // set upper part of 29bit mask
-    C1UGML = cui16_longMaskUpper;
-    // set lower part of 29 bit mask
-    C1LGML = cui16_longMaskLower;
-	  // finish config with clear of CCE and INIT to indicate config
-	  // ( higher 4-Bit nibble of lower byte must be set to 0
-	  //   as it contains TestMode Bit and read-only bit despite of CCE )
-	  C1CSR = ( C1CSR & 0xFF0E );
-    CAN1TxReady = TRUE;
-    ///  -----------------------------------------------------------------------
-    ///  Configuration of the used CAN1 Interrupts:
-    ///  -----------------------------------------------------------------------
-    ///  - CAN1 service request node configuration:
-    ///  - CAN1 interrupt priority level (ILVL) = 11
-    ///  - CAN1 interrupt group level (GLVL) = 3
-    XP0IC = 0x0073;
   }
-  else {
-    XP1IC =  0x0000;
-	  // set control register to config mode
-	  C2CSR = ( C2CSR | 0x41 ); // set CCE and INIT to indicate config
-    // set 11bit mask for CAN2 in register
-    C2GMS = cui16_buildShortMask;
-    // set upper part of 29bit mask
-    C2UGML = cui16_longMaskUpper;
-    // set lower part of 29 bit mask
-    C2LGML = cui16_longMaskLower;
-    // reinit CAN with new settings
+  else
+  {
     CAN2_Init( ui8_currentBaudrate[1], EIE_BIT, SIE_BIT, IE_BIT );
-    // double set the mask values, as it's not shure where
-    // Mitron CAN init function takes the mask values
-    // set 11bit mask for CAN2 in register
-    C2GMS = cui16_buildShortMask;
-    // set upper part of 29bit mask
-    C2UGML = cui16_longMaskUpper;
-    // set lower part of 29 bit mask
-    C2LGML = cui16_longMaskLower;
-	  // finish config with clear of CCE and INIT to indicate config
-	  // ( higher 4-Bit nibble of lower byte must be set to 0
-	  //   as it contains TestMode Bit and read-only bit despite of CCE )
-	  C2CSR = ( C2CSR & 0xFF0E );
-    CAN2TxReady = TRUE;
-    ///  -----------------------------------------------------------------------
-    ///  Configuration of the used CAN2 Interrupts:
-    ///  -----------------------------------------------------------------------
-    ///  - CAN2 service request node configuration:
-    ///  - CAN2 interrupt priority level (ILVL) = 11
-    ///  - CAN2 interrupt group level (GLVL) = 2
-    XP1IC = 0x0072;
   }
-  // activate all IRQ again
-  IEN = 1;      // defined in reg167cs.h
-
-  return HAL_NO_ERR;
+  return can_configGlobalMask(rui8_busNr, rui16_maskStd, rui32_maskExt, rui32_maskLastmsg);
 }
 
 /**
@@ -811,31 +711,8 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
     put_rs232String( "Verlasse can_configGlobalMask mit RangeError\n\r" );
     return HAL_RANGE_ERR;
   }
-  b_runningIrqSendProcess[rui8_busNr] = false;
-  // set close state for all MsgObj as base config of BUS causes invalidation of all active MsgObj
-  for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++) {
-    ui8_canBufferDirectionState[rui8_busNr][ui8_ind] = 0xFF;
-    b_appLock[rui8_busNr][ui8_ind] = false;
-    resetCanRingBuffer( rui8_busNr, ui8_ind);
 
-    // close MsgObjs - retry till MsgObj is really deleted
-    if ( rui8_busNr == 0 ) {
-     while ( CAN1_DelMsgObj( ui8_ind ) == 0 ) __HAL::wdTriggern();
-    }
-    else {
-     while ( CAN2_DelMsgObj( ui8_ind ) == 0 ) __HAL::wdTriggern();
-    }
-  }
   // avoid problems with to big values for masks
-  #if 0
-  const uint16_t cui16_shortMask = ( rui16_maskStd & 0x7FF );
-  const uint32_t cui32_longMask = ( rui32_maskExt & 0x1FFFFFFF );
-  uint16_t ui16_buildShortMask = ( ( cui16_shortMask & 0x7 ) << 13 ) | ( ( cui16_shortMask >> 3 ) & 0xFF );
-  uint32_t ui32_buildLongMaskLower = ( ( cui32_longMask & 0x1F ) << 11 ) | ( ( cui32_longMask >> 5 ) & 0xFF );
-  uint32_t ui32_buildLongMaskUpper = ( ( ( cui32_longMask << 3 ) & 0xFF0000UL ) >> 8 ) | ( ( ( cui32_longMask << 3 ) & 0xFF000000UL ) >> 24 );
-  const uint16_t cui16_longMaskLower = ( ui32_buildLongMaskLower & 0xFFFF );
-  const uint16_t cui16_longMaskUpper = ( ui32_buildLongMaskUpper & 0xFFFF );
-	#else
   const uint16_t cui16_shortMask = ( rui16_maskStd & 0x7FF );
   const uint32_t cui32_longMask = ( rui32_maskExt & 0x1FFFFFFF );
   uint16_t ui16_temp = 0;
@@ -850,7 +727,6 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
   ui16_temp  = ( cui32_longMask & 0x0000001F ) << 11; // ID 4..0
   ui16_temp += ( cui32_longMask & 0x00001FE0 ) >> 5; //  ID 12..5
   const uint16_t cui16_longMaskLower = ui16_temp;
-  #endif
   // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
   if ( rui8_busNr == 0 ) {
@@ -859,8 +735,8 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
     #endif
     // deactivate ITQ and state
     XP0IC = 0x0000;
-	  // set control register to config mode
-	  C1CSR = ( C1CSR | 0x41 ); // set CCE and INIT to indicate config
+    // set control register to config mode
+    C1CSR = ( C1CSR | 0x41 ); // set CCE and INIT to indicate config
     CAN1TxReady = FALSE;
     // set 11bit mask for CAN1 in register
     C1GMS = cui16_buildShortMask;
@@ -868,20 +744,10 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
     C1UGML = cui16_longMaskUpper;
     // set lower part of 29 bit mask
     C1LGML = cui16_longMaskLower;
-    // reinit CAN with new settings
-    CAN1_Init( ui8_currentBaudrate[0], EIE_BIT, SIE_BIT, IE_BIT );
-    // double set the mask values, as it's not shure where
-    // Mitron CAN init function takes the mask values
-    // set 11bit mask for CAN1 in register
-    C1GMS = cui16_buildShortMask;
-    // set upper part of 29bit mask
-    C1UGML = cui16_longMaskUpper;
-    // set lower part of 29 bit mask
-    C1LGML = cui16_longMaskLower;
-	  // finish config with clear of CCE and INIT to indicate config
-	  // ( higher 4-Bit nibble of lower byte must be set to 0
-	  //   as it contains TestMode Bit and read-only bit despite of CCE )
-	  C1CSR = ( C1CSR & 0xFF0E );
+    // finish config with clear of CCE and INIT to indicate config
+    // ( higher 4-Bit nibble of lower byte must be set to 0
+    //   as it contains TestMode Bit and read-only bit despite of CCE )
+    C1CSR = ( C1CSR & 0xFF0E );
     CAN1TxReady = TRUE;
     ///  -----------------------------------------------------------------------
     ///  Configuration of the used CAN1 Interrupts:
@@ -897,8 +763,8 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
     #endif
     // deactivate ITQ and state
     XP1IC =  0x0000;
-	  // set control register to config mode
-	  C2CSR = ( C2CSR | 0x41 ); // set CCE and INIT to indicate config
+    // set control register to config mode
+    C2CSR = ( C2CSR | 0x41 ); // set CCE and INIT to indicate config
     CAN2TxReady = FALSE;
     // set 11bit mask for CAN2 in register
     C2GMS = cui16_buildShortMask;
@@ -906,20 +772,10 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rui16_maskStd, uint32_
     C2UGML = cui16_longMaskUpper;
     // set lower part of 29 bit mask
     C2LGML = cui16_longMaskLower;
-    // reinit CAN with new settings
-    CAN2_Init( ui8_currentBaudrate[1], EIE_BIT, SIE_BIT, IE_BIT );
-    // double set the mask values, as it's not shure where
-    // Mitron CAN init function takes the mask values
-    // set 11bit mask for CAN2 in register
-    C2GMS = cui16_buildShortMask;
-    // set upper part of 29bit mask
-    C2UGML = cui16_longMaskUpper;
-    // set lower part of 29 bit mask
-    C2LGML = cui16_longMaskLower;
-	  // finish config with clear of CCE and INIT to indicate config
-	  // ( higher 4-Bit nibble of lower byte must be set to 0
-	  //   as it contains TestMode Bit and read-only bit despite of CCE )
-	  C2CSR = ( C2CSR & 0xFF0E );
+    // finish config with clear of CCE and INIT to indicate config
+    // ( higher 4-Bit nibble of lower byte must be set to 0
+    //   as it contains TestMode Bit and read-only bit despite of CCE )
+    C2CSR = ( C2CSR & 0xFF0E );
     CAN2TxReady = TRUE;
     ///  -----------------------------------------------------------------------
     ///  Configuration of the used CAN2 Interrupts:
@@ -997,8 +853,8 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
     char tempString[80];
     sprintf( tempString, "\n\rVerlasse can_configMsgobjInit() wegen RangeErr durch BusNr %hd, MsgObjNr %hd\n\r", rui8_busNr, rui8_msgobjNr );
     put_rs232String( (const uint8_t *) tempString );
-	int32_t i32_waitEnd = HAL::getTime() + 1000;
-	while ( i32_waitEnd > HAL::getTime() ) ;
+  int32_t i32_waitEnd = HAL::getTime() + 1000;
+  while ( i32_waitEnd > HAL::getTime() ) ;
     return HAL_RANGE_ERR;
   }
   uint32_t ui32_ident = rrefc_ident.ident();
@@ -1007,10 +863,10 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
                     :rrefc_ident.identType();
 
   uint8_t ui8_bufferSize = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
-	// unlock - if previously locked
-	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
+  // unlock - if previously locked
+  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
 
-	// deactivate all IRQ to inhibit distortion by RS232 or other IRQ
+  // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
   // deactivate CAN BUS durign re-config
   if ( rui8_busNr == 0 ) {
@@ -1038,16 +894,16 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
 
   if (rb_rxtx == 0)
   { // receive
-		ui8_bufferSize = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
-		const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
-		for ( uint8_t ind = 0; ind < CONFIG_CAN_HIGH_LOAD_IDENT_CNT; ind++ )
-		{
-			if ( highLoadCheckList[ind] == pt_config->dwId )
-			{
-				ui8_bufferSize = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
-				break;
-			}
-		}
+    ui8_bufferSize = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
+    const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
+    for ( uint8_t ind = 0; ind < CONFIG_CAN_HIGH_LOAD_IDENT_CNT; ind++ )
+    {
+      if ( highLoadCheckList[ind] == pt_config->dwId )
+      {
+        ui8_bufferSize = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
+        break;
+      }
+    }
   }
   else
   { // send
@@ -1114,35 +970,81 @@ int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAg
                                                 ?DEFAULT_IDENT_TYPE
                                                 :rrefc_ident.identType();
 
-  #if 0
-  char tempString[80];
-  sprintf( tempString, "MsgChgid B%hd M%hd X%hd, Id0x%lx\n\r",
-           rui8_busNr, rui8_msgobjNr,
-           ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr],
-           rrefc_ident.ident() );
-  put_rs232String( (const uint8_t *) tempString );
-  int32_t i32_waitEnd = HAL::getTime() + 500;
-  while ( i32_waitEnd > HAL::getTime() ) tempString[0] = tempString[1] + 1;
-  #endif
-	// unlock - if previously locked
-	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
+  // unlock - if previously locked
+  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
 
-	// deactivate all IRQ to inhibit distortion by RS232 or other IRQ
+  uint32_t id = rrefc_ident.ident();
+  uint16_t* preg_UAR = (rui8_busNr==0)?(C1UAR1+(rui8_msgobjNr*0x10)):(C2UAR1+(rui8_msgobjNr*0x10));
+  uint16_t* preg_LAR = (rui8_busNr==0)?(C1LAR1+(rui8_msgobjNr*0x10)):(C2LAR1+(rui8_msgobjNr*0x10));
+  uint16_t ui16_uarVal, ui16_larVal, tempVal;
+
+
+  if (xtd) /* load Arbitration Registers with XTD ID: */
+  {
+    /* load Upper Arb. Reg.: */
+    id=id<<3;
+    tempVal=(unsigned int) (id>>16);
+    ui16_uarVal=(tempVal<<8)+(tempVal>>8);
+
+    /* load Lower Arb. Reg. */
+    tempVal=(unsigned int) id;
+    ui16_larVal=(tempVal<<8)+(tempVal>>8);
+  }
+  else   /* load Arbitration Registers with STD ID: */
+  {
+    /* load Upper Arb. Reg.: */
+    tempVal=(unsigned int) id;
+    tempVal=tempVal<<5;
+    ui16_uarVal=(tempVal<<8)+(tempVal>>8);
+
+    /* load Lower Arb. Reg.: */
+    ui16_larVal=0x0800;
+  }
+
+  // deactivate all IRQ to inhibit distortion by RS232 or other IRQ
   IEN = 0;      // defined in reg167cs.h
   if ( rui8_busNr == 0 ) {
-    CAN1TxReady = FALSE;
-    while ( CAN1_DelMsgObj( rui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
+    // deactivate ITQ and state
     XP0IC = 0x0000;
-    CAN1_DefineMsgObj(rui8_msgobjNr,  ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr], CAN_INT_ON, ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr], rrefc_ident.ident(), 8);
+    // set control register to config mode
+    C1CSR = ( C1CSR | 0x41 ); // set CCE and INIT to indicate config
+    CAN1TxReady = FALSE;
+    // now set the UAR and LAR arbitration registers
+    *preg_UAR = ui16_uarVal;
+    *preg_LAR = ui16_larVal;
+    // finish config with clear of CCE and INIT to indicate config
+    // ( higher 4-Bit nibble of lower byte must be set to 0
+    //   as it contains TestMode Bit and read-only bit despite of CCE )
+    C1CSR = ( C1CSR & 0xFF0E );
     CAN1TxReady = TRUE;
+    ///  -----------------------------------------------------------------------
+    ///  Configuration of the used CAN1 Interrupts:
+    ///  -----------------------------------------------------------------------
+    ///  - CAN1 service request node configuration:
+    ///  - CAN1 interrupt priority level (ILVL) = 11
+    ///  - CAN1 interrupt group level (GLVL) = 3
     XP0IC = 0x0073;
   }
-  else {
+  else if ( rui8_busNr == 1 ) {
+    // deactivate ITQ and state
+    XP1IC =  0x0000;
+    // set control register to config mode
+    C2CSR = ( C2CSR | 0x41 ); // set CCE and INIT to indicate config
     CAN2TxReady = FALSE;
-    while ( CAN2_DelMsgObj( rui8_msgobjNr ) == 0 ) __HAL::wdTriggern();
-    XP1IC = 0x0000;
-    CAN2_DefineMsgObj(rui8_msgobjNr,  ui8_canBufferDirectionState[rui8_busNr][rui8_msgobjNr], CAN_INT_ON, ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr], rrefc_ident.ident(), 8);
+    // now set the UAR and LAR arbitration registers
+    *preg_UAR = ui16_uarVal;
+    *preg_LAR = ui16_larVal;
+    // finish config with clear of CCE and INIT to indicate config
+    // ( higher 4-Bit nibble of lower byte must be set to 0
+    //   as it contains TestMode Bit and read-only bit despite of CCE )
+    C2CSR = ( C2CSR & 0xFF0E );
     CAN2TxReady = TRUE;
+    ///  -----------------------------------------------------------------------
+    ///  Configuration of the used CAN2 Interrupts:
+    ///  -----------------------------------------------------------------------
+    ///  - CAN2 service request node configuration:
+    ///  - CAN2 interrupt priority level (ILVL) = 11
+    ///  - CAN2 interrupt group level (GLVL) = 2
     XP1IC = 0x0072;
   }
   // activate all IRQ again
@@ -1150,23 +1052,22 @@ int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAg
 
   // reset AppLock flag
   b_appLock[rui8_busNr][rui8_msgobjNr] = false;
-  resetCanRingBuffer( rui8_busNr, rui8_msgobjNr );
 
   return HAL_NO_ERR;
 }
 
 /**
-	lock a MsgObj to avoid further placement of messages into buffer.
+  lock a MsgObj to avoid further placement of messages into buffer.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
-	@param rb_doLock true==lock(default); false==unlock
+  @param rb_doLock true==lock(default); false==unlock
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
-	*/
+  */
 int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 {
-	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
 }
 
 /**
@@ -1196,8 +1097,8 @@ int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
   // check for input vars
   if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
-	// unlock - if previously locked
-	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
+  // unlock - if previously locked
+  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = false;
   #if 0
   char tempString[80];
   sprintf( tempString, "MsgClose B%hd M%hd\n\r",
@@ -1298,25 +1199,25 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
   if ( p_tempSend == NULL ) {
     #if 0
     char tempString[80];
-	  sprintf( tempString, "Buffer Send with Bus: %hd, MsgObj: %hd, MaxSize: %d, Size: %d, Read: %d, Write: %d, IRQ-Cnt: %lu, TX-IRQ: %lu, RX-IRQ: %lu, State: %x\n\r",
-	  rui8_busNr, rui8_msgobjNr,
+    sprintf( tempString, "Buffer Send with Bus: %hd, MsgObj: %hd, MaxSize: %d, Size: %d, Read: %d, Write: %d, IRQ-Cnt: %lu, TX-IRQ: %lu, RX-IRQ: %lu, State: %x\n\r",
+    rui8_busNr, rui8_msgobjNr,
     ui16_canBufferMaxSize[rui8_busNr][rui8_msgobjNr],
-	  ui16_canBufferSize[rui8_busNr][rui8_msgobjNr],
-	  ui16_canBufferRead[rui8_busNr][rui8_msgobjNr],
-	  ui16_canBufferWrite[rui8_busNr][rui8_msgobjNr],
-	  sui32_irqCnt,
-	  sui32_txIrqCnt,
-	  sui32_rxIrqCnt,
-	  ui16_lastCanBusState[rui8_busNr] );
+    ui16_canBufferSize[rui8_busNr][rui8_msgobjNr],
+    ui16_canBufferRead[rui8_busNr][rui8_msgobjNr],
+    ui16_canBufferWrite[rui8_busNr][rui8_msgobjNr],
+    sui32_irqCnt,
+    sui32_txIrqCnt,
+    sui32_rxIrqCnt,
+    ui16_lastCanBusState[rui8_busNr] );
     put_rs232String( (const uint8_t *) tempString );
-	#endif
+  #endif
     // first if buffer is full
     if ( isCanRingBufferFull( rui8_busNr, rui8_msgobjNr ) ) {
-	  #if 0
-	  put_rs232String( "Send Buffer Full\n\r" );
-	  #endif
+    #if 0
+    put_rs232String( "Send Buffer Full\n\r" );
+    #endif
       return HAL_OVERFLOW_ERR;
-	}
+  }
 
     // set AppLock, so that IRQ function can avoid reading a not complete written msg
     // ( this could cause trouble, if the current to be written msg is the first msg in a
@@ -1330,15 +1231,15 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
     if ( ps_element == NULL ) {
       // maybe meanwhile buffer is full -> exit
       b_appLock[rui8_busNr][rui8_msgobjNr] = false;
-	  #if 0
+    #if 0
       put_rs232String( "Insert in buffer faulted\n\r" );
-	  #endif
+    #endif
       return HAL_OVERFLOW_ERR;
     }
     else {
       // the Mitron CAN structure content is in the element field data
       p_tempSend = &( ps_element->data );
-	  }
+    }
   }
   // now insert to be sent data
   // CANPkgExt_c::getData transforms flag data to ident and 8byte string
@@ -1381,11 +1282,11 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
         if ( rui8_busNr == 0 ) {
           CAN1_WriteMsgObjData( rui8_msgobjNr, p_tempSend );
           CAN1_Transmit( rui8_msgobjNr );
-		}
-		else {
+    }
+    else {
           CAN2_WriteMsgObjData( rui8_msgobjNr, p_tempSend );
           CAN2_Transmit( rui8_msgobjNr );
-		}
+    }
       }
     }
   }
@@ -1432,7 +1333,7 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   if ( ( reflIdent & 0x700 ) == 0x200 ) {
     sprintf( temp, "Id0x%lx T%ld O%hd P%hd\n\r",
            reflIdent, arr_canBuffer[rui8_busNr][rui8_msgobjNr][readPos].timestamp,
-		   rui8_msgobjNr, readPos );
+       rui8_msgobjNr, readPos );
     put_rs232String( (const uint8_t *) temp );
   }
   #endif
@@ -1440,9 +1341,9 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
 }
 
 /**
-	transfer front element in buffer into the pointed CANPkg_c;
-	DON'T clear this item from buffer.
-	@see can_useMsgobjPopFront for explicit clear of this front item
+  transfer front element in buffer into the pointed CANPkg_c;
+  DON'T clear this item from buffer.
+  @see can_useMsgobjPopFront for explicit clear of this front item
   functions:
   * void setIdent(MASK_TYPE rt_ident, Ident_c::identType_t rt_type)
     -> set ident rrefc_ident of received msg in CANPkg_c
@@ -1480,37 +1381,37 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
     // now read data from pointed element of buffer
     __IsoAgLib::CANPkg_c::setIdent(uint32_t( pt_element->data.id ), __IsoAgLib::Ident_c::identType_t(ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr]));
     rpc_data->setDataString(pt_element->data.databytes, pt_element->data.bytes);
-	rpc_data->setTime( pt_element->timestamp );
-	#if 0
-	char temp[50];
-	if ( ( pt_element->data.id & 0x700 ) == 0x200 ) {
-	  sprintf( temp, "Time: %lu:\tLastIdent: %lx\tIdent:%luDLC: %hu\tData: %hx %hx %hx %hx %hx %hx %hx %hx\n\r",
-	          pt_element->timestamp,
-			  sui32_lastIdent,
-			  pt_element->data.id,
+  rpc_data->setTime( pt_element->timestamp );
+  #if 0
+  char temp[50];
+  if ( ( pt_element->data.id & 0x700 ) == 0x200 ) {
+    sprintf( temp, "Time: %lu:\tLastIdent: %lx\tIdent:%luDLC: %hu\tData: %hx %hx %hx %hx %hx %hx %hx %hx\n\r",
+            pt_element->timestamp,
+        sui32_lastIdent,
+        pt_element->data.id,
               pt_element->data.bytes,
-			  pt_element->data.databytes[0],
-			  pt_element->data.databytes[1],
-			  pt_element->data.databytes[2],
-			  pt_element->data.databytes[3],
-			  pt_element->data.databytes[4],
-			  pt_element->data.databytes[5],
-			  pt_element->data.databytes[6],
-			  pt_element->data.databytes[7] );
+        pt_element->data.databytes[0],
+        pt_element->data.databytes[1],
+        pt_element->data.databytes[2],
+        pt_element->data.databytes[3],
+        pt_element->data.databytes[4],
+        pt_element->data.databytes[5],
+        pt_element->data.databytes[6],
+        pt_element->data.databytes[7] );
       put_rs232String( (const uint8_t *) temp );
-	}
+  }
   #elif 0
-	static char temp[80];
-	if ( ( pt_element->data.id & 0x700 ) == 0x200 ) {
-	  sprintf( temp, "Process at Time: %lu:\tLastIdent: 0x%lx\tIdent:%luDLC: %hu - ResultIdent: 0x%lx\n\r",
-	          pt_element->timestamp,
-			  sui32_lastIdent,
-			  pt_element->data.id,
+  static char temp[80];
+  if ( ( pt_element->data.id & 0x700 ) == 0x200 ) {
+    sprintf( temp, "Process at Time: %lu:\tLastIdent: 0x%lx\tIdent:%luDLC: %hu - ResultIdent: 0x%lx\n\r",
+            pt_element->timestamp,
+        sui32_lastIdent,
+        pt_element->data.id,
         pt_element->data.bytes,
         __IsoAgLib::CANPkg_c::ident()    );
       put_rs232String( (const uint8_t *) temp );
-	}
-	#endif
+  }
+  #endif
   } while ( b_appLock[rui8_busNr][rui8_msgobjNr] == false );
   // now flag can be cleared as data is complete read
   b_appLock[rui8_busNr][rui8_msgobjNr] = false;
@@ -1519,11 +1420,11 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
 }
 
 /**
-	Either register the currenct front item of buffer as not relevant,
-	or just pop the front item, as it was processed.
-	This explicit pop is needed, as one CAN message shall be served to
-	several CANCustomer_c instances, as long as one of them indicates a
-	succesfull process of the received message.
+  Either register the currenct front item of buffer as not relevant,
+  or just pop the front item, as it was processed.
+  This explicit pop is needed, as one CAN message shall be served to
+  several CANCustomer_c instances, as long as one of them indicates a
+  succesfull process of the received message.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
 */
@@ -1577,8 +1478,8 @@ extern "C" {
 //
 //                NOTE: You have to add application specific
 //                code to this function. There is for message object 1 and 15
-//				  example code written, which can be modified  by user to suit
-//				  the application.
+//          example code written, which can be modified  by user to suit
+//          the application.
 //
 //----------------------------------------------------------------------------
 // Returnvalue   none
@@ -1605,7 +1506,7 @@ interrupt (XP0INT) _using(CAN1_ISR) void CAN1_Isr(void)
   while ((IntID = (C1IR & 0x00ff)))
   {
     ui16_lastCanBusState[0] = C1CSR;
-	// clear higher byte - preserve config bits
+  // clear higher byte - preserve config bits
     C1CSR = ( ui16_lastCanBusState[0] & 0xFF );
     if ( (IntID & 0x00ff) == 1 ) {
       // Status Change Interrupt
@@ -1634,7 +1535,7 @@ interrupt (XP0INT) _using(CAN1_ISR) void CAN1_Isr(void)
     else ui8_msgObjInd = (IntID & 0x00ff) - 3;
     // interprete IRQ type: TXOK or RXOK for MsgObj ui8_msgObjInd
     if (ui16_lastCanBusState[0] & CanStateRxOk) {
-	  sui32_rxIrqCnt++;
+    sui32_rxIrqCnt++;
       i32_cinterfLastSuccReceive[0] = ci32_now;
       // if receive interrupt... (RXOK=1)
       if( CAN1_MsgLost( ui8_msgObjInd ) ) {
@@ -1651,17 +1552,17 @@ interrupt (XP0INT) _using(CAN1_ISR) void CAN1_Isr(void)
         pt_tempElement = writeDataToCanRingBuffer( 0, ui8_msgObjInd, true );
         CAN1_GetMsgObj( ui8_msgObjInd , &( pt_tempElement->data ) );
         pt_tempElement->timestamp = ci32_now;
-				sui32_lastIdent = pt_tempElement->data.id;
+        sui32_lastIdent = pt_tempElement->data.id;
       }
       CAN1_ReleaseObj( ui8_msgObjInd );
     }
     if ( ui16_lastCanBusState[0] & CanStateTxOk ) {
       // TXOK IRQ
-	  sui32_txIrqCnt++;
+    sui32_txIrqCnt++;
       i32_cinterfLastSuccSend[0] = ci32_now;
       CAN1TxReady = TRUE;
       b_runningIrqSendProcess[0] = false;
-	  CAN1_ReleaseObj( ui8_msgObjInd );
+    CAN1_ReleaseObj( ui8_msgObjInd );
       // check if same MsgObj can't be used to send succeeding msg
       // this can be the case if:
       // + buffer is complete empty
@@ -1671,8 +1572,8 @@ interrupt (XP0INT) _using(CAN1_ISR) void CAN1_Isr(void)
       if ( ( isCanRingBufferEmpty( 0, ui8_msgObjInd )         )
         || ( ( b_appLock[0][ui8_msgObjInd] == true          )
           && ( getCanRingBufferSize(0, ui8_msgObjInd ) <= 1 ) ) ) {
-		// MsgObj of successful send has no more msg to send in buffer -> clear INTPND
-		CAN1_ReleaseObj( ui8_msgObjInd );
+    // MsgObj of successful send has no more msg to send in buffer -> clear INTPND
+    CAN1_ReleaseObj( ui8_msgObjInd );
         // search in other configureg send buffer for other waiting msgs
         pt_tempElement = NULL;
         for ( ui8_msgObjInd = 0; ui8_msgObjInd < 15; ui8_msgObjInd++ ) {
@@ -1698,7 +1599,7 @@ interrupt (XP0INT) _using(CAN1_ISR) void CAN1_Isr(void)
       if ( pt_tempElement != NULL ) {
           // clear MsgObj
           CAN1TxReady = FALSE;
-   		  b_runningIrqSendProcess[0] = true;
+        b_runningIrqSendProcess[0] = true;
           CAN1_WriteMsgObjData( ui8_msgObjInd, & ( pt_tempElement->data ) );
           CAN1_Transmit( ui8_msgObjInd );
       }
@@ -1755,7 +1656,7 @@ interrupt (XP1INT) _using(CAN2_ISR) void CAN2_Isr(void)
   while ((IntID = (C2IR & 0x00ff)))
   {
     ui16_lastCanBusState[1] = C2CSR;
-	// clear higher byte - preserve config bits
+  // clear higher byte - preserve config bits
     C2CSR = ( ui16_lastCanBusState[1] & 0xFF );
     if ( (IntID & 0x00ff) == 1 ) {
       // Status Change Interrupt
@@ -1784,7 +1685,7 @@ interrupt (XP1INT) _using(CAN2_ISR) void CAN2_Isr(void)
     else ui8_msgObjInd = (IntID & 0x00ff) - 3;
     // interprete IRQ type: TXOK or RXOK for MsgObj ui8_msgObjInd
     if (ui16_lastCanBusState[1] & CanStateRxOk) {
-	  sui32_rxIrqCnt++;
+    sui32_rxIrqCnt++;
       i32_cinterfLastSuccReceive[1] = ci32_now;
       // if receive interrupt... (RXOK=1)
       if( CAN2_MsgLost( ui8_msgObjInd ) ) {
@@ -1806,11 +1707,11 @@ interrupt (XP1INT) _using(CAN2_ISR) void CAN2_Isr(void)
     }
     if ( ui16_lastCanBusState[1] & CanStateTxOk ) {
       // TXOK IRQ
-	  sui32_txIrqCnt++;
+    sui32_txIrqCnt++;
       i32_cinterfLastSuccSend[1] = ci32_now;
       CAN2TxReady = TRUE;
       b_runningIrqSendProcess[1] = false;
-	  CAN2_ReleaseObj( ui8_msgObjInd );
+    CAN2_ReleaseObj( ui8_msgObjInd );
       // check if same MsgObj can't be used to send succeeding msg
       // this can be the case if:
       // + buffer is complete empty
@@ -1820,8 +1721,8 @@ interrupt (XP1INT) _using(CAN2_ISR) void CAN2_Isr(void)
       if ( ( isCanRingBufferEmpty( 1, ui8_msgObjInd )         )
         || ( ( b_appLock[1][ui8_msgObjInd] == true          )
           && ( getCanRingBufferSize(1, ui8_msgObjInd ) <= 1 ) ) ) {
-		// MsgObj of successful send has no more msg to send in buffer -> clear INTPND
-		CAN2_ReleaseObj( ui8_msgObjInd );
+    // MsgObj of successful send has no more msg to send in buffer -> clear INTPND
+    CAN2_ReleaseObj( ui8_msgObjInd );
         // search in other configureg send buffer for other waiting msgs
         pt_tempElement = NULL;
         for ( ui8_msgObjInd = 0; ui8_msgObjInd < 15; ui8_msgObjInd++ ) {
@@ -1849,7 +1750,7 @@ interrupt (XP1INT) _using(CAN2_ISR) void CAN2_Isr(void)
       if ( pt_tempElement != NULL ) {
           // clear MsgObj
           CAN2TxReady = FALSE;
-   		  b_runningIrqSendProcess[1] = true;
+        b_runningIrqSendProcess[1] = true;
           CAN2_WriteMsgObjData( ui8_msgObjInd, & ( pt_tempElement->data ) );
           CAN2_Transmit( ui8_msgObjInd );
       }

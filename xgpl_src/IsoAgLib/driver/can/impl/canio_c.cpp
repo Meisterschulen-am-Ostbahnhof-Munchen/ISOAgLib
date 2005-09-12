@@ -1248,7 +1248,7 @@ bool CANIO_c::reconfigureMsgObj()
   if ((oldMaskStd != c_maskStd) || (oldMaskExt != c_maskExt))
   {
     // global t_mask setting has changed -> reinit CAN with new global masks
-    baseCanInit(ui16_bitrate);
+    registerChangedGlobalMasks();
   }
 
   int16_t i = 0;
@@ -1341,6 +1341,7 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
   // check if rui16_bitrate is one of the allowed settings
   int16_t pi16_allowed[] = HAL_CAN_BITRATE_LIST;
   bool b_allowed = false;
+
   for (uint8_t ui8_index = 0; ui8_index < HAL_CAN_BITRATE_CNT; ui8_index++)
   {
     if (pi16_allowed[ui8_index] == rui16_bitrate)
@@ -1385,7 +1386,6 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
   { // we want to let all messages in
     c_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
   }
-    
   int16_t i16_retvalInit = HAL::can_configGlobalInit(ui8_busNumber, ui16_bitrate, c_maskStd.ident(), c_maskExt.ident(),
                       c_maskLastmsg.ident());
 
@@ -1415,7 +1415,6 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
     getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
     return false;
   }
-
 
   if ( b_lastMsgObjWasOpen )
   { // open last message buffer during reconfig of other MSgObj as CAN is already activated and at least one MsgObj is already in use
@@ -1480,6 +1479,29 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
   // return true -> must be set according success
   return b_configSuccess;
 }
+
+/**
+  call the needed HAL function for setting the new global masks,
+  without invalidating already open send and last msg obj.
+  */
+bool CANIO_c::registerChangedGlobalMasks(void)
+{
+  int16_t i16_retvalInit = HAL::can_configGlobalMask(ui8_busNumber, c_maskStd.ident(), c_maskExt.ident(),
+                                                     c_maskLastmsg.ident());
+
+  // check for error state
+  if (i16_retvalInit == HAL_RANGE_ERR)
+  { // BIOS complains about limits of BUSnr or msgObj
+    // seldom, because before checked with defined LIMITS
+    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::Can );
+    return false;
+  }
+  else
+  {
+    return true;
+  }
+}
+
 
 /**
   check for can send conflict error and stop send retry on error

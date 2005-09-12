@@ -483,6 +483,11 @@ class CANIO_c : public SingletonCANIO_c {
     @param rui16_bitrate wanted CAN bitrate
   */
   bool baseCanInit(uint16_t rui16_bitrate);
+  /**
+    call the needed HAL function for setting the new global masks,
+    without invalidating already open send and last msg obj.
+  */
+  bool registerChangedGlobalMasks(void);
 
 
 // Private attributes
