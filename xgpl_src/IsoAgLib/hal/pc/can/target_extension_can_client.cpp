@@ -163,6 +163,25 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 
 };
 
+int16_t changeGlobalMask( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg )
+{
+  msqCommand_s msqCommandBuf;
+
+  DEBUG_PRINT1("changeGlobalMask, bus %d\n", bBusNumber);
+
+  if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;
+
+  msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
+  msqCommandBuf.i16_command = COMMAND_CHG_GLOBAL_MASK;
+  msqCommandBuf.s_init.ui8_bus = bBusNumber;
+  msqCommandBuf.s_init.ui16_wGlobMask = wGlobMask;
+  msqCommandBuf.s_init.ui32_dwGlobMask = dwGlobMask;
+  msqCommandBuf.s_init.ui32_dwGlobMaskLastmsg = dwGlobMaskLastmsg;
+
+  return send_command(&msqCommandBuf, &msqDataClient);
+
+};
+
 int16_t closeCan ( uint8_t bBusNumber )
 {
   msqCommand_s msqCommandBuf;

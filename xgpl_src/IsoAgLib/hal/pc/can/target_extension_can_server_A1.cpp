@@ -687,8 +687,18 @@ static void* command_thread_func(void* ptr)
           // first init command for current bus
 
           memset(fdata, 0, sizeof(fdata));
-
+          
           if (iter_client != NULL) {
+
+            // open log file only once per bus
+            if (pc_serverData->b_logMode) {
+              char file_name[255];
+              snprintf(file_name, 255, "%s_%hx", pc_serverData->logFileBase.c_str(), msqCommandBuf.s_init.ui8_bus);
+              if ((pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus] = fopen(file_name, "a+")) == NULL ) {
+                perror("fopen");
+                exit(1);
+              }
+            }
 
             btr0 = 0;
             btr1 = 1;
@@ -715,21 +725,17 @@ static void* command_thread_func(void* ptr)
 
         }
 
+        if (!i32_error)
+          ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
+        
+        // do rest of init handling in next case statement (no break!)
 
+     case COMMAND_CHG_GLOBAL_MASK:
+     
         if (!i32_error) {
           iter_client->ui16_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui16_wGlobMask;
           iter_client->ui32_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui32_dwGlobMask;
           iter_client->ui32_lastMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui32_dwGlobMaskLastmsg;
-          ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
-
-          if (pc_serverData->b_logMode) {
-            char file_name[255];
-            snprintf(file_name, 255, "%s_%hx", pc_serverData->logFileBase.c_str(), msqCommandBuf.s_init.ui8_bus);
-            if ((pc_serverData->f_canOutput[msqCommandBuf.s_init.ui8_bus] = fopen(file_name, "a+")) == NULL ) {
-              perror("fopen");
-              exit(1);
-            }
-          }
         }
 
         send_command_ack(msqCommandBuf.i32_mtype, i32_error, &(pc_serverData->msqDataServer));

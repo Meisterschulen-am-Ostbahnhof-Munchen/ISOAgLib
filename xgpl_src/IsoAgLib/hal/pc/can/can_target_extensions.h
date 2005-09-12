@@ -69,6 +69,7 @@ int16_t can_startDriver();
 int16_t can_stopDriver();
 int32_t can_lastReceiveTime();
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate );
+int16_t changeGlobalMask( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg );
 int16_t closeCan ( uint8_t bBusNumber );
 int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus);
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj);

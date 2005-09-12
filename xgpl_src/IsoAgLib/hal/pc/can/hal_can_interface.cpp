@@ -413,7 +413,7 @@ int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t 
 int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rb_maskStd, uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg)
 {
   getCanBusStatus(rui8_busNr, &t_cinterfCanState);
-  int16_t i16_retVal = init_can(rui8_busNr, rb_maskStd, rui32_maskExt, rui32_maskLastmsg, t_cinterfCanState.wBitrate);
+  int16_t i16_retVal = changeGlobalMask(rui8_busNr, rb_maskStd, rui32_maskExt, rui32_maskLastmsg);
   if (i16_retVal == HAL_WARN_ERR) i16_retVal = HAL_NO_ERR;
   return i16_retVal;
 }

@@ -27,18 +27,19 @@ namespace __HAL {
 #define MSQ_KEY_PATH     "/root"
 #define PIPE_PATH        "/tmp/can_server_"
 
-#define COMMAND_ACK        1
-#define COMMAND_NACK       2
-#define COMMAND_REGISTER   10
-#define COMMAND_DEREGISTER 11
-#define COMMAND_INIT       20
-#define COMMAND_CLOSE      21
-#define COMMAND_CONFIG     30
-#define COMMAND_CHG_CONFIG 31
-#define COMMAND_LOCK       40
-#define COMMAND_UNLOCK     41
-#define COMMAND_QUERYLOCK  42
-#define COMMAND_CLOSEOBJ   50
+#define COMMAND_ACK             1
+#define COMMAND_NACK            2
+#define COMMAND_REGISTER        10
+#define COMMAND_DEREGISTER      11
+#define COMMAND_INIT            20
+#define COMMAND_CLOSE           21
+#define COMMAND_CHG_GLOBAL_MASK 22
+#define COMMAND_CONFIG          30
+#define COMMAND_CHG_CONFIG      31
+#define COMMAND_LOCK            40
+#define COMMAND_UNLOCK          41
+#define COMMAND_QUERYLOCK       42
+#define COMMAND_CLOSEOBJ        50
 
 
 struct can_data {
