@@ -651,6 +651,18 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   return HAL_NO_ERR;
 };
 
+int16_t changeGlobalMask ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg)
+{
+  if ( bBusNumber >= cui32_maxCanBusCnt ) return HAL_RANGE_ERR;
+
+  // Set Global Masks
+  ui16_globalMask[bBusNumber] = wGlobMask;
+  ui32_globalMask[bBusNumber] = dwGlobMask;
+  ui32_lastMask[bBusNumber] = dwGlobMaskLastmsg;
+
+  return HAL_NO_ERR;
+};
+
 
 
 } // end namespace __HAL

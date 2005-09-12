@@ -836,6 +836,30 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   return HAL_NO_ERR;
 };
 
+
+int16_t changeGlobalMask ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg)
+{
+  #ifdef USE_THREAD
+  // wait until the receive thread allows access to buffer
+  while ( b_blockApp )
+  { // do something for 1msec - just to take time
+    usleep( 100 );
+  }
+  // tell thread to wait until this function is finished
+  b_blockThread = true;
+  #endif
+
+  ui16_globalMask[bBusNumber] = wGlobMask;
+  ui32_globalMask[bBusNumber] = dwGlobMask;
+  ui32_lastMask[bBusNumber] = dwGlobMaskLastmsg;
+
+  #ifdef USE_THREAD
+  b_blockThread = false;
+  #endif
+
+  return HAL_NO_ERR;
+};
+
 int16_t closeCan ( uint8_t bBusNumber )
 {
 	if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR;

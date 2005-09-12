@@ -120,6 +120,11 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   return HAL_NO_ERR;
 }
 
+int16_t changeGlobalMask ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg)
+{
+  return HAL_NO_ERR;
+}
+
 /**
 	check if MsgObj is currently locked
   @param rui8_busNr number of the BUS to check
