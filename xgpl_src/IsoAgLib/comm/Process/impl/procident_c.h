@@ -285,9 +285,10 @@ public:
   */
   const GetyPos_c& gtp() const
   #ifdef USE_DIN_9684
-  {return ( ( data.c_gtp.getGety() == 0 ) &&  ( data.c_gtp.getPos() == 0 ) )
-                                ?data.c_gtp
-                                :GetyPos_c(data.c_gtp.getGety(), ownerGtp().getPos());};
+  {if( ( data.c_gtp.getGety() == 0 ) &&  ( data.c_gtp.getPos() == 0 ) )
+               return   data.c_gtp;
+          else
+               return           GetyPos_c(data.c_gtp.getGety(), ownerGtp().getPos());};
   #else
   {return ownerGtp();};
   #endif

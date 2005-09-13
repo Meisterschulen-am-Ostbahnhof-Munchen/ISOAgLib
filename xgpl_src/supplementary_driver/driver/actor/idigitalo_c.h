@@ -142,24 +142,24 @@ public:
     */
   bool good( void ) const { return DigitalO_c::good();};
   /** deliver detailed error state information for this Digital Output
-		* This function evaluates the current where possible, otherwise it evaluates
-		* the measured voltage at the output. The latter interpretation can go wrong
-		* if the PWM setting is >0 but has a very low value, so that even under normal
-		* conditions the voltage with connected consuming device is lower than to open
-		* connector state at low level.
+    * This function evaluates the current where possible, otherwise it evaluates
+    * the measured voltage at the output. The latter interpretation can go wrong
+    * if the PWM setting is >0 but has a very low value, so that even under normal
+    * conditions the voltage with connected consuming device is lower than to open
+    * connector state at low level.
     * @return dout_err_t [noDoutErr|dout_openErr|dout_shortcutErr]
     */
   iDigitalO_c::dout_err_t getState( void ) const { return iDigitalO_c::dout_err_t((uint16_t)DigitalO_c::getState());};
-	/** deliver the measure voltage at the PWM output.
-		Use this for application specific state evaluation for cases, where the standard
-		getDigoutDiagnose function can go wrong.
-		@return voltage at PWM output [mV]
-	*/
-	int16_t getDigoutAdc( void ) const { return DigitalO_c::getDigoutAdc();};
-	/** deliver the max allowed PWM -> setting this value results in max output
-		@return max allowed PWM for the current PWM frequency setting
-	*/
-	uint16_t getMaxOutputPwmFreq() const { return DigitalO_c::getMaxOutputPwmFreq();};
+  /** deliver the measure voltage at the PWM output.
+    Use this for application specific state evaluation for cases, where the standard
+    getDigoutDiagnose function can go wrong.
+    @return voltage at PWM output [mV]
+  */
+  int16_t getDigoutAdc( void ) const { return DigitalO_c::getDigoutAdc();};
+  /** deliver the max allowed PWM -> setting this value results in max output
+    @return max allowed PWM for the current PWM frequency setting
+  */
+  uint16_t getMaxOutputPwmFreq() const { return DigitalO_c::getMaxOutputPwmFreq();};
 
 private:
   /**
@@ -170,7 +170,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  iDigitalO_c(const iDigitalO_c& rrefc_src) : DigitalO_c() {};
+  iDigitalO_c(const iDigitalO_c& /*rrefc_src*/) : DigitalO_c() {};
   /**
     HIDDEN! assignment for Digital_O
     NEVER assign a iDigitalO_c to another instance!!!!
@@ -178,7 +178,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  iDigitalO_c& operator=(const iDigitalO_c& rrefc_src){ return *this;};
+  iDigitalO_c& operator=(const iDigitalO_c& /*rrefc_src*/){ return *this;};
 };
 
 }

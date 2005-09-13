@@ -167,7 +167,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  iDigitalI_c(const iDigitalI_c& rrefc_src) : DigitalI_c() {};
+  iDigitalI_c(const iDigitalI_c& /*rrefc_src*/) : DigitalI_c() {};
   /**
     HIDDEN! assignment for iDigitalI_c
     NEVER assign a iDigitalI_c to another instance!!!!
@@ -175,7 +175,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  iDigitalI_c& operator=(const iDigitalI_c& rrefc_src){return *this;};
+  iDigitalI_c& operator=(const iDigitalI_c& /*rrefc_src*/){return *this;};
 
 };
 }

@@ -407,7 +407,7 @@ public: // methods
           (instead of standard resend of last message) (default false)
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendDin(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout = false);
+  bool sendDin(uint8_t rb_send, const uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout = false);
   #endif
   #ifdef USE_ISO_11783
    /**

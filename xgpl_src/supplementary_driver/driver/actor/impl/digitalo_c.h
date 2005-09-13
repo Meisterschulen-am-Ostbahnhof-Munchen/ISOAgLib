@@ -172,26 +172,26 @@ public:
     */
   bool good( void ) const;
   /** deliver detailed error state information for this Digital Output
-		* This function evaluates the current where possible, otherwise it evaluates
-		* the measured voltage at the output. The latter interpretation can go wrong
-		* if the PWM setting is >0 but has a very low value, so that even under normal
-		* conditions the voltage with connected consuming device is lower than to open
-		* connector state at low level.
+    * This function evaluates the current where possible, otherwise it evaluates
+    * the measured voltage at the output. The latter interpretation can go wrong
+    * if the PWM setting is >0 but has a very low value, so that even under normal
+    * conditions the voltage with connected consuming device is lower than to open
+    * connector state at low level.
     * @return dout_err_t [noDoutErr|dout_openErr|dout_shortcutErr]
     */
   dout_err_t getState( void ) const;
-	/** deliver the measure voltage at the PWM output.
-		Use this for application specific state evaluation for cases, where the standard
-		getDigoutDiagnose function can go wrong.
-		@return voltage at PWM output [mV]
-	*/
+  /** deliver the measure voltage at the PWM output.
+    Use this for application specific state evaluation for cases, where the standard
+    getDigoutDiagnose function can go wrong.
+    @return voltage at PWM output [mV]
+  */
   int16_t getDigoutAdc( void ) const { return HAL::getDigoutAdc( channelNr() );};
-	/** deliver the max allowed PWM -> setting this value results in max output
-		@return max allowed PWM for the current PWM frequency setting
-	*/
+  /** deliver the max allowed PWM -> setting this value results in max output
+    @return max allowed PWM for the current PWM frequency setting
+  */
   uint16_t getMaxOutputPwmFreq() const
-	{ return ui16_maxOutputPwmFreq; }
-	
+  { return ui16_maxOutputPwmFreq; }
+
 private:
   /**
     HIDDEN! copy constructor for Digital_O
@@ -209,7 +209,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  DigitalO_c& operator=(const DigitalO_c& rrefc_src){return *this;};
+  DigitalO_c& operator=(const DigitalO_c& /*rrefc_src*/){return *this;};
 
   uint16_t ui16_value;
   /** minimal allowed current in active state */

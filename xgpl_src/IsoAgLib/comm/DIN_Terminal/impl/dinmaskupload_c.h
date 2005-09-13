@@ -95,7 +95,7 @@
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-
+#include <IsoAgLib/comm/Process/elementddi_s.h>
 #include <IsoAgLib/comm/Process/Local/SimpleMeasureSetpoint/impl/procdatalocalsimplesetpointsimplemeasure_c.h>
 
 
@@ -133,17 +133,17 @@ class DINMaskUpload_c : public SINGLETON_DERIVED(DINMaskUpload_c, ElementBase_c)
 {
 private:
   typedef ProcDataLocalSimpleSetpointSimpleMeasure_c syncproc_t;
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::slist<syncproc_t,STL_NAMESPACE::__malloc_alloc_template<0> > Vec_SyncProc;
-	#else
+  #else
   typedef STL_NAMESPACE::slist<syncproc_t> Vec_SyncProc;
-	#endif
+  #endif
 protected:
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::slist<syncproc_t,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator Vec_SyncProcIterator;
-	#else
+  #else
   typedef STL_NAMESPACE::slist<syncproc_t>::iterator Vec_SyncProcIterator;
-	#endif
+  #endif
 public:
   /** initialisation for DINMaskUpload_c
   */
@@ -230,11 +230,11 @@ private: // Private methods
     @return pointer to active mask
   */
   const IsoAgLib::t_maskDefinition& activeMask()const{return *(psMaskDef[ui8_maskDefInd]);};
-	/**
-		in some cases the Varioterminal doesn't detect the implement.
-		Retrigger send of sync data every 500 msec.
-	*/
-	void tryResendMaskSyncData();
+  /**
+    in some cases the Varioterminal doesn't detect the implement.
+    Retrigger send of sync data every 500 msec.
+  */
+  void tryResendMaskSyncData();
 private: // Private attributes
   /** msg object for CAN I/O */
   MultiSendPkg_c* pc_data;
@@ -250,7 +250,7 @@ private: // Private attributes
   maskUploadState_t en_maskUploadState;
 
   MultiSend_c::sendSuccess_t en_sendSuccess;
-  
+
   /** GETY_POS of the connected terminal */
   GetyPos_c c_gtp;
   /** active entry no in psMaskDef */

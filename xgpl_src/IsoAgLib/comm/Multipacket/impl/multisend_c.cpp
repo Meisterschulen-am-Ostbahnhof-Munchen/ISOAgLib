@@ -489,7 +489,7 @@ MultiSend_c::addSendStream(uint8_t rb_send, uint8_t rb_empf)
         (instead of standard resend of last message) (default false)
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
-bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout)
+bool MultiSend_c::sendDin(uint8_t rb_send,const uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout)
 {
   #if defined( DEBUG )
   INTERNAL_DEBUG_DEVICE << "MultiSend_c::sendDin with Len " << ri32_dataSize << "\n";
@@ -498,7 +498,7 @@ bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rh
   /// first check if new transfer can be started
   /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
   /// - if not NULL is returned, it points to the newly generated stream.
-  SendStream_c* pc_newSendStream = addSendStream();
+  SendStream_c* pc_newSendStream = addSendStream(rb_send,rb_empf);
 
   if (pc_newSendStream)
   {

@@ -92,6 +92,9 @@
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
 #include <IsoAgLib/comm/Process/impl/process_c.h>
+
+#include <IsoAgLib/comm/Process/elementddi_s.h>
+
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 
 // activate following define and include RS232 modules into
@@ -198,7 +201,7 @@ bool DINMaskUpload_c::timeEvent( void )
       {
         if (getDinMonitorInstance4Comm().existDinMemberGtp( psMaskDef[ui8_testInd]->c_gtp, true ))
         {
-          const DINItem_c* pc_dinTerminalItem = &(getDinMonitorInstance4Comm().dinMemberGtp(psMaskDef[ui8_testInd]->c_gtp, true));
+          DINItem_c* pc_dinTerminalItem = &(getDinMonitorInstance4Comm().dinMemberGtp(psMaskDef[ui8_testInd]->c_gtp, true));
           if (CNAMESPACE::memcmp(pc_dinTerminalItem->name(), psMaskDef[ui8_testInd]->pb_termName, 7) == 0)
           { // registered terminal at index ui8_testInd is found
             pc_terminal = pc_dinTerminalItem;
@@ -216,7 +219,7 @@ bool DINMaskUpload_c::timeEvent( void )
                 getProcessInstance4Comm().data().useTermGtpForLocalProc(c_gtp);
                 break;
               case IsoAgLib::FieldstarOld:
-                getProcessInstance4Comm().data().useTermGtpForLocalProc(c_gtp, 0);
+                getProcessInstance4Comm().data().useTermGtpForLocalProc(c_gtp, GetyPos_c(0,0));
                 break;
               default:
                 break;
@@ -451,7 +454,13 @@ void DINMaskUpload_c::createLbsplusProcdata()
   GetyPos_c *pc_localGtp = activeMask().pc_localGtp;
   IsoAgLib::t_syncTupel* pt_syncTupel = activeMask().pt_syncArray;
 
-  arrSyncproc.push_front(syncproc_t(0, *pc_localGtp, 0xF, 4, LBS_PLUS_PROJECT_SIZE, 2, *pc_localGtp, pc_localGtp));
+  IsoAgLib::ElementDDI_s s_TempElementDDI[1] =
+  {
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
+
+  arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, LBS_PLUS_PROJECT_SIZE, *pc_localGtp,2, *pc_localGtp, pc_localGtp));
   if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) {
     arrSyncproc.begin()->setMasterVal(static_cast<int32_t>(activeMask().ui32_maskSize));
     arrSyncproc.begin()->sendVal( c_gtp );
@@ -466,7 +475,7 @@ void DINMaskUpload_c::createLbsplusProcdata()
   {
     if ((pt_syncTupel[ui8_syncNoInd].ui8_ind == 0) || (pt_syncTupel[ui8_syncNoInd].ui8_ind == LBS_PLUS_PROJECT_SIZE)) continue;
 
-    arrSyncproc.push_front(syncproc_t(0, *pc_localGtp, 0xF, 4, pt_syncTupel[ui8_syncNoInd].ui8_ind, 2, *pc_localGtp, pc_localGtp));
+    arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, pt_syncTupel[ui8_syncNoInd].ui8_ind, *pc_localGtp, 2, *pc_localGtp, pc_localGtp));
 
     if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) {
       arrSyncproc.begin()->setMasterVal(pt_syncTupel[ui8_syncNoInd].i32_val);
@@ -514,7 +523,12 @@ void DINMaskUpload_c::createFieldstarProcdata()
 
 #ifdef USE_FLOAT_DATA_TYPE
   // now create all syncronisation process data, where value is != 0
-  arrSyncproc.push_front(syncproc_t(3, *pc_localGtp, 0x0, FS_OLD_PROJECT_SIZE, 0xFF, 5, *pc_localGtp, pc_localGtp));
+  IsoAgLib::ElementDDI_s s_TempElementDDI[1] =
+  {
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
+  arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, FS_OLD_PROJECT_SIZE, 0xFF, *pc_localGtp, 5, *pc_localGtp, pc_localGtp));
   float f_temp = (float)activeMask().ui32_maskSize;
   arrSyncproc.begin()->setpoint().setSetpointMasterVal(f_temp);
   arrSyncproc.begin()->setpoint().sendSetpoint( c_gtp );
@@ -523,9 +537,9 @@ void DINMaskUpload_c::createFieldstarProcdata()
   {
     if ((pt_syncTupel[ui8_syncNoInd].ui8_ind == 0) || (pt_syncTupel[ui8_syncNoInd].ui8_ind == FS_OLD_PROJECT_SIZE)) continue;
     if (pt_syncTupel[ui8_syncNoInd].ui8_ind == FS_OLD_SW_VERSION)
-      arrSyncproc.push_front(syncproc_t(3, *pc_localGtp, 0xF, 0x3, 0xFF, 1, *pc_localGtp, pc_localGtp));
+      arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3,  0xF, 0x3, 0xFF, *pc_localGtp, 1, *pc_localGtp, pc_localGtp));
     else
-      arrSyncproc.push_front(syncproc_t(3, *pc_localGtp, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, 5, *pc_localGtp, pc_localGtp));
+      arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, *pc_localGtp , 5, *pc_localGtp, pc_localGtp));
     f_temp = (float)((float)pt_syncTupel[ui8_syncNoInd].i32_val/100.0F);
     arrSyncproc.begin()->setpoint().setSetpointMasterVal(f_temp);
     arrSyncproc.begin()->setpoint().sendSetpoint( c_gtp );

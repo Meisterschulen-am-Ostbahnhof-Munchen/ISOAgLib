@@ -282,7 +282,7 @@ bool Process_c::timeEvent( void ){
     for (std::list<uint32_t>::const_iterator iter = l_filtersToDeleteDIN.begin();
          iter != l_filtersToDeleteDIN.end();
          iter++)
-    {          
+    {
       if (getCanInstance4Comm().existFilter( *this, 0x70F, *iter))
         // corresponding FilterBox_c exist -> delete it
         getCanInstance4Comm().deleteFilter( *this, 0x70F, *iter);
@@ -295,7 +295,7 @@ bool Process_c::timeEvent( void ){
   //call DevPropertyHandler_c timeEvent
   c_devPropertyHandler.timeEvent();
 #endif
-     
+
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( c_arrClientC1.capacity() != sui16_localProcPointerTotal )
     || ( c_arrClientC2.capacity() != sui16_remoteProcPointerTotal ) )
@@ -1271,19 +1271,19 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
     if ( (*pc_searchCacheC2) == pc_remoteClient ) continue;
     if ((*pc_searchCacheC2)->ownerGtp() == c_toBeDeletedOwnerGtp) b_otherRemoteWithSameOwner = true;
   }
-  
+
   unregisterC2( pc_remoteClient );
 
   // set ptr to a defined position => avoid use of this pc_searchCacheC2 in deleteFilter() which is now postponed (timeEvent())
   pc_searchCacheC2 = c_arrClientC2.end();
-  
+
   if ( !b_otherRemoteWithSameOwner )
   { // delete the remote filter that was created to receive messages from that owner
     #ifdef USE_DIN_9684
     if (getDinMonitorInstance4Comm().existDinMemberGtp(c_toBeDeletedOwnerGtp, true))
     { // remote owner exist and has claimed address -> check if corresponding FilterBox_c exist
       uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberGtp(c_toBeDeletedOwnerGtp, true).nr();
-      ui32_filter = (ui8_recNr | (rui8_pri << 8));
+      ui32_filter = (ui8_recNr | (pc_remoteClient->pri() << 8));
       // delete corresponding FilterBox_c in timeEvent() to avoid problems when called in procdata cestructor
       l_filtersToDeleteDIN.push_back(ui32_filter);
     } // owner exist with claimed address in memberMonitor

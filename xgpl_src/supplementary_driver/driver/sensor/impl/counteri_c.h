@@ -187,7 +187,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  CounterI_c(const CounterI_c& rrefc_src) : SensorBase_c(0) {};
+  CounterI_c(const CounterI_c& /*rrefc_src*/) : SensorBase_c(0) {};
   /**
     HIDDEN! assignment for CounterI_c
     NEVER assign a CounterI_c to another instance!!!!
@@ -195,7 +195,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  CounterI_c& operator=(const CounterI_c& rrefc_src){ return *this;};
+  CounterI_c& operator=(const CounterI_c& /*rrefc_src*/){ return *this;};
 };
 }
 #endif

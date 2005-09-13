@@ -177,7 +177,7 @@ protected:
         detects this fault, and shows you this WARNING!!
     @param rrefc_src source
   */
-  AnalogI_c& operator=(const AnalogI_c& rrefc_src){ return *this;};
+  AnalogI_c& operator=(const AnalogI_c& /*rrefc_src*/){ return *this;};
 private: // Private attributes
   /**
     input type: voltage or current
