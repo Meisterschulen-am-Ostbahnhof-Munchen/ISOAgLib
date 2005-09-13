@@ -1291,22 +1291,29 @@ bool CANIO_c::reconfigureMsgObj()
     CAN MsgObj which doesn't have explicit connected FilterBox
     instances )
   @param rui32_ident Ident of received CAN message
-  @return pointer to matching FilterBox instance or NULL if no matching found
+  @return is another filterbox found?
 */
-FilterBox_c* CANIO_c::canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type )
+bool CANIO_c::canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type, ArrFilterBox::iterator& rref_arrFilterBoxIter, bool rb_start )
 {
-  for (ArrFilterBox::iterator pc_iterFilterBox = arrFilterBox.begin();
-       pc_iterFilterBox != arrFilterBox.end();
-       pc_iterFilterBox++
-      )
+  if (rb_start)
+  { // init
+    rref_arrFilterBoxIter = arrFilterBox.begin();
+  }
+  else
   {
-    if ( pc_iterFilterBox->matchMsgId( rui32_ident, rt_type ) )
+    rref_arrFilterBoxIter++;
+  }
+
+  while (rref_arrFilterBoxIter != arrFilterBox.end())
+  {
+    if ( rref_arrFilterBoxIter->matchMsgId( rui32_ident, rt_type ) )
     { // matching FilterBox_c found
-      return &(*pc_iterFilterBox);
+      return true;
     }
+    rref_arrFilterBoxIter++;
   }
   // if execution reaches this point, no matching FilterBox_c found
-  return NULL;
+  return false;
 }
 
 

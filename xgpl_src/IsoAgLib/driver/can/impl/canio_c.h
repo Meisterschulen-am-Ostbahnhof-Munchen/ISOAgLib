@@ -405,9 +405,9 @@ class CANIO_c : public SingletonCANIO_c {
       CAN MsgObj which doesn't have explicit connected FilterBox
       instances )
     @param rui32_ident Ident of received CAN message
-    @return pointer to matching FilterBox instance or NULL if no matching found
+    @return is another filterbox found?
   */
-  FilterBox_c* canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type );
+  bool CANIO_c::canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type, ArrFilterBox::iterator& rref_arrFilterBoxIter, bool rb_start );
 
 
  protected: // Protected methods

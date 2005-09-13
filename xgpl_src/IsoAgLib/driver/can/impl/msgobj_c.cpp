@@ -548,27 +548,34 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
       if ( ! b_processed )
       { // try to search all FilterBox_c instances
         /** @todo check why ISO 11783 message which matches filter 0xCB0000 needs always global search */
-        FilterBox_c* rpc_targetBox = NULL;
-        #if CAN_INSTANCE_CNT == 1
-        rpc_targetBox = getCanInstance().canMsg2FilterBox( i32_ident, c_filter.identType() );
-        #else
+        CANIO_c::ArrFilterBox::iterator pc_iFilterBox;
+        bool b_foundOne=false;
+        #if CAN_INSTANCE_CNT > 1
         for ( uint16_t ind = 0; ind < CAN_INSTANCE_CNT; ind++)
         {
           if ( getCanInstance( ind ).getBusNumber() == rui8_busNumber )
           { // corresponding CANIO_c instance with same channel found
-            rpc_targetBox = getCanInstance( ind ).canMsg2FilterBox( i32_ident, c_filter.identType() );
+        #endif
+            do {
+              #if CAN_INSTANCE_CNT == 1
+              b_foundOne =    getCanInstance().canMsg2FilterBox( i32_ident, c_filter.identType(), pc_iFilterBox, !b_foundOne );
+              #else
+              b_foundOne = getCanInstance(ind).canMsg2FilterBox( i32_ident, c_filter.identType(), pc_iFilterBox, !b_foundOne );
+              #endif
+              if ( b_foundOne )
+              { // matching instance found
+                HAL::wdTriggern();
+                CANPkgExt_c* pc_target = pc_iFilterBox->customersCanPkg();
+                HAL::can_useMsgobjGet(rui8_busNumber, msgObjNr(), pc_target);
+                pc_iFilterBox->processMsg();
+                b_processed = true;
+              }
+            } while (b_foundOne); // if one found, try if another one can be found!
+        #if CAN_INSTANCE_CNT > 1
             break;
           }
         }
         #endif
-        if ( rpc_targetBox != NULL )
-        { // matching instance found
-          HAL::wdTriggern();
-          CANPkgExt_c* pc_target = rpc_targetBox->customersCanPkg();
-          HAL::can_useMsgobjGet(rui8_busNumber, msgObjNr(), pc_target);
-          rpc_targetBox->processMsg();
-          b_processed = true;
-        }
       }
     }
     // now received message is either processed, or none of the registered CANCustomers is interested
