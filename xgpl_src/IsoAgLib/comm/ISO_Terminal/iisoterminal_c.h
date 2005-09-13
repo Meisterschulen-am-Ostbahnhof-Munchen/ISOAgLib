@@ -74,11 +74,9 @@ typedef __IsoAgLib::ISOTerminal_c::vtCapabilities_s ivtCapabilities_s;
 
     possible errors:
   */
-  void init() { ISOTerminal_c::init(); };
-
   bool init (iIdentItem_c* rpc_wsMasterIdentItem, iIsoTerminalObjectPool_c* rpc_pool, char* rpc_versionLabel)
   { return ISOTerminal_c::init (static_cast<__IsoAgLib::IdentItem_c*>(rpc_wsMasterIdentItem), rpc_pool, rpc_versionLabel); };
-  
+
   /**
     register given object pool for uploading when possible.
     @param rpc_wsMasterIdentItem pointer to an IdentItem_c instance for that the ISO_Terminal acts

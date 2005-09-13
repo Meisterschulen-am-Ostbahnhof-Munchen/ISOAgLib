@@ -89,7 +89,6 @@ bool LibErr_c::init( void )
 /** default constructor which sets the error value to noErr */
 LibErr_c::LibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
 {
-  init();
 }
 
 /** copy constructor which sets the error value to the err value of the source */

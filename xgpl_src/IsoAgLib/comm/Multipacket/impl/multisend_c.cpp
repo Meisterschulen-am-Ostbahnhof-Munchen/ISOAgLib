@@ -345,49 +345,65 @@ MultiSend_c::SendStream_c::initDin (uint8_t rb_send, uint8_t rb_empf, const HUGE
 
 
 
+void
+MultiSend_c::singletonInit()
+{
+  setAlreadyClosed(); // so init() will init ;-)
+  init();
+};
+
+
+
 /** initialisation for MultiSend_c */
 void
 MultiSend_c::init(void)
 { // clear state of b_alreadyClosed, so that close() is called one time
-  clearAlreadyClosed();
-  // first register in Scheduler_c
-  getSchedulerInstance4Comm().registerClient( this );
-  c_data.setSingletonKey( getSingletonVecKey() );
-
-  // set BYTE-ORDER of MultiSendPkg_c
-  data().setByteOrder(LSB_MSB);
-
-  // detect if a new Filter is created, so that a reconfig of the CAN_IO
-  // must be done at the end of this function
-  bool b_isReconfigNeeded = false;
-
-#if defined(USE_ISO_11783)
-  // register to get TP/ETP Messages
-  uint32_t ui32_filter = (static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) << 8);
-  if (!getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
-  { // create FilterBox
-    getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
-    b_isReconfigNeeded = true;
-  }
-  ui32_filter = (static_cast<MASK_TYPE>(ETP_CONN_MANAGE_PGN) << 8);
-  if (!getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
-  { // create FilterBox
-    getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
-    b_isReconfigNeeded = true;
-  }
-#endif
-#ifdef USE_DIN_TERMINAL
-  // create filter to receive service to broadcast member messages from LBS+
-  if (!getCanInstance4Comm().existFilter( *this, (uint16_t)0x700,(uint16_t)0x700))
+  // only init if closed (constructor "closes" it so it gets init'ed initially!
+  if (checkAlreadyClosed())
   {
-    getCanInstance4Comm().insertFilter( *this, 0x700,0x700, true);
-    b_isReconfigNeeded = true;
-  }
-#endif
-  if ( b_isReconfigNeeded )
-  { // at least one new Filter is created -> reconfig
-    // CAN_IO receive structure in CANIO_c
-    getCanInstance4Comm().reconfigureMsgObj();
+    // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
+    clearAlreadyClosed();
+    // first register in Scheduler_c
+    getSchedulerInstance4Comm().registerClient( this );
+    c_data.setSingletonKey( getSingletonVecKey() );
+    // register to get ISO monitor list changes
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+
+    // set BYTE-ORDER of MultiSendPkg_c
+    data().setByteOrder(LSB_MSB);
+
+    // detect if a new Filter is created, so that a reconfig of the CAN_IO
+    // must be done at the end of this function
+    bool b_isReconfigNeeded = false;
+
+  #if defined(USE_ISO_11783)
+    // register to get TP/ETP Messages
+    uint32_t ui32_filter = (static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) << 8);
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
+    { // create FilterBox
+      getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
+      b_isReconfigNeeded = true;
+    }
+    ui32_filter = (static_cast<MASK_TYPE>(ETP_CONN_MANAGE_PGN) << 8);
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
+    { // create FilterBox
+      getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
+      b_isReconfigNeeded = true;
+    }
+  #endif
+  #ifdef USE_DIN_TERMINAL
+    // create filter to receive service to broadcast member messages from LBS+
+    if (!getCanInstance4Comm().existFilter( *this, (uint16_t)0x700,(uint16_t)0x700))
+    {
+      getCanInstance4Comm().insertFilter( *this, 0x700,0x700, true);
+      b_isReconfigNeeded = true;
+    }
+  #endif
+    if ( b_isReconfigNeeded )
+    { // at least one new Filter is created -> reconfig
+      // CAN_IO receive structure in CANIO_c
+      getCanInstance4Comm().reconfigureMsgObj();
+    }
   }
 }
 
@@ -1511,6 +1527,58 @@ MultiSend_c::abortSend (uint8_t rb_send, uint8_t rb_empf)
   for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
   {
     if (pc_iter->matchSaDa (rb_send, rb_empf))
+    { // SendStream found in list, abort and erase!
+      pc_iter->abortSend();
+      pc_iter = list_sendStream.erase (pc_iter);
+    }
+    else
+    { // SendStream not yet found
+      pc_iter++;
+    }
+  }
+}
+
+
+
+/** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+  * @param refc_gtp const reference to the item which ISOItem_c state is changed
+  * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+    */
+void
+MultiSend_c::reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, const __IsoAgLib::ISOItem_c* rpc_newItem )
+{
+#ifdef DEBUG
+  std::cerr << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_gtp.getGety())
+      << ", Instance: " << int(refc_gtp.getPos()) << ", and manufacturer ID: " << int(refc_gtp.getConstName().manufCode())
+      << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
+      << std::endl;
+#endif
+  // no resurrection here as we do NOT (yet) save the gtp/isoname to our SendStream_c instances in the list...
+  // this can be done later if someone thinks that makes sense...
+}
+
+/** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+  * @param refc_gtp const reference to the item which ISOItem_c state is changed
+  * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+  */
+void
+MultiSend_c::reactOnMonitorListRemove( const __IsoAgLib::GetyPos_c&
+                                        #ifdef DEBUG
+                                        refc_gtp
+                                        #else
+                                        /*refc_gtp*/
+                                        #endif
+                                        , uint8_t rui8_oldSa )
+{
+#ifdef DEBUG
+  std::cerr << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_gtp.getGety())
+      << ", Instance: " << int(refc_gtp.getPos()) << ", and manufacturer ID: " << int(refc_gtp.getConstName().manufCode())
+      << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
+      << std::endl;
+#endif
+  for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
+  {
+    if (pc_iter->matchSa (rui8_oldSa) || pc_iter->matchDa (rui8_oldSa))
     { // SendStream found in list, abort and erase!
       pc_iter->abortSend();
       pc_iter = list_sendStream.erase (pc_iter);

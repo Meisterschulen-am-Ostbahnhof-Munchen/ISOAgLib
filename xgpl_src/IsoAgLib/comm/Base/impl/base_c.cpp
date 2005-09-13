@@ -130,6 +130,14 @@ namespace __IsoAgLib {
 uint8_t bcd2dec(uint8_t rb_bcd);
 uint8_t dec2bcd(uint8_t rb_dec);
 
+
+void
+Base_c::singletonInit()
+{
+  setAlreadyClosed();
+  init( NULL, IsoAgLib::BaseDataNothing );
+}
+
 /**
   initialise element which can't be done during construct;
   above all create the needed FilterBox_c instances, to receive
@@ -141,12 +149,10 @@ uint8_t dec2bcd(uint8_t rb_dec);
   @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
 */
 void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
-{ // clear state of b_alreadyClosed, so that close() is called one time
-  clearAlreadyClosed();
+{
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
   c_data.setSingletonKey( getSingletonVecKey() );
-
 
   // set the member base msg value vars to NO_VAL codes
   setDay(1);
@@ -172,7 +178,10 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
   ui8_rearDraftNominal = NO_VAL_8;
   i16_fuelRate = NO_VAL_16S;
   ui8_fuelTemperature = NO_VAL_8;
-  b_dinFilterCreated = false;
+  if ( CheckAlreadyClosed() )
+  {
+    b_dinFilterCreated = false;
+  }
   #endif
   #ifdef USE_ISO_11783
   ui8_lastIsoBase1 = ui8_lastIsoBase2 = ui8_lastIsoCalendar = 0;
@@ -185,7 +194,9 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
   b_maintainEcuPower = b_maintainActuatorPower = b_maintainPowerForImplInTransport
     = b_maintainPowerForImplInPark = b_maintainPowerForImplInWork = false;
 
-  b_isoFilterCreated = false;
+  if ( checkAlreadyClosed() )
+  {
+    b_isoFilterCreated = false;
 
     // *************************************************************************************************
     // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
@@ -202,14 +213,17 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
     b_languageVtReceived = false;
     b_languageTecuReceived = false;
     // *************************************************************************************************
-
+  }
   #endif
   i32_lastCalendarSet = 0;
 
   // set configure values with call for config
   config(rpc_gtp, rt_mySendSelection);
-  /** @todo check if the above doesn't registerClient for a second time! */
+
+  // clear state of b_alreadyClosed, so that close() is called one time
+  clearAlreadyClosed();
 };
+
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */
 void Base_c::close( void ) {

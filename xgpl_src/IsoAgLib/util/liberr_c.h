@@ -219,6 +219,13 @@ private:
   /** copy constructor which sets the error value to the err value of the source */
   LibErr_c(const LibErr_c& rrefc_src);
 
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit() { init(); };
+
   std::bitset<AllErrTypes> errTypeAtLoc [AllErrLocations];
 
 /*

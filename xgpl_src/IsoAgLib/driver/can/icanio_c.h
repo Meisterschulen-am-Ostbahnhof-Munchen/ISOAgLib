@@ -111,8 +111,8 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
            message object (default by define in isoaglib_config.h)
     @return true -> correct initialisation without errors
   */
-  inline bool init(uint8_t rui8_busNumber = 0xFF,
-        uint16_t rui16_bitrate = DEFAULT_BITRATE,
+  inline bool init(uint8_t rui8_busNumber,
+        uint16_t rui16_bitrate,
         Ident_c::identType_t ren_identType = DEFAULT_CONFIG_IDENT_TYPE,
         uint8_t rui8_minObjNr = CONFIG_CAN_DEFAULT_MIN_OBJ_NR,
         uint8_t rui8_maxObjNr = CONFIG_CAN_DEFAULT_MAX_OBJ_NR

@@ -106,6 +106,7 @@ namespace __IsoAgLib {
 */
 class Scheduler_c : public SINGLETON_CLIENT1( Scheduler_c, ElementBase_c, uint8_t ) {
 public:
+
   /** initialisation for the central IsoAgLib object */
   void init( void );
 
@@ -188,7 +189,14 @@ public:
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
-  Scheduler_c() {init();};
+  Scheduler_c() {};
+
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit() { init(); };
 
 private: // Private attributes
 	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED

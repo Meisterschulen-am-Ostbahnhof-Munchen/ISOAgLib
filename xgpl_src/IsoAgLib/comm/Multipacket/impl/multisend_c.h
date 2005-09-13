@@ -95,6 +95,7 @@
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include "multisendpkg_c.h"
 
 #include <list>
@@ -161,7 +162,7 @@ public:
 
   @author Dipl.-Inform. Achim Spangler
 */
-class MultiSend_c : public SINGLETON_DERIVED(MultiSend_c, ElementBase_c)
+class MultiSend_c : public SINGLETON_DERIVED(MultiSend_c, ElementBase_c), public __IsoAgLib::SaClaimHandler_c
 {
 public: // idle was thrown out as it's now idle if no SendStream is in the list for this specific sa/da-pair!
   enum sendState_t { /*Idle,*/ SendRts, AwaitCts, SendData, SendPauseTillCts, /* DecideAfterSend, */ AwaitEndofmsgack, SendFileEnd
@@ -293,6 +294,9 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
 
     bool matchSaDa (uint8_t rui8_sa, uint8_t rui8_da) { return (rui8_sa == b_send) && (rui8_da == b_empf); };
 
+    bool matchSa (uint8_t rui8_sa) { return (rui8_sa == b_send); };
+    bool matchDa (uint8_t rui8_da) { return (rui8_da == b_empf); };
+
   private: // methods
     /**
       send a message -> set the ident and initiate sending to CAN
@@ -376,6 +380,18 @@ public: // methods
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
+
+
+   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+   * @param refc_gtp const reference to the item which ISOItem_c state is changed
+   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+    */
+  virtual void reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, const __IsoAgLib::ISOItem_c* rpc_newItem );
+   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+   * @param refc_gtp const reference to the item which ISOItem_c state is changed
+   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+    */
+  virtual void reactOnMonitorListRemove( const __IsoAgLib::GetyPos_c& refc_gtp, uint8_t rui8_oldSa );
 
 
   #ifdef USE_DIN_TERMINAL
@@ -483,13 +499,21 @@ private: // Private methods
   friend class SINGLETON_DERIVED(MultiSend_c, ElementBase_c);
   friend class iMultiSend_c;
   friend class SendStream_c;
+
   /**
     HIDDEN constructor for a MultiSend_c object instance
     NEVER instantiate a variable of type MultiSend_c within application
     only access MultiSend_c via getMultiSendInstance() or getMultiSendInstance( int riLbsBusNr )
     in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
     */
-  MultiSend_c() { init(); };
+  MultiSend_c() {};
+
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit();
 
   SendStream_c* getSendStream(uint8_t rui8_sa, uint8_t rui8_da);
 

@@ -417,6 +417,12 @@ private: // Private attributes
     constructor for ISOMonitor_c which can store optional pointer to central Scheduler_c instance
   */
   ISOMonitor_c( void );
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit();
   /** temp data where received and to be sent data is put */
   ISOSystemPkg_c c_data;
   /**

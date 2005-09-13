@@ -97,18 +97,27 @@ EEPROMIO_c& getEepromInstance( void ) { return EEPROMIO_c::instance();};
 /** default initialisation */
 void EEPROMIO_c::init()
 { // set the segment size
-  // verify that System is int
-  getSystemInstance().init();
   ui16_segmentSize = HAL::getEepromSegmentSize();
   // set read/write positions to beginning
   ui16_rPosition = ui16_wPosition = 0;
-  // make shure that system is initialized
-  System_c::instance().init();
 }
 
 /** destructor has nothing to destruct */
 EEPROMIO_c::~EEPROMIO_c(){
 }
+
+
+/**
+  initialize directly after the singleton instance is created.
+  this is called from singleton.h and should NOT be called from the user again.
+  users please use init(...) instead.
+*/
+void EEPROMIO_c::singletonInit()
+{
+  // verify that System is int
+  getSystemInstance().init();
+  init();
+};
 
 // ++++++++++++++++++++++++++++++++++++
 // ++++ EEPROM managing operations ++++

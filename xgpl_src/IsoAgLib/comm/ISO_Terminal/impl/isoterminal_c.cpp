@@ -298,9 +298,8 @@ bool ISOTerminal_c::startUploadCommand ()
   Scheduler_c object instance
 */
 ISOTerminal_c::ISOTerminal_c()
-: en_uploadType (UploadIdle)
 {
-  localSettings_a.lastReceived = 0; // set this here for safety reasons, as Process_c will read the language from us if "lastReceived != 0"
+  /// all variable initialization moved to singletonInit!
 }
 
 
@@ -312,6 +311,35 @@ ISOTerminal_c::~ISOTerminal_c(){
   close();
 }
 
+
+
+void
+ISOTerminal_c::singletonInit()
+{
+  /// Constructor inits
+  en_uploadType = UploadIdle;
+  localSettings_a.lastReceived = 0; // set this here for safety reasons, as Process_c will read the language from us if "lastReceived != 0"
+
+  /// real init() code...
+  // clear state of b_alreadyClosed, so that close() is called one time
+  clearAlreadyClosed();
+  // register in Scheduler_c to get timeEvents
+  getSchedulerInstance4Comm().registerClient( this );
+
+  localSettings_a.lastReceived = 0; // no language info received yet
+  vtState_a.lastReceived = 0; // no vt_statusMessage received yet
+  vtSourceAddress = 254; // shouldn't be read anyway before vt_statusMessage arrived....
+
+  pc_wsMasterIdentItem = NULL;
+  c_streamer.pc_pool = NULL;
+  pc_versionLabel = NULL;
+
+  en_objectPoolState = OPNoneRegistered;
+  en_uploadType = UploadIdle;
+  b_receiveFilterCreated = false;
+
+  vtAliveNew = false;
+}
 
 /**
   Register the given object pool
@@ -383,44 +411,8 @@ bool ISOTerminal_c::deregisterIsoObjectPool ()
 
   possible errors:
 */
-void ISOTerminal_c::init()
-{
-  static bool b_alreadyInitialized = false;
-
-  if ((!b_alreadyInitialized) || checkAlreadyClosed()) {
-    // clear state of b_alreadyClosed, so that close() is called one time
-    clearAlreadyClosed();
-    // register in Scheduler_c to get timeEvents
-    getSchedulerInstance4Comm().registerClient( this );
-
-    localSettings_a.lastReceived = 0; // no language info received yet
-    vtState_a.lastReceived = 0; // no vt_statusMessage received yet
-    vtSourceAddress = 254; // shouldn't be read anyway before vt_statusMessage arrived....
-
-    pc_wsMasterIdentItem = NULL;
-    c_streamer.pc_pool = NULL;
-    pc_versionLabel = NULL;
-
-    en_objectPoolState = OPNoneRegistered;
-    en_uploadType = UploadIdle;
-    b_receiveFilterCreated = false;
-
-    vtAliveNew = false;
-
-    // so init() only gets executed once!
-    b_alreadyInitialized = true;
-  }
-};
-
-
-/**
-  initialise element which can't be done during construct
-
-  possible errors:
-*/
 bool ISOTerminal_c::init(IdentItem_c* rpc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c* rpc_pool, char* rpc_versionLabel)
 {
-  init();
   return registerIsoObjectPool (rpc_wsMasterIdentItem, rpc_pool, rpc_versionLabel);
 }
 

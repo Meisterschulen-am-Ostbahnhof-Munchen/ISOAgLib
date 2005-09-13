@@ -534,6 +534,13 @@ private: // Private methods
 
 
 private: // Private attributes
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit() { init(); };
+
   friend class SINGLETON_DERIVED(Process_c,ElementBase_c);
   friend class IsoAgLib::iProcess_c;
   friend class IsoAgLib::iDevPropertyHandler_c;
@@ -542,7 +549,7 @@ private: // Private attributes
     NEVER instantiate a variable of type Process_c within application
     only access Process_c via getProcessInstance() or getProcessInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
     */
-  Process_c() { init(); };
+  Process_c() {};
 
   /** msg object for CAN I/O */
   ProcessPkg_c c_data;

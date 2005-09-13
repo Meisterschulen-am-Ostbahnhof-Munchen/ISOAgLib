@@ -205,18 +205,18 @@
     * as the more usual case is only one BUS, this solution creates no unneeded overhead
     */
   #define autoInstance() instance()
-  #define getCanInstance4Comm()            getCanInstance()
-  #define getSchedulerInstance4Comm()            getSchedulerInstance()
-  #define getBaseInstance4Comm()       getBaseInstance()
-  #define getSystemMgmtInstance4Comm()     getSystemMgmtInstance()
-  #define getDinMonitorInstance4Comm()    getDinMonitorInstance()
-  #define getIsoMonitorInstance4Comm()    getIsoMonitorInstance()
+  #define getCanInstance4Comm()               getCanInstance()
+  #define getSchedulerInstance4Comm()         getSchedulerInstance()
+  #define getBaseInstance4Comm()              getBaseInstance()
+  #define getSystemMgmtInstance4Comm()        getSystemMgmtInstance()
+  #define getDinMonitorInstance4Comm()        getDinMonitorInstance()
+  #define getIsoMonitorInstance4Comm()        getIsoMonitorInstance()
   #define getDinServiceMonitorInstance4Comm() getDinServiceMonitorInstance()
-  #define getProcessInstance4Comm()    getProcessInstance()
-  #define getDinMaskuploadInstance4Comm() getDinMaskuploadInstance()
-  #define getMultiSendInstance4Comm() getMultiSendInstance()
-  #define getIisoTerminalInstance4Comm()   getIsoTerminalInstance()
-  #define getGpsInstance4Comm()        getGpsInstance()
+  #define getProcessInstance4Comm()           getProcessInstance()
+  #define getDinMaskuploadInstance4Comm()     getDinMaskuploadInstance()
+  #define getMultiSendInstance4Comm()         getMultiSendInstance()
+  #define getIisoTerminalInstance4Comm()      getIsoTerminalInstance()
+  #define getGpsInstance4Comm()               getGpsInstance()
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
     * attribute singletonVecKey, which is evaluated by the macro autoInstance()
@@ -328,7 +328,11 @@ template<class T, class B> T* SingletonDerived<T,B>::spc_instance = (T*)0;
   */
 template<class T> T& Singleton<T>::instance( void )
 {
-  if ( spc_instance == (T*)0 )
+  if ( spc_instance > (T*)1 )
+  { // is already complete initialized -> this is THE MOST OFTEN CASE
+    return *spc_instance;
+  }
+  else if ( spc_instance == (T*)0 )
   { // in case of parallel access from two tasks, the first tasks block further
     // inits with setting the poitner to 1 -> later tasks perform busy waiting
     if ( spc_instance == (T*)1 )
@@ -340,19 +344,24 @@ template<class T> T& Singleton<T>::instance( void )
     // if execution reaches this point, Singleton::instance() is called first time
     spc_instance = (T*)1; // block further calls till init is ready
     #ifdef WIN32
-	// Microsoft Visual Studio has problems with init of function scope static instances
-	spc_instance = new T;
-	#else
-	static T sc_instance;
-	#endif
+    // Microsoft Visual Studio has problems with init of function scope static instances
+    spc_instance = new T;
+    #else
+    static T sc_instance;
+    #endif
     // initialise the instance (in embedded systems, the constructor is NOT called for static var)
     #ifdef WIN32
-	spc_instance->init();
-	#else
-    sc_instance.init();
+    spc_instance->singletonInit();
+    #else
+    sc_instance.singletonInit();
     // set static pointerto instance
     spc_instance = &sc_instance;
-	#endif
+    #endif
+  }
+  else
+  { // is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
+    // we'll get a definitive endless loop here - fine to debug ;-)
+    while ( spc_instance == (T*)1 );
   }
   return *spc_instance;
 };
@@ -363,7 +372,11 @@ template<class T> T& Singleton<T>::instance( void )
   */
 template<class T, class B> T& SingletonDerived<T,B>::instance( void )
 {
-  if ( spc_instance == (T*)0 )
+  if ( spc_instance > (T*)1 )
+  { // is already complete initialized -> this is THE MOST OFTEN CASE
+    return *spc_instance;
+  }
+  else if ( spc_instance == (T*)0 )
   { // in case of parallel access from two tasks, the first tasks block further
     // inits with setting the poitner to 1 -> later tasks perform busy waiting
     if ( spc_instance == (T*)1 )
@@ -375,19 +388,24 @@ template<class T, class B> T& SingletonDerived<T,B>::instance( void )
     // if execution reaches this point, Singleton::instance() is called first time
     spc_instance = (T*)1; // block further calls till init is ready
     #ifdef WIN32
-	// Microsoft Visual Studio has problems with init of function scope static instances
-	spc_instance = new T;
-	#else
-	static T sc_instance;
-	#endif
+    // Microsoft Visual Studio has problems with init of function scope static instances
+    spc_instance = new T;
+    #else
+    static T sc_instance;
+    #endif
     // initialise the instance (in embedded systems, the constructor is NOT called for static var)
     #ifdef WIN32
-	spc_instance->init();
-	#else
-    sc_instance.init();
+    spc_instance->singletonInit();
+    #else
+    sc_instance.singletonInit();
     // set static pointerto instance
     spc_instance = &sc_instance;
-	#endif
+    #endif
+  }
+  else
+  { // is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
+    // we'll get a definitive endless loop here - fine to debug ;-)
+    while ( spc_instance == (T*)1 );
   }
   return *spc_instance;
 };
@@ -443,7 +461,11 @@ template<class T, class B, int SIZE> T * SingletonDerivedVec<T,B,SIZE>::spc_inst
   */
 template<class T, int SIZE> T & SingletonVec<T,SIZE>::instance( int riIndex )
 {
-  if ( spc_instance[0] == (T*)0 )
+  if ( spc_instance[0] > (T*)1 )
+  { // is already complete initialized -> this is THE MOST OFTEN CASE
+    return *spc_instance[riIndex];
+  }
+  else if ( spc_instance[0] == (T*)0 )
   { // in case of parallel access from two tasks, the first tasks block further
     // inits with setting the poitner to 1 -> later tasks perform busy waiting
     if ( spc_instance[0] == (T*)1 )
@@ -454,14 +476,28 @@ template<class T, int SIZE> T & SingletonVec<T,SIZE>::instance( int riIndex )
     }
     // if execution reaches this point, Singleton::instance() is called first time
     spc_instance[0] = (T*)1; // block further calls till init is ready
+    #ifdef WIN32
+    for ( int i = 0; i < SIZE; i++)
+    {
+      spc_instance[i] = new T;
+      spc_instance[i]->singletonVecKey = i;
+      spc_instance[i]->singletonInit();
+    }
+    #else
     static T sc_instance[SIZE];
     for ( int i = 0; i < SIZE; i++)
     { // initialise the instance (in embedded systems, the constructor is NOT called for static var)
       sc_instance[i].singletonVecKey = i;
-      sc_instance[i].init();
+      sc_instance[i].singletonInit();
       // set static pointerto instance
       spc_instance[i] = &sc_instance[i];
     }
+    #endif
+  }
+  else
+  { // is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
+    // we'll get a definitive endless loop here - fine to debug ;-)
+    while ( spc_instance[0] == (T*)1 );
   }
   return *spc_instance[riIndex];
 };
@@ -472,7 +508,11 @@ template<class T, int SIZE> T & SingletonVec<T,SIZE>::instance( int riIndex )
   */
 template<class T, class B, int SIZE> T & SingletonDerivedVec<T,B,SIZE>::instance( int riIndex )
 {
-  if ( spc_instance[0] == (T*)0 )
+  if ( spc_instance[0] > (T*)1 )
+  { // is already complete initialized -> this is THE MOST OFTEN CASE
+    return *spc_instance[riIndex];
+  }
+  else if ( spc_instance[0] == (T*)0 )
   { // in case of parallel access from two tasks, the first tasks block further
     // inits with setting the poitner to 1 -> later tasks perform busy waiting
     if ( spc_instance[0] == (T*)1 )
@@ -483,14 +523,28 @@ template<class T, class B, int SIZE> T & SingletonDerivedVec<T,B,SIZE>::instance
     }
     // if execution reaches this point, Singleton::instance() is called first time
     spc_instance[0] = (T*)1; // block further calls till init is ready
+    #ifdef WIN32
+    for ( int i = 0; i < SIZE; i++)
+    {
+      spc_instance[i] = new T;
+      spc_instance[i]->singletonVecKey = i;
+      spc_instance[i]->singletonInit();
+    }
+    #else
     static T sc_instance[SIZE];
     for ( int i = 0; i < SIZE; i++)
     { // initialise the instance (in embedded systems, the constructor is NOT called for static var)
       sc_instance[i].singletonVecKey = i;
-      sc_instance[i].init();
+      sc_instance[i].singletonInit();
       // set static pointerto instance
       spc_instance[i] = &sc_instance[i];
     }
+    #endif
+  }
+  else
+  { // is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
+    // we'll get a definitive endless loop here - fine to debug ;-)
+    while ( spc_instance[0] == (T*)1 );
   }
   return *spc_instance[riIndex];
 };

@@ -102,6 +102,8 @@ namespace IsoAgLib {
 #include "IsoAgLib/typedef.h"
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
+#include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 
 // stl
 #include <list>
@@ -140,16 +142,7 @@ class MultiReceiveClientWrapper_s {
                               #ifdef NMEA_2000_FAST_PACKET
                               ,bool rb_isFastPacket
                               #endif
-                              )
-    : pc_client(rpc_client)
-    , ui8_clientAddress(rui8_clientAddress)
-    , ui32_pgn(rui32_pgn)
-    , b_alsoBroadcast (rb_alsoBroadcast)
-    , b_alsoGlobalErrors (rb_alsoGlobalErrors)
-    #ifdef NMEA_2000_FAST_PACKET
-    , b_isFastPacket (rb_isFastPacket) // means the PGN has to be "insertFilter"/"removeFilter"ed
-    #endif
-  {};
+                              );
 
   IsoAgLib::MultiReceiveClient_c* pc_client;
   uint8_t ui8_clientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
@@ -159,6 +152,9 @@ class MultiReceiveClientWrapper_s {
 #ifdef NMEA_2000_FAST_PACKET
   bool b_isFastPacket;
 #endif
+
+  // the gtp is generated from the source address through iso monitor!
+  __IsoAgLib::GetyPos_c c_gtp;
 };
 
 
@@ -168,11 +164,10 @@ typedef SINGLETON_DERIVED(MultiReceive_c,__IsoAgLib::ElementBase_c) SingletonMul
 
 //  +X2C Class 192 : MultiReceive_c
 //!  Stereotype: 76
-class MultiReceive_c : public SingletonMultiReceive_c
+class MultiReceive_c : public SingletonMultiReceive_c, public __IsoAgLib::SaClaimHandler_c
 {
 
 public:
-
 
   //  Operation: ~MultiReceive_c
   ~MultiReceive_c();
@@ -202,6 +197,17 @@ public:
   , bool rb_fastPacket=false
   #endif
   );
+
+   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+   * @param refc_gtp const reference to the item which ISOItem_c state is changed
+   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+    */
+  virtual void reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, const __IsoAgLib::ISOItem_c* rpc_newItem );
+   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+   * @param refc_gtp const reference to the item which ISOItem_c state is changed
+   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+    */
+  virtual void reactOnMonitorListRemove( const __IsoAgLib::GetyPos_c& refc_gtp, uint8_t rui8_oldSa );
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream);
@@ -245,6 +251,13 @@ protected:
 
 private:
   friend class SINGLETON_DERIVED(MultiReceive_c,__IsoAgLib::ElementBase_c);
+
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit();
 
   /** temp data where received data is put */
   __IsoAgLib::CANPkgExt_c c_data;

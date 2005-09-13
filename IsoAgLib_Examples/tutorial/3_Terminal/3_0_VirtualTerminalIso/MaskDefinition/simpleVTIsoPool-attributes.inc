@@ -47,9 +47,9 @@ const IsoAgLib::iVtObject_c::iVtObjectContainer_s iVtObjectmask1contentscontaine
 const IsoAgLib::iVtObject_c::iVtObjectOutputString_s iVtObjectUnnamed4_sROM = {65500, 66, 8, 1, &iVtObjectFontAttributesNormal6x8, 0, NULL, 0, 6, "Miles:", 0,NULL};
 const IsoAgLib::iVtObject_c::iVtObjectOutputString_s iVtObjectspeedLabel_sROM = {65499, 66, 8, 1, &iVtObjectFontAttributesNormal6x8, 0, NULL, 0, 8, "Speed is", 0,NULL};
 const IsoAgLib::iVtObject_c::iVtObjectOutputString_s iVtObjectUnnamed5_sROM = {65498, 66, 8, 1, &iVtObjectFontAttributesNormal6x8, 0, NULL, 0, 7, "Accel':", 0,NULL};
-const IsoAgLib::iVtObject_c::iVtObjectOutputNumber_s iVtObjectUnnamed6_sROM = {65497, 60, 16, 1, &iVtObjectFontAttributesNormal12x16, 0, &iVtObjectValMiles, 0, 0, 1, 0, 0, 0, 0,NULL};
-const IsoAgLib::iVtObject_c::iVtObjectOutputNumber_s iVtObjectUnnamed7_sROM = {65496, 18, 8, 1, &iVtObjectFontAttributesNormal6x8, 0, &iVtObjectValSpeed, 0, 0, 1, 0, 0, 0, 0,NULL};
-const IsoAgLib::iVtObject_c::iVtObjectOutputNumber_s iVtObjectUnnamed8_sROM = {65495, 24, 8, 1, &iVtObjectFontAttributesNormal8x8, 0, &iVtObjectValAccel, 0, 0, 1, 0, 0, 0, 0,NULL};
+const IsoAgLib::iVtObject_c::iVtObjectOutputNumber_s iVtObjectUnnamed6_sROM = {65497, 60, 16, 1, &iVtObjectFontAttributesNormal12x16, 0, &iVtObjectValMiles, 0, -100, 1, 0, 0, 0, 0,NULL};
+const IsoAgLib::iVtObject_c::iVtObjectOutputNumber_s iVtObjectUnnamed7_sROM = {65496, 18, 8, 1, &iVtObjectFontAttributesNormal6x8, 0, &iVtObjectValSpeed, 0, -200, 1, 0, 0, 0, 0,NULL};
+const IsoAgLib::iVtObject_c::iVtObjectOutputNumber_s iVtObjectUnnamed8_sROM = {65495, 24, 8, 1, &iVtObjectFontAttributesNormal8x8, 0, &iVtObjectValAccel, 0, -300, 1, 0, 0, 0, 0,NULL};
 const IsoAgLib::iVtObject_c::iVtObjectLinearBarGraph_s iVtObjectUnnamed9_sROM = {65494, 120, 8, 0, 0, 53, 4, 0, 100, &iVtObjectValSpeed, 0, NULL, 0, 0,NULL};
 const IsoAgLib::iVtObject_c::iVtObjectOutputString_s iVtObjectColLabel_sROM = {65493, 42, 8, 1, &iVtObjectFontAttributesNormal6x8, 0, NULL, 0, 7, "Color: ", 0,NULL};
 const IsoAgLib::iVtObject_c::iVtObjectOutputString_s iVtObjectColOS_sROM = {65492, 100, 8, 1, &iVtObjectFontAttributesNormal6x8, 0, &iVtObjectStrNone, 0, 0, NULL, 0,NULL};

@@ -317,12 +317,6 @@ public:
   virtual ~ISOTerminal_c();
 
   /**
-    initialise element which can't be done during construct
-    possible errors:
-  */
-  void init();
-
-  /**
     initialise element which can't be done during construct and registerIsoObjectPool
     possible errors:
   */
@@ -483,6 +477,13 @@ private:
     * NEVER define instance of ISOTerminal_c within application
     */
   ISOTerminal_c();
+
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit();
 
   /** sends "Get Memory" to start uploading process... */
   void startObjectPoolUploading ();

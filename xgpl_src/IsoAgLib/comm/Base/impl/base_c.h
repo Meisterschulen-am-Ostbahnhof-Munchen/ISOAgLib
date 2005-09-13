@@ -658,8 +658,13 @@ private:
     @param rpc_gtp optional pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  Base_c(const GetyPos_c* rpc_gtp = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing )
-    { init( rpc_gtp, rt_mySendSelection );};
+  Base_c() {};
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit();
   /**
     deliver reference to data pkg
     @return reference to the member BasePkg_c, which encapsulates the CAN send structure

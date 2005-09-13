@@ -196,11 +196,11 @@ class CANIO_c : public SingletonCANIO_c {
     @see HAL::configCanObj
     @see Ident_c::t_identType
   */
-  bool init(uint8_t rui8_busNumber = 0xFF,
-        uint16_t rui16_bitrate = DEFAULT_BITRATE,
-        Ident_c::identType_t ren_identType = DEFAULT_CONFIG_IDENT_TYPE,
-        uint8_t rui8_minObjNr = CONFIG_CAN_DEFAULT_MIN_OBJ_NR,
-        uint8_t rui8_maxObjNr = CONFIG_CAN_DEFAULT_MAX_OBJ_NR
+  bool init(uint8_t rui8_busNumber,
+        uint16_t rui16_bitrate,
+        Ident_c::identType_t ren_identType,
+        uint8_t rui8_minObjNr,
+        uint8_t rui8_maxObjNr
         );
   /** check if this CANIO_c instance is configured so that it can be used to send */
   bool isReady2Send() const { return ( ui8_busNumber != 0xFF )?true:false;};
@@ -451,7 +451,14 @@ class CANIO_c : public SingletonCANIO_c {
     * NEVER define instance of CANIO_c within application
     * (set ui8_busNumber to 0xFF so that init() detects first call after constructor)
     */
-  CANIO_c( void ) : arrFilterBox(), ui8_busNumber(0xFF)  { };
+  CANIO_c( void ) : arrFilterBox() { };
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit();
+
   /**
     deliver min msg obj nr
     @return min msg obj nr

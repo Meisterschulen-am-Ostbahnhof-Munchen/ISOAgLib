@@ -442,7 +442,13 @@ private: //Private methods
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of RS232IO_c within application
     */
-  RS232IO_c( void ) {init();};
+  RS232IO_c( void ) {};
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit() { init(); };
   /**
     read a token (eat whitespace in front of, end stop before next whitespace or at end og buf)
   */

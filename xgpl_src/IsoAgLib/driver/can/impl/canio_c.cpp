@@ -150,6 +150,17 @@ uint8_t b_irqCanReceiveOffset[CAN_BUS_CNT];
 /** definition of public element functions */
 /*******************************************/
 
+void
+CANIO_c::singletonInit()
+{
+  /// Settings taken form constructor
+  ui8_busNumber = 0xFF;
+
+  /// singletonInit stuff
+  init(0xFF, DEFAULT_BITRATE, DEFAULT_CONFIG_IDENT_TYPE, CONFIG_CAN_DEFAULT_MIN_OBJ_NR, CONFIG_CAN_DEFAULT_MAX_OBJ_NR);
+}
+
+
 /**
   Initialize the CAN hardware, and instantiate one msg object for
    sending of messages. Do configuration for BUS number, sending bitrate,
@@ -357,7 +368,7 @@ bool CANIO_c::timeEvent( void ){
   // check if init was called
   if ( (ui16_bitrate == 0) || ( ui8_busNumber > HAL_CAN_MAX_BUS_NR ) )
   { // this can't be the case after correct call of init
-    init(); // call with default values
+    init(0xFF, DEFAULT_BITRATE, DEFAULT_CONFIG_IDENT_TYPE, CONFIG_CAN_DEFAULT_MIN_OBJ_NR, CONFIG_CAN_DEFAULT_MAX_OBJ_NR); // call with default values
   }
   // if still not ready, CANIO_c is not yet initialised complete -> do nothing
   if ( (ui16_bitrate == 0) || ( ui8_busNumber > HAL_CAN_MAX_BUS_NR ) ) return false;

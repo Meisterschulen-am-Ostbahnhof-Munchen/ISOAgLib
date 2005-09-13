@@ -119,6 +119,14 @@ namespace __IsoAgLib {
   };
 #endif
 
+
+void
+DINMonitor_c::singletonInit()
+{
+  init();
+  /** @todo maybe optimize to avoid double initialization? */
+}
+
 /**
   initialisation for DINMonitor_c
 */

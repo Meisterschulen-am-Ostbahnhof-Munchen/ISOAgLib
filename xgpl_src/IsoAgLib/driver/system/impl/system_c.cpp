@@ -103,6 +103,13 @@ void System_c::close( void )
   HAL::closeSystem();
 }
 
+void
+System_c::singletonInit()
+{
+  init();
+}
+
+
 /**
   Initialize the system hardware
   (uses BIOS function)

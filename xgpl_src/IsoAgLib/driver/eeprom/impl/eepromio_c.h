@@ -301,7 +301,13 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of EEPROMIO_c within application
     */
-  EEPROMIO_c( void ) { init();};
+  EEPROMIO_c( void ) {};
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit();
   /**
     set error flags dependent on BIOS return value
     @param ri16_biosReturn BIOS return value which should be translated in error state of EEPROM_IO

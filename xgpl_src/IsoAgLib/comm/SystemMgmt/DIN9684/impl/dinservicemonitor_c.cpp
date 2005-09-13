@@ -107,6 +107,16 @@ namespace __IsoAgLib {
    DINServiceMonitor_c& getDinServiceMonitorInstance( void ) { return DINServiceMonitor_c::instance();};
 #endif
 
+/**
+  initialize directly after the singleton instance is created.
+  this is called from singleton.h and should NOT be called from the user again.
+  users please use init(...) instead.
+*/
+void DINServiceMonitor_c::singletonInit()
+{
+  init();
+}
+
 /** basic intialisation */
 void DINServiceMonitor_c::init( void ) {
   #ifdef DEBUG_HEAP_USEAGE
@@ -127,7 +137,6 @@ void DINServiceMonitor_c::init( void ) {
 */
 DINServiceMonitor_c::DINServiceMonitor_c( void )
   : vec_dinService() {
-  init();
 }
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */

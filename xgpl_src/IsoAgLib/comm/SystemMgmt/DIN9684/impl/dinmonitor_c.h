@@ -482,7 +482,14 @@ private:
     NEVER instantiate a variable of type DINMonitor_c within application
     only access DINMonitor_c via getBaseInstance() or getBaseInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
     */
-  DINMonitor_c() { init(); };
+  DINMonitor_c() {};
+
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit();
 
 // Private Methods
 #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD

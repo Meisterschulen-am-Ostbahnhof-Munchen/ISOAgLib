@@ -112,7 +112,6 @@ namespace __IsoAgLib {
 */
 SystemMgmt_c::SystemMgmt_c()
 {
-  init();
 }
 /**
   default destructor, which initiate sending address release for all own identities

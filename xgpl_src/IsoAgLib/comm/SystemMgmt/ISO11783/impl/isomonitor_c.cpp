@@ -124,15 +124,33 @@ namespace __IsoAgLib {
   };
 #endif
 
+
+
 /**
   constructor for ISOMonitor_c which can store optional pointer to central Scheduler_c instance
   @param rpc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)
 */
 ISOMonitor_c::ISOMonitor_c()
-  : SingletonISOMonitor_c(), vec_isoMember() {
-  setAlreadyClosed(); // so init() will init ;-)
-  init();
+  : SingletonISOMonitor_c(), vec_isoMember()
+{
+  // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
+
+
+
+/**
+  initialize directly after the singleton instance is created.
+  this is called from singleton.h and should NOT be called from the user again.
+  users please use init(...) instead.
+*/
+void
+ISOMonitor_c::singletonInit()
+{
+  setAlreadyClosed(); // so init() will init ;-) (but only once!)
+  init();
+};
+
+
 
 /** initialisation for ISOMonitor_c which can store optional pointer to central Scheduler_c instance
 */
@@ -176,7 +194,8 @@ void ISOMonitor_c::init( void )
 
 
 /** default destructor which has nothing to do */
-ISOMonitor_c::~ISOMonitor_c(){
+ISOMonitor_c::~ISOMonitor_c()
+{
   close();
 }
 

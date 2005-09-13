@@ -210,7 +210,13 @@ private: // Private methods
     only access DINMaskUpload_c via getDinMaskuploadInstance() or getDinMaskuploadInstance( int riLbsBusNr )
     in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
     */
-  DINMaskUpload_c() { init(); };
+  DINMaskUpload_c() {};
+  /**
+    initialize directly after the singleton instance is created.
+    this is called from singleton.h and should NOT be called from the user again.
+    users please use init(...) instead.
+  */
+  void singletonInit() { init(); };
   /**
     create the syncronisation process data for IsoAgLib+ mask upload
   */

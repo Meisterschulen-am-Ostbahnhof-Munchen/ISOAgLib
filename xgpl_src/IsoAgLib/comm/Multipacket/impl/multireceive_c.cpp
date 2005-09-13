@@ -99,6 +99,7 @@
 #include "../multireceiveclient_c.h"
 
 // IsoAgLib
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/driver/can/impl/filterbox_c.h>
@@ -162,6 +163,30 @@ static const uint8_t scui8_tpPriority=6;
     } \
   }
 
+
+MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
+                                                          uint8_t rui8_clientAddress,
+                                                          uint32_t rui32_pgn,
+                                                          bool rb_alsoBroadcast,
+                                                          bool rb_alsoGlobalErrors
+                                                          #ifdef NMEA_2000_FAST_PACKET
+                                                          ,bool rb_isFastPacket
+                                                          #endif
+                                                        )
+  : pc_client(rpc_client)
+  , ui8_clientAddress(rui8_clientAddress)
+  , ui32_pgn(rui32_pgn)
+  , b_alsoBroadcast (rb_alsoBroadcast)
+  , b_alsoGlobalErrors (rb_alsoGlobalErrors)
+  #ifdef NMEA_2000_FAST_PACKET
+  , b_isFastPacket (rb_isFastPacket) // means the PGN has to be "insertFilter"/"removeFilter"ed
+  #endif
+{
+  if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberNr(rui8_clientAddress))
+    c_gtp = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberNr(rui8_clientAddress).gtp();
+//  else
+//    shouldn't occur...
+};
 
 // //////////////////////////////// +X2C Operation 5653 : ~MultiReceive_c
 MultiReceive_c::~MultiReceive_c()
@@ -1052,18 +1077,25 @@ MultiReceive_c::sendEndOfMessageAck(DEF_Stream_c_IMPL* rpc_stream)
 
 
 
+void
+MultiReceive_c::singletonInit()
+{
+  setAlreadyClosed(); // so init() will perform once!
+  init();
+}
+
 
 // //////////////////////////////// +X2C Operation 2855 : init
 void
 MultiReceive_c::init()
 { // ~X2C
-  static bool b_alreadyInitialized = false;
-
-  if ((!b_alreadyInitialized) || checkAlreadyClosed()) {
+  if ( checkAlreadyClosed() ) {
     // clear state of b_alreadyClosed, so that close() is called one time
     clearAlreadyClosed();
     // register in Scheduler_c to get timeEvents
     __IsoAgLib::getSchedulerInstance4Comm().registerClient( this );
+    // register to get ISO monitor list changes
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
 
     /*** Filter Registration Start ***/
     __IsoAgLib::FilterBox_c* refFB;
@@ -1072,9 +1104,6 @@ MultiReceive_c::init()
     MACRO_insertFilterIfNotYetExists_mask1FF0000_setRef(ETP_CONN_MANAGE_PGN,false,refFB)
     MACRO_insertFilterIfNotYetExists_mask1FF0000_useRef(ETP_DATA_TRANSFER_PGN,true,refFB)
     /*** Filter Registration End ***/
-
-    // so init() only gets executed once!
-    b_alreadyInitialized = true;
   }
 
 } // -X2C
@@ -1230,6 +1259,81 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
   }
   return ui32_maxStreamCompletion1000;
 }
+
+
+
+/** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+  * @param refc_gtp const reference to the item which ISOItem_c state is changed
+  * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+    */
+void
+MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, const __IsoAgLib::ISOItem_c* rpc_newItem )
+{
+#ifdef DEBUG
+  std::cerr << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_gtp.getGety())
+      << ", Instance: " << int(refc_gtp.getPos()) << ", and manufacturer ID: " << int(refc_gtp.getConstName().manufCode())
+      << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
+      << std::endl;
+#endif
+  for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+       i_list_clients != list_clients.end();
+       i_list_clients++)
+  {
+    if (i_list_clients->ui8_clientAddress == 0xFE)
+    { // it's a mrcw that was set to hold, so maybe this addr-claim is for it?
+      if (i_list_clients->c_gtp == refc_gtp)
+      { // yes, it's that GTP that lost its SA
+        i_list_clients->ui8_clientAddress = rpc_newItem->nr();
+      }
+    }
+  }
+}
+
+/** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+  * @param refc_gtp const reference to the item which ISOItem_c state is changed
+  * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+  */
+void
+MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::GetyPos_c&
+                                          #ifdef DEBUG
+                                          refc_gtp
+                                          #else
+                                          /*refc_gtp*/
+                                          #endif
+                                          , uint8_t rui8_oldSa )
+{
+#ifdef DEBUG
+  std::cerr << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_gtp.getGety())
+      << ", Instance: " << int(refc_gtp.getPos()) << ", and manufacturer ID: " << int(refc_gtp.getConstName().manufCode())
+      << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
+      << std::endl;
+#endif
+  // Notify all registered clients
+  for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
+       i_list_clients != list_clients.end();
+       i_list_clients++)
+  {
+    if (rui8_oldSa == i_list_clients->ui8_clientAddress) {
+      i_list_clients->ui8_clientAddress = 0xFE;
+    }
+  }
+
+  // Abort all running streams, because we do NOT save the gtp in the stream and it would be out of sync probably anyway!
+  for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
+       i_list_streams != list_streams.end();)
+  {
+    if ((i_list_streams->getIdent().getDa() == rui8_oldSa) || (i_list_streams->getIdent().getSa() == rui8_oldSa))
+    {
+      connAbortTellClient(true, &(*i_list_streams));
+      i_list_streams = list_streams.erase(i_list_streams);
+    }
+    else
+    {
+      i_list_streams++;
+    }
+  }
+}
+
 
 
 } // end namespace __IsoAgLib
