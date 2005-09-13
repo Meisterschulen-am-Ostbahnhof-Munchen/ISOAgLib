@@ -138,7 +138,7 @@ typedef CAN_SINGLETON(CANIO_c) SingletonCANIO_c;
   @see FilterBox_c MsgObj
 */
 class CANIO_c : public SingletonCANIO_c {
- protected:
+ public: // changed from protected to work with the access from MsgObj_c
   /**
     define dynamic array of MsgObj_c instances for each hardware
     MsgObj_c one object instances in array
