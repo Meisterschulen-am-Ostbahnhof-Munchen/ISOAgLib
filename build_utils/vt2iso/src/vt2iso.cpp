@@ -2883,7 +2883,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       }
       if (!attrIsGiven [attrValue])
         sprintf (attrString [attrValue], "0");
-      fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %s, %s, %sUL, %s, %s, %s, %d, %d, %d", attrString [attrWidth], attrString [attrHeight],
+      fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL, %sUL, %sUL, %sL, %s, %s, %d, %d, %d", attrString [attrWidth], attrString [attrHeight],
         colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
         attrString [attrValue], attrString [attrMin_value], attrString [attrMax_value], attrString [attrOffset], attrString [attrScale],
         attrString [attrNumber_of_decimals], formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]),
@@ -2931,7 +2931,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       }
       if (!attrIsGiven [attrValue])
       sprintf (attrString [attrValue], "0");
-      fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %s, %s, %s, %s, %d, %d", attrString [attrWidth], attrString [attrHeight],
+      fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL, %sL, %s, %s, %d, %d", attrString [attrWidth], attrString [attrHeight],
         colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], outputnumberoptionstoi (attrString [attrOptions]),
         attrString [attrVariable_reference], attrString [attrValue], attrString [attrOffset], attrString [attrScale], attrString [attrNumber_of_decimals],
         formattoi (attrString [attrFormat]), horizontaljustificationtoi (attrString [attrHorizontal_justification]));
@@ -3047,7 +3047,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     case otNumbervariable:
       if (!attrIsGiven [attrValue])
         sprintf (attrString [attrValue], "0");
-      fprintf (partFileB, ", %s", attrString [attrValue]);
+      fprintf (partFileB, ", %sUL", attrString [attrValue]);
       break;
 
     case otStringvariable:
