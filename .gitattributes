@@ -96,6 +96,7 @@ build_utils/proc2iso/src/proc2iso.hpp -text
 build_utils/proc2iso/version.incl -text
 build_utils/proc2iso/xerces-c_2_5_0.dll -text
 build_utils/vt2iso-3-0_VirtualTerminalIso.bat -text
+build_utils/vt2iso/Doxyfile -text
 build_utils/vt2iso/FreeImage.dll -text
 build_utils/vt2iso/Makefile.incl -text
 build_utils/vt2iso/Makefile.paintlib -text
@@ -107,6 +108,10 @@ build_utils/vt2iso/doc/ISO-VirtualTerminal-Objects.txt -text
 build_utils/vt2iso/src/vt2iso-defines.hpp -text
 build_utils/vt2iso/src/vt2iso.hpp -text
 build_utils/vt2iso/version.incl -text
+build_utils/vt2iso/vt2iso.kdevelop -text
+build_utils/vt2iso/vt2iso.kdevelop.filelist -text
+build_utils/vt2iso/vt2iso.kdevelop.pcs -text
+build_utils/vt2iso/vt2iso.kdevses -text
 build_utils/vt2iso/xerces-c_2_5_0.dll -text
 commercial_BIOS.dummy/bios_esx/README -text
 commercial_BIOS.dummy/bios_pm167/README -text

@@ -1,0 +1,27 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE KDevPrjSession>
+<KDevPrjSession>
+ <DocsAndViews NumberOfDocuments="1" >
+  <Doc0 NumberOfViews="1" URL="file:///home/winkler/Projekte/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
+   <View0 line="3242" Type="Source" />
+  </Doc0>
+ </DocsAndViews>
+ <pluginList>
+  <kdevdebugger>
+   <breakpointList/>
+  </kdevdebugger>
+  <kdevbookmarks>
+   <bookmarks/>
+  </kdevbookmarks>
+  <kdevrbdebugger>
+   <breakpointList/>
+   <watchExpressions/>
+  </kdevrbdebugger>
+  <kdevvalgrind>
+   <executable path="" params="" />
+   <valgrind path="" params="" />
+   <calltree path="" params="" />
+   <kcachegrind path="" />
+  </kdevvalgrind>
+ </pluginList>
+</KDevPrjSession>
