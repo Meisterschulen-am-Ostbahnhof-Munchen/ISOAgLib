@@ -133,34 +133,34 @@ namespace __IsoAgLib {
 /** class to stored the language label from a device description */
 LanguageLabel_c::LanguageLabel_c (const char* label)
 {
-  memcpy(str, label, 2);
+  CNAMESPACE::memcpy(str, label, 2);
 };
 
 LanguageLabel_c::LanguageLabel_c (const LanguageLabel_c& c_langLabel)
 {
-  memcpy(str, c_langLabel.str, 2);
+  CNAMESPACE::memcpy(str, c_langLabel.str, 2);
 };
 
 const LanguageLabel_c& LanguageLabel_c::operator=(const LanguageLabel_c& c_langLabel)
 {
-  memcpy(str, c_langLabel.str, 2);
+  CNAMESPACE::memcpy(str, c_langLabel.str, 2);
   return c_langLabel;
 };
 
 const LanguageLabel_c& LanguageLabel_c::operator=(const uint8_t* ui8_str)
 {
-  memcpy(str, ui8_str, 2);
+  CNAMESPACE::memcpy(str, ui8_str, 2);
   return *this;
 };
 
 bool LanguageLabel_c::operator<(const LanguageLabel_c& c_langLabel) const
 {
-  return strcmp(str, c_langLabel.str);
+  return CNAMESPACE::strcmp(str, c_langLabel.str);
 };
 
 bool LanguageLabel_c::operator==(const LanguageLabel_c& c_langLabel)
 {
-  return (strcmp(str, c_langLabel.str)==0)?true:false;
+  return (CNAMESPACE::strcmp(str, c_langLabel.str)==0)?true:false;
 };
 //end of definition LanguageLabel_c
 //===================================================================
@@ -340,8 +340,8 @@ DevPropertyHandler_c::processMsg()
             en_uploadStep = UploadFailed;
             en_poolState = OPCannotBeUploaded;
             ui8_commandParameter = procCmdPar_OPActivateRespMsg;
+            #if defined(DEBUG) && defined(SYSTEM_PC)
             std::cout << (uint16_t) data().getUint8Data(1) << std::endl;
-            #ifdef DEBUG
             std::cout << "upload failed, activate with error..." << std::endl;
             #endif
           }
@@ -783,7 +783,7 @@ DevPropertyHandler_c::initUploading()
 {
   //compare received structurelabel
   uint8_t ui8_offset = getLabelOffset(pc_devDefaultDeviceDescription->p_DevicePool);
-  if (strncmp(pch_structureLabel, (const char*)&pc_devDefaultDeviceDescription->p_DevicePool[ui8_offset], 7) != 0)
+  if (CNAMESPACE::strncmp(pch_structureLabel, (const char*)&pc_devDefaultDeviceDescription->p_DevicePool[ui8_offset], 7) != 0)
   {
     getPoolForUpload();
   }
@@ -796,7 +796,7 @@ DevPropertyHandler_c::initUploading()
       ch_temp[0] = ((getIsoTerminalInstance().getLocalSettings()->languageCode) >> 8) & 0xFF;
       ch_temp[1] = (getIsoTerminalInstance().getLocalSettings()->languageCode) & 0xFF;
       #endif
-      if (strncmp(pch_localizationLabel, ch_temp, 2) == 0)
+      if (CNAMESPACE::strncmp(pch_localizationLabel, ch_temp, 2) == 0)
       {
         en_uploadState = StateIdle;
         en_poolState = OPSuccessfullyUploaded;
@@ -825,7 +825,7 @@ DevPropertyHandler_c::getPoolForUpload()
     std::map<LanguageLabel_c, DevicePool_c>::iterator it_maps;
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
     {
-      if (strncmp(it_maps->first.get(), pc_langCode, 2) == 0)
+      if (CNAMESPACE::strncmp(it_maps->first.get(), pc_langCode, 2) == 0)
       {
         pc_devPoolForUpload = &it_maps->second;
         return;

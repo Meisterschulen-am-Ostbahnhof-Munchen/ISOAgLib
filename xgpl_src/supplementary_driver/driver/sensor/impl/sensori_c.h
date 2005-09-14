@@ -265,7 +265,8 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of SensorI_c within application
     */
-  SensorI_c( void ) { init();};
+  SensorI_c( void ) { };
+	void singletonInit() { init();};
 
   /** register a pointer to an external analog input object
     * @param rpc_object const pointer to new AnalogI_c instance,

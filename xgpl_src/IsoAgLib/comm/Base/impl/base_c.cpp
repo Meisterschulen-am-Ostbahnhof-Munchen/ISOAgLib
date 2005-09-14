@@ -105,9 +105,7 @@
 #include <cmath>
 #include "base_c.h"
 
-#ifdef WIN32
 #include <time.h>
-#endif
 
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
@@ -178,7 +176,7 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
   ui8_rearDraftNominal = NO_VAL_8;
   i16_fuelRate = NO_VAL_16S;
   ui8_fuelTemperature = NO_VAL_8;
-  if ( CheckAlreadyClosed() )
+  if ( checkAlreadyClosed() )
   {
     b_dinFilterCreated = false;
   }
@@ -391,7 +389,7 @@ void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& refc_stream, uint32_t& 
   // --> Byte5 needs scaling factor 0x100000000 in relation to complete 64Bit number to get same base scaling factor as
   //     complete 64Bit number
   // ==> the 64Bit value would have 10.0e-6 while we want 10.0e-2 --> multiply the result afterwards with 10.0e-4
-  refui32_result += uint32_t(double(ui32_temp) * (10.0e-4 * pow(2.0,32.0)));
+  refui32_result += uint32_t(double(ui32_temp) * (10.0e-4 * std::pow(2.0,32.0)));
 }
 
 // //////////////////////////////// +X2C Operation 5703 : reactOnLastChunk

@@ -172,7 +172,8 @@ private:
     /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of ActorO_c within application
     */
-  ActorO_c( void ) { init();};
+  ActorO_c( void ) { };
+	void singletonInit() {init();};
 
   /** register pointer to a new client
     * this function is called within construction of new client instance

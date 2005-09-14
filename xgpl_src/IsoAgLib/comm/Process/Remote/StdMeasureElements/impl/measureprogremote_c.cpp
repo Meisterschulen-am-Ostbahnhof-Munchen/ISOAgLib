@@ -318,7 +318,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::measurementStart);
     // DIN: pd=0, mod=6
-    if (!processData().sendValGtp(ui8_pri, gtp(), b_command))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
+    if (!processData().sendValGtp(ui8_pri, gtp(), int32_t(b_command)))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
       b_sendResult = false;
   }
 #endif
@@ -391,7 +391,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
         getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                                     GeneralCommand_c::exactValue,
                                                                     en_command);
-        b_result = processData().sendValGtp(ui8_pri, gtp(), 0);
+        b_result = processData().sendValGtp(ui8_pri, gtp(), int32_t(0));
       }
     }
 
@@ -412,7 +412,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
                                                                   GeneralCommand_c::exactValue,
                                                                   GeneralCommand_c::measurementStop);
       // DIN: pd=0, mod=6
-      b_result = processData().sendValGtp(ui8_pri, gtp(), 0);
+      b_result = processData().sendValGtp(ui8_pri, gtp(), int32_t(0));
     }
   }
 
@@ -440,7 +440,7 @@ int32_t MeasureProgRemote_c::med(bool rb_sendRequest) const
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=4
-    processDataConst().sendValGtp(2, gtp(), 0);
+    processDataConst().sendValGtp(2, gtp(), int32_t(0));
   }
   return i32_med;
 }
@@ -459,7 +459,7 @@ float MeasureProgRemote_c::medFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=4
-    processDataConst().sendValGtp(2, gtp(), 0);
+    processDataConst().sendValGtp(2, gtp(), int32_t(0));
   }
   return f_med;
 }
@@ -730,7 +730,7 @@ bool MeasureProgRemote_c::resetMed(){
                                                               GeneralCommand_c::medValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendValGtp(ui8_pri, gtp(), 0x28);
+  return processData().sendValGtp(ui8_pri, gtp(), int32_t(0x28));
 }
 
 /**
@@ -752,7 +752,7 @@ bool MeasureProgRemote_c::resetInteg(){
                                                               GeneralCommand_c::integValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendValGtp(ui8_pri, gtp(), 0x48);
+  return processData().sendValGtp(ui8_pri, gtp(), int32_t(0x48));
 }
 
 /**
@@ -774,7 +774,7 @@ bool MeasureProgRemote_c::resetMin(){
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::measurementReset);
       // DIN: pd=0, mod=6
-  return processData().sendValGtp(ui8_pri, gtp(), 0x8);
+  return processData().sendValGtp(ui8_pri, gtp(), int32_t(0x8));
 }
 
 /**
@@ -796,7 +796,7 @@ bool MeasureProgRemote_c::resetMax(){
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendValGtp(ui8_pri, gtp(), 0x8);
+  return processData().sendValGtp(ui8_pri, gtp(), int32_t(0x8));
 }
 
 /**

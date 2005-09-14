@@ -185,7 +185,7 @@ int32_t SimpleManageSetpointRemote_c::setpointMasterVal(bool rb_sendRequest)
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd=2, mod=0
-    c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), 0);
+    c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), int32_t(0));
   }
   return i32_setpointMasterVal;
 }
@@ -224,7 +224,7 @@ float SimpleManageSetpointRemote_c::setpointMasterValFloat(bool rb_sendRequest)
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd=2, mod=0
-    c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), 0);
+    c_base.sendValGtp(c_base.pri(), c_base.commanderGtp(), int32_t(0));
   }
   return f_setpointMasterVal;
 }

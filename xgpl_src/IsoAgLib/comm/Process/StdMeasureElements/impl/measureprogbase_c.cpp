@@ -357,7 +357,7 @@ int32_t MeasureProgBase_c::val(bool rb_sendRequest) const
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 0
-    processData().sendValGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), int32_t(0));
   }
 
   return i32_val;
@@ -376,7 +376,7 @@ int32_t MeasureProgBase_c::integ(bool rb_sendRequest) const
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=3
-    processData().sendValGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), int32_t(0));
   }
   return i32_integ;
 };
@@ -395,7 +395,7 @@ int32_t MeasureProgBase_c::min(bool rb_sendRequest) const
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 1
-    processData().sendValGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), int32_t(0));
   }
   return i32_min;
 };
@@ -413,7 +413,7 @@ int32_t MeasureProgBase_c::max(bool rb_sendRequest) const
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 2
-    processData().sendValGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), int32_t(0));
   }
   return i32_max;
 };
@@ -498,7 +498,7 @@ float MeasureProgBase_c::valFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 0
-    processData().sendValGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), int32_t(0));
   }
   return f_val;
 };
@@ -516,7 +516,7 @@ float MeasureProgBase_c::integFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::integValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=3
-    processData().sendValGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), int32_t(0));
   }
   return f_integ;
 };
@@ -535,7 +535,7 @@ float MeasureProgBase_c::minFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::minValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 1
-    processData().sendValGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), int32_t(0));
   }
   return f_min;
 };
@@ -553,7 +553,7 @@ float MeasureProgBase_c::maxFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::maxValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN: pd = 3, mod = 2
-    processData().sendValGtp(2, gtp(), 0);
+    processData().sendValGtp(2, gtp(), int32_t(0));
   }
   return f_max;
 };

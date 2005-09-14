@@ -84,7 +84,9 @@
 #include "dinmonitor_c.h"
 
 #include "dinsystempkg_c.h"
-#include "dinservicemonitor_c.h"
+#ifdef USE_DIN_SERVICEMONITOR
+  #include "dinservicemonitor_c.h"
+#endif
 #include "../../impl/systemmgmt_c.h"
 #include "../../impl/istate_c.h"
 #include <IsoAgLib/util/liberr_c.h>
@@ -1088,9 +1090,11 @@ bool DINMonitor_c::processMsg(){
       }
       b_result = true;
       break;
+		 #ifdef USE_DIN_SERVICEMONITOR
      case 4: case 7:
       b_result = getDinServiceMonitorInstance4Comm().processMsg();
       break;
+			#endif
       #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
      case 15: // system on/off
       // must be sent from virtual terminal -> gtp== 0, send==0

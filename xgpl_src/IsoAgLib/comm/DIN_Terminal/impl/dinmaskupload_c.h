@@ -240,7 +240,7 @@ private: // Private attributes
   MultiSendPkg_c* pc_data;
 
   /** pointer to the MemberITem of the temrinal */
-  DINItem_c* pc_terminal;
+  const DINItem_c* pc_terminal;
 
   /** array of pointer to Mask Definitions */
   IsoAgLib::t_maskDefinition* psMaskDef[REGISTRABLE_MASK_CNT];

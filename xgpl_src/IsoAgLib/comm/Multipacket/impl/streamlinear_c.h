@@ -135,6 +135,7 @@ public:
   inline uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset);
 
   inline bool eof() const;
+	void immediateInitAfterConstruction() const {};
 
 protected:
 
