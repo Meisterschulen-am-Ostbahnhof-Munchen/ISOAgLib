@@ -1,10 +1,13 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="1" >
-  <Doc0 NumberOfViews="1" URL="file:///home/winkler/Projekte/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
-   <View0 line="3242" Type="Source" />
+ <DocsAndViews NumberOfDocuments="2" >
+  <Doc0 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
+   <View0 line="3074" Type="Source" />
   </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.h" >
+   <View0 line="469" Type="Source" />
+  </Doc1>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

@@ -567,10 +567,9 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
                 HAL::wdTriggern();
                 CANPkgExt_c* pc_target = pc_iFilterBox->customersCanPkg();
                 HAL::can_useMsgobjGet(rui8_busNumber, msgObjNr(), pc_target);
-                pc_iFilterBox->processMsg();
-                b_processed = true;
+                b_processed = pc_iFilterBox->processMsg();
               }
-            } while (b_foundOne); // if one found, try if another one can be found!
+            } while (b_foundOne && !b_processed); // if one found, try if another one can be found!
         #if CAN_INSTANCE_CNT > 1
             break;
           }
