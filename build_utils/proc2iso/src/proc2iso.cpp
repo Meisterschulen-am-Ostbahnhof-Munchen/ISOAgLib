@@ -95,7 +95,7 @@ std::vector<std::string> vecstr_attrString (maxAttributeNames);
 std::vector<std::string> vecstr_objTableIDTable;
 std::vector<std::string> vecstr_constructor (7);
 std::vector<std::string> vecstr_dataForCombination;
-std::vector<std::string> vecstr_dataFromDPD (3);
+std::vector<std::string> vecstr_dataFromDPD (4);
 std::stringstream buffer;
 bool attrIsGiven [maxAttributeNames];
 bool b_dpdCombination = false;
@@ -279,7 +279,6 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
     switch (objType)
     {
       case otDevice:
-      case otDeviceProcessDataCombination:
         sprintf(tempBuffer, "DVC%d", countDVCID);
         countDVCID++;
         break;
@@ -288,6 +287,7 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
         countDETID++;
         break;
       case otDeviceProcessData:
+      case otDeviceProcessDataCombination:
         sprintf(tempBuffer, "DPD%d", countDPDID);
         countDPDID++;
         break;
@@ -412,7 +412,7 @@ void defaultAttributes ()
     attrIsGiven [attrCumulative_value] = true;
   }
   if (!attrIsGiven [attrCommand_type]) {
-    vecstr_attrString [attrCommand_type] = "default";
+    vecstr_attrString [attrCommand_type] = "exact";
     attrIsGiven [attrCommand_type] = true;
   }
 };
@@ -560,6 +560,7 @@ char objName [stringLength+1];
 unsigned int objID;
 unsigned int tableID;
 unsigned int buf_length=0;
+unsigned int buf_length_dpd=0;
 char languageCmdCode[2];
 bool is_objID;
 bool deviceElementExists=false;
@@ -797,25 +798,28 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
     switch (objType)
     {
       case otDevice:
-        if (!(attrIsGiven [attrSoftware_version] || attrIsGiven [attrStructure_label] || attrIsGiven [attrLocalization_label]))
+        if (!attrIsGiven[attrSoftware_version] || !attrIsGiven[attrStructure_label] || !attrIsGiven[attrLocalization_label])
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE software_version= AND structure_label= AND localization_label= ATTRIBUTES FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
         }
-        if (!(vecstr_attrString[attrStructure_label].size() == 7 || vecstr_attrString[attrStructure_label].size() == 7 && vecstr_attrString[attrLocalization_label].size() == 7 || vecstr_attrString[attrLocalization_label].size() == 14))
+        if ( !((vecstr_attrString[attrStructure_label].size() == 7) || (vecstr_attrString[attrStructure_label].size() == 14)) ||
+             !((vecstr_attrString[attrLocalization_label].size() == 7) || (vecstr_attrString[attrLocalization_label].size() == 12 ))
+           )
         {
           clean_exit (-1, "structure_label= AND localization_label= ATTRIBUTES FOR THE <device> OBJECT NEED A LENGTH OF 7 BYTES! STOPPING PARSER! bye.\n\n");
         }
-        if (!(attrIsGiven [attrDevProgVarName]))
+        if (!(attrIsGiven[attrDevProgVarName]))
         {
           clean_exit (-1, "YOU NEED TO SPECIFY device_program_name= ATTRIBUTE FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
         }
-        if (!(attrIsGiven [attrWorkingset_mastername] || (attrIsGiven [attrManufacturer_code] && attrIsGiven [attrWS_serial_number] && attrIsGiven [attrDevice_class] && attrIsGiven [attrDevice_class_instance])))
+        if (!(attrIsGiven[attrWorkingset_mastername] ||
+            (attrIsGiven[attrManufacturer_code] && attrIsGiven[attrWS_serial_number] && attrIsGiven[attrDevice_class] && attrIsGiven[attrDevice_class_instance])))
         {
           clean_exit (-1, "YOU NEED TO SPECIFY EITHER the workingset_mastername= ATTRIBUTE OR the manufacturer_code= AND ws_serial_number= AND device_class= AND device_class_instance= ATTRIBUTES FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         else
         {
-          if (!attrIsGiven [attrWorkingset_mastername])
+          if (!attrIsGiven[attrWorkingset_mastername])
           {
             if (strlen(vecstr_attrString [attrSelf_conf].c_str()) > 1)
             {
@@ -977,38 +981,12 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         }
         break;
       case otDeviceElement:
-        if (!(attrIsGiven [attrElement_type] || attrIsGiven [attrParent_name]))
+        if (!attrIsGiven[attrElement_type] || !attrIsGiven[attrParent_name])
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE element_type= AND parent_name= ATTRIBUTES FOR THE <deviceelement> OBJECT! STOPPING PARSER! bye.\n\n");
         }
-        if (strcmp(buffer.str().c_str(), "") != 0)
-        {
-          fprintf( partFileA, "%s", buffer.str().c_str() );
-          buffer.str("");
-        }
-        //first test, if vecstr_dataForCombination length > 0 and if at least one combination was found -> then a combination is complete and can be written out to header
-        if (vecstr_dataForCombination.size() > 0)
-        {
-          if (b_dpdCombination)
-          {
-            // estimate the amount of combinations
-            uint8_t ui8_amount = vecstr_dataForCombination.size();
-            ui8_amount = (ui8_amount-2) / 3;
-            // output to header-file
-            fprintf(partFileB, "#if defined(USE_ISO_11783)\nconst IsoAgLib::ElementDDI_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
-            for (uint8_t i=0; i<ui8_amount; i++)
-            {
-              fprintf(partFileB, "\t{%s, %s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_dataForCombination[0].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
-            }
-            fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, 0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}\n};\n#endif\n\n");
-            vecstr_dataForCombination.clear();
-            b_dpdCombination = false;
-          } else {
-            vecstr_dataForCombination.clear();
-            b_dpdCombination = false;
-          }
-        }
-        //save element_number for later use in deviceprocessdatavariant
+        vecstr_dataForCombination.clear();
+        //save element_number for later use in deviceprocessdatacombination
         vecstr_dataForCombination.push_back(vecstr_attrString[attrElement_number].c_str());
         //output: tableID & objID
         buffer  << ", \n'" << TableIDTable [objType][0] << "', "
@@ -1052,22 +1030,20 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         vecstr_constructor[2] = vecstr_attrString[attrElement_number].c_str();
         break;
       case otDeviceProcessData:
-        if (!attrIsGiven [attrDdi])
+      {
+        if (!attrIsGiven[attrDdi])
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= ATTRIBUTE FOR THE <deviceprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
         }
-        if (!(attrIsGiven [attrProcProgVarName]))
+        if (!(attrIsGiven[attrProcProgVarName]))
         {
           clean_exit (-1, "YOU NEED TO SPECIFY proc_program_name= ATTRIBUTE FOR THE <deviceprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
-        }
-        if (strcmp(buffer.str().c_str(), "") != 0)
-        {
-          fprintf( partFileA, "%s", buffer.str().c_str() );
-          buffer.str("");
         }
         // save attrProcProgVarName for deviceprocessdatacombination
         if (vecstr_dataForCombination.size() == 2) vecstr_dataForCombination.pop_back();
         if (vecstr_dataForCombination.size() < 2) vecstr_dataForCombination.push_back(vecstr_attrString[attrProcProgVarName].c_str());
+
+        buf_length_dpd = 0;
 
         //output: tableID & objID
         buffer  << ", \n'" << TableIDTable [objType][0] << "', "
@@ -1075,49 +1051,188 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << "'" << TableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
                 << uint16_t((objID >> 8) & 0xFF)      << ", ";
-        buf_length += 5;
+        buf_length_dpd += 5;
         //ddi
         buffer  << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF) << ", "
                 << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF)  << ", ";
-        buf_length += 2;
+        buf_length_dpd += 2;
         //properties
         buffer  << propertytoi(vecstr_attrString[attrProperties].c_str()) << ", ";
-        buf_length++;
+        buf_length_dpd++;
         vecstr_dataFromDPD[0] = vecstr_attrString[attrProperties].c_str();
         //triggermethods
         buffer  << triggermethodtoi(vecstr_attrString[attrTrigger_methods].c_str()) << ", ";
-        buf_length++;
+        buf_length_dpd++;
         vecstr_dataFromDPD[1] = vecstr_attrString[attrTrigger_methods].c_str();
         //length of designator
         buffer << vecstr_attrString[attrDesignator].size() << ", ";
-        buf_length++;
+        buf_length_dpd++;
         //designator
         for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
         {
           buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
         }
-        buf_length += vecstr_attrString[attrDesignator].size();
+        buf_length_dpd += vecstr_attrString[attrDesignator].size();
         //device_value_presentation_object_id
         buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) & 0xFF) << ", "
                 << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) >> 8) & 0xFF);
-        buf_length += 2;
+        buf_length_dpd += 2;
         vecstr_dataFromDPD[2] = vecstr_attrString[attrDevice_value_presentation_name].c_str();
-//         fprintf( partFileA, "%s", buffer.str().c_str() );
-//         buffer.str("");
+        vecstr_dataFromDPD[3] = vecstr_attrString[attrDesignator];
+        
         vecstr_constructor[3] = vecstr_attrString[attrFeature_set].c_str();
         vecstr_constructor[4] = vecstr_attrString[attrCumulative_value].c_str();
         vecstr_constructor[5] = vecstr_attrString[attrProcProgVarName].c_str();
         vecstr_constructor[6] = vecstr_attrString[attrDdi].c_str();
-        break;
-      case otDeviceProperty:
-        if (!(attrIsGiven [attrDdi] || attrIsGiven [attrProperty_value]))
+
+        bool b_DinDPD = false;
+
+        // process DeviceProcessDataCombination childs
+        for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
         {
-          clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= AND property_value= ATTRIBUTES FOR THE <deviceproperty> OBJECT! STOPPING PARSER! bye.\n\n");
+          if (child->getNodeType() != DOMNode::ELEMENT_NODE)
+            continue;
+
+          if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceProcessDataCombination)
+          {
+            getAttributesFromNode(child, otDeviceProcessDataCombination);
+            defaultAttributes ();
+            if (!attrIsGiven[attrDdi] || !attrIsGiven[attrSetpoint])
+            {
+              clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= AND is_setpoint= ATTRIBUTES FOR THE <deviceprocessdatacombination> OBJECT! STOPPING PARSER! bye.\n\n");
+            }
+            b_dpdCombination = true;
+            // kill previous buffer, filled above
+            buffer.str("");
+            buf_length_dpd = 0;
+
+            //designator
+            std::string str_designator = vecstr_dataFromDPD[3];
+            if ( vecstr_attrString[attrSetpoint] == "false")
+              str_designator.append(" Measure ");
+            else
+              str_designator.append(" Setpoint ");
+            str_designator.append(vecstr_attrString[attrCommand_type]);
+
+            /* try with parent object id => first call takes this objID */
+            uint16_t ui16_newObjChildID = getID (str_designator.c_str(), false, objID, otDeviceProcessData);
+            
+            //output: tableID & objID
+            buffer  << ", \n'" << TableIDTable [otDeviceProcessDataCombination][0] << "', "
+                    << "'" << TableIDTable [otDeviceProcessDataCombination][1]   << "', "
+                    << "'" << TableIDTable [otDeviceProcessDataCombination][2]   << "', "
+                    << uint16_t(ui16_newObjChildID & 0xFF)             << ", "
+                    << uint16_t((ui16_newObjChildID >> 8) & 0xFF)      << ", ";
+            buf_length += 5;
+            //ddi
+            buffer  << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF) << ", "
+                    << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF)  << ", ";
+            buf_length += 2;
+            //properties
+            buffer  << propertytoi(vecstr_dataFromDPD[0].c_str()) << ", ";
+            buf_length++;
+            //triggermethods
+            buffer  << triggermethodtoi(vecstr_dataFromDPD[1].c_str()) << ", ";
+            buf_length++;
+
+            //length of designator
+            //vecstr_attrString[attrDesignator].size()
+            buffer << str_designator.size() << ", ";
+            buf_length++;
+        
+            // vecstr_dataFromDPD[3]
+            for (uint16_t i = 0;i<str_designator.size();i++)
+            {
+              buffer << "'" << str_designator[i] << "', ";
+            }
+            buf_length += str_designator.size();
+            //device_value_presentation_object_id
+            buffer  << (idOrName_toi(vecstr_dataFromDPD[2].c_str(), 1) & 0xFF) << ", "
+                    << ((idOrName_toi(vecstr_dataFromDPD[2].c_str(), 1) >> 8) & 0xFF);
+            buf_length += 2;
+            fprintf( partFileA, "%s", buffer.str().c_str() );
+            buffer.str("");
+
+            // save values for later output into header file
+            vecstr_dataForCombination.push_back(vecstr_attrString[attrDdi].c_str());
+            vecstr_dataForCombination.push_back(vecstr_attrString[attrSetpoint].c_str());
+            vecstr_dataForCombination.push_back(vecstr_attrString[attrCommand_type].c_str());
+
+          }
+
+          if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceDinProcessData)
+          {
+            getAttributesFromNode(child, otDeviceDinProcessData);
+            defaultAttributes ();
+            b_DinDPD = TRUE;
+            //this objecttype is only needed for creating the processdata-constructor
+            if (!attrIsGiven [attrWert_inst])
+            {
+              clean_exit (-1, "YOU NEED TO SPECIFY THE wert_inst= ATTRIBUTE FOR THE <devicedinprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
+            }
+          }
         }
+
+        if (b_dpdCombination)
+        {
+          // estimate the amount of combinations
+          uint8_t ui8_amount = vecstr_dataForCombination.size();
+          ui8_amount = (ui8_amount-2) / 3;
+          // output to header-file
+          fprintf(partFileB, "#if defined(USE_ISO_11783)\nconst IsoAgLib::ElementDDI_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
+          for (uint8_t i=0; i<ui8_amount; i++)
+          {
+            fprintf(partFileB, "\t{%s, %s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_dataForCombination[0].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
+          }
+          fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, 0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}\n};\n#endif\n\n");
+          for (uint8_t i=0; i<ui8_amount*3; i++)
+            vecstr_dataForCombination.pop_back();
+        }
+
+        fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
+        fprintf( partFileB, "\n#ifdef USE_ISO_11783\n");
+        if ( b_dpdCombination )
+          fprintf( partFileB, "s_%sElementDDI, ", vecstr_constructor[5].c_str());
+        else
+          fprintf( partFileB, "0x%x, 0x%x, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_constructor[2].c_str(), 0, -1));
+
+        b_dpdCombination = FALSE;
+
+        fprintf( partFileB, "\n#endif\n");
+        fprintf( partFileB, "#ifdef USE_DIN_9684\n");
+
+        if ( b_DinDPD )
+          fprintf( partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
+                  (atoi(vecstr_attrString[attrWert_inst].c_str()) & 0x0F), ((atoi(vecstr_attrString[attrWert_inst].c_str()) >> 4) & 0xF),
+                  atoi(vecstr_constructor[2].c_str()));
+        else
+          fprintf( partFileB, "0x0, 0x0, 0x0, 0x0, ");
+        
+        fprintf( partFileB, "\n#endif\n");
+        fprintf( partFileB, "%sGtp, 0x%x, %sGtp, &%sGtp, %s",
+                  vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
+                  vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
+        fprintf( partFileB, "\n#ifdef USE_EEPROM_IO\n");
+        fprintf( partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
+        fprintf( partFileB, "\n#endif\n");
+        fprintf( partFileB, ");\n\n" );
+            
+        // if we have at least one DeviceProcessDataCombination => buffer_length_dpd is already reseted to 0 and buffer already written
+        buf_length += buf_length_dpd;
+
+        // no DeviceProcessDataCombination found => write now
         if (strcmp(buffer.str().c_str(), "") != 0)
         {
-          fprintf( partFileA, "%s", buffer.str().c_str() );
-          buffer.str("");
+            fprintf( partFileA, "%s", buffer.str().c_str() );
+            buffer.str("");
+        }
+
+        break;
+      }  
+      case otDeviceProperty:
+        if (!attrIsGiven[attrDdi] || !attrIsGiven[attrProperty_value])
+        {
+          clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= AND property_value= ATTRIBUTES FOR THE <deviceproperty> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         //output: tableID & objID
         buffer  << ", \n'" << TableIDTable [objType][0] << "', "
@@ -1153,86 +1268,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         buffer.str("");
         break;
       case otDeviceDinProcessData:
-        //this objecttype is only needed for creating the processdata-constructor
-        if (!attrIsGiven [attrWert_inst])
-        {
-          clean_exit (-1, "YOU NEED TO SPECIFY THE wert_inst= ATTRIBUTE FOR THE <devicedinprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
-        }
-        if (strcmp(buffer.str().c_str(), "") != 0)
-        {
-          fprintf( partFileA, "%s", buffer.str().c_str() );
-          buffer.str("");
-        }
-        fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
-        fprintf( partFileB, "\n#ifdef USE_ISO_11783\n");
-        fprintf( partFileB, "0x%x, 0x%x, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_constructor[2].c_str(), 0, -1));
-        fprintf( partFileB, "\n#endif\n");
-        fprintf( partFileB, "#ifdef USE_DIN_9684\n");
-        fprintf( partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
-                   (atoi(vecstr_attrString[attrWert_inst].c_str()) & 0x0F), ((atoi(vecstr_attrString[attrWert_inst].c_str()) >> 4) & 0xF),
-                   atoi(vecstr_constructor[2].c_str()));
-        fprintf( partFileB, "\n#endif\n");
-        fprintf( partFileB, "%sGtp, 0x%x, %sGtp, &%sGtp, %s",
-                   vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
-                   vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
-        fprintf( partFileB, "\n#ifdef USE_EEPROM_IO\n");
-        fprintf( partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
-        fprintf( partFileB, "\n#endif\n");
-        fprintf( partFileB, ");\n\n" );
         break;
       case otDeviceProcessDataCombination:
-        if (!(attrIsGiven [attrDdi] || attrIsGiven [attrSetpoint]))
-        {
-          clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= AND is_setpoint= ATTRIBUTES FOR THE <deviceprocessdatacombination> OBJECT! STOPPING PARSER! bye.\n\n");
-        }
-        b_dpdCombination = true;
-        // save values for later output into header file
-        vecstr_dataForCombination.push_back(vecstr_attrString[attrDdi].c_str());
-        vecstr_dataForCombination.push_back(vecstr_attrString[attrSetpoint].c_str());
-        vecstr_dataForCombination.push_back(vecstr_attrString[attrCommand_type].c_str());
-        buffer.str("");
-        //output: tableID & objID
-        buffer  << ", \n'" << TableIDTable [objType][0] << "', "
-                << "'" << TableIDTable [objType][1]   << "', "
-                << "'" << TableIDTable [objType][2]   << "', "
-                << uint16_t(objID & 0xFF)             << ", "
-                << uint16_t((objID >> 8) & 0xFF)      << ", ";
-        buf_length += 5;
-        //ddi
-        buffer  << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF) << ", "
-                << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF)  << ", ";
-        buf_length += 2;
-        //properties
-        buffer  << propertytoi(vecstr_dataFromDPD[0].c_str()) << ", ";
-        buf_length++;
-        //triggermethods
-        buffer  << triggermethodtoi(vecstr_dataFromDPD[1].c_str()) << ", ";
-        buf_length++;
-        //length of designator
-        buffer << vecstr_attrString[attrDesignator].size() << ", ";
-        buf_length++;
-        //designator
-        for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
-        {
-          buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
-        }
-        buf_length += vecstr_attrString[attrDesignator].size();
-        //device_value_presentation_object_id
-        buffer  << (idOrName_toi(vecstr_dataFromDPD[2].c_str(), 1) & 0xFF) << ", "
-                << ((idOrName_toi(vecstr_dataFromDPD[2].c_str(), 1) >> 8) & 0xFF);
-        buf_length += 2;
-        fprintf( partFileA, "%s", buffer.str().c_str() );
-        buffer.str("");
         break;
       case otDeviceValuePresentation:
-        if (!(attrIsGiven [attrOffset] || attrIsGiven [attrScale] || attrIsGiven [attrNumber_of_decimals]))
+        if (!attrIsGiven[attrOffset] || !attrIsGiven[attrScale] || !attrIsGiven[attrNumber_of_decimals])
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE offset= AND scale= AND number_of_decimals= ATTRIBUTES FOR THE <devicevaluepresentation> OBJECT! STOPPING PARSER! bye.\n\n");
-        }
-        if (strcmp(buffer.str().c_str(), "") != 0)
-        {
-          fprintf( partFileA, "%s", buffer.str().c_str() );
-          buffer.str("");
         }
         //output: tableID & objID
         buffer  << ", \n'" << TableIDTable [objType][0] << "', "
