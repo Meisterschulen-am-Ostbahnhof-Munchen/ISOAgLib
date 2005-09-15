@@ -448,7 +448,7 @@ int main()
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
   #endif
-                                         myGtp, 2, myGtp, &myGtp, true,
+                                         myGtp, 2, myGtp, &myGtp, true
   #ifdef USE_EEPROM_IO 
                                          ,0xFFFF
   #endif
@@ -462,8 +462,8 @@ int main()
   #if defined(USE_DIN_9684)
                                                 0, 0x5, 0x0, 0xFF,
   #endif
-                                                myGtp, 2, myGtp, &myGtp, true,
-  #ifdef USE_EEPROM_IO 
+                                                myGtp, 2, myGtp, &myGtp, true
+  #ifdef USE_EEPROM_IO
                                                 ,0xFFFF
   #endif
                                                 );
