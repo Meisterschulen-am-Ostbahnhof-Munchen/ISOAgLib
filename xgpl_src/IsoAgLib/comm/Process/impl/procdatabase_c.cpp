@@ -230,7 +230,12 @@ ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
 void ProcDataBase_c::processMsg() {
 
   // generalize command
-  if (!getProcessInstance4Comm().data().resolveCommandType())
+  if (!getProcessInstance4Comm().data().resolveCommandType(
+#ifdef USE_ISO_11783
+    elementDDI()
+#endif
+       )
+     )
     // failure
     return;
 

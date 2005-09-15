@@ -784,13 +784,18 @@ void ProcessPkg_c::useTermGtpForLocalProc(const GetyPos_c& rc_gtp, const GetyPos
 
 /**
   extract data from DIN/ISO commands and save it to member class
+  @param refl_elementDDI
 */
-bool ProcessPkg_c::resolveCommandType()
+bool ProcessPkg_c::resolveCommandType(
+#ifdef USE_ISO_11783
+  const std::list<IsoAgLib::ElementDDI_s>& refl_elementDDI
+#endif
+)
 {
 
   bool b_isSetpoint = false;
   bool b_isRequest = false;
-  GeneralCommand_c::ValueGroup_t en_valueGroup;
+  GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue;
   GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
 
   if ( identType() == Ident_c::StandardIdent) {
@@ -927,6 +932,18 @@ bool ProcessPkg_c::resolveCommandType()
         break;
     }
 
+    for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter_elementDDI = refl_elementDDI.begin();
+         iter_elementDDI != refl_elementDDI.end();
+         iter_elementDDI++)
+    {
+      if ( (iter_elementDDI->ui16_DDI == DDI()) && (iter_elementDDI->ui16_element == element()) )
+      {
+        b_isSetpoint = iter_elementDDI->b_isSetpoint;
+        en_valueGroup = iter_elementDDI->en_valueGroup;
+      }
+    }  
+
+#if 0
     // decide setpoint/measurement
 
    b_isSetpoint = true;
@@ -991,6 +1008,8 @@ bool ProcessPkg_c::resolveCommandType()
       b_isSetpoint = false;
       en_valueGroup = GeneralCommand_c::exactValue;
     }
+#endif
+
 
 #endif
 

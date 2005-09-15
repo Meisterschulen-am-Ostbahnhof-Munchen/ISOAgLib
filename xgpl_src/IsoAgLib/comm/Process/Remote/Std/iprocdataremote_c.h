@@ -220,10 +220,8 @@ public:
 
     const ElementDDI_s s_tmpElementDDI[2] =
     {
-      // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
-      // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
-      // ignores theses parameters and takes to the (only) ones which are present
-      {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
+      // if this constructor is used => only exact measurement possible
+      {rui16_DDI, rui16_element, false, GeneralCommand_c::exactValue},
       {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
     };
 
@@ -323,10 +321,8 @@ public:
   {
      const ElementDDI_s s_tmpElementDDI[2] =
      {
-       // settings for b_isSetpoint and en_valueGroup are not important because we have only one DDI/element pair
-       // in this case deriving the proper DDI/element before sending in ProcDataBase_c::resolvGtpSetBasicSendFlags
-       // ignores theses parameters and takes to the (only) ones which are present
-       {rui16_DDI, rui16_element, true, GeneralCommand_c::exactValue},
+       // if this init is used => only exact measurement possible
+       {rui16_DDI, rui16_element, false, GeneralCommand_c::exactValue},
        {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
      };
 

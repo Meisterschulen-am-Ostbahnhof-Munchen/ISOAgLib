@@ -97,6 +97,8 @@
 
 #ifdef USE_ISO_11783
   #include <IsoAgLib/driver/can/impl/ident_c.h>
+  #include "../elementddi_s.h"
+  #include <list>
 #endif
 
 namespace __IsoAgLib {
@@ -465,8 +467,14 @@ public:
   void setData(uint8_t rb_pos, uint8_t rb_val){pb_procData[rb_pos] = rb_val;};
   /**
     extract data from DIN/ISO commands and save it to member class
+    @param refl_elementDDI
   */
-  bool resolveCommandType();
+  bool resolveCommandType(
+#ifdef USE_ISO_11783
+    const std::list<IsoAgLib::ElementDDI_s>& refl_elementDDI
+#endif
+  );
+  
   /**
     overloaded virtual function to translate the string data into flag values;
     needed for assigning informations from another CANPkg_c or CANPkgExt
