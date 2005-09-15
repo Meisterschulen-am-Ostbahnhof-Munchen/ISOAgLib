@@ -248,27 +248,48 @@ int main()
   // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=1, INST=0)
   // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
   // the pointer to myGtp helps automatic update of GETY_POS, mark this value as NOT cumulated (default)
+  const ElementDDI_s s_myOnoff[2] =
+  { 
+    // DDI 141, element 0
+    {141, 0, true, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
   IsoAgLib::iProcDataLocal_c c_myOnoff(
     #ifdef USE_ISO_11783
-    141 /*DDI*/, 0 /*element*/,
+    s_myOnoff,
     #endif
     #ifdef USE_DIN_9687
     0, 0x1, 0x0, 0xFF,
     #endif
     myGtp, 2, myGtp, &myGtp, false);
   // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=3, INST=1)
+  const ElementDDI_s s_myWorkWidth[2] =
+  { 
+    // DDI 67, element 0
+    {67, 0, true, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
   IsoAgLib::iProcDataLocal_c c_myWorkWidth(
     #ifdef USE_ISO_11783
-    67 /*DDI*/, 0 /*element*/,
+    s_myWorkWidth,
     #endif
     #ifdef USE_DIN_9687
     0, 0x3, 0x1, 0xFF,
     #endif
     myGtp, 2, myGtp, &myGtp, false);
   // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=5, INST=0)
+  const ElementDDI_s s_myApplicationRate[2] =
+  { 
+    // DDI 7, element 0
+    {7, 0, true, GeneralCommand_c::exactValue},
+    // termination entry
+    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+  };
   IsoAgLib::iProcDataLocal_c c_myApplicationRate(
     #ifdef USE_ISO_11783
-    0x0007 /*DDI*/, 0 /*element*/,
+    s_myApplicationRate,
     #endif
     #ifdef USE_DIN_9687
     0, 0x5, 0x0, 0xFF,
