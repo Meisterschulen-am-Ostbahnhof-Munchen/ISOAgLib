@@ -339,6 +339,8 @@ ISOTerminal_c::singletonInit()
   b_receiveFilterCreated = false;
 
   vtAliveNew = false;
+	
+	b_checkSameCommand = true;
 }
 
 /**
@@ -1523,7 +1525,7 @@ bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableR
   #else
   std::queue<SendUpload_c>::iterator i_sendUpload;
   #endif
-  if (b_enableReplaceOfCmd) {
+  if (b_checkSameCommand && b_enableReplaceOfCmd) {
     //get first equal command in queue
     for (i_sendUpload = q_sendUpload.begin(); (p_queue == NULL) && (i_sendUpload != q_sendUpload.end()); i_sendUpload++)
     {

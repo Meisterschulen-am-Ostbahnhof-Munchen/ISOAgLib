@@ -943,8 +943,11 @@
     #include <iostream>
     #include <fstream>
     #define EXTERNAL_DEBUG_DEVICE std::cout
+  	#define EXTERNAL_DEBUG_DEVICE_ENDL std::endl
   #else
     #define EXTERNAL_DEBUG_DEVICE IsoAgLib::getIrs232Instance()
+  	#define EXTERNAL_DEBUG_DEVICE_ENDL "\n"
+
   #endif
 #endif
 /*@}*/

@@ -145,6 +145,7 @@ bool isSystemOpened( void )
 /** max amount of task triggered WD resets */
 static const uint16_t cui16_maxTaskTriggeredWdResets = 40;
 
+//TEST static const uint16_t cui16_maxTaskTriggeredWdResets = 400;
 /** counter for task triggered WD events
     --> the application called function triggerWd()
 		    resets this count to 0;

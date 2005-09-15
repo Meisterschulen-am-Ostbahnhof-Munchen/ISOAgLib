@@ -102,6 +102,9 @@ typedef __IsoAgLib::ISOTerminal_c::vtCapabilities_s ivtCapabilities_s;
 
   uint32_t getUploadBufferSize () { return ISOTerminal_c::getUploadBufferSize (); };
 
+  void enableSameCommandCheck() { ISOTerminal_c::enableSameCommandCheck(); };
+  void disableSameCommandCheck() { ISOTerminal_c::disableSameCommandCheck(); };
+
  private:
   /** allow getIisoTerminalInstance() access to shielded base class.
       otherwise __IsoAgLib::getIsoTerminalInstance() wouldn't be accepted by compiler

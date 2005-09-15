@@ -471,6 +471,9 @@ public:
 
   void dumpQueue();
 
+  void enableSameCommandCheck() { b_checkSameCommand = true; };
+	void disableSameCommandCheck() { b_checkSameCommand = false; };
+
 private:
   friend class SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c);
   /** private constructor which prevents direct instantiation in user application
@@ -510,6 +513,8 @@ private: // attributes
   bool b_receiveFilterCreated;
 
   bool vtAliveNew;
+
+  bool b_checkSameCommand;
 
   /** gets set as soon as the first "VT Status Message" gets received */
   uint8_t vtSourceAddress;
