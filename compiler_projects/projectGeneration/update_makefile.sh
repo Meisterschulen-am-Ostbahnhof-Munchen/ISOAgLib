@@ -811,13 +811,23 @@ function create_autogen_project_config()
 	echo -e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
+
+  echo "// Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory." >> $CONFIG_NAME
+  echo "// Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian." >> $CONFIG_NAME
+  echo "// Please check the manual of your targret cpu. This setting is used to activate some quick number conversion algorithms," >> $CONFIG_NAME
+  echo "// which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO and DIN ) - and other way." >> $CONFIG_NAME
+	if [ $USE_LITTLE_ENDIAN_CPU -gt 0 ] ; then
+		echo -e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
+	else
+		echo -e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
+	fi
+
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME
 	fi
 	if [ $PROC_LOCAL -gt 0 ] ; then
 		echo -e "#ifndef USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE\t#define USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-
 
 	echo "// Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed" >> $CONFIG_NAME
 	echo "// Strong Advice: Don't activate this, as long your target has not too tight memory restrictions" >> $CONFIG_NAME
