@@ -95,6 +95,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # variables
 # if one of the following variables isn't set
 # the corresponding default values are used
+# + USE_LITTLE_ENDIAN_CPU=1 --> most CPU types have little endian number variable representation -> number variable can be converted directly from int variable memory representation into CAN little endian string
 # + USE_CAN_DRIVER="simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" -> select wanted driver connection for CAN
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
@@ -145,6 +146,11 @@ function check_set_correct_variables()
 
 	if [ "A$OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" = "A" ] ; then
   	OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
+  fi
+
+  # set default USE_LITTLE_ENDIAN_CPU, so that quick number variable to CAN string conversions are possible
+  if [ "A$USE_LITTLE_ENDIAN_CPU" = "A" ] ; then
+  	USE_LITTLE_ENDIAN_CPU=1
   fi
 
 
@@ -1533,6 +1539,8 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     ( "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte" ).
+  --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
+  --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
 
 $0 parses the selected project configuration file and overwrites the default values for all contained settings.
 It collects then the corresponding files which can then be imported to an individual IDE.
@@ -1585,6 +1593,12 @@ for option in "$@"; do
 			;;
 		--pc-rs232-driver=*)
 			PARAMETER_RS232_DRIVER=`echo "$option" | sed 's/--pc-rs232-driver=//'`
+			;;
+		--little-endian-cpu)
+			PARAMETER_LITTLE_ENDIAN_CPU=1
+			;;
+		-- big-endian-cpu)
+			PARAMETER_LITTLE_ENDIAN_CPU=0
 			;;
 		-*)
 			echo "Unrecognized option $option'" 1>&2
@@ -1792,6 +1806,16 @@ case "$USE_RS232_DRIVER" in
 		exit 1
 		;;
 esac
+
+# check for little/big endian setting
+if [ "A$PARAMETER_LITTLE_ENDIAN_CPU" != "A" ] ; then
+  USE_LITTLE_ENDIAN_CPU=$PARAMETER_LITTLE_ENDIAN_CPU
+fi
+if [ $USE_LITTLE_ENDIAN_CPU -lt 1 ] ; then
+  echo "Configure for BIG ENDIAN CPU"
+else
+	echo "Configure for LITTLE ENDIAN CPU"
+fi
 
 
 # call the main function to create

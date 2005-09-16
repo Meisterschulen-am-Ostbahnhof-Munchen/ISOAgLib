@@ -87,6 +87,12 @@ ISO_AG_LIB_PATH="../.."
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
+
+# specify integer number memory representation type: LITTLE or BIG ENDIAN
+# default is for most targets: LITTLE -> USE_LITTLE_ENDIAN_CPU=1
+# typical cases for BIG ENDIAN are some ARM and mostly all Motorola 68k and PowerPC CPUs
+# USE_LITTLE_ENDIAN_CPU=1
+
 # select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
