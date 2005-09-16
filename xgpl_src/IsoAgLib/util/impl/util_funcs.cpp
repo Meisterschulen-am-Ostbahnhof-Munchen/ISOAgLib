@@ -84,6 +84,9 @@
 #include "util_funcs.h"
 #include <cstring>
 #include <IsoAgLib/util/config.h>
+#ifdef WIN32
+#include <stdio.h>
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
