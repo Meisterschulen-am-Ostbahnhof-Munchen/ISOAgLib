@@ -1,8 +1,8 @@
 /***************************************************************************
                           config.h  -  system dependent configs, defines and includes
-                             -------------------                                         
-    begin                : Thu Jul 29 1999                                           
-    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                         
+                             -------------------
+    begin                : Thu Jul 29 1999
+    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler
 						 : This file was based on the corresponding file in
 						 : the ESX HAL and modified for the ESXu HAL.
 						 : These changes (C) 2004 - 2005 Michael D. Schmidt
@@ -66,6 +66,9 @@
 
 /** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */
 #define FLOAT_WORD_ORDER WORD_HI_LO
+
+/** define size of int */
+#define SIZEOF_INT 2
 
 /** define suitable keyword for huge memory type */
 #define HUGE_MEM huge

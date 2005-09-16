@@ -102,7 +102,7 @@
   #include <IsoAgLib/comm/Multipacket/istream_c.h>
 #endif
 #include <IsoAgLib/util/config.h>
-#include <cmath>
+#include <IsoAgLib/util/impl/util_funcs.h>
 #include "base_c.h"
 
 #include <time.h>
@@ -170,7 +170,7 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
 
   // set the timestamps to 0
   ui8_lastBase1 = ui8_lastBase2 = ui8_lastBase3 = ui8_lastFuel
-    = ui8_lastCalendar = 0;
+      = ui8_lastCalendar = 0;
   #ifdef USE_DIN_9684
   i16_rearLeftDraft = i16_rearRightDraft = i16_rearDraftNewton = NO_VAL_16S;
   ui8_rearDraftNominal = NO_VAL_8;
@@ -182,7 +182,7 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
   }
   #endif
   #ifdef USE_ISO_11783
-  ui8_lastIsoBase1 = ui8_lastIsoBase2 = ui8_lastIsoCalendar = 0;
+  ui8_lastIsoBase1 = ui8_lastIsoBase2 = ui8_lastIsoCalendar = ui8_lastIsoGps = 0;
   t_frontPtoEngaged = t_rearPtoEngaged
   = t_frontPto1000 = t_rearPto1000
   = t_frontPtoEconomy = t_rearPtoEconomy = t_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
@@ -196,21 +196,21 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
   {
     b_isoFilterCreated = false;
 
-    // *************************************************************************************************
-    // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
-    // Set GPS Lat/Lon values to 0
-    i32_latitudeDegree10Minus7 = 0;
-    i32_longitudeDegree10Minus7 = 0;
-    ui8_satelliteCnt = 0;
-    __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true);
-    __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true);
-    // *************************************************************************************************
+  // *************************************************************************************************
+  // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
+  // Set GPS Lat/Lon values to 0
+  i32_latitudeDegree10Minus7 = 0;
+  i32_longitudeDegree10Minus7 = 0;
+  ui8_satelliteCnt = 0;
+  __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, true);
+  __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true, true);
+  // *************************************************************************************************
 
-    // *************************************************************************************************
-    // Added by Martin Wodok to accomodate LANGUAGE_PGN Messages:
-    b_languageVtReceived = false;
-    b_languageTecuReceived = false;
-    // *************************************************************************************************
+  // *************************************************************************************************
+  // Added by Martin Wodok to accomodate LANGUAGE_PGN Messages:
+  b_languageVtReceived = false;
+  b_languageTecuReceived = false;
+  // *************************************************************************************************
   }
   #endif
   i32_lastCalendarSet = 0;
@@ -294,9 +294,10 @@ void Base_c::config(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySen
 bool Base_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
                                 uint32_t /*rui32_totalLen */)
 { // ~X2C
-  if ( ( rc_ident.getPgn() == NMEA_GPS_POSITON_DATA_PGN       )
-    || ( rc_ident.getPgn() == NMEA_GPS_DIRECTION_DATA_PGN ) )
-  { // this a NMEA multi stream of interest
+  if ( ( ( rc_ident.getPgn() == NMEA_GPS_POSITON_DATA_PGN   )
+      || ( rc_ident.getPgn() == NMEA_GPS_DIRECTION_DATA_PGN ) )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataGps   ) == 0 ) )
+  { // this a NMEA multi stream of interest where we don't send it
     return true;
   }
   else
@@ -350,46 +351,30 @@ void Base_c::reactOnAbort(IsoAgLib::iStream_c* /*rpc_stream*/)
 
 void getDegree10Minus7FromStream( IsoAgLib::iStream_c& refc_stream, int32_t& refi32_result )
 {
-  uint8_t tempValue[4];
+  double d_temp;
   int32_t i32_temp;
 
-  // first read first 3Byte away - we don't need them, as resolution with 10e-7 is enough
-  refc_stream >> tempValue[0]; refc_stream >> tempValue[0];refc_stream >> tempValue[0];
-  // only take Byte4 to get enough resolution
-  refc_stream >> tempValue[0];
-  refi32_result = int32_t(double(tempValue[0]) * (10.0e-9 * double(0x1000000)));
-  refc_stream >> tempValue[0];
-  refc_stream >> tempValue[1];
-  refc_stream >> tempValue[2];
-  refc_stream >> tempValue[3];
-  i32_temp = ( int32_t(tempValue[0]) | ( int32_t(tempValue[1]) << 8 ) | ( int32_t(tempValue[2]) << 16 ) | ( int32_t(tempValue[3]) << 24 ) );
-  // we take only the higher 4 Bytes
-  // --> Byte5 needs scaling factor 0x100000000 in relation to complete 64Bit number to get same base scaling factor as
-  //     complete 64Bit number
-  // ==> the 64Bit value would have 10.0e-16 while we want 10.0e-7 --> multiply the result afterwards with 10.0e-9
-  refi32_result += int32_t(double(i32_temp) * (10.0e-9 * CNAMESPACE::pow(2.0,32.0)));
+  convertIstream( refc_stream, i32_temp );
+  d_temp = double(i32_temp);
+
+  convertIstream( refc_stream, i32_temp );
+  d_temp += ( double(i32_temp) * 4294967296.0 );
+  // NMEA sends with 10.0e-16, while normally 10.0e-7 is enough -> mult with 10.0e-9
+  refi32_result = int32_t( d_temp * 10.0e-9 );
 }
 
 void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& refc_stream, uint32_t& refui32_result )
 {
-  uint8_t tempValue[4];
+  double d_temp;
   uint32_t ui32_temp;
 
-  // first read first 3Byte away - we don't need them, as resolution with 10e-7 is enough
-  refc_stream >> tempValue[0]; refc_stream >> tempValue[0];refc_stream >> tempValue[0];
-  // only take Byte4 to get enough resolution
-  refc_stream >> tempValue[0];
-  refui32_result = uint32_t(double(tempValue[0]) * (10.0e-4 * double(0x1000000)));
-  refc_stream >> tempValue[0];
-  refc_stream >> tempValue[1];
-  refc_stream >> tempValue[2];
-  refc_stream >> tempValue[3];
-  ui32_temp = ( uint32_t(tempValue[0]) | ( uint32_t(tempValue[1]) << 8 ) | ( uint32_t(tempValue[2]) << 16 ) | ( uint32_t(tempValue[3]) << 24 ) );
-  // we take only the higher 4 Bytes
-  // --> Byte5 needs scaling factor 0x100000000 in relation to complete 64Bit number to get same base scaling factor as
-  //     complete 64Bit number
-  // ==> the 64Bit value would have 10.0e-6 while we want 10.0e-2 --> multiply the result afterwards with 10.0e-4
-  refui32_result += uint32_t(double(ui32_temp) * (10.0e-4 * std::pow(2.0,32.0)));
+  convertIstream( refc_stream, ui32_temp );
+  d_temp = double(ui32_temp);
+
+  convertIstream( refc_stream, ui32_temp );
+  d_temp += double(ui32_temp);
+  // NMEA sends with 10.0e-6, while normally 10.0e-2 is enough -> mult with 10.0e-4
+  refui32_result = uint32_t( d_temp * 10.0e-4 );
 }
 
 // //////////////////////////////// +X2C Operation 5703 : reactOnLastChunk
@@ -401,6 +386,30 @@ bool Base_c::reactOnLastChunk( IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
 { // ~X2C
   // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
   const uint8_t cui8_sa = refc_stream.getIdent().getSa();
+  GetyPos_c c_tempGtp( GetyPos_c::GetyPosUnspecified );
+  if (getIsoMonitorInstance4Comm().existIsoMemberNr(cui8_sa))
+  { // the corresponding sender entry exist in the monitor list
+    c_tempGtp = getIsoMonitorInstance4Comm().isoMemberNr(cui8_sa).gtp();
+  }
+  const uint16_t ui16_actTime100ms = (data().time() / 100);
+
+  // check if we want to process the information
+  if (
+      ( ( t_mySendSelection & IsoAgLib::BaseDataGps   ) != 0 ) // I'm the sender
+      || ( // one of the following conditions must be true
+      (c_sendGpsGtp != c_tempGtp) // actual sender different to last
+      && (c_sendGpsGtp.isSpecified() ) // last sender has correctly claimed address member
+      && ((ui16_actTime100ms - ui8_lastBase1) <= 10) // last sender is still active
+         )
+     )
+  { // DO NOT take this message, as this might be a falsly double source
+    return false;
+  }
+
+  // set last time and GTP information
+  ui8_lastIsoGps = ui16_actTime100ms;
+  c_sendGpsGtp = c_tempGtp;
+
 
   uint8_t tempValue[4];
   int16_t i16_temp;
@@ -408,7 +417,8 @@ bool Base_c::reactOnLastChunk( IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
   switch ( rc_ident.getPgn() )
   {
     case NMEA_GPS_POSITON_DATA_PGN: // 0x01F805LU -> 129 029
-    { // Sequence ID was already read with refc_stream.getFirstByte()
+    { // Sequence ID as first byte must be fetched specifically
+      ui8_sequenceID = refc_stream.getFirstByte();
       // --> continue with Byte2 ...
       uint16_t ui16_daysSince1970;
       uint32_t ui32_milliseconds;
@@ -441,7 +451,8 @@ bool Base_c::reactOnLastChunk( IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
       getAltitude10Minus2FromStream( refc_stream, ui32_altitudeCm );
       // now fetch Quality - gps-mode
       refc_stream >> tempValue[0];
-      t_gpsMode = IsoAgLib::IsoGpsRecMode_t(tempValue[0] >> 4);
+      t_gnssType   = IsoAgLib::IsoGnssType_t(tempValue[0] & 0xF );
+      t_gnssMethod = IsoAgLib::IsoGnssMethod_t(tempValue[0] >> 4 );
       // ignore the next byte as GNSS Integrity is not interesting for our use
       refc_stream >> tempValue[0]; // just read the byte out
       // now fetch the number of satelites

@@ -63,6 +63,9 @@
 /** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */
 #define FLOAT_WORD_ORDER WORD_LO_HI
 
+/** define size of int */
+#define SIZEOF_INT 4
+
 /** don't use CanEn check */
 // #define NO_CAN_EN_CHECK
 

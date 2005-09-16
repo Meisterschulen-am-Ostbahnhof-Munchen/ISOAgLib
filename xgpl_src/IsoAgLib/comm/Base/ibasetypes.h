@@ -66,20 +66,28 @@ namespace IsoAgLib {
     IsoNotAvailable = 3 ///< corresponding function is not available/not implemented in service provider
   } IsoActiveFlag_t;
 
-  /** GPS receive mode */
+  /** GPS GNSS Method */
   typedef enum {
-    IsoNoGps            = 0,
-    IsoGPS              = 1,
-    IsoDGPS             = 2,
-    IsoPreciseGps       = 3,
-    IsoRtkInt           = 4,
-    IsoRtkFloat         = 5,
-    IsoEstimatedModePos = 6,
-    IsoManualInputPos   = 7,
-    IsoSimulatePos      = 8,
-    IsoErrorPos         = 14,
-    IsoNullPos          = 15
-  } IsoGpsRecMode_t ;
+    IsoNoGps           = 0,
+    IsoGnssFix         = 1,
+    IsoDgnssFix        = 2,
+    IsoGnssPrecise     = 3,
+    IsoRtkFixedInteger = 4,
+    IsoRtkFloat        = 5,
+    IsoDrEstimated     = 6,
+    IsoGnssManual      = 7,
+    IsoGnssSimulated   = 8,
+    IsoGnssError       = 14,
+    IsoGnssNull        = 15
+  } IsoGnssMethod_t;
+  /** type of GNSS system */
+  typedef enum {
+    IsoGnssGps            = 0,
+    IsoGnssGlonass        = 1,
+    IsoGnssGpsGlonass     = 2,
+    IsoGnssGpsSbas        = 3,
+    IsoGnssGpsSbasGlonass = 4
+  } IsoGnssType_t;
   #endif
 
   /** define the main groups of base data types */

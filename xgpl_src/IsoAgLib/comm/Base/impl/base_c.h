@@ -629,7 +629,9 @@ public: // Public methods
   /** deliver GPS altitude - [cm] */
   uint32_t getGpsAltitudeCm( void ) const { return ui32_altitudeCm; };
   /** deliver GPS receive qualitiy */
-  IsoAgLib::IsoGpsRecMode_t getGpsMode( void ) const { return t_gpsMode;};
+  IsoAgLib::IsoGnssMethod_t getGnssMode( void ) const { return t_gnssMethod;};
+  /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
+  IsoAgLib::IsoGnssType_t getGnssType(void) const { return t_gnssType;};
   /** deliver GPS speed as [cm/s] */
   uint16_t getGpsSpeedCmSec( void ) const { return ui16_speedCmSec;};
   /** deliver GPS Heading [1x10E-4rad] */
@@ -741,6 +743,8 @@ private:
   uint8_t ui8_lastIsoBase2;
   /** last time of ISO calendar msg [100ms] */
   uint8_t ui8_lastIsoCalendar;
+  /** last time of ISO GPS msg [100ms] */
+  uint8_t ui8_lastIsoGps;
   /** key switch state */
   IsoAgLib::IsoActiveFlag_t t_keySwitch;
   /** maximum time of tractor power in [min] */
@@ -792,8 +796,10 @@ private:
   uint16_t ui16_headingRad10Minus4;
   /** GPS altitude - [cm] */
   uint32_t ui32_altitudeCm;
-  /** GPS receive qualitiy */
-  IsoAgLib::IsoGpsRecMode_t t_gpsMode;
+  /** GNSS Method and Quality */
+  IsoAgLib::IsoGnssMethod_t t_gnssMethod;
+  /** GNSS Type */
+  IsoAgLib::IsoGnssType_t t_gnssType;
   /** GTP of GPS data sender */
   GetyPos_c c_sendGpsGtp;
   /** number of received satellites */
@@ -802,6 +808,17 @@ private:
   int16_t i16_hdop;
   /** PDOP with scaling [1x10E-2] */
   int16_t i16_pdop;
+  /** integrity of GPS signal */
+  uint8_t ui8_integrityAndReserved;
+  /** sequence ID of GPS string */
+  uint8_t ui8_sequenceID;
+  /** type and method of */
+
+  uint8_t TypeandMethod;
+  uint32_t GeoidalSeparation;
+  uint8_t NoRefStations;
+  uint16_t TypeandStation[252]; // max number of stations as define in nmea2000 protocol
+  uint16_t DGPSAge[252];
 
   /** VT language information */
   uint8_t p8ui8_languageVt[8];

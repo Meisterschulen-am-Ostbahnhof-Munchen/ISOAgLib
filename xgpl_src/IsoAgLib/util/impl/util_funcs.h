@@ -48,43 +48,46 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #ifndef UTIL_FUNCS_H
 #define UTIL_FUNCS_H
 
 #include <IsoAgLib/typedef.h>
+#ifdef USE_DATASTREAMS_IO
+#include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -180,6 +183,81 @@ uint16_t sizeListTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 );
 */
 uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity );
 
+#ifdef USE_DATASTREAMS_IO
+/** convert receive multistream into an unsigned variable */
+template<class T> bool convertIstream( IsoAgLib::iStream_c& refc_stream, T& ref_result )
+{
+  uint8_t ui8_temp;
+  refc_stream >> ui8_temp;
+  ref_result = T(ui8_temp);
+  unsigned int ind = 1;
+  for ( ; ( ( ind < sizeof(T) ) && ( refc_stream.getNotParsedSize() > 0 ) ); ind++ )
+  {
+    refc_stream >> ui8_temp;
+    ref_result |= (T(ui8_temp) << (8*ind));
+  }
+  if ( ind == sizeof(T) ) return true;  // all result bytes were read
+  else                    return false; // less bytes than inside the result type transferred
+}
 
+/** convert little endian byte string into an unsigned variable */
+template<class T> void convertLittleEndianString( const uint8_t* rpui8_src, T& ref_result )
+{
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( &ref_result, rpui8_src, sizeof(T) );
+  #else
+  ref_result = T(rpui8_src[0]);
+  for ( unsigned int ind = 1; ( ind < sizeof(T) ); ind++ )
+  {
+    ref_result |= (T(rpui8_src[ind]) << (8*ind));
+  }
+  #endif
+}
+
+/** convert number reference variable to little endian byte string */
+template<class T> void numberRef2LittleEndianString( const T& refc_src, uint8_t* pui8_target )
+{
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( pui8_target, &refc_src, sizeof(T) );
+  #else
+  const unsigned int BitSize = sizeof(T) * 8;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+    *pui8_target = ((refc_src >> ind) & 0xFF);
+    pui8_target++;
+  }
+  #endif
+}
+/** convert number call-by-val variable to little endian byte string */
+template<class T> void number2LittleEndianString( const T rt_src, uint8_t* pui8_target )
+{
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( pui8_target, &rt_src, sizeof(T) );
+  #else
+  const unsigned int BitSize = sizeof(T) * 8;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+    *pui8_target = ((rt_src >> ind) & 0xFF);
+    pui8_target++;
+  }
+  #endif
+}
+
+
+/** convert big endian textual number representation into little endian uint8_t string of specified size */
+void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target, unsigned int size );
+
+/** convert big endian textual unsigned int 8Bit number representation into little endian uint8_t string */
+void bigEndianHexNumberText2CanStringUint8( const char* rc_src, uint8_t* pui8_target );
+/** convert big endian textual unsigned int 16Bit number representation into little endian uint8_t string of specified size */
+void bigEndianHexNumberText2CanStringUint16( const char* rc_src, uint8_t* pui8_target );
+/** convert big endian textual unsigned int 32Bit number representation into little endian uint8_t string of specified size */
+void bigEndianHexNumberText2CanStringUint32( const char* rc_src, uint8_t* pui8_target );
+/** convert big endian textual unsigned int 64Bit number representation into little endian uint8_t string of specified size */
+void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_target );
+
+/** convert big endian textual unsigned int up to 16Bit number representation into little endian uint8_t string of specified size */
+void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_target );
+#endif
 } // end of namespace __IsoAgLib
 #endif

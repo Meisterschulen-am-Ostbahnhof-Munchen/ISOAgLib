@@ -154,17 +154,17 @@ void float2Int(const float *const pf_from, void *const pvTo)
   - slist<T> with given size of T
   - add the overhead per node for slist<T> ( pointer to next item )
   - add the overhead for malloc_alloc Allocator which calls malloc for each single node ( HEAP block pointer )
-  - add the overhead for alignment based on sizeof(int)
+  - add the overhead for alignment based on SIZEOF_INT
   @param rui16_sizeT sizeof(T) -> size of the stored class
   @param rui16_cnt amount of items ( default: 1 )
   @return amount of corresponding byte in heap
 */
 uint16_t sizeSlistTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt )
 { // size calculated from: stored class size + pointer to next item + block pointers in MALLOC HEAP structure
-	const uint16_t unalignedItemSize = ( rui16_sizeT + 3 * sizeof(void*) );
+  const uint16_t unalignedItemSize = ( rui16_sizeT + 3 * sizeof(void*) );
   // regard alignment
-	const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
-	const uint16_t alignedItemSize= (unalignedItemSize + alignmentBase) & (unsigned int)~alignmentBase;
+  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
+  const uint16_t alignedItemSize= (unalignedItemSize + alignmentBase) & (unsigned int)~alignmentBase;
 
   return ( alignedItemSize * rui16_cnt );
 }
@@ -173,24 +173,24 @@ uint16_t sizeSlistTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt )
   - list<T> with given size of T
   - add the overhead per node for list<T> ( TWO pointer to next and prev item )
   - add the overhead for malloc_alloc Allocator which calls malloc for each single node ( HEAP block pointer )
-  - add the overhead for alignment based on sizeof(int)
+  - add the overhead for alignment based on SIZEOF_INT
   @param rui16_sizeT sizeof(T) -> size of the stored class
   @param rui16_cnt amount of items ( default: 1 )
   @return amount of corresponding byte in heap
 */
 uint16_t sizeListTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_cnt )
 { // size calculated from: stored class size + pointer to next+prev item + block pointers in MALLOC HEAP structure
-	const uint16_t unalignedItemSize = ( rui16_sizeT + 4 * sizeof(void*) );
+  const uint16_t unalignedItemSize = ( rui16_sizeT + 4 * sizeof(void*) );
   // regard alignment
-	const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
-	const uint16_t alignedItemSize= (unalignedItemSize + alignmentBase) & (unsigned int)~alignmentBase;
+  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
+  const uint16_t alignedItemSize= (unalignedItemSize + alignmentBase) & (unsigned int)~alignmentBase;
 
   return ( alignedItemSize * rui16_cnt );
 }
 /** calculate the total allocated HEAP for:
   - vector<T> with given size of T
   - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
-  - add the overhead for alignment based on sizeof(int)
+  - add the overhead for alignment based on SIZEOF_INT
   @param rui16_sizeT sizeof(T) -> size of the stored class
   @param rui16_capacity reserved space for vector<T> ( >= amount of currently stored items )
   @return amount of corresponding byte in heap
@@ -199,7 +199,7 @@ uint16_t sizeVectorTWithMalloc( uint16_t rui16_sizeT, uint16_t rui16_capacity )
 { // size calculated from: stored class size + block pointers in MALLOC HEAP structure
   const uint16_t sizeWithoutAlignment = (rui16_capacity * rui16_sizeT) + ( 2 * sizeof(void*) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
@@ -221,7 +221,7 @@ uint16_t getChunkedSize( uint16_t rui16_cnt )
   - add the overhead per node for slist<T> ( pointer to next item )
   - add the overhead caused by allocation large chunks of each 40 items
   - add overhead for linking the HEAP block by the lowloevel malloc
-  - add the overhead for alignment based on sizeof(int)
+  - add the overhead for alignment based on SIZEOF_INT
   @param rui16_sizeT sizeof(T) -> size of the stored class
   @param rui16_cnt amount of items ( default: 1 )
   @return amount of corresponding byte in heap
@@ -233,7 +233,7 @@ uint16_t sizeSlistTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt )
   const uint16_t sizeWithoutAlignment
     = ( ( ( rui16_sizeT + sizeof(void*) ) * chunkCnt ) + ( 2 * sizeof(void*) ) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
@@ -242,7 +242,7 @@ uint16_t sizeSlistTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt )
   - add the overhead per node for slist<T> ( pointers to next+prev item )
   - add the overhead caused by allocation large chunks of each 40 items
   - add overhead for linking the HEAP block by the lowloevel malloc
-  - add the overhead for alignment based on sizeof(int)
+  - add the overhead for alignment based on SIZEOF_INT
   @param rui16_sizeT sizeof(T) -> size of the stored class
   @param rui16_cnt amount of items ( default: 1 )
   @return amount of corresponding byte in heap
@@ -254,13 +254,13 @@ uint16_t sizeListTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt )
   const uint16_t sizeWithoutAlignment
     = ( ( ( rui16_sizeT + ( 2 * sizeof(void*) ) ) * chunkCnt ) + ( 2 * sizeof(void*) ) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 /** calculate the total allocated HEAP for:
   - vector<T> with given size of T
   - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
-  - add the overhead for alignment based on sizeof(int)
+  - add the overhead for alignment based on SIZEOF_INT
   @param rui16_sizeT sizeof(T) -> size of the stored class
   @param rui16_capacity reserved space for vector<T> ( >= amount of currently stored items )
   @return amount of corresponding byte in heap
@@ -271,10 +271,204 @@ uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity )
   // chunked amount of items stored in one compact vector
   const uint16_t sizeWithoutAlignment = (chunkCnt * rui16_sizeT) + ( 2 * sizeof(void*) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * sizeof(int) ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
+void int2littleEndianString( unsigned int input, uint8_t* pui8_target, unsigned int size )
+{
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( pui8_target,   &input, size );
+  #else
+  for ( unsigned int ind = 0; ind < size; ind++ )
+  {
+    pui8_target[ind] = ((input >> ( 8 * ind )) & 0xFF );
+  }
+  #endif
+}
 
+#if SIZEOF_INT == 1
+  #define SCANF_INT_STRING "%2x"
+#elif SIZEOF_INT == 2
+  #define SCANF_INT_STRING "%4x"
+#elif SIZEOF_INT == 4
+  #define SCANF_INT_STRING "%8x"
+#elif SIZEOF_INT == 8
+  #define SCANF_INT_STRING "%8x"
+#endif
+
+/** convert big endian textual number representation into little endian uint8_t string of specified size */
+void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target, unsigned int size )
+{
+  if ( NULL == rc_src ){std::memset( pui8_target, 0, size ); return;}
+  unsigned int temp;
+
+  const unsigned int inputLen = strlen(rc_src);
+  uint8_t* pui8_write = pui8_target;
+
+  int ind = inputLen - ( 2 * SIZEOF_INT );
+  for ( ; ind >= 0; ind -= ( 2 * SIZEOF_INT ) )
+  {
+    sscanf( (rc_src+ind), SCANF_INT_STRING, &temp );
+    int2littleEndianString( temp, pui8_write, SIZEOF_INT );
+    pui8_write += SIZEOF_INT;
+    if ( ( pui8_write - pui8_target ) > size ) break;
+  }
+  if ( ( ind < 0 ) && ( ind  > ( -1 * ( 2 * SIZEOF_INT ) ) ) )
+  {
+    unsigned ci_overhandByte = ind + ( 2 * SIZEOF_INT );
+    switch ( ci_overhandByte )
+    {
+      case 1:  case 2:  sscanf( rc_src, "%2x",  &temp );   break;
+      case 3:  case 4:  sscanf( rc_src, "%4x",  &temp );   break;
+      case 5:  case 6:  sscanf( rc_src, "%6x",  &temp );   break;
+      case 7:  case 8:  sscanf( rc_src, "%8x",  &temp );   break;
+      case 9:  case 10: sscanf( rc_src, "%10x", &temp );   break;
+      case 11: case 12: sscanf( rc_src, "%12x", &temp );   break;
+    }
+    unsigned int availableSize = size - ( pui8_write - pui8_target );
+    if ( ci_overhandByte < availableSize ) availableSize = ci_overhandByte;
+    int2littleEndianString( temp, pui8_write, availableSize );
+  }
+}
+
+#if SIZEOF_INT <= 2
+  #define SCANF_HEX_INT16_STRING "%4x"
+#else
+  #define SCANF_HEX_INT16_STRING "%4hx"
+#endif
+
+/** convert big endian textual unsigned int 8Bit number representation into little endian uint8_t string */
+void bigEndianHexNumberText2CanStringUint8( const char* rc_src, uint8_t* pui8_target )
+{
+  if ( NULL == rc_src ){std::memset( pui8_target, 0, 1 ); return;}
+  unsigned int temp;
+  sscanf( rc_src, "%2x",  &temp );
+  pui8_target[0] = ( temp & 0xFF );
+}
+/** convert big endian textual unsigned int 16Bit number representation into little endian uint8_t string of specified size */
+void bigEndianHexNumberText2CanStringUint16( const char* rc_src, uint8_t* pui8_target )
+{
+  if ( NULL == rc_src ){std::memset( pui8_target, 0, 2 ); return;}
+#if SIZEOF_INT <= 4
+  uint16_t temp;
+  sscanf( rc_src, SCANF_HEX_INT16_STRING, &temp );
+  #else
+  unsigned int temp;
+  sscanf( rc_src, "%4x",  &temp );
+  #endif
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( pui8_target,   &temp, 2 );
+  #else
+  pui8_target[0] =   ( temp        & 0xFF );
+  pui8_target[1] = ( ( temp >> 8 ) & 0xFF );
+  #endif
+}
+/** convert big endian textual unsigned int 32Bit number representation into little endian uint8_t string of specified size */
+void bigEndianHexNumberText2CanStringUint32( const char* rc_src, uint8_t* pui8_target )
+{
+  if ( NULL == rc_src ){std::memset( pui8_target, 0, 4 ); return;}
+#if SIZEOF_INT <= 2
+  uint32_t temp;
+  sscanf( rc_src, "%8lx", &temp );
+  #elif SIZEOF_INT == 4
+  uint32_t temp;
+  sscanf( rc_src, "%8x", &temp );
+  #else
+  unsigned int temp;
+  sscanf( rc_src, "%8x", &temp );
+  #endif
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( pui8_target,   &temp, 4 );
+  #else
+  pui8_target[0] =   ( temp         & 0xFF );
+  pui8_target[1] = ( ( temp >> 8  ) & 0xFF );
+  pui8_target[1] = ( ( temp >> 16 ) & 0xFF );
+  pui8_target[3] = ( ( temp >> 24 ) & 0xFF );
+  #endif
+}
+/** convert big endian textual unsigned int 64Bit number representation into little endian uint8_t string of specified size */
+void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_target )
+{
+  if ( NULL == rc_src ){std::memset( pui8_target, 0, 8 ); return;}
+#if SIZEOF_INT <= 2
+  uint32_t temp[2] = {0UL, 0UL};
+  const unsigned int len = strlen( rc_src );
+  const int lowerPartValStart = len - 8;
+  if ( lowerPartValStart >= 0 )
+  {
+    sscanf( rc_src+lowerPartValStart, "%8lx", &(temp[0]) );
+    switch ( lowerPartValStart )
+    {
+      case 0: break;
+      case 1: sscanf( rc_src, "%1lx", &(temp[1]) ); break;
+      case 2: sscanf( rc_src, "%2lx", &(temp[1]) ); break;
+      case 3: sscanf( rc_src, "%3lx", &(temp[1]) ); break;
+      case 4: sscanf( rc_src, "%4lx", &(temp[1]) ); break;
+      case 5: sscanf( rc_src, "%5lx", &(temp[1]) ); break;
+      case 6: sscanf( rc_src, "%6lx", &(temp[1]) ); break;
+      case 7: sscanf( rc_src, "%7lx", &(temp[1]) ); break;
+      case 8: sscanf( rc_src, "%8lx", &(temp[1]) ); break;
+    }
+  }
+  else
+  { // source string contains only digits for lower 4-byte value
+    sscanf( rc_src, "%8lx", &(temp[0]) );
+  }
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( pui8_target,   &(temp[0]), 4 );
+  std::memcpy( pui8_target+4, &(temp[1]), 4 );
+  #else
+  for ( unsigned int ind = 0; ind < 2; ind++ )
+  {
+    pui8_target[(ind*4)]   =   ( temp[ind]         & 0xFF );
+    pui8_target[(ind*4)+1] = ( ( temp[ind] >> 8  ) & 0xFF );
+    pui8_target[(ind*4)+2] = ( ( temp[ind] >> 16 ) & 0xFF );
+    pui8_target[(ind*4)+3] = ( ( temp[ind] >> 24 ) & 0xFF );
+  }
+  #endif
+#elif SIZEOF_INT == 4
+  uint64_t temp;
+  sscanf( rc_src, "%16llx", &temp );
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( pui8_target, &temp, 8 );
+  #else
+  for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
+  #endif
+#else
+  unsigned int temp;
+  sscanf( rc_src, "%16x", &temp );
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( pui8_target, &temp, 8 );
+  #else
+  for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
+  #endif
+#endif
+}
+
+#if SIZEOF_INT <= 2
+#define SCANF_DEC_INT16_STRING "%4d"
+#else
+#define SCANF_DEC_INT16_STRING "%4hd"
+#endif
+
+/** convert big endian textual unsigned int up to 16Bit number representation into little endian uint8_t string of specified size */
+void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_target )
+{
+  if ( NULL == rc_src ){std::memset( pui8_target, 0, 2 ); return;}
+#if SIZEOF_INT <= 4
+  uint16_t temp;
+  sscanf( rc_src, SCANF_DEC_INT16_STRING, &temp );
+#else
+  unsigned int temp;
+  sscanf( rc_src, "%4d",  &temp );
+#endif
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( pui8_target, &temp, 2 );
+  #else
+  pui8_target[0] =   ( temp        & 0xFF );
+  pui8_target[1] = ( ( temp >> 8 ) & 0xFF );
+  #endif
+}
 
 } // end of namespace __IsoAgLib

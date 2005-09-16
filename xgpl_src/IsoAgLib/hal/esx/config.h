@@ -66,6 +66,9 @@
 /** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */
 #define FLOAT_WORD_ORDER WORD_HI_LO
 
+/** define size of int */
+#define SIZEOF_INT 2
+
 /** define suitable keyword for huge memory type */
 #define HUGE_MEM huge
 /** the preprocessor can only distinguish between undefined or defined

@@ -500,7 +500,9 @@ public:
   /** deliver GPS altitude - [cm] */
   uint32_t getGpsAltitudeCm( void ) const { return Base_c::getGpsAltitudeCm(); };
   /** deliver GPS receive qualitiy */
-  IsoAgLib::IsoGpsRecMode_t getGpsMode( void ) const { return Base_c::getGpsMode();};
+  IsoGnssMethod_t getGnssMode( void ) const { return Base_c::getGnssMode();};
+  /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
+  IsoGnssType_t getGnssType(void) const { return Base_c::getGnssType();};
   /** deliver GPS speed as [cm/s] */
   uint16_t getGpsSpeedCmSec( void ) const { return Base_c::getGpsSpeedCmSec();};
   /** deliver GPS Heading [1x10E-4rad] */
