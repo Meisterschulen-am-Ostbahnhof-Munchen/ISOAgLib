@@ -651,7 +651,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
   DOMNamedNodeMap *pAttributes;
   char *node_name = XMLString::transcode(node->getNodeName());
   std::vector<uint16_t> vecstr_childID;
+  static std::vector<uint16_t> vecstr_childID_DVC;
   std::vector<uint16_t>::iterator it_childID;
+  static std::vector<uint16_t>::iterator it_childID_DVC;
 
   // all possible values of the objects
   unsigned int objChildObjects=0; //init for happy compiler
@@ -1020,14 +1022,21 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << uint16_t((objChildObjects >> 8) & 0xFF);
         buf_length += 2;
 
+        vecstr_childID_DVC.clear();
+
         for (it_childID = vecstr_childID.begin(); it_childID != vecstr_childID.end(); it_childID++)
         {
           buffer << ", " << uint16_t(*it_childID & 0xFF) << ", " << uint16_t((*it_childID >> 8) & 0xFF);
           buf_length += 2;
+          vecstr_childID_DVC.push_back(*it_childID);
         }
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
         vecstr_constructor[2] = vecstr_attrString[attrElement_number].c_str();
+        
+        // save vector of device element for later use in otDeviceProcessData
+        it_childID_DVC = vecstr_childID_DVC.begin();
+        
         break;
       case otDeviceProcessData:
       {
@@ -1115,7 +1124,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             str_designator.append(vecstr_attrString[attrCommand_type]);
 
             /* try with parent object id => first call takes this objID */
-            uint16_t ui16_newObjChildID = getID (str_designator.c_str(), false, objID, otDeviceProcessData);
+            //uint16_t ui16_newObjChildID = getID (str_designator.c_str(), false, objID, otDeviceProcessData);
+            uint16_t ui16_newObjChildID = 0;
+            if ( it_childID_DVC != vecstr_childID_DVC.end() )
+            {
+              ui16_newObjChildID =*it_childID_DVC;
+              it_childID_DVC++;
+            }
             
             //output: tableID & objID
             buffer  << ", \n'" << TableIDTable [otDeviceProcessDataCombination][0] << "', "
@@ -1226,7 +1241,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             fprintf( partFileA, "%s", buffer.str().c_str() );
             buffer.str("");
         }
-
+        
         break;
       }  
       case otDeviceProperty:
