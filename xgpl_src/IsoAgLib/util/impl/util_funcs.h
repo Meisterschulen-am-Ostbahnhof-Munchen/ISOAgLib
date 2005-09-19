@@ -185,21 +185,14 @@ uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity );
 
 #ifdef USE_DATASTREAMS_IO
 /** convert receive multistream into an unsigned variable */
-template<class T> bool convertIstream( IsoAgLib::iStream_c& refc_stream, T& ref_result )
-{
-  uint8_t ui8_temp;
-  refc_stream >> ui8_temp;
-  ref_result = T(ui8_temp);
-  unsigned int ind = 1;
-  for ( ; ( ( ind < sizeof(T) ) && ( refc_stream.getNotParsedSize() > 0 ) ); ind++ )
-  {
-    refc_stream >> ui8_temp;
-    ref_result |= (T(ui8_temp) << (8*ind));
-  }
-  if ( ind == sizeof(T) ) return true;  // all result bytes were read
-  else                    return false; // less bytes than inside the result type transferred
-}
-
+uint16_t convertIstreamUi16( StreamInput_c& refc_stream );
+/** convert receive multistream into an unsigned variable */
+int16_t convertIstreamI16( StreamInput_c& refc_stream );
+/** convert receive multistream into an unsigned variable */
+uint32_t convertIstreamUi32( StreamInput_c& refc_stream );
+/** convert receive multistream into an unsigned variable */
+int32_t convertIstreamI32( StreamInput_c& refc_stream );
+#endif
 /** convert little endian byte string into an unsigned variable */
 template<class T> void convertLittleEndianString( const uint8_t* rpui8_src, T& ref_result )
 {
@@ -258,6 +251,5 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
 
 /** convert big endian textual unsigned int up to 16Bit number representation into little endian uint8_t string of specified size */
 void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_target );
-#endif
 } // end of namespace __IsoAgLib
 #endif

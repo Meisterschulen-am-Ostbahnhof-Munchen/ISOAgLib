@@ -146,6 +146,55 @@ inline uint16_t sizeListTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1
 inline uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity )
   { return __IsoAgLib::sizeVectorTWithChunk( rui16_sizeT, rui16_capacity );};
 
+#ifdef USE_DATASTREAMS_IO
+/** convert receive multistream into an unsigned variable */
+template<class T> bool convertIstream( StreamInput_c& refc_stream, T& ref_result )
+{
+  const unsigned int size = sizeof(T);
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  uint8_t* pui8_writePointer = (uint8_t*)(&ref_result);
+  unsigned int ind = 0;
+  for ( ; ( ( ind < size ) && ( !refc_stream.eof() ) ); ind++ )
+  {
+    refc_stream >> *pui8_writePointer;
+    pui8_writePointer++;
+  }
+#else
+  uint8_t ui8_temp;
+  refc_stream >> ui8_temp;
+  ref_result = T(ui8_temp);
+  unsigned int ind = 1;
+  for ( ; ( ( ind < sizeof(T) ) && ( !refc_stream.eof() ) ); ind++ )
+  {
+    refc_stream >> ui8_temp;
+    ref_result |= (T(ui8_temp) << (8*ind));
+  }
+#endif
+  if ( ind == size ) return true;  // all result bytes were read
+  else return false;  // less bytes than inside the result type transferred
+}
+
+/** convert receive multistream into an unsigned variable */
+inline uint8_t convertIstreamUi8( StreamInput_c& refc_stream )
+{ return refc_stream.get(); };
+/** convert receive multistream into an unsigned variable */
+inline int8_t convertIstreamI8( StreamInput_c& refc_stream )
+{ return (int8_t)refc_stream.get(); };
+/** convert receive multistream into an unsigned variable */
+inline uint16_t convertIstreamUi16( StreamInput_c& refc_stream )
+{ return __IsoAgLib::convertIstreamUi16( refc_stream ); };
+/** convert receive multistream into an unsigned variable */
+inline int16_t convertIstreamI16( StreamInput_c& refc_stream )
+{ return __IsoAgLib::convertIstreamI16( refc_stream ); };
+/** convert receive multistream into an unsigned variable */
+inline uint32_t convertIstreamUi32( StreamInput_c& refc_stream )
+{ return __IsoAgLib::convertIstreamUi32( refc_stream ); };
+/** convert receive multistream into an unsigned variable */
+inline int32_t convertIstreamI32( StreamInput_c& refc_stream )
+{ return __IsoAgLib::convertIstreamI32( refc_stream ); };
+
+#endif
+
 /** convert big endian textual number representation into little endian uint8_t string of specified size */
 inline void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target, unsigned int size )
 { __IsoAgLib::bigEndianHexNumberText2CanString( rc_src, pui8_target, size );}

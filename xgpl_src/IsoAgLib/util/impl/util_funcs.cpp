@@ -276,6 +276,92 @@ uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity )
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
+#ifdef USE_DATASTREAMS_IO
+/** convert receive multistream into an unsigned variable */
+uint16_t convertIstreamUi16( StreamInput_c& refc_stream )
+{
+  uint16_t ui16_temp;
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  uint8_t* pui8_writePointer = (uint8_t*)(&ui16_temp);
+  refc_stream >> pui8_writePointer[0];
+  refc_stream >> pui8_writePointer[1];
+  #else
+  uint8_t ui8_temp;
+  refc_stream >> ui8_temp;
+  ui16_temp = ui8_temp;
+  refc_stream >> ui8_temp;
+  ui16_temp |= uint16_t(ui8_temp) << 8;
+  #endif
+  return ui16_temp;
+};
+/** convert receive multistream into an unsigned variable */
+int16_t convertIstreamI16( StreamInput_c& refc_stream )
+{
+  int16_t i16_temp;
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  uint8_t* pui8_writePointer = (uint8_t*)(&i16_temp);
+  refc_stream >> pui8_writePointer[0];
+  refc_stream >> pui8_writePointer[1];
+#else
+  uint8_t ui8_temp;
+  refc_stream >> ui8_temp;
+  i16_temp = ui8_temp;
+  refc_stream >> ui8_temp;
+  i16_temp |= int16_t(ui8_temp) << 8;
+#endif
+  return i16_temp;
+};
+/** convert receive multistream into an unsigned variable */
+uint32_t convertIstreamUi32( StreamInput_c& refc_stream )
+{
+  uint32_t ui32_temp;
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  uint8_t* pui8_writePointer = (uint8_t*)(&ui32_temp);
+  for ( unsigned int ind = 0; ( ( ind < 4 ) && ( !refc_stream.eof() ) ); ind++ )
+  {
+    refc_stream >> *pui8_writePointer;
+    pui8_writePointer++;
+  }
+  #else
+  uint8_t ui8_temp;
+  refc_stream >> ui8_temp;
+  ui32_temp = uint32_t(ui8_temp);
+  for ( unsigned int ind = 1; ( ( ind < 4 ) && ( !refc_stream.eof() ) ); ind++ )
+  {
+    refc_stream >> ui8_temp;
+    ui32_temp |= (uint32_t(ui8_temp) << (8*ind));
+  }
+  #endif
+  return ui32_temp;
+};
+/** convert receive multistream into an unsigned variable */
+int32_t convertIstreamI32( StreamInput_c& refc_stream )
+{
+  int32_t i32_temp;
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  uint8_t* pui8_writePointer = (uint8_t*)(&i32_temp);
+  for ( unsigned int ind = 0; ( ( ind < 4 ) && ( !refc_stream.eof() ) ); ind++ )
+  {
+    refc_stream >> *pui8_writePointer;
+    pui8_writePointer++;
+  }
+#else
+  uint8_t ui8_temp;
+  refc_stream >> ui8_temp;
+  i32_temp = int32_t(ui8_temp);
+  for ( unsigned int ind = 1; ( ( ind < 4 ) && ( !refc_stream.eof() ) ); ind++ )
+  {
+    refc_stream >> ui8_temp;
+    i32_temp |= (int32_t(ui8_temp) << (8*ind));
+  }
+#endif
+  return i32_temp;
+};
+
+
+
+#endif
+
 void int2littleEndianString( unsigned int input, uint8_t* pui8_target, unsigned int size )
 {
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
