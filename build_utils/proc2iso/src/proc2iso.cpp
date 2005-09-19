@@ -651,9 +651,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
   DOMNamedNodeMap *pAttributes;
   char *node_name = XMLString::transcode(node->getNodeName());
   std::vector<uint16_t> vecstr_childID;
-  static std::vector<uint16_t> vecstr_childID_DVC;
+  static std::vector<uint16_t> vecstr_childID_DET;
   std::vector<uint16_t>::iterator it_childID;
-  static std::vector<uint16_t>::iterator it_childID_DVC;
 
   // all possible values of the objects
   unsigned int objChildObjects=0; //init for happy compiler
@@ -785,6 +784,26 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
               //store that ID for later output in the bytestream-file
               vecstr_childID.push_back(objChildID);
               objChildObjects++;
+
+              // if current child is otDeviceProcessData: check if there are more then one otDeviceProcessDataCombination
+              // => generate more child IDs
+              if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceProcessData)
+              {
+                bool b_firstLoop = TRUE;
+                for ( DOMNode *subChild = child->getFirstChild(); subChild != 0; subChild=subChild->getNextSibling() )
+                {
+                  if (objectIsType(XMLString::transcode(subChild->getNodeName())) == otDeviceProcessDataCombination)
+                  { // ID for one child alread created => start with second child
+                    if (!b_firstLoop) {
+                      objChildID = getID(objChildName, is_objChildID, objChildID, objectIsType(XMLString::transcode(child->getNodeName())));
+                      vecstr_childID.push_back(objChildID);
+                      objChildObjects++;
+                    } else
+                      b_firstLoop = FALSE;
+                  }
+                }
+              }
+              
             }
           }
         }
@@ -1022,20 +1041,17 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << uint16_t((objChildObjects >> 8) & 0xFF);
         buf_length += 2;
 
-        vecstr_childID_DVC.clear();
-
         for (it_childID = vecstr_childID.begin(); it_childID != vecstr_childID.end(); it_childID++)
         {
           buffer << ", " << uint16_t(*it_childID & 0xFF) << ", " << uint16_t((*it_childID >> 8) & 0xFF);
           buf_length += 2;
-          vecstr_childID_DVC.push_back(*it_childID);
         }
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
         vecstr_constructor[2] = vecstr_attrString[attrElement_number].c_str();
         
-        // save vector of device element for later use in otDeviceProcessData
-        it_childID_DVC = vecstr_childID_DVC.begin();
+        // save ID vector of device element childrens for later use in otDeviceProcessData
+        vecstr_childID_DET = vecstr_childID;
         
         break;
       case otDeviceProcessData:
@@ -1102,6 +1118,14 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           if (child->getNodeType() != DOMNode::ELEMENT_NODE)
             continue;
 
+          uint16_t ui16_newObjChildID = 0;
+          // get next ID from vec saved during processing otDeviceElement
+          if ( vecstr_childID_DET.size() )
+          {
+            ui16_newObjChildID = vecstr_childID_DET.back();
+            vecstr_childID_DET.pop_back();
+          }
+
           if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceProcessDataCombination)
           {
             getAttributesFromNode(child, otDeviceProcessDataCombination);
@@ -1122,15 +1146,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             else
               str_designator.append(" Setpoint ");
             str_designator.append(vecstr_attrString[attrCommand_type]);
-
-            /* try with parent object id => first call takes this objID */
-            //uint16_t ui16_newObjChildID = getID (str_designator.c_str(), false, objID, otDeviceProcessData);
-            uint16_t ui16_newObjChildID = 0;
-            if ( it_childID_DVC != vecstr_childID_DVC.end() )
-            {
-              ui16_newObjChildID =*it_childID_DVC;
-              it_childID_DVC++;
-            }
             
             //output: tableID & objID
             buffer  << ", \n'" << TableIDTable [otDeviceProcessDataCombination][0] << "', "
