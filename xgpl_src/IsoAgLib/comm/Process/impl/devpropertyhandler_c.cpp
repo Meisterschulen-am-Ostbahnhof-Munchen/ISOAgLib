@@ -106,16 +106,20 @@
 /** This function delivers the offset to the structurelabel in every device description*/
 uint8_t getLabelOffset (const uint8_t* pc_Array)
 {
+  uint8_t ui8_designatorLength =      pc_Array[DEF_Transfer_Code + DEF_TableID + DEF_ObjectID];
+  uint8_t ui8_softwareVersionLength = pc_Array[DEF_Transfer_Code + DEF_TableID + DEF_ObjectID + DEF_Designator_Length + ui8_designatorLength];
+  uint8_t ui8_serialNumberLength =    pc_Array[DEF_Transfer_Code + DEF_TableID + DEF_ObjectID + DEF_Designator_Length + ui8_designatorLength + DEF_Workingset_MasterNAME + DEF_Software_Version_Length + ui8_softwareVersionLength];
   uint8_t ui8_offsetLabel = ( DEF_Transfer_Code
                             + DEF_TableID
                             + DEF_ObjectID
                             + DEF_Designator_Length
-                            + pc_Array[DEF_TableID + DEF_ObjectID]
+                            + ui8_designatorLength
                             + DEF_Software_Version_Length
-                            + pc_Array[(DEF_TableID+DEF_ObjectID+DEF_Designator_Length+pc_Array[DEF_TableID+DEF_ObjectID]+DEF_Designator_Length)]
+                            + ui8_softwareVersionLength //pc_Array[(DEF_Transfer_Code + DEF_TableID + DEF_ObjectID + DEF_Designator_Length + pc_Array[DEF_Transfer_Code + DEF_TableID + DEF_ObjectID + DEF_Designator_LengthDEF_TableID+DEF_ObjectID] + DEF_Designator_Length)]
                             + DEF_Workingset_MasterNAME
                             + DEF_Serialnumber_Length
-                            + pc_Array[(pc_Array[(DEF_TableID+DEF_ObjectID+DEF_Designator_Length+pc_Array[DEF_TableID+DEF_ObjectID]+DEF_Designator_Length)]+DEF_Workingset_MasterNAME+DEF_Serialnumber_Length)]
+                            + ui8_serialNumberLength
+                            + DEF_Structurelabel
                             );
   return ui8_offsetLabel;
 }
