@@ -538,6 +538,13 @@ int main()
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
+    #ifdef SYSTEM_PC
+     #ifdef WIN32
+     Sleep(10);
+     #else
+     usleep(5000);
+     #endif
+    #endif
   }
   return 1;
 }
