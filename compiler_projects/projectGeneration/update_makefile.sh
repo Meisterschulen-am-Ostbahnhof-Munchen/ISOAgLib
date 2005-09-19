@@ -1607,7 +1607,7 @@ for option in "$@"; do
 		--little-endian-cpu)
 			PARAMETER_LITTLE_ENDIAN_CPU=1
 			;;
-		-- big-endian-cpu)
+		--big-endian-cpu)
 			PARAMETER_LITTLE_ENDIAN_CPU=0
 			;;
 		-*)
@@ -1821,16 +1821,19 @@ esac
 if [ "A$PARAMETER_LITTLE_ENDIAN_CPU" != "A" ] ; then
   USE_LITTLE_ENDIAN_CPU=$PARAMETER_LITTLE_ENDIAN_CPU
 fi
-if [ $USE_LITTLE_ENDIAN_CPU -lt 1 ] ; then
-  echo "Configure for BIG ENDIAN CPU"
-else
-	echo "Configure for LITTLE ENDIAN CPU"
-fi
 
 
 # call the main function to create
 # Makefile for defined config setting
 perform_everything $CONF_DIR $SCRIPT_DIR $START_DIR
+
+
+if [ $USE_LITTLE_ENDIAN_CPU -lt 1 ] ; then
+  echo "Configure for BIG ENDIAN CPU"
+else
+  echo "Configure for LITTLE ENDIAN CPU"
+fi
+
 
 echo "Please set the following DEFINES for your compiler in the project settings:"
 echo "$USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES"
