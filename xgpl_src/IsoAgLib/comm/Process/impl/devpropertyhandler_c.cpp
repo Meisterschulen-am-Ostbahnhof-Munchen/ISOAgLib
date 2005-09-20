@@ -206,8 +206,7 @@ DevPropertyHandler_c::processMsg()
   //handling of status message
   if ((data().getUint8Data(0) & 0xF) == 0xE)
   {
-    tcState_lastReceived = HAL::getTime(); // don't use package time (10ms jitter!)
-    tcState_lastReceived = data().time(); 
+    tcState_lastReceived = HAL::getTime();
     //tcState_saOfActiveWorkingSetMaster = data().getUint8Data (1); //do we need it???
     tcSourceAddress = data().isoSa();
     #ifdef DEBUG
