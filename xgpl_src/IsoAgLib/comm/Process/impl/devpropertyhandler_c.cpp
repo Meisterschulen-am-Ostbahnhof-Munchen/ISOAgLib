@@ -196,203 +196,218 @@ const DevicePool_c& DevicePool_c::operator=(const DevicePool_c& c_devicePool)
 bool
 DevPropertyHandler_c::processMsg()
 {
+  if ((data().isoPgn() & 0x1FF00) != PROCESS_DATA_PGN)
+    //should never be the case
+    return FALSE;
 
-  if ((data().isoPgn() & 0x1FF00) == PROCESS_DATA_PGN) { //should always be the case
-    //handling of status message
-    if ((data().getUint8Data(0) & 0xF) == 0xE)
-    {
-      tcState_lastReceived = data().time();
-      //tcState_saOfActiveWorkingSetMaster = data().getUint8Data (1); //do we need it???
-      tcSourceAddress = data().isoSa();
-      #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Received status message..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-    }
+  // set FALSE if "default" is selected in switch case 
+  bool b_rc = TRUE;
+     
+  //handling of status message
+  if ((data().getUint8Data(0) & 0xF) == 0xE)
+  {
+    tcState_lastReceived = HAL::getTime(); // don't use package time (10ms jitter!)
+    tcState_lastReceived = data().time(); 
+    //tcState_saOfActiveWorkingSetMaster = data().getUint8Data (1); //do we need it???
+    tcSourceAddress = data().isoSa();
+    #ifdef DEBUG
+      EXTERNAL_DEBUG_DEVICE << "Received status message..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
+  }
 
-    //handling of nack
-    //-> means that no device description is uploaded before
-    //-> so extract all necessary information from the byte-stream (structure and localization label)
-    //-> add the stream to the map
-    if ((data().getUint8Data(0) & 0xF) == 0xD)
+  //handling of nack
+  //-> means that no device description is uploaded before
+  //-> so extract all necessary information from the byte-stream (structure and localization label)
+  //-> add the stream to the map
+  if ((data().getUint8Data(0) & 0xF) == 0xD)
+  {
+    //here starts nack handling
+    // these two cmds could be answered with a NACK
+    switch ((data().getUint8Data(0) >> 4) & 0xF)
     {
-      //here starts nack handling
-      // these two cmds could be answered with a NACK
-      switch ((data().getUint8Data(0) >> 4) & 0xF)
-      {
-        case 0x0: //NACK Request StructureLabel
-          if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForStructureLabelResponse)
-          {
-            en_uploadStep = UploadWaitForUploadInit;
-            b_receivedStructureLabel = false;
-            #ifdef DEBUG
-            EXTERNAL_DEBUG_DEVICE << "Received NACK for structure label..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
-          }
-          break;
-        case 0x2: //NACK Request LocalizationLabel
-          if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForLocalizationLabelResponse)
-          {
-            en_uploadStep = UploadWaitForUploadInit;
-            b_receivedLocalizationLabel = false;
-            #ifdef DEBUG
-              EXTERNAL_DEBUG_DEVICE << "Received NACK for localization label..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
-          }
-          break;
-      }
-    }
-
-    uint8_t i;
-    switch (data().getUint8Data (0))
-    {
-      case procCmdPar_VersionMsg:
-        if (en_uploadState == StateUploadInit && en_uploadStep == UploadWaitForVersionResponse)
-        {
-          ui8_versionLabel = data().getUint8Data(1);
-          #ifdef DEBUG
-            EXTERNAL_DEBUG_DEVICE << "Received version response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-          #endif
-          startUpload();
-        }
-        break;
-      case procCmdPar_StructureLabelMsg:
+      case 0x0: //NACK Request StructureLabel
         if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForStructureLabelResponse)
         {
-          //store structureLabel for later compare in StateUploadInit
-          for (i=1; i<8; i++) pch_structureLabel[i] = char(data().getUint8Data(i));
-          b_receivedStructureLabel = true;
-          // send Request Localization Label message
+          en_uploadStep = UploadWaitForUploadInit;
+          b_receivedStructureLabel = false;
+          #ifdef DEBUG
+          EXTERNAL_DEBUG_DEVICE << "Received NACK for structure label..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          #endif
+        }
+        break;
+      case 0x2: //NACK Request LocalizationLabel
+        if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForLocalizationLabelResponse)
+        {
+          en_uploadStep = UploadWaitForUploadInit;
+          b_receivedLocalizationLabel = false;
+          #ifdef DEBUG
+            EXTERNAL_DEBUG_DEVICE << "Received NACK for localization label..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          #endif
+        }
+        break;
+      default:
+        b_rc = FALSE;
+    }
+  }
+
+  uint8_t i;
+  switch (data().getUint8Data (0))
+  {
+    case procCmdPar_VersionMsg:
+      if (en_uploadState == StateUploadInit && en_uploadStep == UploadWaitForVersionResponse)
+      {
+        ui8_versionLabel = data().getUint8Data(1);
+        #ifdef DEBUG
+          EXTERNAL_DEBUG_DEVICE << "Received version response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
+        startUpload();
+      }
+      break;
+    case procCmdPar_StructureLabelMsg:
+      if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForStructureLabelResponse)
+      {
+        //store structureLabel for later compare in StateUploadInit
+        for (i=1; i<8; i++) pch_structureLabel[i] = char(data().getUint8Data(i));
+        b_receivedStructureLabel = true;
+        // send Request Localization Label message
+        pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                          procCmdPar_RequestLocalizationLabelMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+        getCanInstance4Comm() << *pc_data;
+        ui32_uploadTimestamp = HAL::getTime();
+        ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+        #ifdef DEBUG
+          EXTERNAL_DEBUG_DEVICE << "Received structure label response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
+      }
+      break;
+    case procCmdPar_LocalizationLabelMsg:
+      if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForLocalizationLabelResponse)
+      {
+        //store localizationLabel for later compare in StateUploadInit
+        for (i=1; i<8; i++) pch_localizationLabel[i] = char(data().getUint8Data(i));
+        b_receivedLocalizationLabel = true;
+        #ifdef DEBUG
+          EXTERNAL_DEBUG_DEVICE << "Received localization response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
+      }
+      break;
+    case procCmdPar_RequestOPTransferRespMsg:
+      if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForRequestOPTransferResponse)
+      {
+        if (data().getUint8Data(1) == 0)
+        {
+          en_uploadStep = UploadUploading;
+          getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), tcSourceAddress,
+          pc_devPoolForUpload->p_DevicePool, pc_devPoolForUpload->devicePoolLength, PROCESS_DATA_PGN, en_sendSuccess);
+        }
+        else
+        {
+          ui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
+          outOfMemory();
+        }
+        #ifdef DEBUG
+          EXTERNAL_DEBUG_DEVICE << "Received response for request OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
+      }
+      break;
+    case procCmdPar_OPTransferRespMsg:
+      // if timeEvent not yet called => set uploadStep right here
+      en_uploadStep = UploadWaitForOPTransferResponse;
+      if (en_uploadState == StateUploadPool)
+      {
+        if (data().getUint8Data(1) == 0)
+        {
+          en_uploadStep = UploadWaitForOPActivateResponse;
           pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                            procCmdPar_RequestLocalizationLabelMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+                          procCmdPar_OPActivateMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
           getCanInstance4Comm() << *pc_data;
           ui32_uploadTimestamp = HAL::getTime();
           ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           #ifdef DEBUG
-            EXTERNAL_DEBUG_DEVICE << "Received structure label response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+            EXTERNAL_DEBUG_DEVICE << "Received positive response for OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
-        break;
-      case procCmdPar_LocalizationLabelMsg:
-        if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForLocalizationLabelResponse)
+        else
         {
-          //store localizationLabel for later compare in StateUploadInit
-          for (i=1; i<8; i++) pch_localizationLabel[i] = char(data().getUint8Data(i));
-          b_receivedLocalizationLabel = true;
+          ui8_commandParameter = procCmdPar_OPTransferRespMsg;
+          outOfMemory();
           #ifdef DEBUG
-            EXTERNAL_DEBUG_DEVICE << "Received localization response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          EXTERNAL_DEBUG_DEVICE << "Received negative response for OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
-        break;
-      case procCmdPar_RequestOPTransferRespMsg:
-        if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForRequestOPTransferResponse)
+      }
+      break;
+    case procCmdPar_OPActivateRespMsg:
+      #ifdef DEBUG
+      EXTERNAL_DEBUG_DEVICE << "Received activate response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      #endif
+      if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForOPActivateResponse)
+      {
+        if (data().getUint8Data(1) == 0)
         {
-          if (data().getUint8Data(1) == 0)
-          {
-            en_uploadStep = UploadUploading;
-            getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), tcSourceAddress,
-            pc_devPoolForUpload->p_DevicePool, pc_devPoolForUpload->devicePoolLength, PROCESS_DATA_PGN, en_sendSuccess);
-          }
-          else
-          {
-            ui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
-            outOfMemory();
-          }
-          #ifdef DEBUG
-            EXTERNAL_DEBUG_DEVICE << "Received response for request OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          en_uploadState = StateIdle;
+          en_uploadStep = UploadNone;
+          en_poolState = OPSuccessfullyUploaded;
+        }
+        else
+        {
+          /** @todo further output for user to locate the error which caused the upload fail*/
+          en_uploadStep = UploadFailed;
+          en_poolState = OPCannotBeUploaded;
+          ui8_commandParameter = procCmdPar_OPActivateRespMsg;
+          #if defined(DEBUG) && defined(SYSTEM_PC)
+          EXTERNAL_DEBUG_DEVICE << (uint16_t) data().getUint8Data(1) << EXTERNAL_DEBUG_DEVICE_ENDL;
+          EXTERNAL_DEBUG_DEVICE << "upload failed, activate with error..." << EXTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
-        break;
-      case procCmdPar_OPTransferRespMsg:
-        if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForOPTransferResponse)
+      }
+      break;
+    case procCmdPar_OPDeleteMsg:
+      if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForDeleteResponse)
+      {
+        if (data().getUint8Data(1) == 0)
         {
-          if (data().getUint8Data(1) == 0)
-          {
-            en_uploadStep = UploadWaitForOPActivateResponse;
-            pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                            procCmdPar_OPActivateMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-            getCanInstance4Comm() << *pc_data;
-            ui32_uploadTimestamp = HAL::getTime();
-            ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-            #ifdef DEBUG
-              EXTERNAL_DEBUG_DEVICE << "Received positive response for OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
-          }
-          else
-          {
-            ui8_commandParameter = procCmdPar_OPTransferRespMsg;
-            outOfMemory();
-            #ifdef DEBUG
-            EXTERNAL_DEBUG_DEVICE << "Received negative response for OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
-          }
+          pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                            procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+          getCanInstance4Comm() << *pc_data;
+          ui32_uploadTimestamp = HAL::getTime();
+          ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+          en_uploadStep = UploadWaitForVersionResponse;
         }
-        break;
-      case procCmdPar_OPActivateRespMsg:
+        else
+        {
+          /** @todo if the pool couldn't be deleted: fail upload or just ignore it??? */
+          pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                            procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+          getCanInstance4Comm() << *pc_data;
+          ui32_uploadTimestamp = HAL::getTime();
+          ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+          en_uploadStep = UploadWaitForVersionResponse;
+        }
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Received activate response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        EXTERNAL_DEBUG_DEVICE << "Received delete response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
         #endif
-        if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForOPActivateResponse)
-        {
-          if (data().getUint8Data(1) == 0)
-          {
-            en_uploadState = StateIdle;
-            en_uploadStep = UploadNone;
-            en_poolState = OPSuccessfullyUploaded;
-          }
-          else
-          {
-            /** @todo further output for user to locate the error which caused the upload fail*/
-            en_uploadStep = UploadFailed;
-            en_poolState = OPCannotBeUploaded;
-            ui8_commandParameter = procCmdPar_OPActivateRespMsg;
-            #if defined(DEBUG) && defined(SYSTEM_PC)
-            EXTERNAL_DEBUG_DEVICE << (uint16_t) data().getUint8Data(1) << EXTERNAL_DEBUG_DEVICE_ENDL;
-            EXTERNAL_DEBUG_DEVICE << "upload failed, activate with error..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
-          }
-        }
-        break;
-      case procCmdPar_OPDeleteMsg:
-        if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForDeleteResponse)
-        {
-          if (data().getUint8Data(1) == 0)
-          {
-            pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                              procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-            getCanInstance4Comm() << *pc_data;
-            ui32_uploadTimestamp = HAL::getTime();
-            ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-            en_uploadStep = UploadWaitForVersionResponse;
-          }
-          else
-          {
-            /** @todo if the pool couldn't be deleted: fail upload or just ignore it??? */
-            pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                              procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-            getCanInstance4Comm() << *pc_data;
-            ui32_uploadTimestamp = HAL::getTime();
-            ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-            en_uploadStep = UploadWaitForVersionResponse;
-          }
-          #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "Received delete response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-          #endif
-        }
-        break;
-      /* UploadCommandWaitingForCommandResponse and UploadMultiSendCommandWaitingForCommandResponse
-       * are states for the same cmd but different ways of sending (via CAN pkg and via mss)
-       */
-      case procCmdPar_ChangeDesignatorRespMsg:
-        if (en_uploadState == StateUploadCommand &&
-           (en_uploadCommand == UploadCommandWaitingForCommandResponse || UploadMultiSendCommandWaitingForCommandResponse))
-        {
-          //no matter if successful or faulty, finish upload command
-          finishUploadCommandChangeDesignator();
-        }
-        break;
-    }
+      }
+      break;
+    /* UploadCommandWaitingForCommandResponse and UploadMultiSendCommandWaitingForCommandResponse
+     * are states for the same cmd but different ways of sending (via CAN pkg and via mss)
+     */
+    case procCmdPar_ChangeDesignatorRespMsg:
+      if (en_uploadState == StateUploadCommand &&
+         (en_uploadCommand == UploadCommandWaitingForCommandResponse || UploadMultiSendCommandWaitingForCommandResponse))
+      {
+        //no matter if successful or faulty, finish upload command
+        finishUploadCommandChangeDesignator();
+        #ifdef DEBUG
+        EXTERNAL_DEBUG_DEVICE << "ChangeDesignatorRespMsg..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
+      }
+      break;
+    default:
+      b_rc = FALSE;
   }
-  return false;
+  
+  return b_rc;
 }
 
 
