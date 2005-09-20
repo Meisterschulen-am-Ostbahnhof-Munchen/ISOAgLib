@@ -441,7 +441,8 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   // copy data
   ptReceive->dwId = pc_data->i32_ident;
   ptReceive->bDlc = pc_data->b_dlc;
-  ptReceive->tReceiveTime.l1ms = pc_data->i32_time;
+  // prevent timestamp which is in the future! (because of 10ms clock jitter)
+  ptReceive->tReceiveTime.l1ms = (i32_lastReceiveTime > pc_data->i32_time) ? pc_data->i32_time : i32_lastReceiveTime;
   ptReceive->bXtd = pc_data->b_xtd;
   memcpy(ptReceive->abData, pc_data->pb_data, pc_data->b_dlc);
 
