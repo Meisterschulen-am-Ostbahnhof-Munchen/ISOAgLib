@@ -102,7 +102,7 @@
   #include <IsoAgLib/comm/Multipacket/istream_c.h>
 #endif
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/impl/util_funcs.h>
+#include <IsoAgLib/util/iutil_funcs.h>
 #include "base_c.h"
 
 #include <time.h>
@@ -354,10 +354,10 @@ void getDegree10Minus7FromStream( IsoAgLib::iStream_c& refc_stream, int32_t& ref
   double d_temp;
   int32_t i32_temp;
 
-  convertIstream( refc_stream, i32_temp );
+  IsoAgLib::convertIstream( refc_stream, i32_temp );
   d_temp = double(i32_temp);
 
-  convertIstream( refc_stream, i32_temp );
+  IsoAgLib::convertIstream( refc_stream, i32_temp );
   d_temp += ( double(i32_temp) * 4294967296.0 );
   // NMEA sends with 10.0e-16, while normally 10.0e-7 is enough -> mult with 10.0e-9
   refi32_result = int32_t( d_temp * 10.0e-9 );
