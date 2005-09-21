@@ -516,7 +516,11 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
   #endif
 #elif SIZEOF_INT == 4
   uint64_t temp;
+#ifdef SYSTEM_PC_VC
+  sscanf( rc_src, "%16I64x", &temp );
+#else
   sscanf( rc_src, "%16llx", &temp );
+#endif
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   std::memcpy( pui8_target, &temp, 8 );
   #else
