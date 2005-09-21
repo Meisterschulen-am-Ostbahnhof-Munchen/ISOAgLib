@@ -488,6 +488,8 @@ private:
   */
   void singletonInit();
 
+  void checkVtStateChange();
+
   /** sends "Get Memory" to start uploading process... */
   void startObjectPoolUploading ();
 

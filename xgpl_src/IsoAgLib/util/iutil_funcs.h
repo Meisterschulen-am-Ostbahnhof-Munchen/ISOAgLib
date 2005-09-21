@@ -197,7 +197,7 @@ inline int32_t convertIstreamI32( StreamInput_c& refc_stream )
 
 /** convert big endian textual number representation into little endian uint8_t string of specified size */
 inline void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target, unsigned int size )
-{ __IsoAgLib::bigEndianHexNumberText2CanString( rc_src, pui8_target, size );}
+{ __IsoAgLib::bigEndianHexNumberText2CanString( rc_src, pui8_target, size );};
 
 /** convert big endian textual unsigned int 8Bit number representation into little endian uint8_t string */
 inline void bigEndianHexNumberText2CanStringUint8( const char* rc_src, uint8_t* pui8_target )

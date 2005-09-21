@@ -430,14 +430,16 @@ void ISOTerminal_c::close( void )
 
     uint32_t ui32_filter = (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8);
     if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // delete FilterBox
-      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
-    }
+       getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+
     ui32_filter = (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8);
-    if (getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // delete FilterBox
-      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
-    }
+    if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+       getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+
+    /** @todo will the IsoItem get lost or get its SA changed? */
+    ui32_filter = ((static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) | static_cast<MASK_TYPE>(pc_wsMasterIdentItem->getIsoItem()->nr())) << 8);
+    if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+       getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
 
     /*** MultiReceive De-Registration ***/
     __IsoAgLib::getMultiReceiveInstance().deregisterClient(this);
@@ -447,66 +449,9 @@ void ISOTerminal_c::close( void )
 }
 
 
-/**
-  periodically event -> call timeEvent for all  identities and parent objects
-  @return true -> all planned activities performed in allowed time
-*/
-bool ISOTerminal_c::timeEvent( void )
+
+void ISOTerminal_c::checkVtStateChange()
 {
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  #ifdef DEBUG_HEAP_USEAGE
-  if ( ( sui16_lastPrintedSendUploadQueueSize < sui16_sendUploadQueueSize )
-    || ( sui16_lastPrintedMaxSendUploadQueueSize < sui16_maxSendUploadQueueSize ) )
-  { // MAX amount of sui16_sendUploadQueueSize or sui16_maxSendUploadQueueSize
-    sui16_lastPrintedSendUploadQueueSize = sui16_sendUploadQueueSize;
-    sui16_lastPrintedMaxSendUploadQueueSize = sui16_maxSendUploadQueueSize;
-    getRs232Instance()
-      << "Max: " << sui16_sendUploadQueueSize << " Items in FIFO, "
-      << sui16_sendUploadQueueSize << " x SendUpload_c: Mal-Alloc: "
-      << sizeSlistTWithMalloc( sizeof(SendUpload_c), sui16_sendUploadQueueSize )
-      << "/" << sizeSlistTWithMalloc( sizeof(SendUpload_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(SendUpload_c), sui16_sendUploadQueueSize )
-      << "\r\n\r\n";
-  }
-  #endif
-
-  // register Filter if at least one active ( claimed address )
-  // local ISO IdentItem_c exists (so we're working on an ISO-Bus!
-  if ( ! getSystemMgmtInstance4Comm().existActiveLocalIsoMember() ) return true;
-
-  // do further activities only if registered ident is initialised as ISO
-  if ( !pc_wsMasterIdentItem ) return true;
-  if ( pc_wsMasterIdentItem->getIsoItem() == NULL ) return true;
-  //if ( !c_isoMonitor.existIsoMemberGtp (pc_wsMasterIdentItem->gtp (), true)) return true;
-
-/*** Filter/MultiReceive Registration Start ***/
-  if ( ! b_receiveFilterCreated )
-  { // register to get VTStatus Messages
-    b_receiveFilterCreated = true;
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
-    }
-    ui32_filter = (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
-    }
-    /*** MultiReceive Registration ***/
-    __IsoAgLib::getMultiReceiveInstance().registerClient(VT_TO_ECU_PGN, pc_wsMasterIdentItem->getIsoItem()->nr(), this);
-  }
-/*** Filter/MultiReceive Registration End ***/
-
- /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
-/*******************************************************************************************************/
-  System_c::triggerWd();
-
-  // #######################
-  // ### VT Alive checks ###
-  // #######################
-
   bool vtAliveOld=vtAliveNew;
   vtAliveNew=isVtActive();
 
@@ -549,10 +494,74 @@ bool ISOTerminal_c::timeEvent( void )
       #endif
       if (c_streamer.pc_pool != NULL) {
         c_streamer.pc_pool->eventEnterSafeState ();
-        /** @todo Also enter safe state if the WS-Maint.Msg is getting NACK'd */
       }
     }
   }
+}
+
+/**
+  periodically event -> call timeEvent for all  identities and parent objects
+  @return true -> all planned activities performed in allowed time
+*/
+bool ISOTerminal_c::timeEvent( void )
+{
+  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  #ifdef DEBUG_HEAP_USEAGE
+  if ( ( sui16_lastPrintedSendUploadQueueSize < sui16_sendUploadQueueSize )
+    || ( sui16_lastPrintedMaxSendUploadQueueSize < sui16_maxSendUploadQueueSize ) )
+  { // MAX amount of sui16_sendUploadQueueSize or sui16_maxSendUploadQueueSize
+    sui16_lastPrintedSendUploadQueueSize = sui16_sendUploadQueueSize;
+    sui16_lastPrintedMaxSendUploadQueueSize = sui16_maxSendUploadQueueSize;
+    getRs232Instance()
+      << "Max: " << sui16_sendUploadQueueSize << " Items in FIFO, "
+      << sui16_sendUploadQueueSize << " x SendUpload_c: Mal-Alloc: "
+      << sizeSlistTWithMalloc( sizeof(SendUpload_c), sui16_sendUploadQueueSize )
+      << "/" << sizeSlistTWithMalloc( sizeof(SendUpload_c), 1 )
+      << ", Chunk-Alloc: "
+      << sizeSlistTWithChunk( sizeof(SendUpload_c), sui16_sendUploadQueueSize )
+      << "\r\n\r\n";
+  }
+  #endif
+
+  // register Filter if at least one active ( claimed address )
+  // local ISO IdentItem_c exists (so we're working on an ISO-Bus!
+  if ( ! getSystemMgmtInstance4Comm().existActiveLocalIsoMember() ) return true;
+
+  // do further activities only if registered ident is initialised as ISO
+  if ( !pc_wsMasterIdentItem ) return true;
+  if ( pc_wsMasterIdentItem->getIsoItem() == NULL ) return true;
+  //if ( !c_isoMonitor.existIsoMemberGtp (pc_wsMasterIdentItem->gtp (), true)) return true;
+
+/*** Filter/MultiReceive Registration Start ***/
+  if ( ! b_receiveFilterCreated )
+  { // register to get VTStatus Messages
+    b_receiveFilterCreated = true;
+
+    uint32_t ui32_filter = (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8);
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+        getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+
+    ui32_filter = (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8);
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+        getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+
+    ui32_filter = (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) | static_cast<MASK_TYPE>(pc_wsMasterIdentItem->getIsoItem()->nr())) << 8;
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+        getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+
+    /*** MultiReceive Registration ***/
+    __IsoAgLib::getMultiReceiveInstance().registerClient(VT_TO_ECU_PGN, pc_wsMasterIdentItem->getIsoItem()->nr(), this);
+  }
+/*** Filter/MultiReceive Registration End ***/
+
+ /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
+/*******************************************************************************************************/
+  System_c::triggerWd();
+
+  // #######################
+  // ### VT Alive checks ###
+  // #######################
+  checkVtStateChange();
 
   // ### Do nothing if there's no VT active ###
   if (!isVtActive()) return true;
@@ -1007,6 +1016,33 @@ bool ISOTerminal_c::processMsg()
       default:
         return false;
     }
+  }
+
+
+        //////////////////////////////////////////////
+       // NACK to this ECU? -->ACKNOWLEDGE_PGN<-- ///
+      //////////////////////////////////////////////
+  if ( pc_wsMasterIdentItem->getIsoItem() && ((data().isoPgn() & 0x1FFFF) == (uint32_t) (ACKNOWLEDGEMENT_PGN | (pc_wsMasterIdentItem->getIsoItem()->nr()))) )
+  { /// on NACK do:
+    // for now ignore source address which must be VT of course. (but in case a NACK comes in before the first VT Status Message
+
+    // Check if a VT-related message was NACKed. Check embedded PGN for that
+    const uint32_t cui32_pgn =  uint32_t (data().getUint8Data(5)) |
+                               (uint32_t (data().getUint8Data(6)) << 8) |
+                               (uint32_t (data().getUint8Data(7)) << 16);
+    switch (cui32_pgn)
+    {
+      case ECU_TO_VT_PGN:
+      case WORKING_SET_MEMBER_PGN:
+      case WORKING_SET_MASTER_PGN:
+        vtState_a.lastReceived = 0; // set VTalive to FALSE, so the queue will be emptied, etc. down below on the state change check.
+
+        // enterSafeState will also be called below!
+        checkVtStateChange();
+
+        /** @todo Maybe re-do address-claim and WSmasterMsg? */
+        break;
+    } // switch
   }
 
 
