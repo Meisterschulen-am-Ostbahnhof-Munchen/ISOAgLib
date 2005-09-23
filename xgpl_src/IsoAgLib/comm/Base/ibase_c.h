@@ -490,7 +490,7 @@ public:
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLatitudeDegree10Minus7( void ) const { return Base_c::getGpsLatitudeDegree10Minus7(); };
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
-  int32_t getGpsLongitudeDegree10Minus710Minus7( void ) const { return Base_c::getGpsLongitudeDegree10Minus710Minus7(); };
+  int32_t getGpsLongitudeDegree10Minus7( void ) const { return Base_c::getGpsLongitudeDegree10Minus7(); };
   #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   /** deliver Minute GPS Latitude */
   float getGpsLatitudeMinute( void ) const { return Base_c::getGpsLatitudeMinute(); };
@@ -507,6 +507,8 @@ public:
   uint16_t getGpsSpeedCmSec( void ) const { return Base_c::getGpsSpeedCmSec();};
   /** deliver GPS Heading [1x10E-4rad] */
   uint16_t getGpsHeadingRad10Minus4( void ) const { return Base_c::getGpsHeadingRad10Minus4(); };
+
+  uint16_t getGpsUpdateAge( void ) const { return Base_c::getGpsUpdateAge(); };
 
   bool isVtLanguageReceived()   const { return Base_c::isVtLanguageReceived(); };
   bool isTecuLanguageReceived() const { return Base_c::isTecuLanguageReceived(); };

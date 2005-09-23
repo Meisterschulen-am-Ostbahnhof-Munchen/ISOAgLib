@@ -619,7 +619,7 @@ public: // Public methods
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLatitudeDegree10Minus7( void ) const { return i32_latitudeDegree10Minus7; };
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
-  int32_t getGpsLongitudeDegree10Minus710Minus7( void ) const { return i32_longitudeDegree10Minus7; };
+  int32_t getGpsLongitudeDegree10Minus7( void ) const { return i32_longitudeDegree10Minus7; };
   #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   /** deliver Minute GPS Latitude */
   float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-5  ); };
@@ -636,6 +636,9 @@ public: // Public methods
   uint16_t getGpsSpeedCmSec( void ) const { return ui16_speedCmSec;};
   /** deliver GPS Heading [1x10E-4rad] */
   uint16_t getGpsHeadingRad10Minus4( void ) const { return ui16_headingRad10Minus4; };
+
+  /** deliver age of last gps-update in milliseconds */
+  uint16_t getGpsUpdateAge( void ) const { return 2000; /** @todo ACHIM - Implement this dummy function */ };
 
   bool isVtLanguageReceived()   const { return b_languageVtReceived; };
   bool isTecuLanguageReceived() const { return b_languageTecuReceived; };
