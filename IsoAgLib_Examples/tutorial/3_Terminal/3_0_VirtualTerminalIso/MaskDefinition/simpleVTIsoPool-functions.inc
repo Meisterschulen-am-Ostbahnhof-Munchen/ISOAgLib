@@ -47,13 +47,14 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce ()
   iVtObjectColLabel.init (&iVtObjectColLabel_sROM);
   iVtObjectColOS.init (&iVtObjectColOS_sROM);
   iVtObjectAccelArchedBarGraph.init (&iVtObjectAccelArchedBarGraph_sROM);
+  iVtObjectOpsFakeMileage.init (&iVtObjectOpsFakeMileage_sROM);
+  iVtObjectInputMiles.init (&iVtObjectInputMiles_sROM);
   iVtObjectInputListTypFakeMiles.init (&iVtObjectInputListTypFakeMiles_sROM);
   iVtObjectUnnamed12.init (&iVtObjectUnnamed12_sROM);
   iVtObjectUnnamed13.init (&iVtObjectUnnamed13_sROM);
   iVtObjectUnnamed14.init (&iVtObjectUnnamed14_sROM);
   iVtObjectUnnamed15.init (&iVtObjectUnnamed15_sROM);
   iVtObjectUnnamed10.init (&iVtObjectUnnamed10_sROM);
-  iVtObjectInputMiles.init (&iVtObjectInputMiles_sROM);
   iVtObjectUnnamed11.init (&iVtObjectUnnamed11_sROM);
   iVtObjectInputLikeage.init (&iVtObjectInputLikeage_sROM);
   iVtObjectLikeageOP.init (&iVtObjectLikeageOP_sROM);
@@ -61,8 +62,8 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce ()
   iVtObjectUnnamed16.init (&iVtObjectUnnamed16_sROM);
   iVtObjectKeyLessAccel.init (&iVtObjectKeyLessAccel_sROM);
   iVtObjectUnnamed17.init (&iVtObjectUnnamed17_sROM);
+  iVtObjectvtLang.init (&iVtObjectvtLang_sROM);
   iVtObjectOSlanguage.init (&iVtObjectOSlanguage_sROM);
-  iVtObjectISinitial.init (&iVtObjectISinitial_sROM);
   iVtObjectdriver.init (&iVtObjectdriver_sROM);
   iVtObjectresonible.init (&iVtObjectresonible_sROM);
   iVtObjectISdriver.init (&iVtObjectISdriver_sROM);
@@ -79,6 +80,8 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce ()
   iVtObjectUnnamed22.init (&iVtObjectUnnamed22_sROM);
   iVtObjectKeyForbidden.init (&iVtObjectKeyForbidden_sROM);
   iVtObjectUnnamed23.init (&iVtObjectUnnamed23_sROM);
+  iVtObjectKeyChangeFill.init (&iVtObjectKeyChangeFill_sROM);
+  iVtObjectUnnamed24.init (&iVtObjectUnnamed24_sROM);
   iVtObjectLineAttributes_Normal.init (&iVtObjectLineAttributes_Normal_sROM);
   iVtObjectFillAttributes.init (&iVtObjectFillAttributes_sROM);
   iVtObjectdEllipse.init (&iVtObjectdEllipse_sROM);
@@ -88,9 +91,9 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce ()
   iVtObjectMacro_2.init (&iVtObjectMacro_2_sROM);
   iVtObjectForbiddenAlarmMask.init (&iVtObjectForbiddenAlarmMask_sROM);
   iVtObjectalarm1contentscontainer.init (&iVtObjectalarm1contentscontainer_sROM);
-  iVtObjectUnnamed24.init (&iVtObjectUnnamed24_sROM);
   iVtObjectUnnamed25.init (&iVtObjectUnnamed25_sROM);
   iVtObjectUnnamed26.init (&iVtObjectUnnamed26_sROM);
+  iVtObjectUnnamed27.init (&iVtObjectUnnamed27_sROM);
   iVtObjectsoftkeysAlarm.init (&iVtObjectsoftkeysAlarm_sROM);
 
   for (int i=0;i<numObjects; i++) {

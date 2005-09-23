@@ -290,13 +290,13 @@ void updateMiles(uint32_t rui32_value) {
   int16_t angle;
   angle = (180*valMiles)>>12;
   iVtObjectdEllipse.setEndAngle ((angle==0)?1:angle);
-  iVtObjectValMiles.setValue (valMiles);
+  iVtObjectValMiles.setValue (valMiles+10000);
 }
 
 void updateAccel(int32_t ri32_value) {
   valAccel = ri32_value;
-  iVtObjectValAccel.setValue (valAccel);
-  iVtObjectAccelArchedBarGraph.setValue (valAccel + 15);
+  iVtObjectValAccel.setValue (valAccel+10000);
+  iVtObjectAccelArchedBarGraph.setValue (valAccel +10000);
 }
 
 // handle incoming number-inputs from vt
@@ -356,16 +356,19 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         valSpeed = 0;
         updateAccel (10);
         updateMiles (0);
-        iVtObjectValSpeed.setValue (valSpeed);
-        iVtObjectdPolygon.setFillAttributes(&iVtObjectFillAttributes);
+        iVtObjectValSpeed.setValue (valSpeed+10000);
         xy = 0;
         iVtObjectcontainerInAllMasks.setChildPosition (&iVtObjectBigLogo, xy, xy);
+        break;
+
+      case vtKeyCodeKeyChangeFill:
+        iVtObjectdPolygon.setFillAttributes(&iVtObjectFillAttributes);
         break;
 
       case vtKeyCodeKeyMove:
         valSpeed += valAccel;
         updateMiles(valMiles + valSpeed);
-        iVtObjectValSpeed.setValue (valSpeed);
+        iVtObjectValSpeed.setValue (valSpeed+10000);
         break;
 
       case vtKeyCodeKeyMoreAccel:
@@ -397,7 +400,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
         break;
 
       case vtKeyCodeKeyForbidden:
-        //iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectForbiddenAlarmMask);
+        iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectForbiddenAlarmMask);
         break;
 
       case vtKeyCodeACK:
@@ -416,7 +419,7 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully ()
   if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden) iVtObjectcontainerInAllMasks.hide ();
     updateAccel (valAccel);
     updateMiles(valMiles);
-  iVtObjectValSpeed.setValue (valSpeed);
+  iVtObjectValSpeed.setValue (valSpeed+10000);
   #ifdef DEBUG
   std::cout << "-->eventObjectPoolUploadedSuccessfully<--\n";
   #endif

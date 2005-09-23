@@ -45,13 +45,14 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectColLabel,
   &iVtObjectColOS,
   &iVtObjectAccelArchedBarGraph,
+  &iVtObjectOpsFakeMileage,
+  &iVtObjectInputMiles,
   &iVtObjectInputListTypFakeMiles,
   &iVtObjectUnnamed12,
   &iVtObjectUnnamed13,
   &iVtObjectUnnamed14,
   &iVtObjectUnnamed15,
   &iVtObjectUnnamed10,
-  &iVtObjectInputMiles,
   &iVtObjectUnnamed11,
   &iVtObjectInputLikeage,
   &iVtObjectLikeageOP,
@@ -59,8 +60,8 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectUnnamed16,
   &iVtObjectKeyLessAccel,
   &iVtObjectUnnamed17,
+  &iVtObjectvtLang,
   &iVtObjectOSlanguage,
-  &iVtObjectISinitial,
   &iVtObjectdriver,
   &iVtObjectresonible,
   &iVtObjectISdriver,
@@ -77,6 +78,8 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectUnnamed22,
   &iVtObjectKeyForbidden,
   &iVtObjectUnnamed23,
+  &iVtObjectKeyChangeFill,
+  &iVtObjectUnnamed24,
   &iVtObjectLineAttributes_Normal,
   &iVtObjectFillAttributes,
   &iVtObjectdEllipse,
@@ -86,10 +89,10 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectMacro_2,
   &iVtObjectForbiddenAlarmMask,
   &iVtObjectalarm1contentscontainer,
-  &iVtObjectUnnamed24,
   &iVtObjectUnnamed25,
   &iVtObjectUnnamed26,
+  &iVtObjectUnnamed27,
   &iVtObjectsoftkeysAlarm
 };
 
-  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 91, 200, 60, 32) {};
+  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 94, 200, 60, 32) {};
