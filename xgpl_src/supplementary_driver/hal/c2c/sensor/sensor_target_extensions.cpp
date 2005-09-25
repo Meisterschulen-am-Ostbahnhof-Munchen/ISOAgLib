@@ -157,7 +157,7 @@ void counterIrqFlex()
 
 void counterIrq_0(){counterIrqFlex();}
 
-static counterIrqFunction irqFuncArr = &counterIrq_0;
+//static counterIrqFunction irqFuncArr = &counterIrq_0;
 
 /**
   init counter for trigger events on digital input;
