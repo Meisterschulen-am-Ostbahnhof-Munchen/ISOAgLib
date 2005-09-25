@@ -390,7 +390,7 @@ void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target,
   if ( NULL == rc_src ){std::memset( pui8_target, 0, size ); return;}
   unsigned int temp;
 
-  const unsigned int inputLen = strlen(rc_src);
+  const unsigned int inputLen = std::strlen(rc_src);
   uint8_t* pui8_write = pui8_target;
 
   int ind = inputLen - ( 2 * SIZEOF_INT );
@@ -480,7 +480,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
   if ( NULL == rc_src ){std::memset( pui8_target, 0, 8 ); return;}
 #if SIZEOF_INT <= 2
   uint32_t temp[2] = {0UL, 0UL};
-  const unsigned int len = strlen( rc_src );
+  const unsigned int len = std::strlen( rc_src );
   const int lowerPartValStart = len - 8;
   if ( lowerPartValStart >= 0 )
   {
