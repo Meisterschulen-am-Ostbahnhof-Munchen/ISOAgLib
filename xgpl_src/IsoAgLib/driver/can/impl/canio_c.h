@@ -407,7 +407,7 @@ class CANIO_c : public SingletonCANIO_c {
     @param rui32_ident Ident of received CAN message
     @return is another filterbox found?
   */
-  bool CANIO_c::canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type, ArrFilterBox::iterator& rref_arrFilterBoxIter, bool rb_start );
+  bool canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type, ArrFilterBox::iterator& rref_arrFilterBoxIter, bool rb_start );
 
 
  protected: // Protected methods
