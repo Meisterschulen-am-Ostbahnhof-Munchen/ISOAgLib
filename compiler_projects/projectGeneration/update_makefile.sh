@@ -1034,6 +1034,7 @@ function create_makefile()
 		sed -e 's#all:#all: can_server#g'  $MakefileName > $MakefileName.1
 		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileName.1 > $MakefileName
 	fi
+	rm -f $MakefileName.1
 
 	# now create a Kdevelop3 project file
 	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/kdevelop3Generic.kdevelop $PROJECT.kdevelop
