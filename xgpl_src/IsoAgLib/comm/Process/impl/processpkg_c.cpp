@@ -541,7 +541,7 @@ void ProcessPkg_c::string2Flags()
     #endif
     set_d(0);
 
-    //Need to replace this call with the getpos from the monitor item. DevClasspos no longer encapsulated in the message data itself
+    //Need to replace this call with the getpos from the monitor item. DevKey no longer encapsulated in the message data itself
     //See new line added below that uses c_isoMonitor. -bac
     //setDevKey( DevKey_c(((CANPkg_c::pb_data[2] >> 4) & 0xF), (CANPkg_c::pb_data[2] & 0xF) ) );
 
