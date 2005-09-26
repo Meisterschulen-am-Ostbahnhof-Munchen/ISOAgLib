@@ -173,12 +173,13 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
   enum sendSuccess_t {SendSuccess, SendAborted, Running};
   enum msgType_t {Din = 1, IsoTarget = 2, IsoBroadcast = 6};
 
-  class SendStream_c
+  class SendStream_c : public ClientBase
   {
   public:
 
     /// Object construction
-    SendStream_c(MultiSend_c& rrefc_multiSend) : pc_multiSend (&rrefc_multiSend) {}; // does NOT initialize anything, use "init(...)" directly after construction!!!!
+    SendStream_c(MultiSend_c& rrefc_multiSend SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA ) : SINGLETON_PARENT_CONSTRUCTOR pc_multiSend (&rrefc_multiSend)
+{}; // does NOT initialize anything, use "init(...)" directly after construction!!!!
     void initIso (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
       #if defined(NMEA_2000_FAST_PACKET)
       , bool rb_useFastPacket = false
@@ -383,15 +384,15 @@ public: // methods
 
 
    /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_gtp const reference to the item which ISOItem_c state is changed
+   * @param refc_devKey const reference to the item which ISOItem_c state is changed
    * @param rpc_newItem pointer to the currently corresponding ISOItem_c
     */
-  virtual void reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, const __IsoAgLib::ISOItem_c* rpc_newItem );
+  virtual void reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem );
    /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_gtp const reference to the item which ISOItem_c state is changed
+   * @param refc_devKey const reference to the item which ISOItem_c state is changed
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  virtual void reactOnMonitorListRemove( const __IsoAgLib::GetyPos_c& refc_gtp, uint8_t rui8_oldSa );
+  virtual void reactOnMonitorListRemove( const __IsoAgLib::DevKey_c& refc_devKey, uint8_t rui8_oldSa );
 
 
   #ifdef USE_DIN_TERMINAL
@@ -440,7 +441,8 @@ public: // methods
   bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
   #if defined(NMEA_2000_FAST_PACKET)
   bool sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
-  #endif
+  bool sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
+#endif
 
   /**
     send a ISO broadcast multipacket message

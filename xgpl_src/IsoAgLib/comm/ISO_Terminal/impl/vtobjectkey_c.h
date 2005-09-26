@@ -113,7 +113,7 @@ public:
   //! Parameter:
   //! @param vtObjectKeySROM:
   //! @param b_initPointer:
-  void init(const iVtObjectKey_s* vtObjectKeySROM) { vtObject_c::init ((iVtObject_s*) vtObjectKeySROM); };
+  void init(const iVtObjectKey_s* vtObjectKeySROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectKeySROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
 
   //  Operation: get_vtObjectKey_a
   iVtObjectKey_s* get_vtObjectKey_a() { return (iVtObjectKey_s *)vtObject_a; };
@@ -136,7 +136,7 @@ public:
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectKey_a(), backgroundColour) : 0, sizeof(iVtObjectKey_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectKey_a(), backgroundColour) : 0, sizeof(iVtObjectKey_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
   void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectKey_a(), keyCode) : 0, sizeof(iVtObjectKey_s), 2, newValue, newValue, b_enableReplaceOfCmd);

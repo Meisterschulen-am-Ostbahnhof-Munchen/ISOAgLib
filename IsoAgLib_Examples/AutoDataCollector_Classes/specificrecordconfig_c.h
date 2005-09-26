@@ -50,7 +50,7 @@
 /**
   Read default Recording Defaults from EEPROM
   and provide them for simple access
-  during Gety_Flex_Manager initialisation for specific
+  during DevClass_Flex_Manager initialisation for specific
   device
   *@author Dipl.-Inform. Achim Spangler
 */
@@ -151,16 +151,16 @@ public:
   */
   bool fieldstarSend() const {return b_fieldstarSend;};
   /**
-    some ECU send time, dist, area values with GETY 0
-    @return specific config for this gety
+    some ECU send time, dist, area values with DEVCLASS 0
+    @return specific config for this devClass
   */
-  uint8_t timeDistGety()const{return ui8_timeDistGety;};
+  uint8_t timeDistDevClass()const{return ui8_timeDistDevClass;};
   /**
-    some devices has a ECU which is implemented for another GETY than used;
+    some devices has a ECU which is implemented for another DEVCLASS than used;
         e.g. TeeJet ECU used for fertiilzer instead of spreader
-    @return GETY_POS which should be used for storing information
+    @return DEV_KEY which should be used for storing information
   */
-  const IsoAgLib::iGetyPos_c& recordAsGtp() const {return c_recordAsGtp;};
+  const IsoAgLib::iDevKey_c& recordAsDevKey() const {return c_recordAsDevKey;};
   /**
     deliver the amount of specific process data for this device
     @return amount of specific process data for this device in EEPROM
@@ -228,10 +228,10 @@ private:
   // obligatory data for each data set
   /** amount of config info for this device */
   uint8_t ui8_configDataCnt;
-  /** GETY of this device (0xFF as wild card) */
-  uint8_t ui8_gety;
-  /** POS of this device (0xFF as wild card) */
-  uint8_t ui8_pos;
+  /** DEVCLASS of this device (0xFF as wild card) */
+  uint8_t ui8_devClass;
+  /** device class inst of this device (0xFF as wild card) */
+  uint8_t ui8_devClassInst;
   /** amount of chars to compare (important to compare only some of
       leftmost characters */
   uint8_t ui8_nameLen;
@@ -263,14 +263,14 @@ private:
   */
   bool b_fieldstarSend;
   /**
-    some ECU send time, dist, area values with GETY 0
-    -> specific config for this gety
+    some ECU send time, dist, area values with DEVCLASS 0
+    -> specific config for this devClass
   */
-  uint8_t ui8_timeDistGety;
+  uint8_t ui8_timeDistDevClass;
 
-  /** some devices has a ECU which is implemented for another GETY than used;
+  /** some devices has a ECU which is implemented for another DEVCLASS than used;
       e.g. TeeJet ECU used for fertiilzer instead of spreader */
-  IsoAgLib::iGetyPos_c c_recordAsGtp;
+  IsoAgLib::iDevKey_c c_recordAsDevKey;
   /** amount of device specific process data */
   uint8_t ui8_procCnt;
 };

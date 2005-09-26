@@ -105,15 +105,15 @@ namespace __IsoAgLib {
 /**
   constructor which can set optional all ident data
   @param ri32_time creation time of this item instance
-  @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
+  @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
   @param rb_status state of this ident (off, claimed address, ...) (default: off)
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-ISOItem_c::ISOItem_c(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
+ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr, IState_c::itemState_t rb_status,
       uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
-  : MonitorItem_c(0, rc_gtp, rui8_nr, rb_status, ri_singletonVecKey ),
+  : MonitorItem_c(0, rc_devKey, rui8_nr, rb_status, ri_singletonVecKey ),
     ui16_saEepromAdr(rui16_saEepromAdr)
 {
   // mark this item as prepare address claim if local
@@ -206,7 +206,7 @@ ISOItem_c::~ISOItem_c(){
   @return pointer to the name uint8_t string (8byte)
 */
 const uint8_t* ISOItem_c::name() const {
-  return gtp().getConstName().outputString();
+  return devKey().getConstName().outputString();
 }
 /**
   check if the name field is empty (no name received)
@@ -235,16 +235,16 @@ void ISOItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen){
 /**
   set all element data with one call
   @param ri32_time creation time of this item instance
-  @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
+  @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
   @param rb_status state of this ident (off, claimed address, ...)
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ISOItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
+void ISOItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr,
         itemState_t ren_status, uint16_t rui16_saEepromAdr, int ri_singletonVecKey )
 {
-  MonitorItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, ri_singletonVecKey);
+  MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
   ui16_saEepromAdr = rui16_saEepromAdr;
   readEepromSa();
 };
@@ -253,7 +253,7 @@ void ISOItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
 /**
   set all element data with one call
   @param ri32_time creation time of this item instance
-  @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
+  @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
   @param rui8_nr number of this item
   @param rb_selfConf true -> the item has a self configurable source adress
   @param rui8_indGroup industry group code (2 for agriculture)
@@ -266,20 +266,20 @@ void ISOItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
   @param rb_ecuInst counter for ECU with same function and function instance (default 0)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void ISOItem_c::set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
+void ISOItem_c::set(int32_t ri32_time, DevKey_c rc_devKey, uint8_t rui8_nr,
         bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
         uint32_t rui32_serNo, itemState_t ren_status, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
         uint8_t rb_ecuInst, int ri_singletonVecKey )
 {
-  MonitorItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, ri_singletonVecKey);
-  c_isoName.set(rb_selfConf, rui8_indGroup, (rc_gtp.getGety()), (rc_gtp.getPos()),
+  MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
+  c_isoName.set(rb_selfConf, rui8_indGroup, (rc_devKey.getDevClass()), (rc_devKey.getDevClassInst()),
         rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
   ui16_saEepromAdr = rui16_saEepromAdr;
   readEepromSa();
-  // set give GTP in NAME field
-  c_isoName.setGtp(rc_gtp);
-  // set ISOName_c pointer inside GetyPos_c to ISOName_c of ISOItem_c
-  c_gtp.setName( &c_isoName );
+  // set give DEVKEY in NAME field
+  c_isoName.setDevKey(rc_devKey);
+  // set ISOName_c pointer inside DevKey_c to ISOName_c of ISOItem_c
+  c_devKey.setName( &c_isoName );
 }
 #endif
 /**
@@ -374,14 +374,14 @@ bool ISOItem_c::timeEvent( void )
         b_oldVtState = false; // means send out master message out first, but wait for VT Status Message to arrive first!
         #endif
         // now inform the ISO monitor list change clients on NEW client use
-        getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( gtp(), this );
+        getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
       }
     }
   }
   #ifdef USE_ISO_TERMINAL
   else if ( itemState(IState_c::ClaimedAddress) ) {
     // *** State ClaimedAddress ***
-    if ( !getIsoTerminalInstance().isVtActive() ) {
+    if ( !getIsoTerminalInstance4Comm().isVtActive() ) {
       wsClaimedAddress = false;
     } else {
       // *** VT is Active ***
@@ -421,13 +421,13 @@ bool ISOItem_c::timeEvent( void )
       else if ( ( slavesToClaimAddress == 0 ) && ( pc_masterItem == this ) && ( checkTime(1000) ) )
       {
         // send working set maintenance message now every second
-        c_pkg.setExtCanPkg8(7, 0, 231, getIsoTerminalInstance().getVtSourceAddress (), nr(),
+        c_pkg.setExtCanPkg8(7, 0, 231, getIsoTerminalInstance4Comm().getVtSourceAddress (), nr(),
                             0xFF, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         c_can << c_pkg;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
         updateTime();
       }
     }
-    b_oldVtState = getIsoTerminalInstance().isVtActive();
+    b_oldVtState = getIsoTerminalInstance4Comm().isVtActive();
   }
   #endif
 
@@ -462,30 +462,30 @@ bool ISOItem_c::processMsg(){
         { // local item has already claimed the same adress
           // -> react suitable for this contention
           // -> check for NAME
-          int8_t i8_higherPrio = gtp().getConstName().higherPriThanPar(c_pkg.name());
+          int8_t i8_higherPrio = devKey().getConstName().higherPriThanPar(c_pkg.name());
           if ( ( i8_higherPrio == 1                                                )
             || ( ( i8_higherPrio == 0 ) && ( itemState(IState_c::ClaimedAddress) ) ) )
           { // this item has higher prio (lower val) -> send adr claim
             // OR both items have same prio and this item is already claimed -> stay
             c_pkg.setIsoSa(nr());
           }
-          else if ( c_pkg.gtp() == gtp() )
-          { // address claim has same GTP ( device class and -instance )
+          else if ( c_pkg.devKey() == devKey() )
+          { // address claim has same DEVKEY ( device class and -instance )
             // -> give this instance to the remote one
             // FIRST INFORM REGISTERED ISO Monitor List change clients
-            // indicate with NULL, that this GetyPos_c is no more inside the monitor list
-            getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( gtp(), nr() );
+            // indicate with NULL, that this DevKey_c is no more inside the monitor list
+            getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
             clearItemState(IState_c::Local);
             setItemState(IState_c::ClaimedAddress);
             setNr(c_pkg.isoSa());
             inputString(c_pkg.name());
             // now inform the ISO monitor list change clients on NEW client use
-            getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( gtp(), this );
+            getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
           }
           else
           { // FIRST INFORM REGISTERED ISO Monitor List change clients
-            // indicate with NULL, that this GetyPos_c is no more inside the monitor list
-            getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( gtp(), nr() );
+            // indicate with NULL, that this DevKey_c is no more inside the monitor list
+            getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
             // local item has lower prio -> search free SA and claim this
             // or set nr to the code 254 %e.g. no suitbla nr found -> error
             setNr(getIsoMonitorInstance4Comm().unifyIsoSa(this));
@@ -520,32 +520,32 @@ bool ISOItem_c::processMsg(){
         Process_c& c_process = getProcessInstance4Comm();
         // delete any receive filters that are connected to the old SA of this item first,
         // before the new SA is written
-        c_process.deleteRemoteFilter( gtp() );
+        c_process.deleteRemoteFilter( devKey() );
         #endif
         // INFORM REGISTERED ISO Monitor List change clients
-        // indicate with NULL, that this GetyPos_c is no more inside the monitor list
-        getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( gtp(), nr() );
+        // indicate with NULL, that this DevKey_c is no more inside the monitor list
+        getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
         clearItemState(IState_c::Local);
         setItemState(IState_c::ClaimedAddress);
         setNr(c_pkg.isoSa());
         inputString(c_pkg.name());
         // now inform the ISO monitor list change clients on NEW client use
-        getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( gtp(), this );
+        getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
       }
       else if ( (!itemState(IState_c::Local))
              || (!itemState(IState_c::ClaimedAddress)) )
       { // no local item or local item not yet performed complete address claim
         // -> simply update this item
         // (in case this item was local item in address claim state,
-        //  Ident_Item::timeEvent will look for new POS/Device Class Instance
-        //  to unify GTP -> if possible it will insert new item for local ident)
+        //  Ident_Item::timeEvent will look for new device class inst/Device Class Instance
+        //  to unify DEVKEY -> if possible it will insert new item for local ident)
         // INFORM REGISTERED ISO Monitor List change clients
-        // indicate with NULL, that this GetyPos_c is no more inside the monitor list
-        const bool b_isChange = ( ( c_pkg.gtp() != gtp() ) || ( c_pkg.isoSa() != nr() ) );
+        // indicate with NULL, that this DevKey_c is no more inside the monitor list
+        const bool b_isChange = ( ( c_pkg.devKey() != devKey() ) || ( c_pkg.isoSa() != nr() ) );
         const bool b_wasClaimed = itemState(IState_c::ClaimedAddress);
         if ( b_wasClaimed &&  b_isChange )
         { // the previously using item had already claimed an address
-          getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( gtp(), nr() );
+          getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
         }
         clearItemState(IState_c::Local);
         setItemState(IState_c::ClaimedAddress);
@@ -553,7 +553,7 @@ bool ISOItem_c::processMsg(){
         inputString(c_pkg.name());
         if ( (!b_wasClaimed) ||  b_isChange )
         { // now inform the ISO monitor list change clients on NEW client use
-          getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( gtp(), this );
+          getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
         }
       }
       b_result = true;
@@ -584,9 +584,9 @@ bool ISOItem_c::processMsg(){
           #ifdef USE_BASE
           case TIME_DATE_PGN: // request for calendar
             // call Base_c function to send calendar
-            // isoSendCalendar checks if this item (identified by GETY_POS)
+            // isoSendCalendar checks if this item (identified by DEV_KEY)
             // is configured to send calendar
-            getBaseInstance4Comm().isoSendCalendar(gtp());
+            getBaseInstance4Comm().isoSendCalendar(devKey());
             b_result = true;
             break;
           #endif

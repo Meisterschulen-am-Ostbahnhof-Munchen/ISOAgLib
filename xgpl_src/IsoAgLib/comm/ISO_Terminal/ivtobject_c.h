@@ -56,6 +56,7 @@
 // +X2C includes
 #include "ivttypes.h"
 #include <IsoAgLib/hal/config.h>
+#include <IsoAgLib/util/impl/singleton.h>
 // ~X2C
 
 // Begin Namespace IsoAgLib
@@ -64,7 +65,7 @@ namespace IsoAgLib {
 
 //  +X2C Class 2 : iVtObject_c
 //!  Stereotype: Klasse
-class iVtObject_c
+class iVtObject_c : public ClientBase
 {
 
 // STRUCTURES

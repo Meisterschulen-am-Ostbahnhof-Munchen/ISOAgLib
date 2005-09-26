@@ -107,10 +107,10 @@ namespace __IsoAgLib {
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-  @param rc_gtp optional GETY_POS code of this instance
+  @param rc_devKey optional DEV_KEY code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerGtp optional GETY_POS of the owner
-  @param rpc_gtp pointer to updated GETY_POS variable of owner
+  @param rc_ownerDevKey optional DEV_KEY of the owner
+  @param rpc_devKey pointer to updated DEV_KEY variable of owner
   @param rb_cumulativeValue
            -# for process data like distance, time, area
                the value of the measure prog data sets is updated
@@ -141,10 +141,10 @@ ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c(
                                                              uint8_t rui8_inst,
                                                              uint8_t rui8_zaehlnum,
 #endif
-                                                             const GetyPos_c& rc_gtp,
+                                                             const DevKey_c& rc_devKey,
                                                              uint8_t rui8_pri,
-                                                             const GetyPos_c& rc_ownerGtp,
-                                                             const GetyPos_c *rpc_gtp,
+                                                             const DevKey_c& rc_ownerDevKey,
+                                                             const DevKey_c *rpc_devKey,
                                                              bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                                              uint16_t rui16_eepromAdr,
@@ -159,7 +159,7 @@ ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c(
 #ifdef USE_DIN_9684
                           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                          rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp,
+                          rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
                           rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                           rui16_eepromAdr,
@@ -186,10 +186,10 @@ ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c(
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-  @param rc_gtp optional GETY_POS code of this instance
+  @param rc_devKey optional DEV_KEY code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerGtp optional GETY_POS of the owner
-  @param rpc_gtp pointer to updated GETY_POS variable of owner
+  @param rc_ownerDevKey optional DEV_KEY of the owner
+  @param rpc_devKey pointer to updated DEV_KEY variable of owner
   @param rb_cumulativeValue
           -# for process data like distance, time, area
               the value of the measure prog data sets is updated
@@ -220,10 +220,10 @@ void ProcDataLocalSimpleSetpoint_c::init(
                                          uint8_t rui8_inst,
                                          uint8_t rui8_zaehlnum,
 #endif
-                                         const GetyPos_c& rc_gtp,
+                                         const DevKey_c& rc_devKey,
                                          uint8_t rui8_pri,
-                                         const GetyPos_c& rc_ownerGtp,
-                                         const GetyPos_c *rpc_gtp,
+                                         const DevKey_c& rc_ownerDevKey,
+                                         const DevKey_c *rpc_devKey,
                                          bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                          uint16_t rui16_eepromAdr,
@@ -239,7 +239,7 @@ void ProcDataLocalSimpleSetpoint_c::init(
 #ifdef USE_DIN_9684
                             rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                            rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
+                            rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             rui16_eepromAdr,
 #endif

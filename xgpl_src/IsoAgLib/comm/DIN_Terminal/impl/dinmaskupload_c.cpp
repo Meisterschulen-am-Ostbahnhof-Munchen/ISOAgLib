@@ -140,7 +140,7 @@ void DINMaskUpload_c::init( void )
   //    process data request just 20 ms after sending it's own name
   getSchedulerInstance4Comm().registerDinMaskuploadInstance( this );
 
-  c_gtp.setUnspecified();
+  c_devKey.setUnspecified();
   pc_terminal = NULL;
 
   CNAMESPACE::memset(psMaskDef,0 , REGISTRABLE_MASK_CNT);
@@ -192,34 +192,34 @@ bool DINMaskUpload_c::timeEvent( void )
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   uint8_t ui8_testInd;
-  const GetyPos_c c_oldTerminalGtp = c_gtp;
+  const DevKey_c c_oldTerminalDevKey = c_devKey;
   switch(en_maskUploadState)
   {
     case none:
       // check if one of the registered terminals is active
       for (ui8_testInd = 0; ui8_testInd < ui8_maskDefCnt; ui8_testInd++)
       {
-        if (getDinMonitorInstance4Comm().existDinMemberGtp( psMaskDef[ui8_testInd]->c_gtp, true ))
+        if (getDinMonitorInstance4Comm().existDinMemberDevKey( psMaskDef[ui8_testInd]->c_devKey, true ))
         {
-          DINItem_c* pc_dinTerminalItem = &(getDinMonitorInstance4Comm().dinMemberGtp(psMaskDef[ui8_testInd]->c_gtp, true));
+          DINItem_c* pc_dinTerminalItem = &(getDinMonitorInstance4Comm().dinMemberDevKey(psMaskDef[ui8_testInd]->c_devKey, true));
           if (CNAMESPACE::memcmp(pc_dinTerminalItem->name(), psMaskDef[ui8_testInd]->pb_termName, 7) == 0)
           { // registered terminal at index ui8_testInd is found
             pc_terminal = pc_dinTerminalItem;
-            c_gtp = pc_terminal->gtp();
+            c_devKey = pc_terminal->devKey();
             ui8_maskDefInd = ui8_testInd;
 
-            // check if terminal wants syncronisation process data with GETY_POS of terminal
+            // check if terminal wants syncronisation process data with DEV_KEY of terminal
             switch (activeMask().en_terminalType)
             {
               case IsoAgLib::FendtVario:
               case IsoAgLib::AgrocomACT:
-                // activate in ProcessPkg_c the automatic conversion of GETY_POS
-                // sent/received process data msgs so that GETY_POS can be normally handled
+                // activate in ProcessPkg_c the automatic conversion of DEV_KEY
+                // sent/received process data msgs so that DEV_KEY can be normally handled
                 // in higher level algorithms
-                getProcessInstance4Comm().data().useTermGtpForLocalProc(c_gtp);
+                getProcessInstance4Comm().data().useTermDevKeyForLocalProc(c_devKey);
                 break;
               case IsoAgLib::FieldstarOld:
-                getProcessInstance4Comm().data().useTermGtpForLocalProc(c_gtp, GetyPos_c(0,0));
+                getProcessInstance4Comm().data().useTermDevKeyForLocalProc(c_devKey, DevKey_c(0,0));
                 break;
               default:
                 break;
@@ -230,21 +230,21 @@ bool DINMaskUpload_c::timeEvent( void )
 
             // only create new entries if terminal changed or if no synproc
             // entries exist ( avoid double creation if several tries are needed )
-            if ( ( c_oldTerminalGtp !=  c_gtp ) || ( ! arrSyncproc.empty() ) )
+            if ( ( c_oldTerminalDevKey !=  c_devKey ) || ( ! arrSyncproc.empty() ) )
             { // now create the process data for syncronisation values
               if ( activeMask().en_terminalType != IsoAgLib::FieldstarOld) createLbsplusProcdata();
               else createFieldstarProcdata();
             }
             #if defined(DEBUG_RS232) || defined(DEBUG_HEAP_USEAGE)
-            getRs232Instance() << "Starte DIN Upload zu Terminal Gety: "
-              << uint16_t( c_gtp.getGety() )
-              << ", Pos: " << uint16_t( c_gtp.getPos() )
+            getRs232Instance() << "Starte DIN Upload zu Terminal DevClass: "
+              << uint16_t( c_devKey.getDevClass() )
+              << ", Pos: " << uint16_t( c_devKey.getDevClassInst() )
               << "\n\r";
             #endif
             en_maskUploadState = await_start;
 
           } // if registered terminal at index ui8_testInd is active
-        } // exist DINItem_c with tested gtp
+        } // exist DINItem_c with tested devKey
       } // for all registered terminals
       break;
     case running:
@@ -255,16 +255,16 @@ bool DINMaskUpload_c::timeEvent( void )
       }
       break;
     case await_start:
-      if ( ( ( c_gtp.isSpecified() ) && (getDinMonitorInstance4Comm().existDinMemberGtp(c_gtp, true)) )
+      if ( ( ( c_devKey.isSpecified() ) && (getDinMonitorInstance4Comm().existDinMemberDevKey(c_devKey, true)) )
         && ( getSystemMgmtInstance4Comm().existActiveLocalDinMember()                                 ) )
       { // resend the mask sync data every 500msec
         tryResendMaskSyncData();
       }
     case success:
     case abort: /** @todo This part is never reached (please double check first someone), as above the state is set to "none" instead of "abort" */
-      if ( ( c_gtp.isSpecified() ) && (!(getDinMonitorInstance4Comm().existDinMemberGtp(c_gtp, true))) )
+      if ( ( c_devKey.isSpecified() ) && (!(getDinMonitorInstance4Comm().existDinMemberDevKey(c_devKey, true))) )
       { // lately terminal found - but not active any more -> reset
-        c_gtp.setUnspecified();
+        c_devKey.setUnspecified();
         pc_terminal = NULL;
         if (en_maskUploadState == running)
         { // abort upload
@@ -282,7 +282,7 @@ bool DINMaskUpload_c::timeEvent( void )
       }
       break;
   } // switch
-  if ( ( c_gtp.isUnspecified() ) || (!(getDinMonitorInstance4Comm().existDinMemberGtp(c_gtp, true))) ) {
+  if ( ( c_devKey.isUnspecified() ) || (!(getDinMonitorInstance4Comm().existDinMemberDevKey(c_devKey, true))) ) {
     // none of the registered terminals active on BUS
     // -> clear array of process data, reset terminal pointer
     if ( ! arrSyncproc.empty() ) {
@@ -297,7 +297,7 @@ bool DINMaskUpload_c::timeEvent( void )
     #ifdef DEBUG_RS232
     getRs232Instance() << "loesche zuvor aktiven Eintrag\n\r";
     #endif
-    c_gtp.setUnspecified();
+    c_devKey.setUnspecified();
     pc_terminal = NULL;
     en_maskUploadState = none;
   }
@@ -320,8 +320,8 @@ void DINMaskUpload_c::tryResendMaskSyncData()
           pc_iter != arrSyncproc.end();
           pc_iter++ )
     { // send proc data at pos
-      if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) pc_iter->sendVal( c_gtp );
-      else pc_iter->setpoint().sendSetpoint( c_gtp );
+      if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) pc_iter->sendVal( c_devKey );
+      else pc_iter->setpoint().sendSetpoint( c_devKey );
     }
   }
 }
@@ -451,7 +451,7 @@ bool DINMaskUpload_c::processMsg(){
 */
 void DINMaskUpload_c::createLbsplusProcdata()
 {
-  GetyPos_c *pc_localGtp = activeMask().pc_localGtp;
+  DevKey_c *pc_localDevKey = activeMask().pc_localDevKey;
   IsoAgLib::t_syncTupel* pt_syncTupel = activeMask().pt_syncArray;
 
   IsoAgLib::ElementDDI_s s_TempElementDDI[1] =
@@ -460,14 +460,14 @@ void DINMaskUpload_c::createLbsplusProcdata()
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   };
 
-  arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, LBS_PLUS_PROJECT_SIZE, *pc_localGtp,2, *pc_localGtp, pc_localGtp));
+  arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, LBS_PLUS_PROJECT_SIZE, *pc_localDevKey,2, *pc_localDevKey, pc_localDevKey));
   if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) {
     arrSyncproc.begin()->setMasterVal(static_cast<int32_t>(activeMask().ui32_maskSize));
-    arrSyncproc.begin()->sendVal( c_gtp );
+    arrSyncproc.begin()->sendVal( c_devKey );
   }
   else {
     arrSyncproc.begin()->setpoint().setSetpointMasterVal(static_cast<int32_t>(activeMask().ui32_maskSize));
-    arrSyncproc.begin()->setpoint().sendSetpoint( c_gtp );
+    arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
   }
 
   // now create all syncronisation process data, where value is != 0
@@ -475,27 +475,27 @@ void DINMaskUpload_c::createLbsplusProcdata()
   {
     if ((pt_syncTupel[ui8_syncNoInd].ui8_ind == 0) || (pt_syncTupel[ui8_syncNoInd].ui8_ind == LBS_PLUS_PROJECT_SIZE)) continue;
 
-    arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, pt_syncTupel[ui8_syncNoInd].ui8_ind, *pc_localGtp, 2, *pc_localGtp, pc_localGtp));
+    arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, pt_syncTupel[ui8_syncNoInd].ui8_ind, *pc_localDevKey, 2, *pc_localDevKey, pc_localDevKey));
 
     if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) {
       arrSyncproc.begin()->setMasterVal(pt_syncTupel[ui8_syncNoInd].i32_val);
       #if 1
-      arrSyncproc.front().sendVal( c_gtp );
+      arrSyncproc.front().sendVal( c_devKey );
       #else
       if ( pt_syncTupel[ui8_syncNoInd].ui8_ind == LBS_PLUS_SYSTEM_STATUS ) {
         // send initial project state
-        arrSyncproc.front().sendVal( c_gtp );
+        arrSyncproc.front().sendVal( c_devKey );
       }
       #endif
     }
     else {
       arrSyncproc.begin()->setpoint().setSetpointMasterVal(pt_syncTupel[ui8_syncNoInd].i32_val);
       #if 1
-      arrSyncproc.front().setpoint().sendSetpoint( c_gtp );
+      arrSyncproc.front().setpoint().sendSetpoint( c_devKey );
       #else
       if ( pt_syncTupel[ui8_syncNoInd].ui8_ind == LBS_PLUS_SYSTEM_STATUS ) {
         // send initial project state
-        arrSyncproc.front().setpoint().sendSetpoint( c_gtp );
+        arrSyncproc.front().setpoint().sendSetpoint( c_devKey );
       }
       #endif
     }
@@ -518,7 +518,7 @@ void DINMaskUpload_c::createLbsplusProcdata()
 */
 void DINMaskUpload_c::createFieldstarProcdata()
 {
-  GetyPos_c *pc_localGtp = activeMask().pc_localGtp;
+  DevKey_c *pc_localDevKey = activeMask().pc_localDevKey;
   IsoAgLib::t_syncTupel* pt_syncTupel = activeMask().pt_syncArray;
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -528,21 +528,21 @@ void DINMaskUpload_c::createFieldstarProcdata()
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   };
-  arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, FS_OLD_PROJECT_SIZE, 0xFF, *pc_localGtp, 5, *pc_localGtp, pc_localGtp));
+  arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, FS_OLD_PROJECT_SIZE, 0xFF, *pc_localDevKey, 5, *pc_localDevKey, pc_localDevKey));
   float f_temp = (float)activeMask().ui32_maskSize;
   arrSyncproc.begin()->setpoint().setSetpointMasterVal(f_temp);
-  arrSyncproc.begin()->setpoint().sendSetpoint( c_gtp );
+  arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
 
   for (uint8_t ui8_syncNoInd = 0; ui8_syncNoInd < activeMask().ui8_syncCnt; ui8_syncNoInd++)
   {
     if ((pt_syncTupel[ui8_syncNoInd].ui8_ind == 0) || (pt_syncTupel[ui8_syncNoInd].ui8_ind == FS_OLD_PROJECT_SIZE)) continue;
     if (pt_syncTupel[ui8_syncNoInd].ui8_ind == FS_OLD_SW_VERSION)
-      arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3,  0xF, 0x3, 0xFF, *pc_localGtp, 1, *pc_localGtp, pc_localGtp));
+      arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3,  0xF, 0x3, 0xFF, *pc_localDevKey, 1, *pc_localDevKey, pc_localDevKey));
     else
-      arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, *pc_localGtp , 5, *pc_localGtp, pc_localGtp));
+      arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, *pc_localDevKey , 5, *pc_localDevKey, pc_localDevKey));
     f_temp = (float)((float)pt_syncTupel[ui8_syncNoInd].i32_val/100.0F);
     arrSyncproc.begin()->setpoint().setSetpointMasterVal(f_temp);
-    arrSyncproc.begin()->setpoint().sendSetpoint( c_gtp );
+    arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
   }
 
 #else
@@ -550,19 +550,19 @@ void DINMaskUpload_c::createFieldstarProcdata()
   // integer
   // main prog version at position 4
   // now create all syncronisation process data, where value is != 0
-  arrSyncproc.push_front(syncproc_t(3, *pc_localGtp, 0x0, 0xC, 0xFF, 5, *pc_localGtp, pc_localGtp));
+  arrSyncproc.push_front(syncproc_t(3, *pc_localDevKey, 0x0, 0xC, 0xFF, 5, *pc_localDevKey, pc_localDevKey));
   arrSyncproc.begin()->setpoint().setSetpointMasterVal(activeMask().ui32_maskSize);
-  arrSyncproc.begin()->setpoint().sendSetpoint( c_gtp );
+  arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
 
   for (uint8_t ui8_syncNoInd = 0; ui8_syncNoInd < activeMask().ui8_syncCnt; ui8_syncNoInd++)
   {
     if ((pt_syncTupel[ui8_syncNoInd].ui8_ind == 0) || (pt_syncTupel[ui8_syncNoInd].ui8_ind == LBS_PLUS_PROJECT_SIZE)) continue;
     if (pt_syncTupel[ui8_syncNoInd].ui8_ind == FS_OLD_SW_VERSION)
-      arrSyncproc.push_front(syncproc_t(3, *pc_localGtp, 0xF, 0x3, 0xFF, 1, *pc_localGtp, pc_localGtp));
+      arrSyncproc.push_front(syncproc_t(3, *pc_localDevKey, 0xF, 0x3, 0xFF, 1, *pc_localDevKey, pc_localDevKey));
     else
-      arrSyncproc.push_front(syncproc_t(3, *pc_localGtp, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, 5, *pc_localGtp, pc_localGtp));
+      arrSyncproc.push_front(syncproc_t(3, *pc_localDevKey, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, 5, *pc_localDevKey, pc_localDevKey));
     arrSyncproc.begin()->setpoint().setSetpointMasterVal(pt_syncTupel[ui8_syncNoInd].i32_val);
-    arrSyncproc.begin()->setpoint().sendSetpoint( c_gtp );
+    arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
   }
 #endif
   #ifdef DEBUG_HEAP_USEAGE

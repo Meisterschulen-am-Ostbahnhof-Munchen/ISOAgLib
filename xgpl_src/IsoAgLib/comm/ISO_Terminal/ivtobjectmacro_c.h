@@ -46,8 +46,8 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag.de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag.de                  *
+ ***************************************************************************/
 
 
 #ifndef IVTOBJECTMACRO_C_H
@@ -72,10 +72,10 @@ public:
 
   //  Operation: init
   //! Parameter:
-  //! @param vtObjectMacroSROM: 
-  //! @param b_initPointer: 
-  void init(const iVtObjectMacro_s* vtObjectMacroSROM) {
-    vtObjectMacro_c::init (vtObjectMacroSROM);
+  //! @param vtObjectMacroSROM:
+  //! @param b_initPointer:
+  void init(const iVtObjectMacro_s* vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectMacro_c::init (vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   };
 
   //  Operation: get_vtObjectMacro_a

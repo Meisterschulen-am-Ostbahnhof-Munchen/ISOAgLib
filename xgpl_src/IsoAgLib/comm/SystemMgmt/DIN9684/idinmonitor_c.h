@@ -118,44 +118,44 @@ public:
   { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberInd(rui8_ind, rb_forceClaimedAddress));};
 
   /**
-    deliver the count of members in the Monitor-List with given GETY (variable POS)
+    deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
     which optional (!!) match the condition of address claim state
-    @param rb_gety searched GETY code
+    @param rui8_devClass searched DEVCLASS code
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
-    @return count of members in Monitor-List with GETY == rb_gety
+    @return count of members in Monitor-List with DEVCLASS == rui8_devClass
   */
-  uint8_t dinMemberGetyCnt(uint8_t rb_gety, bool rb_forceClaimedAddress = false)
-  { return DINMonitor_c::dinMemberGetyCnt(rb_gety, rb_forceClaimedAddress);};
+  uint8_t dinMemberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClaimedAddress = false)
+  { return DINMonitor_c::dinMemberDevClassCnt(rui8_devClass, rb_forceClaimedAddress);};
   /**
-    deliver one of the members with specific GETY
+    deliver one of the members with specific DEVCLASS
     which optional (!!) match the condition of address claim state
-    check first with dinMemberGetyCnt if enough members with wanted GETY and
+    check first with dinMemberDevClassCnt if enough members with wanted DEVCLASS and
     optional (!!) property are registered in Monitor-List
-    @see dinMemberGetyCnt
+    @see dinMemberDevClassCnt
 
     possible errors:
-      * Err_c::range there exist less than rui8_ind members with GETY rb_gety
-   @param rb_gety searched GETY
+      * Err_c::range there exist less than rui8_ind members with DEVCLASS rui8_devClass
+   @param rui8_devClass searched DEVCLASS
    @param rui8_ind position of the wanted member in the
-                 sublist of member with given GETY (first item has rui8_ind == 0 !!)
+                 sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
    @param rb_forceClaimedAddress true -> only members with claimed address are used
          (optional, default false)
    @return reference to searched element
   */
-  iDINItem_c& dinMemberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
-  { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberGetyInd(rb_gety, rui8_ind, rb_forceClaimedAddress));};
+  iDINItem_c& dinMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
+  { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberDevClassInd(rui8_devClass, rui8_ind, rb_forceClaimedAddress));};
   /**
-    check if a memberItem with given GETY_POS exist
+    check if a memberItem with given DEV_KEY exist
     which optional (!!) match the condition of address claim state
     and update local pc_dinMemberCache
-    @param rc_gtp searched GETY_POS
+    @param rc_devKey searched DEV_KEY
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existDinMemberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
-    { return DINMonitor_c::existDinMemberGtp(rc_gtp, rb_forceClaimedAddress);};
+  bool existDinMemberDevKey(const iDevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
+    { return DINMonitor_c::existDinMemberDevKey(rc_devKey, rb_forceClaimedAddress);};
 
   /**
     check if a member with given number exist
@@ -168,27 +168,27 @@ public:
   { return DINMonitor_c::existDinMemberNr(rui8_nr);};
 
   /**
-    check if member is in member list with wanted GETY_POS,
-    adopt POS if member with claimed address with other POS exist
-    @param refc_gtp GETY_POS to search (-> it's updated if member with claimed address with other POS is found)
-    @return true -> member with claimed address with given GETY found (and refc_gtp has now its GETY_POS)
+    check if member is in member list with wanted DEV_KEY,
+    adopt instance if member with claimed address with other device class inst exist
+    @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
+    @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
   */
-  bool dinGety2GtpClaimedAddress(iGetyPos_c &refc_gtp) { return DINMonitor_c::dinGety2GtpClaimedAddress(refc_gtp);};
+  bool dinDevClass2DevKeyClaimedAddress(iDevKey_c &refc_devKey) { return DINMonitor_c::dinDevClass2DevKeyClaimedAddress(refc_devKey);};
 
 
   /**
-    deliver member item with given gtp
-    (check with existDinMemberGtp before access to not defined item)
+    deliver member item with given devKey
+    (check with existDinMemberDevKey before access to not defined item)
 
     possible errors:
       * Err_c::elNonexistent on failed search
 
-    @param rc_gtp searched GETY_POS
+    @param rc_devKey searched DEV_KEY
     @return reference to searched MemberItem
      @exception containerElementNonexistant
   */
-  iDINItem_c& dinMemberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
-    { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberGtp(rc_gtp, rb_forceClaimedAddress));};
+  iDINItem_c& dinMemberDevKey(const iDevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
+    { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberDevKey(rc_devKey, rb_forceClaimedAddress));};
 
   /**
     deliver member item with given nr
@@ -204,15 +204,15 @@ public:
   iDINItem_c& dinMemberNr(uint8_t rui8_nr) { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberNr(rui8_nr));};
 
   /**
-    deliver member item with given GETY_POS, set pointed bool var to true on success
+    deliver member item with given DEV_KEY, set pointed bool var to true on success
     and set a Member Array Iterator to the result
-    @param rc_gtp searched GETY_POS
+    @param rc_devKey searched DEV_KEY
     @param pb_success bool pointer to store the success (true on success)
     @param pbc_iter optional member array iterator which points to searched DINItem_c on success
     @return reference to the searched item
   */
-  iDINItem_c& dinMemberGtp(const iGetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_MemberIterator *const pbc_iter = NULL)
-  { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberGtp(rc_gtp, pb_success, rb_forceClaimedAddress, pbc_iter));};
+  iDINItem_c& dinMemberDevKey(const iDevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_MemberIterator *const pbc_iter = NULL)
+  { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberDevKey(rc_devKey, pb_success, rb_forceClaimedAddress, pbc_iter));};
 
 #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
   /* *********************************************************** */
@@ -228,14 +228,14 @@ public:
     IMPORTANT: as protocol demands the stop command is repeated till explicit stop-release function call
 
     possible errors:
-      * Err_c::elNonexistent the commanded member GETY_POS doesn't exist in member list
+      * Err_c::elNonexistent the commanded member DEV_KEY doesn't exist in member list
       * Err_c::lbsSysNoActiveLocalMember on missing own active ident
-    @param rc_gtpTarget GETY_POS of the member, which should be stopped
+    @param rc_devKeyTarget DEV_KEY of the member, which should be stopped
     @param rb_toStop true -> start sending STOP commands; false -> release STOP sending mode
     @return true -> stop command sent without errors
   */
-  bool commandStop(const iGetyPos_c& rc_gtpTarget, bool rb_toStop = true)
-  { return DINMonitor_c::commandStop(rc_gtpTarget, rb_toStop);};
+  bool commandStop(const iDevKey_c& rc_devKeyTarget, bool rb_toStop = true)
+  { return DINMonitor_c::commandStop(rc_devKeyTarget, rb_toStop);};
 
   /**
     starts or release stop command for all system members;
@@ -253,14 +253,14 @@ public:
     send ISO11783 or DIN9684 system msg to command status request for another member to switch to given mode
 
     possible errors:
-      * Err_c::elNonexistent the commanded member GETY_POS doesn't exist in member list
+      * Err_c::elNonexistent the commanded member DEV_KEY doesn't exist in member list
       * Err_c::lbsSysNoActiveLocalMember on missing own active ident
-    @param rc_gtp GETY_PSO of member, which switch state to OFF
+    @param rc_devKey DEVCLASS_PSO of member, which switch state to OFF
     @param ren_itemState wanted state of item
     @return true -> stop command sent without errors
   */
-  bool commandItemState(const iGetyPos_c& rc_gtp, IState_c::itemState_t ren_itemState)
-  { return DINMonitor_c::commandItemState(rc_gtp, ren_itemState);};
+  bool commandItemState(const iDevKey_c& rc_devKey, IState_c::itemState_t ren_itemState)
+  { return DINMonitor_c::commandItemState(rc_devKey, ren_itemState);};
   /*\@}*/
 #endif
 private:

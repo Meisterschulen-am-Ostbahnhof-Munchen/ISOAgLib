@@ -85,13 +85,13 @@ namespace IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::GetyPos c_myGtp( 1, 0 );
+  IsoAgLib::DevKey c_myDevKey( 1, 0 );
   // creation of process data instance
   iProcDataLocalSimpleMeasure_c c_workState;
   // init for LIS=0, local device type/subtype=1/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send ),
   // load/store measurememnt data to/from EEPROM
-  c_workState.init( 0, myGtp, 0x1, 0x0, 0xFF, 2, c_myGtp, &c_myGtp, false, 0x1234 );
+  c_workState.init( 0, myDevKey, 0x1, 0x0, 0xFF, 2, c_myDevKey, &c_myDevKey, false, 0x1234 );
 
   // update current measurement value ( real value, which can differ from commanded value )
   c_workState.setMasterVal( 100 );
@@ -142,10 +142,10 @@ public:
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_gtp pointer to updated GETY_POS variable of owner
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_devKey pointer to updated DEV_KEY variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -176,10 +176,10 @@ public:
                                 uint8_t rui8_inst = 0,
                                 uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                                const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
+                                const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
                                 uint8_t rui8_pri = 2,
-                                const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
-                                const iGetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false,
+                                const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
+                                const iDevKey_c *rpc_devKey = NULL, bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                                 uint16_t rui16_eepromAdr = 0xFFFF,
 #endif
@@ -192,7 +192,7 @@ public:
 #ifdef USE_DIN_9684
                                    rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                   rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
+                                   rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                    rui16_eepromAdr,
 #endif
@@ -215,10 +215,10 @@ public:
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_gtp pointer to updated GETY_POS variable of owner
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_devKey pointer to updated DEV_KEY variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -249,10 +249,10 @@ public:
             uint8_t rui8_inst = 0,
             uint8_t rui8_zaehlnum = 0xFF,
 #endif
-            const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
+            const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
             uint8_t rui8_pri = 2,
-            const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
-            const iGetyPos_c *rpc_gtp = NULL,
+            const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
+            const iDevKey_c *rpc_devKey = NULL,
             bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t rui16_eepromAdr = 0xFFFF,
@@ -267,7 +267,7 @@ public:
 #ifdef USE_DIN_9684
                                       rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                      rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, rb_cumulativeValue,
+                                      rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                       rui16_eepromAdr,
 #endif
@@ -304,16 +304,16 @@ public:
   */
   uint8_t lis() const{return ProcDataLocalSimpleMeasure_c::lis();};
   /**
-    deliver value GETY (machine type specific table of process data types)
-    @return GETY
+    deliver value DEVCLASS (machine type specific table of process data types)
+    @return DEVCLASS
   */
-  uint8_t gety() const{return ProcDataLocalSimpleMeasure_c::gety();};
+  uint8_t devClass() const{return ProcDataLocalSimpleMeasure_c::devClass();};
   /**
-    deliver value GETY_POS (machine type specific table of process data types)
-    use everytime the GETY from the ident part, and take the POS from the owner
-    @return GETY_POS
+    deliver value DEV_KEY (machine type specific table of process data types)
+    use everytime the _device_class_ from the ident part, and take the _instance_ from the owner
+    @return DEV_KEY
   */
-  const iGetyPos_c& gtp() const {return static_cast<const iGetyPos_c&>(ProcDataLocalSimpleMeasure_c::gtp());};
+  const iDevKey_c& devKey() const {return static_cast<const iDevKey_c&>(ProcDataLocalSimpleMeasure_c::devKey());};
   /**
     deliver value WERT (row of process data table)
     @return WERT
@@ -330,40 +330,40 @@ public:
   */
   uint8_t zaehlnum() const{return ProcDataLocalSimpleMeasure_c::zaehlnum();};
   /**
-    deliver value POS (important if more than one machine with equal GETY are active)
+    deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
     @return POS
   */
-  uint8_t pos() const{return ProcDataLocalSimpleMeasure_c::pos();};
+  uint8_t devClassInst() const{return ProcDataLocalSimpleMeasure_c::devClassInst();};
 
 
   /**
     send the base value (the one that is updated via setMasterVal() )
     to a specified target (selected by GPT)
-    @param rc_targetGtp GetyPos of target
+    @param rc_targetDevKey DevKey of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendVal( const iGetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-    { return ProcDataLocalSimpleMeasure_c::sendVal( rc_targetGtp, ren_progType );};
+  bool sendVal( const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+    { return ProcDataLocalSimpleMeasure_c::sendVal( rc_targetDevKey, ren_progType );};
 
   /**
     send a exact-setpoint to a specified target (selected by GPT)
-    @param rc_targetGtp GetyPos of target
+    @param rc_targetDevKey DevKey of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpoint( const iGetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return setpointConst().sendSetpoint( rc_targetGtp, ren_progType );};
+  bool sendSetpoint( const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+   { return setpointConst().sendSetpoint( rc_targetDevKey, ren_progType );};
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
     @param rui8_mod select sub-type of setpoint
-    @param rc_targetGtp GetyPos of target
+    @param rc_targetDevKey DevKey of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iGetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
   {
-   return setpointConst().sendSetpointMod( rc_targetGtp, ren_progType, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
+   return setpointConst().sendSetpointMod( rc_targetDevKey, ren_progType, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
   };
   #ifdef USE_EEPROM_IO
   /**

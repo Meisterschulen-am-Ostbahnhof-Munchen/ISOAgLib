@@ -106,10 +106,10 @@ namespace __IsoAgLib {
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
     common parameter
-    @param rc_gtp optional GETY_POS code of this instance
+    @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -123,9 +123,9 @@ ProcDataRemote_c::ProcDataRemote_c(
                    uint8_t rui8_inst,
                    uint8_t rui8_zaehlnum,
 #endif
-                   const GetyPos_c& rc_gtp,
-                   uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp,
-                   const GetyPos_c* rpc_commanderGtp,
+                   const DevKey_c& rc_devKey,
+                   uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
+                   const DevKey_c* rpc_commanderDevKey,
                    IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                    int ri_singletonVecKey)
 
@@ -136,7 +136,7 @@ ProcDataRemote_c::ProcDataRemote_c(
 #ifdef USE_DIN_9684
                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                         rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                         rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
                          rpc_processDataChangeHandler, ri_singletonVecKey)
   , c_setpoint(this)
   , c_measure(this)
@@ -156,10 +156,10 @@ ProcDataRemote_c::ProcDataRemote_c(
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
     common parameter
-    @param rc_gtp optional GETY_POS code of this instance
+    @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -170,7 +170,7 @@ void ProcDataRemote_c::init(
 #ifdef USE_DIN_9684
                             uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
 #endif
-                            const GetyPos_c& rc_gtp, uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp, const GetyPos_c* rpc_commanderGtp,
+                            const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey, const DevKey_c* rpc_commanderDevKey,
                             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                             int ri_singletonVecKey)
 {
@@ -181,7 +181,7 @@ void ProcDataRemote_c::init(
 #ifdef USE_DIN_9684
                              rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                             rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                             rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
                              rpc_processDataChangeHandler, ri_singletonVecKey);
   c_setpoint.init( this );
   c_measure.init( this );
@@ -224,12 +224,12 @@ ProcDataRemote_c::~ProcDataRemote_c(){
 */
 bool ProcDataRemote_c::timeEvent( void )
 {
-  // check if remote gtp isn't active any more (>3sec) and stop all
+  // check if remote devKey isn't active any more (>3sec) and stop all
   // measureing progs
   // -> checks and reaction performed by SetpointRemote_c::timeEvent and
   // MeasureProgRemote_c::timeEvent
-  // set gtp for MeasureProgRemote_c if changed
-  prog().setGtp(commanderGtp());
+  // set devKey for MeasureProgRemote_c if changed
+  prog().setDevKey(commanderDevKey());
   if ( ! prog().timeEvent() ) return false;
 
   if ( ! setpoint().timeEvent() ) return false;

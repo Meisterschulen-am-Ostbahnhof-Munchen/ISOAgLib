@@ -81,7 +81,7 @@
  ***************************************************************************/
 
 #include "vtobjectstring_c.h"
-#include "IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h"
+#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 
 
 namespace __IsoAgLib {

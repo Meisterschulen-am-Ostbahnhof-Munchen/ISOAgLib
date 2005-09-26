@@ -99,8 +99,8 @@
 namespace __IsoAgLib {
 
 /**
-  base class for member lists; stores item state, access time, device type ( GETY ),
-  device type instance ( POS ), member number and name.
+  base class for member lists; stores item state, access time, device class,
+  device class instance, member number and name.
   @author Dipl.-Inform. Achim Spangler
 */
 class MonitorItem_c  : public BaseItem_c {
@@ -111,12 +111,12 @@ public:
     constructor which takes optional the pointer to the containing Scheduler_c instance
     and the actual time as parameter to initialise all own values
     @param ri32_time optional timestamp to store as last update
-    @param rc_gtp GETY_POS code of this item
-    @param rui8_nr number of this item (for real services equal to gety)
+    @param rc_devKey DEV_KEY code of this item
+    @param rui8_nr number of this item (for real services equal to devClass)
     @param rb_status state of this ident (off, claimed address, ...) (default: off)
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  MonitorItem_c(int32_t ri32_time = 0, const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, uint8_t rui8_nr = 0xF,
+  MonitorItem_c(int32_t ri32_time = 0, const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, uint8_t rui8_nr = 0xF,
               IState_c::itemState_t rb_status = IState_c::IstateNull, int ri_singletonVecKey = 0);
   /**
     copy constructor which takes it initial values from another MonitorItem_c instance
@@ -137,41 +137,41 @@ public:
   /**
     set all element data with one call
     @param ri32_time creation time of this item instance
-    @param rc_gtp GETY_POS code of this item
-    @param rui8_nr number of this item (for real services equal to gety)
+    @param rc_devKey DEV_KEY code of this item
+    @param rui8_nr number of this item (for real services equal to devClass)
     @param ren_status status information of this ident (IState_c::Off, IState_c::Active, ...)
         (default: IState_c::Active)
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time = 0, const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, uint8_t rui8_nr = 0xF,
+  void set(int32_t ri32_time = 0, const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, uint8_t rui8_nr = 0xF,
            itemState_t ren_status = IState_c::Active, int ri_singletonVecKey = 0);
 
   /**
-    set GETY_POS code of this item
-    @param rc_gtp GETY_POS
+    set DEV_KEY code of this item
+    @param rc_devKey DEV_KEY
   */
-  void setGtp(const GetyPos_c& rc_gtp){c_gtp = rc_gtp;};
+  void setDevKey(const DevKey_c& rc_devKey){c_devKey = rc_devKey;};
   /**
     set number of this item
-    @param rc_gtp number
+    @param rc_devKey number
   */
   void setNr(uint8_t rui8_nr){ui8_nr = rui8_nr;};
 
   /**
-    deliver the GETY_POS code of this item
-    @return GETY_POS code
+    deliver the DEV_KEY code of this item
+    @return DEV_KEY code
   */
-  const GetyPos_c& gtp()const{return c_gtp;};
+  const DevKey_c& devKey()const{return c_devKey;};
   /**
-    deliver the GETY code alone (derived from gtp)
-    @return GETY code
+    deliver the DEVCLASS code alone (derived from devKey)
+    @return DEVCLASS code
   */
-  uint8_t gety()const{return c_gtp.getGety();};
+  uint8_t devClass()const{return c_devKey.getDevClass();};
   /**
-    deliver the POS code alone (derived from gtp)
-    @return POS code
+    deliver the device class inst code alone (derived from devKey)
+    @return device class inst code
   */
-  uint8_t pos()const{return c_gtp.getPos();};
+  uint8_t devClassInst()const{return c_devKey.getDevClassInst();};
   /**
     deliver the number/adress of this item
     @return number
@@ -194,39 +194,39 @@ public:
   */
   virtual void getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen) = 0;
   /**
-    lower comparison with another MonitorItem_c on the rigth (compare the GETY_POS)
+    lower comparison with another MonitorItem_c on the rigth (compare the DEV_KEY)
     @param rrefc_right rigth parameter for lower compare
   */
   bool operator<(const MonitorItem_c& rrefc_right) const
-    {return (gtp() < rrefc_right.gtp())?true:false;};
+    {return (devKey() < rrefc_right.devKey())?true:false;};
   /**
-    lower comparison with GETY_POS uint8_t on the rigth
+    lower comparison with DEV_KEY uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator<(const GetyPos_c& rc_gtp)const{return (gtp() < rc_gtp)?true:false;};
+  bool operator<(const DevKey_c& rc_devKey)const{return (devKey() < rc_devKey)?true:false;};
   /**
-    lower comparison between left GETY_POS uint8_t and right MonitorItem
-    @param rb_left GETY_POS uint8_t left parameter
+    lower comparison between left DEV_KEY uint8_t and right MonitorItem
+    @param rb_left DEV_KEY uint8_t left parameter
     @param rrefc_right rigth DINServiceItem_c parameter
   */
-  friend bool operator<(const GetyPos_c& rc_left, const MonitorItem_c& rrefc_right);
+  friend bool operator<(const DevKey_c& rc_left, const MonitorItem_c& rrefc_right);
   /**
-    lower comparison between left MonitorItem_c and right GETY_POS uint8_t
+    lower comparison between left MonitorItem_c and right DEV_KEY uint8_t
     @param rrefc_left left DINServiceItem_c parameter
-    @param rb_right GETY_POS uint8_t right parameter
+    @param rb_right DEV_KEY uint8_t right parameter
   */
-  friend bool lessThan(const MonitorItem_c& rrefc_left, const GetyPos_c& rc_right);
+  friend bool lessThan(const MonitorItem_c& rrefc_left, const DevKey_c& rc_right);
 
   /**
-    equality comparison with GETY_POS uint8_t on the rigth
+    equality comparison with DEV_KEY uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator==(const GetyPos_c& rc_right)const { return (gtp() == rc_right)?true:false;};
+  bool operator==(const DevKey_c& rc_right)const { return (devKey() == rc_right)?true:false;};
   /**
-    difference comparison with GETY_POS uint8_t on the rigth
+    difference comparison with DEV_KEY uint8_t on the rigth
     @param rrefc_right rigth parameter for lower compare
   */
-  bool operator!=(const GetyPos_c& rc_right) const{ return (gtp() != rc_right)?true:false;};
+  bool operator!=(const DevKey_c& rc_right) const{ return (devKey() != rc_right)?true:false;};
   /**
     compare given number to nr of this item and return result
     @param rui8_nr compared number
@@ -234,8 +234,8 @@ public:
   */
   bool equalNr(const uint8_t rui8_nr)const{return (nr() == rui8_nr)?true:false;};
 protected:
-  /** GETY_POS of element */
-  GetyPos_c c_gtp;
+  /** DEV_KEY of element */
+  DevKey_c c_devKey;
 private:
 // Private attributes
   /** number of element */
@@ -243,11 +243,11 @@ private:
 };
 
 /**
-  lower comparison between left MonitorItem_c and right GETY_POS uint8_t
+  lower comparison between left MonitorItem_c and right DEV_KEY uint8_t
   @param rrefc_left left DINServiceItem_c parameter
-  @param rb_right GETY_POS uint8_t right parameter
+  @param rb_right DEV_KEY uint8_t right parameter
 */
-bool lessThan(const MonitorItem_c& rrefc_left, const GetyPos_c& rc_right);
+bool lessThan(const MonitorItem_c& rrefc_left, const DevKey_c& rc_right);
 
 }
 #endif

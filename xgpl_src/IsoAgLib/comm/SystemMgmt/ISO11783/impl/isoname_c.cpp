@@ -102,8 +102,8 @@ ISOName_c::ISOName_c(const uint8_t* rpb_src)
   constructor which format data string from series of input flags
   @param rb_selfConf true -> indicate sefl configuring ECU
   @param rui8_indGroup industry group of device (2 for agriculture)
-  @param rb_devClass device class of ECU (equivalent to GETY in DIN)
-  @param rb_devClassInst instance number of ECU with same devClass
+  @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
+  @param rui8_devClassInst instance number of ECU with same devClass
         in the network (comparable to POS in DIN9684)
   @param rb_func function of the ECU (usual 25 for network interconnect)
   @param rui16_manufCode code of manufactor (11bit)
@@ -113,10 +113,10 @@ ISOName_c::ISOName_c(const uint8_t* rpb_src)
   @param rb_funcInst instance number of ECU with same function, device class and function instance
       (default 0 - normally)
 */
-ISOName_c::ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_devClass, uint8_t rb_devClassInst,
+ISOName_c::ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
       uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst, uint8_t rb_ecuInst)
 { // call the set function for the single flags
-  set(rb_selfConf, rui8_indGroup, rb_devClass, rb_devClassInst, rb_func, rui16_manufCode, rui32_serNo,
+  set(rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo,
       rb_funcInst, rb_ecuInst);
 }
 /**
@@ -147,8 +147,8 @@ ISOName_c::~ISOName_c()
   set data string with all flags with one call
   @param rb_selfConf true -> indicate sefl configuring ECU
   @param rui8_indGroup industry group of device (2 for agriculture)
-  @param rb_devClass device class of ECU (equivalent to GETY in DIN)
-  @param rb_devClassInst instance number of ECU with same devClass
+  @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
+  @param rui8_devClassInst instance number of ECU with same devClass
         in the network (comparable to POS in DIN9684)
   @param rb_func function of the ECU (usual 25 for network interconnect)
   @param rui16_manufCode code of manufactor (11bit)
@@ -158,13 +158,13 @@ ISOName_c::~ISOName_c()
   @param rb_funcInst instance number of ECU with same function, device class and function instance
       (default 0 - normally)
 */
-void ISOName_c::set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_devClass, uint8_t rb_devClassInst,
+void ISOName_c::set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
       uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst, uint8_t rb_ecuInst)
 { // call the set function for the single flags
   setSelfConf(rb_selfConf);
   setIndGroup(rui8_indGroup);
-  setDevClass(rb_devClass);
-  setDevClassInst(rb_devClassInst);
+  setDevClass(rui8_devClass);
+  setDevClassInst(rui8_devClassInst);
   setFunc(rb_func);
   setManufCode(rui16_manufCode);
   setSerNo(rui32_serNo);
@@ -289,22 +289,22 @@ void ISOName_c::setIndGroup(uint8_t rui8_indGroup)
 }
 /**
   set device class instance number
-  @param rb_devClassInst instance number of ECU with same devClass
+  @param rui8_devClassInst instance number of ECU with same devClass
         in the network (comparable to POS in DIN9684)
 */
-void ISOName_c::setDevClassInst(uint8_t rb_devClassInst)
+void ISOName_c::setDevClassInst(uint8_t rui8_devClassInst)
 {
-  pb_data[7] = ((pb_data[7] & 0xF0) | (rb_devClassInst));
+  pb_data[7] = ((pb_data[7] & 0xF0) | (rui8_devClassInst));
 }
 /**
   set device class code
-  @param rb_devClass device class of ECU (equivalent to GETY in DIN)
+  @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
 */
-void ISOName_c::setDevClass(uint8_t rb_devClass)
+void ISOName_c::setDevClass(uint8_t rui8_devClass)
 {
-  pb_data[6] = ((0 /* reserved bit set to zero!*/) | (rb_devClass << 1));
+  pb_data[6] = ((0 /* reserved bit set to zero!*/) | (rui8_devClass << 1));
 /* old version, which would be right if the reserved bit would have been set somewhere else.
-  pb_data[6] = ((pb_data[6] & 0x1) | (rb_devClass << 1));
+  pb_data[6] = ((pb_data[6] & 0x1) | (rui8_devClass << 1));
 */
 }
 /**

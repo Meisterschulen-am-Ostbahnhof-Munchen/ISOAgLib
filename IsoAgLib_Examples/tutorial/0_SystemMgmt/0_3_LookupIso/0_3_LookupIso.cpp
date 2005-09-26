@@ -53,7 +53,7 @@
 /** \example 0_3_LookupIso.cpp
  * This tutorial presents how to check for the existance of another
  * member on the BUS. This lookup can be based independent from the
- * active protocol on the device type specification with IsoAgLib::iGetyPos_c .
+ * active protocol on the device type specification with IsoAgLib::iDevKey_c .
  * Provide option to send result of lookup on RS232 - this is dependent on
  * define USE_RS232_FOR_DEBUG .
  *
@@ -62,11 +62,11 @@
  * <li>Lookup for specific device type in monitor list
  * <ul>
  *  <li>Providing class IsoAgLib::iSystemMgmt_c
- *  <li>Used member method IsoAgLib::iSystemMgmt_c::existMemberGtp()
+ *  <li>Used member method IsoAgLib::iSystemMgmt_c::existMemberDevKey()
  *    to look for other device ( optionally require that the
  *    other device has already claimed an address, or alternatively allow it
  *    to be currently in the process of claiming and address )
- *  <li>Alternativaly use IsoAgLib::iISOMonitor_c::existIsoMemberGtp() to restrict
+ *  <li>Alternativaly use IsoAgLib::iISOMonitor_c::existIsoMemberDevKey() to restrict
  *    search on ISO 11783 members ( but the other method is more flexible )
  * </ul>
  * <li>Use RS232 for C++ iostream like text output with class IsoAgLib::iRS232IO_c
@@ -227,16 +227,16 @@ using namespace IsoAgLib;
 int main()
 { // simply call startImi
   getIcanInstance().init( 0, 250 );
-  // variable for GETY_POS
+  // variable for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iGetyPos_c myGtp( 5, 0 );
+  IsoAgLib::iDevKey_c myDevKey( 5, 0 );
 
-  /** IsoAgLib::iGetyPos_c of the other remote ECU to lookup */
-  IsoAgLib::iGetyPos_c lookupGtp( 2, 0 );
+  /** IsoAgLib::iDevKey_c of the other remote ECU to lookup */
+  IsoAgLib::iDevKey_c lookupDevKey( 2, 0 );
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can cahnge the myGtp val through the pointer to myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -247,9 +247,9 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
@@ -287,11 +287,11 @@ int main()
     // check in main loop for existance of other item
     // ( force that other item has already complete claimed address with true as second parameter )
     static bool b_lastState = false;
-    if (getISystemMgmtInstance().existMemberGtp(lookupGtp, true))
+    if (getISystemMgmtInstance().existMemberDevKey(lookupDevKey, true))
     { // fine the other item is active on BUS
       if ( ! b_lastState ) {
         #ifdef USE_RS232_FOR_DEBUG
-        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupGtp.getGety() ) << " is ACTIVE on BUS\n";
+        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupDevKey.getDevClass() ) << " is ACTIVE on BUS\n";
         #endif
       }
       b_lastState = true;
@@ -300,7 +300,7 @@ int main()
     { // reset again to false to detect next change for debug
       if ( b_lastState ) {
         #ifdef USE_RS232_FOR_DEBUG
-        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupGtp.getGety() ) << " is NOT ACTIVE on BUS\n";
+        getIrs232Instance() << "Remote ECU with device type: DeviceTpye := " << int( lookupDevKey.getDevClass() ) << " is NOT ACTIVE on BUS\n";
         #endif
       }
       b_lastState = false;

@@ -121,8 +121,8 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectArchedBarGraph_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectArchedBarGraph_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectArchedBarGraph_a->colour, this, IsoAgLib::Colour);
-      destMemory [8] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectArchedBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectArchedBarGraph_a->colour, this, IsoAgLib::Colour);
+      destMemory [8] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectArchedBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
       destMemory [9] = vtObjectArchedBarGraph_a->options;
       destMemory [10] = vtObjectArchedBarGraph_a->startAngle;
       destMemory [11] = vtObjectArchedBarGraph_a->endAngle;
@@ -190,7 +190,7 @@ vtObjectArchedBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool 
   if (get_vtObjectArchedBarGraph_a()->variableReference == NULL) {
     if (b_updateObject) saveValue16 (MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), value), sizeof(iVtObjectArchedBarGraph_s), newValue);
 
-    __IsoAgLib::getIsoTerminalInstance().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+    __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 } // -X2C
 
@@ -203,7 +203,7 @@ vtObjectArchedBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_
     saveValue16 (MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height), sizeof(iVtObjectArchedBarGraph_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end namespace __IsoAgLib

@@ -139,16 +139,16 @@ public:
     DIN parameters:
     @param rpc_lbs optional pointer to central Scheduler_c instance
     @param rui8_lis optional LIS code of this instance
-    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_wert optional WERT code of this instance
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
     common parameters:
-    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_gtp pointer to updated GETY_POS variable of owner
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_devKey pointer to updated DEV_KEY variable of owner
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -160,8 +160,8 @@ public:
                  uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
                  uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                 const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
-                 uint8_t rui8_pri = 2, const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified, const GetyPos_c *rpc_gtp = NULL,
+                 const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
+                 uint8_t rui8_pri = 2, const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified, const DevKey_c *rpc_devKey = NULL,
                  IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                  int ri_singletonVecKey = 0)
 
@@ -172,7 +172,7 @@ public:
 #ifdef USE_DIN_9684
                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                  rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp, ri_singletonVecKey)
+                  rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey, ri_singletonVecKey)
 
     { init(
 #ifdef USE_ISO_11783
@@ -181,7 +181,7 @@ public:
 #ifdef USE_DIN_9684
            rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-           rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp,
+           rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
            rpc_processDataChangeHandler, ri_singletonVecKey
           );
     };
@@ -201,10 +201,10 @@ public:
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
     common parameters:
-    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_gtp pointer to updated GETY_POS variable of owner
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_devKey pointer to updated DEV_KEY variable of owner
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
@@ -216,8 +216,8 @@ public:
             uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
             uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
 #endif
-            const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
-            uint8_t rui8_pri = 2, const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified, const GetyPos_c *rpc_gtp = NULL,
+            const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
+            uint8_t rui8_pri = 2, const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified, const DevKey_c *rpc_devKey = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 
@@ -308,61 +308,61 @@ public:
   */
   virtual bool timeEvent( void );
 
-  virtual const GetyPos_c& commanderGtp()const{return GetyPos_c::GetyPosUnspecified;};
+  virtual const DevKey_c& commanderDevKey()const{return DevKey_c::DevKeyUnspecified;};
 
 #ifdef USE_ISO_11783
   /**
-    delivers state (DIN/ISO) for given gtp
-    @param rc_gtp compared GETY_POS value
+    delivers state (DIN/ISO) for given devKey
+    @param rc_devKey compared DEV_KEY value
     @return IState_c::itemState_t
   */
-  IState_c::itemState_t getIStateForGtp( const GetyPos_c& rc_gtp );
+  IState_c::itemState_t getIStateForDevKey( const DevKey_c& rc_devKey );
 #endif
 
 protected: // Protected methods
   /**
-    send the given int32_t value with variable GETY_POS rc_varGtp;
+    send the given int32_t value with variable DEV_KEY rc_varDevKey;
     set the int32_t value with conversion (according to central data type) in message
     string and set data format flags corresponding to central data type of this process data
 
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
 
-    set general command before sendValGtp !
+    set general command before sendValDevKey !
 
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
         * dependant error in CANIO_c on CAN send problems
     @param rui8_pri PRI code for the msg
-    @param rc_varGtp variable GETY_POS
+    @param rc_varDevKey variable DEV_KEY
     @param ri32_val int32_t value to send
     @param en_valueGroup: min/max/exact/default
     @param en_command
     @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, int32_t ri32_val = 0) const;
+  bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val = 0) const;
 #ifdef USE_FLOAT_DATA_TYPE
   /**
-    send the given float value with variable GETY_POS rc_varGtp;
+    send the given float value with variable DEV_KEY rc_varDevKey;
     set the float value with conversion (according to central data type) in message
     string and set data format flags corresponding to central data type of this process data
 
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
 
-    set general command before sendValGtp !
+    set general command before sendValDevKey !
 
     possible errors:
         * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
         * dependant error in CANIO_c on CAN send problems
     @param rui8_pri PRI code for the msg
-    @param rc_varGtp variable GETY_POS
+    @param rc_varDevKey variable DEV_KEY
     @param rb_pd PD code for the msg
     @param rb_mod MOD code for the msg
     @param ri32_val float value to send
     @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, float rf_val = 0.0F) const;
+  bool sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val = 0.0F) const;
 #endif
 
 private: // Private methods
@@ -371,7 +371,7 @@ private: // Private methods
   /** helper function to get reference to process data pkg very quick */
   ProcessPkg_c& getProcessPkg( void ) const;
   /**
-    resolv SEND|EMPF dependent on GETY_POS rc_varGtp
+    resolv SEND|EMPF dependent on DEV_KEY rc_varDevKey
     (local: receiver; remote: sender)
     (other paramter fixed by ident of process data)
     and set basic value independent flags in ProcessPkg
@@ -381,10 +381,10 @@ private: // Private methods
     is wanted
 
     @param rui8_pri PRI code for the msg
-    @param rc_varGtp variable GETY_POS
-    @return true -> resolvSendGtp successfully resolved EMPF and SEND
+    @param rc_varDevKey variable DEV_KEY
+    @return true -> resolvSendDevKey successfully resolved EMPF and SEND
   */
-  bool resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_c& rc_varGtp) const;
+  bool resolvDevKeySetBasicSendFlags(uint8_t rui8_pri, const DevKey_c& rc_varDevKey) const;
   /**
     virtual function which check dependent on remote/local
     if send action with given var parameter and address claim state of owner is

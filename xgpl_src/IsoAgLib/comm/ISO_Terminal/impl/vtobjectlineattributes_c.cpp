@@ -107,7 +107,7 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 24; // Object Type = Line Attributes
-      destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectLineAttributes_a->lineColour, this, IsoAgLib::LineColour);
+      destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectLineAttributes_a->lineColour, this, IsoAgLib::LineColour);
       if (flags & FLAG_ORIGIN_SKM) {
         destMemory [4] = (((uint32_t) vtObjectLineAttributes_a->lineWidth * factor) >> 20 ) & 0xFF;
       } else {
@@ -147,7 +147,7 @@ vtObjectLineAttributes_c::setLineAttributes(uint8_t newLineColour, uint8_t newLi
     saveValue8 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth), sizeof(iVtObjectLineAttributes_s), newLineWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s), newLineArt);
   }
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeLineAttributes (this, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newLineColour, this, IsoAgLib::LineColour), newLineWidth, newLineArt, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeLineAttributes (this, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newLineColour, this, IsoAgLib::LineColour), newLineWidth, newLineArt, b_enableReplaceOfCmd);
 }
 
 } // end of namespace __IsoAgLib

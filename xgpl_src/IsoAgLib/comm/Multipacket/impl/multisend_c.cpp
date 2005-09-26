@@ -467,7 +467,7 @@ MultiSend_c::addSendStream(uint8_t rb_send, uint8_t rb_empf)
   }
 
   if (list_sendStream.empty()) {
-    list_sendStream.push_back (SendStream_c(*this));
+    list_sendStream.push_back (SendStream_c(*this SINGLETON_VEC_KEY_USE4CALL ));
   } else {
     list_sendStream.insert (list_sendStream.end(), list_sendStream.back()); // insert a copy of the first element (for performance reasons)
   }
@@ -532,7 +532,7 @@ bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8
 bool
 MultiSend_c::sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
 {
-  return sendIsoIntern(rb_send, rb_empf, NULL, rpc_mss->getStreamSize (), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, IsoTarget);
+  return sendIsoIntern(rb_send, rb_empf, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, IsoTarget);
 }
 
 
@@ -573,7 +573,11 @@ MultiSend_c::sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM u
 #if defined(NMEA_2000_FAST_PACKET)
 bool MultiSend_c::sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
 { // no MSS here, not supported by IsoFastPacket
-  return sendIsoIntern(rb_send, rb_empf, rhpb_data, ri32_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL, IsoTarget);
+  return sendIsoIntern(rb_send, rb_empf, rhpb_data, ri32_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL, IsoTarget, true);
+}
+bool MultiSend_c::sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+{ // o MSS here, not supported by IsoFastPacket
+  return sendIsoIntern(rb_send, rb_empf, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, IsoTarget, true);
 }
 #endif
 
@@ -663,14 +667,14 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
           refc_multiSendPkg.setData(0, (ui8_FpSequenceCounter << 5) & 0xE0);
           refc_multiSendPkg.setData(1, getDataSize() & 0xFF);
 
-          // Next 6 bytes are data:
-          // - use i32_DC, so that the read position is automatically updated for next frame
-          for(i32_DC = 0; i32_DC < 6; i32_DC++)
-          {
-            // only hpb_data is supported, as the MultiSendStreamer_c supports ONLY write of full data frames
-            // - and that is against the first frame layout
-            refc_multiSendPkg.setData(i32_DC+2, hpb_data[i32_DC]);
+          uint8_t ui8_nettoCnt = 6;
+          if ( ui8_nettoCnt > getDataSize() ) ui8_nettoCnt = getDataSize();
+          if (hpb_data != NULL) {
+            refc_multiSendPkg.setFastPacketDataPart(hpb_data, 0, ui8_nettoCnt, 2);
+          } else {
+            pc_mss->setDataNextFastPacketStreamPart (&refc_multiSendPkg, ui8_nettoCnt, 2);
           }
+          i32_DC = ui8_nettoCnt;
         }
         en_sendState = SendFpDataFrame;
         //ui32_lastNextPacketNumberToSend = 0xFFFFFFFF;
@@ -702,9 +706,12 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
         {
             prepareSendMsg(ui8_nettoDataCnt);
             refc_multiSendPkg.setData(0, ((ui8_FpSequenceCounter << 5) |(ui8_FpFrameNr & 0x1F)) );
-            // only hpb_data is supported, as the MultiSendStreamer_c supports ONLY write of full data frames
-            // - and that is against the first frame layout
-            refc_multiSendPkg.setDataPart(hpb_data, i32_DC, ui8_nettoDataCnt);
+
+            if (hpb_data != NULL) {
+              refc_multiSendPkg.setFastPacketDataPart(hpb_data, i32_DC, ui8_nettoDataCnt, 1);
+            } else {
+              pc_mss->setDataNextFastPacketStreamPart (&refc_multiSendPkg, ui8_nettoDataCnt, 1);
+            }
             sendIntern();
             i32_DC += ui8_nettoDataCnt;
             //b_pkgSent++; // sent on epkg so we know how much to increase the offset next time a DPO is sent
@@ -1541,38 +1548,38 @@ MultiSend_c::abortSend (uint8_t rb_send, uint8_t rb_empf)
 
 
 /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-  * @param refc_gtp const reference to the item which ISOItem_c state is changed
+  * @param refc_devKey const reference to the item which ISOItem_c state is changed
   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
     */
 void
-MultiSend_c::reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, const __IsoAgLib::ISOItem_c* rpc_newItem )
+MultiSend_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem )
 {
 #ifdef DEBUG
-  std::cerr << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_gtp.getGety())
-      << ", Instance: " << int(refc_gtp.getPos()) << ", and manufacturer ID: " << int(refc_gtp.getConstName().manufCode())
+  std::cerr << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
       << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
       << std::endl;
 #endif
-  // no resurrection here as we do NOT (yet) save the gtp/isoname to our SendStream_c instances in the list...
+  // no resurrection here as we do NOT (yet) save the devKey/isoname to our SendStream_c instances in the list...
   // this can be done later if someone thinks that makes sense...
 }
 
 /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-  * @param refc_gtp const reference to the item which ISOItem_c state is changed
+  * @param refc_devKey const reference to the item which ISOItem_c state is changed
   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
   */
 void
-MultiSend_c::reactOnMonitorListRemove( const __IsoAgLib::GetyPos_c&
+MultiSend_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
                                         #ifdef DEBUG
-                                        refc_gtp
+                                        refc_devKey
                                         #else
-                                        /*refc_gtp*/
+                                        /*refc_devKey*/
                                         #endif
                                         , uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
-  std::cerr << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_gtp.getGety())
-      << ", Instance: " << int(refc_gtp.getPos()) << ", and manufacturer ID: " << int(refc_gtp.getConstName().manufCode())
+  std::cerr << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
       << std::endl;
 #endif

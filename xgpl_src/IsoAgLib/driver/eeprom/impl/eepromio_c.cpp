@@ -505,12 +505,12 @@ EEPROMIO_c& EEPROMIO_c::readIntern(uint8_t* rpb_data, uint8_t rui8_len) {
   return *this;
 }
 
-EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const GetyPos_c& refc_data )
+EEPROMIO_c& operator<<(EEPROMIO_c& refc_stream, const DevKey_c& refc_data )
 {
   refc_stream.writeIntern(refc_data.getConstName().outputString(), 8);
   return refc_stream;
 }
-EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, GetyPos_c& refc_data )
+EEPROMIO_c& operator>>(EEPROMIO_c& refc_stream, DevKey_c& refc_data )
 {
   uint8_t tempName[8];
   refc_stream.readIntern(tempName, sizeof(8));

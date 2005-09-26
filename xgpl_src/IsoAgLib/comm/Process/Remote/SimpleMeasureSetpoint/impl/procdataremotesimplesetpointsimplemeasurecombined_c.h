@@ -118,12 +118,12 @@ namespace __IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::GetyPos c_myGtp( 1, 0 );
+  IsoAgLib::DevKey c_myDevKey( 1, 0 );
   // creation of process data instance
   iProcDataRemoteSimpleSetpoint_c c_workState;
   // init for LIS=0, remote device type/subtype=5/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send )
-  c_workState.init( 0, IsoAgLib::GetyPos_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::GetyPos_c( 0x5, 0 ), &c_myGtp );
+  c_workState.init( 0, IsoAgLib::DevKey_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::DevKey_c( 0x5, 0 ), &c_myDevKey );
 
   // request current measurement value ( real value, which can differ from commanded value ); triger update request
   int lastReceivedMeasureState = c_workState.masterVal( true );
@@ -155,10 +155,10 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-    @param rc_gtp optional GETY_POS code of this instance
+    @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -172,10 +172,10 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
                                                       uint8_t rui8_inst = 0,
                                                       uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                                                      const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
+                                                      const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
                                                       uint8_t rui8_pri = 2,
-                                                      const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
-                                                      const GetyPos_c* rpc_commanderGtp = NULL,
+                                                      const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
+                                                      const DevKey_c* rpc_commanderDevKey = NULL,
                                                       IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                                       int ri_singletonVecKey = 0);
 
@@ -191,10 +191,10 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-    @param rc_gtp optional GETY_POS code of this instance
+    @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -208,10 +208,10 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
             uint8_t rui8_inst = 0,
             uint8_t rui8_zaehlnum = 0xFF,
 #endif
-            const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
+            const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
             uint8_t rui8_pri = 2,
-            const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
-            const GetyPos_c* rpc_commanderGtp = NULL,
+            const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
+            const DevKey_c* rpc_commanderDevKey = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 

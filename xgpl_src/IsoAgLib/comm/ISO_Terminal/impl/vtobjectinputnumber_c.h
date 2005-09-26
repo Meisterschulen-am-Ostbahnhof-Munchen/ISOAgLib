@@ -113,7 +113,7 @@ public:
   //! Parameter:
   //! @param vtObjectInputNumberSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectInputNumber_s* vtObjectInputNumberSROM) { vtObject_c::init ((iVtObject_s*) vtObjectInputNumberSROM); };
+  void init(const iVtObjectInputNumber_s* vtObjectInputNumberSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectInputNumberSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectInputNumber_a
   iVtObjectInputNumber_s* get_vtObjectInputNumber_a() { return (iVtObjectInputNumber_s *)vtObject_a; };
@@ -142,7 +142,7 @@ public:
   }
 
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), backgroundColour) : 0, sizeof(iVtObjectInputNumber_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), backgroundColour) : 0, sizeof(iVtObjectInputNumber_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
 
   void setFontAttributes(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {

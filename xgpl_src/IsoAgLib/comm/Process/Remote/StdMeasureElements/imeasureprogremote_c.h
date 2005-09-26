@@ -79,7 +79,7 @@ public:
     start a measuring programm
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
         * dependant error in CAN_IO
     @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
@@ -93,7 +93,7 @@ public:
     start a measuring programm
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
         * dependant error in CAN_IO
     @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
@@ -124,7 +124,7 @@ public:
     send the stop command to the remote owner of data
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @param b_deleteSubProgs is only used for ISO
     @return true -> command successful sent
@@ -141,7 +141,7 @@ public:
     send reset command for measure value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @param ri32_val reset measure value to this value (ISO only)
     @return true -> command successful sent
@@ -152,7 +152,7 @@ public:
     send reset command for medium value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
@@ -161,7 +161,7 @@ public:
     send reset command for integral value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
@@ -170,7 +170,7 @@ public:
     send reset command for minimum value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
@@ -179,7 +179,7 @@ public:
     send reset command for maximum value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
@@ -291,10 +291,10 @@ public:
   float accelFloat(){return MeasureProgRemote_c::accelFloat();};
 #endif
   /**
-    return the c_gtp code for this measureProg
-    @return GETY_POS of this measureProg
+    return the c_devKey code for this measureProg
+    @return DEV_KEY of this measureProg
   */
-  const iGetyPos_c& gtp(){return static_cast<const iGetyPos_c&>(MeasureProgRemote_c::gtp());};
+  const iDevKey_c& devKey(){return static_cast<const iDevKey_c&>(MeasureProgRemote_c::devKey());};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types
@@ -338,10 +338,10 @@ public:
   */
   void setType(Proc_c::type_t ren_type) {MeasureProgRemote_c::setType(ren_type);};
   /**
-    set the c_gtp code for this measureProg
-    @param rc_gtp GETY_POS for exact specification of partner system
+    set the c_devKey code for this measureProg
+    @param rc_devKey DEV_KEY for exact specification of partner system
   */
-  void setGtp(const iGetyPos_c& rc_gtp) {MeasureProgRemote_c::setGtp(rc_gtp);};
+  void setDevKey(const iDevKey_c& rc_devKey) {MeasureProgRemote_c::setDevKey(rc_devKey);};
  private:
   friend class iProcDataRemote_c;
   friend class iProcDataRemoteSimpleMeasure_c;

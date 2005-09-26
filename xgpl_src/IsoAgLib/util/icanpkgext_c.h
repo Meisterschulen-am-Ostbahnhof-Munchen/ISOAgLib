@@ -69,7 +69,7 @@ namespace IsoAgLib {
   *@author Dipl.-Inform. Achim Spangler
   */
   typedef  __IsoAgLib::CANPkgExt_c  iCANPkgExt_c;
-#if 0  
+#if 0
 class iCANPkgExt_c : private __IsoAgLib::CANPkgExt_c {
 public:
   /**
@@ -241,19 +241,19 @@ public:
   /**
     abstract function to transform the string data into flag values
     => derived class must implement suitable data conversion function
-  
+
     needed for assigning informations from another CANPkg_c or CANPkgExt
     @see CANPkgExt_c::operator=
   */
   virtual void string2Flags() = 0;
-  
+
 private:
 // Private methods
-  
+
   /**
     abstract transform flag values to data string
     => derived class must implement suitable data converting function
-  
+
     needed for sending informations from this object via CANIO_c on CAN BUS,
     because CANIO_c doesn't know anything about the data format of this type of msg
     so that it can only use an unformated data string from CANPkg

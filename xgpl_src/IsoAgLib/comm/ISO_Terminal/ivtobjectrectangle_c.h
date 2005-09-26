@@ -73,8 +73,8 @@ public:
   //! Parameter:
   //! @param vtObjectrectangleSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectRectangle_s* vtObjectRectangleSROM) {
-    vtObjectRectangle_c::init (vtObjectRectangleSROM);
+  void init(const iVtObjectRectangle_s* vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectRectangle_c::init (vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   };
 
   //  Operation: get_vtObjectmeter_a

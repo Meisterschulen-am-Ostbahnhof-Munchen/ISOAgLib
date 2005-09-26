@@ -357,10 +357,63 @@ int32_t convertIstreamI32( StreamInput_c& refc_stream )
 #endif
   return i32_temp;
 };
-
-
-
 #endif
+
+
+/** convert receive multistream into an unsigned variable */
+uint16_t convertLittleEndianStringUi16( const uint8_t* rpui8_src )
+{
+  uint16_t ui16_temp;
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( &ui16_temp, rpui8_src, sizeof(uint16_t) );
+#else
+  ui16_temp = uint16_t(rpui8_src[0]) | (uint16_t(rpui8_src[1]) << 8);
+#endif
+  return ui16_temp;
+}
+
+/** convert receive multistream into an unsigned variable */
+int16_t convertLittleEndianStringI16( const uint8_t* rpui8_src )
+{
+  int16_t i16_temp;
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( &i16_temp, rpui8_src, sizeof(int16_t) );
+#else
+  i16_temp = int16_t(rpui8_src[0]) | (int16_t(rpui8_src[1]) << 8);
+#endif
+  return i16_temp;
+}
+/** convert receive multistream into an unsigned variable */
+uint32_t convertLittleEndianStringUi32( const uint8_t* rpui8_src )
+{
+  uint32_t ui32_temp;
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( &ui32_temp, rpui8_src, sizeof(uint32_t) );
+#else
+  ui32_temp = uint32_t(rpui8_src[0]);
+  for ( unsigned int ind = 1; ( ind < sizeof(uint32_t) ); ind++ )
+  {
+    ui32_temp |= (uint32_t(rpui8_src[ind]) << (8*ind));
+  }
+#endif
+  return ui32_temp;
+}
+/** convert receive multistream into an unsigned variable */
+int32_t convertLittleEndianStringI32( const uint8_t* rpui8_src )
+{
+  int32_t i32_temp;
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  std::memcpy( &i32_temp, rpui8_src, sizeof(int32_t) );
+#else
+  i32_temp = int32_t(rpui8_src[0]);
+  for ( unsigned int ind = 1; ( ind < sizeof(int32_t) ); ind++ )
+  {
+    i32_temp |= (int32_t(rpui8_src[ind]) << (8*ind));
+  }
+#endif
+  return i32_temp;
+}
+
 
 void int2littleEndianString( unsigned int input, uint8_t* pui8_target, unsigned int size )
 {

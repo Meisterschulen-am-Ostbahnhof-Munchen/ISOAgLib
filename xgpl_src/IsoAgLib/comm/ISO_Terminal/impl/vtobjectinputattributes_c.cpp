@@ -175,7 +175,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 250 : setValidationStringRef
@@ -197,8 +197,8 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
 
   setStringToStream( newValidationString ); // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
-	setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  setStrLenToSend( ui16_tempLen );
+ __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 

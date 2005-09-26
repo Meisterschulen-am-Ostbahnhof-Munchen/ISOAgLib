@@ -215,8 +215,8 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& rrefc_src,
      getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */, 
                                                                  en_valueGroup, GeneralCommand_c::setValue);
 
-     pprocessData()->sendValGtp( 2, // target msg
-                                 rrefc_src.gtp(),
+     pprocessData()->sendValDevKey( 2, // target msg
+                                 rrefc_src.devKey(),
                                  i32_value);
   }
 }

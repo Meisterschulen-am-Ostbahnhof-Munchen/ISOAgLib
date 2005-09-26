@@ -114,7 +114,7 @@ public:
   //! Parameter:
   //! @param vtObjectmeterSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectMeter_s* vtObjectMeterSROM) { vtObject_c::init ((iVtObject_s*) vtObjectMeterSROM); };
+  void init(const iVtObjectMeter_s* vtObjectMeterSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectMeterSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectmeter_a
   iVtObjectMeter_s* get_vtObjectMeter_a() { return (iVtObjectMeter_s *)vtObject_a; };
@@ -129,13 +129,13 @@ public:
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), width) : 0, sizeof(iVtObjectMeter_s), 1 /* "Width" */, newValue, b_enableReplaceOfCmd); };
 
   void setNeedleColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour) : 0, sizeof(iVtObjectMeter_s), 2 /* "Needle Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::NeedleColour), b_enableReplaceOfCmd); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour) : 0, sizeof(iVtObjectMeter_s), 2 /* "Needle Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::NeedleColour), b_enableReplaceOfCmd); };
 
   void setBorderColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour) : 0, sizeof(iVtObjectMeter_s), 3 /* "BorderColour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour) : 0, sizeof(iVtObjectMeter_s), 3 /* "BorderColour" */, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd); };
 
   void setArcAndTickColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour) : 0, sizeof(iVtObjectMeter_s), 4 /* "Arc and Tick Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::ArcAndTickColour), b_enableReplaceOfCmd); };
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour) : 0, sizeof(iVtObjectMeter_s), 4 /* "Arc and Tick Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::ArcAndTickColour), b_enableReplaceOfCmd); };
 
   void setOptions(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), options) : 0, sizeof(iVtObjectMeter_s), 5 /* "Options" */, newValue, newValue, b_enableReplaceOfCmd); };

@@ -101,7 +101,7 @@ DINSystemPkg_c::~DINSystemPkg_c(){
 */
 void DINSystemPkg_c::string2Flags()
 {
-  setDinGtp(ident() & 0x7F);
+  setDinDevKey(ident() & 0x7F);
   set_a((ident() & 0x80) >> 7);
   if (a() == 1)
   { // address claim telegram
@@ -154,12 +154,12 @@ void DINSystemPkg_c::flags2String()
   {  // address claim telegramm
     pb_data[0] = nr();
     setLen(1);
-    setIdent( MASK_TYPE( (a() << 7) | ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 ) ), Ident_c::StandardIdent); // PRI system is always 0
+    setIdent( MASK_TYPE( (a() << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 ) ), Ident_c::StandardIdent); // PRI system is always 0
   }
   else
   {
     pb_data[0] = ((verw() << 4)| (send()));
-    setIdent( MASK_TYPE( ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 ) ), Ident_c::StandardIdent); // PRI system is always 0
+    setIdent( MASK_TYPE( ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 ) ), Ident_c::StandardIdent); // PRI system is always 0
     switch (verw())
     {
       case 8: // request name

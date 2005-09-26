@@ -114,7 +114,7 @@ public:
   //! Parameter:
   //! @param vtObjectDataMaskSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM) { vtObject_c::init ((iVtObject_s*) vtObjectDataMaskSROM); };
+  void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
 
   //  Operation: get_vtObjectDataMask_a
   iVtObjectDataMask_s* get_vtObjectDataMask_a() { return (iVtObjectDataMask_s *)vtObject_a; };
@@ -134,7 +134,7 @@ public:
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setBackgroundColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectDataMask_a(), backgroundColour) : 0, sizeof(iVtObjectDataMask_s), 1 /* "Background Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectDataMask_a(), backgroundColour) : 0, sizeof(iVtObjectDataMask_s), 1 /* "Background Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);

@@ -222,9 +222,9 @@ bool checkForStartAsIso11783( void )
 int main()
 { // simply call startImi
   getIcanInstance().init( 0, 250 );
-  // variable for GETY_POS
+  // variable for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iGetyPos_c myGtp( 2, 0 );
+  IsoAgLib::iDevKey_c myDevKey( 2, 0 );
   // specific DIN 9684 setting
   uint8_t myName[12] = "TestIMI";
 
@@ -244,17 +244,17 @@ int main()
   IsoAgLib::iIdentItem_c c_myIdent;
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
   if ( checkForStartAsIso11783() )
   { // start ECU address claim as ISO 11783
-    c_myIdent.start( &myGtp,
+    c_myIdent.start( &myDevKey,
         b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
         ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
   }
   else
   { // start ECU address claim as DIN 9684
-    c_myIdent.start( &myGtp, myName );
+    c_myIdent.start( &myDevKey, myName );
   }
 
   /** IMPORTANT:

@@ -90,7 +90,7 @@
 namespace __IsoAgLib {
 /**
   initialise this SetpointRegister_c to a well defined starting condition
-  @param rc_gtp GET_POS of commander of this setpoint register set
+  @param rc_devKey device key of commander of this setpoint register set
   @param ri32_exact exact setpoint value
   @param ri32_min minimum setpoint value
   @param ri32_max maximum setpoint value
@@ -99,7 +99,7 @@ namespace __IsoAgLib {
   @param rb_master true -> this setpoint register instance represents the actual master setpoint
   @param rb_valid true -> this setpoint register instance is accepted as valid
 */
-void SetpointRegister_c::init(const GetyPos_c& rc_gtp, int32_t ri32_exact, int32_t ri32_min, int32_t ri32_max, int32_t ri32_default,
+void SetpointRegister_c::init(const DevKey_c& rc_devKey, int32_t ri32_exact, int32_t ri32_min, int32_t ri32_max, int32_t ri32_default,
         bool rb_handled, bool rb_master, bool rb_valid)
 { // direct value set to avoid special functions of equivalent set functions
   setExact(ri32_exact);
@@ -107,7 +107,7 @@ void SetpointRegister_c::init(const GetyPos_c& rc_gtp, int32_t ri32_exact, int32
   setMax(ri32_max);
   setDefault(ri32_default);
 
-  setGtp(rc_gtp);
+  setDevKey(rc_devKey);
   setHandled(rb_handled, 0);
   setMaster(rb_master);
   setValid(rb_valid);
@@ -139,7 +139,7 @@ void SetpointRegister_c::assignFromSource( const SetpointRegister_c& rrefc_src )
   data.en_definedSetpoints = rrefc_src.data.en_definedSetpoints;
 
 
-  setGtp(rrefc_src.gtp());
+  setDevKey(rrefc_src.devKey());
   setHandled(rrefc_src.handled(), rrefc_src.i32_lastHandledTime);
   setMaster(rrefc_src.master());
   setValid(rrefc_src.valid());
@@ -159,7 +159,7 @@ bool SetpointRegister_c::operator==(const SetpointRegister_c& rrefc_src)const{
         && (i32_max == rrefc_src.i32_max)
         && (i32_default == rrefc_src.i32_default)
         && (data.en_definedSetpoints == rrefc_src.data.en_definedSetpoints)
-        && (gtp() == rrefc_src.gtp()))
+        && (devKey() == rrefc_src.devKey()))
         ? true:false;
 }
 

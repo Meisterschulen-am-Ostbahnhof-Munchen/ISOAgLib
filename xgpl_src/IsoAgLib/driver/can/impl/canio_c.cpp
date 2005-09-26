@@ -198,6 +198,7 @@ bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
           uint8_t rui8_minObjNr,  uint8_t rui8_maxObjNr)
 { // first make shure that the base system is initialized
   getSystemInstance().init();
+  b_runningCanProcess = false;
   // if FilterBox_c instances were created before the CAN_IO was
   // explicitly initialized, we must call reconfigureMsgObj NOW
   bool b_callReconfigureMsgObj = false;
@@ -765,6 +766,10 @@ bool CANIO_c::verifyBusMsgobjNr(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
          >0  --> all messages are processed, number of messages
 */
 int16_t CANIO_c::processMsg(){
+  // immediately leave this function, if this CAN_IO instance is marked as currently processing
+  // --> detect and avoid CAN message processing loops
+  if ( b_runningCanProcess ) return -1;
+  b_runningCanProcess = true;
   ui8_processedMsgCnt = 0;
 
   // first check if last Message Object is open,
@@ -779,11 +784,17 @@ int16_t CANIO_c::processMsg(){
 
   for (ArrMsgObj::iterator pc_iter = arrMsgObj.begin(); pc_iter != arrMsgObj.end(); pc_iter++)
   { // stop processing of message buffers, if not enough time
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return -1;
+    if ( Scheduler_c::getAvailableExecTime() == 0 )
+    { // switch the flag back, so that further processings are enabled
+      b_runningCanProcess = false;
+      return -1;
+    }
     System_c::triggerWd();
     ui8_processedMsgCnt += pc_iter->processMsg(ui8_busNumber);
   }
 
+  // switch the flag back, so that further processings are enabled
+  b_runningCanProcess = false;
   // return the number of received telegrams
   return ui8_processedMsgCnt;
 }

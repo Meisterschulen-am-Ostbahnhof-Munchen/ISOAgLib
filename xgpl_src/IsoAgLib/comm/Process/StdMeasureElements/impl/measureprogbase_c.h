@@ -131,39 +131,39 @@ public:
     @param rpc_processData optional pointer to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_gtp optional GETY_POS of partner member for this measure program
+    @param rc_devKey optional DEV_KEY of partner member for this measure program
   */
   MeasureProgBase_c(
     ProcDataBase_c *const rpc_processData = NULL,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified ) : ProcessElementBase_c(rpc_processData),
-      vec_measureSubprog() {init(rpc_processData, ren_progType, ri32_val, rc_gtp);};
+    const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified ) : ProcessElementBase_c(rpc_processData),
+      vec_measureSubprog() {init(rpc_processData, ren_progType, ri32_val, rc_devKey);};
   /**
     constructor which can optional set most element vars
     @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_gtp optional GETY_POS of partner member for this measure program
+    @param rc_devKey optional DEV_KEY of partner member for this measure program
   */
   MeasureProgBase_c(
     ProcDataBase_c &rrefc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified) : ProcessElementBase_c(rrefc_processData),
-      vec_measureSubprog() {init(&rrefc_processData, ren_progType, ri32_val, rc_gtp);};
+    const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified) : ProcessElementBase_c(rrefc_processData),
+      vec_measureSubprog() {init(&rrefc_processData, ren_progType, ri32_val, rc_devKey);};
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
     @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param ri32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_gtp optional GETY_POS of partner member for this measure program
+    @param rc_devKey optional DEV_KEY of partner member for this measure program
   */
   void init(
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_val = 0,
-    const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified);
+    const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified);
   /**
     assignment of MeasureProgBase_c objects
     @param rrefc_src source MeasureProgBase_c instance
@@ -265,13 +265,13 @@ public:
     @param rrefc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param rf_val optional individual measure val for this program instance (can differ from master measure value)
-    @param rc_gtp optional GETY_POS of partner member for this measure program
+    @param rc_devKey optional DEV_KEY of partner member for this measure program
   */
   void init(
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType,
     float rf_val,
-    const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified);
+    const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified);
   /**
     deliver actual last received value
     @param rb_sendRequest choose wether a request for value update should be
@@ -318,10 +318,10 @@ public:
   float accelFloat() const {return f_accel;};
 #endif
   /**
-    return the c_gtp code for this measureprog
-    @return GETY_POS of this measureprog
+    return the c_devKey code for this measureprog
+    @return DEV_KEY of this measureprog
   */
-  const GetyPos_c& gtp() const{return c_gtp;};
+  const DevKey_c& devKey() const{return c_devKey;};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types
@@ -412,11 +412,11 @@ public:
   */
   void setType(Proc_c::type_t ren_type){en_type = ren_type;};
   /**
-    set the c_gtp code for this measureprog
-    @param rc_gtp GETY_POS for exact specification of partner system
+    set the c_devKey code for this measureprog
+    @param rc_devKey DEV_KEY for exact specification of partner system
   */
   // This has something to do with the init failing for the iProcDataRemote_c object. -bac
-  void setGtp(const GetyPos_c& rc_gtp){c_gtp = rc_gtp;};
+  void setDevKey(const DevKey_c& rc_devKey){c_devKey = rc_devKey;};
 
   /**
     process a message;
@@ -433,37 +433,37 @@ public:
   virtual bool timeEvent( void );
 
   /**
-    compare two items for PRI and GTP
+    compare two items for PRI and DEVKEY
     @param rrefc_right compared object
-    @return true -> both instances are equal (GETY_POS and ProgType)
+    @return true -> both instances are equal (DEV_KEY and ProgType)
   */
   bool operator==(const MeasureProgBase_c& right) const
     {return (calcCompVal() == right.calcCompVal());};
   /**
     compare two MeasureProg with <
     @param rrefc_right compared object
-    @return true -> this instance is < than the other (GETY_POS and ProgType)
+    @return true -> this instance is < than the other (DEV_KEY and ProgType)
   */
   bool operator<(const MeasureProgBase_c& right) const
     {return (calcCompVal() < right.calcCompVal());};
   /**
     compare two MeasureProg with <=
     @param rrefc_right compared object
-    @return true -> this instance is <= than the other (GETY_POS and ProgType)
+    @return true -> this instance is <= than the other (DEV_KEY and ProgType)
   */
   bool operator<=(const MeasureProgBase_c& right) const
     {return (calcCompVal() <= right.calcCompVal());};
   /**
     compare two MeasureProg with >
     @param rrefc_right compared object
-    @return true -> this instance is > than the other (GETY_POS and ProgType)
+    @return true -> this instance is > than the other (DEV_KEY and ProgType)
   */
   bool operator>(const MeasureProgBase_c& right) const
     {return (calcCompVal() > right.calcCompVal());};
   /**
     compare two MeasureProg with >=
     @param rrefc_right compared object
-    @return true -> this instance is >= than the other (GETY_POS and ProgType)
+    @return true -> this instance is >= than the other (DEV_KEY and ProgType)
   */
   bool operator>=(const MeasureProgBase_c& right) const
     {return (calcCompVal() >= right.calcCompVal());};
@@ -581,9 +581,9 @@ private: // Private methods
   /**
     calculates a single value from identifying values
     (for easy <,>,...)
-    @return single comparison value (depends on GETY_POS and Prog-Type)
+    @return single comparison value (depends on DEV_KEY and Prog-Type)
   */
-  int32_t calcCompVal()const {return ( ( (c_gtp.getGety() << 4) | (c_gtp.getPos()) ) * en_progType);};
+  int32_t calcCompVal()const {return ( ( (c_devKey.getDevClass() << 4) | (c_devKey.getDevClassInst()) ) * en_progType);};
   /**
     deliver to rb_mod according measure val type
 
@@ -682,8 +682,8 @@ private: // Private attributes
     used proportional type for calculating accumulated values (min, max, med, insteg)
   */
   Proc_c::accumProp_t en_accumProp;
-  /** gtp value of caller of program */
-  GetyPos_c c_gtp;
+  /** devKey value of caller of program */
+  DevKey_c c_devKey;
 };
 
 }

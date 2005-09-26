@@ -81,10 +81,10 @@ private:
   friend class iISOMonitor_c;
 public:
   /**
-    deliver the GETY_POS code of this item
-    @return GETY_POS code
+    deliver the DEV_KEY code of this item
+    @return DEV_KEY code
   */
-  const iGetyPos_c& gtp()const{return static_cast<const iGetyPos_c&>(ISOItem_c::gtp());};
+  const iDevKey_c& devKey()const{return static_cast<const iDevKey_c&>(ISOItem_c::devKey());};
   /**
     deliver the number/adress of this item
     @return number
@@ -192,15 +192,15 @@ public:
   void setIndGroup(uint8_t rui8_indGroup) {ISOItem_c::setIndGroup(rui8_indGroup);};
   /**
     set device class instance number
-    @param rb_devClassInst instance number of ECU with same devClass
+    @param rui8_devClassInst instance number of ECU with same devClass
           in the network (comparable to POS in DIN9684)
   */
-  void setDevClassInst(uint8_t rb_devClassInst) {ISOItem_c::setDevClassInst(rb_devClassInst);};
+  void setDevClassInst(uint8_t rui8_devClassInst) {ISOItem_c::setDevClassInst(rui8_devClassInst);};
   /**
     set device class code
-    @param rb_devClass device class of ECU (equivalent to GETY in DIN)
+    @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
   */
-  void setDevClass(uint8_t rb_devClass) {ISOItem_c::setDevClass(rb_devClass);};
+  void setDevClass(uint8_t rui8_devClass) {ISOItem_c::setDevClass(rui8_devClass);};
   /**
     set function code
     @param rb_func function of the ECU (usual 25 for network interconnect)

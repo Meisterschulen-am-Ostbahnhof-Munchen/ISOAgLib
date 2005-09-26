@@ -96,7 +96,7 @@ vtObjectInput_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplac
   if (b_updateObject) {
     updateEnable (enOrDis);
   }
-  return __IsoAgLib::getIsoTerminalInstance().sendCommand (0xA1 /* Command: Command --- Parameter: Enable/Disable Object */,
+  return __IsoAgLib::getIsoTerminalInstance4Comm().sendCommand (0xA1 /* Command: Command --- Parameter: Enable/Disable Object */,
                                                           vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                           enOrDis,
                                                           0xFF, 0xFF, 0xFF, 0xFF, 1000, b_enableReplaceOfCmd);
@@ -106,7 +106,7 @@ vtObjectInput_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplac
 bool
 vtObjectInput_c::select()
 { // ~X2C
-  return __IsoAgLib::getIsoTerminalInstance().sendCommand (0xA2 /* Command: Command --- Parameter: Select Input Object */,
+  return __IsoAgLib::getIsoTerminalInstance4Comm().sendCommand (0xA2 /* Command: Command --- Parameter: Select Input Object */,
                                                           vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                           0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 1000, true);
 } // -X2C

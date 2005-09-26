@@ -100,6 +100,7 @@
   // IsoAgLib_Extension
   #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
   #include <IsoAgLib/comm/Multipacket/istream_c.h>
+  #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 #endif
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/iutil_funcs.h>
@@ -128,6 +129,62 @@ namespace __IsoAgLib {
 uint8_t bcd2dec(uint8_t rb_bcd);
 uint8_t dec2bcd(uint8_t rb_dec);
 
+#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
+
+/** place next data to send direct into send buffer of pointed
+  stream send package - MultiSend_c will send this
+  buffer afterwards
+*/
+void Nmea2000SendStreamer_c::setDataNextStreamPart (__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes)
+{
+  mspData->setDataPart (vec_data, ui16_currentSendPosition, bytes);
+  ui16_currentSendPosition += bytes;
+}
+
+/** place next data to send direct into send buffer of pointed
+    stream send package - MultiSend_c will send this
+    buffer afterwards
+*/
+void Nmea2000SendStreamer_c::setDataNextFastPacketStreamPart (__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes, uint8_t rui8_offset )
+{
+  mspData->setFastPacketDataPart (vec_data, ui16_currentSendPosition, bytes, rui8_offset );
+  ui16_currentSendPosition += bytes;
+}
+
+
+
+/** set cache for data source to stream start */
+void Nmea2000SendStreamer_c::resetDataNextStreamPart()
+{
+  ui16_currentSendPosition = 0;
+}
+
+/** save current send position in data source - neeed for resend on send problem */
+void Nmea2000SendStreamer_c::saveDataNextStreamPart ()
+{
+  ui16_storedSendPosition = ui16_currentSendPosition;
+}
+
+/** reactivate previously stored data source position - used for resend on problem */
+void Nmea2000SendStreamer_c::restoreDataNextStreamPart ()
+{
+  ui16_currentSendPosition = ui16_storedSendPosition;
+}
+
+/** calculate the size of the data source */
+uint32_t Nmea2000SendStreamer_c::getStreamSize ()
+{
+  return vec_data.size();
+}
+
+/** get the first byte, which is the COMMAND-byte and should be given back CONST! */
+uint8_t Nmea2000SendStreamer_c::getFirstByte ()
+{
+  return *(vec_data.begin());
+}
+// END of USE_ISO_11783
+#endif
+
 
 void
 Base_c::singletonInit()
@@ -143,22 +200,27 @@ Base_c::singletonInit()
 
   possible errors:
       * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-  @param rpc_gtp optional pointer to the GETY_POS variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+  @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
   @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
 */
-void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
+void Base_c::init(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
 {
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
   c_data.setSingletonKey( getSingletonVecKey() );
 
   // set the member base msg value vars to NO_VAL codes
-  setDay(1);
-  setHour(0);
-  setMinute(0);
-  setMonth(1);
-  setYear(0);
-  setSecond(0);
+
+  bit_calendar.year = 0;
+  bit_calendar.month = 1;
+  bit_calendar.day = 1;
+  bit_calendar.hour = 0;
+  bit_calendar.minute = 0;
+  bit_calendar.second = 0;
+  bit_calendar.msec = 0;
+  bit_calendar.timezoneMinuteOffset = 0;
+  bit_calendar.timezoneHourOffsetMinus24 = 0;
+
   setHitchRear(NO_VAL_8);
   setHitchFront(NO_VAL_8);
   i16_engine = NO_VAL_16S;
@@ -169,8 +231,8 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
   i32_distReal = i32_distTheor = 0;
 
   // set the timestamps to 0
-  ui8_lastBase1 = ui8_lastBase2 = ui8_lastBase3 = ui8_lastFuel
-      = ui8_lastCalendar = 0;
+  i32_lastBase1 = i32_lastBase2 = i32_lastBase3 = i32_lastFuel
+      = i32_lastCalendar = 0;
   #ifdef USE_DIN_9684
   i16_rearLeftDraft = i16_rearRightDraft = i16_rearDraftNewton = NO_VAL_16S;
   ui8_rearDraftNominal = NO_VAL_8;
@@ -182,10 +244,15 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
   }
   #endif
   #ifdef USE_ISO_11783
-  ui8_lastIsoBase1 = ui8_lastIsoBase2 = ui8_lastIsoCalendar = ui8_lastIsoGps = 0;
+  i32_lastIsoPositionSimple = 0;
+  #ifdef NMEA_2000_FAST_PACKET
+  i32_lastIsoPositionStream = i32_lastIsoDirectionStream = 0;
+  t_multiSendSuccessState = MultiSend_c::SendSuccess;
+  #endif
+
   t_frontPtoEngaged = t_rearPtoEngaged
-  = t_frontPto1000 = t_rearPto1000
-  = t_frontPtoEconomy = t_rearPtoEconomy = t_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
+   = t_frontPto1000 = t_rearPto1000
+   = t_frontPtoEconomy = t_rearPtoEconomy = t_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
   ui8_maxPowerTime = ui8_frontLinkForce = ui8_rearLinkForce = NO_VAL_8;
   i16_frontDraft = i16_rearDraft = NO_VAL_16S;
   ui32_lastMaintainPowerRequest = 0;
@@ -199,11 +266,14 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
   // *************************************************************************************************
   // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
   // Set GPS Lat/Lon values to 0
-  i32_latitudeDegree10Minus7 = 0;
-  i32_longitudeDegree10Minus7 = 0;
+  i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
+  #ifdef NMEA_2000_FAST_PACKET
+  ui32_altitudeCm = 0;
+
   ui8_satelliteCnt = 0;
-  __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, true);
-  __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true, true);
+  getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, false, true);
+  getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true, false, true);
+  #endif
   // *************************************************************************************************
 
   // *************************************************************************************************
@@ -216,7 +286,7 @@ void Base_c::init(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendS
   i32_lastCalendarSet = 0;
 
   // set configure values with call for config
-  config(rpc_gtp, rt_mySendSelection);
+  config(rpc_devKey, rt_mySendSelection);
 
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
@@ -244,246 +314,74 @@ __IsoAgLib::CANPkgExt_c& Base_c::dataBase()
 
 
 /**
-  config the Base_c object after init -> set pointer to gtp and
+  config the Base_c object after init -> set pointer to devKey and
   config send/receive of different base msg types
-  @param rpc_gtp pointer to the GETY_POS variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+  @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
   @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
 */
-void Base_c::config(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
+void Base_c::config(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
 {
   // set configure values
-  pc_gtp = rpc_gtp;
+  pc_devKey = rpc_devKey;
   t_mySendSelection = rt_mySendSelection;
 
 
-  // set ui8_sendGtp to the pointed value, if pointer is valid
-  if ((rpc_gtp != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1   ) != 0 ) ) c_sendBase1Gtp = *rpc_gtp;
-  else c_sendBase1Gtp.setUnspecified();
-  if ((rpc_gtp != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2   ) != 0 ) ) c_sendBase2Gtp = *rpc_gtp;
-  else c_sendBase2Gtp.setUnspecified();
-  if ((rpc_gtp != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 ) ) c_sendCalendarGtp = *rpc_gtp;
-  else c_sendCalendarGtp.setUnspecified();
+  // set ui8_sendDevKey to the pointed value, if pointer is valid
+  if ((rpc_devKey != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1   ) != 0 ) ) c_sendBase1DevKey = *rpc_devKey;
+  else c_sendBase1DevKey.setUnspecified();
+  if ((rpc_devKey != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2   ) != 0 ) ) c_sendBase2DevKey = *rpc_devKey;
+  else c_sendBase2DevKey.setUnspecified();
+  if ((rpc_devKey != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 ) ) c_sendCalendarDevKey = *rpc_devKey;
+  else c_sendCalendarDevKey.setUnspecified();
 
-  if ((rpc_gtp != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup3   ) != 0 ) ) c_sendBase3Gtp = *rpc_gtp;
-  else c_sendBase3Gtp.setUnspecified();
-  if ((rpc_gtp != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataFuel     ) != 0 ) ) c_sendFuelGtp = *rpc_gtp;
-  else c_sendFuelGtp.setUnspecified();
+  if ((rpc_devKey != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup3   ) != 0 ) ) c_sendBase3DevKey = *rpc_devKey;
+  else c_sendBase3DevKey.setUnspecified();
+  if ((rpc_devKey != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataFuel     ) != 0 ) ) c_sendFuelDevKey = *rpc_devKey;
+  else c_sendFuelDevKey.setUnspecified();
 
   #ifdef USE_ISO_11783
-  if ((rpc_gtp != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataGps     ) != 0 ) )
+  if ((rpc_devKey != NULL) && ( ( t_mySendSelection & IsoAgLib::BaseDataGps     ) != 0 ) )
   {
-    c_sendGpsGtp = *rpc_gtp;
+    c_sendGpsDevKey = *rpc_devKey;
+    #ifdef NMEA_2000_FAST_PACKET
     // also remove any previously registered MultiReceive connections
-    __IsoAgLib::getMultiReceiveInstance().deregisterClient( this );
+    getMultiReceiveInstance4Comm().deregisterClient( this );
+    c_nmea2000Streamer.reset();
+    c_nmea2000Streamer.vec_data.resize(0);
+    #endif
   }
   else
   {
-    c_sendGpsGtp.setUnspecified();
+    c_sendGpsDevKey.setUnspecified();
+    #ifdef NMEA_2000_FAST_PACKET
     // make sure that the needed multi receive are registered
-    __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_POSITON_DATA_PGN,       0xFF, this, true);
-    __IsoAgLib::getMultiReceiveInstance().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true);
-
+    getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, false, true);
+    getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_DIRECTION_DATA_PGN, 0xFF, this, true, false, true);
+    c_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
+    #endif
   }
   #endif
 };
 
-// //////////////////////////////// +X2C Operation 2432 : reactOnStreamStart
-//! Parameter:
-//! @param rc_ident:
-//! @param rui32_totalLen:
-bool Base_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
-                                uint32_t /*rui32_totalLen */)
-{ // ~X2C
-  if ( ( ( rc_ident.getPgn() == NMEA_GPS_POSITON_DATA_PGN   )
-      || ( rc_ident.getPgn() == NMEA_GPS_DIRECTION_DATA_PGN ) )
-    && ( ( t_mySendSelection & IsoAgLib::BaseDataGps   ) == 0 ) )
-  { // this a NMEA multi stream of interest where we don't send it
-    return true;
-  }
-  else
-  { // this is not of interest for us
-    return false;
-  }
-} // -X2C
-
-// //////////////////////////////// +X2C Operation 5692 : reactOnAbort
-void Base_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c /*rc_ident*/)
-{ // ~X2C
-  // as we don't perform an on-the-fly parse of the pool, nothing has to be done here
-  // - this is only important with on-the-fly parse, where everything parsed already has to be invalidated
-} // -X2C
-
-// //////////////////////////////// +X2C Operation 5688 : processPartStreamDataChunk
-//! Parameter:
-//! @param rc_ident:
-//! @param rb_isFirstChunk:
-//! @param rb_isLastChunkAndACKd:
-bool Base_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream,
-    bool rb_isFirstChunk,
-    bool rb_isLastChunkAndACKd)
-{ // ~X2C
-  IsoAgLib::ReceiveStreamIdentifier_c rc_ident = rpc_stream->getIdent();
-
-  // >>>First Chunk<<< Processing
-  if (rb_isFirstChunk)
-  {  /** return value is only used on receive of last data chunk */
-     /** @todo this may be wrong, if it's also the last chunk we shouldn't break out here!! */
-    return false;
-  }
-
-  // as process data property description pool is quite small, the complete pool
-  // is parsed at the end of the transfer
-
-  // >>>Last Chunk<<< Processing
-  if (rb_isLastChunkAndACKd)
-  {  /** let reactOnLastChunk decide whether the pool should be kept in memory */
-    return reactOnLastChunk(rc_ident, *rpc_stream);
-  }
-  // default - don't keep it
-  return false;
-} // -X2C
-
-
-//  Operation: reactOnAbort
-void Base_c::reactOnAbort(IsoAgLib::iStream_c* /*rpc_stream*/)
-{ // as we don't perform on-the-fly parse, there is nothing special to do
-}
-
-void getDegree10Minus7FromStream( IsoAgLib::iStream_c& refc_stream, int32_t& refi32_result )
+/** Retrieve the last update time of the specified information type
+  @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+  */
+int32_t Base_c::lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
 {
-  double d_temp;
-  int32_t i32_temp;
-
-  IsoAgLib::convertIstream( refc_stream, i32_temp );
-  d_temp = double(i32_temp);
-
-  IsoAgLib::convertIstream( refc_stream, i32_temp );
-  d_temp += ( double(i32_temp) * 4294967296.0 );
-  // NMEA sends with 10.0e-16, while normally 10.0e-7 is enough -> mult with 10.0e-9
-  refi32_result = int32_t( d_temp * 10.0e-9 );
-}
-
-void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& refc_stream, uint32_t& refui32_result )
-{
-  double d_temp;
-  uint32_t ui32_temp;
-
-  convertIstream( refc_stream, ui32_temp );
-  d_temp = double(ui32_temp);
-
-  convertIstream( refc_stream, ui32_temp );
-  d_temp += double(ui32_temp);
-  // NMEA sends with 10.0e-6, while normally 10.0e-2 is enough -> mult with 10.0e-4
-  refui32_result = uint32_t( d_temp * 10.0e-4 );
-}
-
-// //////////////////////////////// +X2C Operation 5703 : reactOnLastChunk
-//! Parameter:
-//! @param rc_ident:
-//! @param rpc_stream:
-bool Base_c::reactOnLastChunk( IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
-                                          IsoAgLib::iStream_c& refc_stream)
-{ // ~X2C
-  // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
-  const uint8_t cui8_sa = refc_stream.getIdent().getSa();
-  GetyPos_c c_tempGtp( GetyPos_c::GetyPosUnspecified );
-  if (getIsoMonitorInstance4Comm().existIsoMemberNr(cui8_sa))
-  { // the corresponding sender entry exist in the monitor list
-    c_tempGtp = getIsoMonitorInstance4Comm().isoMemberNr(cui8_sa).gtp();
-  }
-  const uint16_t ui16_actTime100ms = (data().time() / 100);
-
-  // check if we want to process the information
-  if (
-      ( ( t_mySendSelection & IsoAgLib::BaseDataGps   ) != 0 ) // I'm the sender
-      || ( // one of the following conditions must be true
-      (c_sendGpsGtp != c_tempGtp) // actual sender different to last
-      && (c_sendGpsGtp.isSpecified() ) // last sender has correctly claimed address member
-      && ((ui16_actTime100ms - ui8_lastBase1) <= 10) // last sender is still active
-         )
-     )
-  { // DO NOT take this message, as this might be a falsly double source
-    return false;
-  }
-
-  // set last time and GTP information
-  ui8_lastIsoGps = ui16_actTime100ms;
-  c_sendGpsGtp = c_tempGtp;
-
-
-  uint8_t tempValue[4];
-  int16_t i16_temp;
-
-  switch ( rc_ident.getPgn() )
+  switch ( rt_mySendSelection )
   {
-    case NMEA_GPS_POSITON_DATA_PGN: // 0x01F805LU -> 129 029
-    { // Sequence ID as first byte must be fetched specifically
-      ui8_sequenceID = refc_stream.getFirstByte();
-      // --> continue with Byte2 ...
-      uint16_t ui16_daysSince1970;
-      uint32_t ui32_milliseconds;
-      static time_t t_tempUnixTime = 0;
-      // read 2-bytes of Generic date as days since 1-1-1970 ( UNIX date )
-      refc_stream >> tempValue[0];
-      refc_stream >> tempValue[1];
-      ui16_daysSince1970 = ( uint16_t(tempValue[1]) << 8 ) + tempValue[0];
-      refc_stream >> tempValue[0];
-      refc_stream >> tempValue[1];
-      refc_stream >> tempValue[2];
-      refc_stream >> tempValue[3];
-      ui32_milliseconds = uint32_t(tempValue[0]) + (uint32_t(tempValue[1]) << 8)
-                       + (uint32_t(tempValue[2]) << 16) + (uint32_t(tempValue[3]) << 24);
-      // NMEA NMEA_GPS_POSITON_DATA_PGN sends with 0.1 msec
-      ui32_milliseconds /= 10;
+    case IsoAgLib::BaseDataGroup1:   return i32_lastBase1;
+    case IsoAgLib::BaseDataGroup2:   return i32_lastBase2;
+    case IsoAgLib::BaseDataGroup3:   return i32_lastBase3;
+    case IsoAgLib::BaseDataCalendar: return i32_lastCalendar;
 
-      t_tempUnixTime = ( time_t(ui16_daysSince1970) * time_t(60 * 60 * 24) ) + (ui32_milliseconds/1000);
-      tm* UtcNow = gmtime( &t_tempUnixTime );
-      if ( UtcNow != NULL )
-      { // now read the tm data strcture
-        setCalendar((UtcNow->tm_year+1900), UtcNow->tm_mon, UtcNow->tm_mday,
-                     UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
-      }
-      // now read Latitude --> convert into double [degree]
-      getDegree10Minus7FromStream( refc_stream, i32_latitudeDegree10Minus7 );
-      // now read Longitude --> convert into double [degree]
-      getDegree10Minus7FromStream( refc_stream, i32_longitudeDegree10Minus7 );
-      // now read Altitude --> convert into double [meter]
-      getAltitude10Minus2FromStream( refc_stream, ui32_altitudeCm );
-      // now fetch Quality - gps-mode
-      refc_stream >> tempValue[0];
-      t_gnssType   = IsoAgLib::IsoGnssType_t(tempValue[0] & 0xF );
-      t_gnssMethod = IsoAgLib::IsoGnssMethod_t(tempValue[0] >> 4 );
-      // ignore the next byte as GNSS Integrity is not interesting for our use
-      refc_stream >> tempValue[0]; // just read the byte out
-      // now fetch the number of satelites
-      refc_stream >> ui8_satelliteCnt;
-      // now fetch HDOP from raw uint16_t to float [1.0*10.0e-2)
-      refc_stream >> tempValue[0];
-      refc_stream >> tempValue[1];
-      i16_hdop = int16_t( uint16_t(tempValue[0]) | (uint16_t(tempValue[1]) << 8 ) );
-      // now fetch PDOP from raw uint16_t to float [1.0*10.0e-2)
-      refc_stream >> tempValue[0];
-      refc_stream >> tempValue[1];
-      i16_pdop = int16_t( uint16_t(tempValue[0]) | (uint16_t(tempValue[1]) << 8 ) );
-      // ignore the rest
-    }
-      break;
-    case NMEA_GPS_DIRECTION_DATA_PGN: // 0x01FA06LU - 130577 with Heading and Speed
-      for ( unsigned int ind = 2; ind < 7; ind++ )
-      { // read the bytes 2,3,4,5,6 into nirwana
-        refc_stream >> tempValue[0];
-      }
-      refc_stream >> tempValue[0];
-      refc_stream >> tempValue[1];
-      ui16_headingRad10Minus4 = uint16_t(tempValue[0]) | ( uint16_t(tempValue[1]) << 8 );
-      refc_stream >> tempValue[0];
-      refc_stream >> tempValue[1];
-      ui16_speedCmSec = uint16_t(tempValue[0]) | ( uint16_t(tempValue[1]) << 8 );
-      break;
+    case IsoAgLib::BaseDataFuel:     return i32_lastCalendar;
+    #ifdef USE_ISO_11783
+    case IsoAgLib::BaseDataGps:      return i32_lastCalendar;
+    #endif
+    default: return 0x7FFFFFFF;
   }
-
-  return false;
-} // -X2C
+}
 
 
 /**
@@ -497,8 +395,7 @@ bool Base_c::reactOnLastChunk( IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool Base_c::processMsg(){
-  bool b_result = false;
-  GetyPos_c c_tempGtp( GetyPos_c::GetyPosUnspecified );
+  DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
 
   #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
   if (c_data.identType() == Ident_c::ExtendedIdent)
@@ -512,181 +409,9 @@ bool Base_c::processMsg(){
   else
   #endif
   #ifdef USE_DIN_9684
-  { // a DIN9684 base information msg received
-    // store the gtp of the sender of base data
-    const uint16_t ui16_actTime100ms = (data().time() / 100);
-    if (getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
-    { // the corresponding sender entry exist in the monitor list
-      c_tempGtp = getDinMonitorInstance4Comm().dinMemberNr(data().send()).gtp();
-    }
-
-    // interprete data accordingto BABO
-    switch (data().babo())
-    {
-      case 4: // base data 1: speed, dist
-        // only take values, if i am not the regular sender
-        // and if actual sender isn't in conflict to previous sender
-        if (
-            ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1   ) == 0 ) // I'm not the sender
-         && ( // one of the following conditions must be true
-             (c_sendBase1Gtp == c_tempGtp) // actual sender equivalent to last
-          || (c_sendBase1Gtp.isUnspecified() ) // last sender has not correctly claimed address member
-          || ((ui16_actTime100ms - ui8_lastBase1) > 10) // last sender isn't active any more
-            )
-           )
-        { // sender is allowed to send
-          // real speed
-          setSpeedReal(data().val12());
-          // theor speed
-          setSpeedTheor(data().val34());
-          // real dist -> react on 16bit int16_t overflow
-          setOverflowSecure(i32_distReal, i16_lastDistReal, data().val56());
-          // theor dist -> react on 16bit int16_t overflow
-          setOverflowSecure(i32_distTheor, i16_lastDistTheor, data().val78());
-
-          // set last time
-          ui8_lastBase1 = ui16_actTime100ms;
-          c_sendBase1Gtp = c_tempGtp;
-        }
-        else
-        { // there is a sender conflict
-          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
-        }
-        b_result = true;
-        break;
-      case 5: // base data 2: pto, hitch
-        // only take values, if i am not the regular sender
-        // and if actual sender isn't in conflict to previous sender
-        if (
-            ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) == 0 ) // I'm not the sender
-         && ( // one of the following conditions must be true
-             (c_sendBase2Gtp == c_tempGtp) // actual sender equivalent to last
-          || (c_sendBase2Gtp.isUnspecified() ) // last sender has not correctly claimed address member
-          || ((ui16_actTime100ms - ui8_lastBase2) > 10) // last sender isn't active any more
-            )
-           )
-        { // sender is allowed to send
-          // rear pto
-          setPtoRear(data().val12());
-          // front pto
-          setPtoFront(data().val34());
-          // engine speed
-          setEngine(data().val56());
-          // rear hitch
-          setHitchRear(data().val7());
-          // front hitch
-          setHitchFront(data().val8());
-
-          // set last time
-          ui8_lastBase2 = ui16_actTime100ms;
-          c_sendBase2Gtp = c_tempGtp;
-        }
-        else
-        { // there is a sender conflict
-          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
-        }
-        b_result = true;
-        break;
-      case 6: // NEW!! base data 3: rear draft
-        // only take values, if i am not the regular sender
-        // and if actual sender isn't in conflict to previous sender
-        if (
-            ( ( t_mySendSelection & IsoAgLib::BaseDataGroup3   ) == 0 ) // I'm not the sender
-         && ( // one of the following conditions must be true
-             (c_sendBase3Gtp == c_tempGtp) // actual sender equivalent to last
-          || (c_sendBase2Gtp.isUnspecified()) // last sender was no correct announced member
-          || (ui16_actTime100ms - ui8_lastBase3 > 10) // last sender isn't active any more
-            )
-           )
-        { // sender is allowed to send
-          // reaer left draft
-          i16_rearLeftDraft = data().val12();
-          // reaer right draft
-          i16_rearRightDraft = data().val34();
-          // reaer total draft Newton
-          i16_rearDraftNewton = data().val56();
-          // reaer total draft Nominal
-          ui8_rearDraftNominal = data().val7();
-
-          // set last time
-          ui8_lastBase3 = ui16_actTime100ms;
-          c_sendBase3Gtp = c_tempGtp;
-        }
-        else
-        { // there is a sender conflict
-          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
-        }
-        b_result = true;
-        break;
-      case 0xC: // NEW!! fuel consumption
-        // only take values, if i am not the regular sender
-        // and if actual sender isn't in conflict to previous sender
-        if (
-            ( ( t_mySendSelection & IsoAgLib::BaseDataFuel ) == 0 ) // I'm not the sender
-         && ( // one of the following conditions must be true
-             (c_sendFuelGtp == c_tempGtp) // actual sender equivalent to last
-          || (c_sendFuelGtp.isUnspecified()) // last sender was no correct announced member
-          || (ui16_actTime100ms - ui8_lastFuel > 10) // last sender isn't active any more
-            )
-           )
-        { // sender is allowed to send
-          // fuel rate
-          i16_fuelRate =  data().val12();
-          // fuel temperature
-          ui8_fuelTemperature =  data().val3();
-
-          // set last time
-          ui8_lastFuel = ui16_actTime100ms;
-          c_sendFuelGtp = c_tempGtp;
-        }
-        else
-        { // there is a sender conflict
-          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
-        }
-        b_result = true;
-        break;
-      case 0xF: // calendar
-        // only take values, if i am not the regular sender
-        // and if actual sender isn't in conflict to previous sender
-        if (
-            ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) == 0 ) // I'm not the sender
-         && ( // one of the following conditions must be true
-             (c_sendCalendarGtp == c_tempGtp) // actual sender equivalent to last
-          || (c_sendCalendarGtp.isUnspecified() ) // last sender has not correctly claimed address member
-          || ((ui16_actTime100ms - ui8_lastBase2) > 10) // last sender isn't active any more
-          || ( year() == 0 ) // current date is not valid - as year is 0 -> maybe this data is better
-            )
-           )
-        { // sender is allowed to send
-          // only store date with valid year ( != 0 ) or if last received
-          // year is also 0
-          if ( ( data().val1() != 0 ) || ( data().val2() != 0 ) || ( year() == 0 ) )
-          { // store new calendar setting
-            setCalendar(
-              bcd2dec(data().val1()) * 100 + bcd2dec(data().val2()),
-              bcd2dec(data().val3()), bcd2dec(data().val4()),
-              bcd2dec(data().val5()), bcd2dec(data().val6()),
-              bcd2dec(data().val7())
-             );
-          }
-          // only handle this data source as reference data source, if year is valid
-          // ( i.e. year != 0 )
-          if ( ( data().val1() != 0 ) || ( data().val2() != 0 ) )
-          { // set last time
-            ui8_lastCalendar = ui16_actTime100ms;
-            c_sendCalendarGtp = c_tempGtp;
-          }
-        }
-        else
-        { // there is a sender conflict
-          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
-        }
-        b_result = true;
-        break;
-    }
-  }
+  return dinProcessMsg();
   #endif
-  return b_result;
+  return false;
 };
 
 
@@ -709,129 +434,81 @@ bool Base_c::timeEvent( void ) {
   checkCreateReceiveFilter();
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
+  const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
+  // check for different base data types whether the previously
+  // sending node stopped sending -> other nodes can now step in
+  if ( ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) == 0 )
+    && ( ( ci32_now - i32_lastBase1 ) >= 3000                  )
+    && ( c_sendBase1DevKey.isSpecified()                       ) )
+  { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+    c_sendBase1DevKey.setUnspecified();
+  }
+  if ( ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) == 0 )
+    && ( ( ci32_now - i32_lastBase2 ) >= 3000                  )
+    && ( c_sendBase2DevKey.isSpecified()                       ) )
+  { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+    c_sendBase2DevKey.setUnspecified();
+  }
+  if ( ( ( t_mySendSelection & IsoAgLib::BaseDataGroup3 ) == 0 )
+    && ( ( ci32_now - i32_lastBase3 ) >= 3000                  )
+    && ( c_sendBase3DevKey.isSpecified()                       ) )
+  { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+    c_sendBase3DevKey.setUnspecified();
+  }
+  if ( ( ( t_mySendSelection & IsoAgLib::BaseDataFuel ) == 0  )
+    && ( ( ci32_now - i32_lastFuel ) >= 3000                  )
+    && ( c_sendFuelDevKey.isSpecified()                       ) )
+  { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+    c_sendFuelDevKey.setUnspecified();
+  }
+  if ( ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) == 0           )
+    && ( ( ( ci32_now - i32_lastCalendar ) >= 3000 ) || ( yearUtc() == 0 ) )
+    && ( c_sendCalendarDevKey.isSpecified()                                ) )
+  { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+    c_sendCalendarDevKey.setUnspecified();
+    bit_calendar.year = bit_calendar.hour = bit_calendar.minute = bit_calendar.second = 0;
+    bit_calendar.month = bit_calendar.day = 1;
+  }
   #ifdef USE_ISO_11783
-  ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  if ((pc_gtp != NULL)&& (c_isoMonitor.existIsoMemberGtp(*pc_gtp, true)))
-  { // stored base information sending ISO member has claimed address
-    isoTimeEvent();
-  }
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  #endif
-  #ifdef USE_DIN_9684
-  const uint8_t ui8_actTime100ms = (Scheduler_c::getLastTimeEventTrigger()/100);
-  CANIO_c& c_can = getCanInstance4Comm();
-  DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
-  if ((pc_gtp != NULL)&& (c_din_monitor.existDinMemberGtp(*pc_gtp, true)))
-  {
-    // retreive the actual dynamic sender no of the member with the registered gtp
-    uint8_t b_send = c_din_monitor.dinMemberGtp(*pc_gtp, true).nr();
-
-    if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastBase1 ) ) >= 1 )
-      && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0       ) )
-    { // send actual base1 data
-      c_sendBase1Gtp = *pc_gtp;
-      data().setBabo(4);
-      data().setSend(b_send);
-      data().setVal12(i16_speedReal);
-      data().setVal34(i16_speedTheor);
-      data().setVal56(long2int(i32_distReal));
-      data().setVal78(long2int(i32_distTheor));
-
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      ui8_lastBase1 = ui8_actTime100ms;
-    }
-
-    if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastBase2 ) ) >= 1 )
-      && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0       ) )
-    { // send actual base2 data
-      c_sendBase2Gtp = *pc_gtp;
-      data().setBabo(5);
-      data().setSend(b_send);
-      data().setVal12(i16_ptoRear);
-      data().setVal34(i16_ptoFront);
-      data().setVal56(i16_engine);
-      data().setVal7(hitchRear());
-      data().setVal8(hitchFront());
-
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      ui8_lastBase2 = ui8_actTime100ms;
-    }
-
-    if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastBase3 ) ) >= 1 )
-      && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup3 ) != 0       ) )
-    { // send actual base3 data
-      c_sendBase3Gtp = *pc_gtp;
-      data().setBabo(6);
-      data().setSend(b_send);
-      data().setVal12(i16_rearLeftDraft);
-      data().setVal34(i16_rearRightDraft);
-      data().setVal56(i16_rearDraftNewton);
-      data().setVal7(ui8_rearDraftNominal);
-
-      // CAN_IO::operator<< retreives the information with the help of CAN_Pkg::get_data
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      ui8_lastBase3 = ui8_actTime100ms;
-    }
-
-    if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastFuel ) ) >= 1 )
-      && ( ( t_mySendSelection & IsoAgLib::BaseDataFuel ) != 0        ) )
-    { // send actual base3 data
-      c_sendFuelGtp = *pc_gtp;
-      data().setBabo(0xC);
-      data().setSend(b_send);
-      data().setVal12(i16_fuelRate);
-      data().setVal3(ui8_fuelTemperature);
-
-      // CAN_IO::operator<< retreives the information with the help of CAN_Pkg::get_data
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      ui8_lastFuel = ui8_actTime100ms;
-    }
-
-    if (
-        (
-         ( ( ui8_actTime100ms - ui8_lastCalendar) >= 10 )
-      || (
-           ( ( ( 0xFF - ui8_lastCalendar ) + ui8_actTime100ms ) >= 10 )
-        && ( ui8_actTime100ms < ui8_lastCalendar )
-         )
-        )
-       && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 ) )
-    { // send actual calendar data
-      c_sendCalendarGtp = *pc_gtp;
-      data().setBabo(0xF);
-      data().setSend(b_send);
-      data().setVal1(dec2bcd(year() / 100));
-      data().setVal2(dec2bcd(year() % 100));
-      data().setVal3(dec2bcd(month()));
-      data().setVal4(dec2bcd(day()));
-      data().setVal5(dec2bcd(hour()));
-      data().setVal6(dec2bcd(minute()));
-      data().setVal7(dec2bcd(second()));
-
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      ui8_lastCalendar = ui8_actTime100ms;
-    }
+  if ( ( ( t_mySendSelection & IsoAgLib::BaseDataGps ) == 0 )
+    #ifdef NMEA_2000_FAST_PACKET
+    && ( ( ci32_now - i32_lastIsoPositionStream  ) >= 3000  )
+    && ( ( ci32_now - i32_lastIsoDirectionStream ) >= 3000  )
+    #endif
+    && ( ( ci32_now - i32_lastIsoPositionSimple  ) >= 3000  )
+    && ( c_sendGpsDevKey.isSpecified()                      ) )
+  { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+    c_sendGpsDevKey.setUnspecified();
+    i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
+    ui8_satelliteCnt = 0;
+    t_gnssMethod = IsoAgLib::IsoNoGps;
+    t_gnssType = IsoAgLib::IsoGnssGps;
+    #ifdef NMEA_2000_FAST_PACKET
+    ui32_altitudeCm = 0;
+    #endif
   }
   #endif
+
+
+  if ( ( pc_devKey != NULL ) && (t_mySendSelection != IsoAgLib::BaseDataNothing))
+  { // there is at least something configured to send
+    #ifdef USE_ISO_11783
+    if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true))
+    { // stored base information sending ISO member has claimed address
+      isoTimeEvent();
+    }
+    #endif
+    #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
+    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    #endif
+    #ifdef USE_DIN_9684
+    if (getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true))
+    { // stored base information sending DIN member has claimed address
+      dinTimeEvent();
+    }
+    #endif
+  }
   return true;
 }
 
@@ -841,7 +518,7 @@ bool Base_c::timeEvent( void ) {
   */
 void Base_c::checkCreateReceiveFilter( void )
 {
-  SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance();
+  SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
   CANIO_c &c_can = getCanInstance4Comm();
   #ifdef USE_DIN_9684
   if ( ( !b_dinFilterCreated ) && (c_systemMgmt.existActiveLocalDinMember() ) )
@@ -911,22 +588,282 @@ void Base_c::checkCreateReceiveFilter( void )
   #endif
 }
 
+#ifdef USE_DIN_9684
+/** send a DIN9684 base information PGN
+ * this is only called when sending ident is configured and it has already claimed an address
+ */
+bool Base_c::dinTimeEvent( void )
+{
+  CANIO_c& c_can = getCanInstance4Comm();
+  // retreive the actual dynamic sender no of the member with the registered devKey
+  uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*pc_devKey, true).nr();
+
+  if ( ( ( ci32_now - i32_lastBase1 ) >= 100                   )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
+  { // send actual base1 data
+    c_sendBase1DevKey = *pc_devKey;
+    data().setBabo(4);
+    data().setSend(b_send);
+    data().setVal12(i16_speedReal);
+    data().setVal34(i16_speedTheor);
+    data().setVal56(long2int(i32_distReal));
+    data().setVal78(long2int(i32_distTheor));
+
+    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+    // then it sends the data
+    c_can << data();
+
+    // update time
+    i32_lastBase1 = ci32_now;
+  }
+
+  if ( ( ( ci32_now - i32_lastBase2 ) >= 100                   )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
+  { // send actual base2 data
+    c_sendBase2DevKey = *pc_devKey;
+    data().setBabo(5);
+    data().setSend(b_send);
+    data().setVal12(i16_ptoRear);
+    data().setVal34(i16_ptoFront);
+    data().setVal56(i16_engine);
+    data().setVal7(hitchRear());
+    data().setVal8(hitchFront());
+
+    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+    // then it sends the data
+    c_can << data();
+
+    // update time
+    i32_lastBase2 = ci32_now;
+  }
+
+  if ( ( ( ci32_now - i32_lastBase3 ) >= 100                   )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup3 ) != 0 ) )
+  { // send actual base3 data
+    c_sendBase3DevKey = *pc_devKey;
+    data().setBabo(6);
+    data().setSend(b_send);
+    data().setVal12(i16_rearLeftDraft);
+    data().setVal34(i16_rearRightDraft);
+    data().setVal56(i16_rearDraftNewton);
+    data().setVal7(ui8_rearDraftNominal);
+
+    // CAN_IO::operator<< retreives the information with the help of CAN_Pkg::get_data
+    // then it sends the data
+    c_can << data();
+
+    // update time
+    i32_lastBase3 = ci32_now;
+  }
+
+  if ( ( ( ci32_now - i32_lastFuel ) >= 100                  )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataFuel ) != 0 ) )
+  { // send actual base3 data
+    c_sendFuelDevKey = *pc_devKey;
+    data().setBabo(0xC);
+    data().setSend(b_send);
+    data().setVal12(i16_fuelRate);
+    data().setVal3(ui8_fuelTemperature);
+
+    // CAN_IO::operator<< retreives the information with the help of CAN_Pkg::get_data
+    // then it sends the data
+    c_can << data();
+
+    // update time
+    i32_lastFuel = ci32_now;
+  }
+
+  if ( ( ( ci32_now - i32_lastCalendar) >= 1000                  )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 ) )
+  { // send actual calendar data
+    c_sendCalendarDevKey = *pc_devKey;
+    data().setBabo(0xF);
+    data().setSend(b_send);
+    data().setVal1(dec2bcd(year() / 100));
+    data().setVal2(dec2bcd(year() % 100));
+    data().setVal3(dec2bcd(month()));
+    data().setVal4(dec2bcd(day()));
+    data().setVal5(dec2bcd(hour()));
+    data().setVal6(dec2bcd(minute()));
+    data().setVal7(dec2bcd(second()));
+
+    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+    // then it sends the data
+    c_can << data();
+
+    // update time
+    i32_lastCalendar = ci32_now;
+  }
+}
+
+/** process a DIN9684 base information PGN */
+bool Base_c::dinProcessMsg()
+{ // a DIN9684 base information msg received
+  // store the devKey of the sender of base data
+  const uint16_t ui16_actTime100ms = (data().time() / 100);
+  if (getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
+  { // the corresponding sender entry exist in the monitor list
+    c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
+  }
+
+  // interprete data accordingto BABO
+  switch (data().babo())
+  {
+    case 4: // base data 1: speed, dist
+      // only take values, if i am not the regular sender
+      // and if actual sender isn't in conflict to previous sender
+      if ( checkParseReceived( c_tempDevKey, c_sendBase1DevKey, IsoAgLib::BaseDataGroup1 ) )
+      { // sender is allowed to send
+        // real speed
+        setSpeedReal(data().val12());
+        // theor speed
+        setSpeedTheor(data().val34());
+        // real dist -> react on 16bit int16_t overflow
+        setOverflowSecure(i32_distReal, i16_lastDistReal, data().val56());
+        // theor dist -> react on 16bit int16_t overflow
+        setOverflowSecure(i32_distTheor, i16_lastDistTheor, data().val78());
+
+        // set last time
+        i32_lastBase1 = ui16_actTime100ms;
+        c_sendBase1DevKey = c_tempDevKey;
+      }
+      else
+      { // there is a sender conflict
+        getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+      }
+      b_result = true;
+      break;
+    case 5: // base data 2: pto, hitch
+      // only take values, if i am not the regular sender
+      // and if actual sender isn't in conflict to previous sender
+      if ( checkParseReceived( c_tempDevKey, c_sendBase2DevKey, IsoAgLib::BaseDataGroup2 ) )
+      { // sender is allowed to send
+        // rear pto
+        setPtoRear(data().val12());
+        // front pto
+        setPtoFront(data().val34());
+        // engine speed
+        setEngine(data().val56());
+        // rear hitch
+        setHitchRear(data().val7());
+        // front hitch
+        setHitchFront(data().val8());
+
+        // set last time
+        i32_lastBase2 = ui16_actTime100ms;
+        c_sendBase2DevKey = c_tempDevKey;
+      }
+      else
+      { // there is a sender conflict
+        getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+      }
+      b_result = true;
+      break;
+    case 6: // NEW!! base data 3: rear draft
+      // only take values, if i am not the regular sender
+      // and if actual sender isn't in conflict to previous sender
+      if ( checkParseReceived( c_tempDevKey, c_sendBase3DevKey, IsoAgLib::BaseDataGroup3 ) )
+      { // sender is allowed to send
+        // reaer left draft
+        i16_rearLeftDraft = data().val12();
+        // reaer right draft
+        i16_rearRightDraft = data().val34();
+        // reaer total draft Newton
+        i16_rearDraftNewton = data().val56();
+        // reaer total draft Nominal
+        ui8_rearDraftNominal = data().val7();
+
+        // set last time
+        i32_lastBase3 = ui16_actTime100ms;
+        c_sendBase3DevKey = c_tempDevKey;
+      }
+      else
+      { // there is a sender conflict
+        getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+      }
+      b_result = true;
+      break;
+    case 0xC: // NEW!! fuel consumption
+      // only take values, if i am not the regular sender
+      // and if actual sender isn't in conflict to previous sender
+      if ( checkParseReceived( c_tempDevKey, c_sendFuelDevKey, IsoAgLib::BaseDataFuel ) )
+      { // sender is allowed to send
+        // fuel rate
+        i16_fuelRate =  data().val12();
+        // fuel temperature
+        ui8_fuelTemperature =  data().val3();
+
+        // set last time
+        i32_lastFuel = ui16_actTime100ms;
+        c_sendFuelDevKey = c_tempDevKey;
+      }
+      else
+      { // there is a sender conflict
+        getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+      }
+      b_result = true;
+      break;
+    case 0xF: // calendar
+      // only take values, if i am not the regular sender
+      // and if actual sender isn't in conflict to previous sender
+      if ( checkParseReceived( c_tempDevKey, c_sendCalendarDevKey, IsoAgLib::BaseDataCalendar ) )
+      { // sender is allowed to send
+        // only store date with valid year ( != 0 ) or if last received
+        // year is also 0
+        if ( ( data().val1() != 0 ) || ( data().val2() != 0 ) || ( year() == 0 ) )
+        { // store new calendar setting
+          #ifdef USE_ISO_11783
+          if ( ( ( t_mySendSelection & IsoAgLib::BaseDataGps ) == 0 )
+            && ( c_sendGpsDevKey.isUnspecified()                    ) )
+          #endif
+          { // neither this item now another item is sending GPS data -> this is the best time source
+            setCalendarLocal(
+              bcd2dec(data().val1()) * 100 + bcd2dec(data().val2()),
+              bcd2dec(data().val3()), bcd2dec(data().val4()),
+              bcd2dec(data().val5()), bcd2dec(data().val6()),
+              bcd2dec(data().val7())
+            );
+          }
+          #ifdef USE_ISO_11783
+          else
+          { // only fetch the date, as this information might not be defined by GPS
+            setDateLocal(bcd2dec(data().val1()) * 100 + bcd2dec(data().val2()),
+              bcd2dec(data().val3()), bcd2dec(data().val4()));
+          }
+          #endif
+        }
+        // only handle this data source as reference data source, if year is valid
+        // ( i.e. year != 0 )
+        if ( ( data().val1() != 0 ) || ( data().val2() != 0 ) )
+        { // set last time
+          i32_lastCalendar = ui16_actTime100ms;
+          c_sendCalendarDevKey = c_tempDevKey;
+        }
+      }
+      else
+      { // there is a sender conflict
+        getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+      }
+      b_result = true;
+      break;
+  } // end switch
+}
+
+#endif
 
 #ifdef USE_ISO_11783
-
-
 /**
   process a ISO11783 base information PGN
 */
 bool Base_c::isoProcessMsg()
 {
   bool b_result = false;
-  GetyPos_c c_tempGtp( GetyPos_c::GetyPosUnspecified );
+  DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
   const uint16_t ui16_actTime100ms = (data().time()/100);
-  // store the gtp of the sender of base data
+  // store the devKey of the sender of base data
   if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
   { // the corresponding sender entry exist in the monitor list
-    c_tempGtp = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).gtp();
+    c_tempDevKey = getIsoMonitorInstance4Comm().isoMemberNr(data().isoSa()).devKey();
   }
 
   switch (data().isoPgn() & 0x1FFFF)
@@ -935,22 +872,26 @@ bool Base_c::isoProcessMsg()
       // time - date
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
-      if (
-          ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) == 0 ) // I'm not the sender
-       && ( // one of the following conditions must be true
-           (c_sendCalendarGtp == c_tempGtp) // actual sender equivalent to last
-        || (c_sendCalendarGtp.isUnspecified() ) // last sender has not correctly claimed address member
-        || ((ui16_actTime100ms - ui8_lastIsoBase2) > 10) // last sender isn't active any more
-          )
-         )
+      if ( checkParseReceived( c_tempDevKey, c_sendCalendarDevKey, IsoAgLib::BaseDataCalendar ) )
       { // sender is allowed to send
         // store new calendar setting
-        setCalendar(
-          (data().val6() + 1985), data().val4(), (data().val5() / 4), (data().val3() + data().val8()),
-           (data().val2() + data().val7()), (data().val1() / 4));
+        if ( ( ( t_mySendSelection & IsoAgLib::BaseDataGps ) == 0 )
+          && ( c_sendGpsDevKey.isUnspecified()                       ) )
+        { // neither this item nor another item is sending GPS data -> this is the best time source
+          setCalendarUtc(
+          (data().val6() + 1985), data().val4(), (data().val5() / 4), (data().val3()),
+           (data().val2()), (data().val1() / 4));
+        }
+        else
+        { // only fetch the date, as this information might not be defined by GPS
+          setDateUtc((data().val6() + 1985), data().val4(), (data().val5() / 4));
+        }
+        // take local timezone offset in all cases
+        bit_calendar.timezoneMinuteOffset = data().val7();
+        bit_calendar.timezoneHourOffsetMinus24 = data().val8();
         // set last time
-        ui8_lastIsoCalendar = ui16_actTime100ms;
-        c_sendCalendarGtp = c_tempGtp;
+        i32_lastCalendar = ui16_actTime100ms;
+        c_sendCalendarDevKey = c_tempDevKey;
       }
       else
       { // there is a sender conflict
@@ -962,14 +903,7 @@ bool Base_c::isoProcessMsg()
     case WHEEL_BASED_SPEED_DIST_PGN:
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
-      if (
-          ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) == 0 ) // I'm not the sender
-       && ( // one of the following conditions must be true
-           (c_sendBase1Gtp == c_tempGtp) // actual sender equivalent to last
-        || (c_sendBase1Gtp.isUnspecified() ) // last sender has not correctly claimed address member
-        || ((ui16_actTime100ms - ui8_lastIsoBase1) > 10) // last sender isn't active any more
-          )
-         )
+      if ( checkParseReceived( c_tempDevKey, c_sendBase1DevKey, IsoAgLib::BaseDataGroup1 ) )
       { // sender is allowed to send
         int16_t i16_tempSpeed = data().val12();
         switch (data().val8() & 3 ) {
@@ -1003,8 +937,8 @@ bool Base_c::isoProcessMsg()
           ui8_maxPowerTime = data().val7();
         }
         // set last time
-        ui8_lastIsoBase1 = ui16_actTime100ms;
-        c_sendBase1Gtp = c_tempGtp;
+        i32_lastBase1 = ui16_actTime100ms;
+        c_sendBase1DevKey = c_tempDevKey;
       }
       else
       { // there is a sender conflict
@@ -1016,14 +950,7 @@ bool Base_c::isoProcessMsg()
     case BACK_HITCH_STATE_PGN:
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
-      if (
-          ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) == 0 ) // I'm not the sender
-       && ( // one of the following conditions must be true
-           (c_sendBase2Gtp == c_tempGtp) // actual sender equivalent to last
-        || (c_sendBase2Gtp.isUnspecified() ) // last sender has not correctly claimed address member
-        || ((ui16_actTime100ms - ui8_lastIsoBase2) > 10) // last sender isn't active any more
-          )
-         )
+      if ( checkParseReceived( c_tempDevKey, c_sendBase2DevKey, IsoAgLib::BaseDataGroup2 ) )
       { // sender is allowed to send
         uint8_t ui8_tempHitch = ((data().val1() * 4) / 10);
         if ( (ui8_tempHitch != ERROR_VAL_8)
@@ -1055,8 +982,8 @@ bool Base_c::isoProcessMsg()
           i16_rearDraft = static_cast<int16_t>(data().val4()) + (static_cast<int16_t>(data().val5()) << 8);
         }
         // set last time
-        ui8_lastIsoBase2 = ui16_actTime100ms;
-        c_sendBase2Gtp = c_tempGtp;
+        i32_lastBase2 = ui16_actTime100ms;
+        c_sendBase2DevKey = c_tempDevKey;
       }
       else
       { // there is a sender conflict
@@ -1068,14 +995,7 @@ bool Base_c::isoProcessMsg()
     case BACK_PTO_STATE_PGN:
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
-      if (
-          ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) == 0 ) // I'm not the sender
-       && ( // one of the following conditions must be true
-           (c_sendBase2Gtp == c_tempGtp) // actual sender equivalent to last
-        || (c_sendBase2Gtp.isUnspecified() ) // last sender has not correctly claimed address member
-        || ((ui16_actTime100ms - ui8_lastIsoBase2) > 10) // last sender isn't active any more
-          )
-         )
+      if ( checkParseReceived( c_tempDevKey, c_sendBase2DevKey, IsoAgLib::BaseDataGroup2 ) )
       { // sender is allowed to send
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
         { // front PTO
@@ -1092,8 +1012,8 @@ bool Base_c::isoProcessMsg()
           t_rearPtoEconomy = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 2) & 3);
         }
         // set last time
-        ui8_lastIsoBase2 = ui16_actTime100ms;
-        c_sendBase2Gtp = c_tempGtp;
+        i32_lastBase2 = ui16_actTime100ms;
+        c_sendBase2DevKey = c_tempDevKey;
       }
       else
       { // there is a sender conflict
@@ -1121,8 +1041,15 @@ bool Base_c::isoProcessMsg()
     // **********************************************************
     // Added by Brad Cox for NMEA 2000 GPS Messages:
     case NMEA_GPS_POSITON_RAPID_UPDATE_PGN:
-      i32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
-      i32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
+      if ( checkParseReceived( c_tempDevKey, c_sendGpsDevKey, IsoAgLib::BaseDataGps ) )
+      { // sender is allowed to send
+        i32_lastIsoPositionSimple = ui16_actTime100ms;
+        i32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
+        i32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
+        // set last time
+        i32_lastIsoPositionSimple = ui16_actTime100ms;
+        c_sendGpsDevKey = c_tempDevKey;
+      }
       b_result = true;
       break;
       // **********************************************************
@@ -1154,56 +1081,319 @@ bool Base_c::isoProcessMsg()
   }
   return b_result;
 }
-/**
-  send a ISO11783 base information PGN
-*/
+
+/** check if an NMEA2000 position signal was received */
+bool Base_c::isPositionReceived() const
+{
+  if ( ( i32_latitudeDegree10Minus7 == 0x7FFFFFFF  )
+    && ( i32_longitudeDegree10Minus7 == 0x7FFFFFFF )
+    #ifdef NMEA_2000_FAST_PACKET
+    && ( ui32_altitudeCm == 0                      )
+    #endif
+     )
+  { // there is no valid GPS information
+    return false;
+  }
+  else
+  {
+    return true;
+  }
+}
+
+#ifdef NMEA_2000_FAST_PACKET
+// //////////////////////////////// +X2C Operation 2432 : reactOnStreamStart
+//! Parameter:
+//! @param rc_ident:
+//! @param rui32_totalLen:
+bool Base_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
+                                uint32_t /*rui32_totalLen */)
+{ // ~X2C
+  if ( ( ( rc_ident.getPgn() == NMEA_GPS_POSITON_DATA_PGN   )
+           || ( rc_ident.getPgn() == NMEA_GPS_DIRECTION_DATA_PGN ) )
+           && ( ( t_mySendSelection & IsoAgLib::BaseDataGps   ) == 0 ) )
+  { // this a NMEA multi stream of interest where we don't send it
+    return true;
+  }
+  else
+  { // this is not of interest for us
+    return false;
+  }
+} // -X2C
+
+// //////////////////////////////// +X2C Operation 5692 : reactOnAbort
+void Base_c::reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c /*rc_ident*/)
+{ // ~X2C
+  // as we don't perform an on-the-fly parse of the pool, nothing has to be done here
+  // - this is only important with on-the-fly parse, where everything parsed already has to be invalidated
+} // -X2C
+
+// //////////////////////////////// +X2C Operation 5688 : processPartStreamDataChunk
+//! Parameter:
+//! @param rc_ident:
+//! @param rb_isFirstChunk:
+//! @param rb_isLastChunkAndACKd:
+bool Base_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream,
+                                        bool /*rb_isFirstChunk*/,
+                                        bool rb_isLastChunkAndACKd)
+{ // ~X2C
+  IsoAgLib::ReceiveStreamIdentifier_c rc_ident = rpc_stream->getIdent();
+
+  // >>>Last Chunk<<< Processing
+  if (rb_isLastChunkAndACKd)
+  {  /** let reactOnLastChunk decide whether the pool should be kept in memory */
+    return reactOnLastChunk(rc_ident, *rpc_stream);
+  }
+  // default - don't keep it
+  return false;
+} // -X2C
+
+
+//  Operation: reactOnAbort
+void Base_c::reactOnAbort(IsoAgLib::iStream_c* /*rpc_stream*/)
+{ // as we don't perform on-the-fly parse, there is nothing special to do
+}
+
+void getDegree10Minus7FromStream( IsoAgLib::iStream_c& refc_stream, int32_t& refi32_result )
+{
+  #if SIZEOF_INT == 4
+  // use 64 bit variable
+  int64_t i64_temp;
+  IsoAgLib::convertIstream( refc_stream, i64_temp );
+  double d_temp = double(i64_temp);
+  refi32_result = int32_t( d_temp * 1.0e-9 );
+ #else
+  // only take higher 4 bytes
+  int32_t i32_temp;
+
+  // ignore the result of the following call
+  IsoAgLib::convertIstream( refc_stream, i32_temp );
+  // only take this part
+  IsoAgLib::convertIstream( refc_stream, i32_temp );
+  // NMEA sends with 1.0e-16, while normally 1.0e-7 is enough -> mult with 1.0e-9
+  double d_temp = ( double(i32_temp) * 4294967296.0 * 1.0e-9 );
+  refi32_result = int32_t( d_temp );
+  #endif
+}
+
+void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& refc_stream, uint32_t& refui32_result )
+{
+#if SIZEOF_INT == 4
+  // use 64 bit variable
+  int64_t i64_temp;
+  IsoAgLib::convertIstream( refc_stream, i64_temp );
+  double d_temp = double(i64_temp);
+  // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
+  refui32_result = int32_t( d_temp * 1.0e-4 );
+  #else
+  // only take higher 4 bytes
+  int32_t i32_temp;
+
+  // ignore the result of the following call
+  IsoAgLib::convertIstream( refc_stream, i32_temp );
+  // only take this part
+  IsoAgLib::convertIstream( refc_stream, i32_temp );
+  // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
+  double d_temp = ( double(i32_temp) * 4294967296.0 * 1.0e-4 );
+  refi32_result = int32_t( d_temp );
+  #endif
+}
+
+// //////////////////////////////// +X2C Operation 5703 : reactOnLastChunk
+//! Parameter:
+//! @param rc_ident:
+//! @param rpc_stream:
+bool Base_c::reactOnLastChunk( IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
+                               IsoAgLib::iStream_c& refc_stream)
+{ // ~X2C
+  // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
+  const uint8_t cui8_sa = refc_stream.getIdent().getSa();
+  DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
+  if (getIsoMonitorInstance4Comm().existIsoMemberNr(cui8_sa))
+  { // the corresponding sender entry exist in the monitor list
+    c_tempDevKey = getIsoMonitorInstance4Comm().isoMemberNr(cui8_sa).devKey();
+  }
+
+  // check if we want to process the information
+  if (
+      ( ( t_mySendSelection & IsoAgLib::BaseDataGps   ) != 0 ) // I'm the sender
+      || ( // one of the following conditions must be true
+         (c_sendGpsDevKey != c_tempDevKey) // actual sender different to last
+      && (c_sendGpsDevKey.isSpecified() ) // last sender has correctly claimed address member
+         )
+     )
+  { // DO NOT take this message, as this might be a falsly double source
+    return false;
+  }
+
+  // set last time and DEVKEY information
+  c_sendGpsDevKey = c_tempDevKey;
+
+
+  uint8_t ui8_tempValue;
+
+  switch ( rc_ident.getPgn() )
+  {
+    case NMEA_GPS_POSITON_DATA_PGN: // 0x01F805LU -> 129 029
+    {
+      i32_lastIsoPositionStream = data().time();
+      // fetch sequence number from Byte1
+      IsoAgLib::convertIstream( refc_stream, ui8_positionSequenceID );
+      // --> continue with Byte2 ...
+      uint16_t ui16_daysSince1970;
+      uint32_t ui32_milliseconds;
+      // read 2-bytes of Generic date as days since 1-1-1970 ( UNIX date )
+      IsoAgLib::convertIstream( refc_stream, ui16_daysSince1970 );
+      IsoAgLib::convertIstream( refc_stream, ui32_milliseconds );
+      // NMEA NMEA_GPS_POSITON_DATA_PGN sends with 0.1 msec
+      ui32_milliseconds /= 10;
+
+      const time_t t_tempUnixTime = ( time_t(ui16_daysSince1970) * time_t(60 * 60 * 24) ) + (ui32_milliseconds/1000);
+      tm* UtcNow = gmtime( &t_tempUnixTime );
+      if ( ( UtcNow != NULL ) && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar   ) != 0  ))
+      { // now read the tm data strcture as I'm currently sending time
+        setCalendarUtc((UtcNow->tm_year+1900), UtcNow->tm_mon, UtcNow->tm_mday,
+                        UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
+      }
+      // now read Latitude --> convert into double [degree]
+      getDegree10Minus7FromStream( refc_stream, i32_latitudeDegree10Minus7 );
+      // now read Longitude --> convert into double [degree]
+      getDegree10Minus7FromStream( refc_stream, i32_longitudeDegree10Minus7 );
+      // now read Altitude --> convert into double [meter]
+      getAltitude10Minus2FromStream( refc_stream, ui32_altitudeCm );
+      // now fetch Quality - gps-mode
+      refc_stream >> ui8_tempValue;
+      t_gnssType   = IsoAgLib::IsoGnssType_t(ui8_tempValue & 0xF );
+      t_gnssMethod = IsoAgLib::IsoGnssMethod_t(ui8_tempValue >> 4 );
+      // GNSS Integrity
+      refc_stream >> ui8_integrity;
+      ui8_integrity &= 0x3; // mask reserved bits out
+      // now fetch the number of satelites
+      refc_stream >> ui8_satelliteCnt;
+      // now fetch HDOP from raw uint16_t to float [1.0*1.0e-2)
+      IsoAgLib::convertIstream( refc_stream, i16_hdop );
+      // now fetch PDOP from raw uint16_t to float [1.0*1.0e-2)
+      IsoAgLib::convertIstream( refc_stream, i16_pdop );
+      // Geodial Separation
+      IsoAgLib::convertIstream( refc_stream, i32_geoidalSeparation );
+      // number of reference stations
+      IsoAgLib::convertIstream( refc_stream, ui8_noRefStations );
+      // now read the type and age of all following reference stations
+      for ( unsigned int ind = 0; ((ind < ui8_noRefStations) &&(!refc_stream.eof())); ind++ )
+      { // push new items at the end or simply update the corresponding value
+        if ( vec_refStationTypeAndStation.size() < (ind+1) ) vec_refStationTypeAndStation.push_back( __IsoAgLib::convertIstreamUi16( refc_stream ) );
+        else IsoAgLib::convertIstream( refc_stream, vec_refStationTypeAndStation[ind] );
+        if ( vec_refStationDifferentialAge10Msec.size() < (ind+1) ) vec_refStationDifferentialAge10Msec.push_back( __IsoAgLib::convertIstreamUi16( refc_stream ) );
+        else IsoAgLib::convertIstream( refc_stream, vec_refStationDifferentialAge10Msec[ind] );
+      }
+    }
+    break;
+    case NMEA_GPS_DIRECTION_DATA_PGN: // 0x01FA06LU - 130577 with Heading and Speed
+      i32_lastIsoDirectionStream = data().time();
+      IsoAgLib::convertIstream( refc_stream, ui8_dataModeAndHeadingReference );
+      ui8_dataModeAndHeadingReference &= 0x3F;
+      IsoAgLib::convertIstream( refc_stream, ui8_directionSequenceID );
+      IsoAgLib::convertIstream( refc_stream, ui16_courseOverGroundRad10Minus4 );
+      IsoAgLib::convertIstream( refc_stream, ui16_speedOverGroundCmSec );
+      IsoAgLib::convertIstream( refc_stream, ui16_headingRad10Minus4 );
+      IsoAgLib::convertIstream( refc_stream, ui16_speedCmSec );
+      IsoAgLib::convertIstream( refc_stream, ui16_flowDirectionRad10Minus4 );
+      IsoAgLib::convertIstream( refc_stream, ui16_driftSpeedCmSec );
+      break;
+  }
+
+  return false;
+} // -X2C
+
+// END NMEA_2000_FAST_PACKET
+#endif
+
+/** send a ISO11783 base information PGN.
+ * this is only called when sending ident is configured and it has already claimed an address
+ */
 bool Base_c::isoTimeEvent( void )
 {
-  CANIO_c& c_can = getCanInstance4Comm();
+  const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  const uint8_t ui8_actTime100ms = (Scheduler_c::getLastTimeEventTrigger()/100);
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-
-  // retreive the actual dynamic sender no of the member with the registered gtp
-  uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberGtp(*pc_gtp, true).nr();
+  // retreive the actual dynamic sender no of the member with the registered devKey
+  uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*pc_devKey, true).nr();
   data().setIdentType(Ident_c::ExtendedIdent);
   data().setIsoPri(3);
   data().setIsoSa(b_sa);
 
-#ifdef SYSTEM_PC_VC
-  if ( ( ( abs(ui8_actTime100ms - ui8_lastIsoBase1 ) ) >= 1    )
+  if ( ( ( ci32_now - i32_lastBase1 ) >= 100                   )
     && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
-#else
-  if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastIsoBase1 ) ) >= 1    )
-    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
-#endif
-  { // send actual base1 data: ground/wheel based speed/dist
-    c_sendBase1Gtp = *pc_gtp;
-    data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
+  { // it's time to send Base1
+    isoSendBase1Update();
+  }
+  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  if ( ( ( ci32_now - i32_lastBase2 ) >= 100                   )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
+  { // it's time to send Base2
+    isoSendBase2Update();
+  }
+  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+
+  if ( ( ( ci32_now - i32_lastCalendar) >= 1000                  )
+    && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 ) )
+  { // send actual calendar data
+    c_sendCalendarDevKey = *pc_devKey;
+    isoSendCalendar(*pc_devKey);
+  }
+
+  if ( ( t_mySendSelection & IsoAgLib::BaseDataGps ) != 0 )
+  {
+    if ( ( ci32_now - i32_lastIsoPositionSimple ) >= 100 )
+    {
+      if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+      isoSendPositionRapidUpdate();
+    }
+
+    if ( ( ( ci32_now - i32_lastIsoPositionStream ) >= 1000 )
+      && ( t_multiSendSuccessState != MultiSend_c::Running  ) )
+    {
+      if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+      isoSendPositionStream();
+    }
+
+    if ( ( ( ci32_now - i32_lastIsoDirectionStream ) >= 1000 )
+      && ( t_multiSendSuccessState != MultiSend_c::Running   ) )
+    {
+      if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+      isoSendDirectionStream();
+    }
+  }
+  return true;
+}
+
+/** send Base1 Group data with ground&theor speed&dist */
+void Base_c::isoSendBase1Update( void )
+{ // send actual base1 data: ground/wheel based speed/dist
+  CANIO_c& c_can = getCanInstance4Comm();
+  c_sendBase1DevKey = *pc_devKey;
+  data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
 #ifdef SYSTEM_PC_VC
-    data().setVal12(abs(i16_speedReal));
+  data().setVal12(abs(i16_speedReal));
 #else
-    data().setVal12(CNAMESPACE::abs(i16_speedReal));
+  data().setVal12(CNAMESPACE::abs(i16_speedReal));
 #endif
   data().setVal36(i32_distReal);
   switch (i16_speedReal) {
-     case ERROR_VAL_16S:
+    case ERROR_VAL_16S:
       data().setVal8(IsoAgLib::IsoError);
       break;
-     case NO_VAL_16S:
+    case NO_VAL_16S:
       data().setVal8(IsoAgLib::IsoNotAvailable);
       break;
-     default:
+    default:
       if (i16_speedReal < 0) data().setVal8(0);
       else data().setVal8(1);
       break;
-    }
+  }
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
-    c_can << data();
+  c_can << data();
 
-    data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
+  data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
 #ifdef SYSTEM_PC_VC
   data().setVal12(abs(i16_speedTheor));
 #else
@@ -1211,133 +1401,265 @@ bool Base_c::isoTimeEvent( void )
 #endif
   data().setVal36(i32_distTheor);
 
-    data().setVal7(ui8_maxPowerTime);
+  data().setVal7(ui8_maxPowerTime);
 
-    uint8_t b_val8 = IsoAgLib::IsoInactive;
-    switch (i16_speedTheor) {
-     case ERROR_VAL_16S:
+  uint8_t b_val8 = IsoAgLib::IsoInactive;
+  switch (i16_speedTheor) {
+    case ERROR_VAL_16S:
       b_val8 |= IsoAgLib::IsoError;
       break;
-     case NO_VAL_16S:
+    case NO_VAL_16S:
       b_val8 |= IsoAgLib::IsoNotAvailable;
       break;
-     default:
+    default:
       if (i16_speedTheor >= 0) b_val8 |= IsoAgLib::IsoActive;
       break;
-    }
-    b_val8 |= (t_keySwitch << 2);
-    data().setVal8(b_val8);
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
-
-
-    // update time
-    ui8_lastIsoBase1 = ui8_actTime100ms;
   }
+  b_val8 |= (t_keySwitch << 2);
+  data().setVal8(b_val8);
+  // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+  // then it sends the data
+  c_can << data();
 
-#ifdef SYSTEM_PC_VC
-  if ( ( ( abs(ui8_actTime100ms - ui8_lastIsoBase2 ) ) >= 1    )
-    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
-#else
-  if ( ( ( CNAMESPACE::abs(ui8_actTime100ms - ui8_lastIsoBase2 ) ) >= 1    )
-    && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
-#endif
-  { // send actual base2 data
-    c_sendBase2Gtp = *pc_gtp;
-    data().setIsoPgn(FRONT_HITCH_STATE_PGN);
-    switch (hitchFront()) {
-     case ERROR_VAL_16S:
+
+  // update time
+  i32_lastBase1 = Scheduler_c::getLastTimeEventTrigger();
+}
+
+/** send Base2 Group data with hitch and PTO state */
+void Base_c::isoSendBase2Update( void )
+{ // send actual base2 data
+  c_sendBase2DevKey = *pc_devKey;
+  CANIO_c& c_can = getCanInstance4Comm();
+  data().setIsoPgn(FRONT_HITCH_STATE_PGN);
+  switch (hitchFront()) {
+    case ERROR_VAL_16S:
       data().setVal1(hitchFront());
       data().setVal2(IsoAgLib::IsoError);
       break;
-     case NO_VAL_16S:
+    case NO_VAL_16S:
       data().setVal1(hitchFront());
       data().setVal2(IsoAgLib::IsoNotAvailable);
       break;
-     default:
+    default:
       data().setVal1(((hitchFront() & 0x7F) * 10) / 4);
       if ((hitchFront() & 0x80) != 0) data().setVal2(1 << 6); // work
       else data().setVal2(1);
       break;
-    }
-    data().setVal3(ui8_frontLinkForce);
-    data().setVal4(i16_frontDraft& 0xFF);
-    data().setVal5(i16_frontDraft >> 8);
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
+  }
+  data().setVal3(ui8_frontLinkForce);
+  data().setVal4(i16_frontDraft& 0xFF);
+  data().setVal5(i16_frontDraft >> 8);
+  // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+  // then it sends the data
+  c_can << data();
 
-    data().setIsoPgn(BACK_HITCH_STATE_PGN);
-    switch (hitchRear()) {
-     case ERROR_VAL_16S:
+  data().setIsoPgn(BACK_HITCH_STATE_PGN);
+  switch (hitchRear()) {
+    case ERROR_VAL_16S:
       data().setVal1(hitchRear());
       data().setVal2(IsoAgLib::IsoError);
       break;
-     case NO_VAL_16S:
+    case NO_VAL_16S:
       data().setVal1(hitchRear());
       data().setVal2(IsoAgLib::IsoNotAvailable);
       break;
-     default:
+    default:
       data().setVal1(((hitchRear() & 0x7F) * 10) / 4);
       if ((hitchRear() & 0x80) != 0) data().setVal2(1 << 6); // work
       else data().setVal2(1);
       break;
-    }
-    data().setVal3(ui8_rearLinkForce);
-    data().setVal4(i16_rearDraft& 0xFF);
-    data().setVal5(i16_rearDraft >> 8);
-
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
-
-    data().setIsoPgn(FRONT_PTO_STATE_PGN);
-    data().setVal12(ptoFront());
-    data().setVal12(NO_VAL_16);
-
-    uint8_t ui8_val5 = (t_frontPtoEngaged << 6);
-    ui8_val5 |= (t_frontPto1000 << 4);
-    ui8_val5 |= (t_frontPtoEconomy << 2);
-    data().setVal5(ui8_val5);
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
-
-    data().setIsoPgn(BACK_PTO_STATE_PGN);
-    data().setVal12(ptoRear());
-    data().setVal12(NO_VAL_16);
-
-    ui8_val5 = (t_frontPtoEngaged << 6);
-    ui8_val5 |= (t_frontPto1000 << 4);
-    ui8_val5 |= (t_frontPtoEconomy << 2);
-    data().setVal5(ui8_val5);
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
-
-    // update time
-    ui8_lastIsoBase2 = ui8_actTime100ms;
   }
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+  data().setVal3(ui8_rearLinkForce);
+  data().setVal4(i16_rearDraft& 0xFF);
+  data().setVal5(i16_rearDraft >> 8);
 
-  if (
-      (
-       ((ui8_actTime100ms - ui8_lastIsoCalendar) >= 10)
-    || (((0xFF - ui8_lastCalendar) + ui8_actTime100ms) >= 10)
-      )
-     && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 )
-     )
-  { // send actual calendar data
-    c_sendCalendarGtp = *pc_gtp;
-    isoSendCalendar(*pc_gtp);
-  }
-  return true;
+  // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+  // then it sends the data
+  c_can << data();
+
+  data().setIsoPgn(FRONT_PTO_STATE_PGN);
+  data().setVal12(ptoFront());
+  data().setVal12(NO_VAL_16);
+
+  uint8_t ui8_val5 = (t_frontPtoEngaged << 6);
+  ui8_val5 |= (t_frontPto1000 << 4);
+  ui8_val5 |= (t_frontPtoEconomy << 2);
+  data().setVal5(ui8_val5);
+  // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+  // then it sends the data
+  c_can << data();
+
+  data().setIsoPgn(BACK_PTO_STATE_PGN);
+  data().setVal12(ptoRear());
+  data().setVal12(NO_VAL_16);
+
+  ui8_val5 = (t_frontPtoEngaged << 6);
+  ui8_val5 |= (t_frontPto1000 << 4);
+  ui8_val5 |= (t_frontPtoEconomy << 2);
+  data().setVal5(ui8_val5);
+  // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+  // then it sends the data
+  c_can << data();
+
+  // update time
+  i32_lastBase2 = Scheduler_c::getLastTimeEventTrigger();
 }
+
+
+/** send position rapid update message */
+void Base_c::isoSendPositionRapidUpdate( void )
+{
+  data().setIsoPgn(NMEA_GPS_POSITON_RAPID_UPDATE_PGN);
+  data().setInt32Data(0, i32_latitudeDegree10Minus7 );
+  data().setInt32Data(4, i32_longitudeDegree10Minus7);
+
+  // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+  // then it sends the data
+  getCanInstance4Comm() << data();
+
+  // update time
+  i32_lastIsoPositionSimple = Scheduler_c::getLastTimeEventTrigger();
+}
+
+
+
+
+#if defined(NMEA_2000_FAST_PACKET)
+void setDegree10Minus7ToStream( const int32_t& refi32_src, std::vector<uint8_t>& writeRef )
+{
+#if SIZEOF_INT == 4
+  // use 64 bit variable
+  const double d_temp = double(refi32_src) * 1.0e+9;
+  int64_t i64_temp = int64_t(d_temp);
+  number2LittleEndianString( i64_temp, writeRef );
+#else
+  // only take higher 4 bytes ( write the lower four byte with 0xFF in case the value is negative )
+  int32_t i32_temp = (refi32_src >= 0)?0:-1;
+  number2LittleEndianString( i32_temp, writeRef );
+
+  i32_temp = int32_t(double(refi32_src) * 1.0e+9 / 4294967296.0);
+  number2LittleEndianString( i32_temp, writeRef );
+#endif
+}
+
+void setAltitude10Minus2ToStream( const uint32_t& refui32_result, std::vector<uint8_t>& writeRef )
+{
+#if SIZEOF_INT == 4
+  // use 64 bit variable
+  // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
+  const double d_temp = double(refui32_result) * 1.0e+4;
+  const int64_t i64_temp = int64_t(d_temp);
+  number2LittleEndianString( i64_temp, writeRef );
+#else
+  // only take higher 4 bytes
+  int32_t i32_temp = 0;
+  number2LittleEndianString( i32_temp, writeRef );
+
+  // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
+  i32_temp = int32_t(double(refi32_src) * 1.0e+4 / 4294967296.0);
+  number2LittleEndianString( i32_temp, writeRef );
+#endif
+}
+
+
+/** send position as detailed stream */
+void Base_c::isoSendPositionStream( void )
+{
+  const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+  ISOMonitor_c& c_iso_monitor = getIsoMonitorInstance4Comm();
+  // set data in Nmea2000SendStreamer_c
+  c_nmea2000Streamer.reset();
+  std::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
+  // use helper function to transfer value to the byte vector
+  number2LittleEndianString( ui8_positionSequenceID, writeRef );
+
+
+  struct tm testTime = { second(), minuteUtc(), hourUtc(), dayUtc(),(monthUtc()-1),(yearUtc()-1900),0,0,0 };
+  const time_t secondsSince1970 = mktime( &testTime );
+  // calculate the days
+  const uint16_t ui16_daysSince1970 = secondsSince1970 / ( 60 * 60 *24 );
+  const uint32_t ui32_milliseconds = ( ( ( ( ( ( hourUtc() * 60 ) + minuteUtc() ) * 60 ) + second() ) * 1000 ) + millisecond()) * 10;
+  // write Position Date as Days since 1.1.1970
+  number2LittleEndianString( ui16_daysSince1970, writeRef );
+  // write Position Time as Milliseconds*10 per day
+  number2LittleEndianString( ui32_milliseconds, writeRef );
+  // write Latitude as uint64_t value
+  setDegree10Minus7ToStream( i32_latitudeDegree10Minus7, writeRef );
+  // write Longitude as uint64_t value
+  setDegree10Minus7ToStream( i32_longitudeDegree10Minus7, writeRef );
+  // write Altitude as uint64_t value
+  setAltitude10Minus2ToStream( ui32_altitudeCm, writeRef );
+
+  // write type and method
+  const uint8_t cu8_tempTypeMethod = ( t_gnssType | ( t_gnssMethod << 4 ) );
+  number2LittleEndianString( cu8_tempTypeMethod, writeRef );
+  // write integrity
+  number2LittleEndianString( ui8_integrity, writeRef );
+  // write #satelites
+  number2LittleEndianString( ui8_satelliteCnt, writeRef );
+  // write HDOP
+  number2LittleEndianString( i16_hdop, writeRef );
+  // write PDOP
+  number2LittleEndianString( i16_pdop, writeRef );
+  // write geodial separation
+  number2LittleEndianString( i32_geoidalSeparation, writeRef );
+
+  // write number of reference stations
+  unsigned int limit = ui8_noRefStations;
+  if ( vec_refStationTypeAndStation.size() < limit ) limit = vec_refStationTypeAndStation.size();
+  if ( vec_refStationDifferentialAge10Msec.size() < limit ) limit = vec_refStationDifferentialAge10Msec.size();
+
+  number2LittleEndianString( limit, writeRef );
+
+  for ( unsigned int ind = 0; ind < limit; ind++ )
+  {
+    number2LittleEndianString( vec_refStationTypeAndStation[ind], writeRef );
+    number2LittleEndianString( vec_refStationDifferentialAge10Msec[ind], writeRef );
+  }
+
+  //now trigger sending
+  // retreive the actual dynamic sender no of the member with the registered devKey
+  const uint8_t b_send = c_iso_monitor.isoMemberDevKey(c_sendGpsDevKey, true).nr();
+  if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
+  { // update time
+    i32_lastIsoPositionStream = ci32_now;
+  }
+}
+/** send direction as detailed stream */
+void Base_c::isoSendDirectionStream( void )
+{
+  const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+  ISOMonitor_c& c_iso_monitor = getIsoMonitorInstance4Comm();
+  // set data in Nmea2000SendStreamer_c
+  c_nmea2000Streamer.reset();
+  std::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
+  // use helper function to transfer value to the byte vector
+  number2LittleEndianString( ui8_dataModeAndHeadingReference, writeRef );
+  number2LittleEndianString( ui8_directionSequenceID, writeRef );
+  number2LittleEndianString( ui16_courseOverGroundRad10Minus4, writeRef );
+  number2LittleEndianString( ui16_speedOverGroundCmSec, writeRef );
+
+  number2LittleEndianString( ui16_headingRad10Minus4, writeRef );
+  number2LittleEndianString( ui16_speedCmSec, writeRef );
+
+  number2LittleEndianString( ui16_flowDirectionRad10Minus4, writeRef );
+  number2LittleEndianString( ui16_driftSpeedCmSec, writeRef );
+
+  //now trigger sending
+  // retreive the actual dynamic sender no of the member with the registered devKey
+  const uint8_t b_send = c_iso_monitor.isoMemberDevKey(c_sendGpsDevKey, true).nr();
+  if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, t_multiSendSuccessState) )
+  { // update time
+    i32_lastIsoDirectionStream = ci32_now;
+  }
+}
+// END OF FAST PACKET IN ISO11783
+#endif
 
 /**
   send ISO11783 calendar PGN
-  @param rc_gtp GETY_POS code off calling item which wants to send
+  @param rc_devKey DEV_KEY code off calling item which wants to send
   @param ri32_time timestamp where calendar was last sent (default autodetect)
 
   possible errors:
@@ -1346,26 +1668,27 @@ bool Base_c::isoTimeEvent( void )
   @see CANPkgExt_c::getData
   @see CANIO_c::operator<<
 */
-void Base_c::isoSendCalendar(const GetyPos_c& rc_gtp)
+void Base_c::isoSendCalendar(const DevKey_c& rc_devKey)
 {
   if ( ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 )
-    && ( c_sendCalendarGtp == rc_gtp                   ) )
-  { // this item (identified by GETY_POS is configured to send
+    && ( c_sendCalendarDevKey == rc_devKey                   ) )
+  { // this item (identified by DEV_KEY is configured to send
     data().setIsoPgn(TIME_DATE_PGN);
     data().setVal1(second() * 4);
-    data().setVal2(minute());
-    data().setVal3(hour());
-    data().setVal4(month());
-    data().setVal5(day() * 4);
-    data().setVal6(year() - 1985);
-    data().setVal78(0);
+    data().setVal2(minuteUtc());
+    data().setVal3(hourUtc());
+    data().setVal4(monthUtc());
+    data().setVal5(dayUtc() * 4);
+    data().setVal6(yearUtc() - 1985);
+    data().setVal7( bit_calendar.timezoneMinuteOffset );
+    data().setVal8( bit_calendar.timezoneHourOffsetMinus24 );
 
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
     getCanInstance4Comm() << data();
 
     // update time
-    ui8_lastIsoCalendar = Scheduler_c::getLastTimeEventTrigger()/100;
+    i32_lastCalendar = Scheduler_c::getLastTimeEventTrigger()/100;
   }
 }
 /** force maintain power from tractor
@@ -1477,21 +1800,21 @@ void Base_c::setOverflowSecure(int32_t& reflVal, int16_t& refiVal, const int16_t
 };
 
 /**
-  deliver the gtp of the sender of the base data
+  deliver the devKey of the sender of the base data
 
   possible errors:
       * Err_c::range rui8_typeNr doesn't match valid base msg type number
   @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
-  @return GETY_POS code of member who is sending the intereested base msg type
+  @return DEV_KEY code of member who is sending the intereested base msg type
 */
-const GetyPos_c& Base_c::senderGtp(IsoAgLib::BaseDataGroup_t rt_typeGrp) {
+const DevKey_c& Base_c::senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) {
   // simply answer first matching result if more than one type is selected
-  if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup1   ) != 0 ) return c_sendBase1Gtp;
-  if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup2   ) != 0 ) return c_sendBase2Gtp;
-  if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup3   ) != 0 ) return c_sendBase3Gtp;
-  if ( ( rt_typeGrp & IsoAgLib::BaseDataFuel     ) != 0 ) return c_sendFuelGtp;
-  if ( ( rt_typeGrp & IsoAgLib::BaseDataCalendar ) != 0 ) return c_sendCalendarGtp;
-  else return GetyPos_c::GetyPosUnspecified;
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup1   ) != 0 ) return c_sendBase1DevKey;
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup2   ) != 0 ) return c_sendBase2DevKey;
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup3   ) != 0 ) return c_sendBase3DevKey;
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataFuel     ) != 0 ) return c_sendFuelDevKey;
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataCalendar ) != 0 ) return c_sendCalendarDevKey;
+  else return DevKey_c::DevKeyUnspecified;
 }
 
 /**
@@ -1534,6 +1857,16 @@ void Base_c::setDistTheor(const int32_t& rreflVal)
   i16_lastDistTheor = long2int(rreflVal);
 };
 
+
+
+/** check if a calendar information was received since init */
+bool Base_c::isCalendarReceived() const
+{ // check if default data from init is still in vars
+  return ( ( bit_calendar.day == 1 ) && ( bit_calendar.month == 1 ) && ( bit_calendar.year == 0 )
+      && ( bit_calendar.second == 0 ) && ( bit_calendar.minute == 0 ) && ( bit_calendar.hour == 0 ) )?false:true;
+}
+
+
 /**
   set the calendar value
   @param ri16_year value to store as year
@@ -1543,9 +1876,10 @@ void Base_c::setDistTheor(const int32_t& rreflVal)
   @param rb_minute value to store as minute
   @param rb_second value to store as second
 */
-void Base_c::setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec)
+void Base_c::setCalendarUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec)
 {
   i32_lastCalendarSet = System_c::getTime();
+
   bit_calendar.year   = ri16_year;
   bit_calendar.month  = rb_month;
   bit_calendar.day    = rb_day;
@@ -1554,6 +1888,148 @@ void Base_c::setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, ui
   bit_calendar.second = rb_second;
   bit_calendar.msec   = rui16_msec;
 };
+/**
+  set the calendar value as local time ( take local time offsets into account )
+  @param ri16_year value to store as year
+  @param rb_month value to store as month
+  @param rb_day value to store as day
+  @param rb_hour value to store as hour
+  @param rb_minute value to store as minute
+  @param rb_second value to store as second
+  */
+void Base_c::setCalendarLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec )
+{
+  i32_lastCalendarSet = System_c::getTime();
+
+  struct tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
+                         rb_day,(rb_month-1),(ri16_year-1900),0,0,0 };
+
+  const time_t middle = mktime( &testTime );
+  const struct tm* normalizedTime = localtime( &middle );
+
+  bit_calendar.year   = normalizedTime->tm_year+1900;
+  bit_calendar.month  = (normalizedTime->tm_mon+1);
+  bit_calendar.day    = normalizedTime->tm_mday;
+  bit_calendar.hour   = normalizedTime->tm_hour;
+  bit_calendar.minute = normalizedTime->tm_min;
+  bit_calendar.second = normalizedTime->tm_sec;
+  bit_calendar.msec   = rui16_msec;
+};
+
+/** set the date in local timezone */
+void Base_c::setDateLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day)
+{
+  i32_lastCalendarSet = System_c::getTime();
+
+  struct tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
+    rb_day,(rb_month-1),(ri16_year-1900),0,0,0 };
+
+  const time_t middle = mktime( &testTime );
+  const struct tm* normalizedTime = localtime( &middle );
+
+  bit_calendar.year   = normalizedTime->tm_year+1900;
+  bit_calendar.month  = (normalizedTime->tm_mon+1);
+  bit_calendar.day    = normalizedTime->tm_mday;
+}
+
+/** set the date in UTC timezone */
+void Base_c::setDateUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day)
+{
+  i32_lastCalendarSet = System_c::getTime();
+  bit_calendar.year   = ri16_year;
+  bit_calendar.month  = rb_month;
+  bit_calendar.day    = rb_day;
+}
+
+/** set the time in local timezone */
+void Base_c::setTimeLocal(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec)
+{
+  i32_lastCalendarSet = System_c::getTime();
+
+  struct tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
+    bit_calendar.day,(bit_calendar.month-1),(bit_calendar.year-1900),0,0,0 };
+
+  const time_t middle = mktime( &testTime );
+  const struct tm* normalizedTime = localtime( &middle );
+
+  bit_calendar.hour   = normalizedTime->tm_hour;
+  bit_calendar.minute = normalizedTime->tm_min;
+  bit_calendar.second = normalizedTime->tm_sec;
+  bit_calendar.msec   = rui16_msec;
+}
+/** set the time in UTC timezone */
+void Base_c::setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec)
+{
+  i32_lastCalendarSet = System_c::getTime();
+  bit_calendar.hour   = rb_hour;
+  bit_calendar.minute = rb_minute;
+  bit_calendar.second = rb_second;
+  bit_calendar.msec   = rui16_msec;
+}
+
+
+const struct tm* Base_c::Utc2LocalTime() const
+{
+  struct tm testTime = {
+    bit_calendar.second + ((calendarSetAge() / 1000)%60),
+    bit_calendar.minute+bit_calendar.timezoneMinuteOffset+ ((calendarSetAge() / 60000)%60),
+    (int(bit_calendar.hour)+int(bit_calendar.timezoneHourOffsetMinus24)-24) + ((calendarSetAge() / 3600000)%24),
+    bit_calendar.day + (calendarSetAge() / 86400000),
+    (bit_calendar.month-1),
+    (bit_calendar.year-1900),
+    0,0,0 };
+
+  const time_t middle = mktime( &testTime );
+  return localtime( &middle );
+}
+
+/**
+  get the calendar year value
+  @return actual calendar year value
+  */
+int16_t Base_c::yearLocal() const
+{
+  return Utc2LocalTime()->tm_year+1900;
+}
+
+/**
+  get the calendar month value
+  @return actual calendar month value
+  */
+uint8_t Base_c::monthLocal() const
+{ // month is delivered with range [0..11] -> add 1
+  return Utc2LocalTime()->tm_mon+1;
+}
+
+/**
+  get the calendar day value
+  @return actual calendar day value
+  */
+uint8_t Base_c::dayLocal() const
+{
+  return Utc2LocalTime()->tm_mday;
+}
+
+/**
+  get the calendar hour value
+  @return actual calendar hour value
+  */
+uint8_t Base_c::hourLocal() const
+{
+  return Utc2LocalTime()->tm_hour;
+}
+
+/**
+  get the calendar minute value
+  @return actual calendar minute value
+  */
+uint8_t Base_c::minuteLocal() const
+{
+  return Utc2LocalTime()->tm_min;
+};
+
+
+
 
 /**
   get int16_t overflowed val from long

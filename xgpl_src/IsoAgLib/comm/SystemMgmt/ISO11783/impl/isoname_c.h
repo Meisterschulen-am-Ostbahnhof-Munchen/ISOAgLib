@@ -111,8 +111,8 @@ public:
     constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU
     @param rui8_indGroup industry group of device (2 for agriculture)
-    @param rb_devClass device class of ECU (equivalent to GETY in DIN)
-    @param rb_devClassInst instance number of ECU with same devClass
+    @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
+    @param rui8_devClassInst instance number of ECU with same devClass
           in the network (comparable to POS in DIN9684)
     @param rb_func function of the ECU (usual 25 for network interconnect)
     @param rui16_manufCode code of manufactor (11bit)
@@ -122,7 +122,7 @@ public:
     @param rb_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_devClass, uint8_t rb_devClassInst,
+  ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0);
   /**
     copy constructor for ISOName
@@ -143,8 +143,8 @@ public:
     set data string with all flags with one call
     @param rb_selfConf true -> indicate sefl configuring ECU
     @param rui8_indGroup industry group of device (2 for agriculture)
-    @param rb_devClass device class of ECU (equivalent to GETY in DIN)
-    @param rb_devClassInst instance number of ECU with same devClass
+    @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
+    @param rui8_devClassInst instance number of ECU with same devClass
           in the network (comparable to POS in DIN9684)
     @param rb_func function of the ECU (usual 25 for network interconnect)
     @param rui16_manufCode code of manufactor (11bit)
@@ -154,7 +154,7 @@ public:
     @param rb_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  void set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_devClass, uint8_t rb_devClassInst,
+  void set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0);
 
 
@@ -229,15 +229,15 @@ public:
   void setIndGroup(uint8_t rui8_indGroup);
   /**
     set device class instance number
-    @param rb_devClassInst instance number of ECU with same devClass
+    @param rui8_devClassInst instance number of ECU with same devClass
           in the network (comparable to POS in DIN9684)
   */
-  void setDevClassInst(uint8_t rb_devClassInst);
+  void setDevClassInst(uint8_t rui8_devClassInst);
   /**
     set device class code
-    @param rb_devClass device class of ECU (equivalent to GETY in DIN)
+    @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
   */
-  void setDevClass(uint8_t rb_devClass);
+  void setDevClass(uint8_t rui8_devClass);
   /**
     set function code
     @param rb_func function of the ECU (usual 25 for network interconnect)

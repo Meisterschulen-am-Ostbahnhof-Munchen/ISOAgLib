@@ -268,13 +268,13 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       *  during active measurement programm)
       * @param rc_src general event source class, which provides conversion functions to get needed event source class
       * @param ri32_val new value, which caused the event (for immediate access)
-      * @param rc_callerGetyPos GetyPos of calling device - i.e. which sent new setpoint
+      * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
       * @return true -> handler class reacted on change event
       */
-    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iGetyPos_c& rc_callerGetyPos, bool rb_change );
+    virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey, bool rb_change );
 };
 
-bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iGetyPos_c& /* rc_callerGetyPos */, bool rb_change )
+bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& /* rc_callerDevKey */, bool rb_change )
 {
 
   if ( ! rb_change )
@@ -305,16 +305,16 @@ MyProcDataHandler_c c_myMeasurementHandler;
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
   getIcanInstance().init( cui32_canChannel, 250 );
-  // variable for GETY_POS
+  // variable for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iGetyPos_c c_myGtp( 2, 0 );
+  IsoAgLib::iDevKey_c c_myDevKey( 2, 0 );
 
   // device type of remote ECU
-  IsoAgLib::iGetyPos_c c_remoteDeviceType( 0x5, 0 );
+  IsoAgLib::iDevKey_c c_remoteDeviceType( 0x5, 0 );
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can cahnge the c_myGtp val through the pointer to c_myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can cahnge the c_myDevKey val through the pointer to c_myDevKey
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -325,11 +325,11 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the c_myGtp val through the pointer to c_myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the c_myDevKey val through the pointer to c_myDevKey
   //  ISO:
 #ifdef USE_ISO_11783 
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp,
+  IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 #endif
@@ -337,7 +337,7 @@ int main()
   //  DIN:
 #if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
   uint8_t c_myName[] = "Hi-Me";
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
 #endif
   
 #if defined(USE_ISO_11783)
@@ -364,7 +364,7 @@ int main()
 #endif
 
 #ifdef USE_PROC_HANDLER
-  // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
+  // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   arr_procData[cui8_indexWorkState].init(
   #if defined(USE_ISO_11783)
                                          s_WorkStateElementDDI,
@@ -372,7 +372,7 @@ int main()
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
   #endif
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp, 
+                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey, 
   #ifdef USE_EEPROM_IO 
                                          0xFFFF,
   #endif 
@@ -386,14 +386,14 @@ int main()
   #if defined(USE_DIN_9684)
                                                0, 0x5, 0x0, 0xFF,
   #endif
-                                               c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp,
+                                               c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
                                                &c_myMeasurementHandler);
 
 #else
-  // workstate of MiniVegN (LIS=0, GETY=2, WERT=1, INST=0)
+  // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   IsoAgLib::iProcDataLocal_c c_workState(
   #if defined(USE_ISO_11783)
                                          s_WorkStateElementDDI,
@@ -401,7 +401,7 @@ int main()
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
   #endif
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp
+                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey
   #ifdef USE_EEPROM_IO 
                                          ,0xFFFF
   #endif
@@ -415,7 +415,7 @@ int main()
   #if defined(USE_DIN_9684)
                                                 0, 0x5, 0x0, 0xFF,
   #endif
-                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myGtp
+                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey
   #ifdef USE_EEPROM_IO 
                                                 ,0xFFFF
   #endif
@@ -463,8 +463,8 @@ int main()
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
 
-    if ( ! getISystemMgmtInstance().existMemberGtp(c_myGtp, true) ) continue;
-    if ( ( ! b_runningPrograms ) && ( getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) ) )
+    if ( ! getISystemMgmtInstance().existMemberDevKey(c_myDevKey, true) ) continue;
+    if ( ( ! b_runningPrograms ) && ( getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) ) )
     { // remote device is active and no program is running
       b_runningPrograms = true;
       LOG_INFO << "\r\nRemote ECU found - try to start measurement programs" << "\r\n";
@@ -480,7 +480,7 @@ int main()
       c_applicationRate.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
       #endif
     }
-    else if ( ! getISystemMgmtInstance().existMemberGtp(c_remoteDeviceType, true) )
+    else if ( ! getISystemMgmtInstance().existMemberDevKey(c_remoteDeviceType, true) )
     { // no more active -> stop
       b_runningPrograms = false;
       #ifdef USE_PROC_HANDLER

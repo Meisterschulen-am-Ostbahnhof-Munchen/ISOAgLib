@@ -251,15 +251,15 @@ private:
       otherwise __IsoAgLib::getEepromInstance() wouldn't be accepted by compiler
     */
   friend iEEPROMIO_c& getIeepromInstance( void );
-  friend iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iGetyPos_c& refc_data );
-  friend iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iGetyPos_c& refc_data );
+  friend iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iDevKey_c& refc_data );
+  friend iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iDevKey_c& refc_data );
 };
 
 /** C-style function, to get access to the unique EEPROMIO_c singleton instance */
 inline iEEPROMIO_c& getIeepromInstance( void ) { return static_cast<iEEPROMIO_c&>(__IsoAgLib::getEepromInstance());};
-inline iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iGetyPos_c& refc_data )
+inline iEEPROMIO_c& operator<<(iEEPROMIO_c& refc_stream, const iDevKey_c& refc_data )
   { return static_cast<iEEPROMIO_c&>(operator<<(static_cast<__IsoAgLib::EEPROMIO_c&>(refc_stream), refc_data ) );};
-inline iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iGetyPos_c& refc_data )
+inline iEEPROMIO_c& operator>>(iEEPROMIO_c& refc_stream, iDevKey_c& refc_data )
   { return static_cast<iEEPROMIO_c&>(operator>>(static_cast<__IsoAgLib::EEPROMIO_c&>(refc_stream), refc_data ) );};
 
 } // end of IsoAgLibInterafce namespace

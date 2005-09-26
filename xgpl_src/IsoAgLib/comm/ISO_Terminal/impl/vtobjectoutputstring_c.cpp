@@ -119,7 +119,7 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectOutputString_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectOutputString_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectOutputString_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectOutputString_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObjectOutputString_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectOutputString_a->fontAttributes->getID() >> 8;
       destMemory [10] = vtObjectOutputString_a->options;
@@ -212,7 +212,7 @@ vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject, 
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 237 : setValueRef
@@ -242,7 +242,7 @@ vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject, b
   uint16_t ui16_tempLen = 0;
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 757 : setVariableReference
@@ -260,7 +260,7 @@ vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c
 
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference),  sizeof(iVtObjectOutputString_s), newVariable);
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeAttribute (this, 6 /* Variable Reference */, newVariable->getID() & 0xFF, newVariable->getID() >> 8, 0, 0, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeAttribute (this, 6 /* Variable Reference */, newVariable->getID() & 0xFF, newVariable->getID() >> 8, 0, 0, b_enableReplaceOfCmd);
 } // -X2C
 
 void
@@ -271,7 +271,7 @@ vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_up
     saveValue16 (MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 // //////////////////////////////// +X2C Operation 247 : getString

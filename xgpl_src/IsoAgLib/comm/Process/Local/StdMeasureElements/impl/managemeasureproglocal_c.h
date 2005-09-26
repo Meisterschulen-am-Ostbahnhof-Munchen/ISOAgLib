@@ -149,11 +149,11 @@ private:
   /**
     check if specific measureprog exist
     @param rui8_pri PRI code of searched measure program
-    @param rc_gtp GETY code of searched measure program
+    @param rc_devKey DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(uint8_t rui8_pri, const GetyPos_c& rc_gtp)
-      {return updateProgCache(rui8_pri, rc_gtp, false);};
+  bool existProg(uint8_t rui8_pri, const DevKey_c& rc_devKey)
+      {return updateProgCache(rui8_pri, rc_devKey, false);};
 
   /**
     search for suiting measureprog, if not found AND if rb_doCreate == true
@@ -162,10 +162,10 @@ private:
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and rb_doCreate == false
     @param rui8_pri PRI code of searched measure program
-    @param rc_gtp GETY code of searched measure program
+    @param rc_devKey DEVCLASS code of searched measure program
     @param rb_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(uint8_t rui8_pri, const GetyPos_c& rc_gtp, bool rb_doCreate);
+  MeasureProgLocal_c& prog(uint8_t rui8_pri, const DevKey_c& rc_devKey, bool rb_doCreate);
   /** initialise value for all registered Measure Progs */
   void initGlobalVal( int32_t ri32_val );
   /** set value for all registered Measure Progs */
@@ -197,20 +197,20 @@ private:
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
     @param rui8_type program type: Proc_c::Base, Proc_c::Target
-    @param rc_gtp commanding GETY_POS
+    @param rc_devKey commanding DEV_KEY
   */
-  void insertMeasureprog(uint8_t rui8_type, const GetyPos_c& rc_gtp);
+  void insertMeasureprog(uint8_t rui8_type, const DevKey_c& rc_devKey);
   /**
     update the programm cache, create an programm item, if wanted
 
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
     @param rui8_type program type: Proc_c::Base, Proc_c::Target
-    @param rc_gtp commanding GETY_POS
+    @param rc_devKey commanding DEV_KEY
     @param rb_createIfNotFound true -> create new item if not found
     @return true -> instance found
   */
-  bool updateProgCache(uint8_t rui8_type, const GetyPos_c& rc_gtp, bool rb_createIfNotFound);
+  bool updateProgCache(uint8_t rui8_type, const DevKey_c& rc_devKey, bool rb_createIfNotFound);
  protected:
   /** container of objects for managing jobs of local measure programs */
   Vec_MeasureProgLocal c_vec_prog;

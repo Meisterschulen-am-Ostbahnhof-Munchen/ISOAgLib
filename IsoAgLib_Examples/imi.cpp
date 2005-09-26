@@ -67,7 +67,7 @@
  * This example claims an address for an IMI on Scheduler_c, requests the member
  * names of the other systems after succeded address claim and create the
  * local process data that should be recorded. All informations including
- * GETY_POS, name, transport-or-not and working width are read from EEPROM.
+ * DEV_KEY, name, transport-or-not and working width are read from EEPROM.
  * If hitch position is not available in Scheduler_c base data, the information is
  * requested as propietary process data from task controller (needed for
  * Scheduler_c retrofit system within research).
@@ -134,9 +134,9 @@ using namespace IsoAgLib;
 int main()
 { // simply call startImi
   getIcanInstance().init( 0, 250 );
-  // variable for GETY_POS
+  // variable for DEV_KEY
   // default with primary cultivation mounted back
-  iGetyPos_c myGtp( 2, 0 );
+  iDevKey_c myDevKey( 2, 0 );
   // uint8_t string for name of this IMI (7 characters + '\0')
   uint8_t myName[12] = "IMI Tes";
   // address claim state of the IMI
@@ -145,8 +145,8 @@ int main()
   uint8_t b_sendNameTime = 5;
   // variable for working width defaultedwith 3000mm
   int32_t myWidth = 15000; //3000;
-  // GTP of task controller which delivers EHR of tractor
-  iGetyPos_c c_autodatacollectorGtp( 1, 3 );
+  // DEVKEY of task controller which delivers EHR of tractor
+  iDevKey_c c_autodatacollectorDevKey( 1, 3 );
   // lower limit for PTO in working state (0 == work state independent from PTO)
   uint16_t ui16_workMinPtoRear = 0;
   uint16_t ui16_workMinPtoFront = 0;
@@ -164,12 +164,12 @@ int main()
 
 #if READ_EEPROM_IDENT_YN ==  YES
   // read preconfigured data from EEPROM
-  // read GETY_POS
+  // read DEV_KEY
   // set read position in EEPROM
-  c_eeprom.setg(ADR_IDENT_GTP);
+  c_eeprom.setg(ADR_IDENT_DEVKEY);
   // read EEPROM value in variable
-  // (read size equivalent to sizeof(myGtp) )
-//  c_eeprom >> myGtp;
+  // (read size equivalent to sizeof(myDevKey) )
+//  c_eeprom >> myDevKey;
   // read name
   c_eeprom.setg(ADR_IDENT_NAME_SHORT);
   c_eeprom.readString(myName, 11);
@@ -209,8 +209,8 @@ int main()
   c_eeprom >> b_forceWorkingSpeed;
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can cahnge the myGtp val through the pointer to myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
 #ifdef USE_ISO_11783
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
@@ -224,12 +224,12 @@ int main()
 
 #ifdef USE_EEPROM_IO
   // read preconfigured data from EEPROM
-  // read GETY_POS
+  // read DEV_KEY
   // set read position in EEPROM
-  c_eeprom.setg(ADR_IDENT_GTP);
+  c_eeprom.setg(ADR_IDENT_DEVKEY);
   // read EEPROM value in variable
-  // (read size equivalent to sizeof(myGtp) )
-//  c_eeprom >> myGtp;
+  // (read size equivalent to sizeof(myDevKey) )
+//  c_eeprom >> myDevKey;
   // read name
   c_eeprom.setg(ADR_IDENT_NAME_SHORT);
   c_eeprom.readString(myName, 7);
@@ -264,19 +264,19 @@ int main()
   #endif
 #endif
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
 #if !defined(USE_ISO_11783)
-  iIdentItem_c c_myIdent( &myGtp, myName );
+  iIdentItem_c c_myIdent( &myDevKey, myName );
 //#elif defined(USE_ISO_11783) && defined(USE_DIN_9684)
 #elif 0
   // claim address for local member as DIN and ISO (ISO only is also possible)
-  iIdentItem_c c_myIdent( &myGtp, myName,
+  iIdentItem_c c_myIdent( &myDevKey, myName,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, ADR_ISO_SA, b_funcInst, b_ecuInst);
 #else
   /* for only ISO 11783 */
-  iIdentItem_c c_myIdent( &myGtp,
+  iIdentItem_c c_myIdent( &myDevKey,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, ADR_ISO_SA, b_funcInst, b_ecuInst);
 #endif
@@ -294,20 +294,20 @@ int main()
   uint8_t b_hitchVal;
   int16_t i16_ptoRearVal, i16_ptoFrontVal;
 
-  // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=1, INST=0)
-  // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
-  // the pointer to myGtp helps automatic update of GETY_POS, mark this value as NOT cumulated (default)
-  iProcDataLocalSimpleSetpoint_c c_myOnoff(0, myGtp, 0x1, 0x0, 0xFF, 2, myGtp, &myGtp, false);
+  // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=1, INST=0)
+  // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of local data (can vary from previously given device class & instance),
+  // the pointer to myDevKey helps automatic update of DEV_KEY, mark this value as NOT cumulated (default)
+  iProcDataLocalSimpleSetpoint_c c_myOnoff(0, myDevKey, 0x1, 0x0, 0xFF, 2, myDevKey, &myDevKey, false);
 
-  // local process data for "whole distance" [m] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=8, INST=1)
-  iProcDataLocalSimpleSetpoint_c c_myWholeDist(0, myGtp, 0x8, 0x1, 0xFF, 2, myGtp, &myGtp, true, ADR_TRIP_DIST);
-  // local process data for "working distance" [m] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=8, INST=4)
-  iProcDataLocalSimpleSetpoint_c c_myWorkDist(0, myGtp, 0x8, 0x4, 0xFF, 2, myGtp, &myGtp, true, ADR_WHOLE_DIST);
+  // local process data for "whole distance" [m] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=8, INST=1)
+  iProcDataLocalSimpleSetpoint_c c_myWholeDist(0, myDevKey, 0x8, 0x1, 0xFF, 2, myDevKey, &myDevKey, true, ADR_TRIP_DIST);
+  // local process data for "working distance" [m] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=8, INST=4)
+  iProcDataLocalSimpleSetpoint_c c_myWorkDist(0, myDevKey, 0x8, 0x4, 0xFF, 2, myDevKey, &myDevKey, true, ADR_WHOLE_DIST);
 
-  // local process data for "whole time" [sec] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=0xA, INST=0)
-  iProcDataLocalSimpleSetpoint_c c_myWholeTime(0, myGtp, 0xA, 0x0, 0xFF, 2, myGtp, &myGtp, true, ADR_TRIP_TIME);
-  // local process data for "work time" [sec] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=0xA, INST=7)
-  iProcDataLocalSimpleSetpoint_c c_myWorkTime(0, myGtp, 0xA, 0x7, 0xFF, 2, myGtp, &myGtp, true, ADR_WHOLE_TIME);
+  // local process data for "whole time" [sec] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=0xA, INST=0)
+  iProcDataLocalSimpleSetpoint_c c_myWholeTime(0, myDevKey, 0xA, 0x0, 0xFF, 2, myDevKey, &myDevKey, true, ADR_TRIP_TIME);
+  // local process data for "work time" [sec] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=0xA, INST=7)
+  iProcDataLocalSimpleSetpoint_c c_myWorkTime(0, myDevKey, 0xA, 0x7, 0xFF, 2, myDevKey, &myDevKey, true, ADR_WHOLE_TIME);
 
   // create pure NULL pointer for working width and working area
   // and init them only, if working width and area are ddefined
@@ -315,21 +315,21 @@ int main()
   iProcDataLocalSimpleSetpoint_c *pMyWorkArea = NULL;
   if (myWidth > 0)
   { // only create and handle working width and working area if working width is defined == transport has no working width
-    // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=3, INST=1)
-    pMyWidth = new iProcDataLocalSimpleSetpoint_c( 0, myGtp, 0x3, 0x1, 0xFF, 2, myGtp, &myGtp, false);
+    // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=3, INST=1)
+    pMyWidth = new iProcDataLocalSimpleSetpoint_c( 0, myDevKey, 0x3, 0x1, 0xFF, 2, myDevKey, &myDevKey, false);
     // set the constant width
     pMyWidth->setMasterVal(myWidth);
-    // local process data for "working area" [m2] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=8, INST=0)
-    // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
-    // the pointer to myGtp helps automatic update of GETY_POS, mark this value as CUMULATED (area grows -> update by de/increment)
-    pMyWorkArea = new iProcDataLocalSimpleSetpoint_c( 0, myGtp, 0x8, 0x0, 0xFF, 2, myGtp, &myGtp, true);
+    // local process data for "working area" [m2] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=8, INST=0)
+    // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of local data (can vary from previously given device class & instance),
+    // the pointer to myDevKey helps automatic update of DEV_KEY, mark this value as CUMULATED (area grows -> update by de/increment)
+    pMyWorkArea = new iProcDataLocalSimpleSetpoint_c( 0, myDevKey, 0x8, 0x0, 0xFF, 2, myDevKey, &myDevKey, true);
   }
 
-   // self defined remote process data for "EHR position" [%] of tracctor (LIS=0, GETY=1, WERT=0x4, INST=0)
-  // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of remote data (can vary from previously given GETY and POS),
-  // ui8_remoteGtp tells the remote owner of the Process Data (where it is located as local),
-  // the pointer to myGtp tells the local commanding member, used for target messages as SEND
-  iProcDataRemote_c c_remoteEhr(0, c_autodatacollectorGtp, 0x4, 0x0, 0xFF, 2, c_autodatacollectorGtp, &myGtp);
+   // self defined remote process data for "EHR position" [%] of tracctor (LIS=0, DEVCLASS=1, WERT=0x4, INST=0)
+  // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of remote data (can vary from previously given device class & instance),
+  // ui8_remoteDevKey tells the remote owner of the Process Data (where it is located as local),
+  // the pointer to myDevKey tells the local commanding member, used for target messages as SEND
+  iProcDataRemote_c c_remoteEhr(0, c_autodatacollectorDevKey, 0x4, 0x0, 0xFF, 2, c_autodatacollectorDevKey, &myDevKey);
   int8_t c_ehrStartProgCnt = 10;
 
 
@@ -355,7 +355,7 @@ int main()
       // all time controlled actions of IsoAgLib
       getISchedulerInstance().timeEvent();
 
-      if (getISystemMgmtInstance().existMemberGtp(myGtp, true))
+      if (getISystemMgmtInstance().existMemberDevKey(myDevKey, true))
       { // local IMI member has claimed address (as DIN or ISO)
         if (!myClaimedAddress)
         { // first time with claimed address -> do some initial actions
@@ -374,17 +374,17 @@ int main()
         }
 
         // test if name should be sent (send name after 5, 7 and 9 sec
-        if ( (getISystemMgmtInstance().existMemberGtp(myGtp, true))
+        if ( (getISystemMgmtInstance().existMemberDevKey(myDevKey, true))
           && ((i32_loopTime / 1000) == b_sendNameTime) )
         { // inkrement b_sendNameTime to send every 2 sec
           if (b_sendNameTime < 9) b_sendNameTime += 2;
           else b_sendNameTime = 0;
           #ifdef USE_DIN_9684
-          getIdinMonitorInstance().dinMemberGtp(myGtp, true).sendName();
+          getIdinMonitorInstance().dinMemberDevKey(myDevKey, true).sendName();
           #endif
         }
 
-        if (getISystemMgmtInstance().existMemberGtp(c_autodatacollectorGtp, true))
+        if (getISystemMgmtInstance().existMemberDevKey(c_autodatacollectorDevKey, true))
         { // check for all progs, if they should be started or stopped
           switch (c_ehrStartProgCnt)
           {

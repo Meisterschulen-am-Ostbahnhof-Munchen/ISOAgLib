@@ -117,10 +117,10 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
     common parameter
-    @param rc_gtp optional GETY_POS code of this instance
+    @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -131,9 +131,9 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
 #ifdef USE_DIN_9684
                        uint8_t rui8_lis = 0xFF, uint8_t rui8_wert = 0, uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                       const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
-                       uint8_t rui8_pri = 2, const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
-                       const GetyPos_c* rpc_commanderGtp = NULL,
+                       const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
+                       uint8_t rui8_pri = 2, const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
+                       const DevKey_c* rpc_commanderDevKey = NULL,
                        IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                        int ri_singletonVecKey = 0)
   { init(
@@ -143,7 +143,7 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
 #ifdef USE_DIN_9684
          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-         rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+         rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
          rpc_processDataChangeHandler, ri_singletonVecKey);};
   /**
     initialise this ProcDataRemoteBase_c instance to a well defined initial state
@@ -158,10 +158,10 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
     common parameter
-    @param rc_gtp optional GETY_POS code of this instance
+    @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -172,9 +172,9 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0xFF, uint8_t rui8_wert = 0, uint8_t rui8_inst = 0, uint8_t rui8_zaehlnum = 0xFF,
 #endif
-            const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
-            uint8_t rui8_pri = 2, const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
-            const GetyPos_c* rpc_commanderGtp = NULL,
+            const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
+            uint8_t rui8_pri = 2, const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
+            const DevKey_c* rpc_commanderDevKey = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
             int ri_singletonVecKey = 0);
 
@@ -196,16 +196,16 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
 
 
   /**
-    deliver the commanderGtp (GETY_POS of local member)
-    @return GETY_POS used for sending commands to remote owner member
+    deliver the commanderDevKey (DEV_KEY of local member)
+    @return DEV_KEY used for sending commands to remote owner member
   */
-  virtual const GetyPos_c& commanderGtp()const{return (pc_gtp != NULL)?*pc_gtp:GetyPos_c::GetyPosUnspecified;};
+  virtual const DevKey_c& commanderDevKey()const{return (pc_devKey != NULL)?*pc_devKey:DevKey_c::DevKeyUnspecified;};
   /**
-    set the pointer to the commander ident gtp
-    @param rpbgtp pointer to GETY_POS var of local member used for
+    set the pointer to the commander ident devKey
+    @param rpbdevKey pointer to DEV_KEY var of local member used for
                 sending commands to remote owner member
   */
-  virtual void setCommanderGtp(const GetyPos_c* rpc_gtp);
+  virtual void setCommanderDevKey(const DevKey_c* rpc_devKey);
 
   /**
     perform periodic actions
@@ -241,8 +241,8 @@ private: // Private methods
 
 
 private: // Private attributes
-  /** pointer to the gtp of the local ident, which acts as commanding member */
-  const GetyPos_c* pc_gtp;
+  /** pointer to the devKey of the local ident, which acts as commanding member */
+  const DevKey_c* pc_devKey;
 };
 
 }

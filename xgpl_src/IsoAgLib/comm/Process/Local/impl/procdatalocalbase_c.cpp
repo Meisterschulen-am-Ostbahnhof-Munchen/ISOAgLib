@@ -141,10 +141,10 @@ namespace __IsoAgLib {
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-  @param rc_gtp optional GETY_POS code of Process-Data
+  @param rc_devKey optional DEV_KEY code of Process-Data
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerGtp optional GETY_POS of the owner
-  @param rpc_gtp pointer to updated GETY_POS variable of owner
+  @param rc_ownerDevKey optional DEV_KEY of the owner
+  @param rpc_devKey pointer to updated DEV_KEY variable of owner
   @param rb_cumulativeValue
           -# for process data like distance, time, area
               the value of the measure prog data sets is updated
@@ -172,8 +172,8 @@ void ProcDataLocalBase_c::init(
 #ifdef USE_DIN_9684
                                uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
 #endif
-                               const GetyPos_c& rc_gtp, uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp,
-                               const GetyPos_c *rpc_gtp, bool rb_cumulativeValue,
+                               const DevKey_c& rc_devKey, uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
+                               const DevKey_c *rpc_devKey, bool rb_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                uint16_t rui16_eepromAdr,
 #endif // USE_EEPROM_IO
@@ -188,7 +188,7 @@ void ProcDataLocalBase_c::init(
 #ifdef USE_DIN_9684
                        rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                       rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp,
+                       rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey,
                        rpc_processDataChangeHandler, ri_singletonVecKey);
 
   b_cumulativeValue = rb_cumulativeValue;
@@ -393,12 +393,12 @@ bool ProcDataLocalBase_c::timeEvent( void ){
 }
 
 /**
-  send a main-information (selected by MOD) to a specified target (selected by GTP)
-  @param rc_targetGtp GetyPos of target
+  send a main-information (selected by MOD) to a specified target (selected by DEVKEY)
+  @param rc_targetDevKey DevKey of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool ProcDataLocalBase_c::sendVal( const GetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType ) const {
+bool ProcDataLocalBase_c::sendVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType ) const {
 
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
@@ -406,15 +406,15 @@ bool ProcDataLocalBase_c::sendVal( const GetyPos_c& rc_targetGtp, Proc_c::progTy
                                                                 GeneralCommand_c::setValue);
     // DIN: pd=1, mod=0
     #if defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValGtp(ren_progType, rc_targetGtp, eepromVal());
-    else return sendValGtp(ren_progType, rc_targetGtp, eepromValFloat());
+    if (valType() == i32_val) return sendValDevKey(ren_progType, rc_targetDevKey, eepromVal());
+    else return sendValDevKey(ren_progType, rc_targetDevKey, eepromValFloat());
     #elif !defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValGtp(ren_progType, rc_targetGtp, masterVal());
-    else return sendValGtp(ren_progType, rc_targetGtp, masterValFloat());
+    if (valType() == i32_val) return sendValDevKey(ren_progType, rc_targetDevKey, masterVal());
+    else return sendValDevKey(ren_progType, rc_targetDevKey, masterValFloat());
     #elif defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
-    return sendValGtp(ren_progType, rc_targetGtp, eepromVal());
+    return sendValDevKey(ren_progType, rc_targetDevKey, eepromVal());
     #elif !defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
-    return sendValGtp(ren_progType, rc_targetGtp, masterVal());
+    return sendValDevKey(ren_progType, rc_targetDevKey, masterVal());
     #endif
 }
 
@@ -431,7 +431,7 @@ void ProcDataLocalBase_c::processProg(){
       // c_pkg.c_generalCommand.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
       c_pkg.c_generalCommand.getValueGroup() == GeneralCommand_c::exactValue)
   { // request for measurement value
-    sendVal( c_pkg.memberSend().gtp(), Proc_c::progType_t(c_pkg.pri()) );
+    sendVal( c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()) );
   }
   else
   { // DIN: PD == 0 and 1 only accepted for reset cmd (pd==1 && mod==0 || pd==0 and mod==6
@@ -443,10 +443,10 @@ void ProcDataLocalBase_c::processProg(){
       setMasterVal(int32_t(0));
       #endif
       // now send result of reset action
-      sendVal( c_pkg.memberSend().gtp(), Proc_c::progType_t(c_pkg.pri()) );
+      sendVal( c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()) );
       // call handler function if handler class is registered
       if ( getProcessDataChangeHandler() != NULL )
-        getProcessDataChangeHandler()->processMeasurementReset( this, 0, c_pkg.memberSend().gtp() );
+        getProcessDataChangeHandler()->processMeasurementReset( this, 0, c_pkg.memberSend().devKey() );
     }
   }
 }
@@ -534,14 +534,14 @@ bool ProcDataLocalBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t
       ((b_msgProto & (uint8_t)IState_c::Din) != 0) &&
   #endif // USE_ISO_11783
       (c_din_monitor.existDinMemberNr(rb_var))
-    &&(c_din_monitor.existDinMemberGtp(ownerGtp(), true))
+    &&(c_din_monitor.existDinMemberDevKey(ownerDevKey(), true))
     &&( (rb_var != 0xFF)
       ||(rui8_pri == 1)
       )
      )
   { // all check was positive -> set b_empf, b_send
     b_empf = rb_var; // for locel data the var parameter is the receiver for sending
-    b_send = c_din_monitor.dinMemberGtp(ownerGtp(), true).nr();
+    b_send = c_din_monitor.dinMemberDevKey(ownerDevKey(), true).nr();
     #ifdef USE_ISO_11783
     en_msgProto = IState_c::Din;
     #endif // USE_ISO_11783
@@ -554,14 +554,14 @@ bool ProcDataLocalBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_t
   if (
         ((b_msgProto & (uint8_t)IState_c::Iso) != 0) &&
         ( c_isoMonitor.existIsoMemberNr(rb_var))
-      &&(c_isoMonitor.existIsoMemberGtp(ownerGtp(), true))
+      &&(c_isoMonitor.existIsoMemberDevKey(ownerDevKey(), true))
       &&( (rb_var != 0xFF)
         ||(rui8_pri == 1)
         )
        )
   { // all check was positive -> set b_empf, b_send
     b_empf = rb_var; // for locel data the var parameter is the receiver for senisog
-    b_send = c_isoMonitor.isoMemberGtp(ownerGtp(), true).nr();
+    b_send = c_isoMonitor.isoMemberDevKey(ownerDevKey(), true).nr();
     en_msgProto = IState_c::Iso;
     b_result = true;
   }

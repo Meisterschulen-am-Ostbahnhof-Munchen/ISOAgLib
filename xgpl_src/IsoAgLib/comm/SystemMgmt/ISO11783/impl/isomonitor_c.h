@@ -117,18 +117,18 @@ class SaClaimHandler_c
  public:
    SaClaimHandler_c(){};
    /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-     * @param refc_gtp const reference to the item which ISOItem_c state is changed
+     * @param refc_devKey const reference to the item which ISOItem_c state is changed
      * @param rpc_newItem pointer to the currently corresponding ISOItem_c
      */
-   virtual void reactOnMonitorListAdd( const GetyPos_c& refc_gtp, const ISOItem_c* rpc_newItem ) = 0;
+   virtual void reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem ) = 0;
    /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-    * @param refc_gtp const reference to the item which ISOItem_c state is changed
+    * @param refc_devKey const reference to the item which ISOItem_c state is changed
     * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-   virtual void reactOnMonitorListRemove( const GetyPos_c& refc_gtp, uint8_t rui8_oldSa ) = 0;
+   virtual void reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa ) = 0;
 };
 
-/** type of map which is used to store SaClaimHandler_c clients corresponding to a GetyPos_c reference */
+/** type of map which is used to store SaClaimHandler_c clients corresponding to a DevKey_c reference */
 typedef std::vector<SaClaimHandler_c*> SaClaimHandlerVector_t;
 typedef std::vector<SaClaimHandler_c*>::iterator SaClaimHandlerVectorIterator_t;
 typedef std::vector<SaClaimHandler_c*>::const_iterator SaClaimHandlerVectorConstIterator_t;
@@ -193,7 +193,7 @@ public:
     @return amount of ISO members with claimed address
   */
   uint8_t isoMemberCnt(bool rb_forceClaimedAddress = false)
-    {return isoMemberGetyCnt(0xFF, rb_forceClaimedAddress);};
+    {return isoMemberDevClassCnt(0xFF, rb_forceClaimedAddress);};
   /**
     deliver the n'th ISO member in monitor list which optional (!!)
     match the condition of address claim state
@@ -211,44 +211,44 @@ public:
     @return reference to searched element
   */
   ISOItem_c& isoMemberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
-    {return isoMemberGetyInd(0xFF, rui8_ind, rb_forceClaimedAddress);};
+    {return isoMemberDevClassInd(0xFF, rui8_ind, rb_forceClaimedAddress);};
 
   /**
-    deliver the count of members in the Monitor-List with given GETY (variable POS)
+    deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
     which optional (!!) match the condition of address claim state
-    @param rb_gety searched GETY code
+    @param rui8_devClass searched DEVCLASS code
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
-    @return count of members in Monitor-List with GETY == rb_gety
+    @return count of members in Monitor-List with DEVCLASS == rui8_devClass
   */
-  uint8_t isoMemberGetyCnt(uint8_t rb_gety, bool rb_forceClaimedAddress = false);
+  uint8_t isoMemberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClaimedAddress = false);
   /**
-    deliver one of the members with specific GETY
+    deliver one of the members with specific DEVCLASS
     which optional (!!) match the condition of address claim state
-    check first with isoMemberGetyCnt if enough members with wanted GETY and
+    check first with isoMemberDevClassCnt if enough members with wanted DEVCLASS and
     optional (!!) property are registered in Monitor-List
-    @see isoMemberGetyCnt
+    @see isoMemberDevClassCnt
 
     possible errors:
-      * Err_c::range there exist less than rui8_ind members with GETY rb_gety
-   @param rb_gety searched GETY
+      * Err_c::range there exist less than rui8_ind members with DEVCLASS rui8_devClass
+   @param rui8_devClass searched DEVCLASS
    @param rui8_ind position of the wanted member in the
-                 sublist of member with given GETY (first item has rui8_ind == 0 !!)
+                 sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
    @param rb_forceClaimedAddress true -> only members with claimed address are used
          (optional, default false)
    @return reference to searched element
   */
-  ISOItem_c& isoMemberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, bool rb_forceClaimedAddress = false);
+  ISOItem_c& isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false);
   /**
-    check if a memberItem with given GETY_POS exist
+    check if a memberItem with given DEV_KEY exist
     which optional (!!) match the condition of address claim state
     and update local pc_isoMemberCache
-    @param rc_gtp searched GETY_POS
+    @param rc_devKey searched DEV_KEY
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existIsoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false);
+  bool existIsoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false);
 
   /**
     check if a member with given number exist
@@ -260,12 +260,12 @@ public:
   bool existIsoMemberNr(uint8_t rui8_nr);
 
   /**
-    check if member is in member list with wanted GETY_POS,
-    adopt POS if member with claimed address with other POS exist
-    @param refc_gtp GETY_POS to search (-> it's updated if member with claimed address with other POS is found)
-    @return true -> member with claimed address with given GETY found (and refc_gtp has now its GETY_POS)
+    check if member is in member list with wanted DEV_KEY,
+    adopt instance if member with claimed address with other device class inst exist
+    @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
+    @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
   */
-  bool isoGety2GtpClaimedAddress(GetyPos_c &refc_gtp);
+  bool isoDevClass2DevKeyClaimedAddress(DevKey_c &refc_devKey);
 
   /**
     insert a new ISOItem_c in the list; with unset rui8_nr the member is initiated as
@@ -275,33 +275,33 @@ public:
       * Err_c::badAlloc not enough memory to insert new ISOItem_c isntance
       * Err_c::busy another member with same ident exists already in the list
 
-    @param rc_gtp GETY_POS of the member
+    @param rc_devKey DEV_KEY of the member
     @param rui8_nr member number
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ren_status wanted status
     @return true -> the ISOItem_c was inserted
   */
-  bool insertIsoMember(const GetyPos_c& rc_gtp, uint8_t rui8_nr = 0xFF,
+  bool insertIsoMember(const DevKey_c& rc_devKey, uint8_t rui8_nr = 0xFF,
                      IState_c::itemState_t ren_state = IState_c::Active, uint16_t rui16_saEepromAdr = 0xFFFF);
 
   /** register a SaClaimHandler_c */
   bool registerSaClaimHandler( SaClaimHandler_c* rpc_client );
   /** this function is used to broadcast a ISO monitor list change to all registered clients */
-  void broadcastSaAdd2Clients( const GetyPos_c& rc_gtp, const ISOItem_c* rpc_isoItem ) const;
+  void broadcastSaAdd2Clients( const DevKey_c& rc_devKey, const ISOItem_c* rpc_isoItem ) const;
   /** this function is used to broadcast a ISO monitor list change to all registered clients */
-  void broadcastSaRemove2Clients( const GetyPos_c& rc_gtp, uint8_t rui8_oldSa ) const;
+  void broadcastSaRemove2Clients( const DevKey_c& rc_devKey, uint8_t rui8_oldSa ) const;
   /**
-    deliver member item with given gtp
-    (check with existIsoMemberGtp before access to not defined item)
+    deliver member item with given devKey
+    (check with existIsoMemberDevKey before access to not defined item)
 
     possible errors:
       * Err_c::elNonexistent on failed search
 
-    @param rc_gtp searched GETY_POS
+    @param rc_devKey searched DEV_KEY
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  ISOItem_c& isoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false);
+  ISOItem_c& isoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false);
 
   /**
     deliver member item with given nr
@@ -317,29 +317,29 @@ public:
   ISOItem_c& isoMemberNr(uint8_t rui8_nr);
 
   /**
-    deliver member item with given GETY_POS, set pointed bool var to true on success
+    deliver member item with given DEV_KEY, set pointed bool var to true on success
     and set a Member Array Iterator to the result
-    @param rc_gtp searched GETY_POS
+    @param rc_devKey searched DEV_KEY
     @param pb_success bool pointer to store the success (true on success)
     @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
     @return reference to the searched item
   */
-  ISOItem_c& isoMemberGtp(const GetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_ISOIterator *const pbc_iter = NULL);
+  ISOItem_c& isoMemberDevKey(const DevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_ISOIterator *const pbc_iter = NULL);
 
   /**
-    delete item with specified gtp
+    delete item with specified devKey
 
     possible errors:
-      * Err_c::elNonexistent no member with given GETY_POS exists
+      * Err_c::elNonexistent no member with given DEV_KEY exists
 
-    @param rc_gtp GETY_POS of to be deleted member
+    @param rc_devKey DEV_KEY of to be deleted member
   */
-  bool deleteIsoMemberGtp(const GetyPos_c& rc_gtp);
+  bool deleteIsoMemberDevKey(const DevKey_c& rc_devKey);
   /**
     delete item with specified member number
 
     possible errors:
-      * Err_c::elNonexistent no member with given GETY_POS exists
+      * Err_c::elNonexistent no member with given DEV_KEY exists
 
     @param rui8_nr number of to be deleted member
   */
@@ -356,16 +356,16 @@ public:
   */
   uint8_t unifyIsoSa(const ISOItem_c* rpc_isoItem);
   /**
-    change gtp if actual gtp isn't unique
-    (search possible free POS to given GETY)
+    change devKey if actual devKey isn't unique
+    (search possible free instance to given device class)
 
     possible errors:
-      * Err_c::busy no other POS code leads to unique GETY_POS code
+      * Err_c::busy no other device class inst code leads to unique DEV_KEY code
 
-    @param refc_gtp reference to GETY_POS var (is changed directly if needed!!)
-    @return true -> referenced GETY_POS is now unique
+    @param refc_devKey reference to DEV_KEY var (is changed directly if needed!!)
+    @return true -> referenced DEV_KEY is now unique
   */
-  bool unifyIsoGtp(GetyPos_c& refc_gtp);
+  bool unifyIsoDevKey(DevKey_c& refc_devKey);
   /**
     deliver timestamp of last ISO request for SA claim msg
     @return time of last Request PG for Adress Claim on BUS

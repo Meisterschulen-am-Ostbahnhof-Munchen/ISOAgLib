@@ -113,7 +113,7 @@ public:
   //! Parameter:
   //! @param vtObjectPictureGraphicSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM) { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM); };
+  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectPictureGraphic_a
   inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return (iVtObjectPictureGraphic_s *) vtObject_a; };
@@ -133,7 +133,7 @@ public:
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options) : 0, sizeof(iVtObjectPictureGraphic_s), 2, newValue, newValue, b_enableReplaceOfCmd);
   }
   void setTransparencyColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
   }
 
 }; // ~X2C

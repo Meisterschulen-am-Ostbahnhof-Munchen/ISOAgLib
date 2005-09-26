@@ -121,13 +121,13 @@ public:
     @param rui8_zaehlnum optional ZAEHLNUM  code of Process-Data
 
     common parameter
-    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS code of owner of Process-Data
-           ( important if GETY and/or POS differs from identity GTP in rc_gtp; this is the case
-             for process data from base data dictionary table (GETY==0), which is managed/owned by device of
-             type GETY != 0)
-    @param rpc_ownerGtp pointer to the optional GETY_POS var of the owner (for automatic update as soon
+    @param rc_ownerDevKey optional DEV_KEY code of owner of Process-Data
+           ( important if DEVCLASS and/or DEVCLASSINST differs from identity DEVKEY in rc_devKey; this is the case
+             for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
+             type DEVCLASS != 0)
+    @param rpc_ownerDevKey pointer to the optional DEV_KEY var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c(
@@ -140,10 +140,10 @@ public:
               uint8_t rui8_inst = 0,
               uint8_t rui8_zaehlnum = 0xFF,
 #endif
-              const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
+              const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
               uint8_t rui8_pri = 2,
-              const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
-              const GetyPos_c *rpc_ownerGtp = NULL,
+              const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
+              const DevKey_c *rpc_ownerDevKey = NULL,
               int ri_singletonVecKey = 0);
 
   /** copy constructor */
@@ -162,13 +162,13 @@ public:
     @param rui8_zaehlnum ZAEHLNUM  code of Process-Data
 
     common parameter
-    @param rc_gtp GETY_POS code of Process-Data
+    @param rc_devKey DEV_KEY code of Process-Data
     @param rui8_pri optional PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS code of owner of Process-Data
-           ( important if GETY and/or POS differs from identity GTP in rc_gtp; this is the case
-             for process data from base data dictionary table (GETY==0), which is managed/owned by device of
-             type GETY != 0)
-    @param rpc_ownerGtp pointer to the optional GETY_POS var of the owner (for automatic update as soon
+    @param rc_ownerDevKey optional DEV_KEY code of owner of Process-Data
+           ( important if DEVCLASS and/or DEVCLASSINST differs from identity DEVKEY in rc_devKey; this is the case
+             for process data from base data dictionary table (DEVCLASS==0), which is managed/owned by device of
+             type DEVCLASS != 0)
+    @param rpc_ownerDevKey pointer to the optional DEV_KEY var of the owner (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   void init(
@@ -181,10 +181,10 @@ public:
             uint8_t rui8_inst,
             uint8_t rui8_zaehlnum,
 #endif
-            const GetyPos_c& rc_gtp,
+            const DevKey_c& rc_devKey,
             uint8_t rui8_pri = 2,
-            const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
-            const GetyPos_c *rpc_ownerGtp = NULL);
+            const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
+            const DevKey_c *rpc_ownerDevKey = NULL);
 
   /**
     copy constructor for class instance
@@ -271,26 +271,26 @@ public:
   */
   uint8_t lis() const{return data.ui8_lis;};
   /**
-    deliver value GETY (machine type specific table of process data types)
-    everytime deliver the identity GETY (and NOT the possibly differing GETY of the owner)
-    @return GETY
+    deliver value DEVCLASS (machine type specific table of process data types)
+    everytime deliver the identity DEVCLASS (and NOT the possibly differing DEVCLASS of the owner)
+    @return DEVCLASS
   */
-  uint8_t gety() const{return data.c_gtp.getGety();};
+  uint8_t devClass() const{return data.c_devKey.getDevClass();};
   /**
-    deliver value GETY_POS (machine type specific table of process data types)
-    use everytime the GETY from the ident part, and take the POS from the owner.
-    Special Case: if GetyPos is set to 0,0 -> don't use any logac logic and return
+    deliver value DEV_KEY (machine type specific table of process data types)
+    use everytime the _device_class_ from the ident part, and take the _instance_ from the owner.
+    Special Case: if DevKey is set to 0,0 -> don't use any logac logic and return
     stored value
-    @return GETY_POS
+    @return DEV_KEY
   */
-  const GetyPos_c& gtp() const
+  const DevKey_c& devKey() const
   #ifdef USE_DIN_9684
-  {if( ( data.c_gtp.getGety() == 0 ) &&  ( data.c_gtp.getPos() == 0 ) )
-               return   data.c_gtp;
+  {if( ( data.c_devKey.getDevClass() == 0 ) &&  ( data.c_devKey.getDevClassInst() == 0 ) )
+               return   data.c_devKey;
           else
-               return           GetyPos_c(data.c_gtp.getGety(), ownerGtp().getPos());};
+               return           DevKey_c(data.c_devKey.getDevClass(), ownerDevKey().getDevClassInst());};
   #else
-  {return ownerGtp();};
+  {return ownerDevKey();};
   #endif
   /**
     deliver value WERT (row of process data table)
@@ -308,18 +308,18 @@ public:
   */
   uint8_t zaehlnum() const{return data.ui8_zaehlnum;};
   /**
-    deliver value POS (important if more than one machine with equal GETY are active)
-    deliver the POS of the owner, as this POS is sometimes updated after the creation of this
+    deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
+    deliver the device class instance of the owner, as this _instance_ is sometimes updated after the creation of this
     process data instance.
     @return POS
   */
-  uint8_t pos() const{return ownerGtp().getPos();};
+  uint8_t devClassInst() const{return ownerDevKey().getDevClassInst();};
   /**
-    deliver the owner gtp (retrieved from pointed gtp value, if valid pointer)
-    @return actual GETY_POS of owner
+    deliver the owner devKey (retrieved from pointed devKey value, if valid pointer)
+    @return actual DEV_KEY of owner
   */
-  const GetyPos_c& ownerGtp() const
-    { return ((pc_ownerGtp != 0)?(*pc_ownerGtp):(data.c_ownerGtp));};
+  const DevKey_c& ownerDevKey() const
+    { return ((pc_ownerDevKey != 0)?(*pc_ownerDevKey):(data.c_ownerDevKey));};
 
 #ifdef USE_ISO_11783
 
@@ -349,15 +349,15 @@ public:
   */
   void setLis(uint8_t rui8_val){data.ui8_lis = rui8_val;};
   /**
-    set value GETY (machine type specific table of process data types)
-    @param rui8_val new GETY val
+    set value DEVCLASS (machine type specific table of process data types)
+    @param rui8_val new DEVCLASS val
   */
-  void setGety(uint8_t rui8_val){data.c_gtp.setGety(rui8_val);};
+  void setDevClass(uint8_t rui8_val){data.c_devKey.setDevClass(rui8_val);};
   /**
-    set value GETY_POS (machine type specific table of process data types)
-    @param rc_val new GETY_POS val
+    set value DEV_KEY (machine type specific table of process data types)
+    @param rc_val new DEV_KEY val
   */
-  void setGtp(const GetyPos_c& rc_val){data.c_gtp = rc_val;};
+  void setDevKey(const DevKey_c& rc_val){data.c_devKey = rc_val;};
   /**
     set value WERT (row of process data table)
     @param rui8_val new WERT val
@@ -374,41 +374,41 @@ public:
   */
   void setZaehlnum(uint8_t rui8_zaehlnum){data.ui8_zaehlnum = rui8_zaehlnum;};
   /**
-    set value POS (important if more than one machine with equal GETY are active)
-    set also the POS of the owner as the owner POS shall be always the most actual value
-    @param rui8_val new POS val
+    set value _instance_ (important if more than one machine with equal _device_class_ are active)
+    set also the _instance_ of the owner as the owner _instance_ shall be always the most actual value
+    @param rui8_val new device class inst val
   */
-  void setPos(uint8_t rui8_val){data.c_gtp.setPos(rui8_val); data.c_ownerGtp.setPos(rui8_val);};
+  void setDevClassInst(uint8_t rui8_val){data.c_devKey.setDevClassInst(rui8_val); data.c_ownerDevKey.setDevClassInst(rui8_val);};
   /**
-    set the owner gtp
-    @param rc_val new GETY_POS of owner
+    set the owner devKey
+    @param rc_val new DEV_KEY of owner
   */
-  void setOwnerGtp(const GetyPos_c& rc_val){data.c_ownerGtp = rc_val;};
+  void setOwnerDevKey(const DevKey_c& rc_val){data.c_ownerDevKey = rc_val;};
   /**
-    set the GETY of the owner
-    @param rui8_val new GETY of owner
+    set the DEVCLASS of the owner
+    @param rui8_val new DEVCLASS of owner
   */
-  void setOwnerGety(uint8_t rui8_val){data.c_ownerGtp.setGety(rui8_val);};
+  void setOwnerDevClass(uint8_t rui8_val){data.c_ownerDevKey.setDevClass(rui8_val);};
   /**
-    set GETY and POS of owner by giving pointer to owner GETY_POS
-    @param rpc_val pointer to owner GETY_POS
+    set DEVCLASS and _instance_ of owner by giving pointer to owner DEV_KEY
+    @param rpc_val pointer to owner DEV_KEY
   */
-  void setOwnerGtp(const GetyPos_c* rpc_val);
+  void setOwnerDevKey(const DevKey_c* rpc_val);
 
   /**
     check if this item has the same identity as defined by the parameters,
-    if rui8_pos is 0xFF a lazy match disregarding pos is done
+    if rui8_devClassInst is 0xFF a lazy match disregarding pos is done
     (important for matching received process data msg);
-    if POS is defined (!= 0xFF) then one of the following conditions must be true:<ul>
-    <li>parameter POS == ident POS (pos())
-    <li>parameter POS == owner POS ( ownerGtp().getPos() )
-    <li>parameter rc_ownerGtp == ownerGtp()
+    if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
+    <li>parameter INSTANCE == ident INSTANCE (devClassInst())
+    <li>parameter INSTANCE == owner INSTANCE ( ownerDevKey().getDevClassInst() )
+    <li>parameter rc_ownerDevKey == ownerDevKey()
     </ul>
 
 
     ISO parameter
-    @param rui8_getyReceiver compared GETY value
-    @param rui8_getySender compare this parameter with owner gety (only for remote, local calls: 0xFF)
+    @param rui8_devClassReceiver compared DEVCLASS value
+    @param rui8_devClassSender compare this parameter with owner devClass (only for remote, local calls: 0xFF)
     @param rui16_DDI compared DDI value
     @param rui16_element compared element value
 
@@ -422,8 +422,8 @@ public:
   */
 #ifdef USE_ISO_11783
   bool matchISO(
-             uint8_t rui8_getyReceiver,
-             uint8_t rui8_getySender,
+             uint8_t rui8_devClassReceiver,
+             uint8_t rui8_devClassSender,
              uint16_t rui16_DDI,
              uint16_t rui16_element
              ) const;
@@ -431,13 +431,13 @@ public:
 
 #ifdef USE_DIN_9684
   bool matchDIN(
-             uint8_t rui8_gety,
+             uint8_t rui8_devClass,
              uint8_t rui8_lis,
              uint8_t rui8_wert,
              uint8_t rui8_inst,
              uint8_t rui8_zaehlnum = 0xFF,
-             uint8_t rui8_pos = 0xFF,  // default values from DIN
-             const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified // default values from DIN
+             uint8_t rui8_devClassInst = 0xFF,  // default values from DIN
+             const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified // default values from DIN
              ) const;
 #endif
 
@@ -445,20 +445,20 @@ private: // Private attributes
   /** internal base function for copy constructor and assignement */
   void assignFromSource( const ProcIdent_c& rrefc_src );
 
-  /** GETY code of process data identity */
-  const GetyPos_c* pc_ownerGtp; // only defined for own local data, otherwise NULL
+  /** DEVCLASS code of process data identity */
+  const DevKey_c* pc_ownerDevKey; // only defined for own local data, otherwise NULL
   struct _data {
     /**
-      in most cases equivalent with ((gety << 3) | pos);
-      for data with ident gety==0 this is mostly NOT the same as the gety of the owner,
+      in most cases equivalent with ((devClass << 3) | pos);
+      for data with ident devClass==0 this is mostly NOT the same as the devClass of the owner,
       because then this value is of the general base data table
     */
-    GetyPos_c c_ownerGtp;
-    /** GetyPos_c information for this instance
-        ( the POS part is important if more ECU of same GETY are
+    DevKey_c c_ownerDevKey;
+    /** DevKey_c information for this instance
+        ( the _instance_ part is important if more ECU of same _device_class_ are
         parallel active on the BUS)
       */
-    GetyPos_c c_gtp;
+    DevKey_c c_devKey;
     /** zaehlnum code */
     uint16_t ui8_zaehlnum : 8;
 

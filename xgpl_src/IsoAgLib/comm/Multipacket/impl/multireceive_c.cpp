@@ -88,11 +88,11 @@
  ***************************************************************************/
 
 #ifdef DEBUG
-	#ifdef SYSTEM_PC
-		#include <iostream>
-	#else
-		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#endif
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
 #endif
 
 #include "multireceive_c.h"
@@ -172,8 +172,9 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
                                                           #ifdef NMEA_2000_FAST_PACKET
                                                           ,bool rb_isFastPacket
                                                           #endif
+                                                          SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                                                         )
-  : pc_client(rpc_client)
+  : SINGLETON_PARENT_CONSTRUCTOR pc_client(rpc_client)
   , ui8_clientAddress(rui8_clientAddress)
   , ui32_pgn(rui32_pgn)
   , b_alsoBroadcast (rb_alsoBroadcast)
@@ -183,7 +184,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( IsoAgLib::MultiReceive
   #endif
 {
   if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberNr(rui8_clientAddress))
-    c_gtp = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberNr(rui8_clientAddress).gtp();
+    c_devKey = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberNr(rui8_clientAddress).devKey();
 //  else
 //    shouldn't occur...
 };
@@ -263,326 +264,324 @@ MultiReceive_c::processMsg()
              (uint32_t (data().getUint8Data(7)) << 16);
   IsoAgLib::ReceiveStreamIdentifier_c c_tmpRSI (ui32_pgn, data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
 
-  if (!anyMultiReceiveClientRegisteredForThisDa (data().isoPs()))
-  { // we do NOT care for this can-pkg at all, as it's NOT directed to any of the registered clients!
-    return false; // let multisend/others check if it needs this can-pkg...
-  }
+  if (anyMultiReceiveClientRegisteredForThisDa (data().isoPs()))
+  { // we ONLY care for this can-pkg at all, as it's NOT directed to any of the registered clients!
 
-  switch (ui8_pgnFormat) {
-    case MACRO_pgnFormatOfPGN(ETP_CONN_MANAGE_PGN):
-      b_ePgn = true; // break left out intentionally!
-    case MACRO_pgnFormatOfPGN(TP_CONN_MANAGE_PGN):
-      #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "\n {CM: " << data().time() << "} ";
-      #endif
-
-     {// to allow local variables
-      switch (ui8_dataByte0)
-      {
-
-        case 0x14: // decimal 20
-          b_eCmd=true; // break left out intentionally
-
-        case 0x10: // decimal 16
-           /////////////////////////
-          /// RTS (Request To Send)
-          MACRO_Define_t_streamType_and_checkInvalid
-
-          { // to allow local variables!
-
-            // RTS from an SA that has already a Stream running? // regardless of PGN
-            Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/
-            #ifdef NMEA_2000_FAST_PACKET
-            , /* Fast-Packet:*/ false
-            #endif
-            );
-            if (pc_streamFound != NULL) {
-              // abort, already running stream is interrupted by RTS
-              notifyError(c_tmpRSI, 101);
-              connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
-              #endif
-              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
-            }
-
-            // otherwise it is a new stream, but before check from the client if he can take it (size is okay)
-
-            // Get Message Size
-            if (ui8_dataByte0 == 0x14) ui32_msgSize = data().getUint32Data(1);
-            else /* 0x10, decimal 16*/ ui32_msgSize = data().getUint16Data(1);
-
-            // Calculate Number of Packets (only for TP-#Pkg-Check!)
-            uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
-            // check for TP-RTS if pkg-count matches the calculated AND if size > 0
-            if (((ui8_dataByte0 == 0x10) && (data().getUint8Data(3) != ui32_numPkg))
-               || (ui32_msgSize < 9)) {
-              // This handles both
-              notifyError(c_tmpRSI, 102);
-              sendConnAbort (t_streamType, c_tmpRSI);
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (Wrong Pkg Number || msgSize < 9) ***\n";
-              #endif
-              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
-            }
-
-            // First of all, is there a client registered that handles those PGNs via (E)TP-Messages?
-            IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(c_tmpRSI);
-            if (pc_clientFound == NULL)
-            { // There's no client registered to take this PGN->thisAddress! */
-              notifyError(c_tmpRSI, 115);
-              sendConnAbort (t_streamType, c_tmpRSI);
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to PGN requested that the MR-Client has not registered to receive ***\n";
-              #endif
-              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
-            }
-
-            // Send the Request To Send (RTS) to the client - Does he give us a Clear To Send (CTS) ?
-            if (!pc_clientFound->reactOnStreamStart (c_tmpRSI, ui32_msgSize)) {
-              // Client rejects this stream!
-              notifyError(c_tmpRSI, 103);
-              sendConnAbort (t_streamType, c_tmpRSI);
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Client Rejecting the stream ***\n";
-              #endif
-              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
-            }
-            // else: Client accepts this stream, so create a representation of the stream NOW -
-            // - further handling is done in "timeEvent()" now!*/
-            createStream(t_streamType, c_tmpRSI, ui32_msgSize);
-            // the constructor above sets the Stream to "AwaitCtsSend" and "StreamRunning"
-            // so next timeEvent will send out the CTS and set the pkgRemainingInBurst to a correct value!
-
-          } // end local variables allowment!
-          return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
-
-
-        case 0x16: // decimal 22
-          b_eCmd=true;
-           ////////////////////////////
-          /// DPO (Data Packet Offset)
-          MACRO_Define_t_streamType_and_checkInvalid
-
-          { // to allow local variables!
-            Stream_c* pc_streamFound = getStream (c_tmpRSI
-            #ifdef NMEA_2000_FAST_PACKET
-            , /* Fast-Packet: */ false
-            #endif
-            );
-
-            if (pc_streamFound == NULL)
-            {
-              notifyError(c_tmpRSI, 104);
-              sendConnAbort (t_streamType, c_tmpRSI); // according to Brad: ConnAbort
-              #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n\n DPO for an unknown/unopened stream!!\n ";
-              #endif
-              return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
-            }
-
-            if (!b_ePgn)
-            {
-              notifyError(c_tmpRSI, 116);
-              connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound); // according to Brad: ConnAbort
-              #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n\n DPO for a Standard-TP stream!!\n ";
-              #endif
-              return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
-            }
-
-            // try to set the DPO in this stream - if it's not allowed right now (or timedout), this DPO was not correct
-            if (! (pc_streamFound->setDataPageOffset ( uint32_t(data().getUint8Data(2)) |
-                                                      (uint32_t(data().getUint8Data(3)) << 8) |
-                                                      (uint32_t(data().getUint8Data(4)) << 16))))
-            { // DPO not awaited now!
-              notifyError(c_tmpRSI, 105);
-              connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to DPO at wrong 't_awaitStep' - was NOT AwaitDpo ***\n";
-              #endif
-              return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
-            }
-          } // end local variables allowment!
-          return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
-
-
-
-
-        case 0x20: // decimal 32
-           ////////////////////////////////////
-          /// BAM (Broadcast Announce Message)
-          MACRO_Define_t_streamType_and_checkInvalid
-
-          { // to allow local variables!
-            // Is BAM directed to 0xFF (global) ?
-            if (data().isoPs() != 0xFF)
-            { // we do NOT take BAMs that are NOT directed to the GLOBAL (255) address
-              notifyError(c_tmpRSI, 112);
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) data().isoPs() <<" ***\n";
-              #endif
-              return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
-            }
-
-            // From now on it is assured that BAM is directed to 0xFF (255)
-
-            // BAM from an SA that has already a Stream running?
-            Stream_c* pc_streamFound = getStream (data().isoSa(), 255 /* 0xFF, BAM is always to GLOBAL */
-            #ifdef NMEA_2000_FAST_PACKET
-            , false
-            #endif
-            );
-            if (pc_streamFound != NULL) {
-              // abort already running stream is interrupted by BAM
-              notifyError(c_tmpRSI, 117);
-              connAbortTellClientRemoveStream (false /* do NOT send ConnAbort msg */, pc_streamFound);
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (BAM in between) ***\n";
-              #endif
-              // return true;
-              // ^^^ do NOT return, if the old BAM is "aborted" due to this BAM, try with this BAM now...
-            }
-
-            ui32_msgSize = data().getUint16Data(1);
-
-            uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
-            // check for TP-RTS if pkg-count matches the calculated AND if size > 0
-            if ((data().getUint8Data(3) != ui32_numPkg) || (ui32_msgSize < 9))
-            { // This handles both
-              notifyError(c_tmpRSI, 113);
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** BAM not taken due to (Wrong Pkg Number || msgSize < 9) ***\n";
-              #endif
-              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
-            }
-
-            // NO client checks as in RTS-case above, as it's for ALL clients, they HAVE to take it =)
-
-            // "Stream_c"'s constructor will set awaitStep to "awaitData" and timeOut to 250ms!
-            createStream(t_streamType, c_tmpRSI, ui32_msgSize);
-          }
-
-          return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
-
-
-
-        case 0xFF: // decimal 255
-           ////////////////////////////////
-          /// ConnAbort (Connection Abort)
-          // same for TP and ETP
-          MACRO_Define_t_streamType_and_checkInvalid
-
-          { // to allow local variables!
-            // also allow a BAM to be aborted by the sender himself...
-            Stream_c* pc_streamFound = getStream (c_tmpRSI
-            #ifdef NMEA_2000_FAST_PACKET
-            , false
-            #endif
-            );
-
-            if (pc_streamFound) {
-              notifyError (c_tmpRSI, 107);
-              connAbortTellClientRemoveStream (false /* do not send connAbort-Msg */, pc_streamFound);
-              // here TRUE could be returned, but for unknown safety just let both (MS/MR) process ConnAbort!
-              // Also it "could" happen that MultiReceive & MultiSend are running parallel, so this ConnAbort would be for both!
-            }
-            else
-            {
-              // ignore an incoming ConnAbort for an unopened/unknown stream!
-            }
-          } // end local variables allowment!
-          return false; // ConnAbort is also of interest for MultiSend!!
-
-
-
-        case 0x15: // decimal 21
-        case 0x11: // decimal 17
-           ////////////////////////
-          /// CTS (for MultiSend)
-          // ignore here and simply pass on to MultiSend (using return false)
-          return false;
-
-        default:
-          #ifdef DEBUG
-            INTERNAL_DEBUG_DEVICE << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!\n";
-          #endif
-          t_streamType = (StreamType_t) ((b_ePgn) ? 0x2:0); // only care for ePgn or not for ConnAbort
-          notifyError(c_tmpRSI, 108);
-          sendConnAbort (t_streamType, c_tmpRSI);
-          return true;
-      }//end switch (ui8_dataByte)
-     }//end allowment of local variables...
-     break; // not reachable, but leave it here because if the above is changed, it's better to have the break here...
-
-
-    case MACRO_pgnFormatOfPGN(ETP_DATA_TRANSFER_PGN):
-      b_ePgn = true; // break left out intentionally!
-    case MACRO_pgnFormatOfPGN(TP_DATA_TRANSFER_PGN):
-      #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "{DATA: " << data().time() << "} "; fflush(0);
-      #endif
-
-       /////////////////////////
-      /// Data Transfer (DATA)
-      { // to allow local variables!
-        // Check if there's already a Stream active from this SA->DA pair (it should ;-)
-        Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/
-        #ifdef NMEA_2000_FAST_PACKET
-        , false
+    switch (ui8_pgnFormat) {
+      case MACRO_pgnFormatOfPGN(ETP_CONN_MANAGE_PGN):
+        b_ePgn = true; // break left out intentionally!
+      case MACRO_pgnFormatOfPGN(TP_CONN_MANAGE_PGN):
+        #ifdef DEBUG
+          INTERNAL_DEBUG_DEVICE << "\n {CM: " << data().time() << "} ";
         #endif
-        );
-        if (pc_streamFound == NULL) {
-          // There's no stream running for this multi-packet-DATA!, this [DATA] MAY BE for MultiSend, so simply return false!
-          #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << "\n*** (E)TP.DATA, but no open stream! ignoring that... ***\n";
+
+      {// to allow local variables
+        switch (ui8_dataByte0)
+        {
+
+          case 0x14: // decimal 20
+            b_eCmd=true; // break left out intentionally
+
+          case 0x10: // decimal 16
+            /////////////////////////
+            /// RTS (Request To Send)
+            MACRO_Define_t_streamType_and_checkInvalid
+
+            { // to allow local variables!
+
+              // RTS from an SA that has already a Stream running? // regardless of PGN
+              Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/
+              #ifdef NMEA_2000_FAST_PACKET
+              , /* Fast-Packet:*/ false
+              #endif
+              );
+              if (pc_streamFound != NULL) {
+                // abort, already running stream is interrupted by RTS
+                notifyError(c_tmpRSI, 101);
+                connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
+                #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***\n";
+                #endif
+                return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+              }
+
+              // otherwise it is a new stream, but before check from the client if he can take it (size is okay)
+
+              // Get Message Size
+              if (ui8_dataByte0 == 0x14) ui32_msgSize = data().getUint32Data(1);
+              else /* 0x10, decimal 16*/ ui32_msgSize = data().getUint16Data(1);
+
+              // Calculate Number of Packets (only for TP-#Pkg-Check!)
+              uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
+              // check for TP-RTS if pkg-count matches the calculated AND if size > 0
+              if (((ui8_dataByte0 == 0x10) && (data().getUint8Data(3) != ui32_numPkg))
+                || (ui32_msgSize < 9)) {
+                // This handles both
+                notifyError(c_tmpRSI, 102);
+                sendConnAbort (t_streamType, c_tmpRSI);
+                #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (Wrong Pkg Number || msgSize < 9) ***\n";
+                #endif
+                return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+              }
+
+              // First of all, is there a client registered that handles those PGNs via (E)TP-Messages?
+              IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(c_tmpRSI);
+              if (pc_clientFound == NULL)
+              { // There's no client registered to take this PGN->thisAddress! */
+                notifyError(c_tmpRSI, 115);
+                sendConnAbort (t_streamType, c_tmpRSI);
+                #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to PGN requested that the MR-Client has not registered to receive ***\n";
+                #endif
+                return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+              }
+
+              // Send the Request To Send (RTS) to the client - Does he give us a Clear To Send (CTS) ?
+              if (!pc_clientFound->reactOnStreamStart (c_tmpRSI, ui32_msgSize)) {
+                // Client rejects this stream!
+                notifyError(c_tmpRSI, 103);
+                sendConnAbort (t_streamType, c_tmpRSI);
+                #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Client Rejecting the stream ***\n";
+                #endif
+                return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+              }
+              // else: Client accepts this stream, so create a representation of the stream NOW -
+              // - further handling is done in "timeEvent()" now!*/
+              createStream(t_streamType, c_tmpRSI, ui32_msgSize);
+              // the constructor above sets the Stream to "AwaitCtsSend" and "StreamRunning"
+              // so next timeEvent will send out the CTS and set the pkgRemainingInBurst to a correct value!
+
+            } // end local variables allowment!
+            return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+
+
+          case 0x16: // decimal 22
+            b_eCmd=true;
+            ////////////////////////////
+            /// DPO (Data Packet Offset)
+            MACRO_Define_t_streamType_and_checkInvalid
+
+            { // to allow local variables!
+              Stream_c* pc_streamFound = getStream (c_tmpRSI
+              #ifdef NMEA_2000_FAST_PACKET
+              , /* Fast-Packet: */ false
+              #endif
+              );
+
+              if (pc_streamFound == NULL)
+              {
+                notifyError(c_tmpRSI, 104);
+                sendConnAbort (t_streamType, c_tmpRSI); // according to Brad: ConnAbort
+                #ifdef DEBUG
+                  INTERNAL_DEBUG_DEVICE << "\n\n DPO for an unknown/unopened stream!!\n ";
+                #endif
+                return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
+              }
+
+              if (!b_ePgn)
+              {
+                notifyError(c_tmpRSI, 116);
+                connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound); // according to Brad: ConnAbort
+                #ifdef DEBUG
+                  INTERNAL_DEBUG_DEVICE << "\n\n DPO for a Standard-TP stream!!\n ";
+                #endif
+                return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
+              }
+
+              // try to set the DPO in this stream - if it's not allowed right now (or timedout), this DPO was not correct
+              if (! (pc_streamFound->setDataPageOffset ( uint32_t(data().getUint8Data(2)) |
+                                                        (uint32_t(data().getUint8Data(3)) << 8) |
+                                                        (uint32_t(data().getUint8Data(4)) << 16))))
+              { // DPO not awaited now!
+                notifyError(c_tmpRSI, 105);
+                connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
+                #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to DPO at wrong 't_awaitStep' - was NOT AwaitDpo ***\n";
+                #endif
+                return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
+              }
+            } // end local variables allowment!
+            return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
+
+
+
+
+          case 0x20: // decimal 32
+            ////////////////////////////////////
+            /// BAM (Broadcast Announce Message)
+            MACRO_Define_t_streamType_and_checkInvalid
+
+            { // to allow local variables!
+              // Is BAM directed to 0xFF (global) ?
+              if (data().isoPs() != 0xFF)
+              { // we do NOT take BAMs that are NOT directed to the GLOBAL (255) address
+                notifyError(c_tmpRSI, 112);
+                #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n*** BAM to NON-GLOBAL address "<< (uint16_t) data().isoPs() <<" ***\n";
+                #endif
+                return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
+              }
+
+              // From now on it is assured that BAM is directed to 0xFF (255)
+
+              // BAM from an SA that has already a Stream running?
+              Stream_c* pc_streamFound = getStream (data().isoSa(), 255 /* 0xFF, BAM is always to GLOBAL */
+              #ifdef NMEA_2000_FAST_PACKET
+              , false
+              #endif
+              );
+              if (pc_streamFound != NULL) {
+                // abort already running stream is interrupted by BAM
+                notifyError(c_tmpRSI, 117);
+                connAbortTellClientRemoveStream (false /* do NOT send ConnAbort msg */, pc_streamFound);
+                #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to Already-Running-Stream! (BAM in between) ***\n";
+                #endif
+                // return true;
+                // ^^^ do NOT return, if the old BAM is "aborted" due to this BAM, try with this BAM now...
+              }
+
+              ui32_msgSize = data().getUint16Data(1);
+
+              uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
+              // check for TP-RTS if pkg-count matches the calculated AND if size > 0
+              if ((data().getUint8Data(3) != ui32_numPkg) || (ui32_msgSize < 9))
+              { // This handles both
+                notifyError(c_tmpRSI, 113);
+                #ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << "\n*** BAM not taken due to (Wrong Pkg Number || msgSize < 9) ***\n";
+                #endif
+                return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+              }
+
+              // NO client checks as in RTS-case above, as it's for ALL clients, they HAVE to take it =)
+
+              // "Stream_c"'s constructor will set awaitStep to "awaitData" and timeOut to 250ms!
+              createStream(t_streamType, c_tmpRSI, ui32_msgSize);
+            }
+
+            return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
+
+
+
+          case 0xFF: // decimal 255
+            ////////////////////////////////
+            /// ConnAbort (Connection Abort)
+            // same for TP and ETP
+            MACRO_Define_t_streamType_and_checkInvalid
+
+            { // to allow local variables!
+              // also allow a BAM to be aborted by the sender himself...
+              Stream_c* pc_streamFound = getStream (c_tmpRSI
+              #ifdef NMEA_2000_FAST_PACKET
+              , false
+              #endif
+              );
+
+              if (pc_streamFound) {
+                notifyError (c_tmpRSI, 107);
+                connAbortTellClientRemoveStream (false /* do not send connAbort-Msg */, pc_streamFound);
+                // here TRUE could be returned, but for unknown safety just let both (MS/MR) process ConnAbort!
+                // Also it "could" happen that MultiReceive & MultiSend are running parallel, so this ConnAbort would be for both!
+              }
+              else
+              {
+                // ignore an incoming ConnAbort for an unopened/unknown stream!
+              }
+            } // end local variables allowment!
+            return false; // ConnAbort is also of interest for MultiSend!!
+
+
+
+          case 0x15: // decimal 21
+          case 0x11: // decimal 17
+            ////////////////////////
+            /// CTS (for MultiSend)
+            // ignore here and simply pass on to MultiSend (using return false)
+            return false;
+
+          default:
+            #ifdef DEBUG
+              INTERNAL_DEBUG_DEVICE << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!\n";
+            #endif
+            t_streamType = (StreamType_t) ((b_ePgn) ? 0x2:0); // only care for ePgn or not for ConnAbort
+            notifyError(c_tmpRSI, 108);
+            sendConnAbort (t_streamType, c_tmpRSI);
+            return true;
+        }//end switch (ui8_dataByte)
+      }//end allowment of local variables...
+      break; // not reachable, but leave it here because if the above is changed, it's better to have the break here...
+
+
+      case MACRO_pgnFormatOfPGN(ETP_DATA_TRANSFER_PGN):
+        b_ePgn = true; // break left out intentionally!
+      case MACRO_pgnFormatOfPGN(TP_DATA_TRANSFER_PGN):
+        #ifdef DEBUG
+          INTERNAL_DEBUG_DEVICE << "{DATA: " << data().time() << "} "; fflush(0);
+        #endif
+
+        /////////////////////////
+        /// Data Transfer (DATA)
+        { // to allow local variables!
+          // Check if there's already a Stream active from this SA->DA pair (it should ;-)
+          Stream_c* pc_streamFound = getStream (data().isoSa(), data().isoPs() /* Ps is destin adr in the (E)TP-PGNs*/
+          #ifdef NMEA_2000_FAST_PACKET
+          , false
           #endif
-          notifyError(c_tmpRSI, 111);
-          return false;
-        }
-        // From this point on the SA/DA pair matches, so that we can return true
-        if (!(pc_streamFound->handleDataPacket(data().pb_data))) {
-          // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
-          if (data().isoPs() == 0xFF)
-          {
-            notifyError(c_tmpRSI, 114);
-            /// Do NOT propagate abortion of BAM to client!
-            //connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
-            removeStream (pc_streamFound);
+          );
+          if (pc_streamFound == NULL) {
+            // There's no stream running for this multi-packet-DATA!, this [DATA] MAY BE for MultiSend, so simply return false!
             #ifdef DEBUG
-            INTERNAL_DEBUG_DEVICE << "\n*** BAM sequence error ***\n";
+            INTERNAL_DEBUG_DEVICE << "\n*** (E)TP.DATA, but no open stream! ignoring that... ***\n";
             #endif
-          } else {
-            notifyError(c_tmpRSI, 109);
-            connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
-            #ifdef DEBUG
-            INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to wrong DATA, see msg before! ***\n";
-            #endif
+            notifyError(c_tmpRSI, 111);
+            return false;
           }
-        }
-        // further handling (send next CTS) is moved to timeEvent, so we don't get confused with CM/DATA PGNs, as they come very fast!
+          // From this point on the SA/DA pair matches, so that we can return true
+          if (!(pc_streamFound->handleDataPacket(data().pb_data))) {
+            // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
+            if (data().isoPs() == 0xFF)
+            {
+              notifyError(c_tmpRSI, 114);
+              /// Do NOT propagate abortion of BAM to client!
+              //connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
+              removeStream (pc_streamFound);
+              #ifdef DEBUG
+              INTERNAL_DEBUG_DEVICE << "\n*** BAM sequence error ***\n";
+              #endif
+            } else {
+              notifyError(c_tmpRSI, 109);
+              connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
+              #ifdef DEBUG
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to wrong DATA, see msg before! ***\n";
+              #endif
+            }
+          }
+          // further handling (send next CTS) is moved to timeEvent, so we don't get confused with CM/DATA PGNs, as they come very fast!
 
-        // Stream is now set to either
-        // -- StreamFinished -or- AwaitCtsSend
-        // OR REMOVED!
+          // Stream is now set to either
+          // -- StreamFinished -or- AwaitCtsSend
+          // OR REMOVED!
 
-      } // end local variables allowment!
-      return true; // if code execution comes to here, then the right SA/DA Pair was there so it WAS for MultiReceive, so we can return true safely!
+        } // end local variables allowment!
+        return true; // if code execution comes to here, then the right SA/DA Pair was there so it WAS for MultiReceive, so we can return true safely!
 
-    default:
-      #ifdef NMEA_2000_FAST_PACKET
-      break; // let's see if it's a fast-packet registered pgn
-      #else
-      return false; // PGN not managed here, so return false so that other CAN-Customers will "processMsg" them!
-      #endif
-  }
-
+      default:
+        #ifdef NMEA_2000_FAST_PACKET
+        break; // let's see if it's a fast-packet registered pgn
+        #else
+        return false; // PGN not managed here, so return false so that other CAN-Customers will "processMsg" them!
+        #endif
+    }
+  } // end if directed to known dest (this check works NOT for fast packet!!!)
   #ifndef NMEA_2000_FAST_PACKET
   // This point should NOT be reached anyway! all "case" statements
   return false;
   #else
   // Check if it's registered for fast-packet receive
-  for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); )
+  for (std::list<MultiReceiveClientWrapper_s>::iterator pc_iter = list_clients.begin(); pc_iter != list_clients.end(); pc_iter++)
   { // is it fast-packet, and is it this pgn?
     /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
     if ((pc_iter->b_isFastPacket) && (pc_iter->ui32_pgn == data().isoPgn()))
@@ -601,7 +600,7 @@ MultiReceive_c::processMsg()
           /** @todo check for range of 0..223 */
           /** @todo determine when to set the PS field of the pgn to "rui8_clientAddress" */
           IsoAgLib::ReceiveStreamIdentifier_c c_fpRSI (data().isoPgn(), 0xFF /* Ps is destin adr in the (E)TP-PGNs*/, data().isoSa());
-          createStream (StreamFastPacket, c_fpRSI, data().getUint8Data (1));
+          pc_streamFound = createStream (StreamFastPacket, c_fpRSI, data().getUint8Data (1));
         }
         else
         { // else no stream open and wrong packeted number comes in.
@@ -656,6 +655,7 @@ MultiReceive_c::registerClient(uint32_t rui32_pgn, uint8_t rui8_clientAddress,
                          #ifdef NMEA_2000_FAST_PACKET
                          , rb_isFastPacket
                          #endif
+                         SINGLETON_VEC_KEY_USE4CALL
                          ) );
   #ifdef NMEA_2000_FAST_PACKET
   /// Fast-Packet additions
@@ -1263,15 +1263,15 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
 
 
 /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-  * @param refc_gtp const reference to the item which ISOItem_c state is changed
+  * @param refc_devKey const reference to the item which ISOItem_c state is changed
   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
     */
 void
-MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, const __IsoAgLib::ISOItem_c* rpc_newItem )
+MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem )
 {
 #ifdef DEBUG
-  std::cerr << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_gtp.getGety())
-      << ", Instance: " << int(refc_gtp.getPos()) << ", and manufacturer ID: " << int(refc_gtp.getConstName().manufCode())
+  std::cerr << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
       << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
       << std::endl;
 #endif
@@ -1281,8 +1281,8 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, co
   {
     if (i_list_clients->ui8_clientAddress == 0xFE)
     { // it's a mrcw that was set to hold, so maybe this addr-claim is for it?
-      if (i_list_clients->c_gtp == refc_gtp)
-      { // yes, it's that GTP that lost its SA
+      if (i_list_clients->c_devKey == refc_devKey)
+      { // yes, it's that DEVKEY that lost its SA
         i_list_clients->ui8_clientAddress = rpc_newItem->nr();
       }
     }
@@ -1290,21 +1290,21 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, co
 }
 
 /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-  * @param refc_gtp const reference to the item which ISOItem_c state is changed
+  * @param refc_devKey const reference to the item which ISOItem_c state is changed
   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
   */
 void
-MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::GetyPos_c&
+MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
                                           #ifdef DEBUG
-                                          refc_gtp
+                                          refc_devKey
                                           #else
-                                          /*refc_gtp*/
+                                          /*refc_devKey*/
                                           #endif
                                           , uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
-  std::cerr << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_gtp.getGety())
-      << ", Instance: " << int(refc_gtp.getPos()) << ", and manufacturer ID: " << int(refc_gtp.getConstName().manufCode())
+  std::cerr << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
       << std::endl;
 #endif
@@ -1318,7 +1318,7 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::GetyPos_c&
     }
   }
 
-  // Abort all running streams, because we do NOT save the gtp in the stream and it would be out of sync probably anyway!
+  // Abort all running streams, because we do NOT save the devKey in the stream and it would be out of sync probably anyway!
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end();)
   {

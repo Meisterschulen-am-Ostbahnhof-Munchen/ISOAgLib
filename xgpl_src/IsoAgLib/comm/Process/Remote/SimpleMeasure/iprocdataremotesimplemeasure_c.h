@@ -82,12 +82,12 @@ namespace IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::GetyPos c_myGtp( 1, 0 );
+  IsoAgLib::DevKey c_myDevKey( 1, 0 );
   // creation of process data instance
   iProcDataRemoteSimpleMeasure_c c_workState;
   // init for LIS=0, remote device type/subtype=5/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send )
-  c_workState.init( 0, IsoAgLib::iGetyPos_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::iGetyPos_c( 0x5, 0 ), &c_myGtp );
+  c_workState.init( 0, IsoAgLib::iDevKey_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::iDevKey_c( 0x5, 0 ), &c_myDevKey );
   // request current measurement value ( real value, which can differ from commanded value ); triger update request
   int lastReceivedMeasureState = c_workState.masterVal( true );
   // as this class doesn't support measurement programs, this is all that can be done on measurement data
@@ -120,7 +120,7 @@ namespace IsoAgLib {
   }
   // if I'm the master setpoint commander, I should release the setpoint explicitly if the
   // controlo is not needed any more
-  if ( c_workState.setpoint().master().gtp() == c_myGtp )
+  if ( c_workState.setpoint().master().devKey() == c_myDevKey )
   { // I'm the master -> release control
     c_workState.setpoint().releaseMaster();
   }
@@ -145,10 +145,10 @@ public:
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-    @param rc_gtp optional GETY_POS code of this instance
+    @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -162,10 +162,10 @@ public:
                                   uint8_t rui8_inst = 0,
                                   uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                                  const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
+                                  const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
                                   uint8_t rui8_pri = 2,
-                                  const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
-                                  const iGetyPos_c* rpc_commanderGtp = NULL,
+                                  const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
+                                  const iDevKey_c* rpc_commanderDevKey = NULL,
                                   ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL, int ri_singletonVecKey = 0)
   : ProcDataRemoteSimpleMeasure_c(
 #ifdef USE_ISO_11783
@@ -174,7 +174,7 @@ public:
 #ifdef USE_DIN_9684
                                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                  rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                                  rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
                                   rpc_processDataChangeHandler, ri_singletonVecKey){};
 
   /**
@@ -189,10 +189,10 @@ public:
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-    @param rc_gtp optional GETY_POS code of this instance
+    @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -206,10 +206,10 @@ public:
                                   uint8_t rui8_inst = 0,
                                   uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                                  const iGetyPos_c& rc_gtp = iGetyPos_c::GetyPosInitialProcessData,
+                                  const iDevKey_c& rc_devKey = iDevKey_c::DevKeyInitialProcessData,
                                   uint8_t rui8_pri = 2,
-                                  const iGetyPos_c& rc_ownerGtp = iGetyPos_c::GetyPosUnspecified,
-                                  const iGetyPos_c* rpc_commanderGtp = NULL,
+                                  const iDevKey_c& rc_ownerDevKey = iDevKey_c::DevKeyUnspecified,
+                                  const iDevKey_c* rpc_commanderDevKey = NULL,
                                   ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                                   int ri_singletonVecKey = 0)
    {ProcDataRemoteSimpleMeasure_c::init(
@@ -219,7 +219,7 @@ public:
 #ifdef USE_DIN_9684
                                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                        rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                                        rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
                                         rpc_processDataChangeHandler, ri_singletonVecKey);};
 
   /** set the poitner to the handler class
@@ -251,10 +251,10 @@ public:
   */
   uint8_t lis() const{return ProcDataRemoteSimpleMeasure_c::lis();};
   /**
-    deliver value GETY (machine type specific table of process data types)
-    @return GETY
+    deliver value DEVCLASS (machine type specific table of process data types)
+    @return DEVCLASS
   */
-  uint8_t gety() const{return ProcDataRemoteSimpleMeasure_c::gety();};
+  uint8_t devClass() const{return ProcDataRemoteSimpleMeasure_c::devClass();};
   /**
     deliver value WERT (row of process data table)
     @return WERT
@@ -271,10 +271,10 @@ public:
   */
   uint8_t zaehlnum() const{return ProcDataRemoteSimpleMeasure_c::zaehlnum();};
   /**
-    deliver value POS (important if more than one machine with equal GETY are active)
+    deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
     @return POS
   */
-  uint8_t pos() const{return ProcDataRemoteSimpleMeasure_c::pos();};
+  uint8_t devClassInst() const{return ProcDataRemoteSimpleMeasure_c::devClassInst();};
 
 
   /**
@@ -335,16 +335,16 @@ public:
   #endif
 
   /**
-    deliver the commanderGtp (GETY_POS of local member)
-    @return GETY_POS used for sending commands to remote owner member
+    deliver the commanderDevKey (DEV_KEY of local member)
+    @return DEV_KEY used for sending commands to remote owner member
   */
-  const iGetyPos_c& commanderGtp()const{return static_cast<const iGetyPos_c&>(ProcDataRemoteSimpleMeasure_c::commanderGtp());};
+  const iDevKey_c& commanderDevKey()const{return static_cast<const iDevKey_c&>(ProcDataRemoteSimpleMeasure_c::commanderDevKey());};
   /**
-    set the pointer to the commander ident gtp
-    @param rpbgtp pointer to GETY_POS var of local member used for
+    set the pointer to the commander ident devKey
+    @param rpbdevKey pointer to DEV_KEY var of local member used for
                 sending commands to remote owner member
   */
-  void setCommanderGtp(const iGetyPos_c* rpc_gtp){ProcDataRemoteSimpleMeasure_c::setCommanderGtp(rpc_gtp);};
+  void setCommanderDevKey(const iDevKey_c* rpc_devKey){ProcDataRemoteSimpleMeasure_c::setCommanderDevKey(rpc_devKey);};
 
 
   /**

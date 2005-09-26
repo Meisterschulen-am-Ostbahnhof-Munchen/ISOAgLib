@@ -232,7 +232,7 @@
 // include the configuration header with addresses of some EEPROM informations
 #include <Application_Config/eeprom_adr.h>
 // include object headers for flexible management of remote data sources
-#include "AutoDataCollector_Classes/getyflexmanager_c.h"
+#include "AutoDataCollector_Classes/devClassflexmanager_c.h"
 // handle GPS informations of Fieldstar (tm) terminal
 #include "AutoDataCollector_Classes/gpsmanager_c.h"
 // handling of configuration data
@@ -258,13 +258,13 @@ void writeHeader();
 bool check_for_imi();
 void writeData();
 
-// GTP of other devices
-IsoAgLib::iGetyPos_c pc_otherGgtp[10];
-uint8_t ui8_cntOtherGtp = 0;
+// DEVKEY of other devices
+IsoAgLib::iDevKey_c pc_otherGdevKey[10];
+uint8_t ui8_cntOtherDevKey = 0;
 uint8_t ui8_rearEhrVal;
 
-typedef std::list<GetyFlexManager_c> list_device_data;
-typedef std::list<GetyFlexManager_c>::iterator iterator_device_data;
+typedef std::list<DevClassFlexManager_c> list_device_data;
+typedef std::list<DevClassFlexManager_c>::iterator iterator_device_data;
 list_device_data c_listDeviceData;
 
 
@@ -283,8 +283,8 @@ DefaultRecordConfig_c c_defaultRecordConfig;
   t_hdd_working_state en_hddWorkingState = initialised;
 #endif
 
-// variable for GETY_POS
-IsoAgLib::iGetyPos_c c_myGtp( 1, 5 );
+// variable for DEV_KEY
+IsoAgLib::iDevKey_c c_myDevKey( 1, 5 );
 
 int main()
 { // simply call startImi
@@ -294,7 +294,7 @@ int main()
 
   for ( uint8_t ind = 0; ind < 10; ind++ )
   {
-    pc_otherGgtp[ind].setUnspecified();
+    pc_otherGdevKey[ind].setUnspecified();
   }
 
   // init RS232
@@ -305,14 +305,14 @@ int main()
   iEEPROMIO_c& c_eeprom = getIeepromInstance();
 
   // read preconfigured data from EEPROM
-  // read GETY_POS
+  // read DEV_KEY
   // set read position in EEPROM
-  c_eeprom.setg(ADR_IDENT_GTP);
+  c_eeprom.setg(ADR_IDENT_DEVKEY);
   // read EEPROM value in variable
-  // (read size equivalent to sizeof(c_myGtp) )
-  uint8_t ui8_tempDinGtp;
-  c_eeprom >> ui8_tempDinGtp;
-  c_myGtp.setCombinedDin( ui8_tempDinGtp );
+  // (read size equivalent to sizeof(c_myDevKey) )
+  uint8_t ui8_tempDinDevKey;
+  c_eeprom >> ui8_tempDinDevKey;
+  c_myDevKey.setCombinedDin( ui8_tempDinDevKey );
   // read name
   c_eeprom.setg(ADR_IDENT_NAME_SHORT);
   c_eeprom.readString(myName, 11);
@@ -320,9 +320,9 @@ int main()
   #endif
 
   // start address claim of the local member "Taskcon"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp, myName );
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey, myName );
 
   // decide if column header should be written on new detected system
   bool b_writeHeader = false;
@@ -514,7 +514,7 @@ int main()
       }
 #endif
     ui8_rearEhrVal = getIBaseInstance().hitchRear() & 0x7F;
-    if (getIdinMonitorInstance().existDinMemberGtp(c_myGtp, true))
+    if (getIdinMonitorInstance().existDinMemberDevKey(c_myDevKey, true))
     {
       if (!my_announced)
       {
@@ -570,19 +570,19 @@ bool check_for_imi()
 {
   bool b_writeHeader = false;
   uint8_t ui8_cntAnnounced = getIdinMonitorInstance().dinMemberCnt(true);
-  IsoAgLib::iGetyPos_c c_testGtp;
+  IsoAgLib::iDevKey_c c_testDevKey;
   IsoAgLib::iDINItem_c *p_member;
   iterator_device_data pc_iter;
 
   for (uint8_t ui8_ind = 0; ui8_ind < ui8_cntAnnounced; ui8_ind++)
   {
     p_member = &(getIdinMonitorInstance().dinMemberInd(ui8_ind, true));
-    c_testGtp = p_member->gtp();
-    // continue immediate with next member if GETY < 2 (gtp == 0x10 (base or tractor)
-    if (p_member->gtp().getGety() < 2) continue;
-    // GETY is now >= 0x10
+    c_testDevKey = p_member->devKey();
+    // continue immediate with next member if DEVCLASS < 2 (devKey == 0x10 (base or tractor)
+    if (p_member->devKey().getDevClass() < 2) continue;
+    // DEVCLASS is now >= 0x10
     // search in device data list
-    pc_iter = find(c_listDeviceData.begin(), c_listDeviceData.end(), c_testGtp);
+    pc_iter = find(c_listDeviceData.begin(), c_listDeviceData.end(), c_testDevKey);
     // if not found -> create new item
     if (pc_iter == c_listDeviceData.end())
     { // not found
@@ -604,17 +604,17 @@ bool check_for_imi()
       if ( (getIBaseInstance().day() == ui8_lastTaskDay)
         && (getIBaseInstance().month() == ui8_lastTaskMonth) )
       { // try to continue recording
-        uint8_t ui8_lastTaskDeviceGtp_1, pui8_lastTaskDeviceName_1[8],
-              ui8_lastTaskDeviceGtp_2, pui8_lastTaskDeviceName_2[8];
-        c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_1_GTP);
-        c_eeprom >> ui8_lastTaskDeviceGtp_1;
+        uint8_t ui8_lastTaskDeviceDevKey_1, pui8_lastTaskDeviceName_1[8],
+              ui8_lastTaskDeviceDevKey_2, pui8_lastTaskDeviceName_2[8];
+        c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_1_DEVKEY);
+        c_eeprom >> ui8_lastTaskDeviceDevKey_1;
         c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_1_NAME);
         c_eeprom.readString(pui8_lastTaskDeviceName_1, 7);
-        c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_2_GTP);
-        c_eeprom >> ui8_lastTaskDeviceGtp_2;
+        c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_2_DEVKEY);
+        c_eeprom >> ui8_lastTaskDeviceDevKey_2;
         c_eeprom.setg(ADR_TASK_CONTROLLER_IMPLEMENT_2_NAME);
         c_eeprom.readString(pui8_lastTaskDeviceName_2, 7);
-        if ( (c_testGtp.getCombinedDin() ==  ui8_lastTaskDeviceGtp_1)
+        if ( (c_testDevKey.getCombinedDin() ==  ui8_lastTaskDeviceDevKey_1)
            &&(memcmp(p_member->name(),pui8_lastTaskDeviceName_1,7) == 0)
            )
         { // actual new device is same as first device of last task -> continue
@@ -622,7 +622,7 @@ bool check_for_imi()
         }
         else
         {
-          if ( (c_testGtp.getCombinedDin() ==  ui8_lastTaskDeviceGtp_2)
+          if ( (c_testDevKey.getCombinedDin() ==  ui8_lastTaskDeviceDevKey_2)
              &&(memcmp(p_member->name(),pui8_lastTaskDeviceName_2,7) == 0)
              )
           { // actual new device is same as second device of last task -> continue
@@ -633,8 +633,8 @@ bool check_for_imi()
       if (ui16_eepromOffsetAdr == 0xFFFF)
       { // no record task to be continued -> reset offset values in EEPROM
         // as new job was detected
-        c_eeprom.setp(ADR_TASK_CONTROLLER_IMPLEMENT_1_GTP);
-        c_eeprom << c_testGtp.getCombinedDin();
+        c_eeprom.setp(ADR_TASK_CONTROLLER_IMPLEMENT_1_DEVKEY);
+        c_eeprom << c_testDevKey.getCombinedDin();
         c_eeprom.setp(ADR_TASK_CONTROLLER_IMPLEMENT_1_NAME);
         c_eeprom.writeString(p_member->name(), 7);
         // set actual task record date
@@ -643,7 +643,7 @@ bool check_for_imi()
         c_eeprom.setp(ADR_TASK_CONTROLLER_DATE_MONTH);
         c_eeprom << getIBaseInstance().month();
         // reset setting for second device
-        c_eeprom.setp(ADR_TASK_CONTROLLER_IMPLEMENT_2_GTP);
+        c_eeprom.setp(ADR_TASK_CONTROLLER_IMPLEMENT_2_DEVKEY);
         c_eeprom << (uint8_t)0xFF;
 
 
@@ -653,9 +653,9 @@ bool check_for_imi()
         for (uint8_t ui8_ind = 0; ui8_ind < 9; ui8_ind++) c_eeprom << (int32_t)0;
       }
       // insert new record data set
-      c_listDeviceData.push_back(GetyFlexManager_c(&c_defaultRecordConfig, ui16_eepromOffsetAdr));
+      c_listDeviceData.push_back(DevClassFlexManager_c(&c_defaultRecordConfig, ui16_eepromOffsetAdr));
       b_writeHeader = true;
-      c_listDeviceData.back().activate(p_member, &c_myGtp);
+      c_listDeviceData.back().activate(p_member, &c_myDevKey);
     }
   }
 
@@ -664,7 +664,7 @@ bool check_for_imi()
     b_repeat = false; // if none found/erased, don't repeat...
     for (pc_iter = c_listDeviceData.begin(); pc_iter != c_listDeviceData.end(); pc_iter++)
     { // test all device data  sets if according member is still active
-      if (!(getIdinMonitorInstance().existDinMemberGtp(pc_iter->gtp(), true)))
+      if (!(getIdinMonitorInstance().existDinMemberDevKey(pc_iter->devKey(), true)))
       { // according member no more announced in monitor list -> delete
         b_writeHeader = true;
 /*      iterator_device_data pc_iter_del = pc_iter;
@@ -688,20 +688,20 @@ bool check_for_imi()
 
   // check for other devices
   uint8_t ui8_memberCnt = getIdinMonitorInstance().dinMemberCnt(true);
-  IsoAgLib::iGetyPos_c c_checkedGtp;
-  ui8_cntOtherGtp = 0;
+  IsoAgLib::iDevKey_c c_checkedDevKey;
+  ui8_cntOtherDevKey = 0;
   for (uint8_t ui8_ind = 0; ui8_ind < ui8_memberCnt ; ui8_ind++)
   {
-    c_checkedGtp =getIdinMonitorInstance().dinMemberInd(ui8_ind, true).gtp();
-    if ((c_checkedGtp.getGety() < 2) && (c_checkedGtp != c_myGtp))
+    c_checkedDevKey =getIdinMonitorInstance().dinMemberInd(ui8_ind, true).devKey();
+    if ((c_checkedDevKey.getDevClass() < 2) && (c_checkedDevKey != c_myDevKey))
     { // this is another not yet recorded device
-      if (c_checkedGtp != pc_otherGgtp[ui8_cntOtherGtp])
+      if (c_checkedDevKey != pc_otherGdevKey[ui8_cntOtherDevKey])
       {
         b_writeHeader = true;
-        pc_otherGgtp[ui8_cntOtherGtp] = c_checkedGtp;
+        pc_otherGdevKey[ui8_cntOtherDevKey] = c_checkedDevKey;
       }
       // convert name to pure ascii
-      ui8_cntOtherGtp++;
+      ui8_cntOtherDevKey++;
     }
   }
   return b_writeHeader;
@@ -776,7 +776,7 @@ void writeData()
     << fahrer_name << ";";
 #endif
   int8_t pc_tempName[15];
-  getIdinMonitorInstance().dinMemberGtp( c_myGtp, true ).getPureAsciiName(pc_tempName, 14);
+  getIdinMonitorInstance().dinMemberDevKey( c_myDevKey, true ).getPureAsciiName(pc_tempName, 14);
  c_rs232
     << (char*)pc_tempName << ";";
  c_rs232

@@ -182,7 +182,7 @@ vtObjectPolygon_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
     saveValue16 (MACRO_getStructOffset(get_vtObjectPolygon_a(), height), sizeof(iVtObjectPolygon_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end namespace __IsoAgLib

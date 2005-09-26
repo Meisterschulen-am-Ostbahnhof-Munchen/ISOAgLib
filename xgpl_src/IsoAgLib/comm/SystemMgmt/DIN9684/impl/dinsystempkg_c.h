@@ -123,10 +123,10 @@ public:
   */
   uint8_t nr() const { return data.ui8_nr;};
   /**
-    deliver GETY_POS of sender
-    @return GETY_POS of sender
+    deliver DEV_KEY of sender
+    @return DEV_KEY of sender
   */
-  const GetyPos_c& gtp() const { return c_gtp; };
+  const DevKey_c& devKey() const { return c_devKey; };
   /**
     deliver VERW code of message
     @return VERW code of message
@@ -197,19 +197,19 @@ public:
   */
   void setNr(uint8_t rb_val) { data.ui8_nr = rb_val; };
   /**
-    set value of GETY_POS flag in identifier
-    @param rc_gtp value of GETY_POS flag
+    set value of DEV_KEY flag in identifier
+    @param rc_devKey value of DEV_KEY flag
   */
-  void setGtp(const GetyPos_c& rc_gtp){
-    c_gtp = rc_gtp;
+  void setDevKey(const DevKey_c& rc_devKey){
+    c_devKey = rc_devKey;
     setIdentType(Ident_c::StandardIdent);
   };
   /**
-    set value of GETY_POS flag in identifier with DIN 9684 format
-    @param rb_val value of GETY_POS flag
+    set value of DEV_KEY flag in identifier with DIN 9684 format
+    @param rb_val value of DEV_KEY flag
   */
-  void setDinGtp(uint8_t rui8_gtp){
-    c_gtp.set( ( rui8_gtp >> 3 ), ( rui8_gtp & 0x7 ) );
+  void setDinDevKey(uint8_t rui8_devKey){
+    c_devKey.set( ( rui8_devKey >> 3 ), ( rui8_devKey & 0x7 ) );
     setIdentType(Ident_c::StandardIdent);
   };
   /**
@@ -286,8 +286,8 @@ private: // Private attributes
   /** address vector (16 bit) with 1 on all positions
       with used number */
   AdrVect_c c_adrVect;
-  /** GETY_POS of sender */
-  GetyPos_c c_gtp;
+  /** DEV_KEY of sender */
+  DevKey_c c_devKey;
   struct
   {
     /** VERW command subtype of system message */

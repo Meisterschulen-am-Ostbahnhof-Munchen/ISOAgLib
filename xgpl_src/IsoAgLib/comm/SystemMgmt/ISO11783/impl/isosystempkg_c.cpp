@@ -87,7 +87,7 @@
 namespace __IsoAgLib {
 
 /** default constructor */
-ISOSystemPkg_c::ISOSystemPkg_c() : c_isoGtp( pb_data ) {
+ISOSystemPkg_c::ISOSystemPkg_c() : c_isoDevKey( pb_data ) {
 }
 /** default destructor */
 ISOSystemPkg_c::~ISOSystemPkg_c(){
@@ -102,7 +102,7 @@ ISOSystemPkg_c::~ISOSystemPkg_c(){
 void ISOSystemPkg_c::string2Flags()
 {
   // for ISO use direct read access with isoPgn, indGroup, etc
-  c_isoGtp.set( pb_data );
+  c_isoDevKey.set( pb_data );
 };
 
 /**

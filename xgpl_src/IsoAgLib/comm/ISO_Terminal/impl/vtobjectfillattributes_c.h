@@ -114,7 +114,7 @@ public:
   //! Parameter:
   //! @param vtObjectFillAttributesSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM) { vtObject_c::init ((iVtObject_s*) vtObjectFillAttributesSROM); };
+  void init(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectFillAttributes_a
   iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a() { return (iVtObjectFillAttributes_s *)vtObject_a; }
@@ -139,7 +139,7 @@ public:
   //! @param newFillColour:
   //! @param b_updateObject:
   void setFillColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour) : 0, sizeof(iVtObjectFillAttributes_s), 2 /* "Fill Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour) : 0, sizeof(iVtObjectFillAttributes_s), 2 /* "Fill Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
   };
 
   //  Operation: setFillPattern

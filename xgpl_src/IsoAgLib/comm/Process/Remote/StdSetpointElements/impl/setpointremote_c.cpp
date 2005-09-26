@@ -100,9 +100,9 @@ void SetpointRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
   SetpointBase_c::init( rpc_processData );
   i32_answeredTime = i32_commandedTime = 0;
-  c_answeredMaster.setGtp( GetyPos_c::GetyPosUnspecified );
-  c_answeredMe.setGtp( GetyPos_c::GetyPosUnspecified );
-  c_commanded.setGtp( GetyPos_c::GetyPosUnspecified );
+  c_answeredMaster.setDevKey( DevKey_c::DevKeyUnspecified );
+  c_answeredMe.setDevKey( DevKey_c::DevKeyUnspecified );
+  c_commanded.setDevKey( DevKey_c::DevKeyUnspecified );
 
 
 }
@@ -156,7 +156,7 @@ SetpointRemote_c::~SetpointRemote_c(){
 void SetpointRemote_c::setExact(float rf_val)
 { // set value in c_commanded
   c_commanded.setExact( rf_val);
-  c_commanded.setGtp( processData().commanderGtp());
+  c_commanded.setDevKey( processData().commanderDevKey());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -167,7 +167,7 @@ void SetpointRemote_c::setExact(float rf_val)
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
   // DIN: pd=0, mod=0
-  processData().sendValGtp(Proc_c::Target, processData().commanderGtp(), rf_val);
+  processData().sendValDevKey(Proc_c::Target, processData().commanderDevKey(), rf_val);
 }
 
 #endif
@@ -183,7 +183,7 @@ void SetpointRemote_c::setExact(float rf_val)
 void SetpointRemote_c::setExact( int32_t ri32_val){
   // set value in c_commanded
   c_commanded.setExact( ri32_val);
-  c_commanded.setGtp( processData().commanderGtp());
+  c_commanded.setDevKey( processData().commanderDevKey());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -193,7 +193,7 @@ void SetpointRemote_c::setExact( int32_t ri32_val){
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner: (DIN: PD=0, MOD=0)
-  processData().sendValGtp( Proc_c::Target, processData().commanderGtp(), ri32_val);
+  processData().sendValDevKey( Proc_c::Target, processData().commanderDevKey(), ri32_val);
 }
 
 
@@ -208,7 +208,7 @@ void SetpointRemote_c::setExact( int32_t ri32_val){
 void SetpointRemote_c::setMin( int32_t ri32_val){
   // set value in c_commanded
   c_commanded.setMin( ri32_val);
-  c_commanded.setGtp( processData().commanderGtp());
+  c_commanded.setDevKey( processData().commanderDevKey());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -218,7 +218,7 @@ void SetpointRemote_c::setMin( int32_t ri32_val){
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner: (DIN: PD=0, MOD=2)
-  processData().sendValGtp( Proc_c::Target, processData().commanderGtp(), ri32_val);
+  processData().sendValDevKey( Proc_c::Target, processData().commanderDevKey(), ri32_val);
 }
 
 /**
@@ -232,7 +232,7 @@ void SetpointRemote_c::setMin( int32_t ri32_val){
 void SetpointRemote_c::setMax( int32_t ri32_val){
   // set value in c_commanded
   c_commanded.setMax( ri32_val);
-  c_commanded.setGtp( processData().commanderGtp());
+  c_commanded.setDevKey( processData().commanderDevKey());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -242,7 +242,7 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner: PD=0, MOD=3
-  processData().sendValGtp( Proc_c::Target, processData().commanderGtp(), ri32_val);
+  processData().sendValDevKey( Proc_c::Target, processData().commanderDevKey(), ri32_val);
 }
 
 /**
@@ -256,7 +256,7 @@ void SetpointRemote_c::setMax( int32_t ri32_val){
 void SetpointRemote_c::setDefault( int32_t ri32_val){
   // set value in c_commanded
   c_commanded.setDefault( ri32_val);
-  c_commanded.setGtp( processData().commanderGtp());
+  c_commanded.setDevKey( processData().commanderDevKey());
 
   // set time of command
   i32_commandedTime = System_c::getTime();
@@ -266,7 +266,7 @@ void SetpointRemote_c::setDefault( int32_t ri32_val){
                                                               GeneralCommand_c::defaultValue,
                                                               GeneralCommand_c::setValue);
   // send command to owner:
-  processData().sendValGtp( Proc_c::Target, processData().commanderGtp(), ri32_val);
+  processData().sendValDevKey( Proc_c::Target, processData().commanderDevKey(), ri32_val);
 }
 
 /**
@@ -279,7 +279,7 @@ void SetpointRemote_c::requestExact() const
                                                               GeneralCommand_c::exactValue,
                                                               GeneralCommand_c::requestValue);
   // DIN: pd = 2, mod = 0
-  processDataConst().sendValGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
+  processDataConst().sendValDevKey( Proc_c::Target, processDataConst().commanderDevKey(), 0);
 }
 /**
   request remote master setpoint - MIN
@@ -291,7 +291,7 @@ void SetpointRemote_c::requestMin() const
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::requestValue);
   // DIN: pd = 2, mod = 2
-  processDataConst().sendValGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
+  processDataConst().sendValDevKey( Proc_c::Target, processDataConst().commanderDevKey(), 0);
 }
 /**
   request remote master setpoint - MAX
@@ -303,7 +303,7 @@ void SetpointRemote_c::requestMax() const
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::requestValue);
   // DIN: pd = 2, mod = 3
-  processDataConst().sendValGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
+  processDataConst().sendValDevKey( Proc_c::Target, processDataConst().commanderDevKey(), 0);
 }
 /**
   request remote master setpoint - DEFAULT
@@ -314,7 +314,7 @@ void SetpointRemote_c::requestDefault() const
   getProcessInstance4Comm().data().c_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
                                                               GeneralCommand_c::defaultValue,
                                                               GeneralCommand_c::requestValue);
-  processDataConst().sendValGtp( Proc_c::Target, processDataConst().commanderGtp(), 0);
+  processDataConst().sendValDevKey( Proc_c::Target, processDataConst().commanderDevKey(), 0);
 }
 
 /**
@@ -339,7 +339,7 @@ bool SetpointRemote_c::accepted() const {
   @return true -> a master setpoint commander exist
 */
 bool SetpointRemote_c::existMaster() const {
-  return (c_answeredMaster.gtp().isSpecified());
+  return (c_answeredMaster.devKey().isSpecified());
 }
 
 /**
@@ -376,7 +376,7 @@ bool SetpointRemote_c::valid() const {
       b_maxTest = true;
   bool b_result =
     ((answered()
-  && (c_commanded.gtp() == c_answeredMaster.gtp())
+  && (c_commanded.devKey() == c_answeredMaster.devKey())
     )) ? true : false;
 
   if ((!b_result) && (answered()) && (existMaster()))
@@ -441,22 +441,22 @@ void SetpointRemote_c::processSet(){
   // detect if something was changed, so that the handler shall be called
   bool b_change = false;
 
-  // retreive the gtp of send and empf
-  const GetyPos_c& c_empfGtp = c_pkg.memberEmpf().gtp();
-  const GetyPos_c& c_sendGtp = c_pkg.memberSend().gtp();
+  // retreive the devKey of send and empf
+  const DevKey_c& c_empfDevKey = c_pkg.memberEmpf().devKey();
+  const DevKey_c& c_sendDevKey = c_pkg.memberSend().devKey();
 
-  if (c_sendGtp == processData().ownerGtp())
+  if (c_sendDevKey == processData().ownerDevKey())
   { // the owner sent the value
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // was a normal value
       if  ( ( c_answeredMaster.valMod( c_pkg.c_generalCommand.getValueGroup() ) != i32_val )
          || ( ! c_answeredMaster.valid() )
-         || ( c_answeredMaster.gtp() != c_empfGtp )
+         || ( c_answeredMaster.devKey() != c_empfDevKey )
          || ( ! c_answeredMaster.master() )
           ) b_change = true;
       c_answeredMaster.setValMod( i32_val, c_pkg.c_generalCommand.getValueGroup());
-      // set the gtp of the actual master
-      c_answeredMaster.setGtp( c_empfGtp);
+      // set the devKey of the actual master
+      c_answeredMaster.setDevKey( c_empfDevKey);
       // set the valid flag to true
       c_answeredMaster.setValid( true);
       // set for completness themaster flag
@@ -464,15 +464,15 @@ void SetpointRemote_c::processSet(){
     }
   }
   // check if it was a master release command
-  if (((c_empfGtp == c_answeredMaster.gtp())
-      ||(c_sendGtp == processData().ownerGtp()))
+  if (((c_empfDevKey == c_answeredMaster.devKey())
+      ||(c_sendDevKey == processData().ownerDevKey()))
     &&(c_pkg.isSpecCmd( setpointReleaseCmd)) )
   { // the actual master setpoint is released
     releaseMasterIntern();
     b_change = true;
   }
   // check if it was a SETPOINT_ERROR message for the master
-  if ((c_empfGtp == c_answeredMaster.gtp())
+  if ((c_empfDevKey == c_answeredMaster.devKey())
     && (c_pkg.isSpecCmd( setpointErrCmd)) )
   { // the owner (controlling) system can´t deliver the commanded setpoint -> actual invalid
     if ( c_answeredMaster.valid() ) b_change = true;
@@ -480,8 +480,8 @@ void SetpointRemote_c::processSet(){
   }
 
   // check if this is an answer to my last command
-  if ((c_empfGtp == processData().commanderGtp())
-    && (c_sendGtp == processData().ownerGtp()))
+  if ((c_empfDevKey == processData().commanderDevKey())
+    && (c_sendDevKey == processData().ownerDevKey()))
   { // the owner of the process data sent me an answer
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // normal value
@@ -509,12 +509,12 @@ void SetpointRemote_c::processSet(){
     }
     // set the answer time
     i32_answeredTime = System_c::getTime();
-    // set the correct gtp
-    c_answeredMe.setGtp( c_empfGtp);
+    // set the correct devKey
+    c_answeredMe.setDevKey( c_empfDevKey);
   }
   // call handler function if handler class is registered
   if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) && ( b_change ) )
-    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), c_pkg.memberSend().gtp() );
+    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), c_pkg.memberSend().devKey() );
 
 }
 
@@ -523,25 +523,25 @@ void SetpointRemote_c::processSet(){
   if this action is allowed
 */
 void SetpointRemote_c::releaseMasterIntern(){
-  c_answeredMaster.setGtp( GetyPos_c::GetyPosUnspecified );
+  c_answeredMaster.setDevKey( DevKey_c::DevKeyUnspecified );
   c_answeredMaster.setMaster( false);
 }
 
 
 /**
   perform periodic actions
-  --> reset all entries if gtp isn't active any more
+  --> reset all entries if devKey isn't active any more
   @return true -> all planned activities performed in available time
 */
 bool SetpointRemote_c::timeEvent( void )
 {
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  const GetyPos_c& c_ownerGtp = processData().ownerGtp();
-  if ( (!getSystemMgmtInstance4Comm().existMemberGtp( c_ownerGtp, true))
+  const DevKey_c& c_ownerDevKey = processData().ownerDevKey();
+  if ( (!getSystemMgmtInstance4Comm().existMemberDevKey( c_ownerDevKey, true))
     #if  defined( USE_DIN_9687 )
-    || ( (getSystemMgmtInstance4Comm().memberGtp( c_ownerGtp, true).lastedTime() > 3000)
+    || ( (getSystemMgmtInstance4Comm().memberDevKey( c_ownerDevKey, true).lastedTime() > 3000)
          #if defined( USE_ISO_11783 )
-         (getSystemMgmtInstance4Comm().memberGtp( c_ownerGtp, true).itemState( IState_c::Din))
+         (getSystemMgmtInstance4Comm().memberDevKey( c_ownerDevKey, true).itemState( IState_c::Din))
          #endif
        )
     #endif
@@ -549,10 +549,10 @@ bool SetpointRemote_c::timeEvent( void )
   { // remote owner of this process data isn't active any more
     // -> reset all entries
     i32_answeredTime = i32_commandedTime = 0;
-    c_answeredMaster.setGtp( GetyPos_c::GetyPosUnspecified );
+    c_answeredMaster.setDevKey( DevKey_c::DevKeyUnspecified );
     c_answeredMaster.setMaster( false);
-    c_answeredMe.setGtp( GetyPos_c::GetyPosUnspecified );
-    c_commanded.setGtp( GetyPos_c::GetyPosUnspecified );
+    c_answeredMe.setDevKey( DevKey_c::DevKeyUnspecified );
+    c_commanded.setDevKey( DevKey_c::DevKeyUnspecified );
   }
   return true;
 }

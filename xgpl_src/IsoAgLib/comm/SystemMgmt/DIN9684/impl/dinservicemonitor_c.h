@@ -149,15 +149,15 @@ public:
 
     possible errors:
       * Err_c::badAlloc on not enough memory to create the needed DINServiceItem_c instance
-      * Err_c::precondition on invalid GETY_POS code
-      * Err_c::busy another DINServiceItem_c with same GETY_POS is already in list of active services
-    @param rc_gtp GETY_POS code for the service
+      * Err_c::precondition on invalid DEV_KEY code
+      * Err_c::busy another DINServiceItem_c with same DEV_KEY is already in list of active services
+    @param rc_devKey DEV_KEY code for the service
     @param rui8_nr corresponding service no
     @return true -> service was created successfully (no equal service exist,
         enough memory to store new entry in ServiceMonitor)
      @exception badAlloc preconditionViolation
   */
-  bool createLocalService(const GetyPos_c& rc_gtp, uint8_t rui8_nr= 0xFF);
+  bool createLocalService(const DevKey_c& rc_devKey, uint8_t rui8_nr= 0xFF);
 
   /**
     create a service ident, for which the library
@@ -168,62 +168,62 @@ public:
 
     possible errors:
       * Err_c::badAlloc on not enough memory to create the needed DINServiceItem_c instance
-      * Err_c::precondition on invalid GETY_POS code
-      * Err_c::busy another DINServiceItem_c with same GETY_POS is already in list of active services
-    @param rc_gtp GETY_POS code for the service
+      * Err_c::precondition on invalid DEV_KEY code
+      * Err_c::busy another DINServiceItem_c with same DEV_KEY is already in list of active services
+    @param rc_devKey DEV_KEY code for the service
     @param rui8_nr corresponding service no
     @return true -> service was created successfully (no equal service exist,
         enough memory to store new entry in ServiceMonitor)
      @exception badAlloc preconditionViolation
   */
-  bool createLocalDinService(const GetyPos_c& rc_gtp, uint8_t rui8_nr= 0xFF)
-    {return createLocalService(rc_gtp, rui8_nr);};
+  bool createLocalDinService(const DevKey_c& rc_devKey, uint8_t rui8_nr= 0xFF)
+    {return createLocalService(rc_devKey, rui8_nr);};
 
   /**
     delete a local service
-    @param rc_gtp GETY_POS code of the service
+    @param rc_devKey DEV_KEY code of the service
     @return true -> wanted item found and deleted
   */
-  bool deleteLocalService(const GetyPos_c& rc_gtp);
+  bool deleteLocalService(const DevKey_c& rc_devKey);
 
   /**
     delete a local service;
     this variant deletes a DIN service; this is replaced during compile
     time by a direct call to deleteLocalMember, so that no runtime
     overhead is caused
-    @param rc_gtp GETY_POS code of the service
+    @param rc_devKey DEV_KEY code of the service
     @return true -> wanted item found and deleted
   */
-  bool deleteLocalDinService(const GetyPos_c& rc_gtp) {return deleteLocalService(rc_gtp);};
+  bool deleteLocalDinService(const DevKey_c& rc_devKey) {return deleteLocalService(rc_devKey);};
 
   /**
-    check if service with given gtp exist
-    @param rc_gtp GETY_POS code of the searched service
+    check if service with given devKey exist
+    @param rc_devKey DEV_KEY code of the searched service
   */
-  bool existDinServiceGtp(const GetyPos_c& rc_gtp);
+  bool existDinServiceDevKey(const DevKey_c& rc_devKey);
 
   /**
-    deliver service item with given gtp
+    deliver service item with given devKey
 
     possible errors:
       * Err_c::elNonexistent on failed search
 
-    @param rc_gtp GETY_POS code of the searched ServiceItem
+    @param rc_devKey DEV_KEY code of the searched ServiceItem
     @return reference to the searched DINServiceItem_c or first item, if search failed
      @exception containerElementNonexistant
   */
-  DINServiceItem_c& dinServiceGtp(const GetyPos_c& rc_gtp);
+  DINServiceItem_c& dinServiceDevKey(const DevKey_c& rc_devKey);
 
   /**
     check if service with given service number exist
-    (use existDinServiceGtp as gtp and number are equivalent for services)
+    (use existDinServiceDevKey as devKey and number are equivalent for services)
     @param rui8_nr searched service number
   */
-  bool existDinServiceNr(uint8_t rui8_nr){return existDinServiceGtp(rui8_nr);};
+  bool existDinServiceNr(uint8_t rui8_nr){return existDinServiceDevKey(rui8_nr);};
 
   /**
     deliver service item with given nr
-    (use din_serviceGtp as gtp and service number are equivalent for services)
+    (use din_serviceDevKey as devKey and service number are equivalent for services)
 
     possible errors:
       * Err_c::elNonexistent on failed search
@@ -232,41 +232,41 @@ public:
     @return reference to the searched DINServiceItem_c or first item, if search failed
      @exception containerElementNonexistant
   */
-  DINServiceItem_c& dinServiceNr(uint8_t rui8_nr) {return dinServiceGtp(rui8_nr);};
+  DINServiceItem_c& dinServiceNr(uint8_t rui8_nr) {return dinServiceDevKey(rui8_nr);};
 
   /**
-    insert service with given gtp and nr
+    insert service with given devKey and nr
 
     possible errors:
       * Err_c::badAlloc not enough memory to insert new DINServiceItem_c isntance
       * Err_c::busy another service with same ident exists already in the list
 
-    @param rc_gtp GETY_POS code of Service
+    @param rc_devKey DEV_KEY code of Service
     @return true if new item inserted
   */
-  bool insertDinService(const GetyPos_c& rc_gtp);
+  bool insertDinService(const DevKey_c& rc_devKey);
 
   /**
-    delete a service with given GETY_POS from the list
+    delete a service with given DEV_KEY from the list
 
     possible errors:
       * Err_c::elNonexistent no service with given ident exists
 
-    @param rc_gtp GETY_POS of the deleted item
+    @param rc_devKey DEV_KEY of the deleted item
     @return true -> an item weas deleted
   */
-  bool deleteDinServiceGtp(const GetyPos_c& rc_gtp);
+  bool deleteDinServiceDevKey(const DevKey_c& rc_devKey);
   /**
     delete a service with given service number from the list
-    (uses deleteDinServiceGtp as GETY_POS and number of services are equal)
+    (uses deleteDinServiceDevKey as DEV_KEY and number of services are equal)
 
     possible errors:
       * Err_c::elNonexistent no service with given ident exists
 
-    @param rc_gtp GETY_POS of the deleted item
+    @param rc_devKey DEV_KEY of the deleted item
     @return true -> an item weas deleted
   */
-   bool deleteDinServiceNr(uint8_t rui8_nr){return deleteDinServiceGtp(rui8_nr);};
+   bool deleteDinServiceNr(uint8_t rui8_nr){return deleteDinServiceDevKey(rui8_nr);};
   /**
     process system msg with alive or error state
     msg from a service

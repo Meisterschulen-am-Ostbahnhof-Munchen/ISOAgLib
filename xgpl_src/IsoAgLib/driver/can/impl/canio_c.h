@@ -463,22 +463,22 @@ class CANIO_c : public SingletonCANIO_c {
     deliver min msg obj nr
     @return min msg obj nr
   */
-  uint8_t minMsgObjNr()const{return b_min_msgObjLimit;};
+  uint8_t minMsgObjNr()const{return ui8_min_msgObjLimit;};
   /**
     deliver max msg obj nr
     @return max msg obj nr
   */
-  uint8_t maxMsgObjNr()const{return b_maxMsgObjLimit;};
+  uint8_t maxMsgObjNr()const{return ui8_maxMsgObjLimit;};
   /**
     set min msg obj nr
     @param rb_limit wanted min msg obj nr
   */
-  void setMinMsgObjNr(uint8_t rb_limit){b_min_msgObjLimit = rb_limit;};
+  void setMinMsgObjNr(uint8_t rb_limit){ui8_min_msgObjLimit = rb_limit;};
   /**
     set max msg obj nr
     @param rb_limit wanted max msg obj nr
   */
-  void setMaxMsgObjNr(uint8_t rb_limit){b_maxMsgObjLimit = rb_limit;};
+  void setMaxMsgObjNr(uint8_t rb_limit){ui8_maxMsgObjLimit = rb_limit;};
   /**
     switch CAN bitrate (possible during runtime
     with automatic reconfiguring of CAN MsgObj)
@@ -563,18 +563,22 @@ class CANIO_c : public SingletonCANIO_c {
     (important for multithreading environments where different
      Processes must share one BUS)
   */
-  uint8_t b_min_msgObjLimit;
+  uint8_t ui8_min_msgObjLimit;
   /**
     max limit of allowed msgObj numbers for this CANIO_c instance
     (important for multithreading environments where different
      Processes must share one BUS)
   */
-  uint8_t b_maxMsgObjLimit;
+  uint8_t ui8_maxMsgObjLimit;
   /** count of CAN messages which were processed during last timeEvent() / processMsg() call
     * this helps Scheduler_c to decide about needed double retrigger of CANIO_c::processMsg()
     * at high CAN BUS load (important to avoid overflow of CAN buffers in HAL
     */
   uint8_t ui8_processedMsgCnt;
+  /** flag to avoid loop of CAN message processing, when timeEvent() is called during previous
+   *  timeEvent triggered CAN processing -> when this flag is TRUE, no further processing is performed
+   */
+  bool b_runningCanProcess;
 };
 
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )

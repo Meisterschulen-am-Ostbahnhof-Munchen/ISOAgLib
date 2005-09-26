@@ -72,7 +72,7 @@ void GpsManager_c::writeHeader()
   IsoAgLib::getIrs232Instance() << "date;time;lon;E/W;lat;N/S;alt;gpsstate;";
 }
 
-/** write informations of according member (GETY, POS, name)
+/** write informations of according member (DEV CLASS/INST, name)
     and all remote process data of ppc_data
     to RS232
 */

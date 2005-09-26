@@ -73,7 +73,7 @@ namespace IsoAgLib {
   informations in the system
 
   <b>Basic Rules for Matching of Received Messages)</b>
-  1) primary match with LIS, GETY, ZAEHLNUM, WERT, INST
+  1) primary match with LIS, DEVCLASS, ZAEHLNUM, WERT, INST
   2) distinguishing of more hits by POS
   \n
   <b>Acceptance Guidlines for Received Messages)</b>
@@ -144,8 +144,8 @@ public:
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
     common parameter
-    @param rui8_gety GETY code of searched local Process Data instance
-    @param rui8_pos optional POS
+    @param rui8_devClass DEVCLASS code of searched local Process Data instance
+    @param rui8_devClassInst optional POS
     @return true -> suitable instance found
   */
   bool existProcDataLocal(
@@ -154,28 +154,28 @@ public:
                           uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
-                          uint8_t rui8_dataGety,
-                          uint8_t rui8_pos,
+                          uint8_t rui8_dataDevClass,
+                          uint8_t rui8_devClassInst,
                           uint8_t rui8_lis,
                           uint8_t rui8_wert,
                           uint8_t rui8_inst,
                           uint8_t rui8_zaehlnum,
 #endif
-                          uint8_t rui8_getyReceiver)
+                          uint8_t rui8_devClassReceiver)
   { return Process_c::existProcDataLocal(
 #ifdef USE_ISO_11783
                           rui16_DDI,
                           rui16_element,
 #endif
 #ifdef USE_DIN_9684
-                          rui8_dataGety,
-                          rui8_pos,
+                          rui8_dataDevClass,
+                          rui8_devClassInst,
                           rui8_lis,
                           rui8_wert,
                           rui8_inst,
                           rui8_zaehlnum,
 #endif
-                          rui8_getyReceiver
+                          rui8_devClassReceiver
   );}
   /**
     checks if a suitable iProcessDataRemote_c item exist
@@ -190,45 +190,45 @@ public:
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
     common parameter
-    @param rui8_gety GETY code of searched remote Process Data instance
-    @param rui8_pos optional POS
+    @param rui8_devClass DEVCLASS code of searched remote Process Data instance
+    @param rui8_devClassInst optional POS
     @return true -> suitable instance found
   */
   bool existProcDataRemote(
 #ifdef USE_ISO_11783
                            uint16_t rui16_DDI,
                            uint16_t rui16_element,
-                           uint8_t rui8_getySender,
+                           uint8_t rui8_devClassSender,
 #endif
 #ifdef USE_DIN_9684
-                           uint8_t rui8_dataGety,
-                           uint8_t rui8_pos,
+                           uint8_t rui8_dataDevClass,
+                           uint8_t rui8_devClassInst,
                            uint8_t rui8_lis,
                            uint8_t rui8_wert,
                            uint8_t rui8_inst,
                            uint8_t rui8_zaehlnum,
 #endif
-                           uint8_t rui8_getyReceiver)
+                           uint8_t rui8_devClassReceiver)
   { return Process_c::existProcDataRemote(
 #ifdef USE_ISO_11783
                            rui16_DDI,
                            rui16_element,
-                           rui8_getySender,
+                           rui8_devClassSender,
 #endif
 #ifdef USE_DIN_9684
-                           rui8_dataGety,
-                           rui8_pos,
+                           rui8_dataDevClass,
+                           rui8_devClassInst,
                            rui8_lis,
                            rui8_wert,
                            rui8_inst,
                            rui8_zaehlnum,
 #endif
-                           rui8_getyReceiver
+                           rui8_devClassReceiver
   );};
 
   /**
     delivers count of local process data entries with similar ident
-    (which differs only in POS of owner)
+    (which differs only in _instance_ of owner)
     ISO parameter
     @param rui16_DDI
     @param rui16_element
@@ -240,7 +240,7 @@ public:
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
     common parameter
-    @param rui8_gety GETY code of searched local Process Data instance
+    @param rui8_devClass DEVCLASS code of searched local Process Data instance
     @return count of similar local process data entries
   */
   uint8_t procDataLocalCnt(
@@ -254,7 +254,7 @@ public:
                            uint8_t rui8_inst,
                            uint8_t rui8_zaehlnum,
 #endif
-                           uint8_t rui8_gety)
+                           uint8_t rui8_devClass)
     {return Process_c::procDataLocalCnt(
 #ifdef USE_ISO_11783
                                         rui16_DDI, rui16_element,
@@ -262,16 +262,16 @@ public:
 #ifdef USE_DIN_9684
                                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                        rui8_gety);
+                                        rui8_devClass);
     };
 
   /**
     delivers count of remote process data entries with similar ident
-    (which differs only in POS of owner)
+    (which differs only in _instance_ of owner)
     ISO parameter
     @param rui16_DDI
     @param rui16_element
-    @param rui8_getySender gety of the sender (used for check against ownerGtp().getGety())
+    @param rui8_devClassSender devClass of the sender (used for check against ownerDevKey().getDevClass())
 
     DIN parameter
     @param rui8_lis LIS code of searched local Process Data instance
@@ -280,14 +280,14 @@ public:
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
     common parameter
-    @param rui8_gety GETY code of searched local Process Data instance
+    @param rui8_devClass DEVCLASS code of searched local Process Data instance
     @return count of similar remote process data entries
   */
   uint8_t procDataRemoteCnt(
 #ifdef USE_ISO_11783
                             uint16_t rui16_DDI,
                             uint16_t rui16_element,
-                            uint8_t rui8_getySender,
+                            uint8_t rui8_devClassSender,
 #endif
 #ifdef USE_DIN_9684
                             uint8_t rui8_lis,
@@ -295,15 +295,15 @@ public:
                             uint8_t rui8_inst,
                             uint8_t rui8_zaehlnum,
 #endif
-                            uint8_t rui8_gety)
+                            uint8_t rui8_devClass)
     {return Process_c::procDataRemoteCnt(
 #ifdef USE_ISO_11783
-                                         rui16_DDI, rui16_element, rui8_getySender,
+                                         rui16_DDI, rui16_element, rui8_devClassSender,
 #endif
 #ifdef USE_DIN_9684
                                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                                         rui8_gety);
+                                         rui8_devClass);
     };
 
  private:

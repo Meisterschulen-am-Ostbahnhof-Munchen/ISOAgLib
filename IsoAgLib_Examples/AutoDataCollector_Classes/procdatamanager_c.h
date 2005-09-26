@@ -44,7 +44,7 @@
 
 using namespace IsoAgLib;
 
-/**Object for basic GETY dependent handling
+/**Object for basic DEVCLASS dependent handling
 of process data for writing by Task Controller
   *@author Dipl.-Inform. Achim Spangler
   */
@@ -63,7 +63,7 @@ public:
   /** test if this instance is activated */
   bool activated()const{return b_activated;};
 
-  /** write informations of according member (GETY, POS, name)
+  /** write informations of according member (DEV CLASS/INST, name)
       and all remote process data of pc_data
       to RS232
   */
@@ -83,10 +83,10 @@ public:
   /** get count of process data */
   uint8_t proc_cnt()const {return ui8_cnt;};
   /**
-    deliver remote gtp of this recording set
-    @return c_remoteGtp
+    deliver remote devKey of this recording set
+    @return c_remoteDevKey
   */
-  const IsoAgLib::iGetyPos_c& gtp() const { return c_remoteGtp;};
+  const IsoAgLib::iDevKey_c& devKey() const { return c_remoteDevKey;};
 protected: // Protected attributes
   /** set activated mode of this instance  */
   void setActivated(bool rb_state = true){b_activated = rb_state;};
@@ -99,8 +99,8 @@ protected: // Protected attributes
   bool b_activated;
   /** amount of managed process data */
   uint8_t ui8_cnt;
-  /** gtp of remote item */
-  IsoAgLib::iGetyPos_c c_remoteGtp;
+  /** devKey of remote item */
+  IsoAgLib::iDevKey_c c_remoteDevKey;
 };
 
 #endif

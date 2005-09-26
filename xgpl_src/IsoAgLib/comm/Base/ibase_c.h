@@ -86,25 +86,30 @@ public:
 
     possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-    @param rpc_gtp optional pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  void init(const iGetyPos_c* rpc_gtp = NULL, BaseDataGroup_t rt_mySendSelection = BaseDataNothing )
-  {Base_c::init(rpc_gtp, rt_mySendSelection);};
+  void init(const iDevKey_c* rpc_devKey = NULL, BaseDataGroup_t rt_mySendSelection = BaseDataNothing )
+  {Base_c::init(rpc_devKey, rt_mySendSelection);};
 
   /**
-    config the Base_c object after init -> set pointer to gtp and
+    config the Base_c object after init -> set pointer to devKey and
     config send/receive of different base msg types
-    @param rpc_gtp pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  void config(const iGetyPos_c* rpc_gtp, BaseDataGroup_t rt_mySendSelection )
-  {Base_c::config(rpc_gtp, rt_mySendSelection );};
+  void config(const iDevKey_c* rpc_devKey, BaseDataGroup_t rt_mySendSelection )
+  {Base_c::config(rpc_devKey, rt_mySendSelection );};
+  /** Retrieve the last update time of the specified information type
+     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+   */
+  int32_t lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
+    {return Base_c::lastUpdate( rt_mySendSelection );}
 
   #ifdef USE_ISO_11783
   /**
     send ISO11783 calendar PGN
-    @param rc_gtp GETY_POS code off calling item which wants to send
+    @param rc_devKey DEV_KEY code off calling item which wants to send
     @parm ri32_time timestamp where calendar was last sent (default autodetect)
 
     possible errors:
@@ -113,7 +118,7 @@ public:
     @see CANPkgExt_c::getData
     @see CANIO_c::operator<<
   */
-  void isoSendCalendar(const iGetyPos_c& rc_gtp) { Base_c::isoSendCalendar(rc_gtp);};
+  void isoSendCalendar(const iDevKey_c& rc_devKey) { Base_c::isoSendCalendar(rc_devKey);};
   #endif
 
   /* ******************************************* */
@@ -243,7 +248,31 @@ public:
     IsoActiveFlag_t rt_implPark, IsoActiveFlag_t rt_implWork)
     {Base_c::forceMaintainPower(rb_ecuPower, rb_actuatorPower, rt_implTransport, rt_implPark, rt_implWork);};
 
+
+  /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
+  void setGpsLatitudeDegree10Minus7( int32_t ri32_newVal ) { Base_c::setGpsLatitudeDegree10Minus7(ri32_newVal); };
+  /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
+  void setGpsLongitudeDegree10Minus7( int32_t ri32_newVal ) { Base_c::setGpsLongitudeDegree10Minus7(ri32_newVal); };
+  #if defined(NMEA_2000_FAST_PACKET)
+  /** deliver GPS altitude - [cm] */
+  void setGpsAltitudeCm( uint32_t rui32_newVal ) { Base_c::setGpsAltitudeCm(rui32_newVal); };
+  /** deliver GPS receive qualitiy */
+  void setGnssMode( IsoAgLib::IsoGnssMethod_t rt_newVal ) { Base_c::setGnssMode(rt_newVal);};
+  /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
+  void setGnssType( IsoAgLib::IsoGnssType_t rt_newVal ) { Base_c::setGnssType(rt_newVal);};
+  /** deliver GPS speed as [cm/s] */
+  void setGpsSpeedCmSec( uint16_t rui16_newVal ) { Base_c::setGpsSpeedCmSec(rui16_newVal);};
+  /** deliver GPS Heading [1x10E-4rad] */
+  void setGpsHeadingRad10Minus4( uint16_t rui16_newVal ) { Base_c::setGpsHeadingRad10Minus4(rui16_newVal); };
+  /** deliver number of received satellites */
+  void setSatelliteCnt( uint8_t rui8_newVal ) { Base_c::setSatelliteCnt(rui8_newVal);};
+  /** deliver HDOP with scaling [1x10E-2] */
+  void setHdop10Minus2( uint16_t rui16_newVal ) { Base_c::setHdop10Minus2(rui16_newVal);};
+  /** PDOP with scaling [1x10E-2] */
+  void setPdop10Minus2( uint16_t rui16_newVal ) { Base_c::setPdop10Minus2(rui16_newVal);};
+  // END OF FAST PACKET
   #endif
+#endif
   /**
     set engine speed
     @param ri16_val value to store as engine rpm value
@@ -270,8 +299,19 @@ public:
     @param rb_minute value to store as minute
     @param rb_second value to store as second
   */
-  void setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second)
-  {Base_c::setCalendar(ri16_year, rb_month, rb_day, rb_hour, rb_minute, rb_second);};
+  void setCalendarUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second)
+  {Base_c::setCalendarUtc(ri16_year, rb_month, rb_day, rb_hour, rb_minute, rb_second);};
+  /**
+    set the calendar value
+    @param ri16_year value to store as year
+    @param rb_month value to store as month
+    @param rb_day value to store as day
+    @param rb_hour value to store as hour
+    @param rb_minute value to store as minute
+    @param rb_second value to store as second
+   */
+  void setCalendarLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second)
+  {Base_c::setCalendarLocal(ri16_year, rb_month, rb_day, rb_hour, rb_minute, rb_second);};
   /*@}*/
 
   /* ****************************************************** */
@@ -334,52 +374,52 @@ public:
     get the calendar year value
     @return actual calendar year value
   */
-  int16_t year() const { return Base_c::year();};
+  int16_t yearUtc() const { return Base_c::yearUtc();};
   /**
     set the calendar year value
     @param rui16_year actual calendar year value
   */
-  void setYear(uint16_t rui16_year) { Base_c::setYear( rui16_year );};
+  void setYearUtc(uint16_t rui16_year) { Base_c::setYearUtc( rui16_year );};
   /**
     get the calendar month value
     @return actual calendar month value
   */
-  uint8_t month() const { return Base_c::month();};
+  uint8_t monthUtc() const { return Base_c::monthUtc();};
   /**
     set the calendar month value
     @param rb_month actual calendar month value
   */
-  void setMonth(uint8_t rb_month) { Base_c::setMonth( rb_month );};
+  void setMonthUtc(uint8_t rb_month) { Base_c::setMonthUtc( rb_month );};
   /**
     get the calendar day value
     @return actual calendar day value
   */
-  uint8_t day() const { return Base_c::day();};
+  uint8_t dayUtc() const { return Base_c::dayUtc();};
   /**
     set the calendar day value
     @param rb_day actual calendar day value
   */
-  void setDay(uint8_t rb_day) { Base_c::setDay( rb_day );};
+  void setDayUtc(uint8_t rb_day) { Base_c::setDayUtc( rb_day );};
   /**
     get the calendar hour value
     @return actual calendar hour value
   */
-  uint8_t hour() const { return Base_c::hour();};
+  uint8_t hourUtc() const { return Base_c::hourUtc();};
   /**
     set the calendar hour value
     @param rb_hour actual calendar hour value
   */
-  void setHour(uint8_t rb_hour) { Base_c::setHour( rb_hour );};
+  void setHourUtc(uint8_t rb_hour) { Base_c::setHourUtc( rb_hour );};
   /**
     get the calendar minute value
     @return actual calendar minute value
   */
-  uint8_t minute() const { return Base_c::minute();};
+  uint8_t minuteUtc() const { return Base_c::minuteUtc();};
   /**
     set the calendar minute value
     @param rb_minute actual calendar minute value
   */
-  void setMinute(uint8_t rb_minute) { Base_c::setMinute( rb_minute );};
+  void setMinuteUtc(uint8_t rb_minute) { Base_c::setMinuteUtc( rb_minute );};
   /**
     get the calendar second value
     @return actual calendar second value
@@ -392,14 +432,14 @@ public:
   void setSecond(uint8_t rb_second) { Base_c::setSecond( rb_second );};
 
   /**
-    deliver the gtp of the sender of the base data
+    deliver the devKey of the sender of the base data
 
     possible errors:
         * Err_c::range rui8_typeNr doesn't match valid base msg type number
     @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
-    @return GETY_POS code of member who is sending the intereested base msg type
+    @return DEV_KEY code of member who is sending the intereested base msg type
   */
-  const iGetyPos_c& senderGtp(BaseDataGroup_t rt_typeGrp) { return static_cast<const iGetyPos_c&>(Base_c::senderGtp( rt_typeGrp ));};
+  const iDevKey_c& senderDevKey(BaseDataGroup_t rt_typeGrp) { return static_cast<const iDevKey_c&>(Base_c::senderDevKey( rt_typeGrp ));};
 
   #ifdef USE_DIN_9684
   /** deliver rear left draft */
@@ -496,17 +536,31 @@ public:
   float getGpsLatitudeMinute( void ) const { return Base_c::getGpsLatitudeMinute(); };
   /** deliver Minute GPS Longitude */
   float getGpsLongitudeMinute( void ) const { return Base_c::getGpsLongitudeMinute(); };
+  /** deliver Degree GPS Latitude */
+  float getGpsLatitudeDegree( void ) const { return Base_c::getGpsLatitudeDegree(); };
+  /** deliver Degree GPS Longitude */
+  float getGpsLongitudeDegree( void ) const { return Base_c::getGpsLongitudeDegree(); };
   #endif
+  #ifdef NMEA_2000_FAST_PACKET
   /** deliver GPS altitude - [cm] */
   uint32_t getGpsAltitudeCm( void ) const { return Base_c::getGpsAltitudeCm(); };
   /** deliver GPS receive qualitiy */
   IsoGnssMethod_t getGnssMode( void ) const { return Base_c::getGnssMode();};
+  /** simply check for some sort of Differential signal */
+  bool hasDifferentialPosition() const { return Base_c::hasDifferentialPosition();};
   /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
   IsoGnssType_t getGnssType(void) const { return Base_c::getGnssType();};
   /** deliver GPS speed as [cm/s] */
   uint16_t getGpsSpeedCmSec( void ) const { return Base_c::getGpsSpeedCmSec();};
   /** deliver GPS Heading [1x10E-4rad] */
   uint16_t getGpsHeadingRad10Minus4( void ) const { return Base_c::getGpsHeadingRad10Minus4(); };
+  /** deliver number of received satellites */
+  uint8_t satelliteCnt() const { return Base_c::satelliteCnt();};
+  /** deliver HDOP with scaling [1x10E-2] */
+  int16_t hdop10Minus2() const { return Base_c::hdop10Minus2();};
+  /** PDOP with scaling [1x10E-2] */
+  int16_t pdop10Minus2() const { return Base_c::pdop10Minus2();};
+  #endif
 
   uint16_t getGpsUpdateAge( void ) const { return Base_c::getGpsUpdateAge(); };
 

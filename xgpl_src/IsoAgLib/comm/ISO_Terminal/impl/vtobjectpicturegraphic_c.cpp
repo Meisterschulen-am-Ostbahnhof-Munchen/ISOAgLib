@@ -46,37 +46,37 @@
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  * 
- ***************************************************************************/ 
+ * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ ***************************************************************************/
 
  /**************************************************************************
- *                                                                         * 
- *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   * 
- * Each software module, which accesses directly elements of this file,    * 
- * is considered to be an extension of IsoAgLib and is thus covered by the * 
- * GPL license. Applications must use only the interface definition out-   * 
- * side :impl: subdirectories. Never access direct elements of __IsoAgLib  * 
- * and __HAL namespaces from applications which shouldnt be affected by    * 
- * the license. Only access their interface counterparts in the IsoAgLib   * 
- * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- * 
- * ion really needs access to a part of an internal namespace, so that the * 
- * interface might be extended if your request is accepted.                * 
- *                                                                         * 
- * Definition of direct access:                                            * 
- * - Instantiation of a variable with a datatype from internal namespace   * 
- * - Call of a (member-) function                                          * 
- * Allowed is:                                                             * 
- * - Instatiation of a variable with a datatype from interface namespace,  * 
- *   even if this is derived from a base class inside an internal namespace* 
- * - Call of member functions which are defined in the interface class     * 
- *   definition ( header )                                                 * 
- *                                                                         * 
- * Pairing of internal and interface classes:                              * 
- * - Internal implementation in an :impl: subdirectory                     * 
- * - Interface in the parent directory of the corresponding internal class * 
- * - Interface class name IsoAgLib::iFoo_c maps to the internal class      * 
- *   __IsoAgLib::Foo_c                                                     * 
- *                                                                         * 
+ *                                                                         *
+ *     ###    !!!    ---    ===    IMPORTANT    ===    ---    !!!    ###   *
+ * Each software module, which accesses directly elements of this file,    *
+ * is considered to be an extension of IsoAgLib and is thus covered by the *
+ * GPL license. Applications must use only the interface definition out-   *
+ * side :impl: subdirectories. Never access direct elements of __IsoAgLib  *
+ * and __HAL namespaces from applications which shouldnt be affected by    *
+ * the license. Only access their interface counterparts in the IsoAgLib   *
+ * and HAL namespaces. Contact a.spangler@osb-ag:de in case your applicat- *
+ * ion really needs access to a part of an internal namespace, so that the *
+ * interface might be extended if your request is accepted.                *
+ *                                                                         *
+ * Definition of direct access:                                            *
+ * - Instantiation of a variable with a datatype from internal namespace   *
+ * - Call of a (member-) function                                          *
+ * Allowed is:                                                             *
+ * - Instatiation of a variable with a datatype from interface namespace,  *
+ *   even if this is derived from a base class inside an internal namespace*
+ * - Call of member functions which are defined in the interface class     *
+ *   definition ( header )                                                 *
+ *                                                                         *
+ * Pairing of internal and interface classes:                              *
+ * - Internal implementation in an :impl: subdirectory                     *
+ * - Interface in the parent directory of the corresponding internal class *
+ * - Interface class name IsoAgLib::iFoo_c maps to the internal class      *
+ *   __IsoAgLib::Foo_c                                                     *
+ *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
@@ -145,13 +145,13 @@ namespace __IsoAgLib {
           options = (vtObjectPictureGraphic_a->f & 0x03) + ((vtObjectPictureGraphic_a->f & optionander) ? 0x04 : 0x00); /* get the right RLE 1/4/8 bit to bit 2 when streaming! */
 
 #define MACRO_calculate_ui8_graphicType \
-          ui8_graphicType = ( min (__IsoAgLib::getIsoTerminalInstance().getVtCapabilities()->hwGraphicType, vtObjectPictureGraphic_a->format) ); \
+          ui8_graphicType = ( min (__IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities()->hwGraphicType, vtObjectPictureGraphic_a->format) ); \
           /* If 16-color bitmap is not specified, take the 2-color version. -That's the only exception! */ \
           if ((ui8_graphicType == 1) && (vtObjectPictureGraphic_a->rawData1 == NULL)) ui8_graphicType = 0;
 
 #define MACRO_CheckFixedBitmapsLoop_start \
     /* See if we have colorDepth of VT */ \
-    uint8_t vtDepth = __IsoAgLib::getIsoTerminalInstance().getVtCapabilities()->hwGraphicType; \
+    uint8_t vtDepth = __IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities()->hwGraphicType; \
     /* Check for 100%-matching fixedBitmaps first */ \
     bool b_foundFixedBitmap = false; \
     for (int fixNr=0; fixNr<vtObjectPictureGraphic_a->numberOfFixedBitmapsToFollow; fixNr++) { \
@@ -163,11 +163,11 @@ namespace __IsoAgLib {
         b_foundFixedBitmap = true; \
         break; \
       } \
-    } 
+    }
 
 #if defined (NO_BITMAP_SCALING)
   #define MACRO_calculateRequestedSize \
-  	uint16_t width = vtObjectPictureGraphic_a->width;
+    uint16_t width = vtObjectPictureGraphic_a->width;
 #else
   #define MACRO_calculateRequestedSize \
     uint16_t width; \
@@ -194,7 +194,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, uint16_
     MACRO_scaleSKLocalVars;
 
     uint8_t ui8_graphicType;
-    
+
     const HUGE_MEM uint8_t* rawData;
     uint32_t numberOfBytesInRawData;
     uint16_t actualWidth;
@@ -211,7 +211,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, uint16_
         options = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].formatoptions & 0x7; /* format is bit 8+7, options is bit 2-0 (NO RLE1/4/8 stuff here!! */
         ui8_graphicType = vtDepth;
     MACRO_CheckFixedBitmapsLoop_end
-    
+
     if (!b_foundFixedBitmap) {
       // See what we have as standard...
       actualWidth = vtObjectPictureGraphic_a->actualWidth;
@@ -224,7 +224,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, uint16_
         default: MACRO_helperForDifferentSizes (numberOfBytesInRawData0, options, rawData0, 0x04) break;
       }
     }
-    
+
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
@@ -237,7 +237,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, uint16_
       destMemory [8] = actualHeight >> 8;
       destMemory [9] = ui8_graphicType;
       destMemory [10] = options;
-      destMemory [11] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
+      destMemory [11] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
       destMemory [12] = (numberOfBytesInRawData) & 0xFF;
       destMemory [13] = (numberOfBytesInRawData >> 8) & 0xFF;
       destMemory [14] = (numberOfBytesInRawData >> 16) & 0xFF;
@@ -271,7 +271,7 @@ vtObjectPictureGraphic_c::fitTerminal()
   MACRO_localVars;
   MACRO_scaleLocalVars;
   MACRO_scaleSKLocalVars;
-  
+
   uint32_t numberOfBytesInRawData;
   uint8_t ui8_graphicType;
 
@@ -280,7 +280,7 @@ vtObjectPictureGraphic_c::fitTerminal()
   MACRO_CheckFixedBitmapsLoop_start
       numberOfBytesInRawData = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].numberOfBytesInRawData;
   MACRO_CheckFixedBitmapsLoop_end
-  
+
   if (!b_foundFixedBitmap) {
     MACRO_calculate_ui8_graphicType
     switch (ui8_graphicType) {
@@ -290,7 +290,7 @@ vtObjectPictureGraphic_c::fitTerminal()
       default: MACRO_helperForDifferentSizesSizeOnly (numberOfBytesInRawData0) break;
     }
   }
- 
+
   return 17+numberOfBytesInRawData+vtObjectPictureGraphic_a->numberOfMacrosToFollow*2;
 } // -X2C
 

@@ -93,14 +93,14 @@ namespace __IsoAgLib {
 /**
   constructor which can set optional all ident data
   @param ri32_time creation time of this item instance
-  @param rc_gtp GETY_POS code of this item
-  @param rui8_nr number of this item (for real services equal to gety)
+  @param rc_devKey DEV_KEY code of this item
+  @param rui8_nr number of this item (for real services equal to devClass)
   @param rb_status state of this ident (off, claimed address, ...) (default: off)
   @param rui16_adrVect ADRESSBELVEKT used by this item
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-DINServiceItem_c::DINServiceItem_c(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr, uint8_t rb_status, uint16_t rui16_adrVect, int ri_singletonVecKey)
-  : MonitorItem_c(ri32_time, rc_gtp, rui8_nr, (IState_c::itemState_t)rb_status, ri_singletonVecKey ), c_adrvect(rui16_adrVect)
+DINServiceItem_c::DINServiceItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr, uint8_t rb_status, uint16_t rui16_adrVect, int ri_singletonVecKey)
+  : MonitorItem_c(ri32_time, rc_devKey, rui8_nr, (IState_c::itemState_t)rb_status, ri_singletonVecKey ), c_adrvect(rui16_adrVect)
 {}
 
 /**
@@ -158,16 +158,16 @@ void DINServiceItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLe
   set all element data with one call
   @param rpc_lbs pointer to the central Scheduler_c instance
   @param ri32_time creation time of this item instance
-  @param rc_gtp GETY_POS code of this item
-  @param rui8_nr number of this item (for real services equal to gety)
+  @param rc_devKey DEV_KEY code of this item
+  @param rui8_nr number of this item (for real services equal to devClass)
   @param ren_status status information of this ident (IState_c::Off, IState_c::Active, ...) (default: IState_c::Active)
   @param rui16_adrVect ADRESSBELVEKT used by this item
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void DINServiceItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
+void DINServiceItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr,
         itemState_t ren_status, uint16_t rui16_adrVect,  int ri_singletonVecKey )
 {
-   MonitorItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, ri_singletonVecKey);
+   MonitorItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, ri_singletonVecKey);
    c_adrvect = rui16_adrVect;
 };
 
@@ -192,7 +192,7 @@ bool DINServiceItem_c::timeEvent( void )
    { // last alive msg is >= 1000msec. ago -> send alive
      DINSystemPkg_c& c_pkg = c_din_monitor.data();
      // fill data in SystemPkg
-     c_pkg.setGtp(gtp());
+     c_pkg.setDevKey(devKey());
      // if item is in error state, send errorAlive
      // dependent on the original aliveVerw, the errorVerw can be
      // built by setting the bits of 0x3

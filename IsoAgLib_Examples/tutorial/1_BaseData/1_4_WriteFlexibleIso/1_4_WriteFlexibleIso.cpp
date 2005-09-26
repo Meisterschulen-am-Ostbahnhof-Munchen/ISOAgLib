@@ -242,13 +242,13 @@ uint16_t localGetSecond() { return ((iSystem_c::getTime()/1000)%60); };
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
   getIcanInstance().init( cui32_canChannel, 250 );
-  // variable for GETY_POS
+  // variable for DEV_KEY
   // default with tractor
-  IsoAgLib::iGetyPos_c myGtp( 1, 5 );
+  IsoAgLib::iDevKey_c myDevKey( 1, 5 );
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can cahnge the myGtp val through the pointer to myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -259,14 +259,14 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
   // configure BaseData_c to send nothing on BUS
-  getIBaseInstance().config(&myGtp, IsoAgLib::BaseDataNothing );
+  getIBaseInstance().config(&myDevKey, IsoAgLib::BaseDataNothing );
 
   // timestamp when local ECU will start to send calendar
   // -> 3000msec after own address claim without any calendar
@@ -307,7 +307,7 @@ int main()
 
     if ( ! b_sendCalendar )
     { // check if local item has already claimed address
-      if (getISystemMgmtInstance().existMemberGtp(myGtp, true))
+      if (getISystemMgmtInstance().existMemberDevKey(myDevKey, true))
       { // local item has claimed address
         if ( i32_decideOnCalendar < 0 )
         { // set time for decision
@@ -318,7 +318,7 @@ int main()
                 && ( ! getIBaseInstance().isCalendarReceived() ) )
         { // still no calendar received -> start sending of calendar
           // first set config in BaseData_c
-          getIBaseInstance().config(&myGtp, BaseDataCalendar );
+          getIBaseInstance().config(&myDevKey, BaseDataCalendar );
           b_sendCalendar = true;
         }
       }

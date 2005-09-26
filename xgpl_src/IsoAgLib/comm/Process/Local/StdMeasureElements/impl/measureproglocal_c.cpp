@@ -98,16 +98,16 @@ namespace __IsoAgLib {
   @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
   @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
   @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-  @param rui8_callerGtp optional GETY_POS of remote member, which caused creation of this instance (default 0xFF == no member)
+  @param rui8_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
 */
 void MeasureProgLocal_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType,
   int32_t ri32_masterVal,
   int32_t ri32_initialVal,
-  const GetyPos_c& rc_callerGtp)
+  const DevKey_c& rc_callerDevKey)
 {
-  MeasureProgBase_c::init( rpc_processData, ren_progType, ri32_initialVal, rc_callerGtp  );
+  MeasureProgBase_c::init( rpc_processData, ren_progType, ri32_initialVal, rc_callerDevKey  );
 
   i32_lastMasterVal = ri32_masterVal;
   if (ri32_initialVal != 0)
@@ -129,14 +129,14 @@ void MeasureProgLocal_c::init(
   @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
   @param rf_masterVal actual central local measured value used as float masterVal
   @param rf_eepromVal optional value stored in EEPROM (default 0.0)
-  @param rui8_callerGtp optional GETY_POS of remote member, which caused creation of this instance (default 0xFF == no member)
+  @param rui8_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
 */
 void MeasureProgLocal_c::init(
   ProcDataBase_c *const rpc_processData,
   Proc_c::progType_t ren_progType, float rf_masterVal,
-  float rf_eepromVal, const GetyPos_c& rc_callerGtp)
+  float rf_eepromVal, const DevKey_c& rc_callerDevKey)
 {
-  MeasureProgBase_c::init( rpc_processData, ren_progType, rf_eepromVal, rc_callerGtp  );
+  MeasureProgBase_c::init( rpc_processData, ren_progType, rf_eepromVal, rc_callerDevKey  );
 
   f_lastMasterVal = rf_masterVal;
   if (rf_eepromVal != 0)
@@ -379,20 +379,20 @@ bool MeasureProgLocal_c::stop(){
 /**
   send a sub-information (selected by MOD) to a specified target (selected by GPT)
   @param rui8_mod MOD code of the value type to send
-  @param rc_targetGtp GetyPos of target
+  @param rc_targetDevKey DevKey of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const GetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType ) const {
+bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType ) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processDataConst().valType() != float_val)
-     return processDataConst().sendValGtp(ren_progType, rc_targetGtp, valMod(en_valueGroup));
-  else return processDataConst().sendValGtp(ren_progType, rc_targetGtp, valModFloat(en_valueGroup));
+     return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, valMod(en_valueGroup));
+  else return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, valModFloat(en_valueGroup));
 #else
-  return processDataConst().sendValGtp(ren_progType, rc_targetGtp, valMod(en_valueGroup));
+  return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, valMod(en_valueGroup));
 #endif
 }
 
@@ -424,11 +424,11 @@ bool MeasureProgLocal_c::processMsg(){
       b_result = true;
       // call handler function if handler class is registered
       if ( processDataConst().getProcessDataChangeHandler() != NULL )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().gtp() );
+        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().devKey() );
     } // write
     else
     { // read -> answer wanted value
-      sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().gtp(), Proc_c::progType_t(c_pkg.pri()));
+      sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()));
       b_result = true;
     } // read
   }
@@ -695,29 +695,29 @@ bool MeasureProgLocal_c::sendRegisteredVals(){
   if (checkDoSend(Proc_c::DoVal))
   {
     // call send function
-    b_success = (sendValMod( GeneralCommand_c::exactValue, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::exactValue, devKey(), en_progType))?true : b_success;
   }
   if (checkDoSend(Proc_c::DoMin))
   {
     // call send function
-    b_success = (sendValMod( GeneralCommand_c::minValue, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::minValue, devKey(), en_progType))?true : b_success;
   }
   if (checkDoSend(Proc_c::DoMax))
   {
     // call send function
-    b_success = (sendValMod( GeneralCommand_c::maxValue, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::maxValue, devKey(), en_progType))?true : b_success;
   }
 
   if (checkDoSend(Proc_c::DoInteg))
   {
     // call send function
-    b_success = (sendValMod( GeneralCommand_c::integValue, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::integValue, devKey(), en_progType))?true : b_success;
 
   }
   if (checkDoSend(Proc_c::DoMed))
   {
     // call send function
-    b_success = (sendValMod( GeneralCommand_c::medValue, gtp(), en_progType))?true : b_success;
+    b_success = (sendValMod( GeneralCommand_c::medValue, devKey(), en_progType))?true : b_success;
   }
 
   return b_success;
@@ -773,14 +773,14 @@ bool MeasureProgLocal_c::resetVal(int32_t ri32_val){
     i32_val = ri32_val;
 
     // DIN: pd=1, mod=0
-    b_sendSuccess = processData().sendValGtp(ui8_pri, c_gtp, val());
+    b_sendSuccess = processData().sendValDevKey(ui8_pri, c_devKey, val());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_val = 0;
     // DIN: pd=1, mod=0
-    b_sendSuccess = processData().sendValGtp(ui8_pri, c_gtp, valFloat());
+    b_sendSuccess = processData().sendValDevKey(ui8_pri, c_devKey, valFloat());
   }
 #endif
   #ifdef USE_EEPROM_IO
@@ -816,13 +816,13 @@ bool MeasureProgLocal_c::resetInteg(){
   {
 #endif
   i32_integ = 0;
-  return processData().sendValGtp(ui8_pri, c_gtp, integ());
+  return processData().sendValDevKey(ui8_pri, c_devKey, integ());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_integ = 0;
-    return processData().sendValGtp(ui8_pri, c_gtp, integFloat());
+    return processData().sendValDevKey(ui8_pri, c_devKey, integFloat());
   }
 #endif
 
@@ -850,13 +850,13 @@ bool MeasureProgLocal_c::resetMed(){
   {
 #endif
   i32_medSum = 0;
-  return processData().sendValGtp(ui8_pri, c_gtp, med());
+  return processData().sendValDevKey(ui8_pri, c_devKey, med());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_medSum = 0;
-    return processData().sendValGtp(ui8_pri, c_gtp, medFloat());
+    return processData().sendValDevKey(ui8_pri, c_devKey, medFloat());
   }
 #endif
 }
@@ -883,14 +883,14 @@ bool MeasureProgLocal_c::resetMin(){
 #endif
   i32_min = 0;
   // DIN: pd=1, mod=1
-  return processData().sendValGtp(ui8_pri, c_gtp, min());
+  return processData().sendValDevKey(ui8_pri, c_devKey, min());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_min = 0;
     // DIN: pd=1, mod=1
-    return processData().sendValGtp(ui8_pri, c_gtp, minFloat());
+    return processData().sendValDevKey(ui8_pri, c_devKey, minFloat());
   }
 #endif
 }
@@ -918,14 +918,14 @@ bool MeasureProgLocal_c::resetMax(){
 #endif
   i32_max = 0;
   // DIN: pd=1, mod=2
-  return processData().sendValGtp(ui8_pri, c_gtp, max());
+  return processData().sendValDevKey(ui8_pri, c_devKey, max());
 #ifdef USE_FLOAT_DATA_TYPE
   }
   else
   {
     f_max = 0;
     // DIN: pd=1, mod=2
-    return processData().sendValGtp(ui8_pri, c_gtp, maxFloat());
+    return processData().sendValDevKey(ui8_pri, c_devKey, maxFloat());
   }
 #endif
 }

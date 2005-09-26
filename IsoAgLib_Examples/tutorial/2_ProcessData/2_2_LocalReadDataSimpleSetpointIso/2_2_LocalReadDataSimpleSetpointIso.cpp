@@ -233,13 +233,13 @@ int32_t localGetApplicationRate() { return IsoAgLib::iSystem_c::getTime(); }
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   IsoAgLib::getIcanInstance().init( 0, 250 );
-  // variable for GETY_POS
+  // variable for DEV_KEY
   // default with fertilizer spreader mounted back
-  IsoAgLib::iGetyPos_c c_myGtp( 5, 0 );
+  IsoAgLib::iDevKey_c c_myDevKey( 5, 0 );
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can cahnge the myGtp val through the pointer to myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -250,11 +250,11 @@ int main()
   uint32_t ui32_serNo = 27;
 
 	// start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
   //  ISO:
 #ifdef USE_ISO_11783 
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myGtp,
+  IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 #endif
@@ -262,7 +262,7 @@ int main()
   //  DIN:
 #if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
   uint8_t c_myName[] = "Hi-Me";
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp, c_myName, IsoAgLib::IState_c::DinOnly);
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
 #endif
 
 #if defined(USE_ISO_11783)
@@ -294,9 +294,9 @@ int main()
 #endif
 
 
-  // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=1, INST=0)
-  // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
-  // the pointer to myGtp helps automatic update of GETY_POS, mark this value as NOT cumulated (default)
+  // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=1, INST=0)
+  // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of local data (can vary from previously given device class & instance),
+  // the pointer to myDevKey helps automatic update of DEV_KEY, mark this value as NOT cumulated (default)
   IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myOnoff(
   #if defined(USE_ISO_11783)
                                          s_onOff,
@@ -304,13 +304,13 @@ int main()
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
   #endif
-                                         c_myGtp, 2, c_myGtp, &c_myGtp, false
+                                         c_myDevKey, 2, c_myDevKey, &c_myDevKey, false
   #ifdef USE_EEPROM_IO 
                                          ,0xFFFF
   #endif
                                          );
 
-  // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=3, INST=1)
+  // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=3, INST=1)
   IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myWorkWidth(
   #if defined(USE_ISO_11783)
                                          s_workWidth,
@@ -318,13 +318,13 @@ int main()
   #if defined(USE_DIN_9684)
                                          0, 0x3, 0x1, 0xFF,
   #endif
-                                         c_myGtp, 2, c_myGtp, &c_myGtp, false
+                                         c_myDevKey, 2, c_myDevKey, &c_myDevKey, false
   #ifdef USE_EEPROM_IO 
                                          ,0xFFFF
   #endif
                                          );
   
-  // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=5, INST=0)
+  // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=5, INST=0)
   IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myApplicationRate(
   #if defined(USE_ISO_11783)
                                          s_applicationRate,
@@ -332,7 +332,7 @@ int main()
   #if defined(USE_DIN_9684)
                                          0, 0x5, 0x0, 0xFF,
   #endif
-                                         c_myGtp, 2, c_myGtp, &c_myGtp, false
+                                         c_myDevKey, 2, c_myDevKey, &c_myDevKey, false
   #ifdef USE_EEPROM_IO 
                                          ,0xFFFF
   #endif

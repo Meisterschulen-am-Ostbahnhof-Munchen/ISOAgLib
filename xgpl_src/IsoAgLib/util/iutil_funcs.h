@@ -156,8 +156,7 @@ template<class T> bool convertIstream( StreamInput_c& refc_stream, T& ref_result
   unsigned int ind = 0;
   for ( ; ( ( ind < size ) && ( !refc_stream.eof() ) ); ind++ )
   {
-    refc_stream >> *pui8_writePointer;
-    pui8_writePointer++;
+    refc_stream >> pui8_writePointer[ind];
   }
 #else
   uint8_t ui8_temp;

@@ -1,6 +1,6 @@
 /***************************************************************************
-                          getypos_c.h - class GetyPos_c combines device type
-                                      ( GETY for DIN 9684 ) and instance
+                          getypos_c.h - class DevKey_c combines device class
+                                      ( GETY_POS for DIN 9684 ) and instance
                                       number ( POS for DIN 9684 )
                              -------------------
     begin                 Sun Feb 23 2003
@@ -84,8 +84,8 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#ifndef GETYPOS_H
-#define GETYPOS_H
+#ifndef DEVCLASSPOS_H
+#define DEVCLASSPOS_H
 
 
 /* *************************************** */
@@ -99,55 +99,55 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-/** class GetyPos_c combines device type
-  * ( GETY for DIN 9684 ) and instance
+/** class DevKey_c combines device class
+  * ( GETY_POS for DIN 9684 ) and instance
   * number ( POS for DIN 9684 )
   *@author Dipl.-Inform. Achim Spangler
   */
-class GetyPos_c {
+class DevKey_c {
  public:
     /** constant for default parameters and initialization, where the device type is not yet spcified.
         the instantiation of this constant variable is located in the module cancustomer_c.cpp
       */
-    static const GetyPos_c GetyPosUnspecified;
+    static const DevKey_c DevKeyUnspecified;
     /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
         the instantiation of this constant variable is located in the module cancustomer_c.cpp
       */
-    static const GetyPos_c GetyPosInitialProcessData;
+    static const DevKey_c DevKeyInitialProcessData;
     /** default constructor
-      * @param rui16_gety optional initial GETY (device type)
-      * @param rui16_pos optional initial POS (device number)
+      * @param rui16_devClass optional initial DEVCLASS (device type)
+      * @param rui16_pos optional initial device class instance
       */
-    GetyPos_c( uint16_t rui16_gety = 0x7F, uint16_t rui16_pos = 0xF )
+    DevKey_c( uint16_t rui16_devClass = 0x7F, uint16_t rui16_pos = 0xF )
     #ifdef USE_ISO_11783
-    : c_isoName( true, 2, rui16_gety, rui16_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {};
+    : c_isoName( true, 2, rui16_devClass, rui16_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {};
     #else
-    : ui16_data( ( rui16_gety << 8 ) | ( rui16_pos & 0xF ) ){};
+    : ui16_data( ( rui16_devClass << 8 ) | ( rui16_pos & 0xF ) ){};
     #endif
 
     #ifdef USE_ISO_11783
     /** default constructor
-      * @param rui16_gety optional initial GETY (device type)
-      * @param rui16_pos optional initial POS (device number)
+      * @param rui16_devClass optional initial DEVCLASS (device type)
+      * @param rui16_pos optional initial device class instance
       */
-    GetyPos_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_devClass, uint8_t rb_devClassInst,
+    DevKey_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0)
-    : c_isoName( rb_selfConf, rui8_indGroup, rb_devClass, rb_devClassInst,
+    : c_isoName( rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst,
         rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst) {};
     /** default constructor
-      * @param rui16_gety optional initial GETY (device type)
-      * @param rui16_pos optional initial POS (device number)
+      * @param rui16_devClass optional initial DEVCLASS (device type)
+      * @param rui16_pos optional initial device class instance
       */
-    GetyPos_c( const ISOName_c& rrefc_src )
+    DevKey_c( const ISOName_c& rrefc_src )
     : c_isoName(rrefc_src) {};
-    GetyPos_c( const uint8_t* rpui8_dataName ) : c_isoName( rpui8_dataName ) {};
+    DevKey_c( const uint8_t* rpui8_dataName ) : c_isoName( rpui8_dataName ) {};
     #endif
 
     /** default constructor
-      * @param rui16_gety optional initial GETY (device type)
-      * @param rui16_pos optional initial POS (device number)
+      * @param rui16_devClass optional initial DEVCLASS (device type)
+      * @param rui16_pos optional initial device class instance
       */
-    GetyPos_c( const GetyPos_c& rrefc_src )
+    DevKey_c( const DevKey_c& rrefc_src )
     #ifdef USE_ISO_11783
     : c_isoName(rrefc_src.c_isoName) {};
     #else
@@ -155,30 +155,30 @@ class GetyPos_c {
     #endif
 
 
-    /** set GETY and POS with two seperate parameters */
-    void set( uint16_t rui16_gety, uint16_t rui16_pos )
+    /** set device class & instance with two seperate parameters */
+    void set( uint16_t rui16_devClass, uint16_t rui16_pos )
     #ifdef USE_ISO_11783
-      { setGety( rui16_gety); setPos( rui16_pos ); };
+      { setDevClass( rui16_devClass); setDevClassInst( rui16_pos ); };
     #else
-      { ui16_data = ( ( rui16_gety << 8 ) | ( rui16_pos & 0xF ) ); };
+      { ui16_data = ( ( rui16_devClass << 8 ) | ( rui16_pos & 0xF ) ); };
     #endif
 
     #ifdef USE_ISO_11783
-    /** set GETY and POS with two seperate parameters */
+    /** set device class & instance with two seperate parameters */
     void set( const ISOName_c& rrefc_isoName ) { c_isoName = rrefc_isoName;};
-    /** set GETY and POS with two seperate parameters */
+    /** set device class & instance with two seperate parameters */
     void set( const uint8_t* rpui8_dataName ){ c_isoName.inputString(rpui8_dataName);};
     #endif
 
-    /** set GETY (device type ) */
-    void setGety( uint16_t rui16_gety )
+    /** set DEVCLASS (device type ) */
+    void setDevClass( uint16_t rui16_devClass )
     #ifdef USE_ISO_11783
-      { c_isoName.setDevClass( rui16_gety );};
+      { c_isoName.setDevClass( rui16_devClass );};
     #else
-      { ui16_data = ( ( rui16_gety << 8 ) | ( ui16_data & 0xF ) );};
+      { ui16_data = ( ( rui16_devClass << 8 ) | ( ui16_data & 0xF ) );};
     #endif
-    /** set POS ( device type instance number ) */
-    void setPos( uint16_t rui16_pos )
+    /** set device class instance */
+    void setDevClassInst( uint16_t rui16_pos )
     #ifdef USE_ISO_11783
       { c_isoName.setDevClassInst( rui16_pos );};
     #else
@@ -186,15 +186,15 @@ class GetyPos_c {
     #endif
 
 
-    /** deliver GETY (device type ) */
-    uint8_t getGety( void ) const
+    /** deliver DEVCLASS (device type ) */
+    uint8_t getDevClass( void ) const
     #ifdef USE_ISO_11783
       { return c_isoName.devClass();};
     #else
       { return ( ui16_data >> 8 );};
     #endif
-    /** deliver POS ( device type instance number ) */
-    uint8_t getPos( void ) const
+    /** deliver _instance_ ( device type instance number ) */
+    uint8_t getDevClassInst( void ) const
     #ifdef USE_ISO_11783
       { return c_isoName.devClassInst();};
     #else
@@ -209,29 +209,29 @@ class GetyPos_c {
     #endif
 
 
-    /** assign value from another GetyPos_c instance */
-    const GetyPos_c& operator=( const GetyPos_c& refc_src )
+    /** assign value from another DevKey_c instance */
+    const DevKey_c& operator=( const DevKey_c& refc_src )
     #ifdef USE_ISO_11783
       {c_isoName = refc_src.c_isoName;return refc_src;};
     #else
       { ui16_data = refc_src.ui16_data; return *this;};
     #endif
-    /** compare two GetyPos_c values with operator== */
-    bool operator==( const GetyPos_c& refc_right ) const
+    /** compare two DevKey_c values with operator== */
+    bool operator==( const DevKey_c& refc_right ) const
     #ifdef USE_ISO_11783
       { return ( c_isoName == refc_right.c_isoName )?true:false;};
     #else
       { return ui16_data == refc_right.ui16_data;};
     #endif
-    /** compare two GetyPos_c values with operator!= */
-    bool operator!=( const GetyPos_c& refc_right ) const
+    /** compare two DevKey_c values with operator!= */
+    bool operator!=( const DevKey_c& refc_right ) const
     #ifdef USE_ISO_11783
       { return ( c_isoName != refc_right.c_isoName )?true:false;};
     #else
       { return ui16_data != refc_right.ui16_data;};
     #endif
-    /** compare two GetyPos_c values with operator< */
-    bool operator<( const GetyPos_c& refc_right ) const
+    /** compare two DevKey_c values with operator< */
+    bool operator<( const DevKey_c& refc_right ) const
     #ifdef USE_ISO_11783
       { return ( c_isoName < refc_right.c_isoName )?true:false;};
     #else
@@ -248,25 +248,25 @@ class GetyPos_c {
     /** check if this instance has specified value (different from default */
     bool isSpecified( void )   const
     #ifdef USE_ISO_11783
-      { return ( ( getGety() != 0x7F ) || ( getPos() != 0xF ) )?true:false;};
+      { return ( ( getDevClass() != 0x7F ) || ( getDevClassInst() != 0xF ) )?true:false;};
     #else
       { return ( ui16_data != 0x7F0F)?true:false;};
     #endif
     bool isUnspecified( void ) const
     #ifdef USE_ISO_11783
-      { return ( ( getGety() == 0x7F ) && ( getPos() == 0xF ) )?true:false;};
+      { return ( ( getDevClass() == 0x7F ) && ( getDevClassInst() == 0xF ) )?true:false;};
     #else
       { return ( ui16_data == 0x7F0F)?true:false;};
     #endif
-    bool isSpecifiedPos( void ) const
+    bool isSpecifiedDevClassInst( void ) const
     #ifdef USE_ISO_11783
-      { return ( getPos()  == 0xF  )?true:false;};
+      { return ( getDevClassInst()  == 0xF  )?true:false;};
     #else
       { return ( ( ui16_data & 0xF ) != 0xF )?true:false;};
     #endif
-    bool isUnspecifiedPos( void ) const
+    bool isUnspecifiedDevClassInst( void ) const
     #ifdef USE_ISO_11783
-      { return ( getGety() == 0x7F )?true:false;};
+      { return ( getDevClass() == 0x7F )?true:false;};
     #else
       { return ( ( ui16_data & 0x7F00 ) == 0x7F00 )?true:false;};
     #endif

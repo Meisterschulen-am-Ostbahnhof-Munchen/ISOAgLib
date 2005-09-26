@@ -113,14 +113,14 @@ public:
     constructor which can set all ident informations
     @see ServictIState::ServiceItem
     @param ri32_time start time of this instance which is set to actual time on default
-    @param rc_gtp GETY_POS of this member item (default: <empty> value)
+    @param rc_devKey DEV_KEY of this member item (default: <empty> value)
     @param rui8_nr member number of this member item (default: <empty> value)
     @param rb_status state of this ident (off, claimed address, ...) (default: off)
     @param rui16_adrVect ADRESSBELEGVECTO information used by this item (important for remote ident)
     @param rpb_name uint8_t string with the name of the ident (max. 7 uint8_t; default empty)
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  DINItem_c(int32_t ri32_time = 0, const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, uint8_t rui8_nr = 0xFF, IState_c::itemState_t rb_status = IState_c::IstateNull,
+  DINItem_c(int32_t ri32_time = 0, const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, uint8_t rui8_nr = 0xFF, IState_c::itemState_t rb_status = IState_c::IstateNull,
              uint16_t rui16_adrVect = 0, const uint8_t* rpb_name = NULL, int ri_singletonVecKey = 0);
 
   /**
@@ -141,14 +141,14 @@ public:
   /**
     set all identity data with one call
     @param ri32_time starting timestamp (default actual time)
-    @param rc_gtp GETY_POS of this ident (default <empty> value)
+    @param rc_devKey DEV_KEY of this ident (default <empty> value)
     @param rui8_nr number of this member (default <empty> value)
     @param ren_status status information of this ident (IState_c::Off, IState_c::Active, ...) (default: IState_c::Active)
     @param rui16_adrVect ADRESSBELEGVECTO information used by this item (important for remote ident)
     @param rpb_name uint8_t string with the name of the ident (max. 7 uint8_t; default empty)
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time = 0, const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, uint8_t rui8_nr = 0xFF, itemState_t ren_status = IState_c::Active,
+  void set(int32_t ri32_time = 0, const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, uint8_t rui8_nr = 0xFF, itemState_t ren_status = IState_c::Active,
            uint16_t rui16_adrVect = 0, const uint8_t* rpb_name = NULL, int ri_singletonVecKey = 0 );
 
   /**

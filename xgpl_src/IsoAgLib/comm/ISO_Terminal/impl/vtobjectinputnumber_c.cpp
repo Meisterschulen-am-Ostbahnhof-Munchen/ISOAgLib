@@ -113,7 +113,7 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
       destMemory [4] = (((uint32_t) vtObjectInputNumber_a->width*vtDimension)/opDimension) >> 8;
       destMemory [5] = (((uint32_t) vtObjectInputNumber_a->height*vtDimension)/opDimension) & 0xFF;
       destMemory [6] = (((uint32_t) vtObjectInputNumber_a->height*vtDimension)/opDimension) >> 8;
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectInputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectInputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObjectInputNumber_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectInputNumber_a->fontAttributes->getID() >> 8;
       destMemory [10] = vtObjectInputNumber_a->options;
@@ -194,7 +194,7 @@ vtObjectInputNumber_c::setValue(uint32_t newValue,
   if (get_vtObjectInputNumber_a()->variableReference == NULL) {
     if (b_updateObject) saveValue32 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), value),  sizeof(iVtObjectInputNumber_s), newValue);
 
-    __IsoAgLib::getIsoTerminalInstance().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
+    __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
   }
 } // -X2C
 
@@ -206,7 +206,7 @@ vtObjectInputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_upd
     saveValue16 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), height), sizeof(iVtObjectInputNumber_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end of namespace __IsoAgLib

@@ -132,7 +132,7 @@ namespace __IsoAgLib {
 
 
 /** struct for client definition */
-class MultiReceiveClientWrapper_s {
+class MultiReceiveClientWrapper_s : public ClientBase {
  public:
   MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
                                uint8_t rui8_clientAddress,
@@ -142,7 +142,8 @@ class MultiReceiveClientWrapper_s {
                               #ifdef NMEA_2000_FAST_PACKET
                               ,bool rb_isFastPacket
                               #endif
-                              );
+                              SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
+                             );
 
   IsoAgLib::MultiReceiveClient_c* pc_client;
   uint8_t ui8_clientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
@@ -153,8 +154,8 @@ class MultiReceiveClientWrapper_s {
   bool b_isFastPacket;
 #endif
 
-  // the gtp is generated from the source address through iso monitor!
-  __IsoAgLib::GetyPos_c c_gtp;
+  // the devKey is generated from the source address through iso monitor!
+  __IsoAgLib::DevKey_c c_devKey;
 };
 
 
@@ -199,15 +200,15 @@ public:
   );
 
    /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_gtp const reference to the item which ISOItem_c state is changed
+   * @param refc_devKey const reference to the item which ISOItem_c state is changed
    * @param rpc_newItem pointer to the currently corresponding ISOItem_c
     */
-  virtual void reactOnMonitorListAdd( const __IsoAgLib::GetyPos_c& refc_gtp, const __IsoAgLib::ISOItem_c* rpc_newItem );
+  virtual void reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem );
    /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_gtp const reference to the item which ISOItem_c state is changed
+   * @param refc_devKey const reference to the item which ISOItem_c state is changed
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
-  virtual void reactOnMonitorListRemove( const __IsoAgLib::GetyPos_c& refc_gtp, uint8_t rui8_oldSa );
+  virtual void reactOnMonitorListRemove( const __IsoAgLib::DevKey_c& refc_devKey, uint8_t rui8_oldSa );
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream);

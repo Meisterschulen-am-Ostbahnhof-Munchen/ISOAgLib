@@ -221,13 +221,13 @@ int32_t localGetApplicationRate() { return IsoAgLib::iSystem_c::getTime(); }
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   getIcanInstance().init( 0, 250 );
-  // variable for GETY_POS
+  // variable for DEV_KEY
   // default with fertilizer spreader mounted back
-  IsoAgLib::iGetyPos_c myGtp( 5, 0 );
+  IsoAgLib::iDevKey_c myDevKey( 5, 0 );
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can cahnge the myGtp val through the pointer to myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -238,16 +238,16 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
 
-  // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=1, INST=0)
-  // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
-  // the pointer to myGtp helps automatic update of GETY_POS, mark this value as NOT cumulated (default)
+  // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=1, INST=0)
+  // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of local data (can vary from previously given device class & instance),
+  // the pointer to myDevKey helps automatic update of DEV_KEY, mark this value as NOT cumulated (default)
   const ElementDDI_s s_myOnoff[2] =
   { 
     // DDI 141, element 0
@@ -262,8 +262,8 @@ int main()
     #ifdef USE_DIN_9687
     0, 0x1, 0x0, 0xFF,
     #endif
-    myGtp, 2, myGtp, &myGtp, false);
-  // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=3, INST=1)
+    myDevKey, 2, myDevKey, &myDevKey, false);
+  // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=3, INST=1)
   const ElementDDI_s s_myWorkWidth[2] =
   { 
     // DDI 67, element 0
@@ -278,8 +278,8 @@ int main()
     #ifdef USE_DIN_9687
     0, 0x3, 0x1, 0xFF,
     #endif
-    myGtp, 2, myGtp, &myGtp, false);
-  // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, GETY=2, WERT=5, INST=0)
+    myDevKey, 2, myDevKey, &myDevKey, false);
+  // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=5, INST=0)
   const ElementDDI_s s_myApplicationRate[2] =
   { 
     // DDI 7, element 0
@@ -294,7 +294,7 @@ int main()
     #ifdef USE_DIN_9687
     0, 0x5, 0x0, 0xFF,
     #endif
-    myGtp, 2, myGtp, &myGtp, false);
+    myDevKey, 2, myDevKey, &myDevKey, false);
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

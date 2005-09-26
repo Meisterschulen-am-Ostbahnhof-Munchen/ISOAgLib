@@ -47,7 +47,7 @@ ProcDataManager_c::ProcDataManager_c( uint8_t rui8_cnt)
   ui8_cnt = rui8_cnt;
   pc_data = NULL;
   b_activated = false;
-	c_remoteGtp.setUnspecified();
+	c_remoteDevKey.setUnspecified();
 }
 ProcDataManager_c::~ProcDataManager_c()
 {
@@ -58,7 +58,7 @@ ProcDataManager_c::ProcDataManager_c(const ProcDataManager_c& rrefc_src)
   pc_monitor = rrefc_src.pc_monitor;
   pc_data = rrefc_src.pc_data;
   ui8_cnt = rrefc_src.ui8_cnt;
-	c_remoteGtp = rrefc_src.c_remoteGtp;
+	c_remoteDevKey = rrefc_src.c_remoteDevKey;
 	// don't copy actation state - start with deactivated
   b_activated = false;
 }
@@ -70,7 +70,7 @@ ProcDataManager_c::ProcDataManager_c(const ProcDataManager_c& rrefc_src)
 void ProcDataManager_c::activate(IsoAgLib::iDINItem_c* rpc_monitor)
 {
   pc_monitor = rpc_monitor;
-	c_remoteGtp = rpc_monitor->gtp();
+	c_remoteDevKey = rpc_monitor->devKey();
   setActivated(true);
 }
 
@@ -84,7 +84,7 @@ void ProcDataManager_c::deactivate()
 void ProcDataManager_c::timeEvent(long /* rl_time */ )
 {return;}
 
-/** write informations of according member (GETY, POS, name)
+/** write informations of according member (DEV CLASS/INST, name)
     and all remote process data of pc_data
     to RS232
 */
@@ -94,7 +94,7 @@ void ProcDataManager_c::writeData()
 	IsoAgLib::iRS232IO_c& c_rs232 = IsoAgLib::getIrs232Instance();
   memmove(temp_name, (char*)(pc_monitor->name()), 8);
   memmove(temp_name+8, ":\0\0\0", 3);
-  c_rs232 << (int16_t)(pc_monitor->gtp().getGety()) << "; " << (int16_t)(pc_monitor->gtp().getPos())
+  c_rs232 << (int16_t)(pc_monitor->devKey().getDevClass()) << "; " << (int16_t)(pc_monitor->devKey().getDevClassInst())
           << "; " << (int16_t)(pc_monitor->nr()) << "; " << temp_name;
   for (uint8_t b_ind = 0; b_ind < ui8_cnt; b_ind++)
   {
@@ -157,11 +157,11 @@ void ProcDataManager_c::resetVal(int ri_ind){
 /** write header of all data columns */
 void ProcDataManager_c::writeHeader(){
 	IsoAgLib::iRS232IO_c& c_rs232 = IsoAgLib::getIrs232Instance();
-  c_rs232 << "GETY; POS; Adresse; Name";
+  c_rs232 << "DEVCLASS; POS; Adresse; Name";
   for (uint8_t b_ind = 0; b_ind < ui8_cnt; b_ind++)
-  { // write for each process data "LIS:GETY:WERT:INST:ZAEHLNUM"
+  { // write for each process data "LIS:DEVCLASS:WERT:INST:ZAEHLNUM"
     c_rs232 << ";" << (int16_t)(pc_data[b_ind]).lis() << ":"
-              << (int16_t)(pc_data[b_ind]).gety() << ":"
+              << (int16_t)(pc_data[b_ind]).devClass() << ":"
               << (int16_t)(pc_data[b_ind]).wert() << ":"
               << (int16_t)(pc_data[b_ind]).inst() << ":"
               << (int16_t)(pc_data[b_ind]).zaehlnum() ;

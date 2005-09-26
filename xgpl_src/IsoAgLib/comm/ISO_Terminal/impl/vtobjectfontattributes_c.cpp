@@ -106,7 +106,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 23; // Object Type = Font Attributes
-    destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectFontAttributes_a->fontColour, this, IsoAgLib::FontColour);
+    destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectFontAttributes_a->fontColour, this, IsoAgLib::FontColour);
     destMemory [4] = ui8_fontSizeScaled; // size() must have been called before to prepare!!!!
     destMemory [5] = vtObjectFontAttributes_a->fontType; // fix ISO_LATIN_1
     destMemory [6] = vtObjectFontAttributes_a->fontStyle;
@@ -211,7 +211,7 @@ vtObjectFontAttributes_c::calcScaledFontDimension()
     scale *= 3; scale /= 4;
   }
   // now check if the font is available?
-  while (!(__IsoAgLib::getIsoTerminalInstance().getVtCapabilities()->fontSizes & (1 << ui8_fontSizeScaled))) {
+  while (!(__IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities()->fontSizes & (1 << ui8_fontSizeScaled))) {
     ui8_fontSizeScaled--; // try a smaller font, but "6x8" should be there in any way, 'cause we set it in processMsg!!
   }
 } // -X2C
@@ -224,7 +224,7 @@ vtObjectFontAttributes_c::setFontAttributes(uint8_t newFontColour, uint8_t newFo
     saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType),   sizeof(iVtObjectFontAttributes_s), newFontType);
     saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle),  sizeof(iVtObjectFontAttributes_s), newFontStyle);
   }
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeFontAttributes (this, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newFontColour, this, IsoAgLib::FontColour), newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeFontAttributes (this, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newFontColour, this, IsoAgLib::FontColour), newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd);
 }
 
 

@@ -120,7 +120,7 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectOutputNumber_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectOutputNumber_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectOutputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectOutputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObjectOutputNumber_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectOutputNumber_a->fontAttributes->getID() >> 8;
       destMemory [10] = vtObjectOutputNumber_a->options;
@@ -183,7 +183,7 @@ vtObjectOutputNumber_c::setValue(uint32_t newValue, bool b_updateObject, bool b_
     if (b_updateObject) saveValue32 (MACRO_getStructOffset(get_vtObjectOutputNumber_a(), value), sizeof(iVtObjectOutputNumber_s), newValue);
 
     // Send Value update
-    __IsoAgLib::getIsoTerminalInstance().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
+    __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
   }
 } // -X2C
 
@@ -208,7 +208,7 @@ vtObjectOutputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_up
     saveValue16 (MACRO_getStructOffset(get_vtObjectOutputNumber_a(), height), sizeof(iVtObjectOutputNumber_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end of namespace __IsoAgLib

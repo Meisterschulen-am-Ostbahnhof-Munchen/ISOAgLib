@@ -111,16 +111,16 @@ namespace __IsoAgLib {
   constructor which can set all ident informations
   @see ServictIState::DINServiceItem_c
   @param ri32_time start time of this instance which is set to actual time on default
-  @param rc_gtp GETY_POS of this member item (default: <empty> value)
+  @param rc_devKey DEV_KEY of this member item (default: <empty> value)
   @param rui8_nr member number of this member item (default: <empty> value)
   @param rb_status state of this ident (off, claimed address, ...) (default: off)
   @param rui16_adrVect ADRESSBELEGVECTO information used by this item (important for remote ident)
   @param rpb_name uint8_t string with the name of the ident (max. 7 uint8_t; default empty)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-DINItem_c::DINItem_c(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr, IState_c::itemState_t rb_status,
+DINItem_c::DINItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr, IState_c::itemState_t rb_status,
             uint16_t rui16_adrVect, const uint8_t* rpb_name, int ri_singletonVecKey)
-: DINServiceItem_c(ri32_time, rc_gtp, rui8_nr, rb_status, rui16_adrVect, ri_singletonVecKey )
+: DINServiceItem_c(ri32_time, rc_devKey, rui8_nr, rb_status, rui16_adrVect, ri_singletonVecKey )
 {
   if (rpb_name != NULL)
   {
@@ -164,17 +164,17 @@ DINItem_c::~DINItem_c(){
 /**
   set all identity data with one call
   @param ri32_time starting timestamp (default actual time)
-  @param rc_gtp GETY_POS of this ident (default <empty> value)
+  @param rc_devKey DEV_KEY of this ident (default <empty> value)
   @param rui8_nr number of this member (default <empty> value)
   @param rb_status status information of this ident (off, claimed address, ...) (default <empty> value)
   @param rui16_adrVect ADRESSBELEGVECTO information used by this item (important for remote ident)
   @param rpb_name uint8_t string with the name of the ident (max. 7 uint8_t; default empty)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void DINItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
+void DINItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr,
         itemState_t ren_status, uint16_t rui16_adrVect, const uint8_t* rpb_name, int ri_singletonVecKey)
 {
-  DINServiceItem_c::set(ri32_time, rc_gtp, rui8_nr, ren_status, rui16_adrVect, ri_singletonVecKey);
+  DINServiceItem_c::set(ri32_time, rc_devKey, rui8_nr, ren_status, rui16_adrVect, ri_singletonVecKey);
   if (rpb_name != NULL)
   {
     setName(rpb_name);
@@ -299,7 +299,7 @@ bool DINItem_c::timeEvent( void ){
     { // prepare for announcing or adressclaim msg
       DINSystemPkg_c& c_pkg = c_din_monitor.data();
       // fill data in DINSystemPkg_c
-      c_pkg.setGtp(gtp());
+      c_pkg.setDevKey(devKey());
 
       uint8_t internAddressClaimCnt = addressClaimCnt();
       uint8_t freeAvailCode;
@@ -310,7 +310,7 @@ bool DINItem_c::timeEvent( void ){
         freeAvailCode = c_din_monitor.freeNrAvailable( b_forceClear );
         if (freeAvailCode == 2) return false;
 
-        if ((c_din_monitor.canClaimNr(gtp())) && freeAvailCode == 1)
+        if ((c_din_monitor.canClaimNr(devKey())) && freeAvailCode == 1)
         {  // can claim an adress
           b_can_claim = true;
           // retreive free number and reserve it in AdrVect_c
@@ -381,7 +381,7 @@ bool DINItem_c::processMsg()
         c_adrvect =  c_pkg.adrvect(); // set ADVECT
         updateTime(c_pkg.time()); // set alive timestamp
         // update AdrVect_c of SystemMgmt_c
-        c_din_monitor.setUsedAdr(c_pkg.gtp(), c_pkg.send());
+        c_din_monitor.setUsedAdr(c_pkg.devKey(), c_pkg.send());
         // set this member only active, if trusted adrvect reports it as
         // correctly registered -> unallowed adress claims are blocked
         if (c_din_monitor.isAdrUsedTrusted(nr()))
@@ -487,7 +487,7 @@ void DINItem_c::startAddressClaim(bool rb_force)
   // now item isn't active -> send first address claim message
   DINSystemPkg_c& c_pkg = getDinMonitorInstance4Comm().data();
   // fill data in DINSystemPkg_c
-  c_pkg.setGtp(gtp());
+  c_pkg.setDevKey(devKey());
   c_pkg.set_a(1);
   c_pkg.setNr(1);
   addressClaimCnt(1);
@@ -513,7 +513,7 @@ void DINItem_c::sendName(){
     {
       DINSystemPkg_c& c_pkg = getDinMonitorInstance4Comm().data();
       // fill data in DINSystemPkg_c
-      c_pkg.setGtp(gtp());
+      c_pkg.setDevKey(devKey());
       c_pkg.setVerw(9);
       c_pkg.setSend(nr());
       c_pkg.setName(name());
@@ -543,7 +543,7 @@ void DINItem_c::sendAdressRelease(){
     {
       DINSystemPkg_c& c_pkg = getDinMonitorInstance4Comm().data();
       // fill data in DINSystemPkg_c
-      c_pkg.setGtp(gtp());
+      c_pkg.setDevKey(devKey());
       c_pkg.setVerw(2);
       c_pkg.setSend(nr());
       // clear own number in AdrVect_c
@@ -599,7 +599,7 @@ void DINItem_c::sendState(){
     {
       DINSystemPkg_c& c_pkg = getDinMonitorInstance4Comm().data();
       // fill data in DINSystemPkg_c
-      c_pkg.setGtp(gtp());
+      c_pkg.setDevKey(devKey());
       c_pkg.setVerw(12);
       c_pkg.setSend(nr());
       // if this is an answer to state reuqest set empf to the requester number
@@ -634,11 +634,11 @@ void DINItem_c::sendStateRequest(){
     {
       DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
       DINSystemPkg_c& c_pkg = c_din_monitor.data();
-      // use number/gtp of first active identity
+      // use number/devKey of first active identity
       DINItem_c& senderItem = getSystemMgmtInstance4Comm().getActiveLocalDinMember();
 
       // fill data in DINSystemPkg_c
-      c_pkg.setGtp(senderItem.gtp());
+      c_pkg.setDevKey(senderItem.devKey());
       c_pkg.setVerw(12);
       c_pkg.setSend(senderItem.nr());
 

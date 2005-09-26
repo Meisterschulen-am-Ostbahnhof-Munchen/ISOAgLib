@@ -105,10 +105,10 @@ namespace __IsoAgLib {
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
     common parameter
-    @param rc_gtp optional GETY_POS code of this instance
+    @param rc_devKey optional DEV_KEY code of this instance
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
     @param rpc_processDataChangeHandler optional pointer to handler class of application
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
@@ -119,9 +119,9 @@ void ProcDataRemoteBase_c::init(
 #ifdef USE_DIN_9684
                                 uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
 #endif
-                                const GetyPos_c& rc_gtp,
-                                uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp,
-                                const GetyPos_c* rpc_commanderGtp,
+                                const DevKey_c& rc_devKey,
+                                uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey,
+                                const DevKey_c* rpc_commanderDevKey,
                                 IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                 int ri_singletonVecKey)
 {
@@ -133,9 +133,9 @@ void ProcDataRemoteBase_c::init(
                        rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
 
-                       rc_gtp, rui8_pri, rc_ownerGtp, NULL, rpc_processDataChangeHandler);
+                       rc_devKey, rui8_pri, rc_ownerDevKey, NULL, rpc_processDataChangeHandler);
   setSingletonKey( ri_singletonVecKey );
-  setCommanderGtp(rpc_commanderGtp);
+  setCommanderDevKey(rpc_commanderDevKey);
 
   // don't register proces data object, as long as it's only created with
   // default values (PRI and LIS must be in all cases different from 0xFF)
@@ -157,7 +157,7 @@ void ProcDataRemoteBase_c::init(
 const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemoteBase_c& rrefc_src){
   // call the assignment operator for the base class
   ProcDataBase_c::operator=(rrefc_src);
-  pc_gtp = rrefc_src.pc_gtp;
+  pc_devKey = rrefc_src.pc_devKey;
   // return reference to source
   return *this;
 }
@@ -169,7 +169,7 @@ const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemote
 ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& rrefc_src)
   : ProcDataBase_c(rrefc_src)
 { // now copy the element var
-  pc_gtp = rrefc_src.pc_gtp;
+  pc_devKey = rrefc_src.pc_devKey;
 
   // now register the pointer to this instance in Process_c
   getProcessInstance4Comm().registerRemoteProcessData( this );
@@ -180,20 +180,20 @@ ProcDataRemoteBase_c::~ProcDataRemoteBase_c(){
   // call unregisterRemoteProcessData in last derived class because unregister does again message processing!
 }
 /**
-  set the pointer to the commander ident gtp
-  @param rpbgtp pointer to GETY_POS var of local member used for
+  set the pointer to the commander ident devKey
+  @param rpbdevKey pointer to DEV_KEY var of local member used for
               sending commands to remote owner member
 */
-void ProcDataRemoteBase_c::setCommanderGtp(const GetyPos_c* rpc_gtp)
+void ProcDataRemoteBase_c::setCommanderDevKey(const DevKey_c* rpc_devKey)
 {
-    pc_gtp = rpc_gtp;
+    pc_devKey = rpc_devKey;
 };
 
 /**
   perform periodic actions
   ProcDataRemoteBase_c::timeEvent
-  -> adopt here the ownerGtp to an existing item, when DevClass/-Instance are matching, but the other fields are
-     differen ( don't change anything, if there is an item with identic GTP setting
+  -> adopt here the ownerDevKey to an existing item, when DevClass/-Instance are matching, but the other fields are
+     differen ( don't change anything, if there is an item with identic DEVKEY setting
   @return true -> all planned executions performed
 */
 bool ProcDataRemoteBase_c::timeEvent( void )
@@ -239,11 +239,11 @@ bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_
       ((en_msgProto & IState_c::Din) != 0) &&
       #endif
       ( c_din_monitor.existDinMemberNr(rb_var))
-    &&(c_din_monitor.existDinMemberGtp(ownerGtp(), true))
+    &&(c_din_monitor.existDinMemberDevKey(ownerDevKey(), true))
     &&(rb_var != 0xFF)
      )
   { // all check was positive -> set b_empf, b_send
-    b_empf = c_din_monitor.dinMemberGtp(ownerGtp(), true).nr();
+    b_empf = c_din_monitor.dinMemberDevKey(ownerDevKey(), true).nr();
     b_send = rb_var; // for remote data the var parameter is the sender for sending
     #ifdef USE_ISO_11783
     en_msgProto = IState_c::Din;
@@ -257,11 +257,11 @@ bool ProcDataRemoteBase_c::var2empfSend(uint8_t rui8_pri, uint8_t rb_var, uint8_
   if (
       ((en_msgProto & IState_c::Iso) != 0) &&
       (c_isoMonitor.existIsoMemberNr(rb_var ))
-    &&(c_isoMonitor.existIsoMemberGtp(ownerGtp(), true))
+    &&(c_isoMonitor.existIsoMemberDevKey(ownerDevKey(), true))
     &&(rb_var != 0xFF)
      )
   { // all check was positive -> set b_empf, b_send
-    b_empf = c_isoMonitor.isoMemberGtp(ownerGtp(), true).nr();
+    b_empf = c_isoMonitor.isoMemberDevKey(ownerDevKey(), true).nr();
     b_send = rb_var; // for remote data the var parameter is the sender for senisog
     en_msgProto = IState_c::Iso;
     b_result = true;

@@ -134,7 +134,7 @@ DINMonitor_c::singletonInit()
 */
 void DINMonitor_c::init( void )
 {
-  c_tempDinMemberItem.set(0, GetyPos_c::GetyPosUnspecified, 0xFF, IState_c::Active, 0, NULL, getSingletonVecKey() );
+  c_tempDinMemberItem.set(0, DevKey_c::DevKeyUnspecified, 0xFF, IState_c::Active, 0, NULL, getSingletonVecKey() );
   c_data.setSingletonKey( getSingletonVecKey() );
   #ifdef DEBUG_HEAP_USEAGE
   sui16_dinItemTotal -= vec_dinMember.size();
@@ -258,10 +258,10 @@ bool DINMonitor_c::timeEvent( void ){
         {
           Vec_MemberIterator pc_iterDelete = pc_iterItem;
           #ifdef USE_ISO_11783
-          // delete item with same GTP also from ISO list
-          if (getIsoMonitorInstance4Comm().existIsoMemberGtp(pc_iterDelete->gtp()))
-          { // item with same GTP in ISOMonitor -> delete it
-            getIsoMonitorInstance4Comm().deleteIsoMemberGtp(pc_iterDelete->gtp());
+          // delete item with same DEVKEY also from ISO list
+          if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(pc_iterDelete->devKey()))
+          { // item with same DEVKEY in ISOMonitor -> delete it
+            getIsoMonitorInstance4Comm().deleteIsoMemberDevKey(pc_iterDelete->devKey());
           }
           #endif
           //erase delivers iterator to item after erased item
@@ -402,7 +402,7 @@ bool DINMonitor_c::requestDinMemberNames(){
   // set the data for the request pgk
   MonitorItem_c& senderItem = c_lbsSystem.getActiveLocalDinMember();
 
-  data().setGtp(senderItem.gtp());
+  data().setDevKey(senderItem.devKey());
   data().setVerw(8); // verw code for name request
   data().setSend(senderItem.nr());
   // now send the telegram
@@ -422,56 +422,56 @@ bool DINMonitor_c::requestDinMemberNames(){
 
 
 /**
-  deliver the count of members in the Monitor-List with given GETY (variable POS)
+  deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
   which optional (!!) match the condition of address claim state
-  @param rb_gety searched GETY code
+  @param rui8_devClass searched DEVCLASS code
   @param rb_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
-  @return count of members in Monitor-List with GETY == rb_gety
+  @return count of members in Monitor-List with DEVCLASS == rui8_devClass
 */
-uint8_t DINMonitor_c::dinMemberGetyCnt(uint8_t rb_gety, bool rb_forceClaimedAddress)
+uint8_t DINMonitor_c::dinMemberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClaimedAddress)
 {
   uint8_t b_result = 0;
   for (Vec_MemberIterator pc_iter = vec_dinMember.begin() ; pc_iter != vec_dinMember.end(); pc_iter++)
   {
-    if ( ( ((pc_iter->gtp().getGety()) == rb_gety) || (rb_gety == 0xFF))
+    if ( ( ((pc_iter->devKey().getDevClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
       && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       b_result++;
-      pc_dinMemberCache = pc_iter; // set member cache to member  with searched gety
+      pc_dinMemberCache = pc_iter; // set member cache to member  with searched devClass
     }
   }
   return b_result;
 }
 
 /**
-  deliver one of the members with specific GETY
+  deliver one of the members with specific DEVCLASS
   which optional (!!) match the condition of address claim state
-  check first with dinMemberGetyCnt if enough members with wanted GETY and
+  check first with dinMemberDevClassCnt if enough members with wanted DEVCLASS and
   optional (!!) property are registered in Monitor-List
-  @see dinMemberGetyCnt
+  @see dinMemberDevClassCnt
 
   possible errors:
-    * range there exist less than rui8_ind members with GETY rb_gety
-  @param rb_gety searched GETY
+    * range there exist less than rui8_ind members with DEVCLASS rui8_devClass
+  @param rui8_devClass searched DEVCLASS
   @param rui8_ind position of the wanted member in the
-               sublist of member with given GETY (first item has rui8_ind == 0 !!)
+               sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
   @param rb_forceClaimedAddress true -> only members with claimed address are used
        (optional, default false)
   @return reference to searched element
 */
-DINItem_c& DINMonitor_c::dinMemberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, bool rb_forceClaimedAddress)
+DINItem_c& DINMonitor_c::dinMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress)
 {
   int8_t c_cnt = -1;
   for (Vec_MemberIterator pc_iter  = vec_dinMember.begin() ; pc_iter != vec_dinMember.end(); pc_iter++)
   {
-    if ( ( ((pc_iter->gtp().getGety()) == rb_gety) || (rb_gety == 0xFF))
+    if ( ( ((pc_iter->devKey().getDevClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
       && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       c_cnt++;
       if (c_cnt == rui8_ind)
       {
-        pc_dinMemberCache = pc_iter; // set member cache to member  with searched gety
+        pc_dinMemberCache = pc_iter; // set member cache to member  with searched devClass
         break; //searched Item found (first element has 0)break; //searched Item found (first element has 0)
       }
     }
@@ -486,19 +486,19 @@ DINItem_c& DINMonitor_c::dinMemberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, boo
 
 
 /**
-  check if a memberItem with given GETY_POS exist
+  check if a memberItem with given DEV_KEY exist
   which optional (!!) match the condition of address claim state
   and update local pc_dinMemberCache
-  @param rc_gtp searched GETY_POS
+  @param rc_devKey searched DEV_KEY
   @param rb_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
   @return true -> searched member exist
 */
-bool DINMonitor_c::existDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress)
+bool DINMonitor_c::existDinMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress)
 {
   if (!vec_dinMember.empty() && (pc_dinMemberCache != vec_dinMember.end()))
   {
-    if ( (pc_dinMemberCache->gtp() == rc_gtp )
+    if ( (pc_dinMemberCache->devKey() == rc_devKey )
       && (!rb_forceClaimedAddress || pc_dinMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   }
@@ -506,7 +506,7 @@ bool DINMonitor_c::existDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaim
        pc_dinMemberCache != vec_dinMember.end();
        pc_dinMemberCache++)
   {
-    if ( (pc_dinMemberCache->gtp() == rc_gtp )
+    if ( (pc_dinMemberCache->devKey() == rc_devKey )
       && (!rb_forceClaimedAddress || pc_dinMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   };
@@ -534,29 +534,29 @@ bool DINMonitor_c::existDinMemberNr(uint8_t rui8_nr )
 };
 
 /**
-  check if member is in member list with wanted GETY_POS,
-  adopt POS if member with claimed address with other POS exist
-  @param refc_gtp GETY_POS to search (-> it's updated if member with claimed address with other POS is found)
-  @return true -> member with claimed address with given GETY found (and refc_gtp has now its GETY_POS)
+  check if member is in member list with wanted DEV_KEY,
+  adopt instance if member with claimed address with other device class inst exist
+  @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
+  @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
 */
-bool DINMonitor_c::dinGety2GtpClaimedAddress(GetyPos_c &refc_gtp)
+bool DINMonitor_c::dinDevClass2DevKeyClaimedAddress(DevKey_c &refc_devKey)
 {
-  if (existDinMemberGtp(refc_gtp, true))
+  if (existDinMemberDevKey(refc_devKey, true))
   { // there exists a device with exact NAME in claimed address state
     return true;
   }
   else
-  { // no item with GETY_POS found -> adapt POS
-    // search for member with claimed address with same GETY
-    if (dinMemberGetyCnt(refc_gtp.getGety(), true) > 0)
-    { // member with wanted device class exists -> store the GTP
-      refc_gtp = dinMemberGetyInd(refc_gtp.getGety(), 0, true).gtp();
+  { // no item with DEV_KEY found -> adapt POS
+    // search for member with claimed address with same DEVCLASS
+    if (dinMemberDevClassCnt(refc_devKey.getDevClass(), true) > 0)
+    { // member with wanted device class exists -> store the DEVKEY
+      refc_devKey = dinMemberDevClassInd(refc_devKey.getDevClass(), 0, true).devKey();
       return true;
     }
-    else if (dinMemberGetyCnt(refc_gtp.getGety(), false) > 0)
-    { // member with wanted device class exists -> store the GTP
-      refc_gtp = dinMemberGetyInd(refc_gtp.getGety(), 0, false).gtp();
-      // even if a device with wanted GTP exist - it is not claimed
+    else if (dinMemberDevClassCnt(refc_devKey.getDevClass(), false) > 0)
+    { // member with wanted device class exists -> store the DEVKEY
+      refc_devKey = dinMemberDevClassInd(refc_devKey.getDevClass(), 0, false).devKey();
+      // even if a device with wanted DEVKEY exist - it is not claimed
       return false;
     }
     else
@@ -575,20 +575,20 @@ bool DINMonitor_c::dinGety2GtpClaimedAddress(GetyPos_c &refc_gtp)
     * badAlloc not enough memory to insert new DINItem_c isntance
     * busy another member with same ident exists already in the list
 
-  @param rc_gtp GETY_POS of the member
+  @param rc_devKey DEV_KEY of the member
   @param rpb_name pointer to 7 uint8_t name string
   @param rui8_nr member number
   @param rui16_adrvect AdrVect_c used by the member
   @param ren_status wanted status
   @return true -> the DINItem_c was inserted
 */
-bool DINMonitor_c::insertDinMember(const GetyPos_c& rc_gtp, const uint8_t* rpb_name, uint8_t rui8_nr, uint16_t rui16_adrvect, IState_c::itemState_t ren_state)
+bool DINMonitor_c::insertDinMember(const DevKey_c& rc_devKey, const uint8_t* rpb_name, uint8_t rui8_nr, uint16_t rui16_adrvect, IState_c::itemState_t ren_state)
 {
   bool b_result = true;
 
-  // check if another DINItem_c with same GETY_POS already exist
-  if (existDinMemberGtp(rc_gtp))
-  { // another member with same GETY_POS found
+  // check if another DINItem_c with same DEV_KEY already exist
+  if (existDinMemberDevKey(rc_devKey))
+  { // another member with same DEV_KEY found
     getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::LbsSystem );
     b_result = false; // don't insert
   }
@@ -596,12 +596,12 @@ bool DINMonitor_c::insertDinMember(const GetyPos_c& rc_gtp, const uint8_t* rpb_n
   if (b_result)
   { // the insert is allowed
     // prepare temp item with wanted data
-    c_tempDinMemberItem.set(System_c::getTime(), rc_gtp, rui8_nr, IState_c::itemState_t(ren_state), rui16_adrvect, rpb_name, getSingletonVecKey() );
+    c_tempDinMemberItem.set(System_c::getTime(), rc_devKey, rui8_nr, IState_c::itemState_t(ren_state), rui16_adrvect, rpb_name, getSingletonVecKey() );
     c_tempDinMemberItem.setItemState(IState_c::Member);
     // if rNr < 15 == active member update adrVect
     if (rui8_nr < 15)
     { // defined number
-      setUsedAdr(rc_gtp, rui8_nr);
+      setUsedAdr(rc_devKey, rui8_nr);
       // check if trusted vector has accepted this member
       if (isAdrUsedTrusted(rui8_nr))
       { // number is accepted -> set new member to claimed address
@@ -644,19 +644,19 @@ bool DINMonitor_c::insertDinMember(const GetyPos_c& rc_gtp, const uint8_t* rpb_n
 };
 
 /**
-  deliver member item with given gtp
-  (check with existDinMemberGtp before access to not defined item)
+  deliver member item with given devKey
+  (check with existDinMemberDevKey before access to not defined item)
 
   possible errors:
     * elNonexistent on failed search
 
-  @param rc_gtp searched GETY_POS
+  @param rc_devKey searched DEV_KEY
   @return reference to searched MemberItem
   @exception containerElementNonexistant
 */
-DINItem_c& DINMonitor_c::dinMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress)
+DINItem_c& DINMonitor_c::dinMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress)
 {
-  if (existDinMemberGtp(rc_gtp, rb_forceClaimedAddress))
+  if (existDinMemberDevKey(rc_devKey, rb_forceClaimedAddress))
   { // no error
     return static_cast<DINItem_c&>(*pc_dinMemberCache);
   }
@@ -702,16 +702,16 @@ DINItem_c& DINMonitor_c::dinMemberNr(uint8_t rui8_nr)
 };
 
 /**
-  deliver member item with given GETY_POS, set pointed bool var to true on success
+  deliver member item with given DEV_KEY, set pointed bool var to true on success
   and set a Member Array Iterator to the result
-  @param rc_gtp searched GETY_POS
+  @param rc_devKey searched DEV_KEY
   @param pb_success bool pointer to store the success (true on success)
   @param pbc_iter optional member array iterator which points to searched DINItem_c on success
   @return reference to the searched item
 */
-DINItem_c& DINMonitor_c::dinMemberGtp(const GetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress, Vec_MemberIterator *const pbc_iter)
+DINItem_c& DINMonitor_c::dinMemberDevKey(const DevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress, Vec_MemberIterator *const pbc_iter)
 {
-  *pb_success = (existDinMemberGtp(rc_gtp, rb_forceClaimedAddress))?true:false;
+  *pb_success = (existDinMemberDevKey(rc_devKey, rb_forceClaimedAddress))?true:false;
 
   if (pbc_iter != NULL)
   {
@@ -721,18 +721,18 @@ DINItem_c& DINMonitor_c::dinMemberGtp(const GetyPos_c& rc_gtp, bool *const pb_su
 };
 
 /**
-  delete item with specified gtp
+  delete item with specified devKey
 
   possible errors:
-    * elNonexistent no member with given GETY_POS exists
+    * elNonexistent no member with given DEV_KEY exists
 
-  @param rc_gtp GETY_POS of to be deleted member
+  @param rc_devKey DEV_KEY of to be deleted member
   @param rb_send-release true -> send adress release msg (optional, default = false)
 */
-bool DINMonitor_c::deleteDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_sendRelease)
+bool DINMonitor_c::deleteDinMemberDevKey(const DevKey_c& rc_devKey, bool rb_sendRelease)
 { // only delete local items, if send of adress release is requested - otherwise
   // this is not triggered by local software
-  if ( ( existDinMemberGtp(rc_gtp)                                                    )
+  if ( ( existDinMemberDevKey(rc_devKey)                                                    )
     && ( ( rb_sendRelease ) || ( ! pc_dinMemberCache->itemState ( IState_c::Local ) ) ) )
   { // set correct state
     // check the number and delete it from AdrVect
@@ -741,7 +741,7 @@ bool DINMonitor_c::deleteDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_sendRelea
     // if release should be send - do it now
     if (rb_sendRelease && pc_dinMemberCache->itemState(IState_c::ClaimedAddress))
     { // fill data in SystemPkg
-      data().setGtp(rc_gtp);
+      data().setDevKey(rc_devKey);
       data().setVerw(2);
       data().setSend(pc_dinMemberCache->nr());
       data().adrvect() = adrvect();
@@ -749,7 +749,7 @@ bool DINMonitor_c::deleteDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_sendRelea
       getCanInstance4Comm() << data();
     }
 
-    // erase it from list (existDinMemberGtp sets pc_dinMemberCache to the wanted item)
+    // erase it from list (existDinMemberDevKey sets pc_dinMemberCache to the wanted item)
     vec_dinMember.erase(pc_dinMemberCache);
     pc_dinMemberCache = vec_dinMember.begin();
     #ifdef DEBUG_HEAP_USEAGE
@@ -767,7 +767,7 @@ bool DINMonitor_c::deleteDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_sendRelea
     return true;
   }
   else
-  { // to be deleted member GETY_POS does not exist
+  { // to be deleted member DEV_KEY does not exist
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );
     return false;
   }
@@ -777,7 +777,7 @@ bool DINMonitor_c::deleteDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_sendRelea
   delete item with specified member number
 
   possible errors:
-    * elNonexistent no member with given GETY_POS exists
+    * elNonexistent no member with given DEV_KEY exists
 
   @param rui8_nr number of to be deleted member
   @param rb_send-release true -> send adress release msg (optional, default = false)
@@ -785,8 +785,8 @@ bool DINMonitor_c::deleteDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_sendRelea
 bool DINMonitor_c::deleteDinMemberNr(uint8_t rui8_nr, bool rb_sendRelease)
 {
   if (existDinMemberNr(rui8_nr))
-  { // use deleteDinMemberGtp
-    return deleteDinMemberGtp(pc_dinMemberCache->gtp(), rb_sendRelease);
+  { // use deleteDinMemberDevKey
+    return deleteDinMemberDevKey(pc_dinMemberCache->devKey(), rb_sendRelease);
   }
   else
   { // to be deleted member number does not exist
@@ -796,28 +796,28 @@ bool DINMonitor_c::deleteDinMemberNr(uint8_t rui8_nr, bool rb_sendRelease)
 };
 
 /**
-  check if ECU with gtp is allowed to claim an adress number
-  @param rc_gtp GETY_POS of member which is tested
+  check if ECU with devKey is allowed to claim an adress number
+  @param rc_devKey DEV_KEY of member which is tested
   @return true -> member is allowed to claim number
 */
-bool DINMonitor_c::canClaimNr(const GetyPos_c& rc_gtp)
-{ GetyPos_c min_gtp = rc_gtp;
+bool DINMonitor_c::canClaimNr(const DevKey_c& rc_devKey)
+{ DevKey_c min_devKey = rc_devKey;
 
-  // search announcing list item with lowest gtp
+  // search announcing list item with lowest devKey
   for (Vec_MemberIterator pc_iterItem = vec_dinMember.begin();
         pc_iterItem != vec_dinMember.end(); pc_iterItem++)
   {
-    // if item pc_iterItem is announcing and its gtp is lower than actual min_gtp
-    // update min_gtp
-//    if ((pc_iterItem->itemState(IState_c::AddressClaim)) && (pc_iterItem->gtp() < min_gtp))
-//      min_gtp =  pc_iterItem->gtp();
+    // if item pc_iterItem is announcing and its devKey is lower than actual min_devKey
+    // update min_devKey
+//    if ((pc_iterItem->itemState(IState_c::AddressClaim)) && (pc_iterItem->devKey() < min_devKey))
+//      min_devKey =  pc_iterItem->devKey();
     if (pc_iterItem->itemState(IState_c::AddressClaim))
     {
-      if (pc_iterItem->gtp() < min_gtp) min_gtp =  pc_iterItem->gtp();
+      if (pc_iterItem->devKey() < min_devKey) min_devKey =  pc_iterItem->devKey();
     }
   }
-  // if actual min_gtp is rc_gtp, the ECU can claim adress
-  if (min_gtp == rc_gtp) return true;
+  // if actual min_devKey is rc_devKey, the ECU can claim adress
+  if (min_devKey == rc_devKey) return true;
   else return false;
 }
 
@@ -891,7 +891,7 @@ bool DINMonitor_c::freeNrAvailable(bool rb_eraseInactiveItem)
        }
       if (foundDeletable)
        { // delete inactive member and force send of adress release
-         deleteDinMemberGtp(pc_deletableIter->gtp(), true);
+         deleteDinMemberDevKey(pc_deletableIter->devKey(), true);
         b_result = true;   // sign for now free but previously not -> exit timeEvent
       }
      }
@@ -900,42 +900,42 @@ bool DINMonitor_c::freeNrAvailable(bool rb_eraseInactiveItem)
 };
 
 /**
-  change gtp if actual gtp isn't unique
-  (search possible free POS to given GETY)
+  change devKey if actual devKey isn't unique
+  (search possible free instance to given device class)
 
   possible errors:
-    * busy no other POS code leads to unique GETY_POS code
+    * busy no other device class inst code leads to unique DEV_KEY code
 
-  @param refc_gtp reference to GETY_POS var (is changed directly if needed!!)
-  @return true -> referenced GETY_POS is now unique
+  @param refc_devKey reference to DEV_KEY var (is changed directly if needed!!)
+  @return true -> referenced DEV_KEY is now unique
 */
-bool DINMonitor_c::unifyDinGtp(GetyPos_c& refc_gtp){
+bool DINMonitor_c::unifyDinDevKey(DevKey_c& refc_devKey){
   bool b_result = true;
-  GetyPos_c c_tempGtp = refc_gtp;
-  if (existDinMemberGtp(refc_gtp))
-  { // gtp exist -> search new with changed POS
-    b_result = false; // refc_gtp isn't unique
-    // store the pos part of given gtp
-    int16_t tempPos = (refc_gtp.getPos()),
+  DevKey_c c_tempDevKey = refc_devKey;
+  if (existDinMemberDevKey(refc_devKey))
+  { // devKey exist -> search new with changed POS
+    b_result = false; // refc_devKey isn't unique
+    // store the pos part of given devKey
+    int16_t tempPos = (refc_devKey.getDevClassInst()),
         diff = 1;
     for (; diff < 8; diff++)
     {
       if (tempPos + diff < 8)
-      {  // (tempPos + diff) would be an allowed POS code
-        c_tempGtp.setPos( tempPos + diff );
-        if (!(existDinMemberGtp(c_tempGtp)))
+      {  // (tempPos + diff) would be an allowed device class inst code
+        c_tempDevKey.setDevClassInst( tempPos + diff );
+        if (!(existDinMemberDevKey(c_tempDevKey)))
         {  // (tempPos + diff) can't be found in list -> it is unique
-          refc_gtp.setPos( tempPos + diff );
+          refc_devKey.setDevClassInst( tempPos + diff );
           b_result = true;
           break;
         }
       }
       if (tempPos - diff >= 0)
-      { // (tempPos - diff) would be an allowed POS code
-        c_tempGtp.setPos( tempPos - diff );
-        if (!(existDinMemberGtp(c_tempGtp)))
+      { // (tempPos - diff) would be an allowed device class inst code
+        c_tempDevKey.setDevClassInst( tempPos - diff );
+        if (!(existDinMemberDevKey(c_tempDevKey)))
         {  // (tempPos - diff) can't be found in list -> it is unique
-          refc_gtp.setPos( tempPos - diff );
+          refc_devKey.setDevClassInst( tempPos - diff );
           b_result = true;
           break;
         }
@@ -954,13 +954,13 @@ bool DINMonitor_c::unifyDinGtp(GetyPos_c& refc_gtp){
   possible errors:
     * busy another member with given nr is already registered in AdrVect
 
-  @param rc_gtp GETY_POS of the used setting member
+  @param rc_devKey DEV_KEY of the used setting member
   @param rui8_nr number to register as used for the given member
   @return true -> the wanted nr was registered successful in AdrVect
 */
-bool DINMonitor_c::setUsedAdr(const GetyPos_c& rc_gtp, uint8_t rui8_nr){
+bool DINMonitor_c::setUsedAdr(const DevKey_c& rc_devKey, uint8_t rui8_nr){
   bool b_result = false;
-  if ((canClaimNr(rc_gtp)) || (System_c::getTime() < 3000))
+  if ((canClaimNr(rc_devKey)) || (System_c::getTime() < 3000))
   { // claim is allowed -> update trusted (it updates internal too)
     b_result = c_adrVectTrusted.setUsedAdrTrusted(rui8_nr);
   }
@@ -1006,23 +1006,23 @@ bool DINMonitor_c::processMsg(){
        getSchedulerInstance4Comm().registerDinMemberNameReceive();
      case 1: case 3: case 10: case 11: case 12:
       // cehck if is valid active member
-      // (there is member with this gtp/nr marked as active in list)
-      // || (there is no itme with this nr && no with this gtp
+      // (there is member with this devKey/nr marked as active in list)
+      // || (there is no itme with this nr && no with this devKey
       //       -> if SystemTime < 3sec accept as normal; else insert with
       //          status "falseAlive" --> is member send 3times false alive
       //                check if other member interprete it as normal member -> adapt)
-      if (!existDinMemberGtp(data().gtp()))
+      if (!existDinMemberDevKey(data().devKey()))
       {
         // insert memberItem
-        insertDinMember(data().gtp(), NULL, data().send(), data().adrvect().adrvect());
+        insertDinMember(data().devKey(), NULL, data().send(), data().adrvect().adrvect());
         // register send in AdrVect
-        setUsedAdr(data().gtp(), data().send());
+        setUsedAdr(data().devKey(), data().send());
         // set falseAlive state if local ECU is longer than 3sec. online
-        if (System_c::getTime() > 3000)dinMemberGtp(data().gtp()).setItemState(IState_c::FalseAlive);
-        else dinMemberGtp(data().gtp()).setItemState(IState_c::ClaimedAddress);
+        if (System_c::getTime() > 3000)dinMemberDevKey(data().devKey()).setItemState(IState_c::FalseAlive);
+        else dinMemberDevKey(data().devKey()).setItemState(IState_c::ClaimedAddress);
       }
 
-      // suitable entry with GETY_POS exist in list
+      // suitable entry with DEV_KEY exist in list
       if ((data().verw() == 11) || ((data().verw() == 12) && (data().m() == 0)))
       { // this is a command from send to empf -> set the state in the stateRequest
         // of member with number empf
@@ -1031,47 +1031,47 @@ bool DINMonitor_c::processMsg(){
       else
       {
         // let the item process the data of pkg
-        dinMemberGtp(data().gtp()).processMsg();
+        dinMemberDevKey(data().devKey()).processMsg();
       }
       b_result = true;
       break;
      case 0: // address claim
-      // ((member must have lowest gtp of all announcing members
+      // ((member must have lowest devKey of all announcing members
       // && must have announed 3 times)
       // || (system time is lower than 3 sec
-      //      && no announcing member with this gtp in list))
-      // && no other active member with this gtp in list
+      //      && no announcing member with this devKey in list))
+      // && no other active member with this devKey in list
 
       if (!existDinMemberNr(data().send()))
       { // message is valid -> process
-        if( ( canClaimNr(data().gtp()) ) ||( System_c::getTime() < 3000 )) allowedClaim = true;
-        if (!existDinMemberGtp(data().gtp()))
+        if( ( canClaimNr(data().devKey()) ) ||( System_c::getTime() < 3000 )) allowedClaim = true;
+        if (!existDinMemberDevKey(data().devKey()))
         { // insert memberItem
-          insertDinMember(data().gtp(), NULL, data().send(), data().adrvect().adrvect());
+          insertDinMember(data().devKey(), NULL, data().send(), data().adrvect().adrvect());
         }
         // let the item process the data of pkg
-        dinMemberGtp(data().gtp()).processMsg();
+        dinMemberDevKey(data().devKey()).processMsg();
         // if claim was unallowed register it as false alive
-        if (!allowedClaim) dinMemberGtp(data().gtp()).itemState(IState_c::FalseAlive);
+        if (!allowedClaim) dinMemberDevKey(data().devKey()).itemState(IState_c::FalseAlive);
       }
       b_result = true;
       break;
      case 2: // adress free
-      // there must be an item with same nr/gtp or according nr hasn't sent alive since > 3sec
+      // there must be an item with same nr/devKey or according nr hasn't sent alive since > 3sec
       // delete item from the list
       // IMPORTANT: Varioterminal sends delete msg for members which are still active - but not used by Varioterminal
       // -> call delete only for outdated and not local members
-      if (existDinMemberGtp(data().gtp())) {
+      if (existDinMemberDevKey(data().devKey())) {
         // member exists
-        if ( ( dinMemberGtp(data().gtp()).lastedTime() > 10000            )
-          && ( ! dinMemberGtp(data().gtp()).itemState( IState_c::Local )  )
-          && ( ! getSystemMgmtInstance().existLocalMemberGtp( data().gtp()
+        if ( ( dinMemberDevKey(data().devKey()).lastedTime() > 10000            )
+          && ( ! dinMemberDevKey(data().devKey()).itemState( IState_c::Local )  )
+          && ( ! getSystemMgmtInstance4Comm().existLocalMemberDevKey( data().devKey()
                 #ifdef USE_ISO_11783
                 , IState_c::DinOnly
                 #endif
                 ) )
           ) {
-          deleteDinMemberGtp(data().gtp());
+          deleteDinMemberDevKey(data().devKey());
           b_result = true;
         }
       }
@@ -1090,15 +1090,15 @@ bool DINMonitor_c::processMsg(){
       }
       b_result = true;
       break;
-		 #ifdef USE_DIN_SERVICEMONITOR
+     #ifdef USE_DIN_SERVICEMONITOR
      case 4: case 7:
       b_result = getDinServiceMonitorInstance4Comm().processMsg();
       break;
-			#endif
+      #endif
       #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
      case 15: // system on/off
-      // must be sent from virtual terminal -> gtp== 0, send==0
-      if ((data().gtp() == 0) && (data().send() == 0))
+      // must be sent from virtual terminal -> devKey== 0, send==0
+      if ((data().devKey() == 0) && (data().send() == 0))
       {
         if (data().nae() == 1) b_globalSystemState = true; // on
         else b_globalSystemState = false; // off
@@ -1113,11 +1113,11 @@ bool DINMonitor_c::processMsg(){
 
 /** process a message with an address claim information */
 void DINMonitor_c::processAddressClaimMsg(){
-  // check if sender used my gtp or number
-  if ( (getSystemMgmtInstance4Comm().existLocalDinMemberGtp(data().gtp()))
-    && ( existDinMemberGtp(data().gtp()) ) )
-  { // notify my identity with this gtp about conflict
-    dinMemberGtp(data().gtp()).affectedConflictCnt(IStateExt_c::Incr, System_c::getTime());
+  // check if sender used my devKey or number
+  if ( (getSystemMgmtInstance4Comm().existLocalDinMemberDevKey(data().devKey()))
+    && ( existDinMemberDevKey(data().devKey()) ) )
+  { // notify my identity with this devKey about conflict
+    dinMemberDevKey(data().devKey()).affectedConflictCnt(IStateExt_c::Incr, System_c::getTime());
   }
   else
   {
@@ -1126,13 +1126,13 @@ void DINMonitor_c::processAddressClaimMsg(){
     switch (data().nr())
     {
       case 1: // first address claim
-        if (!existDinMemberGtp(data().gtp())) valid = true;
+        if (!existDinMemberDevKey(data().devKey())) valid = true;
         break;
       case 2: // second address claim
         if (
             (
-             ( existDinMemberGtp(data().gtp()) )
-           &&( dinMemberGtp(data().gtp()).addressClaimCnt() == 1 )
+             ( existDinMemberDevKey(data().devKey()) )
+           &&( dinMemberDevKey(data().devKey()).addressClaimCnt() == 1 )
             )
           ||( System_c::getTime() < 3000 )
            ) valid = true;
@@ -1140,8 +1140,8 @@ void DINMonitor_c::processAddressClaimMsg(){
       case 3: //third address claim
         if (
             (
-             ( existDinMemberGtp(data().gtp()) )
-           &&( dinMemberGtp(data().gtp()).addressClaimCnt() >= 2 )
+             ( existDinMemberDevKey(data().devKey()) )
+           &&( dinMemberDevKey(data().devKey()).addressClaimCnt() >= 2 )
             )
           ||( System_c::getTime() < 3000 )
            ) valid = true;
@@ -1149,12 +1149,12 @@ void DINMonitor_c::processAddressClaimMsg(){
     }
     if (valid)
     { // process address claim msg
-      if (!existDinMemberGtp(data().gtp()))
+      if (!existDinMemberDevKey(data().devKey()))
       { // insert memberItem
-        insertDinMember(data().gtp());
+        insertDinMember(data().devKey());
       }
       // let the item process the data of pkg
-      dinMemberGtp(data().gtp()).processMsg();
+      dinMemberDevKey(data().devKey()).processMsg();
     }
   }
 }
@@ -1167,14 +1167,14 @@ void DINMonitor_c::processAddressClaimMsg(){
 bool DINMonitor_c::adressConflict(){
   // ignore all adress conflict caused by name requests, because
   // of lots of interpretation problems of name request
-  // additionally ignore conflicts caused by Scheduler_c services (GETY < 8)
-  if ((data().verw() == 8) || (data().gtp().getGety() < 8)) return false; // report NO conflict
+  // additionally ignore conflicts caused by Scheduler_c services (DEVCLASS < 8)
+  if ((data().verw() == 8) || (data().devKey().getDevClass() < 8)) return false; // report NO conflict
 
   // first calculate some standard elements
   Vec_MemberIterator senderIter;
-  bool senderFound = false, senderGtpExist = false, senderNrExist = false;
-  dinMemberGtp(data().gtp(), &senderGtpExist, &senderIter);
-  if ((senderGtpExist) && (senderIter->nr() == data().send()))
+  bool senderFound = false, senderDevKeyExist = false, senderNrExist = false;
+  dinMemberDevKey(data().devKey(), &senderDevKeyExist, &senderIter);
+  if ((senderDevKeyExist) && (senderIter->nr() == data().send()))
   {
     senderFound = true;
     senderNrExist = true;
@@ -1184,14 +1184,14 @@ bool DINMonitor_c::adressConflict(){
     if (existDinMemberNr(data().send())) senderNrExist = true;
   }
 
-  // check if sender used my gtp or number
+  // check if sender used my devKey or number
   // only interprete as conflict of affected local member is already in
   // monitor list
-  if ( (senderGtpExist)
-     &&(getSystemMgmtInstance4Comm().existLocalDinMemberGtp(data().gtp()))
+  if ( (senderDevKeyExist)
+     &&(getSystemMgmtInstance4Comm().existLocalDinMemberDevKey(data().devKey()))
      )
-  { // notify my identity with this gtp about conflict
-     dinMemberGtp(data().gtp()).affectedConflictCnt(IStateExt_c::Incr, System_c::getTime());
+  { // notify my identity with this devKey about conflict
+     dinMemberDevKey(data().devKey()).affectedConflictCnt(IStateExt_c::Incr, System_c::getTime());
      return true; // report conflict
   }
 
@@ -1206,19 +1206,19 @@ bool DINMonitor_c::adressConflict(){
      }
   }
 
-  // if both gtp and send are not found in list, no conflict
-  if ((!senderGtpExist)&&(!senderNrExist)) return false;
+  // if both devKey and send are not found in list, no conflict
+  if ((!senderDevKeyExist)&&(!senderNrExist)) return false;
 
   if (senderFound) // == senderNrExist && senderNrExist
-  { // GETY_POS and SEND correspond right according monitor list and
+  { // DEV_KEY and SEND correspond right according monitor list and
     // no conflict with local indents -> return reporting no conflict
     return false; // NO conflict
   }
 
-  if ((senderGtpExist) && (!senderNrExist))
-  { // notify the member with GETY_POS of msg if it has other number
-    if (dinMemberGtp(data().gtp()).itemState(IState_c::ClaimedAddress))
-    { // other member with same GETY_POS is announcd with diferent number
+  if ((senderDevKeyExist) && (!senderNrExist))
+  { // notify the member with DEV_KEY of msg if it has other number
+    if (dinMemberDevKey(data().devKey()).itemState(IState_c::ClaimedAddress))
+    { // other member with same DEV_KEY is announcd with diferent number
       senderIter->causedConflictCnt(IStateExt_c::Incr, System_c::getTime());
       return true;
     }
@@ -1228,7 +1228,7 @@ bool DINMonitor_c::adressConflict(){
     }
   }
 
-  // last alternative: !senderGtpExist && senderNrExist
+  // last alternative: !senderDevKeyExist && senderNrExist
   if (dinMemberNr(data().send()).checkTime(3000))
   { // ignore conflict, because member seems to be inactive
     // delete old item
@@ -1248,18 +1248,18 @@ bool DINMonitor_c::adressConflict(){
   IMPORTANT: as protocol demands the stop command is repeated till explicit stop-release function call
 
   possible errors:
-    * elNonexistent the commanded member GETY_POS doesn't exist in member list
+    * elNonexistent the commanded member DEV_KEY doesn't exist in member list
     * lbsSysNoActiveLocalMember on missing own active ident
-  @param rc_gtpTarget GETY_POS of the member, which should be stopped
+  @param rc_devKeyTarget DEV_KEY of the member, which should be stopped
   @param rb_toStop true -> start sending STOP commands; false -> release STOP sending mode
   @return true -> stop command sent without errors
 */
-bool DINMonitor_c::commandStop(const GetyPos_c& rc_gtpTarget, bool rb_toStop){
+bool DINMonitor_c::commandStop(const DevKey_c& rc_devKeyTarget, bool rb_toStop){
   /* ******************************** */
   /* perform some precondition checks */
   /* ******************************** */
-  if (!existDinMemberGtp(rc_gtpTarget))
-  { // commanded member GETY_POS not existant
+  if (!existDinMemberDevKey(rc_devKeyTarget))
+  { // commanded member DEV_KEY not existant
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );
     return false;
   }
@@ -1273,7 +1273,7 @@ bool DINMonitor_c::commandStop(const GetyPos_c& rc_gtpTarget, bool rb_toStop){
   /* *************************** */
   /* build and send stop command */
   /* *************************** */
-  uint8_t b_empfTarget = dinMemberGtp(rc_gtpTarget).nr();
+  uint8_t b_empfTarget = dinMemberDevKey(rc_devKeyTarget).nr();
   DINItem_c& c_sender = getSystemMgmtInstance4Comm().getActiveLocalDinMember();
   ArrStopIterator c_stopIter = vec_stop.begin();
   bool b_result = true;
@@ -1309,7 +1309,7 @@ bool DINMonitor_c::commandStop(const GetyPos_c& rc_gtpTarget, bool rb_toStop){
     if (b_result)
     {
       // send first command - and update i32_lastStopSent
-      if(sendStopIntern(c_sender.gtp(), 11, c_sender.nr(),
+      if(sendStopIntern(c_sender.devKey(), 11, c_sender.nr(),
                         b_empfTarget, c_stopIter->command()))
       {
         // notify element of send
@@ -1330,19 +1330,19 @@ bool DINMonitor_c::commandStop(const GetyPos_c& rc_gtpTarget, bool rb_toStop){
   send ISO11783 or DIN9684 system msg to command status request for another member to switch to given mode
 
   possible errors:
-    * elNonexistent the commanded member GETY_POS doesn't exist in member list
+    * elNonexistent the commanded member DEV_KEY doesn't exist in member list
     * lbsSysNoActiveLocalMember on missing own active ident
-  @param rc_gtp GETY_PSO of member, which switch state to OFF
+  @param rc_devKey DEVCLASS_PSO of member, which switch state to OFF
   @param ren_itemState wanted state of item
   @return true -> stop command sent without errors
 */
-bool DINMonitor_c::commandItemState(const GetyPos_c& rc_gtp, IState_c::itemState_t ren_itemState)
+bool DINMonitor_c::commandItemState(const DevKey_c& rc_devKey, IState_c::itemState_t ren_itemState)
 {
   /* ******************************** */
   /* perform some precondition checks */
   /* ******************************** */
-  if (!existDinMemberGtp(rc_gtp))
-  { // commanded member GETY_POS not existant
+  if (!existDinMemberDevKey(rc_devKey))
+  { // commanded member DEV_KEY not existant
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );
     return false;
   }
@@ -1356,7 +1356,7 @@ bool DINMonitor_c::commandItemState(const GetyPos_c& rc_gtp, IState_c::itemState
   /* ********************* */
   /* initiate state command */
   /* ********************* */
-  dinMemberGtp(rc_gtp).setRequestedState(ren_itemState);
+  dinMemberDevKey(rc_devKey).setRequestedState(ren_itemState);
   return true;
 };
 
@@ -1384,7 +1384,7 @@ bool DINMonitor_c::commandGlobalStop(bool rb_toStop){
 
   c_globalStop.setStop(0xF, rb_toStop);
   // send first command - and update i32_lastStopSent
-  if (sendStopIntern(c_sender.gtp(), 10, c_sender.nr(),
+  if (sendStopIntern(c_sender.devKey(), 10, c_sender.nr(),
                     0xF, c_globalStop.command()))
   { // send performed without error
     // notify element of send
@@ -1425,7 +1425,7 @@ bool DINMonitor_c::sendPeriodicStop( void){
   { // stop command must be sent
     if (c_globalStop.active())
     {
-      sendStopIntern(c_sender.gtp(), 10, c_sender.nr(),0xF, c_globalStop.command());
+      sendStopIntern(c_sender.devKey(), 10, c_sender.nr(),0xF, c_globalStop.command());
       c_globalStop.notifySend();
     }
     else
@@ -1436,7 +1436,7 @@ bool DINMonitor_c::sendPeriodicStop( void){
       {
         if (c_stopIter->active())
         {
-          if (sendStopIntern(c_sender.gtp(), 11, c_sender.nr(),
+          if (sendStopIntern(c_sender.devKey(), 11, c_sender.nr(),
                 c_stopIter->empf(), c_stopIter->command()))
           {
             c_stopIter->notifySend();
@@ -1454,18 +1454,18 @@ bool DINMonitor_c::sendPeriodicStop( void){
 }
 
 /**
-  internal inline function to send stop command with given gtp,send,verw,empf,xxx
-  @param rc_gtp GETY_POS of sending member identity
+  internal inline function to send stop command with given devKey,send,verw,empf,xxx
+  @param rc_devKey DEV_KEY of sending member identity
   @param rb_verw VERW code of the system command
   @param rb_send SEND code of the system command
   @param rb_empf EMPF code of the system command (target member no)
   @param rb_xxxx XXXX code of the system command
   @return true -> send without errors
 */
-bool DINMonitor_c::sendStopIntern(const GetyPos_c& rc_gtp, const uint8_t& rb_verw, const uint8_t& rb_send,
+bool DINMonitor_c::sendStopIntern(const DevKey_c& rc_devKey, const uint8_t& rb_verw, const uint8_t& rb_send,
     const uint8_t& rb_empf, const uint8_t& rb_xxxx)
 {
-  data().setGtp(rc_gtp);
+  data().setDevKey(rc_devKey);
   data().setVerw(rb_verw); // stop for specific member
   data().setSend(rb_send);
   data().setEmpf(rb_empf);

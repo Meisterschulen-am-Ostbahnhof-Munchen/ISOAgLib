@@ -200,9 +200,9 @@ DevPropertyHandler_c::processMsg()
     //should never be the case
     return FALSE;
 
-  // set FALSE if "default" is selected in switch case 
+  // set FALSE if "default" is selected in switch case
   bool b_rc = TRUE;
-     
+
   //handling of status message
   if ((data().getUint8Data(0) & 0xF) == 0xE)
   {
@@ -296,7 +296,7 @@ DevPropertyHandler_c::processMsg()
         if (data().getUint8Data(1) == 0)
         {
           en_uploadStep = UploadUploading;
-          getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), tcSourceAddress,
+          getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), tcSourceAddress,
           pc_devPoolForUpload->p_DevicePool, pc_devPoolForUpload->devicePoolLength, PROCESS_DATA_PGN, en_sendSuccess);
         }
         else
@@ -405,7 +405,7 @@ DevPropertyHandler_c::processMsg()
     default:
       b_rc = FALSE;
   }
-  
+
   return b_rc;
 }
 
@@ -812,8 +812,8 @@ DevPropertyHandler_c::initUploading()
     {
       char ch_temp[2] = { 'e', 'n' };
       #ifdef USE_ISO_TERMINAL
-      ch_temp[0] = ((getIsoTerminalInstance().getLocalSettings()->languageCode) >> 8) & 0xFF;
-      ch_temp[1] = (getIsoTerminalInstance().getLocalSettings()->languageCode) & 0xFF;
+      ch_temp[0] = ((getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) >> 8) & 0xFF;
+      ch_temp[1] = (getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) & 0xFF;
       #endif
       if (CNAMESPACE::strncmp(pch_localizationLabel, ch_temp, 2) == 0)
       {
@@ -835,11 +835,11 @@ DevPropertyHandler_c::getPoolForUpload()
 {
   #ifdef USE_ISO_TERMINAL
   //if there are no local settings in ISOTerminal just take the default pool from the map
-  if (getIsoTerminalInstance().getLocalSettings()->lastReceived != 0) {
+  if (getIsoTerminalInstance4Comm().getLocalSettings()->lastReceived != 0) {
     //get local language from ISOTerminal
     char pc_langCode [2];
-    pc_langCode[0] = ((getIsoTerminalInstance().getLocalSettings()->languageCode) >> 8) & 0xFF;
-    pc_langCode[1] = (getIsoTerminalInstance().getLocalSettings()->languageCode) & 0xFF;
+    pc_langCode[0] = ((getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) >> 8) & 0xFF;
+    pc_langCode[1] = (getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) & 0xFF;
     //compare with all stored pools -> take the first found pool
     std::map<LanguageLabel_c, DevicePool_c>::iterator it_maps;
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
@@ -855,22 +855,22 @@ DevPropertyHandler_c::getPoolForUpload()
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
     {
       //get all units from localization label
-      if (getIsoTerminalInstance().getLocalSettings()->uDistance == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 6) & 0x3))
+      if (getIsoTerminalInstance4Comm().getLocalSettings()->uDistance == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 6) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
       }
-      if (getIsoTerminalInstance().getLocalSettings()->uArea == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 4) & 0x3))
+      if (getIsoTerminalInstance4Comm().getLocalSettings()->uArea == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 4) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
       }
-      if (getIsoTerminalInstance().getLocalSettings()->uVolume == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
+      if (getIsoTerminalInstance4Comm().getLocalSettings()->uVolume == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
       }
-      if (getIsoTerminalInstance().getLocalSettings()->uMass == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
+      if (getIsoTerminalInstance4Comm().getLocalSettings()->uMass == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
@@ -879,7 +879,7 @@ DevPropertyHandler_c::getPoolForUpload()
     //compare date format
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
     {
-      if (getIsoTerminalInstance().getLocalSettings()->dFormat == (uint8_t)(it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+3] & 0xFF))
+      if (getIsoTerminalInstance4Comm().getLocalSettings()->dFormat == (uint8_t)(it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+3] & 0xFF))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
@@ -888,7 +888,7 @@ DevPropertyHandler_c::getPoolForUpload()
     //compare time format
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
     {
-      if (getIsoTerminalInstance().getLocalSettings()->nTimeFormat == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+2] >> 4) & 0x3))
+      if (getIsoTerminalInstance4Comm().getLocalSettings()->nTimeFormat == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+2] >> 4) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
@@ -984,7 +984,7 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
   else
   {
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), tcSourceAddress,
+    getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), tcSourceAddress,
            &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, en_sendSuccess);
     en_uploadCommand = UploadMultiSendCommandWaitingForCommandResponse;
   }

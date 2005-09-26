@@ -108,7 +108,7 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObjectAlarmMask_a->ID & 0xFF;
       destMemory [1] = vtObjectAlarmMask_a->ID >> 8;
       destMemory [2] = 2; // Object Type = Alarm Mask
-      destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectAlarmMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectAlarmMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       if (vtObjectAlarmMask_a->softKeyMask != NULL) {
           destMemory [4] = vtObjectAlarmMask_a->softKeyMask->getID() & 0xFF;
           destMemory [5] = vtObjectAlarmMask_a->softKeyMask->getID() >> 8;
@@ -158,7 +158,7 @@ vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKey
 { // ~X2C
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s), newSoftKeyMask);
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSoftKeyMask (this, 2 /* "Type: Alarm Mask" */, newSoftKeyMask->getID(), b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSoftKeyMask (this, 2 /* "Type: Alarm Mask" */, newSoftKeyMask->getID(), b_enableReplaceOfCmd);
 } // -X2C
 
 

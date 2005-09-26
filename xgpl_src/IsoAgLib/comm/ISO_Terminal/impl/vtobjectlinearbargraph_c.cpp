@@ -118,8 +118,8 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectLinearBarGraph_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectLinearBarGraph_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectLinearBarGraph_a->colour, this, IsoAgLib::Colour);
-      destMemory [8] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectLinearBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectLinearBarGraph_a->colour, this, IsoAgLib::Colour);
+      destMemory [8] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectLinearBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
       destMemory [9] = vtObjectLinearBarGraph_a->options;
       destMemory [10] = vtObjectLinearBarGraph_a->numberOfTicks;
       destMemory [11] = vtObjectLinearBarGraph_a->minValue & 0xFF;
@@ -177,7 +177,7 @@ vtObjectLinearBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool 
   if (get_vtObjectLinearBarGraph_a()->variableReference == NULL) {
     if (b_updateObject) saveValue16 (MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), value), sizeof(iVtObjectLinearBarGraph_s), newValue);
 
-    __IsoAgLib::getIsoTerminalInstance().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+    __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 } // -X2C
 
@@ -188,7 +188,7 @@ vtObjectLinearBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_
     saveValue16 (MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), width),  sizeof(iVtObjectLinearBarGraph_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), height), sizeof(iVtObjectLinearBarGraph_s), newHeight);
   }
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end of namespace __IsoAgLib

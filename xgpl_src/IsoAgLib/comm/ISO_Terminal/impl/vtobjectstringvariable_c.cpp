@@ -158,7 +158,7 @@ vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject, bool
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 236 : setValue
@@ -182,7 +182,7 @@ vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject,
   uint16_t ui16_tempLen = 0;
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectStringVariable_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectStringVariable_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 

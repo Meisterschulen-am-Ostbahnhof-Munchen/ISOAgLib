@@ -206,9 +206,9 @@ using namespace IsoAgLib;
 int main()
 { // Initialize the CAN BUS at channel 0 to 250 kbaud
   getIcanInstance().init( 0, 250 );
-  // variable for GETY_POS ( device type, device type instance )
+  // variable for DEV_KEY ( device type, device type instance )
   // default with primary cultivation mounted back ( device type 2, -instance 0 )
-  IsoAgLib::iGetyPos_c myGtp( 2, 0 );
+  IsoAgLib::iDevKey_c myDevKey( 2, 0 );
 
   // start address claim of the local member
 
@@ -224,9 +224,9 @@ int main()
   uint32_t ui32_serNo = 27;
 
 	// start address claim of the local member
-  // if GETY_POS ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
+  // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 

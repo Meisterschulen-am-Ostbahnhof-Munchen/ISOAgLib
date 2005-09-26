@@ -104,44 +104,44 @@ public:
   { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberInd( rui8_ind, rb_forceClaimedAddress ));};
 
   /**
-    deliver the count of members in the Monitor-List with given GETY (variable POS)
+    deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
     which optional (!!) match the condition of address claim state
-    @param rb_gety searched GETY code
+    @param rui8_devClass searched DEVCLASS code
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
-    @return count of members in Monitor-List with GETY == rb_gety
+    @return count of members in Monitor-List with DEVCLASS == rui8_devClass
   */
-  uint8_t isoMemberGetyCnt(uint8_t rb_gety, bool rb_forceClaimedAddress = false)
-  { return ISOMonitor_c::isoMemberGetyCnt( rb_gety, rb_forceClaimedAddress );};
+  uint8_t isoMemberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClaimedAddress = false)
+  { return ISOMonitor_c::isoMemberDevClassCnt( rui8_devClass, rb_forceClaimedAddress );};
   /**
-    deliver one of the members with specific GETY
+    deliver one of the members with specific DEVCLASS
     which optional (!!) match the condition of address claim state
-    check first with isoMemberGetyCnt if enough members with wanted GETY and
+    check first with isoMemberDevClassCnt if enough members with wanted DEVCLASS and
     optional (!!) property are registered in Monitor-List
-    @see isoMemberGetyCnt
+    @see isoMemberDevClassCnt
 
     possible errors:
-      * Err_c::range there exist less than rui8_ind members with GETY rb_gety
-   @param rb_gety searched GETY
+      * Err_c::range there exist less than rui8_ind members with DEVCLASS rui8_devClass
+   @param rui8_devClass searched DEVCLASS
    @param rui8_ind position of the wanted member in the
-                 sublist of member with given GETY (first item has rui8_ind == 0 !!)
+                 sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
    @param rb_forceClaimedAddress true -> only members with claimed address are used
          (optional, default false)
    @return reference to searched element
   */
-  iISOItem_c& isoMemberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
-  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberGetyInd( rb_gety, rui8_ind, rb_forceClaimedAddress ));};
+  iISOItem_c& isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
+  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberDevClassInd( rui8_devClass, rui8_ind, rb_forceClaimedAddress ));};
   /**
-    check if a memberItem with given GETY_POS exist
+    check if a memberItem with given DEV_KEY exist
     which optional (!!) match the condition of address claim state
     and update local pc_isoMemberCache
-    @param rc_gtp searched GETY_POS
+    @param rc_devKey searched DEV_KEY
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existIsoMemberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
-  { return ISOMonitor_c::existIsoMemberGtp(rc_gtp, rb_forceClaimedAddress );};
+  bool existIsoMemberDevKey(const iDevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
+  { return ISOMonitor_c::existIsoMemberDevKey(rc_devKey, rb_forceClaimedAddress );};
 
   /**
     check if a member with given number exist
@@ -154,26 +154,26 @@ public:
   { return ISOMonitor_c::existIsoMemberNr( rui8_nr );};
 
   /**
-    check if member is in member list with wanted GETY_POS,
-    adopt POS if member with claimed address with other POS exist
-    @param refc_gtp GETY_POS to search (-> it's updated if member with claimed address with other POS is found)
-    @return true -> member with claimed address with given GETY found (and refc_gtp has now its GETY_POS)
+    check if member is in member list with wanted DEV_KEY,
+    adopt instance if member with claimed address with other device class inst exist
+    @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
+    @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
   */
-  bool isoGety2GtpClaimedAddress(iGetyPos_c &refc_gtp) { return ISOMonitor_c::isoGety2GtpClaimedAddress( refc_gtp);};
+  bool isoDevClass2DevKeyClaimedAddress(iDevKey_c &refc_devKey) { return ISOMonitor_c::isoDevClass2DevKeyClaimedAddress( refc_devKey);};
 
   /**
-    deliver member item with given gtp
-    (check with existIsoMemberGtp before access to not defined item)
+    deliver member item with given devKey
+    (check with existIsoMemberDevKey before access to not defined item)
 
     possible errors:
       * Err_c::elNonexistent on failed search
 
-    @param rc_gtp searched GETY_POS
+    @param rc_devKey searched DEV_KEY
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  iISOItem_c& isoMemberGtp(const iGetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
-    { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberGtp( rc_gtp, rb_forceClaimedAddress));};
+  iISOItem_c& isoMemberDevKey(const iDevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
+    { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberDevKey( rc_devKey, rb_forceClaimedAddress));};
 
   /**
     deliver member item with given nr
@@ -189,15 +189,15 @@ public:
   iISOItem_c& isoMemberNr(uint8_t rui8_nr) { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberNr( rui8_nr));};
 
   /**
-    deliver member item with given GETY_POS, set pointed bool var to true on success
+    deliver member item with given DEV_KEY, set pointed bool var to true on success
     and set a Member Array Iterator to the result
-    @param rc_gtp searched GETY_POS
+    @param rc_devKey searched DEV_KEY
     @param pb_success bool pointer to store the success (true on success)
     @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
     @return reference to the searched item
   */
-  iISOItem_c& isoMemberGtp(const iGetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress = false )
-  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberGtp( rc_gtp, pb_success, rb_forceClaimedAddress ));};
+  iISOItem_c& isoMemberDevKey(const iDevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress = false )
+  { return static_cast<iISOItem_c&>(ISOMonitor_c::isoMemberDevKey( rc_devKey, pb_success, rb_forceClaimedAddress ));};
 private:
   /** allow getIisoMonitorInstance() access to shielded base class.
       otherwise __IsoAgLib::getIsoMonitorInstance() wouldn't be accepted by compiler

@@ -99,7 +99,7 @@ namespace __IsoAgLib {
 */
 void MeasureProgRemote_c::init( ProcDataBase_c *const rpc_processData )
 {
-  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), GetyPos_c::GetyPosUnspecified );
+  MeasureProgBase_c::init( rpc_processData, Proc_c::UndefinedProg, int32_t(0), DevKey_c::DevKeyUnspecified );
   b_receiveForeignMeasurement = false;
 }
 
@@ -140,7 +140,7 @@ MeasureProgRemote_c::~MeasureProgRemote_c(){
   start a measuring programm
 
   possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
+      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
       * dependant error in CAN_IO
   @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
@@ -165,7 +165,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::doSend_
   start a measuring programm
 
   possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
+      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
       * dependant error in CAN_IO
   @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
@@ -189,13 +189,13 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
     setProgType(ren_progType);
   }
 
-  // if stored remote gtp isn't valid exit this function
+  // if stored remote devKey isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteGtp())return false;
+  if (!verifySetRemoteDevKey())return false;
 
 #ifdef USE_ISO_11783
   // check if receiver (local) uses DIN or ISO
-  IState_c::itemState_t en_msgProto = processData().getIStateForGtp(processData().ownerGtp());
+  IState_c::itemState_t en_msgProto = processData().getIStateForDevKey(processData().ownerDevKey());
 
   if (en_msgProto == IState_c::IstateNull) return false;
 #else
@@ -214,11 +214,11 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 
       // DIN: send values for each program type !
       if (pc_subprog->type() == Proc_c::TimeProp)
-        // send msg with wanted type-code, gtp, pd=0, mod=4, -1*increment value
+        // send msg with wanted type-code, devKey, pd=0, mod=4, -1*increment value
         en_command = GeneralCommand_c::measurementTimeValue;
 
       if (pc_subprog->type() == Proc_c::DistProp)
-        // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
+        // send msg with wanted type-code, devKey, pd=0, mod=4, increment value
         en_command = GeneralCommand_c::measurementDistanceValue;
 
       if (pc_subprog->type() == Proc_c::OnChange)
@@ -251,12 +251,12 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
     {
         if(checkDoSend(Proc_c::DoMin)) b_command |= 0x9;
         else if(checkDoSend(Proc_c::DoMax)) b_command |= 0xA;
-        if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, b_command, pc_subprog->increment()))
+        if (!processData().sendDataRawCmdDevKey(ren_progType, devKey(), 0, b_command, pc_subprog->increment()))
             b_sendResult = false;
     }
     else if (pc_subprog->type() == Proc_c::Counter)
-    { // send msg with wanted type-code, gtp, pd=0, mod=4, increment value
-      if (!processData().sendDataRawCmdGtp(ren_progType, gtp(), 0, 0x2, pc_subprog->increment()))
+    { // send msg with wanted type-code, devKey, pd=0, mod=4, increment value
+      if (!processData().sendDataRawCmdDevKey(ren_progType, devKey(), 0, 0x2, pc_subprog->increment()))
             b_sendResult = false;
     }
 #endif
@@ -274,7 +274,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
        getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                                    GeneralCommand_c::exactValue,
                                                                    en_command);
-       if (!processData().sendValGtp(ren_progType, gtp(), i32_tmpValue))
+       if (!processData().sendValDevKey(ren_progType, devKey(), i32_tmpValue))
           b_sendResult = false;
     }
 
@@ -310,15 +310,15 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 
     // send start command to remote ECU
     uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
-    // send msg with wanted type-code, gtp, pd=0, mod=6, start command
-    // return result -> true if msg claimed address for member with gtp() exist
+    // send msg with wanted type-code, devKey, pd=0, mod=6, start command
+    // return result -> true if msg claimed address for member with devKey() exist
 
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                                 GeneralCommand_c::exactValue,
                                                                 GeneralCommand_c::measurementStart);
     // DIN: pd=0, mod=6
-    if (!processData().sendValGtp(ui8_pri, gtp(), int32_t(b_command)))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
+    if (!processData().sendValDevKey(ui8_pri, devKey(), int32_t(b_command)))        // The 6 here the data modfier. It is used in conjuction with LSB of data to mean start, stop, reset. -bac
       b_sendResult = false;
   }
 #endif
@@ -330,7 +330,7 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
   send the stop command to the remote owner of data
 
   possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
+      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
   @param b_deleteSubProgs is only used for ISO
   @return true -> command successful sent
@@ -338,9 +338,9 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
   bool b_result = true;
 
-  // if stored remote gtp isn't valid exit this function
+  // if stored remote devKey isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteGtp()) return false;
+  if (!verifySetRemoteDevKey()) return false;
 
   // send stop command to remote ECU
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
@@ -348,7 +348,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
 
 #ifdef USE_ISO_11783
   // check if receiver (local) uses DIN or ISO
-  IState_c::itemState_t en_msgProto = processData().getIStateForGtp(processData().ownerGtp());
+  IState_c::itemState_t en_msgProto = processData().getIStateForDevKey(processData().ownerDevKey());
 
   if (en_msgProto == IState_c::IstateNull) return false;
 #else
@@ -391,7 +391,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
         getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                                     GeneralCommand_c::exactValue,
                                                                     en_command);
-        b_result = processData().sendValGtp(ui8_pri, gtp(), int32_t(0));
+        b_result = processData().sendValDevKey(ui8_pri, devKey(), int32_t(0));
       }
     }
 
@@ -405,14 +405,14 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
   if (en_msgProto == IState_c::Din) {
 
     if (checkDoSend(Proc_c::doSend_t(Proc_c::DoVal | Proc_c::DoMed | Proc_c::DoInteg)))
-    { // send msg with wanted type-code, gtp, pd=0, mod=6, stop command
-      // return result -> true if msg claimed address for member with gtp() exist
+    { // send msg with wanted type-code, devKey, pd=0, mod=6, stop command
+      // return result -> true if msg claimed address for member with devKey() exist
       // prepare general command in process pkg
       getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
                                                                   GeneralCommand_c::exactValue,
                                                                   GeneralCommand_c::measurementStop);
       // DIN: pd=0, mod=6
-      b_result = processData().sendValGtp(ui8_pri, gtp(), int32_t(0));
+      b_result = processData().sendValDevKey(ui8_pri, devKey(), int32_t(0));
     }
   }
 
@@ -440,7 +440,7 @@ int32_t MeasureProgRemote_c::med(bool rb_sendRequest) const
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=4
-    processDataConst().sendValGtp(2, gtp(), int32_t(0));
+    processDataConst().sendValDevKey(2, devKey(), int32_t(0));
   }
   return i32_med;
 }
@@ -459,7 +459,7 @@ float MeasureProgRemote_c::medFloat(bool rb_sendRequest) const
                                                                 GeneralCommand_c::medValue,
                                                                 GeneralCommand_c::requestValue);
     // DIN pd=3, mod=4
-    processDataConst().sendValGtp(2, gtp(), int32_t(0));
+    processDataConst().sendValDevKey(2, devKey(), int32_t(0));
   }
   return f_med;
 }
@@ -551,7 +551,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), masterVal(), c_pkg.memberSend().gtp(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), masterVal(), c_pkg.memberSend().devKey(), b_change );
 
 #ifdef USE_FLOAT_DATA_TYPE
   }
@@ -587,7 +587,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), masterValFloat(), c_pkg.memberSend().gtp(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), masterValFloat(), c_pkg.memberSend().devKey(), b_change );
 
   }
 #endif
@@ -639,15 +639,15 @@ void MeasureProgRemote_c::initVal(int32_t ri32_val){
   send reset command for measure value
 
   possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
+      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
   @param ri32_val reset measure value to this value (ISO only)
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
-  // if stored remote gtp isn't valid exit this function
+  // if stored remote devKey isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteGtp())return false;
+  if (!verifySetRemoteDevKey())return false;
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
   // prepare general command in process pkg
@@ -657,7 +657,7 @@ bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
 
 #ifdef USE_ISO_11783
   // check if receiver (local) uses DIN or ISO
-  IState_c::itemState_t en_msgProto = processData().getIStateForGtp(processData().ownerGtp());
+  IState_c::itemState_t en_msgProto = processData().getIStateForDevKey(processData().ownerDevKey());
 
   if (en_msgProto == IState_c::IstateNull) return false;
 #else
@@ -669,7 +669,7 @@ bool MeasureProgRemote_c::resetVal(int32_t ri32_val){
     i32_valToSend = ri32_val; // ISO
 
   // DIN: pd=0, mod=6
-  return processData().sendValGtp(ui8_pri, gtp(), i32_valToSend);
+  return processData().sendValDevKey(ui8_pri, devKey(), i32_valToSend);
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -715,14 +715,14 @@ void MeasureProgRemote_c::initVal(float rf_val){
   send reset command for medium value
 
   possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
+      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetMed(){
-  // if stored remote gtp isn't valid exit this function
+  // if stored remote devKey isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteGtp())return false;
+  if (!verifySetRemoteDevKey())return false;
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
@@ -730,21 +730,21 @@ bool MeasureProgRemote_c::resetMed(){
                                                               GeneralCommand_c::medValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendValGtp(ui8_pri, gtp(), int32_t(0x28));
+  return processData().sendValDevKey(ui8_pri, devKey(), int32_t(0x28));
 }
 
 /**
   send reset command for integral value
 
   possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
+      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetInteg(){
-  // if stored remote gtp isn't valid exit this function
+  // if stored remote devKey isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteGtp())return false;
+  if (!verifySetRemoteDevKey())return false;
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
@@ -752,21 +752,21 @@ bool MeasureProgRemote_c::resetInteg(){
                                                               GeneralCommand_c::integValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendValGtp(ui8_pri, gtp(), int32_t(0x48));
+  return processData().sendValDevKey(ui8_pri, devKey(), int32_t(0x48));
 }
 
 /**
   send reset command for minimum value
 
   possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
+      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetMin(){
-  // if stored remote gtp isn't valid exit this function
+  // if stored remote devKey isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteGtp())return false;
+  if (!verifySetRemoteDevKey())return false;
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
@@ -774,21 +774,21 @@ bool MeasureProgRemote_c::resetMin(){
                                                               GeneralCommand_c::minValue,
                                                               GeneralCommand_c::measurementReset);
       // DIN: pd=0, mod=6
-  return processData().sendValGtp(ui8_pri, gtp(), int32_t(0x8));
+  return processData().sendValDevKey(ui8_pri, devKey(), int32_t(0x8));
 }
 
 /**
   send reset command for maximum value
 
   possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
+      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetMax(){
-  // if stored remote gtp isn't valid exit this function
+  // if stored remote devKey isn't valid exit this function
   // error state are set by the function
-  if (!verifySetRemoteGtp())return false;
+  if (!verifySetRemoteDevKey())return false;
 
   // get suitable PRI code
   uint8_t ui8_pri = (checkProgType(Proc_c::Base))? 1:2;
@@ -796,16 +796,16 @@ bool MeasureProgRemote_c::resetMax(){
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::measurementReset);
   // DIN: pd=0, mod=6
-  return processData().sendValGtp(ui8_pri, gtp(), int32_t(0x8));
+  return processData().sendValDevKey(ui8_pri, devKey(), int32_t(0x8));
 }
 
 /**
-  perform periodic actions --> stop measuring prog if gtp isn't active any more
+  perform periodic actions --> stop measuring prog if devKey isn't active any more
   @return true -> all planned activities performed in available time
 */
 bool MeasureProgRemote_c::timeEvent( void )
 {
-  if ( (!getSystemMgmtInstance4Comm().existMemberGtp(gtp(), true)) && started() )
+  if ( (!getSystemMgmtInstance4Comm().existMemberDevKey(devKey(), true)) && started() )
   { // remote owner of this process data isn't active any more
     // stop measureing subprogs
     stop();
@@ -827,39 +827,39 @@ void MeasureProgRemote_c::receiveForeignMeasurement(bool rb_useForeign)
 
 
 /**
-  verify the stored GETY_POS code of the remote system
+  verify the stored DEV_KEY code of the remote system
   and set Err_c::elNonexistent if this system isn't registered as ative;
-  if gtp is undefied yet, retrieve it by the stored ident GETY of this process data
+  if devKey is undefied yet, retrieve it by the stored ident DEVCLASS of this process data
 
   possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given GETY found
+      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
   @return true -> everything o.k.
 */
-bool MeasureProgRemote_c::verifySetRemoteGtp()
-{ // if ownerGtp is specified, check if it's still valid
+bool MeasureProgRemote_c::verifySetRemoteDevKey()
+{ // if ownerDevKey is specified, check if it's still valid
   SystemMgmt_c &c_lbsSystem = getSystemMgmtInstance4Comm();
-  if ( processData().ownerGtp().isSpecified()
-    && (c_lbsSystem.existMemberGtp(processData().ownerGtp(), true)))
+  if ( processData().ownerDevKey().isSpecified()
+    && (c_lbsSystem.existMemberDevKey(processData().ownerDevKey(), true)))
     return true; // change nothing and return success
 
   // check if proc data identity is valid and corresponding member has claimed address in monitor list
-  if ( processData().gtp().isSpecified()
-    && (c_lbsSystem.existMemberGtp(processData().gtp(), true)))
+  if ( processData().devKey().isSpecified()
+    && (c_lbsSystem.existMemberDevKey(processData().devKey(), true)))
     return true; // change nothing and return success
 
-  // if both tests were false look for member with claimed address with GETY of this process
-  // data to update POS of this instance
-  GetyPos_c c_tempGtp = processData().ownerGtp();
+  // if both tests were false look for member with claimed address with DEVCLASS of this process
+  // data to update dev class inst of this instance
+  DevKey_c c_tempDevKey = processData().ownerDevKey();
   uint8_t b_tempPos;
   for (b_tempPos = 0; b_tempPos < 8; b_tempPos++)
   {
-    c_tempGtp.setPos( b_tempPos );
-    if (getSystemMgmtInstance4Comm().existMemberGtp(c_tempGtp))
+    c_tempDevKey.setDevClassInst( b_tempPos );
+    if (getSystemMgmtInstance4Comm().existMemberDevKey(c_tempDevKey))
     {
-      processData().setOwnerGtp(c_tempGtp); // set actual GETY_POS, because member is found in list
-      processData().setPos(c_tempGtp.getPos());
+      processData().setOwnerDevKey(c_tempDevKey); // set actual DEV_KEY, because member is found in list
+      processData().setDevClassInst(c_tempDevKey.getDevClassInst());
       // stop further search if this item has already claimed address
-      if (getSystemMgmtInstance4Comm().memberGtp(c_tempGtp).itemState(IState_c::ClaimedAddress))
+      if (getSystemMgmtInstance4Comm().memberDevKey(c_tempDevKey).itemState(IState_c::ClaimedAddress))
       { // this item has claimed address -> use it and stop search
         return true; // return from this function with positive result
       }

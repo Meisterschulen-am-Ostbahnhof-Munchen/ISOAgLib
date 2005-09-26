@@ -181,7 +181,7 @@ vtObjectRectangle_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectRectangle_a(), width),  sizeof(iVtObjectRectangle_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s), newHeight);
   }
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end namespace __IsoAgLib

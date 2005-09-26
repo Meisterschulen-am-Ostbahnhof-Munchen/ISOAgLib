@@ -111,13 +111,13 @@ public:
   /**
     constructor which can set optional all ident data
     @param ri32_time creation time of this item instance
-    @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
+    @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
     @param rui8_nr number of this item
     @param rb_status state of this ident (off, claimed address, ...) (default: off)
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ISOItem_c(int32_t ri32_time = 0, const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, uint8_t rui8_nr = 0xFE,
+  ISOItem_c(int32_t ri32_time = 0, const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, uint8_t rui8_nr = 0xFE,
                IState_c::itemState_t rb_status = IState_c::IstateNull,
                uint16_t rui16_saEepromAdr = 0xFFFF, int riSingletonKey = 0 );
   /**
@@ -143,120 +143,120 @@ public:
     deliver the data NAME string as pointer to 8byte string
     @return const pointer to 8 uint8_t string with NAME
   */
-  const uint8_t* outputString() const {return c_gtp.getConstName().outputString();};
+  const uint8_t* outputString() const {return c_devKey.getConstName().outputString();};
 
   /**
     get self config mode
     @return self configuration adress state
   */
-  uint8_t selfConf() const {return c_gtp.getConstName().selfConf();};
+  uint8_t selfConf() const {return c_devKey.getConstName().selfConf();};
   /**
     get industry group code
     @return industry group of device
   */
-  uint8_t indGroup() const {return c_gtp.getConstName().indGroup();};
+  uint8_t indGroup() const {return c_devKey.getConstName().indGroup();};
   /**
     get device class instance number
     @return:device class instance number
   */
-  uint8_t devClassInst() const {return c_gtp.getConstName().devClassInst();};
+  uint8_t devClassInst() const {return c_devKey.getConstName().devClassInst();};
   /**
     get device class code
     @return:device class
   */
-  uint8_t devClass() const {return c_gtp.getConstName().devClass();};
+  uint8_t devClass() const {return c_devKey.getConstName().devClass();};
   /**
     get function code
     @return function code
   */
-  uint8_t func() const {return c_gtp.getConstName().func();};
+  uint8_t func() const {return c_devKey.getConstName().func();};
   /**
     get function instance code
     @return function instance code
   */
-  uint8_t funcInst() const {return c_gtp.getConstName().funcInst();};
+  uint8_t funcInst() const {return c_devKey.getConstName().funcInst();};
   /**
     get ECU instance code
     @return ECU instance code
   */
-  uint8_t ecuInst() const {return c_gtp.getConstName().ecuInst();};
+  uint8_t ecuInst() const {return c_devKey.getConstName().ecuInst();};
   /**
     get manufactor code
     @return manufactor code
   */
-  uint16_t manufCode() const {return c_gtp.getConstName().manufCode();};
+  uint16_t manufCode() const {return c_devKey.getConstName().manufCode();};
 
   /**
     get serial number
     @return serial number
   */
-  uint32_t serNo() const {return c_gtp.getConstName().serNo();};
+  uint32_t serNo() const {return c_devKey.getConstName().serNo();};
   /**
     set the NAME data from 8 uint8_t string
     @param rpb_src pointer to 8byte source string
   */
-  void inputString(const uint8_t* rpb_src) {c_gtp.set(rpb_src);};
+  void inputString(const uint8_t* rpb_src) {c_devKey.set(rpb_src);};
 
   /**
     set self config mode
     @param rb_selfConf true -> indicate sefl configuring ECU
   */
-  void setSelfConf(bool rb_selfConf) {c_gtp.getName().setSelfConf(rb_selfConf);};
+  void setSelfConf(bool rb_selfConf) {c_devKey.getName().setSelfConf(rb_selfConf);};
   /**
     set industry group code
     @param rui8_indGroup industry group of device (2 for agriculture)
   */
-  void setIndGroup(uint8_t rui8_indGroup) {c_gtp.getName().setIndGroup(rui8_indGroup);};
+  void setIndGroup(uint8_t rui8_indGroup) {c_devKey.getName().setIndGroup(rui8_indGroup);};
   /**
     set device class instance number
-    @param rb_devClassInst instance number of ECU with same devClass
+    @param rui8_devClassInst instance number of ECU with same devClass
           in the network (comparable to POS in DIN9684)
   */
-  void setDevClassInst(uint8_t rb_devClassInst) {c_gtp.getName().setDevClassInst(rb_devClassInst);};
+  void setDevClassInst(uint8_t rui8_devClassInst) {c_devKey.getName().setDevClassInst(rui8_devClassInst);};
   /**
     set device class code
-    @param rb_devClass device class of ECU (equivalent to GETY in DIN)
+    @param rui8_devClass device class of ECU (equivalent to DEVCLASS in DIN)
   */
-  void setDevClass(uint8_t rb_devClass) {c_gtp.getName().setDevClass(rb_devClass);};
+  void setDevClass(uint8_t rui8_devClass) {c_devKey.getName().setDevClass(rui8_devClass);};
   /**
     set function code
     @param rb_func function of the ECU (usual 25 for network interconnect)
   */
-  void setFunc(uint8_t rb_func) {c_gtp.getName().setFunc(rb_func);};
+  void setFunc(uint8_t rb_func) {c_devKey.getName().setFunc(rb_func);};
   /**
     set function instance code
     @param rb_funcInst instance number of ECU with same function and device class
         (default 0 - normally)
   */
-  void setFuncInst(uint8_t rb_funcInst) {c_gtp.getName().setFuncInst(rb_funcInst);};
+  void setFuncInst(uint8_t rb_funcInst) {c_devKey.getName().setFuncInst(rb_funcInst);};
   /**
     set ECU instance code
     @param rb_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  void setEcuInst(uint8_t rb_ecuInst) {c_gtp.getName().setEcuInst(rb_ecuInst);};
+  void setEcuInst(uint8_t rb_ecuInst) {c_devKey.getName().setEcuInst(rb_ecuInst);};
   /**
     set manufactor code
     @param rui16_manufCode code of manufactor (11bit)
   */
-  void setManufCode(uint16_t rui16_manufCode) {c_gtp.getName().setManufCode(rui16_manufCode);};
+  void setManufCode(uint16_t rui16_manufCode) {c_devKey.getName().setManufCode(rui16_manufCode);};
 
   /**
     set serial number (Identity Number)
     @param rui32_serNo serial no of specific device (21bit)
   */
-  void setSerNo(uint32_t rui32_serNo) {c_gtp.getName().setSerNo(rui32_serNo);};
+  void setSerNo(uint32_t rui32_serNo) {c_devKey.getName().setSerNo(rui32_serNo);};
 
   /**
     set all element data with one call
     @param ri32_time creation time of this item instance
-    @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
+    @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
     @param rui8_nr number of this item
     @param rb_status state of this ident (off, claimed address, ...)
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
+  void set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr,
            itemState_t ren_status = IState_c::Active,
            uint16_t rui16_saEepromAdr = 0xFFFF, int riSingletonKey = 0 );
 
@@ -264,7 +264,7 @@ public:
   /**
     set all element data with one call
     @param ri32_time creation time of this item instance
-    @param rc_gtp GETY_POS code of this item ((deviceClass << 3) | devClInst )
+    @param rc_devKey DEV_KEY code of this item ((deviceClass << 3) | devClInst )
     @param rui8_nr number of this item
     @param rb_selfConf true -> the item has a self configurable source adress
     @param rui8_indGroup industry group code (2 for agriculture)
@@ -277,7 +277,7 @@ public:
     @param rb_ecuInst counter for ECU with same function and function instance (default 0)
     @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ri32_time, GetyPos_c rc_gtp, uint8_t rui8_nr,
+  void set(int32_t ri32_time, DevKey_c rc_devKey, uint8_t rui8_nr,
           bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
           uint32_t rui32_serNo, itemState_t ren_status = IState_c::Active,
           uint16_t rui16_saEepromAdr = 0xFFFF, uint8_t rb_funcInst = 0,
@@ -285,16 +285,16 @@ public:
   #endif
 
   /**
-    set GETY_POS code of this item
-    @param rc_gtp GETY_POS
+    set DEV_KEY code of this item
+    @param rc_devKey DEV_KEY
   */
-  void setGtp(const GetyPos_c& rc_gtp)
-  {c_gtp = rc_gtp;};
+  void setDevKey(const DevKey_c& rc_devKey)
+  {c_devKey = rc_devKey;};
   /**
-    deliver GETY_POS code of this item
-    @return GETY_POS
+    deliver DEV_KEY code of this item
+    @return DEV_KEY
   */
-  const GetyPos_c& gtp() const {return MonitorItem_c::gtp();};
+  const DevKey_c& devKey() const {return MonitorItem_c::devKey();};
 
   /**
     deliver name

@@ -251,8 +251,8 @@ private: // Private attributes
 
   MultiSend_c::sendSuccess_t en_sendSuccess;
 
-  /** GETY_POS of the connected terminal */
-  GetyPos_c c_gtp;
+  /** DEV_KEY of the connected terminal */
+  DevKey_c c_devKey;
   /** active entry no in psMaskDef */
   uint8_t ui8_maskDefInd;
   /** amount of registered masks */

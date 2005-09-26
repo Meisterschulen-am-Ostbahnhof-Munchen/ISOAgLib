@@ -104,19 +104,19 @@ namespace __IsoAgLib {
 
 /**
   default constructor, which can optionally start address claim for this identity, if enough information
-  is provided with the parameters (at least rpc_gtp, rpb_name [ ren_protoOrder if NO DIN ident shall be created)
-  @param rpc_gtp optional pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  is provided with the parameters (at least rpc_devKey, rpb_name [ ren_protoOrder if NO DIN ident shall be created)
+  @param rpc_devKey optional pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_name optional pointer to the name of this identity (DIN or ISO)
   @param ren_protoOrder optional selection of wanted protocol type ( IState_c::DinOnly, IState_c::IsoOnly)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
+IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
     const uint8_t* rpb_name
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     ,IState_c::protoOrder_t ren_protoOrder
     #endif
     #if defined( USE_ISO_11783 )
-    ,int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList
+    ,int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList
     #endif
     , int ri_singletonVecKey )
   : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey )
@@ -128,9 +128,9 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
     , ui16_saEepromAdr( 0xFFFF ), i8_slaveCount ( ri8_slaveCount ), b_wantedSa( 254 )
   #endif
 { // check if called with complete default parameters -> don't start address claim in this case
-  if ( rpc_gtp == NULL )
+  if ( rpc_devKey == NULL )
   {
-    pc_gtp = NULL;
+    pc_devKey = NULL;
     #ifdef USE_DIN_9684
     CNAMESPACE::memset(cpName,'\0',7);
     #endif
@@ -142,14 +142,14 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
     #endif
 
     #if (!defined(USE_ISO_11783)) && defined(USE_DIN_9684)
-    init( rpc_gtp, rpb_name, ri_singletonVecKey ) ;
+    init( rpc_devKey, rpb_name, ri_singletonVecKey ) ;
     #elif defined(USE_ISO_11783) && defined(USE_DIN_9684)
     if ( ren_protoOrder == IState_c::DinOnly )
-      init( rpc_gtp, rpb_name, NULL, 254, 0xFFF, ri_singletonVecKey );
+      init( rpc_devKey, rpb_name, NULL, 254, 0xFFF, ri_singletonVecKey );
     else
-      init(rpc_gtp, NULL, rpb_name, 254, 0xFFFF, ri_singletonVecKey );
+      init(rpc_devKey, NULL, rpb_name, 254, 0xFFFF, ri_singletonVecKey );
     #elif defined( USE_ISO_11783 ) && (!defined( USE_DIN_9684 ) )
-    init(rpc_gtp, NULL, rpb_name, 254, 0xFFFF, ri_singletonVecKey );
+    init(rpc_devKey, NULL, rpb_name, 254, 0xFFFF, ri_singletonVecKey );
     #endif
   }
 }
@@ -157,7 +157,7 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
 #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
 /**
   constructor for DIN + ISO identity, which starts address claim for this identity
-  @param rpc_gtp pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_name pointer to the DIN name of this identity
   @param rpb_isoName pointer to the 64Bit ISO11783 NAME of this identity
   @param rb_wantedSa optional preselected source adress (SA) of the ISO item (fixed SA or last time
@@ -171,24 +171,24 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
     IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
+IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
     const uint8_t* rpb_name,
     const uint8_t* rpb_isoName,
     uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr,
-    int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList,
+    int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
     int ri_singletonVecKey )
   : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey ), pc_memberItem( NULL ),
     pc_isoItem( NULL ), pc_slaveIsoNameList ( rpc_slaveIsoNameList ), ui16_saEepromAdr( rui16_saEepromAdr ), i8_slaveCount ( ri8_slaveCount ), b_wantedSa( rb_wantedSa )
 {
   CNAMESPACE::memset(cpName,'\0',7);
-  init( rpc_gtp, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+  init( rpc_devKey, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
 }
 #endif
 
 #ifdef USE_ISO_11783
 /**
   constructor for ISO identity, which starts address claim for this identity
-  @param rpc_gtp pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_isoName pointer to the 64Bit ISO11783 NAME of this identity
   @param rb_wantedSa optional preselected source adress (SA) of the ISO item (fixed SA or last time
       SA for self conf ISO device) (default 254 for free self-conf)
@@ -201,10 +201,10 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
     IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
+IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
     const uint8_t* rpb_isoName,
     uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr,
-    int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList,
+    int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
     int ri_singletonVecKey )
   : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey ),
     #ifdef USE_DIN_9684
@@ -215,11 +215,11 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
-  init(rpc_gtp, NULL, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+  init(rpc_devKey, NULL, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
 }
 /**
   constructor for DIN + ISO identity, which starts address claim for this identity
-  @param rpc_gtp pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_name pointer to the DIN name of this identity
   @param rb_selfConf true -> this member as a self configurable source adress
   @param rui8_indGroup select the industry group, 2 == agriculture
@@ -239,10 +239,10 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
     IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp, const uint8_t* rpb_dinName,
+IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
   bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
   uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
+  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
   : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey ),
     #ifdef USE_DIN_9684
     pc_memberItem( NULL ),
@@ -253,20 +253,20 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp, const uint8_t* rpb_dinName,
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
-  if ( rpc_gtp != NULL )
+  if ( rpc_devKey != NULL )
   {
-    ISOName_c c_isoName(rb_selfConf, rui8_indGroup, rpc_gtp->getGety(), rpc_gtp->getPos(),
+    ISOName_c c_isoName(rb_selfConf, rui8_indGroup, rpc_devKey->getDevClass(), rpc_devKey->getDevClassInst(),
           rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
-    init(rpc_gtp, rpb_dinName, c_isoName.outputString(), rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+    init(rpc_devKey, rpb_dinName, c_isoName.outputString(), rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
   }
   else
   {
-    init( rpc_gtp, rpb_dinName, NULL, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+    init( rpc_devKey, rpb_dinName, NULL, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
   }
 }
 /**
   constructor for ISO identity, which starts address claim for this identity
-  @param rpc_gtp pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_name pointer to the DIN name of this identity
   @param rb_selfConf true -> this member as a self configurable source adress
   @param rui8_indGroup select the industry group, 2 == agriculture
@@ -286,10 +286,10 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp, const uint8_t* rpb_dinName,
     IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
+IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
   bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
   uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
+  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
   : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey ),
     #ifdef USE_DIN_9684
     pc_memberItem( NULL ),
@@ -299,15 +299,15 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
-  if ( rpc_gtp != NULL )
+  if ( rpc_devKey != NULL )
   {
-    ISOName_c c_isoName(rb_selfConf, rui8_indGroup, rpc_gtp->getGety(), rpc_gtp->getPos(),
+    ISOName_c c_isoName(rb_selfConf, rui8_indGroup, rpc_devKey->getDevClass(), rpc_devKey->getDevClassInst(),
           rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
-    init(rpc_gtp, NULL, c_isoName.outputString(), rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+    init(rpc_devKey, NULL, c_isoName.outputString(), rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
   }
   else
   {
-    init( rpc_gtp, NULL, NULL, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+    init( rpc_devKey, NULL, NULL, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
   }
 }
 #endif
@@ -316,11 +316,11 @@ IdentItem_c::IdentItem_c(GetyPos_c* rpc_gtp,
 #ifdef USE_DIN_9684
 /**
   explicit start of activity for a DIN only instance
-  @param rpc_gtp optional pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  @param rpc_devKey optional pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_name optional pointer to the name of this identity (DIN or ISO)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IdentItem_c::start(GetyPos_c* rpc_gtp,
+void IdentItem_c::start(DevKey_c* rpc_devKey,
     const uint8_t* rpb_name,
     int ri_singletonVecKey )
 {
@@ -328,16 +328,16 @@ void IdentItem_c::start(GetyPos_c* rpc_gtp,
   BaseItem_c::set( System_c::getTime(), ri_singletonVecKey );
   CNAMESPACE::memset(cpName,'\0',7);
   #if (!defined(USE_ISO_11783))
-    init( rpc_gtp, rpb_name, ri_singletonVecKey ) ;
+    init( rpc_devKey, rpb_name, ri_singletonVecKey ) ;
   #else
-    init( rpc_gtp, rpb_name, NULL, 254, 0xFFF, ri_singletonVecKey );
+    init( rpc_devKey, rpb_name, NULL, 254, 0xFFF, ri_singletonVecKey );
   #endif
 }
 #endif
 #ifdef USE_ISO_11783
 /**
   explicit start  for DIN + ISO identity, which starts address claim for this identity
-  @param rpc_gtp pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_name pointer to the DIN name of this identity
   @param rpb_isoName pointer to the 64Bit ISO11783 NAME of this identity
   @param rb_wantedSa optional preselected source adress (SA) of the ISO item (fixed SA or last time
@@ -351,11 +351,11 @@ void IdentItem_c::start(GetyPos_c* rpc_gtp,
     IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IdentItem_c::start(GetyPos_c* rpc_gtp,
+void IdentItem_c::start(DevKey_c* rpc_devKey,
     const uint8_t* rpb_name,
     const uint8_t* rpb_isoName,
     uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr,
-    int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList,
+    int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
     int ri_singletonVecKey )
 {
   close(); // if this item has already claimed an address -> revert this first
@@ -367,11 +367,11 @@ void IdentItem_c::start(GetyPos_c* rpc_gtp,
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
-  init( rpc_gtp, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+  init( rpc_devKey, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
 }
 /**
   explicit start  for ISO identity, which starts address claim for this identity
-  @param rpc_gtp pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_isoName pointer to the 64Bit ISO11783 NAME of this identity
   @param rb_wantedSa optional preselected source adress (SA) of the ISO item (fixed SA or last time
       SA for self conf ISO device) (default 254 for free self-conf)
@@ -384,10 +384,10 @@ void IdentItem_c::start(GetyPos_c* rpc_gtp,
     IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IdentItem_c::start(GetyPos_c* rpc_gtp,
+void IdentItem_c::start(DevKey_c* rpc_devKey,
     const uint8_t* rpb_isoName,
     uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr,
-    int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList,
+    int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
     int ri_singletonVecKey )
 {
   close(); // if this item has already claimed an address -> revert this first
@@ -399,11 +399,11 @@ void IdentItem_c::start(GetyPos_c* rpc_gtp,
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
-  init(rpc_gtp, NULL, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+  init(rpc_devKey, NULL, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
 }
 /**
   explicit start  for DIN + ISO identity, which starts address claim for this identity
-  @param rpc_gtp pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_name pointer to the DIN name of this identity
   @param rb_selfConf true -> this member as a self configurable source adress
   @param rui8_indGroup select the industry group, 2 == agriculture
@@ -423,10 +423,10 @@ void IdentItem_c::start(GetyPos_c* rpc_gtp,
     IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IdentItem_c::start(GetyPos_c* rpc_gtp, const uint8_t* rpb_dinName,
+void IdentItem_c::start(DevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
   bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
   uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
+  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
 {
   close(); // if this item has already claimed an address -> revert this first
   BaseItem_c::set( System_c::getTime(), ri_singletonVecKey );
@@ -437,20 +437,20 @@ void IdentItem_c::start(GetyPos_c* rpc_gtp, const uint8_t* rpb_dinName,
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
-  if ( rpc_gtp != NULL )
+  if ( rpc_devKey != NULL )
   {
-    ISOName_c c_isoName(rb_selfConf, rui8_indGroup, rpc_gtp->getGety(), rpc_gtp->getPos(),
+    ISOName_c c_isoName(rb_selfConf, rui8_indGroup, rpc_devKey->getDevClass(), rpc_devKey->getDevClassInst(),
           rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
-    init(rpc_gtp, rpb_dinName, c_isoName.outputString(), rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+    init(rpc_devKey, rpb_dinName, c_isoName.outputString(), rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
   }
   else
   {
-    init( rpc_gtp, rpb_dinName, NULL, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+    init( rpc_devKey, rpb_dinName, NULL, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
   }
 }
 /**
   explicit start  for ISO identity, which starts address claim for this identity
-  @param rpc_gtp pointer to the GETY_POS variable of this identity, which is resident somewhere else (f.e. main() task)
+  @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
   @param rpb_name pointer to the DIN name of this identity
   @param rb_selfConf true -> this member as a self configurable source adress
   @param rui8_indGroup select the industry group, 2 == agriculture
@@ -470,10 +470,10 @@ void IdentItem_c::start(GetyPos_c* rpc_gtp, const uint8_t* rpb_dinName,
     IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IdentItem_c::start(GetyPos_c* rpc_gtp,
+void IdentItem_c::start(DevKey_c* rpc_devKey,
   bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
   uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
+  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
 {
   close(); // if this item has already claimed an address -> revert this first
   BaseItem_c::set( System_c::getTime(), ri_singletonVecKey );
@@ -484,15 +484,15 @@ void IdentItem_c::start(GetyPos_c* rpc_gtp,
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
-  if ( rpc_gtp != NULL )
+  if ( rpc_devKey != NULL )
   {
-    ISOName_c c_isoName(rb_selfConf, rui8_indGroup, rpc_gtp->getGety(), rpc_gtp->getPos(),
+    ISOName_c c_isoName(rb_selfConf, rui8_indGroup, rpc_devKey->getDevClass(), rpc_devKey->getDevClassInst(),
           rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst);
-    init(rpc_gtp, NULL, c_isoName.outputString(), rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+    init(rpc_devKey, NULL, c_isoName.outputString(), rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
   }
   else
   {
-    init( rpc_gtp, NULL, NULL, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
+    init( rpc_devKey, NULL, NULL, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
   }
 }
 #endif
@@ -509,25 +509,25 @@ void IdentItem_c::close( void )
 {
   #ifdef USE_DIN_9684
   if ( (pc_memberItem != NULL)
-    && (pc_memberItem->gtp() == gtp())
+    && (pc_memberItem->devKey() == devKey())
     && (pc_memberItem->itemState(IState_c::ClaimedAddress))
     )
     { // item has claimed address -> send unregister cmd
       // send an adress release for according number
       // pc_memberItem->sendAdressRelease();
       // delete item from memberList - and force send of address release
-      getDinMonitorInstance4Comm().deleteDinMemberGtp(gtp(), true );
+      getDinMonitorInstance4Comm().deleteDinMemberDevKey(devKey(), true );
       pc_memberItem = NULL;
     }
   #endif
   #ifdef USE_ISO_11783
   if ( (pc_isoItem != NULL)
-    && (pc_isoItem->gtp() == gtp())
+    && (pc_isoItem->devKey() == devKey())
     && (pc_isoItem->itemState(IState_c::ClaimedAddress))
     )
     { // item has claimed address -> send unregister cmd
       // delete item from memberList
-      getIsoMonitorInstance4Comm().deleteIsoMemberGtp(gtp());
+      getIsoMonitorInstance4Comm().deleteIsoMemberDevKey(devKey());
       pc_isoItem = NULL;
       clearItemState( IState_c::ClaimedAddress );
     }
@@ -538,7 +538,7 @@ void IdentItem_c::close( void )
 
 /**
   init local Ident Instance and set all internal values of an ident item with one function call
-  @param rpc_gtp pointer to the variable with the GETY_POS code of this item (default no timestamp setting)
+  @param rpc_devKey pointer to the variable with the DEV_KEY code of this item (default no timestamp setting)
   @param rpb_name DIN name (uint8_t[7] array) of this item ( NULL == only ISO )
   @param rpb_isoName potiner to 64bit ISO11783 NAME string ( NULL == only DIN )
   @param rb_wantedSa preselected source adress (SA) of the ISO item (fixed SA or last time
@@ -547,7 +547,7 @@ void IdentItem_c::close( void )
       (default 0xFFFF for NO EEPROM store)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IdentItem_c::init(GetyPos_c* rpc_gtp, const uint8_t*
+void IdentItem_c::init(DevKey_c* rpc_devKey, const uint8_t*
     #ifdef USE_DIN_9684
     rpb_name // ifdef'd to avoid compiler warning in DIN case where this parameter is not used!
     #endif
@@ -561,15 +561,15 @@ void IdentItem_c::init(GetyPos_c* rpc_gtp, const uint8_t*
   // register in SystemMgmt_c
   getSystemMgmtInstance4Comm().registerClient( this );
 
-  if (rpc_gtp == NULL)
+  if (rpc_devKey == NULL)
   {
-    if ( pc_gtp == NULL )
+    if ( pc_devKey == NULL )
     { // set precondition error
       getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsSystem );
       return; // return with error information
     }
   }
-  else pc_gtp = rpc_gtp;
+  else pc_devKey = rpc_devKey;
   #ifdef USE_DIN_9684
   if (rpb_name != NULL)
   {
@@ -581,14 +581,14 @@ void IdentItem_c::init(GetyPos_c* rpc_gtp, const uint8_t*
   #ifdef USE_ISO_11783
   if (rpb_isoName != NULL)
   {
-    if ( pc_gtp != NULL )
+    if ( pc_devKey != NULL )
     { // set all values from rpb_isoName with exception of device class / -instance
-      const uint8_t ui8_deviceClass = pc_gtp->getGety();
-      const uint8_t ui8_deviceClassInstance = pc_gtp->getPos();
-      // set the ISOName_c into the pointed GTP
-      pc_gtp->set( rpb_isoName );
+      const uint8_t ui8_deviceClass = pc_devKey->getDevClass();
+      const uint8_t ui8_deviceClassInstance = pc_devKey->getDevClassInst();
+      // set the ISOName_c into the pointed DEVKEY
+      pc_devKey->set( rpb_isoName );
       // store the device class / -instance values back
-      pc_gtp->set( ui8_deviceClass, ui8_deviceClassInstance );
+      pc_devKey->set( ui8_deviceClass, ui8_deviceClassInstance );
     }
     setItemState(IState_c::Iso);
   }
@@ -596,7 +596,7 @@ void IdentItem_c::init(GetyPos_c* rpc_gtp, const uint8_t*
   if (rui16_saEepromAdr != 0xFFFF) ui16_saEepromAdr = rui16_saEepromAdr;
   #endif
 
-  if (pc_gtp != NULL)
+  if (pc_devKey != NULL)
   { // set state to prepare address claim
     setItemState(IState_c::itemState_t(IState_c::PreAddressClaim | IState_c::Local));
     // set time to individual wait time
@@ -630,7 +630,7 @@ bool IdentItem_c::timeEvent( void )
     // and last timed action is 1sec lasted
      // -> check for possible state switch or needed actions
 
-    // if state is prepare address claim check if gtp unique and insert item in list
+    // if state is prepare address claim check if devKey unique and insert item in list
     if (itemState(IState_c::PreAddressClaim)) return timeEventPreAddressClaim();
     else return timeEventActive();
   }
@@ -640,7 +640,7 @@ bool IdentItem_c::timeEvent( void )
 /**
   periodically called functions do perform
   time dependent actions in prepare address claim state
-  -> unify Gtp (Device Class / Device Class Instance)
+  -> unify DevKey (Device Class / Device Class Instance)
   -> insert item in appropriate monitor lists and initiate address claim
 
   possible errors:
@@ -651,29 +651,29 @@ bool IdentItem_c::timeEvent( void )
   @return true -> all planned activities performed
 */
 bool IdentItem_c::timeEventPreAddressClaim( void ) {
-  bool b_gtpSuccessfulUnified = false;
-  // check if gtp is unique and change if needed (to avoid adress conflict on Scheduler_c BUS)
+  bool b_devKeySuccessfulUnified = false;
+  // check if devKey is unique and change if needed (to avoid adress conflict on Scheduler_c BUS)
   #ifdef USE_DIN_9684
     #ifdef USE_ISO_11783
   if (itemState(IState_c::Din))
     #endif
-    b_gtpSuccessfulUnified = getDinMonitorInstance4Comm().unifyDinGtp(*pc_gtp);
+    b_devKeySuccessfulUnified = getDinMonitorInstance4Comm().unifyDinDevKey(*pc_devKey);
   #endif // USE_DIN_9684
   #ifdef USE_ISO_11783
-  // just update pointed GTP field - NAME is updated during insert of
+  // just update pointed DEVKEY field - NAME is updated during insert of
   // new ISO item within ISOMonitor::insertIsoMember
     #ifdef USE_DIN_9684
   if (itemState(IState_c::Iso))
     #endif
-    b_gtpSuccessfulUnified = getIsoMonitorInstance4Comm().unifyIsoGtp(*pc_gtp);
+    b_devKeySuccessfulUnified = getIsoMonitorInstance4Comm().unifyIsoDevKey(*pc_devKey);
 
   #endif // USE_ISO_11783
 
   #ifdef USE_DIN_9684
-  if ( (itemState(IState_c::Din)) && (b_gtpSuccessfulUnified) ) {
+  if ( (itemState(IState_c::Din)) && (b_devKeySuccessfulUnified) ) {
   // insert element in list
-  getDinMonitorInstance4Comm().insertDinMember(gtp(), cpName);
-  pc_memberItem = &(getDinMonitorInstance4Comm().dinMemberGtp(gtp()));
+  getDinMonitorInstance4Comm().insertDinMember(devKey(), cpName);
+  pc_memberItem = &(getDinMonitorInstance4Comm().dinMemberDevKey(devKey()));
   // set item as member and as own identity and overwrite old value
   pc_memberItem->setItemState
     (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Din));
@@ -682,11 +682,11 @@ bool IdentItem_c::timeEventPreAddressClaim( void ) {
   }
   #endif
   #ifdef USE_ISO_11783
-  if ( (itemState(IState_c::Iso)) && (b_gtpSuccessfulUnified) )  {
+  if ( (itemState(IState_c::Iso)) && (b_devKeySuccessfulUnified) )  {
     // insert element in list
-    getIsoMonitorInstance4Comm().insertIsoMember(gtp(), b_wantedSa,
+    getIsoMonitorInstance4Comm().insertIsoMember(devKey(), b_wantedSa,
       IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim), ui16_saEepromAdr);
-    pc_isoItem = &(getIsoMonitorInstance4Comm().isoMemberGtp(gtp()));
+    pc_isoItem = &(getIsoMonitorInstance4Comm().isoMemberDevKey(devKey()));
     // set item as member and as own identity and overwrite old value
     pc_isoItem->setItemState
       (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim));
@@ -698,7 +698,7 @@ bool IdentItem_c::timeEventPreAddressClaim( void ) {
 }
   #endif
   // set ident_item state to claim address
-  if (b_gtpSuccessfulUnified) setItemState(IState_c::AddressClaim);
+  if (b_devKeySuccessfulUnified) setItemState(IState_c::AddressClaim);
   return true;
 }
 
@@ -706,7 +706,7 @@ bool IdentItem_c::timeEventPreAddressClaim( void ) {
   periodically called functions do perform
   time dependent actions in active (address claim/claimed address) state
   -> call timeEvent for corresponding items in MemberMonitor (DIN) and ISOMonitor (ISO)
-  -> initiate repeated address claim with changed Nr / Gtp if conflict with other item occured
+  -> initiate repeated address claim with changed Nr / DevKey if conflict with other item occured
 
   possible errors:
       * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
@@ -716,9 +716,9 @@ bool IdentItem_c::timeEventPreAddressClaim( void ) {
   @param ri32_time optional timestamp to coordinate different periodic actions with one time and to shrink System_c::getTime calls
 */
 bool IdentItem_c::timeEventActive( void ) {
-  // only change POS and repeated address claim on adress conflicts, if following define
+  // only change dev class inst and repeated address claim on adress conflicts, if following define
   // is set in masterHeader
-  #ifdef CHANGE_POS_ON_CONFLICT
+  #ifdef CHANGE_DEV_CLASS_INST_ON_CONFLICT
   // because of errors caused by terminals, which doesn't claim correctly an address
   // don't do conflict changing of POS
   if ((pc_memberItem->affectedConflictCnt() > 3) && (itemState(IState_c::Din)))
@@ -726,7 +726,7 @@ bool IdentItem_c::timeEventActive( void ) {
     // send an adress release for according number
     pc_memberItem->sendAdressRelease();
     // delete item from memberList
-    getDinMonitorInstance4Comm().deleteDinMemberGtp(gtp());
+    getDinMonitorInstance4Comm().deleteDinMemberDevKey(devKey());
     pc_memberItem = NULL;
     // restart with init
     init();
@@ -735,12 +735,12 @@ bool IdentItem_c::timeEventActive( void ) {
   }
   else
   #endif
-  // following code is used independent of setting of CHANGE_POS_ON_CONFLICT
+  // following code is used independent of setting of CHANGE_DEV_CLASS_INST_ON_CONFLICT
   {
     bool b_configure = false;
     // call timeEvent for monitor list item
     #ifdef USE_DIN_9684
-    if ( (pc_memberItem != NULL) && ( pc_memberItem->gtp() == gtp() ) && ( pc_memberItem->itemState(IState_c::Local) ) )
+    if ( (pc_memberItem != NULL) && ( pc_memberItem->devKey() == devKey() ) && ( pc_memberItem->itemState(IState_c::Local) ) )
     {
       bool b_oldAddressClaimState = pc_memberItem->itemState(IState_c::ClaimedAddress);
       #ifdef USE_ISO_11783
@@ -780,14 +780,14 @@ bool IdentItem_c::timeEventActive( void ) {
     }
     else if ( itemState(IState_c::Din) )
     { // local item is DIN but either pc_memberItem doesn't point to own item
-      // or one of the states LOCAL or GTP is not satisfied
+      // or one of the states LOCAL or DEVKEY is not satisfied
       // restart address claim
       pc_memberItem = NULL;
       #ifdef USE_ISO_11783
-      if ( ( pc_isoItem != NULL ) && ( pc_isoItem->gtp() == gtp() ) && ( pc_isoItem->itemState(IState_c::Local) ) )
+      if ( ( pc_isoItem != NULL ) && ( pc_isoItem->devKey() == devKey() ) && ( pc_isoItem->itemState(IState_c::Local) ) )
       { // this item is also active as ISO item and is already inserted in ISO list
         // --> delete it, to get fresh restart
-        getIsoMonitorInstance4Comm().deleteIsoMemberGtp(gtp());
+        getIsoMonitorInstance4Comm().deleteIsoMemberDevKey(devKey());
         pc_isoItem = NULL;
         clearItemState( IState_c::ClaimedAddress );
       }
@@ -797,9 +797,9 @@ bool IdentItem_c::timeEventActive( void ) {
     #endif // USE_DIN_9684
     #ifdef USE_ISO_11783
     if ( pc_isoItem != NULL )
-    { // if pc_isoItem points to item with different GTP
+    { // if pc_isoItem points to item with different DEVKEY
       // -> pointer is invalid -> set to NULL so that it is searched new
-      if (pc_isoItem->gtp() != gtp())
+      if (pc_isoItem->devKey() != devKey())
       {
         pc_isoItem = NULL;
         clearItemState( IState_c::ClaimedAddress );
@@ -808,8 +808,8 @@ bool IdentItem_c::timeEventActive( void ) {
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     if (pc_isoItem == NULL) {
       // search item in ISOMonitor
-      if ( c_isoMonitor.existIsoMemberGtp(gtp()) )
-        pc_isoItem = &(c_isoMonitor.isoMemberGtp(gtp()));
+      if ( c_isoMonitor.existIsoMemberDevKey(devKey()) )
+        pc_isoItem = &(c_isoMonitor.isoMemberDevKey(devKey()));
     }
     if (pc_isoItem != NULL)
     {
@@ -846,9 +846,9 @@ bool IdentItem_c::timeEventActive( void ) {
             uint32_t ui32_nr = pc_isoItem->nr();
             // only ISO msgs with own SA in PS (destination)
             uint32_t ui32_filter = ((static_cast<MASK_TYPE>(VT_TO_ECU_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-            if (!getCanInstance4Comm().existFilter( getIsoTerminalInstance(), (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+            if (!getCanInstance4Comm().existFilter( getIsoTerminalInstance4Comm(), (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
             { // create FilterBox
-              getCanInstance4Comm().insertFilter( getIsoTerminalInstance(), (0x1FFFF00UL), ui32_filter, false, Ident_c::ExtendedIdent);
+              getCanInstance4Comm().insertFilter( getIsoTerminalInstance4Comm(), (0x1FFFF00UL), ui32_filter, false, Ident_c::ExtendedIdent);
               b_configure = true;
             }
           }
@@ -857,13 +857,13 @@ bool IdentItem_c::timeEventActive( void ) {
       }
       else {
         // remote ISO item has overwritten local item
-        // -> unify my POS / device class instance and insert new item
+        // -> unify my dev class inst / device class instance and insert new item
         // in monitor list of ISOMonitor
-        if (c_isoMonitor.unifyIsoGtp(*pc_gtp) ) {
+        if (c_isoMonitor.unifyIsoDevKey(*pc_devKey) ) {
           // insert element in list
-          c_isoMonitor.insertIsoMember(gtp(), b_wantedSa,
+          c_isoMonitor.insertIsoMember(devKey(), b_wantedSa,
             IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim), ui16_saEepromAdr);
-          pc_isoItem = &(c_isoMonitor.isoMemberGtp(gtp()));
+          pc_isoItem = &(c_isoMonitor.isoMemberDevKey(devKey()));
           // set item as member and as own identity and overwrite old value
           pc_isoItem->setItemState
             (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim));
@@ -885,7 +885,7 @@ bool IdentItem_c::timeEventActive( void ) {
 
 /**
   calculate an individual number between [0,1000] to get an individual wait time before first
-  address claim -> chance to avoid conflict with other system with same default GETY-POS
+  address claim -> chance to avoid conflict with other system with same default DEVKEY
 */
 void IdentItem_c::setIndividualWait()
 {
@@ -902,9 +902,9 @@ void IdentItem_c::setIndividualWait()
      // use the serialNo for calculating of random value
      for (int16_t j = 0; j < 6; j++) i32_result ^= ((serNo[j] * i32_result) % 10000);
 
-     // do some calculations with GETY_POS
-     i32_result *= gtp().getPos();
-     i32_result += gtp().getGety();
+     // do some calculations with DEV_KEY
+     i32_result *= devKey().getDevClassInst();
+     i32_result += devKey().getDevClass();
      // use the system time
      i32_result -= (System_c::getTime() - i32_time);
      i32_result = CNAMESPACE::labs((i32_result % 1000) - (i32_result / 1000)) % 1000;
@@ -947,7 +947,7 @@ bool IdentItem_c::equalNr(uint8_t rui8_nr
 };
 
 #ifdef USE_ISO_11783
-void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const GetyPos_c* rpc_slaveIsoNameList)
+void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList)
 {
   ISOItem_c* pc_slaveIsoItem;
 
@@ -968,12 +968,12 @@ void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const GetyPos_c* rpc_slave
     // loop over all slaves
     for (uint8_t i=0; i<i8_slaveCount; i++) {
       // insert element in list
-      if ( getIsoMonitorInstance4Comm().existIsoMemberGtp(pc_slaveIsoNameList[i]) ) {
-        pc_slaveIsoItem = &(getIsoMonitorInstance4Comm().isoMemberGtp(pc_slaveIsoNameList[i]));
+      if ( getIsoMonitorInstance4Comm().existIsoMemberDevKey(pc_slaveIsoNameList[i]) ) {
+        pc_slaveIsoItem = &(getIsoMonitorInstance4Comm().isoMemberDevKey(pc_slaveIsoNameList[i]));
       } else
       if (getIsoMonitorInstance4Comm().insertIsoMember(pc_slaveIsoNameList[i], 0xFE,
         IState_c::itemState_t(IState_c::Member | IState_c::Iso | IState_c::PreAddressClaim), 0xFFFF)) {
-        pc_slaveIsoItem = &(getIsoMonitorInstance4Comm().isoMemberGtp(pc_slaveIsoNameList[i]));
+        pc_slaveIsoItem = &(getIsoMonitorInstance4Comm().isoMemberDevKey(pc_slaveIsoNameList[i]));
         // set item as member and as own identity and overwrite old value
         pc_slaveIsoItem->setItemState
         (IState_c::itemState_t(IState_c::Member | IState_c::Iso | IState_c::PreAddressClaim));

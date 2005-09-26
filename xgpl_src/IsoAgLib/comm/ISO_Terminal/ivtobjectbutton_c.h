@@ -72,8 +72,8 @@ public:
   //! Parameter:
   //! @param vtObjectButtonSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectButton_s* vtObjectButtonSROM) {
-    vtObjectButton_c::init (vtObjectButtonSROM);
+  void init(const iVtObjectButton_s* vtObjectButtonSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectButton_c::init (vtObjectButtonSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   };
 
   //  Operation: get_vtObjectButton_a

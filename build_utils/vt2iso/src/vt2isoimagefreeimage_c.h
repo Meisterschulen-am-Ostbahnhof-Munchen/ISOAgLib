@@ -41,7 +41,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <FreeImage.h>
+#include "FreeImage.h"
 
 #include "vt2isoimagebase_c.h"
 

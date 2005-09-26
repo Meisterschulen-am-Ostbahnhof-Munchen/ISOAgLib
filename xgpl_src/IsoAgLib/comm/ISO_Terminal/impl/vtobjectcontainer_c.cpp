@@ -156,7 +156,7 @@ vtObjectContainer_c::hideShow(uint8_t b_hideOrShow, bool b_updateObject, bool b_
 { // ~X2C
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s), (!b_hideOrShow)&0x01);
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
                                                    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                    b_hideOrShow,
                                                    0xFF, 0xFF, 0xFF, 0xFF, 1000, b_enableReplaceOfCmd);
@@ -170,7 +170,7 @@ vtObjectContainer_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectContainer_a(), height), sizeof(iVtObjectContainer_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 

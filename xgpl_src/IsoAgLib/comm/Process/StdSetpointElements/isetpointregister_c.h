@@ -77,11 +77,11 @@ public:
   /* ************************************ */
 
   /**
-    deliver gtp of commanding member
-    @return GETY_POS of setpoint commander
+    deliver devKey of commanding member
+    @return DEV_KEY of setpoint commander
   */
-  const iGetyPos_c& gtp()const
-  {return static_cast<const iGetyPos_c&>(SetpointRegister_c::gtp());};
+  const iDevKey_c& devKey()const
+  {return static_cast<const iDevKey_c&>(SetpointRegister_c::devKey());};
   /**
     deliver the exact setpoint
     @return exact setpoint value
@@ -162,10 +162,10 @@ public:
   /* ************************************ */
 
   /**
-    set gtp of commanding member
-    @param rc_gtp GETY_POS of commanding member
+    set devKey of commanding member
+    @param rc_devKey DEV_KEY of commanding member
   */
-  void setGtp(uint8_t rb_val){SetpointRegister_c::setGtp(rb_val);};
+  void setDevKey(uint8_t rb_val){SetpointRegister_c::setDevKey(rb_val);};
   /**
     set the exact setpoint value
     @param ri32_val new exact setpoint value

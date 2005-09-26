@@ -113,7 +113,7 @@ public:
   //! Parameter:
   //! @param vtObjectLineAttributesSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM) { vtObject_c::init ((iVtObject_s*) vtObjectLineAttributesSROM); };
+  void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectLineAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectLineAtrtibutes_a
   iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a() { return (iVtObjectLineAttributes_s *)vtObject_a; };
@@ -127,7 +127,7 @@ public:
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour) : 0, sizeof(iVtObjectLineAttributes_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour) : 0, sizeof(iVtObjectLineAttributes_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
   }
 
   void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {

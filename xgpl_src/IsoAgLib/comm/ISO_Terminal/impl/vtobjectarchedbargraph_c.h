@@ -115,7 +115,7 @@ public:
   //! Parameter:
   //! @param vtObjectArchedBarGraphSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM) { vtObject_c::init ((iVtObject_s*) vtObjectArchedBarGraphSROM); };
+  void init(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectArchedBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectArchedBarGraph_a
   iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return (iVtObjectArchedBarGraph_s *)vtObject_a; }
@@ -138,11 +138,11 @@ public:
   }
 
   void setColour(uint8_t newColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour) : 0, sizeof(iVtObjectArchedBarGraph_s), 3 /* "Colour" */, newColour, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newColour, this, IsoAgLib::Colour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour) : 0, sizeof(iVtObjectArchedBarGraph_s), 3 /* "Colour" */, newColour, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newColour, this, IsoAgLib::Colour), b_enableReplaceOfCmd);
   }
 
   void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectArchedBarGraph_s), 4 /* "Target Line Colour" */, newTargetLineColour, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newTargetLineColour, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectArchedBarGraph_s), 4 /* "Target Line Colour" */, newTargetLineColour, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newTargetLineColour, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
   }
 
   void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {

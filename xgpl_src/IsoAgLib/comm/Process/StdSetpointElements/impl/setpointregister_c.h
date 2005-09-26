@@ -113,7 +113,7 @@ class SetpointRegister_c {
 public:
   /**
     constructor which can set all element variables (all parameters are optional)
-    @param rc_gtp GET_POS of commander of this setpoint register set
+    @param rc_devKey device key of commander of this setpoint register set
     @param ri32_exact exact setpoint value
     @param ri32_min minimum setpoint value
     @param ri32_max maximum setpoint value
@@ -122,13 +122,13 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, int32_t ri32_exact = NO_VAL_32S,
+  SetpointRegister_c(const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true)
-      {  init(rc_gtp, ri32_exact, ri32_min, ri32_max, ri32_default, rb_handled, rb_master, rb_valid);};
+      {  init(rc_devKey, ri32_exact, ri32_min, ri32_max, ri32_default, rb_handled, rb_master, rb_valid);};
   /**
     initialise this SetpointRegister_c to a well defined starting condition
-    @param rc_gtp GET_POS of commander of this setpoint register set
+    @param rc_devKey device key of commander of this setpoint register set
     @param ri32_exact exact setpoint value
     @param ri32_min minimum setpoint value
     @param ri32_max maximum setpoint value
@@ -137,7 +137,7 @@ public:
     @param rb_master true -> this setpoint register instance represents the actual master setpoint
     @param rb_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(const GetyPos_c& rc_gtp = GetyPos_c::GetyPosUnspecified, int32_t ri32_exact = NO_VAL_32S,
+  void init(const DevKey_c& rc_devKey = DevKey_c::DevKeyUnspecified, int32_t ri32_exact = NO_VAL_32S,
       int32_t ri32_min = NO_VAL_32S, int32_t ri32_max = NO_VAL_32S, int32_t ri32_default = NO_VAL_32S,
       bool rb_handled = false, bool rb_master = false, bool rb_valid = true);
 
@@ -168,10 +168,10 @@ public:
   /* ************************************ */
 
   /**
-    deliver gtp of commanding member
-    @return GETY_POS of setpoint commander
+    deliver devKey of commanding member
+    @return DEV_KEY of setpoint commander
   */
-  const GetyPos_c& gtp()const{return c_requestGtp;};
+  const DevKey_c& devKey()const{return c_requestDevKey;};
   /**
     deliver the exact setpoint
     @return exact setpoint value
@@ -282,15 +282,15 @@ public:
   /* ************************************ */
 
   /**
-    set gtp of cammanding member
-    @param rc_gtp GETY_POS of commanding member
+    set devKey of cammanding member
+    @param rc_devKey DEV_KEY of commanding member
   */
-  void setGtp(const GetyPos_c& rc_val){c_requestGtp = rc_val;};
+  void setDevKey(const DevKey_c& rc_val){c_requestDevKey = rc_val;};
   /**
-    set gtp of cammanding member
-    @param rc_gtp GETY_POS of commanding member
+    set devKey of cammanding member
+    @param rc_devKey DEV_KEY of commanding member
   */
-  void setGtp(uint8_t rui8_gety, uint8_t rui8_pos){c_requestGtp.set( rui8_gety, rui8_pos );};
+  void setDevKey(uint8_t rui8_devClass, uint8_t rui8_devClassInst){c_requestDevKey.set( rui8_devClass, rui8_devClassInst );};
   /**
     set the exact setpoint value
     @param ri32_val new exact setpoint value
@@ -395,8 +395,8 @@ private: // Private attributes
 #endif
   /** tiemstamp of last setXx operation */
   int32_t i32_lastHandledTime;
-  /** gtp code of requester */
-  GetyPos_c c_requestGtp;
+  /** devKey code of requester */
+  DevKey_c c_requestDevKey;
   struct {
     /** master state == the setpoint requester can change the value if needed */
     bool b_master : 1;

@@ -230,11 +230,11 @@ public:
     VERY IMPORTANT: THIS FUNCTION CALL MAY OCCUR PRIOR TO AN SUCCESSFULLY UPLOADED POOL !!!!!!!
   */
   virtual void eventLanguagePgn(const localSettings_s& /*rrefs_localSettings*/) {};
-  
+
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
-  virtual void initAllObjectsOnce()=0;
+  virtual void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF)=0;
 
   iIsoTerminalObjectPool_c(iVtObject_c** r_iVtObjects, uint16_t r_numObjects, uint16_t r_dimension, uint16_t r_skWidth=60, uint16_t r_skHeight=32)
     : iVtObjects (r_iVtObjects)

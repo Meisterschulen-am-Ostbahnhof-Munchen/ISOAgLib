@@ -88,6 +88,7 @@
 #ifdef USE_DATASTREAMS_IO
 #include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
 #endif
+#include <vector>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -207,6 +208,19 @@ template<class T> void convertLittleEndianString( const uint8_t* rpui8_src, T& r
   #endif
 }
 
+/** convert receive multistream into an unsigned variable */
+inline uint8_t convertLittleEndianStringUi8( const uint8_t* rpui8_src ) { return rpui8_src[0];};
+/** convert receive multistream into an unsigned variable */
+inline int8_t convertLittleEndianStringI8( const uint8_t* rpui8_src ){ return (int8_t)(rpui8_src[0]);};
+/** convert receive multistream into an unsigned variable */
+uint16_t convertLittleEndianStringUi16( const uint8_t* rpui8_src );
+/** convert receive multistream into an unsigned variable */
+int16_t convertLittleEndianStringI16( const uint8_t* rpui8_src );
+/** convert receive multistream into an unsigned variable */
+uint32_t convertLittleEndianStringUi32( const uint8_t* rpui8_src );
+/** convert receive multistream into an unsigned variable */
+int32_t convertLittleEndianStringI32( const uint8_t* rpui8_src );
+
 /** convert number reference variable to little endian byte string */
 template<class T> void numberRef2LittleEndianString( const T& refc_src, uint8_t* pui8_target )
 {
@@ -235,6 +249,50 @@ template<class T> void number2LittleEndianString( const T rt_src, uint8_t* pui8_
   }
   #endif
 }
+
+
+/** convert number reference variable to little endian byte string
+ * @return iterator so that write can be continued directly after last written position
+*/
+template<class T> void numberRef2LittleEndianString( const T& refc_src, std::vector<uint8_t>& refc_target )
+{
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  const uint8_t* pui8_src = &refc_src;
+  const unsigned int size = sizeof(T);
+  for ( unsigned int ind = 0; ind < size; ind++ )
+  {
+    refc_target.push_back( pui8_src[ind] );
+  }
+#else
+  const unsigned int BitSize = sizeof(T) * 8;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+    refc_target.push_back((refc_src >> ind) & 0xFF);
+  }
+#endif
+}
+/** convert number call-by-val variable to little endian byte string
+ * @return iterator so that write can be continued directly after last written position
+*/
+template<class T> void number2LittleEndianString( const T rt_src, std::vector<uint8_t>& refc_target )
+{
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  const uint8_t* pui8_src = (const uint8_t*)(&rt_src);
+  const unsigned int size = sizeof(T);
+  for ( unsigned int ind = 0; ind < size; ind++ )
+  {
+    refc_target.push_back( pui8_src[ind] );
+  }
+#else
+  const unsigned int BitSize = sizeof(T) * 8;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+    refc_target.push_back((refc_src >> ind) & 0xFF);
+  }
+#endif
+}
+
+
 
 
 /** convert big endian textual number representation into little endian uint8_t string of specified size */

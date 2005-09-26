@@ -120,11 +120,11 @@ typedef struct {
 /** definition of a LBS+ terminal mask */
 typedef struct
 {
-  /** pointer to GTP of local member which wants to send mask */
-  iGetyPos_c* pc_localGtp;
+  /** pointer to DEVKEY of local member which wants to send mask */
+  iDevKey_c* pc_localDevKey;
 
-  /** GETY_POS of temrinal */
-  iGetyPos_c c_gtp;
+  /** DEV_KEY of temrinal */
+  iDevKey_c c_devKey;
   /** 7byte name string of terminal */
   uint8_t pb_termName[8];
   /**

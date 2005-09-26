@@ -206,15 +206,15 @@ using namespace IsoAgLib;
 int main()
 { // simply call startImi
   getIcanInstance().init( 0, 125 );
-  // variable for GETY_POS
+  // variable for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iGetyPos_c myGtp( 2, 0 );
+  IsoAgLib::iDevKey_c myDevKey( 2, 0 );
   uint8_t myName[12] = "TestIMI";
 
 	// start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-	IsoAgLib::iIdentItem_c c_myIdent( &myGtp, myName );
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+	IsoAgLib::iIdentItem_c c_myIdent( &myDevKey, myName );
 
   /** IMPORTANT:
 	  - The following loop could be replaced of any repeating call of

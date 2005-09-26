@@ -58,8 +58,8 @@ SpecificRecordConfig_c::SpecificRecordConfig_c(uint16_t rui16_eepromAdr, Default
 	memset(pui8_cachedTagData, '\0', TAG_VALUE_LEN + 1);
 
 	ui8_configDataCnt = 0;
-	ui8_gety = 0;
-	ui8_pos = 0;
+	ui8_devClass = 0;
+	ui8_devClassInst = 0;
 	ui8_nameLen = 0;
 	memset(pui8_name, 0, 11);
 
@@ -70,10 +70,10 @@ SpecificRecordConfig_c::SpecificRecordConfig_c(uint16_t rui16_eepromAdr, Default
 	b_transportDummyWidth = false;
 	b_transportWorkDist = false;
 	b_fieldstarSend = false;
-	ui8_timeDistGety = 0xFF;
+	ui8_timeDistDevClass = 0xFF;
 	// default only measure prog for IMI and not even single measure request for other ECU
 	ui8_useMeasureProgs = 1;
-	c_recordAsGtp.setUnspecified();
+	c_recordAsDevKey.setUnspecified();
 	ui8_procCnt = 0;
 
 	// check if pointers and eepromd are valid -> call init
@@ -97,8 +97,8 @@ SpecificRecordConfig_c::SpecificRecordConfig_c(const SpecificRecordConfig_c& rre
 	memmove(pui8_cachedTagData, rrefc_src.pui8_cachedTagData, TAG_VALUE_LEN + 1);
 
 	ui8_configDataCnt = rrefc_src.ui8_configDataCnt;
-	ui8_gety = rrefc_src.ui8_gety;
-	ui8_pos = rrefc_src.ui8_pos;
+	ui8_devClass = rrefc_src.ui8_devClass;
+	ui8_devClassInst = rrefc_src.ui8_devClassInst;
 	ui8_nameLen = rrefc_src.ui8_nameLen;
 	memmove(pui8_name, rrefc_src.pui8_name, 11);
 
@@ -110,9 +110,9 @@ SpecificRecordConfig_c::SpecificRecordConfig_c(const SpecificRecordConfig_c& rre
 	b_transportWorkDist = rrefc_src.b_transportWorkDist;
 	b_fieldstarSend = rrefc_src.b_fieldstarSend;
 	ui8_useMeasureProgs = rrefc_src.ui8_useMeasureProgs;
-	c_recordAsGtp = rrefc_src.c_recordAsGtp;
+	c_recordAsDevKey = rrefc_src.c_recordAsDevKey;
 	ui8_procCnt = rrefc_src.ui8_procCnt;
-	ui8_timeDistGety = rrefc_src.ui8_timeDistGety;
+	ui8_timeDistDevClass = rrefc_src.ui8_timeDistDevClass;
 }
 /**
 	destructor
@@ -158,23 +158,23 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 
 	// decide if measure programs should be used
 	// a) if default config is 0 ==> no measure prog
-	// b) if default config is 1 ==> measure prog for IMI == GETY different from 4:seed, 5:fertilizer, 6:spreader
-	//                                or POS 5:"Aufsattelposition" or 7:"Anhaengeposition2"
+	// b) if default config is 1 ==> measure prog for IMI == DEVCLASS different from 4:seed, 5:fertilizer, 6:spreader
+	//                                or DEVCLASSINST 5:"Aufsattelposition" or 7:"Anhaengeposition2"
 	// c) if default config is 2 ==> measure prog
-	ui8_gety = rpc_memberItem->gety();
-	ui8_timeDistGety = ui8_gety;
-	ui8_pos = rpc_memberItem->pos();
+	ui8_devClass = rpc_memberItem->devClass();
+	ui8_timeDistDevClass = ui8_devClass;
+	ui8_devClassInst = rpc_memberItem->devClassInst();
 
-	// clear config setting for application record of x/min for gety4:seeder
+	// clear config setting for application record of x/min for devClass4:seeder
 	// -> clear bit of value 2
-	if (ui8_gety == 4) ui8_applrateRecording &= ~2;
+	if (ui8_devClass == 4) ui8_applrateRecording &= ~2;
 
-	// activate record of work dist if GETY != 11 (if device is not transport)
-	if (ui8_gety != 11) b_transportWorkDist = 1;
+	// activate record of work dist if DEVCLASS != 11 (if device is not transport)
+	if (ui8_devClass != 11) b_transportWorkDist = 1;
 
 	bool b_isImiDevice;
-	if ((ui8_gety < 4) || (ui8_gety > 10)
-	 || (ui8_pos == 5) || (ui8_pos == 7)
+	if ((ui8_devClass < 4) || (ui8_devClass > 10)
+	 || (ui8_devClassInst == 5) || (ui8_devClassInst == 7)
 	 || (memcmp(rpc_memberItem->name(), "IMI", 3) == 0)
 	   )
 	{
@@ -205,7 +205,7 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 			break;
 	}
 
-	c_recordAsGtp = rpc_memberItem->gtp();
+	c_recordAsDevKey = rpc_memberItem->devKey();
 	b_fieldstarSend = false;
 
 	// get the amount of device records
@@ -218,8 +218,8 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 	ui8_procCnt = 0;
 
 	ui8_configDataCnt = 0;
-	ui8_gety = 0xFF;
-	ui8_pos = 0xFF;
+	ui8_devClass = 0xFF;
+	ui8_devClassInst = 0xFF;
 	ui8_nameLen = 0;
 	memset(pui8_name, 0, 11);
 
@@ -237,8 +237,8 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 		// now compare read data set with pointed iMember_Item
 		b_device_found = true;
 
-		if ((ui8_gety != 0xFF) && (ui8_gety != rpc_memberItem->gety())) b_device_found = false;
-		if ((ui8_pos != 0xFF) && (ui8_pos != rpc_memberItem->pos())) b_device_found = false;
+		if ((ui8_devClass != 0xFF) && (ui8_devClass != rpc_memberItem->devClass())) b_device_found = false;
+		if ((ui8_devClassInst != 0xFF) && (ui8_devClassInst != rpc_memberItem->devClassInst())) b_device_found = false;
 		const uint8_t *pb_member_name = rpc_memberItem->name();
 		if (memcmp(pui8_name, pb_member_name, ui8_nameLen) != 0) b_device_found = false;
 		if (!b_device_found)
@@ -300,7 +300,7 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 					break; // exit while loop
 				}
 				if (strstr((const char*)pui8_cachedTagName, "fiel_snd") != NULL)
-				{ // read tag is Owner gety_pos of data sets for this device
+				{ // read tag is Owner devClass_pos of data sets for this device
 					if ((strchr((const char*)pui8_cachedTagData, '1') != NULL)
 					 || (strstr((const char*)pui8_cachedTagData, "true") != NULL))
 						b_fieldstarSend = true;
@@ -334,15 +334,15 @@ bool SpecificRecordConfig_c::init(uint16_t rui16_eepromAdr, DefaultRecordConfig_
 					break; // exit while loop
 				}
 				if (strstr((const char*)pui8_cachedTagName, "rec_asgp") != NULL)
-				{ // read tag is record_as_gtp of data sets for this device
+				{ // read tag is record_as_devKey of data sets for this device
 					sscanf((const char*)pui8_cachedTagData, "%i", &i_val);
-					c_recordAsGtp.setCombinedDin( i_val );
+					c_recordAsDevKey.setCombinedDin( i_val );
 					break; // exit while loop
 				}
-				if (strstr((const char*)pui8_cachedTagName, "td_gety") != NULL)
-				{ // read tag is time_dist_gety to define specific GETY for time, dist, area vals
+				if (strstr((const char*)pui8_cachedTagName, "td_devClass") != NULL)
+				{ // read tag is time_dist_devClass to define specific DEVCLASS for time, dist, area vals
 					sscanf((const char*)pui8_cachedTagData, "%i", &i_val);
-					ui8_timeDistGety = i_val;
+					ui8_timeDistDevClass = i_val;
 					break; // exit while loop
 				}
 				if (strstr((const char*)pui8_cachedTagName, "proc_cnt") != NULL)
@@ -384,26 +384,26 @@ void SpecificRecordConfig_c::readIdentData()
 				ui8_configDataCnt = i_val;
 				break; // exit while loop
 			}
-			if (strstr((const char*)pui8_cachedTagName, "gety") != NULL)
-			{ // read tag is GETY of data sets for this device
+			if (strstr((const char*)pui8_cachedTagName, "devClass") != NULL)
+			{ // read tag is DEVCLASS of data sets for this device
 				sscanf((const char*)pui8_cachedTagData, "%i", &i_val);
-				ui8_gety = i_val;
+				ui8_devClass = i_val;
 				break; // exit while loop
 			}
-			if (strstr((const char*)pui8_cachedTagName, "pos") != NULL)
-			{ // read tag is POS of data sets for this device
+			if (strstr((const char*)pui8_cachedTagName, "devClassInst") != NULL)
+			{ // read tag is device class inst of data sets for this device
 				sscanf((const char*)pui8_cachedTagData, "%i", &i_val);
-				ui8_pos = i_val;
+				ui8_devClassInst = i_val;
 				break; // exit while loop
 			}
 			if (strstr((const char*)pui8_cachedTagName, "name_len") != NULL)
-			{ // read tag is POS of data sets for this device
+			{ // read tag is device class inst of data sets for this device
 				sscanf((const char*)pui8_cachedTagData, "%i", &i_val);
 				ui8_nameLen = i_val;
 				break; // exit while loop
 			}
 			if (strstr((const char*)pui8_cachedTagName, "name") != NULL)
-			{ // read tag is POS of data sets for this device
+			{ // read tag is device class inst of data sets for this device
 				if (strchr((const char*)pui8_cachedTagData, '{') != NULL)
 				{ // name given as {0,1,2,3..}
 					char *pb_scan_string;

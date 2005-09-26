@@ -63,7 +63,7 @@ namespace IsoAgLib {
 
 /**
   item class for service lists, which can manage
-  adress vector, element status, number, GETY_POS, local/remote
+  adress vector, element status, number, DEV_KEY, local/remote
   @short Item with services needed for service monitor lists.
   @author Dipl.-Inform. Achim Spangler
   @see iMemberItem
@@ -72,20 +72,20 @@ class iDINServiceItem_c : private __IsoAgLib::DINServiceItem_c {
 public:
   // Public methods
   /**
-    deliver the GETY_POS code of this item
-    @return GETY_POS code
+    deliver the DEV_KEY code of this item
+    @return DEV_KEY code
   */
-  const iGetyPos_c& gtp()const{return static_cast<const iGetyPos_c&>(DINServiceItem_c::gtp());};
+  const iDevKey_c& devKey()const{return static_cast<const iDevKey_c&>(DINServiceItem_c::devKey());};
   /**
-    deliver the GETY code alone (derived from gtp)
-    @return GETY code
+    deliver the DEVCLASS code alone (derived from devKey)
+    @return DEVCLASS code
   */
-  uint8_t gety()const{return DINServiceItem_c::gety();};
+  uint8_t devClass()const{return DINServiceItem_c::devClass();};
   /**
-    deliver the POS code alone (derived from gtp)
-    @return POS code
+    deliver the device class inst code alone (derived from devKey)
+    @return device class inst code
   */
-  uint8_t pos()const{return DINServiceItem_c::pos();};
+  uint8_t devClassInst()const{return DINServiceItem_c::devClassInst();};
   /**
     deliver the number/adress of this item
     @return number

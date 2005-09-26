@@ -115,13 +115,13 @@ namespace __IsoAgLib {
   Example:
   \code
   // define local device type
-  IsoAgLib::GetyPos c_myGtp( 1, 0 );
+  IsoAgLib::DevKey c_myDevKey( 1, 0 );
   // creation of process data instance
   iProcDataLocalSimpleMeasure_c c_workState;
   // init for LIS=0, local device type/subtype=1/0, complete work width=0xFF,
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send ),
   // load/store measurememnt data to/from EEPROM
-  c_workState.init( 0, myGtp, 0x1, 0x0, 0xFF, 2, c_myGtp, &c_myGtp, false, 0x1234 );
+  c_workState.init( 0, myDevKey, 0x1, 0x0, 0xFF, 2, c_myDevKey, &c_myDevKey, false, 0x1234 );
 
   // update current measurement value ( real value, which can differ from commanded value )
   c_workState.setMasterVal( 100 );
@@ -170,10 +170,10 @@ public:
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_gtp pointer to updated GETY_POS variable of owner
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_devKey pointer to updated DEV_KEY variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -204,10 +204,10 @@ public:
                                uint8_t rui8_inst = 0,
                                uint8_t rui8_zaehlnum = 0xFF,
 #endif
-                               const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
+                               const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
                                uint8_t rui8_pri = 2,
-                               const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
-                               const GetyPos_c *rpc_gtp = NULL,
+                               const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
+                               const DevKey_c *rpc_devKey = NULL,
                                bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                                uint16_t rui16_eepromAdr = 0xFFFF,
@@ -231,10 +231,10 @@ public:
     @param rui8_inst optional INST code of this instance
     @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-    @param rc_gtp optional GETY_POS code of Process-Data
+    @param rc_devKey optional DEV_KEY code of Process-Data
     @param rui8_pri PRI code of messages with this process data instance (default 2)
-    @param rc_ownerGtp optional GETY_POS of the owner
-    @param rpc_gtp pointer to updated GETY_POS variable of owner
+    @param rc_ownerDevKey optional DEV_KEY of the owner
+    @param rpc_devKey pointer to updated DEV_KEY variable of owner
     @param rb_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -265,10 +265,10 @@ public:
             uint8_t rui8_inst = 0,
             uint8_t rui8_zaehlnum = 0xFF,
 #endif
-            const GetyPos_c& rc_gtp = GetyPos_c::GetyPosInitialProcessData,
+            const DevKey_c& rc_devKey = DevKey_c::DevKeyInitialProcessData,
             uint8_t rui8_pri = 2,
-            const GetyPos_c& rc_ownerGtp = GetyPos_c::GetyPosUnspecified,
-            const GetyPos_c *rpc_gtp = NULL, bool rb_cumulativeValue = false,
+            const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified,
+            const DevKey_c *rpc_devKey = NULL, bool rb_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t rui16_eepromAdr = 0xFFFF,
 #endif

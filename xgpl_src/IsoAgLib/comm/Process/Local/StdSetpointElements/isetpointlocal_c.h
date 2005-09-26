@@ -78,7 +78,7 @@ public:
 
   /**
     set if master setpoint should be preserved even if caller
-    gtp is no more active (default false)
+    devKey is no more active (default false)
     @param rb_static choose if master setpoint should be preserved
           if caller isn't acitve
   */

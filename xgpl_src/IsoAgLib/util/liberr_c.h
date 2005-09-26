@@ -67,7 +67,7 @@
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
   class LibErr_c;
-	typedef SINGLETON( LibErr_c ) SingletonLiberr_c;
+  typedef SINGLETON( LibErr_c ) SingletonLiberr_c;
   /** C-style function, to get access to the unique LibErr_c singleton instance */
   LibErr_c& getLbsErrInstance( void );
 
@@ -176,18 +176,18 @@ public:
   */
   uint16_t getErrCnt( LbsLibErrLocations_t rt_errLocation ) const;
 
-	/**
-	  deliver the type of the nth error
-	  @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
-	  @return LbsLibErrTypes_t
-	*/
-	LbsLibErrTypes_t getErrIndType( uint8_t rui8_ind ) const;
-	/**
-	  deliver the location of the nth error
-	  @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
-	  @return LbsLibErrTypes_t
-	*/
-	LbsLibErrLocations_t getErrIndLocation( uint8_t rui8_ind ) const;
+  /**
+    deliver the type of the nth error
+    @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
+    @return LbsLibErrTypes_t
+  */
+  LbsLibErrTypes_t getErrIndType( uint8_t rui8_ind ) const;
+  /**
+    deliver the location of the nth error
+    @param rui8_ind index of the requested error ( [0..(ErrCnt-1)] )
+    @return LbsLibErrTypes_t
+  */
+  LbsLibErrLocations_t getErrIndLocation( uint8_t rui8_ind ) const;
 
   /**
     check if the error value reports correct error free state
@@ -212,7 +212,7 @@ public:
   virtual ~LibErr_c();
 
 private:
-  friend class Singleton< LibErr_c >;
+  friend class SINGLETON( LibErr_c );
 
   /** default constructor which sets the error value to noErr */
   LibErr_c();

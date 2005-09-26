@@ -106,7 +106,7 @@ namespace __IsoAgLib {
   GPS_c& getGpsInstance( void ) { return GPS_c::instance();};
 #endif
 
-static const GetyPos_c gc_fieldstarGtp(0x1, 0x3); // DIN-GTP: 0xB
+static const DevKey_c gc_fieldstarDevKey(0x1, 0x3); // DIN-DEVKEY: 0xB
 
 /** initialise element which can't be done during construct */
 void GPS_c::init()
@@ -172,9 +172,9 @@ bool GPS_c::timeEvent( void )
     CANIO_c& c_can_io = getCanInstance4Comm();
     i32_lastFilterBoxTime = i32_time;
     uint16_t ui16_filter;
-    if (c_din_monitor.existDinMemberGtp(gc_fieldstarGtp))
+    if (c_din_monitor.existDinMemberDevKey(gc_fieldstarDevKey))
     {
-      uint8_t ui8_fieldstarNrTemp = c_din_monitor.dinMemberGtp(gc_fieldstarGtp).nr();
+      uint8_t ui8_fieldstarNrTemp = c_din_monitor.dinMemberDevKey(gc_fieldstarDevKey).nr();
       if (ui8_fieldstarNr != ui8_fieldstarNrTemp)
       { // fieldstar changed number -> delete first old filter
         ui16_filter = ( 0x500 | ui8_fieldstarNr);
@@ -228,7 +228,7 @@ bool GPS_c::processMsg(){
   if ( (data().pri() == 5)
     && (data().lis() == 3)
     && (data().wert() == 5)
-    && (data().gety() <= 1)
+    && (data().devClass() <= 1)
      )
   { // partner group process data from fieldstar with GPS information
     b_result = true;
@@ -317,7 +317,7 @@ bool GPS_c::processMsg(){
     if ( (data().pri() == 3)
       && (data().send() == 3)
       && (data().lis() == 0)
-      && (data().gety() == 0)
+      && (data().devClass() == 0)
       && (data().empf() == 0xF)
        )
     { // LBS+ GPS information as process data msg from service to broadcast member

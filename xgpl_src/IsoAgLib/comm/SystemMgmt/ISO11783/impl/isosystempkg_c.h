@@ -131,12 +131,12 @@ public:
   */
   uint8_t nr() const { return isoSa(); };
   /**
-    deliver GETY_POS of sender
-    @return GETY_POS of sender
+    deliver DEV_KEY of sender
+    @return DEV_KEY of sender
   */
-  const GetyPos_c& gtp() const
-  { // read on extended ident ISO msg the GTP from NAME setting
-    return c_isoGtp;
+  const DevKey_c& devKey() const
+  { // read on extended ident ISO msg the DEVKEY from NAME setting
+    return c_isoDevKey;
   };
   /**
     deliver member name string of message
@@ -186,7 +186,7 @@ protected: // protected methods
   */
   virtual void flags2String();
   private:
-    GetyPos_c c_isoGtp;
+    DevKey_c c_isoDevKey;
 };
 
 }

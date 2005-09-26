@@ -166,7 +166,7 @@ void ISOMonitor_c::init( void )
     vec_isoMember.clear();
     pc_isoMemberCache = vec_isoMember.end();
     i32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
-    c_tempIsoMemberItem.set( 0, GetyPos_c::GetyPosUnspecified, 0xFE, IState_c::Active,
+    c_tempIsoMemberItem.set( 0, DevKey_c::DevKeyUnspecified, 0xFE, IState_c::Active,
             0xFFFF, getSingletonVecKey() );
 
     // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
@@ -271,57 +271,57 @@ bool ISOMonitor_c::timeEvent( void ){
 }
 
 /**
-  deliver the count of members in the Monitor-List with given GETY (variable POS)
+  deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
   which optional (!!) match the condition of address claim state
-  @param rb_gety searched GETY code
+  @param rui8_devClass searched DEVCLASS code
   @param rb_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
-  @return count of members in Monitor-List with GETY == rb_gety
+  @return count of members in Monitor-List with DEVCLASS == rui8_devClass
 */
-uint8_t ISOMonitor_c::isoMemberGetyCnt(uint8_t rb_gety, bool rb_forceClaimedAddress)
+uint8_t ISOMonitor_c::isoMemberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClaimedAddress)
 {
   uint8_t b_result = 0;
   for (Vec_ISOIterator pc_iter = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
-//    cerr << "Tested Member Gety: " << int( pc_iter->gtp().getGety() ) << endl;
-    if ( ( ((pc_iter->gtp().getGety()) == rb_gety) || (rb_gety == 0xFF))
+//    cerr << "Tested Member DevClass: " << int( pc_iter->devKey().getDevClass() ) << endl;
+    if ( ( ((pc_iter->devKey().getDevClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
       && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       b_result++;
-      pc_isoMemberCache = pc_iter; // set member cache to member  with searched gety
+      pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
     }
   }
   return b_result;
 }
 
 /**
-  deliver one of the members with specific GETY
+  deliver one of the members with specific DEVCLASS
   which optional (!!) match the condition of address claim state
-  check first with isoMemberGetyCnt if enough members with wanted GETY and
+  check first with isoMemberDevClassCnt if enough members with wanted DEVCLASS and
   optional (!!) property are registered in Monitor-List
-  @see isoMemberGetyCnt
+  @see isoMemberDevClassCnt
 
   possible errors:
-    * range there exist less than rui8_ind members with GETY rb_gety
- @param rb_gety searched GETY
+    * range there exist less than rui8_ind members with DEVCLASS rui8_devClass
+ @param rui8_devClass searched DEVCLASS
  @param rui8_ind position of the wanted member in the
-               sublist of member with given GETY (first item has rui8_ind == 0 !!)
+               sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
  @param rb_forceClaimedAddress true -> only members with claimed address are used
        (optional, default false)
  @return reference to searched element
 */
-ISOItem_c& ISOMonitor_c::isoMemberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, bool rb_forceClaimedAddress)
+ISOItem_c& ISOMonitor_c::isoMemberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress)
 {
   int8_t c_cnt = -1;
   for (Vec_ISOIterator pc_iter  = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
   {
-    if ( ( ((pc_iter->gtp().getGety()) == rb_gety) || (rb_gety == 0xFF))
+    if ( ( ((pc_iter->devKey().getDevClass()) == rui8_devClass) || (rui8_devClass == 0xFF))
       && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       c_cnt++;
       if (c_cnt == rui8_ind)
       {
-        pc_isoMemberCache = pc_iter; // set member cache to member  with searched gety
+        pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
         break; //searched Item found (first element has 0)break; //searched Item found (first element has 0)
       }
     }
@@ -335,19 +335,19 @@ ISOItem_c& ISOMonitor_c::isoMemberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, boo
 }
 
 /**
-  check if a memberItem with given GETY_POS exist
+  check if a memberItem with given DEV_KEY exist
   which optional (!!) match the condition of address claim state
   and update local pc_isoMemberCache
-  @param rc_gtp searched GETY_POS
+  @param rc_devKey searched DEV_KEY
   @param rb_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
   @return true -> searched member exist
 */
-bool ISOMonitor_c::existIsoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress)
+bool ISOMonitor_c::existIsoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress)
 {
   if (!vec_isoMember.empty() && (pc_isoMemberCache != vec_isoMember.end()))
   {
-    if ( (pc_isoMemberCache->gtp() == rc_gtp )
+    if ( (pc_isoMemberCache->devKey() == rc_devKey )
       && (!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   }
@@ -355,7 +355,7 @@ bool ISOMonitor_c::existIsoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaim
        pc_isoMemberCache != vec_isoMember.end();
        pc_isoMemberCache++)
   {
-    if ( (pc_isoMemberCache->gtp() == rc_gtp )
+    if ( (pc_isoMemberCache->devKey() == rc_devKey )
       && (!rb_forceClaimedAddress || pc_isoMemberCache->itemState(IState_c::ClaimedAddress))
         )  return true;
   };
@@ -387,29 +387,29 @@ bool ISOMonitor_c::existIsoMemberNr(uint8_t rui8_nr)
 
 
 /**
-  check if member is in member list with wanted GETY_POS,
-  adopt POS if member with claimed address with other POS exist
-  @param refc_gtp GETY_POS to search (-> it's updated if member with claimed address with other POS is found)
-  @return true -> member with claimed address with given GETY found (and refc_gtp has now its GETY_POS)
+  check if member is in member list with wanted DEV_KEY,
+  adopt instance if member with claimed address with other device class inst exist
+  @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
+  @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
 */
-bool ISOMonitor_c::isoGety2GtpClaimedAddress(GetyPos_c &refc_gtp)
+bool ISOMonitor_c::isoDevClass2DevKeyClaimedAddress(DevKey_c &refc_devKey)
 {
-  if (existIsoMemberGtp(refc_gtp, true))
+  if (existIsoMemberDevKey(refc_devKey, true))
   { // there exists a device with exact NAME in claimed address state
     return true;
   }
   else
-  { // no item with GETY_POS found -> adapt POS
-    // search for member with claimed address with same GETY
-    if (isoMemberGetyCnt(refc_gtp.getGety(), true) > 0)
-    { // member with wanted device class exists -> store the GTP
-      refc_gtp = isoMemberGetyInd(refc_gtp.getGety(), 0, true).gtp();
+  { // no item with DEV_KEY found -> adapt POS
+    // search for member with claimed address with same DEVCLASS
+    if (isoMemberDevClassCnt(refc_devKey.getDevClass(), true) > 0)
+    { // member with wanted device class exists -> store the DEVKEY
+      refc_devKey = isoMemberDevClassInd(refc_devKey.getDevClass(), 0, true).devKey();
       return true;
     }
-    else if (isoMemberGetyCnt(refc_gtp.getGety(), false) > 0)
-    { // member with wanted device class exists -> store the GTP
-      refc_gtp = isoMemberGetyInd(refc_gtp.getGety(), 0, false).gtp();
-      // even if a device with wanted GTP exist - it is not claimed
+    else if (isoMemberDevClassCnt(refc_devKey.getDevClass(), false) > 0)
+    { // member with wanted device class exists -> store the DEVKEY
+      refc_devKey = isoMemberDevClassInd(refc_devKey.getDevClass(), 0, false).devKey();
+      // even if a device with wanted DEVKEY exist - it is not claimed
       return false;
     }
     else
@@ -428,20 +428,20 @@ bool ISOMonitor_c::isoGety2GtpClaimedAddress(GetyPos_c &refc_gtp)
     * badAlloc not enough memory to insert new ISOItem_c isntance
     * busy another member with same ident exists already in the list
 
-  @param rc_gtp GETY_POS of the member
+  @param rc_devKey DEV_KEY of the member
   @param rui8_nr member number
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ren_status wanted status
   @return true -> the ISOItem_c was inserted
 */
-bool ISOMonitor_c::insertIsoMember(const GetyPos_c& rc_gtp,
+bool ISOMonitor_c::insertIsoMember(const DevKey_c& rc_devKey,
       uint8_t rui8_nr, IState_c::itemState_t ren_state, uint16_t rui16_saEepromAdr)
 {
   bool b_result = true;
 
-  // check if another ISOItem_c with same GETY_POS already exist
-  if (existIsoMemberGtp(rc_gtp))
-  { // another member with same GETY_POS found
+  // check if another ISOItem_c with same DEV_KEY already exist
+  if (existIsoMemberDevKey(rc_devKey))
+  { // another member with same DEV_KEY found
     getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::LbsSystem );
     b_result = false; // don't insert
   }
@@ -449,7 +449,7 @@ bool ISOMonitor_c::insertIsoMember(const GetyPos_c& rc_gtp,
   if (b_result)
   { // the insert is allowed
     // prepare temp item with wanted data
-    c_tempIsoMemberItem.set(System_c::getTime(), rc_gtp, rui8_nr,
+    c_tempIsoMemberItem.set(System_c::getTime(), rc_devKey, rui8_nr,
         IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Iso | IState_c::Active),
         rui16_saEepromAdr, getSingletonVecKey() );
 
@@ -498,36 +498,36 @@ bool ISOMonitor_c::registerSaClaimHandler( SaClaimHandler_c* rpc_client )
 
 
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
-void ISOMonitor_c::broadcastSaAdd2Clients( const GetyPos_c& rc_gtp, const ISOItem_c* rpc_isoItem ) const
+void ISOMonitor_c::broadcastSaAdd2Clients( const DevKey_c& rc_devKey, const ISOItem_c* rpc_isoItem ) const
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
-    (*iter)->reactOnMonitorListAdd( rc_gtp, rpc_isoItem );
+    (*iter)->reactOnMonitorListAdd( rc_devKey, rpc_isoItem );
   }
 }
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
-void ISOMonitor_c::broadcastSaRemove2Clients( const GetyPos_c& rc_gtp, uint8_t rui8_oldSa ) const
+void ISOMonitor_c::broadcastSaRemove2Clients( const DevKey_c& rc_devKey, uint8_t rui8_oldSa ) const
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
-    (*iter)->reactOnMonitorListRemove( rc_gtp, rui8_oldSa );
+    (*iter)->reactOnMonitorListRemove( rc_devKey, rui8_oldSa );
   }
 }
 
 /**
-  deliver member item with given gtp
-  (check with existIsoMemberGtp before access to not defined item)
+  deliver member item with given devKey
+  (check with existIsoMemberDevKey before access to not defined item)
 
   possible errors:
     * elNonexistent on failed search
 
-  @param rc_gtp searched GETY_POS
+  @param rc_devKey searched DEV_KEY
   @return reference to searched ISOItem
   @exception containerElementNonexistant
 */
-ISOItem_c& ISOMonitor_c::isoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress)
+ISOItem_c& ISOMonitor_c::isoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress)
 {
-  if (existIsoMemberGtp(rc_gtp, rb_forceClaimedAddress))
+  if (existIsoMemberDevKey(rc_devKey, rb_forceClaimedAddress))
   { // no error
     return static_cast<ISOItem_c&>(*pc_isoMemberCache);
   }
@@ -573,16 +573,16 @@ ISOItem_c& ISOMonitor_c::isoMemberNr(uint8_t rui8_nr)
 };
 
 /**
-  deliver member item with given GETY_POS, set pointed bool var to true on success
+  deliver member item with given DEV_KEY, set pointed bool var to true on success
   and set a Member Array Iterator to the result
-  @param rc_gtp searched GETY_POS
+  @param rc_devKey searched DEV_KEY
   @param pb_success bool pointer to store the success (true on success)
   @param pbc_iter optional member array iterator which points to searched ISOItem_c on success
   @return reference to the searched item
 */
-ISOItem_c& ISOMonitor_c::isoMemberGtp(const GetyPos_c& rc_gtp, bool *const pb_success, bool rb_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
+ISOItem_c& ISOMonitor_c::isoMemberDevKey(const DevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
 {
-  *pb_success = (existIsoMemberGtp(rc_gtp, rb_forceClaimedAddress))?true:false;
+  *pb_success = (existIsoMemberDevKey(rc_devKey, rb_forceClaimedAddress))?true:false;
 
   if (pbc_iter != NULL)
   {
@@ -592,16 +592,16 @@ ISOItem_c& ISOMonitor_c::isoMemberGtp(const GetyPos_c& rc_gtp, bool *const pb_su
 };
 
 /**
-  delete item with specified gtp
+  delete item with specified devKey
 
   possible errors:
-    * elNonexistent no member with given GETY_POS exists
+    * elNonexistent no member with given DEV_KEY exists
 
-  @param rc_gtp GETY_POS of to be deleted member
+  @param rc_devKey DEV_KEY of to be deleted member
 */
-bool ISOMonitor_c::deleteIsoMemberGtp(const GetyPos_c& rc_gtp)
+bool ISOMonitor_c::deleteIsoMemberDevKey(const DevKey_c& rc_devKey)
 {
-  if (existIsoMemberGtp(rc_gtp))
+  if (existIsoMemberDevKey(rc_devKey))
   { // set correct state
 
     // Are we deleting a WorkingSetMaster?
@@ -613,7 +613,7 @@ bool ISOMonitor_c::deleteIsoMemberGtp(const GetyPos_c& rc_gtp)
       }
     }
 
-    // erase it from list (existIsoMemberGtp sets pc_isoMemberCache to the wanted item)
+    // erase it from list (existIsoMemberDevKey sets pc_isoMemberCache to the wanted item)
     vec_isoMember.erase(pc_isoMemberCache);
     #ifdef DEBUG_HEAP_USEAGE
     sui16_isoItemTotal--;
@@ -631,7 +631,7 @@ bool ISOMonitor_c::deleteIsoMemberGtp(const GetyPos_c& rc_gtp)
     return true;
   }
   else
-  { // to be deleted member GETY_POS does not exist
+  { // to be deleted member DEV_KEY does not exist
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::LbsSystem );
     return false;
   }
@@ -641,15 +641,15 @@ bool ISOMonitor_c::deleteIsoMemberGtp(const GetyPos_c& rc_gtp)
   delete item with specified member number
 
   possible errors:
-    * elNonexistent no member with given GETY_POS exists
+    * elNonexistent no member with given DEV_KEY exists
 
   @param rui8_nr SA of to be deleted member
 */
 bool ISOMonitor_c::deleteIsoMemberNr(uint8_t rui8_nr)
 {
   if (existIsoMemberNr(rui8_nr))
-  { // use deleteIsoMemberGtp
-    return deleteIsoMemberGtp(pc_isoMemberCache->gtp());
+  { // use deleteIsoMemberDevKey
+    return deleteIsoMemberDevKey(pc_isoMemberCache->devKey());
   }
   else
   { // to be deleted member number does not exist
@@ -660,42 +660,42 @@ bool ISOMonitor_c::deleteIsoMemberNr(uint8_t rui8_nr)
 
 
 /**
-  change gtp if actual gtp isn't unique
-  (search possible free POS to given GETY)
+  change devKey if actual devKey isn't unique
+  (search possible free instance to given device class)
 
   possible errors:
-    * busy no other POS code leads to unique GETY_POS code
+    * busy no other device class inst code leads to unique DEV_KEY code
 
-  @param refc_gtp reference to GETY_POS var (is changed directly if needed!!)
-  @return true -> referenced GETY_POS is now unique
+  @param refc_devKey reference to DEV_KEY var (is changed directly if needed!!)
+  @return true -> referenced DEV_KEY is now unique
 */
-bool ISOMonitor_c::unifyIsoGtp(GetyPos_c& refc_gtp){
+bool ISOMonitor_c::unifyIsoDevKey(DevKey_c& refc_devKey){
   bool b_result = true;
-  GetyPos_c c_tempGtp = refc_gtp;
-  if (existIsoMemberGtp(refc_gtp))
-  { // gtp exist -> search new with changed POS
-    b_result = false; // refc_gtp isn't unique
-    // store the pos part of given gtp
-    int16_t tempPos = (refc_gtp.getPos()),
+  DevKey_c c_tempDevKey = refc_devKey;
+  if (existIsoMemberDevKey(refc_devKey))
+  { // devKey exist -> search new with changed POS
+    b_result = false; // refc_devKey isn't unique
+    // store the pos part of given devKey
+    int16_t tempPos = (refc_devKey.getDevClassInst()),
         diff = 1;
     for (; diff < 8; diff++)
     {
       if (tempPos + diff < 8)
-      {  // (tempPos + diff) would be an allowed POS code
-        c_tempGtp.setPos( tempPos + diff );
-        if (!(existIsoMemberGtp(c_tempGtp)))
+      {  // (tempPos + diff) would be an allowed device class inst code
+        c_tempDevKey.setDevClassInst( tempPos + diff );
+        if (!(existIsoMemberDevKey(c_tempDevKey)))
         {  // (tempPos + diff) can't be found in list -> it is unique
-          refc_gtp.setPos( tempPos + diff );
+          refc_devKey.setDevClassInst( tempPos + diff );
           b_result = true;
           break;
         }
       }
       if (tempPos - diff >= 0)
-      { // (tempPos - diff) would be an allowed POS code
-        c_tempGtp.setPos( tempPos - diff );
-        if (!(existIsoMemberGtp(c_tempGtp)))
+      { // (tempPos - diff) would be an allowed device class inst code
+        c_tempDevKey.setDevClassInst( tempPos - diff );
+        if (!(existIsoMemberDevKey(c_tempDevKey)))
         {  // (tempPos - diff) can't be found in list -> it is unique
-          refc_gtp.setPos( tempPos - diff );
+          refc_devKey.setDevClassInst( tempPos - diff );
           b_result = true;
           break;
         }
@@ -837,21 +837,21 @@ bool ISOMonitor_c::processMsg(){
         }
       }
 
-      // if no item has same GTP -> insert new item
-      if (existIsoMemberGtp(data().gtp()) == false)
+      // if no item has same DEVKEY -> insert new item
+      if (existIsoMemberDevKey(data().devKey()) == false)
       { // create new item from received msg
         // (ISOMonitor_c::insertIsoMember set state bits for member and ISO
         //  additionally)
-        insertIsoMember(data().gtp(), data().isoSa(),
+        insertIsoMember(data().devKey(), data().isoSa(),
                         IState_c::itemState_t(IState_c::AddressClaim));
         if ( isoMemberNr(data().isoSa()).processMsg() ) b_processed = true;
       }
       else
-      { // item with same GTP exist -> let it process
-        if ( isoMemberGtp(data().gtp()).processMsg() ) b_processed = true;
+      { // item with same DEVKEY exist -> let it process
+        if ( isoMemberDevKey(data().devKey()).processMsg() ) b_processed = true;
       }
 
-      // after processing the received msg by item with same GTP
+      // after processing the received msg by item with same DEVKEY
       if (pc_localItemWithSameSa != NULL)
       { // let local item with same SA process msg for suitable reaction
         if ( pc_localItemWithSameSa->processMsg() ) b_processed = true;
@@ -927,7 +927,7 @@ bool ISOMonitor_c::processMsg(){
         pc_itemMaster = &(isoMemberNr(data().isoSa()));
         // the working set master places the NAME field of each children
         // in the data part of this message type
-        pc_item = &(isoMemberGtp(data().gtp()));
+        pc_item = &(isoMemberDevKey(data().devKey()));
         pc_item->setMaster (pc_itemMaster); // set master on this isoItem
         b_processed = true;
       }

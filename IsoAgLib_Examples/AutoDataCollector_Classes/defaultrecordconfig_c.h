@@ -44,7 +44,7 @@
 /**
 	Read default Recording Defaults from EEPROM
 	and provide them for simple access
-	during Gety_Flex_Manager initialisation for specific
+	during DevClass_Flex_Manager initialisation for specific
 	device
   *@author Dipl.-Inform. Achim Spangler
 */
@@ -128,8 +128,8 @@ public:
 		get every sec. a new value (use alternatively single requests for Fieldstar systems)
 		@return 0=no measure prog and no single measurement val request,
 						1=no measure prog but send single measurement val requests,
-		        2=only for identified IMIs (GETY different from 4:seed, 5:fertilizer, 6:spreader
-		                                    or POS 4:"Aufsattelposition", 7:"Anhaengeposition2"
+		        2=only for identified IMIs (DEVCLASS different from 4:seed, 5:fertilizer, 6:spreader
+		                                    or DEVCLASSINST 4:"Aufsattelposition", 7:"Anhaengeposition2"
 																				or LBS-Name beginning with "IMI")
 					  3=always
 	*/

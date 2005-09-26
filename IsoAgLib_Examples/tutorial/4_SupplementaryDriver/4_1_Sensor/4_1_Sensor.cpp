@@ -256,14 +256,14 @@ int main()
   uint16_t ui16_manufCode = 0x7FF;
   uint32_t ui32_serNo = 27;
 
-  // variable for GETY_POS ( device type, device type instance )
+  // variable for DEV_KEY ( device type, device type instance )
   // default with primary cultivation mounted back ( device type 2, instance 0 )
-  IsoAgLib::iGetyPos_c myGtp( ui8_deviceType, ui8_deviceTypeInstance );
+  IsoAgLib::iDevKey_c myDevKey( ui8_deviceType, ui8_deviceTypeInstance );
 
 	// start address claim of the local member
-  // if GETY_POS ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
+  // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
       b_selfConf, ui8_indGroup, ui8_func, ui16_manufCode,
       ui32_serNo, ui8_wantedSa, 0xFFFF, ui8_funcInst, ui8_ecuInst);
 

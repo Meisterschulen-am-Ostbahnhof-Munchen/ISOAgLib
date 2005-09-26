@@ -39,12 +39,12 @@
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
     * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
     * from PRT_INSTANCE_CNT
-		* Difference to SINGLETON_CLIENT1 is the fact, that this version allows to derive the singleton pattern using class from
-		* another class. This is important to avoid multiple inheritance.
+    * Difference to SINGLETON_CLIENT1 is the fact, that this version allows to derive the singleton pattern using class from
+    * another class. This is important to avoid multiple inheritance.
     */
   #define SINGLETON_DERIVED_CLIENT1( CLASS, BASE, CLIENT1, KEY1 ) SingletonDerivedVecCont1<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1>
 
-	/** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
+  /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
@@ -54,20 +54,20 @@
     */
   #define SINGLETON_CLIENT2( CLASS, CLIENT1, KEY1, CLIENT2, KEY2 ) \
     SingletonVecCont2<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2>
-	/** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
+  /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
     * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
     * from PRT_INSTANCE_CNT
-		* Difference to SINGLETON_CLIENT2 is the fact, that this version allows to derive the singleton pattern using class from
-		* another class. This is important to avoid multiple inheritance.
+    * Difference to SINGLETON_CLIENT2 is the fact, that this version allows to derive the singleton pattern using class from
+    * another class. This is important to avoid multiple inheritance.
     */
   #define SINGLETON_DERIVED_CLIENT2( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2 ) \
     SingletonDerivedVecCont2<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2>
 
-	/** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
+  /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
@@ -77,35 +77,43 @@
     */
   #define SINGLETON_CLIENT3( CLASS, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
     SingletonVecCont3<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
-	/** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
+  /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
     * the value of PRT_INSTANCE_CNT. With the help of the macro autoInstance(), the interaction of
     * instances of different classes which belongs to the same ISO11783 or DIN9684 BUS can be defined independent
     * from PRT_INSTANCE_CNT
-		* Difference to SINGLETON_CLIENT3 is the fact, that this version allows to derive the singleton pattern using class from
-		* another class. This is important to avoid multiple inheritance.
+    * Difference to SINGLETON_CLIENT3 is the fact, that this version allows to derive the singleton pattern using class from
+    * another class. This is important to avoid multiple inheritance.
     */
   #define SINGLETON_DERIVED_CLIENT3( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
     SingletonDerivedVecCont3<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
 
-	/** the macro autoInstance() uses the class  value singletonVecKey
+  /** the macro autoInstance() uses the class  value singletonVecKey
     * to get a corresponding class instance, which is delegated to the same ISO11783 or DIN9684 BUS
     */
-  #define autoInstance() instance( getSingletonVecKey() )
+  #define autoInstance()                   instance( getSingletonVecKey() )
+  #define SINGLETON_PARENT_CONSTRUCTOR     ClientBase( ri_singletonVecKey ),
+  #define SINGLETON_VEC_KEY_USE4CALL       , getSingletonVecKey()
+  #define SINGLETON_VEC_KEY_PARAMETER_DEF  int ri_singletonVecKey
+  #define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA  , int ri_singletonVecKey
+  #define SINGLETON_VEC_KEY_PARAMETER_VAR  getSingletonVecKey()
+  #define SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA , ri_singletonVecKey
+  #define SINGLETON_VEC_KEY_INIT_CALL      setSingletonKey( ri_singletonVecKey );
   #define getCanInstance4Comm()            getCanInstance( getSingletonVecKey() )
-  #define getSchedulerInstance4Comm()            getSchedulerInstance( getSingletonVecKey() )
-  #define getBaseInstance4Comm()       getBaseInstance( getSingletonVecKey() )
+  #define getSchedulerInstance4Comm()      getSchedulerInstance( getSingletonVecKey() )
+  #define getBaseInstance4Comm()           getBaseInstance( getSingletonVecKey() )
   #define getSystemMgmtInstance4Comm()     getSystemMgmtInstance( getSingletonVecKey() )
   #define getDinMonitorInstance4Comm()     getDinMonitorInstance( getSingletonVecKey() )
   #define getIsoMonitorInstance4Comm()     getIsoMonitorInstance( getSingletonVecKey() )
   #define getDinServiceMonitorInstance4Comm() getDinServiceMonitorInstance( getSingletonVecKey() )
-  #define getProcessInstance4Comm()    getProcessInstance( getSingletonVecKey() )
-  #define getDinMaskuploadInstance4Comm() getDinMaskuploadInstance( getSingletonVecKey() )
-  #define getMultiSendInstance4Comm() getMultiSendInstance( getSingletonVecKey() )
-  #define getIisoTerminalInstance4Comm()   getIsoTerminalInstance( getSingletonVecKey() )
-  #define getGpsInstance4Comm()        getGpsInstance( getSingletonVecKey() )
+  #define getProcessInstance4Comm()        getProcessInstance( getSingletonVecKey() )
+  #define getDinMaskuploadInstance4Comm()  getDinMaskuploadInstance( getSingletonVecKey() )
+  #define getMultiSendInstance4Comm()      getMultiSendInstance( getSingletonVecKey() )
+  #define getIsoTerminalInstance4Comm()    getIsoTerminalInstance( getSingletonVecKey() )
+  #define getMultiReceiveInstance4Comm()   getMultiReceiveInstance( getSingletonVecKey() )
+  #define getGpsInstance4Comm()            getGpsInstance( getSingletonVecKey() )
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
     * attribute singletonVecKey, which is evaluated by the macro autoInstance()
@@ -136,12 +144,12 @@
     * compile time
     * this variant is used by the compiler, if only one ISO11783 or DIN9684 BUS (common case) has to be managed by
     * the IsoAgLib, so that the additional overhead of SingletonVec is avoided
-		* Difference to SINGLETON is the fact, that this version allows to derive the singleton pattern using class from
-		* another class. This is important to avoid multiple inheritance.
+    * Difference to SINGLETON is the fact, that this version allows to derive the singleton pattern using class from
+    * another class. This is important to avoid multiple inheritance.
     */
   #define SINGLETON_DERIVED( CLASS, BASE ) SingletonDerived<CLASS,BASE>
 
-	/** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
+  /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
@@ -150,7 +158,7 @@
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_CLIENT1( CLASS, CLIENT1, KEY1 ) SingletonCont1<CLASS,CLIENT1,KEY1>
-	/** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
+  /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
@@ -160,7 +168,7 @@
     */
   #define SINGLETON_DERIVED_CLIENT1( CLASS, BASE, CLIENT1, KEY1 ) SingletonDerivedCont1<CLASS,BASE,CLIENT1,KEY1>
 
-	/** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
+  /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
@@ -169,7 +177,7 @@
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_CLIENT2( CLASS, CLIENT1, KEY1, CLIENT2, KEY2 ) SingletonCont2<CLASS,CLIENT1,KEY1,CLIENT2,KEY2>
-	/** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
+  /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
@@ -178,9 +186,9 @@
     * from PRT_INSTANCE_CNT
     */
   #define SINGLETON_DERIVED_CLIENT2( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2 ) \
-		SingletonDerivedCont2<CLASS,BASE,CLIENT1,KEY1,CLIENT2,KEY2>
+    SingletonDerivedCont2<CLASS,BASE,CLIENT1,KEY1,CLIENT2,KEY2>
 
-	/** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
+  /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
@@ -190,7 +198,7 @@
     */
   #define SINGLETON_DERIVED_CLIENT3( CLASS, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
     SingletonCont3< CLASS,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
-	/** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
+  /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
     * execution of destructor. This macro allows to define specific classes independent from
@@ -201,10 +209,17 @@
   #define SINGLETON_CLIENT3( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
     SingletonDerivedCont3< CLASS,BASE,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
 
-	/** the macro autoInstance() is simply replaced by instance() in cases where only one ISO11783 or DIN9684 BUS is managed
+  /** the macro autoInstance() is simply replaced by instance() in cases where only one ISO11783 or DIN9684 BUS is managed
     * as the more usual case is only one BUS, this solution creates no unneeded overhead
     */
-  #define autoInstance() instance()
+  #define autoInstance()                      instance()
+  #define SINGLETON_PARENT_CONSTRUCTOR
+  #define SINGLETON_VEC_KEY_USE4CALL
+  #define SINGLETON_VEC_KEY_PARAMETER_DEF
+  #define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
+  #define SINGLETON_VEC_KEY_PARAMETER_VAR
+  #define SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA
+  #define SINGLETON_VEC_KEY_INIT_CALL
   #define getCanInstance4Comm()               getCanInstance()
   #define getSchedulerInstance4Comm()         getSchedulerInstance()
   #define getBaseInstance4Comm()              getBaseInstance()
@@ -215,7 +230,8 @@
   #define getProcessInstance4Comm()           getProcessInstance()
   #define getDinMaskuploadInstance4Comm()     getDinMaskuploadInstance()
   #define getMultiSendInstance4Comm()         getMultiSendInstance()
-  #define getIisoTerminalInstance4Comm()      getIsoTerminalInstance()
+  #define getIsoTerminalInstance4Comm()       getIsoTerminalInstance()
+  #define getMultiReceiveInstance4Comm()      getMultiReceiveInstance()
   #define getGpsInstance4Comm()               getGpsInstance()
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
@@ -261,7 +277,7 @@
 #endif
 
 /** @todo try to remove these include hacks, as soon as Tasking provides a bugfix
-		for their broken version 7.x STL headers.
+    for their broken version 7.x STL headers.
     Official STL headers like "c166/include.cpp/stl_algobase.h"
     where the C-Header <string.h> is imported into the global namespace, prevent
     a later include of <cstring> ( the correct C++ standard method ) to get
@@ -297,9 +313,9 @@ template<class T> class Singleton
   static T* spc_instance;
 };
 /** BaseSingleton class for classes which need only ONE instance per project.
-		This version of Singleton can be derived from another class.
-		This is important to avoid multiple inheritance in the class that uses the
-		singleton pattern.
+    This version of Singleton can be derived from another class.
+    This is important to avoid multiple inheritance in the class that uses the
+    singleton pattern.
   */
 template<class T, class B> class SingletonDerived : public B
 {
@@ -430,9 +446,9 @@ template<class T, int SIZE> class SingletonVec
 };
 
 /** scalable variant of base Singleton, which can manage a predefined amount of instances with global access
-		This version of Singleton can be derived from another class.
-		This is important to avoid multiple inheritance in the class that uses the
-		singleton pattern.
+    This version of Singleton can be derived from another class.
+    This is important to avoid multiple inheritance in the class that uses the
+    singleton pattern.
   */
 template<class T, class B, int SIZE> class SingletonDerivedVec : public B
 {
@@ -603,8 +619,8 @@ template<class T, class B, int SIZE> T & SingletonDerivedVec<T,B,SIZE>::instance
 #undef TEMPLATE_DECL_BASE
 #undef TEMPLATE_QUAL_BASE
 /**
-	Second bunch of Singleton Templates which can be derived from another class, so that
-	multiple inheritance can be avoided
+  Second bunch of Singleton Templates which can be derived from another class, so that
+  multiple inheritance can be avoided
 */
 #define SINGLETON_TYPE SingletonDerived
 #define TEMPLATE_DECL_BASE class T, class B

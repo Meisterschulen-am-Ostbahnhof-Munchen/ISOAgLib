@@ -112,30 +112,30 @@ public:
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
     @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param rc_callerGtp optional GETY_POS of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param rc_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c(
     ProcDataBase_c *const rpc_processData = NULL,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_masterVal = 0,
     int32_t ri32_initialVal = 0,
-    const GetyPos_c& rc_callerGtp = GetyPos_c::GetyPosUnspecified )
-    : MeasureProgBase_c(rpc_processData, ren_progType, ri32_initialVal, rc_callerGtp )
-    {init(rpc_processData, ren_progType, ri32_masterVal, ri32_initialVal, rc_callerGtp  );};
+    const DevKey_c& rc_callerDevKey = DevKey_c::DevKeyUnspecified )
+    : MeasureProgBase_c(rpc_processData, ren_progType, ri32_initialVal, rc_callerDevKey )
+    {init(rpc_processData, ren_progType, ri32_masterVal, ri32_initialVal, rc_callerDevKey  );};
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param ri32_masterVal optional actual central local measured value used as masterVal (def 0)
     @param ri32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param rc_callerGtp optional GETY_POS of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param rc_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ri32_masterVal = 0,
     int32_t ri32_initialVal = 0,
-    const GetyPos_c& rc_callerGtp = GetyPos_c::GetyPosUnspecified );
+    const DevKey_c& rc_callerDevKey = DevKey_c::DevKeyUnspecified );
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
@@ -143,30 +143,30 @@ public:
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param rf_masterVal actual central local measured value used as float masterVal
     @param rf_eepromVal optional value stored in EEPROM (default 0.0)
-    @param rc_callerGtp optional GETY_POS of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param rc_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c(
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType,
     float rf_masterVal,
     float rf_eepromVal = 0.0F,
-    const GetyPos_c& rc_callerGtp = GetyPos_c::GetyPosUnspecified)
-    : MeasureProgBase_c(rpc_processData, ren_progType, 0, rc_callerGtp )
-    {init(rpc_processData, ren_progType, rf_masterVal, rf_eepromVal, rc_callerGtp  );};
+    const DevKey_c& rc_callerDevKey = DevKey_c::DevKeyUnspecified)
+    : MeasureProgBase_c(rpc_processData, ren_progType, 0, rc_callerDevKey )
+    {init(rpc_processData, ren_progType, rf_masterVal, rf_eepromVal, rc_callerDevKey  );};
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param rpc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
     @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param rf_masterVal actual central local measured value used as float masterVal
     @param rf_eepromVal optional value stored in EEPROM (default 0.0)
-    @param rc_callerGtp optional GETY_POS of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param rc_callerDevKey optional DEV_KEY of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
     ProcDataBase_c *const rpc_processData,
     Proc_c::progType_t ren_progType,
     float rf_masterVal,
     float rf_eepromVal = 0.0F,
-    const GetyPos_c& rc_callerGtp = GetyPos_c::GetyPosUnspecified );
+    const DevKey_c& rc_callerDevKey = DevKey_c::DevKeyUnspecified );
 #endif
   /**
     assignment of MeasureProgLocal_c objects
@@ -248,11 +248,11 @@ public:
   /**
     send a sub-information (selected by MOD) to a specified target (selected by GPT)
     @param rui8_mod MOD code of the value type to send
-    @param rc_targetGtp GetyPos of target
+    @param rc_targetDevKey DevKey of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const GetyPos_c& rc_targetGtp, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
+  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
   /**
     process a message: reset command or value requests
 

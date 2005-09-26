@@ -100,22 +100,22 @@ MultiSendPkg_c::MultiSendPkg_c(){
 MultiSendPkg_c::~MultiSendPkg_c(){
 }
 /**
-	assign operator to insert informations from one CANPkg_c into another
-	@see __IsoAgLib::FilterBox_c::operator>>
-	@see CANPkgExt_c::operator=
-	@see CANPkgExt_c::getData
-	@param rrefc_right reference to the source CANPkg_c on the right
-	@return reference to the source CANPkg_c to enable assign chains like
-			"pkg1 = pkg2 = pkg3 = pkg4;"
+  assign operator to insert informations from one CANPkg_c into another
+  @see __IsoAgLib::FilterBox_c::operator>>
+  @see CANPkgExt_c::operator=
+  @see CANPkgExt_c::getData
+  @param rrefc_right reference to the source CANPkg_c on the right
+  @return reference to the source CANPkg_c to enable assign chains like
+      "pkg1 = pkg2 = pkg3 = pkg4;"
 */
 const CANPkg_c& MultiSendPkg_c::operator=(const CANPkg_c& rrefc_right)
 {
-	const MultiSendPkg_c& rrefc_mine = static_cast<const MultiSendPkg_c&>(rrefc_right);
+  const MultiSendPkg_c& rrefc_mine = static_cast<const MultiSendPkg_c&>(rrefc_right);
   bitfield.b_empf = rrefc_mine.bitfield.b_empf;
   bitfield.b_send = rrefc_mine.bitfield.b_send;
   en_byteOrder = rrefc_mine.en_byteOrder;
 
-	return CANPkg_c::operator=(rrefc_right);
+  return CANPkg_c::operator=(rrefc_right);
 }
 
 /**
@@ -195,19 +195,74 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri3
 {
   #ifdef USE_HUGE_MEM
   const HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
-  uint8_t ui8_ind=0;
-  for (; ui8_ind < rb_partSize; ui8_ind++)
-  {
-    pb_data[ui8_ind+1] = pb_source[ui8_ind];
-  }
-  for (; ui8_ind < 7; ui8_ind++)
-  {
-    pb_data[ui8_ind+1] = 0xFF;
+  // end condition comparison aganist ZERO is faster -> perform loop with decrementing
+  for (unsigned int ui_ind=rb_partSize; ui_ind != 0; --ui_ind)
+  { // e.g: copy of 4 elements results in 4:=3, 3:=2, 2:=1, 1:=0 -> run as long as LEFT side is not null
+    pb_data[ui_ind] = pb_source[ui_ind-1];
   }
   #else
   CNAMESPACE::memcpy(pb_data+1, rpb_source + ri32_pos, rb_partSize);
-  CNAMESPACE::memset(pb_data+1+rb_partSize,0xFF, (7-rb_partSize));
   #endif
+  CNAMESPACE::memset(pb_data+1+rb_partSize,0xFF, (7-rb_partSize));
 }
+/**
+  set the 7 uint8_t data part of transfer message
+  @param rpb_source source data pointer
+  @param ri32_pos uint8_t position in data string to start
+  @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+  */
+void MultiSendPkg_c::setDataPart(const std::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize)
+{
+  uint8_t* pui8_writer = pb_data+1-ri32_pos;
+  const uint32_t cui32_end = rb_partSize+ri32_pos;
+  for ( uint32_t ind = ri32_pos; ind < cui32_end; ind++ )
+  { // the pointer pui8_writer points ri32_pos bytes BEFORE the real write target
+    // -> starting with ind:=ri32_pos leads to writing at the real wanted target position
+    // ==> ONE index for quick access to src and targer without any loop index access calculations
+    pui8_writer[ind] = refc_vecSource[ind];
+  }
+  CNAMESPACE::memset(pb_data+1+rb_partSize,0xFF, (7-rb_partSize));
+}
+#if defined(NMEA_2000_FAST_PACKET)
+/**
+  set the 7 uint8_t data part of transfer message
+  @param rpb_source source data pointer
+  @param ri32_pos uint8_t position in data string to start
+  @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7) {Anyway MAX 7 bytes!!}
+ */
+void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize, uint8_t rui8_offset)
+{
+#ifdef USE_HUGE_MEM
+  const HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
+  // end condition comparison aganist ZERO is faster -> perform loop with decrementing
+  for (unsigned int ui_ind=0; ui_ind < rb_partSize; ++ui_ind)
+  { // e.g: copy of 4 elements results in 4:=3, 3:=2, 2:=1, 1:=0 -> run as long as LEFT side is not null
+    pb_data[ui_ind+rui8_offset] = pb_source[ui_ind];
+  }
+#else
+  CNAMESPACE::memcpy(pb_data+rui8_offset, rpb_source + ri32_pos, rb_partSize);
+#endif
+  CNAMESPACE::memset(pb_data+rui8_offset+rb_partSize,0xFF, (8-rui8_offset-rb_partSize));
+}
+/**
+  set the 7 uint8_t data part of transfer message
+  @param rpb_source source data pointer
+  @param ri32_pos uint8_t position in data string to start
+  @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+  */
+void MultiSendPkg_c::setFastPacketDataPart(const std::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize, uint8_t rui8_offset )
+{
+  uint8_t* pui8_writer = pb_data+rui8_offset-ri32_pos;
+  const uint32_t cui32_end = rb_partSize+ri32_pos;
+  for ( uint32_t ind = ri32_pos; ind < cui32_end; ind++ )
+  { // the pointer pui8_writer points ri32_pos bytes BEFORE the real write target
+    // -> starting with ind:=ri32_pos leads to writing at the real wanted target position
+    // ==> ONE index for quick access to src and targer without any loop index access calculations
+    pui8_writer[ind] = refc_vecSource[ind];
+  }
+
+  CNAMESPACE::memset(pb_data+rui8_offset+rb_partSize,0xFF, (8-rui8_offset-rb_partSize));
+}
+#endif
 
 } // end of namespace __IsoAgLib

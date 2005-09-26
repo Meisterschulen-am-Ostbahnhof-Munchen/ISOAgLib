@@ -280,13 +280,13 @@ bool ISOTerminal_c::startUploadCommand ()
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
 
-    return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
+    return getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
            &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, en_sendSuccess);
   } else {
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
-    return getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
+    return getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
            (MultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),        ECU_TO_VT_PGN, en_sendSuccess);
   }
   return true;
@@ -339,8 +339,8 @@ ISOTerminal_c::singletonInit()
   b_receiveFilterCreated = false;
 
   vtAliveNew = false;
-	
-	b_checkSameCommand = true;
+
+  b_checkSameCommand = true;
 }
 
 /**
@@ -364,7 +364,7 @@ bool ISOTerminal_c::registerIsoObjectPool (IdentItem_c* rpc_wsMasterIdentItem, I
   pc_wsMasterIdentItem = rpc_wsMasterIdentItem;
   c_streamer.pc_pool = rpc_pool;
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
-  c_streamer.pc_pool->initAllObjectsOnce();
+  c_streamer.pc_pool->initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_VAR);
 
   if (rpc_versionLabel != NULL) {
     pc_versionLabel = new (char [7+1]);
@@ -442,7 +442,7 @@ void ISOTerminal_c::close( void )
        getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
 
     /*** MultiReceive De-Registration ***/
-    __IsoAgLib::getMultiReceiveInstance().deregisterClient(this);
+    __IsoAgLib::getMultiReceiveInstance4Comm().deregisterClient(this);
 
     deregisterIsoObjectPool();
   }
@@ -530,7 +530,7 @@ bool ISOTerminal_c::timeEvent( void )
   // do further activities only if registered ident is initialised as ISO
   if ( !pc_wsMasterIdentItem ) return true;
   if ( pc_wsMasterIdentItem->getIsoItem() == NULL ) return true;
-  //if ( !c_isoMonitor.existIsoMemberGtp (pc_wsMasterIdentItem->gtp (), true)) return true;
+  //if ( !c_isoMonitor.existIsoMemberDevKey (pc_wsMasterIdentItem->devKey (), true)) return true;
 
 /*** Filter/MultiReceive Registration Start ***/
   if ( ! b_receiveFilterCreated )
@@ -550,7 +550,7 @@ bool ISOTerminal_c::timeEvent( void )
         getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
 
     /*** MultiReceive Registration ***/
-    __IsoAgLib::getMultiReceiveInstance().registerClient(VT_TO_ECU_PGN, pc_wsMasterIdentItem->getIsoItem()->nr(), this);
+    __IsoAgLib::getMultiReceiveInstance4Comm().registerClient(VT_TO_ECU_PGN, pc_wsMasterIdentItem->getIsoItem()->nr(), this);
   }
 /*** Filter/MultiReceive Registration End ***/
 
@@ -1228,7 +1228,7 @@ bool ISOTerminal_c::processMsg()
           if (data().getUint8Data (2) == 0) {
             // start uploading, there MAY BE enough memory
             en_uploadPoolState = UploadPoolUploading;
-            getMultiSendInstance().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+            getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
           } else {
             vtOutOfMemory();
           }

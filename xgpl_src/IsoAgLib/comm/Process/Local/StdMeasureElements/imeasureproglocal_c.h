@@ -154,10 +154,10 @@ public:
   float accelFloat(){return MeasureProgLocal_c::accelFloat();};
 #endif
   /**
-    return the c_gtp code for this measureProg
-    @return GETY_POS of this measureProg
+    return the c_devKey code for this measureProg
+    @return DEV_KEY of this measureProg
   */
-  const iGetyPos_c& gtp(){return static_cast<const iGetyPos_c&>(MeasureProgLocal_c::gtp());};
+  const iDevKey_c& devKey(){return static_cast<const iDevKey_c&>(MeasureProgLocal_c::devKey());};
   /**
     deliver the type of the active increment types
     @return actual Bit-OR combined increment types

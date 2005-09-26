@@ -89,6 +89,8 @@
 #define CAN_PKG_EXT_H
 
 #include "canpkg_c.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
+
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -135,30 +137,34 @@ public:
     @param rui16_val uint16_t value to set
   */
   void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
-    { pb_data[rui8_pos] = (rui16_val & 0xFF); pb_data[rui8_pos+1] = ( rui16_val >> 8 );};
+    {numberRef2LittleEndianString( rui16_val, (pb_data+rui8_pos) );};
+    //{ pb_data[rui8_pos] = (rui16_val & 0xFF); pb_data[rui8_pos+1] = ( rui16_val >> 8 );};
   /**
     set an int16_t value at specified position in string
     @param rui8_pos position [0..6]
     @param ri16_val int16_t value to set
   */
   void setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
-    { pb_data[rui8_pos] = (ri16_val & 0xFF); pb_data[rui8_pos+1] = ( ri16_val >> 8 );};
+    {numberRef2LittleEndianString( ri16_val, (pb_data+rui8_pos) );};
+    //{ pb_data[rui8_pos] = (ri16_val & 0xFF); pb_data[rui8_pos+1] = ( ri16_val >> 8 );};
   /**
     set an uint32_t value at specified position in string
     @param rui8_pos position [0..4]
     @param rui32_val uint32_t value to set
   */
   void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
-    { setUint16Data( rui8_pos,     uint16_t(rui32_val & 0xFFFF) );
-      setUint16Data( (rui8_pos+2), uint16_t( rui32_val >> 16 ) );};
+    {numberRef2LittleEndianString( rui32_val, (pb_data+rui8_pos) );};
+  //{ setUint16Data( rui8_pos,     uint16_t(rui32_val & 0xFFFF) );
+  //    setUint16Data( (rui8_pos+2), uint16_t( rui32_val >> 16 ) );};
   /**
     set an int32_t value at specified position in string
     @param rui8_pos position [0..4]
     @param ri32_val int32_t value to set
   */
   void setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
-    { setInt16Data( rui8_pos,     int16_t(ri32_val & 0xFFFF) );
-      setInt16Data( (rui8_pos+2), int16_t( ri32_val >> 16 ) );};
+    {numberRef2LittleEndianString( ri32_val, (pb_data+rui8_pos) );};
+  //{ setInt16Data( rui8_pos,     int16_t(ri32_val & 0xFFFF) );
+  //  setInt16Data( (rui8_pos+2), int16_t( ri32_val >> 16 ) );};
 
   /**
     simply deliver a uint8_t from a specific position with
@@ -171,25 +177,29 @@ public:
     @param rb_pos position of dellivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint16_t getUint16Data(uint8_t rb_pos) const {return (uint16_t(pb_data[rb_pos]) | (uint16_t(pb_data[rb_pos+1])<<8));};
+  uint16_t getUint16Data(uint8_t rb_pos) const { return convertLittleEndianStringUi16(pb_data+rb_pos);};
+  //{return (uint16_t(pb_data[rb_pos]) | (uint16_t(pb_data[rb_pos+1])<<8));};
   /**
     simply deliver a int16_t from a specific starting position with
     @param rb_pos position of dellivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int16_t getInt16Data(uint8_t rb_pos) const {return int16_t( uint16_t(pb_data[rb_pos]) | ( uint16_t(pb_data[rb_pos+1]) << 8 ) );};
+  int16_t getInt16Data(uint8_t rb_pos) const { return convertLittleEndianStringI16(pb_data+rb_pos);};
+  // {return int16_t( uint16_t(pb_data[rb_pos]) | ( uint16_t(pb_data[rb_pos+1]) << 8 ) );};
   /**
     simply deliver a uint32_t from a specific starting position with
     @param rb_pos position of dellivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint32_t getUint32Data(uint8_t rb_pos) const {return (uint32_t(getUint16Data(rb_pos)) | (uint32_t(getUint16Data(rb_pos+2))<<16));};
+  uint32_t getUint32Data(uint8_t rb_pos) const { return convertLittleEndianStringUi32(pb_data+rb_pos);};
+  // {return (uint32_t(getUint16Data(rb_pos)) | (uint32_t(getUint16Data(rb_pos+2))<<16));};
   /**
     simply deliver a int32_t from a specific starting position with
     @param rb_pos position of dellivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int32_t getInt32Data(uint8_t rb_pos) const {return int32_t( uint32_t(getUint16Data(rb_pos)) | ( uint32_t(getUint16Data(rb_pos+2)) << 16 ) );};
+  int32_t getInt32Data(uint8_t rb_pos) const { return convertLittleEndianStringI32(pb_data+rb_pos);};
+  // {return int32_t( uint32_t(getUint16Data(rb_pos)) | ( uint32_t(getUint16Data(rb_pos+2)) << 16 ) );};
 
   /**
     put data into given reference to BIOS related data structure with data, len

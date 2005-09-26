@@ -109,7 +109,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class SystemMgmt_c;
-typedef SINGLETON_DERIVED_CLIENT1(SystemMgmt_c, ElementBase_c, IdentItem_c, GetyPos_c) SingletonSystemMgmt_c;
+typedef SINGLETON_DERIVED_CLIENT1(SystemMgmt_c, ElementBase_c, IdentItem_c, DevKey_c) SingletonSystemMgmt_c;
 /**
   Central IsoAgLib system management object, which provides information retrieval
   from devices independen of their protocol type. This is achieved by requesting
@@ -148,7 +148,7 @@ public:
   /* ********************************************************** */
   /** \name Search and access of local + remote  DIN + ISO
     * Search for monitor list entries for local and remote
-    * DIN and / or ISO. Search keys are GETY_POS and source
+    * DIN and / or ISO. Search keys are DEV_KEY and source
     * number.                                                   */
   /* ********************************************************** */
   /*\@{*/
@@ -161,7 +161,7 @@ public:
     @return amount of DIN members with claimed address
   */
   uint8_t memberCnt(bool rb_forceClaimedAddress = false)
-    {return memberGetyCnt(0xFF, rb_forceClaimedAddress);};
+    {return memberDevClassCnt(0xFF, rb_forceClaimedAddress);};
   /**
     deliver the n'th DIN and/or ISO member in monitor list which optional (!!)
     match the condition of address claim state
@@ -185,7 +185,7 @@ public:
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
   , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
   #endif
-  ){return *((MonitorItem_c*)&memberGetyInd(0xFF, rui8_ind, rb_forceClaimedAddress
+  ){return *((MonitorItem_c*)&memberDevClassInd(0xFF, rui8_ind, rb_forceClaimedAddress
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
   , ren_protoOrder
   #endif
@@ -193,29 +193,29 @@ public:
 
   /**
     deliver the count of members in the DIN and/or ISO Monitor-Lists
-    with given GETY (variable POS)
+    with given DEVCLASS (variable POS)
     which optional (!!) match the condition of address claim state
-    @param rb_gety searched GETY code
+    @param rui8_devClass searched DEVCLASS code
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
-    @return count of members in Monitor-List with GETY == rb_gety
+    @return count of members in Monitor-List with DEVCLASS == rui8_devClass
   */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  uint8_t memberGetyCnt(uint8_t rb_gety, bool rb_forceClaimedAddress = false);
+  uint8_t memberDevClassCnt(uint8_t rui8_devClass, bool rb_forceClaimedAddress = false);
   /**
-    deliver one of the members with specific GETY  in the DIN and/or ISO lists
+    deliver one of the members with specific DEVCLASS  in the DIN and/or ISO lists
     which optional (!!) match the condition of address claim state
-    check first with memberGetyCnt if enough members with wanted GETY and
+    check first with memberDevClassCnt if enough members with wanted DEVCLASS and
     optional (!!) property are registered in Monitor-List
-    @see memberGetyCnt
+    @see memberDevClassCnt
 
     possible errors:
-      * Err_c::range there exist less than rui8_ind members with GETY rb_gety
-   @param rb_gety searched GETY
+      * Err_c::range there exist less than rui8_ind members with DEVCLASS rui8_devClass
+   @param rui8_devClass searched DEVCLASS
    @param rui8_ind position of the wanted member in the
-                 sublist of member with given GETY (first item has rui8_ind == 0 !!)
+                 sublist of member with given DEVCLASS (first item has rui8_ind == 0 !!)
    @param rb_forceClaimedAddress true -> only members with claimed address are used
          (optional, default false)
    @param ren_searchOrder define search order
@@ -226,7 +226,7 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  MonitorItem_c& memberGetyInd(uint8_t rb_gety, uint8_t rui8_ind, bool rb_forceClaimedAddress = false
+  MonitorItem_c& memberDevClassInd(uint8_t rui8_devClass, uint8_t rui8_ind, bool rb_forceClaimedAddress = false
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
@@ -253,21 +253,21 @@ public:
     #endif
   );
   /**
-    check for member with given member gtp
+    check for member with given member devKey
       which optional (!!) match the condition of address claim state;
     search MemberMonitor and ISOMonitor in order defined by ren_searchOrder
-    @param rc_gtp member gtp to search for
+    @param rc_devKey member devKey to search for
     @param rb_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @param ren_searchOrder define search order
       (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
       (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
-    @return true -> one of the devices in the searched Monitor lists has the wanted member gtp
+    @return true -> one of the devices in the searched Monitor lists has the wanted member devKey
   */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  bool existMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false
+  bool existMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
@@ -297,14 +297,14 @@ public:
     #endif
   );
   /**
-    check for member with given member gtp;
+    check for member with given member devKey;
     search MemberMonitor and ISOMonitor in order defined by ren_searchOrder
-    (check with existMemberGtp before access to not defined item)
+    (check with existMemberDevKey before access to not defined item)
 
     possible errors:
       * Err_c::elNonexistent on failed search
 
-    @param rc_gtp member gtp to search for
+    @param rc_devKey member devKey to search for
     @param ren_searchOrder define search order
       (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
       (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
@@ -314,25 +314,25 @@ public:
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  MonitorItem_c& memberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false
+  MonitorItem_c& memberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
   );
 
   /**
-    check if member is in one of the member lists for DIN or ISO with wanted GETY_POS,
-    adopt POS if member with claimed address with other POS exist
-    @param refc_gtp GETY_POS to search (-> it's updated if member with claimed address with other POS is found)
+    check if member is in one of the member lists for DIN or ISO with wanted DEV_KEY,
+    adopt instance if member with claimed address with other device class inst exist
+    @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
     @param ren_searchOrder define search order
       (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)
       (this parameter is only used if USE_ISO_11783 is defined, default check first din then iso)
-    @return true -> member with claimed address with given GETY found (and refc_gtp has now its GETY_POS)
+    @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
   */
   #if ( ! defined( PRT_INSTANCE_CNT ) ) || ( PRT_INSTANCE_CNT < 2 )
   static
   #endif
-  bool gety2gtpClaimedAddress(GetyPos_c &refc_gtp
+  bool devClass2devKeyClaimedAddress(DevKey_c &refc_devKey
   #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
   , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
   #endif
@@ -369,7 +369,7 @@ public:
       (this parameter is only used if USE_ISO_11783 is defined, default check both)
     @return pointer to wanted local member (NULL if no suitable MonitorItem_c found)
       (MonitorItem_c is bas class of both ISOItem_c or DINItem_c which serves
-       adress, gtp, itemState)
+       adress, devKey, itemState)
   */
   MonitorItem_c& localMemberInd(uint8_t rui8_ind
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
@@ -455,7 +455,7 @@ public:
       (this parameter is only used if USE_ISO_11783 is defined, default check both)
     @return reference to the MonitorItem_c of the first active local member
       (MonitorItem_c is bas class of both ISOItem_c or DINItem_c which serves
-       adress, gtp, itemState)
+       adress, devKey, itemState)
      @exception preconditionViolation
   */
   MonitorItem_c& getActiveLocalMember(
@@ -548,14 +548,14 @@ public:
     #endif
   );
   /**
-    check for own ident with given GETY_POS
-    @param rc_gtp GETY_POS to search for
+    check for own ident with given DEV_KEY
+    @param rc_devKey DEV_KEY to search for
     @param ren_protoTypes select which active local member types should be checked
       (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso)
       (this parameter is only used if USE_ISO_11783 is defined, default check both)
-    @return true -> one of the own identities has the wanted GETY_POS
+    @return true -> one of the own identities has the wanted DEV_KEY
   */
-  bool existLocalMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false
+  bool existLocalMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
@@ -577,15 +577,15 @@ public:
       #endif
       );};
   /**
-    check for own din ident with given GETY_POS;
+    check for own din ident with given DEV_KEY;
     this variant of existLocalMemberNr is replaced during compile time by a direct
     call to existLocalMemberNr, so that no runtime overhead is caused;
     allows consistent naming with other DIN member functions
-    @param rc_gtp GETY_POS to search for
-    @return true -> one of the own din identities has the wanted GETY_POS
+    @param rc_devKey DEV_KEY to search for
+    @return true -> one of the own din identities has the wanted DEV_KEY
   */
-  bool existLocalDinMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
-    {return existLocalMemberGtp(rc_gtp, rb_forceClaimedAddress
+  bool existLocalDinMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
+    {return existLocalMemberDevKey(rc_devKey, rb_forceClaimedAddress
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       , IState_c::DinOnly
       #endif
@@ -607,15 +607,15 @@ public:
       #endif
       );};
   /**
-    check for own din ident with given GETY_POS;
+    check for own din ident with given DEV_KEY;
     this variant of existLocalMemberNr is replaced during compile time by a direct
     call to existLocalMemberNr, so that no runtime overhead is caused;
     allows consistent naming with other ISO member functions
-    @param rc_gtp GETY_POS to search for
-    @return true -> one of the own iso identities has the wanted GETY_POS
+    @param rc_devKey DEV_KEY to search for
+    @return true -> one of the own iso identities has the wanted DEV_KEY
   */
-  bool existLocalIsoMemberGtp(const GetyPos_c& rc_gtp, bool rb_forceClaimedAddress = false)
-    {return existLocalMemberGtp(rc_gtp, rb_forceClaimedAddress
+  bool existLocalIsoMemberDevKey(const DevKey_c& rc_devKey, bool rb_forceClaimedAddress = false)
+    {return existLocalMemberDevKey(rc_devKey, rb_forceClaimedAddress
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::IsoOnly
     #endif

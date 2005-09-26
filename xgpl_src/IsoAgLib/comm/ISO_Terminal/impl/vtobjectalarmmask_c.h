@@ -114,7 +114,7 @@ public:
   //! Parameter:
   //! @param vtObjectAlarmMaskSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM) { vtObject_c::init ((iVtObject_s*) vtObjectAlarmMaskSROM); };
+  void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAlarmMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectAlarmMask_a
   iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a() { return (iVtObjectAlarmMask_s *)vtObject_a; };
@@ -127,7 +127,7 @@ public:
 
 
   void setBackgroundColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour) : 0, sizeof(iVtObjectAlarmMask_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour) : 0, sizeof(iVtObjectAlarmMask_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
 
   void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);

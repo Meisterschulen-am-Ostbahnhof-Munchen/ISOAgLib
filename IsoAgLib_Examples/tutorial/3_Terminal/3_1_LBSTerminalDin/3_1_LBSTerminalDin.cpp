@@ -66,9 +66,9 @@
  *  <li>Use structure types IsoAgLib::t_maskDefinition and IsoAgLib::t_syncTupel
  *    to define DIN terminal resources
  *    for sync between terminal and ECU
- *  <li>Used member method IsoAgLib::iDINMonitor_c::existMemberGtp()
+ *  <li>Used member method IsoAgLib::iDINMonitor_c::existMemberDevKey()
  *    to look for existance of possible versions of DIN terminals
- *    ( based on IsoAgLib::iDINItem_c::gtp() , IsoAgLib::iDINItem_c::name()
+ *    ( based on IsoAgLib::iDINItem_c::devKey() , IsoAgLib::iDINItem_c::name()
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
  *  <ul>
@@ -248,9 +248,9 @@
 using namespace IsoAgLib;
 
 int main()
-{ // variable for GETY_POS
+{ // variable for DEV_KEY
   // default with primary cultivation mounted back
-  IsoAgLib::iGetyPos_c myGtp( 2, 0 );
+  IsoAgLib::iDevKey_c myDevKey( 2, 0 );
   // uint8_t string for name of this IMI (7 characters + '\0')
   uint8_t myName[8];
   uint8_t pui8_nameForFieldstar[7] = {0,0,0,0x32,0,0x10,1};
@@ -310,7 +310,7 @@ int main()
   #endif
 
   // register Fieldstar Old Style
-  IsoAgLib::iGetyPos_c c_FieldstarGtp(1,2); // 0xA
+  IsoAgLib::iDevKey_c c_FieldstarDevKey(1,2); // 0xA
   IsoAgLib::t_syncTupel psFieldstarOldSyncNo[] = {
    {100, FS_OLD_SW_VERSION},
    {430, FS_OLD_REQ_TERM_VERSION},
@@ -318,8 +318,8 @@ int main()
   };
 
   IsoAgLib::t_maskDefinition sFieldstarOldMask = {
-   &myGtp, // pointer to local gtp
-   iGetyPos_c(1,2), // GetyPos of Terminal (0xA) -> Gety:1, Pos:2
+   &myDevKey, // pointer to local devKey
+   iDevKey_c(1,2), // DevKey of Terminal (0xA) -> DevClass:1, Pos:2
    {0, 0, 0, 0x31, 0, 0x10, 2}, // name of Fieldstar Term
    FieldstarOld, // is LBS+ terminal
    NULL, // no config data
@@ -334,7 +334,7 @@ int main()
 
 
   // register Fendt Vario
-  IsoAgLib::iGetyPos_c c_VarioGtp(1, 5); // 0xD
+  IsoAgLib::iDevKey_c c_VarioDevKey(1, 5); // 0xD
   IsoAgLib::t_syncTupel psVarioSyncNo[] = {
    {1, LBS_PLUS_SYSTEM_STATUS},
    {100, LBS_PLUS_GENERIC_DRIVER_VERSION},
@@ -350,8 +350,8 @@ int main()
    {0x00000080, LBS_PLUS_PROJECT_VISISIZE}
   };
   IsoAgLib::t_maskDefinition sVarioMask = {
-   &myGtp, // pointer to local gtp
-   iGetyPos_c(1, 5), // GetyPos of Terminal
+   &myDevKey, // pointer to local devKey
+   iDevKey_c(1, 5), // DevKey of Terminal
    "FENVARC", // name of Fendt Vario Term
    FendtVario, // is LBS+ terminal
    pVarioConfigStartVektor, // string with config settings
@@ -369,9 +369,9 @@ int main()
   getIdinMaskuploadInstance().registerLbsPlusMask(&sVarioMask);
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp, myName );
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey, myName );
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -403,23 +403,23 @@ int main()
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
-    if ( ( !getIdinMonitorInstance().existDinMemberGtp(myGtp, true) )
-      && ( getIdinMonitorInstance().existDinMemberGtp(myGtp)        ) )
+    if ( ( !getIdinMonitorInstance().existDinMemberDevKey(myDevKey, true) )
+      && ( getIdinMonitorInstance().existDinMemberDevKey(myDevKey)        ) )
     { // local member exist but has not yet claimed address -> check name
       if ( (en_maskNameSetting != varioName)
-        && (getIdinMonitorInstance().existDinMemberGtp(c_VarioGtp, true))
-        && (memcmp(getIdinMonitorInstance().dinMemberGtp(c_VarioGtp).name(), "FENVARC", 7) == 0)
+        && (getIdinMonitorInstance().existDinMemberDevKey(c_VarioDevKey, true))
+        && (memcmp(getIdinMonitorInstance().dinMemberDevKey(c_VarioDevKey).name(), "FENVARC", 7) == 0)
           )
       { // Vario Terminal has claimed address
-        getIdinMonitorInstance().dinMemberGtp(myGtp).setName((const uint8_t*)"LEMK_1P");
+        getIdinMonitorInstance().dinMemberDevKey(myDevKey).setName((const uint8_t*)"LEMK_1P");
         en_maskNameSetting = varioName;
       }
       else if ( (en_maskNameSetting != fieldstarName)
-        && (getIdinMonitorInstance().existDinMemberGtp(c_FieldstarGtp, true))
-        && (memcmp(getIdinMonitorInstance().dinMemberGtp(c_VarioGtp).name(), pb_fieldstarName, 7) == 0)
+        && (getIdinMonitorInstance().existDinMemberDevKey(c_FieldstarDevKey, true))
+        && (memcmp(getIdinMonitorInstance().dinMemberDevKey(c_VarioDevKey).name(), pb_fieldstarName, 7) == 0)
           )
       { // Fieldstar Terminal has claimed address
-        getIdinMonitorInstance().dinMemberGtp(myGtp).setName(pui8_nameForFieldstar);
+        getIdinMonitorInstance().dinMemberDevKey(myDevKey).setName(pui8_nameForFieldstar);
         en_maskNameSetting = fieldstarName;
       }
     }

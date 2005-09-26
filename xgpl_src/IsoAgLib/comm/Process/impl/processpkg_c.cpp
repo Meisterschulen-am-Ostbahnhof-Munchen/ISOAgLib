@@ -125,8 +125,8 @@ namespace __IsoAgLib {
 
 /** default constructor which has nothing to do */
 ProcessPkg_c::ProcessPkg_c( int ri_singletonVecKey ) : CANPkgExt_c( ri_singletonVecKey ) {
-  c_specialTermGtp.setUnspecified();
-  c_specialTermUseProcGtp.setUnspecified();
+  c_specialTermDevKey.setUnspecified();
+  c_specialTermUseProcDevKey.setUnspecified();
 }
 /** default constructor which has nothing to do */
 ProcessPkg_c::~ProcessPkg_c(){
@@ -469,8 +469,8 @@ void ProcessPkg_c::string2Flags()
     #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     else bit_data.b_valType = float_val;
     #endif
-    setGety((CANPkg_c::pb_data[2] >> 3) & 0xF);
-    setPos(CANPkg_c::pb_data[2] & 0x7);
+    setDevClass((CANPkg_c::pb_data[2] >> 3) & 0xF);
+    setDevClassInst(CANPkg_c::pb_data[2] & 0x7);
 
     DINMonitor_c &c_din_monitor = getDinMonitorInstance4Comm();
     // now set pc_monitorSend and pc_monitorEmpf
@@ -499,19 +499,19 @@ void ProcessPkg_c::string2Flags()
     setWert(CANPkg_c::pb_data[3] >> 4);
     setInst((CANPkg_c::pb_data[3] & 0xF));
 
-    // some DIN systems place wrong GETY in data string -> correct GETY, for all requests to GETY of receiver
-    // and correct GETY for all messages from special registered terminal
+    // some DIN systems place wrong DEVCLASS in data string -> correct DEVCLASS, for all requests to DEVCLASS of receiver
+    // and correct DEVCLASS for all messages from special registered terminal
     if ( (pc_monitorEmpf != NULL) // receiver must be found in monitor list
          && (pc_monitorSend != NULL) // sender must be found in monitor list
-         && ( gety() != 0 ) // Proc is not of special GetyPos 0,0 case
-         && ( pos() != 0 ) // Proc is not of special GetyPos 0,0 case
+         && ( devClass() != 0 ) // Proc is not of special DevKey 0,0 case
+         && ( devClassInst() != 0 ) // Proc is not of special DevKey 0,0 case
          && ( ( ( pd() & 0x2 ) != 0 ) // first alternative: it's a request
-              ||   ( ( c_specialTermGtp ==  pc_monitorSend->gtp() ) && (c_specialTermGtp.isSpecified()) ) // or it's from known special terminal
+              ||   ( ( c_specialTermDevKey ==  pc_monitorSend->devKey() ) && (c_specialTermDevKey.isSpecified()) ) // or it's from known special terminal
               )
          )
-    { // sender is special case terminal -> change GETY_POS for data part from terminal GETY_POS to local of empf
-      setGety((pc_monitorEmpf->gtp()).getGety());
-      setPos((pc_monitorEmpf->gtp()).getPos());
+    { // sender is special case terminal -> change DEV_KEY for data part from terminal DEV_KEY to local of empf
+      setDevClass((pc_monitorEmpf->devKey()).getDevClass());
+      setDevClassInst((pc_monitorEmpf->devKey()).getDevClassInst());
     }
 #endif //DIN
 
@@ -541,14 +541,14 @@ void ProcessPkg_c::string2Flags()
     #endif
     set_d(0);
 
-    //Need to replace this call with the getpos from the monitor item. Getypos no longer encapsulated in the message data itself
+    //Need to replace this call with the getpos from the monitor item. DevClasspos no longer encapsulated in the message data itself
     //See new line added below that uses c_isoMonitor. -bac
-    //setGtp( GetyPos_c(((CANPkg_c::pb_data[2] >> 4) & 0xF), (CANPkg_c::pb_data[2] & 0xF) ) );
+    //setDevKey( DevKey_c(((CANPkg_c::pb_data[2] >> 4) & 0xF), (CANPkg_c::pb_data[2] & 0xF) ) );
 
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
-    // gtp in ProcessPkg_c is no longer used in ISO (for DIN the message contains the empf gtp!)
-    //setGtp(c_isoMonitor.isoMemberNr(send()).gtp());  // Get the gety and pos (Device Class, Device Class Instance -bac
+    // devKey in ProcessPkg_c is no longer used in ISO (for DIN the message contains the empf devKey!)
+    //setDevKey(c_isoMonitor.isoMemberNr(send()).devKey());  // Get the devClass and pos (Device Class, Device Class Instance -bac
 
     // now set pc_monitorSend and pc_monitorEmpf
     if ((pri() == 2) && (c_isoMonitor.existIsoMemberNr(empf())))
@@ -656,20 +656,20 @@ void ProcessPkg_c::flags2String()
     }
     CANPkg_c::pb_data[0] = ((lis() & 0x7) << 5) |((pd() & 0x3) << 3) | (mod() & 0x7);
 
-    // if c_specialTermGtp != GetyPos_c::GetyPosUnspecified dependent on gtp receiver of the GETY_POS of this data should be changed
-    // to remote gtp
-    CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 );
+    // if c_specialTermDevKey != DevKey_c::DevKeyUnspecified dependent on devKey receiver of the DEV_KEY of this data should be changed
+    // to remote devKey
+    CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 );
     #if 0
-    if ( (c_specialTermGtp.isSpecified())
-      && (c_specialTermGtp == getDinMonitorInstance4Comm().dinMemberNr(empf()).gtp())
+    if ( (c_specialTermDevKey.isSpecified())
+      && (c_specialTermDevKey == getDinMonitorInstance4Comm().dinMemberNr(empf()).devKey())
       && ( ( (wert() == 0) && (inst() >= 0xC) ) || ( (wert() == 0xF) &&  ( (inst() == 3) || (inst() == 4) ) ) )
        )
-    { // sender is special case terminal -> change GETY_POS for data part to terminal GETY_POS to local from empf
-      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 );
+    { // sender is special case terminal -> change DEV_KEY for data part to terminal DEV_KEY to local from empf
+      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 );
     }
     else
     { // standard case
-      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( gtp().getGety() << 3 ) | ( gtp().getPos() & 0x7 );
+      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 );
     }
     #endif
 
@@ -771,15 +771,15 @@ MonitorItem_c& ProcessPkg_c::memberSend() const
 }
 /**
   some LBS+ terminals wants process data interaction for syncronisation of
-  terminal mask with GETY_POS of terminal even for local process data
-  @param rc_gtp GETY_POS of terminal, for which the GETY_POS of data is converted
-  @param rc_useProcGtp GTP for process data (optional, default to terminal gtp)
+  terminal mask with DEV_KEY of terminal even for local process data
+  @param rc_devKey DEV_KEY of terminal, for which the DEV_KEY of data is converted
+  @param rc_useProcDevKey DEVKEY for process data (optional, default to terminal devKey)
 */
-void ProcessPkg_c::useTermGtpForLocalProc(const GetyPos_c& rc_gtp, const GetyPos_c& rc_useProcGtp)
+void ProcessPkg_c::useTermDevKeyForLocalProc(const DevKey_c& rc_devKey, const DevKey_c& rc_useProcDevKey)
 {
-  c_specialTermGtp = rc_gtp;
-  if (rc_useProcGtp.isSpecified())c_specialTermUseProcGtp = rc_useProcGtp;
-  else c_specialTermUseProcGtp = rc_gtp;
+  c_specialTermDevKey = rc_devKey;
+  if (rc_useProcDevKey.isSpecified())c_specialTermUseProcDevKey = rc_useProcDevKey;
+  else c_specialTermUseProcDevKey = rc_devKey;
 }
 
 /**
@@ -869,7 +869,7 @@ bool ProcessPkg_c::resolveCommandType(
       }
     }
 
-    if (existMemberEmpf() && (gety() == memberEmpf().gtp().getGety())) {
+    if (existMemberEmpf() && (devClass() == memberEmpf().devKey().getDevClass())) {
        // we are local
        // from MeasureProgLocal_c::processMsg and ProcDataLocalBase_c::processProg())
        if ((pd() == 1) && (dataRawCmdLong() == 0) )

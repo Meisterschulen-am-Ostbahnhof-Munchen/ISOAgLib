@@ -5,7 +5,7 @@
 
 // the identifying datas are in the first 32 Byte of one part
 // (offest of 0xFF for system data)
-#define ADR_IDENT_GTP (0x0+0x100)
+#define ADR_IDENT_DEVKEY (0x0+0x100)
 // SHORT NAME LENGTH
 #define ADR_IDENT_NAME_SHORT (0x1+0x100)
 // ISO NAME flags
@@ -38,15 +38,15 @@
 #define ADR_TASK_CONTROLLER_DATE_MONTH          4001
 /** offset values for tractor/task-contr -> 4xlong -> 16byte */
 #define ADR_TASK_CONTROLLER_TRAC_OFFSET          4002
-/**  1byte for GTP of first implement */
-#define ADR_TASK_CONTROLLER_IMPLEMENT_1_GTP      4018
+/**  1byte for DEVKEY of first implement */
+#define ADR_TASK_CONTROLLER_IMPLEMENT_1_DEVKEY      4018
 /**  8byte for name of first implement */
 #define ADR_TASK_CONTROLLER_IMPLEMENT_1_NAME     4019
 /**   9 int32_t offset values -> 36byte of first implement */
 #define ADR_TASK_CONTROLLER_IMPLEMENT_1_OFFSET  4027
 
-/**  1byte for GTP of second implement */
-#define ADR_TASK_CONTROLLER_IMPLEMENT_2_GTP      4063
+/**  1byte for DEVKEY of second implement */
+#define ADR_TASK_CONTROLLER_IMPLEMENT_2_DEVKEY      4063
 /**  8byte for name of second implement */
 #define ADR_TASK_CONTROLLER_IMPLEMENT_2_NAME     4064
 /**   9 int32_t offset values -> 36byte of second implement */
@@ -81,14 +81,14 @@
 // working area WERT=8, INST=0
 #define ADR_WORKING_AREA          300
 #define ADR_TRIP_AREA              300
-// remote process data for "whole distance" [m] (LIS=0, GETY=2, WERT=8, INST=1)
+// remote process data for "whole distance" [m] (LIS=0, DEVCLASS=2, WERT=8, INST=1)
 #define ADR_WHOLE_DIST            304
-// remote process data for "working distance" [m] (LIS=0, GETY=2, WERT=8, INST=4)
+// remote process data for "working distance" [m] (LIS=0, DEVCLASS=2, WERT=8, INST=4)
 #define ADR_WORKING_DIST          308
 #define ADR_TRIP_DIST              308
-// remote process data for "whole time" [sec] (LIS=0, GETY=2, WERT=0xA, INST=0)
+// remote process data for "whole time" [sec] (LIS=0, DEVCLASS=2, WERT=0xA, INST=0)
 #define  ADR_WHOLE_TIME            312
-// remote process data for "work time" [sec] (LIS=0, GETY=2, WERT=0xA, INST=7)
+// remote process data for "work time" [sec] (LIS=0, DEVCLASS=2, WERT=0xA, INST=7)
 #define ADR_WORKING_TIME          316
 #define  ADR_TRIP_TIME              316
 

@@ -137,10 +137,10 @@ namespace __IsoAgLib {
    @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
    common parameters:
-   @param rc_gtp optional GETY_POS code of Process-Data
+   @param rc_devKey optional DEV_KEY code of Process-Data
    @param rui8_pri PRI code of messages with this process data instance (default 2)
-   @param rc_ownerGtp optional GETY_POS of the owner
-   @param rpc_gtp pointer to updated GETY_POS variable of owner
+   @param rc_ownerDevKey optional DEV_KEY of the owner
+   @param rpc_devKey pointer to updated DEV_KEY variable of owner
    @param rpc_processDataChangeHandler optional pointer to handler class of application
    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
@@ -152,8 +152,8 @@ namespace __IsoAgLib {
                             uint8_t rui8_lis, uint8_t rui8_wert,
                             uint8_t rui8_inst, uint8_t rui8_zaehlnum ,
 #endif
-                            const GetyPos_c& rc_gtp,
-                            uint8_t rui8_pri, const GetyPos_c& rc_ownerGtp, const GetyPos_c *rpc_gtp,
+                            const DevKey_c& rc_devKey,
+                            uint8_t rui8_pri, const DevKey_c& rc_ownerDevKey, const DevKey_c *rpc_devKey,
                             IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                             int ri_singletonVecKey)
   {
@@ -164,7 +164,7 @@ namespace __IsoAgLib {
 #ifdef USE_DIN_9684
                     rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                    rc_gtp, rui8_pri, rc_ownerGtp, rpc_gtp);
+                    rc_devKey, rui8_pri, rc_ownerDevKey, rpc_devKey);
 
   setSingletonKey(ri_singletonVecKey);
   en_procValType = i32_val;
@@ -254,24 +254,24 @@ bool ProcDataBase_c::timeEvent( void ){
 
 
 /**
-  send the given int32_t value with variable GETY_POS rc_varGtp
+  send the given int32_t value with variable DEV_KEY rc_varDevKey
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
 
-  set general command before sendValGtp !
+  set general command before sendValDevKey !
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
       * dependant error in CANIO_c on CAN send problems
   @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
+  @param rc_varDevKey variable DEV_KEY
   @param ri32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, int32_t ri32_val) const
+bool ProcDataBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, int32_t ri32_val) const
 {
   bool b_result;
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp))
+  if (resolvDevKeySetBasicSendFlags(rui8_pri, rc_varDevKey))
   { // now call sendIntern, if var2empfSend was successful
     // set PD, MOD, and data with the function setPkgDataLong
     getProcessPkg().setData( ri32_val, en_procValType);
@@ -290,23 +290,23 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, in
 
 #ifdef USE_FLOAT_DATA_TYPE
 /**
-  send the given float value with variable GETY_POS rc_varGtp
+  send the given float value with variable DEV_KEY rc_varDevKey
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
 
-  set general command before sendValGtp !
+  set general command before sendValDevKey !
 
   possible errors:
       * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
       * dependant error in CANIO_c on CAN send problems
   @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
+  @param rc_varDevKey variable DEV_KEY
   @param ri32_val float value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, float rf_val) const {
+bool ProcDataBase_c::sendValDevKey(uint8_t rui8_pri, const DevKey_c& rc_varDevKey, float rf_val) const {
   bool b_result;
-  if (resolvGtpSetBasicSendFlags(rui8_pri, rc_varGtp))
+  if (resolvDevKeySetBasicSendFlags(rui8_pri, rc_varDevKey))
   { // now call sendIntern, if var2empfSend was successful
     // set PD, MOD, and data with the function setPkgDataLong
     getProcessPkg().setData( rf_val, en_procValType);
@@ -325,7 +325,7 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, fl
 #endif
 
 /**
-  resolv SEND|EMPF dependent on GETY_POS rc_varGtp
+  resolv SEND|EMPF dependent on DEV_KEY rc_varDevKey
   (local: receiver; remote: sender)
   (other paramter fixed by ident of process data)
   and set basic value independent flags in ProcessPkg
@@ -335,12 +335,12 @@ bool ProcDataBase_c::sendValGtp(uint8_t rui8_pri, const GetyPos_c& rc_varGtp, fl
   is wanted
 
   @param rui8_pri PRI code for the msg
-  @param rc_varGtp variable GETY_POS
+  @param rc_varDevKey variable DEV_KEY
   @param rb_pd PD code for the msg
   @param rb_mod MOD code for the msg
-  @return true -> resolvSendGtp successfully resolved EMPF and SEND
+  @return true -> resolvSendDevKey successfully resolved EMPF and SEND
 */
-bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_c& rc_varGtp) const {
+bool ProcDataBase_c::resolvDevKeySetBasicSendFlags(uint8_t rui8_pri, const DevKey_c& rc_varDevKey) const {
   uint8_t ui8_empf = 0xFF,
       ui8_send = 0xFF;
   bool b_result = false;
@@ -352,10 +352,10 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_
   // retreive pointer to te according DINMonitor_c class
   static DINMonitor_c& c_din_monitor = getDinMonitorInstance4Comm();
 
-  // check is the var parameter has claimed address - the variable device is totally known by GTP: the requesting device for local proc, the commanding for remote proc
-  if (c_din_monitor.existDinMemberGtp(rc_varGtp, true))
-  { // the member to rc_varGtp has claimed address (virtual function -> worksdependent on child type local/remote)
-    b_result = var2empfSend(rui8_pri, (c_din_monitor.dinMemberGtp(rc_varGtp, true).nr()),
+  // check is the var parameter has claimed address - the variable device is totally known by DEVKEY: the requesting device for local proc, the commanding for remote proc
+  if (c_din_monitor.existDinMemberDevKey(rc_varDevKey, true))
+  { // the member to rc_varDevKey has claimed address (virtual function -> worksdependent on child type local/remote)
+    b_result = var2empfSend(rui8_pri, (c_din_monitor.dinMemberDevKey(rc_varDevKey, true).nr()),
                   ui8_empf,
                   ui8_send
                   #ifdef USE_ISO_11783
@@ -371,10 +371,10 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_
   // try with ISO communication
   if (!b_result)
   {
-    if (c_isoMonitor.existIsoMemberGtp(rc_varGtp, true ))
-    { // the member to rc_varGtp has claimed address (virtual function -> worksdependent on child type local/remote)
+    if (c_isoMonitor.existIsoMemberDevKey(rc_varDevKey, true ))
+    { // the member to rc_varDevKey has claimed address (virtual function -> worksdependent on child type local/remote)
       en_msgProto = IState_c::Iso;
-      b_result = var2empfSend(rui8_pri, (c_isoMonitor.isoMemberGtp(rc_varGtp, true).nr()),
+      b_result = var2empfSend(rui8_pri, (c_isoMonitor.isoMemberDevKey(rc_varDevKey, true).nr()),
           ui8_empf, ui8_send, en_msgProto);
     }
   }
@@ -461,7 +461,7 @@ bool ProcDataBase_c::resolvGtpSetBasicSendFlags(uint8_t rui8_pri, const GetyPos_
     c_data.setZaehlnum(zaehlnum());
     c_data.setWert(wert());
     c_data.setInst(inst());
-    c_data.setGtp(gtp());
+    c_data.setDevKey(devKey());
 #endif
 
   }
@@ -486,28 +486,28 @@ void ProcDataBase_c::processSetpoint()
 
 #ifdef USE_ISO_11783
 /**
-  delivers item state (DIN/ISO) for given gtp
-  @param rc_gtp compared GETY_POS value
+  delivers item state (DIN/ISO) for given devKey
+  @param rc_devKey compared DEV_KEY value
   @return IState_c::itemState_t
 */
-IState_c::itemState_t ProcDataBase_c::getIStateForGtp( const GetyPos_c& rc_gtp )
+IState_c::itemState_t ProcDataBase_c::getIStateForDevKey( const DevKey_c& rc_devKey )
 {
   IState_c::itemState_t en_msgProto = IState_c::IstateNull;
 
 #if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
-  if ( getDinMonitorInstance4Comm().existDinMemberGtp(rc_gtp, true) )
+  if ( getDinMonitorInstance4Comm().existDinMemberDevKey(rc_devKey, true) )
     en_msgProto = IState_c::Din;
 #endif
 
 #if !defined(USE_DIN_9684) && defined(USE_ISO_11783)
-  if ( getIsoMonitorInstance4Comm().existIsoMemberGtp(rc_gtp, true) )
+  if ( getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_devKey, true) )
     en_msgProto = IState_c::Iso;
 #endif
 
 #if defined(USE_DIN_9684) && defined(USE_ISO_11783)
-  if ( getSystemMgmtInstance4Comm().existMemberGtp(rc_gtp, true, IState_c::IsoOnly) )
+  if ( getSystemMgmtInstance4Comm().existMemberDevKey(rc_devKey, true, IState_c::IsoOnly) )
     en_msgProto = IState_c::Iso;
-  if ( getSystemMgmtInstance4Comm().existMemberGtp(rc_gtp, true, IState_c::DinOnly) )
+  if ( getSystemMgmtInstance4Comm().existMemberDevKey(rc_devKey, true, IState_c::DinOnly) )
     en_msgProto = IState_c::Din;
 #endif
 

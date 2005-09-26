@@ -990,9 +990,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           buf_length += 7;
           fprintf( partFileA, "%s", buffer.str().c_str() );
           buffer.str("");
-          fprintf( partFileB, "IsoAgLib::iGetyPos_c %sGtp(0x%x, 0x%x);\n\n",
+          fprintf( partFileB, "IsoAgLib::iDevKey_c %sDevKey(0x%x, 0x%x);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
-          fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sGtp, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISOTERMINAL \n , 0, NULL\n #endif\n);\n\n",
+          fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sDevKey, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISOTERMINAL \n , 0, NULL\n #endif\n);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "true" : "false",
                    c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
                    atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
@@ -1239,7 +1239,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           fprintf( partFileB, "0x0, 0x0, 0x0, 0x0, ");
         
         fprintf( partFileB, "\n#endif\n");
-        fprintf( partFileB, "%sGtp, 0x%x, %sGtp, &%sGtp, %s",
+        fprintf( partFileB, "%sDevKey, 0x%x, %sDevKey, &%sDevKey, %s",
                   vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
                   vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
         fprintf( partFileB, "\n#ifdef USE_EEPROM_IO\n");

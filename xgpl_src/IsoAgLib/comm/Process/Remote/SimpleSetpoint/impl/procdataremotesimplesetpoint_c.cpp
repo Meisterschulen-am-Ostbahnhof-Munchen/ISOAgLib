@@ -107,10 +107,10 @@ namespace __IsoAgLib {
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-  @param rc_gtp optional GETY_POS code of this instance
+  @param rc_devKey optional DEV_KEY code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerGtp optional GETY_POS of the owner
-  @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+  @param rc_ownerDevKey optional DEV_KEY of the owner
+  @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
@@ -124,10 +124,10 @@ ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(
                                                                uint8_t rui8_inst,
                                                                uint8_t rui8_zaehlnum,
 #endif
-                                                               const GetyPos_c& rc_gtp,
+                                                               const DevKey_c& rc_devKey,
                                                                uint8_t rui8_pri,
-                                                               const GetyPos_c& rc_ownerGtp,
-                                                               const GetyPos_c* rpc_commanderGtp,
+                                                               const DevKey_c& rc_ownerDevKey,
+                                                               const DevKey_c* rpc_commanderDevKey,
                                                                IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                                                int ri_singletonVecKey)
   : ProcDataRemoteBase_c(
@@ -137,7 +137,7 @@ ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(
 #ifdef USE_DIN_9684
                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                         rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                         rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
                          rpc_processDataChangeHandler, ri_singletonVecKey)
   , c_setpoint(this)
   , c_measure(this)
@@ -156,10 +156,10 @@ ProcDataRemoteSimpleSetpoint_c::ProcDataRemoteSimpleSetpoint_c(
   @param rui8_inst optional INST code of this instance
   @param rui8_zaehlnum optional ZAEHLNUM code of this instance
 
-  @param rc_gtp optional GETY_POS code of this instance
+  @param rc_devKey optional DEV_KEY code of this instance
   @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @param rc_ownerGtp optional GETY_POS of the owner
-  @param rpc_commanderGtp pointer to updated GETY_POS variable of commander
+  @param rc_ownerDevKey optional DEV_KEY of the owner
+  @param rpc_commanderDevKey pointer to updated DEV_KEY variable of commander
   @param rpc_processDataChangeHandler optional pointer to handler class of application
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
@@ -173,10 +173,10 @@ void ProcDataRemoteSimpleSetpoint_c::init(
                                           uint8_t rui8_inst,
                                           uint8_t rui8_zaehlnum,
 #endif
-                                          const GetyPos_c& rc_gtp,
+                                          const DevKey_c& rc_devKey,
                                           uint8_t rui8_pri,
-                                          const GetyPos_c& rc_ownerGtp,
-                                          const GetyPos_c* rpc_commanderGtp,
+                                          const DevKey_c& rc_ownerDevKey,
+                                          const DevKey_c* rpc_commanderDevKey,
                                           IsoAgLib::ProcessDataChangeHandler_c *rpc_processDataChangeHandler,
                                           int ri_singletonVecKey)
 {
@@ -187,7 +187,7 @@ void ProcDataRemoteSimpleSetpoint_c::init(
 #ifdef USE_DIN_9684
                              rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
-                             rc_gtp, rui8_pri, rc_ownerGtp, rpc_commanderGtp,
+                             rc_devKey, rui8_pri, rc_ownerDevKey, rpc_commanderDevKey,
                              rpc_processDataChangeHandler, ri_singletonVecKey);
   c_setpoint.init( this );
   c_measure.init( this );
@@ -227,7 +227,7 @@ ProcDataRemoteSimpleSetpoint_c::~ProcDataRemoteSimpleSetpoint_c(){
 */
 bool ProcDataRemoteSimpleSetpoint_c::timeEvent( void )
 {
-  prog().setGtp(commanderGtp());
+  prog().setDevKey(commanderDevKey());
   return prog().timeEvent();
 }
 

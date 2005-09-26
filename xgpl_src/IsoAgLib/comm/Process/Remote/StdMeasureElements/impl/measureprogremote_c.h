@@ -111,7 +111,7 @@ public:
   */
   MeasureProgRemote_c(
     ProcDataBase_c *const rpc_processData = NULL )
-  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, GetyPos_c::GetyPosUnspecified )
+  : MeasureProgBase_c(rpc_processData, Proc_c::UndefinedProg, 0, DevKey_c::DevKeyUnspecified )
   {init( rpc_processData );};
   /**
     initialise this MeasureProgRemote_c instance to well defined initial condition
@@ -155,7 +155,7 @@ public:
     start a measuring programm
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
         * dependant error in CAN_IO
     @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
@@ -168,7 +168,7 @@ public:
     start a measuring programm
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
         * dependant error in CAN_IO
     @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
@@ -182,7 +182,7 @@ public:
     send the stop command to the remote owner of data
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @param b_deleteSubProgs is only used for ISO
     @return true -> command successful sent
@@ -246,7 +246,7 @@ public:
     send reset command for measure value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @param ri32_val reset measure value to this value (ISO only)
     @return true -> command successful sent
@@ -269,7 +269,7 @@ public:
     send reset command for medium value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
@@ -278,7 +278,7 @@ public:
     send reset command for integral value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
@@ -287,7 +287,7 @@ public:
     send reset command for minimum value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
@@ -296,28 +296,28 @@ public:
     send reset command for maximum value
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @return true -> command successful sent
   */
   virtual bool resetMax();
 
   /**
-    perform periodic actions --> stop measuring prog if gtp isn't active any more
+    perform periodic actions --> stop measuring prog if devKey isn't active any more
     @return true -> all planned activities performed in available time
   */
   virtual bool timeEvent( void );
 private: // Private methods
   /**
-    verify the stored GETY_POS code of the remote system
+    verify the stored DEV_KEY code of the remote system
     and set Err_c::elNonexistent if this system isn't registered as ative;
-    if gtp is undefied yet, retrieve it by the stored ident GETY of this process data
+    if devKey is undefied yet, retrieve it by the stored ident DEVCLASS of this process data
 
     possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given GETY found
+        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
     @return true -> everything o.k.
   */
-  bool verifySetRemoteGtp();
+  bool verifySetRemoteDevKey();
 
   /**
     set medium val

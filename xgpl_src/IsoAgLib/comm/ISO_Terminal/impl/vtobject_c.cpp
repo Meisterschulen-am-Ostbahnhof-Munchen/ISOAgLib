@@ -98,7 +98,7 @@ namespace __IsoAgLib {
 void
 vtObject_c::setAttribute(uint8_t attrID, uint32_t newValue, bool b_enableReplaceOfCmd)
 { // ~X2C
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeAttribute (this, attrID, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeAttribute (this, attrID, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
 } // -X2C
 
 void
@@ -222,7 +222,7 @@ vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int1
   if (dy < -127)dy = -127; /** @todo throw a warning here?! log to Err_c ?! */
 
   bool b_result = genericChangeChildLocationPosition (true, childObject, dx, dy, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
-  if (b_result) __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildLocation (this, childObject, dx, dy, b_enableReplaceOfCmd);
+  if (b_result) __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeChildLocation (this, childObject, dx, dy, b_enableReplaceOfCmd);
   return b_result;
 }
 
@@ -230,7 +230,7 @@ bool
 vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t x, int16_t y, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd)
 {
   bool b_result = genericChangeChildLocationPosition (false, childObject, x, y, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
-  if (b_result) __IsoAgLib::getIsoTerminalInstance().sendCommandChangeChildPosition (this, childObject, x, y, b_enableReplaceOfCmd);
+  if (b_result) __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeChildPosition (this, childObject, x, y, b_enableReplaceOfCmd);
   return b_result;
 }
 
@@ -243,7 +243,7 @@ vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCm
   if (b_updateObject) {
     updateEnable (enOrDis);
   }
-  return __IsoAgLib::getIsoTerminalInstance().sendCommand (0xA1 /* Command: Command --- Parameter: Enable/Disable Object */,
+  return __IsoAgLib::getIsoTerminalInstance4Comm().sendCommand (0xA1 /* Command: Command --- Parameter: Enable/Disable Object */,
                                                           vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                           enOrDis,
                                                           0xFF, 0xFF, 0xFF, 0xFF, 1000, b_enableReplaceOfCmd);
@@ -253,7 +253,7 @@ vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCm
 bool
 vtObject_c::select()
 { // ~X2C
-  return __IsoAgLib::getIsoTerminalInstance().sendCommand (0xA2 /* Command: Command --- Parameter: Select Input Object */,
+  return __IsoAgLib::getIsoTerminalInstance4Comm().sendCommand (0xA2 /* Command: Command --- Parameter: Select Input Object */,
                                                           vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                           0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 1000, true);
 } // -X2C

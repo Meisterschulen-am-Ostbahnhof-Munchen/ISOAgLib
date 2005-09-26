@@ -92,11 +92,11 @@
 #include <IsoAgLib/hal/system.h>
 
 #ifdef DEBUG
-	#ifdef SYSTEM_PC
-		#include <iostream>
-	#else
-		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#endif
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
 #endif
 
 

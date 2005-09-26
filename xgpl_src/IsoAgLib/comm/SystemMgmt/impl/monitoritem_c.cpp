@@ -90,14 +90,14 @@ namespace __IsoAgLib {
   constructor which takes optional the pointer to the containing Scheduler_c instance
   and the actual time as parameter to initialise all own values
   @param ri32_time optional timestamp to store as last update
-  @param rc_gtp GETY_POS code of this item
-  @param rui8_nr number of this item (for real services equal to gety)
+  @param rc_devKey DEV_KEY code of this item
+  @param rui8_nr number of this item (for real services equal to devClass)
   @param rb_status state of this ident (off, claimed address, ...) (default: off)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-MonitorItem_c::MonitorItem_c( int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
+MonitorItem_c::MonitorItem_c( int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr,
   IState_c::itemState_t rb_status, int ri_singletonVecKey)
-  : BaseItem_c(ri32_time, rb_status, ri_singletonVecKey), c_gtp(rc_gtp), ui8_nr(rui8_nr)
+  : BaseItem_c(ri32_time, rb_status, ri_singletonVecKey), c_devKey(rc_devKey), ui8_nr(rui8_nr)
 {}
 
 /**
@@ -105,28 +105,28 @@ MonitorItem_c::MonitorItem_c( int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_
   @param rrefc_monitorItem reference to the source MonitorItem_c instance
 */
 MonitorItem_c::MonitorItem_c(const MonitorItem_c& rrefc_monitorItem)
-: BaseItem_c(rrefc_monitorItem), c_gtp(rrefc_monitorItem.c_gtp), ui8_nr(rrefc_monitorItem.ui8_nr)
+: BaseItem_c(rrefc_monitorItem), c_devKey(rrefc_monitorItem.c_devKey), ui8_nr(rrefc_monitorItem.ui8_nr)
 {}
 
 /** destructor which sets the update timestamp to 0 */
 MonitorItem_c::~MonitorItem_c(){
   setNr(0xF);
-  c_gtp.setUnspecified();
+  c_devKey.setUnspecified();
 }
 
 /**
   set all element data with one call
   @param ri32_time creation time of this item instance
-  @param rc_gtp GETY_POS code of this item
-  @param rui8_nr number of this item (for real services equal to gety)
+  @param rc_devKey DEV_KEY code of this item
+  @param rui8_nr number of this item (for real services equal to devClass)
   @param ren_status status information of this ident (IState_c::Off, IState_c::Active, ...) (default: IState_c::Active)
   @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void MonitorItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8_nr,
+void MonitorItem_c::set(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_nr,
         itemState_t ren_status, int ri_singletonVecKey)
 {
   BaseItem_c::set( ri32_time, ren_status, ri_singletonVecKey );
-  setGtp(rc_gtp);
+  setDevKey(rc_devKey);
   setNr(rui8_nr);
 };
 
@@ -134,29 +134,29 @@ void MonitorItem_c::set(int32_t ri32_time, const GetyPos_c& rc_gtp, uint8_t rui8
 compile warnings with the automatic generated version */
 MonitorItem_c& MonitorItem_c::operator=(const MonitorItem_c& src){
   BaseItem_c::operator=(src);
-  setGtp(src.gtp());
+  setDevKey(src.devKey());
   setNr(src.nr());
   return *this;
 }
 
 /**
-  lower comparison between left GETY_POS uint8_t and right MonitorItem
-  @param rb_left GETY_POS uint8_t left parameter
+  lower comparison between left DEV_KEY uint8_t and right MonitorItem
+  @param rb_left DEV_KEY uint8_t left parameter
   @param rrefc_right rigth DINServiceItem_c parameter
 */
-bool operator<(const GetyPos_c& rc_left, const MonitorItem_c& rrefc_right)
+bool operator<(const DevKey_c& rc_left, const MonitorItem_c& rrefc_right)
 {
-  return (rc_left < rrefc_right.gtp())?true:false;
+  return (rc_left < rrefc_right.devKey())?true:false;
 }
 
 /**
-  lower comparison between left MonitorItem_c and right GETY_POS uint8_t
+  lower comparison between left MonitorItem_c and right DEV_KEY uint8_t
   @param rrefc_left left DINServiceItem_c parameter
-  @param rb_right GETY_POS uint8_t right parameter
+  @param rb_right DEV_KEY uint8_t right parameter
 */
-bool lessThan(const MonitorItem_c& rrefc_left, const GetyPos_c& rc_right)
+bool lessThan(const MonitorItem_c& rrefc_left, const DevKey_c& rc_right)
 {
-  return (rrefc_left.gtp() < rc_right)?true:false;
+  return (rrefc_left.devKey() < rc_right)?true:false;
 }
 
 } // end namespace __IsoAgLib

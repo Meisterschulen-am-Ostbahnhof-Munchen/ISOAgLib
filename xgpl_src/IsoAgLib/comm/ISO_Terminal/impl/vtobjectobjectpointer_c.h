@@ -113,7 +113,7 @@ public:
   //! Parameter:
   //! @param vtObjectObjectPointerSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM) { vtObject_c::init ((iVtObject_s*) vtObjectObjectPointerSROM); };
+  void init(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectObjectPointerSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
 
   //  Operation: get_vtObjectObjectPointer_a
   iVtObjectObjectPointer_s* get_vtObjectObjectPointer_a() { return (iVtObjectObjectPointer_s *)vtObject_a; };

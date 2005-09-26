@@ -80,20 +80,20 @@ private:
 public:
   // Public methods
   /**
-    deliver the GETY_POS code of this item
-    @return GETY_POS code
+    deliver the DEV_KEY code of this item
+    @return DEV_KEY code
   */
-  const iGetyPos_c& gtp()const{return static_cast<const iGetyPos_c&>(DINItem_c::gtp());};
+  const iDevKey_c& devKey()const{return static_cast<const iDevKey_c&>(DINItem_c::devKey());};
   /**
-    deliver the GETY code alone (derived from gtp)
-    @return GETY code
+    deliver the DEVCLASS code alone (derived from devKey)
+    @return DEVCLASS code
   */
-  uint8_t gety()const{return DINItem_c::gety();};
+  uint8_t devClass()const{return DINItem_c::devClass();};
   /**
-    deliver the POS code alone (derived from gtp)
-    @return POS code
+    deliver the device class inst code alone (derived from devKey)
+    @return device class inst code
   */
-  uint8_t pos()const{return DINItem_c::pos();};
+  uint8_t devClassInst()const{return DINItem_c::devClassInst();};
   /**
     deliver the number/adress of this item
     @return number

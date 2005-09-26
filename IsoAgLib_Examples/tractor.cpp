@@ -262,9 +262,9 @@ class MyInternalPkg_c : public IsoAgLib::iCANPkgExt_c
 };
 
 
-// variable for GETY_POS ( device type, device type instance )
+// variable for DEV_KEY ( device type, device type instance )
 // default with tractor device type
-IsoAgLib::iGetyPos_c myGtp( 1, 0 );
+IsoAgLib::iDevKey_c myDevKey( 1, 0 );
 
 /**
 	Operation: flags2String
@@ -441,9 +441,9 @@ int main()
   uint32_t ui32_serNo = 27;
 
 	// start address claim of the local member
-  // if GETY_POS ( device type, -instance ) conflicts forces change of POS/instance, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
+  // if DEV_KEY ( device type, -instance ) conflicts forces change of POS/instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
@@ -452,7 +452,7 @@ int main()
 		- BaseDataGroup2: front and rear PTO, engine RPM, front and rear hitch information
 		- BaseDataCalendar: calendar data
 	*/
-	getIBaseInstance().config(&myGtp, BaseDataGroup12Cal );
+	getIBaseInstance().config(&myDevKey, BaseDataGroup12Cal );
 
   /** IMPORTANT:
 	  - The following loop could be replaced of any repeating call of

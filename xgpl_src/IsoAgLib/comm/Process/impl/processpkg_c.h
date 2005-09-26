@@ -209,21 +209,21 @@ public:
 
 #ifdef USE_DIN_9684
   /**
-    deliver POS of process msg (mounting position; important for more active members of same GETY)
-    @return POS value of message
+    deliver _instance_ of process msg (mounting position; important for more active members of same _device_class_)
+    @return _instance_ value of message
   */
-  uint8_t pos()const{return bit_data.c_gtp.getPos();};
+  uint8_t devClassInst()const{return bit_data.c_devKey.getDevClassInst();};
   /**
-    deliver GETY of process msg (machine type specific number of Proces-Data table)
-    @return GETY value of message
+    deliver DEVCLASS of process msg (machine type specific number of Proces-Data table)
+    @return DEVCLASS value of message
   */
-  uint8_t gety()const{return bit_data.c_gtp.getGety();};
+  uint8_t devClass()const{return bit_data.c_devKey.getDevClass();};
   /**
-    deliver gety and pos as gtp
-    only used for DIN messages, ISO: gtp not in message
-    @return GETY_POS value of message
+    deliver devClass and pos as devKey
+    only used for DIN messages, ISO: devKey not in message
+    @return DEV_KEY value of message
   */
-  const GetyPos_c& gtp()const{return bit_data.c_gtp;};
+  const DevKey_c& devKey()const{return bit_data.c_devKey;};
 #endif
 
   /**
@@ -393,21 +393,21 @@ public:
 
 #ifdef USE_DIN_9684
   /**
-    set value POS of process msg
-    @param rb_val new POS value for message
+    set value dev class inst of process msg
+    @param rb_val new device class inst value for message
   */
-  void setPos(uint8_t rb_val){bit_data.c_gtp.setPos(rb_val);};
+  void setDevClassInst(uint8_t rb_val){bit_data.c_devKey.setDevClassInst(rb_val);};
   /**
-    set value GETY of process msg
-    @param rb_val new GETY value for message
+    set value DEVCLASS of process msg
+    @param rb_val new DEVCLASS value for message
   */
-  void setGety(uint8_t rb_val){bit_data.c_gtp.setGety(rb_val);};
+  void setDevClass(uint8_t rb_val){bit_data.c_devKey.setDevClass(rb_val);};
   /**
-    set values gety and pos from gtp
-    only used for DIN messages, ISO: gtp not in message
-    @param rc_val new GETY_POS value for message
+    set values devClass and pos from devKey
+    only used for DIN messages, ISO: devKey not in message
+    @param rc_val new DEV_KEY value for message
   */
-  void setGtp(const GetyPos_c& rc_val){bit_data.c_gtp = rc_val;};
+  void setDevKey(const DevKey_c& rc_val){bit_data.c_devKey = rc_val;};
 #endif
 
   /**
@@ -484,11 +484,11 @@ public:
   virtual void string2Flags();
   /**
     some LBS+ terminals wants process data interaction for syncronisation of
-    terminal mask with GETY_POS of terminal even for local process data
-    @param rc_gtp GETY_POS of terminal, for which the GETY_POS of data is converted
-    @param rui8_useProcGtp GTP for process data (optional, default to terminal gtp)
+    terminal mask with DEV_KEY of terminal even for local process data
+    @param rc_devKey DEV_KEY of terminal, for which the DEV_KEY of data is converted
+    @param rui8_useProcDevKey DEVKEY for process data (optional, default to terminal devKey)
   */
-  void useTermGtpForLocalProc(const GetyPos_c& rc_gtp, const GetyPos_c& rc_useProcGtp = GetyPos_c::GetyPosUnspecified);
+  void useTermDevKeyForLocalProc(const DevKey_c& rc_devKey, const DevKey_c& rc_useProcDevKey = DevKey_c::DevKeyUnspecified);
 
   /** stores the command in generalized form */
   GeneralCommand_c c_generalCommand;
@@ -523,8 +523,8 @@ private: // Private attributes
     /** PD for data */
     uint16_t b_pd : 2;
     #ifdef USE_DIN_9684
-    /** GetyPos for data */
-    GetyPos_c c_gtp;
+    /** DevKey for data */
+    DevKey_c c_devKey;
     #endif
 
     /** MOD for data */
@@ -550,15 +550,15 @@ private: // Private attributes
   /** pointer to monitor list item of receiver "EMPF" (NULL if not claimed address) */
   MonitorItem_c* pc_monitorEmpf;
   /**
-    some terminal wants to use GETY_POS of terminal even for local process
+    some terminal wants to use DEV_KEY of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)
   */
-  GetyPos_c c_specialTermGtp;
+  DevKey_c c_specialTermDevKey;
   /**
-    some terminal wants to use GETY_POS of terminal even for local process
+    some terminal wants to use DEV_KEY of terminal even for local process
     data for communication on CAN BUS (default 0xFF for off)
   */
-  GetyPos_c c_specialTermUseProcGtp;
+  DevKey_c c_specialTermUseProcDevKey;
 
 };
 

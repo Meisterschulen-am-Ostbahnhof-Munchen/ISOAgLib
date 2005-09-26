@@ -113,7 +113,7 @@ public:
   //! Parameter:
   //! @param vtObjectSoftKeyMaskSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM) { vtObject_c::init ((iVtObject_s*) vtObjectSoftKeyMaskSROM); };
+  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
 
   //  Operation: get_vtObjectSoftKeyMask_a
   iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a() { return (iVtObjectSoftKeyMask_s *)vtObject_a; };
@@ -133,7 +133,7 @@ public:
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour) : 0, sizeof(iVtObjectSoftKeyMask_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour) : 0, sizeof(iVtObjectSoftKeyMask_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
 
 }; // ~X2C

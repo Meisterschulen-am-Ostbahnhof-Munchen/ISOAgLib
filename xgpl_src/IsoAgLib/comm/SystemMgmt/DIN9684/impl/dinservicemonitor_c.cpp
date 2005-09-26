@@ -155,14 +155,14 @@ void DINServiceMonitor_c::close( void ) {
 
   possible errors:
     * badAlloc on not enough memory to create the needed DINServiceItem_c instance
-    * precondition on invalid GETY_POS code
-    * busy another DINServiceItem_c with same GETY_POS is already in list of active services
-  @param rc_gtp GETY_POS code for the service
+    * precondition on invalid DEV_KEY code
+    * busy another DINServiceItem_c with same DEV_KEY is already in list of active services
+  @param rc_devKey DEV_KEY code for the service
   @param rui8_nr corresponding service no
   @return true -> service was created successfully (no equal service exist, enough memory to store new entry in DINServiceMonitor_c)
    @exception badAlloc
 */
-bool DINServiceMonitor_c::createLocalService(const GetyPos_c& rc_gtp, uint8_t rui8_nr)
+bool DINServiceMonitor_c::createLocalService(const DevKey_c& rc_devKey, uint8_t rui8_nr)
 {
   bool b_result = false;
 
@@ -171,15 +171,15 @@ bool DINServiceMonitor_c::createLocalService(const GetyPos_c& rc_gtp, uint8_t ru
   /* *********************************** */
 
   // ckeck for defined pointers
-  if ((rc_gtp.getGety() > 0) && (rui8_nr > 0x7))
+  if ((rc_devKey.getDevClass() > 0) && (rui8_nr > 0x7))
   { // set precondition error on wrong service type code
     getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsSystem );
     return false; // return with error information
   }
-  uint8_t ui8_nr = (rui8_nr < 0x7)? rui8_nr:(rc_gtp.getPos());
+  uint8_t ui8_nr = (rui8_nr < 0x7)? rui8_nr:(rc_devKey.getDevClassInst());
 
-  // check if given GETY_POS isn't already used by another service
-  if (existDinServiceGtp(ui8_nr))
+  // check if given DEV_KEY isn't already used by another service
+  if (existDinServiceDevKey(ui8_nr))
   { // error set busy error
     getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::LbsSystem );
     return false; // exit function with error state
@@ -192,10 +192,10 @@ bool DINServiceMonitor_c::createLocalService(const GetyPos_c& rc_gtp, uint8_t ru
   /* *******************************/
   // no equivalent service already exists -> can be created
   // DINServiceMonitor_c::insertService sets badAlloc if memory problem occurs
-  if (insertDinService(rc_gtp))
+  if (insertDinService(rc_devKey))
   { // new service entry successful inserted
     b_result = true;
-    dinServiceGtp(rc_gtp).setItemState
+    dinServiceDevKey(rc_devKey).setItemState
       (IState_c::itemState_t(IState_c::Local | IState_c::Active), true);
   }
 
@@ -203,14 +203,14 @@ bool DINServiceMonitor_c::createLocalService(const GetyPos_c& rc_gtp, uint8_t ru
 }
 /**
   delete a local service
-  @param rc_gtp getyPos code of the service
+  @param rc_devKey devKey code of the service
   @return true -> wanted item found and deleted
 */
-bool DINServiceMonitor_c::deleteLocalService(const GetyPos_c& rc_gtp)
+bool DINServiceMonitor_c::deleteLocalService(const DevKey_c& rc_devKey)
 {
-  if (existDinServiceGtp(rc_gtp) && dinServiceGtp(rc_gtp).itemState(IState_c::Local))
+  if (existDinServiceDevKey(rc_devKey) && dinServiceDevKey(rc_devKey).itemState(IState_c::Local))
   { // wanted local serice exist
-    deleteDinServiceGtp(rc_gtp);
+    deleteDinServiceDevKey(rc_devKey);
     return true;
   }
   else
@@ -221,37 +221,37 @@ bool DINServiceMonitor_c::deleteLocalService(const GetyPos_c& rc_gtp)
 
 
 /**
-  check if service with given gtp exist
-  @param rc_gtp GETY_POS code of the searched service
+  check if service with given devKey exist
+  @param rc_devKey DEV_KEY code of the searched service
 */
-bool DINServiceMonitor_c::existDinServiceGtp(const GetyPos_c& rc_gtp)
+bool DINServiceMonitor_c::existDinServiceDevKey(const DevKey_c& rc_devKey)
 {
    bool b_result = false;
    if (!vec_dinService.empty())
    {
      if ( pc_dinServiceCache != vec_dinService.end() )
      {
-      if (pc_dinServiceCache->gtp() == rc_gtp) return true;
+      if (pc_dinServiceCache->devKey() == rc_devKey) return true;
      }
-     pc_dinServiceCache = STL_NAMESPACE::find(vec_dinService.begin(), vec_dinService.end(), rc_gtp);
-     b_result = ((pc_dinServiceCache != vec_dinService.end())&&(pc_dinServiceCache->gtp() == rc_gtp))?true:false;
+     pc_dinServiceCache = STL_NAMESPACE::find(vec_dinService.begin(), vec_dinService.end(), rc_devKey);
+     b_result = ((pc_dinServiceCache != vec_dinService.end())&&(pc_dinServiceCache->devKey() == rc_devKey))?true:false;
    }
    return b_result;
 };
 
 /**
-  deliver service item with given gtp
+  deliver service item with given devKey
 
   possible errors:
     * elNonexistent on failed search
 
-  @param rc_gtp GETY_POS code of the searched ServiceItem
+  @param rc_devKey DEV_KEY code of the searched ServiceItem
   @return reference to the DINItem_c of the first active own identity
   @exception containerElementNonexistant
 */
-DINServiceItem_c& DINServiceMonitor_c::dinServiceGtp(const GetyPos_c& rc_gtp)
+DINServiceItem_c& DINServiceMonitor_c::dinServiceDevKey(const DevKey_c& rc_devKey)
 {
-  if (existDinServiceGtp(rc_gtp))
+  if (existDinServiceDevKey(rc_devKey))
   { // return reference to the pointed ident element
     return *pc_dinServiceCache;
   }
@@ -269,21 +269,21 @@ DINServiceItem_c& DINServiceMonitor_c::dinServiceGtp(const GetyPos_c& rc_gtp)
 
 
 /**
-  insert service with given gtp and nr
+  insert service with given devKey and nr
 
   possible errors:
     * badAlloc not enough memory to insert new DINServiceItem_c isntance
     * busy another service with same ident exists already in the list
 
-  @param rc_gtp GETY_POS code of Service
+  @param rc_devKey DEV_KEY code of Service
   @return true if new item inserted
 */
-bool DINServiceMonitor_c::insertDinService(const GetyPos_c& rc_gtp){
+bool DINServiceMonitor_c::insertDinService(const DevKey_c& rc_devKey){
   bool b_result = false;
-  if (!existDinServiceGtp(rc_gtp))
+  if (!existDinServiceDevKey(rc_devKey))
   { // update manage info
     uint8_t b_oldSize = vec_dinService.size();
-    c_tempDinServiceItem.set(System_c::getTime(), rc_gtp, rc_gtp.getPos(), IState_c::Active, getDinMonitorInstance4Comm().adrvect(), getSingletonVecKey() );
+    c_tempDinServiceItem.set(System_c::getTime(), rc_devKey, rc_devKey.getDevClassInst(), IState_c::Active, getDinMonitorInstance4Comm().adrvect(), getSingletonVecKey() );
     c_tempDinServiceItem.setItemState(IState_c::Service);
     vec_dinService.push_front(c_tempDinServiceItem);
     if (vec_dinService.size() > b_oldSize)
@@ -317,18 +317,18 @@ bool DINServiceMonitor_c::insertDinService(const GetyPos_c& rc_gtp){
 }
 
 /**
-  delete a service with given GETY_POS from the list
+  delete a service with given DEV_KEY from the list
 
   possible errors:
     * elNonexistent no service with given ident exists
 
-  @param rc_gtp GETY_POS of the deleted item
+  @param rc_devKey DEV_KEY of the deleted item
   @return true -> an item weas deleted
 */
-bool DINServiceMonitor_c::deleteDinServiceGtp(const GetyPos_c& rc_gtp)
+bool DINServiceMonitor_c::deleteDinServiceDevKey(const DevKey_c& rc_devKey)
 {
-  if (existDinServiceGtp(rc_gtp))
-  { // erase it from list with cpServiceCache set to be deleted item (by existDinServiceGtp)
+  if (existDinServiceDevKey(rc_devKey))
+  { // erase it from list with cpServiceCache set to be deleted item (by existDinServiceDevKey)
     vec_dinService.erase(pc_dinServiceCache);
     #ifdef DEBUG_HEAP_USEAGE
     sui16_dinServiceItemTotal--;
@@ -412,12 +412,12 @@ bool DINServiceMonitor_c::processMsg(){
   switch (c_pkg.verw())
   {
     case 4: case 7: // service msg: service alive or service error state information
-      if (!existDinServiceGtp(c_pkg.gtp()))
+      if (!existDinServiceDevKey(c_pkg.devKey()))
       { // insert service item
-        insertDinService(c_pkg.gtp());
+        insertDinService(c_pkg.devKey());
       }
       // let suitable DINServiceItem_c process the msg
-      dinServiceGtp(c_pkg.gtp()).processMsg();
+      dinServiceDevKey(c_pkg.devKey()).processMsg();
       b_result = true;
       break;
   }

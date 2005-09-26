@@ -99,14 +99,60 @@
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
-#include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
 
 #include "basepkg_c.h"
 
+#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
+#include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
+#endif
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
+#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
 
+class MultiSendPkg_c;
+class Nmea2000SendStreamer_c : public MultiSendStreamer_c
+{
+  public:
+    Nmea2000SendStreamer_c() : ui16_currentSendPosition(0), ui16_storedSendPosition(0) {};
+    virtual ~Nmea2000SendStreamer_c()  {};
+    /** place next data to send direct into send buffer of pointed
+      stream send package - MultiSend_c will send this
+      buffer afterwards
+    */
+    virtual void setDataNextStreamPart (__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes);
+    /** place next data to send direct into send buffer of pointed
+      stream send package - MultiSend_c will send this
+      buffer afterwards
+   */
+    virtual void setDataNextFastPacketStreamPart (__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes, uint8_t rui8_offset = 0 );
+
+    /** set cache for data source to stream start */
+    virtual void resetDataNextStreamPart();
+
+    /** save current send position in data source - neeed for resend on send problem */
+    virtual void saveDataNextStreamPart ();
+
+    /** reactivate previously stored data source position - used for resend on problem */
+    virtual void restoreDataNextStreamPart ();
+
+    /** calculate the size of the data source */
+    virtual uint32_t getStreamSize ();
+
+    /** get the first byte, which is the COMMAND-byte and should be given back CONST! */
+    virtual uint8_t getFirstByte ();
+
+    void reset() { ui16_currentSendPosition = ui16_storedSendPosition = 0; vec_data.clear();};
+
+    /** public send buffer */
+    std::vector<uint8_t> vec_data;
+  private:
+    uint16_t ui16_currentSendPosition;
+    uint16_t ui16_storedSendPosition;
+};
+#endif
 
 class Base_c;
 typedef SINGLETON_DERIVED(Base_c,ElementBase_c) SingletonBase_c;
@@ -119,7 +165,11 @@ typedef SINGLETON_DERIVED(Base_c,ElementBase_c) SingletonBase_c;
    per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   *@author Dipl.-Inform. Achim Spangler
 */
-class Base_c : public SingletonBase_c, public IsoAgLib::MultiReceiveClient_c {
+class Base_c : public SingletonBase_c
+#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
+    , public IsoAgLib::MultiReceiveClient_c
+#endif
+{
 public: // Public methods
   /* ********************************************* */
   /** \name Management Functions for class Base_c  */
@@ -132,10 +182,10 @@ public: // Public methods
 
     possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-    @param rpc_gtp optional pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  void init(const GetyPos_c* rpc_gtp = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing );
+  void init(const DevKey_c* rpc_devKey = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing );
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
@@ -161,12 +211,16 @@ public: // Public methods
   void checkCreateReceiveFilter( void );
 
   /**
-    config the Base_c object after init -> set pointer to gtp and
+    config the Base_c object after init -> set pointer to devKey and
     config send/receive of different base msg types
-    @param rpc_gtp pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
-  void config(const GetyPos_c* rpc_gtp, IsoAgLib::BaseDataGroup_t rt_mySendSelection);
+  void config(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection);
+  /** Retrieve the last update time of the specified information type
+    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+   */
+  int32_t lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const;
 
   /** destructor for Base_c which has nothing to do */
   virtual ~Base_c() { close();};
@@ -183,25 +237,17 @@ public: // Public methods
 
   #ifdef USE_ISO_11783
   /**
-    process a ISO11783 base information PGN
-  */
-  bool isoProcessMsg();
-  /**
-    send a ISO11783 base information PGN
-  */
-  bool isoTimeEvent( void );
-  /**
-    send ISO11783 calendar PGN
-    @param rc_gtp GETY_POS code off calling item which wants to send
-    @parm ri32_time timestamp where calendar was last sent (default autodetect)
+  send ISO11783 calendar PGN
+  @param rc_devKey DEV_KEY code off calling item which wants to send
+  @parm ri32_time timestamp where calendar was last sent (default autodetect)
 
     possible errors:
-        * dependant error in CANIO_c on CAN send problems
-    @see CANPkg_c::getData
-    @see CANPkgExt_c::getData
-    @see CANIO_c::operator<<
-  */
-  void isoSendCalendar(const GetyPos_c& rc_gtp);
+   * dependant error in CANIO_c on CAN send problems
+  @see CANPkg_c::getData
+  @see CANPkgExt_c::getData
+  @see CANIO_c::operator<<
+   */
+  void isoSendCalendar(const DevKey_c& rc_devKey);
   #endif
   /*@}*/
 
@@ -259,6 +305,52 @@ public: // Public methods
     @param ri16_val value to store as the speed of the front PTO
   */
   void setPtoFront(int16_t ri16_val){i16_ptoFront = ri16_val;};
+  /**
+  set engine speed
+  @param ri16_val value to store as engine rpm value
+   */
+  void setEngine(int16_t ri16_val){i16_engine = ri16_val;};
+
+  /**
+  set rear hitch
+  @param rb_val uint8_t value to store as position of rear hitch
+   */
+  void setHitchRear(uint8_t rb_val){ b_hitchRear = rb_val;};
+  /**
+  set front hitch
+  @param rb_val uint8_t value to store as position of front hitch
+   */
+  void setHitchFront(uint8_t rb_val){ b_hitchFront = rb_val;};
+
+  /**
+  set the calendar value
+  @param ri16_year value to store as year
+  @param rb_month value to store as month
+  @param rb_day value to store as day
+  @param rb_hour value to store as hour
+  @param rb_minute value to store as minute
+  @param rb_second value to store as second
+   */
+  void setCalendarUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
+  /**
+  set the calendar value as local time ( take local time offsets into account )
+  @param ri16_year value to store as year
+  @param rb_month value to store as month
+  @param rb_day value to store as day
+  @param rb_hour value to store as hour
+  @param rb_minute value to store as minute
+  @param rb_second value to store as second
+   */
+  void setCalendarLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
+  /** set the date in local timezone */
+  void setDateLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day);
+  /** set the date in UTC timezone */
+  void setDateUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day);
+
+  /** set the time in local timezone */
+  void setTimeLocal(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
+  /** set the time in UTC timezone */
+  void setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
 
   #ifdef USE_DIN_9684
   /** deliver rear left draft */
@@ -339,8 +431,30 @@ public: // Public methods
   void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoActiveFlag_t rt_implTransport,
     IsoAgLib::IsoActiveFlag_t rt_implPark, IsoAgLib::IsoActiveFlag_t rt_implWork);
 
+  /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
+  void setGpsLatitudeDegree10Minus7( int32_t ri32_newVal ) { i32_latitudeDegree10Minus7 = ri32_newVal; };
+  /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
+  void setGpsLongitudeDegree10Minus7( int32_t ri32_newVal ) { i32_longitudeDegree10Minus7 = ri32_newVal; };
 
-    //  Operation: reactOnStreamStart
+  #if defined(NMEA_2000_FAST_PACKET)
+  /** deliver GPS altitude - [cm] */
+  void setGpsAltitudeCm( uint32_t rui32_newVal ) { ui32_altitudeCm = rui32_newVal; };
+  /** deliver GPS receive qualitiy */
+  void setGnssMode( IsoAgLib::IsoGnssMethod_t rt_newVal ) { t_gnssMethod = rt_newVal;};
+  /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
+  void setGnssType( IsoAgLib::IsoGnssType_t rt_newVal ) { t_gnssType = rt_newVal;};
+  /** deliver GPS speed as [cm/s] */
+  void setGpsSpeedCmSec( uint16_t rui16_newVal ) { ui16_speedCmSec = rui16_newVal;};
+  /** deliver GPS Heading [1x10E-4rad] */
+  void setGpsHeadingRad10Minus4( uint16_t rui16_newVal ) { ui16_headingRad10Minus4 = rui16_newVal; };
+  /** deliver number of received satellites */
+  void setSatelliteCnt( uint8_t rui8_newVal ) { ui8_satelliteCnt = rui8_newVal;};
+  /** deliver HDOP with scaling [1x10E-2] */
+  void setHdop10Minus2( uint16_t rui16_newVal ) { i16_hdop = rui16_newVal;};
+  /** PDOP with scaling [1x10E-2] */
+  void setPdop10Minus2( uint16_t rui16_newVal ) { i16_pdop = rui16_newVal;};
+
+  //  Operation: reactOnStreamStart
   //! Parameter:
   //! @param rc_ident:
   //! @param rui32_totalLen:
@@ -358,35 +472,8 @@ public: // Public methods
 
   //  Operation: reactOnAbort
   virtual void reactOnAbort(IsoAgLib::ReceiveStreamIdentifier_c rc_ident);
+  #endif
 #endif
-  /**
-    set engine speed
-    @param ri16_val value to store as engine rpm value
-  */
-  void setEngine(int16_t ri16_val){i16_engine = ri16_val;};
-
-  /**
-    set rear hitch
-    @param rb_val uint8_t value to store as position of rear hitch
-  */
-  void setHitchRear(uint8_t rb_val){ b_hitchRear = rb_val;};
-  /**
-    set front hitch
-    @param rb_val uint8_t value to store as position of front hitch
-  */
-  void setHitchFront(uint8_t rb_val){ b_hitchFront = rb_val;};
-
-  /**
-    set the calendar value
-    @param ri16_year value to store as year
-    @param rb_month value to store as month
-    @param rb_day value to store as day
-    @param rb_hour value to store as hour
-    @param rb_minute value to store as minute
-    @param rb_second value to store as second
-  */
-  void setCalendar(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
-
   /*@}*/
 
   /* ****************************************************** */
@@ -444,60 +531,82 @@ public: // Public methods
   uint8_t hitchFront() const {return  b_hitchFront;};
 
   /** check if a calendar information was received since init */
-  bool isCalendarReceived() const
-  { // check if default data from init is still in vars
-    return ( ( bit_calendar.day == 1 ) && ( bit_calendar.month == 1 ) && ( bit_calendar.year == 0 )
-          && ( bit_calendar.second == 0 ) && ( bit_calendar.minute == 0 ) && ( bit_calendar.hour == 0 ) )?false:true;};
+  bool isCalendarReceived() const;
+  /**
+      get the calendar year value
+      @return actual calendar year value
+  */
+    int16_t yearLocal() const;
   /**
     get the calendar year value
     @return actual calendar year value
   */
-  int16_t year() const {return bit_calendar.year;};
+  int16_t yearUtc() const {return bit_calendar.year;};
   /**
     set the calendar year value
     @param rui16_year actual calendar year value
   */
-  void setYear(uint16_t rui16_year){i32_lastCalendarSet = System_c::getTime();bit_calendar.year = rui16_year;};
+  void setYearUtc(uint16_t rui16_year){i32_lastCalendarSet = System_c::getTime();bit_calendar.year = rui16_year;};
   /**
     get the calendar month value
     @return actual calendar month value
   */
-  uint8_t month() const {return bit_calendar.month;};
+  uint8_t monthLocal() const;
+  /**
+    get the calendar month value
+    @return actual calendar month value
+  */
+  uint8_t monthUtc() const {return bit_calendar.month;};
   /**
     set the calendar month value
     @param rb_month actual calendar month value
   */
-  void setMonth(uint8_t rb_month){i32_lastCalendarSet = System_c::getTime();bit_calendar.month = rb_month;};
+  void setMonthUtc(uint8_t rb_month){i32_lastCalendarSet = System_c::getTime();bit_calendar.month = rb_month;};
   /**
     get the calendar day value
     @return actual calendar day value
   */
-  uint8_t day() const {return bit_calendar.day + (calendarSetAge() / 86400000);};
+  uint8_t dayLocal() const;
+  /**
+    get the calendar day value
+    @return actual calendar day value
+  */
+  uint8_t dayUtc() const {return bit_calendar.day + (calendarSetAge() / 86400000);};
   /**
     set the calendar day value
     @param rb_day actual calendar day value
   */
-  void setDay(uint8_t rb_day){i32_lastCalendarSet = System_c::getTime();bit_calendar.day = rb_day;};
+  void setDayUtc(uint8_t rb_day){i32_lastCalendarSet = System_c::getTime();bit_calendar.day = rb_day;};
   /**
     get the calendar hour value
     @return actual calendar hour value
   */
-  uint8_t hour() const {return ((bit_calendar.hour + (calendarSetAge() / 3600000))%24);};
+  uint8_t hourLocal() const;
+  /**
+    get the calendar hour value
+    @return actual calendar hour value
+  */
+  uint8_t hourUtc() const {return ((bit_calendar.hour + (calendarSetAge() / 3600000))%24);};
   /**
     set the calendar hour value
     @param rb_hour actual calendar hour value
   */
-  void setHour(uint8_t rb_hour){i32_lastCalendarSet = System_c::getTime();bit_calendar.hour = rb_hour;};
+  void setHourUtc(uint8_t rb_hour){i32_lastCalendarSet = System_c::getTime();bit_calendar.hour = rb_hour;};
   /**
     get the calendar minute value
     @return actual calendar minute value
   */
-  uint8_t minute() const {return ((bit_calendar.minute + (calendarSetAge() / 60000))%60);};
+  uint8_t minuteLocal() const;
+  /**
+    get the calendar minute value
+    @return actual calendar minute value
+  */
+  uint8_t minuteUtc() const {return ((bit_calendar.minute + (calendarSetAge() / 60000))%60);};
   /**
     set the calendar minute value
     @param rb_minute actual calendar minute value
   */
-  void setMinute(uint8_t rb_minute){i32_lastCalendarSet = System_c::getTime();bit_calendar.minute = rb_minute;};
+  void setMinuteUtc(uint8_t rb_minute){i32_lastCalendarSet = System_c::getTime();bit_calendar.minute = rb_minute;};
   /**
     get the calendar second value
     @return actual calendar second value
@@ -509,20 +618,25 @@ public: // Public methods
   */
   void setSecond(uint8_t rb_second){i32_lastCalendarSet = System_c::getTime();bit_calendar.second = rb_second;};
   /**
-    set the calendar second value
-    @param rb_second actual calendar second value
+  set the calendar millisecond value
+    @param rb_millisecond actual calendar second value
    */
   void setMillisecond(uint16_t rui16_millisecond){i32_lastCalendarSet = System_c::getTime();bit_calendar.msec = rui16_millisecond;};
+  /**
+      get the calendar millisecond value
+      @return actual calendar second value
+   */
+  uint16_t millisecond() const {return ((bit_calendar.msec + calendarSetAge())%1000);};
 
   /**
-    deliver the gtp of the sender of the base data
+    deliver the devKey of the sender of the base data
 
     possible errors:
         * Err_c::range rui8_typeNr doesn't match valid base msg type number
     @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
-    @return GETY_POS code of member who is sending the intereested base msg type
+    @return DEV_KEY code of member who is sending the intereested base msg type
   */
-  const GetyPos_c& senderGtp(IsoAgLib::BaseDataGroup_t rt_typeGrp);
+  const DevKey_c& senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp);
 
   #ifdef USE_DIN_9684
   /** deliver rear left draft */
@@ -616,27 +730,46 @@ public: // Public methods
   bool maintainPowerForImplInWork() const
     { return b_maintainPowerForImplInWork;};
 
+
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLatitudeDegree10Minus7( void ) const { return i32_latitudeDegree10Minus7; };
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLongitudeDegree10Minus7( void ) const { return i32_longitudeDegree10Minus7; };
   #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+
+  /** check if an NMEA2000 position signal was received */
+  bool isPositionReceived() const;
+
   /** deliver Minute GPS Latitude */
-  float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-5  ); };
+  float getGpsLatitudeMinute( void ) const { return ( i32_latitudeDegree10Minus7 * 6.0e-4  ); };
   /** deliver Minute GPS Longitude */
-  float getGpsLongitudeMinute( void ) const { return ( i32_longitudeDegree10Minus7 * 6.0e-5 ); };
-  #endif
+  float getGpsLongitudeMinute( void ) const { return ( i32_longitudeDegree10Minus7 * 6.0e-4 ); };
+  /** deliver Degree GPS Latitude */
+  float getGpsLatitudeDegree( void ) const { return ( float(i32_latitudeDegree10Minus7) * 1.0e-7  ); };
+  /** deliver Degree GPS Longitude */
+  float getGpsLongitudeDegree( void ) const { return ( float(i32_longitudeDegree10Minus7) * 1.0e-7 ); };
+#endif
+  #ifdef NMEA_2000_FAST_PACKET
   /** deliver GPS altitude - [cm] */
   uint32_t getGpsAltitudeCm( void ) const { return ui32_altitudeCm; };
   /** deliver GPS receive qualitiy */
   IsoAgLib::IsoGnssMethod_t getGnssMode( void ) const { return t_gnssMethod;};
+  /** simply check for some sort of Differential signal */
+  bool hasDifferentialPosition() const { return ( ( t_gnssMethod > IsoAgLib::IsoGnssFix ) && ( t_gnssMethod < IsoAgLib::IsoDrEstimated ) )?true:false;};
   /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
   IsoAgLib::IsoGnssType_t getGnssType(void) const { return t_gnssType;};
   /** deliver GPS speed as [cm/s] */
   uint16_t getGpsSpeedCmSec( void ) const { return ui16_speedCmSec;};
   /** deliver GPS Heading [1x10E-4rad] */
   uint16_t getGpsHeadingRad10Minus4( void ) const { return ui16_headingRad10Minus4; };
-
+  /** deliver number of received satellites */
+  uint8_t satelliteCnt() const { return ui8_satelliteCnt;};
+  /** deliver HDOP with scaling [1x10E-2] */
+  int16_t hdop10Minus2() const { return i16_hdop;};
+  /** PDOP with scaling [1x10E-2] */
+  int16_t pdop10Minus2() const { return i16_pdop;};
+  // END NMEA_2000_FAST_PACKET
+#endif
   /** deliver age of last gps-update in milliseconds */
   uint16_t getGpsUpdateAge( void ) const { return 2000; /** @todo ACHIM - Implement this dummy function */ };
 
@@ -660,7 +793,7 @@ private:
     and calendar
     NEVER instantiate a variable of type Base_c within application
     only access Base_c via getBaseInstance() or getBaseInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
-    @param rpc_gtp optional pointer to the GETY_POS variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
   */
   Base_c() {};
@@ -702,26 +835,136 @@ private:
   */
   int32_t calendarSetAge() const {return (System_c::getTime() - i32_lastCalendarSet);};
 
+  /** check if a received message should be parsed */
+  bool checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const
+  {
+    return ( ( ( t_mySendSelection & rt_selfSend   ) == 0 ) // I'm not the sender
+          && ( // one of the following conditions must be true
+               (rrefc_activeSender == rrefc_currentSender) // actual sender equivalent to last
+            || (rrefc_activeSender.isUnspecified() ) // last sender has not correctly claimed address member
+             )
+           )?true:false;
+  };
+
+  #ifdef USE_DIN_9684
+  /** send a DIN9684 base information PGN.
+   * this is only called when sending ident is configured and it has already claimed an address
+   */
+  bool dinTimeEvent( void );
+  /** process a DIN9684 base information PGN */
+  bool dinProcessMsg();
+#endif
+  #if defined(USE_ISO_11783)
+  /** send a ISO11783 base information PGN.
+    * this is only called when sending ident is configured and it has already claimed an address
+    */
+  bool isoTimeEvent( void );
+  /** send Base1 Group data with ground&theor speed&dist */
+  void isoSendBase1Update( void );
+  /** send Base2 Group data with hitch and PTO state */
+  void isoSendBase2Update( void );
+  /** send position rapid update message */
+  void isoSendPositionRapidUpdate( void );
+  /** process a ISO11783 base information PGN */
+  bool isoProcessMsg();
+
+  #if defined(NMEA_2000_FAST_PACKET)
+  /** send position as detailed stream */
+  void isoSendPositionStream( void );
+  /** send direction as detailed stream */
+  void isoSendDirectionStream( void );
+
+  //  Operation: reactOnLastChunk
+  //! Parameter:
+  //! @param rc_ident:
+  //! @param rpc_stream:
+  bool reactOnLastChunk(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
+                        IsoAgLib::iStream_c& rpc_stream);
+
+  //  Operation: reactOnAbort
+  virtual void reactOnAbort(IsoAgLib::iStream_c* rpc_stream);
+  // END NMEA_2000_FAST_PACKET
+  #endif
+  // END USE_ISO_11783
+  #endif
 private:
   // Private attributes
   /** temp data where received data is put */
   BasePkg_c c_data;
-  /** last time of base_1 msg [100ms] */
-  uint8_t ui8_lastBase1;
-  /** last time of base_2 msg [100ms] */
-  uint8_t ui8_lastBase2;
-  /** last time of base_3 msg [100ms] */
-  uint8_t ui8_lastBase3;
-  /** last time of fuel msg [100ms] */
-  uint8_t ui8_lastFuel;
-  /** last time of calendar msg [100ms] */
-  uint8_t ui8_lastCalendar;
+  /** last time of base_1 msg [msec] */
+  int32_t i32_lastBase1;
+  /** last time of base_2 msg [msec] */
+  int32_t i32_lastBase2;
+  /** last time of base_3 msg [msec] */
+  int32_t i32_lastBase3;
+  /** last time of fuel msg [msec] */
+  int32_t i32_lastFuel;
+  /** last time of calendar msg [msec] */
+  int32_t i32_lastCalendar;
   /**
     last timestamp where calendar was set
     -> use this to calculate new time
   */
   int32_t i32_lastCalendarSet;
-  #ifdef USE_DIN_9684
+
+  /** distance */
+  /** real distance as int32_t value (cumulates 16bit overflows) */
+  int32_t i32_distReal;
+  /** theoretical distance as int32_t value (cumulates 16bit overflows)*/
+  int32_t i32_distTheor;
+  /** last 16bit real distance to cope with 16bit overflows */
+  int16_t i16_lastDistReal;
+  /** last 16bit theoretical distance to cope with 16bit overflows */
+  int16_t i16_lastDistTheor;
+
+  /** speed */
+  /** real speed */
+  int16_t i16_speedReal;
+  /** theoretical speed */
+  int16_t i16_speedTheor;
+
+  /** pto rear */
+  int16_t i16_ptoRear;
+  /** pto front */
+  int16_t i16_ptoFront;
+  /** engine speed */
+  int16_t i16_engine;
+
+  /** devKey which act as sender of base msg */
+  const DevKey_c* pc_devKey;
+
+  /** bit_calendar */
+  struct {
+    uint16_t year : 12;
+    uint16_t month : 4;
+    uint16_t day : 6;
+    uint16_t hour : 6;
+    uint16_t minute : 6;
+    uint16_t second : 6;
+    uint16_t msec   : 10;
+    uint16_t timezoneMinuteOffset : 6;
+    uint16_t timezoneHourOffsetMinus24 : 6;
+  } bit_calendar;
+  const struct tm* Utc2LocalTime() const;
+
+  /** bitmask with selection of all base data types to send */
+  IsoAgLib::BaseDataGroup_t t_mySendSelection;
+  /** DEVKEY of base1 sender */
+  DevKey_c c_sendBase1DevKey;
+  /** DEVKEY of base2 sender */
+  DevKey_c c_sendBase2DevKey;
+  /** DEVKEY of base3 sender */
+  DevKey_c c_sendBase3DevKey;
+  /** DEVKEY of fuel data sender */
+  DevKey_c c_sendFuelDevKey;
+  /** DEVKEY of calendar sender */
+  DevKey_c c_sendCalendarDevKey;
+  /** front hitch data */
+  uint8_t b_hitchFront;
+  /** rear hitch data */
+  uint8_t b_hitchRear;
+
+#ifdef USE_DIN_9684
   /** flag to detect, if receive filters for DIN are created */
   bool b_dinFilterCreated;
   /** NEW from AGCO Fendt Vario: rear left draft */
@@ -738,16 +981,27 @@ private:
   uint8_t ui8_fuelTemperature;
   #endif
   #ifdef USE_ISO_11783
+  /** VT language information */
+  uint8_t p8ui8_languageVt[8];
+  /** TECU language information */
+  uint8_t p8ui8_languageTecu[8];
+  /** VT language reception information */
+  bool b_languageVtReceived;
+  /** TECU language reception information */
+  bool b_languageTecuReceived;
+
   /** flag to detect, if receive filters for ISO are created */
   bool b_isoFilterCreated;
-  /** last time of ISO base_1 msg [100ms] */
-  uint8_t ui8_lastIsoBase1;
-  /** last time of ISO base_2 msg [100ms] */
-  uint8_t ui8_lastIsoBase2;
-  /** last time of ISO calendar msg [100ms] */
-  uint8_t ui8_lastIsoCalendar;
-  /** last time of ISO GPS msg [100ms] */
-  uint8_t ui8_lastIsoGps;
+
+#ifdef NMEA_2000_FAST_PACKET
+  /** last time of ISO GPS msg [msec] */
+  int32_t i32_lastIsoPositionStream;
+  /** last time of ISO GPS msg [msec] */
+  int32_t i32_lastIsoDirectionStream;
+#endif
+  /** last time of ISO GPS msg [msec] */
+  int32_t i32_lastIsoPositionSimple;
+
   /** key switch state */
   IsoAgLib::IsoActiveFlag_t t_keySwitch;
   /** maximum time of tractor power in [min] */
@@ -793,18 +1047,13 @@ private:
   int32_t i32_latitudeDegree10Minus7;
   /** raw GPS longitude [degree]; Long_Min < 0 --> West */
   int32_t i32_longitudeDegree10Minus7;
-  /** GPS speed - [cm/s] */
-  uint16_t ui16_speedCmSec;
-  /** GPS heading [1x10E-4rad] */
-  uint16_t ui16_headingRad10Minus4;
+#ifdef NMEA_2000_FAST_PACKET
   /** GPS altitude - [cm] */
   uint32_t ui32_altitudeCm;
   /** GNSS Method and Quality */
   IsoAgLib::IsoGnssMethod_t t_gnssMethod;
   /** GNSS Type */
   IsoAgLib::IsoGnssType_t t_gnssType;
-  /** GTP of GPS data sender */
-  GetyPos_c c_sendGpsGtp;
   /** number of received satellites */
   uint8_t ui8_satelliteCnt;
   /** HDOP with scaling [1x10E-2] */
@@ -812,91 +1061,39 @@ private:
   /** PDOP with scaling [1x10E-2] */
   int16_t i16_pdop;
   /** integrity of GPS signal */
-  uint8_t ui8_integrityAndReserved;
+  uint8_t ui8_integrity;
   /** sequence ID of GPS string */
-  uint8_t ui8_sequenceID;
-  /** type and method of */
+  uint8_t ui8_positionSequenceID;
+  int32_t i32_geoidalSeparation;
+  uint8_t ui8_noRefStations;
+  std::vector<uint16_t> vec_refStationTypeAndStation;
+  std::vector<uint16_t> vec_refStationDifferentialAge10Msec;
 
-  uint8_t TypeandMethod;
-  uint32_t GeoidalSeparation;
-  uint8_t NoRefStations;
-  uint16_t TypeandStation[252]; // max number of stations as define in nmea2000 protocol
-  uint16_t DGPSAge[252];
+  /** data mode and Set/COG/Heading Ref. of Direction Data PGN 130577 */
+  uint8_t ui8_dataModeAndHeadingReference;
+  /** sequence ID of direction data */
+  uint8_t ui8_directionSequenceID;
+  /** course over ground */
+  uint16_t ui16_courseOverGroundRad10Minus4;
+  /** speed over ground */
+  uint16_t ui16_speedOverGroundCmSec;
+  /** GPS heading [1x10E-4rad] */
+  uint16_t ui16_headingRad10Minus4;
+  /** GPS speed - [cm/s] */
+  uint16_t ui16_speedCmSec;
+  /** flow direction */
+  uint16_t ui16_flowDirectionRad10Minus4;
+  /** drift speed */
+  uint16_t ui16_driftSpeedCmSec;
 
-  /** VT language information */
-  uint8_t p8ui8_languageVt[8];
-  /** TECU language information */
-  uint8_t p8ui8_languageTecu[8];
-  /** VT language reception information */
-  bool b_languageVtReceived;
-  /** TECU language reception information */
-  bool b_languageTecuReceived;
-
-
-  //  Operation: reactOnLastChunk
-  //! Parameter:
-  //! @param rc_ident:
-  //! @param rpc_stream:
-  bool reactOnLastChunk(IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
-                        IsoAgLib::iStream_c& rpc_stream);
-
-  //  Operation: reactOnAbort
-  virtual void reactOnAbort(IsoAgLib::iStream_c* rpc_stream);
+  /** buffer class for sending data streams */
+  Nmea2000SendStreamer_c c_nmea2000Streamer;
+  /** sending success state */
+  MultiSend_c::sendSuccess_t t_multiSendSuccessState;
 #endif
-
-  /** distance */
-  /** real distance as int32_t value (cumulates 16bit overflows) */
-  int32_t i32_distReal;
-  /** theoretical distance as int32_t value (cumulates 16bit overflows)*/
-  int32_t i32_distTheor;
-  /** last 16bit real distance to cope with 16bit overflows */
-  int16_t i16_lastDistReal;
-  /** last 16bit theoretical distance to cope with 16bit overflows */
-  int16_t i16_lastDistTheor;
-
-  /** speed */
-  /** real speed */
-  int16_t i16_speedReal;
-  /** theoretical speed */
-  int16_t i16_speedTheor;
-
-  /** pto rear */
-  int16_t i16_ptoRear;
-  /** pto front */
-  int16_t i16_ptoFront;
-  /** engine speed */
-  int16_t i16_engine;
-
-  /** gtp which act as sender of base msg */
-  const GetyPos_c* pc_gtp;
-
-  /** bit_calendar */
-  struct {
-    uint16_t year : 12;
-    uint16_t month : 4;
-    uint16_t day : 6;
-    uint16_t hour : 6;
-    uint16_t minute : 6;
-    uint16_t second : 6;
-    uint16_t msec   : 10;
-  } bit_calendar;
-
-  /** bitmask with selection of all base data types to send */
-  IsoAgLib::BaseDataGroup_t t_mySendSelection;
-  /** GTP of base1 sender */
-  GetyPos_c c_sendBase1Gtp;
-  /** GTP of base2 sender */
-  GetyPos_c c_sendBase2Gtp;
-  /** GTP of base3 sender */
-  GetyPos_c c_sendBase3Gtp;
-  /** GTP of fuel data sender */
-  GetyPos_c c_sendFuelGtp;
-  /** GTP of calendar sender */
-  GetyPos_c c_sendCalendarGtp;
-  /** front hitch data */
-  uint8_t b_hitchFront;
-  /** rear hitch data */
-  uint8_t b_hitchRear;
+  /** DEVKEY of GPS data sender */
+  DevKey_c c_sendGpsDevKey;
+#endif
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

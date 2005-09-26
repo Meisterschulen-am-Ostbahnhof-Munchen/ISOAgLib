@@ -238,13 +238,13 @@ int32_t localGetTheorDist() { return (iSystem_c::getTime()*localGetTheorSpeed()/
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
   getIcanInstance().init( cui32_canChannel, 250 );
-  // variable for GETY_POS
+  // variable for DEV_KEY
   // default with tractor
-  IsoAgLib::iGetyPos_c myGtp( 1, 0 );
+  IsoAgLib::iDevKey_c myDevKey( 1, 0 );
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can cahnge the myGtp val through the pointer to myGtp
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -255,14 +255,14 @@ int main()
   uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
-  // if GETY_POS conflicts forces change of POS, the
-  // IsoAgLib can change the myGtp val through the pointer to myGtp
-  IsoAgLib::iIdentItem_c c_myIdent( &myGtp,
+  // if DEV_KEY conflicts forces change of device class instance, the
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
+  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
   // configure BaseData_c to send base information for speed and distance on BUS
-  getIBaseInstance().config(&myGtp, BaseDataGroup1 );
+  getIBaseInstance().config(&myDevKey, BaseDataGroup1 );
 
 
   /** IMPORTANT:

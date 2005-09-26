@@ -113,7 +113,7 @@ public:
   //! Parameter:
   //! @param vtObjectOutputNumberSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs) { vtObject_c::init ((iVtObject_s*) vtObjectOutputNumberSROMs); };
+  void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectOutputNumberSROMs SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
 
   //  Operation: get_vtObjectOutputNumber_a
   iVtObjectOutputNumber_s* get_vtObjectOutputNumber_a() { return (iVtObjectOutputNumber_s *)vtObject_a; };
@@ -137,41 +137,41 @@ public:
   void setOriginSKM(bool b_SKM);
 
 
-	// //////////////////////////////////
-	// All special Attribute-Set methods
-	void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  // //////////////////////////////////
+  // All special Attribute-Set methods
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), width) : 0, sizeof(iVtObjectOutputNumber_s), 1, newValue, b_enableReplaceOfCmd);
-	}
-	void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  }
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), height) : 0, sizeof(iVtObjectOutputNumber_s), 2, newValue, b_enableReplaceOfCmd);
-	}
-	void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), backgroundColour) : 0, sizeof(iVtObjectOutputNumber_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
-	}
-	void setFontAttributes(vtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  }
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+   saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), backgroundColour) : 0, sizeof(iVtObjectOutputNumber_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+  }
+  void setFontAttributes(vtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), fontAttributes) : 0, sizeof(iVtObjectOutputNumber_s), 4, newValue, b_enableReplaceOfCmd);
-	}
-	void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  }
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), options) : 0, sizeof(iVtObjectOutputNumber_s), 5, newValue, newValue, b_enableReplaceOfCmd);
-	}
-	void setVariableReference(vtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  }
+  void setVariableReference(vtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), variableReference) : 0, sizeof(iVtObjectOutputNumber_s), 6, newValue, b_enableReplaceOfCmd);
-	}
-	void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  }
+  void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), offset) : 0, sizeof(iVtObjectOutputNumber_s), 7, (uint32_t) newValue, b_enableReplaceOfCmd);
-	}
-	void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  }
+  void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValueFloatSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), scale) : 0, sizeof(iVtObjectOutputNumber_s), 8, newValue, b_enableReplaceOfCmd);
-	}
-	void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  }
+  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), numberOfDecimals) : 0, sizeof(iVtObjectOutputNumber_s), 9, newValue, newValue, b_enableReplaceOfCmd);
-	}
-	void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  }
+  void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), format) : 0, sizeof(iVtObjectOutputNumber_s), 10, (newValue) ? 1 : 0, (newValue) ? 1 : 0, b_enableReplaceOfCmd);
-	}
-	void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  }
+  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputNumber_s), 11, newValue, newValue, b_enableReplaceOfCmd);
-	}
+  }
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
 

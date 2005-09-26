@@ -1,5 +1,5 @@
 /***************************************************************************
-                          getyflexmanager_c.h  -  description
+                          devClassflexmanager_c.h  -  description
                              -------------------
     begin                : Tue Jul 18 2000
     copyright            : (C) 2000 by Dipl.-Inform. Achim Spangler
@@ -36,34 +36,34 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
 
-#ifndef GETY_FLEX_MANAGER_H
-#define GETY_FLEX_MANAGER_H
+#ifndef DEVCLASS_FLEX_MANAGER_H
+#define DEVCLASS_FLEX_MANAGER_H
 
 #include "procdatamanager_c.h"
 #include "specificrecordconfig_c.h"
 
-/**manage process data for GETY 2 (primary soil implement)
+/**manage process data for DEVCLASS 2 (primary soil implement)
   *@author Dipl.-Inform. Achim Spangler
 */
-class GetyFlexManager_c : public ProcDataManager_c  {
+class DevClassFlexManager_c : public ProcDataManager_c  {
 public:
-  GetyFlexManager_c(DefaultRecordConfig_c* rpc_defaultRecordConfig = NULL, uint16_t rui16_eepromOffsetAdr = 0xFFFF);
-  GetyFlexManager_c(const GetyFlexManager_c& rrefc_src);
-  virtual ~GetyFlexManager_c();
+  DevClassFlexManager_c(DefaultRecordConfig_c* rpc_defaultRecordConfig = NULL, uint16_t rui16_eepromOffsetAdr = 0xFFFF);
+  DevClassFlexManager_c(const DevClassFlexManager_c& rrefc_src);
+  virtual ~DevClassFlexManager_c();
   void init(DefaultRecordConfig_c* rpc_defaultRecordConfig);
-  bool operator==(const GetyFlexManager_c& rrefc_comp)const{return (c_remoteGtp == rrefc_comp.c_remoteGtp)?true:false;};
-  bool operator!=(const GetyFlexManager_c& rrefc_comp)const{return (c_remoteGtp != rrefc_comp.c_remoteGtp)?true:false;};
-  bool operator<(const GetyFlexManager_c& rrefc_comp)const{return (c_remoteGtp < rrefc_comp.c_remoteGtp)?true:false;};
+  bool operator==(const DevClassFlexManager_c& rrefc_comp)const{return (c_remoteDevKey == rrefc_comp.c_remoteDevKey)?true:false;};
+  bool operator!=(const DevClassFlexManager_c& rrefc_comp)const{return (c_remoteDevKey != rrefc_comp.c_remoteDevKey)?true:false;};
+  bool operator<(const DevClassFlexManager_c& rrefc_comp)const{return (c_remoteDevKey < rrefc_comp.c_remoteDevKey)?true:false;};
 
-  bool operator==(const IsoAgLib::iGetyPos_c& rc_comp)const{return (c_remoteGtp == rc_comp)?true:false;};
-  bool operator!=(const IsoAgLib::iGetyPos_c& rc_comp)const{return (c_remoteGtp != rc_comp)?true:false;};
-  bool operator<(const IsoAgLib::iGetyPos_c& rc_comp)const{return (c_remoteGtp < rc_comp)?true:false;};
+  bool operator==(const IsoAgLib::iDevKey_c& rc_comp)const{return (c_remoteDevKey == rc_comp)?true:false;};
+  bool operator!=(const IsoAgLib::iDevKey_c& rc_comp)const{return (c_remoteDevKey != rc_comp)?true:false;};
+  bool operator<(const IsoAgLib::iDevKey_c& rc_comp)const{return (c_remoteDevKey < rc_comp)?true:false;};
   /**
     activate with creating the needed ProcessData
     @param rpc_monitor pointer to member_item of data delivering member
-    @param rpc_localGtp pointer to local member GTP for sending of commands
+    @param rpc_localDevKey pointer to local member DEVKEY for sending of commands
   */
-  void activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib::iGetyPos_c* rpc_localGtp);
+  void activate(IsoAgLib::iDINItem_c* rpc_monitor, IsoAgLib::iDevKey_c* rpc_localDevKey);
   /** deactivate with deleting the created ProcessDatas */
   void deactivate();
   /**
@@ -71,7 +71,7 @@ public:
     process data
   */
   virtual void writeHeader();
-  /** write informations of according member (GETY, POS, name)
+  /** write informations of according member (DEV CLASS/INST, name)
       and all remote process data of ppc_data
       to RS232
   */
@@ -84,7 +84,7 @@ private:
     @return true --> record working width
   */
   bool recordWidth()const
-  {return ((pc_monitor->gety() != 11)||(configField.transportDummyWidth == 1))?true:false;};
+  {return ((pc_monitor->devClass() != 11)||(configField.transportDummyWidth == 1))?true:false;};
   /**
     check if a single measurement request should be sent on every local
     value access
@@ -97,9 +97,9 @@ private:
   */
   bool sendRequest( uint8_t rb_procInd )const;
   /**
-    deliver the GETY for time, dist, area values
+    deliver the DEVCLASS for time, dist, area values
   */
-  uint8_t timeDistGety()const{return configField.timeDistGety;};
+  uint8_t timeDistDevClass()const{return configField.timeDistDevClass;};
 
   /** EEPROM adress of offset values */
   uint16_t ui16_eepromOffsetAdr;
@@ -109,7 +109,7 @@ private:
 
   struct {
     uint8_t timeWert : 4;
-    uint8_t recordAsGety : 4;
+    uint8_t recordAsDevClass : 4;
 
     uint8_t applrateXHa : 1;
     uint8_t applrateXMin : 1;
@@ -123,7 +123,7 @@ private:
     uint8_t workWertInst : 8;
 
     uint8_t posApplrateX : 4;
-    uint8_t timeDistGety : 4;
+    uint8_t timeDistDevClass : 4;
 
     uint8_t requestSingleVals : 1;
   } configField;

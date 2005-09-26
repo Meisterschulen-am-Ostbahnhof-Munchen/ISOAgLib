@@ -219,6 +219,29 @@ public:
   */
   void setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize = 7);
   /**
+    set the 7 uint8_t data part of transfer message
+    @param rpb_source source data pointer
+    @param ri32_pos uint8_t position in data string to start
+    @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+   */
+  void setDataPart(const std::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize = 7);
+  #if defined(NMEA_2000_FAST_PACKET)
+  /**
+    set the 7 uint8_t data part of transfer message
+    @param rpb_source source data pointer
+    @param ri32_pos uint8_t position in data string to start
+    @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+   */
+  void setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri32_pos, uint8_t rb_partSize = 7, uint8_t rui8_offset = 0);
+  /**
+    set the 7 uint8_t data part of transfer message
+    @param rpb_source source data pointer
+    @param ri32_pos uint8_t position in data string to start
+    @param rb_partSize optional amount of bytes of data stream for actual pkg (default 7)
+   */
+  void setFastPacketDataPart(const std::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize = 7, uint8_t rui8_offset = 0);
+  #endif
+  /**
     set value EMPF of process msg
     @param rb_val new EMPF value for message
   */

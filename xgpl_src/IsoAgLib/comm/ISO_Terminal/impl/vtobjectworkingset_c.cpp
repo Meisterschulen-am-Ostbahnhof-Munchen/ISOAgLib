@@ -106,7 +106,7 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
         destMemory [0] = vtObjectWorkingSet_a->ID & 0xFF;
         destMemory [1] = vtObjectWorkingSet_a->ID >> 8;
         destMemory [2] = 0; // Object Type = Working Set
-        destMemory [3] = __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (vtObjectWorkingSet_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+        destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectWorkingSet_a->backgroundColour, this, IsoAgLib::BackgroundColour);
         destMemory [4] = vtObjectWorkingSet_a->selectable;
 
         if (vtObjectWorkingSet_a->activeMask != NULL) {
@@ -156,7 +156,7 @@ vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* rpc_vtObjectMa
 { // ~X2C
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), rpc_vtObjectMask);
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
                                                    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                    rpc_vtObjectMask->getID() & 0xFF, rpc_vtObjectMask->getID() >> 8,
                                                    0xFF, 0xFF, 0xFF, 2000, b_enableReplaceOfCmd);
@@ -167,7 +167,7 @@ vtObjectWorkingSet_c::changeBackgroundColour(uint8_t newValue, bool b_updateObje
 { // ~X2C
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), backgroundColour), sizeof(iVtObjectWorkingSet_s), newValue);
 
-  __IsoAgLib::getIsoTerminalInstance().sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
 } // -X2C
 
 bool

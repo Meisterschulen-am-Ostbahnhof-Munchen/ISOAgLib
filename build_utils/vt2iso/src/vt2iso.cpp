@@ -489,7 +489,7 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
     fprintf (partFileF, "\n  /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */");
     fprintf (partFileF, "\n  //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);");
-    fprintf (partFileF, "\n  void initAllObjectsOnce();");
+    fprintf (partFileF, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
     fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName);
     fprintf (partFileF, "\n};\n");
     fprintf (partFileF, "\n #endif\n" );
@@ -501,7 +501,7 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileFderived, "\n #define DECL_derived_iObjectPool_%s_c", proName );
     fprintf (partFileFderived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName);
     fprintf (partFileFderived, "\npublic:");
-    fprintf (partFileFderived, "\n  void initAllObjectsOnce();");
+    fprintf (partFileFderived, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
     fprintf (partFileFderived, "\n  iObjectPool_%s_c ();", proName);
     fprintf (partFileFderived, "\n};\n");
     fprintf (partFileFderived, "\n #endif\n" );
@@ -739,7 +739,7 @@ void init (const char* xmlFile)
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-functions.inc");
   partFileC = fopen (partFileName,"wt");
-  fprintf (partFileC, "void iObjectPool_%s_c::initAllObjectsOnce ()\n{\n", proName);
+  fprintf (partFileC, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName);
   fprintf (partFileC, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
 
   strncpy (partFileName, xmlFile, 1024);
@@ -2768,7 +2768,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
   fprintf (partFileA, "IsoAgLib::iVtObject%s_c iVtObject%s;\n", otClassnameTable [objType], objName);
   fprintf (partFileB, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s_sROM = {%d", otClassnameTable [objType], objName, objID);
-  fprintf (partFileC, "  iVtObject%s.init (&iVtObject%s_sROM);\n", objName, objName);
+  fprintf (partFileC, "  iVtObject%s.init (&iVtObject%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, objName);
   fprintf (partFileD, "#define iVtObjectID%s %d\n", objName, objID);
   if (firstLineFileE) {
     firstLineFileE = false;
