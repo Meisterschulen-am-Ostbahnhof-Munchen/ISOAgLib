@@ -395,8 +395,6 @@ int32_t Base_c::lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool Base_c::processMsg(){
-  DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
-
   #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
   if (c_data.identType() == Ident_c::ExtendedIdent)
   #endif // USE_DIN_9684 && USE_ISO_11783
@@ -595,6 +593,7 @@ void Base_c::checkCreateReceiveFilter( void )
 bool Base_c::dinTimeEvent( void )
 {
   CANIO_c& c_can = getCanInstance4Comm();
+  const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
   // retreive the actual dynamic sender no of the member with the registered devKey
   uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*pc_devKey, true).nr();
 
@@ -616,6 +615,7 @@ bool Base_c::dinTimeEvent( void )
     // update time
     i32_lastBase1 = ci32_now;
   }
+  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   if ( ( ( ci32_now - i32_lastBase2 ) >= 100                   )
     && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
@@ -636,6 +636,7 @@ bool Base_c::dinTimeEvent( void )
     // update time
     i32_lastBase2 = ci32_now;
   }
+  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   if ( ( ( ci32_now - i32_lastBase3 ) >= 100                   )
     && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup3 ) != 0 ) )
@@ -672,6 +673,7 @@ bool Base_c::dinTimeEvent( void )
     // update time
     i32_lastFuel = ci32_now;
   }
+  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   if ( ( ( ci32_now - i32_lastCalendar) >= 1000                  )
     && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar ) != 0 ) )
@@ -679,12 +681,12 @@ bool Base_c::dinTimeEvent( void )
     c_sendCalendarDevKey = *pc_devKey;
     data().setBabo(0xF);
     data().setSend(b_send);
-    data().setVal1(dec2bcd(year() / 100));
-    data().setVal2(dec2bcd(year() % 100));
-    data().setVal3(dec2bcd(month()));
-    data().setVal4(dec2bcd(day()));
-    data().setVal5(dec2bcd(hour()));
-    data().setVal6(dec2bcd(minute()));
+    data().setVal1(dec2bcd(yearLocal() / 100));
+    data().setVal2(dec2bcd(yearLocal() % 100));
+    data().setVal3(dec2bcd(monthLocal()));
+    data().setVal4(dec2bcd(dayLocal()));
+    data().setVal5(dec2bcd(hourLocal()));
+    data().setVal6(dec2bcd(minuteLocal()));
     data().setVal7(dec2bcd(second()));
 
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
@@ -694,11 +696,14 @@ bool Base_c::dinTimeEvent( void )
     // update time
     i32_lastCalendar = ci32_now;
   }
+  return true;
 }
 
 /** process a DIN9684 base information PGN */
 bool Base_c::dinProcessMsg()
 { // a DIN9684 base information msg received
+  DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
+  bool b_result = false;
   // store the devKey of the sender of base data
   const uint16_t ui16_actTime100ms = (data().time() / 100);
   if (getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
@@ -810,7 +815,7 @@ bool Base_c::dinProcessMsg()
       { // sender is allowed to send
         // only store date with valid year ( != 0 ) or if last received
         // year is also 0
-        if ( ( data().val1() != 0 ) || ( data().val2() != 0 ) || ( year() == 0 ) )
+        if ( ( data().val1() != 0 ) || ( data().val2() != 0 ) || ( yearUtc() == 0 ) )
         { // store new calendar setting
           #ifdef USE_ISO_11783
           if ( ( ( t_mySendSelection & IsoAgLib::BaseDataGps ) == 0 )
@@ -847,6 +852,7 @@ bool Base_c::dinProcessMsg()
       b_result = true;
       break;
   } // end switch
+  return b_result;
 }
 
 #endif
