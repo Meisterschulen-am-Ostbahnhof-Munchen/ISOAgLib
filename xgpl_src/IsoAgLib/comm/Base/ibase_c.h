@@ -420,6 +420,33 @@ public:
     @param rb_minute actual calendar minute value
   */
   void setMinuteUtc(uint8_t rb_minute) { Base_c::setMinuteUtc( rb_minute );};
+
+  /**
+  get the calendar year value
+  @return actual calendar year value
+   */
+  int16_t yearLocal() const { return Base_c::yearLocal();};
+  /**
+  get the calendar month value
+  @return actual calendar month value
+   */
+  uint8_t monthLocal() const { return Base_c::monthLocal();};
+  /**
+  get the calendar day value
+  @return actual calendar day value
+   */
+  uint8_t dayLocal() const { return Base_c::dayLocal();};
+  /**
+  get the calendar hour value
+  @return actual calendar hour value
+   */
+  uint8_t hourLocal() const { return Base_c::hourLocal();};
+  /**
+  get the calendar minute value
+  @return actual calendar minute value
+   */
+  uint8_t minuteLocal() const { return Base_c::minuteLocal();};
+
   /**
     get the calendar second value
     @return actual calendar second value
