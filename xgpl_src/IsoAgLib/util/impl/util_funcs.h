@@ -287,7 +287,7 @@ template<class T> void number2LittleEndianString( const T rt_src, std::vector<ui
   const unsigned int BitSize = sizeof(T) * 8;
   for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
   {
-    refc_target.push_back((refc_src >> ind) & 0xFF);
+    refc_target.push_back((rt_src >> ind) & 0xFF);
   }
 #endif
 }
