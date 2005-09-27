@@ -97,16 +97,17 @@
 #else
   #include <string>
 #endif
+#include <deque>
 #include <supplementary_driver/hal/rs232.h>
 
 /** define based on system type the support of several RS232 channels */
 #if  defined(SYSTEM_C2C) || defined(SYSTEM_PC)
-	#define USE_RS232_CHANNEL
-	#define RS232_CHANNEL_PARAM_SINGLE ui8_channel
-	#define RS232_CHANNEL_PARAM_LAST , ui8_channel
+  #define USE_RS232_CHANNEL
+  #define RS232_CHANNEL_PARAM_SINGLE ui8_channel
+  #define RS232_CHANNEL_PARAM_LAST , ui8_channel
 #else
-	#define RS232_CHANNEL_PARAM_SINGLE
-	#define RS232_CHANNEL_PARAM_LAST
+  #define RS232_CHANNEL_PARAM_SINGLE
+  #define RS232_CHANNEL_PARAM_LAST
 #endif
 
 
@@ -156,10 +157,10 @@ public:
           t_dataMode ren_dataMode = CONFIG_RS232_DEFAULT_DATA_MODE,
           bool rb_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
           uint16_t rui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
-					#ifdef USE_RS232_CHANNEL
-					,uint8_t rui8_channel = 0
-					#endif
-					);
+          #ifdef USE_RS232_CHANNEL
+          ,uint8_t rui8_channel = 0
+          #endif
+          );
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
   void close( void ){};
@@ -179,6 +180,11 @@ public:
     @return RS232 baudrate
   */
   uint16_t baudrate()const{return ui16_baudrate;};
+  /**
+    deliver the decoding type
+    @return RS232 type
+   */
+  t_dataMode dataMode()const{return en_dataMode;};
 
   /**
     set send puffer size
@@ -213,10 +219,10 @@ public:
   */
   uint16_t rec_pufferSize()const{return ui16_recPuf;};
 
-	#ifdef USE_RS232_CHANNEL
-	/** get the channel */
-	uint8_t getChannel() const { return ui8_channel;};
-	#endif
+  #ifdef USE_RS232_CHANNEL
+  /** get the channel */
+  uint8_t getChannel() const { return ui8_channel;};
+  #endif
   /**
     clear the receive puffer without reading of actual data in puffer
   */
@@ -344,14 +350,14 @@ public:
     @param rui8_len length of data string
   */
   void receive(uint8_t* pData, uint8_t rui8_len);
-	/** read a line to the next apperance of '\n'.
-			read nothing if the delimiter isn't found.
-		@param pui8_data    pointer to puffer for writing the data
-		@param ui8_lastChar terminating char for read ( default '\n' )
-		@return HAL_NOACT_ERR -> nothing copied as delimiter not found;
-		        HAL_NO_ERR -> delimiter found; text before delimiter copied; delimiter removed
-	*/
-	int16_t getLine( uint8_t* pui8_data, uint8_t ui8_lastChar = '\n' );
+  /** read a line to the next apperance of '\n'.
+      read nothing if the delimiter isn't found.
+    @param pui8_data    pointer to puffer for writing the data
+    @param ui8_lastChar terminating char for read ( default '\n' )
+    @return HAL_NOACT_ERR -> nothing copied as delimiter not found;
+            HAL_NO_ERR -> delimiter found; text before delimiter copied; delimiter removed
+  */
+  int16_t getLine( uint8_t* pui8_data, uint8_t ui8_lastChar = '\n' );
 
   /**
     receive whitespace (or puffer end) terminated string on RS232
@@ -359,6 +365,13 @@ public:
     @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
   */
   RS232IO_c& operator>>(std::basic_string<char>& refc_data);
+  /**
+    read the received RS232 string into a deque.
+    read until the end of the buffer.
+    @param refc_data reference to data deque for receive
+    @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
+   */
+  RS232IO_c& operator>>(std::deque<char>& refc_data);
   /**
     receive '\n' (or puffer end) terminated string on RS232
     @param pb_data pointer to string to receive
@@ -462,10 +475,10 @@ private:
   uint16_t ui16_sndPuf;
   uint16_t ui16_recPuf;
   char pc_token[15];
-	#ifdef USE_RS232_CHANNEL
-	/** new: define channel to use for RS232 */
-	uint8_t ui8_channel;
-	#endif
+  #ifdef USE_RS232_CHANNEL
+  /** new: define channel to use for RS232 */
+  uint8_t ui8_channel;
+  #endif
 };
 
 

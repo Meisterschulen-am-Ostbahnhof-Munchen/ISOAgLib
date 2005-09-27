@@ -312,6 +312,19 @@ public:
    */
   void setCalendarLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second)
   {Base_c::setCalendarLocal(ri16_year, rb_month, rb_day, rb_hour, rb_minute, rb_second);};
+  /** set the date in local timezone */
+  void setDateLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day)
+  {Base_c::setDateLocal(ri16_year, rb_month, rb_day);};
+  /** set the date in UTC timezone */
+  void setDateUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day)
+  {Base_c::setDateUtc(ri16_year, rb_month, rb_day);};
+
+  /** set the time in local timezone */
+  void setTimeLocal(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0)
+  {Base_c::setTimeLocal(rb_hour, rb_minute, rb_second, rui16_msec);};
+  /** set the time in UTC timezone */
+  void setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0)
+  {Base_c::setTimeUtc(rb_hour, rb_minute, rb_second, rui16_msec);};
   /*@}*/
 
   /* ****************************************************** */

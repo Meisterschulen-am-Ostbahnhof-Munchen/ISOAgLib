@@ -116,6 +116,7 @@ class SaClaimHandler_c
 {
  public:
    SaClaimHandler_c(){};
+   virtual ~SaClaimHandler_c(){};
    /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
      * @param refc_devKey const reference to the item which ISOItem_c state is changed
      * @param rpc_newItem pointer to the currently corresponding ISOItem_c

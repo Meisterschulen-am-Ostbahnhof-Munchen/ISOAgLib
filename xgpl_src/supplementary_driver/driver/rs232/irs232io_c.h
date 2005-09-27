@@ -100,15 +100,15 @@ public:
           t_dataMode ren_dataMode = iRS232IO_c::t_dataMode(CONFIG_RS232_DEFAULT_DATA_MODE),
           bool rb_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
           uint16_t rui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
-					#ifdef USE_RS232_CHANNEL
-					,uint8_t rui8_channel = 0
-					#endif
-					)
+          #ifdef USE_RS232_CHANNEL
+          ,uint8_t rui8_channel = 0
+          #endif
+          )
   {return RS232IO_c::init(rui16_baudrate, RS232IO_c::t_dataMode(ren_dataMode), rb_xonXoff, rui16_sndPuf, rui16_recPuf
-				#ifdef USE_RS232_CHANNEL
-				,rui8_channel
-				#endif
-	);};
+        #ifdef USE_RS232_CHANNEL
+        ,rui8_channel
+        #endif
+  );};
   /**
     set the baudrate to a new value
     @param rui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
@@ -124,6 +124,11 @@ public:
     @return RS232 baudrate
   */
   uint16_t baudrate() const {return RS232IO_c::baudrate();};
+  /**
+    deliver the decoding type
+    @return RS232 type
+   */
+  t_dataMode dataMode()const{return t_dataMode(RS232IO_c::dataMode());};
 
   /**
     set send puffer size
@@ -296,15 +301,15 @@ public:
     @param rui8_len length of data string
   */
   void receive(uint8_t* pData, uint8_t rui8_len) {RS232IO_c::receive(pData, rui8_len);};
-	/** read a line to the next apperance of '\n'.
-			read nothing if the delimiter isn't found.
-		@param pui8_data    pointer to puffer for writing the data
-		@param ui8_lastChar terminating char for read ( default '\n' )
-		@return HAL_NOACT_ERR -> nothing copied as delimiter not found;
-		        HAL_NO_ERR -> delimiter found; text before delimiter copied; delimiter removed
-	*/
-	int16_t getLine( uint8_t* pui8_data, uint8_t ui8_lastChar = '\n' )
-		{ return RS232IO_c::getLine( pui8_data, ui8_lastChar );};
+  /** read a line to the next apperance of '\n'.
+      read nothing if the delimiter isn't found.
+    @param pui8_data    pointer to puffer for writing the data
+    @param ui8_lastChar terminating char for read ( default '\n' )
+    @return HAL_NOACT_ERR -> nothing copied as delimiter not found;
+            HAL_NO_ERR -> delimiter found; text before delimiter copied; delimiter removed
+  */
+  int16_t getLine( uint8_t* pui8_data, uint8_t ui8_lastChar = '\n' )
+    { return RS232IO_c::getLine( pui8_data, ui8_lastChar );};
   /**
     receive whitespace (or puffer end) terminated string on RS232
     @param refc_data reference to data string for receive
@@ -312,6 +317,14 @@ public:
   */
   iRS232IO_c& operator>>( std::basic_string<char>& refc_data)
     {return static_cast<iRS232IO_c&>(RS232IO_c::operator>>(refc_data));};
+  /**
+    read the received RS232 string into a deque.
+    read until the end of the buffer.
+    @param refc_data reference to data deque for receive
+    @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
+   */
+  RS232IO_c& operator>>(std::deque<char>& refc_data)
+  { return static_cast<iRS232IO_c&>(RS232IO_c::operator>>(refc_data)); };
   /**
     receive '\n' (or puffer end) terminated string on RS232
     @param pb_data pointer to string to receive
@@ -398,12 +411,12 @@ public:
   #endif
 private: //Private methods
   #if defined( RS232_INSTANCE_CNT ) && ( RS232_INSTANCE_CNT > 1 )
-	/** allow getIrs232Instance() access to shielded base class.
+  /** allow getIrs232Instance() access to shielded base class.
       otherwise __IsoAgLib::getRs232Instance() wouldn't be accepted by compiler
     */
   friend iRS232IO_c& getIrs232Instance( uint8_t rui8_instance );
   #else
-	/** allow getIrs232Instance() access to shielded base class.
+  /** allow getIrs232Instance() access to shielded base class.
       otherwise __IsoAgLib::getRs232Instance() wouldn't be accepted by compiler
     */
   friend iRS232IO_c& getIrs232Instance( void );

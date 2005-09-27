@@ -368,16 +368,19 @@ void Base_c::config(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_myS
   */
 int32_t Base_c::lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
 {
+  const int32_t ci32_now = System_c::getTime();
   switch ( rt_mySendSelection )
   {
-    case IsoAgLib::BaseDataGroup1:   return i32_lastBase1;
-    case IsoAgLib::BaseDataGroup2:   return i32_lastBase2;
-    case IsoAgLib::BaseDataGroup3:   return i32_lastBase3;
-    case IsoAgLib::BaseDataCalendar: return i32_lastCalendar;
+    case IsoAgLib::BaseDataGroup1:   return ( ci32_now - i32_lastBase1);
+    case IsoAgLib::BaseDataGroup2:   return ( ci32_now - i32_lastBase2);
+    case IsoAgLib::BaseDataGroup3:   return ( ci32_now - i32_lastBase3);
+    case IsoAgLib::BaseDataCalendar: return ( ci32_now -  i32_lastCalendar);
 
-    case IsoAgLib::BaseDataFuel:     return i32_lastCalendar;
+    case IsoAgLib::BaseDataFuel:     return ( ci32_now - i32_lastFuel);
     #ifdef USE_ISO_11783
-    case IsoAgLib::BaseDataGps:      return i32_lastCalendar;
+    case IsoAgLib::BaseDataGps:
+      if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple ) return ( ci32_now - i32_lastIsoPositionStream);
+      else return ( ci32_now - i32_lastIsoPositionSimple);
     #endif
     default: return 0x7FFFFFFF;
   }
@@ -1822,6 +1825,9 @@ const DevKey_c& Base_c::senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) {
   if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup3   ) != 0 ) return c_sendBase3DevKey;
   if ( ( rt_typeGrp & IsoAgLib::BaseDataFuel     ) != 0 ) return c_sendFuelDevKey;
   if ( ( rt_typeGrp & IsoAgLib::BaseDataCalendar ) != 0 ) return c_sendCalendarDevKey;
+  #if defined(USE_ISO_11783) && defined(NMEA_2000_FAST_PACKET)
+  if ( ( rt_typeGrp & IsoAgLib::BaseDataGps      ) != 0 ) return c_sendGpsDevKey;
+  #endif
   else return DevKey_c::DevKeyUnspecified;
 }
 

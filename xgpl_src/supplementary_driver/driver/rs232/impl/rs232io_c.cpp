@@ -89,7 +89,7 @@
 
 #if defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__)
 // #if 0
-  #define	isspace(_c)	((_c)&(0x1|0x4|'\r'|'\n'))
+  #define isspace(_c) ((_c)&(0x1|0x4|'\r'|'\n'))
 #else
   #include <cctype>
   #if !defined(__TSW_CPP_756__) && !defined(SYSTEM_PC_VC)
@@ -142,10 +142,10 @@ RS232IO_c::~RS232IO_c(){
 */
 bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_xonXoff,
         uint16_t rui16_sndPuf, uint16_t rui16_recPuf
-				#ifdef USE_RS232_CHANNEL
-				, uint8_t rui8_channel
-				#endif
-				)
+        #ifdef USE_RS232_CHANNEL
+        , uint8_t rui8_channel
+        #endif
+        )
 {
   bool b_result;
   // verify that System is int
@@ -179,9 +179,9 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
   b_xon_xoff = rb_xonXoff;
   ui16_sndPuf = rui16_sndPuf;
   ui16_recPuf = rui16_recPuf;
-	#ifdef USE_RS232_CHANNEL
-	ui8_channel = rui8_channel;
-	#endif
+  #ifdef USE_RS232_CHANNEL
+  ui8_channel = rui8_channel;
+  #endif
 
   // set error state if one of b_baudAllowed and b_dataModeAllowed is false
   // and init hardware if everything is accepted
@@ -378,11 +378,11 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
   */
   RS232IO_c& RS232IO_c::operator<<(int8_t rc_data)
   {
-		#ifdef WIN32
+    #ifdef WIN32
     int16_t i16_val = (rc_data >= 0)?rc_data:(-1*(abs(rc_data)));
-		#else
+    #else
     int16_t i16_val = (rc_data >= 0)?rc_data:(-1*(CNAMESPACE::abs(rc_data)));
-		#endif
+    #endif
     char pc_data[5];
     // sprintf print value as text to uint8_t string and terminate it with '\0'
     CNAMESPACE::sprintf(pc_data, "%hi", i16_val);
@@ -517,15 +517,15 @@ void RS232IO_c::receive(uint8_t* pData, uint8_t rui8_len)
 }
 
 /** read a line to the next apperance of '\n'.
-		read nothing if the delimiter isn't found.
-	@param pui8_data    pointer to puffer for writing the data
-	@param ui8_lastChar terminating char for read
-	@return HAL_NOACT_ERR -> nothing copied as delimiter not found;
-					HAL_NO_ERR -> delimiter found; text before delimiter copied; delimiter removed
+    read nothing if the delimiter isn't found.
+  @param pui8_data    pointer to puffer for writing the data
+  @param ui8_lastChar terminating char for read
+  @return HAL_NOACT_ERR -> nothing copied as delimiter not found;
+          HAL_NO_ERR -> delimiter found; text before delimiter copied; delimiter removed
 */
 int16_t RS232IO_c::getLine( uint8_t* pui8_data, uint8_t ui8_lastChar )
 {
-	return HAL::getRs232String( pui8_data, ui8_lastChar RS232_CHANNEL_PARAM_LAST);
+  return HAL::getRs232String( pui8_data, ui8_lastChar RS232_CHANNEL_PARAM_LAST);
 }
 
 /**
@@ -551,17 +551,37 @@ RS232IO_c& RS232IO_c::operator>>(std::basic_string<char>& refc_data)
 
   // now b_data is a not whitespace byte
 //  refc_data = b_data; // store it
-  for (; !eof();
-       HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST))
+  while ( !eof() )
   {
+    HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST);
     //CNAMESPACE::strncat(pc_tempArray, (char *)&b_data, 1);
-		if ((b_data == ' ' ) || (b_data == '\t' )) break;
-		else refc_data.push_back( b_data );
+    if ((b_data == ' ' ) || (b_data == '\t' )) break;
+    else refc_data.push_back( b_data );
 //      following line caused assertion
 //    refc_data += b_data;
   }
   return *this;
 }
+
+/**
+  read the received RS232 string into a deque.
+  read until the end of the buffer.
+  @param refc_data reference to data deque for receive
+  @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
+  */
+RS232IO_c& RS232IO_c::operator>>(std::deque<char>& refc_data)
+{
+  uint8_t b_data;
+
+  while ( !eof() )
+  {
+    HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST);
+    refc_data.push_back( b_data );
+  }
+  return *this;
+}
+
+
 
 /**
   receive '\n' (or puffer end) terminated string on RS232
