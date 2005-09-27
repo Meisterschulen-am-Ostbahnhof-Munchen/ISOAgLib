@@ -536,13 +536,14 @@ function create_filelist( )
 			else
 				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
 			fi
-			PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
-			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
+#			PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
+#			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
 		else
 			echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
 			echo 'Current Setting is $USE_RS232_DRIVER'
 			exit 3
 		fi
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/rs232_target_extensions.h'"
   fi
 
   LIB_ROOT="../$ISO_AG_LIB_PATH/xgpl_src"
@@ -821,6 +822,7 @@ function create_autogen_project_config()
 	else
 		echo -e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
 	fi
+
 
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME

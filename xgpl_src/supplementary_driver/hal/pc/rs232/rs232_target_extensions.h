@@ -57,6 +57,14 @@
 #include <IsoAgLib/hal/pc/typedef.h>
 
 namespace __HAL {
+typedef enum {
+  DATA_7_BITS_EVENPARITY   = 1,
+  DATA_8_BITS_EVENPARITY   = 2,
+  DATA_7_BITS_ODDPARITY    = 3,
+  DATA_8_BITS_ODDPARITY    = 4,
+  DATA_8_BITS_NOPARITY     = 5
+} Rs232PortMode_t;
+
 /* ******************************************************** */
 /**
  * \name RS232 I/O BIOS functions
