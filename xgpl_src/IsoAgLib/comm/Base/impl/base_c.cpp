@@ -481,10 +481,10 @@ bool Base_c::timeEvent( void ) {
   { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
     c_sendGpsDevKey.setUnspecified();
     i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
+    #ifdef NMEA_2000_FAST_PACKET
     ui8_satelliteCnt = 0;
     t_gnssMethod = IsoAgLib::IsoNoGps;
     t_gnssType = IsoAgLib::IsoGnssGps;
-    #ifdef NMEA_2000_FAST_PACKET
     ui32_altitudeCm = 0;
     #endif
   }
@@ -1348,6 +1348,7 @@ bool Base_c::isoTimeEvent( void )
       isoSendPositionRapidUpdate();
     }
 
+    #ifdef NMEA_2000_FAST_PACKET
     if ( ( ( ci32_now - i32_lastIsoPositionStream ) >= 1000 )
       && ( t_multiSendSuccessState != MultiSend_c::Running  ) )
     {
@@ -1361,6 +1362,7 @@ bool Base_c::isoTimeEvent( void )
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
       isoSendDirectionStream();
     }
+    #endif
   }
   return true;
 }
