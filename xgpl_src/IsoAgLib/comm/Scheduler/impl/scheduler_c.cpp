@@ -85,19 +85,21 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/liberr_c.h>
+#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+
 
 #if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
   #include <IsoAgLib/hal/eeprom.h>
 #endif
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-	#include <IsoAgLib/util/impl/util_funcs.h>
-	#ifdef SYSTEM_PC
-		#include <iostream>
-	#else
-		#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-	#endif
-	#include <IsoAgLib/util/impl/util_funcs.h>
+  #include <IsoAgLib/util/impl/util_funcs.h>
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -178,7 +180,7 @@ void Scheduler_c::closeCommunication( void ) {
   while ( ! c_arrClientC1.empty() )
   { // call close for each registered client
     pc_searchCacheC1 = c_arrClientC1.begin();
-		if ( *pc_searchCacheC1 != NULL ) (*pc_searchCacheC1)->close();
+    if ( *pc_searchCacheC1 != NULL ) (*pc_searchCacheC1)->close();
   }
 }
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
@@ -218,7 +220,7 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
     sui16_clientTimeTotal++;
 
     getRs232Instance()
-	    << sui16_clientPointerTotal
+      << sui16_clientPointerTotal
       << "(" << c_arrClientC1.capacity()
       << ") x Scheduler_c Clients: Mal-Alloc: "
       << sizeVectorTWithMalloc( sizeof(void*), c_arrClientC1.capacity() )
@@ -226,7 +228,7 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
       << ", Chunk-Alloc: "
       << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
       << "\r\n"
-	    << sui16_clientTimeTotal
+      << sui16_clientTimeTotal
       << "(" << arrExecTime.capacity()
       << ") x Execution Times: Mal-Alloc: "
       << sizeVectorTWithMalloc( sizeof(uint16_t), arrExecTime.capacity() )
@@ -270,12 +272,12 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
   // bring time array and client array in sync
   while ( c_arrClientC1.size() < arrExecTime.size() )
   { // delete last element
-		#ifdef DEBUG_HEAP_USEAGE
+    #ifdef DEBUG_HEAP_USEAGE
     sui16_clientPointerTotal--;
     sui16_clientTimeTotal--;
 
     getRs232Instance()
-	    << sui16_clientPointerTotal
+      << sui16_clientPointerTotal
       << "(" << c_arrClientC1.capacity()
       << ") x Scheduler_c Clients: Mal-Alloc: "
       << sizeVectorTWithMalloc( sizeof(void*), c_arrClientC1.capacity() )
@@ -283,7 +285,7 @@ void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
       << ", Chunk-Alloc: "
       << sizeVectorTWithChunk( sizeof(void*), c_arrClientC1.capacity() )
       << "\r\n"
-	    << sui16_clientTimeTotal
+      << sui16_clientTimeTotal
       << "(" << arrExecTime.capacity()
       << ") x Execution Times: Mal-Alloc: "
       << sizeVectorTWithMalloc( sizeof(uint16_t), arrExecTime.capacity() )
@@ -349,42 +351,46 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   int32_t i32_now = System_c::getTime();
   int32_t i32_stepStartTime = i32_lastTimeEventTime = i32_now;
 
-	i32_demandedExecEnd = ri32_demandedExecEnd;
-	#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-	if ( ri32_demandedExecEnd < 0 )
-	{ // limit execution time, even if no limit was defined by caller - avoid deadlock due to overload
-		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-	}
-	#endif
+  i32_demandedExecEnd = ri32_demandedExecEnd;
+  #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+  if ( ri32_demandedExecEnd < 0 )
+  { // limit execution time, even if no limit was defined by caller - avoid deadlock due to overload
+    i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+  }
+  #endif
   // trigger the watchdog
   System_c::triggerWd();
   // define flag to detect amount of executed tasks
   uint8_t ui8_execCnt = 0;
   // check if immediate return is needed
-  if ( getAvailableExecTime( i16_canExecTime ) == 0 ) 
+  if ( getAvailableExecTime( i16_canExecTime ) == 0 )
   {
      // reset awaited can processing execution time to prevent dead lock
      i16_canExecTime = 0;
      return false;
   }
 
+  // FIRST give the SystemMgmt_c class a chance to do periodic actions
+  // like sending alive messages
+  getSystemMgmtInstance4Comm().timeEvent();
+
   // process CAN messages
   if ( getCanInstance4Comm().timeEvent() )
   { // all CAN_IO activities ready -> update statistic for CAN_IO
     i16_canExecTime = System_c::getTime() - i32_stepStartTime;
   }
-	System_c::triggerWd();
+  System_c::triggerWd();
 
   #ifdef USE_DIN_9684
   // if names are received -> call additionally DINMaskupload, to create local
   // process data which are requested by terminal for mask sync
   if ( ( pc_ctlDinMaskupload != NULL ) && ( b_din_memberNameReceived || b_switch2AddressClaim ) )
   { // make execution unlimited for this special case
-		#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-		#else
+    #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+    i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+    #else
     i32_demandedExecEnd = -1;
-		#endif
+    #endif
   }
   #endif
 
@@ -405,18 +411,18 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
     getCanInstance( ind ).timeEvent();
   }
   #endif
-	System_c::triggerWd();
+  System_c::triggerWd();
 
   #ifdef USE_DIN_9684
   // if names are received -> call additionally DINMaskupload, to create local
   // process data which are requested by terminal for mask sync
   if ( ( pc_ctlDinMaskupload != NULL ) && ( b_din_memberNameReceived || b_switch2AddressClaim ) )
   { // make execution unlimited for this special case
-		#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-		#else
+    #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+    i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+    #else
     i32_demandedExecEnd = -1;
-		#endif
+    #endif
   }
   #endif
 
@@ -453,11 +459,11 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   // call aditionally CANIO_c if fresh address claim
   if ( b_switch2AddressClaim )
   { // make execution unlimited for this special case
-		#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-		#else
+    #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+    i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+    #else
     i32_demandedExecEnd = -1;
-		#endif
+    #endif
     // call CANIO_c::processMsg to detect immediate reactions of other members on local address claim
     getCanInstance4Comm().processMsg();
   }
@@ -465,11 +471,11 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
   // process data which are requested by terminal for mask sync
   if ( ( pc_ctlDinMaskupload != NULL ) && ( b_din_memberNameReceived || b_switch2AddressClaim ) )
   { // make execution unlimited for this special case
-		#ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-		i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-		#else
+    #ifdef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
+    i32_demandedExecEnd = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
+    #else
     i32_demandedExecEnd = -1;
-		#endif
+    #endif
     // DINMaskUpload_c is registered and new names are received
     pc_ctlDinMaskupload->timeEvent();
     // clear flag b_din_memberNameReceived
