@@ -155,14 +155,9 @@ void Process_c::init()
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
   i32_lastFilterBoxTime = 0;
-#ifdef USE_ISO_11783
-  i32_lastTaskStatusTime = 0;
-  ui8_runningTaskWithSa = 0xFF;         // Initialize to 0xFF because it is an address we can't have. -bac
-  ui8_taskStatus = 0;
-  #ifdef USE_PROC_DATA_DESCRIPTION_POOL
+  #if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
   c_devPropertyHandler.init(&c_data);
   #endif
-#endif
   c_data.setSingletonKey( getSingletonVecKey() );
 
   // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
