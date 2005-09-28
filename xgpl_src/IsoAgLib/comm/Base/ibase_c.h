@@ -470,6 +470,20 @@ public:
     @param rb_second actual calendar second value
   */
   void setSecond(uint8_t rb_second) { Base_c::setSecond( rb_second );};
+  /**
+  set the calendar millisecond value
+  @param rb_millisecond actual calendar second value
+   */
+  void setMillisecond(uint16_t rui16_millisecond) { Base_c::setMillisecond( rui16_millisecond );};
+  /**
+  get the calendar millisecond value
+  @return actual calendar second value
+   */
+  uint16_t millisecond() const { return Base_c::millisecond();};
+
+  /** set the local time to UTC time offsets */
+  void setLocalTimeOffsets( int16_t ri16_hourOffset, uint16_t rui16_minuteOffset )
+  {Base_c::setLocalTimeOffsets( ri16_hourOffset, rui16_minuteOffset );};
 
   /**
     deliver the devKey of the sender of the base data

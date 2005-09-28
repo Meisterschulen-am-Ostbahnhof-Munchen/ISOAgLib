@@ -628,6 +628,10 @@ public: // Public methods
    */
   uint16_t millisecond() const {return ((bit_calendar.msec + calendarSetAge())%1000);};
 
+  /** set the local time to UTC time offsets */
+  void setLocalTimeOffsets( int16_t ri16_hourOffset, uint16_t rui16_minuteOffset )
+  {bit_calendar.timezoneHourOffsetMinus24 = (ri16_hourOffset+24); bit_calendar.timezoneMinuteOffset = rui16_minuteOffset;};
+
   /**
     deliver the devKey of the sender of the base data
 

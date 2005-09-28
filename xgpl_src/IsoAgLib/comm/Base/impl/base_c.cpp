@@ -219,7 +219,7 @@ void Base_c::init(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySen
   bit_calendar.second = 0;
   bit_calendar.msec = 0;
   bit_calendar.timezoneMinuteOffset = 0;
-  bit_calendar.timezoneHourOffsetMinus24 = 0;
+  bit_calendar.timezoneHourOffsetMinus24 = 24;
 
   setHitchRear(NO_VAL_8);
   setHitchFront(NO_VAL_8);
