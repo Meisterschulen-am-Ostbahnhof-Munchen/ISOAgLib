@@ -174,12 +174,6 @@ void Process_c::init()
 
 }
 
-#ifdef USE_ISO_11783
-void Process_c::setTaskStatus(uint8_t taskStatus)
-{
-    ui8_taskStatus = taskStatus;
-}
-#endif
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */
 void Process_c::close( void ) {
@@ -328,41 +322,6 @@ bool Process_c::timeEvent( void ){
       #endif
   }
   #endif
-
-#ifdef USE_ISO_11783
-  const ISOItem_c *pc_checkLocal = NULL;
-  SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
-
-  for ( int ind = 0; ind < c_systemMgmt.localIsoMemberCnt(); ind++ )
-  {
-    pc_checkLocal = &(c_systemMgmt.localIsoMemberInd( ind ));
-    if ( ( pc_checkLocal->devKey().getConstName().devClass() == 0 )
-      && ( pc_checkLocal->devKey().getConstName().func() == 130   )
-      && ( pc_checkLocal->itemState(IState_c::ClaimedAddress)  ) )
-    { // local ident has identity of TC and has already claimed an address
-      ui8_runningTaskWithSa = pc_checkLocal->nr();
-      break;
-    }
-  }
-  if(ui8_runningTaskWithSa == 0xFF)
-  {
-    if(getSystemMgmtInstance4Comm().existMemberNr(ui8_runningTaskWithSa)) //getSystemMgmtInstance().existLocalMemberDevKey(c_myDevKey))
-    {
-      ui8_runningTaskWithSa = getSystemMgmtInstance4Comm().memberNr(ui8_runningTaskWithSa).nr();
-    }
-  }
-  if (ui8_runningTaskWithSa != 0xFF && (i32_time - i32_lastTaskStatusTime > 2000))
-  {
-    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    ISOSystemPkg_c& c_pkg = c_isoMonitor.data();
-    i32_lastTaskStatusTime = i32_time;
-
-    //Send task status message
-    c_pkg.setExtCanPkg8(7, 0, 0xCB, 0xFF, ui8_runningTaskWithSa,   // OxCB == 203dec = Process Data PGN
-          0x0E, 0x00, 0x00, 0x00, ui8_taskStatus, 0x00, 0x00, 0x00 );
-    getCanInstance4Comm() << c_pkg;     // Task Status Message
-  }
-#endif
 
   // call the time event for all local data
   for ( pc_searchCacheC1 = c_arrClientC1.begin();

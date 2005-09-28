@@ -277,13 +277,6 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
        if (!processData().sendValDevKey(ren_progType, devKey(), i32_tmpValue))
           b_sendResult = false;
     }
-
-#ifdef USE_ISO_11783
-    if (b_sendResult == true)
-       // Update the state to reflect that the task has started
-       getProcessInstance4Comm().setTaskStatus(1);
-#endif
-
   }
 
   // call base function for registering start state
@@ -394,12 +387,6 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
         b_result = processData().sendValDevKey(ui8_pri, devKey(), int32_t(0));
       }
     }
-
-#ifdef USE_ISO_11783
-    // Set task status to stopped.
-    getProcessInstance4Comm().setTaskStatus(0);
-#endif
-
   }
 
   if (en_msgProto == IState_c::Din) {

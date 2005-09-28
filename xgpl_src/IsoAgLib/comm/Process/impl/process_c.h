@@ -444,9 +444,6 @@ public:
     */
   void unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient);
 
-#ifdef USE_ISO_11783
-   void setTaskStatus(uint8_t taskStatus);
-#endif
   /**
     delete FilterBox_c for receive from remote devKey if needed
     (important to delete old Filter Boxes after deletion of
@@ -564,12 +561,6 @@ private: // Private attributes
 
   /** last timestamp with FilterBox_c check */
   int32_t i32_lastFilterBoxTime;
-
-#ifdef USE_ISO_11783
-  int32_t i32_lastTaskStatusTime;
-  uint8_t ui8_runningTaskWithSa;
-  uint8_t ui8_taskStatus;
-#endif
 
 #ifdef USE_ISO_11783
   std::list<uint32_t> l_filtersToDeleteISO;
