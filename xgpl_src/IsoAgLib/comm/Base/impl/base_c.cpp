@@ -379,8 +379,10 @@ int32_t Base_c::lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
     case IsoAgLib::BaseDataFuel:     return ( ci32_now - i32_lastFuel);
     #ifdef USE_ISO_11783
     case IsoAgLib::BaseDataGps:
+    #ifdef NMEA_2000_FAST_PACKET
       if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple ) return ( ci32_now - i32_lastIsoPositionStream);
       else return ( ci32_now - i32_lastIsoPositionSimple);
+    #endif
     #endif
     default: return 0x7FFFFFFF;
   }
