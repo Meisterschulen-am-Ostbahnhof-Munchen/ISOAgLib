@@ -110,12 +110,12 @@ static const int32_t sci32_timeOutT5=750;  // dpo -> data (ETP only, naming "T5"
 static const int32_t sci32_timeOutFP=750;  // FPdata <-> FPdata
 static const int32_t sci32_timeNever=-1;
 #else
-static const int32_t sci32_timeOutT1=500;  // data -> data
+static const int32_t sci32_timeOutT1=1000;  // data -> data
 static const int32_t sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)
 static const int32_t sci32_timeOutT3=1250; // data/rts -> cts (not needed for checking here)
 static const int32_t sci32_timeOutT4=1100;  // cts(0)<->cts
-static const int32_t sci32_timeOutT5=750;  // dpo -> data (ETP only, naming "T5" done by Martin)
-static const int32_t sci32_timeOutFP=750;  // FPdata <-> FPdata
+static const int32_t sci32_timeOutT5=1000;  // dpo -> data (ETP only, naming "T5" done by Martin)
+static const int32_t sci32_timeOutFP=1000;  // FPdata <-> FPdata
 static const int32_t sci32_timeNever=-1;
 #endif
 
