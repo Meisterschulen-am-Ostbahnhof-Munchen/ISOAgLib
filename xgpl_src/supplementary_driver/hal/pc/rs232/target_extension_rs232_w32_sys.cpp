@@ -223,9 +223,17 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t ui8_terminateChar, uint8_t compor
 int16_t getRs232Char(uint8_t *pbRead, uint8_t comport)
 {
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  DWORD x;
-  if (!ReadFile(hCom[comport],pbRead,1,&x,NULL)) return 0;
-  return (x > 0)?HAL_NO_ERR:HAL_NOACT_ERR;
+  getRs232RxBufCount(rui8_channel);
+  if (deq_readPuff[comport].size() > 0)
+  {
+    pbRead[0] = deq_readPuff[comport].front();
+    deq_readPuff[comport].pop_front();
+    return HAL_NO_ERR;
+  }
+  else
+  {
+    return HAL_NOACT_ERR;
+  }
 }
 
 #if 0

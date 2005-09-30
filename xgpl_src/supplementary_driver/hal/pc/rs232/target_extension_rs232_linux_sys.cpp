@@ -257,7 +257,6 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
   {
     pbRead[0] = deq_readPuff[rui8_channel].front();
     deq_readPuff[rui8_channel].pop_front();
-    pbRead[1] = '\0';
     return HAL_NO_ERR;
   }
   else
