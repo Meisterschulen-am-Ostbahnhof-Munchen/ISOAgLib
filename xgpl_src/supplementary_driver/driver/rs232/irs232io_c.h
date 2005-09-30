@@ -164,6 +164,11 @@ public:
     @return receive puffer size
   */
   uint16_t rec_pufferSize()const{return RS232IO_c::rec_pufferSize();};
+
+  #ifdef USE_RS232_CHANNEL
+  /** get the channel */
+  uint8_t getChannel() const { return RS232IO_c::getChannel();};
+  #endif
   /**
     clear the receive puffer without reading of actual data in puffer
   */
