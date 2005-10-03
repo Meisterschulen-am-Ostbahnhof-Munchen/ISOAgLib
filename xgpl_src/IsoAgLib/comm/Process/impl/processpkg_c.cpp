@@ -797,7 +797,7 @@ bool ProcessPkg_c::resolveCommandType(
   bool b_isRequest = false;
   GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue;
   GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
-
+  
   if ( identType() == Ident_c::StandardIdent) {
 
 #ifdef USE_DIN_9684
@@ -866,6 +866,20 @@ bool ProcessPkg_c::resolveCommandType(
           en_command = GeneralCommand_c::measurementStart;
         if ( (dataLong() & 0xF) == 0x8)
           en_command = GeneralCommand_c::measurementReset;
+
+        // use en_valueGroup minValue/maxValue to transmit information how to start measure prog (DoVal, DoMin, DoMax)
+        uint8_t b_cmd = data(0);
+        switch (b_cmd >> 4)
+        {
+          case DoMin:
+            en_valueGroup = GeneralCommand_c::minValue;
+            break;
+          case DoMax:
+            en_valueGroup = GeneralCommand_c::maxValue;
+            break;
+          default:
+            ;
+        }
       }
     }
 

@@ -691,7 +691,22 @@ bool MeasureProgBase_c::processMsg(){
         }
 
         if (en_type != Proc_c::NullType)
-           start(static_cast<Proc_c::progType_t>(c_pkg.pri()), en_type, Proc_c::DoVal);
+        {
+          GeneralCommand_c::ValueGroup_t en_valueGroup = c_pkg.c_generalCommand.getValueGroup();
+          Proc_c::doSend_t en_doSend = Proc_c::DoVal;
+          switch (en_valueGroup)
+          {
+            case GeneralCommand_c::minValue:
+              en_doSend = Proc_c::DoMin;
+              break;
+            case GeneralCommand_c::maxValue:
+              en_doSend = Proc_c::DoMax;
+              break;
+            default:
+              ;
+          }    
+          start(static_cast<Proc_c::progType_t>(c_pkg.pri()), en_type, en_doSend);
+        }
       }
       else
        stop();
