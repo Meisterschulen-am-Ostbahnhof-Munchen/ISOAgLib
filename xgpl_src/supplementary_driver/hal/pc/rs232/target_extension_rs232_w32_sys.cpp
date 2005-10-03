@@ -1,9 +1,12 @@
 #include "rs232_target_extensions.h"
 
+#include <IsoAgLib/hal/pc/errcodes.h>
+
 #include <stdio.h>      /* for fgets()  */
 #include <stdlib.h>     /* for atexit() */
 #include <conio.h>      /* for KeyXXX() */
 #include <windows.h>    /* for SioXXX() */
+#include <deque>
 
 namespace __HAL {
 HANDLE hCom[RS232_INSTANCE_CNT];
@@ -39,7 +42,7 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
 
   DCB dcb;
   COMMTIMEOUTS ct;
-  uint8_t com[] = "COMx";
+  char com[] = "COMx";
 
   com[3] = comport + 1 + '0';
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
@@ -109,7 +112,7 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
   if ( comport >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   DCB dcb;
   COMMTIMEOUTS ct;
-  uint8_t com[] = "COMx";
+  char com[] = "COMx";
 
   com[3] = comport + 1 + '0';
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
