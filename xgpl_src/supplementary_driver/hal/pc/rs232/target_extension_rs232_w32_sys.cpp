@@ -17,12 +17,12 @@ static uint32_t configuredComport = 0xFFFF;
 
 
 void SioExit(uint32_t comport) {
-  if ( comport >= RS232_INSTANCE_CNT ) return 0;
+  if ( comport >= RS232_INSTANCE_CNT ) return;
     CloseHandle(hCom[comport]);
 }
 
 void SioExit() {
-  if ( configuredComport >= RS232_INSTANCE_CNT ) return 0;
+  if ( configuredComport >= RS232_INSTANCE_CNT ) return;
     CloseHandle(hCom[configuredComport]);
 }
 
@@ -223,14 +223,14 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t ui8_terminateChar, uint8_t compor
   @param pbRead pointer to target data
   @return HAL_NO_ERR -> o.k. else puffer underflow
  */
-int16_t getRs232Char(uint8_t *pbRead, uint8_t comport)
+int16_t getRs232Char(uint8_t *pbRead, uint8_t rui8_channel)
 {
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   getRs232RxBufCount(rui8_channel);
-  if (deq_readPuff[comport].size() > 0)
+  if (deq_readPuff[rui8_channel].size() > 0)
   {
-    pbRead[0] = deq_readPuff[comport].front();
-    deq_readPuff[comport].pop_front();
+    pbRead[0] = deq_readPuff[rui8_channel].front();
+    deq_readPuff[rui8_channel].pop_front();
     return HAL_NO_ERR;
   }
   else
