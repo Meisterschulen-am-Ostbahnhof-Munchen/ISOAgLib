@@ -72,12 +72,11 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
 
   DCB dcb;
   COMMTIMEOUTS ct;
-  char com[] = "COMx";
-
+  char com[] = "//./COMx";
+  com[7] = comport + 1 + '0';
   // first close if already configured
   SioExit(comport);
 
-  com[3] = comport + 1 + '0';
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
   if (!hCom[comport]) return HAL_CONFIG_ERR;
   // read old config
@@ -86,7 +85,12 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
 
   atexit(SioExit);
 
-  if (!SetupComm(hCom[comport],1024,1024)) return HAL_CONFIG_ERR;
+  if (!SetupComm(hCom[comport],1024,1024))
+  {		
+		DWORD test = GetLastError();
+	  return HAL_CONFIG_ERR;
+  }
+  
   if (!GetCommState(hCom[comport],&dcb)) return HAL_CONFIG_ERR;
   dcb.BaudRate    = baudrate;
 
@@ -122,7 +126,11 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   if ( bitSoftwarehandshake ) dcb.fRtsControl = RTS_CONTROL_HANDSHAKE;
   else                        dcb.fRtsControl = RTS_CONTROL_ENABLE;
   if (!SetCommState(hCom[comport],&dcb)) return HAL_CONFIG_ERR;
-  if (!GetCommTimeouts(hCom[comport],&ct)) return HAL_CONFIG_ERR;
+  if (!GetCommTimeouts(hCom[comport],&ct)) 
+  {
+	  DWORD temp = GetLastError();
+	  return HAL_CONFIG_ERR;
+  }
   ct.ReadIntervalTimeout = MAXDWORD;
   ct.ReadTotalTimeoutMultiplier = 0;
   ct.ReadTotalTimeoutConstant = 0;
