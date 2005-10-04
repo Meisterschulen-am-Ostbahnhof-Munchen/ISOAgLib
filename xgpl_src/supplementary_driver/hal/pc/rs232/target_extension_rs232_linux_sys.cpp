@@ -27,25 +27,51 @@ struct termios t_com[RS232_INSTANCE_CNT];
 int32_t f_com[RS232_INSTANCE_CNT];
 std::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
 
+static bool arr_usedPort[RS232_INSTANCE_CNT] = {
+#if RS232_INSTANCE_CNT > 0
+false
+#endif
+#if RS232_INSTANCE_CNT > 1
+, false
+#endif
+#if RS232_INSTANCE_CNT > 2
+, false
+#endif
+#if RS232_INSTANCE_CNT > 3
+, false
+#endif
+#if RS232_INSTANCE_CNT > 4
+, false
+#endif
+};
 
 #define false 0
 #define true 1
 
 int8_t c_read;
-static uint32_t configuredComport = 0xFFFF;
 
 void SioExit(uint32_t comport)
 {
   if ( comport >= RS232_INSTANCE_CNT ) return;
-  tcsetattr(f_com[comport], TCSANOW, &(t_com[comport]));
-  close(f_com[comport]);
+  if ( arr_usedPort[comport] )
+  {
+    tcsetattr(f_com[comport], TCSANOW, &(t_com[comport]));
+    close(f_com[comport]);
+    arr_usedPort[comport] = false;
+  }
 }
 
 void SioExit()
 {
-  if ( configuredComport >= RS232_INSTANCE_CNT ) return;
-  tcsetattr(f_com[configuredComport], TCSANOW, &(t_com[configuredComport]));
-  close(f_com[configuredComport]);
+  for ( int ind = 0; ind < RS232_INSTANCE_CNT; ind++)
+  {
+    if ( arr_usedPort[ind] )
+    {
+      tcsetattr(f_com[ind], TCSANOW, &(t_com[ind]));
+      close(f_com[ind]);
+      arr_usedPort[ind] = false;
+    }
+  }
 }
 
 
@@ -69,8 +95,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   uint32_t  baudflag;
 
   // first close if already configured
-  if ( configuredComport != 0xFFFF ) SioExit(configuredComport);
-  configuredComport = rui8_channel;
+  SioExit(rui8_channel);
 
   b = t_baud;
   do {
@@ -81,8 +106,12 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   com[9] = rui8_channel+'0';
   if ((f_com[rui8_channel] = open(com, O_RDWR|O_NOCTTY|O_NDELAY)) < 0) return HAL_CONFIG_ERR;
   if (tcgetattr(f_com[rui8_channel], &(t_com[rui8_channel]))) return HAL_CONFIG_ERR;
+
+  arr_usedPort[rui8_channel] = true;
   atexit(SioExit);
-  fcntl(f_com[rui8_channel], F_SETFL, FNDELAY);                  /* Configure port reading */
+
+  /* Configure port reading */
+  fcntl(f_com[rui8_channel], F_SETFL, FNDELAY);
 
   /* Get the current options for the port */
   tcgetattr(f_com[rui8_channel], &tty_options);
@@ -164,7 +193,7 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t rui8_channel)
   uint32_t  baudflag;
 
   // first close if already configured
-  if ( configuredComport != 0xFFFF ) SioExit(configuredComport);
+  SioExit(rui8_channel);
 
   b = t_baud;
   do {

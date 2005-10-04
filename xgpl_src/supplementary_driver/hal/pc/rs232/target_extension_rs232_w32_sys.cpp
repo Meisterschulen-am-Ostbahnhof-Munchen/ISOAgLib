@@ -10,20 +10,50 @@
 
 namespace __HAL {
 HANDLE hCom[RS232_INSTANCE_CNT];
+DCB oldConfig[RS232_INSTANCE_CNT];
 std::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
 
 int8_t c_read;
-static uint32_t configuredComport = 0xFFFF;
+
+static int arr_usedPort[RS232_INSTANCE_CNT] = {
+#if RS232_INSTANCE_CNT > 0
+false
+#endif
+#if RS232_INSTANCE_CNT > 1
+, false
+#endif
+#if RS232_INSTANCE_CNT > 2
+, false
+#endif
+#if RS232_INSTANCE_CNT > 3
+, false
+#endif
+#if RS232_INSTANCE_CNT > 4
+, false
+#endif
+};
 
 
 void SioExit(uint32_t comport) {
   if ( comport >= RS232_INSTANCE_CNT ) return;
+  if ( arr_usedPort[comport] )
+  {
+    SetCommState(hCom[comport],&(oldConfig[comport]));
     CloseHandle(hCom[comport]);
+    arr_usedPort[comport] = false;
+  }
 }
 
 void SioExit() {
-  if ( configuredComport >= RS232_INSTANCE_CNT ) return;
-    CloseHandle(hCom[configuredComport]);
+  for ( int comport = 0; comport < RS232_INSTANCE_CNT; comport++)
+  {
+    if ( arr_usedPort[comport] )
+    {
+      SetCommState(hCom[comport],&(oldConfig[comport]));
+      CloseHandle(hCom[comport]);
+      arr_usedPort[comport] = false;
+    }
+  }
 }
 
 /**
@@ -44,9 +74,15 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   COMMTIMEOUTS ct;
   char com[] = "COMx";
 
+  // first close if already configured
+  SioExit(comport);
+
   com[3] = comport + 1 + '0';
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
   if (!hCom[comport]) return HAL_CONFIG_ERR;
+  // read old config
+  if (!GetCommState(hCom[comport],&(oldConfig[comport]))) return HAL_CONFIG_ERR;
+  arr_usedPort[comport] = true;
 
   atexit(SioExit);
 
