@@ -725,10 +725,6 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
                 *pen_sendSuccessNotify = SendSuccess;
                 return true; // FINISHED SendStream, remove it from list please!
             }
-            else
-            {
-                CNAMESPACE::printf("Data is not complete!\n");
-            }
         } // for
       }
       break;
