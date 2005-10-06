@@ -1273,8 +1273,8 @@ bool Base_c::reactOnLastChunk( IsoAgLib::ReceiveStreamIdentifier_c rc_ident,
       getAltitude10Minus2FromStream( refc_stream, ui32_altitudeCm );
       // now fetch Quality - gps-mode
       refc_stream >> ui8_tempValue;
-      t_gnssType   = IsoAgLib::IsoGnssType_t(ui8_tempValue & 0xF );
-      t_gnssMethod = IsoAgLib::IsoGnssMethod_t(ui8_tempValue >> 4 );
+      if ( ( ui8_tempValue >> 4  ) <= IsoAgLib::IsoGnssMethodMAX ) t_gnssMethod = IsoAgLib::IsoGnssMethod_t(ui8_tempValue >> 4 );
+      if ( ( ui8_tempValue & 0xF ) <= IsoAgLib::IsoGnssTypeMAX   ) t_gnssType   = IsoAgLib::IsoGnssType_t(ui8_tempValue & 0xF );
       // GNSS Integrity
       refc_stream >> ui8_integrity;
       ui8_integrity &= 0x3; // mask reserved bits out

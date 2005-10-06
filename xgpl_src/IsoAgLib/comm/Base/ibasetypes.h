@@ -78,7 +78,8 @@ namespace IsoAgLib {
     IsoGnssManual      = 7,
     IsoGnssSimulated   = 8,
     IsoGnssError       = 14,
-    IsoGnssNull        = 15
+    IsoGnssNull        = 15,
+    IsoGnssMethodMAX   = 15
   } IsoGnssMethod_t;
   /** type of GNSS system */
   typedef enum {
@@ -86,7 +87,8 @@ namespace IsoAgLib {
     IsoGnssGlonass        = 1,
     IsoGnssGpsGlonass     = 2,
     IsoGnssGpsSbas        = 3,
-    IsoGnssGpsSbasGlonass = 4
+    IsoGnssGpsSbasGlonass = 4,
+    IsoGnssTypeMAX        = 4
   } IsoGnssType_t;
   #endif
 

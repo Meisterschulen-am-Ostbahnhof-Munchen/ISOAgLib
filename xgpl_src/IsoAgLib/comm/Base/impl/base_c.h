@@ -440,9 +440,9 @@ public: // Public methods
   /** deliver GPS altitude - [cm] */
   void setGpsAltitudeCm( uint32_t rui32_newVal ) { ui32_altitudeCm = rui32_newVal; };
   /** deliver GPS receive qualitiy */
-  void setGnssMode( IsoAgLib::IsoGnssMethod_t rt_newVal ) { if(rt_newVal<=IsoAgLib::IsoGnssNull) t_gnssMethod = rt_newVal;};
+  void setGnssMode( IsoAgLib::IsoGnssMethod_t rt_newVal ) { if(rt_newVal<=IsoAgLib::IsoGnssMethodMAX) t_gnssMethod = rt_newVal;};
   /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
-  void setGnssType( IsoAgLib::IsoGnssType_t rt_newVal ) { if(rt_newVal<=IsoAgLib::IsoGnssGpsSbasGlonass) t_gnssType = rt_newVal;};
+  void setGnssType( IsoAgLib::IsoGnssType_t rt_newVal )   { if(rt_newVal<=IsoAgLib::IsoGnssTypeMAX) t_gnssType = rt_newVal;};
   /** deliver GPS speed as [cm/s] */
   void setGpsSpeedCmSec( uint16_t rui16_newVal ) { ui16_speedCmSec = rui16_newVal;};
   /** deliver GPS Heading [1x10E-4rad] */
