@@ -120,19 +120,19 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
 
   if ( bitSoftwarehandshake )
   { // use XON/XOFF flow control
-    term.c_iflag |= (IXON | IXOFF);
+    tty_options.c_iflag |= (IXON | IXOFF);
   }
   else
   { // don't use XON/XOFF
-    term.c_iflag &= ~(IXON | IXOFF);
+    tty_options.c_iflag &= ~(IXON | IXOFF);
   }
 
   // ignore BRK condition and parity error ( maybe also activate CR ignore - but that might be wanted )
-  term.c_iflag |= IGNBRK | IGNPAR /*| IGNCR*/;
+  tty_options.c_iflag |= IGNBRK | IGNPAR /*| IGNCR*/;
 
   // no implementation defined output processing
-  term.c_oflag &= ~(OPOST);
-  term.c_oflag |= ONLCR;
+  tty_options.c_oflag &= ~(OPOST);
+  tty_options.c_oflag |= ONLCR;
   /* Enable the receiver and set local mode */
   tty_options.c_cflag |= (CLOCAL | CREAD);
 
