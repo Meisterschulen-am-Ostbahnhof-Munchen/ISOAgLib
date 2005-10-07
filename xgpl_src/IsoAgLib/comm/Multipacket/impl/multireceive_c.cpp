@@ -891,7 +891,7 @@ MultiReceive_c::timeEvent( void )
       i_list_streams = list_streams.erase (i_list_streams);
       continue;
     }
-    else if (pc_stream->getNextComing() == AwaitCtsSend)
+    else if ((pc_stream->getNextComing() == AwaitCtsSend) && (pc_stream->readyToSendCts()))
     { // this case shouldn't happen for BAM / FastPacket
       #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Processing Burst\n";

@@ -119,6 +119,7 @@ Stream_c::Stream_c (StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifie
   , c_ident (rc_rsi)
   , t_streamState (StreamRunning)
   , t_awaitStep (AwaitCtsSend) // so next timeEvent will send out the CTS!
+  , i32_delayCtsUntil (sci32_timeNever) // means send out IMMEDIATELY (the initial CTS, afterwards delay some time!)
   , ui32_byteTotalSize (rui32_msgSize)
   , ui32_byteAlreadyReceived (0)
   , ui32_pkgNextToWrite (1)
@@ -157,6 +158,17 @@ Stream_c::awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut)
 {
   t_awaitStep = rt_awaitStep;
   i32_timeoutLimit = HAL::getTime()+ri32_timeOut;
+  if (rt_awaitStep == AwaitCtsSend)
+  {
+    i32_delayCtsUntil = HAL::getTime() + sci32_ctsSendDelay;
+  }
+}
+
+
+bool
+Stream_c::readyToSendCts()
+{
+  return (i32_delayCtsUntil == sci32_timeNever) || (HAL::getTime() >= i32_delayCtsUntil);
 }
 
 

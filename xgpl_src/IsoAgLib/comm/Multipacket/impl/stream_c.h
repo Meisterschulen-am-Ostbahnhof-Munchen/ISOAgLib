@@ -101,6 +101,7 @@ namespace __IsoAgLib {
 
 // T1/T2 here are the same as in "multireceive_c.h"
 // T1/T2 here are the same as in "multireceive_c.h"
+static const int32_t sci32_ctsSendDelay=50;  // data -> cts
 #if 0
 static const int32_t sci32_timeOutT1=250;  // data -> data
 static const int32_t sci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)
@@ -228,6 +229,8 @@ public:
   void setStreamFinishedJustKept() { awaitNextStep (AwaitNothing, sci32_timeNever); // no timeOut on own Send-Awaits
                                      t_streamState = StreamFinishedJustKept; }; // from now on NOTHING more should be done with this stream!
 
+  bool readyToSendCts();
+
 private:
 
   void awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut);
@@ -245,6 +248,9 @@ private:
 
   //  Attribute: t_awaitStep
   NextComing_t t_awaitStep;
+
+  // Attribute i32_delayCtsUntil
+  int32_t i32_delayCtsUntil;
 
 
 /// Byte counting stuff

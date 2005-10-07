@@ -153,8 +153,8 @@ public:
         * Err_c::badAlloc not enough memory for allocating the puffers
         * Err_c::range one of the configuration vals is not in allowed ranges
   */
-  bool init(uint16_t rui16_baudrate = CONFIG_RS232_DEFAULT_BAUDRATE,
-          t_dataMode ren_dataMode = CONFIG_RS232_DEFAULT_DATA_MODE,
+  bool init(uint16_t rui16_baudrate,
+          t_dataMode ren_dataMode,
           bool rb_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
           uint16_t rui16_sndPuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t rui16_recPuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
           #ifdef USE_RS232_CHANNEL
@@ -454,14 +454,17 @@ private: //Private methods
   friend class IsoAgLib::iRS232IO_c;
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of RS232IO_c within application
+    * ---> DEFAULT VALUES FOR RS2332 NOT YET INITIALIZED!!!! <---
     */
-  RS232IO_c( void ) {};
+  RS232IO_c( void );
+
   /**
     initialize directly after the singleton instance is created.
     this is called from singleton.h and should NOT be called from the user again.
     users please use init(...) instead.
   */
-  void singletonInit() { init(); };
+  void singletonInit();
+
   /**
     read a token (eat whitespace in front of, end stop before next whitespace or at end og buf)
   */

@@ -120,6 +120,18 @@ namespace __IsoAgLib {
 /*******************************************/
 /** definition of public element functions */
 /*******************************************/
+
+RS232IO_c::RS232IO_c( void )
+  : ui16_baudrate (0xFFFF)
+  : en_dataMode (_8_N_1)
+  : b_xon_xoff (false)
+  : ui16_sndPuf (0)
+  : ui16_recPuf (0)
+  #ifdef USE_RS232_CHANNEL
+  ,ui8_channel (0xFF)
+  #endif
+{};
+
 /** destructor has nothing to destruct */
 RS232IO_c::~RS232IO_c(){
 }
@@ -148,8 +160,6 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
         )
 {
   bool b_result;
-  // verify that System is int
-  getSystemInstance().init();
   // check the configuration informations
   bool b_baudAllowed = false,
        b_dataModeAllowed = false;
@@ -203,6 +213,19 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
   }
   return b_result;
 }
+
+
+/**
+  initialize directly after the singleton instance is created.
+  this is called from singleton.h and should NOT be called from the user again.
+  users please use init(...) instead.
+*/
+void RS232IO_c::singletonInit()
+{
+  // verify that System is int
+  getSystemInstance().init();
+};
+
 
 /**
   set the baudrate to a new value
