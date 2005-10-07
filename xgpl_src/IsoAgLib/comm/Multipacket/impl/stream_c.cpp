@@ -157,9 +157,8 @@ void
 Stream_c::awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut)
 {
   t_awaitStep = rt_awaitStep;
-  i32_timeoutLimit = HAL::getTime()+ri32_timeOut;
-  if (rt_awaitStep == AwaitCtsSend)
-  {
+  i32_timeoutLimit = (ri32_timeOut==sci32_timeNever) ? (sci32_timeNever) : (HAL::getTime()+ri32_timeOut);
+  if (rt_awaitStep == AwaitCtsSend) {
     i32_delayCtsUntil = HAL::getTime() + sci32_ctsSendDelay;
   }
 }
