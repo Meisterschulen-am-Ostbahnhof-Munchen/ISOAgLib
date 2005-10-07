@@ -89,6 +89,11 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
 {
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
 
+#ifdef SYSTEM_A1
+// Don't allow gps communication on com 1 of the A1 - it is used for 
+if(rui8_channel == 0)
+  return HAL_NO_ERR;
+#endif
   static char com[] = "/dev/ttySx";
   struct termios tty_options;
   struct T_BAUD *b;
