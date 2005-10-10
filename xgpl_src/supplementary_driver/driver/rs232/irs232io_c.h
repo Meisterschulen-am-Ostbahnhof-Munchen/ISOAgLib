@@ -430,7 +430,7 @@ private: //Private methods
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of iRS232IO_c within application
     */
-  iRS232IO_c( void ) { init();};
+  iRS232IO_c( void ) : RS232IO_c() { };
 
 };
 #if defined( RS232_INSTANCE_CNT ) && ( RS232_INSTANCE_CNT > 1 )
