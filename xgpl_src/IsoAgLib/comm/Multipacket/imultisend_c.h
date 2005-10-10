@@ -90,6 +90,7 @@ public:
 #endif
 #ifdef USE_ISO_11783
 
+#if 0
   /**
     send a ISO target multipacket message with active retrieve of data-parts to send
     @param rb_send dynamic member no of sender
@@ -106,6 +107,7 @@ public:
   */
   bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t* rpen_sendSuccessNotify)
     {return MultiSend_c::sendIsoTarget(rb_send, rb_empf, rpc_mss, ri32_pgn, rpen_sendSuccessNotify );};
+#endif
 
   /**
     send a ISO target multipacket message
@@ -118,8 +120,8 @@ public:
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t* rpen_sendSuccessNotify)
-    {return MultiSend_c::sendIsoTarget(rb_send, rb_empf, rhpb_data, ri32_dataSize, ri32_pgn, rpen_sendSuccessNotify );};
+  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+    {return MultiSend_c::sendIsoTarget(rb_send, rb_empf, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify );};
 
   /**
     send a ISO broadcast multipacket message
@@ -130,8 +132,8 @@ public:
     @param ri32_pgn PGN to use for the upload
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn)
-    {return MultiSend_c::sendIsoBroadcast(rb_send, rb_empf, rhpb_data, ri32_dataSize, ri32_pgn);};
+  bool sendIsoBroadcast(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+    {return MultiSend_c::sendIsoBroadcast(rb_send, rb_empf, rhpb_data, ri32_dataSize, ri32_pgn, rrefen_sendSuccessNotify);};
 #endif
 
   /** check if at least one multisend stream is running */
@@ -151,11 +153,11 @@ public:
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
   inline iMultiSend_c& getIMultiSendInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iMultiSend_c&>(__IsoAgLib::getLbsMultiSendInstance(rui8_instance));};
+  { return static_cast<iMultiSend_c&>(__IsoAgLib::getMultiSendInstance(rui8_instance));};
 #else
   /** C-style function, to get access to the unique LBSMultiSendC_c singleton instance */
   inline iMultiSend_c& getIMultiSendInstance( void )
-  { return static_cast<iMultiSend_c&>(__IsoAgLib::getLbsMultiSendInstance());};
+  { return static_cast<iMultiSend_c&>(__IsoAgLib::getMultiSendInstance());};
 #endif
 
 }
