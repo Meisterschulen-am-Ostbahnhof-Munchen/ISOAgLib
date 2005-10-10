@@ -497,6 +497,9 @@ public: // methods
   /** user function for explicit abort of any running matching stream. */
   void abortSend (uint8_t rb_send, uint8_t rb_empf);
 
+  /** check if at least one multisend stream is running */
+  bool isMultiSendRunning() const { return (list_sendStream.size() > 0)?true:false;};
+
 private: // Private methods
   friend class SINGLETON_DERIVED(MultiSend_c, ElementBase_c);
   friend class iMultiSend_c;

@@ -134,28 +134,9 @@ public:
     {return MultiSend_c::sendIsoBroadcast(rb_send, rb_empf, rhpb_data, ri32_dataSize, ri32_pgn);};
 #endif
 
-
-  /**
-    abort the multipacket send stream
-    (important if original target isn't active any more)
-  */
-  void abortSend(){MultiSend_c::abortSend();};
-  /**
-    check if multipacket send is running
-    @return true -> multipacket is being sent at the moment
-  */
-  bool isRunning()const{return MultiSend_c::isRunning();};
-  /**
-    check if multipacket send is finished with success
-    @return true -> multipacket is finished with success
-  */
-  bool isSuccess()const{return MultiSend_c::isSuccess();};
-  /**
-    check if multipacket send is aborted
-    @return true -> multipacket is aborted
-  */
-  bool isAborted()const{return MultiSend_c::isAborted();};
- private:
+  /** check if at least one multisend stream is running */
+  bool isMultiSendRunning() const { return MultiSend_c::isMultiSendRunning();};
+  private:
   /** allow getIMultiSendInstance() access to shielded base class.
       otherwise __IsoAgLib::getLbsMultiSendInstance() wouldn't be accepted by compiler
     */
