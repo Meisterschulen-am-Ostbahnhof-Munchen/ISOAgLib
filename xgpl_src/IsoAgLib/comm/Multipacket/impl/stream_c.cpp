@@ -157,9 +157,11 @@ void
 Stream_c::awaitNextStep (NextComing_t rt_awaitStep, int32_t ri32_timeOut)
 {
   t_awaitStep = rt_awaitStep;
-  i32_timeoutLimit = (ri32_timeOut==sci32_timeNever) ? (sci32_timeNever) : (HAL::getTime()+ri32_timeOut);
   if (rt_awaitStep == AwaitCtsSend) {
-    i32_delayCtsUntil = HAL::getTime() + sci32_ctsSendDelay;
+    i32_delayCtsUntil = HAL::getTime() + ri32_timeOut; // use the timeOut parameter here for the delay!!!!
+    i32_timeoutLimit = sci32_timeNever; // no timeOut on own sending...
+  } else {
+    i32_timeoutLimit = (ri32_timeOut==sci32_timeNever) ? (sci32_timeNever) : (HAL::getTime()+ri32_timeOut);
   }
 }
 
@@ -271,7 +273,9 @@ Stream_c::handleDataPacket (uint8_t* rui8_data)
       t_streamState = StreamFinished;
     } else {
       // ---CTS--- go for more!
-      awaitNextStep (AwaitCtsSend, sci32_timeNever); // no timeOut on own Send-Awaits
+      // Calculate the send delay
+      const int32_t ci32_ctsSendDelay = (__IsoAgLib::getMultiReceiveInstance().getStreamCount() == 1) ? 0 : sci32_ctsSendDelay;
+      awaitNextStep (AwaitCtsSend, ci32_ctsSendDelay); // no timeOut on own Send-Awaits (this is automatically done in awaitNextStep) - parameter is the send-delay!
     }
     // (A complete / The last) chunk is received, handling will be done after this function returns
   } else {
