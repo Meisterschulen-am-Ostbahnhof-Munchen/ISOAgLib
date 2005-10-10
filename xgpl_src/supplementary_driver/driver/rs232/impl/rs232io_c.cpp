@@ -123,10 +123,10 @@ namespace __IsoAgLib {
 
 RS232IO_c::RS232IO_c( void )
   : ui16_baudrate (0xFFFF)
-  : en_dataMode (_8_N_1)
-  : b_xon_xoff (false)
-  : ui16_sndPuf (0)
-  : ui16_recPuf (0)
+  , en_dataMode (_8_N_1)
+  , b_xon_xoff (false)
+  , ui16_sndPuf (0)
+  , ui16_recPuf (0)
   #ifdef USE_RS232_CHANNEL
   ,ui8_channel (0xFF)
   #endif
