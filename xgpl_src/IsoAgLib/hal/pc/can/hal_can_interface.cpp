@@ -544,6 +544,13 @@ int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
   return closeCanObj(rui8_busNr, rui8_msgobjNr);
 }
 
+
+/** wait until specified timeout or until next CAN message receive */
+void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+{
+  waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );
+}
+
 /* ***************************************************** */
 /* ***************** Use of MsgObj ********************* */
 /* ***************************************************** */

@@ -231,6 +231,11 @@ class CANIO_c : public SingletonCANIO_c {
   */
   uint16_t getBusLoad() const;
 
+  /** wait until specified timeout or until next CAN message receive */
+  static void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+  { HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
+
+
   /**
     set the minimum delay in msec. between two sent CAN messages
     @param rui16_minDelay minimum time between two CAN messages [msec.]

@@ -75,6 +75,7 @@ int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus);
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj);
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig );
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj );
+void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval );
 int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend );
 int16_t checkMsg();
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive );

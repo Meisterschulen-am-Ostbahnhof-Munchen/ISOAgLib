@@ -829,6 +829,30 @@ int16_t can_configGlobalClose(uint8_t rui8_busNr)
 }
 
 
+/** wait until specified timeout or until next CAN message receive */
+void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+{
+  const int32_t ci32_endWait = HAL::getTime() + rui16_timeoutInterval;
+  int32_t i32_waitSlice rui16_timeoutInterval;
+
+  // if greater than 50msec -> divide so that about 10 slices are realized
+  if ( i32_waitSlice > 50 ) i32_waitSlice /= 10;
+  // if still more than 50msec slice limit to 50
+  if ( i32_waitSlice > 50 ) i32_waitSlice = 50;
+
+  while (true)
+  {
+    for ( unsigned int busInd = 0; busInd < cui32_maxCanBusCnt; busInd++)
+    {
+      for ( unsigned int msgInd = 0; msgInd < 15; msgInd++ )
+      {
+        if ( getCanRingBufferSize( busInd, msgInd ) > 0 ) return;
+      }
+    }
+    if ( HAL::getTime() >= ci32_endWait ) return;
+  }
+}
+
 /* ***************************** */
 /* ***Specific for one MsgObj*** */
 /* ***************************** */

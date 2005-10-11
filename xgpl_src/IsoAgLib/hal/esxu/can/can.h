@@ -5,11 +5,11 @@
                              -------------------
     begin                : Wed Mar 15 2000
     copyright            : (C) 2000 - 2004 Dipl.-Inform. Achim Spangler
-						 : This file was based on the corresponding file in
-						 : the ESX HAL and modified for the ESXu HAL.
-						 : These changes (C) 2004 - 2005 Michael D. Schmidt
+             : This file was based on the corresponding file in
+             : the ESX HAL and modified for the ESXu HAL.
+             : These changes (C) 2004 - 2005 Michael D. Schmidt
     email                : a.spangler@osb-ag:de
-						 : mike.schmidt@agcocorp:com
+             : mike.schmidt@agcocorp:com
     type                 : Header
  ***************************************************************************/
 
@@ -247,6 +247,10 @@ namespace HAL
   inline int16_t can_configGlobalClose(uint8_t rui8_busNr)
     {return __HAL::can_configGlobalClose(rui8_busNr);};
 
+
+  /** wait until specified timeout or until next CAN message receive */
+  inline void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+  {__HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
   /*@}*/
 
   /* ***************************************************************** */
@@ -350,10 +354,10 @@ namespace HAL
     {return __HAL::can_useMsgobjReceivedIdent(rui8_busNr, rui8_msgobjNr, reflIdent);};
 
   /**
-		transfer front element in buffer into the pointed CANPkg_c;
-		DON'T clear this item from buffer.
-		@see can_useMsgobjPopFront for explicit clear of this front item
-		functions:
+    transfer front element in buffer into the pointed CANPkg_c;
+    DON'T clear this item from buffer.
+    @see can_useMsgobjPopFront for explicit clear of this front item
+    functions:
     * setIdent(Ident_c& rrefc_ident)
       -> set ident rrefc_ident of received msg in CANPkg
     * uint8_t setData(uint8_t rb_dlc, uint8_t* rpb_data)
@@ -372,11 +376,11 @@ namespace HAL
     {return __HAL::can_useMsgobjGet(rui8_busNr, rui8_msgobjNr, rpc_data);};
 
   /**
-		Either register the currenct front item of buffer as not relevant,
-		or just pop the front item, as it was processed.
-		This explicit pop is needed, as one CAN message shall be served to
-		several CANCustomer_c instances, as long as one of them indicates a
-		succesfull process of the received message.
+    Either register the currenct front item of buffer as not relevant,
+    or just pop the front item, as it was processed.
+    This explicit pop is needed, as one CAN message shall be served to
+    several CANCustomer_c instances, as long as one of them indicates a
+    succesfull process of the received message.
     @param rui8_busNr number of the BUS to config
     @param rui8_msgobjNr number of the MsgObj to config
   */

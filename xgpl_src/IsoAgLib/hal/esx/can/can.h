@@ -196,14 +196,14 @@ namespace HAL
   inline int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
     {return __HAL::can_stateMsgobjFreecnt(rui8_busNr, rui8_msgobjNr);};
 
-	/**
-		check if MsgObj is currently locked
-		@param rui8_busNr number of the BUS to check
-		@param rui8_msgobjNr number of the MsgObj to check
-		@return true -> MsgObj is currently locked
-	*/
-	inline bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
-		{return __HAL::can_stateMsgobjLocked( rui8_busNr, rui8_msgobjNr );};
+  /**
+    check if MsgObj is currently locked
+    @param rui8_busNr number of the BUS to check
+    @param rui8_msgobjNr number of the MsgObj to check
+    @return true -> MsgObj is currently locked
+  */
+  inline bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+    {return __HAL::can_stateMsgobjLocked( rui8_busNr, rui8_msgobjNr );};
   /*@}*/
 
   /* ************************************************************ */
@@ -251,6 +251,10 @@ namespace HAL
   inline int16_t can_configGlobalClose(uint8_t rui8_busNr)
     {return __HAL::can_configGlobalClose(rui8_busNr);};
 
+  /** wait until specified timeout or until next CAN message receive */
+  inline void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+  {__HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
+
   /*@}*/
 
   /* ***************************************************************** */
@@ -287,17 +291,17 @@ namespace HAL
   inline int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident)
     {return __HAL::can_configMsgobjChgid(rui8_busNr, rui8_msgobjNr, rrefc_ident);};
 
-	/**
-		lock a MsgObj to avoid further placement of messages into buffer.
-		@param rui8_busNr number of the BUS to config
-		@param rui8_msgobjNr number of the MsgObj to config
-		@param rb_doLock true==lock(default); false==unlock
-		@return HAL_NO_ERR == no error;
-						HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
-						HAL_RANGE_ERR == wrong BUS or MsgObj number
-		*/
-	inline int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock = true )
-		{return __HAL::can_configMsgobjLock( rui8_busNr, rui8_msgobjNr, rb_doLock);};
+  /**
+    lock a MsgObj to avoid further placement of messages into buffer.
+    @param rui8_busNr number of the BUS to config
+    @param rui8_msgobjNr number of the MsgObj to config
+    @param rb_doLock true==lock(default); false==unlock
+    @return HAL_NO_ERR == no error;
+            HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+            HAL_RANGE_ERR == wrong BUS or MsgObj number
+    */
+  inline int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock = true )
+    {return __HAL::can_configMsgobjLock( rui8_busNr, rui8_msgobjNr, rb_doLock);};
 
   /**
     change the the send rate for one MsgObj by setting the minimum
@@ -366,10 +370,10 @@ namespace HAL
     {return __HAL::can_useMsgobjReceivedIdent(rui8_busNr, rui8_msgobjNr, reflIdent);};
 
   /**
-		transfer front element in buffer into the pointed CANPkg_c;
-		DON'T clear this item from buffer.
-		@see can_useMsgobjPopFront for explicit clear of this front item
-		functions:
+    transfer front element in buffer into the pointed CANPkg_c;
+    DON'T clear this item from buffer.
+    @see can_useMsgobjPopFront for explicit clear of this front item
+    functions:
     * setIdent(Ident_c& rrefc_ident)
       -> set ident rrefc_ident of received msg in CANPkg
     * uint8_t setData(uint8_t rb_dlc, uint8_t* rpb_data)
@@ -388,11 +392,11 @@ namespace HAL
     {return __HAL::can_useMsgobjGet(rui8_busNr, rui8_msgobjNr, rpc_data);};
 
   /**
-		Either register the currenct front item of buffer as not relevant,
-		or just pop the front item, as it was processed.
-		This explicit pop is needed, as one CAN message shall be served to
-		several CANCustomer_c instances, as long as one of them indicates a
-		succesfull process of the received message.
+    Either register the currenct front item of buffer as not relevant,
+    or just pop the front item, as it was processed.
+    This explicit pop is needed, as one CAN message shall be served to
+    several CANCustomer_c instances, as long as one of them indicates a
+    succesfull process of the received message.
     @param rui8_busNr number of the BUS to config
     @param rui8_msgobjNr number of the MsgObj to config
   */

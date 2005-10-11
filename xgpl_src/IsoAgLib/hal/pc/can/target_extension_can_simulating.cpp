@@ -120,22 +120,52 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   return HAL_NO_ERR;
 }
 
+void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+{
+  const int32_t ci32_endWait = getTime() + rui16_timeoutInterval;
+  int32_t i32_waitSlice rui16_timeoutInterval;
+
+  // if greater than 50msec -> divide so that about 10 slices are realized
+  if ( i32_waitSlice > 50 ) i32_waitSlice /= 10;
+  // if still more than 50msec slice limit to 50
+  if ( i32_waitSlice > 50 ) i32_waitSlice = 50;
+
+  while (true)
+  {
+    for ( unsigned int busInd = 0; busInd < cui32_maxCanBusCnt; busInd++)
+    {
+      if ( !b_busOpened[busInd] ) continue;
+      for ( unsigned int msgInd = 0; msgInd < 15; msgInd++ )
+      {
+        if ( rec_bufCnt[busInd][msgInd] > 0 ) return;
+      }
+    }
+    #if defined WIN32
+    Sleep( i32_waitSlice );
+    #else
+    usleep( i32_waitSlice * 1000 );
+    #endif
+    if ( getTime() >= ci32_endWait ) return;
+  }
+}
+
+
 int16_t changeGlobalMask ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg)
 {
   return HAL_NO_ERR;
 }
 
 /**
-	check if MsgObj is currently locked
+  check if MsgObj is currently locked
   @param rui8_busNr number of the BUS to check
   @param rui8_msgobjNr number of the MsgObj to check
-	@return true -> MsgObj is currently locked
+  @return true -> MsgObj is currently locked
 */
 bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 {
   if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
-	else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
-	else return false;
+  else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
+  else return false;
 }
 
 int16_t closeCan ( uint8_t bBusNumber )
@@ -172,43 +202,43 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 void scanCanMsgLine( uint8_t bBusNumber,uint8_t bMsgObj )
 {
   char zeile[100];
-	printf("lese naechste Zeile aus BUS %d und Objekt %d\n", bBusNumber, bMsgObj);
-	while ( true )
-	{ // read lines till timestamp is >= last close time
-		fgets(zeile, 99, can_input[bBusNumber][bMsgObj]);
-		if ( strlen( zeile ) == 0 )
-		{
-			if ( feof(can_input[bBusNumber][bMsgObj]) )
-			{
-				dateiende[bBusNumber][bMsgObj] = 1;
-				break;
-			}
-			else continue;
-		}
-		int iResult = sscanf(zeile, "%u %x  %hx %hx %hx %hx %hx %hx %hx %hx \n",
-			&(pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms), &(pRead[bBusNumber][bMsgObj].dwId),
-			&(pRead[bBusNumber][bMsgObj].abData[0]), &(pRead[bBusNumber][bMsgObj].abData[1]),
-			&(pRead[bBusNumber][bMsgObj].abData[2]), &(pRead[bBusNumber][bMsgObj].abData[3]),
-			&(pRead[bBusNumber][bMsgObj].abData[4]), &(pRead[bBusNumber][bMsgObj].abData[5]),
-			&(pRead[bBusNumber][bMsgObj].abData[6]), &(pRead[bBusNumber][bMsgObj].abData[7]));
+  printf("lese naechste Zeile aus BUS %d und Objekt %d\n", bBusNumber, bMsgObj);
+  while ( true )
+  { // read lines till timestamp is >= last close time
+    fgets(zeile, 99, can_input[bBusNumber][bMsgObj]);
+    if ( strlen( zeile ) == 0 )
+    {
+      if ( feof(can_input[bBusNumber][bMsgObj]) )
+      {
+        dateiende[bBusNumber][bMsgObj] = 1;
+        break;
+      }
+      else continue;
+    }
+    int iResult = sscanf(zeile, "%u %x  %hx %hx %hx %hx %hx %hx %hx %hx \n",
+      &(pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms), &(pRead[bBusNumber][bMsgObj].dwId),
+      &(pRead[bBusNumber][bMsgObj].abData[0]), &(pRead[bBusNumber][bMsgObj].abData[1]),
+      &(pRead[bBusNumber][bMsgObj].abData[2]), &(pRead[bBusNumber][bMsgObj].abData[3]),
+      &(pRead[bBusNumber][bMsgObj].abData[4]), &(pRead[bBusNumber][bMsgObj].abData[5]),
+      &(pRead[bBusNumber][bMsgObj].abData[6]), &(pRead[bBusNumber][bMsgObj].abData[7]));
 
-		// check for close time
-		if ( ( pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms >= lastCloseTimeArr[bBusNumber][bMsgObj] )
-			&& ( iResult != EOF ) )
-		{
-			pRead[bBusNumber][bMsgObj].bDlc = iResult;
-			printf("vorabgelesene Zeile in BIOS Funktion:\n%s\n", zeile);
-			break;
-		}
-		else printf( "ignore old message from file with timestamp %u with last close time %i\n",
-									pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms, lastCloseTimeArr[bBusNumber][bMsgObj]);
-		if ( feof(can_input[bBusNumber][bMsgObj]) != 0 )
-		{ // if actual time after last message in this file, set the "dateiende" flag
-			printf("in getCanMsg die letzte Zeile geliefert, keine neue Zeile in Buffer gelesen, da Dateiende erreicht\n");
-			dateiende[bBusNumber][bMsgObj] = 1;
-			break;
-		}
-	}
+    // check for close time
+    if ( ( pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms >= lastCloseTimeArr[bBusNumber][bMsgObj] )
+      && ( iResult != EOF ) )
+    {
+      pRead[bBusNumber][bMsgObj].bDlc = iResult;
+      printf("vorabgelesene Zeile in BIOS Funktion:\n%s\n", zeile);
+      break;
+    }
+    else printf( "ignore old message from file with timestamp %u with last close time %i\n",
+                  pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms, lastCloseTimeArr[bBusNumber][bMsgObj]);
+    if ( feof(can_input[bBusNumber][bMsgObj]) != 0 )
+    { // if actual time after last message in this file, set the "dateiende" flag
+      printf("in getCanMsg die letzte Zeile geliefert, keine neue Zeile in Buffer gelesen, da Dateiende erreicht\n");
+      dateiende[bBusNumber][bMsgObj] = 1;
+      break;
+    }
+  }
 }
 
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig )
@@ -218,7 +248,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
 
 
   pb_bXtd[bBusNumber][bMsgObj] = ptConfig->bXtd;
-	b_canBufferLock[bBusNumber][bMsgObj] = false;
+  b_canBufferLock[bBusNumber][bMsgObj] = false;
 
   /* test ob sendeobjekt configuriert wird */
   if (ptConfig->bMsgType == TX)
@@ -280,7 +310,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
     pOpen[bBusNumber][bMsgObj] = 1;
 
     /* erste Zeile einlesen */
-		scanCanMsgLine( bBusNumber, bMsgObj );
+    scanCanMsgLine( bBusNumber, bMsgObj );
   }
   return HAL_NO_ERR;
 }
@@ -290,7 +320,7 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   char name[50];
   char zeile[100];
 
-	b_canBufferLock[bBusNumber][bMsgObj] = false;
+  b_canBufferLock[bBusNumber][bMsgObj] = false;
   if (pOpen[bBusNumber][bMsgObj] != 1) return 0;
 
   pb_bXtd[bBusNumber][bMsgObj] = bXtd;
@@ -316,22 +346,22 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   // END: Added by M.Wodok 6.12.04
 
   /* erste Zeile einlese */
-	scanCanMsgLine( bBusNumber, bMsgObj );
+  scanCanMsgLine( bBusNumber, bMsgObj );
   return HAL_NO_ERR;
 }
 /**
-	lock a MsgObj to avoid further placement of messages into buffer.
+  lock a MsgObj to avoid further placement of messages into buffer.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
-	@param rb_doLock true==lock(default); false==unlock
+  @param rb_doLock true==lock(default); false==unlock
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
-	*/
+  */
 int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 { // first get waiting messages
-	checkMsg();
-	b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+  checkMsg();
+  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
   return HAL_NO_ERR;
 }
 
@@ -347,7 +377,7 @@ int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
   printf("closeCanObj fuer bus %d und objekt %d\n", bBusNumber, bMsgObj);
-	b_canBufferLock[bBusNumber][bMsgObj] = false;
+  b_canBufferLock[bBusNumber][bMsgObj] = false;
   if ((bMsgObj < 2) && ( pSendOpen[bBusNumber][bMsgObj] == 1))
   {
     fclose(can_output[bBusNumber][bMsgObj]);
@@ -429,7 +459,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
     printf("in getCanMsg len rec %d und dat %d\n",ptReceive->bDlc, pRead[bBusNumber][bMsgObj].bDlc);
 
     /* naechste Zeile einlesen */
-		scanCanMsgLine( bBusNumber, bMsgObj );
+    scanCanMsgLine( bBusNumber, bMsgObj );
   }
   return HAL_NO_ERR;
 };
@@ -442,13 +472,13 @@ int16_t checkMsg()
   int16_t empfangen = 0;
   int16_t flag = 1;
   bool b_received[cui32_maxCanBusCnt][15];
-	for ( unsigned int indBus = 0; indBus < cui32_maxCanBusCnt; indBus++ )
-	{
-		for ( unsigned int indObj = 0; indObj < 15; indObj++ )
-		{
-			b_received[indBus][indObj] = false;
-		}
-	}
+  for ( unsigned int indBus = 0; indBus < cui32_maxCanBusCnt; indBus++ )
+  {
+    for ( unsigned int indObj = 0; indObj < 15; indObj++ )
+    {
+      b_received[indBus][indObj] = false;
+    }
+  }
   while (flag == 1)
   {
     result = i = j = 0;
@@ -475,15 +505,15 @@ int16_t checkMsg()
             /* zeitstempel ist erreicht -> verarbeiten */
             if ( can_irq[j][i] != NULL )
             {
-							if ( b_canBufferLock[j][i] )
-							{ // don't even check this MsgObj as it shall not receive messages
-								// -> read next line as a message with current timestamp shall be ignored from file
-								printf( "ignore message at BUS %d and Object %d with timestamp %d, as this message object is currently locked\n",
-									j, i, pRead[j][i].tReceiveTime.l1ms);
-								scanCanMsgLine( j, i );
-								continue;
-							}
-							printf("rufe irq fun fuer BUS %d und Objekt %d auf bei zeit %d und CAN-Zeit %d\n", j, i, getTime(), pRead[j][i].tReceiveTime.l1ms);
+              if ( b_canBufferLock[j][i] )
+              { // don't even check this MsgObj as it shall not receive messages
+                // -> read next line as a message with current timestamp shall be ignored from file
+                printf( "ignore message at BUS %d and Object %d with timestamp %d, as this message object is currently locked\n",
+                  j, i, pRead[j][i].tReceiveTime.l1ms);
+                scanCanMsgLine( j, i );
+                continue;
+              }
+              printf("rufe irq fun fuer BUS %d und Objekt %d auf bei zeit %d und CAN-Zeit %d\n", j, i, getTime(), pRead[j][i].tReceiveTime.l1ms);
               *(can_irq[j][i])(j,i,NULL);
             }
             empfangen++;

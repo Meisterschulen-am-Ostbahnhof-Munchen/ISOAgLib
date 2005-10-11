@@ -387,24 +387,21 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 };
 
 
-void waitUntilCanReceive(int32_t i32_endThisLoop)
+void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
+  // for debug only
+  //int32_t i32_endWait = getTime() + rui16_timeoutInterval;
+
   int16_t i16_rc;
   fd_set rfds;
-  int32_t i32_now;
   struct timeval s_timeout;
   uint8_t ui8_buf[16];
-
-  if (i32_endThisLoop < (i32_now = getTime())) {
-    DEBUG_PRINT("*");
-    return;
-  }
 
   FD_ZERO(&rfds);
   FD_SET(msqDataClient.i32_pipeHandle, &rfds);
 
   s_timeout.tv_sec = 0;
-  s_timeout.tv_usec = (i32_endThisLoop - i32_now) * 1000;
+  s_timeout.tv_usec = rui16_timeoutInterval * 1000;
 
   i16_rc = select(msqDataClient.i32_pipeHandle+1, &rfds, NULL, NULL, &s_timeout);
 
@@ -412,7 +409,18 @@ void waitUntilCanReceive(int32_t i32_endThisLoop)
     // clear pipe (is done also in can server before next write)
     i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16);
 
-
+  /*
+  if ( getTime() < i32_endWait ) std::cout << "#";
+  else std::cout << ".";
+  static int dbgCnt = 0;
+  static int32_t i32_lastDebugLinefeed = 0;
+  dbgCnt++;
+  if ( ( dbgCnt % 50 ) == 0 )
+  {
+    std::cout << (getTime() - i32_lastDebugLinefeed)/50 << std::endl;
+    i32_lastDebugLinefeed = getTime();
+  }
+  */
 };
 
 // MDS NOTE: This is code is highly inefficient and needs to be optimized!
