@@ -432,7 +432,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
   const int32_t ci32_endWait = getTime() + rui16_timeoutInterval;
-  int32_t i32_waitSlice rui16_timeoutInterval;
+  int32_t i32_waitSlice = rui16_timeoutInterval;
 
   // if greater than 50msec -> divide so that about 10 slices are realized
   if ( i32_waitSlice > 50 ) i32_waitSlice /= 10;
