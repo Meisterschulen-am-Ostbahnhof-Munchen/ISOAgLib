@@ -1643,8 +1643,8 @@ void Base_c::isoSendPositionStream( void )
   // write type and method
   const uint8_t cu8_tempTypeMethod = ( t_gnssType | ( t_gnssMethod << 4 ) );
   number2LittleEndianString( cu8_tempTypeMethod, writeRef );
-  // write integrity
-  number2LittleEndianString( ui8_integrity, writeRef );
+  // write integrity ( set unused highest 6 bits to "1" )
+  number2LittleEndianString( (ui8_integrity| 0xFC), writeRef );
   // write #satelites
   number2LittleEndianString( ui8_satelliteCnt, writeRef );
   // write HDOP
