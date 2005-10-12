@@ -99,7 +99,15 @@ using namespace __HAL;
 // Globals
 /** if the following define is active, the can_server writes important logging info to the given path.
  *  comment this define out to eliminate this */
-#define CAN_SERVER_LOG_PATH "./can_server.log"
+#ifdef WIN32
+  #define CAN_SERVER_LOG_PATH ".\\can_server.log"
+#elif defined( SYSTEM_A1 )
+  #define CAN_SERVER_LOG_PATH "/sd/sd1/can_server.log"
+#else
+  #define CAN_SERVER_LOG_PATH "./can_server.log"
+#endif
+
+
 
 // CAN Globals
 static int apiversion;
