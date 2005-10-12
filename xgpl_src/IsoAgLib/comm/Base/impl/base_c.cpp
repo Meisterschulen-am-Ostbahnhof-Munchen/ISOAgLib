@@ -1112,6 +1112,42 @@ bool Base_c::isPositionReceived() const
 }
 
 #ifdef NMEA_2000_FAST_PACKET
+/** deliver GPS receive qualitiy */
+void Base_c::setGnssMode( IsoAgLib::IsoGnssMethod_t rt_newVal )
+{
+  if(rt_newVal<=IsoAgLib::IsoGnssMethodMAX) t_gnssMethod = rt_newVal;
+  // set the upper 4 bits to unused as the Set/COG/Heading Ref is not used
+  ui8_dataModeAndHeadingReference = 0xF0;
+  switch ( rt_newVal )
+  {
+    case IsoAgLib::IsoDgnssFix:
+    case IsoAgLib::IsoGnssPrecise:
+    case IsoAgLib::IsoRtkFixedInteger:
+    case IsoAgLib::IsoRtkFloat:
+      ui8_dataModeAndHeadingReference |= 0x1; // Differential enhanced mode
+      break;
+    case IsoAgLib::IsoDrEstimated:
+      ui8_dataModeAndHeadingReference |= 0x2; // Estimated Mode
+      break;
+    case IsoAgLib::IsoGnssSimulated:
+      ui8_dataModeAndHeadingReference |= 0x3; // Simulated Mode
+      break;
+    case IsoAgLib::IsoGnssManual:
+      ui8_dataModeAndHeadingReference |= 0x4; // Manual Mode
+      break;
+    case IsoAgLib::IsoGnssError:
+      ui8_dataModeAndHeadingReference |= 0xE; // Error
+      break;
+    case IsoAgLib::IsoGnssNull:
+      ui8_dataModeAndHeadingReference |= 0xF; // Error
+      break;
+    default:
+      // let the lower 4 bits at value "0" as currently initialized --> Autonomous Mode
+      break;
+
+  }
+}
+
 // //////////////////////////////// +X2C Operation 2432 : reactOnStreamStart
 //! Parameter:
 //! @param rc_ident:
@@ -1637,6 +1673,7 @@ void Base_c::isoSendPositionStream( void )
   if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_POSITON_DATA_PGN, t_multiSendSuccessState) )
   { // update time
     i32_lastIsoPositionStream = ci32_now;
+    ui8_positionSequenceID++;
   }
 }
 /** send direction as detailed stream */
@@ -1665,6 +1702,7 @@ void Base_c::isoSendDirectionStream( void )
   if ( getMultiSendInstance4Comm().sendIsoFastPacket(b_send, 0xFF, &c_nmea2000Streamer, NMEA_GPS_DIRECTION_DATA_PGN, t_multiSendSuccessState) )
   { // update time
     i32_lastIsoDirectionStream = ci32_now;
+    ui8_directionSequenceID++;
   }
 }
 // END OF FAST PACKET IN ISO11783
