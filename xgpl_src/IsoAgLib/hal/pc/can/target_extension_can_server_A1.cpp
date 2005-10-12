@@ -94,21 +94,12 @@
 
 using namespace __HAL;
 
-#define HWTYPE_AUTO 1000
-#define c_ICAN     1
-#define c_PowerCAN 2
-#define c_CANAS    3
-#define c_CANA1ASCII    4
-#define c_CANA1BINARY    5
-#define c_EICAN    6
-#define c_ECAN_PCI 7
-#define c_CANLpt   8
-#define c_PowerCANPCI       10
-#define c_CANUSB_Std_Api    11
-
 
 /////////////////////////////////////////////////////////////////////////
 // Globals
+/** if the following define is active, the can_server writes important logging info to the given path.
+ *  comment this define out to eliminate this */
+#define CAN_SERVER_LOG_PATH "./can_server.log"
 
 // CAN Globals
 static int apiversion;
@@ -117,13 +108,6 @@ static int apiversion;
 const int32_t LptIsaIoAdr = 0x378;
 
 #define USE_CAN_CARD_TYPE c_CANA1BINARY
-
-#ifdef USE_CAN_CARD_TYPE
-static int32_t gHwType = USE_CAN_CARD_TYPE;
-#else
-// select the Vector CAN card type to use
-static int32_t gHwType = HWTYPE_AUTO;
-#endif
 
 
 
@@ -304,18 +288,31 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           if (i_rcSnd == -1)
           {
             DEBUG_PRINT1("error in msgsnd (errno: %d)\n", errno);
+            #ifdef CAN_SERVER_LOG_PATH
+            std::ofstream logging( CAN_SERVER_LOG_PATH );
+            logging << "error in msgsnd (errno: " << errno << ")" << std::endl;
+            #endif
             if (errno == EAGAIN)
             { // queue is full => remove oldest msg and try again
               msqWrite_s msqWriteBuf;
               DEBUG_PRINT("message queue full => try to remove oldest msg and send again!!\n");
+              #ifdef CAN_SERVER_LOG_PATH
+              logging << "message queue full => try to remove oldest msg and send again!!" << std::endl;
+              #endif
               int i_rcRcv = msgrcv(pc_serverData->msqDataServer.i32_rdHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0,IPC_NOWAIT);
               if ( i_rcRcv > 0 )
               { // number of received bytes > 0 => msgrcv successfull => try again
                 DEBUG_PRINT("oldest msg from queue removed!!\n");
+                #ifdef CAN_SERVER_LOG_PATH
+                logging << "message queue full => try to remove oldest msg and send again!!" << std::endl;
+                #endif
                 int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
                 if (i_rcSnd == 0)
                 {
                   DEBUG_PRINT("message sent again after queue full!!\n");
+                  #ifdef CAN_SERVER_LOG_PATH
+                  logging << "message queue full => try to remove oldest msg and send again!!" << std::endl;
+                  #endif
                 }
               }
             }
@@ -687,7 +684,7 @@ static void* command_thread_func(void* ptr)
           // first init command for current bus
 
           memset(fdata, 0, sizeof(fdata));
-          
+
           if (iter_client != NULL) {
 
             // open log file only once per bus
@@ -727,11 +724,11 @@ static void* command_thread_func(void* ptr)
 
         if (!i32_error)
           ui16_busRefCnt[msqCommandBuf.s_init.ui8_bus]++;
-        
+
         // do rest of init handling in next case statement (no break!)
 
      case COMMAND_CHG_GLOBAL_MASK:
-     
+
         if (!i32_error) {
           iter_client->ui16_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui16_wGlobMask;
           iter_client->ui32_globalMask[msqCommandBuf.s_init.ui8_bus] = msqCommandBuf.s_init.ui32_dwGlobMask;
@@ -1127,13 +1124,6 @@ int main(int argc, char *argv[])
     }
   }
 
-
-#ifdef USE_CAN_CARD_TYPE
-  gHwType = USE_CAN_CARD_TYPE;
-#else
-  // select the Vector CAN card type to use
-  gHwType = HWTYPE_AUTO;
-#endif
 
   apiversion = ca_InitApi_1();
   if ( apiversion == 0 ) { // failure - nothing found
