@@ -150,6 +150,19 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   DEF_SerialPointer(rui8_channel)->set_echo( false );
   return HAL_NO_ERR;
 } // soll "C0,R,E0,B4800,L8n1"
+
+/** close the RS232 interface. */
+int16_t close_rs232(uint8_t rui8_channel)
+{
+  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+	if ( DEF_SerialPointer(rui8_channel) == NULL ) return HAL_NOACT_ERR;
+	delete DEF_SerialPointer(rui8_channel);
+	DEF_SerialPointer(rui8_channel) = NULL;
+	c_buffer[RS232_INSTANCE_CNT].clear();
+	return HAL_NO_ERR;
+}
+
+
 /**
   set the RS232 Baudrate
   @param wBaudrate wanted baudrate

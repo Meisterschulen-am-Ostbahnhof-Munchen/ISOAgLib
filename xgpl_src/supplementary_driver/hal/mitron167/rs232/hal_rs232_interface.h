@@ -83,6 +83,8 @@ namespace __HAL {
     @return HAL_NO_ERR -> o.k. else one of settings incorrect
   */
   int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake);
+	/** close the RS232 interface. */
+	int16_t close_rs232();
   /**
     set the RS232 Baudrate
     @param wBaudrate wanted baudrate

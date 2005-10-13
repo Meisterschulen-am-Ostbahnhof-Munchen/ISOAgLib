@@ -85,6 +85,8 @@ static const uchar* puc_endPuffer   =  &(__HAL::serial.rx.ascii.data[SD_MAX_ASCI
 static uchar* puc_rs232BufferWrite = (uchar*) puc_startPuffer;
 static uchar* puc_rs232BufferRead  = (uchar*) puc_startPuffer;
 
+static bool b_isChannelOpen = false;
+
 /** low level helper function to check if buffer is full */
 bool stackparm isRs232RingBufferFull( void ) {
   return ( __HAL::serial.rx.ascii.count < SD_MAX_ASCII_CHARS )?false:true;
@@ -231,8 +233,15 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     if ( ( bMode != 5 ) || ( bStoppbits != 1 ) ) S0CON = ui16_ctlReg;
     IEN = 1;      // defined in reg167cs.h
     // answer NoErrCondition
+		b_isChannelOpen = true;
     return HAL_NO_ERR;
   }
+	/** close the RS232 interface. */
+	int16_t close_rs232()
+	{
+		b_isChannelOpen = false;
+	}
+
   /**
     set the RS232 Baudrate
     @param wBaudrate wanted baudrate
@@ -431,8 +440,8 @@ extern "C" {
 //******************************************************************************
 // this function is application dependent!!!
 void handle_character(uchar ch)
-{ // insert at end
-  writeDataToRs232RingBuffer( ch );
+{ // insert at end when bus was not closed
+	if ( b_isChannelOpen ) writeDataToRs232RingBuffer( ch );
 }
 
 
@@ -440,6 +449,7 @@ void handle_character(uchar ch)
 // This function is for applications
 void handle_ascii_string(schar *text)
 { // insert string
+	if ( !b_isChannelOpen ) return; // do nothing if BUS was closed
   schar *psc_read = text;
   while ( writeDataToRs232RingBuffer( *psc_read ) )
   { // increment write pointer in any case

@@ -134,6 +134,11 @@ RS232IO_c::RS232IO_c( void )
 
 /** destructor has nothing to destruct */
 RS232IO_c::~RS232IO_c(){
+  #ifdef USE_RS232_CHANNEL
+  if ( ui8_channel != 0xFF ) HAL::close_rs232( ui8_channel );
+  #else
+  HAL::close_rs232();
+  #endif
 }
 
 // ++++++++++++++++++++++++++++++++++++
@@ -182,23 +187,32 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
     // now check if stop bis are set to 1 or 2
     b_dataModeAllowed = ((b_stopBit == 1) || (b_stopBit == 2))?true:false;
   }
-
-  // store configuration values
-  ui16_baudrate = rui16_baudrate;
-  en_dataMode = ren_dataMode;
-  b_xon_xoff = rb_xonXoff;
-  ui16_sndPuf = rui16_sndPuf;
-  ui16_recPuf = rui16_recPuf;
-  #ifdef USE_RS232_CHANNEL
-  ui8_channel = rui8_channel;
-  #endif
+  // stop RS232 interface if configured before
+  if ( ui16_baudrate != 0xFFFF )
+  { // no more initial value
+    #ifdef USE_RS232_CHANNEL
+    if ( ui8_channel != 0xFF ) HAL::close_rs232( ui8_channel );
+    #else
+    HAL::close_rs232();
+    #endif
+  }
 
   // set error state if one of b_baudAllowed and b_dataModeAllowed is false
   // and init hardware if everything is accepted
   if ( ((b_baudAllowed) && (b_dataModeAllowed))
-     &&(HAL::init_rs232(ui16_baudrate, b_dataParityVal, b_stopBit, b_xon_xoff RS232_CHANNEL_PARAM_LAST) == HAL_NO_ERR)
+     &&(HAL::init_rs232(rui16_baudrate, b_dataParityVal, b_stopBit, rb_xonXoff RS232_CHANNEL_PARAM_LAST) == HAL_NO_ERR)
       )
   { // o.k.
+    // store configuration values
+    ui16_baudrate = rui16_baudrate;
+    en_dataMode = ren_dataMode;
+    b_xon_xoff = rb_xonXoff;
+    ui16_sndPuf = rui16_sndPuf;
+    ui16_recPuf = rui16_recPuf;
+    #ifdef USE_RS232_CHANNEL
+    ui8_channel = rui8_channel;
+    #endif
+
     b_result = true;
     // now init puffers
     if (HAL::configRs232TxObj(ui16_sndPuf, NULL, NULL RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR) b_result = false;

@@ -50,18 +50,24 @@ false
 
 int8_t c_read;
 
-void SioExit(uint32_t comport)
+/** close the RS232 interface. */
+int16_t close_rs232(uint8_t comport)
 {
-  if ( comport >= RS232_INSTANCE_CNT ) return;
+  if ( comport >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   if ( arr_usedPort[comport] )
   {
     tcsetattr(f_com[comport], TCSANOW, &(t_com[comport]));
     close(f_com[comport]);
     arr_usedPort[comport] = false;
+		return HAL_NO_ERR;
   }
+	else
+	{
+		return HAL_NOACT_ERR;
+	}
 }
 
-void SioExit()
+void close_rs232()
 {
   for ( int ind = 0; ind < RS232_INSTANCE_CNT; ind++)
   {
@@ -90,7 +96,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
 
 #ifdef SYSTEM_A1
-// Don't allow gps communication on com 1 of the A1 - it is used for 
+// Don't allow gps communication on com 1 of the A1 - it is used for
 if(rui8_channel == 0)
   return HAL_NO_ERR;
 #endif
@@ -100,7 +106,7 @@ if(rui8_channel == 0)
   uint32_t  baudflag;
 
   // first close if already configured
-  SioExit(rui8_channel);
+  close_rs232(rui8_channel);
 
   b = t_baud;
   do {
@@ -113,7 +119,7 @@ if(rui8_channel == 0)
   if (tcgetattr(f_com[rui8_channel], &(t_com[rui8_channel]))) return HAL_CONFIG_ERR;
 
   arr_usedPort[rui8_channel] = true;
-  atexit(SioExit);
+  atexit(close_rs232);
 
   /* Configure port reading */
   fcntl(f_com[rui8_channel], F_SETFL, FNDELAY);
@@ -213,7 +219,7 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t rui8_channel)
   uint32_t  baudflag;
 
   // first close if already configured
-  SioExit(rui8_channel);
+  close_rs232(rui8_channel);
 
   b = t_baud;
   do {

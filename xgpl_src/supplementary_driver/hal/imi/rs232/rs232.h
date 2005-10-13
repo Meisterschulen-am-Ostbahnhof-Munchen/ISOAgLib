@@ -93,7 +93,7 @@ namespace HAL
 
   /**
     init the RS232 interface
-    @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200} 
+    @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
           as configured in <Application_Config/isoaglib_config.h>
     @param bMode one of (DATA_7_BITS_EVENPARITY = 1, DATA_8_BITS_EVENPARITY = 2,
             DATA_7_BITS_ODDPARITY = 3, DATA_8_BITS_ODDPARITY = 4, DATA_8_BITS_NOPARITY = 5)
@@ -103,6 +103,9 @@ namespace HAL
   */
   inline int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake)
     {return __HAL::init_rs232(wBaudrate,bMode,bStoppbits,bitSoftwarehandshake) ;};
+	/** close the RS232 interface. */
+	inline int16_t close_rs232()
+		{__HAL::config_rs232_rx_obj(0,NULL); return __HAL::config_rs232_tx_obj(0,NULL,NULL);};
   /**
     set the RS232 Baudrate
     @param wBaudrate wanted baudrate
@@ -183,7 +186,7 @@ namespace HAL
   */
   inline int16_t put_rs232String(uint8_t *pbString)
     {return __HAL::put_rs232_string(pbString);};
-    
+
   /**
     clear receive puffer
   */

@@ -129,6 +129,17 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   #endif
   return HAL_NO_ERR;
 }
+
+/** close the RS232 interface. */
+int16_t close_rs232(uint8_t rui8_channel)
+{
+  if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if (rs232_output[rui8_channel]) fclose( rs232_output[rui8_channel] );
+  #ifdef WRITE_LOG_FILE
+  if (rs232_log[rui8_channel]) fclose( rs232_log[rui8_channel] );
+  #endif
+  return HAL_NO_ERR;
+}
 /**
   set the RS232 Baudrate
   @param wBaudrate wanted baudrate

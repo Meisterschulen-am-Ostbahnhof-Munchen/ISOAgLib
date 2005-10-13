@@ -102,6 +102,9 @@ namespace HAL
   */
   inline int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t rui8_channel)
     {return __HAL::init_rs232(wBaudrate,bMode,bStoppbits,bitSoftwarehandshake, rui8_channel) ;};
+  /** close the RS232 interface. */
+  inline int16_t close_rs232(uint8_t rui8_channel)
+    {return __HAL::close_rs232(rui8_channel);};
   /**
     set the RS232 Baudrate
     @param wBaudrate wanted baudrate

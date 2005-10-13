@@ -34,17 +34,24 @@ false
 };
 
 
-void SioExit(uint32_t comport) {
-  if ( comport >= RS232_INSTANCE_CNT ) return;
+/** close the RS232 interface. */
+int16_t close_rs232(uint8_t comport)
+{
+  if ( comport >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   if ( arr_usedPort[comport] )
   {
     SetCommState(hCom[comport],&(oldConfig[comport]));
     CloseHandle(hCom[comport]);
     arr_usedPort[comport] = false;
+		return HAL_NO_ERR;
   }
+	else
+	{
+		return HAL_NOACT_ERR;
+	}
 }
 
-void SioExit() {
+void close_rs232() {
   for ( int comport = 0; comport < RS232_INSTANCE_CNT; comport++)
   {
     if ( arr_usedPort[comport] )
@@ -75,7 +82,7 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   char com[] = "//./COMx";
   com[7] = comport + 1 + '0';
   // first close if already configured
-  SioExit(comport);
+  close_rs232(comport);
 
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
   if (!hCom[comport]) return HAL_CONFIG_ERR;
@@ -83,14 +90,14 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   if (!GetCommState(hCom[comport],&(oldConfig[comport]))) return HAL_CONFIG_ERR;
   arr_usedPort[comport] = true;
 
-  atexit(SioExit);
+  atexit(close_rs232);
 
   if (!SetupComm(hCom[comport],1024,1024))
-  {		
+  {
 		DWORD test = GetLastError();
 	  return HAL_CONFIG_ERR;
   }
-  
+
   if (!GetCommState(hCom[comport],&dcb)) return HAL_CONFIG_ERR;
   dcb.BaudRate    = baudrate;
 
@@ -126,7 +133,7 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   if ( bitSoftwarehandshake ) dcb.fRtsControl = RTS_CONTROL_HANDSHAKE;
   else                        dcb.fRtsControl = RTS_CONTROL_ENABLE;
   if (!SetCommState(hCom[comport],&dcb)) return HAL_CONFIG_ERR;
-  if (!GetCommTimeouts(hCom[comport],&ct)) 
+  if (!GetCommTimeouts(hCom[comport],&ct))
   {
 	  DWORD temp = GetLastError();
 	  return HAL_CONFIG_ERR;
@@ -162,7 +169,7 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
   if (!hCom[comport]) return HAL_CONFIG_ERR;
 
-  atexit(SioExit);
+  atexit(close_rs232);
 
   if (!SetupComm(hCom[comport],1024,1024)) return HAL_CONFIG_ERR;
   if (!GetCommState(hCom[comport],&dcb)) return HAL_CONFIG_ERR;
