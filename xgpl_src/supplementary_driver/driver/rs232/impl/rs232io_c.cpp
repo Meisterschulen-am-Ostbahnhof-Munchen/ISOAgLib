@@ -200,7 +200,7 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
   // set error state if one of b_baudAllowed and b_dataModeAllowed is false
   // and init hardware if everything is accepted
   if ( ((b_baudAllowed) && (b_dataModeAllowed))
-     &&(HAL::init_rs232(rui16_baudrate, b_dataParityVal, b_stopBit, rb_xonXoff RS232_CHANNEL_PARAM_LAST) == HAL_NO_ERR)
+     &&(HAL::init_rs232(rui16_baudrate, b_dataParityVal, b_stopBit, rb_xonXoff RS232_CHANNEL_CALL_PARAM_LAST) == HAL_NO_ERR)
       )
   { // o.k.
     // store configuration values
@@ -215,8 +215,8 @@ bool RS232IO_c::init(uint16_t rui16_baudrate, t_dataMode ren_dataMode, bool rb_x
 
     b_result = true;
     // now init puffers
-    if (HAL::configRs232TxObj(ui16_sndPuf, NULL, NULL RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
-    if (HAL::configRs232RxObj(ui16_recPuf, NULL RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
+    if (HAL::configRs232TxObj(ui16_sndPuf, NULL, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
+    if (HAL::configRs232RxObj(ui16_recPuf, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
 
     if (!b_result) getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::Rs232 );
   }
