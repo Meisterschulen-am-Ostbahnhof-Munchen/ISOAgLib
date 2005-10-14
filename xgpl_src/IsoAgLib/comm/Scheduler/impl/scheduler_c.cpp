@@ -85,7 +85,10 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/liberr_c.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+
+#if defined(USE_DIN_9684) || defined(USE_ISO_11783)
+  #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#endif
 
 
 #if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
@@ -369,11 +372,11 @@ bool Scheduler_c::timeEvent( int32_t ri32_demandedExecEnd )
      i16_canExecTime = 0;
      return false;
   }
-
+  #if defined(USE_DIN_9684) || defined(USE_ISO_11783)
   // FIRST give the SystemMgmt_c class a chance to do periodic actions
   // like sending alive messages
   getSystemMgmtInstance4Comm().timeEvent();
-
+  #endif
   // process CAN messages
   if ( getCanInstance4Comm().timeEvent() )
   { // all CAN_IO activities ready -> update statistic for CAN_IO
