@@ -120,7 +120,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   return HAL_NO_ERR;
 }
 
-void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
   const int32_t ci32_endWait = getTime() + rui16_timeoutInterval;
   int32_t i32_waitSlice rui16_timeoutInterval;
@@ -137,7 +137,7 @@ void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
       if ( !b_busOpened[busInd] ) continue;
       for ( unsigned int msgInd = 0; msgInd < 15; msgInd++ )
       {
-        if ( rec_bufCnt[busInd][msgInd] > 0 ) return;
+        if ( rec_bufCnt[busInd][msgInd] > 0 ) return true;
       }
     }
     #if defined WIN32
@@ -145,7 +145,7 @@ void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
     #else
     usleep( i32_waitSlice * 1000 );
     #endif
-    if ( getTime() >= ci32_endWait ) return;
+    if ( getTime() >= ci32_endWait ) return false;
   }
 }
 

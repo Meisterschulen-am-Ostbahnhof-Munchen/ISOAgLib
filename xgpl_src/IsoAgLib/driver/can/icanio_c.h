@@ -135,9 +135,11 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
   */
   int16_t getBusLoad() const {return CANIO_c::getBusLoad();};
 
-  /** wait until specified timeout or until next CAN message receive */
-  static void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
-  {CANIO_c::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
+  /** wait until specified timeout or until next CAN message receive
+   *  @return true -> there are CAN messages waiting for process. else: return due to timeout
+   */
+  static bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+  { return CANIO_c::waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
 
 
   /**

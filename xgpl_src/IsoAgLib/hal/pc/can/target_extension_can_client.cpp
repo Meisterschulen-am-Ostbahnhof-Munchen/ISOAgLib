@@ -387,7 +387,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 };
 
 
-void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
   // for debug only
   //int32_t i32_endWait = getTime() + rui16_timeoutInterval;
@@ -405,10 +405,14 @@ void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 
   i16_rc = select(msqDataClient.i32_pipeHandle+1, &rfds, NULL, NULL, &s_timeout);
 
+  // return true, when the timeout was NOT the trigger for coming back from select
+  const bool cb_result = ( i16_rc > 0 )?true:false;
+
   if(i16_rc > 0 && FD_ISSET(msqDataClient.i32_pipeHandle, &rfds) > 0)
     // clear pipe (is done also in can server before next write)
     i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16);
 
+  return cb_result;
   /*
   if ( getTime() < i32_endWait ) std::cout << "#";
   else std::cout << ".";

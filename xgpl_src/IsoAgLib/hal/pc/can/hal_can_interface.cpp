@@ -545,10 +545,12 @@ int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 }
 
 
-/** wait until specified timeout or until next CAN message receive */
-void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+/** wait until specified timeout or until next CAN message receive
+ *  @return true -> there are CAN messages waiting for process. else: return due to timeout
+  */
+bool can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
-  waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );
+  return waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );
 }
 
 /* ***************************************************** */

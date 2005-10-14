@@ -199,7 +199,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
-void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
   unsigned int busInd = 0;
   int openBus = -1;
@@ -208,17 +208,19 @@ void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
     if ( b_busOpened[busInd] )
     {
       if (openBus < 0) openBus = busInd;
-      for ( unsigned int msgInd = 0; msgInd < 15; msgInd++) if ( rec_bufCnt[busInd][msgInd] > 0 ) return;
+      for ( unsigned int msgInd = 0; msgInd < 15; msgInd++) if ( rec_bufCnt[busInd][msgInd] > 0 ) return true;
     }
   }
   if ( openBus >= 0 )
   { // an open CAN BUS found
     /** @todo how to handle TWO open BUSSes -> how can wait be called then */
-    rteCan_c[openBus].wait( 1, RTE_ONE_MILLISECOND*rte_time_t(rui16_timeoutInterval) );
+    if ( rteCan_c[openBus].wait( 1, RTE_ONE_MILLISECOND*rte_time_t(rui16_timeoutInterval) ) == rte_ret_error( timeout ) ) return false;
+    else return true;
   }
   else
   { // no CAN BUS opened
     usleep( rui16_timeoutInterval * 1000 );
+    return false;
   }
 }
 

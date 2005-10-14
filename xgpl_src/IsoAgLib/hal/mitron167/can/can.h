@@ -253,9 +253,11 @@ namespace HAL
     {return __HAL::can_configGlobalClose(rui8_busNr);};
 
 
-  /** wait until specified timeout or until next CAN message receive */
-  inline void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
-  {__HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
+  /** wait until specified timeout or until next CAN message receive
+   *  @return true -> there are CAN messages waiting for process. else: return due to timeout
+   */
+  inline bool can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+  { return __HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
   /*@}*/
 
   /* ***************************************************************** */

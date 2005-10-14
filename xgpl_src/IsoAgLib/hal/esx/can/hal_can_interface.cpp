@@ -479,8 +479,10 @@ int16_t can_configGlobalClose(uint8_t rui8_busNr)
 }
 
 
-/** wait until specified timeout or until next CAN message receive */
-void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+/** wait until specified timeout or until next CAN message receive
+ *  @return true -> there are CAN messages waiting for process. else: return due to timeout
+ */
+bool can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
   const int32_t ci32_endWait = getTime() + rui16_timeoutInterval;
   int32_t i32_waitSlice rui16_timeoutInterval;
@@ -496,11 +498,11 @@ void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
     {
       for ( unsigned int msgInd = 0; msgInd < 15; msgInd++ )
       {
-        if ( get_can_msg_buf_count(busInd, (msgInd+1)) > 0 ) return;
+        if ( get_can_msg_buf_count(busInd, (msgInd+1)) > 0 ) return true;
       }
     }
     delay_us( i32_waitSlice * 1000 );
-    if ( getTime() >= ci32_endWait ) return;
+    if ( getTime() >= ci32_endWait ) return false;
   }
 }
 

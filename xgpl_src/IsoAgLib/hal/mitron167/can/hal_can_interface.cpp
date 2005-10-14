@@ -829,8 +829,10 @@ int16_t can_configGlobalClose(uint8_t rui8_busNr)
 }
 
 
-/** wait until specified timeout or until next CAN message receive */
-void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+/** wait until specified timeout or until next CAN message receive
+ *  @return true -> there are CAN messages waiting for process. else: return due to timeout
+ */
+bool can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
   const int32_t ci32_endWait = HAL::getTime() + rui16_timeoutInterval;
   int32_t i32_waitSlice rui16_timeoutInterval;
@@ -846,10 +848,10 @@ void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
     {
       for ( unsigned int msgInd = 0; msgInd < 15; msgInd++ )
       {
-        if ( getCanRingBufferSize( busInd, msgInd ) > 0 ) return;
+        if ( getCanRingBufferSize( busInd, msgInd ) > 0 ) return true;
       }
     }
-    if ( HAL::getTime() >= ci32_endWait ) return;
+    if ( HAL::getTime() >= ci32_endWait ) return false;
   }
 }
 

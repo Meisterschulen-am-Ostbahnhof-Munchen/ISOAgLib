@@ -633,7 +633,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
 };
 
-void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
   unsigned int busInd = 0;
   int openBus = -1;
@@ -642,7 +642,7 @@ void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
     if ( b_busOpened[busInd] )
     {
       if (openBus < 0) openBus = busInd;
-      for ( unsigned int msgInd = 0; msgInd < 15; msgInd++) if ( rec_bufCnt[busInd][msgInd] > 0 ) return;
+      for ( unsigned int msgInd = 0; msgInd < 15; msgInd++) if ( rec_bufCnt[busInd][msgInd] > 0 ) return true;
     }
   }
   if ( openBus >= 0 )
@@ -656,10 +656,13 @@ void waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
     FD_ZERO(&rfds);
     FD_SET(can_device, &rfds);
     retval = select(maxfd, &rfds, NULL, NULL, &tv);
+    if ( retval > 0 ) return true;
+    else return false;
   }
   else
   { // no CAN BUS opened
     usleep( rui16_timeoutInterval * 1000 );
+    return false;
   }
 }
 

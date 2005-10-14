@@ -231,9 +231,11 @@ class CANIO_c : public SingletonCANIO_c {
   */
   uint16_t getBusLoad() const;
 
-  /** wait until specified timeout or until next CAN message receive */
-  static void can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
-  { HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
+  /** wait until specified timeout or until next CAN message receive
+   *  @return true -> there are CAN messages waiting for process. else: return due to timeout
+   */
+  static bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
+  { return HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );};
 
 
   /**
