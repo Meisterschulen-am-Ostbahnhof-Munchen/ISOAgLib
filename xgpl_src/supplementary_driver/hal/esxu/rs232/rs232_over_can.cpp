@@ -1,6 +1,6 @@
 /***************************************************************************
                           rs232_over_can.cpp - definition of HAL
-                                    namesapce layer for C2C
+                                    namesapce layer for ESXu
                              -------------------
     begin                : Fri Aug 26 2005
     copyright            : (C) 2005 Michael D. Schmidt
