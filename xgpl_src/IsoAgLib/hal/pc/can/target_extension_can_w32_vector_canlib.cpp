@@ -318,8 +318,8 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
     #else
     // wait until the receive thread allows access to buffer
     while ( b_blockApp )
-    { // do something for 1msec - just to take time
-      Sleep( i32_waitSlice );
+    { // do something for 5msec - just to take time
+      Sleep( 5 );
     }
     #endif
     for ( unsigned int busInd = 0; busInd < cui32_maxCanBusCnt; busInd++)
@@ -330,9 +330,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
         if ( rec_bufCnt[busInd][msgInd] > 0 ) return true;
       }
     }
-    #ifndef USE_THREAD
     Sleep( i32_waitSlice );
-    #endif
     if ( getTime() >= ci32_endWait ) return false;
   }
 }
