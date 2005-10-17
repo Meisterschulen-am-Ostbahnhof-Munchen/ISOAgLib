@@ -158,7 +158,7 @@ int16_t close_rs232(uint8_t rui8_channel)
 	if ( DEF_SerialPointer(rui8_channel) == NULL ) return HAL_NOACT_ERR;
 	delete DEF_SerialPointer(rui8_channel);
 	DEF_SerialPointer(rui8_channel) = NULL;
-	c_buffer[RS232_INSTANCE_CNT].clear();
+	c_buffer[rui8_channel].clear();
 	return HAL_NO_ERR;
 }
 
