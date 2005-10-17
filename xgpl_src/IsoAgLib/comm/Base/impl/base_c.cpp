@@ -1644,7 +1644,7 @@ void Base_c::isoSendPositionStream( void )
   const uint8_t cu8_tempTypeMethod = ( t_gnssType | ( t_gnssMethod << 4 ) );
   number2LittleEndianString( cu8_tempTypeMethod, writeRef );
   // write integrity ( set unused highest 6 bits to "1" )
-  number2LittleEndianString( (ui8_integrity| 0xFC), writeRef );
+  number2LittleEndianString( uint8_t(ui8_integrity| 0xFC), writeRef );
   // write #satelites
   number2LittleEndianString( ui8_satelliteCnt, writeRef );
   // write HDOP
@@ -1685,7 +1685,7 @@ void Base_c::isoSendDirectionStream( void )
   c_nmea2000Streamer.reset();
   std::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
   // use helper function to transfer value to the byte vector
-  number2LittleEndianString( ui8_dataModeAndHeadingReference, writeRef );
+  number2LittleEndianString( uint8_t (ui8_dataModeAndHeadingReference|0xC0), writeRef );
   number2LittleEndianString( ui8_directionSequenceID, writeRef );
   number2LittleEndianString( ui16_courseOverGroundRad10Minus4, writeRef );
   number2LittleEndianString( ui16_speedOverGroundCmSec, writeRef );
