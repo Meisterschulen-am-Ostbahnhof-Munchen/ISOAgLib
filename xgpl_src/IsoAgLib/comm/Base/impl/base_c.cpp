@@ -1092,7 +1092,7 @@ bool Base_c::isoProcessMsg()
   }
   return b_result;
 }
-
+#if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
 /** check if an NMEA2000 position signal was received */
 bool Base_c::isPositionReceived() const
 {
@@ -1110,6 +1110,7 @@ bool Base_c::isPositionReceived() const
     return true;
   }
 }
+#endif
 
 #ifdef NMEA_2000_FAST_PACKET
 /** deliver GPS receive qualitiy */
