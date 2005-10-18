@@ -142,9 +142,9 @@ void SystemMgmt_c::close( void )
   if ( ! checkAlreadyClosed() ) {
     // avoid another call
     setAlreadyClosed();
-    for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
-    { // call close for each registered client
-      (*pc_searchCacheC1)->close();
+    while ( c_arrClientC1.size() > 0 )
+    {
+      (*c_arrClientC1.begin())->close();
     }
     getSchedulerInstance4Comm().unregisterClient( this );
   }
