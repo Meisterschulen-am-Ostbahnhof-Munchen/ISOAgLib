@@ -1530,7 +1530,7 @@ void Base_c::isoSendBase2Update( void )
 
   data().setIsoPgn(FRONT_PTO_STATE_PGN);
   data().setVal12(ptoFront());
-  data().setVal12(NO_VAL_16);
+  data().setVal34(NO_VAL_16);
 
   uint8_t ui8_val5 = (t_frontPtoEngaged << 6);
   ui8_val5 |= (t_frontPto1000 << 4);
@@ -1542,7 +1542,7 @@ void Base_c::isoSendBase2Update( void )
 
   data().setIsoPgn(BACK_PTO_STATE_PGN);
   data().setVal12(ptoRear());
-  data().setVal12(NO_VAL_16);
+  data().setVal34(NO_VAL_16);
 
   ui8_val5 = (t_frontPtoEngaged << 6);
   ui8_val5 |= (t_frontPto1000 << 4);
