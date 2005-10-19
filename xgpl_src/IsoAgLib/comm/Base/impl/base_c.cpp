@@ -1010,14 +1010,14 @@ bool Base_c::isoProcessMsg()
       { // sender is allowed to send
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
         { // front PTO
-          setPtoFront(data().val12());
+          setPtoFront(data().val12() / 8); // ISO defines a resolution of 0.125 per bit!!!
           t_frontPtoEngaged = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 6) & 3);
           t_frontPto1000 = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 4) & 3);
           t_frontPtoEconomy = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 2) & 3);
         }
         else
         { // back PTO
-          setPtoRear(data().val12());
+          setPtoRear(data().val12() / 8); // ISO defines a resolution of 0.125 per bit!!!
           t_rearPtoEngaged = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 6) & 3);
           t_rearPto1000 = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 4) & 3);
           t_rearPtoEconomy = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 2) & 3);
@@ -1529,7 +1529,7 @@ void Base_c::isoSendBase2Update( void )
   c_can << data();
 
   data().setIsoPgn(FRONT_PTO_STATE_PGN);
-  data().setVal12(ptoFront());
+  data().setVal12(ptoFront()*8); // ISO defines a resolution of 0.125 per bit!!!
   data().setVal34(NO_VAL_16);
 
   uint8_t ui8_val5 = (t_frontPtoEngaged << 6);
@@ -1541,7 +1541,7 @@ void Base_c::isoSendBase2Update( void )
   c_can << data();
 
   data().setIsoPgn(BACK_PTO_STATE_PGN);
-  data().setVal12(ptoRear());
+  data().setVal12(ptoRear() * 8); // ISO defines a resolution of 0.125 per bit!!!
   data().setVal34(NO_VAL_16);
 
   ui8_val5 = (t_frontPtoEngaged << 6);
