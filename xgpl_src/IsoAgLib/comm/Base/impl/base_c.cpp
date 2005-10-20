@@ -710,7 +710,7 @@ bool Base_c::dinProcessMsg()
   DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
   bool b_result = false;
   // store the devKey of the sender of base data
-  const uint16_t ui16_actTime100ms = (data().time() / 100);
+  const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
   if (getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
   { // the corresponding sender entry exist in the monitor list
     c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
@@ -734,7 +734,7 @@ bool Base_c::dinProcessMsg()
         setOverflowSecure(i32_distTheor, i16_lastDistTheor, data().val78());
 
         // set last time
-        i32_lastBase1 = ui16_actTime100ms;
+        i32_lastBase1 = ci32_now;
         c_sendBase1DevKey = c_tempDevKey;
       }
       else
@@ -760,7 +760,7 @@ bool Base_c::dinProcessMsg()
         setHitchFront(data().val8());
 
         // set last time
-        i32_lastBase2 = ui16_actTime100ms;
+        i32_lastBase2 = ci32_now;
         c_sendBase2DevKey = c_tempDevKey;
       }
       else
@@ -784,7 +784,7 @@ bool Base_c::dinProcessMsg()
         ui8_rearDraftNominal = data().val7();
 
         // set last time
-        i32_lastBase3 = ui16_actTime100ms;
+        i32_lastBase3 = ci32_now;
         c_sendBase3DevKey = c_tempDevKey;
       }
       else
@@ -804,7 +804,7 @@ bool Base_c::dinProcessMsg()
         ui8_fuelTemperature =  data().val3();
 
         // set last time
-        i32_lastFuel = ui16_actTime100ms;
+        i32_lastFuel = ci32_now;
         c_sendFuelDevKey = c_tempDevKey;
       }
       else
@@ -846,7 +846,7 @@ bool Base_c::dinProcessMsg()
         // ( i.e. year != 0 )
         if ( ( data().val1() != 0 ) || ( data().val2() != 0 ) )
         { // set last time
-          i32_lastCalendar = ui16_actTime100ms;
+          i32_lastCalendar = ci32_now;
           c_sendCalendarDevKey = c_tempDevKey;
         }
       }
@@ -870,7 +870,7 @@ bool Base_c::isoProcessMsg()
 {
   bool b_result = false;
   DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
-  const uint16_t ui16_actTime100ms = (data().time()/100);
+  const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
   // store the devKey of the sender of base data
   if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
   { // the corresponding sender entry exist in the monitor list
@@ -901,7 +901,7 @@ bool Base_c::isoProcessMsg()
         bit_calendar.timezoneMinuteOffset = data().val7();
         bit_calendar.timezoneHourOffsetMinus24 = data().val8();
         // set last time
-        i32_lastCalendar = ui16_actTime100ms;
+        i32_lastCalendar = ci32_now;
         c_sendCalendarDevKey = c_tempDevKey;
       }
       else
@@ -948,7 +948,7 @@ bool Base_c::isoProcessMsg()
           ui8_maxPowerTime = data().val7();
         }
         // set last time
-        i32_lastBase1 = ui16_actTime100ms;
+        i32_lastBase1 = ci32_now;
         c_sendBase1DevKey = c_tempDevKey;
       }
       else
@@ -993,7 +993,7 @@ bool Base_c::isoProcessMsg()
           i16_rearDraft = static_cast<int16_t>(data().val4()) + (static_cast<int16_t>(data().val5()) << 8);
         }
         // set last time
-        i32_lastBase2 = ui16_actTime100ms;
+        i32_lastBase2 = ci32_now;
         c_sendBase2DevKey = c_tempDevKey;
       }
       else
@@ -1023,7 +1023,7 @@ bool Base_c::isoProcessMsg()
           t_rearPtoEconomy = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 2) & 3);
         }
         // set last time
-        i32_lastBase2 = ui16_actTime100ms;
+        i32_lastBase2 = ci32_now;
         c_sendBase2DevKey = c_tempDevKey;
       }
       else
@@ -1054,11 +1054,11 @@ bool Base_c::isoProcessMsg()
     case NMEA_GPS_POSITON_RAPID_UPDATE_PGN:
       if ( checkParseReceived( c_tempDevKey, c_sendGpsDevKey, IsoAgLib::BaseDataGps ) )
       { // sender is allowed to send
-        i32_lastIsoPositionSimple = ui16_actTime100ms;
+        i32_lastIsoPositionSimple = ci32_now;
         i32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
         i32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
         // set last time
-        i32_lastIsoPositionSimple = ui16_actTime100ms;
+        i32_lastIsoPositionSimple = ci32_now;
         c_sendGpsDevKey = c_tempDevKey;
       }
       b_result = true;
@@ -1740,7 +1740,7 @@ void Base_c::isoSendCalendar(const DevKey_c& rc_devKey)
     getCanInstance4Comm() << data();
 
     // update time
-    i32_lastCalendar = Scheduler_c::getLastTimeEventTrigger()/100;
+    i32_lastCalendar = Scheduler_c::getLastTimeEventTrigger();
   }
 }
 /** force maintain power from tractor
