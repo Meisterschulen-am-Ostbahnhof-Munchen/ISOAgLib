@@ -99,7 +99,7 @@ namespace IsoAgLib {
 
 
 // IsoAgLib
-#include "IsoAgLib/typedef.h"
+#include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
