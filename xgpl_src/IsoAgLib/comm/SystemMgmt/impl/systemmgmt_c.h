@@ -104,6 +104,7 @@
 #endif
 
 #include "identitem_c.h"
+#include "monitoritem_c.h"
 
 
 // Begin Namespace __IsoAgLib
