@@ -768,7 +768,7 @@ RS232IO_c& RS232IO_c::operator>>(float& f_data)
 */
 void RS232IO_c::readToken()
 {
-  uint8_t b_data;
+  uint8_t b_data = 0;
   uint8_t ui8_ind = 0;
 
   // first eat white space (including \t,\n) - stop if puffer is empty
