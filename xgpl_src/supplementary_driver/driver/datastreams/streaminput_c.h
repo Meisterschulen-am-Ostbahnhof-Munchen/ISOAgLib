@@ -92,7 +92,7 @@
 #define STREAMINPUT_C_H
 
 
-#include "IsoAgLib/typedef.h"
+#include <IsoAgLib/typedef.h>
 
 // +X2C includes
 // ~X2C

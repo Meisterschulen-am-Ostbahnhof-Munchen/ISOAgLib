@@ -89,7 +89,7 @@
 #define FILESTREAMOUTPUT_C_H
 
 
-#include "IsoAgLib/typedef.h"
+#include <IsoAgLib/typedef.h>
 #include "streamoutput_c.h"
 #include <supplementary_driver/hal/datastreams.h>
 

@@ -89,7 +89,7 @@
 #define FILESTREAMINPUT_C_H
 
 
-#include "IsoAgLib/typedef.h"
+#include <IsoAgLib/typedef.h>
 #include "streaminput_c.h"
 #include <supplementary_driver/hal/datastreams.h>
 #include <stdio.h>
