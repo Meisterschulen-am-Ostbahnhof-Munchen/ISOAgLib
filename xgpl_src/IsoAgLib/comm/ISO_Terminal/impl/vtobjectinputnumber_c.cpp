@@ -81,7 +81,7 @@
  ***************************************************************************/
 
 #include "vtobjectinputnumber_c.h"
-#include "IsoAgLib/util/impl/util_funcs.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
 #include "isoterminal_c.h"
 
 

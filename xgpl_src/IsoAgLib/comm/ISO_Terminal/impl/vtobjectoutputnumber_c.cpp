@@ -81,7 +81,7 @@
  ***************************************************************************/
 
 #include "vtobjectoutputnumber_c.h"
-#include "IsoAgLib/util/impl/util_funcs.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
 #include "../ivtobjectfontattributes_c.h"
 #include "isoterminal_c.h"
 
