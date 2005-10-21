@@ -81,7 +81,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-#define IOP_OUTPUT
+//#define IOP_OUTPUT
 
 /* *************************************** */
 /* ********** include headers ************ */
