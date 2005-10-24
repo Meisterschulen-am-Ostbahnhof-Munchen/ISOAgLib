@@ -1442,7 +1442,7 @@ bool ISOTerminal_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_ob
 {
   return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      0x00, byte1, byte2, byte3, byte4,
+                      0xFF, byte1, byte2, byte3, byte4,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
