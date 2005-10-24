@@ -186,6 +186,11 @@ int16_t  init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pf
     sprintf(name, "digitalInput_%hu", bInput );
     sensorDigitalInput[ bInput] = fopen(name, "r");
   }
+  if ( sensorDigitalInput[ bInput] == NULL) {
+    // still not open
+    sensorDigitalInputOpen[bInput] = false;
+    return HAL_CONFIG_ERR;
+  }
   // END: Added by M.Wodok 6.12.04
 
   sensorDigitalInputOpen[bInput] = true;
@@ -202,6 +207,7 @@ int16_t  init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pf
 
 int16_t  getDiginOnoff(uint8_t bInputNumber){
   // printf("getDiginOnoff(%i)\n", bInputNumber);
+  if ( ! sensorDigitalInputOpen[bInputNumber] ) return HAL_CONFIG_ERR;
   if ( getTime() >= next_sensorDigitalInputTime[bInputNumber] )
   { // save next_XX to last_XX
     lastSensorDigitalInputTime[bInputNumber] = next_sensorDigitalInputTime[bInputNumber];
@@ -217,6 +223,7 @@ int16_t  getDiginOnoff(uint8_t bInputNumber){
 }
 int16_t  getDiginOnoffStatic(uint8_t bInputNumber){
   // printf("getDiginOnoffStatic(%i)\n", bInputNumber);
+  if ( ! sensorDigitalInputOpen[bInputNumber] ) return HAL_CONFIG_ERR;
   if ( getTime() >= next_sensorDigitalInputTime[bInputNumber] )
   { // save next_XX to last_XX
     lastSensorDigitalInputTime[bInputNumber] = next_sensorDigitalInputTime[bInputNumber];
