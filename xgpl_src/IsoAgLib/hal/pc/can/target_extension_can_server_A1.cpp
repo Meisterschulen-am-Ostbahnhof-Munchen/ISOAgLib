@@ -303,23 +303,27 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
             if (errno == EAGAIN)
             { // queue is full => remove oldest msg and try again
               msqWrite_s msqWriteBuf;
-              DEBUG_PRINT("message queue full => try to remove oldest msg and send again!!\n");
+              DEBUG_PRINT4("message queue for CAN Ident: %d with Filter: %d, global Mask: %d for MsgObj: %d is full => try to remove oldest msg and send again!!\n",
+                           ui32_id, iter->ui32_filter[b_bus][i32_obj], iter->ui32_globalMask[b_bus], i32_obj );
               #ifdef CAN_SERVER_LOG_PATH
-              logging << "message queue full => try to remove oldest msg and send again!!" << std::endl;
+              logging << "message queue for CAN Ident: " << ui32_id << " with Filter: "
+                << iter->ui32_filter[b_bus][i32_obj] << ", global Mask: " << iter->ui32_globalMask[b_bus]
+                << " for MsgObj NR: " << i32_obj
+                << " is full => try to remove oldest msg and send again!!" << std::endl;
               #endif
               int i_rcRcv = msgrcv(pc_serverData->msqDataServer.i32_rdHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(int32_t), 0,IPC_NOWAIT);
               if ( i_rcRcv > 0 )
               { // number of received bytes > 0 => msgrcv successfull => try again
                 DEBUG_PRINT("oldest msg from queue removed!!\n");
                 #ifdef CAN_SERVER_LOG_PATH
-                logging << "message queue full => try to remove oldest msg and send again!!" << std::endl;
+                logging << "oldest msg from queue removed!!" << std::endl;
                 #endif
                 int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
                 if (i_rcSnd == 0)
                 {
                   DEBUG_PRINT("message sent again after queue full!!\n");
                   #ifdef CAN_SERVER_LOG_PATH
-                  logging << "message queue full => try to remove oldest msg and send again!!" << std::endl;
+                  logging << "message sent again after queue full!!" << std::endl;
                   #endif
                 }
               }
