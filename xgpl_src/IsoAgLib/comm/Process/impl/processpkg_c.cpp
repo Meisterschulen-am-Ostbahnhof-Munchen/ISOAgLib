@@ -119,6 +119,7 @@
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include "proc_c.h"
 
 namespace __IsoAgLib {
 
@@ -871,10 +872,10 @@ bool ProcessPkg_c::resolveCommandType(
         uint8_t b_cmd = data(0);
         switch (b_cmd >> 4)
         {
-          case DoMin:
+          case Proc_c::DoMin:
             en_valueGroup = GeneralCommand_c::minValue;
             break;
-          case DoMax:
+          case Proc_c::DoMax:
             en_valueGroup = GeneralCommand_c::maxValue;
             break;
           default:
