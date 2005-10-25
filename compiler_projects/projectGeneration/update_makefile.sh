@@ -69,7 +69,7 @@ USE_EMBED_HEADER_DIRECTORY="commercial_BIOS/bios_esx"
 USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib"
 USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 USE_EMBED_ILO="Xos20lcs.ilo"
-USE_EMBED_COMPILER_DIR="c:/programme/tasking/7.56/c166"
+USE_EMBED_COMPILER_DIR="c:/programme/tasking/c166"
 
 USE_WIN32_LIB_DIRECTORY="C:/Development"
 USE_WIN32_HEADER_DIRECTORY="C:/Development"

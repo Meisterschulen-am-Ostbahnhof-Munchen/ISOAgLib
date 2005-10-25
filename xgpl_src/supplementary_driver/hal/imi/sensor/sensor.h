@@ -100,6 +100,14 @@
 #define MAX_ANALOG_MA 20
 ///set max digital BIOS function return value corresponding to MAX_ANALOG_MA
 #define MAX_ANALOG_MA_DIGIT 833
+
+/** define the scale factor to get [mV] from the return value of get_analogin_mean */
+/** @todo verify this with STW, as there are differing informations on this */
+#define ADC2MILLIVOLT 16
+
+/** define the scale factor to get [mA] from the return value of get_analogin_mean */
+/** @todo verify this with STW, as there are differing informations on this */
+#define ADC2MILLIAMPERE 20
 /*@}*/
 
 namespace __HAL {
@@ -128,14 +136,14 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_analoginVolt(uint8_t bNumber)
-    {__HAL::init_analogin(bNumber, VOLTAGE_IN);return C_NO_ERR;};
+    {/*__HAL::init_input(bNumber, VOLTAGE_IN);*/return C_NO_ERR;};
   /**
     initialize one of the [0..7] analog input channels to CURRENT input
     @param bNumber number of the analog input channel
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_analoginCurrent(uint8_t bNumber)
-    {__HAL::init_analogin(bNumber, CURRENT_IN);return C_NO_ERR;};
+    {/*__HAL::init_input(bNumber, CURRENT_IN);*/return C_NO_ERR;};
 
   /**
     initialize one of the (16 [DIN1..DIN16]) digital input channels
@@ -218,9 +226,9 @@ namespace HAL
     @return voltage [0..8500] [mV] or C_RANGE on wrong input channel number
   */
   inline int16_t  getAdcVoltage(uint8_t rb_channel)
-    {int16_t i16_temp = __HAL::getAnaloginMean(rb_channel);
+    {int16_t i16_temp = __HAL::get_analogin_mean(rb_channel);
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return ((i16_temp * 9) + ((i16_temp * 39)/100));};
+     return ((i16_temp * ADC2MILLIVOLT);};
   /**
     get the MEDIUM of measured voltage value of a channel in [mV]
     @param rb_channel measured channel
@@ -236,7 +244,7 @@ namespace HAL
   inline int16_t  getAdcCurrent(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::getAnaloginMean(rb_channel);
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return ((i16_temp * 24) + ((i16_temp * 41)/100));};
+     return (i16_temp * ADC2MILLIAMPERE);};
   /**
     get the MEDIUM of measured current value of a channel in [uA]
     @param rb_channel measured channel
@@ -251,7 +259,7 @@ namespace HAL
       @return ON, OFF or C_RANGE
     */
     inline int16_t  getDiginOnoff(uint8_t bInputNumber)
-      {return __HAL::getDiginOnoff(bInputNumber);};
+      {return __HAL::get_digin_onoff(bInputNumber);};
 
     /**
       deliver debounced state of digital input based on Activ-High/Low setting
@@ -260,7 +268,7 @@ namespace HAL
       @return ON, OFF or C_RANGE
     */
     inline int16_t  getDiginOnoffStatic(uint8_t bInputNumber)
-      {return __HAL::getDiginOnoffStatic(bInputNumber);};
+      {return __HAL::get_digin_onoff_static(bInputNumber);};
 
     /**
       deliver frequency of digital interrupt channel
@@ -274,7 +282,7 @@ namespace HAL
     */
     inline uint16_t getDiginFreq(uint8_t bInputNumber, bool b_useVirtual = false)
       {uint16_t ui16_result;
-       return ((__HAL::getDiginFreq(bInputNumber, &ui16_result) == C_NO_ERR) || (b_useVirtual))?ui16_result:0;};
+       return ((__HAL::get_digin_freq(bInputNumber, &ui16_result) == C_NO_ERR) || (b_useVirtual))?ui16_result:0;};
 
   /*@}*/
 }
