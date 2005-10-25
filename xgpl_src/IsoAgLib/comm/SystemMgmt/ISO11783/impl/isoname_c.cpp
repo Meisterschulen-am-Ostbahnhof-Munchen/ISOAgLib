@@ -80,9 +80,9 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include "isoname_c.h"
 #include <IsoAgLib/typedef.h>
 #include <cstring>
+#include "isoname_c.h"
 
 /* ************************************** */
 /* import some namespaces for easy access */

@@ -71,7 +71,7 @@
 #include <IsoAgLib/hal/imi/config.h>
 #include <IsoAgLib/hal/imi/typedef.h>
 #include <IsoAgLib/hal/imi/errcodes.h>
-#include "target_extensions.h"
+#include "sensor_target_extensions.h"
 
 /* ******************************************************** */
 /**
@@ -130,20 +130,23 @@ namespace HAL
   /** \name Sensor_c Input BIOS functions */
 /*@{*/
 
+   #define  VOLTAGE_IN               0       /* Define to configure the input as voltage input */
+   #define  CURRENT_IN               1       /* Define to configure the input as current input */
+
   /**
     initialize one of the [0..7] analog input channels to VOLTAGE input
     @param bNumber number of the analog input channel
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_analoginVolt(uint8_t bNumber)
-    {/*__HAL::init_input(bNumber, VOLTAGE_IN);*/return C_NO_ERR;};
+    {__HAL::init_input(bNumber, VOLTAGE_IN);return C_NO_ERR;};
   /**
     initialize one of the [0..7] analog input channels to CURRENT input
     @param bNumber number of the analog input channel
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_analoginCurrent(uint8_t bNumber)
-    {/*__HAL::init_input(bNumber, CURRENT_IN);*/return C_NO_ERR;};
+    {__HAL::init_input(bNumber, CURRENT_IN);return C_NO_ERR;};
 
   /**
     initialize one of the (16 [DIN1..DIN16]) digital input channels
@@ -228,7 +231,7 @@ namespace HAL
   inline int16_t  getAdcVoltage(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_analogin_mean(rb_channel);
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return ((i16_temp * ADC2MILLIVOLT);};
+     return (i16_temp * ADC2MILLIVOLT);};
   /**
     get the MEDIUM of measured voltage value of a channel in [mV]
     @param rb_channel measured channel
@@ -242,7 +245,7 @@ namespace HAL
     @return current [4000..20000] [uA] or C_RANGE on wrong input channel number
   */
   inline int16_t  getAdcCurrent(uint8_t rb_channel)
-    {int16_t i16_temp = __HAL::getAnaloginMean(rb_channel);
+    {int16_t i16_temp = __HAL::get_analogin_mean(rb_channel);
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * ADC2MILLIAMPERE);};
   /**

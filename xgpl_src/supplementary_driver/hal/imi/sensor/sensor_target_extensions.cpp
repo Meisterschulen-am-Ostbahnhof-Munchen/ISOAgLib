@@ -69,6 +69,7 @@
 #include <IsoAgLib/hal/imi/config.h>
 
 #include <cstdlib>
+#include <cstring>
 
 namespace __HAL {
 extern "C" {
@@ -76,15 +77,10 @@ extern "C" {
   #include <commercial_BIOS/bios_imi/adis10.h>
 }
 
+using namespace std;
 
 /** prescaler value for digin input channels 1_6 */
 static uint8_t _b_prescale_1_6Index;
-/**
-  array of pointers to uint32_t arrays with counter
-  values; avoid memory waste, if only some channels are
-  used for counting
-*/
-static uint32_t *_pulDiginCounter[4];
 /**
   array of pointers to uint32_t arrays with counter
   values; avoid memory waste, if only some channels are
@@ -132,7 +128,7 @@ void counterIrqFlex(uint8_t rb_row, uint8_t rb_col)
   if (_pt_diginTriggerTime[rb_row] != NULL)
   {
     _put_temp = &(_pt_diginTriggerTime[rb_row][rb_col]);
-    _wIrqTime = (getTime() & 0xFFFF);
+    _wIrqTime = (get_time() & 0xFFFF);
     if (_wIrqTime > _put_temp->uiAct) _put_temp->uiPeriod = _wIrqTime - _put_temp->uiAct;
     else
     {
@@ -188,7 +184,7 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, boolean rb_act
 //  int32_t ui16_prescale = ((rui16_timebase * getCpuFreq() * 1000) / 65534);
   uint8_t ui8_prescaleIndex, b_pow;
   int16_t i16_errorState;
-  i32_prescale *= (getCpuFreq() * 1000);
+  i32_prescale *= (get_cpu_freq() * 1000);
   i32_prescale /= 65534;
   /* check if rb_channel is allowed and exit function with RANGE error if not correct */
   if (rb_channel > 15) return C_RANGE;
@@ -207,14 +203,14 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, boolean rb_act
     }
   }
   /* set prescaler */
-  i16_errorState = setDiginPrescaler(RPM_IN_1_6, _b_prescale_1_6Index);
+  i16_errorState = set_digin_prescaler(RPM_IN_1_6, _b_prescale_1_6Index);
 
   /* create var for counter value -> this vars are managed in 4-groups
    *  of int32_t -> avoid memory waste
    */
   if (_pulDiginCounter[(rb_channel / 4)] == NULL)
   { /* according 4-group of uint32_t isn´t created -> allocate */
-    _pulDiginCounter[(rb_channel / 4)] = malloc(4*sizeof(uint32_t));
+    _pulDiginCounter[(rb_channel / 4)] = (uint32_t*)malloc(4*sizeof(uint32_t));
     /* check if allocated properly and init */
     if (_pulDiginCounter[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
     else memset(_pulDiginCounter[(rb_channel / 4)], 0, sizeof(uint32_t)*4);
@@ -223,7 +219,7 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, boolean rb_act
   /* store given timebase in according 4-group */
   if (_puiDiginTimebase[(rb_channel / 4)] == NULL)
   {
-    _puiDiginTimebase[(rb_channel / 4)] = malloc(4*sizeof(uint16_t));
+    _puiDiginTimebase[(rb_channel / 4)] = (uint16_t*)malloc(4*sizeof(uint16_t));
     /* check if allocated properly and init */
     if (_puiDiginTimebase[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
     else
@@ -239,7 +235,7 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, boolean rb_act
      */
     if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL)
     {  /* according 4-group of t_triggerNode isn´t created -> allocate */
-      _pt_diginTriggerTime[(rb_channel / 4)] = malloc(4*sizeof(t_triggerNode));
+      _pt_diginTriggerTime[(rb_channel / 4)] = (t_triggerNode*)malloc(4*sizeof(t_triggerNode));
       if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
       else memset(_pt_diginTriggerTime[(rb_channel / 4)], 0, sizeof(t_triggerNode) * 4);
     }
@@ -291,10 +287,10 @@ uint16_t getCounterPeriod(uint8_t rb_channel)
   {
     ui16_timebase = _puiDiginTimebase[(rb_channel / 4)][(rb_channel % 4)];
     if (ui16_timebase == 0) ui16_result = 0xFFFF;
-    else if (ui16_timebase < (1024 * 65534 / (getCpuFreq() * 1000)))
+    else if (ui16_timebase < (1024 * 65534 / (get_cpu_freq() * 1000)))
     { /* use standard BIOS method because timebase is short enough */
-      getDiginPeriod(rb_channel, &ui16_result, &ui16_counter);
-      ui16_result = (((2 << (_b_prescale_1_6Index + 2)) * ui16_result )/ (getCpuFreq() * 1000));
+      get_digin_period(rb_channel, &ui16_result, &ui16_counter);
+      ui16_result = (((2 << (_b_prescale_1_6Index + 2)) * ui16_result )/ (get_cpu_freq() * 1000));
     }
     else
     { /* use extension method */
@@ -326,9 +322,9 @@ uint16_t getCounterFrequency(uint8_t rb_channel)
   {
     ui16_timebase = _puiDiginTimebase[(rb_channel / 4)][(rb_channel % 4)];
     if (ui16_timebase == 0) ui16_result = 0;
-    else if (ui16_timebase < (1024 * 65534 / (getCpuFreq() * 1000)))
+    else if (ui16_timebase < (1024 * 65534 / (get_cpu_freq() * 1000)))
     { /* use standard BIOS method because timebase is short enough */
-      getDiginFreq(rb_channel, &ui16_result);
+      get_digin_freq(rb_channel, &ui16_result);
     }
     else
     { /* use extension method */
@@ -359,7 +355,7 @@ uint16_t getCounterFrequency(uint8_t rb_channel)
 */
 uint16_t getCounterLastSignalAge(uint8_t rb_channel)
 {
-  uint16_t uiResult = 0xFFFF, uiTime = (getTime() & 0xFFFF);
+  uint16_t uiResult = 0xFFFF, uiTime = (get_time() & 0xFFFF);
   uint16_t ui16_period, ui16_actTime;
   /* check if rb_channel is allowed and var array is allocated */
   if ((rb_channel < 16) && (_pt_diginTriggerTime[(rb_channel / 4)] != NULL))

@@ -86,6 +86,8 @@
 #include <IsoAgLib/util/config.h>
 #include <stdio.h>
 
+using namespace std;
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /**
@@ -123,10 +125,10 @@ void int2Float(const void *const pvFrom, float *const pf_to)
 
   #if FLOAT_WORD_ORDER == WORD_HI_LO
     // change first and last two bytes for float access
-    CNAMESPACE::memcpy(pb_to, pb_from+2, 2);
-    CNAMESPACE::memcpy(pb_to+2, pb_from, 2);
+    memcpy(pb_to, pb_from+2, 2);
+    memcpy(pb_to+2, pb_from, 2);
   #else
-    CNAMESPACE::memcpy(pb_to, pb_from, 4);
+    memcpy(pb_to, pb_from, 4);
   #endif
 }
 /**
@@ -144,10 +146,10 @@ void float2Int(const float *const pf_from, void *const pvTo)
 
   #if FLOAT_WORD_ORDER == WORD_HI_LO
     // change first and last two bytes for float access
-    CNAMESPACE::memcpy(pb_to, pb_from+2, 2);
-    CNAMESPACE::memcpy(pb_to+2, pb_from, 2);
+    memcpy(pb_to, pb_from+2, 2);
+    memcpy(pb_to+2, pb_from, 2);
   #else
-    CNAMESPACE::memcpy(pb_to, pb_from, 4);
+    memcpy(pb_to, pb_from, 4);
   #endif
 }
 
@@ -365,7 +367,7 @@ uint16_t convertLittleEndianStringUi16( const uint8_t* rpui8_src )
 {
   uint16_t ui16_temp;
 #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( &ui16_temp, rpui8_src, sizeof(uint16_t) );
+  memcpy( &ui16_temp, rpui8_src, sizeof(uint16_t) );
 #else
   ui16_temp = uint16_t(rpui8_src[0]) | (uint16_t(rpui8_src[1]) << 8);
 #endif
@@ -377,7 +379,7 @@ int16_t convertLittleEndianStringI16( const uint8_t* rpui8_src )
 {
   int16_t i16_temp;
 #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( &i16_temp, rpui8_src, sizeof(int16_t) );
+  memcpy( &i16_temp, rpui8_src, sizeof(int16_t) );
 #else
   i16_temp = int16_t(rpui8_src[0]) | (int16_t(rpui8_src[1]) << 8);
 #endif
@@ -388,7 +390,7 @@ uint32_t convertLittleEndianStringUi32( const uint8_t* rpui8_src )
 {
   uint32_t ui32_temp;
 #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( &ui32_temp, rpui8_src, sizeof(uint32_t) );
+  memcpy( &ui32_temp, rpui8_src, sizeof(uint32_t) );
 #else
   ui32_temp = uint32_t(rpui8_src[0]);
   for ( unsigned int ind = 1; ( ind < sizeof(uint32_t) ); ind++ )
@@ -403,7 +405,7 @@ int32_t convertLittleEndianStringI32( const uint8_t* rpui8_src )
 {
   int32_t i32_temp;
 #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( &i32_temp, rpui8_src, sizeof(int32_t) );
+  memcpy( &i32_temp, rpui8_src, sizeof(int32_t) );
 #else
   i32_temp = int32_t(rpui8_src[0]);
   for ( unsigned int ind = 1; ( ind < sizeof(int32_t) ); ind++ )
@@ -418,7 +420,7 @@ int32_t convertLittleEndianStringI32( const uint8_t* rpui8_src )
 void int2littleEndianString( unsigned int input, uint8_t* pui8_target, unsigned int size )
 {
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( pui8_target,   &input, size );
+  memcpy( pui8_target,   &input, size );
   #else
   for ( unsigned int ind = 0; ind < size; ind++ )
   {
@@ -440,10 +442,10 @@ void int2littleEndianString( unsigned int input, uint8_t* pui8_target, unsigned 
 /** convert big endian textual number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target, unsigned int size )
 {
-  if ( NULL == rc_src ){std::memset( pui8_target, 0, size ); return;}
+  if ( NULL == rc_src ){memset( pui8_target, 0, size ); return;}
   unsigned int temp;
 
-  const unsigned int inputLen = std::strlen(rc_src);
+  const unsigned int inputLen = strlen(rc_src);
   uint8_t* pui8_write = pui8_target;
 
   int ind = inputLen - ( 2 * SIZEOF_INT );
@@ -481,7 +483,7 @@ void bigEndianHexNumberText2CanString( const char* rc_src, uint8_t* pui8_target,
 /** convert big endian textual unsigned int 8Bit number representation into little endian uint8_t string */
 void bigEndianHexNumberText2CanStringUint8( const char* rc_src, uint8_t* pui8_target )
 {
-  if ( NULL == rc_src ){std::memset( pui8_target, 0, 1 ); return;}
+  if ( NULL == rc_src ){memset( pui8_target, 0, 1 ); return;}
   unsigned int temp;
   sscanf( rc_src, "%2x",  &temp );
   pui8_target[0] = ( temp & 0xFF );
@@ -489,7 +491,7 @@ void bigEndianHexNumberText2CanStringUint8( const char* rc_src, uint8_t* pui8_ta
 /** convert big endian textual unsigned int 16Bit number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanStringUint16( const char* rc_src, uint8_t* pui8_target )
 {
-  if ( NULL == rc_src ){std::memset( pui8_target, 0, 2 ); return;}
+  if ( NULL == rc_src ){memset( pui8_target, 0, 2 ); return;}
 #if SIZEOF_INT <= 4
   uint16_t temp;
   sscanf( rc_src, SCANF_HEX_INT16_STRING, &temp );
@@ -498,7 +500,7 @@ void bigEndianHexNumberText2CanStringUint16( const char* rc_src, uint8_t* pui8_t
   sscanf( rc_src, "%4x",  &temp );
   #endif
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( pui8_target,   &temp, 2 );
+  memcpy( pui8_target,   &temp, 2 );
   #else
   pui8_target[0] =   ( temp        & 0xFF );
   pui8_target[1] = ( ( temp >> 8 ) & 0xFF );
@@ -507,7 +509,7 @@ void bigEndianHexNumberText2CanStringUint16( const char* rc_src, uint8_t* pui8_t
 /** convert big endian textual unsigned int 32Bit number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanStringUint32( const char* rc_src, uint8_t* pui8_target )
 {
-  if ( NULL == rc_src ){std::memset( pui8_target, 0, 4 ); return;}
+  if ( NULL == rc_src ){memset( pui8_target, 0, 4 ); return;}
 #if SIZEOF_INT <= 2
   uint32_t temp;
   sscanf( rc_src, "%8lx", &temp );
@@ -519,7 +521,7 @@ void bigEndianHexNumberText2CanStringUint32( const char* rc_src, uint8_t* pui8_t
   sscanf( rc_src, "%8x", &temp );
   #endif
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( pui8_target,   &temp, 4 );
+  memcpy( pui8_target,   &temp, 4 );
   #else
   pui8_target[0] =   ( temp         & 0xFF );
   pui8_target[1] = ( ( temp >> 8  ) & 0xFF );
@@ -530,10 +532,10 @@ void bigEndianHexNumberText2CanStringUint32( const char* rc_src, uint8_t* pui8_t
 /** convert big endian textual unsigned int 64Bit number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_target )
 {
-  if ( NULL == rc_src ){std::memset( pui8_target, 0, 8 ); return;}
+  if ( NULL == rc_src ){memset( pui8_target, 0, 8 ); return;}
 #if SIZEOF_INT <= 2
   uint32_t temp[2] = {0UL, 0UL};
-  const unsigned int len = std::strlen( rc_src );
+  const unsigned int len = strlen( rc_src );
   const int lowerPartValStart = len - 8;
   if ( lowerPartValStart >= 0 )
   {
@@ -556,8 +558,8 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
     sscanf( rc_src, "%8lx", &(temp[0]) );
   }
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( pui8_target,   &(temp[0]), 4 );
-  std::memcpy( pui8_target+4, &(temp[1]), 4 );
+  memcpy( pui8_target,   &(temp[0]), 4 );
+  memcpy( pui8_target+4, &(temp[1]), 4 );
   #else
   for ( unsigned int ind = 0; ind < 2; ind++ )
   {
@@ -575,7 +577,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
   sscanf( rc_src, "%16llx", &temp );
 #endif
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( pui8_target, &temp, 8 );
+  memcpy( pui8_target, &temp, 8 );
   #else
   for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
   #endif
@@ -583,7 +585,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
   unsigned int temp;
   sscanf( rc_src, "%16x", &temp );
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( pui8_target, &temp, 8 );
+  memcpy( pui8_target, &temp, 8 );
   #else
   for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
   #endif
@@ -599,7 +601,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
 /** convert big endian textual unsigned int up to 16Bit number representation into little endian uint8_t string of specified size */
 void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_target )
 {
-  if ( NULL == rc_src ){std::memset( pui8_target, 0, 2 ); return;}
+  if ( NULL == rc_src ){memset( pui8_target, 0, 2 ); return;}
 #if SIZEOF_INT <= 4
   uint16_t temp;
   sscanf( rc_src, SCANF_DEC_INT16_STRING, &temp );
@@ -608,7 +610,7 @@ void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_tar
   sscanf( rc_src, "%4d",  &temp );
 #endif
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  std::memcpy( pui8_target, &temp, 2 );
+  memcpy( pui8_target, &temp, 2 );
   #else
   pui8_target[0] =   ( temp        & 0xFF );
   pui8_target[1] = ( ( temp >> 8 ) & 0xFF );

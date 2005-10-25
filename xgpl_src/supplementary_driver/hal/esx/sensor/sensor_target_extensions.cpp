@@ -70,7 +70,6 @@
 
 #include <cstdlib>
 
-
 /** acivate the following define, if the signal period shall be
     calculated from get_digin_freq() as the BIOS function
 		get_digin_period() is very unprecise as long as the
@@ -207,7 +206,7 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
   /* store given timebase in according 4-group */
   if (_puiDiginTimebase[(rb_channel / 4)] == NULL)
   {
-    _puiDiginTimebase[(rb_channel / 4)] = (uint16_t*)std::malloc(4*sizeof(uint16_t));
+    _puiDiginTimebase[(rb_channel / 4)] = (uint16_t*)malloc(4*sizeof(uint16_t));
     /* check if allocated properly and init */
     if (_puiDiginTimebase[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
     else
@@ -254,7 +253,7 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
 	   */
 	  if (_pulDiginCounter[(rb_channel / 4)] == NULL)
 	  { /* according 4-group of uint32_t isn't created -> allocate */
-	    _pulDiginCounter[(rb_channel / 4)] = (uint32_t*)std::malloc(4*sizeof(uint32_t));
+	    _pulDiginCounter[(rb_channel / 4)] = (uint32_t*)malloc(4*sizeof(uint32_t));
 	    /* check if allocated properly and init */
 	    if (_pulDiginCounter[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
 	    else CNAMESPACE::memset(_pulDiginCounter[(rb_channel / 4)], 0, sizeof(uint32_t)*4);
@@ -263,7 +262,7 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
     // create corresponding array elements for last trigger time
 		if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL)
     {  /* according 4-group of t_triggerNode isn't created -> allocate */
-      _pt_diginTriggerTime[(rb_channel / 4)] = (t_triggerNode*)std::malloc(4*sizeof(t_triggerNode));
+      _pt_diginTriggerTime[(rb_channel / 4)] = (t_triggerNode*)malloc(4*sizeof(t_triggerNode));
       if (_pt_diginTriggerTime[(rb_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
       else CNAMESPACE::memset(_pt_diginTriggerTime[(rb_channel / 4)], 0, sizeof(t_triggerNode) * 4);
     }

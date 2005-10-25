@@ -81,6 +81,7 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+ #include <IsoAgLib/typedef.h>
 #include "identitem_c.h"
 #include "systemmgmt_c.h"
 #ifdef USE_DIN_9684

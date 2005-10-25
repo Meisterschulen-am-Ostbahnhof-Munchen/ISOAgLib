@@ -95,8 +95,8 @@ namespace HAL
 /*@{*/
   inline int16_t printf(...){return 1;};
   inline int16_t scanf(...) {return 1;};
-  using ::sprintf;
-  using ::sscanf;
+  using CNAMESPACE::sprintf;
+  using CNAMESPACE::sscanf;
   /**
     open the system with system specific function call
     @return error state (HAL_NO_ERR == o.k.)

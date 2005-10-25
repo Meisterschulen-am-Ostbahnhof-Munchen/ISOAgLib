@@ -116,20 +116,66 @@ int16_t getOn_offSwitch(void)
   else return 0;
 }
 
+
+
+/** max amount of task triggered WD resets */
+static const uint16_t cui16_maxTaskTriggeredWdResets = 400;
+
+//TEST static const uint16_t cui16_maxTaskTriggeredWdResets = 400;
+/** counter for task triggered WD events
+    --> the application called function triggerWd()
+		    resets this count to 0;
+	  --> if the WD trigger task is activated it checks for this counter
+		  ==> on < cui16_maxTaskTriggeredWdResets -> trigger BIOS wd
+			==> else -> do nothing so that WD resets the system
+*/
+static uint16_t sui16_watchdogCounter = 0;
+
+/** task function which is called each 50msec to trigger the BIOS WD
+    if the App has called wdTriggern(void) max cui16_maxTaskTriggeredWdResets
+		rounds ago
+*/
+void taskTriggerWatchdog()
+{
+	if ( sui16_watchdogCounter < cui16_maxTaskTriggeredWdResets )
+	{ // fine - last WD call by app was not too long ago
+		wd_triggern();
+		sui16_watchdogCounter++;
+	}
+}
+
+/** trigger the watchdog */
+void wdTriggern(void)
+{
+	sui16_watchdogCounter = 0;
+}
+
+/** flag to control if WD-Task is started already */
+static bool sb_isWdTriggerTaskRunning = false;
+
 /**
   configure the watchdog of the system with the
-  settings of configImi
+  settings of configEsx
   @return error state (C_NO_ERR == o.k.)
     or DATA_CHANGED on new values -> need call of wdReset to use new settings
   @see wdReset
 */
-int16_t configWatchdog( void )
+int16_t configWatchdog()
 {
+  if ( ! sb_isWdTriggerTaskRunning )
+	{
+		init_task_call( TASKLEVEL_2A, 5, 5, taskTriggerWatchdog );
+		start_task_timer( 20 );
+		sb_isWdTriggerTaskRunning = true;
+	}
+
 #if defined(SYSTEM_IMI_2CAN)
   return config_wd(WD_TIME1000ms);
 #else
   return C_NO_ERR;
 #endif
 }
+
+
 
 } // end namespace __HAL
