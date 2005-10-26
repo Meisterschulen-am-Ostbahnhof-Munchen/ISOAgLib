@@ -98,6 +98,11 @@ typedef __IsoAgLib::ISOTerminal_c::vtCapabilities_s ivtCapabilities_s;
   */
   bool isVtActive () { return ISOTerminal_c::isVtActive (); };
 
+  uint32_t getVtHardwareDimension () { return ISOTerminal_c::getVtHardwareDimension (); };
+  uint16_t getVtObjectPoolDimension () { return ISOTerminal_c::getVtObjectPoolDimension (); };
+  uint16_t getVtObjectPoolSoftKeyWidth () { return ISOTerminal_c::getVtObjectPoolSoftKeyWidth (); };
+  uint16_t getVtObjectPoolSoftKeyHeight () { return ISOTerminal_c::getVtObjectPoolSoftKeyHeight (); };
+
   vtState_s* getVtState () { return ISOTerminal_c::getVtState (); };
 
   uint32_t getUploadBufferSize () { return ISOTerminal_c::getUploadBufferSize (); };
