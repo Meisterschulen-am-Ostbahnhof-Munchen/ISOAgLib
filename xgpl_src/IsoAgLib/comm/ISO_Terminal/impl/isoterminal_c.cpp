@@ -341,6 +341,8 @@ ISOTerminal_c::singletonInit()
   vtAliveNew = false;
 
   b_checkSameCommand = true;
+
+  ui32_filterAckPGN = 0; // filter not yet inserted!
 }
 
 /**
@@ -437,10 +439,11 @@ void ISOTerminal_c::close( void )
        getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
 
     /** @todo will the IsoItem get lost or get its SA changed? */
-    ui32_filter = ((static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) | static_cast<MASK_TYPE>(pc_wsMasterIdentItem->getIsoItem()->nr())) << 8);
-    if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-       getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
-
+    if (ui32_filterAckPGN != 0)
+    { // do only if filter could be calculated (IsoItem was needed for that) and was actually inserted!
+      if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+        getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+    }
     /*** MultiReceive De-Registration ***/
     __IsoAgLib::getMultiReceiveInstance4Comm().deregisterClient(this);
 
@@ -545,9 +548,9 @@ bool ISOTerminal_c::timeEvent( void )
     if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
         getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
 
-    ui32_filter = (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) | static_cast<MASK_TYPE>(pc_wsMasterIdentItem->getIsoItem()->nr())) << 8;
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-        getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+    ui32_filterAckPGN = (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) | static_cast<MASK_TYPE>(pc_wsMasterIdentItem->getIsoItem()->nr())) << 8;
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent))
+        getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filterAckPGN, true, Ident_c::ExtendedIdent);
 
     /*** MultiReceive Registration ***/
     __IsoAgLib::getMultiReceiveInstance4Comm().registerClient(VT_TO_ECU_PGN, pc_wsMasterIdentItem->getIsoItem()->nr(), this);

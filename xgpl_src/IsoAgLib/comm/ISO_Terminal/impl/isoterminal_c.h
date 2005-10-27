@@ -555,6 +555,8 @@ private: // attributes
   uploadCommandState_t en_uploadCommandState; // state only used if en_uploadType == "UploadCommand"
   uploadPoolState_t en_uploadPoolState;       // state only used if en_uploadType == "UploadPool"
 
+  uint32_t ui32_filterAckPGN;
+
   uint32_t ui32_uploadTimestamp;
   uint32_t ui32_uploadTimeout;
 
