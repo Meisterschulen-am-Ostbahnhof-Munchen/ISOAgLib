@@ -87,14 +87,6 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-#ifdef DEBUG
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-#endif
-
 #include "multireceive_c.h"
 #include "../multireceiveclient_c.h"
 
@@ -103,6 +95,17 @@
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/driver/can/impl/filterbox_c.h>
+
+
+#ifdef DEBUG
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+#endif
+
+
 
 // helper macros
 #define MACRO_pgnFormatOfPGN(mpPgn)     ((mpPgn>>8) & 0xFF)
@@ -519,7 +522,7 @@ MultiReceive_c::processMsg()
         b_ePgn = true; // break left out intentionally!
       case MACRO_pgnFormatOfPGN(TP_DATA_TRANSFER_PGN):
         #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << "{DATA: " << data().time() << "} "; fflush(0);
+          INTERNAL_DEBUG_DEVICE << "{DATA: " << data().time() << "} "; INTERNAL_DEBUG_FLUSH
         #endif
 
         /////////////////////////
@@ -1270,10 +1273,10 @@ void
 MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem )
 {
 #ifdef DEBUG
-  std::cerr << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
       << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
       << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
-      << std::endl;
+      << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
@@ -1303,10 +1306,10 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
                                           , uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
-  std::cerr << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
       << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
-      << std::endl;
+      << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   // Notify all registered clients
   for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();

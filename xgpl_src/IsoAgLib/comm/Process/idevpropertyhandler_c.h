@@ -73,7 +73,7 @@ public:
   /**
   Pointer auf das Byte-Array entgegennehmen, LanguageLabel herzaubern, das alte in der Map ersetzen oder neu einfügen
   */
-  bool registerDevicePool (const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault)
+  bool registerDevicePool (const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault)
     {return DevPropertyHandler_c::registerDevicePool (rpc_wsMasterIdentItem, rpc_devicePoolByteArray, rui32_bytestreamLength, b_setToDefault);};
   bool sendCommandChangeDesignator(uint16_t rpui16_objectID, const char* rpc_newString, uint8_t stringLength)
   {return DevPropertyHandler_c::sendCommandChangeDesignator(rpui16_objectID, rpc_newString, stringLength);};

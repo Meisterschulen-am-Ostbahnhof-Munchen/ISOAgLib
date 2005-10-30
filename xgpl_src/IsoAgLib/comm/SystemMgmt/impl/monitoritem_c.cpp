@@ -83,7 +83,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "monitoritem_c.h"
-
+using namespace std; 
 namespace __IsoAgLib {
 
 /**

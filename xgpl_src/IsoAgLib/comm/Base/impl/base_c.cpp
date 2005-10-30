@@ -106,7 +106,7 @@
 #include <IsoAgLib/util/iutil_funcs.h>
 #include "base_c.h"
 
-#include <time.h>
+using namespace std;
 
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
@@ -1943,6 +1943,7 @@ void Base_c::setCalendarUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day,
   bit_calendar.second = rb_second;
   bit_calendar.msec   = rui16_msec;
 };
+
 /**
   set the calendar value as local time ( take local time offsets into account )
   @param ri16_year value to store as year
@@ -1956,11 +1957,11 @@ void Base_c::setCalendarLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_da
 {
   i32_lastCalendarSet = System_c::getTime();
 
-  struct tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
+  struct ::tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
                          rb_day,(rb_month-1),(ri16_year-1900),0,0,0 };
 
   const time_t middle = mktime( &testTime );
-  const struct tm* normalizedTime = localtime( &middle );
+  const struct ::tm* normalizedTime = localtime( &middle );
 
   bit_calendar.year   = normalizedTime->tm_year+1900;
   bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -1976,11 +1977,11 @@ void Base_c::setDateLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day)
 {
   i32_lastCalendarSet = System_c::getTime();
 
-  struct tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
+  struct ::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
     rb_day,(rb_month-1),(ri16_year-1900),0,0,0 };
 
   const time_t middle = mktime( &testTime );
-  const struct tm* normalizedTime = localtime( &middle );
+  const struct ::tm* normalizedTime = localtime( &middle );
 
   bit_calendar.year   = normalizedTime->tm_year+1900;
   bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -2001,11 +2002,11 @@ void Base_c::setTimeLocal(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second,
 {
   i32_lastCalendarSet = System_c::getTime();
 
-  struct tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
+  struct ::tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
     bit_calendar.day,(bit_calendar.month-1),(bit_calendar.year-1900),0,0,0 };
 
   const time_t middle = mktime( &testTime );
-  const struct tm* normalizedTime = localtime( &middle );
+  const struct ::tm* normalizedTime = localtime( &middle );
 
   bit_calendar.hour   = normalizedTime->tm_hour;
   bit_calendar.minute = normalizedTime->tm_min;
@@ -2023,9 +2024,9 @@ void Base_c::setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, u
 }
 
 
-const struct tm* Base_c::Utc2LocalTime() const
+const struct ::tm* Base_c::Utc2LocalTime() const
 {
-  struct tm testTime = {
+  struct ::tm testTime = {
     bit_calendar.second + ((calendarSetAge() / 1000)%60),
     bit_calendar.minute+bit_calendar.timezoneMinuteOffset+ ((calendarSetAge() / 60000)%60),
     (int(bit_calendar.hour)+int(bit_calendar.timezoneHourOffsetMinus24)-24) + ((calendarSetAge() / 3600000)%24),

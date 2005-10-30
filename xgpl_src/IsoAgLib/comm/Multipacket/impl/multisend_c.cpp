@@ -460,7 +460,7 @@ MultiSend_c::addSendStream(uint8_t rb_send, uint8_t rb_empf)
     else // use this finished one because it would be deleted anyway...
     {
       #ifdef DEBUG
-      std::cout << "Using Stream from list which is already finished but not yet kicked from MultiSend_c::timeEvent()."<<std::endl;
+      INTERNAL_DEBUG_DEVICE << "Using Stream from list which is already finished but not yet kicked from MultiSend_c::timeEvent()."<< INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return pc_foundStream;
     }
@@ -980,7 +980,7 @@ MultiSend_c::timeEvent( void )
     { // SendStream finished
       pc_iter = list_sendStream.erase (pc_iter);
       #ifdef DEBUG
-      std::cout << "Kicked SendStream because it finished!\n";
+      INTERNAL_DEBUG_DEVICE << "Kicked SendStream because it finished!\n";
       #endif
       b_listShrunk = true;
     }
@@ -1551,10 +1551,10 @@ void
 MultiSend_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem )
 {
 #ifdef DEBUG
-  std::cerr << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
       << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
       << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
-      << std::endl;
+      << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   // no resurrection here as we do NOT (yet) save the devKey/isoname to our SendStream_c instances in the list...
   // this can be done later if someone thinks that makes sense...
@@ -1574,10 +1574,10 @@ MultiSend_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
                                         , uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
-  std::cerr << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
       << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
-      << std::endl;
+      << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
   {

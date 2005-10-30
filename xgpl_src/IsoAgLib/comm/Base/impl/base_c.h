@@ -101,6 +101,7 @@
 #include <IsoAgLib/util/impl/getypos_c.h>
 
 #include "basepkg_c.h"
+#include <ctime>
 
 #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
 #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
@@ -949,7 +950,7 @@ private:
     uint16_t timezoneMinuteOffset : 6;
     uint16_t timezoneHourOffsetMinus24 : 6;
   } bit_calendar;
-  const struct tm* Utc2LocalTime() const;
+  const struct CNAMESPACE::tm* Utc2LocalTime() const;
 
   /** bitmask with selection of all base data types to send */
   IsoAgLib::BaseDataGroup_t t_mySendSelection;

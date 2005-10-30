@@ -100,11 +100,11 @@ namespace __IsoAgLib {
 class LanguageLabel_c {
   char str[2];
 public:
-  LanguageLabel_c (const char* label = "de");
+  LanguageLabel_c (const HUGE_MEM char* label = "de");
   LanguageLabel_c (const LanguageLabel_c& rref_str);
 
   const LanguageLabel_c& operator=(const LanguageLabel_c& c_langLabel);
-  const LanguageLabel_c& operator=(const uint8_t* ui8_str);
+  const LanguageLabel_c& operator=(const HUGE_MEM uint8_t* ui8_str);
   bool operator<(const LanguageLabel_c& c_langLabel) const;
   bool operator==(const LanguageLabel_c& c_langLabel);
   const char* get() const { return str; }
@@ -113,10 +113,10 @@ public:
 
 class DevicePool_c {
 public:
-  const uint8_t* p_DevicePool;
+  const HUGE_MEM uint8_t* p_DevicePool;
   uint32_t devicePoolLength;
 
-  DevicePool_c (const uint8_t* pcui8_bytestream, const uint32_t ui32_length);
+  DevicePool_c (const HUGE_MEM uint8_t* pcui8_bytestream, const uint32_t ui32_length);
 
   const DevicePool_c& operator=(const DevicePool_c& c_devicePool);
 };
@@ -179,7 +179,7 @@ public:
 
   bool timeEvent( void );
 
-  bool registerDevicePool (const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault);
+  bool registerDevicePool (const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault);
   bool sendCommandChangeDesignator(uint16_t rpui16_objectID, const char* rpc_newString, uint8_t stringLength);
 
   ProcessPkg_c data(){return *pc_data;};
@@ -193,7 +193,7 @@ private:
 
   uint8_t getTcSourceAddress () { return tcSourceAddress; };
 
-  bool queuePoolInMap(const uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool b_setToDefault);
+  bool queuePoolInMap(const HUGE_MEM uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool b_setToDefault);
 
   void initUploading();
   void getPoolForUpload();

@@ -104,7 +104,7 @@
 
 
 /** This function delivers the offset to the structurelabel in every device description*/
-uint8_t getLabelOffset (const uint8_t* pc_Array)
+uint8_t getLabelOffset (const HUGE_MEM uint8_t* pc_Array)
 {
   uint8_t ui8_designatorLength =      pc_Array[DEF_Transfer_Code + DEF_TableID + DEF_ObjectID];
   uint8_t ui8_softwareVersionLength = pc_Array[DEF_Transfer_Code + DEF_TableID + DEF_ObjectID + DEF_Designator_Length + ui8_designatorLength];
@@ -136,9 +136,10 @@ namespace __IsoAgLib {
 //define helper class LanguageLabel_c
 //===================================================================
 /** class to stored the language label from a device description */
-LanguageLabel_c::LanguageLabel_c (const char* label)
+LanguageLabel_c::LanguageLabel_c (const HUGE_MEM char* label)
 {
-  CNAMESPACE::memcpy(str, label, 2);
+  str[0] = label[0];
+  str[1] = label[1];
 };
 
 LanguageLabel_c::LanguageLabel_c (const LanguageLabel_c& c_langLabel)
@@ -152,9 +153,10 @@ const LanguageLabel_c& LanguageLabel_c::operator=(const LanguageLabel_c& c_langL
   return c_langLabel;
 };
 
-const LanguageLabel_c& LanguageLabel_c::operator=(const uint8_t* ui8_str)
+const LanguageLabel_c& LanguageLabel_c::operator=(const HUGE_MEM uint8_t* ui8_str)
 {
-  CNAMESPACE::memcpy(str, ui8_str, 2);
+  str[0] = ui8_str[0];
+  str[1] = ui8_str[1];
   return *this;
 };
 
@@ -174,7 +176,7 @@ bool LanguageLabel_c::operator==(const LanguageLabel_c& c_langLabel)
 //define helper class DevicePool_c
 //===================================================================
 /** class to stored the device description byte stream and its length */
-DevicePool_c::DevicePool_c (const uint8_t* pcui8_bytestream, const uint32_t ui32_length)
+DevicePool_c::DevicePool_c (const HUGE_MEM uint8_t* pcui8_bytestream, const uint32_t ui32_length)
 {
   p_DevicePool = pcui8_bytestream;
   devicePoolLength = ui32_length;
@@ -728,7 +730,7 @@ DevPropertyHandler_c::timeEvent( void )
     @return true => device description successfully stored
   */
 bool
-DevPropertyHandler_c::queuePoolInMap (const uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool b_setToDefault)
+DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool b_setToDefault)
 {
   /** @todo should we test for minimum size of the pool??? (1 DeviceObject + 1 DeviceElementObject)*/
 
@@ -757,7 +759,7 @@ DevPropertyHandler_c::queuePoolInMap (const uint8_t* rpc_devicePoolByteArray, ui
     @return true => if pool was successfully stored
   */
 bool
-DevPropertyHandler_c::registerDevicePool(const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamlength, bool b_setToDefault)
+DevPropertyHandler_c::registerDevicePool(const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamlength, bool b_setToDefault)
 {
   //no double registration for one device description
   if (en_poolState != OPNotRegistered) return false;
