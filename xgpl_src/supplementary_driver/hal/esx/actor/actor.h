@@ -97,7 +97,7 @@ namespace __HAL {
     @return according channel number for __HAL call
   */
   inline uint8_t getPwmoutAdcCheckNr(uint8_t rb_channel)
-    {uint8_t b_result;
+    {
     if (rb_channel < 4) return (43 - (rb_channel * 2));
     else if (rb_channel == 4) return 44;
     else if (rb_channel < 8) return ((47+5) - rb_channel);

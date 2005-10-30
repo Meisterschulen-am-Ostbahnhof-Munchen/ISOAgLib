@@ -68,8 +68,8 @@
 
 namespace HAL {
 
-static const cui16_openLow6_8  = ( 170000 / 3743 ); // 1700mV * 100 / 37.43mV * 100
-static const cui16_openLow9_12 = ( 125000 / 3743 ); // 1250mV * 100 / 37.43mV * 100
+static const uint16_t cui16_openLow6_8  = ( 170000 / 3743 ); // 1700mV * 100 / 37.43mV * 100
+static const uint16_t cui16_openLow9_12 = ( 125000 / 3743 ); // 1250mV * 100 / 37.43mV * 100
 
   /** deliver the state of a digital output.
 		* This function evaluates the current where possible, otherwise it evaluates
