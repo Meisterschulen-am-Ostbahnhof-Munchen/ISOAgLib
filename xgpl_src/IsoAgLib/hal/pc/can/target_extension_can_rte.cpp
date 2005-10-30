@@ -214,7 +214,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   if ( openBus >= 0 )
   { // an open CAN BUS found
     /** @todo how to handle TWO open BUSSes -> how can wait be called then */
-    if ( rteCan_c[openBus].wait( 1, RTE_ONE_MILLISECOND*rte_time_t(rui16_timeoutInterval) ) == rte_ret_error( timeout ) ) return false;
+    if ( rteCan_c[openBus]->wait( 1, RTE_ONE_MILLISECOND*rte_time_t(rui16_timeoutInterval) ) == rte_ret_error( timeout ) ) return false;
     else return true;
   }
   else
