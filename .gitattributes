@@ -116,6 +116,10 @@ build_utils/vt2iso/xerces-c_2_5_0.dll -text
 commercial_BIOS.dummy/bios_esx/README -text
 commercial_BIOS.dummy/bios_pm167/README -text
 commercial_BIOS.dummy/bios_pm167/mios1s.lib -text
+commercial_BIOS/bios_pc.testserver/include -text
+commercial_BIOS/bios_pc.testserver/lib -text
+commercial_BIOS/bios_pc.testserver/rte_client_lib -text
+commercial_BIOS/bios_pc.testserver/sw -text
 compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.dev -text
 compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__sys.dev -text
 compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__sontheim__simulating.dev -text
