@@ -89,7 +89,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "../../../StdMeasureElements/impl/measureprogbase_c.h"
+#include <IsoAgLib/comm/Process/StdMeasureElements/impl/measureprogbase_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
