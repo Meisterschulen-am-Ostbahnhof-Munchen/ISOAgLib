@@ -253,6 +253,21 @@ public:
     @return POS
   */
   uint8_t devClassInst() const{return ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::devClassInst();};
+#ifdef USE_ISO_11783
+  /** check if this ProcIdent_c has the given DDI as element */
+  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );};
+
+  /**
+    deliver value DDI (only possible if only one elementDDI in list)
+    @return DDI
+   */
+  uint16_t DDI() const { return ProcIdent_c::DDI();};
+  /**
+  deliver value element (only possible if only one elementDDI in list)
+  @return element
+   */
+  uint16_t element() const  { return ProcIdent_c::element();};
+#endif
 
 
   /* ******************************************** *

@@ -178,7 +178,11 @@ public:
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     , IState_c::protoOrder_t ren_protoOrder = IState_c::DinIso
     #endif
-    );
+                                   ) { return static_cast<iMonitorItem_c&>(SystemMgmt_c::memberDevClassInd(rui8_devClass, rui8_ind, rb_forceClaimedAddress
+#if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
+    , ren_protoOrder
+#endif
+                                                                                ));};
 
   /**
     check for member with given member no

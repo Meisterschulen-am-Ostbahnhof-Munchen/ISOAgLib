@@ -71,7 +71,11 @@ namespace IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
 */
 class iMonitorItem_c  : __IsoAgLib::MonitorItem_c {
-public:
+ private:
+  friend class iIdentItem_c;
+  friend class iSystemMgmt_c;
+  friend class iISOMonitor_c;
+ public:
   /**
     deliver the DEV_KEY code of this item
     @return DEV_KEY code
@@ -134,6 +138,11 @@ public:
   */
   itemState_t setItemState(itemState_t ren_itemState, bool rb_sendState = false)
     {return MonitorItem_c::setItemState(ren_itemState, rb_sendState);};
+  /**
+  deliver the timestamp of the last update as int32_t [msec]
+  @return last update [msec]
+   */
+  int32_t lastTime() const {return BaseItem_c::lastTime();};
 };
 
 

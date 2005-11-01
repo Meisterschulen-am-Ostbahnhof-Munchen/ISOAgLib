@@ -390,6 +390,8 @@ public:
   uint8_t devClassInst() const{return ProcDataRemote_c::devClassInst();};
 
 #ifdef USE_ISO_11783
+  /** check if this ProcIdent_c has the given DDI as element */
+  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );};
   /**
     deliver elementDDI list
     @return std::list<ElementDDI_s>

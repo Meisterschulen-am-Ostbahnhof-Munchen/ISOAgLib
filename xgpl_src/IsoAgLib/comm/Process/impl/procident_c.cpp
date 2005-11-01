@@ -331,6 +331,19 @@ bool ProcIdent_c::matchISO(
   // all previous tests are positive -> answer positive match
   return true;
 }
+
+/** check if this ProcIdent_c has the given DDI as element */
+bool ProcIdent_c::hasDDI( uint16_t rui16_checkDDI ) const
+{
+  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = NULL;
+  for (iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+    if (iter->ui16_DDI == rui16_checkDDI)
+      break;
+
+  if (iter == data.l_elementDDI.end()) return false;
+  else return true;
+}
+
 #endif
 
 

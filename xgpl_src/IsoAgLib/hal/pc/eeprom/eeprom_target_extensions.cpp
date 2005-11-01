@@ -132,7 +132,7 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
       pByte = (uint8_t*)&sTemp;
       for (i=0; i < wNumber; i++)
       {
-			 if ( isprint( pByte[i] ) ) putchar(pByte[i]);
+       if ( isprint( pByte[i] ) ) putchar(pByte[i]);
        fputc(pByte[i], eepromDat);
       }
       printf(", als Zahl %hi", sTemp);
@@ -184,14 +184,14 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte){
   int32_t i32_temp;
 //  printf("lese Daten von %i mit Daten als text:", wAddress);
 #ifdef WIN32
-  eepromDat = fopen("..\\..\\..\\simulated_io\\eeprom.dat", "r+b");
+  eepromDat = fopen("..\\..\\..\\simulated_io\\eeprom.dat", "a+b");
 #else
-  eepromDat = fopen("../../../simulated_io/eeprom.dat", "r+b");
+  eepromDat = fopen("../../../simulated_io/eeprom.dat", "a+b");
 #endif
   // BEGIN: Added by M.Wodok 6.12.04
   if (eepromDat == NULL) {
     // try again in current directory
-    eepromDat = fopen("eeprom.dat", "r+b");
+    eepromDat = fopen("eeprom.dat", "a+b");
   }
   // END: Added by M.Wodok 6.12.04
   fseek(eepromDat, wAddress, 0);
