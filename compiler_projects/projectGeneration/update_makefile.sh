@@ -1235,9 +1235,9 @@ function create_EdePrj()
 ### @todo
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 	  if [ "M$USE_APP_PATH" = "M" ] ; then
-			USE_APP_PATH=`echo "../$ISO_AG_LIB_PATH/$REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+			USE_APP_PATH=`echo "../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 		else
-			USE_APP_PATH="$USE_APP_PATH;"`echo "../$ISO_AG_LIB_PATH/$REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+			USE_APP_PATH="$USE_APP_PATH"`echo ";../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 		fi
 	done
 	echo "USE_APP_PATH: $USE_APP_PATH"
