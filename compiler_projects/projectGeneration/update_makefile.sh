@@ -1312,7 +1312,6 @@ function create_EdePrj()
 	cat $PROJECT_FILE_NAME.1 | gawk '{ sub("\r", ""); print $0;}' > $PROJECT_FILE_NAME
 	cat $PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $PROJECT_FILE_NAME.1
 	mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
-	mv $EdePrjFilelist.1    $EdePrjFilelist
 }
 
 function create_VCPrj()
