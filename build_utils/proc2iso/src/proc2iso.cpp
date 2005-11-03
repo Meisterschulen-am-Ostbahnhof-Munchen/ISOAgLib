@@ -803,7 +803,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                   }
                 }
               }
-              
+
             }
           }
         }
@@ -992,7 +992,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           buffer.str("");
           fprintf( partFileB, "IsoAgLib::iDevKey_c %sDevKey(0x%x, 0x%x);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
-          fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sDevKey, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISOTERMINAL \n , 0, NULL\n #endif\n);\n\n",
+          fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sDevKey, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISO_TERMINAL \n , 0, NULL\n #endif\n);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "true" : "false",
                    c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
                    atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
@@ -1049,10 +1049,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         fprintf( partFileA, "%s", buffer.str().c_str() );
         buffer.str("");
         vecstr_constructor[2] = vecstr_attrString[attrElement_number].c_str();
-        
+
         // save ID vector of device element childrens for later use in otDeviceProcessData
         vecstr_childID_DET = vecstr_childID;
-        
+
         break;
       case otDeviceProcessData:
       {
@@ -1104,7 +1104,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         buf_length_dpd += 2;
         vecstr_dataFromDPD[2] = vecstr_attrString[attrDevice_value_presentation_name].c_str();
         vecstr_dataFromDPD[3] = vecstr_attrString[attrDesignator];
-        
+
         vecstr_constructor[3] = vecstr_attrString[attrFeature_set].c_str();
         vecstr_constructor[4] = vecstr_attrString[attrCumulative_value].c_str();
         vecstr_constructor[5] = vecstr_attrString[attrProcProgVarName].c_str();
@@ -1146,7 +1146,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             else
               str_designator.append(" Setpoint ");
             str_designator.append(vecstr_attrString[attrCommand_type]);
-            
+
             //output: tableID & objID
             buffer  << ", \n'" << TableIDTable [otDeviceProcessDataCombination][0] << "', "
                     << "'" << TableIDTable [otDeviceProcessDataCombination][1]   << "', "
@@ -1169,7 +1169,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             //vecstr_attrString[attrDesignator].size()
             buffer << str_designator.size() << ", ";
             buf_length++;
-        
+
             // vecstr_dataFromDPD[3]
             for (uint16_t i = 0;i<str_designator.size();i++)
             {
@@ -1237,7 +1237,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                   atoi(vecstr_constructor[2].c_str()));
         else
           fprintf( partFileB, "0x0, 0x0, 0x0, 0x0, ");
-        
+
         fprintf( partFileB, "\n#endif\n");
         fprintf( partFileB, "%sDevKey, 0x%x, %sDevKey, &%sDevKey, %s",
                   vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
@@ -1246,7 +1246,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         fprintf( partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
         fprintf( partFileB, "\n#endif\n");
         fprintf( partFileB, ");\n\n" );
-            
+
         // if we have at least one DeviceProcessDataCombination => buffer_length_dpd is already reseted to 0 and buffer already written
         buf_length += buf_length_dpd;
 
@@ -1256,9 +1256,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             fprintf( partFileA, "%s", buffer.str().c_str() );
             buffer.str("");
         }
-        
+
         break;
-      }  
+      }
       case otDeviceProperty:
         if (!attrIsGiven[attrDdi] || !attrIsGiven[attrProperty_value])
         {
