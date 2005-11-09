@@ -91,7 +91,7 @@ public:
   //! Parameter:
   //! @param newValidationString:
   //! @param b_updateObject:
-  void setValidationStringCopy(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setValidationStringCopy(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputAttributes_c::setValidationStringCopy (newValidationString, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -99,7 +99,7 @@ public:
   //! Parameter:
   //! @param newValidationString:
   //! @param b_updateObject:
-  void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputAttributes_c::setValidationStringRef (newValidationString, b_updateObject, b_enableReplaceOfCmd);
   };
 

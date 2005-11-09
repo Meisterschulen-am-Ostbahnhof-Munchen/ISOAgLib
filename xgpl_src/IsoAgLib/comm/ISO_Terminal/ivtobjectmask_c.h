@@ -75,7 +75,7 @@ public:
   //! @param newSoftKeyMask:
   //! @param b_updateObject:
   virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask,
-                              bool b_updateObject= false, bool b_enableReplaceOfCmd=true) = 0;
+                              bool b_updateObject= false, bool b_enableReplaceOfCmd=false) = 0;
 
   virtual ~iVtObjectMask_c(){};
 }; // ~X2C

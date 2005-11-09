@@ -91,7 +91,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputBoolean_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -99,7 +99,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputBoolean_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -107,7 +107,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setForegroundColour(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setForegroundColour(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputBoolean_c::setForegroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -115,19 +115,19 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputBoolean_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
     //  Operation: enable
   //! Parameter:
   //! @param b_updateObject:
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: disable
   //! Parameter:
   //! @param b_updateObject:
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: select
   bool select() { return vtObject_c::select(); }

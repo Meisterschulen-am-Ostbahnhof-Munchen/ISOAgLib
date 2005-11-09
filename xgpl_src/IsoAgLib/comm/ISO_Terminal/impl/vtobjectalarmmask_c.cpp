@@ -163,11 +163,12 @@ vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKey
 
 
 
+/// No cmdReplacing here, as it's a relative command!!
 bool
-vtObjectAlarmMask_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectAlarmMask_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject)
 {
   MACRO_localVars;
-  return genericChangeChildLocation (rpc_childObject, dx, dy, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAlarmMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (rpc_childObject, dx, dy, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectAlarmMask_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), false);
 }
 
 bool

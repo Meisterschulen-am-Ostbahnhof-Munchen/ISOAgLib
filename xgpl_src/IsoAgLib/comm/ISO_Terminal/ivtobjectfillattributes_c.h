@@ -86,7 +86,7 @@ public:
   //! Parameter:
   //! @param newFillType:
   //! @param b_updateObject:
-  void setFillType(uint8_t newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setFillType(uint8_t newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillType(newFillType, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -94,7 +94,7 @@ public:
   //! Parameter:
   //! @param newFillColour:
   //! @param b_updateObject:
-  void setFillColour(uint8_t newFillColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setFillColour(uint8_t newFillColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillColour(newFillColour, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -102,7 +102,7 @@ public:
   //! Parameter:
   //! @param newFillPatternObject:
   //! @param b_updateObject:
-  void setFillPattern(iVtObjectPictureGraphic_c* newFillPatternObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setFillPattern(iVtObjectPictureGraphic_c* newFillPatternObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillPattern(newFillPatternObject, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -112,7 +112,7 @@ public:
   //! @param newFillColour:
   //! @param newFillPatternObject:
   //! @param b_updateObject:
-  void setFillAttributes(uint8_t newFillType, uint8_t newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setFillAttributes(uint8_t newFillType, uint8_t newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillAttributes(newFillType, newFillColour, newFillPattern, b_updateObject, b_enableReplaceOfCmd);
   };
 

@@ -128,19 +128,19 @@ public:
   //! Parameter:
   //! @param rpc_vtObjectMask:
   //! @param b_updateObject:
-  void changeActiveMask(IsoAgLib::iVtObjectMask_c* rpc_vtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void changeActiveMask(IsoAgLib::iVtObjectMask_c* rpc_vtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
 
-  void changeBackgroundColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void changeBackgroundColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
 //  Operation: setOriginSKM
   //! Parameter:
   //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
-  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
+  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 }; // ~X2C
 

@@ -127,13 +127,13 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopy(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void setValueCopy(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: setValueRef
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: getString
   const char* getString();

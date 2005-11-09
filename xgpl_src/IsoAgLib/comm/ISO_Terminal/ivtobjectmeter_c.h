@@ -84,7 +84,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -92,7 +92,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setNeedleColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setNeedleColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setNeedleColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -100,7 +100,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setBorderColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setBorderColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setBorderColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -108,7 +108,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setArcAndTickColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setArcAndTickColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setArcAndTickColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -116,7 +116,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setOptions(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setOptions(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -124,7 +124,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setNumberOfTicks (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -132,7 +132,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setStartAngle (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -140,7 +140,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setEndAngle (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -148,7 +148,7 @@ public:
   //! Parameter:
   //! @param newMin:
   //! @param b_updateObject:
-  void setMin(uint32_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setMin(uint32_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setMin (newMin, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -156,7 +156,7 @@ public:
   //! Parameter:
   //! @param newMax:
   //! @param b_updateObject:
-  void setMax(uint32_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setMax(uint32_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setMax (newMax, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -172,7 +172,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setVariableReference(iVtObject_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 

@@ -131,13 +131,13 @@ public:
   //! Parameter:
   //! @param newValidationString:
   //! @param b_updateObject:
-  void setValidationStringCopy(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void setValidationStringCopy(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: setValidationStringRef
   //! Parameter:
   //! @param newValidationString:
   //! @param b_updateObject:
-  void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
 }; // ~X2C
 

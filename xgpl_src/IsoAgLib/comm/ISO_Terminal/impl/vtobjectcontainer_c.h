@@ -129,11 +129,11 @@ public:
   //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
+  bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 protected:
 
@@ -141,7 +141,7 @@ protected:
   //! Parameter:
   //! @param b_hideOrShow:
   //! @param b_updateObject:
-  void hideShow(uint8_t b_hideOrShow, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void hideShow(uint8_t b_hideOrShow, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
 }; // ~X2C
 

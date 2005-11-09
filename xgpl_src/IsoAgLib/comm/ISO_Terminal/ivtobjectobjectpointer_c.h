@@ -83,7 +83,7 @@ public:
   //! Parameter:
   //! @param rpc_newObject:
   //! @param b_updateObject:
-  void setValue(iVtObject_c* rpc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setValue(iVtObject_c* rpc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectObjectPointer_c::setValue (rpc_newObject, b_updateObject, b_enableReplaceOfCmd);
   };
 

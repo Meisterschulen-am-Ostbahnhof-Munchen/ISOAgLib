@@ -91,7 +91,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -99,7 +99,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -107,7 +107,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -115,7 +115,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -123,7 +123,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -131,7 +131,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -139,7 +139,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setMinValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setMinValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setMinValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -147,7 +147,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setMaxValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setMaxValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setMaxValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -155,7 +155,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setOffset (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -163,7 +163,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setScale (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -171,7 +171,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setNumberOfDecimals (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -179,7 +179,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setFormat (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -187,7 +187,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -196,19 +196,19 @@ public:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true){
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false){
     vtObjectInputNumber_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   };
 
   //  Operation: enable
   //! Parameter:
   //! @param b_updateObject:
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: disable
   //! Parameter:
   //! @param b_updateObject:
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: select
   bool select() { return vtObject_c::select(); }

@@ -121,7 +121,8 @@
 #endif
 
 static const uint8_t scpui8_cmdCompareTable[(0xB4-0x92)+1] = {
-/* 0x92 */ 0 , //not invalid, but no need for compare
+/// (1<<0) means DO NOT OVERRIDE THESE COMMANDS AT ALL
+/* 0x92 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND
 /* 0x93 */ 0 , //invalid command
 /* 0x94 */ 0 , //invalid command
 /* 0x95 */ 0 , //invalid command
@@ -135,27 +136,27 @@ static const uint8_t scpui8_cmdCompareTable[(0xB4-0x92)+1] = {
 /* 0x9D */ 0 , //invalid command
 /* 0x9E */ 0 , //invalid command
 /* 0x9F */ 0 , //invalid command
-/* 0xA0 */ (1<<1) | (1<<2) | (1<<3) ,
-/* 0xA1 */ (1<<1) | (1<<2) | (1<<3) ,
+/* 0xA0 */ (1<<1) | (1<<2) ,
+/* 0xA1 */ (1<<1) | (1<<2) ,
 /* 0xA2 */ (1<<1) | (1<<2) ,
-/* 0xA3 */ (1<<1) | (1<<2) | (1<<3) ,
-/* 0xA4 */ 0 , //not invalid, but no need for compare
-/* 0xA5 */ (1<<1) | (1<<2) | (1<<3) | (1<<4) ,
+/* 0xA3 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Control Audio Device)
+/* 0xA4 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Set Audio Volume)
+/* 0xA5 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Change Child Location), as it's relative!!!
 /* 0xA6 */ (1<<1) | (1<<2) ,
 /* 0xA7 */ (1<<1) | (1<<2) ,
-/* 0xA8 */ (1<<1) | (1<<2) ,
+/* 0xA8 */ (1<<1) | (1<<2) , // Change Numeric Value (all has been done for THIS ONE originally ;-)
 /* 0xA9 */ (1<<1) | (1<<2) ,
 /* 0xAA */ (1<<1) | (1<<2) ,
 /* 0xAB */ (1<<1) | (1<<2) ,
 /* 0xAC */ (1<<1) | (1<<2) ,
-/* 0xAD */ (1<<1) | (1<<2) ,
+/* 0xAD */ (1<<1) | (1<<2) , /** @todo Maybe change to delete in between and push_back new?! */ // (Change Active Mask)
 /* 0xAE */ (1<<1) | (1<<2) | (1<<3) ,
 /* 0xAF */ (1<<1) | (1<<2) | (1<<3) ,
 /* 0xB0 */ (1<<1) | (1<<2) ,
 /* 0xB1 */ (1<<1) | (1<<2) | (1<<3) ,
-/* 0xB2 */ 0 ,
+/* 0xB2 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Delete Object Pool)
 /* 0xB3 */ (1<<1) | (1<<2) ,
-/* 0xB4 */ (1<<1) | (1<<2) | (1<<3)
+/* 0xB4 */ (1<<1) | (1<<2) | (1<<3) | (1<<4)  // (Change Child Position)
 };
 
 
@@ -1551,7 +1552,7 @@ bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableR
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - VT IS NOT ACTIVE!--\n";
     #endif
-    return false;
+  //  return false;
   }
   SendUpload_c* p_queue = NULL;
   uint8_t i = 0;
@@ -1590,16 +1591,19 @@ bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableR
           }
           //get bitmask for the corresponding command
           uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-0x92];
-          for (i=1;i<=7;i++)
-          {
-            if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == rref_sendUpload.vec_uploadBuffer[i]))
+          if (!(ui8_bitmask & (1<<0)))
+          { // go Check for overwrite...
+            for (i=1;i<=7;i++)
             {
-              break;
+              if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == rref_sendUpload.vec_uploadBuffer[i]))
+              {
+                break;
+              }
             }
-          }
-          if (!(i<=7))
-          { // loop ran through, all to-compare-bytes matched!
-            p_queue = &*i_sendUpload; // so overwrite this SendUpload_c with the new value one
+            if (!(i<=7))
+            { // loop ran through, all to-compare-bytes matched!
+              p_queue = &*i_sendUpload; // so overwrite this SendUpload_c with the new value one
+            }
           }
         }
       }

@@ -128,7 +128,7 @@ public:
   //! Parameter:
   //! @param rpc_newObject:
   //! @param b_updateObject:
-  void setValue(IsoAgLib::iVtObject_c* rpc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void setValue(IsoAgLib::iVtObject_c* rpc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: setOriginSKM
   //! Parameter:

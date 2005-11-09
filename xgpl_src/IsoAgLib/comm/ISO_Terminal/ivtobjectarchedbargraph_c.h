@@ -94,7 +94,7 @@ public:
   //! Parameter:
   //! @param newWidth:
   //! @param b_updateObject:
-  void setWidth(uint16_t newWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setWidth(uint16_t newWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -102,7 +102,7 @@ public:
   //! Parameter:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setHeight(uint16_t newHeight, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setHeight(uint16_t newHeight, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -110,7 +110,7 @@ public:
   //! Parameter:
   //! @param newColour:
   //! @param b_updateObject:
-  void setColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setColour (newColour, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -118,7 +118,7 @@ public:
   //! Parameter:
   //! @param newTargetLineColour:
   //! @param b_updateObject:
-  void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setTargetLineColour (newTargetLineColour, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -126,7 +126,7 @@ public:
   //! Parameter:
   //! @param newOptions:
   //! @param b_updateObject:
-  void setOptions(uint8_t newOptions, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setOptions(uint8_t newOptions, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setOptions (newOptions, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -134,7 +134,7 @@ public:
   //! Parameter:
   //! @param newStartAngle:
   //! @param b_updateObject:
-  void setStartAngle(uint8_t newStartAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setStartAngle(uint8_t newStartAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setStartAngle (newStartAngle, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -142,7 +142,7 @@ public:
   //! Parameter:
   //! @param newEndAngle:
   //! @param b_updateObject:
-  void setEndAngle(uint8_t newEndAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setEndAngle(uint8_t newEndAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setEndAngle (newEndAngle, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -150,7 +150,7 @@ public:
   //! Parameter:
   //! @param newBarGraphWidth:
   //! @param b_updateObject:
-  void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setBarGraphWidth (newBarGraphWidth, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -158,7 +158,7 @@ public:
   //! Parameter:
   //! @param newMin:
   //! @param b_updateObject:
-  void setMinValue(uint32_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setMinValue(uint32_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setMinValue (newMin, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -166,7 +166,7 @@ public:
   //! Parameter:
   //! @param newMax:
   //! @param b_updateObject:
-  void setMaxValue(uint32_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setMaxValue(uint32_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setMaxValue (newMax, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -174,7 +174,7 @@ public:
   //! Parameter:
   //! @param newVariableReference:
   //! @param b_updateObject:
-  void setVariableReference(iVtObject_c* newVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setVariableReference(iVtObject_c* newVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setVariableReference (newVariableReference, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -182,7 +182,7 @@ public:
   //! Parameter:
   //! @param newTargetValueVariableReference:
   //! @param b_updateObject:
-  void setTargetValueVariableReference(iVtObject_c* newTargetValueVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setTargetValueVariableReference(iVtObject_c* newTargetValueVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setTargetValueVariableReference (newTargetValueVariableReference, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -190,7 +190,7 @@ public:
   //! Parameter:
   //! @param newTargetValue:
   //! @param b_updateObject:
-  void setTargetValue(uint16_t newTargetValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setTargetValue(uint16_t newTargetValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setTargetValue (newTargetValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -199,7 +199,7 @@ public:
   //! @param newWidth:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 

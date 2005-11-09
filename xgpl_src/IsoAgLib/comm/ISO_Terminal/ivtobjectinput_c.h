@@ -71,12 +71,12 @@ public:
   //  Operation: enable
   //! Parameter:
   //! @param b_updateObject:
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObjectInput_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObjectInput_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: disable
   //! Parameter:
   //! @param b_updateObject:
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObjectInput_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObjectInput_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: select
   bool select() { return vtObjectInput_c::select(); }

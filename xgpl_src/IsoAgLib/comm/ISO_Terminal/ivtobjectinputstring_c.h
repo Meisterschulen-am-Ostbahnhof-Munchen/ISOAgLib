@@ -88,7 +88,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -96,7 +96,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -104,7 +104,7 @@ public:
   //! Parameter:
   //! @param newVariable:
   //! @param b_updateObject:
-  void setVariableReference(iVtObjectStringVariable_c* newVariable, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setVariableReference(iVtObjectStringVariable_c* newVariable, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setVariableReference (newVariable, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -112,7 +112,7 @@ public:
   //! Parameter:
   //! @param colorValue:
   //! @param b_updateObject:
-  void changeBackgroundColour(uint8_t colorValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void changeBackgroundColour(uint8_t colorValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setBackgroundColour (colorValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -120,7 +120,7 @@ public:
   //! Parameter:
   //! @param newWidth:
   //! @param b_updateObject:
-  void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -128,7 +128,7 @@ public:
   //! Parameter:
   //! @param newHeight:
   //! @param b_updateObject:
-  void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -136,7 +136,7 @@ public:
   //! Parameter:
   //! @param newFontAttributes:
   //! @param b_updateObject:
-  void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newFontAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newFontAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setFontAttributes (newFontAttributes, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -144,7 +144,7 @@ public:
   //! Parameter:
   //! @param newInputAttributes:
   //! @param b_updateObject:
-  void setInputAttributes(IsoAgLib::iVtObjectInputAttributes_c* newInputAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setInputAttributes(IsoAgLib::iVtObjectInputAttributes_c* newInputAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setInputAttributes (newInputAttributes, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -152,7 +152,7 @@ public:
   //! Parameter:
   //! @param newOptions:
   //! @param b_updateObject:
-  void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setOptions (newOptions, b_updateObject, b_enableReplaceOfCmd);
   };
 
@@ -160,19 +160,19 @@ public:
   //! Parameter:
   //! @param newHorizontalJustification:
   //! @param b_updateObject:
-  void setHorizontalJustification(uint8_t newHorizontalJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
+  void setHorizontalJustification(uint8_t newHorizontalJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setHorizontalJustification (newHorizontalJustification, b_updateObject, b_enableReplaceOfCmd);
   };
 
     //  Operation: enable
   //! Parameter:
   //! @param b_updateObject:
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: disable
   //! Parameter:
   //! @param b_updateObject:
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=true) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: select
   bool select() { return vtObject_c::select(); }

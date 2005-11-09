@@ -83,13 +83,13 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) { vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd); };
+  void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) { vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: setValueRef
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) { vtObjectStringVariable_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd); };
+  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) { vtObjectStringVariable_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd); };
 
   //  Operation: getString
   const char* getString() { return vtObjectStringVariable_c::getString(); };

@@ -107,7 +107,7 @@ protected:
   //  Operation: able
   //! Parameter:
   //! @param b_updateObject:
-  bool able (uint8_t enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  bool able (uint8_t enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
 private:
 
