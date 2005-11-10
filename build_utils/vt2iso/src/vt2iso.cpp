@@ -3331,9 +3331,11 @@ int main(int argC, char* argV[])
     #ifdef WIN32
     int lastDirPos = c_fileName.find_last_of( "\\" );
     std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+    if (c_directory == "") c_directory = ".\";
     #else
     int lastDirPos = c_fileName.find_last_of( "/" );
     std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+    if (c_directory == "") c_directory = "./";
     #endif
     /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
     std::basic_string<char> c_unwantedType = ".inc";
@@ -3432,7 +3434,7 @@ int main(int argC, char* argV[])
       closedir(dp);
     } else
     {
-      std::cerr <<  "Couldn't open the directory.";
+      std::cerr <<  "Couldn't open the directory '" << c_directory.c_str() << "'.";
       return 0;
     }
     #endif
