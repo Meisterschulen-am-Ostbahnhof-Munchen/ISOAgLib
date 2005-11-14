@@ -2743,11 +2743,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             fprintf (partFileB, ", ");
           }
           if (!(attrIsGiven [attrPos_x])) {
-            std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
+            std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n";
             clean_exit (-1);
           }
           if (!(attrIsGiven [attrPos_y])) {
-            std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
+            std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...> ! STOPPING PARSER! bye.\n\n";
             clean_exit (-1);
           }
           fprintf (partFileB, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));

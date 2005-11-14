@@ -324,7 +324,7 @@ bool Process_c::timeEvent( void ){
        pc_searchCacheC1++ )
   { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-    if ( !(*pc_searchCacheC1)->timeEvent() ) b_result = false;
+    if ( !(*pc_searchCacheC1)->timeEvent() ) b_result = false; /** @todo seemded to segfault here, although this is REALLY STRANGE! */
   }
   // call the time event for all remote data
   for ( pc_searchCacheC2 = c_arrClientC2.begin();
