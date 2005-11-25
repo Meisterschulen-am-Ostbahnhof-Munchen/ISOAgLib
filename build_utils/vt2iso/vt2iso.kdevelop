@@ -44,7 +44,7 @@
   <kdevdebugger>
     <general>
       <dbgshell/>
-      <programargs>../../../../../TaskController/MaskDefinition/Task_Controller</programargs>
+      <programargs>../../../../src_test/test_pools/testcase/fillattributes/Pool.xml</programargs>
       <gdbpath/>
       <configGdbScript/>
       <runShellScript/>

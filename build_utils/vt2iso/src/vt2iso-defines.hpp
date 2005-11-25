@@ -231,8 +231,8 @@
 #define attrInput_id (73)
 
 // Command Attributes:
-#define attrObjectID	(74)
-#define attrHideShow	(75)
+#define attrObjectID  (74)
+#define attrHideShow  (75)
 #define attrDisable_enable (76)
 #define attrNumber_of_repetitions (77)
 #define attrFrequency (78)
@@ -260,7 +260,7 @@
 #define attrBytes_in_string (100)
 #define attrCode (101)
 
-#define maxAttributeNames (102)	
+#define maxAttributeNames (102)
 
 
 #define maxObjectTypesToCompare (maxObjectTypes+6)
@@ -487,7 +487,7 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
 };
 
 // Table of possible Macro Commands
-#define maxCommandsToCompare (maxCommands)  
+#define maxCommandsToCompare (maxCommands)
 char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
     "command_hide_show_object",
     "command_enable_disable_object",
@@ -561,6 +561,12 @@ char fontstyleTable [maxFontstyleTable] [stringLength+1] = {
     "inverted",
     "flashinginverted",
     "flashinghidden"
+};
+
+#define maxFonttypeTable 2
+char fonttypeTable [maxFonttypeTable] [stringLength+1] = {
+    "ISO_Latin_1",
+    "ISO_Latin_9"
 };
 
 #define maxTruthTable 5
@@ -729,7 +735,7 @@ char eventTable [maxEventTable] [stringLength+1] = {
 
 #define maxAuxFunctionTypes 3
 char auxFunctionTypeTable [maxAuxFunctionTypes] [stringLength+1] = {
-	"latchingboolean",
-	"analog",
-	"nonlatchingboolean"
+  "latchingboolean",
+  "analog",
+  "nonlatchingboolean"
 };

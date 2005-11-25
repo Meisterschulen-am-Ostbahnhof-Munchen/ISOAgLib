@@ -684,6 +684,7 @@ unsigned int getID (char* objName, bool isMacro, bool wishingID, unsigned int wi
     // insert new name-id pair now!
     objIDTable [objCount] = foundID;
     strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
+//     printf("objName: %s, objCount: %i\n", objName, objCount);
     objCount++;
   }
   // else { take ID found }
@@ -873,6 +874,17 @@ unsigned int colordepthtoi (char* text_colordepth)
     }
   }
   return 2;
+}
+
+unsigned int fonttypetoi (char* text_fonttype)
+{
+  int l;
+  for (l=0; l<2; l++) {
+    if (strncmp (text_fonttype, fonttypeTable [l], stringLength) == 0) {
+      return l;
+    }
+  }
+  return 0xFF;
 }
 
 
@@ -3065,11 +3077,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       break;
 
     case otFontattributes:
-      if (!(attrIsGiven [attrFont_colour] && attrIsGiven [attrFont_size]))
+      if (!(attrIsGiven [attrFont_colour] && attrIsGiven [attrFont_size] && attrIsGiven [attrFont_type]))
       {
-        clean_exit (-1, "YOU NEED TO SPECIFY THE font_colour= AND font_size= ATTRIBUTE FOR THE <fontattributes> OBJECT! STOPPING PARSER! bye.\n\n");
+        clean_exit (-1, "YOU NEED TO SPECIFY THE font_colour= AND font_size= AND font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! STOPPING PARSER! bye.\n\n");
       }
-      fprintf (partFileB, ", %d, %d, 0 /* ISO_LATIN_1 */, %d", colortoi (attrString [attrFont_colour]), fontsizetoi (attrString [attrFont_size]), fontstyletoi (attrString [attrFont_style]));
+      fprintf (partFileB, ", %d, %d, %d, %d", colortoi (attrString [attrFont_colour]), fontsizetoi (attrString [attrFont_size]), fonttypetoi (attrString [attrFont_type]), fontstyletoi (attrString [attrFont_style]));
       break;
 
     case otLineattributes:
@@ -3593,7 +3605,7 @@ int main(int argC, char* argV[])
   if (!is_skHeight) skHeight = 32;
   if (!is_skWidth || !is_skHeight) {
     std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
-              << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so thake care that you know what you're doing!\n\n";
+              << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!\n\n";
   }
   fprintf (partFileD, "#define vtObjectPoolDimension %d\n", opDimension);
   fprintf (partFileD, "#define vtObjectPoolSoftKeyWidth %d\n", skWidth);
