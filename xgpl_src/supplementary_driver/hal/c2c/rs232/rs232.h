@@ -69,8 +69,8 @@
 */
 /* ************************************************************ */
 
-#ifndef _HAL_ESX_RS232_H_
-#define _HAL_ESX_RS232_H_
+#ifndef _HAL_C2C_RS232_H_
+#define _HAL_C2C_RS232_H_
 
 // Multiple RS232 ports, so must use the channel parameter in the function calls!
 #define USE_RS232_CHANNEL
