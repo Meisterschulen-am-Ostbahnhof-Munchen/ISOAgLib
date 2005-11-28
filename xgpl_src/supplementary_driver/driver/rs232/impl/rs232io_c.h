@@ -101,8 +101,7 @@
 #include <supplementary_driver/hal/rs232.h>
 
 /** define based on system type the support of several RS232 channels */
-#if  defined(SYSTEM_C2C) || defined(SYSTEM_PC)
-  #define USE_RS232_CHANNEL
+#if defined(USE_RS232_CHANNEL)
   #define RS232_CHANNEL_PARAM_SINGLE ui8_channel
   #define RS232_CHANNEL_PARAM_LAST , ui8_channel
   #define RS232_CHANNEL_CALL_PARAM_SINGLE rui8_channel

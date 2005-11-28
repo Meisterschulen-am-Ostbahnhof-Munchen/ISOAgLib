@@ -72,6 +72,9 @@
 #ifndef _HAL_ESX_RS232_H_
 #define _HAL_ESX_RS232_H_
 
+// Multiple RS232 ports, so must use the channel parameter in the function calls!
+#define USE_RS232_CHANNEL
+
 #include <IsoAgLib/hal/c2c/config.h>
 #include <IsoAgLib/hal/c2c/typedef.h>
 #include <IsoAgLib/hal/c2c/errcodes.h>

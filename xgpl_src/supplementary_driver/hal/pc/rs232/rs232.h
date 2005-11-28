@@ -70,6 +70,9 @@
 #ifndef _HAL_PC_RS232_H_
 #define _HAL_PC_RS232_H_
 
+// Multiple RS232 ports, so must use the channel parameter in the function calls!
+#define USE_RS232_CHANNEL
+
 #include <IsoAgLib/hal/pc/config.h>
 #include <IsoAgLib/hal/pc/typedef.h>
 #include <IsoAgLib/hal/pc/errcodes.h>
