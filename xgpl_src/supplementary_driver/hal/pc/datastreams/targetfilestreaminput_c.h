@@ -90,7 +90,7 @@
 #define TARGETFILESTREAMINPUT_C_H
 
 
-#include "IsoAgLib/typedef.h"
+#include <IsoAgLib/typedef.h>
 #include <fstream>
 #include <supplementary_driver/hal/datastreams.h>
 #include <string>
