@@ -467,12 +467,14 @@ public:
 
   bool sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
 
+  bool sendCommandDeleteObjectPool ();
+
   bool queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd=true);
 
   void dumpQueue();
 
   void enableSameCommandCheck() { b_checkSameCommand = true; };
-	void disableSameCommandCheck() { b_checkSameCommand = false; };
+  void disableSameCommandCheck() { b_checkSameCommand = false; };
 
 private:
   friend class SINGLETON_DERIVED(ISOTerminal_c,ElementBase_c);

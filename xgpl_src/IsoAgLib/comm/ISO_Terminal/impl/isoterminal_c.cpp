@@ -1226,12 +1226,6 @@ bool ISOTerminal_c::processMsg()
         b_result = true;
         break;
 
-      // ### Error field is on byte 2 (index 1)
-      case 0xB2: // Command: "Command", parameter "Delete Object Pool"
-        MACRO_setStateDependantOnError(2)
-        b_result = true;
-        break;
-
       case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
         iso11783version = data().getUint8Data (1);
         if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForMemoryResponse)) {
@@ -1526,6 +1520,12 @@ bool ISOTerminal_c::sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object,
   } else {
     return false;
   }
+}
+
+bool ISOTerminal_c::sendCommandDeleteObjectPool ()
+{
+  return sendCommand (178 /* Command: Command --- Parameter: Delete Object Pool */,
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand);
 }
 
 bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
