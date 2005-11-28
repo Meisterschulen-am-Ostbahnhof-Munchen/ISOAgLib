@@ -825,6 +825,10 @@ void defaultAttributes ()
     sprintf (attrString [attrEnabled], "yes");
     attrIsGiven [attrEnabled] = true;
   }
+  if (!attrIsGiven [attrFont_type]) {
+    sprintf (attrString [attrFont_type], "ISO_Latin_1");
+    attrIsGiven [attrFont_type] = true;
+  }
   /*
   if (!attrIsGiven [attr]) {
     sprintf (attrString [attr], "");

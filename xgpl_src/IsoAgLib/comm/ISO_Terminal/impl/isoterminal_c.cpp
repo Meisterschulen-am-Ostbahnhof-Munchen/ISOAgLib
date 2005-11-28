@@ -1226,6 +1226,12 @@ bool ISOTerminal_c::processMsg()
         b_result = true;
         break;
 
+      // ### Error field is on byte 2 (index 1)
+      case 0xB2: // Command: "Command", parameter "Delete Object Pool"
+        MACRO_setStateDependantOnError(2)
+        b_result = true;
+        break;
+
       case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
         iso11783version = data().getUint8Data (1);
         if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForMemoryResponse)) {
