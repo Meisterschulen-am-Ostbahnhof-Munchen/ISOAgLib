@@ -64,11 +64,10 @@
  * ********************************************************** */
 
 #include "actor.h"
-#include <IsoAgLib/hal/esxu/config.h>
-#include <IsoAgLib/util/impl/util_funcs.h>
 
-#include <cstdlib>
-#include <cstdio>
+#include <IsoAgLib/util/impl/util_funcs.h>
+#include <supplementary_driver/driver/rs232/irs232io_c.h>
+
 
 namespace HAL {
 
@@ -86,10 +85,13 @@ static const int16_t cui16_openLow  = ( 170000L / 4000L ); // 1700mV * 100 / 40m
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT    */
   int16_t getDigoutDiagnose(uint8_t rui8_channel, uint16_t rui16_minCurrent, uint16_t rui16_maxCurrent)
   {
-		const int16_t i16_adc = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(rui8_channel));
+		int16_t i16_adc = getDigoutCurrent(rui8_channel);
 
-		const bool b_hiSet = ( rui16_maxCurrent > 0 )?true:false;
-		const uint16_t cui16_useLowCompare = cui16_openLow;
+		if( i16_adc < 0 )
+			return HAL_NO_ERR;	// Pin doesn't support current checking - should really do something else here!!!
+
+		bool b_hiSet = ( rui16_maxCurrent > 0 )?true:false;
+		uint16_t cui16_useLowCompare = cui16_openLow;
 
 		if ( b_hiSet )
 		{ // if active PWM ( setting > 0 ) has lower voltage than
@@ -112,7 +114,18 @@ static const int16_t cui16_openLow  = ( 170000L / 4000L ); // 1700mV * 100 / 40m
 	*/
 	int16_t getDigoutAdc( uint8_t rui8_channel )
 	{
-		const int16_t ci16_result = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(rui8_channel));
+		if( rui8_channel > OUT4 )
+			return -1;
+
+		int16_t ci16_result = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(rui8_channel));
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+<< "get_adc( "
+<< (uint16_t)__HAL::getPwmoutAdcCheckNr(rui8_channel)
+<< " ) returns " << ci16_result << "\r";
+#endif
+
 		if ( ci16_result != HAL_NO_ERR ) return ci16_result;
 		return __IsoAgLib::mul1Div1Mul2Div2(ci16_result, 3743, 1, 100);
 	}

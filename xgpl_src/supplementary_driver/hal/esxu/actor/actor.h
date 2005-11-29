@@ -72,26 +72,33 @@
 #ifndef _HAL_ESXu_ACTOR_H_
 #define _HAL_ESXu_ACTOR_H_
 
+namespace __HAL {
+  extern "C" {
+    /** include the BIOS specific header into __HAL */
+    #include <commercial_BIOS/bios_esxu/mos10osy.h>
+  }
+}
+
 #include <IsoAgLib/hal/esxu/config.h>
 #include <IsoAgLib/hal/esxu/typedef.h>
 #include <IsoAgLib/hal/esxu/errcodes.h>
+
+#include <supplementary_driver/driver/rs232/irs232io_c.h>
 
 /* ******************************************************** */
 /**
  * \name Basic BIOS limit constants
  */
 /*@{*/
-#define DIGITAL_OUTPUT_MIN 0
+#define DIGITAL_OUTPUT_MIN OUT1
 // only uncomment following line if  DIGITAL_OUTPUT_MIN > 0
-//#define DIGITAL_OUTPUT_MIN_GREATER_ZERO
-#define DIGITAL_OUTPUT_MAX 1
+#if (DIGITAL_OUTPUT_MIN > 0)
+#	define DIGITAL_OUTPUT_MIN_GREATER_ZERO
+#endif
+#define DIGITAL_OUTPUT_MAX OUT6
 /*@}*/
 
 namespace __HAL {
-  extern "C" {
-    /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_esxu/mos10osy.h>
-  }
   /**
     deliver channel number for checking/requesting of
     ADC value at pwm output
@@ -101,7 +108,7 @@ namespace __HAL {
     @return according channel number for __HAL call
   */
   inline uint8_t getPwmoutAdcCheckNr(uint8_t rb_channel)
-    { return rb_channel+1; }
+    { return GET_OUT_1-rb_channel; }
   /**
     deliver channel number for checking/requesting of
     current output through given PWM output
@@ -109,7 +116,7 @@ namespace __HAL {
     @return according channel number for __HAL call
   */
   inline uint8_t getPwmCurrentCheckNr(uint8_t rb_channel)
-    {return rb_channel;}
+    {return GET_I_PWM_1-rb_channel;}
 }
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
@@ -133,8 +140,18 @@ namespace HAL
   inline int16_t setPwmFreq(uint8_t bOutput, uint32_t dwFrequency)
   // ESXu BIOS lets PWM channels OUT1, OUT2 configure individual PWM FREQ
     {
-    return __HAL::set_pwm_freq(bOutput, dwFrequency);
-	}
+    int16_t retval = __HAL::set_pwm_freq(bOutput, dwFrequency);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+<< "set_pwm_freq( "
+<< (uint16_t)bOutput << ", "
+<< (uint16_t)dwFrequency
+<< " ) returns " << retval << "\r";
+#endif
+
+    return retval;};
+
 
   /**
     retrieve maximal PWM frequency -> setting to this value results in maximal output
@@ -142,8 +159,19 @@ namespace HAL
     @return max possible PWM value
   */
   inline uint16_t getMaxPwmDigout(uint8_t rui8_channel)
-  { __HAL::tOutput tOutputstatus; __HAL::get_digout_status(rui8_channel,&tOutputstatus);
-    return tOutputstatus.wMaxOutput;
+  {
+  __HAL::tOutput tOutputstatus;
+  int16_t retval = __HAL::get_digout_status(rui8_channel,&tOutputstatus);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+<< "get_digout_status( "
+<< (uint16_t)rui8_channel << ", "
+<< "&tOutputstatus"
+<< " ) returns " << retval << "\r";
+#endif
+
+   return tOutputstatus.wMaxOutput;
   }
 
   /**
@@ -153,7 +181,43 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
   inline int16_t setDigout(uint8_t rui8_channel, uint16_t wPWMValue)
-    {return __HAL::set_digout(rui8_channel, wPWMValue);};
+    {
+    int16_t retval = __HAL::set_digout(rui8_channel, wPWMValue);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+<< "set_digout( "
+<< (uint16_t)rui8_channel << ", "
+<< (uint16_t)wPWMValue
+<< " ) returns " << retval << "\r";
+#endif
+
+    return retval;
+    };
+  
+  /**
+	This function sets the digital Output over mask.
+	The Bit 0, 1, 2... represent the Output 1, 2, 3...
+	If the bit is set with wOutputMask, the appropriate bit from wDigitalValue will be taken
+	over the mask out.
+	If the bit is not set in the mask, the output remains unchanged. 
+
+    @return error state (C_NO_ERR == o.k.)
+  */
+  inline int16_t setDigoutMask(uint16_t wOutputMask, uint16_t wDigitalValue)
+    {
+    int16_t retval = __HAL::set_digout_mask(wOutputMask, wDigitalValue);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+<< "set_digout_mask( "
+<< (uint16_t)wOutputMask << ", "
+<< (uint16_t)wDigitalValue
+<< " ) returns " << retval << "\r";
+#endif
+
+    return retval;
+    };
   
   /** deliver the actual current of the digital output
     * @param rui8_channel channel to check
@@ -161,7 +225,22 @@ namespace HAL
     */
   inline int16_t getDigoutCurrent( uint8_t rui8_channel )
   {
-    return -1;
+//    return (rui8_channel <= OUT4) ? __HAL::get_adc( __HAL::getPwmCurrentCheckNr(rui8_channel) ) : -1;
+	if( rui8_channel <= OUT4 )
+		{
+		int16_t retval = __HAL::get_adc( __HAL::getPwmCurrentCheckNr(rui8_channel) );
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+<< "get_adc( "
+<< (uint16_t)__HAL::getPwmCurrentCheckNr(rui8_channel)
+<< " ) returns " << retval << "\r";
+#endif
+
+		return retval;
+		}
+	else
+		return -1;
   }
 
   /** deliver the state of a digital output
