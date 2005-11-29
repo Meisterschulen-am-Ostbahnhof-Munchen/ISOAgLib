@@ -72,16 +72,17 @@
 #ifndef _HAL_ESXu_EEPROM_H_
 #define _HAL_ESXu_EEPROM_H_
 
-#include "../config.h"
-#include "../typedef.h"
-#include "../errcodes.h"
-
 namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
     #include <commercial_BIOS/bios_esxu/mos10osy.h>
   }
 }
+
+#include <IsoAgLib/hal/esxu/config.h>
+#include <IsoAgLib/hal/esxu/typedef.h>
+#include <IsoAgLib/hal/esxu/errcodes.h>
+
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
    inline function with call to orig BIOS function)
