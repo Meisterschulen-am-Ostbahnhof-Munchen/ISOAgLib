@@ -73,18 +73,7 @@
 #ifndef _HAL_ESXu_SYSTEM_H_
 #define _HAL_ESXu_SYSTEM_H_
 
-#include <cstdio>
-#include "../config.h"
-#include "../typedef.h"
-#include "../errcodes.h"
 #include "system_target_extensions.h"
-
-namespace __HAL {
-  extern "C" {
-    /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_esxu/mos10osy.h>
-  }
-}
 
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
@@ -132,30 +121,187 @@ namespace HAL
     {return __HAL::configWatchdog();};
 
   /**
+	With reset_wd the watchdog can be forced to RESET (reboot) the processor. 
+
     reset the watchdog to use new configured watchdog settings
     @see configWd
-  */
-  inline int16_t  wdReset(void)
-    {return HAL_NO_ERR;};
+
+	The function reset_wd causes a new start of the ESX-micro software.
+	This means that the system monitor is also initialized again and the settings of
+	config_wd become effective. If no reset has taken place after 4ms, the function
+	is exitted and an error message is returned.
+   */
+  inline void wdReset(void)
+    {__HAL::reset_wd();
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "reset_wd()\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - reset_wd()\r"
+, (uint16_t)__HAL::get_time()
+);
+#endif
+
+    };
   /** trigger the watchdog */
   inline void wdTriggern(void)
-    {__HAL::trigger_wd();};
+    {__HAL::trigger_wd();
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "trigger_wd()\r";
+#endif
+    };
+
   /**
     get the system time in [ms]
     @return [ms] since start of the system
   */
   inline int32_t getTime(void)
-    {return __HAL::get_time();};
+    {return __HAL::get_time();
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "get_time()\r";
+#endif
+    };
 
   inline int16_t getSnr(uint8_t *snrDat)
-    {return __HAL::get_snr(snrDat);};
+    {
+    int16_t retval = __HAL::get_snr(snrDat);
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "get_snr( "
+//<< (uint16_t) *snrDat
+//<< " ) returns  "
+//<< retval << "\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - get_snr( %u ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)*snrDat
+, (int16_t) retval );
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
+	return retval;
+    }
+
+  inline int16_t getLokalId(uint8_t *Dat)
+    {
+    int16_t retval = __HAL::get_lokal_id(Dat);
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "getLokalId( "
+//<< (uint16_t) *Dat
+//<< " ) returns  "
+//<< retval << "\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - get_lokal_id( %u ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)*Dat
+, (int16_t) retval );
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
+	return retval;
+    }
 
   /**
     start the Task Timer -> time between calls of Task Manager
   */
   inline void startTaskTimer ( void )
-    {__HAL::start_task_timer ( T_TASK_BASIC );};
+    {
+    __HAL::start_task_timer ( T_TASK_BASIC );
 
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "start_task_timer( "
+//<< (uint16_t) T_TASK_BASIC
+//<< " )\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - start_task_timer( %u )\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)T_TASK_BASIC
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+    }
+
+  /**
+    init the Task Call
+	This function permits cyclic and/or delayed calls of user functions. If 0 is tranferred as parameter 
+	for wInterval, the function call will occur only once. (For starting the tasks start task timer
+	(word wBasicTick) has to be queried.) 
+	The ordering of the task into the interrupt system uses the transfer parameter wHandle. If a zero-pointer
+	is used in the user function parameter, the function will stop when the handle is called. 
+	The maximum number of tasks is limited to 4. 
+  */
+  inline int16_t initTaskCall( uint16_t wHandle, uint16_t wInterval, uint16_t wOffset, void (* pfFunction)(void) )
+    {
+    int16_t retval = __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction );
+
+#if defined( DEBUG_HAL )
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - init_task_call( %u, %u, %u, %s ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)wHandle
+, (uint16_t)wInterval
+, (uint16_t)wOffset
+, ( (pfFunction) ? "pfFunction" : "NULL" )
+, (int16_t) retval
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+	return retval;
+    }
+  /**
+    Get Task Overload
+	If a task has already been running and is called up a second time by a timer interrupt,
+	a flag is set. The function get_task_overload returns the condition of this flag.
+	With reset_task_overload this flag can be deleted. 
+  */
+  inline int16_t getTaskOverload ( uint16_t wHandle )
+    {
+    int16_t retval = __HAL::get_task_overload ( wHandle );
+
+#if defined( DEBUG_HAL )
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - get_task_overload( %u ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)wHandle
+, (int16_t) retval
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
+	return retval;
+    }
+  /**
+    Reset Task Overload
+	If a task has already been running and is called up a second time by a timer interrupt,
+	a flag is set. The function get_task_overload returns the condition of this flag.
+	With reset_task_overload this flag can be deleted. 
+  */
+  inline int16_t resetTaskOverload ( uint16_t wHandle )
+    {
+    int16_t retval = __HAL::reset_task_overload ( wHandle );
+
+#if defined( DEBUG_HAL )
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - reset_task_overload( %u ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)wHandle
+, (int16_t) retval
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
+	return retval;
+    }
   /**
     get the main power voltage
     @return voltage of power [mV]
@@ -164,8 +310,21 @@ namespace HAL
     {
 	__HAL::t_Sys_AnalogData t_Sys_AnalogData;
 	__HAL::get_system_analogdata(&t_Sys_AnalogData);
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "get_system_analogdata( &t_Sys_AnalogData ) " << ", wUE = " << t_Sys_AnalogData.wUE << "\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - get_system_analogdata(), wUE = %u\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)t_Sys_AnalogData.wUE
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
     return t_Sys_AnalogData.wUE;
-    };
+    }
   /**
     get the voltage of the external reference 8.5Volt for work of external sensors
     @return voltage at external reference [mV]
@@ -182,7 +341,22 @@ namespace HAL
     #if defined(NO_CAN_EN_CHECK)
       return ON;
     #else
-      return __HAL::get_on_off_switch();
+      int16_t retval = __HAL::get_on_off_switch();
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "get_on_off_switch("
+//<< ") returns "
+//<< retval << "\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - get_on_off_switch() returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (int16_t)retval
+);
+#endif
+
+	return retval;
     #endif
   };
 
@@ -191,20 +365,58 @@ namespace HAL
     stop (f.e. store values) actions after loss of CAN_EN
   */
   inline void stayingAlive(void)
-    {__HAL::staying_alive();};
+    {__HAL::staying_alive();
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "staying_alive()\r";
+
+#if defined( DEBUG_HAL )
+uint8_t buf[64];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - staying_alive()\r"
+, (uint16_t)__HAL::get_time()
+);
+#endif
+
+    };
 
   /**
     shut off the whole system (set power down)
   */
   inline void powerDown(void)
-    {__HAL::power_down();};
+    {__HAL::power_down();
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "power_down()\r";
+
+uint8_t buf[64];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - power_down()\r"
+, (uint16_t)__HAL::get_time()
+);
+#endif
+
+    };
 
   /**
     switch relais on or off
     @param bitState true -> Relais ON
   */
   inline void setRelais(bool bitState)
-  {__HAL::set_relais(bitState);};
+  {__HAL::set_relais(bitState);
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "set_relais( "
+//<< (uint16_t)bitState
+//<< " )\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - set_relais( %u )\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)bitState
+);
+#endif
+
+  };
 /*@}*/
 
 

@@ -65,22 +65,11 @@
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
  * ********************************************************** */
 
-#include "system_target_extensions.h"
-#include "../config.h"
-
+#include "system.h"
 
 namespace __HAL {
-extern "C" {
-  /** include the BIOS specific header with the part for CAN into __HAL */
-  #include <commercial_BIOS/bios_esxu/mos10osy.h>
-  }
-/** initialise static tSystem to complete zero, so that a call of
-  * open_system can be reliable detected
-  */
-static tSystem t_biosextSysdata =
-  {0,0,0,0,0,0,0
-    ,{0,0,0,0,0,0,0,0},
-  0};
+
+static bool system_is_opened = false;
 
 /**
   open the system with system specific function call
@@ -88,9 +77,28 @@ static tSystem t_biosextSysdata =
 */
 int16_t open_system()
 {
-  int16_t i16_result = open_micro(&t_biosextSysdata);
+	int16_t i16_result = C_NO_ERR;
+	if( !system_is_opened )
+		{
+		tSystem t_biosextSysdata;
+		i16_result = open_micro(&t_biosextSysdata);
 
-  return i16_result;
+		system_is_opened = true;
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "open_micro( &t_biosextSysdata ) returns " << i16_result << "\r";
+
+uint8_t buf[64];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - open_micro() returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (int16_t) i16_result
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+		}
+
+	return i16_result;
 }
 /**
   close the system with system specific function call
@@ -112,18 +120,28 @@ int16_t closeSystem( void )
   // trigger Watchdog, till CanEn is off
   while ( get_on_off_switch() ) trigger_wd();
   // power off
-  close_micro();
-  return C_NO_ERR;
+  int16_t retval = close_micro();
+  system_is_opened = false;
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "close_micro() returns " << retval << "\r";
+
+uint8_t buf[64];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - close_micro() returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (int16_t) retval
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
+  return retval;
 }
 
 /** check if open_System() has already been called */
 bool isSystemOpened( void )
 {
-  if ( ( t_biosextSysdata.bCPU_freq != 0 )
-    && ( t_biosextSysdata.wRAMSize != 0 )
-    && ( t_biosextSysdata.wROMSize != 0 )
-    && ( t_biosextSysdata.bEESize != 0 ) ) return true;
-  else return false;
+	return system_is_opened;
 }
 
 /**
@@ -141,7 +159,28 @@ int16_t configWatchdog()
       UD_MAX
   };
 
-  return config_wd(&t_watchdogConf);
+  int16_t retval = config_wd( &t_watchdogConf );
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "config_wd( &t_watchdogConf( "
+//<< t_watchdogConf.wWDTime_ms << ", "
+//<< t_watchdogConf.wUEmin_mV << ", "
+//<< t_watchdogConf.wUEmax_mV
+//<< " ) ) returns " << retval << "\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - config_wd( &t_watchdogConf( %u, %u, %u ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)t_watchdogConf.wWDTime_ms
+, (uint16_t)t_watchdogConf.wUEmin_mV
+, (uint16_t)t_watchdogConf.wUEmax_mV
+, (int16_t) retval
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
+	return retval;
 }
 
 } // end namespace __HAL

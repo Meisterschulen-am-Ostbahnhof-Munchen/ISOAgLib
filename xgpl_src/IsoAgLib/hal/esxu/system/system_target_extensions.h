@@ -68,8 +68,23 @@
 #ifndef _HAL_ESXu_SYSTEM_TARGET_EXTENSIONS_H_
 #define _HAL_ESXu_SYSTEM_TARGET_EXTENSIONS_H_
 
-#include "../typedef.h"
-#include "../errcodes.h"
+namespace __HAL {
+  extern "C" {
+    /** include the BIOS specific header into __HAL */
+    #include <commercial_BIOS/bios_esxu/mos10osy.h>
+  }
+}
+
+//#include <cstdio>
+#include <cstdio>
+#include <IsoAgLib/hal/esxu/config.h>
+#include <IsoAgLib/hal/esxu/typedef.h>
+#include <IsoAgLib/hal/esxu/errcodes.h>
+
+#if defined( DEBUG_HAL )
+#  include <supplementary_driver/driver/rs232/irs232io_c.h>
+#endif
+
 namespace __HAL {
 
 /* ******************************************** */
