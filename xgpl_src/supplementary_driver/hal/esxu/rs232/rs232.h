@@ -91,9 +91,6 @@ namespace __HAL {
  */
 #define CONSOLE 	RS232_1
 
-#ifdef USE_RS232_OVER_CAN
-#  include "rs232_over_can.h"
-#else
 namespace HAL
 {
   /* ****************************** */
@@ -219,5 +216,4 @@ namespace HAL
     {__HAL::clear_rs232_tx_buffer();};
   /*@}*/
 }
-#endif	// USE_RS232_OVER_CAN
 #endif	// _HAL_ESXu_RS232_H_
