@@ -123,7 +123,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
   const int32_t ci32_endWait = getTime() + rui16_timeoutInterval;
-  int32_t i32_waitSlice rui16_timeoutInterval;
+  int32_t i32_waitSlice = rui16_timeoutInterval;
 
   // if greater than 50msec -> divide so that about 10 slices are realized
   if ( i32_waitSlice > 50 ) i32_waitSlice /= 10;
@@ -134,10 +134,9 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   {
     for ( unsigned int busInd = 0; busInd < cui32_maxCanBusCnt; busInd++)
     {
-      if ( !b_busOpened[busInd] ) continue;
       for ( unsigned int msgInd = 0; msgInd < 15; msgInd++ )
       {
-        if ( rec_bufCnt[busInd][msgInd] > 0 ) return true;
+        if ( getCanMsgBufCount( busInd, msgInd ) > 0 ) return true;
       }
     }
     #if defined WIN32

@@ -258,7 +258,7 @@ vtObjectFontAttributes_c::calcScaledFontDimension()
   // else if (scale == 0x100000) ==> no need to scale!
 
   /// Always check if the font is available!
-  while (!(__IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities()->fontSizes & (1 << ui8_fontSizeScaled))) {
+  while (!(__IsoAgLib::getIsoTerminalInstance4Comm().getVtFontSizes() & (1 << ui8_fontSizeScaled))) {
     ui8_fontSizeScaled--; // try a smaller font, but "6x8" should be there in any way, 'cause we set it in processMsg!!
   }
 } // -X2C

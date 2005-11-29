@@ -49,6 +49,9 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111_1307  USA           *
  ***************************************************************************/
 
+// #define DEBUG_RAPID_UPDATE
+
+
 /* *********************************************************************** */
 /** \example 3_0_VirtualTerminalIso.cpp
  * This tutorial shall provide the base program, which uploads a ISO 11783
@@ -541,6 +544,30 @@ int main()
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
+#ifdef DEBUG_RAPID_UPDATE
+    {
+      static int32_t si32_lastTime = 0;
+      int32_t i32_nowTime = HAL::getTime();
+      if ((i32_nowTime - si32_lastTime) > 1000) {
+        updateMiles (valMiles+1);
+        si32_lastTime = i32_nowTime;
+      }
+    }
+#endif
+#ifdef DEBUG_TOGGLE_MASKS
+    static int32_t si32_lastToggleTime = 0;
+    int32_t i32_nowTime = HAL::getTime();
+    if ((i32_nowTime - si32_lastToggleTime) > 5000) {
+      static bool sb_toggle = false;
+      si32_lastToggleTime = i32_nowTime;
+      if (sb_toggle)
+           iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
+//      else iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectAnotherMask);
+      else iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectForbiddenAlarmMask);
+//      else iVtObjectimiIsoMaskupload.changeActiveMask (&iVtObjectMainMask);
+      sb_toggle = !sb_toggle;
+    }
+#endif
     #ifdef SYSTEM_PC
      #ifdef WIN32
      Sleep(10);

@@ -115,30 +115,42 @@
 
   </softkeymask>
 
-    <lineattributes name="LineAttributes_Normal" line_colour="0" line_width="1" line_art="1111111111111111" />
-    <fillattributes name="FillAttributes" fill_type="fillcolour" fill_colour="2" />
+  <lineattributes name="LineAttributes_Normal" line_colour="0" line_width="1" line_art="1111111111111111" />
+  <fillattributes name="FillAttributes" fill_type="fillcolour" fill_colour="2" />
 
-    <ellipse name="dEllipse" line_attributes="LineAttributes_Normal" width="64" height="32" ellipse_type="closedsegment" start_angle="0" end_angle="1" fill_attributes="FillAttributes" />
+  <ellipse name="dEllipse" line_attributes="LineAttributes_Normal" width="64" height="32" ellipse_type="closedsegment" start_angle="0" end_angle="1" fill_attributes="FillAttributes" />
 
-    <polygon name="dPolygon" width="41" height="35" line_attributes="LineAttributes_Normal" polygon_type="convex">
-        <point pos_x="00" pos_y="20" />
-        <point pos_x="10" pos_y="10" />
-        <point pos_x="10" pos_y="20" />
-        <point pos_x="00" pos_y="10" />
-        <point pos_x="10" pos_y="10" />
-        <point pos_x="05" pos_y="00" />
-        <point pos_x="00" pos_y="10" />
-        <point pos_x="00" pos_y="20" />
-        <point pos_x="10" pos_y="20" />
-    </polygon>
+  <polygon name="dPolygon" width="41" height="35" line_attributes="LineAttributes_Normal" polygon_type="convex">
+      <point pos_x="00" pos_y="20" />
+      <point pos_x="10" pos_y="10" />
+      <point pos_x="10" pos_y="20" />
+      <point pos_x="00" pos_y="10" />
+      <point pos_x="10" pos_y="10" />
+      <point pos_x="05" pos_y="00" />
+      <point pos_x="00" pos_y="10" />
+      <point pos_x="00" pos_y="20" />
+      <point pos_x="10" pos_y="20" />
+  </polygon>
 
-    <meter name="dMeter" width="40" needle_colour="161" border_colour="0" arc_and_tick_colour="15" options="arc+ticks+clockwise" number_of_ticks="31" start_angle="157" end_angle="112" min_value="0" max_value="100" variable_reference="ValSpeed" />
+  <meter name="dMeter" width="40" needle_colour="161" border_colour="0" arc_and_tick_colour="15" options="arc+ticks+clockwise" number_of_ticks="31" start_angle="157" end_angle="112" min_value="10000" max_value="10100" variable_reference="ValSpeed" />
 
-    <macro id="1" name="Macro_1" number_of_bytes="8">
-        <command_hide_show_object object_id="3000" hide_show="show" />
-    </macro>
+  <macro id="1" name="Macro_1" number_of_bytes="8">
+      <command_hide_show_object object_id="3000" hide_show="show" />
+  </macro>
 
-    <macro id="2" name="Macro_2" number_of_bytes="8">
-        <command_hide_show_object object_id="3000" hide_show="hide" />
-    </macro>
+  <macro id="2" name="Macro_2" number_of_bytes="8">
+      <command_hide_show_object object_id="3000" hide_show="hide" />
+  </macro>
+
+
+  <datamask name='AnotherMask' background_colour='white' soft_key_mask='softkeysAlarm' >
+    <outputstring value="Just Another Mask  6x 8" pos_x='0' pos_y='40'  width='480' height='8' background_colour='white' horizontal_justification='middle' font_attributes='FontAttributesNormal6x8' />
+    <outputstring value="Just Another Mask  8x 8" pos_x='0' pos_y='50'  width='480' height='8' background_colour='white' horizontal_justification='middle' font_attributes='FontAttributesNormal8x8' />
+    <outputstring value="Just Another Mask  8x12" pos_x='0' pos_y='60'  width='480' height='12' background_colour='white' horizontal_justification='middle' font_attributes='FontAttributesNormal8x12' />
+    <outputstring value="Just Another Mask 12x16" pos_x='0' pos_y='74'  width='480' height='16' background_colour='white' horizontal_justification='middle' font_attributes='FontAttributesNormal12x16' />
+    <outputstring value="Just Another Mask 16x16" pos_x='0' pos_y='92'  width='480' height='16' background_colour='white' horizontal_justification='middle' font_attributes='FontAttributesNormal16x16' />
+    <outputstring value="Just Another Mask 16x24" pos_x='0' pos_y='120'  width='480' height='24' background_colour='white' horizontal_justification='middle' font_attributes='FontAttributesNormal16x24' />
+    <outputstring value="Just Another Mask 24x32" pos_x='0' pos_y='150'  width='480' height='32' background_colour='white' horizontal_justification='middle' font_attributes='FontAttributesNormal24x32' />
+  </datamask>
+
 </objectpool>

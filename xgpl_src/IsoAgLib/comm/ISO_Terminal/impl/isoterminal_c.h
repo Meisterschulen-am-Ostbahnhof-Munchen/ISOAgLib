@@ -379,15 +379,26 @@ public:
     ATTENTION: check only if (isVtActive == true)
     @return uint8_t source address of virtual terminal
   */
-  uint8_t            getVtSourceAddress () { return vtSourceAddress; };
-  uint16_t           getVtObjectPoolDimension () { return c_streamer.pc_pool->getDimension(); };
-  uint16_t           getVtObjectPoolSoftKeyWidth () { return c_streamer.pc_pool->getSkWidth(); };
+// the following define should be globally defined in the project settings...
+#ifdef FAKE_VT_PROPERTIES
+  void fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
+  {
+    vtCapabilities_a.hwWidth = rui16_dimension;
+    vtCapabilities_a.skWidth = rui16_skWidth;
+    vtCapabilities_a.skHeight = rui16_skHeight;
+    vtCapabilities_a.hwGraphicType = rui16_colorDepth;
+    vtCapabilities_a.fontSizes = rui16_fontSizes;
+  }
+#endif
+  uint8_t            getVtSourceAddress ()           { return vtSourceAddress; };
+  uint16_t           getVtObjectPoolDimension ()     { return c_streamer.pc_pool->getDimension(); };
+  uint16_t           getVtObjectPoolSoftKeyWidth ()  { return c_streamer.pc_pool->getSkWidth(); };
   uint16_t           getVtObjectPoolSoftKeyHeight () { return c_streamer.pc_pool->getSkHeight(); };
-  uint32_t           getVtHardwareDimension () { return (uint32_t) vtCapabilities_a.hwWidth; };
-//sendCommandState_t getVtSendCommandState () { return en_sendCommandState; };
-  vtCapabilities_s*  getVtCapabilities () { return &vtCapabilities_a; };
-  vtState_s*         getVtState () { return &vtState_a; };
-  localSettings_s*   getLocalSettings () { return &localSettings_a; };
+  uint32_t           getVtHardwareDimension ()       { return (uint32_t) (vtCapabilities_a.hwWidth); };
+  uint16_t           getVtFontSizes ()               { return vtCapabilities_a.fontSizes; };
+  vtCapabilities_s*  getVtCapabilities ()            { return &vtCapabilities_a; };
+  vtState_s*         getVtState ()                   { return &vtState_a; };
+  localSettings_s*   getLocalSettings ()             { return &localSettings_a; };
   uint32_t           getUploadBufferSize ();
   uint8_t            getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour) {
                        uint8_t colorDepth = getVtCapabilities()->hwGraphicType;

@@ -98,6 +98,12 @@ typedef __IsoAgLib::ISOTerminal_c::vtCapabilities_s ivtCapabilities_s;
   */
   bool isVtActive () { return ISOTerminal_c::isVtActive (); };
 
+// the following define should be globally defined in the project settings...
+#ifdef FAKE_VT_PROPERTIES
+  void fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
+  { ISOTerminal_c::fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes); };
+#endif
+
   uint32_t getVtHardwareDimension () { return ISOTerminal_c::getVtHardwareDimension (); };
   uint16_t getVtObjectPoolDimension () { return ISOTerminal_c::getVtObjectPoolDimension (); };
   uint16_t getVtObjectPoolSoftKeyWidth () { return ISOTerminal_c::getVtObjectPoolSoftKeyWidth (); };
