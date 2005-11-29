@@ -1019,8 +1019,6 @@ xgpl_src/supplementary_driver/hal/esx/actor/actor_target_extensions.cpp -text
 xgpl_src/supplementary_driver/hal/esxu/actor/actor.h -text
 xgpl_src/supplementary_driver/hal/esxu/actor/actor_target_extensions.cpp -text
 xgpl_src/supplementary_driver/hal/esxu/rs232/rs232.h -text
-xgpl_src/supplementary_driver/hal/esxu/rs232/rs232_over_can.cpp -text
-xgpl_src/supplementary_driver/hal/esxu/rs232/rs232_over_can.h -text
 xgpl_src/supplementary_driver/hal/esxu/sensor/sensor.h -text
 xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.cpp -text
 xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.h -text
