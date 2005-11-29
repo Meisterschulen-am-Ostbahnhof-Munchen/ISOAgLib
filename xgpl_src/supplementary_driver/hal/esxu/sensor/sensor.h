@@ -72,10 +72,11 @@
 #ifndef _HAL_ESXu_SENSOR_H_
 #define _HAL_ESXu_SENSOR_H_
 
-#include <IsoAgLib/hal/esxu/config.h>
-#include <IsoAgLib/hal/esxu/typedef.h>
-#include <IsoAgLib/hal/esxu/errcodes.h>
 #include "sensor_target_extensions.h"
+
+#if defined( DEBUG_HAL )
+#  include <supplementary_driver/driver/rs232/irs232io_c.h>
+#endif
 
 /* ******************************************************** */
 /**
@@ -104,20 +105,16 @@
 #define COUNTER_INPUT_MAX DIN10
 
 /// set maximal voltage input for analog input set to voltage in [mV]
-#define MAX_ANALOG_MV 8500
+#define MAX_ANALOG_MV 30000
 ///set max digital BIOS function return value corresponding to MAX_ANALOG_MV
-#define MAX_ANALOG_MV_DIGIT 907
+#define MAX_ANALOG_MV_DIGIT 1000
 /// set maximal current input for analog input set [mA]
-#define MAX_ANALOG_MA 20
+#define MAX_ANALOG_MA 25
 ///set max digital BIOS function return value corresponding to MAX_ANALOG_MA
-#define MAX_ANALOG_MA_DIGIT 833
+#define MAX_ANALOG_MA_DIGIT 1000
 /*@}*/
 
 namespace __HAL {
-  extern "C" {
-    /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_esxu/mos10osy.h>
-  }
   /**
     deliver channel number for checking/requesting of analog input
     for call of __HAL:: functions (differences mostly caused
@@ -158,14 +155,32 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_analoginVolt(uint8_t bNumber)
-    {return __HAL::init_analogin(bNumber, VOLTAGE_IN);};
+    {
+    int16_t retval = __HAL::init_analogin(bNumber, VOLTAGE_IN);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_analogin( "
+<< (uint16_t)bNumber << ", "
+<< (uint16_t)VOLTAGE_IN << ") returns " << retval << "\r";
+#endif
+
+    return retval;};
   /**
     initialize one of the [0..7] analog input channels to CURRENT input
     @param bNumber number of the analog input channel
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_analoginCurrent(uint8_t bNumber)
-    {return __HAL::init_analogin(bNumber, CURRENT_IN);};
+    {
+    int16_t retval = __HAL::init_analogin(bNumber, CURRENT_IN);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_analogin( "
+<< (uint16_t)bNumber << ", "
+<< (uint16_t)CURRENT_IN << ") returns " << retval << "\r";
+#endif
+
+    return retval;};
 
   /**
     initialize one of the [0..7] digital input channels
@@ -176,7 +191,18 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_digin(uint8_t rb_channel,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)())
-    {return __HAL::init_digin(rb_channel, bMode, bAktivhighlow, pfFunctionName);};
+    {
+  	int16_t retval = __HAL::init_digin(rb_channel, bMode, bAktivhighlow, pfFunctionName);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_digin( "
+<< (uint16_t)rb_channel << ", "
+<< (uint16_t)bMode << ", "
+<< (uint16_t)bAktivhighlow << ", "
+<< (pfFunctionName?"pfFunctionName":"NULL") << ") returns " << retval << "\r";
+#endif
+
+    return retval;};
 
   /**
     init counter for trigger events on digital inoput;
@@ -243,6 +269,12 @@ namespace HAL
   */
   inline int16_t  getAdcVoltage(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getAnaloginCheckNr(rb_channel));
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
+<< (uint16_t)__HAL::getAnaloginCheckNr(rb_channel) << ") returns " << i16_temp << "\r";
+#endif
+
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 10);};
   /**
@@ -252,6 +284,12 @@ namespace HAL
   */
   inline int16_t  getAdcMeanVoltage(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getAnaloginCheckNr(rb_channel));
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc_mean( "
+<< (uint16_t)__HAL::getAnaloginCheckNr(rb_channel) << ") returns " << i16_temp << "\r";
+#endif
+
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 10);};
   /**
@@ -261,6 +299,12 @@ namespace HAL
   */
   inline int16_t  getAdcCurrent(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getDiginAdcCheckNr(rb_channel));
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
+<< (uint16_t)__HAL::getDiginAdcCheckNr(rb_channel) << ") returns " << i16_temp << "\r";
+#endif
+
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 25);};
   /**
@@ -270,6 +314,12 @@ namespace HAL
   */
   inline int16_t  getAdcMeanCurrent(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getDiginAdcCheckNr(rb_channel));
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc_mean( "
+<< (uint16_t)__HAL::getDiginAdcCheckNr(rb_channel) << ") returns " << i16_temp << "\r";
+#endif
+
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 25);};
   /**
@@ -279,6 +329,12 @@ namespace HAL
   */
   inline int16_t  getDiginDiagnoseAdc(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getDiginAdcCheckNr(rb_channel));
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
+<< (uint16_t)__HAL::getDiginAdcCheckNr(rb_channel) << ") returns " << i16_temp << "\r";
+#endif
+
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 10);};
   /**
@@ -289,6 +345,12 @@ namespace HAL
     { 
 	__HAL::t_Sys_AnalogData t_Sys_AnalogData;
 	__HAL::get_system_analogdata(&t_Sys_AnalogData);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+<< "get_system_analogdata( &t_Sys_AnalogData ) " << ", iTemperatur = " << t_Sys_AnalogData.iTemperatur << "\r";
+#endif
+
     return t_Sys_AnalogData.iTemperatur;
     }
    #if !defined(GET_U_THRESHOLD) && defined(GET_U_2_3_V)
@@ -302,7 +364,14 @@ namespace HAL
     @return ON, OFF or C_RANGE
   */
   inline int16_t  getDiginOnoff(uint8_t rb_channelNumber)
-    {return __HAL::get_digin_onoff(rb_channelNumber);};
+    { int16_t retval = __HAL::get_digin_onoff(rb_channelNumber);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_digin_onoff( "
+<< (uint16_t)rb_channelNumber << ") returns " << retval << "\r";
+#endif
+
+  return retval;};
 
   /**
     deliver debounced state of digital input based on Activ-High/Low setting
@@ -311,7 +380,15 @@ namespace HAL
     @return ON, OFF or C_RANGE
   */
   inline int16_t  getDiginOnoffStatic(uint8_t rb_channelNumber)
-    {return __HAL::get_digin_onoff_static(rb_channelNumber);};
+    {
+    int16_t retval = __HAL::get_digin_onoff_static(rb_channelNumber);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_digin_onoff_static( "
+<< (uint16_t)rb_channelNumber << ") returns " << retval << "\r";
+#endif
+
+  return retval;};
 
   /**
     deliver frequency of digital interrupt channel
@@ -324,8 +401,17 @@ namespace HAL
     @return frequency of triggered events [mHz] or BIOS_WARN on too less impulses
   */
   inline uint16_t getDiginFreq(uint8_t rb_channelNumber, bool b_useVirtual = false)
-    {uint16_t ui16_result;
-     return ((__HAL::get_digin_freq(rb_channelNumber, &ui16_result) == C_NO_ERR) || (b_useVirtual))?ui16_result:0;};
+    {
+    uint16_t ui16_result;
+    int16_t retval = __HAL::get_digin_freq(rb_channelNumber, &ui16_result);
+
+#if defined( DEBUG_HAL )
+IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_digin_freq( "
+<< (uint16_t)rb_channelNumber << ", "
+<< (uint16_t)ui16_result << ") returns " << retval << "\r";
+#endif
+
+    return (( retval == C_NO_ERR) || (b_useVirtual))?ui16_result:0;};
 
   /*@}*/
 }

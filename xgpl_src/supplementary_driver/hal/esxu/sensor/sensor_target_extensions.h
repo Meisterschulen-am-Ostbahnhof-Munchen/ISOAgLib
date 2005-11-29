@@ -68,8 +68,17 @@
 #ifndef _HAL_ESXu_SENSOR_TARGET_EXTENSIONS_H_
 #define _HAL_ESXu_SENSOR_TARGET_EXTENSIONS_H_
 
+namespace __HAL {
+  extern "C" {
+    /** include the BIOS specific header into __HAL */
+    #include <commercial_BIOS/bios_esxu/mos10osy.h>
+  }
+}
+
+#include <IsoAgLib/hal/esxu/config.h>
 #include <IsoAgLib/hal/esxu/typedef.h>
 #include <IsoAgLib/hal/esxu/errcodes.h>
+
 namespace __HAL {
 
 /* **************************************************** */
