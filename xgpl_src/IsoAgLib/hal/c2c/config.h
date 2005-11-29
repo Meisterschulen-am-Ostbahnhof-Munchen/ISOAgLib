@@ -86,7 +86,9 @@
 #define MAX_EEPROM_WRITE_TRY_CYCLE_CNT 5
 
 // basic period of task manager (scheduler)= const * 500 us = 1 ms
-#define T_TASK_BASIC 2
+#if !defined( T_TASK_BASIC )
+	#define T_TASK_BASIC 2
+#endif
 /* Initialisierung Watchdog 0 */
 /* Initialize Watchdog 0 */
 /* 128 ms                     */
