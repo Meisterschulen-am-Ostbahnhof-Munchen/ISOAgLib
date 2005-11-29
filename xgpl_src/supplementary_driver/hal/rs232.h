@@ -69,20 +69,24 @@
 
 
 // now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/rs232/rs232.h"
-#elif defined(SYSTEM_ESX)
-	#include "esx/rs232/rs232.h"
-#elif defined(SYSTEM_ESXu)
-	#include "esxu/rs232/rs232.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/rs232/rs232.h"
-#elif defined(SYSTEM_IMI)
-	#include "imi/rs232/rs232.h"
-#elif defined(SYSTEM_PM167)
-	#include "pm167/rs232/rs232.h"
-#elif defined(SYSTEM_MITRON167)
-	#include "mitron167/rs232/rs232.h"
+#if defined(USE_RS232_OVER_CAN)
+#	include "../driver/rs232/impl/rs232_over_can.h"
+#else
+	#if defined(SYSTEM_PC)
+		#include "pc/rs232/rs232.h"
+	#elif defined(SYSTEM_ESX)
+		#include "esx/rs232/rs232.h"
+	#elif defined(SYSTEM_ESXu)
+		#include "esxu/rs232/rs232.h"
+	#elif defined(SYSTEM_C2C)
+		#include "c2c/rs232/rs232.h"
+	#elif defined(SYSTEM_IMI)
+		#include "imi/rs232/rs232.h"
+	#elif defined(SYSTEM_PM167)
+		#include "pm167/rs232/rs232.h"
+	#elif defined(SYSTEM_MITRON167)
+		#include "mitron167/rs232/rs232.h"
+	#endif
 #endif
 
 
