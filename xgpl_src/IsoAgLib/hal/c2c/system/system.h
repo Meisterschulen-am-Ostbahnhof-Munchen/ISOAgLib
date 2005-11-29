@@ -136,7 +136,9 @@ namespace HAL
     @see configWd
   */
   inline int16_t  wdReset(void)
-    {return HAL_NO_ERR;};
+    { return __HAL::reset_wd(); }
+//    {return HAL_NO_ERR;};
+
   /** trigger the watchdog */
   inline void wdTriggern(void)
     {__HAL::trigger_wd();};
@@ -148,14 +150,120 @@ namespace HAL
     {return __HAL::get_time();};
 
   inline int16_t getSnr(uint8_t *snrDat)
-    {return __HAL::get_snr(snrDat);};
+    {
+    int16_t retval = __HAL::get_snr(snrDat);
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "get_snr( "
+//<< (uint16_t) *snrDat
+//<< " ) returns  "
+//<< retval << "\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - get_snr( %u ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)*snrDat
+, (int16_t) retval );
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
+	return retval;
+    }
+
+  inline int16_t getLokalId(uint8_t *Dat)
+    {
+    int16_t retval = __HAL::get_lokal_id(Dat);
+
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "getLokalId( "
+//<< (uint16_t) *Dat
+//<< " ) returns  "
+//<< retval << "\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - get_lokal_id( %u ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)*Dat
+, (int16_t) retval );
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
+	return retval;
+    }
 
   /**
     start the Task Timer -> time between calls of Task Manager
   */
   inline void startTaskTimer ( void )
-    {__HAL::start_task_timer ( T_TASK_BASIC );};
+    {
+    __HAL::start_task_timer ( T_TASK_BASIC );
 
+#if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "start_task_timer( "
+//<< (uint16_t) T_TASK_BASIC
+//<< " )\r";
+
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - start_task_timer( %u )\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)T_TASK_BASIC
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+    }
+
+  /**
+    init the Task Call
+	This function permits cyclic and/or delayed calls of user functions. If 0 is tranferred as parameter 
+	for wInterval, the function call will occur only once. (For starting the tasks start task timer
+	(word wBasicTick) has to be queried.) 
+	The ordering of the task into the interrupt system uses the transfer parameter wHandle. If a zero-pointer
+	is used in the user function parameter, the function will stop when the handle is called. 
+	The maximum number of tasks is limited to 4. 
+  */
+  inline int16_t initTaskCall( uint16_t wHandle, uint16_t wInterval, uint16_t wOffset, void (* pfFunction)(void) )
+    {
+    int16_t retval = __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction );
+
+#if defined( DEBUG_HAL )
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - init_task_call( %u, %u, %u, %s ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)wHandle
+, (uint16_t)wInterval
+, (uint16_t)wOffset
+, ( (pfFunction) ? "pfFunction" : "NULL" )
+, (int16_t) retval
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+	return retval;
+    }
+  /**
+    Get Task Overload
+	If a task has already been running and is called up a second time by a timer interrupt,
+	a flag is set. The function get_task_overload returns the condition of this flag.
+	With reset_task_overload this flag can be deleted. 
+  */
+  inline int16_t getTaskOverload ( uint16_t /*wHandle*/ )
+    {
+    int16_t retval = __HAL::get_task_overload ();
+
+#if defined( DEBUG_HAL )
+uint8_t buf[128];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - get_task_overload( %u ) returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (uint16_t)wHandle
+, (int16_t) retval
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+
+	return retval;
+    }
   /**
     get the main power voltage
     @return voltage of power [mV]
