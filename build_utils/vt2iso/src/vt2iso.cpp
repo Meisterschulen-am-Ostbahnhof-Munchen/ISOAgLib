@@ -879,6 +879,7 @@ unsigned int colordepthtoi (char* text_colordepth)
 unsigned int fonttypetoi (char* text_fonttype)
 {
   int l;
+  if ((atoi(text_fonttype) == 0) || (atoi(text_fonttype) == 1) || (atoi(text_fonttype) == 255)) return atoi(text_fonttype);
   for (l=0; l<3; l++) {
     if (strncmp (text_fonttype, fonttypeTable [l], stringLength) == 0) {
       if (l == 2) return 0xFF;
