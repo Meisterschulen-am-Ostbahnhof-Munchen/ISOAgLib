@@ -3349,7 +3349,7 @@ int main(int argC, char* argV[])
     #ifdef WIN32
     int lastDirPos = c_fileName.find_last_of( "\\" );
     std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-    if (c_directory == "") c_directory = ".\";
+    if (c_directory == "") c_directory = ".\"";
     #else
     int lastDirPos = c_fileName.find_last_of( "/" );
     std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
