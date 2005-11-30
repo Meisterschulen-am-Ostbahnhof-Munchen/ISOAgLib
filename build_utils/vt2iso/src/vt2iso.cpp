@@ -879,12 +879,15 @@ unsigned int colordepthtoi (char* text_colordepth)
 unsigned int fonttypetoi (char* text_fonttype)
 {
   int l;
-  for (l=0; l<2; l++) {
+  for (l=0; l<3; l++) {
     if (strncmp (text_fonttype, fonttypeTable [l], stringLength) == 0) {
+      if (l == 2) return 0xFF;
       return l;
     }
   }
-  return 0xFF;
+  std::cout << "INVALID FONT TYPE '" << text_fonttype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  clean_exit (-1);
+  return 0; // to make compiler happy
 }
 
 
@@ -3080,7 +3083,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       if (!attrIsGiven [attrFont_type])
       {
         clean_exit (-1, "INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! \n \
-        VALID VALUES ARE ISO_Latin_1 OR ISO_Latin_9! STOPPING PARSER! bye.\n\n");
+        VALID VALUES ARE latin1, latin9 or proprietary! STOPPING PARSER! bye.\n\n");
       }
 
       if (!(attrIsGiven [attrFont_colour] && attrIsGiven [attrFont_size]))

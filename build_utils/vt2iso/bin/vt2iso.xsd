@@ -6,7 +6,7 @@
   <xs:simpleType name="attrObjectId">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="0"/>
-      <xs:maxInclusive value="65535"/>
+      <xs:maxInclusive value="65534"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -73,7 +73,7 @@
       <xs:pattern value="none|(rle|rle1|rle4|rle8|opaque|normal|transparent|flashing)?(\+(rle|rle1|rle4|rle8|opaque|normal|transparent|flashing))*"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <!-- RLE1/4/8 from above seems to be obsolete!!!!!!! -->
 
   <xs:simpleType name="attrRle">
@@ -222,7 +222,7 @@
     <xs:sequence>
       <xs:choice maxOccurs="unbounded">
         <xs:element name="outputstring" type="elemOutputString"/>
-	<xs:element name="language"     type="elemLanguage"/>
+        <xs:element name="language"     type="elemLanguage"/>
       </xs:choice>
     </xs:sequence>
     <xs:attribute use="optional" name="name"              type="xs:string"/>
@@ -237,7 +237,7 @@
       <xs:choice maxOccurs="unbounded">
         <xs:element name="outputstring"   type="elemOutputString"/>
         <xs:element name="picturegraphic" type="elemPictureGraphic"/>
-	<xs:element name="include_object" type="elemIncludeObject"/>
+  <xs:element name="include_object" type="elemIncludeObject"/>
       </xs:choice>
     </xs:sequence>
     <xs:attribute use="optional" name="name"              type="xs:string"/>
@@ -284,7 +284,7 @@
     <xs:attribute use="optional" name="id"                       type="attrObjectId"/>
     <xs:attribute use="required" name="font_colour"              type="attrColour"/>
     <xs:attribute use="required" name="font_size"                type="attrFontSize"/>
-    <xs:attribute use="optional" name="font_type"                type="attrFontType"/>
+    <xs:attribute use="required" name="font_type"                type="attrFontType"/>
     <xs:attribute use="required" name="font_style"               type="attrFontStyle"/>
   </xs:complexType>
 
@@ -311,7 +311,7 @@
       <xs:sequence>
         <xs:choice minOccurs="1" maxOccurs="unbounded">
           <xs:element name="workingset"     type="elemWorkingset"/>
-	  <xs:element name="datamask"       type="elemDatamask"/>
+    <xs:element name="datamask"       type="elemDatamask"/>
           <xs:element name="picturegraphic" type="elemPictureGraphic"/>
           <xs:element name="fontattributes" type="elemFontAttributes"/>
         </xs:choice>
