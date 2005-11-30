@@ -825,10 +825,6 @@ void defaultAttributes ()
     sprintf (attrString [attrEnabled], "yes");
     attrIsGiven [attrEnabled] = true;
   }
-  if (!attrIsGiven [attrFont_type]) {
-    sprintf (attrString [attrFont_type], "ISO_Latin_1");
-    attrIsGiven [attrFont_type] = true;
-  }
   /*
   if (!attrIsGiven [attr]) {
     sprintf (attrString [attr], "");
@@ -3081,7 +3077,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       break;
 
     case otFontattributes:
-      if (!(attrIsGiven [attrFont_colour] && attrIsGiven [attrFont_size] && attrIsGiven [attrFont_type]))
+      if (!attrIsGiven [attrFont_type])
+      {
+        clean_exit (-1, "INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! \n \
+        VALID VALUES ARE ISO_Latin_1 OR ISO_Latin_9! STOPPING PARSER! bye.\n\n");
+      }
+
+      if (!(attrIsGiven [attrFont_colour] && attrIsGiven [attrFont_size]))
       {
         clean_exit (-1, "YOU NEED TO SPECIFY THE font_colour= AND font_size= AND font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! STOPPING PARSER! bye.\n\n");
       }
