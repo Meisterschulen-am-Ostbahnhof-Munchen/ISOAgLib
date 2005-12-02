@@ -946,6 +946,16 @@ simulated_io/menufiles/Lemken[!!-~]Smaragd.bin -text
 simulated_io/menufiles/Lemken_Grubber_Menue.hex -text
 simulated_io/menufiles/implmenu2.bin -text
 simulated_io/menufiles/implmenu_vario.bin -text
+xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp_old -text
+xgpl_src/IsoAgLib/comm/Base/impl/base_c.h_old -text
+xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp -text
+xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h -text
+xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp -text
+xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h -text
+xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp -text
+xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h -text
+xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp -text
+xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h -text
 xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp -text
 xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h -text
 xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp -text

@@ -98,7 +98,7 @@ namespace IsoAgLib {
     BaseDataGroup1   = 0x01, ///< real and gear based speed and distance; for ISO: also key_switch_state and max power time
     BaseDataGroup2   = 0x02, ///< front and rear PTO, engine RPM, front and rear hitch information
     BaseDataCalendar = 0x04, ///< calendar data
-    BaseDataGroup3   = 0x08, ///< Fendt Vario DIN 9684 specific detailet read link force information
+    BaseDataGroup3   = 0x08, ///< Fendt Vario DIN 9684 specific detailed read link force information
     BaseDataFuel     = 0x10, ///< Fendt Vario DIN 9684 specific fuel consumption and temp info
     BaseDataGps      = 0x20, ///< ISO NMEA 2000 GPS information
     BaseDataGroup12  = 0x03, ///< Combination of Groups 1+2
