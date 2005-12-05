@@ -39,15 +39,15 @@
 #include "gpsmanager_c.h"
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
 #include <IsoAgLib/comm/Process/igps_c.h>
-#include <IsoAgLib/comm/Base/ibase_c.h>
+#include <IsoAgLib/comm/Base/itimeposgps_c.h>
 
 GpsManager_c::GpsManager_c()
 {
-	b_activated = false;
+  b_activated = false;
 }
 GpsManager_c::~GpsManager_c()
 {
-	b_activated = false;
+  b_activated = false;
 }
 
 /**
@@ -55,13 +55,13 @@ GpsManager_c::~GpsManager_c()
 */
 void GpsManager_c::activate()
 {
-	b_activated = true;
+  b_activated = true;
 }
 
 /** deactivate */
 void GpsManager_c::deactivate()
 {
-	b_activated = false;
+  b_activated = false;
 }
 
 
@@ -78,74 +78,74 @@ void GpsManager_c::writeHeader()
 */
 void GpsManager_c::writeData()
 {
-	IsoAgLib::iGPS_c& c_gps = IsoAgLib::getIGpsInstance();
-	IsoAgLib::iBase_c& c_base = IsoAgLib::getIBaseInstance();
-	IsoAgLib::iRS232IO_c& c_rs232 = IsoAgLib::getIrs232Instance();
+  IsoAgLib::iGPS_c& c_gps = IsoAgLib::getIGpsInstance();
+  IsoAgLib::iTimePosGPS_c& c_timePosGps = IsoAgLib::getITimePosGpsInstance();
+  IsoAgLib::iRS232IO_c& c_rs232 = IsoAgLib::getIrs232Instance();
 
 // Neu Ehrl: array (char position[20] ist zu klein -> Erhöhung von 20 auf 30!!
-//	char position[20];
-	char position[30];
-	float f_temp_pos;
-	char sign;
+//  char position[20];
+  char position[30];
+  float f_temp_pos;
+  char sign;
 
-	// date
-  c_rs232 << (int16_t)c_base.day() << "." << (int16_t)c_base.month() << "." << (int16_t)c_base.year();
-	// time
-	c_rs232 << ";" << (int)c_gps.hour() << ":" << (int)c_gps.minute() << ":" << (int)c_gps.second() << ";";
-	// longitude
-	f_temp_pos = c_gps.longitude();
-	if (f_temp_pos < 0)
-	{
-		f_temp_pos *= -1;
-		sign = 'W';
-	}
-	else
-	{
-		sign = 'E';
-	}
-	sprintf(position, "%#11.8f;%c;", f_temp_pos, sign);
-	// change use float format to german
-	*(strstr(position, ".")) = ',';
+  // date
+  c_rs232 << (int16_t)c_timePosGps.day() << "." << (int16_t)c_timePosGps.month() << "." << (int16_t)c_timePosGps.year();
+  // time
+  c_rs232 << ";" << (int)c_gps.hour() << ":" << (int)c_gps.minute() << ":" << (int)c_gps.second() << ";";
+  // longitude
+  f_temp_pos = c_gps.longitude();
+  if (f_temp_pos < 0)
+  {
+    f_temp_pos *= -1;
+    sign = 'W';
+  }
+  else
+  {
+    sign = 'E';
+  }
+  sprintf(position, "%#11.8f;%c;", f_temp_pos, sign);
+  // change use float format to german
+  *(strstr(position, ".")) = ',';
 
-	c_rs232 << position;
+  c_rs232 << position;
 
-	// latitude
-	f_temp_pos = c_gps.latitude();
-	if (f_temp_pos < 0)
-	{
-		f_temp_pos *= -1;
-		sign = 'S';
-	}
-	else
-	{
-		sign = 'N';
-	}
-	sprintf(position, "%#11.8f;%c;", f_temp_pos, sign);
-	// change use float format to german
-	*(strstr(position, ".")) = ',';
-	c_rs232 << position;
+  // latitude
+  f_temp_pos = c_gps.latitude();
+  if (f_temp_pos < 0)
+  {
+    f_temp_pos *= -1;
+    sign = 'S';
+  }
+  else
+  {
+    sign = 'N';
+  }
+  sprintf(position, "%#11.8f;%c;", f_temp_pos, sign);
+  // change use float format to german
+  *(strstr(position, ".")) = ',';
+  c_rs232 << position;
 
-	// altitude
-	sprintf(position, "%#8.3f;", c_gps.altitude());
-	// change use float format to german
-	*(strstr(position, ".")) = ',';
-	c_rs232 << position;
-	// hdop
-//	c_rs232 << c_gps.hdop();
-	// rec-mode
-	switch (c_gps.rec_mode())
-	{
-		case IsoAgLib::iGPS_c::noGps:
-			c_rs232 << "0;";
-			break;
-		case IsoAgLib::iGPS_c::gps:
-			c_rs232 << "1;";
-			break;
-		case IsoAgLib::iGPS_c::dgps:
-			c_rs232 << "2;";
-			break;
-		case IsoAgLib::iGPS_c::rtkgps:
-			c_rs232 << "3;";
-			break;
-	}
+  // altitude
+  sprintf(position, "%#8.3f;", c_gps.altitude());
+  // change use float format to german
+  *(strstr(position, ".")) = ',';
+  c_rs232 << position;
+  // hdop
+//  c_rs232 << c_gps.hdop();
+  // rec-mode
+  switch (c_gps.rec_mode())
+  {
+    case IsoAgLib::iGPS_c::noGps:
+      c_rs232 << "0;";
+      break;
+    case IsoAgLib::iGPS_c::gps:
+      c_rs232 << "1;";
+      break;
+    case IsoAgLib::iGPS_c::dgps:
+      c_rs232 << "2;";
+      break;
+    case IsoAgLib::iGPS_c::rtkgps:
+      c_rs232 << "3;";
+      break;
+  }
 }

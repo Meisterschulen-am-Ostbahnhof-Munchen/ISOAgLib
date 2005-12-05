@@ -109,7 +109,9 @@
 // of the "IsoAgLib"
 #include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
-#include <IsoAgLib/comm/Base/ibase_c.h>
+#include <IsoAgLib/comm/Base/itracgeneral_c.h>
+#include <IsoAgLib/comm/Base/itracmove_c.h>
+#include <IsoAgLib/comm/Base/itracpto_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
 
@@ -365,7 +367,7 @@ int main()
           getIdinMonitorInstance().requestDinMemberNames();
           #endif
           // get the i32_distanceOffset to calculate distance from address claim on
-          i32_distanceOffset = getIBaseInstance().distTheor();
+          i32_distanceOffset = getITracMoveInstance().distTheor();
           // set the i32_lastDist for getting the working dist to the actual base dist
           i32_lastDist = 0;
           // set i32_lastTime to this time
@@ -426,9 +428,9 @@ int main()
         }
 
         // calculate some informations from Scheduler_c Data
-        b_hitchVal = getIBaseInstance().hitchRear() & 0x7F;
+        b_hitchVal = getITracGeneralInstance().hitchRear() & 0x7F;
         // check if Scheduler_c Base data have correct EHR val
-        if (getIBaseInstance().hitchFront() == 0xFF)
+        if (getITracGeneralInstance().hitchFront() == 0xFF)
         { // this is sign, that tractor back EHR data may also not be integrated in Base_c
           // use EHR value communicated by proc data
           b_hitchVal = (c_remoteEhr.prog().val()  & 0x7F);
@@ -436,17 +438,17 @@ int main()
         // test IMI working state dependent on settings in example.h
         // test first for standard speed != 0 because this is forced for all
         // OR if it is not forced to drive during work set independent from speed working dist
-        if ((getIBaseInstance().speedTheor() != 0 ) || (b_forceWorkingSpeed == false))
+        if ((getITracMoveInstance().speedTheor() != 0 ) || (b_forceWorkingSpeed == false))
         { // IMI and tractor are moving
           b_newWorkingState = true;
 
           // check if PTO limit is exceeded (if PTO irrelevant the limit is set to 0)
-          i16_ptoRearVal = getIBaseInstance().ptoRear();
+          i16_ptoRearVal = getITracPtoInstance().ptoRear();
           if (i16_ptoRearVal >= 0)
           { // check working state dependent on rear PTO as rear PTO is defined in lbs base data
             if (i16_ptoRearVal < ui16_workMinPtoRear) b_newWorkingState = false;
           }
-          i16_ptoFrontVal = getIBaseInstance().ptoFront();
+          i16_ptoFrontVal = getITracPtoInstance().ptoFront();
           if (i16_ptoFrontVal >= 0)
           { // check working state dependent on front PTO as front PTO is defined in lbs base data
             if (i16_ptoFrontVal < ui16_workMinPtoFront) b_newWorkingState = false;
@@ -456,7 +458,7 @@ int main()
           if ((b_hitchVal > b_workMaxEhrRear) || (b_hitchVal < b_workMinEhrRear))
             b_newWorkingState = false;
           // check front EHR: value must be within intervall [b_workMinEhrFront..b_workMaxEhrFront]
-          if (((getIBaseInstance().hitchFront()  & 0x7F) > b_workMaxEhrFront) || ((getIBaseInstance().hitchFront()  & 0x7F) < b_workMinEhrFront))
+          if (((getITracGeneralInstance().hitchFront()  & 0x7F) > b_workMaxEhrFront) || ((getITracGeneralInstance().hitchFront()  & 0x7F) < b_workMinEhrFront))
             b_newWorkingState = false;
         }
         else
@@ -464,7 +466,7 @@ int main()
           b_newWorkingState = false;
         }
         // set the values, which are independent from working state (set in [m] -> from base data in [mm])
-        i32_newDist = (getIBaseInstance().distTheor() - i32_distanceOffset);
+        i32_newDist = (getITracMoveInstance().distTheor() - i32_distanceOffset);
         c_myWholeDist.setMasterVal(i32_newDist/1000);
         c_myWholeTime.setMasterVal(i32_loopTime/1000);
 

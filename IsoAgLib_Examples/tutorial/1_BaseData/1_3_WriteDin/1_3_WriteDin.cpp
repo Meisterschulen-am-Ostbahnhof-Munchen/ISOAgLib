@@ -206,7 +206,7 @@
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
-#include <IsoAgLib/comm/Base/ibase_c.h>
+#include <IsoAgLib/comm/Base/itracmove_c.h>
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
@@ -247,7 +247,7 @@ int main()
   IsoAgLib::iIdentItem_c c_myIdent( &myDevKey, myName );
 
   // configure BaseData_c to send base information for speed and distance on BUS
-  getIBaseInstance().config(&myDevKey, BaseDataGroup1 );
+  getITracMoveInstance().config(&myDevKey, BaseDataGroup1 );
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -281,10 +281,10 @@ int main()
     getISchedulerInstance().timeEvent();
 
     // set current values for speed and distance, so that IsoAgLib can send them on BUS
-    getIBaseInstance().setDistTheor( localGetTheorDist() );
-    getIBaseInstance().setDistReal( localGetRealDist() );
-    getIBaseInstance().setSpeedTheor( localGetTheorSpeed() );
-    getIBaseInstance().setSpeedReal( localGetRealSpeed() );
+    getITracMoveInstance().setDistTheor( localGetTheorDist() );
+    getITracMoveInstance().setDistReal( localGetRealDist() );
+    getITracMoveInstance().setSpeedTheor( localGetTheorSpeed() );
+    getITracMoveInstance().setSpeedReal( localGetRealSpeed() );
   }
   return 1;
 }

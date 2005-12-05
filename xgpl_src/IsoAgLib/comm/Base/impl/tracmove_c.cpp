@@ -298,6 +298,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   void TracMove_c::checkCreateReceiveFilter(void)
   {
     #ifdef USE_DIN_9684
+    SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
     if ( ( !b_dinFilterCreated ) && (c_systemMgmt.existActiveLocalDinMember() ) )
     { // check if needed receive filters for DIN are active

@@ -85,7 +85,7 @@
 #include "isosystempkg_c.h"
 #include "isomonitor_c.h"
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/comm/Base/impl/base_c.h>
+#include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #ifdef USE_EEPROM_IO
 #include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>
@@ -586,7 +586,7 @@ bool ISOItem_c::processMsg(){
             // call Base_c function to send calendar
             // isoSendCalendar checks if this item (identified by DEV_KEY)
             // is configured to send calendar
-            getBaseInstance4Comm().isoSendCalendar(devKey());
+            getTimePosGpsInstance4Comm().isoSendCalendar(devKey());
             b_result = true;
             break;
           #endif

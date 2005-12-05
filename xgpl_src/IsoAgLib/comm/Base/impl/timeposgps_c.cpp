@@ -948,6 +948,7 @@ namespace __IsoAgLib {
     i32_lastIsoPositionSimple = Scheduler_c::getLastTimeEventTrigger();
   }
 
+  #if defined(NMEA_2000_FAST_PACKET)
   /** send direction as detailed stream */
   void TimePosGPS_c::isoSendDirectionStream( void )
   {
@@ -978,7 +979,6 @@ namespace __IsoAgLib {
     }
   }
 
-  #if def NMEA_2000_FAST_PACKET
   void setDegree10Minus7ToStream( const int32_t& refi32_src, std::vector<uint8_t>& writeRef )
   {
     #if SIZEOF_INT == 4

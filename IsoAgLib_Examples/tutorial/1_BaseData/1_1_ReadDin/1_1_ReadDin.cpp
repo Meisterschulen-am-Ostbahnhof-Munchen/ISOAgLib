@@ -215,7 +215,9 @@
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
-#include <IsoAgLib/comm/Base/ibase_c.h>
+#include <IsoAgLib/comm/Base/itimeposgps_c.h>
+#include <IsoAgLib/comm/Base/itracgeneral_c.h>
+#include <IsoAgLib/comm/Base/itracmove_c.h>
 
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
@@ -273,26 +275,26 @@ int main()
     if ( IsoAgLib::iSystem_c::getTime() > si32_nextDebug )
     { // it's time to print debug msg
       si32_nextDebug = ( IsoAgLib::iSystem_c::getTime() + 1000 );
-      EXTERNAL_DEBUG_DEVICE << "The theoretical distance of the tractor is now " << getIBaseInstance().distTheor() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The real distance of the tractor is now " << getIBaseInstance().distReal() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The theoretical speed  of the tractor is now " << getIBaseInstance().speedTheor() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The real speed of the tractor is now " << getIBaseInstance().speedReal() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The rear hitch position of the tractor is now " << int(getIBaseInstance().hitchRear()) << "\n";
-      if ( getIBaseInstance().isCalendarReceived() )
+      EXTERNAL_DEBUG_DEVICE << "The theoretical distance of the tractor is now " << getITracMoveInstance().distTheor() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "The real distance of the tractor is now " << getITracMoveInstance().distReal() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "The theoretical speed  of the tractor is now " << getITracMoveInstance().speedTheor() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "The real speed of the tractor is now " << getITracMoveInstance().speedReal() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "The rear hitch position of the tractor is now " << int(getITracGeneralInstance().hitchRear()) << "\n";
+      if ( getITimePosGpsInstance().isCalendarReceived() )
       { // already calendar received
         EXTERNAL_DEBUG_DEVICE << "Already Calendar received with "
-          << int(getIBaseInstance().year()) << ":"
-          << int(getIBaseInstance().month()) << ":"
-          << int(getIBaseInstance().day())
+          << int(getITimePosGpsInstance().year()) << ":"
+          << int(getITimePosGpsInstance().month()) << ":"
+          << int(getITimePosGpsInstance().day())
           << "; "
-          << int(getIBaseInstance().hour()) << ":"
-          << int(getIBaseInstance().minute()) << ":"
-          << int(getIBaseInstance().second()) << ":"
+          << int(getITimePosGpsInstance().hour()) << ":"
+          << int(getITimePosGpsInstance().minute()) << ":"
+          << int(getITimePosGpsInstance().second()) << ":"
           << "\n";
       }
     }
     #else
-    static int32_t si32_lastDist = getIBaseInstance().distTheor();
+    static int32_t si32_lastDist = getITracMoveInstance().distTheor();
     #endif
   }
   return 1;

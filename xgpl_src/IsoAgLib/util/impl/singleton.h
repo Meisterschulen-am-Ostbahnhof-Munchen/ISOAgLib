@@ -103,7 +103,10 @@
   #define SINGLETON_VEC_KEY_INIT_CALL      setSingletonKey( ri_singletonVecKey );
   #define getCanInstance4Comm()            getCanInstance( getSingletonVecKey() )
   #define getSchedulerInstance4Comm()      getSchedulerInstance( getSingletonVecKey() )
-  #define getBaseInstance4Comm()           getBaseInstance( getSingletonVecKey() )
+  #define getTimePosGpsInstance4Comm()     getTimePosGpsInstance( getSingletonVecKey() )
+  #define getTracGeneralInstance4Comm()    getTracGeneralInstance( getSingletonVecKey() )
+  #define getTracMoveInstance4Comm()       getTracMoveInstance( getSingletonVecKey() )
+  #define getTracPtoInstance4Comm()        getTracPtoInstance( getSingletonVecKey() )
   #define getSystemMgmtInstance4Comm()     getSystemMgmtInstance( getSingletonVecKey() )
   #define getDinMonitorInstance4Comm()     getDinMonitorInstance( getSingletonVecKey() )
   #define getIsoMonitorInstance4Comm()     getIsoMonitorInstance( getSingletonVecKey() )
@@ -222,7 +225,10 @@
   #define SINGLETON_VEC_KEY_INIT_CALL
   #define getCanInstance4Comm()               getCanInstance()
   #define getSchedulerInstance4Comm()         getSchedulerInstance()
-  #define getBaseInstance4Comm()              getBaseInstance()
+  #define getTimePosGpsInstance4Comm()        getTimePosGpsInstance()
+  #define getTracGeneralInstance4Comm()       getTracGeneralInstance()
+  #define getTracMoveInstance4Comm()          getTracMoveInstance()
+  #define getTracPtoInstance4Comm()           getTracPtoInstance()
   #define getSystemMgmtInstance4Comm()        getSystemMgmtInstance()
   #define getDinMonitorInstance4Comm()        getDinMonitorInstance()
   #define getIsoMonitorInstance4Comm()        getIsoMonitorInstance()

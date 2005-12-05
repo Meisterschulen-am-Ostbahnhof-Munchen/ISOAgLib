@@ -104,7 +104,12 @@ public:
      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
    */
   int32_t lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
-    {return TimePosGPS_c::lastUpdate( rt_mySendSelection );}
+    {return TimePosGPS_c::lastUpdate( rt_mySendSelection );};
+
+  #ifdef USE_ISO_11783
+  /** send ISO11783 calendar PGN */
+  void isoSendCalendar(const iDevKey_c& rc_devKey) { return TimePosGPS_c::isoSendCalendar(rc_devKey);};
+  #endif // END of USE_ISO_11783
 
   /* ******************************************* */
   /** \name Get Values */

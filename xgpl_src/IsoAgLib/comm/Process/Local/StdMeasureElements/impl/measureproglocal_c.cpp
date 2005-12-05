@@ -88,7 +88,7 @@
 #include "measureproglocal_c.h"
 #include "../../../impl/process_c.h"
 #include "../../../processdatachangehandler_c.h"
-#include <IsoAgLib/comm/Base/impl/base_c.h>
+#include <IsoAgLib/comm/Base/impl/tracmove_c.h>
 
 namespace __IsoAgLib {
 
@@ -218,7 +218,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         break;
       #ifdef USE_BASE
       case Proc_c::DistProp:
-        pc_iter->start(getBaseInstance4Comm().distTheor());
+        pc_iter->start(getTracMoveInstance4Comm().distTheor());
         en_accumProp = Proc_c::AccumDist;
         break;
       #endif
@@ -292,7 +292,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         break;
       #ifdef USE_BASE
       case Proc_c::DistProp:
-        pc_iter->start(getBaseInstance4Comm().distTheor());
+        pc_iter->start(getTracMoveInstance4Comm().distTheor());
         en_accumProp = Proc_c::AccumDist;
         break;
       #endif
@@ -412,7 +412,7 @@ bool MeasureProgLocal_c::processMsg(){
   { // only use the local vars if needed
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
-    // the message was a value message -> evaluate it here 
+    // the message was a value message -> evaluate it here
     // ISO: set value command, DIN: i32_val == 0
     if ( c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
@@ -490,7 +490,7 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
         break;
       case Proc_c::DistProp:
         #ifdef USE_BASE
-        b_singleTest = pc_iter->updateTrigger(getBaseInstance4Comm().distTheor());
+        b_singleTest = pc_iter->updateTrigger(getTracMoveInstance4Comm().distTheor());
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
@@ -544,10 +544,10 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
   // if b_triggeredIncrement == true the registered values should be sent
   if (b_triggeredIncrement)
   { // send the registered values
-      
+
      if ( (b_checkMin && i32_minVal > val() ) ||
           (b_checkMax && i32_maxVal < val() )
-        ) 
+        )
      {
        // omit this value send
        b_triggeredIncrement = false;
@@ -591,7 +591,7 @@ void MeasureProgLocal_c::setVal(float rf_val){
     f_delta = (f_incr * 1000.0F) / (float)i32_timeDelta;
     f_accel = ((f_delta - f_oldDelta) * 1000.0F) / (float)i32_timeDelta;
   }
-    
+
   float f_minVal = 0;
   float f_maxVal = 0;
   bool b_checkMin = false;
@@ -613,13 +613,13 @@ void MeasureProgLocal_c::setVal(float rf_val){
         break;
       case Proc_c::DistProp:
         #ifdef USE_BASE
-        b_singleTest = pc_iter->updateTrigger(getBaseInstance4Comm().distTheor());
+        b_singleTest = pc_iter->updateTrigger(getTracMoveInstance4Comm().distTheor());
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumDist))updatePropDepVals();
         break;
-        
+
       case Proc_c::OnChange:
         b_singleTest = pc_iter->updateTrigger(valFloat());
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
@@ -669,13 +669,13 @@ void MeasureProgLocal_c::setVal(float rf_val){
   { // send the registered values
     if ( (b_checkMin && f_minVal > valFloat() ) ||
          (b_checkMax && f_maxVal < valFloat() )
-       ) 
+       )
     {
       // omit this value send
       b_triggeredIncrement = false;
       return;
     }
-    
+
     // if at least one send try had success reset b_triggeredIncrement
     if (sendRegisteredVals()) b_triggeredIncrement = false;
   }
@@ -943,12 +943,12 @@ bool MeasureProgLocal_c::timeEvent( void )
 {
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
-  
+
   int32_t i32_minVal = 0;
   int32_t i32_maxVal = 0;
   bool b_checkMin = false;
   bool b_checkMax = false;
-  
+
   bool b_singleTest;
 
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
@@ -965,7 +965,7 @@ bool MeasureProgLocal_c::timeEvent( void )
         break;
       case Proc_c::DistProp:
         #ifdef USE_BASE
-        b_singleTest = pc_iter->updateTrigger(getBaseInstance4Comm().distTheor());
+        b_singleTest = pc_iter->updateTrigger(getTracMoveInstance4Comm().distTheor());
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
@@ -983,21 +983,21 @@ bool MeasureProgLocal_c::timeEvent( void )
         break;
     } // switch
   } // for
-  
+
   // if b_triggeredIncrement == true the registered values should be sent
   // if needed an old unsuccessfull send try is redone
   if (b_triggeredIncrement)
   { // send the registered values
-    
+
     if ( (b_checkMin && i32_minVal > val() ) ||
          (b_checkMax && i32_maxVal < val() )
-       ) 
+       )
     {
       // omit this value send
       b_triggeredIncrement = false;
       return true;
     }
-    
+
     // if at least one send try had success reset b_triggeredIncrement
     if (sendRegisteredVals()) b_triggeredIncrement = false;
   }

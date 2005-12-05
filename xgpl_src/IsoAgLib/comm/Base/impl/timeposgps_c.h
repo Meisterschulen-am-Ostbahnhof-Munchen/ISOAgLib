@@ -94,11 +94,10 @@
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/driver/system/impl/system_c.h>
 
 #include "basepkg_c.h"
 #include <ctime>
-
-#define NMEA_2000_FAST_PACKET
 
 #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
   #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
@@ -126,7 +125,7 @@ class Nmea2000SendStreamer_c : public MultiSendStreamer_c
       stream send package - MultiSend_c will send this
       buffer afterwards
    */
-    virtual void setDataNextFastPacketStreamPart (__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes, uint8_t rui8_offset = 0 );
+    virtual void setDataNextFastPacketStreamPart (MultiSendPkg_c* mspData, uint8_t bytes, uint8_t rui8_offset = 0 );
 
     /** set cache for data source to stream start */
     virtual void resetDataNextStreamPart();
