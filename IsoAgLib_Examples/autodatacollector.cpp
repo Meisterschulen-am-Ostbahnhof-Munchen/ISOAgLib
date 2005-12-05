@@ -235,7 +235,7 @@
 // include the configuration header with addresses of some EEPROM informations
 #include <Application_Config/eeprom_adr.h>
 // include object headers for flexible management of remote data sources
-#include "AutoDataCollector_Classes/devClassflexmanager_c.h"
+#include "AutoDataCollector_Classes/getyflexmanager_c.h"
 // handle GPS informations of Fieldstar (tm) terminal
 #include "AutoDataCollector_Classes/gpsmanager_c.h"
 // handling of configuration data
@@ -315,7 +315,7 @@ int main()
   // (read size equivalent to sizeof(c_myDevKey) )
   uint8_t ui8_tempDinDevKey;
   c_eeprom >> ui8_tempDinDevKey;
-  c_myDevKey.setCombinedDin( ui8_tempDinDevKey );
+  c_myDevKey.set( &ui8_tempDinDevKey );
   // read name
   c_eeprom.setg(ADR_IDENT_NAME_SHORT);
   c_eeprom.readString(myName, 11);
@@ -604,8 +604,8 @@ bool check_for_imi()
       c_eeprom.setg(ADR_TASK_CONTROLLER_DATE_MONTH);
       c_eeprom >> ui8_lastTaskMonth;
 
-      if ( (getITimePosGpsInstance().day() == ui8_lastTaskDay)
-        && (getITimePosGpsInstance().month() == ui8_lastTaskMonth) )
+      if ( (getITimePosGpsInstance().dayLocal() == ui8_lastTaskDay)
+        && (getITimePosGpsInstance().monthLocal() == ui8_lastTaskMonth) )
       { // try to continue recording
         uint8_t ui8_lastTaskDeviceDevKey_1, pui8_lastTaskDeviceName_1[8],
               ui8_lastTaskDeviceDevKey_2, pui8_lastTaskDeviceName_2[8];
@@ -642,9 +642,9 @@ bool check_for_imi()
         c_eeprom.writeString(p_member->name(), 7);
         // set actual task record date
         c_eeprom.setp(ADR_TASK_CONTROLLER_DATE_DAY);
-        c_eeprom << getITimePosGpsInstance().day();
+        c_eeprom << getITimePosGpsInstance().dayLocal();
         c_eeprom.setp(ADR_TASK_CONTROLLER_DATE_MONTH);
-        c_eeprom << getITimePosGpsInstance().month();
+        c_eeprom << getITimePosGpsInstance().monthLocal();
         // reset setting for second device
         c_eeprom.setp(ADR_TASK_CONTROLLER_IMPLEMENT_2_DEVKEY);
         c_eeprom << (uint8_t)0xFF;

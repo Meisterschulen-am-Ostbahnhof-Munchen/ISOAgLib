@@ -312,7 +312,7 @@ int main()
     }
     else
     { // we are currently sending calendar
-      getITimePosGpsInstance().setCalendar( localGetYear(), localGetMonth(), localGetDay(), localGetHour(), localGetMinute(), localGetSecond() );
+      getITimePosGpsInstance().setCalendarLocal( localGetYear(), localGetMonth(), localGetDay(), localGetHour(), localGetMinute(), localGetSecond() );
     }
   }
   return 1;

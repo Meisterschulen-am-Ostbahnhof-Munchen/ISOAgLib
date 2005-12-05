@@ -348,9 +348,15 @@ function create_filelist( )
 		if [ $PRJ_GPS -gt 0 ] ; then
 			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*gps_c.*'"
 		fi
+		if [ $PRJ_ISO11783 -gt 0 ] ; then
+			# allow DevPropertyHandler
+			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/impl/dev*'"
+		else
+			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o \( -path '*/Process/impl/dev*' -a -not -name 'devproperty*' \)"
+		fi
 
     if [ $PROC_LOCAL -gt 0 ] ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/impl/dev*' -o -path '*/Process/Local/impl/*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/impl/*'"
 
       if [ $PROC_LOCAL_STD -gt 0 ] ; then
         COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/Std/*'"

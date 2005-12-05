@@ -91,7 +91,9 @@
 #include "../multireceiveclient_c.h"
 
 // IsoAgLib
+#ifdef USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#endif
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/driver/can/impl/filterbox_c.h>

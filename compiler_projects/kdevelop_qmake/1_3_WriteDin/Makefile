@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = 1_3_WriteDin
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/1_BaseData/1_3_WriteDin 
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/1_BaseData/1_3_WriteDin
 BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
 BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
@@ -35,8 +35,10 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
@@ -46,7 +48,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/1_BaseData/1_3_WriteDin/1_3_WriteDin.cpp  
+		../../../IsoAgLib_Examples/tutorial/1_BaseData/1_3_WriteDin/1_3_WriteDin.cpp
 
 
 #Special Sources for CAN Server

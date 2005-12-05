@@ -564,6 +564,11 @@ private:
   bool b_dinFilterCreated;
   #endif // END of  USE_DIN_9684
 
+  /** raw GPS latitude [degree] ; Lat_Min < 0 --> South */
+  int32_t i32_latitudeDegree10Minus7;
+  /** raw GPS longitude [degree]; Long_Min < 0 --> West */
+  int32_t i32_longitudeDegree10Minus7;
+
   #ifdef USE_ISO_11783
   /// General
   /** flag to detect, if receive filters for ISO are created */
@@ -581,10 +586,6 @@ private:
 
   /** key switch state */
   IsoAgLib::IsoActiveFlag_t t_keySwitch;
-  /** raw GPS latitude [degree] ; Lat_Min < 0 --> South */
-  int32_t i32_latitudeDegree10Minus7;
-  /** raw GPS longitude [degree]; Long_Min < 0 --> West */
-  int32_t i32_longitudeDegree10Minus7;
 
   #ifdef NMEA_2000_FAST_PACKET
   /** GPS altitude - [cm] */

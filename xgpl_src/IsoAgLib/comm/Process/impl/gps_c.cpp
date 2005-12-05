@@ -87,7 +87,7 @@
 /* *************************************** */
 #include "gps_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/Base/impl/base_c.h>
+#include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
 #include <IsoAgLib/comm/Process/impl/process_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
@@ -220,7 +220,7 @@ bool GPS_c::timeEvent( void )
 bool GPS_c::processMsg(){
   int32_t i32_tempVal = data().dataRawCmdLong();
   #ifdef USE_BASE
-  Base_c& c_lbsBase = getBaseInstance4Comm();
+  TimePosGPS_c& c_lbsTimePosGps = getTimePosGpsInstance4Comm();
   #endif
   bool b_result = false;
 
@@ -269,8 +269,8 @@ bool GPS_c::processMsg(){
           b_hour = ((i32_tempVal >> 16) & 0xFF) + 1;
           #ifdef USE_BASE
           // consider summer time
-          uint8_t b_day = c_lbsBase.dayLocal(),
-          b_month = c_lbsBase.monthLocal();
+          uint8_t b_day = c_lbsTimePosGps.dayLocal(),
+          b_month = c_lbsTimePosGps.monthLocal();
           if ( ( (b_month > 3) && (b_month < 10) )
             || ( (b_month == 10) && (b_day < 25) )
              )
@@ -283,7 +283,7 @@ bool GPS_c::processMsg(){
             // -> no exact test possible) -> base_c.hour is more reliyable
             if ( (b_day >= 25) && ( (b_month == 3)  || (b_month == 10) ) )
             {
-              b_hour = c_lbsBase.hourLocal();
+              b_hour = c_lbsTimePosGps.hourLocal();
             }
           }
           #endif
@@ -296,9 +296,9 @@ bool GPS_c::processMsg(){
         if ( (b_isGpsTime == 0) || (b_hour > 24) || (b_minute > 60) || (b_second > 60) )
         { // if time note valid because of no sec change or because of invalid settings use
           // Base_c
-          b_hour = c_lbsBase.hourLocal();
-          b_minute = c_lbsBase.minuteLocal();
-          b_second = c_lbsBase.second();
+          b_hour = c_lbsTimePosGps.hourLocal();
+          b_minute = c_lbsTimePosGps.minuteLocal();
+          b_second = c_lbsTimePosGps.second();
         }
         #endif
         break;
@@ -362,8 +362,8 @@ bool GPS_c::processMsg(){
 
             // consider summer time
             #ifdef USE_BASE
-            uint8_t b_day = c_lbsBase.dayLocal(),
-            b_month = c_lbsBase.monthLocal();
+            uint8_t b_day = c_lbsTimePosGps.dayLocal(),
+            b_month = c_lbsTimePosGps.monthLocal();
             if ( ( (b_month > 3) && (b_month < 10) )
               || ( (b_month == 10) && (b_day < 25) )
                )
@@ -376,7 +376,7 @@ bool GPS_c::processMsg(){
               // -> no exact test possible) -> base_c.hour is more reliyable
               if ( (b_day >= 25) && ( (b_month == 3)  || (b_month == 10) ) )
               {
-                b_hour = c_lbsBase.hourLocal();
+                b_hour = c_lbsTimePosGps.hourLocal();
               }
             }
             #endif
@@ -389,9 +389,9 @@ bool GPS_c::processMsg(){
           { // if time note valid because of no sec change or because of invalid settings use
             // Base_c
             #ifdef USE_BASE
-            b_hour = c_lbsBase.hourLocal();
-            b_minute = c_lbsBase.minuteLocal();
-            b_second = c_lbsBase.second();
+            b_hour = c_lbsTimePosGps.hourLocal();
+            b_minute = c_lbsTimePosGps.minuteLocal();
+            b_second = c_lbsTimePosGps.second();
             #endif
           }
           break;

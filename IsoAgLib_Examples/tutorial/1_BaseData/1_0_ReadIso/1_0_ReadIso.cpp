@@ -299,12 +299,12 @@ int main()
       if ( getITimePosGpsInstance().isCalendarReceived() )
       { // already calendar received
         EXTERNAL_DEBUG_DEVICE << "Already Calendar received with "
-          << int(getITimePosGpsInstance().year()) << ":"
-          << int(getITimePosGpsInstance().month()) << ":"
-          << int(getITimePosGpsInstance().day())
+          << int(getITimePosGpsInstance().yearLocal()) << ":"
+          << int(getITimePosGpsInstance().monthLocal()) << ":"
+          << int(getITimePosGpsInstance().dayLocal())
           << "; "
-          << int(getITimePosGpsInstance().hour()) << ":"
-          << int(getITimePosGpsInstance().minute()) << ":"
+          << int(getITimePosGpsInstance().hourLocal()) << ":"
+          << int(getITimePosGpsInstance().minuteLocal()) << ":"
           << int(getITimePosGpsInstance().second()) << ":"
           << "\n";
       }
@@ -312,11 +312,14 @@ int main()
         << "Some probably already correct decoded GPS information\n"
         << "Latitude: " << getITimePosGpsInstance().getGpsLatitudeMinute() << "\n"
         << "Longitude: " << getITimePosGpsInstance().getGpsLongitudeMinute() << "\n"
-        << "Altitude: " << getITimePosGpsInstance().getGpsAltitude() << "\n\n"
+        #if defined(NMEA_2000_FAST_PACKET)
+        << "Altitude: " << getITimePosGpsInstance().getGpsAltitudeCm() << "\n\n"
         << "Some probably not yet correct decoded GPS information\n"
-        << "GPS Mode: " << getITimePosGpsInstance().getGpsMode() << "\n"
-        << "GPS Speed: " << getITimePosGpsInstance().getGpsSpeed() << "\n"
-        << "GPS Heading: " << getITimePosGpsInstance().getGpsHeading() << "\n";
+        << "GPS Mode: " << getITimePosGpsInstance().getGnssMode() << "\n"
+        << "GPS Speed: " << getITimePosGpsInstance().getGpsSpeedCmSec() << "\n"
+        << "GPS Heading: " << getITimePosGpsInstance().getGpsHeadingRad10Minus4() << "\n"
+        #endif
+        ;
 
     }
     #else

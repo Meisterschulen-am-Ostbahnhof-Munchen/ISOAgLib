@@ -103,7 +103,7 @@
   #include "devpropertyhandler_c.h"
 #endif
 
-#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1)
+#if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
   #include <ext/slist>
   namespace std { using __gnu_cxx::slist;};
 #else
@@ -563,13 +563,16 @@ private: // Private attributes
   int32_t i32_lastFilterBoxTime;
 
 #ifdef USE_ISO_11783
-  std::list<uint32_t> l_filtersToDeleteISO;
-#endif
-#ifdef USE_DIN_9684
-  std::list<uint32_t> l_filtersToDeleteDIN;
+  std::slist<uint32_t> l_filtersToDeleteISO;
 #endif
 
+#ifdef USE_DIN_9684
+  std::slist<uint32_t> l_filtersToDeleteDIN;
+#endif
 };
+
+
+
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Process_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS

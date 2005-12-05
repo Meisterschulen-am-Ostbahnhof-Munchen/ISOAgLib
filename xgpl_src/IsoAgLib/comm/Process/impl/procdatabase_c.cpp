@@ -382,7 +382,9 @@ bool ProcDataBase_c::resolvDevKeySetBasicSendFlags(uint8_t rui8_pri, const DevKe
 
   if ( !b_result )
   { // the var paramter hasn't claimed address -> signal it by 0xFF to var2empfSend
+    #ifdef USE_ISO_11783
     en_msgProto = (IState_c::itemState_t(IState_c::Din | IState_c::Iso));
+    #endif
     b_result = var2empfSend(rui8_pri, 0xFF, ui8_empf, ui8_send
       #ifdef USE_ISO_11783
         , en_msgProto

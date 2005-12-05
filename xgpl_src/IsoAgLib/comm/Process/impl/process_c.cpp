@@ -253,7 +253,7 @@ bool Process_c::timeEvent( void ){
 #ifdef USE_ISO_11783
   if ( l_filtersToDeleteISO.size() > 0)
   {
-    for (std::list<uint32_t>::const_iterator iter = l_filtersToDeleteISO.begin();
+    for (std::slist<uint32_t>::const_iterator iter = l_filtersToDeleteISO.begin();
          iter != l_filtersToDeleteISO.end();
          iter++)
     {
@@ -268,7 +268,7 @@ bool Process_c::timeEvent( void ){
 #ifdef USE_DIN_9684
   if ( l_filtersToDeleteDIN.size() > 0)
   {
-    for (std::list<uint32_t>::const_iterator iter = l_filtersToDeleteDIN.begin();
+    for (std::slist<uint32_t>::const_iterator iter = l_filtersToDeleteDIN.begin();
          iter != l_filtersToDeleteDIN.end();
          iter++)
     {
@@ -1239,7 +1239,7 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
       uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberDevKey(c_toBeDeletedOwnerDevKey, true).nr();
       ui32_filter = (ui8_recNr | (pc_remoteClient->pri() << 8));
       // delete corresponding FilterBox_c in timeEvent() to avoid problems when called in procdata cestructor
-      l_filtersToDeleteDIN.push_back(ui32_filter);
+      l_filtersToDeleteDIN.push_front(ui32_filter);
     } // owner exist with claimed address in memberMonitor
     #endif
     #ifdef USE_ISO_11783
@@ -1248,7 +1248,7 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
       uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberDevKey(c_toBeDeletedOwnerDevKey, true).nr();
       ui32_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
       // delete corresponding FilterBox_c in timeEvent() to avoid problems when called in procdata cestructor
-      l_filtersToDeleteISO.push_back(ui32_filter);
+      l_filtersToDeleteISO.push_front(ui32_filter);
     } // owner exist with claimed address in isoMonitor
     #endif
   }

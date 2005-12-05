@@ -283,12 +283,12 @@ int main()
       if ( getITimePosGpsInstance().isCalendarReceived() )
       { // already calendar received
         EXTERNAL_DEBUG_DEVICE << "Already Calendar received with "
-          << int(getITimePosGpsInstance().year()) << ":"
-          << int(getITimePosGpsInstance().month()) << ":"
-          << int(getITimePosGpsInstance().day())
+          << int(getITimePosGpsInstance().yearLocal()) << ":"
+          << int(getITimePosGpsInstance().monthLocal()) << ":"
+          << int(getITimePosGpsInstance().dayLocal())
           << "; "
-          << int(getITimePosGpsInstance().hour()) << ":"
-          << int(getITimePosGpsInstance().minute()) << ":"
+          << int(getITimePosGpsInstance().hourLocal()) << ":"
+          << int(getITimePosGpsInstance().minuteLocal()) << ":"
           << int(getITimePosGpsInstance().second()) << ":"
           << "\n";
       }
