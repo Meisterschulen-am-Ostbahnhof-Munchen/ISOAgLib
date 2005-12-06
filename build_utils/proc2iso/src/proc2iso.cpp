@@ -542,8 +542,8 @@ uint32_t stringtonumber(const char *text_number, int8_t ui8_bitRange, int8_t i8_
         case attrDevice_class_instance:
           clean_exit (-1, "device_class_instance has a value range of 4 bits! STOPPING PARSER! bye.\n\n");
           break;
-        case attrWS_serial_number:
-          clean_exit (-1, "ws_serial_number has a value range of 21 bits! STOPPING PARSER! bye.\n\n");
+        case attrWS_identity_number:
+          clean_exit (-1, "ws_identity_number has a value range of 21 bits! STOPPING PARSER! bye.\n\n");
           break;
       }
     }
@@ -834,9 +834,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           clean_exit (-1, "YOU NEED TO SPECIFY device_program_name= ATTRIBUTE FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         if (!(attrIsGiven[attrWorkingset_mastername] ||
-            (attrIsGiven[attrManufacturer_code] && attrIsGiven[attrWS_serial_number] && attrIsGiven[attrDevice_class] && attrIsGiven[attrDevice_class_instance])))
+            (attrIsGiven[attrManufacturer_code] && attrIsGiven[attrWS_identity_number] && attrIsGiven[attrDevice_class] && attrIsGiven[attrDevice_class_instance])))
         {
-          clean_exit (-1, "YOU NEED TO SPECIFY EITHER the workingset_mastername= ATTRIBUTE OR the manufacturer_code= AND ws_serial_number= AND device_class= AND device_class_instance= ATTRIBUTES FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
+          clean_exit (-1, "YOU NEED TO SPECIFY EITHER the workingset_mastername= ATTRIBUTE OR the manufacturer_code= AND ws_identity_number= AND device_class= AND device_class_instance= ATTRIBUTES FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
         }
         else
         {
@@ -853,7 +853,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                           stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
                           stringtonumber(vecstr_attrString [attrFunction].c_str(), 8, attrFunction),
                           stringtonumber(vecstr_attrString [attrManufacturer_code].c_str(), 11, attrManufacturer_code),
-                          stringtonumber(vecstr_attrString [attrWS_serial_number].c_str(), 21, attrWS_serial_number),
+                          stringtonumber(vecstr_attrString [attrWS_identity_number].c_str(), 21, attrWS_identity_number),
                           stringtonumber(vecstr_attrString [attrFunc_Inst].c_str(), 5, attrFunc_Inst),
                           stringtonumber(vecstr_attrString [attrECU_Inst].c_str(), 3, attrECU_Inst));
           }
@@ -866,7 +866,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             if ((vecstr_attrString[attrWorkingset_mastername][0] != 'l') && (vecstr_attrString[attrWorkingset_mastername][0] != 'm'))
             {
               clean_exit(-1, "workingset_mastername NEEDS TO START EITHER WITH \n \
-                              L/l ... least signifant byte; see XML definition of device DVC (xs:hexBinary ISO 11783-10) OR \n \
+                              L/l ... least signifant byte; (see XML definition of device DVC (xs:hexBinary ISO 11783-10)) OR \n \
                               M/m ... most signifant byte; normal definition (highest digit first) \n \
                               STOPPING PARSER! bye.\n\n");
             }
