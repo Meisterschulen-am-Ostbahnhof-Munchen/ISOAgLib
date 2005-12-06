@@ -223,17 +223,10 @@
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
 #include <IsoAgLib/comm/SystemMgmt/DIN9684/idinmonitor_c.h>
-<<<<<<< .mine
-#include <IsoAgLib/comm/Base/itimeposgps_c.h>
-#include <IsoAgLib/comm/Base/itracgeneral_c.h>
-#include <IsoAgLib/comm/Base/itracmove_c.h>
-#include <IsoAgLib/comm/Base/itracpto_c.h>
-=======
 #include <IsoAgLib/comm/Base/itracgeneral_c.h>
 #include <IsoAgLib/comm/Base/itimeposgps_c.h>
 #include <IsoAgLib/comm/Base/itracmove_c.h>
 #include <IsoAgLib/comm/Base/itracpto_c.h>
->>>>>>> .r1429
 
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Remote/Std/iprocdataremote_c.h>
@@ -611,13 +604,8 @@ bool check_for_imi()
       c_eeprom.setg(ADR_TASK_CONTROLLER_DATE_MONTH);
       c_eeprom >> ui8_lastTaskMonth;
 
-<<<<<<< .mine
-      if ( (getITimePosGpsInstance().day() == ui8_lastTaskDay)
-        && (getITimePosGpsInstance().month() == ui8_lastTaskMonth) )
-=======
       if ( (getITimePosGpsInstance().dayLocal() == ui8_lastTaskDay)
         && (getITimePosGpsInstance().monthLocal() == ui8_lastTaskMonth) )
->>>>>>> .r1429
       { // try to continue recording
         uint8_t ui8_lastTaskDeviceDevKey_1, pui8_lastTaskDeviceName_1[8],
               ui8_lastTaskDeviceDevKey_2, pui8_lastTaskDeviceName_2[8];
@@ -654,17 +642,9 @@ bool check_for_imi()
         c_eeprom.writeString(p_member->name(), 7);
         // set actual task record date
         c_eeprom.setp(ADR_TASK_CONTROLLER_DATE_DAY);
-<<<<<<< .mine
-        c_eeprom << getITimePosGpsInstance().day();
-=======
         c_eeprom << getITimePosGpsInstance().dayLocal();
->>>>>>> .r1429
         c_eeprom.setp(ADR_TASK_CONTROLLER_DATE_MONTH);
-<<<<<<< .mine
-        c_eeprom << getITimePosGpsInstance().month();
-=======
         c_eeprom << getITimePosGpsInstance().monthLocal();
->>>>>>> .r1429
         // reset setting for second device
         c_eeprom.setp(ADR_TASK_CONTROLLER_IMPLEMENT_2_DEVKEY);
         c_eeprom << (uint8_t)0xFF;

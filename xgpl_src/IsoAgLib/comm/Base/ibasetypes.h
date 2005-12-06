@@ -103,6 +103,7 @@ namespace IsoAgLib {
     BaseDataGps      = 0x20, ///< ISO NMEA 2000 GPS information
     BaseDataGroup12  = 0x03, ///< Combination of Groups 1+2
     BaseDataGroup123 = 0x0B, ///< Combination of Groups 1+2+3
+    BaseDataGroup1Fuel = 0x11, ///< Combination of Groups 1+Fuel
     BaseDataGroup12Cal = 0x07, ///< Combination of Goups 1+2 with Calendar
     BaseDataGroups12CalGps = 0x27, ///< Combination of Groups 1+2 with Calendar and NMEA 2000 GPS
     BaseDataGroupAll = 0x3F  ///< Combination of all possible base data
