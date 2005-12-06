@@ -42,7 +42,7 @@
 #include <IsoAgLib/comm/Process/Remote/Std/iprocdataremote_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 
-using namespace IsoAgLib;
+// using namespace IsoAgLib;
 
 /**Object for basic DEVCLASS dependent handling
 of process data for writing by Task Controller

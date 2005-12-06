@@ -456,11 +456,12 @@ int main()
   /** configure BaseData_c to send:
     - BaseDataGroup1: real and gear based speed and distance; for ISO: also key_switch_state and max power time
     - BaseDataGroup2: front and rear PTO, engine RPM, front and rear hitch information
+    - BaseDataCalendar: calendar data
   */
-  getITimePosGpsInstance().config(&myDevKey, BaseDataCalendar);
-  getITracGeneralInstance().config(&myDevKey, BaseDataGroup1Fuel);
-  getITracMoveInstance().config(&myDevKey, BaseDataGroup1);
-  getITracPtoInstance().config(&myDevKey, BaseDataGroup2);
+  getITimePosGpsInstance().config(&myDevKey, BaseDataCalendar );
+  getITracGeneralInstance().config(&myDevKey, BaseDataGroup1 );
+  getITracMoveInstance().config(&myDevKey, BaseDataGroup1 );
+  getITracPtoInstance().config(&myDevKey, BaseDataGroup2 );
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -500,4 +501,3 @@ int main()
   }
   return 1;
 }
-

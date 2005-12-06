@@ -320,7 +320,6 @@ int main()
         << "GPS Heading: " << getITimePosGpsInstance().getGpsHeadingRad10Minus4() << "\n"
         #endif
         ;
-
     }
     #else
     static int32_t si32_lastDist = getITracMoveInstance().distTheor();
@@ -328,4 +327,3 @@ int main()
   }
   return 1;
 }
-
