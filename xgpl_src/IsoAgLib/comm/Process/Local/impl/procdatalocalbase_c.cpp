@@ -265,11 +265,11 @@ void ProcDataLocalBase_c::setEepromAdr(uint16_t rui16_eepromAdr)
       float f_temp;
       getEepromInstance() >> f_temp;
       f_eepromVal = f_temp;
-      // decide if eeprom val should be assigned as starting masterVal
+      // decide if eeprom val should be assigned as starting masterMeasurementVal
       if (!b_cumulativeValue)
       { // value is NOT cumulative -> use eeprom as starting master,
         // else for cumulative values master value can be set independent from EEPROM
-        // ==> for cumulative values the communicated value is sum of masterVal AND EEPROM val
+        // ==> for cumulative values the communicated value is sum of masterMeasurementVal AND EEPROM val
         f_masterVal = f_eepromVal;
       }
     }
@@ -289,11 +289,11 @@ void ProcDataLocalBase_c::setEepromAdr(uint16_t rui16_eepromAdr)
       int32_t i32_temp;
       getEepromInstance() >> i32_temp;
       i32_eepromVal = i32_temp;
-      // decide if eeprom val should be assigned as starting masterVal
+      // decide if eeprom val should be assigned as starting masterMeasurementVal
       if (!b_cumulativeValue)
       { // value is NOT cumulative -> use eeprom as starting master,
         // else for cumulative values master value can be set independent from EEPROM
-        // ==> for cumulative values the communicated value is sum of masterVal AND EEPROM val
+        // ==> for cumulative values the communicated value is sum of masterMeasurementVal AND EEPROM val
         i32_masterVal = i32_eepromVal;
       }
     }
@@ -306,10 +306,10 @@ void ProcDataLocalBase_c::setEepromAdr(uint16_t rui16_eepromAdr)
 #endif // USE_EEPROM_IO
 
 /**
-  set the masterVal from main application independent from any measure progs
+  set the masterMeasurementVal from main application independent from any measure progs
   @param ri32_val new measure value
 */
-void ProcDataLocalBase_c::setMasterVal(int32_t ri32_val){
+void ProcDataLocalBase_c::setMasterMeasurementVal(int32_t ri32_val){
   // set the local values
   setValType(i32_val);
 #ifdef USE_EEPROM_IO
@@ -323,7 +323,7 @@ void ProcDataLocalBase_c::setMasterVal(int32_t ri32_val){
   increment the value -> update the local and the measuring programs values
   @param ri32_val size of increment of master value
 */
-void ProcDataLocalBase_c::incrMasterVal(int32_t ri32_val){
+void ProcDataLocalBase_c::incrMasterMeasurementVal(int32_t ri32_val){
   // set the local values
   setValType(i32_val);
 #ifdef USE_EEPROM_IO
@@ -334,10 +334,10 @@ void ProcDataLocalBase_c::incrMasterVal(int32_t ri32_val){
 
 #ifdef USE_FLOAT_DATA_TYPE
 /**
-  set the masterVal from main application independent from any measure progs
+  set the masterMeasurementVal from main application independent from any measure progs
   @param rf_val new measure value
 */
-void ProcDataLocalBase_c::setMasterVal(float rf_val){
+void ProcDataLocalBase_c::setMasterMeasurementVal(float rf_val){
   // set the local values
   setValType(float_val);
   #ifdef USE_EEPROM_IO
@@ -351,7 +351,7 @@ void ProcDataLocalBase_c::setMasterVal(float rf_val){
   increment the value -> update the local and the measuring programs values
   @param ri32_val size of increment of master value
 */
-void ProcDataLocalBase_c::incrMasterVal(float rf_val){
+void ProcDataLocalBase_c::incrMasterMeasurementVal(float rf_val){
   // set the local values
   setValType(float_val);
   #ifdef USE_EEPROM_IO
@@ -398,7 +398,7 @@ bool ProcDataLocalBase_c::timeEvent( void ){
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool ProcDataLocalBase_c::sendVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType ) const {
+bool ProcDataLocalBase_c::sendMasterMeasurementVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType ) const {
 
     // prepare general command in process pkg
     getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
@@ -409,12 +409,12 @@ bool ProcDataLocalBase_c::sendVal( const DevKey_c& rc_targetDevKey, Proc_c::prog
     if (valType() == i32_val) return sendValDevKey(ren_progType, rc_targetDevKey, eepromVal());
     else return sendValDevKey(ren_progType, rc_targetDevKey, eepromValFloat());
     #elif !defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValDevKey(ren_progType, rc_targetDevKey, masterVal());
+    if (valType() == i32_val) return sendValDevKey(ren_progType, rc_targetDevKey, masterMeasurementVal());
     else return sendValDevKey(ren_progType, rc_targetDevKey, masterValFloat());
     #elif defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
     return sendValDevKey(ren_progType, rc_targetDevKey, eepromVal());
     #elif !defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
-    return sendValDevKey(ren_progType, rc_targetDevKey, masterVal());
+    return sendValDevKey(ren_progType, rc_targetDevKey, masterMeasurementVal());
     #endif
 }
 
@@ -431,7 +431,7 @@ void ProcDataLocalBase_c::processProg(){
       // c_pkg.c_generalCommand.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
       c_pkg.c_generalCommand.getValueGroup() == GeneralCommand_c::exactValue)
   { // request for measurement value
-    sendVal( c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()) );
+    sendMasterMeasurementVal( c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()) );
   }
   else
   { // DIN: PD == 0 and 1 only accepted for reset cmd (pd==1 && mod==0 || pd==0 and mod==6
@@ -440,10 +440,10 @@ void ProcDataLocalBase_c::processProg(){
       #ifdef USE_EEPROM_IO
       resetEeprom();
       #else
-      setMasterVal(int32_t(0));
+      setMasterMeasurementVal(int32_t(0));
       #endif
       // now send result of reset action
-      sendVal( c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()) );
+      sendMasterMeasurementVal( c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()) );
       // call handler function if handler class is registered
       if ( getProcessDataChangeHandler() != NULL )
         getProcessDataChangeHandler()->processMeasurementReset( this, 0, c_pkg.memberSend().devKey() );

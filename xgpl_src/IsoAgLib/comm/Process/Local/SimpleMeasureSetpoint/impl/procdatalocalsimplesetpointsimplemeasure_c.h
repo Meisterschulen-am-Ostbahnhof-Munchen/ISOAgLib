@@ -123,7 +123,7 @@ namespace __IsoAgLib {
   c_workState.init( 0, myDevKey, 0x1, 0x0, 0xFF, 2, c_myDevKey, &c_myDevKey, false, 0x1234 );
 
   // update current measurement value ( real value, which can differ from commanded value )
-  c_workState.setMasterVal( 100 );
+  c_workState.setMasterMeasurementVal( 100 );
   // backend in IsoAgLib doesn't provide measurement programs ( only single one-shot value requests )
 
   // simply access received setpoints ( without facility to reject wrong values )

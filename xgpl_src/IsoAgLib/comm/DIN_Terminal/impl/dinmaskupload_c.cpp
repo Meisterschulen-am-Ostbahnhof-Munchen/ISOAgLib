@@ -320,8 +320,8 @@ void DINMaskUpload_c::tryResendMaskSyncData()
           pc_iter != arrSyncproc.end();
           pc_iter++ )
     { // send proc data at pos
-      if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) pc_iter->sendVal( c_devKey );
-      else pc_iter->setpoint().sendSetpoint( c_devKey );
+      if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) pc_iter->sendMasterMeasurementVal( c_devKey );
+      else pc_iter->setpoint().sendMasterSetpointVal( c_devKey );
     }
   }
 }
@@ -462,12 +462,12 @@ void DINMaskUpload_c::createLbsplusProcdata()
 
   arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, LBS_PLUS_PROJECT_SIZE, *pc_localDevKey,2, *pc_localDevKey, pc_localDevKey));
   if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) {
-    arrSyncproc.begin()->setMasterVal(static_cast<int32_t>(activeMask().ui32_maskSize));
-    arrSyncproc.begin()->sendVal( c_devKey );
+    arrSyncproc.begin()->setMasterMeasurementVal(static_cast<int32_t>(activeMask().ui32_maskSize));
+    arrSyncproc.begin()->sendMasterMeasurementVal( c_devKey );
   }
   else {
     arrSyncproc.begin()->setpoint().setSetpointMasterVal(static_cast<int32_t>(activeMask().ui32_maskSize));
-    arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
+    arrSyncproc.begin()->setpoint().sendMasterSetpointVal( c_devKey );
   }
 
   // now create all syncronisation process data, where value is != 0
@@ -478,24 +478,24 @@ void DINMaskUpload_c::createLbsplusProcdata()
     arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, pt_syncTupel[ui8_syncNoInd].ui8_ind, *pc_localDevKey, 2, *pc_localDevKey, pc_localDevKey));
 
     if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) {
-      arrSyncproc.begin()->setMasterVal(pt_syncTupel[ui8_syncNoInd].i32_val);
+      arrSyncproc.begin()->setMasterMeasurementVal(pt_syncTupel[ui8_syncNoInd].i32_val);
       #if 1
-      arrSyncproc.front().sendVal( c_devKey );
+      arrSyncproc.front().sendMasterMeasurementVal( c_devKey );
       #else
       if ( pt_syncTupel[ui8_syncNoInd].ui8_ind == LBS_PLUS_SYSTEM_STATUS ) {
         // send initial project state
-        arrSyncproc.front().sendVal( c_devKey );
+        arrSyncproc.front().sendMasterMeasurementVal( c_devKey );
       }
       #endif
     }
     else {
       arrSyncproc.begin()->setpoint().setSetpointMasterVal(pt_syncTupel[ui8_syncNoInd].i32_val);
       #if 1
-      arrSyncproc.front().setpoint().sendSetpoint( c_devKey );
+      arrSyncproc.front().setpoint().sendMasterSetpointVal( c_devKey );
       #else
       if ( pt_syncTupel[ui8_syncNoInd].ui8_ind == LBS_PLUS_SYSTEM_STATUS ) {
         // send initial project state
-        arrSyncproc.front().setpoint().sendSetpoint( c_devKey );
+        arrSyncproc.front().setpoint().sendMasterSetpointVal( c_devKey );
       }
       #endif
     }
@@ -531,7 +531,7 @@ void DINMaskUpload_c::createFieldstarProcdata()
   arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, FS_OLD_PROJECT_SIZE, 0xFF, *pc_localDevKey, 5, *pc_localDevKey, pc_localDevKey));
   float f_temp = (float)activeMask().ui32_maskSize;
   arrSyncproc.begin()->setpoint().setSetpointMasterVal(f_temp);
-  arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
+  arrSyncproc.begin()->setpoint().sendMasterSetpointVal( c_devKey );
 
   for (uint8_t ui8_syncNoInd = 0; ui8_syncNoInd < activeMask().ui8_syncCnt; ui8_syncNoInd++)
   {
@@ -542,7 +542,7 @@ void DINMaskUpload_c::createFieldstarProcdata()
       arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, *pc_localDevKey , 5, *pc_localDevKey, pc_localDevKey));
     f_temp = (float)((float)pt_syncTupel[ui8_syncNoInd].i32_val/100.0F);
     arrSyncproc.begin()->setpoint().setSetpointMasterVal(f_temp);
-    arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
+    arrSyncproc.begin()->setpoint().sendMasterSetpointVal( c_devKey );
   }
 
 #else
@@ -552,7 +552,7 @@ void DINMaskUpload_c::createFieldstarProcdata()
   // now create all syncronisation process data, where value is != 0
   arrSyncproc.push_front(syncproc_t(3, *pc_localDevKey, 0x0, 0xC, 0xFF, 5, *pc_localDevKey, pc_localDevKey));
   arrSyncproc.begin()->setpoint().setSetpointMasterVal(activeMask().ui32_maskSize);
-  arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
+  arrSyncproc.begin()->setpoint().sendMasterSetpointVal( c_devKey );
 
   for (uint8_t ui8_syncNoInd = 0; ui8_syncNoInd < activeMask().ui8_syncCnt; ui8_syncNoInd++)
   {
@@ -562,7 +562,7 @@ void DINMaskUpload_c::createFieldstarProcdata()
     else
       arrSyncproc.push_front(syncproc_t(3, *pc_localDevKey, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, 5, *pc_localDevKey, pc_localDevKey));
     arrSyncproc.begin()->setpoint().setSetpointMasterVal(pt_syncTupel[ui8_syncNoInd].i32_val);
-    arrSyncproc.begin()->setpoint().sendSetpoint( c_devKey );
+    arrSyncproc.begin()->setpoint().sendMasterSetpointVal( c_devKey );
   }
 #endif
   #ifdef DEBUG_HEAP_USEAGE

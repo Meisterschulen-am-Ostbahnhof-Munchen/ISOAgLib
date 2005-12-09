@@ -98,7 +98,7 @@ namespace IsoAgLib {
   c_workState.init( 0, myDevKey, 0x1, 0x0, 0xFF, 2, c_myDevKey, &c_myDevKey, false, 0x1234 );
 
   // update current measurement value ( real value, which can differ from commanded value )
-  c_workState.setMasterVal( 100 );
+  c_workState.setMasterMeasurementVal( 100 );
   // measurement programs and value requests are handled in the backend of the IsoAgLibrary
 
   // simply access received setpoints ( without facility to reject wrong values )
@@ -341,22 +341,22 @@ public:
 
 
   /**
-    send the base value (the one that is updated via setMasterVal() )
+    send the base value (the one that is updated via setMasterMeasurementVal() )
     to a specified target (selected by GPT)
     @param rc_targetDevKey DevKey of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendVal( const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-    { return ProcDataLocalSimpleSetpoint_c::sendVal( rc_targetDevKey, ren_progType );};
+  bool sendMasterMeasurementVal( const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+    { return ProcDataLocalSimpleSetpoint_c::sendMasterMeasurementVal( rc_targetDevKey, ren_progType );};
   /**
     send a exact-setpoint to a specified target (selected by GPT)
     @param rc_targetDevKey DevKey of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpoint( const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
-   { return setpointConst().sendSetpoint( rc_targetDevKey, ren_progType );};
+  bool sendMasterSetpointVal( const iDevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+   { return setpointConst().sendMasterSetpointVal( rc_targetDevKey, ren_progType );};
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
     @param rui8_mod select sub-type of setpoint
@@ -391,31 +391,31 @@ public:
     independent)
     @return actual master value
   */
-  const int32_t& masterVal()const{return ProcDataLocalSimpleSetpoint_c::masterVal();};
+  const int32_t& masterMeasurementVal()const{return ProcDataLocalSimpleSetpoint_c::masterMeasurementVal();};
   /**
     set the masterVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
-  void setMasterVal(int32_t ri32_val)
-    {ProcDataLocalSimpleSetpoint_c::setMasterVal(ri32_val);};
+  void setMasterMeasurementVal(int32_t ri32_val)
+    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(ri32_val);};
   /**
     set the masterVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
-  void setMasterVal(int16_t ri16_val)
-    {ProcDataLocalSimpleSetpoint_c::setMasterVal((int32_t)ri16_val);};
+  void setMasterMeasurementVal(int16_t ri16_val)
+    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal((int32_t)ri16_val);};
   /**
     set the masterVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
-  void setMasterVal(uint8_t rb_val)
-    {ProcDataLocalSimpleSetpoint_c::setMasterVal((int32_t)rb_val);};
+  void setMasterMeasurementVal(uint8_t rb_val)
+    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal((int32_t)rb_val);};
   /**
     increment the value -> update the local and the measuring programs values
     @param ri32_val size of increment of master value
   */
-  void incrMasterVal(int32_t ri32_val)
-    {ProcDataLocalSimpleSetpoint_c::incrMasterVal(ri32_val);};
+  void incrMasterMeasurementVal(int32_t ri32_val)
+    {ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(ri32_val);};
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the master value (central measure value of this process data;
@@ -429,14 +429,14 @@ public:
     set the masterVal from main application independent from any measure progs
     @param rf_val new measure value
   */
-  void setMasterVal(float rf_val)
-    {ProcDataLocalSimpleSetpoint_c::setMasterVal(rf_val);};
+  void setMasterMeasurementVal(float rf_val)
+    {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(rf_val);};
   /**
     increment the value -> update the local and the measuring programs values
     @param rf_val size of increment of master value
   */
-  void incrMasterVal(float rf_val)
-    {ProcDataLocalSimpleSetpoint_c::incrMasterVal(rf_val);};
+  void incrMasterMeasurementVal(float rf_val)
+    {ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(rf_val);};
 #endif
 
 

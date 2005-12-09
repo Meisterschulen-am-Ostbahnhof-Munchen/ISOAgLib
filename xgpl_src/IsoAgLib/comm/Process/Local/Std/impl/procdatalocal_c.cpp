@@ -298,36 +298,36 @@ void ProcDataLocal_c::setEepromAdr(uint16_t rui16_eepromAdr)
 }
 #endif
 /**
-  set the masterVal from main application independent from any measure progs
+  set the masterMeasurementVal from main application independent from any measure progs
   @param ri32_val new measure value
 */
-void ProcDataLocal_c::setMasterVal(int32_t ri32_val){
-  ProcDataLocalBase_c::setMasterVal( ri32_val );
+void ProcDataLocal_c::setMasterMeasurementVal(int32_t ri32_val){
+  ProcDataLocalBase_c::setMasterMeasurementVal( ri32_val );
   c_measureprog.setGlobalVal( ri32_val );
 }
 /**
   increment the value -> update the local and the measuring programs values
   @param ri32_val size of increment of master value
 */
-void ProcDataLocal_c::incrMasterVal(int32_t ri32_val){
-  ProcDataLocalBase_c::incrMasterVal( ri32_val );
+void ProcDataLocal_c::incrMasterMeasurementVal(int32_t ri32_val){
+  ProcDataLocalBase_c::incrMasterMeasurementVal( ri32_val );
   c_measureprog.setGlobalVal( ri32_val );
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
-  set the masterVal from main application independent from any measure progs
+  set the masterMeasurementVal from main application independent from any measure progs
   @param rf_val new measure value
 */
-void ProcDataLocal_c::setMasterVal(float rf_val){
-  ProcDataLocalBase_c::setMasterVal( rf_val );
+void ProcDataLocal_c::setMasterMeasurementVal(float rf_val){
+  ProcDataLocalBase_c::setMasterMeasurementVal( rf_val );
   c_measureprog.setGlobalVal( rf_val );
 }
 /**
   increment the value -> update the local and the measuring programs values
   @param ri32_val size of increment of master value
 */
-void ProcDataLocal_c::incrMasterVal(float rf_val){
-  ProcDataLocalBase_c::incrMasterVal( rf_val );
+void ProcDataLocal_c::incrMasterMeasurementVal(float rf_val){
+  ProcDataLocalBase_c::incrMasterMeasurementVal( rf_val );
   c_measureprog.setGlobalVal( rf_val );
 }
 #endif

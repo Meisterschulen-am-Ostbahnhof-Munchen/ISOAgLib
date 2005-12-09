@@ -127,7 +127,7 @@ namespace __IsoAgLib {
   c_workState.init( 0, myDevKey, 0x1, 0x0, 0xFF, 2, c_myDevKey, &c_myDevKey, false, 0x1234 );
 
   // update current measurement value ( real value, which can differ from commanded value )
-  c_workState.setMasterVal( 100 );
+  c_workState.setMasterMeasurementVal( 100 );
   // measurement programs and value requests are handled in the backend of the IsoAgLibrary
 
   // simply access received setpoints ( without facility to reject wrong values )
@@ -311,24 +311,24 @@ public:
     set the masterVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
-  virtual void setMasterVal(int32_t ri32_val);
+  virtual void setMasterMeasurementVal(int32_t ri32_val);
   /**
     increment the value -> update the local and the measuring programs values
     @param ri32_val size of increment of master value
   */
-  virtual void incrMasterVal(int32_t ri32_val);
+  virtual void incrMasterMeasurementVal(int32_t ri32_val);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the masterVal from main application independent from any measure progs
     @param rf_val new measure value
   */
-  virtual void setMasterVal(float rf_val);
+  virtual void setMasterMeasurementVal(float rf_val);
   /**
     increment the value -> update the local and the measuring programs values
     @param rf_val size of increment of master value
 
   */
-  virtual void incrMasterVal(float rf_val);
+  virtual void incrMasterMeasurementVal(float rf_val);
 #endif
   /**
     perform periodic actions

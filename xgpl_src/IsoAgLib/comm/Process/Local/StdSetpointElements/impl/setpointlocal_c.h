@@ -188,7 +188,7 @@ public:
   */
   void setSetpointMasterVal( int32_t ri32_val )
     { if (!existMaster()) setStaticMaster();
-      setMasterVal( ri32_val );
+      setMasterMeasurementVal( ri32_val );
     };
   #ifdef USE_FLOAT_DATA_TYPE
   /**
@@ -202,7 +202,7 @@ public:
   */
   void setSetpointMasterVal( float rf_val )
     { if (!existMaster()) setStaticMaster();
-      setMasterVal( rf_val );
+      setMasterMeasurementVal( rf_val );
     };
   #endif
 
@@ -269,7 +269,7 @@ public:
      through process data setpoints )
     @param ri32_val wanted setpoint value
   */
-  void setMasterVal( int32_t ri32_val );
+  void setMasterMeasurementVal( int32_t ri32_val );
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     set the master setpoint manually
@@ -277,7 +277,7 @@ public:
      through process data setpoints )
     @param rf_val wanted setpoint value
   */
-  void setMasterVal( float rf_val );
+  void setMasterMeasurementVal( float rf_val );
 #endif
   /**
     deliver the count of unhandled setpoints
@@ -366,7 +366,7 @@ public:
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpoint( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendMasterSetpointVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
    { return sendSetpointMod(rc_targetDevKey, ren_progType, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
 
 private: // Private methods

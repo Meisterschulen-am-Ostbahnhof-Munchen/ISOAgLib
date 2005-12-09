@@ -124,7 +124,7 @@ namespace __IsoAgLib {
   // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send )
   c_workState.init( 0, IsoAgLib::DevKey_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::DevKey_c( 0x5, 0 ), &c_myDevKey );
   // request current measurement value ( real value, which can differ from commanded value ); triger update request
-  int lastReceivedMeasureState = c_workState.masterVal( true );
+  int lastReceivedMeasureState = c_workState.masterMeasurementVal( true );
   // as this class doesn't support measurement programs, this is all that can be done on measurement data
 
   // request current setpoint value ( parameter true -> send request to remote ECU, false -> just deliver last received value )
@@ -297,8 +297,8 @@ public:
     deliver actual measurement value as long
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
-  int32_t masterVal(bool rb_sendRequest = false)
-    { return c_measure.masterVal( rb_sendRequest );};
+  int32_t masterMeasurementVal(bool rb_sendRequest = false)
+    { return c_measure.masterMeasurementVal( rb_sendRequest );};
   /**
     send reset cmd for the measurement value
   */

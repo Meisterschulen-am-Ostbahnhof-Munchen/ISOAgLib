@@ -399,7 +399,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processSetpoint(){
     }
     // call handler function if handler class is registered
     if ( ( getProcessDataChangeHandler() != NULL ) && ( b_change ) )
-      getProcessDataChangeHandler()->processSetpointResponse( this, masterVal(), c_pkg.memberSend().devKey() );
+      getProcessDataChangeHandler()->processSetpointResponse( this, masterMeasurementVal(), c_pkg.memberSend().devKey() );
   }
 }
 /** process a measure prog message for remote process data */
@@ -425,7 +425,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processProg(){
     }
     // call handler function if handler class is registered
     if ( getProcessDataChangeHandler() != NULL )
-      getProcessDataChangeHandler()->processMeasurementUpdate( this, masterVal(), c_pkg.memberSend().devKey(), b_change );
+      getProcessDataChangeHandler()->processMeasurementUpdate( this, masterMeasurementVal(), c_pkg.memberSend().devKey(), b_change );
   }
 }
 

@@ -310,17 +310,17 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     independent)
     @return actual master value
   */
-  const int32_t& masterVal()const{return i32_masterVal;};
+  const int32_t& masterMeasurementVal()const{return i32_masterVal;};
   /**
-    set the masterVal from main application independent from any measure progs
+    set the masterMeasurementVal from main application independent from any measure progs
     @param ri32_val new measure value
   */
-  virtual void setMasterVal(int32_t ri32_val);
+  virtual void setMasterMeasurementVal(int32_t ri32_val);
   /**
     increment the value -> update the local and the measuring programs values
     @param ri32_val size of increment of master value
   */
-  virtual void incrMasterVal(int32_t ri32_val);
+  virtual void incrMasterMeasurementVal(int32_t ri32_val);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the master value (central measure value of this process data;
@@ -330,15 +330,15 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   const float& masterValFloat()const{return f_masterVal;};
   /**
-    set the masterVal from main application independent from any measure progs
+    set the masterMeasurementVal from main application independent from any measure progs
     @param rf_val new measure value
   */
-  virtual void setMasterVal(float rf_val);
+  virtual void setMasterMeasurementVal(float rf_val);
   /**
     increment the value -> update the local and the measuring programs values
     @param rf_val size of increment of master value
   */
-  virtual void incrMasterVal(float rf_val);
+  virtual void incrMasterMeasurementVal(float rf_val);
 #endif
   /**
     perform periodic actions
@@ -353,7 +353,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
+  bool sendMasterMeasurementVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
 
  protected:
   /** processing of a setpoint message.

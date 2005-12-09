@@ -538,7 +538,7 @@ void MeasureProgRemote_c::setValFromPkg(){
 
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), masterVal(), c_pkg.memberSend().devKey(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), masterMeasurementVal(), c_pkg.memberSend().devKey(), b_change );
 
 #ifdef USE_FLOAT_DATA_TYPE
   }

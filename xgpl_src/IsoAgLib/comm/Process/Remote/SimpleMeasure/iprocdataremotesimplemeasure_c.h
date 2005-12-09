@@ -334,8 +334,8 @@ public:
     deliver actual measurement value as long
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
-  int32_t masterVal(bool rb_sendRequest = false)
-    {return ProcDataRemoteSimpleMeasure_c::masterVal(rb_sendRequest);};
+  int32_t masterMeasurementVal(bool rb_sendRequest = false)
+    {return ProcDataRemoteSimpleMeasure_c::masterMeasurementVal(rb_sendRequest);};
   /**
     send reset cmd for the measurement value
   */

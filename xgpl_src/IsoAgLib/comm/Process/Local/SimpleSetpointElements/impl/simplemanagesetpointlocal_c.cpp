@@ -242,7 +242,7 @@ int32_t SimpleManageSetpointLocal_c::setpointMasterVal() const
 return i32_setpointMasterVal;
 #else // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
-uint32_t ui32_masterVal = c_localProcBase.masterVal();
+uint32_t ui32_masterVal = c_localProcBase.masterMeasurementVal();
 return i32_masterVal;
 #endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 }
@@ -274,7 +274,7 @@ processData().setValType(i32_val);
 i32_setpointMasterVal = ri32_val;
 #else // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
-c_localProcBase.setMasterVal( ri32_val );
+c_localProcBase.setMasterMeasurementVal( ri32_val );
 #endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 }
 #ifdef USE_FLOAT_DATA_TYPE
@@ -289,7 +289,7 @@ processData().setValType(float_val);
 f_setpointMasterVal = rf_val;
 #else // HANDLE_SETPOINT_MEASURE_EQUIVALEN
 ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
-c_localProcBase.setMasterVal( rf_val );
+c_localProcBase.setMasterMeasurementVal( rf_val );
 #endif // HANDLE_SETPOINT_MEASURE_EQUIVALEN
 }
 #endif // USE_FLOAT_DATA_TYPE

@@ -135,8 +135,8 @@ public:
      through process data setpoints)
     @param ri32_val wanted setpoint value
   */
-  void setMasterVal(int32_t ri32_val)
-    {SetpointLocal_c::setMasterVal(ri32_val);};
+  void setMasterMeasurementVal(int32_t ri32_val)
+    {SetpointLocal_c::setMasterMeasurementVal(ri32_val);};
 
   /**
     deliver the count of unhandled setpoints

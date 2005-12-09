@@ -268,7 +268,7 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
     deliver actual measurement value as long
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
-  int32_t masterVal(bool rb_sendRequest = false);
+  int32_t masterMeasurementVal(bool rb_sendRequest = false);
   /**
     send reset cmd for the measurement value
   */

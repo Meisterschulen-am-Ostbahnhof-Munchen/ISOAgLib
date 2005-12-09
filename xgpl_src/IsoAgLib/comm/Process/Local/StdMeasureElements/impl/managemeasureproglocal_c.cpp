@@ -115,7 +115,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
     ProcDataLocalBase_c* pc_procdata =
       static_cast<ProcDataLocalBase_c*>(pprocessData());
     vec_prog().push_front(MeasureProgLocal_c(pc_procdata, Proc_c::UndefinedProg,
-                                              pc_procdata->masterVal()
+                                              pc_procdata->masterMeasurementVal()
                                               #ifdef USE_EEPROM_IO
                                                 , pc_procdata->eepromVal()
                                               #endif

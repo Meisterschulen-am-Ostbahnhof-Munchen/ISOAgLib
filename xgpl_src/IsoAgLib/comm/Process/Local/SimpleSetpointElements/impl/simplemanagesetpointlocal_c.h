@@ -161,7 +161,7 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendSetpoint( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
+  bool sendMasterSetpointVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const
    { return sendSetpointMod( rc_targetDevKey, ren_progType, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
   /**
     send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)

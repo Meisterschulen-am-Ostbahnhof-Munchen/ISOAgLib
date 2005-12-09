@@ -121,7 +121,7 @@ namespace __IsoAgLib {
   c_workState.init( 0, IsoAgLib::DevKey_c( 0x5, 0 ), 0x5, 0x0, 0xFF, 2, IsoAgLib::DevKey_c( 0x5, 0 ), &c_myDevKey );
 
   // request current measurement value ( real value, which can differ from commanded value ); triger update request
-  int lastReceivedMeasureState = c_workState.masterVal( true );
+  int lastReceivedMeasureState = c_workState.masterMeasurementVal( true );
   // start a measuring program
   // a) trigger value update every 1000 msec.
   c_workState.prog().addSubprog(Proc_c::TimeProp, 1000);
@@ -298,8 +298,8 @@ public:
     deliver actual measurement value as long
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
-  int32_t masterVal(bool rb_sendRequest = false)
-    { return c_measure.masterVal( rb_sendRequest );};
+  int32_t masterMeasurementVal(bool rb_sendRequest = false)
+    { return c_measure.masterMeasurementVal( rb_sendRequest );};
   /**
     send reset cmd for the measurement value
   */

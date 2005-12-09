@@ -254,14 +254,14 @@ bool SetpointLocal_c::existUnhandledMaster() {
       i8_result = 1;
       break;
     } // if
-       
+
     if (i8_result < 0)
     { // first run with check for old cache
       i8_result = 0;
       pc_registerCache = vec_register.begin();
     } else
       pc_registerCache++;
-    
+
   } // for
   return ( i8_result > 0 )?true:false;
 }
@@ -306,7 +306,7 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
         // and release pc_registerCache and keep pc_master!
         // (e.g. different from new received unhandled one)
         if (pc_master->handled())
-        { 
+        {
           if (pc_registerCache->existExact())
             pc_master->setExact(pc_registerCache->exact());
           if (pc_registerCache->existMin())
@@ -315,7 +315,7 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
             pc_master->setMax(pc_registerCache->max());
           if (pc_registerCache->existDefault())
             pc_master->setDefault(pc_registerCache->getDefault());
-              
+
           vec_register.erase( pc_registerCache );
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
@@ -343,7 +343,7 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
    through process data setpoints)
   @param ri32_val wanted setpoint value
 */
-void SetpointLocal_c::setMasterVal( int32_t ri32_val)
+void SetpointLocal_c::setMasterMeasurementVal( int32_t ri32_val)
 {
   if (!existMaster())
   { // create register entry for master value
@@ -382,10 +382,10 @@ void SetpointLocal_c::setMasterVal( int32_t ri32_val)
    through process data setpoints)
   @param rf_val wanted setpoint value
 */
-void SetpointLocal_c::setMasterVal( float rf_val)
+void SetpointLocal_c::setMasterMeasurementVal( float rf_val)
 {
   int32_t i32_temp = (*(int32_t*)(&rf_val));
-  setMasterVal( i32_temp);
+  setMasterMeasurementVal( i32_temp);
   setValType( float_val);
 }
 #endif
@@ -627,7 +627,7 @@ bool SetpointLocal_c::timeEvent( void ){
 
   // check if the actual master measurement value is valid, force send of notify, if
   // valid state has changed
-  checkMeasurement( processData().masterVal(), true);
+  checkMeasurement( processData().masterMeasurementVal(), true);
 
   return true;
 }
