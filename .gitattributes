@@ -1027,7 +1027,6 @@ xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp -text
 xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
-xgpl_src/supplementary_driver/driver/rs232/impl/rs232_over_can.cpp -text
 xgpl_src/supplementary_driver/driver/rs232/impl/rs232_over_can.h -text
 xgpl_src/supplementary_driver/hal/c2c/actor/actor.h -text
 xgpl_src/supplementary_driver/hal/c2c/actor/actor_target_extensions.cpp -text
@@ -1042,3 +1041,4 @@ xgpl_src/supplementary_driver/hal/esxu/rs232/rs232.h -text
 xgpl_src/supplementary_driver/hal/esxu/sensor/sensor.h -text
 xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.cpp -text
 xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.h -text
+xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.cpp -text
