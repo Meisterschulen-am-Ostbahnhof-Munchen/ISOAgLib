@@ -124,7 +124,7 @@ const SimpleManageMeasureProgRemote_c& SimpleManageMeasureProgRemote_c::operator
   deliver actual measurement value as long
   @param rb_sendRequest true -> request for new value is sent (optional, default false)
 */
-int32_t SimpleManageMeasureProgRemote_c::masterVal(bool rb_sendRequest)
+int32_t SimpleManageMeasureProgRemote_c::masterMeasurementVal(bool rb_sendRequest)
 {
   setValType(i32_val);
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());

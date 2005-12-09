@@ -444,19 +444,19 @@ int main()
         i32_lastRequestTime = IsoAgLib::iSystem_c::getTime();
         #ifdef USE_PROC_HANDLER
         // simply access measurement value to trigger next request message
-        arr_procData[cui8_indexWorkState].masterVal( true );
-        arr_procData[cui8_indexApplicationRate].masterVal( true );
+        arr_procData[cui8_indexWorkState].masterMeasurementVal( true );
+        arr_procData[cui8_indexApplicationRate].masterMeasurementVal( true );
         #else
         // access measurement value and use the returned value for internal processing
-        handleRemoteWorkState( c_workState.masterVal( true ) );
-        handleRemoteApplicationRate( c_applicationRate.masterVal( true ) );
+        handleRemoteWorkState( c_workState.masterMeasurementVal( true ) );
+        handleRemoteApplicationRate( c_applicationRate.masterMeasurementVal( true ) );
         #endif
       }
       #ifndef USE_PROC_HANDLER
       else
       { // no time for value request message
-        handleRemoteWorkState( c_workState.masterVal( false ) );
-        handleRemoteApplicationRate( c_applicationRate.masterVal( false ) );
+        handleRemoteWorkState( c_workState.masterMeasurementVal( false ) );
+        handleRemoteApplicationRate( c_applicationRate.masterMeasurementVal( false ) );
       }
       #endif
     }

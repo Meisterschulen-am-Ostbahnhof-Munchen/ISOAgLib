@@ -82,7 +82,7 @@
  *	<li>Local process data class IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c with simple setpoint handling
  *	<li>Use constructor IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c::iProcDataLocalSimpleSetpointSimpleMeasure_c
  *		to create variable with defined property
- *	<li>Use IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c::setMasterVal() to set current measurement data
+ *	<li>Use IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c::setMasterMeasurementVal() to set current measurement data
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
  * 	<ul>
@@ -261,7 +261,7 @@ int main()
   // if DEV_KEY conflicts forces change of device class instance, the
   // IsoAgLib can change the myDevKey val through the pointer to myDevKey
   //  ISO:
-#ifdef USE_ISO_11783 
+#ifdef USE_ISO_11783
   IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
@@ -274,31 +274,31 @@ int main()
 #endif
 
 #if defined(USE_ISO_11783)
-  const ElementDDI_s s_onOff[2] = 
-  { 
+  const ElementDDI_s s_onOff[2] =
+  {
     // DDI 141, element 0
     {141, 0, true, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   };
-  const ElementDDI_s s_workWidth[3] = 
-  { 
+  const ElementDDI_s s_workWidth[3] =
+  {
     // DDI 66, element 0
     {66, 0, true, GeneralCommand_c::exactValue},
     // DDI 67, element 0
     {67, 0, false, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  }; 
-  const ElementDDI_s s_applicationRate[3] = 
-  { 
+  };
+  const ElementDDI_s s_applicationRate[3] =
+  {
     // DDI 1, element 0
     {1, 0, true, GeneralCommand_c::exactValue},
     // DDI 2, element 0
     {2, 0, false, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  }; 
+  };
 #endif
 
 
@@ -313,7 +313,7 @@ int main()
                                          0, 0x1, 0x0, 0xFF,
   #endif
                                          c_myDevKey, 2, c_myDevKey, &c_myDevKey, false
-  #ifdef USE_EEPROM_IO 
+  #ifdef USE_EEPROM_IO
                                          ,0xFFFF
   #endif
                                          );
@@ -327,11 +327,11 @@ int main()
                                          0, 0x3, 0x1, 0xFF,
   #endif
                                          c_myDevKey, 2, c_myDevKey, &c_myDevKey, false
-  #ifdef USE_EEPROM_IO 
+  #ifdef USE_EEPROM_IO
                                          ,0xFFFF
   #endif
                                          );
-  
+
   // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=5, INST=0)
   IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c c_myApplicationRate(
   #if defined(USE_ISO_11783)
@@ -341,11 +341,11 @@ int main()
                                          0, 0x5, 0x0, 0xFF,
   #endif
                                          c_myDevKey, 2, c_myDevKey, &c_myDevKey, false
-  #ifdef USE_EEPROM_IO 
+  #ifdef USE_EEPROM_IO
                                          ,0xFFFF
   #endif
                                          );
-  
+
 
   /** IMPORTANT:
 	  - The following loop could be replaced of any repeating call of
@@ -380,9 +380,9 @@ int main()
 
 		// update local value for local process data so that remote ECUs can get the current
 		// value from IsoAgLib
-		c_myOnoff.setMasterVal( localIsWorking() );
-		c_myWorkWidth.setMasterVal( localGetWorkingWidth() );
-		c_myApplicationRate.setMasterVal( localGetApplicationRate() );
+		c_myOnoff.setMasterMeasurementVal( localIsWorking() );
+		c_myWorkWidth.setMasterMeasurementVal( localGetWorkingWidth() );
+		c_myApplicationRate.setMasterMeasurementVal( localGetApplicationRate() );
 	}
   return 1;
 }

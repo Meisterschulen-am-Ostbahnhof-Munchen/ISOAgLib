@@ -325,11 +325,7 @@ int main()
     }
     else
     { // we are currently sending calendar
-<<<<<<< .mine
-      getITimePosGpsInstance().setCalendar( localGetYear(), localGetMonth(), localGetDay(), localGetHour(), localGetMinute(), localGetSecond() );
-=======
       getITimePosGpsInstance().setCalendarLocal( localGetYear(), localGetMonth(), localGetDay(), localGetHour(), localGetMinute(), localGetSecond() );
->>>>>>> .r1433
     }
   }
   return 1;

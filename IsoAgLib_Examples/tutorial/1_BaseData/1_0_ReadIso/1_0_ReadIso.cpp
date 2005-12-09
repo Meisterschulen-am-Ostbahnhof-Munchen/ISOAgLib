@@ -299,52 +299,27 @@ int main()
       if ( getITimePosGpsInstance().isCalendarReceived() )
       { // already calendar received
         EXTERNAL_DEBUG_DEVICE << "Already Calendar received with "
-<<<<<<< .mine
-          << int(getITimePosGpsInstance().year()) << ":"
-          << int(getITimePosGpsInstance().month()) << ":"
-          << int(getITimePosGpsInstance().day())
-=======
           << int(getITimePosGpsInstance().yearLocal()) << ":"
           << int(getITimePosGpsInstance().monthLocal()) << ":"
           << int(getITimePosGpsInstance().dayLocal())
->>>>>>> .r1433
           << "; "
-<<<<<<< .mine
-          << int(getITimePosGpsInstance().hour()) << ":"
-          << int(getITimePosGpsInstance().minute()) << ":"
-          << int(getITimePosGpsInstance().second()) << ":"
-=======
           << int(getITimePosGpsInstance().hourLocal()) << ":"
           << int(getITimePosGpsInstance().minuteLocal()) << ":"
           << int(getITimePosGpsInstance().second()) << ":"
->>>>>>> .r1433
           << "\n";
       }
       EXTERNAL_DEBUG_DEVICE
         << "Some probably already correct decoded GPS information\n"
-<<<<<<< .mine
-        << "Latitude: " << getITimePosGpsInstance().getGpsLatitudeMinute() << "\n"
-        << "Longitude: " << getITimePosGpsInstance().getGpsLongitudeMinute() << "\n"
-        << "Altitude: " << getITimePosGpsInstance().getGpsAltitude() << "\n\n"
-=======
         << "Latitude: " << getITimePosGpsInstance().getGpsLatitudeMinute() << "\n"
         << "Longitude: " << getITimePosGpsInstance().getGpsLongitudeMinute() << "\n"
         #if defined(NMEA_2000_FAST_PACKET)
         << "Altitude: " << getITimePosGpsInstance().getGpsAltitudeCm() << "\n\n"
->>>>>>> .r1433
         << "Some probably not yet correct decoded GPS information\n"
-<<<<<<< .mine
-        << "GPS Mode: " << getITimePosGpsInstance().getGpsMode() << "\n"
-        << "GPS Speed: " << getITimePosGpsInstance().getGpsSpeed() << "\n"
-        << "GPS Heading: " << getITimePosGpsInstance().getGpsHeading() << "\n";
-
-=======
         << "GPS Mode: " << getITimePosGpsInstance().getGnssMode() << "\n"
         << "GPS Speed: " << getITimePosGpsInstance().getGpsSpeedCmSec() << "\n"
         << "GPS Heading: " << getITimePosGpsInstance().getGpsHeadingRad10Minus4() << "\n"
         #endif
         ;
->>>>>>> .r1433
     }
     #else
     static int32_t si32_lastDist = getITracMoveInstance().distTheor();

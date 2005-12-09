@@ -64,7 +64,7 @@
  *  <li>Standard local process data class IsoAgLib::iProcDataLocal_c
  *  <li>Use constructor IsoAgLib::iProcDataLocal_c::iProcDataLocal_c to create variable with defined property
  *  <li>Use IsoAgLib::iProcDataLocal_c::init to define process data properties independent from instantiation ( needed especially for arrays of process data )
- *  <li>Use IsoAgLib::iProcDataLocal_c::setMasterVal() to set current measurement data
+ *  <li>Use IsoAgLib::iProcDataLocal_c::setMasterMeasurementVal() to set current measurement data
  *  <li>Use IsoAgLib::iProcDataLocal_c::setpoint to get access to the setpoint handling part of the process data of type IsoAgLib::iSetpointLocal_c
  *  <li>Use IsoAgLib::iSetpointLocal_c::existUnhandledMaster , IsoAgLib::iSetpointLocal_c::master , IsoAgLib::iSetpointLocal_c::unhandledMaster ,
  *      IsoAgLib::iSetpointLocal_c::acceptNewMaster to check for current master setpoint sender ( master == ECU which sent first accepted setpoint, and which
@@ -72,7 +72,7 @@
  *  <li>Use IsoAgLib::iSetpointLocal_c::unhandledCnt and unhandledInd to access the not yet handled received setpoints
  *  <li>Use IsoAgLib::iSetpointLocal_c::answerAllUnhandled to notify all not yet handled setpoint senders of acceptance or deny
  *  <li>Use IsoAgLib::iSetpointLocal_c::setAllowedDeltaPercent to control the allowed deviation between setpoint and measurement -> send problem indication to controlling
- *      ECU if current setpoint can't be realized at the moment ( IsoAgLib sends this indication automatically if call of IsoAgLib::iProcDataLocal_c::setMasterVal
+ *      ECU if current setpoint can't be realized at the moment ( IsoAgLib sends this indication automatically if call of IsoAgLib::iProcDataLocal_c::setMasterMeasurementVal
  *      indicates this problem --> application don't have to do this )
  *  <li>Use IsoAgLib::iSetpointRegister_c::devKey to get device type of corresponding setpoint sender
  *  <li>Use IsoAgLib::iSetpointRegister_c::existExact , IsoAgLib::iSetpointRegister_c::existPercent , IsoAgLib::iSetpointRegister_c::existMin and
@@ -374,7 +374,7 @@ int main()
   // if DEV_KEY conflicts forces change of device class instance, the
   // IsoAgLib can change the myDevKey val through the pointer to myDevKey
   // ISO
-#ifdef USE_ISO_11783 
+#ifdef USE_ISO_11783
   IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
@@ -388,16 +388,16 @@ int main()
 
 
 #if defined(USE_ISO_11783)
-  const ElementDDI_s s_WorkStateElementDDI[2] = 
-  { 
+  const ElementDDI_s s_WorkStateElementDDI[2] =
+  {
     // DDI 141, element 0
     {141, 0, true, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
   };
-  const ElementDDI_s s_ApplicationRateElementDDI[5] = 
-  { 
-    // DDI 1, element 2 
+  const ElementDDI_s s_ApplicationRateElementDDI[5] =
+  {
+    // DDI 1, element 2
     {1, 2, true, GeneralCommand_c::exactValue},
     // DDI 2, element 4
     {2, 4, false, GeneralCommand_c::exactValue},
@@ -407,7 +407,7 @@ int main()
     {4, 8, true, GeneralCommand_c::minValue},
     // termination entry
     {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  }; 
+  };
 #endif
 
 #ifdef USE_PROC_HANDLER
@@ -420,11 +420,11 @@ int main()
                                          0, 0x1, 0x0, 0xFF,
   #endif
                                          myDevKey, 2, myDevKey, &myDevKey, true,
-  #ifdef USE_EEPROM_IO 
+  #ifdef USE_EEPROM_IO
                                          0xFFFF,
-  #endif 
+  #endif
                                          &c_mySetpointHandler);
-  
+
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   arr_procData[cui8_indexApplicationRate].init(
   #if defined(USE_ISO_11783)
@@ -433,12 +433,12 @@ int main()
   #if defined(USE_DIN_9684)
                                                0, 0x5, 0x0, 0xFF,
   #endif
-                                               myDevKey, 2, myDevKey, &myDevKey, true, 
+                                               myDevKey, 2, myDevKey, &myDevKey, true,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
                                                &c_mySetpointHandler);
-    
+
 #else
   // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   IsoAgLib::iProcDataLocal_c c_workState(
@@ -449,7 +449,7 @@ int main()
                                          0, 0x1, 0x0, 0xFF,
   #endif
                                          myDevKey, 2, myDevKey, &myDevKey, true
-  #ifdef USE_EEPROM_IO 
+  #ifdef USE_EEPROM_IO
                                          ,0xFFFF
   #endif
                                          );
@@ -551,11 +551,11 @@ int main()
     // setpoints can be realized ( i.e. send NACK or out-of-service information )
     #ifdef USE_PROC_HANDLER
 
-    arr_procData[cui8_indexWorkState].setMasterVal( getCurrentWorkState() );
-    arr_procData[cui8_indexApplicationRate].setMasterVal( getCurrentApplicationRate() );
+    arr_procData[cui8_indexWorkState].setMasterMeasurementVal( getCurrentWorkState() );
+    arr_procData[cui8_indexApplicationRate].setMasterMeasurementVal( getCurrentApplicationRate() );
     #else
-    c_workState.setMasterVal( getCurrentWorkState() );
-    c_applicationRate.setMasterVal( getCurrentApplicationRate() );
+    c_workState.setMasterMeasurementVal( getCurrentWorkState() );
+    c_applicationRate.setMasterMeasurementVal( getCurrentApplicationRate() );
     #endif
   }
   return 1;

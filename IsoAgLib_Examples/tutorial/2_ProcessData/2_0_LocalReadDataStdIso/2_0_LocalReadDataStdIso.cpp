@@ -62,7 +62,7 @@
  * <ul>
  *  <li>Standard local process data class IsoAgLib::iProcDataLocal_c
  *  <li>Use constructor IsoAgLib::iProcDataLocal_c::iProcDataLocal_c to create variable with defined property
- *  <li>Use IsoAgLib::iProcDataLocal_c::setMasterVal() to set current measurement data
+ *  <li>Use IsoAgLib::iProcDataLocal_c::setMasterMeasurementVal() to set current measurement data
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
  *  <ul>
@@ -329,9 +329,9 @@ int main()
 
     // update local value for local process data so that remote ECUs can get the current
     // value from IsoAgLib
-    c_myOnoff.setMasterVal( localIsWorking() );
-    c_myWorkWidth.setMasterVal( localGetWorkingWidth() );
-    c_myApplicationRate.setMasterVal( localGetApplicationRate() );
+    c_myOnoff.setMasterMeasurementVal( localIsWorking() );
+    c_myWorkWidth.setMasterMeasurementVal( localGetWorkingWidth() );
+    c_myApplicationRate.setMasterMeasurementVal( localGetApplicationRate() );
   }
   return 1;
 }

@@ -320,7 +320,7 @@ int main()
     // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=3, INST=1)
     pMyWidth = new iProcDataLocalSimpleSetpoint_c( 0, myDevKey, 0x3, 0x1, 0xFF, 2, myDevKey, &myDevKey, false);
     // set the constant width
-    pMyWidth->setMasterVal(myWidth);
+    pMyWidth->setMasterMeasurementVal(myWidth);
     // local process data for "working area" [m2] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=8, INST=0)
     // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of local data (can vary from previously given device class & instance),
     // the pointer to myDevKey helps automatic update of DEV_KEY, mark this value as CUMULATED (area grows -> update by de/increment)
@@ -467,8 +467,8 @@ int main()
         }
         // set the values, which are independent from working state (set in [m] -> from base data in [mm])
         i32_newDist = (getITracMoveInstance().distTheor() - i32_distanceOffset);
-        c_myWholeDist.setMasterVal(i32_newDist/1000);
-        c_myWholeTime.setMasterVal(i32_loopTime/1000);
+        c_myWholeDist.setMasterMeasurementVal(i32_newDist/1000);
+        c_myWholeTime.setMasterMeasurementVal(i32_loopTime/1000);
 
         // check if this and last check was working
         if (b_newWorkingState && b_workingState)
@@ -480,14 +480,14 @@ int main()
             // now calculate the working area ([mm2]/1000000 -> [m2])
             i32_workArea = mul1Div1Mul2Div2(i32_workDist, 1000, myWidth, 1000);
             // set work area
-            pMyWorkArea->setMasterVal(i32_workArea);
+            pMyWorkArea->setMasterMeasurementVal(i32_workArea);
           }
           // calculate work time in msec
           i32_workTime += i32_loopTime - i32_lastTime;
           // set work time
-          c_myWorkTime.setMasterVal(i32_workTime/1000);
+          c_myWorkTime.setMasterMeasurementVal(i32_workTime/1000);
           // set work dist (set in [m] -> from base data in [mm])
-          c_myWorkDist.setMasterVal(i32_workDist/1000);
+          c_myWorkDist.setMasterMeasurementVal(i32_workDist/1000);
         }
         // set the new vals as old vals for next intervall
         i32_lastDist = i32_newDist;
@@ -495,8 +495,8 @@ int main()
         i32_lastTime = i32_loopTime;
 
         // set working state to 100% or 0%
-        if (b_workingState) c_myOnoff.setMasterVal(0x64);
-        else c_myOnoff.setMasterVal(0);
+        if (b_workingState) c_myOnoff.setMasterMeasurementVal(0x64);
+        else c_myOnoff.setMasterMeasurementVal(0);
 
        }
       else
