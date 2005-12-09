@@ -255,6 +255,11 @@ PRJ_BASE=1
 # standard C++ iostreams
 # PRJ_RS232=0
 
+# select special RS232 virtual driver HAL for RS232_over_CAN
+# activating this implicitly activates PRJ_RS232 with this special
+# HAL driver
+# PRJ_RS232_OVER_CAN=0
+
 # select iDigitalO_c ( one instance/variable of this class per channel )
 # for digital On/Off input
 # ( provides automatic range check which uses diagnose function of HAL

@@ -98,7 +98,11 @@
   #include <string>
 #endif
 #include <deque>
-#include <supplementary_driver/hal/rs232.h>
+#ifdef USE_RS232_OVER_CAN
+  #include <supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.h>
+#else
+  #include <supplementary_driver/hal/rs232.h>
+#endif
 
 /** define based on system type the support of several RS232 channels */
 #if defined(USE_RS232_CHANNEL)

@@ -127,13 +127,13 @@ public:
   uint8_t operator[](uint8_t rb_pos) const {return pb_data[rb_pos];};
   /**
     set an uint8_t value at specified position in string
-    @param rui8_pos position [0..7]
+    @param rui8_devClassInst position [0..7]
     @param rui8_val uint8_t value to set
   */
-  void setUint8Data( uint8_t rui8_pos, uint8_t rui8_val) { pb_data[rui8_pos] = rui8_val;};
+  void setUint8Data( uint8_t rui8_devClassInst, uint8_t rui8_val) { pb_data[rui8_devClassInst] = rui8_val;};
   /**
     set an uint16_t value at specified position in string
-    @param rui8_pos position [0..6]
+    @param rui8_devClassInst position [0..6]
     @param rui16_val uint16_t value to set
   */
   void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
@@ -141,7 +141,7 @@ public:
     //{ pb_data[rui8_pos] = (rui16_val & 0xFF); pb_data[rui8_pos+1] = ( rui16_val >> 8 );};
   /**
     set an int16_t value at specified position in string
-    @param rui8_pos position [0..6]
+    @param rui8_devClassInst position [0..6]
     @param ri16_val int16_t value to set
   */
   void setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
@@ -149,7 +149,7 @@ public:
     //{ pb_data[rui8_pos] = (ri16_val & 0xFF); pb_data[rui8_pos+1] = ( ri16_val >> 8 );};
   /**
     set an uint32_t value at specified position in string
-    @param rui8_pos position [0..4]
+    @param rui8_devClassInst position [0..4]
     @param rui32_val uint32_t value to set
   */
   void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
@@ -158,7 +158,7 @@ public:
   //    setUint16Data( (rui8_pos+2), uint16_t( rui32_val >> 16 ) );};
   /**
     set an int32_t value at specified position in string
-    @param rui8_pos position [0..4]
+    @param rui8_devClassInst position [0..4]
     @param ri32_val int32_t value to set
   */
   void setInt32Data( uint8_t rui8_pos, int32_t ri32_val)

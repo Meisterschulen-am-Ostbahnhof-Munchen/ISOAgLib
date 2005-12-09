@@ -13,7 +13,7 @@
 
 uint8_t StoreInBigBuf = true;
 
-using namespace IsoAgLib;  
+//using namespace IsoAgLib;
 namespace HAL
 {
   /* ****************************** */
@@ -42,7 +42,7 @@ uint16_t RS232_over_can_CANID = 0x7F0;
 int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t rui8_channel)
 {
 	RS232_over_can_initialized = true;
-	return C_NO_ERR;
+	return HAL_NO_ERR;
 
 //	if( !RS232_over_can_initialized )
 //	{
@@ -120,7 +120,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
 		    c_can << c_sendData;
 			}
 
-		return getLbsErrInstance().good( LibErr_c::Can );
+   return IsoAgLib::getLbsErrInstance().good( IsoAgLib::LibErr_c::Can );
 		}
 
 };

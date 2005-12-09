@@ -237,6 +237,11 @@ function check_set_correct_variables()
 		PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=1
   fi
 
+	if [ "A$PRJ_RS232_OVER_CAN" = "A" ] ; then
+		PRJ_RS232_OVER_CAN=0
+	elif [ $PRJ_RS232_OVER_CAN -gt 0 ] ; then
+		PRJ_RS232=1 # force activation of RS232 driver class when this special RS232 HAL is activated
+	fi
 
   if [ "A$PRJ_MULTIPACKET_STREAM_CHUNK" = "A" ] ; then
   	PRJ_MULTIPACKET_STREAM_CHUNK=1
@@ -529,25 +534,30 @@ function create_filelist( )
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/sensor/*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'"
 	fi
   if [ $PRJ_RS232 -gt 0 ] ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/rs232/*' -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*' -o -path '*/hal/rs232.h'"
-    echo "RS232 driver: $USE_RS232_DRIVER"
-		if [ $USE_RS232_DRIVER = "simulating" ] ; then
-			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
-		elif [ $USE_RS232_DRIVER = "rte" ] ; then
-			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'"
-		elif [ $USE_RS232_DRIVER = "sys" ] ; then
-			PLATFORM=`uname`
-			if [ $PLATFORM = "Linux" ] ; then
-				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'"
-			else
-				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
-			fi
-#			PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
-#			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/rs232/*' -o -path '*/hal/rs232.h'"
+		if [ $PRJ_RS232_OVER_CAN -gt 0 ] ; then
+			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/virtualDrivers/rs232/*'"
 		else
-			echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
-			echo 'Current Setting is $USE_RS232_DRIVER'
-			exit 3
+			PRJ_RS232_OVER_CAN="$PRJ_RS232_OVER_CAN -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'"
+			echo "RS232 driver: $USE_RS232_DRIVER"
+			if [ $USE_RS232_DRIVER = "simulating" ] ; then
+				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
+			elif [ $USE_RS232_DRIVER = "rte" ] ; then
+				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'"
+			elif [ $USE_RS232_DRIVER = "sys" ] ; then
+				PLATFORM=`uname`
+				if [ $PLATFORM = "Linux" ] ; then
+					DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'"
+				else
+					DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
+				fi
+	#			PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
+	#			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
+			else
+				echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
+				echo 'Current Setting is $USE_RS232_DRIVER'
+				exit 3
+			fi
 		fi
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/rs232_target_extensions.h'"
   fi
@@ -827,6 +837,10 @@ function create_autogen_project_config()
 		echo -e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
 	else
 		echo -e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
+	fi
+
+	if [ $PRJ_RS232_OVER_CAN -gt 0 ] ; then
+		echo -e "#define USE_RS232_OVER_CAN$ENDLINE" >> $CONFIG_NAME
 	fi
 
 
