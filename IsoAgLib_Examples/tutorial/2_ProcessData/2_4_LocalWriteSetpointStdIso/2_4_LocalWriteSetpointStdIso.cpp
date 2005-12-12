@@ -70,7 +70,7 @@
  *      IsoAgLib::iSetpointLocal_c::acceptNewMaster to check for current master setpoint sender ( master == ECU which sent first accepted setpoint, and which
  *      should be able to rule the further work of the controlled ECU --> later setpoints of other ECUs should never cause a deviation from the control of the master
  *  <li>Use IsoAgLib::iSetpointLocal_c::unhandledCnt and unhandledInd to access the not yet handled received setpoints
- *  <li>Use IsoAgLib::iSetpointLocal_c::answerAllUnhandled to notify all not yet handled setpoint senders of acceptance or deny
+ *  <li>Use IsoAgLib::iSetpointLocal_c::respondAckNack to notify all not yet handled setpoint senders of acceptance or deny
  *  <li>Use IsoAgLib::iSetpointLocal_c::setAllowedDeltaPercent to control the allowed deviation between setpoint and measurement -> send problem indication to controlling
  *      ECU if current setpoint can't be realized at the moment ( IsoAgLib sends this indication automatically if call of IsoAgLib::iProcDataLocal_c::setMasterMeasurementVal
  *      indicates this problem --> application don't have to do this )
@@ -324,7 +324,7 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int
         arr_procData[cui8_indexWorkState].setpoint().acceptNewMaster();
       }
       // send answer for all received setpoints
-      arr_procData[cui8_indexWorkState].setpoint().answerAllUnhandled();
+      arr_procData[cui8_indexWorkState].setpoint().respondAckNack();
       break;
     case cui8_indexApplicationRate:
       if ( ! arr_procData[cui8_indexApplicationRate].setpoint().existMaster() ) {
@@ -339,7 +339,7 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int
         arr_procData[cui8_indexApplicationRate].setpoint().acceptNewMaster();
       }
       // send answer for all received setpoints
-      arr_procData[cui8_indexApplicationRate].setpoint().answerAllUnhandled();
+      arr_procData[cui8_indexApplicationRate].setpoint().respondAckNack();
       break;
   }
   // answer to IsoAgLib that this new setpoint is handled
@@ -521,7 +521,7 @@ int main()
         c_workState.setpoint().acceptNewMaster();
       }
       // send answer for all received setpoints
-      c_workState.setpoint().answerAllUnhandled();
+      c_workState.setpoint().respondAckNack();
     }
 
     if ( c_applicationRate.setpoint().unhandledCnt() > 0 ) {
@@ -540,7 +540,7 @@ int main()
         c_applicationRate.setpoint().acceptNewMaster();
       }
       // send answer for all received setpoints
-      c_applicationRate.setpoint().answerAllUnhandled();
+      c_applicationRate.setpoint().respondAckNack();
     }
     #endif
 

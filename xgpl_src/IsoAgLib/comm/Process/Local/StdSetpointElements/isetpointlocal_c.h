@@ -175,7 +175,7 @@ public:
         * dependant error in ProcessDataLocal_c commander of some setpoint isn't found in Monitor List
         * dependant error in CANIO_c on CAN send problems
   */
-  void answerAllUnhandled() {SetpointLocal_c::answerAllUnhandled();};
+  void respondAckNack() {SetpointLocal_c::respondAckNack();};
   /**
     set the allowed percentual deviation between actual measurement and
     existing master setpoint

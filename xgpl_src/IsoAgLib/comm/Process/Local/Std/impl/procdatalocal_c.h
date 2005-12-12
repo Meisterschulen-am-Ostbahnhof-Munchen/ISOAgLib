@@ -177,7 +177,7 @@ namespace __IsoAgLib {
       c_workState.setpoint().acceptNewMaster();
     }
     // send answer for all received setpoints
-    c_workState.setpoint().answerAllUnhandled();
+    c_workState.setpoint().respondAckNack();
   }
   \endcode
 

@@ -466,7 +466,7 @@ SetpointRegister_c& SetpointLocal_c::unhandledFirst(){
       * dependant error in ProcDataLocal_c commander of some setpoint isn't found in Monitor List
       * dependant error in CANIO_c on CAN send problems
 */
-void SetpointLocal_c::answerAllUnhandled(){
+void SetpointLocal_c::respondAckNack(){
   // now send NO_VAL_32S for all other unhandled setpoints
   for (Vec_SetpointRegisterIterator pc_iter = vec_register.begin();
        pc_iter != vec_register.end();
