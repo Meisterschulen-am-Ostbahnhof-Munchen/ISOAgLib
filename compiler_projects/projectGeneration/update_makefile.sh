@@ -538,7 +538,7 @@ function create_filelist( )
 		if [ $PRJ_RS232_OVER_CAN -gt 0 ] ; then
 			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/virtualDrivers/rs232/*'"
 		else
-			PRJ_RS232_OVER_CAN="$PRJ_RS232_OVER_CAN -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'"
+			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'"
 			echo "RS232 driver: $USE_RS232_DRIVER"
 			if [ $USE_RS232_DRIVER = "simulating" ] ; then
 				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
