@@ -783,14 +783,15 @@
 
 
 // <DESTINATION> PGNs
-
+#define CLIENT_TO_FS_PGN       0x00AA00LU
+#define FS_TO_CLIENT_PGN       0x00AB00LU
 #define ETP_DATA_TRANSFER_PGN  0x00C700LU
 #define ETP_CONN_MANAGE_PGN    0x00C800LU
 #define PROCESS_DATA_PGN       0x00CB00LU
 #define VT_TO_GLOBAL_PGN       0x00E6FFLU
 #define VT_TO_ECU_PGN          0x00E600LU
 #define ECU_TO_VT_PGN          0x00E700LU
-/* we're NOT using ACK/NACH to Global address, we're directing directly to the sender! */
+/* we're NOT using ACK/NACK to Global address, we're directing directly to the sender! */
 #define ACKNOWLEDGEMENT_PGN    0x00E800LU
 #define REQUEST_PGN_MSG_PGN    0x00EA00LU
 #define TP_DATA_TRANSFER_PGN   0x00EB00LU
@@ -799,7 +800,6 @@
 #define PROPRIETARY_A_PGN      0x00EF00LU
 
 // <NO DESTINATION> PGNs
-
 #define WORKING_SET_MEMBER_PGN      0x00FE0CLU
 #define WORKING_SET_MASTER_PGN      0x00FE0DLU
 #define LANGUAGE_PGN                0x00FE0FLU
