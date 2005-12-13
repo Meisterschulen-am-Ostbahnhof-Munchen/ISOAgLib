@@ -98,6 +98,7 @@ std::vector<std::string> vecstr_dataForCombination;
 std::vector<std::string> vecstr_dataFromDPD (4);
 std::stringstream buffer;
 bool attrIsGiven [maxAttributeNames];
+std::vector<int16_t> veci16_elemNumsFromCombinations;
 bool b_dpdCombination = false;
 static bool b_isFirstDevice = true;
 
@@ -421,6 +422,10 @@ void defaultAttributes ()
   if (!attrIsGiven [attrCommand_type]) {
     vecstr_attrString [attrCommand_type] = "exact";
     attrIsGiven [attrCommand_type] = true;
+  }
+  if (!attrIsGiven [attrElement_number_combi]) {
+    vecstr_attrString [attrElement_number_combi] = "-1";
+    attrIsGiven [attrElement_number_combi] = true;
   }
 };
 
@@ -1136,6 +1141,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceProcessDataCombination)
           {
             getAttributesFromNode(child, otDeviceProcessDataCombination);
+            if (attrIsGiven[attrElement_number_combi] && (strcmp(vecstr_attrString[attrElement_number_combi].c_str(), "") != 0))
+              veci16_elemNumsFromCombinations.push_back(atoi(vecstr_attrString[attrElement_number_combi].c_str()));
+            else
+              veci16_elemNumsFromCombinations.push_back(-1);
             defaultAttributes ();
             if (!attrIsGiven[attrDdi] || !attrIsGiven[attrSetpoint])
             {
@@ -1200,6 +1209,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceDinProcessData)
           {
             getAttributesFromNode(child, otDeviceDinProcessData);
+
             defaultAttributes ();
             b_DinDPD = TRUE;
             //this objecttype is only needed for creating the processdata-constructor
@@ -1219,11 +1229,12 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           fprintf(partFileB, "#if defined(USE_ISO_11783)\nconst IsoAgLib::ElementDDI_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
           for (uint8_t i=0; i<ui8_amount; i++)
           {
-            if (!attrIsGiven [attrElement_number_combi])
+            if (veci16_elemNumsFromCombinations[i] < 0)
               fprintf(partFileB, "\t{%s, %s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_dataForCombination[0].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
             else
-              fprintf(partFileB, "\t{%s, %s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_attrString[attrElement_number_combi].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
+              fprintf(partFileB, "\t{%s, %i, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), veci16_elemNumsFromCombinations[i], vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
           }
+          veci16_elemNumsFromCombinations.clear();
           fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, 0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}\n};\n#endif\n\n");
           for (uint8_t i=0; i<ui8_amount*3; i++)
             vecstr_dataForCombination.pop_back();
