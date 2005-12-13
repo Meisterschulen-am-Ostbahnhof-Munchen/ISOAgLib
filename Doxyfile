@@ -468,7 +468,8 @@ FILE_PATTERNS          = *.c \
                          *.h \
                          *.hpp \
                          *.txt \
-                         *.html
+                         *.html \
+			 *.dox
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
 # should be searched for input files as well. Possible values are YES and NO. 
@@ -518,7 +519,8 @@ EXAMPLE_PATTERNS       = *.c \
                          *.h \
                          *.hpp \
                          *.txt \
-                         *.html
+                         *.html \
+			 *.xml
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be 
 # searched for input files to be used with the \include or \dontinclude 
