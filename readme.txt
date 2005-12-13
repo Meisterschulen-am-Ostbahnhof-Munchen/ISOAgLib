@@ -46,8 +46,8 @@
 <br>
 &nbsp;<br>
 <h4>Most often needed lookup-links:</h4>
-\ref XMLspec
-\ref XMLProcSpec
+\ref XMLspec<br>
+\ref XMLProcSpec<br>
 &nbsp;<br>
 &nbsp;<br>
 Last Update: <br>11 January 2005<br>
