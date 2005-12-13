@@ -9,6 +9,7 @@
 
 <table width="100%" border="0" cellspacing="0" cellpadding="2">
 <tr><td valign="Top" nowrap="true" >
+<h4>Table of Contents:</h4>
 \ref IndexWhereToStart<br>
 \ref IndexNews<br>
 \ref IndexChanges<br>
@@ -44,6 +45,9 @@
 \ref FurtherReading<br>
 <br>
 &nbsp;<br>
+<h4>Most often needed lookup-links:</h4>
+\ref XMLspec
+\ref XMLProcSpec
 &nbsp;<br>
 &nbsp;<br>
 Last Update: <br>11 January 2005<br>

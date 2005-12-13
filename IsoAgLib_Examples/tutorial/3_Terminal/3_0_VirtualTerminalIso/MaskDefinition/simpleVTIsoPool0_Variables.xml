@@ -17,17 +17,17 @@
 
 
 <!-- Attributes -->
-  <fontattributes name='FontAttributesNormal6x8' font_colour='black' font_size='6x8' />
-  <fontattributes name='FontAttributesNormal6x8R' font_colour='red' font_size='6x8' />
-  <fontattributes name='FontAttributesNormal6x8B' font_colour='blue' font_size='6x8' font_style='bold+underlined+italic' />
-  <fontattributes name='FontAttributesNormal8x8' font_colour='black' font_size='8x8' />
-  <fontattributes name='FontAttributesNormal12x16' font_colour='black' font_size='12x16' />
+  <fontattributes name='FontAttributesNormal6x8' font_colour='black' font_size='6x8' font_type="latin1"/>
+  <fontattributes name='FontAttributesNormal6x8R' font_colour='red' font_size='6x8' font_type="latin1"/>
+  <fontattributes name='FontAttributesNormal6x8B' font_colour='blue' font_size='6x8' font_type="latin1" font_style='bold+underlined+italic' />
+  <fontattributes name='FontAttributesNormal8x8' font_colour='black' font_size='8x8' font_type="latin1" />
+  <fontattributes name='FontAttributesNormal12x16' font_colour='black' font_size='12x16' font_type="latin1" />
   <lineattributes name='LineAttributesNormal' line_colour='black' line_width='1' line_art='1111111111111111'/>
   <lineattributes name='LineAttributesDotted' line_colour='black' line_width='1' line_art='1001100110011001'/>
 
-  <fontattributes name='FontAttributesSKM6x8' font_colour='black' font_size='6x8' />
-  <fontattributes name='FontAttributesSKM8x8' font_colour='black' font_size='8x8' />
-  <fontattributes name='FontAttributesSKM12x16' font_colour='black' font_size='12x16' />
+  <fontattributes name='FontAttributesSKM6x8' font_colour='black' font_size='6x8' font_type="latin1" />
+  <fontattributes name='FontAttributesSKM8x8' font_colour='black' font_size='8x8' font_type="latin1" />
+  <fontattributes name='FontAttributesSKM12x16' font_colour='black' font_size='12x16' font_type="latin1" />
   <lineattributes name='LineAttributesSKM' line_colour='black' line_width='1' line_art='1111111111111111'/>
 
 

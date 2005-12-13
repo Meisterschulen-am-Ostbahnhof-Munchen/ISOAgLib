@@ -1,24 +1,35 @@
 /** @page XMLspec Specification for ISO VirtualTerminal XML files
 \section XMLGeneralNotes General notes
 <ul>
-<li>This version of vt2iso is designed to work with VTs that support bitmap-scaling (as they're supposed to) but also offers the possibility to include pre-scaled-bitmaps (for VTs with a known dimension/color-depth). The "normal" bitmaps will be searched in the "std_bitmap_path" and the bitmaps for a fixed-size terminal will be searched in the "fix_bitmap_path".
+<li> <b>What is vt2iso?</b> vt2iso is an XML->C-Source converter that converts your object-pool (described in XML) to C-source files (that have to be included in your application then).
+<li>This version of vt2iso is designed to work with VTs that support bitmap-scaling (as they're supposed to) but also offers the possibility to include pre-scaled-bitmaps (for VTs that don't scale (as they SHOULD do) if you know their dimension/color-depth). The "normal" bitmaps will be searched in the "std_bitmap_path" and the bitmaps for a fixed-size terminal will be searched in the "fix_bitmap_path".
 </ul>
 
 \section XMLUsage Usage in your own project
 <ul>
-<li> Take a look at the following example, in which the iObjectPool class is generated for standalone use:
+<li> Take a look at the following example, in which the <i>iObjectPool</i> class is generated for standalone use:
 <li> Include the necessary headers through one collective include file
 \code
 #include "MaskDefinition/simpleVTIsoPool.xml_direct.h"
 \endcode
-<li> Then implement the neccessary methods from iObjectPool_simpleVTIsoPool_c, whereas "simpleVTIsoPool" is generated from the filename!
+<li> Then implement the neccessary methods from <i>iObjectPool_simpleVTIsoPool_c</i>, whereas "simpleVTIsoPool" is generated from the filename!
 \code
 void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t ui8_value, uint32_t ui32_value ) { ... }
+void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast);
+void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ();
 void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton ) { ... }
 void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully () { ... }
 \endcode
-<li> It's important that "eventObjectPoolUploadedSuccessfully" updates all necessary values of the objectpool. It will be called everytime the pool is uploaded/loaded from nv-storage. This is also the case when the VT is switched off and on during operation!
-<li> If you want to derive your main-class from "iObjectPool_simpleVTIsoPool_c", you should use the following directive
+<li> There are more methods that CAN be implemented. If you want to, you have to uncomment them in <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc</i>. These are the following
+\code
+//virtual void eventStringValueAbort();
+//virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);
+//virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whic
+//virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);
+\endcode
+<li> as vt2iso does NOT want to override the manual changes you may have made in the <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc</i> file because of uncommenting some of those methods, it will NOT override this file at the next call of vt2iso, but will name the file <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc-template</i>.
+<li> It's important that <i>eventObjectPoolUploadedSuccessfully</i> updates all necessary values of the objectpool. It will be called everytime the pool is uploaded/loaded from non-volatile-storage (harddisk, flashdisk, etc.). This is also the case when the VT is switched off and on during operation!
+<li> If you want to derive your main-class from <i>iObjectPool_simpleVTIsoPool_c</i>, you should use the following directive
 \code
 #include "MaskDefinition/simpleVTIsoPool.xml_derived-cpp.h"
 \endcode
@@ -32,7 +43,7 @@ in your ".h" file (that's why its name is "-h.h").<br> That's all to include.
 \code
 static iObjectPool_simpleVTIsoPool_c MyObjectPool_c;
 \endcode
-<li> In all cases init the ISO-Terminal the following way (If no WS-Name is given, the pool won't be saved in nv-storage from the vt!):
+<li> In all cases init the ISO-Terminal the following way (If no WorkingSet-Name is given, the pool won't be saved in nv-storage from the VT!):
 \code
 getIisoTerminalInstance().init(&c_myIdent, &MyPool_c, "WS-Name");
 \endcode
@@ -45,7 +56,8 @@ Please refer to IsoAgLib::iISOTerminal_c::init(...) for more information.
 <li> The parser will treat all XML files matching your base-filename (for example <i>simpleVTIsoPool.xml</i>) as one big XML file, ordered alphabetically.
 <li> Thus having created the files <i>simpleVTIsoPool.xml-0_WorkingSetAndVariables</i> and <i>simpleVTIsoPool.xml-1_DataMask1</i>, you'd simply pass the base-filename <b>simpleVTIsoPool.xml</b> as parameter to the conversion script.
 \endcode
-<li> Only the first XML file in alphabetical order has to have the <i>dimension='...'</i> and <i>std_bitmap_path='...'</i> <i>fix_bitmap_path='...'</i> attributes set.
+<li> Only the first XML file in alphabetical order MUST HAVE the <i>dimension='...'</i> and <i>std_bitmap_path='...'</i> and <i>fix_bitmap_path='...'</i> attributes set.
+<li> Only the first XML file in alphabetical order CAN HAVE the <i>sk_width='...'</i> and <i>sk_height='...'</i> attributes set. If not given, the softkey-size defaults to 60x32.
 </ul>
 Take a look at the following snippet of <i>simpleVTIsoPool.xml-0_WorkingSetAndVariables</i>, which is the first in alpabetical order and has the dimension and path-attributes set:
 \code
@@ -92,10 +104,10 @@ Now here's a snippet from <i>simpleVTIsoPool.xml-1_DataMask1</i>:
 <ul>
 <li> If <b>no</b> ObjectID (for example "id='12345'") is given, an automatcially numbered ID is assigned, starting at the highest allowed ID (65534), counting downwards.
 <li> If <b>no</b> KeyCode ('key_code=...') is given, an automatically numbered KeyCode is assigned, starting at the almost highest allowed KeyCode (254), counting downwards.
-<li> If you want to use your own ObjectID, please use the lower range of [0...65534] .
-<li> If you want to use your own KeyCode, please use the lower range of [1..255]<br>(0 is reserved for the VT's ESC key which is automatically being defined as <b>vtKeyCodeESC</b>).
+<li> If you want to use your own ObjectID, please use the lower range of [256...65534]
 <li> IDs of Macro Objects must fit into one byte, so they should be in the range of [0..255]. They will automatically be generated this way, starting at 255 downwards.
-<li> When using own IDs/KeyCodes, try not to interfere with the automatically generated numbers: Use Object-IDs greater than 256 for not interfering with Macros.
+<li> If you want to use your own KeyCode, please use the lower range of [1..255]<br>(0 is reserved for the VT's ESC key which is automatically being defined as <b>vtKeyCodeESC</b>).
+<li> IMPORTANT: When using own IDs/KeyCodes, try not to interfere with the automatically generated numbers: Use Object-IDs greater than 256 for not interfering with Macros.
 </ul>
 
 \section XMLAttributes Important note on Attributes and Exchangeable SoftKey Elements
@@ -104,16 +116,16 @@ Now here's a snippet from <i>simpleVTIsoPool.xml-1_DataMask1</i>:
 Take a look at the following example snippet:
 \code
 <!-- Attributes for Data-/Alarm-Masks -->
-  <fontattributes name='FontAttrNormal6x8' font_colour='black' font_size='6x8' />
-  <fontattributes name='FontAttrNormal8x8' font_colour='black' font_size='8x8' />
-  <fontattributes name='FontAttrNormal12x16red' font_colour='red' font_size='12x16' />
+  <fontattributes name='FontAttrNormal6x8' font_colour='black' font_size='6x8' font_type='latin1' />
+  <fontattributes name='FontAttrNormal8x8' font_colour='black' font_size='8x8' font_type='latin1' />
+  <fontattributes name='FontAttrNormal12x16red' font_colour='red' font_size='12x16' font_type='latin1' />
   <lineattributes name='LineAttrNormal' line_colour='black' line_width='1' line_art='1111111111111111'/>
   <lineattributes name='LineAttrNormalDot' line_colour='black' line_width='1' line_art='1010101010101010'/>
 
 <!-- Attributes for SoftKey-Masks -->
-  <fontattributes name='FontAttrSKM6x8' font_colour='black' font_size='6x8' />
-  <fontattributes name='FontAttrSKM8x8' font_colour='black' font_size='8x8' />
-  <fontattributes name='FontAttrSKM12x16' font_colour='black' font_size='12x16' />
+  <fontattributes name='FontAttrSKM6x8' font_colour='black' font_size='6x8' font_type='latin1' />
+  <fontattributes name='FontAttrSKM8x8' font_colour='black' font_size='8x8' font_type='latin1' />
+  <fontattributes name='FontAttrSKM12x16' font_colour='black' font_size='12x16' font_type='latin1' />
   <lineattributes name='LineAttrSKM' line_colour='black' line_width='1' line_art='1111111111111111'/>
 \endcode
 <li> You can't define exchangeable contents in a SoftKey (lets take an OutputString with "On" and one with "Off" for example), instead you'll have to do exchangeable SoftKeys. Objects not known where they'll be used in can't be auto-detected from the Auto-Scale function. Keep in mind that scaling of the SoftKeys may differ from scaling of the Data-/Alarm-Masks!<br>
@@ -132,7 +144,7 @@ Take a look at the following <b>WRONG</b> example snippet, keep in mind the outp
 </softkeymask>
 \endcode
 
-Here's the <b>RIGHT</b> example snippet (not the texts are exchanged, but the whole softkeys - this way it's clear that switchOn/OffText are to be scaled for use in softkeys!):
+Here's the <b>CORRECT</b> example snippet (not the texts are exchanged, but the whole softkeys - this way it's clear that switchOn/OffText are to be scaled for use in softkeys!):
 \code
 <key name='KeySwitchOn' background_colour='white'>
   <outputstring name='switchOnText'  pos_x='0' pos_y='0' width='12' height='8' background_colour='white'
@@ -244,11 +256,11 @@ The following table shows which objects may be included into which other.
 </td></tr><tr><td>    line           </td><td> Macro
 </td></tr><tr><td>    rectangle      </td><td> Macro
 </td></tr><tr><td>    ellipse        </td><td> Macro
-</td></tr><tr><td>    polygon        </td><td> Macro | ombPoint
+</td></tr><tr><td>    polygon        </td><td> Macro | Point
 </td></tr><tr><td>    meter          </td><td> Macro
 </td></tr><tr><td>    linearbar      </td><td> Macro
 </td></tr><tr><td>    archedbar      </td><td> Macro
-</td></tr><tr><td>    picturegraphic </td><td> Macro | ombFixedBitmap
+</td></tr><tr><td>    picturegraphic </td><td> Macro | FixedBitmap
 </td></tr><tr><td>    numbervariable </td><td> none
 </td></tr><tr><td>    stringvariable </td><td> none
 </td></tr><tr><td>    fontattributes </td><td> Macro
@@ -257,8 +269,8 @@ The following table shows which objects may be included into which other.
 </td></tr><tr><td>    inputattributes</td><td> Macro
 </td></tr><tr><td>    objectpointer  </td><td> none
 </td></tr><tr><td>    macro          </td><td> none
-</td></tr><tr><td>    auxfunction    </td><td> ombOutputfield | ombOutputshape | ombPicturegraphic, // really NONE
-</td></tr><tr><td>    auxinput       </td><td> ombOutputfield | ombOutputshape | ombPicturegraphic, // really NONE
+</td></tr><tr><td>    auxfunction    </td><td> Outputfield | Outputshape | Picturegraphic, // really NONE
+</td></tr><tr><td>    auxinput       </td><td> Outputfield | Outputshape | Picturegraphic, // really NONE
 </td></tr><tr><td>    objectpool     </td><td> all
 </td></tr><tr><td>    include_object </td><td> none
 </td></tr><tr><td>    include_macro  </td><td> none
@@ -315,7 +327,7 @@ The following table shows which objects may be included into which other.
 <tr><td>transparency_colour</td><td> \ref XMLColour "Colour" </td></tr>
 <tr><td>font_colour</td><td> \ref XMLColour "Colour" </td></tr>
 <tr><td>font_size</td><td> \ref fontsize "FontSize"</td></tr>
-<tr><td>font_type</td><td> fixed at 0 (=ISO Latin 1), unchangeable yet</td></tr>
+<tr><td>font_type</td><td> \ref fonttype "FontType"</td></tr>
 <tr><td>font_style</td><td> \ref fontstyle "FontStyle"</td></tr>
 <tr><td>line_colour</td><td> \ref XMLColour "Colour" </td></tr>
 <tr><td>line_width</td><td> Integer </td></tr>
@@ -382,6 +394,9 @@ If you want to specify a colour, the attribute value is an index in the range of
                                                  '96x128'<br>
                                                  '128x128'<br>
                                                  '128x192'</td></tr>
+<tr><td> &nbsp;</td> <td> \anchor fonttype font_style </td> <td> '0' or 'latin1'<br>
+                                                 '1' or 'latin9'<br>
+                                                 '255' or 'proprietary'</td></tr>
 <tr><td> &nbsp;</td> <td> \anchor fontstyle font_style </td> <td> 'bold'<br>
                                                  'crossed'<br>
                                                  'underlined'<br>

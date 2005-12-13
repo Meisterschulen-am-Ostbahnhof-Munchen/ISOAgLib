@@ -87,12 +87,20 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectdMeter,
   &iVtObjectMacro_1,
   &iVtObjectMacro_2,
-  &iVtObjectForbiddenAlarmMask,
-  &iVtObjectalarm1contentscontainer,
+  &iVtObjectAnotherMask,
   &iVtObjectUnnamed25,
   &iVtObjectUnnamed26,
   &iVtObjectUnnamed27,
+  &iVtObjectUnnamed28,
+  &iVtObjectUnnamed29,
+  &iVtObjectUnnamed30,
+  &iVtObjectUnnamed31,
+  &iVtObjectForbiddenAlarmMask,
+  &iVtObjectalarm1contentscontainer,
+  &iVtObjectUnnamed32,
+  &iVtObjectUnnamed33,
+  &iVtObjectUnnamed34,
   &iVtObjectsoftkeysAlarm
 };
 
-  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 94, 200, 60, 32) {};
+  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 102, 200, 60, 32) {};
