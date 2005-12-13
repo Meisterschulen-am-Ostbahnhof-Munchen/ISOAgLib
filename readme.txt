@@ -100,7 +100,16 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 
 \section IndexNews News
 
-\subsection IndexNewNews News after the 1.0.0 release
+\subsection IndexNewNews News after the 1.1.0 release
+	- <b>during 2005:</b> Virtual Terminal Client<br>
+		- Added support for IsoLatin-9 fonts: Now for every font-attribute the "font_type" attribute has to be specified. (Please adapt your existing XML files.)<br>
+		- Support for font-downscaling (in case a pool is designed for >200x200 pixel VTs)<br>
+		- Cleanup on Tutorial3_0 example objectpool
+		- Several more handler functions, for more information see "Changes" section below<br>
+	- <b>2005-March:</b> MultiReceive classes implemented.
+
+
+\subsection IndexNewNews News before the 1.1.0 release
 	- <b>2004-11-15:</b> Create new email list for email exchange within user community so that users can help each other, and
 		can discuss changes there, before somebody starts implementing the change<br>
 		- subscribe at <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib</a>
@@ -311,6 +320,14 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- new HAl adoptions to further <b>STW</b> ECU types supported by users
 	- proper support of NMEA2000 GPS strings
 	- several enhancements regarding VT client and network management
+	- XML-Schema pre-validation of vt2iso XML files
+	- Softkey size can now also be specified (sk_width="..." sk_height="...", just like the datamask-size (dimension="...")
+	- Adapted many items (timeouts, font-encoding, Positions now SIGNED integer) to FIRST EDITION of 11783-Part 6 (Virtual Terminal)
+	- "vtKeyCodeESC" is now "vtKeyCodeACK"
+	- vt2iso: Filename-parameter doesn't need "./" prefixed any more if XML file is in current directory
+	- minor fixes in ISOTerminal_c's close(), changeNumericValue's reserved byte changed to 0xFF
+	- NACK-recognition implemented (eventEnterSafeState), although it needs some more testing
+	- reaction on language (change) PGN now possible via hook-function
 
 
 \section IndexMainFeatures Main Features
