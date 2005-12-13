@@ -50,7 +50,7 @@
   <kdevdebugger>
     <general>
       <dbgshell/>
-      <programargs/>
+      <programargs>/home/winkler/Projekte/TaskController/IsoAgLib/IsoAgLib_Examples/tutorial/2_ProcessData/2_1_LocalReadDataSimpleMeasureIso/devicedescription/DeviceDescription.xml</programargs>
       <gdbpath/>
       <configGdbScript/>
       <runShellScript/>
@@ -147,6 +147,11 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
+    <qt>
+      <used>false</used>
+      <version>3</version>
+      <root/>
+    </qt>
   </kdevcppsupport>
   <kdevfileview>
     <tree>

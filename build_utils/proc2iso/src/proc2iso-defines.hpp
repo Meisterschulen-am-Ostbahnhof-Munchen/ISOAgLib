@@ -67,30 +67,32 @@
 #define attrProperty_value (13)
 #define attrLis (14)
 #define attrWert_inst (15)
-#define attrOffset (16)
-#define attrScale (17)
-#define attrNumber_of_decimals (18)
-#define attrUnitdesignator (19)
-#define attrSelf_conf (20)
-#define attrIndustry_group (21)
-#define attrFunction (22)
-#define attrWanted_SA (23)
-#define attrFunc_Inst (24)
-#define attrECU_Inst (25)
-#define attrStore_SA_at_EEPROM_address (26)
-#define attrManufacturer_code (27)
-#define attrDevice_class (28)
-#define attrDevice_class_instance (29)
-#define attrWS_identity_number (30)
-#define attrFeature_set (31)
-#define attrPriority (32)
-#define attrDevProgVarName (33)
-#define attrProcProgVarName (34)
-#define attrCumulative_value (35)
-#define attrCommand_type (36)
-#define attrSetpoint (37)
+#define attrZaehl_num (16)
+#define attrOffset (17)
+#define attrScale (18)
+#define attrNumber_of_decimals (19)
+#define attrUnitdesignator (20)
+#define attrSelf_conf (21)
+#define attrIndustry_group (22)
+#define attrFunction (23)
+#define attrWanted_SA (24)
+#define attrFunc_Inst (25)
+#define attrECU_Inst (26)
+#define attrStore_SA_at_EEPROM_address (27)
+#define attrManufacturer_code (28)
+#define attrDevice_class (29)
+#define attrDevice_class_instance (30)
+#define attrWS_identity_number (31)
+#define attrFeature_set (32)
+#define attrPriority (33)
+#define attrDevProgVarName (34)
+#define attrProcProgVarName (35)
+#define attrCumulative_value (36)
+#define attrCommand_type (37)
+#define attrSetpoint (38)
+#define attrElement_number_combi (39)
 
-#define maxAttributeNames (38)
+#define maxAttributeNames (40)
 
 
 #define maxObjectTypesToCompare (maxObjectTypes)
@@ -143,6 +145,7 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
       "property_value",
       "lis",
       "wert_inst",
+      "zaehl_num",
       "offset",
       "scale",
       "number_of_decimals",
@@ -164,7 +167,8 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
       "proc_program_name",
       "cumulative_value",
       "command_type",
-      "is_setpoint"
+      "is_setpoint",
+      "combination_element_number"
 };
 
 #define maxTableID 7
@@ -220,7 +224,7 @@ char falseTable [maxFalseTable] [stringLength+1] = {
 char featureSetTable [maxFeatureSet] [stringLength+1] = {
     "SimpleMeasure",
     "SimpleSetpoint",
-    "SimpleMeasureSetpoint"
+    "SimpleSetpointSimpleMeasure"
 };
 
 #define maxCommandoTypes 4

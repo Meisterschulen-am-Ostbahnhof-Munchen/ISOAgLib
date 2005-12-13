@@ -86,6 +86,7 @@ build_utils/proc2iso/config.h.in -text
 build_utils/proc2iso/config.sub -text
 build_utils/proc2iso/configure -text
 build_utils/proc2iso/configure.in -text
+build_utils/proc2iso/doc/ISO-ProcessData-Objects.txt -text
 build_utils/proc2iso/html/XMLspec.html -text
 build_utils/proc2iso/html/doxygen.css -text
 build_utils/proc2iso/html/doxygen.png -text

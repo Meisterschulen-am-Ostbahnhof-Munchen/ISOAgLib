@@ -327,7 +327,10 @@ void init (const char* xmlFile)
   strcat (partFileName, "-bytestream.inc");
   char FileName[200];
   char *tempFileName = strrchr(partFileName, '/');
-  for (uint8_t i=0; i<strlen(tempFileName); i++) FileName[i]=tempFileName[i];
+  uint8_t i;
+  for (i=0; i<strlen(tempFileName); i++)
+    FileName[i]=tempFileName[i];
+  FileName[i] = '\0';
   partFileA = fopen (partFileName,"wt");
 
   fprintf (partFileA, "const HUGE_MEM uint8_t deviceDescription");
@@ -406,6 +409,10 @@ void defaultAttributes ()
   if (!attrIsGiven [attrWert_inst]) {
     vecstr_attrString [attrWert_inst] = "0xFF";
     attrIsGiven [attrWert_inst] = true;
+  }
+  if (!attrIsGiven [attrZaehl_num]) {
+    vecstr_attrString [attrZaehl_num] = "0xFF";
+    attrIsGiven [attrZaehl_num] = true;
   }
   if (!attrIsGiven [attrCumulative_value]) {
     vecstr_attrString [attrCumulative_value] = "false";
@@ -1212,7 +1219,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           fprintf(partFileB, "#if defined(USE_ISO_11783)\nconst IsoAgLib::ElementDDI_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
           for (uint8_t i=0; i<ui8_amount; i++)
           {
-            fprintf(partFileB, "\t{%s, %s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_dataForCombination[0].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
+            if (!attrIsGiven [attrElement_number_combi])
+              fprintf(partFileB, "\t{%s, %s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_dataForCombination[0].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
+            else
+              fprintf(partFileB, "\t{%s, %s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_attrString[attrElement_number_combi].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
           }
           fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, 0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}\n};\n#endif\n\n");
           for (uint8_t i=0; i<ui8_amount*3; i++)
@@ -1233,8 +1243,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
         if ( b_DinDPD )
           fprintf( partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
-                  (atoi(vecstr_attrString[attrWert_inst].c_str()) & 0x0F), ((atoi(vecstr_attrString[attrWert_inst].c_str()) >> 4) & 0xF),
-                  atoi(vecstr_constructor[2].c_str()));
+                  (stringtonumber(vecstr_attrString[attrWert_inst].c_str(), 0, -1) & 0x0F), ((stringtonumber(vecstr_attrString[attrWert_inst].c_str(), 0, -1) >> 4) & 0xF),
+                  stringtonumber(vecstr_attrString[attrZaehl_num].c_str(), 0, -1));
         else
           fprintf( partFileB, "0x0, 0x0, 0x0, 0x0, ");
 
