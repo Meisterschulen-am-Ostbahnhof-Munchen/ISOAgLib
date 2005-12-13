@@ -230,14 +230,14 @@
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Local/SimpleMeasure/iprocdatalocalsimplemeasure_c.h>
 
+#include "devicedescription/DeviceDescription.xml-func.h"
+
 // if following define is active, the version with HANDLER usage is compiled
 #define USE_PROC_HANDLER
 
 #ifdef USE_PROC_HANDLER
   #include <IsoAgLib/comm/Process/processdatachangehandler_c.h>
 #endif
-
-
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
@@ -253,6 +253,7 @@ uint32_t ui32_localDummyApplicationRate;
 /** dummy function to decide on acceptance of received setpoint */
 bool localIsAcceptableWorkState( const IsoAgLib::iDevKey_c& rc_deviceType, uint32_t rui32_setpointValue )
 { // just for demo - accept from other than device type 1 only values smaller than 255
+
   if ( rc_deviceType.getDevClass() < 2 )
   {
     ui8_localDummyWorkState = rui32_setpointValue;
@@ -308,6 +309,7 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 
 bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iDevKey_c& rc_setpointSender, bool rb_change)
 {
+
   if ( ! rb_change )
   { // don't handle succeeding setpoints which don't contain new value - maybe still relevant for other applications
     return false; // indicate that this information is not again handled - just ignored
@@ -359,67 +361,26 @@ MyProcDataHandler_c c_mySetpointHandler;
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   IsoAgLib::getIcanInstance().init( 0, 250 );
-  // variable for DEV_KEY
-  // default with fertilizer spreader mounted back
-  IsoAgLib::iDevKey_c c_myDevKey( 5, 0 );
-
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the c_myDevKey val through the pointer to c_myDevKey
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      b_func = 25,
-      b_wantedSa = 128,
-      b_funcInst = 0,
-      b_ecuInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
   // IsoAgLib can change the c_myDevKey val through the pointer to c_myDevKey
-  // ISO
-#ifdef USE_ISO_11783
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey,
-    b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-    ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
-#endif
-
   //  DIN:
 #if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
   uint8_t c_myName[] = "Hi-You";
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
-#endif
-
-#if defined(USE_ISO_11783)
-  const ElementDDI_s s_WorkStateElementDDI[2] =
-  {
-    // DDI 141, element 0
-    {141, 0, true, GeneralCommand_c::exactValue},
-    // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  };
-  const ElementDDI_s s_ApplicationRateElementDDI[3] =
-  {
-    //  DDI 1, element 2
-    {1, 2, true, GeneralCommand_c::exactValue},
-    //  DDI 2, element 4
-    {2, 4, false, GeneralCommand_c::exactValue},
-    // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  };
+  IsoAgLib::iIdentItem_c c_myIdent( &myDeviceDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
 #endif
 
 #ifdef USE_PROC_HANDLER
   // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   arr_procData[cui8_indexWorkState].init(
   #if defined(USE_ISO_11783)
-                                         s_WorkStateElementDDI,
+                                         s_workStateElementDDI,
   #endif
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
   #endif
-                                         c_myDevKey, 2, c_myDevKey, &c_myDevKey,
+                                         myDeviceDevKey, 2, myDeviceDevKey, &myDeviceDevKey,
   #ifdef USE_EEPROM_IO
                                          0xFFFF,
   #endif
@@ -428,45 +389,17 @@ int main()
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   arr_procData[cui8_indexApplicationRate].init(
   #if defined(USE_ISO_11783)
-                                               s_ApplicationRateElementDDI,
+                                               s_applicationRateElementDDI,
   #endif
   #if defined(USE_DIN_9684)
                                                0, 0x5, 0x0, 0xFF,
   #endif
-                                               c_myDevKey, 2, c_myDevKey, &c_myDevKey,
+                                               myDeviceDevKey, 2, myDeviceDevKey, &myDeviceDevKey,
   #ifdef USE_EEPROM_IO
                                                0xFFFF,
   #endif
                                                &c_mySetpointHandler);
 
-#else
-  // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
-  IsoAgLib::iProcDataLocalSimpleMeasure_c c_workState(
-  #if defined(USE_ISO_11783)
-                                         s_WorkStateElementDDI,
-  #endif
-  #if defined(USE_DIN_9684)
-                                         0, 0x1, 0x0, 0xFF,
-  #endif
-                                         c_myDevKey, 2, c_myDevKey, &c_myDevKey
-  #ifdef USE_EEPROM_IO
-                                         ,0xFFFF
-  #endif
-                                         );
-
-  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-  IsoAgLib::iProcDataLocalSimpleMeasure_c c_applicationRate(
-  #if defined(USE_ISO_11783)
-                                                s_ApplicationRateElementDDI,
-  #endif
-  #if defined(USE_DIN_9684)
-                                                0, 0x5, 0x0, 0xFF,
-  #endif
-                                                c_myDevKey, 2, c_myDevKey, &c_myDevKey
-  #ifdef USE_EEPROM_IO
-                                                ,0xFFFF
-  #endif
-                                                );
 #endif
 
 

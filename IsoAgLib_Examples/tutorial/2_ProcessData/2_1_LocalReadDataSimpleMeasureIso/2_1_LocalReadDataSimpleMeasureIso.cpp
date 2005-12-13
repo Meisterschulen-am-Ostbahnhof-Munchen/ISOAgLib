@@ -212,6 +212,7 @@
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Local/SimpleMeasure/iprocdatalocalsimplemeasure_c.h>
 
+#include "devicedescription/DeviceDescription.xml-func.h"
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
@@ -227,94 +228,15 @@ int32_t localGetApplicationRate() { return IsoAgLib::iSystem_c::getTime(); }
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   IsoAgLib::getIcanInstance().init( 0, 250 );
-  // variable for DEV_KEY
-  // default with fertilizer spreader mounted back
-  IsoAgLib::iDevKey_c c_myDevKey( 5, 0 );
-
-  // start address claim of the local member "IMI"
-  // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
-  bool b_selfConf = true;
-  uint8_t ui8_indGroup = 2,
-      b_func = 25,
-      b_wantedSa = 128,
-      b_funcInst = 0,
-      b_ecuInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
   // IsoAgLib can change the myDevKey val through the pointer to myDevKey
-  //  ISO:
-#ifdef USE_ISO_11783
-  IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey,
-    b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-    ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
-#endif
-
   //  DIN:
 #if defined(USE_DIN_9684) && !defined(USE_ISO_11783)
   uint8_t c_myName[] = "Hi-Me";
-  IsoAgLib::iIdentItem_c c_myIdent( &myDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
+  IsoAgLib::iIdentItem_c c_myIdent( &myDeviceDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
 #endif
-
-#if defined(USE_ISO_11783)
-  const ElementDDI_s s_onOff[2] =
-  {
-    // DDI 141, element 0
-    {141, 0, true, GeneralCommand_c::exactValue},
-    // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  };
-  const ElementDDI_s s_workWidth[2] =
-  {
-    // DDI 67, element 0
-    {67, 0, false, GeneralCommand_c::exactValue},
-    // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  };
-  const ElementDDI_s s_applicationRate[2] =
-  {
-    // DDI 2, element 0
-    {2, 0, false, GeneralCommand_c::exactValue},
-    // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  };
-#endif
-
-
-  // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=1, INST=0)
-  // with full working width (ZAEHLNUM 0xFF), POS, DEV_KEY of local data (can vary from previously given device class & instance),
-  // the pointer to myDevKey helps automatic update of DEV_KEY, mark this value as NOT cumulated (default)
-  IsoAgLib::iProcDataLocalSimpleMeasure_c c_myOnoff(
-    #ifdef USE_ISO_11783
-    s_onOff /*DDI*/,
-    #endif
-    #ifdef USE_DIN_9687
-    0, 0x1, 0x0, 0xFF,
-    #endif
-    c_myDevKey, 2, c_myDevKey, &c_myDevKey, false);
-
-  // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=3, INST=1)
-  IsoAgLib::iProcDataLocalSimpleMeasure_c c_myWorkWidth(
-    #ifdef USE_ISO_11783
-    s_workWidth /*DDI*/,
-    #endif
-    #ifdef USE_DIN_9687
-    0, 0x3, 0x1, 0xFF,
-    #endif
-    c_myDevKey, 2, c_myDevKey, &c_myDevKey, false);
-
-  // local process data for "application rate" [kg/ha] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=5, INST=0)
-  IsoAgLib::iProcDataLocalSimpleMeasure_c c_myApplicationRate(
-    #ifdef USE_ISO_11783
-    s_applicationRate /*DDI*/,
-    #endif
-    #ifdef USE_DIN_9687
-    0, 0x5, 0x0, 0xFF,
-    #endif
-    c_myDevKey, 2, c_myDevKey, &c_myDevKey, false);
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
