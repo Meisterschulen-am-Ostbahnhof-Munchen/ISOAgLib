@@ -545,11 +545,10 @@ function create_filelist( )
 			elif [ $USE_RS232_DRIVER = "rte" ] ; then
 				DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'"
 			elif [ $USE_RS232_DRIVER = "sys" ] ; then
-				PLATFORM=`uname`
-				if [ $PLATFORM = "Linux" ] ; then
-					DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'"
-				else
+			  if [ $USE_TARGET_SYSTEM == "pc_win32" ] ; then
 					DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
+				else
+					DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'"
 				fi
 	#			PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
 	#			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
