@@ -70,7 +70,7 @@
 
 // now include dependent on used target the suitable header
 #if defined(USE_RS232_OVER_CAN)
-#	include "../driver/rs232/impl/rs232_over_can.h"
+#	include "virtualDrivers/rs232/rs232_over_can.h"
 #else
 	#if defined(SYSTEM_PC)
 		#include "pc/rs232/rs232.h"
