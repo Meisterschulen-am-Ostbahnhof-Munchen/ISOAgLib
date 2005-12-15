@@ -84,7 +84,7 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   // first close if already configured
   close_rs232(comport);
 
-  hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
+  hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,NULL);
   if (!hCom[comport]) return HAL_CONFIG_ERR;
   // read old config
   if (!GetCommState(hCom[comport],&(oldConfig[comport]))) return HAL_CONFIG_ERR;
@@ -166,7 +166,7 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
   char com[] = "COMx";
 
   com[3] = comport + 1 + '0';
-  hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
+  hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,NULL);
   if (!hCom[comport]) return HAL_CONFIG_ERR;
 
   atexit(close_rs232);
@@ -178,7 +178,43 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
 
   return HAL_NO_ERR;
 }
-
+BOOL WriteABuffer(HANDLE &ref_hCom, const uint8_t * lpBuf, DWORD dwToWrite) 
+{ 
+     OVERLAPPED osWrite = {0}; 
+     DWORD dwWritten; 
+     DWORD dwRes; 
+     BOOL fRes; 
+     // Create this write operation's OVERLAPPED structure's hEvent. 
+     osWrite.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL); 
+     if (osWrite.hEvent == NULL) // error creating overlapped event handle 
+       return FALSE; 
+     // Issue write. 
+     if (!WriteFile(ref_hCom, lpBuf, dwToWrite, &dwWritten, &osWrite)) 
+     { 
+       if (GetLastError() != ERROR_IO_PENDING) 
+       { // WriteFile failed, but isn't delayed. Report error and abort. 
+         fRes = FALSE; 
+       } 
+       else // Write is pending. 
+         dwRes = WaitForSingleObject(osWrite.hEvent, INFINITE); 
+       switch(dwRes) { // OVERLAPPED structure's event has been signaled. 
+         case WAIT_OBJECT_0: 
+           if (!GetOverlappedResult(ref_hCom, &osWrite, &dwWritten, FALSE)) fRes = FALSE; 
+           else // Write operation completed successfully. 
+             fRes = TRUE; 
+           break; 
+         default: // An error has occurred in WaitForSingleObject. 
+           // This usually indicates a problem with the 
+           // OVERLAPPED structure's event handle. 
+           fRes = FALSE; 
+           break; 
+       } 
+     }
+     else // WriteFile completed immediately. 
+       fRes = TRUE;
+     CloseHandle(osWrite.hEvent); 
+     return fRes; 
+}
 /**
   send single uint8_t on RS232
   @param bByte data uint8_t to send
@@ -190,7 +226,8 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t rui8_channel)
   uint8_t b_data = bByte;
 
   DWORD x;
-  return (WriteFile(hCom[rui8_channel],&b_data,1,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
+  return WriteABuffer(hCom[rui8_channel], &b_data, 1)?HAL_NO_ERR:HAL_NOACT_ERR;
+  //(WriteFile(hCom[rui8_channel],&b_data,1,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 /**
   send string of n uint8_t on RS232
@@ -203,7 +240,8 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
 
   DWORD x;
-  return (WriteFile(hCom[rui8_channel],bpWrite,wNumber,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
+  return WriteABuffer(hCom[rui8_channel], bpWrite, wNumber)?HAL_NO_ERR:HAL_NOACT_ERR;
+  //(WriteFile(hCom[rui8_channel],bpWrite,wNumber,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 /**
   send '\0' terminated string on RS232
@@ -215,7 +253,8 @@ int16_t put_rs232String(const uint8_t *pbString, uint8_t rui8_channel)
   if ( rui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
 
   DWORD x;
-  return (WriteFile(hCom[rui8_channel],pbString,strlen((const char*)pbString),&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
+  return WriteABuffer(hCom[rui8_channel], pbString, strlen((const char*)pbString))?HAL_NO_ERR:HAL_NOACT_ERR;
+  //(WriteFile(hCom[rui8_channel],pbString,strlen((const char*)pbString),&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 
 

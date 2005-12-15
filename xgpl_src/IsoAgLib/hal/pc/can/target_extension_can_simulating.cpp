@@ -56,7 +56,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cctype>
-
+#ifdef WIN32
+       #include <windows.h>
+#endif
 namespace __HAL {
 
 // globale Filehandle fuer simulierte CAN Input
@@ -139,7 +141,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
         if ( getCanMsgBufCount( busInd, msgInd ) > 0 ) return true;
       }
     }
-    #if defined WIN32
+    #if defined(WIN32)
     Sleep( i32_waitSlice );
     #else
     usleep( i32_waitSlice * 1000 );

@@ -621,7 +621,7 @@
   *   the requested PGN is TIME_DATE_PGN )
   */
   #ifndef USE_PROCESS_YN
-    #define USE_PROCESS_YN YES
+    #define USE_PROCESS_YN NO
   #endif
   #if USE_PROCESS_YN == YES && !defined(USE_PROCESS)
     #define USE_PROCESS
