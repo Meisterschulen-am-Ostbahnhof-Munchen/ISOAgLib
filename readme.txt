@@ -168,7 +168,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 
 
 \section IndexChanges Changes
-\subsection 010TO020 0.1.0 to 0.2.0
+\subsection Change_A 0.1.0 to 0.2.0
 
 	- optional basic set of <b>ISO 11783</b> features
 	- possibility of baud rate auto sensing on power up and on BUS OFF errors (with configurable wait time).
@@ -179,12 +179,12 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- collection of all files which must be edited for hardware adoption to one directory and reduction of the amount
 			of affected files
 
-\subsection 020TO021 0.2.0 to 0.2.1
+\subsection Change_B 0.2.0 to 0.2.1
 
 	- corrected some small errors of synchronisation between working 0.1.0 tree and the new 0.2.0
 	- fixed bug in process data list management
 
-\subsection 021TO100rc1 0.2.1 to 1.0.0rc1
+\subsection Change_C 0.2.1 to 1.0.0rc1
 
 	- reorganization of source files
 	- ISO 11783 at larger extend:
@@ -203,7 +203,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	    type, which provides exactly the needed features
 	- simple integration of process data and local identity variables within the program scope -> better control of memory and activation
 
-\subsection 100rc1TO100rc2 1.0.0rc1 to 1.0.0rc2
+\subsection Change_D 1.0.0rc1 to 1.0.0rc2
 
 	- added several features to the project generation script to create project
 		files for the Open Source Win32 IDE "Dev-C++" and for the Tasking EDE
@@ -215,7 +215,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- integrated the virtual terminal mask handling tool <b>vt2iso</b> to Win32 build
 		with Dev-C++ ( added alternative image manipulation library usage for <b>Free Image</b> )
 
-\subsection 100rc2TO100rc3 1.0.0rc2 to 1.0.0rc3
+\subsection Change_E 1.0.0rc2 to 1.0.0rc3
 
 	- added support for Vector Informatik CAN driver libraries <b>CANLIB</b> and <b>XL Driver Library</b>
 		( integrate it in the project generation script, so that a Dev-C++ project can be simply created )
@@ -224,13 +224,13 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- enhanced some documentation
 	- fixed some small problems in interaction with CANoe virtual terminal ( thanks to Brad Cox )
 
-\subsection 100rc3TO100rc4 1.0.0rc3 to 1.0.0rc4
+\subsection Change_F 1.0.0rc3 to 1.0.0rc4
 
 	- reordered main documentation blocks
 	- changed device type of virtual terminal example to tillage so that
 		conflicts with the tractor instance of CANoe are avoided
 
-\subsection 100rc4TO100rc5 1.0.0rc4 to 1.0.0rc5
+\subsection Change_G 1.0.0rc4 to 1.0.0rc5
 
 	- added trigger request for claimed address as soon as local Ident is initialized as ISO 11783
 		( avoid <DeviceType, DeviceTypeInst> clash in IsoAgLib::IsoMonitor_c )
@@ -245,12 +245,12 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- fixed bug in FreeImage library handling, which places Y scanlines upsidedown in relation to
 		"usual" graphic algorithms -> thus the bitmaps were flipped vertically
 
-\subsection 100rc5TO100 1.0.0rc5 to 1.0.0
+\subsection Change_H 1.0.0rc5 to 1.0.0
 
 	- implemented all virtual terminal object types, which are defined in ISO 11783 ( thanks to Brad Cox )
 	- implemented simple access function for easy change control of Vt-Object attributes like colour
 
-\subsection 100TO110 1.0.0 to 1.1.0
+\subsection Change_I 1.0.0 to 1.1.0
 
 	- now using specific LAST CAN MESSAGE OBJECT of CAN controllers to store CAN messages
 		during CAN reconfiguration process for later process ( avoid loss of messages )<br>
@@ -300,7 +300,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 		you can use a XL CAN card with the CANLIB driver API also - this is the case for all users the maintainers know to date --> vector_canlib is
 		the right selection in the conf_foo feature setup files )
 
-\subsection 110TO120 1.1.0 to 1.2.0
+\subsection Change_J 1.1.0 to 1.2.0
 
 	- ISO<i><sub>AgLib</sub></i> is meanwhile used for several commercial projects, and more people are using it, so that
 	  the overall quality is raised to a fairly well level
@@ -308,8 +308,8 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	  download page for details)
 	- Process data communication is now update to the new ISO 11783 format
 	- XML based definition of Device Description
-	- creation of directly compileable Device Description with tool <b>proc2iso</b> which creates also the 
-	  class instantiations for all defined local process data, so that the list of construction parameters needn't be 
+	- creation of directly compileable Device Description with tool <b>proc2iso</b> which creates also the
+	  class instantiations for all defined local process data, so that the list of construction parameters needn't be
 		managed by hand
 	- Upload of Device Description correspomnding to current state of Task Controller
 	- fully functional support of Task Controller Client
