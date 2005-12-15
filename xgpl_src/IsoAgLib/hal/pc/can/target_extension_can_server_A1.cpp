@@ -1100,8 +1100,8 @@ static int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_ser
 #endif
 
   if (ret < 0) {
+    perror("ca_TransmitCanCard_1 ioctl");
     /* nothing to read or interrupted system call */
-    DEBUG_PRINT("CAN error: \n");
   }
 
   return 1;
