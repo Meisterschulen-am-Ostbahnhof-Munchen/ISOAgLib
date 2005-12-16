@@ -3,7 +3,12 @@
 /COPYING -text
 /ChangeLog -text
 /Doxyfile -text
+IsoAgLib_Examples/AutoDataCollector/TutPrjDescAutoDataCollector.txt -text
 IsoAgLib_Examples/config_AutoDataCollector.h -text
+IsoAgLib_Examples/config_imi_iso.h -text
+IsoAgLib_Examples/config_tractor.h -text
+IsoAgLib_Examples/imi_iso/TutPrjDescimi_iso.txt -text
+IsoAgLib_Examples/tractor/TutPrjDesctractor.txt -text
 IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/TutPrjDesc0_0_AddressClaimIso.txt -text
 IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/config_0_0_AddressClaimIso.h -text
 IsoAgLib_Examples/tutorial/0_SystemMgmt/0_1_AddressClaimDin/TutPrjDesc0_1_AddressClaimDin.txt -text
