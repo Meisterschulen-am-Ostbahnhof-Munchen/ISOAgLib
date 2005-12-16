@@ -153,7 +153,7 @@ void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& refc_stream, uint32_t& 
   IsoAgLib::convertIstream( refc_stream, i32_temp );
   // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
   double d_temp = ( double(i32_temp) * 4294967296.0 * 1.0e-4 );
-  refi32_result = int32_t( d_temp );
+  refui32_result = int32_t( d_temp );
   #endif
 }
 #endif // END of NMEA_2000_FAST_PACKET
@@ -1008,7 +1008,7 @@ namespace __IsoAgLib {
     int32_t i32_temp = 0;
     number2LittleEndianString( i32_temp, writeRef );
     // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
-    i32_temp = int32_t(double(refi32_src) * 1.0e+4 / 4294967296.0);
+    i32_temp = int32_t(double(refui32_result) * 1.0e+4 / 4294967296.0);
     number2LittleEndianString( i32_temp, writeRef );
     #endif
   }
