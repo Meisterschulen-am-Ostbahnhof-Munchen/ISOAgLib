@@ -204,3 +204,5 @@
 ../../../IsoAgLib_Examples/AutoDataCollector_Classes/getyflexmanager_c.h
 ../../../IsoAgLib_Examples/AutoDataCollector_Classes/gpsmanager_c.h
 ../../../IsoAgLib_Examples/config_AutoDataCollector.h
+../../../IsoAgLib_Examples/config_imi_iso.h
+../../../IsoAgLib_Examples/config_tractor.h

@@ -1,20 +1,20 @@
 // File: config_1_2_WriteIso.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_1_2_WriteIso"
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_1_2_WriteIso" 
 //            Perform changes direct in the feature and project setup file conf_1_2_WriteIso
 //  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_1_2_WriteIso" call,
 //                    if the corresponding value in isoaglib_config.h changed
-#define CAN_BUS_CNT 1
+#define CAN_BUS_CNT 1 
 
-#define CAN_BUS_USED 0
+#define CAN_BUS_USED 0 
 
-#define CAN_INSTANCE_CNT 1
+#define CAN_INSTANCE_CNT 1 
 
-#define PRT_INSTANCE_CNT 1
+#define PRT_INSTANCE_CNT 1 
 
-#define RS232_INSTANCE_CNT 1
+#define RS232_INSTANCE_CNT 1 
 
 // Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory.
 // Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian.
@@ -22,8 +22,8 @@
 // which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO and DIN ) - and other way.
 #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 
-#ifndef USE_BASE
-	#define USE_BASE
+#ifndef USE_BASE 
+	#define USE_BASE 
 #endif
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
@@ -38,17 +38,17 @@
 #ifndef NO
   #define NO 0
 #endif
-#ifndef USE_PROCESS_YN
-	#define USE_PROCESS_YN NO
+#ifndef USE_PROCESS_YN 
+	#define USE_PROCESS_YN NO 
 #endif
-#ifndef USE_EEPROM_IO_YN
-	#define USE_EEPROM_IO_YN NO
+#ifndef USE_EEPROM_IO_YN 
+	#define USE_EEPROM_IO_YN NO 
 #endif
-#ifndef USE_DATASTREAMS_IO_YN
-	#define USE_DATASTREAMS_IO_YN NO
+#ifndef USE_DATASTREAMS_IO_YN 
+	#define USE_DATASTREAMS_IO_YN NO 
 #endif
-#ifndef USE_ISO_11783
-	#define USE_ISO_11783
+#ifndef USE_ISO_11783 
+	#define USE_ISO_11783 
 #endif
 
 // The following configuration values can be overwritten.

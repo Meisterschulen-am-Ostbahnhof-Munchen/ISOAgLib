@@ -1,7 +1,7 @@
 [Project]
 FileName=AutoDataCollector__vector_canlib__sys.dev
 Name=AutoDataCollector
-UnitCount=204
+UnitCount=206
 Type=1
 Ver=1
 ObjFiles=
@@ -2079,6 +2079,26 @@ BuildCmd=
 
 [Unit204]
 FileName=../../../IsoAgLib_Examples/config_AutoDataCollector.h
+CompileCpp=1
+Folder=AutoDataCollector
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit205]
+FileName=../../../IsoAgLib_Examples/config_imi_iso.h
+CompileCpp=1
+Folder=AutoDataCollector
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit206]
+FileName=../../../IsoAgLib_Examples/config_tractor.h
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
