@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = AutoDataCollector
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples
+APP_INC = -I../../../IsoAgLib_Examples 
 BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
 BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
@@ -17,67 +17,76 @@ first: all
 
 ####### Files
 SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinservicemonitor_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvecttrusted_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinserviceitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinstopmanager_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinsystempkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvect_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinservicemonitor_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinserviceitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvect_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvecttrusted_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinsystempkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinstopmanager_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/gps_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/Remote/impl/procdataremotebase_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/Remote/StdSetpointElements/impl/setpointremote_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/Remote/StdMeasureElements/impl/measureprogremote_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measureprogbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/Remote/impl/procdataremotebase_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/Remote/StdMeasureElements/impl/measureprogremote_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/Remote/StdSetpointElements/impl/setpointremote_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traclight_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracmovesetpoint_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracaux_c.cpp  \
 		../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp  \
 		../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp  \
-		../../../IsoAgLib_Examples/autodatacollector.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp  \
+		../../../IsoAgLib_Examples/AutoDataCollector_Classes/defaultrecordconfig_c.cpp  \
+		../../../IsoAgLib_Examples/AutoDataCollector_Classes/getyflexmanager_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/gpsmanager_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/procdatamanager_c.cpp  \
-		../../../IsoAgLib_Examples/AutoDataCollector_Classes/defaultrecordconfig_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/specificrecordconfig_c.cpp  \
-		../../../IsoAgLib_Examples/AutoDataCollector_Classes/getyflexmanager_c.cpp
+		../../../IsoAgLib_Examples/autodatacollector.cpp  
 
 
 #Special Sources for CAN Server

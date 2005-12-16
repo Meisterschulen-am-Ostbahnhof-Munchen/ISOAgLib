@@ -17,35 +17,35 @@ first: all
 
 ####### Files
 SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinservicemonitor_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvecttrusted_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinserviceitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinstopmanager_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinsystempkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvect_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinservicemonitor_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinserviceitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvect_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvecttrusted_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinsystempkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinstopmanager_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
 		../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_2_AddressClaimFlexible/0_2_AddressClaimFlexible.cpp  

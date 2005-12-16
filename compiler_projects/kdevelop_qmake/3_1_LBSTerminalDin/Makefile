@@ -18,9 +18,9 @@ first: all
 ####### Files
 SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinservicemonitor_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvecttrusted_c.cpp  \
@@ -30,8 +30,8 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvect_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
@@ -41,19 +41,20 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleMeasureSetpoint/impl/procdatalocalsimplesetpointsimplemeasure_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleSetpointElements/impl/simplemanagesetpointlocal_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/DIN_Terminal/impl/dinmaskupload_c.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
@@ -62,6 +63,28 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
 		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_1_LBSTerminalDin/3_1_LBSTerminalDin.cpp  
 
+
+#Special Sources for CAN Server
+SOURCES_SERVER = ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
+
+#Special Rules for CAN Server
+OBJ_DIR_SERVER  = objects_server
+OBJECTS_SERVER = $(patsubst %.cpp,$(OBJ_DIR_SERVER)/%.o,$(notdir $(SOURCES_SERVER)))
+DEPS_SERVER := $(patsubst %.o,%.d,$(OBJECTS_SERVER))
+
+$(OBJ_DIR_SERVER)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_SERVER)/$$1!' > $@
+
+$(OBJ_DIR_SERVER)/%.o : $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) $(OBJ_DIR_SERVER)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.o,%,$@).cpp,$(SOURCES_SERVER))
+
+include $(DEPS_SERVER)
+
+can_server: $(OBJECTS_SERVER)
+	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS)
 ####### Some Standard Rules
 CC       = gcc
 CXX      = g++
@@ -73,7 +96,7 @@ LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
 LINK     = g++
-LFLAGS   =
+LFLAGS   = -pthread
 LIBS     = $(SUBLIBS)  $(BIOS_LIB)
 AR       = ar cqs
 RANLIB   =
@@ -119,7 +142,7 @@ $(OBJ_DIR)/%.o : $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) $(OB
 ####### Build rules
 deps : $(DEPS)
 
-all: Makefile $(TARGET)
+all: can_server Makefile $(TARGET)
 $(TARGET):  $(OBJECTS)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 
@@ -146,7 +169,7 @@ FORCE:
 
 ####### Install
 
-install:
+install: can_server
 
-uninstall:
+uninstall: can_server
 

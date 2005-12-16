@@ -7,6 +7,8 @@
 TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
 APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso 
+BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
+BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
 PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
 
@@ -15,71 +17,71 @@ first: all
 
 ####### Files
 SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectarchedbargraph_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlinearbargraph_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputstring_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectalarmmask_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectellipse_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectworkingset_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectbutton_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputstring_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputlist_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpicturegraphic_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputboolean_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinput_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstringvariable_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmeter_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfontattributes_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobject_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectline_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputnumber_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryinput_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectdatamask_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
+		../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp  \
-		../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectsoftkeymask_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectworkingset_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectellipse_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpicturegraphic_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlinearbargraph_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputstring_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectbutton_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputnumber_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmeter_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryfunction_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfontattributes_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobject_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectdatamask_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectauxiliaryinput_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputlist_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectarchedbargraph_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectmacro_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectalarmmask_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstringvariable_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectline_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputstring_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinput_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectfillattributes_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectnumbervariable_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectlineattributes_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputattributes_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectinputboolean_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectrectangle_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectcontainer_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
 		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp  

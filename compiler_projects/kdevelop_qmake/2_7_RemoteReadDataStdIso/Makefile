@@ -7,6 +7,8 @@
 TARGET = 2_7_RemoteReadDataStdIso
 ISOAGLIB_PATH = ../../..
 APP_INC = -I../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso 
+BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
+BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
 PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_2_7_RemoteReadDataStdIso.h
 
@@ -16,22 +18,23 @@ first: all
 ####### Files
 SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp  \
@@ -44,7 +47,8 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
@@ -54,6 +58,28 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
 		../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso/2_7_RemoteReadDataStdIso.cpp  
 
+
+#Special Sources for CAN Server
+SOURCES_SERVER = ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
+
+#Special Rules for CAN Server
+OBJ_DIR_SERVER  = objects_server
+OBJECTS_SERVER = $(patsubst %.cpp,$(OBJ_DIR_SERVER)/%.o,$(notdir $(SOURCES_SERVER)))
+DEPS_SERVER := $(patsubst %.o,%.d,$(OBJECTS_SERVER))
+
+$(OBJ_DIR_SERVER)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_SERVER)/$$1!' > $@
+
+$(OBJ_DIR_SERVER)/%.o : $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) $(OBJ_DIR_SERVER)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.o,%,$@).cpp,$(SOURCES_SERVER))
+
+include $(DEPS_SERVER)
+
+can_server: $(OBJECTS_SERVER)
+	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS)
 ####### Some Standard Rules
 CC       = gcc
 CXX      = g++
@@ -65,7 +91,7 @@ LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
 LINK     = g++
-LFLAGS   =
+LFLAGS   = -pthread
 LIBS     = $(SUBLIBS)  $(BIOS_LIB)
 AR       = ar cqs
 RANLIB   =
@@ -111,7 +137,7 @@ $(OBJ_DIR)/%.o : $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) $(OB
 ####### Build rules
 deps : $(DEPS)
 
-all: Makefile $(TARGET)
+all: can_server Makefile $(TARGET)
 $(TARGET):  $(OBJECTS)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 
@@ -138,7 +164,7 @@ FORCE:
 
 ####### Install
 
-install:
+install: can_server
 
-uninstall:
+uninstall: can_server
 
