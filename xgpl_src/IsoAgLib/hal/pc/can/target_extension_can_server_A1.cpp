@@ -1092,7 +1092,7 @@ static int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_ser
 
   int ret;
 
-  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
+  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
     ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_WRITE_MSG, &msg);
 
 #else
