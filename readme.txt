@@ -3,7 +3,7 @@
 <center>
 <h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
 <h1>Development of ISO 11783 and DIN 9684 Applications</h1>
-<h2>Copyright &copy; 1999 - 2004 Achim Spangler, Martin Wodok</h2>
+<h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
@@ -50,7 +50,7 @@
 \ref XMLProcSpec<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>11 January 2005<br>
+Last Update: <br>22 December 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -890,6 +890,14 @@ the spare free time of the developers and other experts in the user community. F
 reaction time for each issue ( question or bug report ), might contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 for individual service contracts.
 
+\subsection IndexCommercialEdition Commercial Editions
+The business model of ISO<i><sub>AgLib</sub></i> is comparable to <b>Red Hat</b> with their <i>free</i>
+<b><a href="http://www.fedora-linux.org/">Fedora Linux</a></b> and their commercial grade 
+<b><a href="http://www.redhat.com/">Red Hat Enterprise</a></b> edition. 
+While the versions of the free ISO<i><sub>AgLib</sub></i> edition are good working snapshots of the ongoing development,
+the commercial edition provides thoroughly tested and maintained (including bug fixes for older revisions) versions.
+Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for more information.
+
 \subsection IndexFeaturesOnRequest Integration of Requested Features
 As long as <a href="http://www.osb-ag.de">OSB AG</a> maintains the ISO<i><sub>AgLib</sub></i>, all received
 patches will be reviewed and merged into the reference version of the software. Additionally all feature
@@ -912,19 +920,23 @@ Some examples:
 \section IndexMaintainers Some information on the maintainers
 The ISO<i><sub>AgLib</sub></i> was initially created by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> who is now
 working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
-already about 60 engineers working in the three locations Munich, Stuttgart and Krefeld ( all in Germany; <b>state November 2004</b> ).<br>
+already more than 100 engineers working in the four locations Munich, Stuttgart, Krefeld and Hamburg ( all in Germany; <b>state December 2005</b> ).<br>
 The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
 Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
-	- AOA
-	- Avery Dennison
+	- AGCO GmbH / Fendt
+	- Apparatebau Gauting GmbH
+	- Avery Dennison Deutschland GmbH
+	- AZH GmbH
+	- BenQ Mobile GmbH & Co OHG
 	- EMAG
 	- FIDUCIA IT
 	- Fritzmeier
-	- Infineon
-	- MTU
+	- Infineon Technologies AG
+	- MTU Aero Engines
 	- Porsche
-	- Siemens
-	- ThyssenKrupp
+	- Robert Bosch GmbH
+	- Siemens AG
+	- ThyssenKrupp AutomotiveMechatronics GmbH
 	- Valeo
 
 
@@ -937,7 +949,7 @@ Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 <center>
 <h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
 <h1>Development of ISO 11783 and DIN 9684 Applications</h1>
-<h2>Copyright &copy; 1999 - 2004 Achim Spangler, Martin Wodok</h2>
+<h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
@@ -980,7 +992,7 @@ Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>11 January 2005<br>
+Last Update: <br>22 December 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -1153,7 +1165,7 @@ source and the contained informative text files.
 <center>
 <h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
 <h1>Development of ISO 11783 and DIN 9684 Applications</h1>
-<h2>Copyright &copy; 1999 - 2004 Achim Spangler, Martin Wodok</h2>
+<h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
@@ -1196,7 +1208,7 @@ source and the contained informative text files.
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>11 January 2005<br>
+Last Update: <br>22 December 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -1523,22 +1535,24 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
   --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
   --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                     target which is specified in the configuration file
-                                    ( "pc_linux"|"pc_win32"|"esx"|"imi"|"pm167"|"mitron167" ).
+                                    ( "pc_linux"|"pc_win32"|"esx"|"c2c"|"imi"|"pm167"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
-                                    ( "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib" ).
+                                    ( "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte" ).
+  --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
+  --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
 
-./update_makefile.sh parses the selected project configuration file and overwrites the default values for all contained settings.
+./compiler_projects/projectGeneration/update_makefile.sh parses the selected project configuration file and overwrites the default values for all contained settings.
 It collects then the corresponding files which can then be imported to an individual IDE.
 Additionally a project specific configuration header is created in the directory xgpl_src/Application_Config with the
 name scheme ".config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to ".config_<project_name>.h",
 the central configuration header xgpl_src/Application_Config/isoaglib_config.h will include this header.
-Please set additionally the SYSTEM_FOO for the wanted platform - $0 will output the correct define at the end of the
+Please set additionally the SYSTEM_FOO for the wanted platform - ./compiler_projects/projectGeneration/update_makefile.sh will output the correct define at the end of the
 run.
 Thus with these two DEFINE settings, the compiler can generate a clean running executable / HEX.
 
-Report bugs to <Achim.Spangler@osb-ag:de>.
+Report bugs to <Achim.Spangler@osb-ag.de>.
 
 \endcode
 
@@ -1600,10 +1614,12 @@ The following basic settings can be specified independent from hardware and feat
 		                           dynamic lists ( output on each list change )
 	- <b>PRJ_SEND_DEBUG</b> activate several IsoAgLib internal debugging on RS232
 	- <b>USE_FLOAT_DATA_TYPE</b> activate useage of float variable type ( avoid useage of float in subfunctions process data, RS232 output, GPS decode )
+	- <b>OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED</b> reduce HEAP useage size in favour of speed. This can lead to HEAP memory fragmentation in worst-case scenarios. Default is OFF.
 
 \subsubsection ConfBasicHwSetup Basic Hardware Setup
 The basic hardware setup of your target ( including CAN hardware/driver ) can be defined in this group.
 	- <b>USE_TARGET_SYSTEM</b> type of target system from list <i>{ "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167" }</i> or other coming supported HALs
+	- <b>USE_LITTLE_ENDIAN_CPU</b> enables several optimizations of number conversions, when a little endian CPU is used. Switch this flag to <b>off</b> when you use a big endian CPU.
 	- <b>USE_CAN_DRIVER</b> CAN driver to use from list <i>{ "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" }</i>,<br>
 			- where type "simulating" uses file based CAN simulation on each PC system target,
 			- target "pc_win32" allows additionally <i>{ "vector_canlib"|"vector_xl_drv_lib"|"sontheim" }</i> ( <b>again: use vector_canlib if your drivers were installed to a CANLIB directrory - this is independent of the name of the card!! </b>),
@@ -1622,6 +1638,7 @@ The basic hardware setup of your target ( including CAN hardware/driver ) can be
 	- <b>PRT_INSTANCE_CNT</b> count of CAN channels where the communication protocol shall be supported - the IsoAgLib can be used as gateway to
 	                          route traffic between the connected CAN interfaces ( or you could support DIN 9684 and ISO 11783 at two seperate
 	                          connectors in parallel time - this is really working in practise )
+	- <b>RS232_INSTANCE_CNT</b> defines amount of RS232 instances that are supported in parallel. When the ECU shall communicate on more than one channel, this variable has to be adopted to the channel amount.
 
 \subsubsection ConfCoreComm Core Communication Setup
 Setup of most important communication features:
@@ -1631,11 +1648,15 @@ Setup of most important communication features:
 	                     ( both ISO and DIN can be used in a project in parallel - e.g. decide on system init on used protocol )
 	- <b>PRJ_DIN_TERMINAL</b> selection of LBS+ Terminal support ( like Fendt Varioterminal ) ( only available if PRJ_DIN9684 is activated )
 	- <b>PRJ_BASE</b> gather base data like tractor speed, distance, ISO GPS, PTO RPM from BUS and make them available independent of receive time
-
+	- <b>PRJ_MULTIPACKET_STREAM_CHUNK</b> allows to specify the preferred way of receiving multi message data streams. If chunk (default) mode is active,
+	     the application can perform a parsing on-the-fly of each received burst. This allows to reduce the RAM useage for large
+			 data streams. But in case all data are parsed just after complete receive of all data bye, the <b>linear</b> receive mode
+			 is better. So switch chunk mode <b>off</b> in those cases.
+	
 \subsubsection ConProcData Process Data Communication Setup
 Setup of process data support:
 	- <b>PRJ_PROCESS</b> overall activation of process data support
-	- <b>PRJ_GPS</b> activation of DIN 9684 GPS data communication as used by DIN 9684 Fieldstar Terminals
+	- <b>PRJ_FIELDSTAR_GPS</b> activation of DIN 9684 GPS data communication as used by DIN 9684 Fieldstar Terminals
 	- <b>PROC_LOCAL</b> overall activation of local process data - local means that the corresponding ECU measures the data which can be requested by remote ECUs
 		- <b>PROC_LOCAL_STD</b> select standard local process data IsoAgLib::iProcDataLocal_c with measure programs and enhanced management of received setpoints
 		- <b>PROC_LOCAL_SIMPLE_MEASURE</b> select IsoAgLib::iProcDataLocalSimpleMeasure_c for local process data without measure programs to reduce
@@ -1673,7 +1694,9 @@ provided - and can be selected by the following configuration variables.
 		   --> try to reuse SA os last working session on next system start.<br>
 		   the application has only to specify to EEPROM address to handle the SA;
 		   IsoAgLib takes then care of storing and reloading the SA )
+	- <b>PRJ_DATASTREAMS</b> enables HAL based file I/O, so that applications with file access can be easily ported between targets with different methods for file access.
 	- <b>PRJ_RS232</b> select IsoAgLib::iRS232IO_c for RS232 output which can be used like the standard C++ iostreams
+	- <b>PRJ_RS232_OVER_CAN</b> provides a special RS232 HAL, that uses CAN messaging for sending and receiving RS232 messages.
 	- <b>PRJ_SENSOR_DIGITAL</b> select IsoAgLib::iDigitalO_c ( one instance/variable of this class per channel ) for digital On/Off input
 	     ( provides automatic range check which uses diagnose function of HAL - BIOS/OS - to check if current is in allowed interval );
 	     use IsoAgLib::iActorO_c for global access to all active IsoAgLib::iDigitalO_c instances
@@ -1804,7 +1827,7 @@ APP_SRC_FILE="0_0_AddressClaimIso.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# define relative path to the main directory of the IsoAgLib
+# define relative path to the main directory if the IsoAgLib
 # - i.e. where both xgpl_src and IsoAgLibExamples are located
 # - use relative path as seen from the work directory where the
 #   update_makefile.sh script is called and the conf_xy file is placed
@@ -1820,8 +1843,8 @@ ISO_AG_LIB_PATH="../.."
 # - DEBUG_CAN_BUFFER_FILLING for RS232 output of MAX amount of buffered CAN messages
 #   ( important to decide on amount of items in the BIOS/OS CAN receive buffer )
 # - DEBUG_HEAP_USEAGE for RS232 output of amount of bytes which are needed of one
-#   item in the different types of dynamic lists: IsoAgLib::MsgObj_c , IsoAgLib::FilterBox_c , IsoAgLib::IsoItem_c , IsoAgLib::DinItem_c ,
-#   IsoAgLib::MeasureSubprog_c , IsoAgLib::SetpointRegister_c ;
+#   item in the different types of dynamic lists: MsgObj_c , FilterBox_c , IsoItem_c , DinItem_c ,
+#   MeasureSubprog_c , SetpointRegister ;
 #   additionally print calculated amount of HEAP memory which is used by the several types of
 #   dynamic lists ( output on each list change )
 # PRJ_DEFINES=""
@@ -1837,16 +1860,27 @@ ISO_AG_LIB_PATH="../.."
 #   GPS decode )
 # USE_FLOAT_DATA_TYPE=0
 
+# select if HEAP usage should reduce size in favour of speed
+# ( default: maximize speed, which costs about 10KByte more HEAPSIZE,
+#            but avoids slow memory allocation in too small units )
+# OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
+
 # ###############################################################
 # Basic Hardware Setup
 # ###############################################################
 
 # select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
-# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"
+
+# specify integer number memory representation type: LITTLE or BIG ENDIAN
+# default is for most targets: LITTLE -> USE_LITTLE_ENDIAN_CPU=1
+# typical cases for BIG ENDIAN are some ARM and mostly all Motorola 68k and PowerPC CPUs
+# USE_LITTLE_ENDIAN_CPU=1
+
+# select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"|"sontheim"
-# only target "pc_linux" can us the driver "rte"
+# only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
+# only target "pc_linux" can us the driver "rte"|"linux_server_client"
 USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -1874,6 +1908,11 @@ else
   PRT_INSTANCE_CNT=1
 fi
 
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
 # ###############################################################
 # Core Communication Setup
 # ###############################################################
@@ -1884,6 +1923,14 @@ PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_DIN9684=0
 # PRJ_DIN_TERMINAL=0
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # select if base data like tractor speed, distance, ISO GPS, PTO RPM
 # shall be gathered from BUS ( either receive or send )
@@ -1900,30 +1947,30 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
 
 # select the feature set of the wanted local process data
 
-# select standard local process data IsoAgLib::iProcDataLocal_c with
+# select standard local process data iProcDataLocal_c with
 # measure programs and enhanced management of received setpoints
 # PROC_LOCAL_STD=0
 
-# select IsoAgLib::iProcDataLocalSimpleMeasure_c for
+# select iProcDataLocalSimpleMeasure_c for
 # local process data without measure programs to reduce
 # HEAP useage ( all measurement programs are stored on HEAP, as
 # amount of active programs depend on remote ECUs )
 # PROC_LOCAL_SIMPLE_MEASURE=0
 
-# select IsoAgLib::iProcDataLocalSimpleSetpoint_c for
+# select iProcDataLocalSimpleSetpoint_c for
 # local process data without selective reaction on received setpoints
 # ( simply store received setpoints and automatically ACK the receive of
 #   a setpoint )
 # PROC_LOCAL_SIMPLE_SETPOINT=0
 
-# select IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c for
+# select iProcDataLocalSimpleSetpointSimpleMeasure_c for
 # local process data with smallest resource needs - and most
 # restricted feature set
 # PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=0
@@ -1933,7 +1980,7 @@ PRJ_ISO11783=1
 
 # select the feature set of the wanted remote process data
 
-# select IsoAgLib::iProcDataRemote_c for remote process data which can
+# select iProcDataRemote_c for remote process data which can
 # use measure programs to request periodic measurement value update
 # and which provides setpoint management which can detect current master
 # setpoint ( setpoint which is ACKed by commanded device ) and the self
@@ -1944,26 +1991,26 @@ PRJ_ISO11783=1
 # satisfy both )
 # PROC_REMOTE_STD=0
 
-# select IsoAgLib::iProcDataRemoteSimpleMeasure_c if capable setpoint management
+# select iProcDataRemoteSimpleMeasure_c if capable setpoint management
 # is needed, but simple one shot measurement value request is enough
 # ( reduce HEAP useage, as the potential parallel active increments are
 #   stored in dynamic lists at HEAP )
 # PROC_REMOTE_SIMPLE_MEASURE=0
 
-# select IsoAgLib::iProcDataRemoteSimpleSetpoint_c if measurement programs are needed,
+# select iProcDataRemoteSimpleSetpoint_c if measurement programs are needed,
 # but no or only simple setpoint control is wanted
 # ( reduce memory useage, as no management data is needed for detection
 #   of active setpoint in relation to own setpoint wish )
 # PROC_REMOTE_SIMPLE_SETPOINT=0
 
-# select IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c if only
+# select iProcDataRemoteSimpleSetpointSimpleMeasure_c if only
 # one shot measurement value requests and no setpoint handling is needed
-# ( in relation to IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c
+# ( in relation to iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c
 #   the single setpoint and the single measurement value can represent
 #   different values )
 # PROC_REMOTE_SIMPLE_MEASURE_SETPOINT=0
 
-# select IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c for
+# select iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c for
 # a very simple approach on remote process data.
 # This is only useful if no distinguishing between setpoint and measurement
 # value is needed
@@ -1987,22 +2034,30 @@ PRJ_ISO11783=1
 #       IsoAgLib takes then care of storing and reloading the SA )
 # PRJ_EEPROM=0
 
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
 
-# select IsoAgLib::iDigitalO_c ( one instance/variable of this class per channel )
+# select special RS232 virtual driver HAL for RS232_over_CAN
+# activating this implicitly activates PRJ_RS232 with this special
+# HAL driver
+PRJ_RS232_OVER_CAN=1
+
+# select iDigitalO_c ( one instance/variable of this class per channel )
 # for digital On/Off input
 # ( provides automatic range check which uses diagnose function of HAL
 #  - BIOS/OS - to check if current is in allowed interval );
-# use IsoAgLib::iActorO_c for global access to all active IsoAgLib::iDigitalO_c instances
+# use iActorO_c for global access to all active iDigitalO_c instances
 # PRJ_SENSOR_DIGITAL=0
 
-# select IsoAgLib::iAnalogI_c for analog ( current or voltage ) sensor input.
-# or IsoAgLib::iAnalogIRangeCheck_c with enhanced automatic range check
+# select iAnalogI_c for analog ( current or voltage ) sensor input.
+# or iAnalogIRangeCheck_c with enhanced automatic range check
 # PRJ_SENSOR_ANALOG=0
 
-# select IsoAgLib::iCounterI_c for counter input.
+# select iCounterI_c for counter input.
 # the existing HAL implementations ( e.g. for ESX ) extend the BIOS/OS
 # function, as a IsoAgLib specific event counting for very low
 # event repetition rates is provided - the BIOS version is only
@@ -2010,25 +2065,15 @@ PRJ_ISO11783=1
 # PRJ_SENSOR_COUNTER=0
 
 # select if the digital output driver shall be integrated into the project.
-# you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
 # access on PWM output. This is completely independent from communication tasks,
 # but was created during research and is actively used by OSB AG for its own
 # projects
 # PRJ_ACTOR=0
 
-
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
-
-# optionally define path to qmake
-# if it can be automatically found by
-# + which qmake ( e.g. in search path for binaries )
-# + can be found with sys-cmd find beneath /usr/lib/qt*
-#   ( there should be only one version of qmake in this path
-#      -> if there are more qt installations, please manually define
-#          it by uncommenting and adopting the following line )
-# QMAKE_PATH=/usr/lib/qt3/bin/qmake
 
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
@@ -2096,9 +2141,6 @@ PRJ_ISO11783=1
 
 # SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
 # ( esp. Vector Informatik )
-# + Dev-C++ (esp. needed for Win32 CAN driver integration
-#             which is at the moment provided for
-#             Vector Informatik canlib43 and XL Driver Library )
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the WIN32 CAN libraries
 # IMPORTANT: Set the path to the directory where you installed
@@ -2141,7 +2183,6 @@ PRJ_ISO11783=1
 #   if the XL driver is selected --> DONT'T set the XL_ here again
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
-
 \endcode
 
 
@@ -2158,7 +2199,7 @@ PRJ_ISO11783=1
 <center>
 <h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
 <h1>Development of ISO 11783 and DIN 9684 Applications</h1>
-<h2>Copyright &copy; 1999 - 2004 Achim Spangler, Martin Wodok</h2>
+<h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
@@ -2201,7 +2242,7 @@ PRJ_ISO11783=1
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>11 January 2005<br>
+Last Update: <br>22 December 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2440,7 +2481,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 <center>
 <h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
 <h1>Development of ISO 11783 and DIN 9684 Applications</h1>
-<h2>Copyright &copy; 1999 - 2004 Achim Spangler, Martin Wodok</h2>
+<h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
@@ -2484,7 +2525,7 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>11 January 2005<br>
+Last Update: <br>22 December 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">
@@ -2557,7 +2598,7 @@ This is possible, if some basic strategies are used by all devices:
 <center>
 <h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
 <h1>Development of ISO 11783 and DIN 9684 Applications</h1>
-<h2>Copyright &copy; 1999 - 2004 Achim Spangler, Martin Wodok</h2>
+<h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
@@ -2600,7 +2641,7 @@ This is possible, if some basic strategies are used by all devices:
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
-Last Update: <br>11 January 2005<br>
+Last Update: <br>22 December 2005<br>
 by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
 <br></td>
 <td valign="Top">

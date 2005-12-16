@@ -174,7 +174,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -577,7 +577,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -980,7 +980,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -1383,7 +1383,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -1786,7 +1786,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -2189,7 +2189,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -2592,7 +2592,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -2995,7 +2995,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -3398,7 +3398,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -3801,7 +3801,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -4204,7 +4204,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -4607,7 +4607,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -5010,7 +5010,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -5413,7 +5413,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -5816,7 +5816,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -6219,7 +6219,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -6622,7 +6622,7 @@ PRJ_ISO11783=1
 # to decode GPS information from Fieldstar or LBS+ extension
 # ( if this and DIN9684 is activated, but PRJ_PROCESS is not
 #   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_GPS=0
+# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0

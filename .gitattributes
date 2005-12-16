@@ -905,6 +905,7 @@ compiler_projects/projectGeneration/conf_tractor -text
 compiler_projects/projectGeneration/kdevelop3Generic.kdevelop -text
 compiler_projects/projectGeneration/qmake_stub.pro -text
 compiler_projects/projectGeneration/vc6_prj_base.dsp eol=crlf
+doc/header.html -text
 doc/html/Diagramme/IsoAgLib-further_develop.gif -text
 doc/html/Diagramme/IsoAgLib-imi.gif -text
 doc/html/Diagramme/IsoAgLib-mixed-protocols.gif -text
@@ -913,6 +914,8 @@ doc/html/Diagramme/fertiliser_control_collaboration.gif -text
 doc/html/Diagramme/service_network_conflict.gif -text
 doc/html/Diagramme/service_network_connection.gif -text
 doc/html/Diagramme/service_network_flexibility.gif -text
+doc/html/IsoAgLib_logo.png -text svneol=unset#image/png
+doc/html/osb_logo.gif -text
 /isoaglib_examples.lsm -text
 simulated_io/analogInput_0 -text
 simulated_io/analogInput_1 -text

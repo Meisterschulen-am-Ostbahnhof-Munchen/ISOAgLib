@@ -111,7 +111,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + PRJ_DIN_TERMINAL ( specify if DIN LBS+ terminal is wanted; default 0; only possible if PRJ_DIN9684=1 -> error message if not )
 # + PRJ_BASE ( specify if Base data - main tractor information as PGN or LBS Base message - is wanted; default 0 )
 # + PRJ_PROCESS ( specify if process data should be used ; default 0 )
-#   - PRJ_GPS ( specify if process data based decode of Fieldstar or LBS+ GPS data is wanted; default 0 )
+#   - PRJ_FIELDSTAR_GPS ( specify if process data based decode of Fieldstar or LBS+ GPS data is wanted; default 0 )
 #   - PROC_LOCAL ( specify if local process data shall be used; must be activated for all types of local process data; default 0 )
 #     o PROC_LOCAL_STD ( specify if full featured local process data shall be used; default 0 )
 #     o PROC_LOCAL_SIMPLE_MEASURE ( specify if local process data with restricted measurement feature set shall be used; default 0 )
@@ -255,11 +255,11 @@ function check_set_correct_variables()
   if [ "A$PRJ_PROCESS" = "A" ] ; then
   	PRJ_PROCESS=0
   fi
-  if [ "A$PRJ_GPS" = "A" ] ; then
-  	PRJ_GPS=0
+  if [ "A$PRJ_FIELDSTAR_GPS" = "A" ] ; then
+  	PRJ_FIELDSTAR_GPS=0
   fi
-  if test $PRJ_GPS -gt 0 -a $PRJ_DIN9684 -gt 0 -a $PRJ_PROCESS -lt 1 ; then
-  	echo "Warning! DIN 9684 ( PRJ_DIN9684 ) and GPS ( PRJ_GPS ) is activated, but PROCESS ( PRJ_PROCESS ) not"
+  if test $PRJ_FIELDSTAR_GPS -gt 0 -a $PRJ_DIN9684 -gt 0 -a $PRJ_PROCESS -lt 1 ; then
+  	echo "Warning! DIN 9684 ( PRJ_DIN9684 ) and GPS ( PRJ_FIELDSTAR_GPS ) is activated, but PROCESS ( PRJ_PROCESS ) not"
     echo "--> PRJ_PROCESS is overwritten with 1 to activate it"
     PRJ_PROCESS=1
   fi
@@ -350,7 +350,7 @@ function create_filelist( )
     fi
     COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process/impl/generalcommand*'"
 
-		if [ $PRJ_GPS -gt 0 ] ; then
+		if [ $PRJ_FIELDSTAR_GPS -gt 0 ] ; then
 			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*gps_c.*'"
 		fi
 		if [ $PRJ_ISO11783 -gt 0 ] ; then
@@ -929,7 +929,7 @@ function create_autogen_project_config()
 		echo -e "#ifndef DEBUG $ENDLINE\t#define DEBUG $ENDLINE#endif" >> $CONFIG_NAME
 	fi
 
-	if [ $PRJ_GPS -gt 0 ] ; then
+	if [ $PRJ_FIELDSTAR_GPS -gt 0 ] ; then
 		echo -e "#ifndef USE_DIN_GPS $ENDLINE\t#define USE_DIN_GPS $ENDLINE#endif" >> $CONFIG_NAME
 	fi
 
