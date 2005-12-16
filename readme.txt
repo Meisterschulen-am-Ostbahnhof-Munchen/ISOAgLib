@@ -1,8 +1,6 @@
 /*! \mainpage Overview on Documentation of IsoAgLib
 
 <center>
-<h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
-<h1>Development of ISO 11783 and DIN 9684 Applications</h1>
 <h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
@@ -947,8 +945,6 @@ Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 /*! \page HowtoDownloadPage Documentation and Download of IsoAgLib
 
 <center>
-<h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
-<h1>Development of ISO 11783 and DIN 9684 Applications</h1>
 <h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
@@ -1163,8 +1159,6 @@ source and the contained informative text files.
 /*! \page GettingInstalled Getting Started with IsoAgLib
 
 <center>
-<h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
-<h1>Development of ISO 11783 and DIN 9684 Applications</h1>
 <h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
@@ -2197,8 +2191,6 @@ PRJ_RS232_OVER_CAN=1
 /*! \page information Development Targets and Usage Preconditions of IsoAgLib
 
 <center>
-<h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
-<h1>Development of ISO 11783 and DIN 9684 Applications</h1>
 <h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
@@ -2479,8 +2471,6 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 /*! \page outlook Further Development and Applications of IsoAgLib
 
 <center>
-<h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
-<h1>Development of ISO 11783 and DIN 9684 Applications</h1>
 <h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
@@ -2596,8 +2586,6 @@ This is possible, if some basic strategies are used by all devices:
 /*! \page disc_further Contact and Background Information on IsoAgLib
 
 <center>
-<h1>Object Oriented Program Library ISO<i><sub>AgLib</sub></i></h1>
-<h1>Development of ISO 11783 and DIN 9684 Applications</h1>
 <h2>Copyright &copy; 1999 - 2006 Achim Spangler, Martin Wodok</h2>
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
