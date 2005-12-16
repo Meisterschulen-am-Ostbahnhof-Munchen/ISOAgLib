@@ -205,6 +205,7 @@
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Local/Std/iprocdatalocal_c.h>
+#include <IsoAgLib/comm/Process/iprocess_c.h>
 
 #include "devicedescription/DeviceDescription.xml-func.h"
 
@@ -223,6 +224,9 @@ int32_t localGetApplicationRate() { return IsoAgLib::iSystem_c::getTime(); }
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   getIcanInstance().init( 0, 250 );
+
+  /// register pool of the device description
+  bool b_registerSuccess = IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(&c_myIdent, deviceDescription_de, ui32_arrayLength_de, true);
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of

@@ -222,6 +222,7 @@
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Local/Std/iprocdatalocal_c.h>
+#include <IsoAgLib/comm/Process/iprocess_c.h>
 
 #include "devicedescription/DeviceDescription.xml-func.h"
 
@@ -354,6 +355,9 @@ MyProcDataHandler_c c_mySetpointHandler;
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   IsoAgLib::getIcanInstance().init( 0, 250 );
+
+  /// register pool of the device description
+  bool b_registerSuccess = IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(&c_myIdent, deviceDescription_de, ui32_arrayLength_de, true);
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the

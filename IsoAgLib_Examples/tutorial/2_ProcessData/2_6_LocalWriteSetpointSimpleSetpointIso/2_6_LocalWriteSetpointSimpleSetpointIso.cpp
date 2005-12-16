@@ -218,6 +218,7 @@
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
 #include <IsoAgLib/comm/Process/proc_c.h>
 #include <IsoAgLib/comm/Process/Local/SimpleSetpoint/iprocdatalocalsimplesetpoint_c.h>
+#include <IsoAgLib/comm/Process/iprocess_c.h>
 
 #include "devicedescription/DeviceDescription.xml-func.h"
 
@@ -347,7 +348,7 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int
       if ( ! localIsAcceptableWorkState( rc_setpointSender, ri32_val ) )
       { // set the current measurement value as current used setpoint
         // ( this should be replaced by a more intelligent handling in a reall app )
-        arr_procData[cui8_indexWorkState].setSetpointMasterVal( getCurrentWorkState() );
+        arr_procData[cui8_indexWorkState].setSetpointMasterVal( int32_t(getCurrentWorkState()) );
       }
       else
       { // fine - accepted - maybe trigger some reaction ...
@@ -357,7 +358,7 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int
       if ( ! localIsAcceptableApplicationRate( rc_setpointSender, ri32_val ) )
       { // set the current measurement value as current used setpoint
         // ( this should be replaced by a more intelligent handling in a reall app )
-        arr_procData[cui8_indexApplicationRate].setSetpointMasterVal( getCurrentApplicationRate() );
+        arr_procData[cui8_indexApplicationRate].setSetpointMasterVal( int32_t(getCurrentApplicationRate()) );
       }
       else
       { // fine - accepted - maybe trigger some reaction ...
@@ -376,6 +377,9 @@ MyProcDataHandler_c c_mySetpointHandler;
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
   IsoAgLib::getIcanInstance().init( 0, 250 );
+
+  /// register pool of the device description
+  bool b_registerSuccess = IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(&c_myIdent, deviceDescription_de, ui32_arrayLength_de, true);
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
