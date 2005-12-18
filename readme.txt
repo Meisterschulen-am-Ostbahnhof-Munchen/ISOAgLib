@@ -1005,39 +1005,39 @@ parts.
 	<td valign="Top" nowrap="true" >Size [KByte]</td>
 </tr>
 <tr><td>Core components which are needed for almost all use cases</td>
-	<td>http://www.tec.wzw.tum.de/IsoAgLib/Download/coreArchiv-1.2.0.zip</td>
+	<td>http://projects.osb-ag.de/IsoAgLib/Download/coreArchiv-1.2.0.zip</td>
 	<td>4152</td>
 </tr>
 <tr><td>Documentation ( Can also be recreated with Doxygen )</td>
-	<td>http://www.tec.wzw.tum.de/IsoAgLib/Download/generatedHtmlDocuList-1.2.0.zip</td>
+	<td>http://projects.osb-ag.de/IsoAgLib/Download/generatedHtmlDocuList-1.2.0.zip</td>
 	<td>13125</td>
 </tr>
 <tr><td><b>Essential ISO 11783</b> specific parts including virtual terminal support</td>
-	<td>http://www.tec.wzw.tum.de/IsoAgLib/Download/isoArchiv-1.2.0.zip</td>
+	<td>http://projects.osb-ag.de/IsoAgLib/Download/isoArchiv-1.2.0.zip</td>
 	<td>408</td>
 </tr>
 <tr><td><b>Essential DIN 9684</b> specific parts including LBS+ terminal support/upload</td>
-	<td>http://www.tec.wzw.tum.de/IsoAgLib/Download/dinArchiv-1.2.0.zip</td>
+	<td>http://projects.osb-ag.de/IsoAgLib/Download/dinArchiv-1.2.0.zip</td>
 	<td>112</td>
 </tr>
 <tr><td>Data repository class with cached tractor information ( Base Data like tractor speed )</td>
-	<td>http://www.tec.wzw.tum.de/IsoAgLib/Download/baseArchiv-1.2.0.zip</td>
+	<td>http://projects.osb-ag.de/IsoAgLib/Download/baseArchiv-1.2.0.zip</td>
 	<td>28</td>
 </tr>
 <tr><td>Process Data support ( local and remote process data with several variants for different feature sets / resource requirements</td>
-	<td>http://www.tec.wzw.tum.de/IsoAgLib/Download/procArchiv-1.2.0.zip</td>
+	<td>http://projects.osb-ag.de/IsoAgLib/Download/procArchiv-1.2.0.zip</td>
 	<td>276</td>
 </tr>
 <tr><td>Supplementary driver with object oriented modelling of RS232 ( access functions like C++ iostreams )</td>
-	<td>http://www.tec.wzw.tum.de/IsoAgLib/Download/supplRs232Archiv-1.2.0.zip</td>
+	<td>http://projects.osb-ag.de/IsoAgLib/Download/supplRs232Archiv-1.2.0.zip</td>
 	<td>44</td>
 </tr>
 <tr><td>Supplementary driver with object oriented modelling of Actors ( effective diagnose based on properties for allowed current range )</td>
-	<td>http://www.tec.wzw.tum.de/IsoAgLib/Download/supplActorArchiv-1.2.0.zip</td>
+	<td>http://projects.osb-ag.de/IsoAgLib/Download/supplActorArchiv-1.2.0.zip</td>
 	<td>36</td>
 </tr>
 <tr><td>Supplementary driver with object oriented modelling of Sensors ( Digital and Analog Input )</td>
-	<td>http://www.tec.wzw.tum.de/IsoAgLib/Download/supplSensorArchiv-1.2.0.zip</td>
+	<td>http://projects.osb-ag.de/IsoAgLib/Download/supplSensorArchiv-1.2.0.zip</td>
 	<td>80</td>
 </tr>
 </table>
