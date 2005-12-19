@@ -124,6 +124,10 @@ public:
   //! check for end of input stream
   virtual bool eof() const { return c_targetHandle.eof(); };
 
+  //  Operation: getFileName
+  //! get file name
+  const std::string& getFileName() const { return str_openedFile; };
+
 private:
   TargetFileStreamInput_c c_targetHandle;
 
