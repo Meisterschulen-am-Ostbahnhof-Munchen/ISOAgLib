@@ -960,7 +960,9 @@ doc/html/Diagramme/service_network_conflict.gif -text
 doc/html/Diagramme/service_network_connection.gif -text
 doc/html/Diagramme/service_network_flexibility.gif -text
 doc/html/Images/IsoAgLib_logo.png -text svneol=unset#image/png
+doc/html/Images/ikb_logo.gif -text
 doc/html/Images/osb_logo.gif -text
+doc/html/Images/tum_logo.gif -text
 /isoaglib_examples.lsm -text
 simulated_io/analogInput_0 -text
 simulated_io/analogInput_1 -text
