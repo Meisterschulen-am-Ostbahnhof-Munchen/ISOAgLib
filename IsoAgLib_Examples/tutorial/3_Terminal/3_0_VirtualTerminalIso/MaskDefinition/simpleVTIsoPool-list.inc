@@ -3,10 +3,14 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectUnnamed1,
   &iVtObjectUnnamed2,
   &iVtObjectFontAttributesNormal6x8,
+  &iVtObjectFontAttributesNormal8x12,
   &iVtObjectFontAttributesNormal6x8R,
   &iVtObjectFontAttributesNormal6x8B,
   &iVtObjectFontAttributesNormal8x8,
   &iVtObjectFontAttributesNormal12x16,
+  &iVtObjectFontAttributesNormal16x16,
+  &iVtObjectFontAttributesNormal16x24,
+  &iVtObjectFontAttributesNormal24x32,
   &iVtObjectLineAttributesNormal,
   &iVtObjectLineAttributesDotted,
   &iVtObjectFontAttributesSKM6x8,
@@ -103,4 +107,4 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectsoftkeysAlarm
 };
 
-  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 102, 200, 60, 32) {};
+  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 106, 200, 60, 32) {};
