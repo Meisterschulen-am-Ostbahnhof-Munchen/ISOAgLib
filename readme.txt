@@ -1035,39 +1035,39 @@ parts.
 	<td valign="Top" nowrap="true" >Size [KByte]</td>
 </tr>
 <tr><td>Core components which are needed for almost all use cases</td>
-	<td>http://projects.osb-ag.de/IsoAgLib/Download/coreArchiv-1.2.0.zip</td>
+	<td>http://www.isoaglib.org/Download/coreArchiv-1.2.0.zip</td>
 	<td>4152</td>
 </tr>
 <tr><td>Documentation ( Can also be recreated with Doxygen )</td>
-	<td>http://projects.osb-ag.de/IsoAgLib/Download/generatedHtmlDocuList-1.2.0.zip</td>
+	<td>http://www.isoaglib.org/Download/generatedHtmlDocuList-1.2.0.zip</td>
 	<td>13125</td>
 </tr>
 <tr><td><b>Essential ISO 11783</b> specific parts including virtual terminal support</td>
-	<td>http://projects.osb-ag.de/IsoAgLib/Download/isoArchiv-1.2.0.zip</td>
+	<td>http://www.isoaglib.org/Download/isoArchiv-1.2.0.zip</td>
 	<td>408</td>
 </tr>
 <tr><td><b>Essential DIN 9684</b> specific parts including LBS+ terminal support/upload</td>
-	<td>http://projects.osb-ag.de/IsoAgLib/Download/dinArchiv-1.2.0.zip</td>
+	<td>http://www.isoaglib.org/Download/dinArchiv-1.2.0.zip</td>
 	<td>112</td>
 </tr>
 <tr><td>Data repository class with cached tractor information ( Base Data like tractor speed )</td>
-	<td>http://projects.osb-ag.de/IsoAgLib/Download/baseArchiv-1.2.0.zip</td>
+	<td>http://www.isoaglib.org/Download/baseArchiv-1.2.0.zip</td>
 	<td>28</td>
 </tr>
 <tr><td>Process Data support ( local and remote process data with several variants for different feature sets / resource requirements</td>
-	<td>http://projects.osb-ag.de/IsoAgLib/Download/procArchiv-1.2.0.zip</td>
+	<td>http://www.isoaglib.org/Download/procArchiv-1.2.0.zip</td>
 	<td>276</td>
 </tr>
 <tr><td>Supplementary driver with object oriented modelling of RS232 ( access functions like C++ iostreams )</td>
-	<td>http://projects.osb-ag.de/IsoAgLib/Download/supplRs232Archiv-1.2.0.zip</td>
+	<td>http://www.isoaglib.org/Download/supplRs232Archiv-1.2.0.zip</td>
 	<td>44</td>
 </tr>
 <tr><td>Supplementary driver with object oriented modelling of Actors ( effective diagnose based on properties for allowed current range )</td>
-	<td>http://projects.osb-ag.de/IsoAgLib/Download/supplActorArchiv-1.2.0.zip</td>
+	<td>http://www.isoaglib.org/Download/supplActorArchiv-1.2.0.zip</td>
 	<td>36</td>
 </tr>
 <tr><td>Supplementary driver with object oriented modelling of Sensors ( Digital and Analog Input )</td>
-	<td>http://projects.osb-ag.de/IsoAgLib/Download/supplSensorArchiv-1.2.0.zip</td>
+	<td>http://www.isoaglib.org/Download/supplSensorArchiv-1.2.0.zip</td>
 	<td>80</td>
 </tr>
 </table>
@@ -1085,11 +1085,11 @@ The ISO<i><sub>AgLib</sub></i> repository can be accessed in read-only mode with
 registration is needed. Due to the server configuration, the direct Subversion repository access is only
 possible with the following special ports:
 	- HTTP:
-		- HEAD: <a href="http://projects.osb-ag.de/svn/IsoAgLib/IsoAgLib">http://projects.osb-ag.de/svn/IsoAgLib/IsoAgLib</a>
-		- Releases: <a href="http://projects.osb-ag.de/svn/IsoAgLib/releases">http://projects.osb-ag.de/svn/IsoAgLib/releases</a>
+		- HEAD: <a href="http://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib">http://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib</a>
+		- Releases: <a href="http://www.isoaglib.org/svn/OSB/IsoAgLib/releases">http://www.isoaglib.org/svn/OSB/IsoAgLib/releases</a>
 	- HTTPS:
-		- HEAD: <a href="https://projects.osb-ag.de/svn/IsoAgLib/IsoAgLib">https://projects.osb-ag.de/svn/IsoAgLib/IsoAgLib</a>
-		- Releases: <a href="https://projects.osb-ag.de/svn/IsoAgLib/releases">https://projects.osb-ag.de/svn/IsoAgLib/releases</a>
+		- HEAD: <a href="https://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib">https://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib</a>
+		- Releases: <a href="https://www.isoaglib.org/svn/OSB/IsoAgLib/releases">https://www.isoaglib.org/svn/OSB/IsoAgLib/releases</a>
 
 You can access the repository by:
 	- normal Browser ( use the URL <a href="http://linux90.idvnet.de:8092/websvn">http://linux90.idvnet.de:8092/websvn</a>
