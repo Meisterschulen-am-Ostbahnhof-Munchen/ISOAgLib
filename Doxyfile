@@ -469,7 +469,7 @@ FILE_PATTERNS          = *.c \
                          *.hpp \
                          *.txt \
                          *.html \
-			 *.dox
+                         *.dox
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
 # should be searched for input files as well. Possible values are YES and NO. 
@@ -520,7 +520,7 @@ EXAMPLE_PATTERNS       = *.c \
                          *.hpp \
                          *.txt \
                          *.html \
-			 *.xml
+                         *.xml
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be 
 # searched for input files to be used with the \include or \dontinclude 
@@ -1279,4 +1279,4 @@ DOT_CLEANUP            = YES
 # The SEARCHENGINE tag specifies whether or not a search engine should be 
 # used. If set to NO the values of all tags below this one will be ignored.
 
-SEARCHENGINE           = NO
+SEARCHENGINE           = YES
