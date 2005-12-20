@@ -98,12 +98,18 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 
 \section IndexNews News
 
-\subsection IndexNewNews News after the 1.1.0 release
+\subsection IndexNewNews News for the 1.2.0 release
 	- <b>during 2005:</b> Virtual Terminal Client<br>
+		- <b>ISO<i><sub>AgLib</sub></i> has now its own internet domains: http://www.isoaglib.org , http://www.isoaglib.de and http://www.isoaglib.com</b>
 		- Added support for IsoLatin-9 fonts: Now for every font-attribute the "font_type" attribute has to be specified. (Please adapt your existing XML files.)<br>
 		- Support for font-downscaling (in case a pool is designed for >200x200 pixel VTs)<br>
 		- Cleanup on Tutorial3_0 example objectpool
 		- Several more handler functions, for more information see "Changes" section below<br>
+		- Vector-Informatik supports now the Open Sourve IDE <b>Dev-C++</b>, so that you don't need Microsoft compilers to get the tutorials to run with real CAN hardware on Win32.
+		- New area of customer only extension modules. Specific extansions like complete level 2 and 3 Tractor ECU Client and Server support need several additional functions, that
+			are at the moment only implemented by <a href="http://www.osb-ag.de/">OSB</a> and nobody else from the user community. Thus we don't want to give it for free to anonymous
+			parties (including our competitors). Researchers and potential customer may ask <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for granting personal access
+			to the repository.
 	- <b>2005-March:</b> MultiReceive classes implemented.
 
 
@@ -309,7 +315,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- creation of directly compileable Device Description with tool <b>proc2iso</b> which creates also the
 	  class instantiations for all defined local process data, so that the list of construction parameters needn't be
 		managed by hand
-	- Upload of Device Description correspomnding to current state of Task Controller
+	- Upload of Device Description corresponding to current state of Task Controller standardization
 	- fully functional support of Task Controller Client
 	- Multi-Receive is now supported, so that Input Text fields can be used in Virtual Terminal masks without restriction
 	- new Linux CAN HAL driver uses Linux kernel message queues for CAN communication between several local applications
@@ -326,6 +332,10 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- minor fixes in ISOTerminal_c's close(), changeNumericValue's reserved byte changed to 0xFF
 	- NACK-recognition implemented (eventEnterSafeState), although it needs some more testing
 	- reaction on language (change) PGN now possible via hook-function
+	- old class Base_c is subdivided into smaller classes, so that a project can better select the wanted information types.
+		This allows also the better maintenance of anonymous accessible parts (most of the features existing in pre-1.2.0 release)
+		and special extansions, that is only possible by personal access. Please contact  <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+		to gain access to the extension parts.
 
 
 \section IndexMainFeatures Main Features
@@ -890,8 +900,8 @@ for individual service contracts.
 
 \subsection IndexCommercialEdition Commercial Editions
 The business model of ISO<i><sub>AgLib</sub></i> is comparable to <b>Red Hat</b> with their <i>free</i>
-<b><a href="http://www.fedora-linux.org/">Fedora Linux</a></b> and their commercial grade 
-<b><a href="http://www.redhat.com/">Red Hat Enterprise</a></b> edition. 
+<b><a href="http://www.fedora-linux.org/">Fedora Linux</a></b> and their commercial grade
+<b><a href="http://www.redhat.com/">Red Hat Enterprise</a></b> edition.
 While the versions of the free ISO<i><sub>AgLib</sub></i> edition are good working snapshots of the ongoing development,
 the commercial edition provides thoroughly tested and maintained (including bug fixes for older revisions) versions.
 Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for more information.
@@ -937,6 +947,26 @@ Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 	- ThyssenKrupp AutomotiveMechatronics GmbH
 	- Valeo
 
+\subsection IndexMaintainersExtensions New customer and researcher only feature area
+Even if ISO<i><sub>AgLib</sub></i> provides already most of the features, a agricultural device
+may need, there are still some functions, that are missing or that could ease application
+development. But their implementation can only be done, when people of the user community
+do at least part of the work, some sponsoring companies give OSB some money to do this,
+or if OSB has the option to refinance the work with surrounding customer contracts (we want
+at least to avoid that our competitors take the code for free and make their own business without
+even asking us).
+
+Interested parties don't have to pay much money, as we are mostly interested in information about
+everybody who uses those additional features. So don't hesitate to contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+for registration to get access to the <b>EXT</b> part of ISO<i><sub>AgLib</sub></i>.
+
+The following areas are examples for such extensions:
+	- tractor data level 2 + 3 server
+		- <i>iTracLight_c</i> for lightning information and control
+		- <i>iTracMoveSetpoint_c</i> for control of tractor moving parameters by implement
+		- <i>iTracPtoSetpoint_c</i> for control of PTO settings by implement
+		- <i>iTracAux_c</i> for management of axiliary valves of tractor ( control and information )
+	- additional features for virtual terminal access like multi language framework (simple definition of variable language depend parts of the mask pool)
 
 </td></tr>
   </table>
@@ -1646,7 +1676,7 @@ Setup of most important communication features:
 	     the application can perform a parsing on-the-fly of each received burst. This allows to reduce the RAM useage for large
 			 data streams. But in case all data are parsed just after complete receive of all data bye, the <b>linear</b> receive mode
 			 is better. So switch chunk mode <b>off</b> in those cases.
-	
+
 \subsubsection ConProcData Process Data Communication Setup
 Setup of process data support:
 	- <b>PRJ_PROCESS</b> overall activation of process data support
