@@ -111,7 +111,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- <b>2005-March:</b> MultiReceive classes implemented.
 
 
-\subsection IndexNewNews News before the 1.1.0 release
+\subsection IndexNews_A News before the 1.1.0 release
 	- <b>2004-11-15:</b> Create new email list for email exchange within user community so that users can help each other, and
 		can discuss changes there, before somebody starts implementing the change<br>
 		- subscribe at <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib</a>
