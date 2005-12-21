@@ -5,53 +5,51 @@
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="2">
-<tr><td valign="Top" nowrap="true" >
-<h4>Table of Contents:</h4>
-\ref IndexWhereToStart<br>
-\ref IndexNews<br>
-\ref IndexChanges<br>
-\ref IndexMainFeatures<br>
-\ref IndexMemoryUsage<br>
-\ref IndexStructuralOverview<br>
-\ref IndexLicenseConditions<br>
-\ref IndexAchnowledgements<br>
-\ref IndexInitialSupport<br>
-\ref IndexIsoVtExtension<br>
-\ref IndexFirstWin32Users<br>
-\ref IndexAuthors<br>
-\ref IndexMaintainers<br>
-\ref IndexSupport<br>
-\ref IndexTodo<br>
-\ref IndexUsingProjects<br>
-\ref HowtoDownload<br>
-\ref HowtoAccessRepository<br>
-\ref HowtoContribute<br>
-\ref HowtoGetHelp<br>
-\ref HowtoCreateDoc<br>
-\ref HowtoLearnIsoAgLib<br>
-\ref HowtoSetupCompilerTools<br>
-\ref InstallIsoToolVt2Iso<br>
-\ref HowtoCreateProjectFiles<br>
-\ref InfGeneralInformation<br>
-\ref InfAgentNetwork<br>
-\ref InfServiceNetwork<br>
-\ref InfRequirements<br>
-\ref FurtherDevelopment<br>
-\ref FurtherExamples<br>
-\ref QuestionsAnswers<br>
-\ref FurtherReading<br>
-<br>
+<div id="menu">
+<ul>
+<li> \ref IndexWhereToStart
+<li> \ref IndexNews
+<li> \ref IndexChanges
+<li> \ref IndexMainFeatures
+<li> \ref IndexMemoryUsage
+<li> \ref IndexStructuralOverview
+<li> \ref IndexLicenseConditions
+<li> \ref IndexAchnowledgements
+<li> \ref IndexInitialSupport
+<li> \ref IndexIsoVtExtension
+<li> \ref IndexFirstWin32Users
+<li> \ref IndexAuthors
+<li> \ref IndexMaintainers
+<li> \ref IndexSupport
+<li> \ref IndexTodo
+<li> \ref IndexUsingProjects
+<li> \ref HowtoDownload
+<li> \ref HowtoAccessRepository
+<li> \ref HowtoContribute
+<li> \ref HowtoGetHelp
+<li> \ref HowtoCreateDoc
+<li> \ref HowtoLearnIsoAgLib
+<li> \ref HowtoSetupCompilerTools
+<li> \ref InstallIsoToolVt2Iso
+<li> \ref HowtoCreateProjectFiles
+<li> \ref InfGeneralInformation
+<li> \ref InfAgentNetwork
+<li> \ref InfServiceNetwork
+<li> \ref InfRequirements
+<li> \ref FurtherDevelopment
+<li> \ref FurtherExamples
+<li> \ref QuestionsAnswers
+<li> \ref FurtherReading
+</ul>
 &nbsp;<br>
+Last Update: <br>22 December 2005 by<br>
+<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a><br>
+</div>
+
 <h4>Most often needed lookup-links:</h4>
 \ref XMLspec<br>
 \ref XMLProcSpec<br>
 &nbsp;<br>
-&nbsp;<br>
-Last Update: <br>22 December 2005<br>
-by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-<br></td>
-<td valign="Top">
 &nbsp;<br>
 \section IndexWhereToStart Where to Start Learning IsoAgLib
 \subsection IndexGettingOverview Where to Get an Overview
@@ -968,8 +966,6 @@ The following areas are examples for such extensions:
 		- <i>iTracAux_c</i> for management of axiliary valves of tractor ( control and information )
 	- additional features for virtual terminal access like multi language framework (simple definition of variable language depend parts of the mask pool)
 
-</td></tr>
-  </table>
 */
 
 /*! \page HowtoDownloadPage Documentation and Download of IsoAgLib
@@ -979,49 +975,48 @@ The following areas are examples for such extensions:
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="2">
-<tr><td valign="Top" nowrap="true" >
-\ref IndexWhereToStart<br>
-\ref IndexNews<br>
-\ref IndexChanges<br>
-\ref IndexMainFeatures<br>
-\ref IndexMemoryUsage<br>
-\ref IndexStructuralOverview<br>
-\ref IndexLicenseConditions<br>
-\ref IndexAchnowledgements<br>
-\ref IndexInitialSupport<br>
-\ref IndexIsoVtExtension<br>
-\ref IndexFirstWin32Users<br>
-\ref IndexAuthors<br>
-\ref IndexMaintainers<br>
-\ref IndexSupport<br>
-\ref IndexTodo<br>
-\ref IndexUsingProjects<br>
-\ref HowtoDownload<br>
-\ref HowtoAccessRepository<br>
-\ref HowtoContribute<br>
-\ref HowtoGetHelp<br>
-\ref HowtoCreateDoc<br>
-\ref HowtoLearnIsoAgLib<br>
-\ref HowtoSetupCompilerTools<br>
-\ref InstallIsoToolVt2Iso<br>
-\ref HowtoCreateProjectFiles<br>
-\ref InfGeneralInformation<br>
-\ref InfAgentNetwork<br>
-\ref InfServiceNetwork<br>
-\ref InfRequirements<br>
-\ref FurtherDevelopment<br>
-\ref FurtherExamples<br>
-\ref QuestionsAnswers<br>
-\ref FurtherReading<br>
-<br>
+
+<div id="menu">
+<ul>
+<li> \ref IndexWhereToStart
+<li> \ref IndexNews
+<li> \ref IndexChanges
+<li> \ref IndexMainFeatures
+<li> \ref IndexMemoryUsage
+<li> \ref IndexStructuralOverview
+<li> \ref IndexLicenseConditions
+<li> \ref IndexAchnowledgements
+<li> \ref IndexInitialSupport
+<li> \ref IndexIsoVtExtension
+<li> \ref IndexFirstWin32Users
+<li> \ref IndexAuthors
+<li> \ref IndexMaintainers
+<li> \ref IndexSupport
+<li> \ref IndexTodo
+<li> \ref IndexUsingProjects
+<li> \ref HowtoDownload
+<li> \ref HowtoAccessRepository
+<li> \ref HowtoContribute
+<li> \ref HowtoGetHelp
+<li> \ref HowtoCreateDoc
+<li> \ref HowtoLearnIsoAgLib
+<li> \ref HowtoSetupCompilerTools
+<li> \ref InstallIsoToolVt2Iso
+<li> \ref HowtoCreateProjectFiles
+<li> \ref InfGeneralInformation
+<li> \ref InfAgentNetwork
+<li> \ref InfServiceNetwork
+<li> \ref InfRequirements
+<li> \ref FurtherDevelopment
+<li> \ref FurtherExamples
+<li> \ref QuestionsAnswers
+<li> \ref FurtherReading
+</ul>
 &nbsp;<br>
-&nbsp;<br>
-&nbsp;<br>
-Last Update: <br>22 December 2005<br>
-by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-<br></td>
-<td valign="Top">
+Last Update: <br>22 December 2005 by<br>
+<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a><br>
+</div>
+
 
 \section HowtoDownload HOWTO Identify and download needed archives
 
@@ -1179,9 +1174,6 @@ source and the contained informative text files.
 <li>Let Doxygen create the documentation with the config file "Doxyfile" which is located in the project root directory
 </ol>
 
-
-</td></tr>
-  </table>
 */
 
 
@@ -1193,49 +1185,47 @@ source and the contained informative text files.
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="2">
-<tr><td valign="Top" nowrap="true" >
-\ref IndexWhereToStart<br>
-\ref IndexNews<br>
-\ref IndexChanges<br>
-\ref IndexMainFeatures<br>
-\ref IndexMemoryUsage<br>
-\ref IndexStructuralOverview<br>
-\ref IndexLicenseConditions<br>
-\ref IndexAchnowledgements<br>
-\ref IndexInitialSupport<br>
-\ref IndexIsoVtExtension<br>
-\ref IndexFirstWin32Users<br>
-\ref IndexAuthors<br>
-\ref IndexMaintainers<br>
-\ref IndexSupport<br>
-\ref IndexTodo<br>
-\ref IndexUsingProjects<br>
-\ref HowtoDownload<br>
-\ref HowtoAccessRepository<br>
-\ref HowtoContribute<br>
-\ref HowtoGetHelp<br>
-\ref HowtoCreateDoc<br>
-\ref HowtoLearnIsoAgLib<br>
-\ref HowtoSetupCompilerTools<br>
-\ref InstallIsoToolVt2Iso<br>
-\ref HowtoCreateProjectFiles<br>
-\ref InfGeneralInformation<br>
-\ref InfAgentNetwork<br>
-\ref InfServiceNetwork<br>
-\ref InfRequirements<br>
-\ref FurtherDevelopment<br>
-\ref FurtherExamples<br>
-\ref QuestionsAnswers<br>
-\ref FurtherReading<br>
-<br>
+
+<div id="menu">
+<ul>
+<li> \ref IndexWhereToStart
+<li> \ref IndexNews
+<li> \ref IndexChanges
+<li> \ref IndexMainFeatures
+<li> \ref IndexMemoryUsage
+<li> \ref IndexStructuralOverview
+<li> \ref IndexLicenseConditions
+<li> \ref IndexAchnowledgements
+<li> \ref IndexInitialSupport
+<li> \ref IndexIsoVtExtension
+<li> \ref IndexFirstWin32Users
+<li> \ref IndexAuthors
+<li> \ref IndexMaintainers
+<li> \ref IndexSupport
+<li> \ref IndexTodo
+<li> \ref IndexUsingProjects
+<li> \ref HowtoDownload
+<li> \ref HowtoAccessRepository
+<li> \ref HowtoContribute
+<li> \ref HowtoGetHelp
+<li> \ref HowtoCreateDoc
+<li> \ref HowtoLearnIsoAgLib
+<li> \ref HowtoSetupCompilerTools
+<li> \ref InstallIsoToolVt2Iso
+<li> \ref HowtoCreateProjectFiles
+<li> \ref InfGeneralInformation
+<li> \ref InfAgentNetwork
+<li> \ref InfServiceNetwork
+<li> \ref InfRequirements
+<li> \ref FurtherDevelopment
+<li> \ref FurtherExamples
+<li> \ref QuestionsAnswers
+<li> \ref FurtherReading
+</ul>
 &nbsp;<br>
-&nbsp;<br>
-&nbsp;<br>
-Last Update: <br>22 December 2005<br>
-by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-<br></td>
-<td valign="Top">
+Last Update: <br>22 December 2005 by<br>
+<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a><br>
+</div>
 
 
 \section HowtoLearnIsoAgLib HOWTO Learn Usage of IsoAgLib
@@ -2209,12 +2199,6 @@ PRJ_RS232_OVER_CAN=1
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 \endcode
 
-
-
-
-
-</td></tr>
-  </table>
 */
 
 
@@ -2225,49 +2209,47 @@ PRJ_RS232_OVER_CAN=1
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="2">
-<tr><td valign="Top" nowrap="true" >
-\ref IndexWhereToStart<br>
-\ref IndexNews<br>
-\ref IndexChanges<br>
-\ref IndexMainFeatures<br>
-\ref IndexMemoryUsage<br>
-\ref IndexStructuralOverview<br>
-\ref IndexLicenseConditions<br>
-\ref IndexAchnowledgements<br>
-\ref IndexInitialSupport<br>
-\ref IndexIsoVtExtension<br>
-\ref IndexFirstWin32Users<br>
-\ref IndexAuthors<br>
-\ref IndexMaintainers<br>
-\ref IndexSupport<br>
-\ref IndexTodo<br>
-\ref IndexUsingProjects<br>
-\ref HowtoDownload<br>
-\ref HowtoAccessRepository<br>
-\ref HowtoContribute<br>
-\ref HowtoGetHelp<br>
-\ref HowtoCreateDoc<br>
-\ref HowtoLearnIsoAgLib<br>
-\ref HowtoSetupCompilerTools<br>
-\ref InstallIsoToolVt2Iso<br>
-\ref HowtoCreateProjectFiles<br>
-\ref InfGeneralInformation<br>
-\ref InfAgentNetwork<br>
-\ref InfServiceNetwork<br>
-\ref InfRequirements<br>
-\ref FurtherDevelopment<br>
-\ref FurtherExamples<br>
-\ref QuestionsAnswers<br>
-\ref FurtherReading<br>
-<br>
+
+<div id="menu">
+<ul>
+<li> \ref IndexWhereToStart
+<li> \ref IndexNews
+<li> \ref IndexChanges
+<li> \ref IndexMainFeatures
+<li> \ref IndexMemoryUsage
+<li> \ref IndexStructuralOverview
+<li> \ref IndexLicenseConditions
+<li> \ref IndexAchnowledgements
+<li> \ref IndexInitialSupport
+<li> \ref IndexIsoVtExtension
+<li> \ref IndexFirstWin32Users
+<li> \ref IndexAuthors
+<li> \ref IndexMaintainers
+<li> \ref IndexSupport
+<li> \ref IndexTodo
+<li> \ref IndexUsingProjects
+<li> \ref HowtoDownload
+<li> \ref HowtoAccessRepository
+<li> \ref HowtoContribute
+<li> \ref HowtoGetHelp
+<li> \ref HowtoCreateDoc
+<li> \ref HowtoLearnIsoAgLib
+<li> \ref HowtoSetupCompilerTools
+<li> \ref InstallIsoToolVt2Iso
+<li> \ref HowtoCreateProjectFiles
+<li> \ref InfGeneralInformation
+<li> \ref InfAgentNetwork
+<li> \ref InfServiceNetwork
+<li> \ref InfRequirements
+<li> \ref FurtherDevelopment
+<li> \ref FurtherExamples
+<li> \ref QuestionsAnswers
+<li> \ref FurtherReading
+</ul>
 &nbsp;<br>
-&nbsp;<br>
-&nbsp;<br>
-Last Update: <br>22 December 2005<br>
-by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-<br></td>
-<td valign="Top">
+Last Update: <br>22 December 2005 by<br>
+<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a><br>
+</div>
 
 \section InfGeneralInformation General Information
 The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic process data recording within the research group
@@ -2494,8 +2476,6 @@ are not familiar with C++ and the ISO<i><sub>AgLib</sub></i>) should contact <a 
  to establish commercial support contracts including training, project attendance and ISO<i><sub>AgLib</sub></i> ISO 900x certification.<br>
 <br><b>
 Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should start with the <a href="examplex.html">tutorial examples</a>.</b><br>
-</td></tr>
-  </table>
 */
 
 /*! \page outlook Further Development and Applications of IsoAgLib
@@ -2506,49 +2486,47 @@ Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should s
 </center>
 
 
-<table width="100%" border="0" cellspacing="0" cellpadding="2">
-<tr><td valign="Top" nowrap="true" >
-\ref IndexWhereToStart<br>
-\ref IndexNews<br>
-\ref IndexChanges<br>
-\ref IndexMainFeatures<br>
-\ref IndexMemoryUsage<br>
-\ref IndexStructuralOverview<br>
-\ref IndexLicenseConditions<br>
-\ref IndexAchnowledgements<br>
-\ref IndexInitialSupport<br>
-\ref IndexIsoVtExtension<br>
-\ref IndexFirstWin32Users<br>
-\ref IndexAuthors<br>
-\ref IndexMaintainers<br>
-\ref IndexSupport<br>
-\ref IndexTodo<br>
-\ref IndexUsingProjects<br>
-\ref HowtoDownload<br>
-\ref HowtoAccessRepository<br>
-\ref HowtoContribute<br>
-\ref HowtoGetHelp<br>
-\ref HowtoCreateDoc<br>
-\ref HowtoLearnIsoAgLib<br>
-\ref HowtoSetupCompilerTools<br>
-\ref InstallIsoToolVt2Iso<br>
-\ref HowtoCreateProjectFiles<br>
-\ref InfGeneralInformation<br>
-\ref InfAgentNetwork<br>
-\ref InfServiceNetwork<br>
-\ref InfRequirements<br>
-\ref FurtherDevelopment<br>
-\ref FurtherExamples<br>
-\ref QuestionsAnswers<br>
-\ref FurtherReading<br>
-<br>
+
+<div id="menu">
+<ul>
+<li> \ref IndexWhereToStart
+<li> \ref IndexNews
+<li> \ref IndexChanges
+<li> \ref IndexMainFeatures
+<li> \ref IndexMemoryUsage
+<li> \ref IndexStructuralOverview
+<li> \ref IndexLicenseConditions
+<li> \ref IndexAchnowledgements
+<li> \ref IndexInitialSupport
+<li> \ref IndexIsoVtExtension
+<li> \ref IndexFirstWin32Users
+<li> \ref IndexAuthors
+<li> \ref IndexMaintainers
+<li> \ref IndexSupport
+<li> \ref IndexTodo
+<li> \ref IndexUsingProjects
+<li> \ref HowtoDownload
+<li> \ref HowtoAccessRepository
+<li> \ref HowtoContribute
+<li> \ref HowtoGetHelp
+<li> \ref HowtoCreateDoc
+<li> \ref HowtoLearnIsoAgLib
+<li> \ref HowtoSetupCompilerTools
+<li> \ref InstallIsoToolVt2Iso
+<li> \ref HowtoCreateProjectFiles
+<li> \ref InfGeneralInformation
+<li> \ref InfAgentNetwork
+<li> \ref InfServiceNetwork
+<li> \ref InfRequirements
+<li> \ref FurtherDevelopment
+<li> \ref FurtherExamples
+<li> \ref QuestionsAnswers
+<li> \ref FurtherReading
+</ul>
 &nbsp;<br>
-&nbsp;<br>
-&nbsp;<br>
-Last Update: <br>22 December 2005<br>
-by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-<br></td>
-<td valign="Top">
+Last Update: <br>22 December 2005 by<br>
+<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a><br>
+</div>
 
 \section FurtherDevelopment Further Development
 The ISO<i><sub>AgLib</sub></i> is published as Open Source according to the GPL license ( with exceptions ). Therefore everybody has the right
@@ -2608,9 +2586,6 @@ This is possible, if some basic strategies are used by all devices:
 - interprete setpoints which are sent by other devices
 - fertilizer&nbsp;should ask the driver for a priority ranking of different conflicting setpoint sender (this ranking should
 		be stored for future use)
-
-</td></tr>
-  </table>
 */
 
 /*! \page disc_further Contact and Background Information on IsoAgLib
@@ -2620,49 +2595,47 @@ This is possible, if some basic strategies are used by all devices:
 <h2>Licensed with Exceptions under the General Public License (GPL) of the Free Software Foundation</h2>
 </center>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="2">
-<tr><td valign="Top" nowrap="true" >
-\ref IndexWhereToStart<br>
-\ref IndexNews<br>
-\ref IndexChanges<br>
-\ref IndexMainFeatures<br>
-\ref IndexMemoryUsage<br>
-\ref IndexStructuralOverview<br>
-\ref IndexLicenseConditions<br>
-\ref IndexAchnowledgements<br>
-\ref IndexInitialSupport<br>
-\ref IndexIsoVtExtension<br>
-\ref IndexFirstWin32Users<br>
-\ref IndexAuthors<br>
-\ref IndexMaintainers<br>
-\ref IndexSupport<br>
-\ref IndexTodo<br>
-\ref IndexUsingProjects<br>
-\ref HowtoDownload<br>
-\ref HowtoAccessRepository<br>
-\ref HowtoContribute<br>
-\ref HowtoGetHelp<br>
-\ref HowtoCreateDoc<br>
-\ref HowtoLearnIsoAgLib<br>
-\ref HowtoSetupCompilerTools<br>
-\ref InstallIsoToolVt2Iso<br>
-\ref HowtoCreateProjectFiles<br>
-\ref InfGeneralInformation<br>
-\ref InfAgentNetwork<br>
-\ref InfServiceNetwork<br>
-\ref InfRequirements<br>
-\ref FurtherDevelopment<br>
-\ref FurtherExamples<br>
-\ref QuestionsAnswers<br>
-\ref FurtherReading<br>
-<br>
+
+<div id="menu">
+<ul>
+<li> \ref IndexWhereToStart
+<li> \ref IndexNews
+<li> \ref IndexChanges
+<li> \ref IndexMainFeatures
+<li> \ref IndexMemoryUsage
+<li> \ref IndexStructuralOverview
+<li> \ref IndexLicenseConditions
+<li> \ref IndexAchnowledgements
+<li> \ref IndexInitialSupport
+<li> \ref IndexIsoVtExtension
+<li> \ref IndexFirstWin32Users
+<li> \ref IndexAuthors
+<li> \ref IndexMaintainers
+<li> \ref IndexSupport
+<li> \ref IndexTodo
+<li> \ref IndexUsingProjects
+<li> \ref HowtoDownload
+<li> \ref HowtoAccessRepository
+<li> \ref HowtoContribute
+<li> \ref HowtoGetHelp
+<li> \ref HowtoCreateDoc
+<li> \ref HowtoLearnIsoAgLib
+<li> \ref HowtoSetupCompilerTools
+<li> \ref InstallIsoToolVt2Iso
+<li> \ref HowtoCreateProjectFiles
+<li> \ref InfGeneralInformation
+<li> \ref InfAgentNetwork
+<li> \ref InfServiceNetwork
+<li> \ref InfRequirements
+<li> \ref FurtherDevelopment
+<li> \ref FurtherExamples
+<li> \ref QuestionsAnswers
+<li> \ref FurtherReading
+</ul>
 &nbsp;<br>
-&nbsp;<br>
-&nbsp;<br>
-Last Update: <br>22 December 2005<br>
-by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-<br></td>
-<td valign="Top">
+Last Update: <br>22 December 2005 by<br>
+<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a><br>
+</div>
 
 \section QuestionsAnswers Questions, Answers and Discussion
 An Open Source project needs active users, who post their questions, hints and <b>answers to other questions</b>

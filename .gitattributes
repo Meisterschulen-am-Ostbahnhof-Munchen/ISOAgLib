@@ -963,6 +963,7 @@ doc/html/Images/IsoAgLib_logo.png -text svneol=unset#image/png
 doc/html/Images/ikb_logo.gif -text
 doc/html/Images/osb_logo.gif -text
 doc/html/Images/tum_logo.gif -text
+doc/stylesheet.css -text
 /isoaglib_examples.lsm -text
 simulated_io/analogInput_0 -text
 simulated_io/analogInput_1 -text
