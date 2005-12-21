@@ -1090,17 +1090,33 @@ static int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_ser
   }
 #endif
 
-  int ret;
+  int ret = 0;
 
-  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
+  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
     ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+
+#ifdef DEBUG_IOCTL
+    if (ret < 0) {
+      perror("ca_TransmitCanCard_1 ioctl");
+
+      // try to read
+      CANmsg msg;
+      ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_READ_MSG, &msg);
+      printf("id 0x%x len 0x%x data 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x time 0x%x\n", msg.id, msg.msg_type, msg.len, msg.data[0], msg.data[1], msg.data[1], msg.data[1], msg.data[1], msg.data[1], msg.data[1], msg.data[1], msg.time);
+
+      if (ret < 0) {
+        perror("ioctl read after write");
+      }
+    }
+#endif
+  }
 
 #else
   int ret = 0;
 #endif
 
   if (ret < 0) {
-    perror("ca_TransmitCanCard_1 ioctl");
+    // perror("ca_TransmitCanCard_1 ioctl");
     /* nothing to read or interrupted system call */
   }
 
