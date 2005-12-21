@@ -730,9 +730,9 @@ needed access.
 
 
 \section IndexAchnowledgements Acknowledgements
-\subsection InitialFundingDfg Thanks to DFG funded research group "IKB D&uuml;rnast"
+\subsection InitialFundingDfg Thanks to DFG funded research group "IKB Dürnast"
 The initial creation of the ISO<i><sub>AgLib</sub></i> was enabled by the research project
-<b>"IKB D&uuml;rnast"</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology
+<b>"IKB Dürnast"</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology
 			- Crop Production Engineering</a> .
 
 \subsection IndexInitialSupport Thanks to development by Sensortechnik Wiedemann ( STW )
@@ -2253,7 +2253,7 @@ Last Update: <br>22 December 2005 by<br>
 
 \section InfGeneralInformation General Information
 The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic process data recording within the research group
-<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/forschung/forschung.html">IKB-D&uuml;rnast</a>
+<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/forschung/forschung.html">IKB-Dürnast</a>
 . Since publication of this project it is used for:
 	- Implement Indicator (IMI) which detects working state dependent on configuration and tractor base
     data information (LBS-Base) and records process data:
@@ -2303,9 +2303,9 @@ In case the ISO<i><sub>AgLib</sub></i> would suffer some problems for other appl
 
 The targeted flexible network, where devices of different manufacturers,
 models and built years are providing and using general services can be seen
-as a network of partial autonomous agents. K&uuml;hnel establishes the following
+as a network of partial autonomous agents. Kühnel establishes the following
 criteria for the use of agents in the view of the whole system (book: "Agentenbasierte
-Softwareentwicklung", A.: Ralf K&uuml;hnel, V.: Addison-Wesley):
+Softwareentwicklung", A.: Ralf Kühnel, V.: Addison-Wesley):
 - inherent&nbsp;distribution of data, competence and leadership
 - existence&nbsp;of specific software for sub tasks which should be integrated
 - complexity of algorithms which could be subdivided in distributed parts
@@ -2539,7 +2539,7 @@ DIN 9684 and ISO 11783 for their machines. The author <a href="mailto:Achim.Span
 
 \section FurtherExamples Examples
 \image html Diagramme/IsoAgLib-imi.gif
-The ISO<i><sub>AgLib</sub></i> is used at the experimental station D&uuml;rnast to document the work of all tractor dependent work
+The ISO<i><sub>AgLib</sub></i> is used at the experimental station Dürnast to document the work of all tractor dependent work
 including simple soil cultivation implements. Small computing devices, which are called "Implement Indicator" (IMI) were
 developed for this purpose based on the ISO<i><sub>AgLib</sub></i>. A ISO<i><sub>AgLib</sub></i>
  based Task-Controller records all available process data information from
@@ -2655,7 +2655,7 @@ The ISO<i><sub>AgLib</sub></i> was developed with the help of the following Open
 - LINUX and all its standard development tools
 - ...
 
-Thanks to the DFG, which finances the partial project 2 of the research group "IKB-D&uuml;rnast".
+Thanks to the DFG, which finances the partial project 2 of the research group "IKB-Dürnast".
 Thanks to the research group of Prof. H. Auernhammer and to Martin Wodok (m.wodok@osb-ag:de), who
 developed LBS_Terminal.
 
@@ -2674,7 +2674,7 @@ with good search function <br>
 <a href="http://www.acl.lanl.gov/iscope97/papers/veldhuizen.ps"> http://www.acl.lanl.gov/iscope97/papers/veldhuizen.ps</a>
 - IN THE TRENCHES - Twelve Rules For A Better Open Source Project <a href="http://www.linux-mag.com/2000-02/trench_01.html">http://www.linux-mag.com/2000-02/trench_01.html</a>
 - Information&nbsp;about the used GPL-compatible derivatied license, as defined by the <a href="http://ecos.sourceware.org/license-overview.html">eCos project</a>
-- Information&nbsp;about IKB-D&uuml;rnast and about partial project 2, which develops the ISO<i><sub>AgLib</sub></i>:<br>
+- Information&nbsp;about IKB-Dürnast and about partial project 2, which develops the ISO<i><sub>AgLib</sub></i>:<br>
 <a href="http://ikb.weihenstephan.de/en/research/tp_2/actions.html">http://ikb.weihenstephan.de/en/research/tp_2/actions.html</a><br>
 <a href="http://ikb.weihenstephan.de/en/research/tp_2/overview.html">http://ikb.weihenstephan.de/en/research/tp_2/overview.html</a><br></td></tr>
 </table>
