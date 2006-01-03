@@ -102,7 +102,7 @@ using namespace __HAL;
 #ifdef WIN32
   #define CAN_SERVER_LOG_PATH ".\\can_server.log"
 #elif defined( SYSTEM_A1 )
-  #define CAN_SERVER_LOG_PATH "/sd0/can_server.log"
+  #define CAN_SERVER_LOG_PATH "/sd0/settings/can_server.log"
 #else
   #define CAN_SERVER_LOG_PATH "./can_server.log"
 #endif
