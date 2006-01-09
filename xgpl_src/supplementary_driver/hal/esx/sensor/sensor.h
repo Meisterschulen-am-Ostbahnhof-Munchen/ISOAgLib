@@ -243,7 +243,7 @@ namespace HAL
   inline int16_t  getAdcMeanVoltage(uint8_t rb_channel)
     {int16_t i16_temp = __HAL::get_analogin_mean(rb_channel);
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return ((i16_temp * 9) + ((i16_temp * 59)/100));};
+     return ((i16_temp * 9) + ((i16_temp * 39)/100));};
   /**
     get the measured current value of a channel in [uA]
     @param rb_channel measured channel
