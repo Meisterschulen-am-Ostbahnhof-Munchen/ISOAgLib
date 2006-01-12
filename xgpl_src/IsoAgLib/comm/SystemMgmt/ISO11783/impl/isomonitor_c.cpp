@@ -817,7 +817,14 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   data().setIsoDp(0);
   data().setIsoPf(234);
   data().setIsoPs(255); // global request
-  data().setIsoSa(254); // special flag for "no SA yet"
+  if ( getSystemMgmtInstance4Comm().existActiveLocalMember() )
+  { // use the SA of the already active node
+    data().setIsoSa(getSystemMgmtInstance4Comm().getActiveLocalMember().nr());
+  }
+  else
+  { // no local ident has claimed an adress so far
+    data().setIsoSa(254); // special flag for "no SA yet"
+  }
   // built request data string
   uint8_t pb_requestString[4];
   pb_requestString[0] = (ADRESS_CLAIM_PGN & 0xFF);
