@@ -656,7 +656,7 @@ void getAttributesFromNode(DOMNode *node, unsigned int objType) {
 //
 // ---------------------------------------------------------------------------
 #ifdef WIN32
-void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1)
+void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1)
 #else
 static void processElement (DOMNode *node, uint64_t ombType, const char* rc_workDir, signed int parentObjType = -1)
 #endif
@@ -1522,7 +1522,6 @@ int main(int argC, char* argV[])
         if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
         if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
         if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
-        if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
 
         if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
           c_directoryCompareItem.insert(0, "\\" );

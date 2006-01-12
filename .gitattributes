@@ -106,6 +106,9 @@ build_utils/proc2iso/ChangeLog -text
 build_utils/proc2iso/INSTALL -text
 build_utils/proc2iso/Makefile -text
 build_utils/proc2iso/Makefile.incl -text
+build_utils/proc2iso/Makefile.win -text
+build_utils/proc2iso/Proc2Iso.dev -text
+build_utils/proc2iso/Proc2Iso.exe -text
 build_utils/proc2iso/bin/proc2iso -text
 build_utils/proc2iso/config.guess -text
 build_utils/proc2iso/config.h.in -text
