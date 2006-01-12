@@ -146,7 +146,7 @@ IState_c::itemState_t IState_c::setItemState(itemState_t ren_itemState, bool rb_
     if ((ren_itemState & (PreAddressClaim|AddressClaim|ClaimedAddress|FalseAlive)) > 0)
     { // one of PreAddressClaim, AddressClaim and ClaimedAddress exclusive
       // clear before set
-      clearItemState(itemState_t(PreAddressClaim|AddressClaim|ClaimedAddress|FalseAlive));
+      clearItemState(itemState_t(PreAddressClaim|AddressClaim|ClaimedAddress|FalseAlive|PossiblyOffline));
     }
     // now set always additionally the Active flag
     en_itemState = itemState_t(en_itemState | Active);

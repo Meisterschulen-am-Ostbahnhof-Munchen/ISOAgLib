@@ -101,6 +101,11 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
+/** this define controls the time interval between regular SA requests on the bus
+ *  (set to 0 to stop any periodic SA requests)
+ */
+#define SA_REQUEST_PERIOD_MSEC 60000
+
 
 #ifdef DEBUG_HEAP_USEAGE
 static uint16_t sui16_isoItemTotal = 0;
@@ -237,9 +242,14 @@ bool ISOMonitor_c::timeEvent( void ){
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
   if ( lastIsoSaRequest() == -1) return true;
+  else if ( ( HAL::getTime() - lastIsoSaRequest() ) > SA_REQUEST_PERIOD_MSEC )
+  { // it's time for the next SA request
+    sendRequestForClaimedAddress( true );
+  }
 
   int32_t i32_now = Scheduler_c::getLastTimeEventTrigger();
   const int32_t ci32_timeSinceLastAdrClaimRequest = (i32_now - lastIsoSaRequest());
+  bool b_reqeustAdrClaim = false;
   if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
   { // the last request is more than CONFIG_ISO_ITEM_MAX_AGE ago
     // --> each client MUST have answered until now if it's still alive
@@ -248,23 +258,36 @@ bool ISOMonitor_c::timeEvent( void ){
       if ( ( pc_iter->lastTime() < lastIsoSaRequest() )
         && ( !(pc_iter->itemState(IState_c::Local))   ) )
       { // its last AdrClaim is too old - it didn't react on the last request
-        Vec_ISOIterator pc_iterDelete = pc_iter;
-        #ifdef DEBUG_HEAP_USEAGE
-        sui16_isoItemTotal--;
+        // was it too late for the first time??
+        if ( pc_iter->itemState( IState_c::PossiblyOffline) )
+        { // it's too late the second time -> remove it
+          Vec_ISOIterator pc_iterDelete = pc_iter;
+          #ifdef DEBUG_HEAP_USEAGE
+          sui16_isoItemTotal--;
 
-        getRs232Instance()
-          << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
-          <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
-          << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
-          << ", Chunk-Alloc: "
-          << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
-          << "\r\n\r\n";
-        #endif
-        pc_iter = vec_isoMember.erase(pc_iterDelete); // erase returns iterator to next element after the erased one
+          getRs232Instance()
+            << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
+            <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
+            << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
+            << ", Chunk-Alloc: "
+            << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
+            << "\r\n\r\n";
+          #endif
+          pc_iter = vec_isoMember.erase(pc_iterDelete); // erase returns iterator to next element after the erased one
+        }
+        else
+        { // give it another chance
+          pc_iter->setItemState( IState_c::PossiblyOffline );
+          b_reqeustAdrClaim = true;
+        }
       } else  {
         pc_iter++;
       }
     } // for
+    if ( b_reqeustAdrClaim )
+    { // at least one node needs an additional adr claim
+      sendRequestForClaimedAddress( true );
+    }
   } // if
   #endif
   return true;

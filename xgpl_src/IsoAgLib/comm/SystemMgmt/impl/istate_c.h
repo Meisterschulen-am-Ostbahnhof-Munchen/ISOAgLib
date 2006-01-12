@@ -111,8 +111,13 @@ public:
          PreAddressClaim = 0x10, AddressClaim = 0x20, ClaimedAddress = 0x40, FalseAlive = 0x80,
          Stop = 0x100,
          // states of following Line independent parallel possible
-         CausedConflict = 0x200, AffectedConflict = 0x400,
-         Error = 0x800, Member = 0x1000, Service = 0x2000, Local = 0x4000
+         CausedConflict = 0x200,
+         AffectedConflict = 0x400,
+         Error = 0x800,
+         Member = 0x1000,  ///< This identifies a normal member
+         Service = 0x2000, ///< This flag identifies DIN 9684 services (could be used for ISO also ???)
+         Local = 0x4000,   ///< This flag identifies local items
+         PossiblyOffline = 0x8000 ///< This flag indicates, that the node missed to anwer at least one AdrClaim request -> upon next miss it should be deleted from monitor list
   };
 
   /**
