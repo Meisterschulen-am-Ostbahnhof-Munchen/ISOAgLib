@@ -62,7 +62,7 @@
 //        extern "C"
  using namespace std;
 #else
- #include <fstream.h>
+ #include <fstream>
  #include <dirent.h>
 #endif
 
@@ -454,13 +454,15 @@ unsigned int idOrName_toi(const char* rpc_string, unsigned int parentObjType)
 unsigned int booltoi (const char *text_bool)
 {
   int l;
+  char text_bool_lowered[stringLength];
+  for ( int ind = 0; ind < stringLength; ind++) text_bool_lowered[ind] = tolower( text_bool[ind] );
   for (l=0; l<maxTruthTable; l++) {
-    if (strncmp (text_bool, truthTable [l], stringLength) == 0) {
+    if (strncmp (text_bool_lowered, truthTable [l], stringLength) == 0) {
       return true;
     }
   }
   for (l=0; l<maxFalseTable; l++) {
-    if (strncmp (text_bool, falseTable [l], stringLength) == 0) {
+    if (strncmp (text_bool_lowered, falseTable [l], stringLength) == 0) {
       return false;
     }
   }
@@ -854,12 +856,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           if (!attrIsGiven[attrWorkingset_mastername])
           {
-            if (strlen(vecstr_attrString [attrSelf_conf].c_str()) > 1)
-            {
-              vecstr_attrString [attrSelf_conf] = booltoi(vecstr_attrString [attrSelf_conf].c_str());
-            }
             //alle Attribute zum Workingset_mastername zusammensetzen
-            c_isoname.set(vecstr_attrString [attrSelf_conf].c_str(),
+            c_isoname.set(booltoi(       vecstr_attrString [attrSelf_conf].c_str()),
                           stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
                           stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
                           stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
