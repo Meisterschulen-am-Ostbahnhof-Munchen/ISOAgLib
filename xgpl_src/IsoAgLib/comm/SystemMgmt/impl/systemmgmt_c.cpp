@@ -155,10 +155,10 @@ void SystemMgmt_c::close( void )
   @return true -> all planned activities performed in allowed time
 */
 bool SystemMgmt_c::timeEvent( void ){
-  for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
+  for ( std::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
-    if ( !(*pc_searchCacheC1)->timeEvent() ) return false;
+    if ( !(*pc_iter)->timeEvent() ) return false;
   }
   return true;
 }
