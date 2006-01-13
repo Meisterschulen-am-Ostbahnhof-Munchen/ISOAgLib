@@ -205,9 +205,10 @@ public:
                         Proc_c::doSend_t ren_doSend);
   /**
     stop all running subprog
+    @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
     @return always true; only relevant for overoaded methods in derived classes
   */
-  virtual bool stop();
+  virtual bool stop(bool b_deleteSubProgs = true);
   /**
     check if this measure prog is running
     @return true -> program is running

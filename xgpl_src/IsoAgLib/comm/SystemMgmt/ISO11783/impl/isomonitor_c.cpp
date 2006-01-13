@@ -86,6 +86,7 @@
 #include <IsoAgLib/util/liberr_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 
 #ifdef USE_PROCESS
   #include <IsoAgLib/comm/Process/impl/process_c.h>

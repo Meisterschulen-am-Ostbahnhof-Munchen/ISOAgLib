@@ -230,9 +230,10 @@ public:
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CANIO_c on send problems
+    @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
     @return true -> stop values sent with success
   */
-  virtual bool stop();
+  virtual bool stop(bool b_deleteSubProgs = true);
   /**
     deliver med val
     @return actual medium value

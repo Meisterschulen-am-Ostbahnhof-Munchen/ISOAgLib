@@ -365,9 +365,10 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
   possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CANIO_c on send problems
+  @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
   @return true -> stop values sent with success
 */
-bool MeasureProgLocal_c::stop(){
+bool MeasureProgLocal_c::stop(bool /*b_deleteSubProgs*/){
   // send the registered values
   bool b_sendResult = sendRegisteredVals();
   // call base function

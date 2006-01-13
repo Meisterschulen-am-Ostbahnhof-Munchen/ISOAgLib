@@ -274,7 +274,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   // local: virtual ProcDataLocal::commanderDevKey() gives DevKey_c::DevKeyUnspecified
   if (pprocessDataConst()->commanderDevKey() != DevKey_c::DevKeyUnspecified)
     setDevKey(pprocessDataConst()->commanderDevKey());
-    
+
   return true;
 }
 
@@ -317,9 +317,10 @@ bool MeasureProgBase_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t re
 
 /**
   stop all running subprog
+  @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
   @return always true; only relevant for overoaded methods in derived classes
 */
-bool MeasureProgBase_c::stop(){
+bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/){
   // clear the array with all subprogs -> no trigger test is done on value set
   #ifdef DEBUG_HEAP_USEAGE
   sui16_MeasureProgBaseTotal -= vec_measureSubprog.size();
@@ -704,7 +705,7 @@ bool MeasureProgBase_c::processMsg(){
               break;
             default:
               ;
-          }    
+          }
           start(static_cast<Proc_c::progType_t>(c_pkg.pri()), en_type, en_doSend);
         }
       }

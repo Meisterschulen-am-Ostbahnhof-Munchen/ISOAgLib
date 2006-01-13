@@ -482,7 +482,7 @@ public:
     @param rpbdevKey pointer to DEV_KEY var of local member used for
                 sending commands to remote owner member
   */
-  void setCommanderDevKey(const iDevKey_c* rpc_devKey){ProcDataRemote_c::setCommanderDevKey(rpc_devKey);};
+  void setCommanderDevKey(const __IsoAgLib::DevKey_c* rpc_devKey){ProcDataRemote_c::setCommanderDevKey(rpc_devKey);};
 
 
   /**
