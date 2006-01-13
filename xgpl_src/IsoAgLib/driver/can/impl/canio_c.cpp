@@ -1406,15 +1406,8 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
       << "CANIO_c::baseCanInit( " << rui16_bitrate << " ) vor HAL::can_configGlobalInit\n";
   #endif
   // init CAN BUS (BIOS function)
-  if ( arrFilterBox.size() == 0 )
-  { // no FliterBox is registered --> there is NO need to receive all nowhere matching CAN messages
-    // in the last message object --> set all CAN ident bits as relevant for comparison
-    c_maskLastmsg.set(0x1FFFFFFF, DEFAULT_IDENT_TYPE );
-  }
-  else
-  { // we want to let all messages in
-    c_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
-  }
+  c_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
+
   int16_t i16_retvalInit = HAL::can_configGlobalInit(ui8_busNumber, ui16_bitrate, c_maskStd.ident(), c_maskExt.ident(),
                       c_maskLastmsg.ident());
 

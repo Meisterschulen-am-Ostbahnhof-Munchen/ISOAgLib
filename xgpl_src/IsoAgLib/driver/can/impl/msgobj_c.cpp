@@ -752,8 +752,6 @@ void MsgObj_c::lock( bool rb_lock )
   else
   {
     if ( isLocked() ) return; ///< is already locked
-    // change to ident which results at least for
-    Ident_c c_tempIdent( 0x1FFFFFFF, c_filter.identType() );
     //HAL::can_configMsgobjChgid(bit_data.busNumber, bit_data.ui8_msgObjNr, c_tempIdent);
     HAL::can_configMsgobjLock( bit_data.busNumber, bit_data.ui8_msgObjNr, true );
     // set lock bit
