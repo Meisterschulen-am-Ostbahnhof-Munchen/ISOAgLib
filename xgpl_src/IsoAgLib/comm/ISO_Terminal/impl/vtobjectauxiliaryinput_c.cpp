@@ -82,6 +82,7 @@
 
 #include "vtobjectauxiliaryinput_c.h"
 #include "isoterminal_c.h"
+#include "../ivtobjectfontattributes_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

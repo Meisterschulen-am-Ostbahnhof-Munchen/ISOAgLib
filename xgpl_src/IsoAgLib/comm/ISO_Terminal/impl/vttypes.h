@@ -165,7 +165,6 @@ class vtObjectAuxiliaryInput_c;
     int32_t factorY = (vtSoftKeyHeight << 20) / opSoftKeyHeight; \
     int32_t factor  = (factorX < factorY) ? factorX : factorY;
 
-
 #define MACRO_streamObject(bytesBefore) \
     uint16_t nrObject = (sourceOffset-(bytesBefore)) / 2; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+2) <= maxBytes)) { \
@@ -218,13 +217,21 @@ class vtObjectAuxiliaryInput_c;
     int16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factor) >> 20)) >>1; \
     int16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factor) >> 20)) >>1; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
+      int32_t xBlock, yBlock; \
+      if (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont != NULL) { \
+        xBlock = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].col * (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () >> 8); \
+        yBlock = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].row * (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () & 0xFF); \
+      } else { \
+        xBlock = 0; \
+        yBlock = 0; \
+      } \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
-      destMemory [curBytes+2] = (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x+centerX) & 0xFF; \
-      destMemory [curBytes+3] = (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x+centerX) >> 8; \
-      destMemory [curBytes+4] = (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y+centerY) & 0xFF; \
-      destMemory [curBytes+5] = (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y+centerY) >> 8; \
+      destMemory [curBytes+2] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x * factor) >> 20)+xBlock+centerX) & 0xFF; \
+      destMemory [curBytes+3] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x * factor) >> 20)+xBlock+centerX) >> 8; \
+      destMemory [curBytes+4] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y * factor) >> 20)+yBlock+centerY) & 0xFF; \
+      destMemory [curBytes+5] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y * factor) >> 20)+yBlock+centerY) >> 8; \
       nrObjectXY++; \
       curBytes += 6; \
       sourceOffset += 6; \
