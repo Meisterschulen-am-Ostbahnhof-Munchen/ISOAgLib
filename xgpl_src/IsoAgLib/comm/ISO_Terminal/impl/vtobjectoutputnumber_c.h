@@ -136,6 +136,10 @@ public:
   //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
+  //! Parameter:
+  //! @param p_btn:
+  void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
+
 
   // //////////////////////////////////
   // All special Attribute-Set methods

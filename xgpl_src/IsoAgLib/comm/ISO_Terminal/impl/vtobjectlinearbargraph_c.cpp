@@ -108,7 +108,7 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 18; // Object Type = Linear Bar Graph
-      if (flags & FLAG_ORIGIN_SKM) {
+      if (flags & FLAG_ORIGIN_SKM) { // no need to check for p_parentButtonObject as this object can't be nested in a button!
         destMemory [3] = (((uint32_t) vtObjectLinearBarGraph_a->width*factorM)/factorD) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectLinearBarGraph_a->width*factorM)/factorD) >> 8;
         destMemory [5] = (((uint32_t) vtObjectLinearBarGraph_a->height*factorM)/factorD) & 0xFF;

@@ -201,6 +201,19 @@ vtObjectOutputNumber_c::setOriginSKM(bool b_SKM)
   }
 } // -X2C
 
+//! Parameter:
+//! @param p_btn:
+void
+vtObjectOutputNumber_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
+{
+  MACRO_localVars;
+  if (p_btn)
+  {
+    p_parentButtonObject = p_btn;
+    vtObjectOutputNumber_a->fontAttributes->setOriginBTN (p_btn);
+  }
+}
+
 void
 vtObjectOutputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
 {

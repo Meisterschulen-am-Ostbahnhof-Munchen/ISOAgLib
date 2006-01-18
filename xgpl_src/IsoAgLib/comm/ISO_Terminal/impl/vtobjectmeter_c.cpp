@@ -108,7 +108,7 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 17; // Object Type = Meter
-      if (flags & FLAG_ORIGIN_SKM) {
+      if (flags & FLAG_ORIGIN_SKM) { // no need to check for p_parentButtonObject as this object can't be nested in a button!
         destMemory [3] = (((uint32_t) vtObjectMeter_a->width*factorM)/factorD) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectMeter_a->width*factorM)/factorD) >> 8;
       } else {

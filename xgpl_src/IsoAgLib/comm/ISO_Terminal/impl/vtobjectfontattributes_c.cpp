@@ -183,7 +183,7 @@ vtObjectFontAttributes_c::calcScaledFontDimension()
 
   ui8_fontSizeScaled = vtObjectFontAttributes_a->fontSize;
   uint32_t scale;
-  if (flags & FLAG_ORIGIN_SKM) {
+  if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
     scale = (((uint32_t) factorM * 0x100000)/factorD); // (20 bit shifted fixed floating)
   } else {
     scale = (((uint32_t) vtDimension * 0x100000)/opDimension); // (20 bit shifted fixed floating)

@@ -184,6 +184,19 @@ vtObjectOutputString_c::setOriginSKM(bool b_SKM)
   }
 } // -X2C
 
+//! Parameter:
+//! @param p_btn:
+void
+vtObjectOutputString_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
+{
+  MACRO_localVars;
+  if (p_btn)
+  {
+    p_parentButtonObject = p_btn;
+    vtObjectOutputString_a->fontAttributes->setOriginBTN (p_btn);
+  }
+}
+
 // //////////////////////////////// +X2C Operation 237 : setValueCopy
 //! Parameter:
 //! @param newValue:

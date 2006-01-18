@@ -131,8 +131,7 @@ public:
 
   //! Parameter:
   //! @param p_btn:
-  void
-  setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/);
+  void setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/);
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
