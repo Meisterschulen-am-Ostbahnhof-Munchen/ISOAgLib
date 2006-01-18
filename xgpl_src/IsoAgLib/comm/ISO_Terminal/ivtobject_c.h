@@ -456,7 +456,7 @@ public:
 public:
 
   // Constructor
-  iVtObject_c() : flags (0) {};
+  iVtObject_c() : p_parentButtonObject(NULL), flags (0) {};
   virtual ~iVtObject_c() {};
 
   //  Operation: getID
@@ -467,14 +467,21 @@ public:
   //! @param b_SKM:
   virtual void setOriginSKM(bool b_SKM);
 
+  //  Operation: setOriginBTN
+  //! Parameter:
+  //! @param b_BTN:
+  virtual void setOriginBTN(iVtObjectButton_c* p_btn);
+
 protected:
 
   //  Attribute: vtObject_a
   iVtObject_s* vtObject_a;
 
+  //Attribute: p_vtObject
+  iVtObjectButton_c* p_parentButtonObject;
+
   //  Attribute: flags
   uint8_t flags;
-
 }; // ~X2C
 
 } // end of namespace IsoAgLib

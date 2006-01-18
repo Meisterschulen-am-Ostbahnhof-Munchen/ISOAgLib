@@ -81,6 +81,7 @@
  ***************************************************************************/
 
 #include "vtobjectpicturegraphic_c.h"
+#include "../ivtobjectbutton_c.h"
 //#include "../ivtobjectmacro_c.h"
 #include "isoterminal_c.h"
 
@@ -171,7 +172,7 @@ namespace __IsoAgLib {
 #else
   #define MACRO_calculateRequestedSize \
     uint16_t width; \
-    if (flags & FLAG_ORIGIN_SKM) { \
+    if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
       width = (((uint32_t) vtObjectPictureGraphic_a->width * factor) >> 20); \
     } else { \
       width = (((uint32_t) vtObjectPictureGraphic_a->width * vtDimension) /opDimension); \

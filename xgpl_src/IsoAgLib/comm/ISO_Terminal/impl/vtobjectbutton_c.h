@@ -153,6 +153,8 @@ public:
 
   bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
+  void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
+
 }; // ~X2C
 
 } // end of namespace __IsoAgLib

@@ -83,6 +83,7 @@
 #include "vtobjectkey_c.h"
 #include "isoterminal_c.h"
 #include "../ivtobjectfontattributes_c.h"
+#include "../ivtobjectbutton_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -102,6 +103,7 @@ vtObjectKey_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeA vtObjectKey_a
 #define MACRO_vtObjectTypeS iVtObjectKey_s
     MACRO_streamLocalVars;
+    MACRO_scaleLocalVars;
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;

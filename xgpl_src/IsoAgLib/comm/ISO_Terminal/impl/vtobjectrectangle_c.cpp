@@ -85,6 +85,7 @@
 #include "vtobjectrectangle_c.h"
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
+#include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
 
 
@@ -115,7 +116,7 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
       destMemory [2] = 14; // Object Type = Rectangle
       destMemory [3] = vtObjectRectangle_a->lineAttributes->getID() & 0xFF;
       destMemory [4] = vtObjectRectangle_a->lineAttributes->getID() >> 8;
-      if (flags & FLAG_ORIGIN_SKM) {
+      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [5] = (((uint32_t) vtObjectRectangle_a->width * factor) >> 20) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectRectangle_a->width * factor) >> 20) >> 8;
         destMemory [7] = (((uint32_t) vtObjectRectangle_a->height * factor) >> 20) & 0xFF;

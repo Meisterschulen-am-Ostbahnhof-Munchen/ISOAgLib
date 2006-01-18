@@ -84,6 +84,7 @@
 
 #include "vtobjectarchedbargraph_c.h"
 #include "isoterminal_c.h"
+#include "../ivtobjectbutton_c.h"
 
 
 // Begin Namespace __IsoAgLib
@@ -110,7 +111,7 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 19; // Object Type = Arched Bar Graph
-      if (flags & FLAG_ORIGIN_SKM) {
+      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [3] = (((uint32_t) vtObjectArchedBarGraph_a->width * factor) >> 20) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectArchedBarGraph_a->width * factor) >> 20) >> 8;
         destMemory [5] = (((uint32_t) vtObjectArchedBarGraph_a->height * factor) >> 20) & 0xFF;
@@ -126,7 +127,7 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
       destMemory [9] = vtObjectArchedBarGraph_a->options;
       destMemory [10] = vtObjectArchedBarGraph_a->startAngle;
       destMemory [11] = vtObjectArchedBarGraph_a->endAngle;
-      if (flags & FLAG_ORIGIN_SKM)
+      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject)
       {
         destMemory [12] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth * factor) >> 20) & 0xFF;
         destMemory [13] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth * factor) >> 20) >> 8;

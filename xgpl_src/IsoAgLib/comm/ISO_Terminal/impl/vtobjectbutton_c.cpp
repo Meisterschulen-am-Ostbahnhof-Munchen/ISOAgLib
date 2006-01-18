@@ -82,6 +82,7 @@
 
 #include "vtobjectbutton_c.h"
 #include "../ivtobjectfontattributes_c.h"
+#include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -102,7 +103,6 @@ vtObjectButton_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectButton_s
     MACRO_streamLocalVars;
     MACRO_scaleLocalVars;
-    uint32_t factor=1UL<<20; // should never happen
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
@@ -122,7 +122,7 @@ vtObjectButton_c::stream(uint8_t* destMemory,
       curBytes += 13;
     }
 
-    MACRO_streamObjectXY(13);
+    MACRO_streamObjectXYcenteredInButton(13);
     MACRO_streamEventMacro(13+vtObjectButton_a->numberOfObjectsToFollow*6);
     return curBytes;
 } // -X2C
@@ -164,6 +164,18 @@ vtObjectButton_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16
 {
   MACRO_localVars;
   return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectButton_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectButton_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd);
+}
+
+//! Parameter:
+//! @param p_btn:
+void
+vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
+{
+  MACRO_localVars;
+  p_parentButtonObject = (IsoAgLib::iVtObjectButton_c*)this;
+  for (int i=0; i<vtObjectButton_a->numberOfObjectsToFollow; i++) {
+    vtObjectButton_a->objectsToFollow[i].vtObject->setOriginBTN (p_parentButtonObject);
+  }
 }
 
 } // end of namespace __IsoAgLib

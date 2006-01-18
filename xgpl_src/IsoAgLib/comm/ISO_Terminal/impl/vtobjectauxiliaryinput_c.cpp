@@ -83,6 +83,7 @@
 #include "vtobjectauxiliaryinput_c.h"
 #include "isoterminal_c.h"
 #include "../ivtobjectfontattributes_c.h"
+#include "../ivtobjectbutton_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -99,6 +100,7 @@ vtObjectAuxiliaryInput_c::stream(uint8_t* destMemory, uint16_t maxBytes, uint16_
 #define MACRO_vtObjectTypeA vtObjectAuxiliaryInput_a
 #define MACRO_vtObjectTypeS iVtObjectAuxiliaryInput_s
   MACRO_streamLocalVars;
+  MACRO_scaleLocalVars;
   if (sourceOffset == 0) { // dump out constant sized stuff
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;

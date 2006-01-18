@@ -129,6 +129,11 @@ public:
   //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
+  //! Parameter:
+  //! @param p_btn:
+  void
+  setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/);
+
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

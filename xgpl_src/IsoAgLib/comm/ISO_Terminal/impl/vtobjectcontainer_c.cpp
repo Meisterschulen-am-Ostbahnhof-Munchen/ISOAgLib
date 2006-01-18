@@ -82,6 +82,7 @@
 
 #include "vtobjectcontainer_c.h"
 #include "../ivtobjectfontattributes_c.h"
+#include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -108,7 +109,7 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 3; // Object Type = Container
-      if (flags & FLAG_ORIGIN_SKM) {
+      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [3] = (((uint32_t) vtObjectContainer_a->width * factor) >> 20) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectContainer_a->width * factor) >> 20) >> 8;
         destMemory [5] = (((uint32_t) vtObjectContainer_a->height * factor) >> 20) & 0xFF;
@@ -204,5 +205,17 @@ vtObjectContainer_c::setOriginSKM(bool b_SKM)
     }
   }
 } // -X2C
+
+//! Parameter:
+//! @param p_btn:
+void
+vtObjectContainer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
+{
+  MACRO_localVars;
+  if (p_btn) p_parentButtonObject = p_btn;
+  for (int i=0; i<vtObjectContainer_a->numberOfObjectsToFollow; i++) {
+    vtObjectContainer_a->objectsToFollow[i].vtObject->setOriginBTN (p_btn);
+  }
+}
 
 } // end of namespace __IsoAgLib

@@ -80,11 +80,10 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-
-
 #include "vtobjectpolygon_c.h"
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
+#include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
 
 
@@ -113,7 +112,7 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 16; // Object Type = Polygon
-      if (flags & FLAG_ORIGIN_SKM) {
+      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [3] = (((uint32_t) vtObjectPolygon_a->width * factor) >> 20) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectPolygon_a->width * factor) >> 20) >> 8;
         destMemory [5] = (((uint32_t) vtObjectPolygon_a->height * factor) >> 20) & 0xFF;

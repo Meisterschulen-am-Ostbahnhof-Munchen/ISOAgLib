@@ -80,10 +80,9 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-
-
 #include "vtobjectmeter_c.h"
 #include "isoterminal_c.h"
+#include "../ivtobjectbutton_c.h"
 
 
 // Begin Namespace __IsoAgLib

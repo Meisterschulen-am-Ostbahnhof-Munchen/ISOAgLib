@@ -82,6 +82,7 @@
 
 #include "vtobjectoutputstring_c.h"
 #include "../ivtobjectfontattributes_c.h"
+#include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -108,7 +109,7 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 11; // Object Type = Output String
-      if (flags & FLAG_ORIGIN_SKM) {
+      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [3] = (((uint32_t) vtObjectOutputString_a->width * factor) >> 20) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectOutputString_a->width * factor) >> 20) >> 8;
         destMemory [5] = (((uint32_t) vtObjectOutputString_a->height * factor) >> 20) & 0xFF;

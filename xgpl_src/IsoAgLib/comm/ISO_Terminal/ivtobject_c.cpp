@@ -72,4 +72,11 @@ iVtObject_c::setOriginSKM(bool b_SKM)
   if (b_SKM) flags |= FLAG_ORIGIN_SKM;
 } // -X2C
 
+//! Parameter:
+//! @param p_btn: false if this object is not included in a button.
+void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
+{
+  if (p_btn) p_parentButtonObject = p_btn;
+}
+
 } // end of namespace IsoAgLib

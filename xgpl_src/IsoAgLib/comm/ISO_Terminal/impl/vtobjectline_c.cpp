@@ -83,6 +83,7 @@
 #include "vtobjectline_c.h"
 #include "../ivtobjectlineattributes_c.h"
 #include "isoterminal_c.h"
+#include "../ivtobjectbutton_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -111,7 +112,7 @@ vtObjectLine_c::stream(uint8_t* destMemory,
       destMemory [2] = 13; // Object Type = Line
       destMemory [3] = vtObjectLine_a->lineAttributes->getID() & 0xFF;
       destMemory [4] = vtObjectLine_a->lineAttributes->getID() >> 8;
-      if (flags & FLAG_ORIGIN_SKM) {
+      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [5] = (((uint32_t) vtObjectLine_a->width * factor) >> 20) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectLine_a->width * factor) >> 20) >> 8;
         destMemory [7] = (((uint32_t) vtObjectLine_a->height * factor) >> 20) & 0xFF;

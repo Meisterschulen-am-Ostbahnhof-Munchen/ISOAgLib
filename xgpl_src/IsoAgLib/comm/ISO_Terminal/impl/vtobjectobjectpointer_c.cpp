@@ -155,4 +155,16 @@ vtObjectObjectPointer_c::setOriginSKM(bool b_SKM)
   }
 } // -X2C
 
+//! Parameter:
+//! @param p_btn:
+void
+vtObjectObjectPointer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
+{
+  MACRO_localVars;
+  if (p_btn) p_parentButtonObject = p_btn;
+  if (vtObjectObjectPointer_a->value != NULL) {
+    vtObjectObjectPointer_a->value->setOriginBTN (p_btn);
+  }
+}
+
 } // end of namespace __IsoAgLib

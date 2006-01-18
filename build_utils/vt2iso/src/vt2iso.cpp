@@ -449,6 +449,9 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileC, "\n  for (int i=0;i<numObjects; i++) {");
     fprintf (partFileC, "\n    iVtObjects [i]->setOriginSKM (false);");
     fprintf (partFileC, "\n  }");
+    fprintf (partFileC, "\n  for (int i=0;i<numObjects; i++) {");
+    fprintf (partFileC, "\n    iVtObjects [i]->setOriginBTN (NULL);");
+    fprintf (partFileC, "\n  }");
     fprintf (partFileC, "\n  b_initAllObjects = true;");
     fprintf (partFileC, "\n}\n");
     fclose (partFileC);
