@@ -96,6 +96,13 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 
 \section IndexNews News
 
+\subsection IndexCurrentAdditionNews News for the changes already in repository after 1.2.0
+  - <b>18.1.2005:</b> Virtual Terminal Client<br>
+    - Now supporting correct scaling of the button-contents! (Each button has its own scaling-factor/centering-offset as the border is always 4 absolute 4 pixel, independent of how the object-pool will be scaled!)
+      <b>ATTENTION: Please REBUILD vt2iso and RERUN it on your project's XML-definition, the initAllObjects function in the generated -functions.inc has changed!!<br>
+    - Also new due to this slightly different scaling in the buttons: Don't use the same fontattributes-object in the datamask AND a button. Also (from a strict point of view) don't use the same fontattributes-object in different-sized buttons (as they all got a slightly different scaling-factor)!!!</b><br>
+    - Please recheck all your fixed-bitmaps in your projects (if using any), because the scaling-routine has slightly changed, which may result in size-differences by 1 pixel - this may lead to NOT finding a matching fixed-bitmap anymore!
+
 \subsection IndexNewNews News for the 1.2.0 release
 	- <b>during 2005:</b> Virtual Terminal Client<br>
 		- <b>ISO<i><sub>AgLib</sub></i> has now its own internet domains: http://www.isoaglib.org , http://www.isoaglib.de and http://www.isoaglib.com</b>
