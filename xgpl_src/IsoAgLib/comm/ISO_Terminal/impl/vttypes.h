@@ -157,25 +157,38 @@ class vtObjectAuxiliaryInput_c;
     MACRO_scaleLocalVarVtDimension
 
 #define MACRO_scaleSKLocalVars \
-    int32_t factorX, factorY;  \
     int32_t opSoftKeyWidth,  opSoftKeyHeight, vtSoftKeyWidth, vtSoftKeyHeight; \
     int32_t opButtonWidth, opButtonHeight, vtButtonWidth, vtButtonHeight;\
+    int32_t factorM, factorD; /* zaehler, nenner */ \
     if (p_parentButtonObject != NULL) { \
       opButtonWidth  = p_parentButtonObject->get_vtObjectButton_a()->width-8; \
       opButtonHeight = p_parentButtonObject->get_vtObjectButton_a()->height-8; \
       vtButtonWidth  = ((opButtonWidth+8) * vtDimension) / opDimension - 8; \
       vtButtonHeight = ((opButtonHeight+8) * vtDimension) / opDimension - 8; \
-      factorX = (vtButtonWidth << 20) / opButtonWidth; \
-      factorY = (vtButtonHeight << 20) / opButtonHeight; \
+      const int32_t ci_factorX = ((vtButtonWidth << 20) / opButtonWidth); \
+      const int32_t ci_factorY = ((vtButtonHeight << 20) / opButtonHeight); \
+      if (ci_factorX < ci_factorY) { \
+        factorM = vtButtonWidth; \
+        factorD = opButtonWidth; \
+      } else { \
+        factorM = vtButtonHeight; \
+        factorD = opButtonHeight; \
+      } \
     } else {  \
       opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getVtObjectPoolSoftKeyWidth(); \
       opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getVtObjectPoolSoftKeyHeight(); \
       vtSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities ()->skWidth; \
       vtSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities ()->skHeight; \
-      factorX = (vtSoftKeyWidth  << 20) / opSoftKeyWidth; \
-      factorY = (vtSoftKeyHeight << 20) / opSoftKeyHeight; \
+      const int32_t ci_factorX = (vtSoftKeyWidth  << 20) / opSoftKeyWidth; \
+      const int32_t ci_factorY = (vtSoftKeyHeight << 20) / opSoftKeyHeight; \
+      if (ci_factorX < ci_factorY) { \
+        factorM = vtSoftKeyWidth; \
+        factorD = opSoftKeyWidth; \
+      } else { \
+        factorM = vtSoftKeyHeight; \
+        factorD = opSoftKeyHeight; \
+      } \
     } \
-    int32_t factor = (factorX < factorY) ? factorX : factorY; \
 
 #define MACRO_getBlockfont  \
     int32_t xBlock, yBlock; \
@@ -211,10 +224,10 @@ class vtObjectAuxiliaryInput_c;
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
       MACRO_getBlockfont  \
       if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
-        destMemory [curBytes+2] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x) * factor) >> 20)+xBlock) >> 8; \
-        destMemory [curBytes+4] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) & 0xFF; \
-        destMemory [curBytes+5] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y) * factor) >> 20)+yBlock) >> 8; \
+        destMemory [curBytes+2] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*factorM)/factorD)+xBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*factorM)/factorD)+xBlock) >> 8; \
+        destMemory [curBytes+4] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*factorM)/factorD)+yBlock) & 0xFF; \
+        destMemory [curBytes+5] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*factorM)/factorD)+yBlock) >> 8; \
       } else { \
         destMemory [curBytes+2] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
         destMemory [curBytes+3] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \
@@ -229,17 +242,17 @@ class vtObjectAuxiliaryInput_c;
 #define MACRO_streamObjectXYcenteredInButton(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
     MACRO_scaleSKLocalVars \
-    int16_t centerX = (vtButtonWidth -  ((opButtonWidth *factor) >> 20)) >>1; \
-    int16_t centerY = (vtButtonHeight - ((opButtonHeight*factor) >> 20)) >>1; \
+    int16_t centerX = (vtButtonWidth -  ((opButtonWidth *factorM)/factorD)) >>1; \
+    int16_t centerY = (vtButtonHeight - ((opButtonHeight*factorM)/factorD)) >>1; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       MACRO_getBlockfont  \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
-      destMemory [curBytes+2] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x * factor) >> 20)+xBlock+centerX) & 0xFF; \
-      destMemory [curBytes+3] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x * factor) >> 20)+xBlock+centerX) >> 8; \
-      destMemory [curBytes+4] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y * factor) >> 20)+yBlock+centerY) & 0xFF; \
-      destMemory [curBytes+5] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y * factor) >> 20)+yBlock+centerY) >> 8; \
+      destMemory [curBytes+2] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX) & 0xFF; \
+      destMemory [curBytes+3] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX) >> 8; \
+      destMemory [curBytes+4] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY) & 0xFF; \
+      destMemory [curBytes+5] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY) >> 8; \
       nrObjectXY++; \
       curBytes += 6; \
       sourceOffset += 6; \
@@ -248,17 +261,17 @@ class vtObjectAuxiliaryInput_c;
 #define MACRO_streamObjectXYcenteredInSoftKey(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
     MACRO_scaleSKLocalVars \
-    int16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factor) >> 20)) >>1; \
-    int16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factor) >> 20)) >>1; \
+    int16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factorM)/factorD)) >>1; \
+    int16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factorM)/factorD)) >>1; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       MACRO_getBlockfont  \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
-      destMemory [curBytes+2] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x * factor) >> 20)+xBlock+centerX) & 0xFF; \
-      destMemory [curBytes+3] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x * factor) >> 20)+xBlock+centerX) >> 8; \
-      destMemory [curBytes+4] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y * factor) >> 20)+yBlock+centerY) & 0xFF; \
-      destMemory [curBytes+5] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y * factor) >> 20)+yBlock+centerY) >> 8; \
+      destMemory [curBytes+2] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX) & 0xFF; \
+      destMemory [curBytes+3] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX) >> 8; \
+      destMemory [curBytes+4] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY) & 0xFF; \
+      destMemory [curBytes+5] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY) >> 8; \
       nrObjectXY++; \
       curBytes += 6; \
       sourceOffset += 6; \
@@ -301,10 +314,10 @@ class vtObjectAuxiliaryInput_c;
         xBlock = 0; \
         yBlock = 0; \
       if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
-        destMemory [curBytes  ] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x) * factor) >> 20)+xBlock) & 0xFF; \
-        destMemory [curBytes+1] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x) * factor) >> 20)+xBlock) >> 8; \
-        destMemory [curBytes+2] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y) * factor) >> 20)+yBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y) * factor) >> 20)+yBlock) >> 8; \
+        destMemory [curBytes  ] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x)*factorM)/factorD)+xBlock) & 0xFF; \
+        destMemory [curBytes+1] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x)*factorM)/factorD)+xBlock) >> 8; \
+        destMemory [curBytes+2] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y)*factorM)/factorD)+yBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y)*factorM)/factorD)+yBlock) >> 8; \
       } else { \
         destMemory [curBytes  ] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
         destMemory [curBytes+1] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \

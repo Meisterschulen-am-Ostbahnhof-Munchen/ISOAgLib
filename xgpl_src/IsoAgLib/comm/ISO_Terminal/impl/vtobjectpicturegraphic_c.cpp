@@ -173,7 +173,7 @@ namespace __IsoAgLib {
   #define MACRO_calculateRequestedSize \
     uint16_t width; \
     if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
-      width = (((uint32_t) vtObjectPictureGraphic_a->width * factor) >> 20); \
+      width = (((uint32_t) vtObjectPictureGraphic_a->width * factorM)/factorD); \
     } else { \
       width = (((uint32_t) vtObjectPictureGraphic_a->width * vtDimension) /opDimension); \
     }

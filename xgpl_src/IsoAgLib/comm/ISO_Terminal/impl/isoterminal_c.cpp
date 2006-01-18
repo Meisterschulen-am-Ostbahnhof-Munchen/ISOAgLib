@@ -1105,8 +1105,8 @@ bool ISOTerminal_c::processMsg()
       case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
         if (c_streamer.pc_pool) {
           c_streamer.pc_pool->eventNumericValue (uint16_t( data().getUint8Data (1) ) | (uint16_t( data().getUint8Data (2) ) << 8) /* objID */,
-                                      data().getUint8Data (4) /* 1 byte value */,
-                                      uint32_t( data().getUint8Data (4) ) | (uint32_t( data().getUint8Data (5) ) << 8) | (uint32_t( data().getUint8Data (6) ) << 16)| (uint32_t( data().getUint8Data (7) ) << 24) /* 4 byte value */ );
+                                                 data().getUint8Data (4) /* 1 byte value */,
+                                                 uint32_t( data().getUint8Data (4) ) | (uint32_t( data().getUint8Data (5) ) << 8) | (uint32_t( data().getUint8Data (6) ) << 16)| (uint32_t( data().getUint8Data (7) ) << 24) /* 4 byte value */ );
         }
         b_result = true;
         break;

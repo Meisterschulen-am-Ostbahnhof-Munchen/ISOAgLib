@@ -112,10 +112,10 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 19; // Object Type = Arched Bar Graph
       if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
-        destMemory [3] = (((uint32_t) vtObjectArchedBarGraph_a->width * factor) >> 20) & 0xFF;
-        destMemory [4] = (((uint32_t) vtObjectArchedBarGraph_a->width * factor) >> 20) >> 8;
-        destMemory [5] = (((uint32_t) vtObjectArchedBarGraph_a->height * factor) >> 20) & 0xFF;
-        destMemory [6] = (((uint32_t) vtObjectArchedBarGraph_a->height * factor) >> 20) >> 8;
+        destMemory [3] = (((uint32_t) vtObjectArchedBarGraph_a->width*factorM)/factorD) & 0xFF;
+        destMemory [4] = (((uint32_t) vtObjectArchedBarGraph_a->width*factorM)/factorD) >> 8;
+        destMemory [5] = (((uint32_t) vtObjectArchedBarGraph_a->height*factorM)/factorD) & 0xFF;
+        destMemory [6] = (((uint32_t) vtObjectArchedBarGraph_a->height*factorM)/factorD) >> 8;
       } else {
         destMemory [3] = (((uint32_t) vtObjectArchedBarGraph_a->width*vtDimension)/opDimension) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectArchedBarGraph_a->width*vtDimension)/opDimension) >> 8;
@@ -129,8 +129,8 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
       destMemory [11] = vtObjectArchedBarGraph_a->endAngle;
       if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject)
       {
-        destMemory [12] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth * factor) >> 20) & 0xFF;
-        destMemory [13] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth * factor) >> 20) >> 8;
+        destMemory [12] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*factorM)/factorD) & 0xFF;
+        destMemory [13] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*factorM)/factorD) >> 8;
       }
       else
       {

@@ -116,10 +116,10 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
       destMemory [3] = vtObjectEllipse_a->lineAttributes->getID() & 0xFF;
       destMemory [4] = vtObjectEllipse_a->lineAttributes->getID() >> 8;
       if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
-        destMemory [5] = (((uint32_t) vtObjectEllipse_a->width * factor) >> 20) & 0xFF;
-        destMemory [6] = (((uint32_t) vtObjectEllipse_a->width * factor) >> 20) >> 8;
-        destMemory [7] = (((uint32_t) vtObjectEllipse_a->height * factor) >> 20) & 0xFF;
-        destMemory [8] = (((uint32_t) vtObjectEllipse_a->height * factor) >> 20) >> 8;
+        destMemory [5] = (((uint32_t) vtObjectEllipse_a->width*factorM)/factorD) & 0xFF;
+        destMemory [6] = (((uint32_t) vtObjectEllipse_a->width*factorM)/factorD) >> 8;
+        destMemory [7] = (((uint32_t) vtObjectEllipse_a->height*factorM)/factorD) & 0xFF;
+        destMemory [8] = (((uint32_t) vtObjectEllipse_a->height*factorM)/factorD) >> 8;
       } else {
         destMemory [5] = (((uint32_t) vtObjectEllipse_a->width*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectEllipse_a->width*vtDimension)/opDimension) >> 8;

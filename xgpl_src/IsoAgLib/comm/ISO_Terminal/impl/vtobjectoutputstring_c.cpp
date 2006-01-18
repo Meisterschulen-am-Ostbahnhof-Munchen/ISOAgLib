@@ -110,10 +110,10 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 11; // Object Type = Output String
       if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
-        destMemory [3] = (((uint32_t) vtObjectOutputString_a->width * factor) >> 20) & 0xFF;
-        destMemory [4] = (((uint32_t) vtObjectOutputString_a->width * factor) >> 20) >> 8;
-        destMemory [5] = (((uint32_t) vtObjectOutputString_a->height * factor) >> 20) & 0xFF;
-        destMemory [6] = (((uint32_t) vtObjectOutputString_a->height * factor) >> 20) >> 8;
+        destMemory [3] = (((uint32_t) vtObjectOutputString_a->width*factorM)/factorD) & 0xFF;
+        destMemory [4] = (((uint32_t) vtObjectOutputString_a->width*factorM)/factorD) >> 8;
+        destMemory [5] = (((uint32_t) vtObjectOutputString_a->height*factorM)/factorD) & 0xFF;
+        destMemory [6] = (((uint32_t) vtObjectOutputString_a->height*factorM)/factorD) >> 8;
       } else {
         destMemory [3] = (((uint32_t) vtObjectOutputString_a->width*vtDimension)/opDimension) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectOutputString_a->width*vtDimension)/opDimension) >> 8;
