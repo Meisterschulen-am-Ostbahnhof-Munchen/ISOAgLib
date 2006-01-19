@@ -297,14 +297,29 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   void TracMove_c::checkCreateReceiveFilter(void)
   {
-    #ifdef USE_DIN_9684
     SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
+    #ifdef USE_DIN_9684
     if ( ( !b_dinFilterCreated ) && (c_systemMgmt.existActiveLocalDinMember() ) )
     { // check if needed receive filters for DIN are active
       b_dinFilterCreated = true;
       // filter for base data 1
       c_can.insertFilter(*this, (0x7F << 4),(0x14 << 4), false);
+    }
+    #endif
+    #ifdef USE_ISO_11783
+    if ( ( ! b_isoFilterCreated ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+    { // check if needed receive filters for ISO are active
+      b_isoFilterCreated = true;
+      // create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
+      // mask: (0x1FFFF << 8) filter: (GROUND_BASED_SPEED_DIST_PGN << 8)
+      c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                        (static_cast<MASK_TYPE>(GROUND_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
+      // create FilterBox_c for PGN WHEEL_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
+      // mask: (0x1FFFF << 8) filter: (WHEEL_BASED_SPEED_DIST_PGN << 8)
+      c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
+                        (static_cast<MASK_TYPE>(WHEEL_BASED_SPEED_DIST_PGN) << 8), true, Ident_c::ExtendedIdent);
+
     }
     #endif
   }

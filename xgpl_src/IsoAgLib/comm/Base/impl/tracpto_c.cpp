@@ -301,7 +301,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // check if needed receive filters for DIN are active
       b_dinFilterCreated = true;
       // filter for base data 2
-      c_can.insertFilter(*this, (0x7F << 4),(0x15 << 4), false);
+      c_can.insertFilter(*this, (0x7F << 4),(0x15 << 4), true);
     }
     #endif
 
@@ -316,7 +316,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       // create FilterBox_c for PGN BACK_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                        (static_cast<MASK_TYPE>(BACK_PTO_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+                        (static_cast<MASK_TYPE>(BACK_PTO_STATE_PGN) << 8), true, Ident_c::ExtendedIdent);
     }
     #endif
   }

@@ -584,9 +584,6 @@ private:
   /** last time of ISO GPS msg [msec] */
   int32_t i32_lastIsoPositionSimple;
 
-  /** key switch state */
-  IsoAgLib::IsoActiveFlag_t t_keySwitch;
-
   #ifdef NMEA_2000_FAST_PACKET
   /** GPS altitude - [cm] */
   uint32_t ui32_altitudeCm;
