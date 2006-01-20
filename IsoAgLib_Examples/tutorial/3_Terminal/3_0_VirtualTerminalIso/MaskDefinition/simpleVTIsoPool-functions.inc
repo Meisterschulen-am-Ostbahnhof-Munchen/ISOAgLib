@@ -111,5 +111,8 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   for (int i=0;i<numObjects; i++) {
     iVtObjects [i]->setOriginSKM (false);
   }
+  for (int i=0;i<numObjects; i++) {
+    iVtObjects [i]->setOriginBTN (NULL);
+  }
   b_initAllObjects = true;
 }
