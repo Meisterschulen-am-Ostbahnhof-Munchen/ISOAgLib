@@ -3354,7 +3354,7 @@ int main(int argC, char* argV[])
 
     std::basic_string<char> c_fileName( argV [argInd] );
     #ifdef WIN32
-    int lastDirPos = c_fileName.find_last_of( "\\" )
+    int lastDirPos = c_fileName.find_last_of( "\\" );
     std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
     if (c_directory == "") c_directory = ".\\";
     #else
