@@ -569,17 +569,7 @@ bool ISOItem_c::processMsg(){
         switch (i32_reqPgn)
         {
           case ADRESS_CLAIM_PGN: // request for adress claim
-            if ( ! itemState(IState_c::ClaimedAddress) ) break; ///< send no answer, if not yet ready claimed
-            c_pkg.setIsoPri(6);
-            c_pkg.setIsoSa(nr());
-            c_pkg.setIsoPgn(ADRESS_CLAIM_PGN); // doppelt gemoppelt ;)
-            c_pkg.setIsoPf(238);
-            c_pkg.setIsoPs(255); // global information
-            // set NAME to CANPkg
-            c_pkg.setName(outputString());
-            // now ISOSystemPkg_c has right data -> send
-            getCanInstance4Comm() << c_pkg;
-            b_result = true;
+            if ( sendSaClaim() ) b_result = true;
             break;
           #ifdef USE_BASE
           case TIME_DATE_PGN: // request for calendar
@@ -598,6 +588,31 @@ bool ISOItem_c::processMsg(){
   return b_result;
 };
 
+/** send a SA claim message
+  * - needed to respond on request for claimed SA fomr other nodes
+  * - also needed when a local ident triggers a periodic request for SA
+  * @return true -> this item has already a claimed SA -> it sent its SA; false -> didn't send SA, as not yet claimed or not local
+  */
+bool ISOItem_c::sendSaClaim()
+{
+  if ( ! itemState(IState_c::ClaimedAddress) ) return false; ///< send no answer, if not yet ready claimed
+  if ( ! itemState(IState_c::Local) ) return false;
+  // now this ISOItem should/can send a SA claim
+  #ifdef DEBUG
+  EXTERNAL_DEBUG_DEVICE << "Send checking SA request" << EXTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
+  ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
+  c_pkg.setIsoPri(6);
+  c_pkg.setIsoSa(nr());
+  c_pkg.setIsoPgn(ADRESS_CLAIM_PGN); // doppelt gemoppelt ;)
+  c_pkg.setIsoPf(238);
+  c_pkg.setIsoPs(255); // global information
+            // set NAME to CANPkg
+  c_pkg.setName(outputString());
+            // now ISOSystemPkg_c has right data -> send
+  getCanInstance4Comm() << c_pkg;
+  return true;
+}
 
 /**
   set eeprom adress and read SA from there

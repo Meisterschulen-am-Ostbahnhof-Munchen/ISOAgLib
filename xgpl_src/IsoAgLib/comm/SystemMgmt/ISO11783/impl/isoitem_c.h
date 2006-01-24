@@ -329,6 +329,12 @@ public:
     @return true -> a reaction on the received/processed msg was sent
   */
   bool processMsg();
+  /** send a SA claim message
+   * - needed to respond on request for claimed SA fomr other nodes
+   * - also needed when a local ident triggers a periodic request for SA
+   * @return true -> this item has already a claimed SA -> it sent its SA; false -> didn't send SA, as not yet claimed or not local
+   */
+  bool sendSaClaim();
 
   // returns NULL if standalone, SELF if it is master itself, or the master ISOItem otherwise.
   ISOItem_c* getMaster () const;

@@ -242,10 +242,25 @@ bool ISOMonitor_c::timeEvent( void ){
   #if CONFIG_ISO_ITEM_MAX_AGE > 0
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
+  if ( getSystemMgmtInstance4Comm().existActiveLocalMember() )
+  { // use the SA of the already active node
+    data().setIsoSa(getSystemMgmtInstance4Comm().getActiveLocalMember().nr());
+  }
+
+
   if ( lastIsoSaRequest() == -1) return true;
-  else if ( ( HAL::getTime() - lastIsoSaRequest() ) > SA_REQUEST_PERIOD_MSEC )
-  { // it's time for the next SA request
-    sendRequestForClaimedAddress( true );
+  else if ( getSystemMgmtInstance4Comm().existActiveLocalMember() )
+  { // we could send the next SA request
+    const int32_t ci32_timePeriod = SA_REQUEST_PERIOD_MSEC
+        + ( ( getSystemMgmtInstance4Comm().getActiveLocalMember().nr() % 0x80 ) * 1000 );
+    // the request interval takes the number of the SA into account, so that nodes with higher
+    // SA should receive the request of this node before they decide to send a request on their own
+    // ==> MIN INTERVAL is SA_REQUEST_PERIOD_MSEC
+    // ==> MAX INTERVAL is (SA_REQUEST_PERIOD_MSEC + (0xFF % 0x80) ) == ( SA_REQUEST_PERIOD_MSEC + 0x7F )
+    if ( ( HAL::getTime() - lastIsoSaRequest() ) > ci32_timePeriod )
+    { // it's time for the next SA request in case we have already one
+      sendRequestForClaimedAddress( true );
+    }
   }
 
   int32_t i32_now = Scheduler_c::getLastTimeEventTrigger();
@@ -806,6 +821,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   { // at least one request was already detected
     return false;
   }
+  bool b_sendOwnSa = false;
   // now it's needed to send
 //  int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
   const int32_t i32_time = System_c::getTime();
@@ -821,6 +837,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   if ( getSystemMgmtInstance4Comm().existActiveLocalMember() )
   { // use the SA of the already active node
     data().setIsoSa(getSystemMgmtInstance4Comm().getActiveLocalMember().nr());
+    b_sendOwnSa = true;
   }
   else
   { // no local ident has claimed an adress so far
@@ -836,6 +853,19 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   getCanInstance4Comm() << data();
   // store adress claim request time
   setLastIsoSaRequest(i32_time);
+
+  // now send own SA in case at least one local ident has yet claimed adress
+  if (b_sendOwnSa)
+  {
+    #ifdef DEBUG
+    EXTERNAL_DEBUG_DEVICE << "Send checking SA request" << EXTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
+    const uint8_t cui8_localCnt = getSystemMgmtInstance4Comm().localIsoMemberCnt();
+    for ( uint8_t ui8_ind = 0; ui8_ind < cui8_localCnt; ui8_ind++ )
+    { // the function ISOItem_c::sendSaClaim() checks if this item is local and has already claimed a SA
+      getSystemMgmtInstance4Comm().localIsoMemberInd( ui8_ind ).sendSaClaim();
+    }
+  }
   return true;
 }
 
