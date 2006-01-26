@@ -160,6 +160,9 @@ void SimpleManageSetpointRemote_c::processSetpoint()
           setValType(i32_val);
         }
         break;
+      default:
+        // only exactValues allowed in SimpleSetpoint
+        break;
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
