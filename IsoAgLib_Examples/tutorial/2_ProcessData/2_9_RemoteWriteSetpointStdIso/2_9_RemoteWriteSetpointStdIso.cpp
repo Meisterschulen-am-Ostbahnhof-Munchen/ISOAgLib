@@ -405,7 +405,7 @@ int main()
     
 #else
   // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
-  IsoAgLib::iProcDataLocal_c c_workState(
+  IsoAgLib::iProcDataRemote_c c_workState(
   #if defined(USE_ISO_11783)
                                          s_WorkStateElementDDI,
   #endif
@@ -419,7 +419,7 @@ int main()
                                          );
 
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
-  IsoAgLib::iProcDataLocal_c c_applicationRate(
+  IsoAgLib::iProcDataRemote_c c_applicationRate(
   #if defined(USE_ISO_11783)
                                                 s_ApplicationRateElementDDI,
   #endif
