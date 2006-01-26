@@ -405,7 +405,9 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
   }
 #endif
 
+#ifdef USE_DIN_9684
   uint8_t ui8_devClassInstData = 0xFF;
+#endif
   bool b_result = false;
 
   #if defined(DEBUG) && defined(USE_DIN_9684)

@@ -194,7 +194,8 @@ void SimpleManageMeasureProgRemote_c::processProg()
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   bool b_change = false;
 
-  if ((c_pkg.pd() == 1) && (c_pkg.mod() == 0))
+  //  DIN: pd() == 1, mod() == 0
+  if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::setValue)
   {
   #ifdef USE_FLOAT_DATA_TYPE
     if ( ( c_pkg.valType() == float_val)
