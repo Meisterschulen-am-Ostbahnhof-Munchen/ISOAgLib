@@ -384,6 +384,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   }
 
   #endif
+  /** check if a received message should be parsed */
+  bool TracPTO_c::checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const
+  {
+    return ( ( ( t_mySendSelection & rt_selfSend   ) == 0 ) // I'm not the sender
+          && ( // one of the following conditions must be true
+              (rrefc_activeSender == rrefc_currentSender) // actual sender equivalent to last
+            || (rrefc_activeSender.isUnspecified() ) // last sender has not correctly claimed address member
+            || ((i16_ptoFront==-32768)&&(i16_ptoRear==-32768)) // current information is not valid
+            )
+          )?true:false;
+  };
 
   #ifdef USE_ISO_11783
   /**

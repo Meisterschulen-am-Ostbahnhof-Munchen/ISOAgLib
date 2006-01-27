@@ -403,6 +403,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
   #endif
 
+  /** check if a received message should be parsed */
+  bool TracMove_c::checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const
+  {
+    return ( ( ( t_mySendSelection & rt_selfSend   ) == 0 ) // I'm not the sender
+          && ( // one of the following conditions must be true
+              (rrefc_activeSender == rrefc_currentSender) // actual sender equivalent to last
+            || (rrefc_activeSender.isUnspecified() ) // last sender has not correctly claimed address member
+            || ((i32_distReal == -1)&&(i32_distTheor == -1)&&(i16_speedTheor == -1)) // current received data is not valid
+            )
+          )?true:false;
+  };
+
   #ifdef USE_ISO_11783
   /**
     process a ISO11783 base information PGN

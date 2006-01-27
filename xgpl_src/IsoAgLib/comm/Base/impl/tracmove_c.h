@@ -275,15 +275,7 @@ namespace __IsoAgLib {
     static int16_t long2int(const int32_t& rreflVal);
 
     /** check if a received message should be parsed */
-    bool checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const
-    {
-      return ( ( ( t_mySendSelection & rt_selfSend   ) == 0 ) // I'm not the sender
-            && ( // one of the following conditions must be true
-                (rrefc_activeSender == rrefc_currentSender) // actual sender equivalent to last
-              || (rrefc_activeSender.isUnspecified() ) // last sender has not correctly claimed address member
-              )
-            )?true:false;
-    };
+    bool checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const;
 
     #ifdef USE_DIN_9684
     /** send a DIN9684 base information PGN.
