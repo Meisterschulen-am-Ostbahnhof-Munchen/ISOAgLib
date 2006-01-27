@@ -17,6 +17,7 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectFontAttributesSKM8x8,
   &iVtObjectFontAttributesSKM12x16,
   &iVtObjectLineAttributesSKM,
+  &iVtObjectFontAttributesNormal6x8_Button60x30,
   &iVtObjectValSpeed,
   &iVtObjectValAccel,
   &iVtObjectValMiles,
@@ -107,4 +108,4 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectsoftkeysAlarm
 };
 
-  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 106, 200, 60, 32) {};
+  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 107, 200, 60, 32) {};

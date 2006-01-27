@@ -16,6 +16,7 @@ IsoAgLib::iVtObjectFontAttributes_c iVtObjectFontAttributesSKM6x8;
 IsoAgLib::iVtObjectFontAttributes_c iVtObjectFontAttributesSKM8x8;
 IsoAgLib::iVtObjectFontAttributes_c iVtObjectFontAttributesSKM12x16;
 IsoAgLib::iVtObjectLineAttributes_c iVtObjectLineAttributesSKM;
+IsoAgLib::iVtObjectFontAttributes_c iVtObjectFontAttributesNormal6x8_Button60x30;
 IsoAgLib::iVtObjectNumberVariable_c iVtObjectValSpeed;
 IsoAgLib::iVtObjectNumberVariable_c iVtObjectValAccel;
 IsoAgLib::iVtObjectNumberVariable_c iVtObjectValMiles;

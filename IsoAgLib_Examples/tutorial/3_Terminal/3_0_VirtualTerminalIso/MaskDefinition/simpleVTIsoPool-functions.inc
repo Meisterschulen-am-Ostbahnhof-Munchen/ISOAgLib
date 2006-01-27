@@ -19,6 +19,7 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectFontAttributesSKM8x8.init (&iVtObjectFontAttributesSKM8x8_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectFontAttributesSKM12x16.init (&iVtObjectFontAttributesSKM12x16_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectLineAttributesSKM.init (&iVtObjectLineAttributesSKM_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectFontAttributesNormal6x8_Button60x30.init (&iVtObjectFontAttributesNormal6x8_Button60x30_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectValSpeed.init (&iVtObjectValSpeed_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectValAccel.init (&iVtObjectValAccel_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectValMiles.init (&iVtObjectValMiles_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
