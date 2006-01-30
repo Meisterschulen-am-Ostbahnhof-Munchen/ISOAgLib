@@ -353,7 +353,7 @@ function create_filelist( )
 		if [ $PRJ_FIELDSTAR_GPS -gt 0 ] ; then
 			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*gps_c.*'"
 		fi
-		if [ $PRJ_ISO11783 -gt 0 ] ; then
+		if [ $PRJ_ISO11783 -gt 0 -a $PROC_LOCAL -gt 0 ] ; then
 			# allow DevPropertyHandler
 			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/impl/dev*'"
 		else
