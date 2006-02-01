@@ -325,6 +325,9 @@ function check_set_correct_variables()
 	elif [ "A$PRJ_RS232" = "A" ] ; then
   	PRJ_RS232=0
 	fi
+	if [ "A$PRJ_MULTIPACKET" = "A" ] ; then
+  	PRJ_MULTIPACKET=0
+  fi
 
   # preset some conditional vars
 	INC_LOC_STD_MEASURE_ELEMENTS=0
@@ -455,7 +458,6 @@ function create_filelist( )
 	esac
 
   COMM_FEATURES=" -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'"
-	PRJ_MULTIPACKET=0
   if [ $PRJ_BASE -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
   fi

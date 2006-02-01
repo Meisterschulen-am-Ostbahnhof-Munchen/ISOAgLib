@@ -134,6 +134,9 @@ public:
   //  Operation: getNotParsed
   inline uint8_t getNotParsed(uint16_t ui16_notParsedRelativeOffset);
 
+  //  Operation: getLinearBuffer
+  inline uint8_t* getLinearBuffer();
+
   inline bool eof() const;
 	void immediateInitAfterConstruction() const {};
 
@@ -158,6 +161,13 @@ StreamLinear_c::getNextNotParsed()
   return vui8_buffer[ui32_parsedCnt++];
 } // -X2C
 
+
+
+inline uint8_t*
+StreamLinear_c::getLinearBuffer()
+{
+  return &vui8_buffer.front();
+}
 
 
 // //////////////////////////////// +X2C Operation 838 : getNotParsedSize
