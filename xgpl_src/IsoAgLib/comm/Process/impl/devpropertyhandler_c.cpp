@@ -85,6 +85,9 @@
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Multipacket/istream_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
 
@@ -299,7 +302,7 @@ DevPropertyHandler_c::processMsg()
         {
           en_uploadStep = UploadUploading;
           getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), tcSourceAddress,
-          pc_devPoolForUpload->p_DevicePool, pc_devPoolForUpload->devicePoolLength, PROCESS_DATA_PGN, en_sendSuccess);
+          this, PROCESS_DATA_PGN, en_sendSuccess);
         }
         else
         {
@@ -1005,4 +1008,81 @@ DevPropertyHandler_c::finishUploadCommandChangeDesignator()
   l_sendUpload.pop_front();
 }
 
+
+void
+DevPropertyHandler_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes)
+{
+  uint16_t ui16_isoNameOffset= DEF_Transfer_Code /* uploadcommand */ + DEF_TableID /* type of element (3 byte) */
+                               + DEF_ObjectID /*Object ID (2 byte)*/ + DEF_Designator_Length /* designatorlength */
+                               + pc_devPoolForUpload->p_DevicePool[DEF_Transfer_Code+DEF_TableID+DEF_ObjectID] /* designator */
+                               + DEF_Software_Version_Length /* length of sw version */
+                               + pc_devPoolForUpload->p_DevicePool[DEF_Transfer_Code+DEF_TableID+DEF_ObjectID+DEF_Designator_Length+pc_devPoolForUpload->p_DevicePool[DEF_Transfer_Code+DEF_TableID+DEF_ObjectID]];
+  const bool cb_left = (ui16_isoNameOffset / 7) == (ui16_currentSendPosition / 7);
+  const bool cb_right = ((ui16_isoNameOffset+7) / 7) == (ui16_currentSendPosition / 7);
+  if (cb_left || cb_right)
+  { // special overwriting
+    uint8_t p14ui8_overlayBuffer[14];
+    int index = 0;
+    for (int arr_index=((ui16_isoNameOffset/7)*7); arr_index < (((ui16_isoNameOffset/7)*7)+14); index++, arr_index++)
+      p14ui8_overlayBuffer[index] = pc_devPoolForUpload->p_DevicePool[arr_index];
+    for (index=0; index<14; index++) std::cout << uint16_t(p14ui8_overlayBuffer[index]) << " ";
+    std::cout << std::endl;
+    // overwrite isoName
+    uint16_t ui16_tmpOffset = ui16_isoNameOffset%7;
+    const uint8_t *pui8_isoname = pc_wsMasterIdentItem->getIsoItem()->outputString();
+    index = 0;
+    for (int buf_index=ui16_tmpOffset; buf_index < (ui16_tmpOffset+8); buf_index++, index++)
+      p14ui8_overlayBuffer[buf_index] = pui8_isoname[index];
+    for (index=0; index<14; index++) std::cout << uint16_t(p14ui8_overlayBuffer[index]) << " ";
+    std::cout << std::endl;
+    // send from overlayed buffer
+    mspData->setDataPart (p14ui8_overlayBuffer, cb_left ? 0 : 7, bytes);
+  }
+  else
+  { // normal sending
+    mspData->setDataPart (pc_devPoolForUpload->p_DevicePool, ui16_currentSendPosition, bytes);
+  }
+  ui16_currentSendPosition += bytes;
+}
+
+
+void
+DevPropertyHandler_c::resetDataNextStreamPart()
+{
+  ui16_currentSendPosition = 0;
+}
+
+
+void
+DevPropertyHandler_c::saveDataNextStreamPart ()
+{
+  ui16_storedSendPosition = ui16_currentSendPosition;
+}
+
+
+void
+DevPropertyHandler_c::restoreDataNextStreamPart ()
+{
+  ui16_currentSendPosition = ui16_storedSendPosition;
+}
+
+
+uint32_t
+DevPropertyHandler_c::getStreamSize ()
+{
+  return pc_devPoolForUpload->devicePoolLength;
+}
+
+
+uint8_t
+DevPropertyHandler_c::getFirstByte ()
+{
+  return pc_devPoolForUpload->p_DevicePool[0];
+}
+
 };
+
+
+
+
+

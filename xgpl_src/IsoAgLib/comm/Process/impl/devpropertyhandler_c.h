@@ -88,6 +88,8 @@
 /* *************************************** */
 #include "processpkg_c.h"
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
+#include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 
 #include <map>
@@ -122,134 +124,151 @@ public:
 };
 
 
-class DevPropertyHandler_c{
-private:
+class MultiSendPkg_c;
+class DevPropertyHandler_c : public MultiSendStreamer_c
+{
+  public:
+    DevPropertyHandler_c() : ui16_currentSendPosition(0), ui16_storedSendPosition(0) {};
+    virtual ~DevPropertyHandler_c()  {};
 
-  /** enum type for defining all message types
-      for possible changes in ISO definitions ;)
-    */
-  enum en_processDataMsg {procCmdPar_RequestVersionMsg = 0x0,
-                          procCmdPar_VersionMsg = 0x10,
-                          procCmdPar_RequestStructureLabelMsg = 0x1,
-                          procCmdPar_StructureLabelMsg = 0x11,
-                          procCmdPar_RequestLocalizationLabelMsg = 0x21,
-                          procCmdPar_LocalizationLabelMsg = 0x31,
-                          procCmdPar_RequestOPTransferMsg = 0x41,
-                          procCmdPar_RequestOPTransferRespMsg = 0x51,
-                          procCmdPar_OPTransferMsg = 0x61,
-                          procCmdPar_OPTransferRespMsg = 0x71,
-                          procCmdPar_OPActivateMsg = 0x81,
-                          procCmdPar_OPActivateRespMsg = 0x91,
-                          procCmdPar_OPDeleteMsg = 0xA1,
-                          procCmdPar_OPDeleteRespMsg = 0xB1,
-                          procCmdPar_ChangeDesignatorMsg = 0xC1,
-                          procCmdPar_ChangeDesignatorRespMsg = 0xD1
-                         };
+    /** initialisation for DevPropertyHandler_c */
+    void init( ProcessPkg_c *rpc_data);
 
-  enum PoolState_t    { OPNotRegistered, OPRegistered, OPSuccessfullyUploaded, OPCannotBeUploaded };
-  enum UploadState_t  { StatePresettings, StateUploadInit, StateUploadPool, StateUploadCommand, StateIdle };
-  enum UploadSteps_t  { UploadNone,                             //state when nothing is to do
-                        UploadStart,                            //reached after init()-call
-                        UploadWaitForStructureLabelResponse,    //wait for structure label
-                        UploadWaitForLocalizationLabelResponse, //wait for localization label
-                        UploadWaitForUploadInit,                //wait for state UploadInit -> is reached when at least one pool is mapped as active pool
-                        UploadWaitForDeleteResponse,            //before uploading a new pool we have to delete the old one
-                        UploadWaitForVersionResponse,           //wait for version response
-                        UploadRetryUpload,                      //"start"-state for re-upload after fail
-                        UploadWaitForRequestOPTransferResponse, //wait upload enabling
-                        UploadUploading,                        //OP is uploading
-                        UploadWaitForOPTransferResponse,        //wait for end of pool
-                        UploadWaitForOPActivateResponse,        //incate the pool complete and ready to use
-                        UploadFailed                            //Upload failed
-                      };
-  enum UploadCommandState_t { UploadCommandWaitingForCommandResponse,           //wait for response to change designator
-                              UploadMultiSendCommandWaitingForCommandResponse,  //wait for response to change designator
-                              UploadCommandTimedOut                             //upload was timed out
-                            };
+    /** start processing of a process msg */
+    bool processMsg();
 
-public:
-  /** initialisation for DevPropertyHandler_c
-    */
-  void init( ProcessPkg_c *rpc_data);
+    bool timeEvent( void );
 
-  /**
-  start processing of a process msg
-    */
-  bool processMsg();
+    bool registerDevicePool (const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault);
+    bool sendCommandChangeDesignator(uint16_t rpui16_objectID, const char* rpc_newString, uint8_t stringLength);
 
-  bool timeEvent( void );
+    ProcessPkg_c data(){return *pc_data;};
 
-  bool registerDevicePool (const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault);
-  bool sendCommandChangeDesignator(uint16_t rpui16_objectID, const char* rpc_newString, uint8_t stringLength);
+    /** place next data to send direct into send buffer of pointed
+      stream send package - MultiSend_c will send this
+      buffer afterwards */
+    virtual void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
 
-  ProcessPkg_c data(){return *pc_data;};
-private:
-  friend class IsoAgLib::iProcess_c;
-  /**
-    check if there's already been at least one tc_statusMessage in the last 3 seconds
-    @return true if at least one tc_statusMessage - false if there's not yet been one or the last one is more than 3 seconds old
-  */
-  bool isTcActive ();
+    /** set cache for data source to stream start */
+    virtual void resetDataNextStreamPart();
 
-  uint8_t getTcSourceAddress () { return tcSourceAddress; };
+    /** save current send position in data source - neeed for resend on send problem */
+    virtual void saveDataNextStreamPart ();
 
-  bool queuePoolInMap(const HUGE_MEM uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool b_setToDefault);
+    /** reactivate previously stored data source position - used for resend on problem */
+    virtual void restoreDataNextStreamPart ();
 
-  void initUploading();
-  void getPoolForUpload();
-  void outOfMemory();
-  void startUpload();
+    /** calculate the size of the data source */
+    virtual uint32_t getStreamSize ();
 
-  void startUploadCommandChangeDesignator();
-  void finishUploadCommandChangeDesignator();
+    /** get the first byte, which is the COMMAND-byte and should be given back CONST! */
+    virtual uint8_t getFirstByte ();
 
-  uint32_t  tcState_lastReceived; /* Timestamp of last reception */
-  /* the following data is extracted from one "Task Controller Status Message" */
-  uint8_t  tcState_saOfActiveWorkingSetMaster;
+    void reset() { ui16_currentSendPosition = ui16_storedSendPosition = 0; };
 
-  bool b_setToDefault;
-  bool tcAliveNew;
+  private:
+    uint16_t ui16_currentSendPosition;
+    uint16_t ui16_storedSendPosition;
+    /** enum type for defining all message types for possible changes in ISO definitions ;) */
+    enum en_processDataMsg {procCmdPar_RequestVersionMsg = 0x0,
+                            procCmdPar_VersionMsg = 0x10,
+                            procCmdPar_RequestStructureLabelMsg = 0x1,
+                            procCmdPar_StructureLabelMsg = 0x11,
+                            procCmdPar_RequestLocalizationLabelMsg = 0x21,
+                            procCmdPar_LocalizationLabelMsg = 0x31,
+                            procCmdPar_RequestOPTransferMsg = 0x41,
+                            procCmdPar_RequestOPTransferRespMsg = 0x51,
+                            procCmdPar_OPTransferMsg = 0x61,
+                            procCmdPar_OPTransferRespMsg = 0x71,
+                            procCmdPar_OPActivateMsg = 0x81,
+                            procCmdPar_OPActivateRespMsg = 0x91,
+                            procCmdPar_OPDeleteMsg = 0xA1,
+                            procCmdPar_OPDeleteRespMsg = 0xB1,
+                            procCmdPar_ChangeDesignatorMsg = 0xC1,
+                            procCmdPar_ChangeDesignatorRespMsg = 0xD1
+                           };
 
-  bool b_receivedStructureLabel;
-  bool b_receivedLocalizationLabel;
+    enum PoolState_t    { OPNotRegistered, OPRegistered, OPSuccessfullyUploaded, OPCannotBeUploaded };
+    enum UploadState_t  { StatePresettings, StateUploadInit, StateUploadPool, StateUploadCommand, StateIdle };
+    enum UploadSteps_t  { UploadNone,                             //state when nothing is to do
+                          UploadStart,                            //reached after init()-call
+                          UploadWaitForStructureLabelResponse,    //wait for structure label
+                          UploadWaitForLocalizationLabelResponse, //wait for localization label
+                          UploadWaitForUploadInit,                //wait for state UploadInit -> is reached when at least one pool is mapped as active pool
+                          UploadWaitForDeleteResponse,            //before uploading a new pool we have to delete the old one
+                          UploadWaitForVersionResponse,           //wait for version response
+                          UploadRetryUpload,                      //"start"-state for re-upload after fail
+                          UploadWaitForRequestOPTransferResponse, //wait upload enabling
+                          UploadUploading,                        //OP is uploading
+                          UploadWaitForOPTransferResponse,        //wait for end of pool
+                          UploadWaitForOPActivateResponse,        //incate the pool complete and ready to use
+                          UploadFailed                            //Upload failed
+                        };
+    enum UploadCommandState_t { UploadCommandWaitingForCommandResponse,           //wait for response to change designator
+                                UploadMultiSendCommandWaitingForCommandResponse,  //wait for response to change designator
+                                UploadCommandTimedOut                             //upload was timed out
+                              };
 
-  ProcessPkg_c* pc_data;
+    friend class IsoAgLib::iProcess_c;
+    /** check if there's already been at least one tc_statusMessage in the last 3 seconds
+        @return true if at least one tc_statusMessage - false if there's not yet been one or the last one is more than 3 seconds old */
+    bool isTcActive ();
 
-  std::map<LanguageLabel_c, DevicePool_c> map_deviceDescription; //map with language label and related bytestream
+    uint8_t getTcSourceAddress () { return tcSourceAddress; };
 
-  uint8_t tcSourceAddress;
+    bool queuePoolInMap(const HUGE_MEM uint8_t* rpc_devicePoolByteArray, uint32_t rui32_bytestreamlength, bool b_setToDefault);
 
-  uint8_t ui8_versionLabel;
-  char pch_structureLabel[7];
-  char pch_localizationLabel[7];
+    void initUploading();
+    void getPoolForUpload();
+    void outOfMemory();
+    void startUpload();
 
-  DevicePool_c* pc_devDefaultDeviceDescription;
+    void startUploadCommandChangeDesignator();
+    void finishUploadCommandChangeDesignator();
 
-  DevicePool_c* pc_devPoolForUpload;
+    uint32_t  tcState_lastReceived; /* Timestamp of last reception */
+    /* the following data is extracted from one "Task Controller Status Message" */
+    uint8_t  tcState_saOfActiveWorkingSetMaster;
 
-  /**
-    has to be set using registerDevicePool (...) so that DevPropertyHandler_c
-    can interact in the name of the wsMaster
-  */
-  const IsoAgLib::iIdentItem_c* pc_wsMasterIdentItem;
+    bool b_setToDefault;
+    bool tcAliveNew;
 
-  /**
-    Upload-State & Variables
-  */
-  PoolState_t en_poolState;
-  UploadState_t en_uploadState;
-  UploadSteps_t en_uploadStep;
-  UploadCommandState_t en_uploadCommand;
+    bool b_receivedStructureLabel;
+    bool b_receivedLocalizationLabel;
 
-  uint32_t ui32_uploadTimestamp;
-  uint32_t ui32_uploadTimeout;
+    ProcessPkg_c* pc_data;
 
-  uint8_t ui8_uploadRetry;
-  uint8_t ui8_commandParameter;
+    std::map<LanguageLabel_c, DevicePool_c> map_deviceDescription; //map with language label and related bytestream
 
-  STL_NAMESPACE::list<SendUploadBase_c>  l_sendUpload;
+    uint8_t tcSourceAddress;
 
-  MultiSend_c::sendSuccess_t en_sendSuccess;
+    uint8_t ui8_versionLabel;
+    char pch_structureLabel[7];
+    char pch_localizationLabel[7];
+
+    DevicePool_c* pc_devDefaultDeviceDescription;
+
+    DevicePool_c* pc_devPoolForUpload;
+
+    /** has to be set using registerDevicePool (...) so that DevPropertyHandler_c
+        can interact in the name of the wsMaster */
+    const IsoAgLib::iIdentItem_c* pc_wsMasterIdentItem;
+
+    /** Upload-State & Variables */
+    PoolState_t en_poolState;
+    UploadState_t en_uploadState;
+    UploadSteps_t en_uploadStep;
+    UploadCommandState_t en_uploadCommand;
+
+    uint32_t ui32_uploadTimestamp;
+    uint32_t ui32_uploadTimeout;
+
+    uint8_t ui8_uploadRetry;
+    uint8_t ui8_commandParameter;
+
+    STL_NAMESPACE::list<SendUploadBase_c>  l_sendUpload;
+
+    MultiSend_c::sendSuccess_t en_sendSuccess;
 };
 
 }
