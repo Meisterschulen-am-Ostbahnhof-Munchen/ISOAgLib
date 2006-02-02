@@ -1025,16 +1025,12 @@ DevPropertyHandler_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t by
     int index = 0;
     for (int arr_index=((ui16_isoNameOffset/7)*7); arr_index < (((ui16_isoNameOffset/7)*7)+14); index++, arr_index++)
       p14ui8_overlayBuffer[index] = pc_devPoolForUpload->p_DevicePool[arr_index];
-    for (index=0; index<14; index++) std::cout << uint16_t(p14ui8_overlayBuffer[index]) << " ";
-    std::cout << std::endl;
     // overwrite isoName
     uint16_t ui16_tmpOffset = ui16_isoNameOffset%7;
     const uint8_t *pui8_isoname = pc_wsMasterIdentItem->getIsoItem()->outputString();
     index = 0;
     for (int buf_index=ui16_tmpOffset; buf_index < (ui16_tmpOffset+8); buf_index++, index++)
       p14ui8_overlayBuffer[buf_index] = pui8_isoname[index];
-    for (index=0; index<14; index++) std::cout << uint16_t(p14ui8_overlayBuffer[index]) << " ";
-    std::cout << std::endl;
     // send from overlayed buffer
     mspData->setDataPart (p14ui8_overlayBuffer, cb_left ? 0 : 7, bytes);
   }
