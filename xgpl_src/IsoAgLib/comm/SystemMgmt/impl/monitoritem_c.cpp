@@ -83,7 +83,6 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "monitoritem_c.h"
-using namespace std; 
 namespace __IsoAgLib {
 
 /**
@@ -158,6 +157,5 @@ bool lessThan(const MonitorItem_c& rrefc_left, const DevKey_c& rc_right)
 {
   return (rrefc_left.devKey() < rc_right)?true:false;
 }
-
 } // end namespace __IsoAgLib
 

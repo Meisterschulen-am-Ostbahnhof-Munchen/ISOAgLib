@@ -93,7 +93,7 @@
   /** the macro autoInstance() uses the class  value singletonVecKey
     * to get a corresponding class instance, which is delegated to the same ISO11783 or DIN9684 BUS
     */
-  #define autoInstance()                   instance( getSingletonVecKey() )
+  #define autoInstance()                   instance( ClientBase::getSingletonVecKey() )
   #define SINGLETON_PARENT_CONSTRUCTOR     ClientBase( ri_singletonVecKey ),
   #define SINGLETON_VEC_KEY_USE4CALL       , getSingletonVecKey()
   #define SINGLETON_VEC_KEY_PARAMETER_DEF  int ri_singletonVecKey
@@ -673,11 +673,6 @@ template<class T, class B, int SIZE> T & SingletonDerivedVec<T,B,SIZE>::instance
 #define CLIENT_TYPE_CNT() 3
 /* by multiple inclusion of singleton_container.h the suitable template class can be generated */
 #include "singleton_container.h"
-
-
-
-
-
 
 
 #endif

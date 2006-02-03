@@ -125,7 +125,7 @@ public:
 
 
 class MultiSendPkg_c;
-class DevPropertyHandler_c : public MultiSendStreamer_c
+class DevPropertyHandler_c : public MultiSendStreamer_c,  ClientBase
 {
   public:
     DevPropertyHandler_c() : ui16_currentSendPosition(0), ui16_storedSendPosition(0) {};

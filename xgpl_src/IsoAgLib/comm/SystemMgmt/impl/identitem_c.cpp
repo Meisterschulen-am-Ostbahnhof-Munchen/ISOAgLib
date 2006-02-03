@@ -749,7 +749,7 @@ bool IdentItem_c::timeEventActive( void ) {
       // ( some conflicts with other remote BUS nodes could cause an overwrite
       //    of the master node or of one of the slave node -> this function
       //     resets everything to a well defined master->slave state )
-      if ( i8_slaveCount >= 0 ) setToMaster();
+      if ( ( pc_isoItem != NULL ) && ( i8_slaveCount >= 0 ) ) setToMaster();
       #endif
 
       pc_memberItem->timeEvent();
