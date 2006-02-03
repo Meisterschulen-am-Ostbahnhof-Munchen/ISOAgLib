@@ -429,7 +429,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   bool TracMove_c::isoProcessMsg()
   {
     bool b_result = false;
+    #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     IsoAgLib::iTracGeneral_c& c_tracgeneral = IsoAgLib::getITracGeneralInstance();
+    #endif
     DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // store the devKey of the sender of base data
@@ -473,9 +475,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             setSpeedTheor(i16_tempSpeed);
             // wheel based dist
             setDistTheor(static_cast<int32_t>(data().val36()));
+            #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
             // additionally scan for key switch and maximum power time
             c_tracgeneral.setKeySwitch(IsoAgLib::IsoActiveFlag_t( ( data().val8() >> 2 ) & 3 ));
             c_tracgeneral.setMaxPowerTime(data().val7());
+            #endif
           }
           // set last time
           i32_lastBase1 = ci32_now;
