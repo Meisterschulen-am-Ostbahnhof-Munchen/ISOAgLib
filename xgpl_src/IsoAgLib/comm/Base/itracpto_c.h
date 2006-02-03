@@ -83,22 +83,21 @@ namespace IsoAgLib {
         possible errors:
           * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
         @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-      */
-    void init(const iDevKey_c* rpc_devKey = NULL, BaseDataGroup_t rt_mySendSelection = BaseDataNothing)
+        @param rb_sendState optional setting to express TECU sending state (default: only receive in implement mode)
+     */
+    void init(const iDevKey_c* rpc_devKey = NULL, bool rb_sendState = false)
     {TracPTO_c::init(rpc_devKey, rt_mySendSelection);};
     /** config the Base_c object after init -> set pointer to devKey and
         config send/receive of different base msg types
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-      */
-    void config(const iDevKey_c* rpc_devKey, BaseDataGroup_t rt_mySendSelection )
+        @param rb_sendState optional setting to express TECU sending state
+     */
+    void config(const iDevKey_c* rpc_devKey, bool rb_sendState )
     {TracPTO_c::config(rpc_devKey, rt_mySendSelection );};
-    /** Retrieve the last update time of the specified information type
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-      */
-    int32_t lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
-    {return TracPTO_c::lastUpdate( rt_mySendSelection );}
+    /** Retrieve the last update time */
+    int32_t lastedTimeSinceUpdate() const {return TracPTO_c::lastedTimeSinceUpdate();}
+    /** Retrieve the time of last update */
+    int32_t lastUpdateTime() const {return TracPTO_c::lastUpdateTime();};
 
 
 /* ******************************************* */
@@ -163,7 +162,7 @@ namespace IsoAgLib {
         @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
         @return DEV_KEY code of member who is sending the intereested base msg type
       */
-    const iDevKey_c& senderDevKey(BaseDataGroup_t rt_typeGrp) {return static_cast<const iDevKey_c&>(TracPTO_c::senderDevKey(rt_typeGrp));};
+    const iDevKey_c& senderDevKey(BaseDataGroup_t rt_typeGrp) const {return static_cast<const iDevKey_c&>(TracPTO_c::senderDevKey(rt_typeGrp));};
 
     #ifdef USE_ISO_11783
     /** deliver explicit information whether front PTO is engaged

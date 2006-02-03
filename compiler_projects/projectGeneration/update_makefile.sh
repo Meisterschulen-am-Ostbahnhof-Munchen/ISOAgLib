@@ -6,7 +6,7 @@
 #                          based on a feature set specifying config file
 #                            -------------------
 #   begin                 Mon Aug 02 2004
-#   copyright            : (C) 2004 - 2004 by Dipl.-Inform. Achim Spangler
+#   copyright            : (C) 2004 - 2006 by Dipl.-Inform. Achim Spangler
 #   email                : a.spangler@osb-ag:de
 # ####################################################################### #
 
@@ -110,6 +110,12 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + PRJ_ISO_TERMINAL ( specify if ISO virtual terminal is wanted; default 0; only possible if PRJ_ISO11783=1 -> error message if not )
 # + PRJ_DIN_TERMINAL ( specify if DIN LBS+ terminal is wanted; default 0; only possible if PRJ_DIN9684=1 -> error message if not )
 # + PRJ_BASE ( specify if Base data - main tractor information as PGN or LBS Base message - is wanted; default 0 )
+# + PRJ_TRACTOR_GENERAL (only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information)
+# + PRJ_TRACTOR_MOVE (only incorporate parts from BASE that provide tractor distance and speed information)
+# + PRJ_TRACTOR_PTO (only incorporate parts from BASE that provide tractor PTO information)
+# + PRJ_TRACTOR_LIGHT (only incorporate parts from BASE that provide tractor lighting information)
+# + PRJ_TRACTOR_AUX (only incorporate parts from BASE that provide tractor auxiliary valve information)
+# + PRJ_TIME_GPS (only incorporate parts from BASE that provide time and GPS information)
 # + PRJ_PROCESS ( specify if process data should be used ; default 0 )
 #   - PRJ_FIELDSTAR_GPS ( specify if process data based decode of Fieldstar or LBS+ GPS data is wanted; default 0 )
 #   - PROC_LOCAL ( specify if local process data shall be used; must be activated for all types of local process data; default 0 )
@@ -249,6 +255,24 @@ function check_set_correct_variables()
 
   if [ "A$PRJ_BASE" = "A" ] ; then
   	PRJ_BASE=0
+  fi
+  if [ "A$PRJ_TRACTOR_GENERAL" = "A" ] ; then
+  	PRJ_TRACTOR_GENERAL=0
+  fi
+  if [ "A$PRJ_TRACTOR_MOVE" = "A" ] ; then
+  	PRJ_TRACTOR_MOVE=0
+  fi
+  if [ "A$PRJ_TRACTOR_PTO" = "A" ] ; then
+  	PRJ_TRACTOR_PTO=0
+  fi
+  if [ "A$PRJ_TRACTOR_LIGHT" = "A" ] ; then
+  	PRJ_TRACTOR_LIGHT=0
+  fi
+  if [ "A$PRJ_TRACTOR_AUX" = "A" ] ; then
+  	PRJ_TRACTOR_AUX=0
+  fi
+  if [ "A$PRJ_TIME_GPS" = "A" ] ; then
+  	PRJ_TIME_GPS=0
   fi
 
 
@@ -457,10 +481,41 @@ function create_filelist( )
 			;;
 	esac
 
+	# make sure that for DIN9684 projects both PTO and general are incorporated, as
+	# both information is sent with same message
+	if [ $PRJ_DIN9684 -gt 0 ] ; then
+		if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 ; then
+			PRJ_TRACTOR_GENERAL=1
+			PRJ_TRACTOR_PTO=1
+		fi
+	fi
+
   COMM_FEATURES=" -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'"
   if [ $PRJ_BASE -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
   fi
+  if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
+	  COMM_FEATURES="$COMM_FEATURES -o -name 'ibasetypes.h' -o -name 'basepkg_c*'"
+	fi
+  if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracgeneral*' \)"
+  fi
+  if [ $PRJ_TRACTOR_MOVE -gt 0 ] ; then
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove*' \)"
+  fi
+  if [ $PRJ_TRACTOR_PTO -gt 0 ] ; then
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
+  fi
+  if [ $PRJ_TRACTOR_LIGHT -gt 0 ] ; then
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*traclight*' \)"
+  fi
+  if [ $PRJ_TRACTOR_AUX -gt 0 ] ; then
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracaux*' \)"
+  fi
+  if [ $PRJ_TIME_GPS -gt 0 ] ; then
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*timeposgps*' \)"
+  fi
+
   if [ $PRJ_ISO_TERMINAL_SERVER -gt 0 ] ; then
     PRJ_MULTIPACKET=1
   fi
@@ -848,6 +903,25 @@ function create_autogen_project_config()
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME
 	fi
+	if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
+		echo -e "#ifndef USE_TRACTOR_GENERAL $ENDLINE\t#define USE_TRACTOR_GENERAL $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+	if [ $PRJ_TRACTOR_MOVE -gt 0 ] ; then
+		echo -e "#ifndef USE_TRACTOR_MOVE $ENDLINE\t#define USE_TRACTOR_MOVE $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+	if [ $PRJ_TRACTOR_PTO -gt 0 ] ; then
+		echo -e "#ifndef USE_TRACTOR_PTO $ENDLINE\t#define USE_TRACTOR_PTO $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+	if [ $PRJ_TRACTOR_LIGHT -gt 0 ] ; then
+		echo -e "#ifndef USE_TRACTOR_LIGHT $ENDLINE\t#define USE_TRACTOR_LIGHT $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+	if [ $PRJ_TRACTOR_AUX -gt 0 ] ; then
+		echo -e "#ifndef USE_TRACTOR_AUX $ENDLINE\t#define USE_TRACTOR_AUX $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+	if [ $PRJ_TIME_GPS -gt 0 ] ; then
+		echo -e "#ifndef USE_TIME_GPS $ENDLINE\t#define USE_TIME_GPS $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+
 	if [ $PROC_LOCAL -gt 0 ] ; then
 		echo -e "#ifndef USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE\t#define USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE#endif" >> $CONFIG_NAME
 	fi

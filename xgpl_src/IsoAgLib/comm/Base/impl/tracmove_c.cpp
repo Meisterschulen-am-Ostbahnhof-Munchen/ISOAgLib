@@ -209,10 +209,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** Retrieve the last update time of the specified information type
     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
     */
-  int32_t TracMove_c::lastUpdate(IsoAgLib::BaseDataGroup_t rt_mySendSelection) const
+  int32_t TracMove_c::lastedTimeSinceUpdate(IsoAgLib::BaseDataGroup_t rt_mySendSelection) const
   {
     const int32_t ci32_now = System_c::getTime();
     if (rt_mySendSelection == IsoAgLib::BaseDataGroup1) return (ci32_now - i32_lastBase1);
+    else return 0x7FFFFFFF;
+  }
+  /** Retrieve the time of last update */
+  int32_t TracMove_c::lastUpdateTime( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
+  {
+    if (rt_mySendSelection == IsoAgLib::BaseDataGroup1) return i32_lastBase1;
     else return 0x7FFFFFFF;
   }
 
@@ -361,14 +367,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** process a DIN9684 base information PGN */
   bool TracMove_c::dinProcessMsg()
   { // a DIN9684 base information msg received
-    DevKey_c c_tempDevKey(DevKey_c::DevKeyUnspecified);
     bool b_result = false;
     // store the devKey of the sender of base data
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    if (getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
-    { // the corresponding sender entry exist in the monitor list
-      c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
+    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
+    { // the sender is not known -> ignore and block interpretation by other classes
+      return true;
     }
+    // the corresponding sender entry exist in the monitor list
+    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
 
     // interprete data accordingto BABO
     switch (data().babo())
@@ -642,7 +649,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
       @return DEV_KEY code of member who is sending the intereested base msg type
     */
-  const DevKey_c& TracMove_c::senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) {
+  const DevKey_c& TracMove_c::senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) const {
     // simply answer first matching result if more than one type is selected
     if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup1   ) != 0 ) return c_sendBase1DevKey;
     else return DevKey_c::DevKeyUnspecified;

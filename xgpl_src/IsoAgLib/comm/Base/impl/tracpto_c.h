@@ -121,9 +121,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         possible errors:
           * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
         @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+        @param rb_sendState optional setting to express TECU sending state (default: only receive in implement mode)
       */
-    void init(const DevKey_c* rpc_devKey = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing);
+    void init(const DevKey_c* rpc_devKey = NULL, bool rb_sendState = false);
 
     /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
     void close(void);
@@ -148,13 +148,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** config the Base_c object after init -> set pointer to devKey and
         config send/receive of different base msg types
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send (default send nothing)
+        @param rb_sendState optional setting to express TECU sending state
       */
-    void config(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection);
-    /** Retrieve the last update time of the specified information type
-        @param rt_mySendSelection optional Bitmask of base data to send (default send nothing)
-      */
-    int32_t lastUpdate(IsoAgLib::BaseDataGroup_t rt_mySendSelection) const;
+    void config(const DevKey_c* rpc_devKey, bool rb_sendState);
+    /** Retrieve the last update time */
+    int32_t lastedTimeSinceUpdate() const;
+    /** Retrieve the time of last update */
+    int32_t lastUpdateTime() const;
+    /** deliver the devKey of the sender of the base data
+    @return DEV_KEY code of member who is sending the intereested base msg type
+     */
+    const DevKey_c& senderDevKey() const { return c_sendDevKey;};
 
     /** destructor for Base_c which has nothing to do */
     virtual ~TracPTO_c() { close();};
@@ -166,6 +170,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
       */
     virtual bool processMsg();
+
+    #ifdef USE_DIN_9684
+    /** helper function to do the parsing of the flag data of a
+     * received DIN9684 base message with Pto,Hitch,Engine information */
+    void dinParsePtoFlags(const BasePkg_c& rrefc_pkg);
+    /** helper function to set the Hitch and Engine flags of a DIN base data message */
+    void dinSetPtoFlags(BasePkg_c& rrefc_pkg);
+    #endif
     /*@}*/
 
     /* ******************************************* */
@@ -222,13 +234,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       */
     int16_t ptoFront() const { return i16_ptoFront;};
 
-    /** deliver the devKey of the sender of the base data
-        possible errors:
-          * Err_c::range rui8_typeNr doesn't match valid base msg type number
-        @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
-        @return DEV_KEY code of member who is sending the intereested base msg type
-      */
-    const DevKey_c& senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp);
 
     #ifdef USE_ISO_11783
     /** deliver explicit information whether front PTO is engaged
@@ -268,7 +273,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       NEVER instantiate a variable of type Base_c within application
       only access Base_c via getBaseInstance() or getBaseInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
       @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
     */
     TracPTO_c() {};
     /**
@@ -289,7 +293,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     CANPkgExt_c& dataBase();
 
     /** check if a received message should be parsed */
-    bool checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const;
+    bool checkParseReceived(const DevKey_c& rrefc_currentSender ) const;
 
     #ifdef USE_DIN_9684
     /** send a DIN9684 base information PGN.
@@ -304,8 +308,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       * this is only called when sending ident is configured and it has already claimed an address
       */
     bool isoTimeEvent( void );
-    /** send Base2 Group data with hitch and PTO state */
-    void isoSendBase2Update( void );
     /** process a ISO11783 base information PGN */
     bool isoProcessMsg();
     #endif
@@ -315,7 +317,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** temp data where received data is put */
     BasePkg_c c_data;
     /** last time of base_2 msg [msec] */
-    int32_t i32_lastBase2;
+    int32_t i32_lastPtoFront;
+    int32_t i32_lastPtoRear;
 
     /** pto rear */
     int16_t i16_ptoRear;
@@ -326,9 +329,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     const DevKey_c* pc_devKey;
 
     /** bitmask with selection of all base data types to send */
-    IsoAgLib::BaseDataGroup_t t_mySendSelection;
+    bool b_sendState;
     /** DEVKEY of base2 sender */
-    DevKey_c c_sendBase2DevKey;
+    DevKey_c c_sendDevKey;
 
     #ifdef USE_DIN_9684
     /** flag to detect, if receive filters for DIN are created */

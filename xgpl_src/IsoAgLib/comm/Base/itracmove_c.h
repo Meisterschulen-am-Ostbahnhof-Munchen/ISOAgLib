@@ -97,8 +97,11 @@ namespace IsoAgLib {
     /** Retrieve the last update time of the specified information type
         @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
       */
-    int32_t lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
-    {return TracMove_c::lastUpdate( rt_mySendSelection );}
+    int32_t lastedTimeSinceUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
+    {return TracMove_c::lastedTimeSinceUpdate( rt_mySendSelection );}
+    /** Retrieve the time of last update */
+    int32_t lastUpdateTime( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
+    {return TracMove_c::lastUpdateTime( rt_mySendSelection );};
 
 
     /* ******************************************* */
@@ -159,7 +162,7 @@ namespace IsoAgLib {
         @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
         @return DEV_KEY code of member who is sending the intereested base msg type
       */
-    const iDevKey_c& senderDevKey(BaseDataGroup_t rt_typeGrp) {return static_cast<const iDevKey_c&>(TracMove_c::senderDevKey(rt_typeGrp));};
+    const iDevKey_c& senderDevKey(BaseDataGroup_t rt_typeGrp) const {return static_cast<const iDevKey_c&>(TracMove_c::senderDevKey(rt_typeGrp));};
 
   private:
     /** allow getITracMoveInstance() access to shielded tracgeneral class.

@@ -571,7 +571,7 @@ bool ISOItem_c::processMsg(){
           case ADRESS_CLAIM_PGN: // request for adress claim
             if ( sendSaClaim() ) b_result = true;
             break;
-          #ifdef USE_BASE
+          #if defined(USE_BASE) || defined(USE_TIME_GPS)
           case TIME_DATE_PGN: // request for calendar
             // call Base_c function to send calendar
             // isoSendCalendar checks if this item (identified by DEV_KEY)

@@ -443,7 +443,7 @@ namespace __IsoAgLib {
   /** Retrieve the last update time of the specified information type
       @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
     */
-  int32_t TimePosGPS_c::lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
+  int32_t TimePosGPS_c::lastedTimeSinceUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
   {
     const int32_t ci32_now = System_c::getTime();
     switch ( rt_mySendSelection )
@@ -456,6 +456,22 @@ namespace __IsoAgLib {
         else return ( ci32_now - i32_lastIsoPositionSimple);
       #endif // END of NMEA_2000_FAST_PACKET
       #endif // END of USE_ISO_11783
+      default: return 0x7FFFFFFF;
+    }
+  }
+  /** Retrieve the time of last update */
+  int32_t TimePosGPS_c::lastUpdateTime( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
+  {
+    switch ( rt_mySendSelection )
+    {
+      case IsoAgLib::BaseDataCalendar: return i32_lastCalendar;
+#ifdef USE_ISO_11783
+      case IsoAgLib::BaseDataGps:
+#ifdef NMEA_2000_FAST_PACKET
+        if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple ) return i32_lastIsoPositionStream;
+        else return i32_lastIsoPositionSimple;
+#endif // END of NMEA_2000_FAST_PACKET
+#endif // END of USE_ISO_11783
       default: return 0x7FFFFFFF;
     }
   }
@@ -557,14 +573,15 @@ namespace __IsoAgLib {
   /** process a DIN9684 base information PGN */
   bool TimePosGPS_c::dinProcessMsg()
   { // a DIN9684 base information msg received
-    DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
     bool b_result = false;
     // store the devKey of the sender of base data
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    if (getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
-    { // the corresponding sender entry exist in the monitor list
-      c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
+    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
+    { // the sender is not known -> ignore and block interpretation by other classes
+      return true;
     }
+    // the corresponding sender entry exist in the monitor list
+    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
 
     // interprete data according to BABO
     if (data().babo() == 0xF) {
@@ -1120,7 +1137,7 @@ namespace __IsoAgLib {
   @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
   @return DEV_KEY code of member who is sending the intereested base msg type
   */
-  const DevKey_c& TimePosGPS_c::senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp)
+  const DevKey_c& TimePosGPS_c::senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) const
   {
     // simply answer first matching result if more than one type is selected
     if ( ( rt_typeGrp & IsoAgLib::BaseDataCalendar ) != 0 ) return c_sendCalendarDevKey;

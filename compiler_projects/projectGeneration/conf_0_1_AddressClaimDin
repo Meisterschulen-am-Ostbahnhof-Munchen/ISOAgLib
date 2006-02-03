@@ -152,6 +152,24 @@ PRJ_DIN9684=1
 # shall be gathered from BUS ( either receive or send )
 # PRJ_BASE=0
 
+# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# PRJ_TRACTOR_GENERAL=0
+
+# only incorporate parts from BASE that provide tractor distance and speed information
+# PRJ_TRACTOR_MOVE=0
+
+# only incorporate parts from BASE that provide tractor PTO information
+# PRJ_TRACTOR_PTO=0
+
+# only incorporate parts from BASE that provide tractor lighting information
+# PRJ_TRACTOR_LIGHT=0
+
+# only incorporate parts from BASE that provide tractor auxiliary valve information
+# PRJ_TRACTOR_AUX=0
+
+# only incorporate parts from BASE that provide time and GPS information
+# PRJ_TIME_GPS=0
+
 # ###############################################################
 # Process Data Communication Setup
 # ###############################################################

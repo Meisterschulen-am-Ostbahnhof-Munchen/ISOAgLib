@@ -94,11 +94,14 @@ namespace IsoAgLib {
       */
     void config(const iDevKey_c* rpc_devKey, BaseDataGroup_t rt_mySendSelection )
     {TracGeneral_c::config(rpc_devKey, rt_mySendSelection );};
-    /** Retrieve the last update time of the specified information type
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-      */
-    int32_t lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
-    {return TracGeneral_c::lastUpdate( rt_mySendSelection );}
+    /** Retrieve the last update time */
+    int32_t lastedTimeSinceUpdate() const { return TracGeneral_c::lastedTimeSinceUpdate();};
+    /** Retrieve the time of last update */
+    int32_t lastUpdateTime() const { return TracGeneral_c::lastUpdateTime();};
+    /** deliver the devKey of the sender of the base data
+    @return DEV_KEY code of member who is sending the intereested base msg type
+     */
+    const iDevKey_c& senderDevKey() const { return static_cast<const iDevKey_c&>(TracGeneral_c::senderDevKey());};
 
     /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
@@ -207,17 +210,6 @@ namespace IsoAgLib {
     const uint8_t* getTecuLanguage() const { return TracGeneral_c::getTecuLanguage();};
     #endif
     /*@}*/
-
-    /* ****************************************************** */
-    /** \name Retrieve Values which are sent from other ECUs  */
-    /*@{*/
-    /** deliver the devKey of the sender of the base data
-        possible errors:
-          * Err_c::range rui8_typeNr doesn't match valid base msg type number
-        @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
-        @return DEV_KEY code of member who is sending the intereested base msg type
-      */
-    const iDevKey_c& senderDevKey(BaseDataGroup_t rt_typeGrp) { return static_cast<const iDevKey_c&>(TracGeneral_c::senderDevKey(rt_typeGrp));};
 
   private:
     /** allow getITracGeneralInstance() access to shielded tracgeneral class.

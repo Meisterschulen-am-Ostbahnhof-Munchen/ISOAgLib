@@ -216,7 +216,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         pc_iter->start(System_c::getTime());
         en_accumProp = Proc_c::AccumTime;
         break;
-      #ifdef USE_BASE
+      #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       case Proc_c::DistProp:
         pc_iter->start(getTracMoveInstance4Comm().distTheor());
         en_accumProp = Proc_c::AccumDist;
@@ -290,7 +290,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         pc_iter->start(System_c::getTime());
         en_accumProp = Proc_c::AccumTime;
         break;
-      #ifdef USE_BASE
+      #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       case Proc_c::DistProp:
         pc_iter->start(getTracMoveInstance4Comm().distTheor());
         en_accumProp = Proc_c::AccumDist;
@@ -490,7 +490,7 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
         break;
       case Proc_c::DistProp:
-        #ifdef USE_BASE
+        #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         b_singleTest = pc_iter->updateTrigger(getTracMoveInstance4Comm().distTheor());
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
@@ -613,7 +613,7 @@ void MeasureProgLocal_c::setVal(float rf_val){
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
         break;
       case Proc_c::DistProp:
-        #ifdef USE_BASE
+        #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         b_singleTest = pc_iter->updateTrigger(getTracMoveInstance4Comm().distTheor());
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
@@ -965,7 +965,7 @@ bool MeasureProgLocal_c::timeEvent( void )
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
         break;
       case Proc_c::DistProp:
-        #ifdef USE_BASE
+        #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         b_singleTest = pc_iter->updateTrigger(getTracMoveInstance4Comm().distTheor());
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;

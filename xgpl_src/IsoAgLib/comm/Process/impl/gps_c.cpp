@@ -219,7 +219,7 @@ bool GPS_c::timeEvent( void )
 */
 bool GPS_c::processMsg(){
   int32_t i32_tempVal = data().dataRawCmdLong();
-  #ifdef USE_BASE
+  #if defined(USE_BASE) || defined(USE_TIME_GPS)
   TimePosGPS_c& c_lbsTimePosGps = getTimePosGpsInstance4Comm();
   #endif
   bool b_result = false;
@@ -267,7 +267,7 @@ bool GPS_c::processMsg(){
           b_minute = ((i32_tempVal >> 8) & 0xFF);
           // add +1h because GPS time is in UTC
           b_hour = ((i32_tempVal >> 16) & 0xFF) + 1;
-          #ifdef USE_BASE
+          #if defined(USE_BASE) || defined(USE_TIME_GPS)
           // consider summer time
           uint8_t b_day = c_lbsTimePosGps.dayLocal(),
           b_month = c_lbsTimePosGps.monthLocal();
@@ -292,7 +292,7 @@ bool GPS_c::processMsg(){
         { // no second change -> decrement validity of time
           if (b_isGpsTime > 0) b_isGpsTime -= 1;
         }
-        #ifdef USE_BASE
+        #if defined(USE_BASE) || defined(USE_TIME_GPS)
         if ( (b_isGpsTime == 0) || (b_hour > 24) || (b_minute > 60) || (b_second > 60) )
         { // if time note valid because of no sec change or because of invalid settings use
           // Base_c
@@ -361,7 +361,7 @@ bool GPS_c::processMsg(){
             b_hour = (i32_tempVal / 3600);
 
             // consider summer time
-            #ifdef USE_BASE
+            #if defined(USE_BASE) || defined(USE_TIME_GPS)
             uint8_t b_day = c_lbsTimePosGps.dayLocal(),
             b_month = c_lbsTimePosGps.monthLocal();
             if ( ( (b_month > 3) && (b_month < 10) )
@@ -388,7 +388,7 @@ bool GPS_c::processMsg(){
           if ( (b_isGpsTime == 0) || (b_hour > 24) || (b_minute > 60) || (b_second > 60) )
           { // if time note valid because of no sec change or because of invalid settings use
             // Base_c
-            #ifdef USE_BASE
+            #if defined(USE_BASE) || defined(USE_TIME_GPS)
             b_hour = c_lbsTimePosGps.hourLocal();
             b_minute = c_lbsTimePosGps.minuteLocal();
             b_second = c_lbsTimePosGps.second();

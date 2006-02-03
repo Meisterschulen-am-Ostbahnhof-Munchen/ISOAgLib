@@ -214,7 +214,9 @@ public:
   /** Retrieve the last update time of the specified information type
       @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
    */
-  int32_t lastUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const;
+  int32_t lastedTimeSinceUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const;
+  /** Retrieve the time of last update */
+  int32_t lastUpdateTime( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const;
 
   /** destructor for Base_c which has nothing to do */
   virtual ~TimePosGPS_c() { close();};
@@ -444,7 +446,7 @@ public:
     @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2
     @return DEV_KEY code of member who is sending the interested base msg type
     */
-  const DevKey_c& senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp);
+  const DevKey_c& senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) const;
 
 private:
   // Private methods

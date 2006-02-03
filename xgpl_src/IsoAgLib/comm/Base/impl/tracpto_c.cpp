@@ -99,8 +99,11 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/iutil_funcs.h>
 #include "tracpto_c.h"
+#include "tracgeneral_c.h"
 
 using namespace std;
+
+#define TIMEOUT_PTO_DISENGAGED 300
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
@@ -133,9 +136,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-  void TracPTO_c::init(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
+      @param rb_sendState optional setting to express TECU sending state (default: only receive in implement mode)
+   */
+  void TracPTO_c::init(const DevKey_c* rpc_devKey, bool rb_sendState)
   {
     // first register in Scheduler_c
     getSchedulerInstance4Comm().registerClient( this );
@@ -145,7 +148,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     i16_ptoFront = i16_ptoRear = NO_VAL_16S;
 
     // set the timestamps to 0
-    i32_lastBase2 = 0;
+    i32_lastPtoFront = i32_lastPtoRear = 0;
     #ifdef USE_DIN_9684
     if ( checkAlreadyClosed() )
     {
@@ -164,7 +167,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     #endif
 
     // set configure values with call for config
-    config(rpc_devKey, rt_mySendSelection);
+    config(rpc_devKey, rb_sendState);
 
     // clear state of b_alreadyClosed, so that close() is called one time
     clearAlreadyClosed();
@@ -191,27 +194,31 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** config the TracPTO_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-  void TracPTO_c::config(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
+      @param rb_sendState optional setting to express TECU sending state
+   */
+  void TracPTO_c::config(const DevKey_c* rpc_devKey, bool rb_sendState)
   {
     // set configure values
     pc_devKey = rpc_devKey;
-    t_mySendSelection = rt_mySendSelection;
+    b_sendState = rb_sendState;
 
     // set ui8_sendDevKey to the pointed value, if pointer is valid
-    if ((rpc_devKey != NULL) && ((t_mySendSelection & IsoAgLib::BaseDataGroup2) != 0)) c_sendBase2DevKey = *rpc_devKey;
-    else c_sendBase2DevKey.setUnspecified();
+    if ((rpc_devKey != NULL) && (b_sendState)) c_sendDevKey = *rpc_devKey;
+    else c_sendDevKey.setUnspecified();
   };
 
-  /** Retrieve the last update time of the specified information type
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-  int32_t TracPTO_c::lastUpdate(IsoAgLib::BaseDataGroup_t rt_mySendSelection) const
+  /** Retrieve the last update time */
+  int32_t TracPTO_c::lastedTimeSinceUpdate() const
   {
     const int32_t ci32_now = System_c::getTime();
-    if (rt_mySendSelection == IsoAgLib::BaseDataGroup2) return ( ci32_now - i32_lastBase2);
-    else return 0x7FFFFFFF;
+    if (i32_lastPtoFront < i32_lastPtoRear ) return (ci32_now - i32_lastPtoRear);
+    else return (ci32_now - i32_lastPtoFront);
+  }
+  /** Retrieve the time of last update */
+  int32_t TracPTO_c::lastUpdateTime() const
+  {
+    if (i32_lastPtoFront < i32_lastPtoRear ) return i32_lastPtoRear;
+    else return i32_lastPtoFront;
   }
 
   /** process received base msg and store updated value for later reading access;
@@ -261,13 +268,32 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     // check for different base data types whether the previously
     // sending node stopped sending -> other nodes can now step in
-    if ( ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) == 0 )
-      && ( ( ci32_now - i32_lastBase2 ) >= 3000                  )
-      && ( c_sendBase2DevKey.isSpecified()                       ) )
-    { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-      c_sendBase2DevKey.setUnspecified();
+    if ( ( !b_sendState               )
+      && ( c_sendDevKey.isSpecified() ) )
+    { // previously a node sent PTO data
+      if ( ( ( ci32_now - i32_lastPtoFront ) >= 3000 ) && ( ( ci32_now - i32_lastPtoRear ) >= 3000 ) )
+      { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
+        c_sendDevKey.setUnspecified();
+      }
+      #ifdef USE_ISO_11783
+      else
+      {
+        if ( ( ci32_now - i32_lastPtoFront ) >= TIMEOUT_PTO_DISENGAGED )
+        { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
+          // --> switch values to ZERO
+          i16_ptoFront = 0;
+          t_frontPtoEngaged = IsoAgLib::IsoInactive;
+        }
+        if ( ( ci32_now - i32_lastPtoRear ) >= TIMEOUT_PTO_DISENGAGED )
+        { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
+          // --> switch values to ZERO
+          i16_ptoRear = 0;
+          t_rearPtoEngaged = IsoAgLib::IsoInactive;
+        }
+      }
+      #endif
     }
-    if ( ( pc_devKey != NULL ) && (t_mySendSelection != IsoAgLib::BaseDataNothing))
+    if ( ( pc_devKey != NULL ) && (b_sendState))
     { // there is at least something configured to send
       #ifdef USE_ISO_11783
       if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true))
@@ -334,21 +360,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
-    if ( ( ( ci32_now - i32_lastBase2 ) >= 100                   )
-      && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup2 ) != 0 ) )
+    if ( ( ( ci32_now - i32_lastPtoFront ) >= 100 )
+      && ( b_sendState                            ) )
     { // send actual base2 data
-      c_sendBase2DevKey = *pc_devKey;
+      c_sendDevKey = *pc_devKey;
       data().setBabo(5);
       data().setSend(b_send);
-      data().setVal12(i16_ptoRear);
-      data().setVal34(i16_ptoFront);
+      dinSetPtoFlags( data() );
+      // set other information
+      getTracGeneralInstance4Comm().dinSetHitchEngineFlags( data() );
 
       // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
       // then it sends the data
       c_can << data();
-
-      // update time
-      i32_lastBase2 = ci32_now;
     }
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
@@ -358,39 +382,62 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** process a DIN9684 base information PGN */
   bool TracPTO_c::dinProcessMsg()
   { // a DIN9684 base information msg received
-    DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
-    bool b_result = false;
     // store the devKey of the sender of base data
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    if (getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
-    { // the corresponding sender entry exist in the monitor list
-      c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
+    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
+    { // the sender is not known -> ignore and block interpretation by other classes
+      return true;
     }
+    // the corresponding sender entry exist in the monitor list
+    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
 
     // interprete data accordingto BABO
     if (data().babo() == 5) {
       // base data 2: pto, hitch
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
-      if ( checkParseReceived( c_tempDevKey, c_sendBase2DevKey, IsoAgLib::BaseDataGroup2 ) )
+      if ( checkParseReceived( c_tempDevKey ) )
       { // sender is allowed to send
-        // rear pto
-        setPtoRear(data().val12());
-        // front pto
-        setPtoFront(data().val34());
+        dinParsePtoFlags( data() );
+        // parse other information
+        getTracGeneralInstance4Comm().dinParseHitchEngineFlags( data() );
       }
+      return true;
     }
-    return b_result;
+    else
+    {
+      return false;
+    }
+  }
+  /** helper function to do the parsing of the flag data of a
+   * received DIN9684 base message with Pto,Hitch,Engine information */
+  void TracPTO_c::dinParsePtoFlags(const BasePkg_c& rrefc_pkg)
+  { // rear pto
+    setPtoRear(rrefc_pkg.val12());
+    // front pto
+    setPtoFront(rrefc_pkg.val34());
+
+    // set last time
+    i32_lastPtoFront = i32_lastPtoRear = Scheduler_c::getLastTimeEventTrigger();
+    c_sendDevKey = getDinMonitorInstance4Comm().dinMemberNr(rrefc_pkg.send()).devKey();
+  }
+  /** helper function to set the Hitch and Engine flags of a DIN base data message */
+  void TracPTO_c::dinSetPtoFlags(BasePkg_c& rrefc_pkg)
+  {
+    rrefc_pkg.setVal12(i16_ptoRear);
+    rrefc_pkg.setVal34(i16_ptoFront);
+
+    // update time
+    i32_lastPtoFront = i32_lastPtoRear = Scheduler_c::getLastTimeEventTrigger();
   }
 
   #endif
   /** check if a received message should be parsed */
-  bool TracPTO_c::checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const
+  bool TracPTO_c::checkParseReceived(const DevKey_c& rrefc_currentSender ) const
   {
-    return ( ( ( t_mySendSelection & rt_selfSend   ) == 0 ) // I'm not the sender
+    return ( ( !b_sendState   ) // I'm not the sender
           && ( // one of the following conditions must be true
-              (rrefc_activeSender == rrefc_currentSender) // actual sender equivalent to last
-            || (rrefc_activeSender.isUnspecified() ) // last sender has not correctly claimed address member
+               (c_sendDevKey == rrefc_currentSender) // actual sender equivalent to last
+            || (c_sendDevKey.isUnspecified() ) // last sender has not correctly claimed address member
             || ((i16_ptoFront==-32768)&&(i16_ptoRear==-32768)) // current information is not valid
             )
           )?true:false;
@@ -415,10 +462,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     {
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
-      if ( checkParseReceived( c_tempDevKey, c_sendBase2DevKey, IsoAgLib::BaseDataGroup2 ) )
+      if ( checkParseReceived( c_tempDevKey ) )
       { // sender is allowed to send
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
         { // front PTO
+          i32_lastPtoFront = ci32_now;
           setPtoFront(data().val12() / 8); // ISO defines a resolution of 0.125 per bit!!!
           t_frontPtoEngaged = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 6) & 3);
           t_frontPto1000 = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 4) & 3);
@@ -426,14 +474,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         }
         else
         { // back PTO
+          i32_lastPtoRear = ci32_now;
           setPtoRear(data().val12() / 8); // ISO defines a resolution of 0.125 per bit!!!
           t_rearPtoEngaged = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 6) & 3);
           t_rearPto1000 = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 4) & 3);
           t_rearPtoEconomy = IsoAgLib::IsoActiveFlag_t( (data().val5() >> 2) & 3);
         }
         // set last time
-        i32_lastBase2 = ci32_now;
-        c_sendBase2DevKey = c_tempDevKey;
+        c_sendDevKey = c_tempDevKey;
       }
       else
       { // there is a sender conflict
@@ -457,60 +505,42 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setIsoSa(b_sa);
 
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
-    if (((ci32_now - i32_lastBase2 ) >= 100)
-      && ((t_mySendSelection & IsoAgLib::BaseDataGroup2) != 0))
+    if ( ((ci32_now - i32_lastPtoFront ) >= 100) && (b_sendState) )
     { // it's time to send Base2
-      isoSendBase2Update();
+      c_sendDevKey = *pc_devKey;
+      CANIO_c& c_can = getCanInstance4Comm();
+
+      data().setIsoPgn(FRONT_PTO_STATE_PGN);
+      data().setVal12(ptoFront()*8); // ISO defines a resolution of 0.125 per bit!!!
+      data().setVal34(NO_VAL_16);
+
+      uint8_t ui8_val5 = (t_frontPtoEngaged << 6);
+      ui8_val5 |= (t_frontPto1000 << 4);
+      ui8_val5 |= (t_frontPtoEconomy << 2);
+      data().setVal5(ui8_val5);
+      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // then it sends the data
+      c_can << data();
+
+      data().setIsoPgn(BACK_PTO_STATE_PGN);
+      data().setVal12(ptoRear() * 8); // ISO defines a resolution of 0.125 per bit!!!
+      data().setVal34(NO_VAL_16);
+
+      ui8_val5 = (t_frontPtoEngaged << 6);
+      ui8_val5 |= (t_frontPto1000 << 4);
+      ui8_val5 |= (t_frontPtoEconomy << 2);
+      data().setVal5(ui8_val5);
+      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+      // then it sends the data
+      c_can << data();
+
+      // update time
+      i32_lastPtoFront = Scheduler_c::getLastTimeEventTrigger();
     }
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
     return true;
   }
-
-  /** send Base2 Group data with hitch and PTO state */
-  void TracPTO_c::isoSendBase2Update( void )
-  { // send actual base2 data
-    c_sendBase2DevKey = *pc_devKey;
-    CANIO_c& c_can = getCanInstance4Comm();
-
-    data().setIsoPgn(FRONT_PTO_STATE_PGN);
-    data().setVal12(ptoFront()*8); // ISO defines a resolution of 0.125 per bit!!!
-    data().setVal34(NO_VAL_16);
-
-    uint8_t ui8_val5 = (t_frontPtoEngaged << 6);
-    ui8_val5 |= (t_frontPto1000 << 4);
-    ui8_val5 |= (t_frontPtoEconomy << 2);
-    data().setVal5(ui8_val5);
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
-
-    data().setIsoPgn(BACK_PTO_STATE_PGN);
-    data().setVal12(ptoRear() * 8); // ISO defines a resolution of 0.125 per bit!!!
-    data().setVal34(NO_VAL_16);
-
-    ui8_val5 = (t_frontPtoEngaged << 6);
-    ui8_val5 |= (t_frontPto1000 << 4);
-    ui8_val5 |= (t_frontPtoEconomy << 2);
-    data().setVal5(ui8_val5);
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-    // then it sends the data
-    c_can << data();
-
-    // update time
-    i32_lastBase2 = Scheduler_c::getLastTimeEventTrigger();
-  }
   #endif
 
-  /** deliver the devKey of the sender of the base data
-      possible errors:
-        * Err_c::range rui8_typeNr doesn't match valid base msg type number
-      @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
-      @return DEV_KEY code of member who is sending the intereested base msg type
-    */
-  const DevKey_c& TracPTO_c::senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) {
-    // simply answer first matching result if more than one type is selected
-    if ((rt_typeGrp & IsoAgLib::BaseDataGroup2) != 0) return c_sendBase2DevKey;
-    else return DevKey_c::DevKeyUnspecified;
-  }
 } // End Namespace __IsoAgLib

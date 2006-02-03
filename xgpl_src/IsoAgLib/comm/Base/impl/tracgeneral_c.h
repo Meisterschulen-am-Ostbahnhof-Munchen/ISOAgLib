@@ -125,9 +125,9 @@ public: // Public methods
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-  void init(const DevKey_c* rpc_devKey = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing );
+      @param rb_sendState optional setting to express TECU sending state
+   */
+  void init(const DevKey_c* rpc_devKey = NULL, bool rb_sendState = false );
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close(void);
@@ -152,13 +152,17 @@ public: // Public methods
   /** config the Base_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-  void config(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection);
-  /** Retrieve the last update time of the specified information type
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-  int32_t lastUpdate(IsoAgLib::BaseDataGroup_t rt_mySendSelection) const;
+      @param rb_sendState optional setting to express TECU sending state
+   */
+  void config(const DevKey_c* rpc_devKey, bool rb_sendState);
+  /** Retrieve the last update time */
+  int32_t lastedTimeSinceUpdate() const { return (System_c::getTime() - i32_lastEngineHitch);};
+  /** Retrieve the time of last update */
+  int32_t lastUpdateTime() const { return i32_lastEngineHitch;};
+    /** deliver the devKey of the sender of the base data
+  @return DEV_KEY code of member who is sending the intereested base msg type
+     */
+  const DevKey_c& senderDevKey() const { return c_sendDevKey;};
 
   /** destructor for Base_c which has nothing to do */
   virtual ~TracGeneral_c() { close();};
@@ -170,6 +174,21 @@ public: // Public methods
       @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
     */
   virtual bool processMsg();
+  #ifdef USE_DIN_9684
+  /** helper function to do the parsing of the flag data of a
+   * received DIN9684 base message with Pto,Hitch,Engine information */
+  void dinParseHitchEngineFlags(const BasePkg_c& rrefc_pkg);
+  /** helper function to set the Hitch and Engine flags of a DIN base data message */
+  void dinSetHitchEngineFlags(BasePkg_c& rrefc_pkg);
+
+  /** config the Base_c object after init -> set pointer to devKey and
+    config send/receive of different base msg types
+    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rb_sendState optional setting to express TECU sending state
+   */
+  void configFuel(const DevKey_c* rpc_devKey, bool rb_sendState);
+  #endif
+  /*@}*/
 
   /* ******************************************* */
   /** \name Set Values for periodic send on BUS  */
@@ -260,14 +279,6 @@ public: // Public methods
     */
   uint8_t hitchFront() const {return b_hitchFront;};
 
-  /** deliver the devKey of the sender of the base data
-      possible errors:
-        * Err_c::range rui8_typeNr doesn't match valid base msg type number
-      @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataCalendar | BaseDataGps
-      @return DEV_KEY code of member who is sending the intereested base msg type
-    */
-  const DevKey_c& senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp);
-
   #ifdef USE_DIN_9684
   /** deliver rear left draft */
   int rearLeftDraft() const { return i16_rearLeftDraft;};
@@ -281,6 +292,7 @@ public: // Public methods
   int fuelRate() const { return i16_fuelRate;};
   /** deliver fuel temperature °C */
   int fuelTemperature() const { return ui8_fuelTemperature;};
+
   #endif
 
   #ifdef USE_ISO_11783
@@ -360,17 +372,28 @@ private:
   CANPkgExt_c& dataBase();
 
   /** check if a received message should be parsed */
-  bool checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend) const
+  bool checkParseReceived(const DevKey_c& rrefc_currentSender) const
   {
-    return ( ( ( t_mySendSelection & rt_selfSend   ) == 0 ) // I'm not the sender
+    return ( ( !b_sendState ) // I'm not the sender
           && ( // one of the following conditions must be true
-               (rrefc_activeSender == rrefc_currentSender) // actual sender equivalent to last
-            || (rrefc_activeSender.isUnspecified() ) // last sender has not correctly claimed address member
+               (c_sendDevKey == rrefc_currentSender) // actual sender equivalent to last
+            || (c_sendDevKey.isUnspecified() ) // last sender has not correctly claimed address member
              )
            )?true:false;
   };
 
   #ifdef USE_DIN_9684
+  /** check if a received message should be parsed */
+  bool checkParseReceivedFuel(const DevKey_c& rrefc_currentSender) const
+  {
+    return ( ( !b_sendStateFuel ) // I'm not the sender
+          && ( // one of the following conditions must be true
+               (c_sendFuelDevKey == rrefc_currentSender) // actual sender equivalent to last
+            || (c_sendFuelDevKey.isUnspecified() ) // last sender has not correctly claimed address member
+             )
+           )?true:false;
+  };
+
   /** send a DIN9684 base information PGN.
    * this is only called when sending ident is configured and it has already claimed an address
    */
@@ -383,10 +406,6 @@ private:
     * this is only called when sending ident is configured and it has already claimed an address
     */
   bool isoTimeEvent(void);
-  /** send Base1 Group data with ground&theor speed&dist */
-  void isoSendBase1Update(void);
-  /** send Base2 Group data with hitch and PTO state */
-  void isoSendBase2Update(void);
   /** process a ISO11783 base information PGN */
   bool isoProcessMsg();
   #endif
@@ -395,37 +414,31 @@ private:
   // Private attributes
   /** temp data where received data is put */
   BasePkg_c c_data;
-  /** last time of base_1 msg [msec] */
-  int32_t i32_lastBase1;
   /** last time of base_2 msg [msec] */
-  int32_t i32_lastBase2;
-  /** last time of base_3 msg [msec] */
-  int32_t i32_lastBase3;
-  /** last time of fuel msg [msec] */
-  int32_t i32_lastFuel;
-
-  /** engine speed */
-  int16_t i16_engine;
-
+  int32_t i32_lastEngineHitch;
+  /** flag to store sending state of engine and hitch */
+  bool b_sendState;
+  /** DEVKEY of engine and hitch sender */
+  DevKey_c c_sendDevKey;
   /** devKey which act as sender of base msg */
   const DevKey_c* pc_devKey;
 
-  /** bitmask with selection of all base data types to send */
-  IsoAgLib::BaseDataGroup_t t_mySendSelection;
-  /** DEVKEY of base1 sender */
-  DevKey_c c_sendBase1DevKey;
-  /** DEVKEY of base2 sender */
-  DevKey_c c_sendBase2DevKey;
-  /** DEVKEY of base3 sender */
-  DevKey_c c_sendBase3DevKey;
-  /** DEVKEY of fuel data sender */
-  DevKey_c c_sendFuelDevKey;
+  /** engine speed */
+  int16_t i16_engine;
   /** front hitch data */
   uint8_t b_hitchFront;
   /** rear hitch data */
   uint8_t b_hitchRear;
 
   #ifdef USE_DIN_9684
+  /** last time of fuel msg [msec] */
+  int32_t i32_lastFuel;
+  /** send state for fuel */
+  bool b_sendStateFuel;
+  /** DevKey_c for fuel sender */
+  DevKey_c c_sendFuelDevKey;
+
+
   /** flag to detect, if receive filters for DIN are created */
   bool b_dinFilterCreated;
   /** NEW from AGCO Fendt Vario: rear left draft */
