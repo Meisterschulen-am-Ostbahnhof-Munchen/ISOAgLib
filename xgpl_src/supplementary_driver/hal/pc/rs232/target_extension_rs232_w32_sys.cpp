@@ -80,12 +80,12 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   DCB dcb;
   COMMTIMEOUTS ct;
   char com[] = "//./COMx";
-  com[7] = comport + 1 + '0';
+  com[7] = comport + '0';
   // first close if already configured
   close_rs232(comport);
 
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,NULL);
-  if (!hCom[comport]) return HAL_CONFIG_ERR;
+  if (hCom[comport]==INVALID_HANDLE_VALUE) return HAL_CONFIG_ERR;
   // read old config
   if (!GetCommState(hCom[comport],&(oldConfig[comport]))) return HAL_CONFIG_ERR;
   arr_usedPort[comport] = true;
