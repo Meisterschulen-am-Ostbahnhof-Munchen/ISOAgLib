@@ -477,7 +477,7 @@ The initial creation of the ISO<i><sub>AgLib</sub></i> was enabled by the resear
 <b>"IKB Dürnast"</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology
 			- Crop Production Engineering</a> .
 
-\subsection IndexInitialSupport Thanks to development by Sensortechnik Wiedemann ( STW )
+\subsection IndexInitialSupport Thanks to development by Sensortechnik Wiedemann (STW)
 The development phase with some compiler issues was supported by the experts of the
 <b>ESX</b> engineering team at <a href="http://www.sensor-technik.de">Sensortechnik Wiedemann ( STW )</a> .
 Some of the main design goals were derived during a project with <a href="http://www.sensor-technik.de">STW</a>
