@@ -230,6 +230,13 @@ public:
     VERY IMPORTANT: THIS FUNCTION CALL MAY OCCUR PRIOR TO AN SUCCESSFULLY UPLOADED POOL !!!!!!!
   */
   virtual void eventLanguagePgn(const localSettings_s& /*rrefs_localSettings*/) {};
+ 
+  /**
+    hook function that gets called immediately after recognizing an incoming
+    VT status message.
+  */
+ 
+  virtual void eventVtStatusMsg() {};
 
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
