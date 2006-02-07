@@ -52,8 +52,10 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 
 \section IndexNews News
 
-\subsection IndexCurrentAdditionNews News for the changes already in repository after 1.2.0
-  - <b>18.1.2005:</b> Virtual Terminal Client<br>
+\subsection IndexCurrentAdditionNews News for the 1.2.1 release
+  - <b>February 2006:</b> Enhance modularization of base information (Not-ProcessData parts from 11783-7) - this will be finished for release 1.2.2
+  - <b>January 2006:</b> Periodic Source Adress (SA) request sending to get early cleanup of stale nodes in monitor list
+  - <b>18.1.2006:</b> Virtual Terminal Client<br>
     - Now supporting correct scaling of the button-contents! (Each button has its own scaling-factor/centering-offset as the border is always 4 absolute 4 pixel, independent of how the object-pool will be scaled!)
       <b>ATTENTION: Please REBUILD vt2iso and RERUN it on your project's XML-definition, the initAllObjects function in the generated -functions.inc has changed!!<br>
     - Also new due to this slightly different scaling in the buttons: Don't use the same fontattributes-object in the datamask AND a button. Also (from a strict point of view) don't use the same fontattributes-object in different-sized buttons (as they all got a slightly different scaling-factor)!!!</b><br>
@@ -74,7 +76,7 @@ as there not only the maintainers can try to help you out. Please <a href="http:
 	- <b>2005-March:</b> MultiReceive classes implemented.
 
 <b>
-\ref IndexOldNews Archive of Old News
+\ref IndexOldNews
 </b>
 
 

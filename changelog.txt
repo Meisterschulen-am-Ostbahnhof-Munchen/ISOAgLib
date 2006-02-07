@@ -4,87 +4,59 @@
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
 \section IndexChanges Changes
-\subsection Change_A 0.1.0 to 0.2.0
 
-	- optional basic set of <b>ISO 11783</b> features
-	- possibility of baud rate auto sensing on power up and on BUS OFF errors (with configurable wait time).
-	- partitioning of sources in different packages. A base package contains system management, base tractor information
-			and CAN driver. All optional modules like process data or EEPROM driver can now
-			be downloaded as separate source archives.
-	- ISO<i><sub>AgLib</sub></i> specific CAN driver module to ease hardware adoption
-	- collection of all files which must be edited for hardware adoption to one directory and reduction of the amount
-			of affected files
+\subsection Change_K 1.2.0 to 1.2.1
 
-\subsection Change_B 0.2.0 to 0.2.1
+	- fixes for Win32 RS232 HAL
+	- added the hook function eventVtStatusMsg() that gets called immediately after recognizing an incoming VT status message
+	- fix compilation problems for cases with more than one protocoll instance
+	- project generation can now selectively incorporate tractor information subgroup classes, enhance the tractor information bases classes
+	- implemented possibility to change ISONAME of a device during runtime for DeviceDescription upload to TaskController
+	- Added explicit MultiPacket enabling in update_makefile.sh. Added getLinearBuffer function to StreamLinear_c
+	- include devpropertyhandler_c (DeviceDescription handling) only in projects which use LOCAL Process Data
+	- different font used for outputstrings in buttons to enable different scaling factors depending on the size of the button
+	- iProcDataLocalSimpleSetpoint_c::init() and iProcDataLocalSimpleMeasure_c::init() bugfix
+	- periodic SA request (about one minute period) for early detect of lost nodes on the BUS to get early cleanup of monitor list
+	  ( this feature is only active, when the automatic deletion of stale ISO nodes is activated by #define CONFIG_ISO_ITEM_MAX_AGE > 0 )
+	- Now supporting differentially scaled fontattributes in buttons
+	- Changed Scaling to get more exact. removed 20bit fixpoint by factorM and factorD
+	- Softkey child object positioning revised
+	- fix useage of CAN last message object which is used to receive CAN messages while the normal message objects are reconfigured
+	- give an ISOItem a second chance on a missed SA-Request; trigger periodic SA-Request every minute to get rid of stale entries in the monitor list
+	- fix calculation of analog ADC voltage value to the correct formula given by ESX BIOS
 
-	- corrected some small errors of synchronisation between working 0.1.0 tree and the new 0.2.0
-	- fixed bug in process data list management
+\subsection Change_J 1.1.0 to 1.2.0
 
-\subsection Change_C 0.2.1 to 1.0.0rc1
-
-	- reorganization of source files
-	- ISO 11783 at larger extend:
-	    - working set messages
-			- virtual terminal
-			- process data state of Spring 2003
-			- some bugs of first ISO approach fixed
-	- extended documentation with several examples and diagrams
-	- global access to central service classes to avoid complicated access through several steps
-	- reduced usage of heap memory
-	- reorganized error handling
-	- better integration in time schedule of application, as main function for periodic actions of ISO<i><sub>AgLib</sub></i> allows
-	    now to define a final time of return, where ISO<i><sub>AgLib</sub></i> returns at latest to the application
-	- smarter structure of namespaces
-	- several variants of process data, to restrict resource usage to needed level by selection of process data
-	    type, which provides exactly the needed features
-	- simple integration of process data and local identity variables within the program scope -> better control of memory and activation
-
-\subsection Change_D 1.0.0rc1 to 1.0.0rc2
-
-	- added several features to the project generation script to create project
-		files for the Open Source Win32 IDE "Dev-C++" and for the Tasking EDE
-	- enhanced documentation ( esp. Getting Started Guide, extended HTML links in examples
-		to demonstrated features )
-	- renamed all usages of "Announce" to the more standard conformant "Address Claim" and
-		change "DPlus" to "CanEn" to make ISO<i><sub>AgLib</sub></i> terms easier to understand
-	- enhanced overall integration into Win32 ( thanks to the help of Brad Cox )
-	- integrated the virtual terminal mask handling tool <b>vt2iso</b> to Win32 build
-		with Dev-C++ ( added alternative image manipulation library usage for <b>Free Image</b> )
-
-\subsection Change_E 1.0.0rc2 to 1.0.0rc3
-
-	- added support for Vector Informatik CAN driver libraries <b>CANLIB</b> and <b>XL Driver Library</b>
-		( integrate it in the project generation script, so that a Dev-C++ project can be simply created )
-	- made management of Master Working Set state of a local IsoAgLib::IdentItem_c ( representing of local ISO 11783
-		node in the library ) more robust against SA and Device Type conflicts
-	- enhanced some documentation
-	- fixed some small problems in interaction with CANoe virtual terminal ( thanks to Brad Cox )
-
-\subsection Change_F 1.0.0rc3 to 1.0.0rc4
-
-	- reordered main documentation blocks
-	- changed device type of virtual terminal example to tillage so that
-		conflicts with the tractor instance of CANoe are avoided
-
-\subsection Change_G 1.0.0rc4 to 1.0.0rc5
-
-	- added trigger request for claimed address as soon as local Ident is initialized as ISO 11783
-		( avoid <DeviceType, DeviceTypeInst> clash in IsoAgLib::IsoMonitor_c )
-	- implemented GPS decoding for ISO 11783 based on open accessible sources ( thanks to google )
-		( please test and send changes, in case a reference system reveals wrong decoding;
-			decoding of Longituge and Latitude are most probably correct, others?? )
-			- CAN ID 0x00FFF3LU with GPS_STATE_PGN -> probably the GPS mode is in BYTE1???
-			- CAN ID 0x00FEF3LU with GPS_LATITUDE_LONGITUDE_PGN -> a google'd example shows positioning and unit of latitude and longitude
-			- CAN ID 0x00FEE8LU with GPS_SPEED_HEADING_ALTITUDE_PGN -> probably last 4 Bytes contain altitude
-	- extended definition possibilities for application sources in project building script <b>update_makefile.sh</b>
-	- fixed bug in vt2iso.cpp which prevented it creating bitmap arrays for the 480 resolution
-	- fixed bug in FreeImage library handling, which places Y scanlines upsidedown in relation to
-		"usual" graphic algorithms -> thus the bitmaps were flipped vertically
-
-\subsection Change_H 1.0.0rc5 to 1.0.0
-
-	- implemented all virtual terminal object types, which are defined in ISO 11783 ( thanks to Brad Cox )
-	- implemented simple access function for easy change control of Vt-Object attributes like colour
+	- ISO<i><sub>AgLib</sub></i> is meanwhile used for several commercial projects, and more people are using it, so that
+	  the overall quality is raised to a fairly well level
+	- Vector-Informatik CAN card drivers can now be used with Dev-C++ due to new version of <b>their</b> driver (Please check Vector-Informatik
+	  download page for details)
+	- Process data communication is now update to the new ISO 11783 format
+	- XML based definition of Device Description
+	- creation of directly compileable Device Description with tool <b>proc2iso</b> which creates also the
+	  class instantiations for all defined local process data, so that the list of construction parameters needn't be
+		managed by hand
+	- Upload of Device Description corresponding to current state of Task Controller standardization
+	- fully functional support of Task Controller Client
+	- Multi-Receive is now supported, so that Input Text fields can be used in Virtual Terminal masks without restriction
+	- new Linux CAN HAL driver uses Linux kernel message queues for CAN communication between several local applications
+	  with or without real CAN cards --> several applications can easily constitude a CAN BUS without any hardware
+	- class GetyPos_c was renamed to DevKey_c to express the meaning for users who don't know DIN 9684
+	- new HAl adoptions to further <b>STW</b> ECU types supported by users
+	- proper support of NMEA2000 GPS strings
+	- several enhancements regarding VT client and network management
+	- XML-Schema pre-validation of vt2iso XML files
+	- Softkey size can now also be specified (sk_width="..." sk_height="...", just like the datamask-size (dimension="...")
+	- Adapted many items (timeouts, font-encoding, Positions now SIGNED integer) to FIRST EDITION of 11783-Part 6 (Virtual Terminal)
+	- "vtKeyCodeESC" is now "vtKeyCodeACK"
+	- vt2iso: Filename-parameter doesn't need "./" prefixed any more if XML file is in current directory
+	- minor fixes in ISOTerminal_c's close(), changeNumericValue's reserved byte changed to 0xFF
+	- NACK-recognition implemented (eventEnterSafeState), although it needs some more testing
+	- reaction on language (change) PGN now possible via hook-function
+	- old class Base_c is subdivided into smaller classes, so that a project can better select the wanted information types.
+		This allows also the better maintenance of anonymous accessible parts (most of the features existing in pre-1.2.0 release)
+		and special extansions, that is only possible by personal access. Please contact  <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+		to gain access to the extension parts.
 
 \subsection Change_I 1.0.0 to 1.1.0
 
@@ -136,40 +108,87 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 		you can use a XL CAN card with the CANLIB driver API also - this is the case for all users the maintainers know to date --> vector_canlib is
 		the right selection in the conf_foo feature setup files )
 
-\subsection Change_J 1.1.0 to 1.2.0
+\subsection Change_H 1.0.0rc5 to 1.0.0
 
-	- ISO<i><sub>AgLib</sub></i> is meanwhile used for several commercial projects, and more people are using it, so that
-	  the overall quality is raised to a fairly well level
-	- Vector-Informatik CAN card drivers can now be used with Dev-C++ due to new version of <b>their</b> driver (Please check Vector-Informatik
-	  download page for details)
-	- Process data communication is now update to the new ISO 11783 format
-	- XML based definition of Device Description
-	- creation of directly compileable Device Description with tool <b>proc2iso</b> which creates also the
-	  class instantiations for all defined local process data, so that the list of construction parameters needn't be
-		managed by hand
-	- Upload of Device Description corresponding to current state of Task Controller standardization
-	- fully functional support of Task Controller Client
-	- Multi-Receive is now supported, so that Input Text fields can be used in Virtual Terminal masks without restriction
-	- new Linux CAN HAL driver uses Linux kernel message queues for CAN communication between several local applications
-	  with or without real CAN cards --> several applications can easily constitude a CAN BUS without any hardware
-	- class GetyPos_c was renamed to DevKey_c to express the meaning for users who don't know DIN 9684
-	- new HAl adoptions to further <b>STW</b> ECU types supported by users
-	- proper support of NMEA2000 GPS strings
-	- several enhancements regarding VT client and network management
-	- XML-Schema pre-validation of vt2iso XML files
-	- Softkey size can now also be specified (sk_width="..." sk_height="...", just like the datamask-size (dimension="...")
-	- Adapted many items (timeouts, font-encoding, Positions now SIGNED integer) to FIRST EDITION of 11783-Part 6 (Virtual Terminal)
-	- "vtKeyCodeESC" is now "vtKeyCodeACK"
-	- vt2iso: Filename-parameter doesn't need "./" prefixed any more if XML file is in current directory
-	- minor fixes in ISOTerminal_c's close(), changeNumericValue's reserved byte changed to 0xFF
-	- NACK-recognition implemented (eventEnterSafeState), although it needs some more testing
-	- reaction on language (change) PGN now possible via hook-function
-	- old class Base_c is subdivided into smaller classes, so that a project can better select the wanted information types.
-		This allows also the better maintenance of anonymous accessible parts (most of the features existing in pre-1.2.0 release)
-		and special extansions, that is only possible by personal access. Please contact  <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
-		to gain access to the extension parts.
+	- implemented all virtual terminal object types, which are defined in ISO 11783 ( thanks to Brad Cox )
+	- implemented simple access function for easy change control of Vt-Object attributes like colour
 
+\subsection Change_G 1.0.0rc4 to 1.0.0rc5
 
+	- added trigger request for claimed address as soon as local Ident is initialized as ISO 11783
+		( avoid <DeviceType, DeviceTypeInst> clash in IsoAgLib::IsoMonitor_c )
+	- implemented GPS decoding for ISO 11783 based on open accessible sources ( thanks to google )
+		( please test and send changes, in case a reference system reveals wrong decoding;
+			decoding of Longituge and Latitude are most probably correct, others?? )
+			- CAN ID 0x00FFF3LU with GPS_STATE_PGN -> probably the GPS mode is in BYTE1???
+			- CAN ID 0x00FEF3LU with GPS_LATITUDE_LONGITUDE_PGN -> a google'd example shows positioning and unit of latitude and longitude
+			- CAN ID 0x00FEE8LU with GPS_SPEED_HEADING_ALTITUDE_PGN -> probably last 4 Bytes contain altitude
+	- extended definition possibilities for application sources in project building script <b>update_makefile.sh</b>
+	- fixed bug in vt2iso.cpp which prevented it creating bitmap arrays for the 480 resolution
+	- fixed bug in FreeImage library handling, which places Y scanlines upsidedown in relation to
+		"usual" graphic algorithms -> thus the bitmaps were flipped vertically
+
+\subsection Change_F 1.0.0rc3 to 1.0.0rc4
+
+	- reordered main documentation blocks
+	- changed device type of virtual terminal example to tillage so that
+		conflicts with the tractor instance of CANoe are avoided
+
+\subsection Change_E 1.0.0rc2 to 1.0.0rc3
+
+	- added support for Vector Informatik CAN driver libraries <b>CANLIB</b> and <b>XL Driver Library</b>
+		( integrate it in the project generation script, so that a Dev-C++ project can be simply created )
+	- made management of Master Working Set state of a local IsoAgLib::IdentItem_c ( representing of local ISO 11783
+		node in the library ) more robust against SA and Device Type conflicts
+	- enhanced some documentation
+	- fixed some small problems in interaction with CANoe virtual terminal ( thanks to Brad Cox )
+
+\subsection Change_D 1.0.0rc1 to 1.0.0rc2
+
+	- added several features to the project generation script to create project
+		files for the Open Source Win32 IDE "Dev-C++" and for the Tasking EDE
+	- enhanced documentation ( esp. Getting Started Guide, extended HTML links in examples
+		to demonstrated features )
+	- renamed all usages of "Announce" to the more standard conformant "Address Claim" and
+		change "DPlus" to "CanEn" to make ISO<i><sub>AgLib</sub></i> terms easier to understand
+	- enhanced overall integration into Win32 ( thanks to the help of Brad Cox )
+	- integrated the virtual terminal mask handling tool <b>vt2iso</b> to Win32 build
+		with Dev-C++ ( added alternative image manipulation library usage for <b>Free Image</b> )
+
+\subsection Change_C 0.2.1 to 1.0.0rc1
+
+	- reorganization of source files
+	- ISO 11783 at larger extend:
+	    - working set messages
+			- virtual terminal
+			- process data state of Spring 2003
+			- some bugs of first ISO approach fixed
+	- extended documentation with several examples and diagrams
+	- global access to central service classes to avoid complicated access through several steps
+	- reduced usage of heap memory
+	- reorganized error handling
+	- better integration in time schedule of application, as main function for periodic actions of ISO<i><sub>AgLib</sub></i> allows
+	    now to define a final time of return, where ISO<i><sub>AgLib</sub></i> returns at latest to the application
+	- smarter structure of namespaces
+	- several variants of process data, to restrict resource usage to needed level by selection of process data
+	    type, which provides exactly the needed features
+	- simple integration of process data and local identity variables within the program scope -> better control of memory and activation
+
+\subsection Change_B 0.2.0 to 0.2.1
+
+	- corrected some small errors of synchronisation between working 0.1.0 tree and the new 0.2.0
+	- fixed bug in process data list management
+
+\subsection Change_A 0.1.0 to 0.2.0
+
+	- optional basic set of <b>ISO 11783</b> features
+	- possibility of baud rate auto sensing on power up and on BUS OFF errors (with configurable wait time).
+	- partitioning of sources in different packages. A base package contains system management, base tractor information
+			and CAN driver. All optional modules like process data or EEPROM driver can now
+			be downloaded as separate source archives.
+	- ISO<i><sub>AgLib</sub></i> specific CAN driver module to ease hardware adoption
+	- collection of all files which must be edited for hardware adoption to one directory and reduction of the amount
+			of affected files
 
 */
 

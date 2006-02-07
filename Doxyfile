@@ -23,7 +23,7 @@ PROJECT_NAME           = IsoAgLib
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
-PROJECT_NUMBER         = 1.2.0
+PROJECT_NUMBER         = 1.2.1
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -462,7 +462,7 @@ WARN_LOGFILE           =
 INPUT                  = IsoAgLib_Examples \
                          xgpl_src \
                          build_utils \
-                         readme.txt
+                         readme.txt changelog.txt  oldNews.txt  README_LICENSED_PARTS.txt
 
 # If the value of the INPUT tag contains directories, you can use the
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -552,7 +552,7 @@ IMAGE_PATH             =
 # to standard output.  If FILTER_PATTERNS is specified, this tag will be
 # ignored.
 
-INPUT_FILTER           =
+INPUT_FILTER           = 
 
 # The FILTER_PATTERNS tag can be used to specify filters on a per file pattern
 # basis.  Doxygen will compare the file name with each pattern and apply the
@@ -561,7 +561,7 @@ INPUT_FILTER           =
 # info on how filters are used. If FILTER_PATTERNS is empty, INPUT_FILTER
 # is applied to all files.
 
-FILTER_PATTERNS        = *.txt=PlaceMainHeaderWithNavbar.sh
+FILTER_PATTERNS        = *.txt=./PlaceMainHeaderWithNavbar.sh
 
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using

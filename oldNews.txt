@@ -3,7 +3,7 @@
 
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
-\section IndexOldNews
+\section IndexOldNews Archive of old news
 \subsection IndexNews_A News before the 1.1.0 release
 	- <b>2004-11-15:</b> Create new email list for email exchange within user community so that users can help each other, and
 		can discuss changes there, before somebody starts implementing the change<br>

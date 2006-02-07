@@ -40,6 +40,6 @@
 <li> \ref FurtherReading
 </ul>
 &nbsp;<br>
-Last Update: <br>06 February 2006 by<br>
+Last Update: <br>07 February 2006 by<br>
 <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a><br>
 </div>
