@@ -686,6 +686,7 @@ MultiReceive_c::deregisterClient (IsoAgLib::MultiReceiveClient_c* rpc_client)
   // first of all remove all streams that are for this client!
   for (std::list<DEF_Stream_c_IMPL>::iterator pc_iter = list_streams.begin(); pc_iter != list_streams.end(); )
   {
+    // do also erase "kept" streams!!
     if (getClient(pc_iter->getIdent()) == rpc_client)
     { // remove stream (do not call any callbacks, as deregister is likely called in the client's destructor
       pc_iter = list_streams.erase (pc_iter);
@@ -763,7 +764,12 @@ MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent
     #else
     if (curStream->getIdent() == rc_streamIdent) // .matchRSI (rc_streamIdent)
     #endif
-      return curStream;
+    {
+      if (curStream->getStreamingState() != StreamFinishedJustKept)
+      { // only return streams that are not "kept". ignore kept streams here for further processing!
+        return curStream;
+      }
+    }
     i_list_streams++;
   }
   return NULL;
@@ -788,7 +794,12 @@ Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
     #else
     if (curStream->getIdent().matchSaDa (sa, da))
     #endif
-      return curStream;
+    {
+      if (curStream->getStreamingState() != StreamFinishedJustKept)
+      { // only return streams that are not "kept". ignore kept streams here for further processing!
+        return curStream;
+      }
+    }
     i_list_streams++;
   }
   return NULL;
@@ -804,7 +815,8 @@ MultiReceive_c::removeStream(Stream_c* rpc_stream)
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end();
        i_list_streams++) {
-    if (rpc_stream == (&*i_list_streams)) {
+    if (rpc_stream == (&*i_list_streams))
+    { // also let "kept" streams be erased!
       list_streams.erase (i_list_streams);
       return;
     }
@@ -1327,6 +1339,7 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
   for (std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
        i_list_streams != list_streams.end();)
   {
+    /** @todo What to do with the kept streams?? */
     if ((i_list_streams->getIdent().getDa() == rui8_oldSa) || (i_list_streams->getIdent().getSa() == rui8_oldSa))
     {
       connAbortTellClient(true, &(*i_list_streams));
