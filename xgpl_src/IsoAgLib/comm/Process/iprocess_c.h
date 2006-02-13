@@ -306,6 +306,15 @@ public:
                                          rui8_devClass);
     };
 
+#ifdef USE_ISO_11783
+  bool checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey)
+  { return Process_c::checkAndAddMatchingDDI2Group(rui16_DDI, rui_deviceElement, rc_devKey);};
+
+  bool addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const iDevKey_c& rc_devKey)
+  { return Process_c::addProprietaryDDI2Group(rui16_DDI, rui_deviceElement, b_isSetpoint, ddiType, rc_devKey);};
+#endif
+
+
  private:
   /** allow getIProcessInstance() access to shielded base class.
       otherwise __IsoAgLib::getProcessInstance() wouldn't be accepted by compiler

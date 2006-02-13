@@ -337,7 +337,6 @@ public:
     @param pl_elementDDI
   */
   void setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI);
-
 #endif
 
   /**
@@ -442,6 +441,20 @@ public:
              uint8_t rui8_devClassInst = 0xFF,  // default values from DIN
              const DevKey_c& rc_ownerDevKey = DevKey_c::DevKeyUnspecified // default values from DIN
              ) const;
+#endif
+
+#ifdef USE_ISO_11783
+  bool check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey);
+
+  bool checkProprietary4GroupMatch(uint16_t rui_deviceElement, const DevKey_c& rc_devKey);
+
+  static bool isPair(uint16_t rui16_ElementDDI, uint16_t rui16_DDI);
+
+  bool add2Group(uint16_t rui16_DDI);
+
+  bool addProprietary2Group(uint16_t rui16_DDI, uint16_t rui16_element, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType);
+
+  static void getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t &ref_ddiType, bool &refb_isSetpoint);
 #endif
 
 private: // Private attributes

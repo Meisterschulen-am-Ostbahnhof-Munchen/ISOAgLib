@@ -261,9 +261,9 @@ int main()
 
     // update local value for local process data so that remote ECUs can get the current
     // value from IsoAgLib
-    c_myOnoff.setMasterMeasurementVal( localIsWorking() );
-    c_myWorkWidth.setMasterMeasurementVal( localGetWorkingWidth() );
-    c_myApplicationRate.setMasterMeasurementVal( localGetApplicationRate() );
+    c_workState.setMasterMeasurementVal( localIsWorking() );
+    c_workWidth.setMasterMeasurementVal( localGetWorkingWidth() );
+    c_applicationRate.setMasterMeasurementVal( localGetApplicationRate() );
   }
   return 1;
 }

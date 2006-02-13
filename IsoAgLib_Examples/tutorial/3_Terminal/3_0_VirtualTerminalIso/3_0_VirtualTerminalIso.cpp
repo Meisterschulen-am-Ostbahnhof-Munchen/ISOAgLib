@@ -572,7 +572,7 @@ int main()
      #ifdef WIN32
      Sleep(10);
      #else
-     usleep(5000);
+     IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
      #endif
     #endif
   }

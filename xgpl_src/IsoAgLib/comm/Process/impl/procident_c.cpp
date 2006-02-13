@@ -112,6 +112,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "procident_c.h"
+#include "process_c.h"
 
 namespace __IsoAgLib {
 
@@ -328,6 +329,7 @@ bool ProcIdent_c::matchISO(
     if (devClass() != rui8_devClassReceiver) return false;
   }
 
+  if (!getProcessInstance4Comm().data().resolveCommandTypeForISO(*iter)) return false;
   // all previous tests are positive -> answer positive match
   return true;
 }
@@ -395,12 +397,189 @@ bool ProcIdent_c::matchDIN(
     && (ownerDevKey().getDevClassInst() != rui8_devClassInst)
     && (ownerDevKey() != rc_ownerDevKey)) return false;
 
+  // positive match, so call resolveCommandType
+  if (!resolveCommandTypeForDIN()) return false;
   // all previous tests are positive -> answer positive match
   return true;
 }
 #endif
 
+
 #ifdef USE_ISO_11783
+bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey)
+{
+  bool b_foundPair = false;
+  // first check if DevClass is the same like ownerDevKey's DevClass
+  if (rc_devKey.getDevClass() != data.c_ownerDevKey.getDevClass()) return b_foundPair;
+
+  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+  {
+    // if it is not the same device element continue
+    if (rui16_element != (*iter).ui16_element) continue;
+
+    b_foundPair = isPair((*iter).ui16_DDI, rui16_DDI);
+    if (b_foundPair) break;
+  }
+  return b_foundPair;
+};
+
+
+bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const DevKey_c& rc_devKey)
+{
+  bool b_foundPair = false;
+  // first check if DevClass is the same like ownerDevKey's DevClass
+  if (rc_devKey.getDevClass() != pc_ownerDevKey->getDevClass()) return b_foundPair;
+
+  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+  {
+    // if it is not the same device element continue
+    if (rui16_element != iter->ui16_element) continue;
+
+    // device element was found
+    b_foundPair = true;
+  }
+  return b_foundPair;
+};
+
+
+bool ProcIdent_c::isPair(uint16_t rui16_ElementDDI, uint16_t rui16_DDI)
+{
+  if (rui16_ElementDDI == rui16_DDI) return false; // same DDI -> "new DDI should not be added"
+  // check if given DDI is proprietary
+  if (rui16_ElementDDI > 0xDFFF) return false; // 0xDFFF is Request Default Process Data
+  // calculate group membership of both DDIs
+  // germane groups are from DDI 1 to 70 grouped to 5 and DDI 71 to 79 grouped to 3 and DDI 142/143
+  uint8_t ui8_groupElementDDI1 = (rui16_ElementDDI / 5);
+  uint8_t ui8_groupElementDDI2 = ((1 + rui16_ElementDDI) / 3);
+
+  uint8_t ui8_groupDDI1 = (rui16_DDI / 5);
+  uint8_t ui8_groupDDI2 = ((1 + rui16_DDI) / 3);
+
+  // check if both are in same DDI group
+  if ((ui8_groupElementDDI1 == ui8_groupDDI1) &&
+      ((ui8_groupElementDDI1 <= 13) || ((ui8_groupElementDDI1 >= 20) && (ui8_groupElementDDI1 <= 22))))
+    return true;
+  if ((ui8_groupElementDDI2 == ui8_groupDDI2) && ((ui8_groupElementDDI2 >= 24) && (ui8_groupElementDDI2 <= 26)))
+    return true;
+  if (((rui16_ElementDDI == 0x8E) && (rui16_DDI == 0x8F)) || ((rui16_ElementDDI == 0x8F) && (rui16_DDI == 0x8E)))
+    return true;
+  return false;
+};
+
+
+bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
+{
+  bool b_foundPair = false;
+
+  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
+  {
+    b_foundPair = isPair(iter->ui16_DDI, rui16_DDI);
+
+    if (b_foundPair)
+    {
+      GeneralCommand_c::ValueGroup_t ddiType;
+      bool b_isSetpoint;
+      getDDIType(rui16_DDI, ddiType, b_isSetpoint);
+      if (ddiType != GeneralCommand_c::noValue)
+      {
+        IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, iter->ui16_element, b_isSetpoint, ddiType};
+        data.l_elementDDI.push_back(s_DDIToAdd);
+      }
+      break;
+    }
+  }
+  return b_foundPair;
+};
+
+
+bool ProcIdent_c::addProprietary2Group(uint16_t rui16_DDI, uint16_t rui16_element, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType)
+{
+  IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, rui16_element, b_isSetpoint, ddiType};
+  data.l_elementDDI.push_back(s_DDIToAdd);
+
+  return true;
+};
+
+void ProcIdent_c::getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t &ref_ddiType, bool &refb_isSetpoint)
+{
+  // check if given DDI is proprietary
+  if (rui16_DDI > 0xDFFF)
+  {
+    ref_ddiType = GeneralCommand_c::noValue; // 0xDFFF is Request Default Process Data
+    return;
+  }
+
+  if (rui16_DDI == 0x8E)
+  {
+    ref_ddiType = GeneralCommand_c::exactValue;
+    refb_isSetpoint = true;
+    return;
+  }
+  if (rui16_DDI == 0x8F)
+  {
+    ref_ddiType = GeneralCommand_c::exactValue;
+    refb_isSetpoint = false;
+    return;
+  }
+
+  if (((rui16_DDI >=0x1) && (rui16_DDI <= 0x46)) || ((rui16_DDI >=0x65) && (rui16_DDI <= 0x73)))
+  {
+    uint8_t ui8_groupDDI1 = rui16_DDI % 5;
+
+    switch (ui8_groupDDI1)
+    {
+      case 0:
+        ref_ddiType = GeneralCommand_c::maxValue;
+        refb_isSetpoint = true;
+        break;
+      case 1:
+        ref_ddiType = GeneralCommand_c::exactValue;
+        refb_isSetpoint = true;
+        break;
+      case 2:
+        ref_ddiType = GeneralCommand_c::exactValue;
+        refb_isSetpoint = false;
+        break;
+      case 3:
+        ref_ddiType = GeneralCommand_c::defaultValue;
+        refb_isSetpoint = true;
+        break;
+      case 4:
+        ref_ddiType = GeneralCommand_c::minValue;
+        refb_isSetpoint = true;
+        break;
+    }
+    return;
+  }
+
+  if ((rui16_DDI >=0x47) && (rui16_DDI <= 0x4F))
+  {
+    uint8_t ui8_groupDDI2 = (1 + rui16_DDI) % 3;
+
+    switch (ui8_groupDDI2)
+    {
+      case 0:
+        ref_ddiType = GeneralCommand_c::exactValue;
+        refb_isSetpoint = true;
+        break;
+      case 1:
+        ref_ddiType = GeneralCommand_c::exactValue;
+        refb_isSetpoint = false;
+        break;
+      case 2:
+        ref_ddiType = GeneralCommand_c::maxValue;
+        refb_isSetpoint = false;
+        break;
+    }
+    return;
+  }
+
+  // any other DDI
+  ref_ddiType = GeneralCommand_c::exactValue;
+  refb_isSetpoint = false;
+}
+
+
 void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
 {
   data.l_elementDDI.clear();
@@ -415,7 +594,7 @@ void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
 void ProcIdent_c::setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI)
 {
   data.l_elementDDI.clear();
-  // check if pointer to strcut (array) is set (constructor call with NULL possible!)
+  // check if pointer to struct (array) is set (constructor call with NULL possible!)
   if (pl_elementDDI) {
     for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = pl_elementDDI->begin();
          iter != pl_elementDDI->end(); iter++)

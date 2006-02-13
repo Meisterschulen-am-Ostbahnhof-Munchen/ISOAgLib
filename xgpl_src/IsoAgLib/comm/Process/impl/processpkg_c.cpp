@@ -784,34 +784,29 @@ void ProcessPkg_c::useTermDevKeyForLocalProc(const DevKey_c& rc_devKey, const De
 }
 
 /**
-  extract data from DIN/ISO commands and save it to member class
-  @param refl_elementDDI
+  extract data from DIN commands and save it to member class
 */
-bool ProcessPkg_c::resolveCommandType(
-#ifdef USE_ISO_11783
-  const std::list<IsoAgLib::ElementDDI_s>& refl_elementDDI
-#endif
-)
+#ifdef USE_DIN_9684
+bool ProcessPkg_c::resolveCommandTypeForDIN()
 {
-
   bool b_isSetpoint = false;
   bool b_isRequest = false;
   GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue;
   GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
-  
-  if ( identType() == Ident_c::StandardIdent) {
 
-#ifdef USE_DIN_9684
+  if ( identType() == Ident_c::StandardIdent)
+  {
     // DIN command
-
     // make first decision: requestValue / setValue
     en_command = ( pd() & 0x2 ) ? GeneralCommand_c::requestValue : GeneralCommand_c::setValue;
 
-    if (((pd() & 0x1) == 0) && (mod() < 4)) {
+    if (((pd() & 0x1) == 0) && (mod() < 4))
+    {
       // pd {00, 10} with mod {000,001,010} are setpoint messages
       b_isSetpoint = true;
 
-      switch (mod()) {
+      switch (mod())
+      {
         case 0x0:
           en_valueGroup = GeneralCommand_c::exactValue;
           break;
@@ -824,7 +819,8 @@ bool ProcessPkg_c::resolveCommandType(
       }
     }
 
-    if (((pd() & 0x1) == 1) && (mod() < 5)) {
+    if (((pd() & 0x1) == 1) && (mod() < 5))
+    {
       // measure
 
       switch (mod()) {
@@ -846,15 +842,18 @@ bool ProcessPkg_c::resolveCommandType(
       }
     }
 
-    if (pd() == 0) {
+    if (pd() == 0)
+    {
       // measure prog commands
-      if (mod() == 4) {
+      if (mod() == 4)
+      {
         if (dataLong() >= 0)
           en_command = GeneralCommand_c::measurementDistanceValue;
         else
           en_command = GeneralCommand_c::measurementTimeValue;
       }
-      if (mod() == 5) {
+      if (mod() == 5)
+      {
         en_command = GeneralCommand_c::noCommand;
         if (dataLong() > 0)
           en_command = GeneralCommand_c::measurementChangeThresholdValue;
@@ -884,7 +883,8 @@ bool ProcessPkg_c::resolveCommandType(
       }
     }
 
-    if (existMemberEmpf() && (devClass() == memberEmpf().devKey().getDevClass())) {
+    if (existMemberEmpf() && (devClass() == memberEmpf().devKey().getDevClass()))
+    {
        // we are local
        // from MeasureProgLocal_c::processMsg and ProcDataLocalBase_c::processProg())
        if ((pd() == 1) && (dataRawCmdLong() == 0) )
@@ -896,16 +896,36 @@ bool ProcessPkg_c::resolveCommandType(
       }
     }
 
-    if (pd() & 0x2) {
+    if (pd() & 0x2)
+    {
       // pd {10, 11} are requests
       b_isRequest = true;
     }
+  }
+
+  if (en_command != GeneralCommand_c::noCommand)
+  {
+    c_generalCommand.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command);
+    return true;
+  }
+  else return false;
+};
 #endif
 
-  } else {
 
+/**
+  extract data from DIN/ISO commands and save it to member class
+  @param refl_elementDDI
+*/
 #ifdef USE_ISO_11783
+bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDDI_s& refl_elementDDI)
+{
+  bool b_isSetpoint = false;
+  bool b_isRequest = false;
+  GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue;
+  GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
 
+  if ( identType() != Ident_c::StandardIdent) {
     // ISO command
     switch (cmd()) {
       case 0x00:
@@ -946,96 +966,21 @@ bool ProcessPkg_c::resolveCommandType(
         en_command = GeneralCommand_c::workingsetMasterMaintenance;
         break;
     }
-
-    for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter_elementDDI = refl_elementDDI.begin();
-         iter_elementDDI != refl_elementDDI.end();
-         iter_elementDDI++)
-    {
-      if ( (iter_elementDDI->ui16_DDI == DDI()) && (iter_elementDDI->ui16_element == element()) )
-      {
-        b_isSetpoint = iter_elementDDI->b_isSetpoint;
-        en_valueGroup = iter_elementDDI->en_valueGroup;
-      }
-    }  
-
-#if 0
-    // decide setpoint/measurement
-
-   b_isSetpoint = true;
-    if ( DDI() < 74 ) {
-      if ( DDI() % 5 == 2 ) {
-        // actual value with DDI 2, 7, 12, 17, ...: measure
-        b_isSetpoint = false;
-        en_valueGroup = GeneralCommand_c::exactValue;
-      }
-
-      if ( DDI() % 5 == 1 )
-        en_valueGroup = GeneralCommand_c::exactValue;
-      if ( DDI() % 5 == 3 )
-        en_valueGroup = GeneralCommand_c::defaultValue;
-      if ( DDI() % 5 == 4 )
-        en_valueGroup = GeneralCommand_c::minValue;
-      if ( DDI() % 5 == 0 )
-        en_valueGroup = GeneralCommand_c::maxValue;
-
-    }
-    else if ( DDI() < 80 ) {
-      if ( ( DDI() - 74 ) % 3 > 0 ) {
-        // actual value with DDI 75, 76, 78, 79 ...: measure
-        b_isSetpoint = false;
-        en_valueGroup = GeneralCommand_c::exactValue;
-      }
-
-      if ( ( DDI() - 74 ) % 3 == 0 )
-        en_valueGroup = GeneralCommand_c::exactValue;
-      if ( ( DDI() - 74 ) % 3 == 2 )
-        en_valueGroup = GeneralCommand_c::maxValue;
-    }
-    else if ( DDI() <= 100 ) {
-      b_isSetpoint = false;
-      en_valueGroup = GeneralCommand_c::exactValue;
-    }
-    else if ( DDI() < 116 ) {
-      if ( DDI() % 5 == 2 ) {
-        // actual value with DDI 2, 7, 12, 17, ...: measure
-        b_isSetpoint = false;
-        en_valueGroup = GeneralCommand_c::exactValue;
-      }
-
-      if ( DDI() % 5 == 1 )
-        en_valueGroup = GeneralCommand_c::exactValue;
-      if ( DDI() % 5 == 3 )
-        en_valueGroup = GeneralCommand_c::defaultValue;
-      if ( DDI() % 5 == 4 )
-        en_valueGroup = GeneralCommand_c::minValue;
-      if ( DDI() % 5 == 0 )
-        en_valueGroup = GeneralCommand_c::maxValue;
-
-    }
-    else if ( DDI() < 124 ) {
-      b_isSetpoint = false;
-      en_valueGroup = GeneralCommand_c::exactValue;
-    }
-    else if ( DDI() < 134 ) {
-      en_valueGroup = GeneralCommand_c::exactValue;
-    }
-    else {
-      b_isSetpoint = false;
-      en_valueGroup = GeneralCommand_c::exactValue;
-    }
-#endif
-
-
-#endif
-
   }
 
-  if (en_command != GeneralCommand_c::noCommand) {
+  if ( (refl_elementDDI.ui16_DDI == DDI()) && (refl_elementDDI.ui16_element == element()) )
+  {
+    b_isSetpoint = refl_elementDDI.b_isSetpoint;
+    en_valueGroup = refl_elementDDI.en_valueGroup;
+  }
+
+  if (en_command != GeneralCommand_c::noCommand)
+  {
     c_generalCommand.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command);
     return true;
-  } else
-    return false;
-
-};
+  }
+  else return false;
+}
+#endif
 
 } // end of namespace __IsoAgLib

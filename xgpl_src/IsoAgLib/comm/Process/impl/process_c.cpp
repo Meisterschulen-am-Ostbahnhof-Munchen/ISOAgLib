@@ -703,7 +703,7 @@ ProcDataLocalBase_c& Process_c::procDataLocal(
     @param rui8_devClassInst optional device class inst code of searched local Process Data instance
                   (only important if more DEVCLASS type members are active)
     @param rui8_lis LIS code of searched local Process Data instance
-    @param rui8_wert WERT code of searched local Process Data instance
+    @param rui8_wert WERT code of searched local10,64 Process Data instance
     @param rui8_inst INST code of searched local Process Data instance
     @param rui8_zaehlnum ZAEHLNUM  code of searched local Process Data instance
 
@@ -1010,7 +1010,7 @@ bool Process_c::updateRemoteCache(
 #ifdef USE_ISO_11783
                          uint16_t rui16_DDI,
                          uint16_t rui16_element,
-                         uint8_t rui8_devClassReceiverSender,
+                         uint8_t rui8_devClassSender,
 #endif
 #ifdef USE_DIN_9684
                          uint8_t rui8_dataDevClass,
@@ -1033,11 +1033,11 @@ bool Process_c::updateRemoteCache(
         if ((*pc_searchCacheC2)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_devClassInst)) return true;
       } else {
         // ISO
-        if ((*pc_searchCacheC2)->matchISO(rui8_devClassReceiver, rui8_devClassReceiverSender, rui16_DDI, rui16_element)) return true;
+        if ((*pc_searchCacheC2)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element)) return true;
       }
 #else
   #ifdef USE_ISO_11783
-      if ((*pc_searchCacheC2)->matchISO(rui8_devClassReceiver, rui8_devClassReceiverSender, rui16_DDI, rui16_element)) return true;
+      if ((*pc_searchCacheC2)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element)) return true;
   #endif
   #ifdef USE_DIN_9684
       if ((*pc_searchCacheC2)->matchDIN(rui8_dataDevClass, rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum, rui8_devClassInst)) return true;
@@ -1046,7 +1046,7 @@ bool Process_c::updateRemoteCache(
 
     }
     //old cache doesn't match any more -> search new
-    for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
+    for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
     { // check for lazy match with INSTANCE == 0xFF (==joker)
@@ -1059,12 +1059,12 @@ bool Process_c::updateRemoteCache(
           b_matched = true;
       } else {
         // ISO
-        if ((*pc_iter)->matchISO(rui8_devClassReceiver, rui8_devClassReceiverSender, rui16_DDI, rui16_element))
+        if ((*pc_iter)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element))
           b_matched = true;
       }
 #else
   #ifdef USE_ISO_11783
-      if ((*pc_iter)->matchISO(rui8_devClassReceiver, rui8_devClassReceiverSender, rui16_DDI, rui16_element))
+      if ((*pc_iter)->matchISO(rui8_devClassReceiver, rui8_devClassSender, rui16_DDI, rui16_element))
         b_matched = true;
   #endif
   #ifdef USE_DIN_9684
@@ -1149,6 +1149,55 @@ bool Process_c::createRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
 
   return b_result;
 }
+
+#ifdef USE_ISO_11783
+bool Process_c::checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey)
+{
+  ProcDataRemoteBase_c* pc_remoteProcessData = check4DDIGroupMatch(rui16_DDI, rui_deviceElement, rc_devKey);
+
+  if (NULL == pc_remoteProcessData) return false;
+
+  return pc_remoteProcessData->add2Group(rui16_DDI);
+};
+
+
+bool Process_c::addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const DevKey_c &rc_devKey)
+{
+  ProcDataRemoteBase_c* pc_remoteProcessData = check4ProprietaryDDIGroupMatch(rui_deviceElement, rc_devKey);
+
+  if (NULL == pc_remoteProcessData) return false;
+
+  return pc_remoteProcessData->addProprietary2Group(rui16_DDI, rui_deviceElement, b_isSetpoint, ddiType);
+};
+
+
+ProcDataRemoteBase_c* Process_c::check4DDIGroupMatch(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey)
+{
+  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
+        ( pc_iter != c_arrClientC2.end() );
+        pc_iter++ )
+  {
+    if ((*pc_iter)->check4GroupMatch(rui16_DDI, rui_deviceElement, rc_devKey))
+      return *pc_iter;
+  }// for
+
+  return NULL;
+}
+
+ProcDataRemoteBase_c* Process_c::check4ProprietaryDDIGroupMatch(uint16_t rui_deviceElement, const DevKey_c &rc_devKey)
+{
+  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
+        ( pc_iter != c_arrClientC2.end() );
+        pc_iter++ )
+  {
+    if ((*pc_iter)->checkProprietary4GroupMatch(rui_deviceElement, rc_devKey))
+      return *pc_iter;
+  }// for
+
+  return NULL;
+};
+#endif
+
 /**
   delete FilterBox_c for receive from remote devKey if needed
   (important to delete old Filter Boxes after deletion of

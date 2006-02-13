@@ -465,16 +465,19 @@ public:
     @param rb_val uint8_t data value
   */
   void setData(uint8_t rb_pos, uint8_t rb_val){pb_procData[rb_pos] = rb_val;};
+
   /**
     extract data from DIN/ISO commands and save it to member class
     @param refl_elementDDI
   */
-  bool resolveCommandType(
-#ifdef USE_ISO_11783
-    const std::list<IsoAgLib::ElementDDI_s>& refl_elementDDI
+#ifdef USE_DIN_9684
+  bool resolveCommandTypeForDIN();
 #endif
-  );
-  
+
+#ifdef USE_ISO_11783
+  bool resolveCommandTypeForISO(const IsoAgLib::ElementDDI_s& refl_elementDDI);
+#endif
+
   /**
     overloaded virtual function to translate the string data into flag values;
     needed for assigning informations from another CANPkg_c or CANPkgExt

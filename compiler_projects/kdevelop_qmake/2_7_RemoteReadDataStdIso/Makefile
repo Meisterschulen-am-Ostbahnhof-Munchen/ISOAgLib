@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = 2_7_RemoteReadDataStdIso
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso 
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso
 BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
 BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
@@ -47,6 +47,12 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
@@ -56,7 +62,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso/2_7_RemoteReadDataStdIso.cpp  
+		../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso/2_7_RemoteReadDataStdIso.cpp
 
 
 #Special Sources for CAN Server
