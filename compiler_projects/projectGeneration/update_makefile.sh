@@ -492,7 +492,12 @@ function create_filelist( )
 
   COMM_FEATURES=" -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'"
   if [ $PRJ_BASE -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
+    if [ $PRJ_ISO11783 -lt 1 ] ; then
+      # no trac light
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*traclight*' \)"
+    else
+      COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
+    fi
   fi
   if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
 	  COMM_FEATURES="$COMM_FEATURES -o -name 'ibasetypes.h' -o -name 'basepkg_c*'"
@@ -506,8 +511,10 @@ function create_filelist( )
   if [ $PRJ_TRACTOR_PTO -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
   fi
-  if [ $PRJ_TRACTOR_LIGHT -gt 0 ] ; then
+  if test $PRJ_TRACTOR_LIGHT -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*traclight*' \)"
+  else
+	PRJ_TRACTOR_LIGHT=0
   fi
   if [ $PRJ_TRACTOR_AUX -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracaux*' \)"
