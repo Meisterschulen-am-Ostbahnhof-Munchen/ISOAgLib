@@ -403,7 +403,7 @@ bool ProcIdent_c::matchDIN(
     && (ownerDevKey() != rc_ownerDevKey)) return false;
 
   // positive match, so call resolveCommandType
-  if (!resolveCommandTypeForDIN()) return false;
+  if (!getProcessInstance4Comm().data().resolveCommandTypeForDIN()) return false;
   // all previous tests are positive -> answer positive match
   return true;
 }

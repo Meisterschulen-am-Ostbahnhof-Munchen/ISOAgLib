@@ -457,10 +457,10 @@ void DINMaskUpload_c::createLbsplusProcdata()
   IsoAgLib::ElementDDI_s s_TempElementDDI[1] =
   {
     // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, GeneralCommand_c::noValue}
   };
 
-  arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, LBS_PLUS_PROJECT_SIZE, *pc_localDevKey,2, *pc_localDevKey, pc_localDevKey));
+  arrSyncproc.push_front(syncproc_t(s_TempElementDDI, 0xFFFF, 0, 0xF, 4, LBS_PLUS_PROJECT_SIZE, *pc_localDevKey,2, *pc_localDevKey, pc_localDevKey));
   if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) {
     arrSyncproc.begin()->setMasterMeasurementVal(static_cast<int32_t>(activeMask().ui32_maskSize));
     arrSyncproc.begin()->sendMasterMeasurementVal( c_devKey );
@@ -475,7 +475,7 @@ void DINMaskUpload_c::createLbsplusProcdata()
   {
     if ((pt_syncTupel[ui8_syncNoInd].ui8_ind == 0) || (pt_syncTupel[ui8_syncNoInd].ui8_ind == LBS_PLUS_PROJECT_SIZE)) continue;
 
-    arrSyncproc.push_front(syncproc_t(s_TempElementDDI,0, 0xF, 4, pt_syncTupel[ui8_syncNoInd].ui8_ind, *pc_localDevKey, 2, *pc_localDevKey, pc_localDevKey));
+    arrSyncproc.push_front(syncproc_t(s_TempElementDDI, 0xFFFF, 0, 0xF, 4, pt_syncTupel[ui8_syncNoInd].ui8_ind, *pc_localDevKey, 2, *pc_localDevKey, pc_localDevKey));
 
     if (activeMask().en_terminalType < IsoAgLib::FieldstarPlus) {
       arrSyncproc.begin()->setMasterMeasurementVal(pt_syncTupel[ui8_syncNoInd].i32_val);
@@ -526,9 +526,9 @@ void DINMaskUpload_c::createFieldstarProcdata()
   IsoAgLib::ElementDDI_s s_TempElementDDI[1] =
   {
     // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, GeneralCommand_c::noValue}
   };
-  arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, FS_OLD_PROJECT_SIZE, 0xFF, *pc_localDevKey, 5, *pc_localDevKey, pc_localDevKey));
+  arrSyncproc.push_front(syncproc_t(s_TempElementDDI, 0xFFFF, 3, 0x0, FS_OLD_PROJECT_SIZE, 0xFF, *pc_localDevKey, 5, *pc_localDevKey, pc_localDevKey));
   float f_temp = (float)activeMask().ui32_maskSize;
   arrSyncproc.begin()->setpoint().setSetpointMasterVal(f_temp);
   arrSyncproc.begin()->setpoint().sendMasterSetpointVal( c_devKey );
@@ -537,9 +537,9 @@ void DINMaskUpload_c::createFieldstarProcdata()
   {
     if ((pt_syncTupel[ui8_syncNoInd].ui8_ind == 0) || (pt_syncTupel[ui8_syncNoInd].ui8_ind == FS_OLD_PROJECT_SIZE)) continue;
     if (pt_syncTupel[ui8_syncNoInd].ui8_ind == FS_OLD_SW_VERSION)
-      arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3,  0xF, 0x3, 0xFF, *pc_localDevKey, 1, *pc_localDevKey, pc_localDevKey));
+      arrSyncproc.push_front(syncproc_t(s_TempElementDDI, 0xFFFF, 3, 0xF, 0x3, 0xFF, *pc_localDevKey, 1, *pc_localDevKey, pc_localDevKey));
     else
-      arrSyncproc.push_front(syncproc_t(s_TempElementDDI,3, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, *pc_localDevKey , 5, *pc_localDevKey, pc_localDevKey));
+      arrSyncproc.push_front(syncproc_t(s_TempElementDDI, 0xFFFF, 3, 0x0, pt_syncTupel[ui8_syncNoInd].ui8_ind, 0xFF, *pc_localDevKey , 5, *pc_localDevKey, pc_localDevKey));
     f_temp = (float)((float)pt_syncTupel[ui8_syncNoInd].i32_val/100.0F);
     arrSyncproc.begin()->setpoint().setSetpointMasterVal(f_temp);
     arrSyncproc.begin()->setpoint().sendMasterSetpointVal( c_devKey );
