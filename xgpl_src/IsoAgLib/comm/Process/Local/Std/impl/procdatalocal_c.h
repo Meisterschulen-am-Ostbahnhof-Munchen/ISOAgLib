@@ -228,6 +228,7 @@ public:
   ProcDataLocal_c(
 #ifdef USE_ISO_11783
                   const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
+                  uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
                   uint8_t rui8_lis = 0xFF,
@@ -289,6 +290,7 @@ public:
   void init(
 #ifdef USE_ISO_11783
             const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
+            uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0xFF,

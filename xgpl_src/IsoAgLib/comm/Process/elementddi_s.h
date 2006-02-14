@@ -99,7 +99,6 @@ namespace IsoAgLib {
 */
 struct ElementDDI_s {
   uint16_t ui16_DDI;
-  uint16_t ui16_element;
   bool b_isSetpoint;
   GeneralCommand_c::ValueGroup_t en_valueGroup;
 };

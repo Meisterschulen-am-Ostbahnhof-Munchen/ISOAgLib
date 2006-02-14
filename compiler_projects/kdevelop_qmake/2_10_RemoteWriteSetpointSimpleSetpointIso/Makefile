@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = 2_10_RemoteWriteSetpointSimpleSetpointIso
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_10_RemoteWriteSetpointSimpleSetpointIso 
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_10_RemoteWriteSetpointSimpleSetpointIso
 BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
 BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
@@ -45,6 +45,12 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/Remote/StdMeasureElements/impl/measureprogremote_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/Remote/SimpleSetpointElements/impl/simplemanagesetpointremote_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
 		../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp  \
 		../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
@@ -56,7 +62,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_10_RemoteWriteSetpointSimpleSetpointIso/2_10_RemoteWriteSetpointSimpleSetpointIso.cpp  
+		../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_10_RemoteWriteSetpointSimpleSetpointIso/2_10_RemoteWriteSetpointSimpleSetpointIso.cpp
 
 
 #Special Sources for CAN Server

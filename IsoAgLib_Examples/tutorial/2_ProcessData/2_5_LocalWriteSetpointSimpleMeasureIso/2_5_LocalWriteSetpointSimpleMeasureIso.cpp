@@ -380,6 +380,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
   #if defined(USE_ISO_11783)
                                          s_workStateElementDDI,
+                                         ui16_workStateElementNumber,
   #endif
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
@@ -394,6 +395,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
   #if defined(USE_ISO_11783)
                                                s_applicationRateElementDDI,
+                                               ui16_applicationRateElementNumber,
   #endif
   #if defined(USE_DIN_9684)
                                                0, 0x5, 0x0, 0xFF,

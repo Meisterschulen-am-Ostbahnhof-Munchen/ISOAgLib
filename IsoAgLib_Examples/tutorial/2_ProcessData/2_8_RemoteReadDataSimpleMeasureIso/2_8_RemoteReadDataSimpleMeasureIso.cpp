@@ -320,7 +320,7 @@ int main()
   // if DEV_KEY conflicts forces change of device class instance, the
   // IsoAgLib can change the c_myDevKey val through the pointer to c_myDevKey
   // ISO
-#ifdef USE_ISO_11783 
+#ifdef USE_ISO_11783
   IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey,
     b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
     ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
@@ -331,27 +331,27 @@ int main()
   uint8_t c_myName[] = "Hi-You";
   IsoAgLib::iIdentItem_c c_myIdent( &c_myDevKey, c_myName, IsoAgLib::IState_c::DinOnly);
 #endif
-  
+
   // device type of remote ECU
   IsoAgLib::iDevKey_c c_remoteDeviceType( 0x5, 0 );
 
 #if defined(USE_ISO_11783)
-  const ElementDDI_s s_WorkStateElementDDI[2] = 
-  { 
-    // DDI 141, element 0
-    {141, 0, true, GeneralCommand_c::exactValue},
+  const ElementDDI_s s_WorkStateElementDDI[2] =
+  {
+    // DDI 141
+    {141, true, GeneralCommand_c::exactValue},
     // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, GeneralCommand_c::noValue}
   };
-  const ElementDDI_s s_ApplicationRateElementDDI[3] = 
-  { 
-    // DDI 1, element 2
-    {1, 2, true, GeneralCommand_c::exactValue},
-    // DDI 2, element 4
-    {2, 4, false, GeneralCommand_c::exactValue},
+  const ElementDDI_s s_ApplicationRateElementDDI[3] =
+  {
+    // DDI 1
+    {1, true, GeneralCommand_c::exactValue},
+    // DDI 2
+    {2, false, GeneralCommand_c::exactValue},
     // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
-  }; 
+    {0xFFFF, false, GeneralCommand_c::noValue}
+  };
 #endif
 
 #ifdef USE_PROC_HANDLER
@@ -359,29 +359,32 @@ int main()
   arr_procData[cui8_indexWorkState].init(
   #if defined(USE_ISO_11783)
                                          s_WorkStateElementDDI,
+                                         0,
   #endif
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
   #endif
-                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey, 
+                                         c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey,
                                          &c_myMeasurementHandler);
-  
+
   // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   arr_procData[cui8_indexApplicationRate].init(
   #if defined(USE_ISO_11783)
                                                s_ApplicationRateElementDDI,
+                                               0,
   #endif
   #if defined(USE_DIN_9684)
                                                0, 0x5, 0x0, 0xFF,
   #endif
                                                c_remoteDeviceType, 2, c_remoteDeviceType, &c_myDevKey,
                                                &c_myMeasurementHandler);
-    
+
 #else
   // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   IsoAgLib::iProcDataRemoteSimpleMeasure_c c_workState(
   #if defined(USE_ISO_11783)
                                          s_WorkStateElementDDI,
+                                         0,
   #endif
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
@@ -393,6 +396,7 @@ int main()
   IsoAgLib::iProcDataRemoteSimpleMeasure_c c_applicationRate(
   #if defined(USE_ISO_11783)
                                                 s_ApplicationRateElementDDI,
+                                                0,
   #endif
   #if defined(USE_DIN_9684)
                                                 0, 0x5, 0x0, 0xFF,

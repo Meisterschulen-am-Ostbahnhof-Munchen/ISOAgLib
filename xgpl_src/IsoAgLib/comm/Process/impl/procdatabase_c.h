@@ -155,6 +155,7 @@ public:
   ProcDataBase_c(
 #ifdef USE_ISO_11783
                  const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
+                 uint16_t ui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
                  uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,
@@ -168,6 +169,7 @@ public:
     : ProcIdent_c(
 #ifdef USE_ISO_11783
                   ps_elementDDI,
+                  ui16_element,
 #endif
 #ifdef USE_DIN_9684
                   rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -177,6 +179,7 @@ public:
     { init(
 #ifdef USE_ISO_11783
            ps_elementDDI,
+           ui16_element,
 #endif
 #ifdef USE_DIN_9684
            rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -211,6 +214,7 @@ public:
   void init(
 #ifdef USE_ISO_11783
             const IsoAgLib::ElementDDI_s* ps_elementDDI,
+            uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0, uint8_t rui8_wert = 0,

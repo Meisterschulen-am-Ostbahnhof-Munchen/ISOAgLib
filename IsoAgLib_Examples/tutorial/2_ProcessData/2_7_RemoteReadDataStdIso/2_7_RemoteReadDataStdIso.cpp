@@ -344,23 +344,23 @@ int main()
 #if defined(USE_ISO_11783)
   const ElementDDI_s s_workStateElementDDI[2] =
   {
-    // DDI 141, element 0
-    {141, 0, true, GeneralCommand_c::exactValue},
+    // DDI 141,
+    {141, true, GeneralCommand_c::exactValue},
     // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, GeneralCommand_c::noValue}
   };
   const ElementDDI_s s_applicationRateElementDDI[5] =
   {
-    // DDI 1, element 2
-    {1, 2, true, GeneralCommand_c::exactValue},
-    // DDI 2, element 2
-//     {2, 2, false, GeneralCommand_c::exactValue}, // -> that ElementDDI_s is commented out to demonstrate how to add a DDI dynamically
-    // DDI 3, element 2
-    {3, 2, true, GeneralCommand_c::defaultValue},
-    // DDI 4, element 2
-    {4, 2, true, GeneralCommand_c::minValue},
+    // DDI 1,
+    {1, true, GeneralCommand_c::exactValue},
+    // DDI 2,
+//     {2, false, GeneralCommand_c::exactValue}, // -> that ElementDDI_s is commented out to demonstrate how to add a DDI dynamically
+    // DDI 3,
+    {3, true, GeneralCommand_c::defaultValue},
+    // DDI 4,
+    {4, true, GeneralCommand_c::minValue},
     // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, GeneralCommand_c::noValue}
   };
 #endif
 
@@ -369,6 +369,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
   #if defined(USE_ISO_11783)
                                          s_workStateElementDDI,
+                                         0, // device element number
   #endif
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
@@ -383,6 +384,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
   #if defined(USE_ISO_11783)
                                                s_applicationRateElementDDI,
+                                               0, // device element number
   #endif
   #if defined(USE_DIN_9684)
                                                0, 0x5, 0x0, 0xFF,
@@ -398,6 +400,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_workState(
   #if defined(USE_ISO_11783)
                                          s_workStateElementDDI,
+                                         0,
   #endif
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
@@ -412,6 +415,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_applicationRate(
   #if defined(USE_ISO_11783)
                                                 s_applicationRateElementDDI,
+                                                0,
   #endif
   #if defined(USE_DIN_9684)
                                                 0, 0x5, 0x0, 0xFF,

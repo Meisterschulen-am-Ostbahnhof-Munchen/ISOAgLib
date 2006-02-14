@@ -147,6 +147,7 @@ namespace __IsoAgLib {
   void ProcDataBase_c::init(
 #ifdef USE_ISO_11783
                             const IsoAgLib::ElementDDI_s* ps_elementDDI,
+                            uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
                             uint8_t rui8_lis, uint8_t rui8_wert,
@@ -160,6 +161,7 @@ namespace __IsoAgLib {
   ProcIdent_c::init(
 #ifdef USE_ISO_11783
                     ps_elementDDI,
+                    rui16_element,
 #endif
 #ifdef USE_DIN_9684
                     rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -428,7 +430,7 @@ bool ProcDataBase_c::resolvDevKeySetBasicSendFlags(uint8_t rui8_pri, const DevKe
       // => we don't have reliable infos about en_valueGroup and b_isSetpoint
       // => don't check for en_valueGroup and b_isSetpoint but use this single entry in list
       iter_elementDDI = elementDDI().begin();
-      c_data.set_Element(iter_elementDDI->ui16_element);
+      c_data.set_Element(element());
       c_data.set_DDI(iter_elementDDI->ui16_DDI);
     }
     else
@@ -437,7 +439,7 @@ bool ProcDataBase_c::resolvDevKeySetBasicSendFlags(uint8_t rui8_pri, const DevKe
       for (iter_elementDDI = elementDDI().begin();
            iter_elementDDI != elementDDI().end(); iter_elementDDI++)
         if ( (iter_elementDDI->en_valueGroup == en_valueGroup) && (iter_elementDDI->b_isSetpoint == b_isSetpoint) ) {
-          c_data.set_Element(iter_elementDDI->ui16_element);
+          c_data.set_Element(element());
           c_data.set_DDI(iter_elementDDI->ui16_DDI);
           break;
         }

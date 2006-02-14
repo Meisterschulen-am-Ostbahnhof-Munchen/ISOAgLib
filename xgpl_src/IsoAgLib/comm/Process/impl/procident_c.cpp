@@ -119,9 +119,9 @@ namespace __IsoAgLib {
 /**
   constructor which can optional set all member values
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param ui16_element device element number
     DIN parameter
     @param rui8_lis optional LIS code of Process-Data
     @param rui8_wert optional WERT code of Process-Data
@@ -141,6 +141,7 @@ namespace __IsoAgLib {
   ProcIdent_c::ProcIdent_c(
 #ifdef USE_ISO_11783
                            const IsoAgLib::ElementDDI_s* ps_elementDDI,
+                           uint16_t ui16_element,
 #endif
 #ifdef USE_DIN_9684
                            uint8_t rui8_lis,
@@ -158,6 +159,7 @@ namespace __IsoAgLib {
   init(
 #ifdef USE_ISO_11783
             ps_elementDDI,
+            ui16_element,
 #endif
 #ifdef USE_DIN_9684
             rui8_lis,
@@ -181,9 +183,9 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
 /**
     initialisation which can set this process data instance to a defined intial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param ui16_element device element number
     DIN parameter
     @param rui8_lis LIS code of Process-Data
     @param rui8_wert WERT code of Process-Data
@@ -203,6 +205,7 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& rrefc_src )
 void ProcIdent_c::init(
 #ifdef USE_ISO_11783
             const IsoAgLib::ElementDDI_s* ps_elementDDI,
+            uint16_t ui16_element,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis,
@@ -217,6 +220,7 @@ void ProcIdent_c::init(
 {
 #ifdef USE_ISO_11783
   setElementDDI(ps_elementDDI);
+  setElementNumber(ui16_element);
 #endif
 #ifdef USE_DIN_9684
   setLis(rui8_lis);
@@ -313,9 +317,10 @@ bool ProcIdent_c::matchISO(
              ) const
 {
   // check wether current element/DDI combination matches one list element in process data element/DDI list
+  if (rui16_element != element()) return false;
   std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = NULL;
   for (iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
-    if ( (iter->ui16_DDI == rui16_DDI) && (iter->ui16_element == rui16_element) )
+    if ( iter->ui16_DDI == rui16_DDI )
       break;
 
   if (iter == data.l_elementDDI.end())
@@ -412,11 +417,10 @@ bool ProcIdent_c::check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, c
   // first check if DevClass is the same like ownerDevKey's DevClass
   if (rc_devKey.getDevClass() != data.c_ownerDevKey.getDevClass()) return b_foundPair;
 
+  if (rui16_element != element()) return b_foundPair;
+
   for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
   {
-    // if it is not the same device element continue
-    if (rui16_element != (*iter).ui16_element) continue;
-
     b_foundPair = isPair((*iter).ui16_DDI, rui16_DDI);
     if (b_foundPair) break;
   }
@@ -430,11 +434,12 @@ bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t rui16_element, const DevK
   // first check if DevClass is the same like ownerDevKey's DevClass
   if (rc_devKey.getDevClass() != pc_ownerDevKey->getDevClass()) return b_foundPair;
 
-  for (std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = data.l_elementDDI.begin(); iter != data.l_elementDDI.end(); iter++)
-  {
-    // if it is not the same device element continue
-    if (rui16_element != iter->ui16_element) continue;
+  // if it is not the same device element continue
+  if (rui16_element != element()) return b_foundPair;
 
+  std::list<IsoAgLib::ElementDDI_s>::const_iterator iter = data.l_elementDDI.begin();
+  if (iter != data.l_elementDDI.end())
+  {
     // device element was found
     b_foundPair = true;
   }
@@ -482,7 +487,7 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
       getDDIType(rui16_DDI, ddiType, b_isSetpoint);
       if (ddiType != GeneralCommand_c::noValue)
       {
-        IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, iter->ui16_element, b_isSetpoint, ddiType};
+        IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
         data.l_elementDDI.push_back(s_DDIToAdd);
       }
       break;
@@ -492,9 +497,9 @@ bool ProcIdent_c::add2Group(uint16_t rui16_DDI)
 };
 
 
-bool ProcIdent_c::addProprietary2Group(uint16_t rui16_DDI, uint16_t rui16_element, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType)
+bool ProcIdent_c::addProprietary2Group(uint16_t rui16_DDI, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType)
 {
-  IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, rui16_element, b_isSetpoint, ddiType};
+  IsoAgLib::ElementDDI_s s_DDIToAdd = {rui16_DDI, b_isSetpoint, ddiType};
   data.l_elementDDI.push_back(s_DDIToAdd);
 
   return true;
@@ -586,7 +591,7 @@ void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
   // check if pointer to strcut (array) is set (constructor call with NULL possible!)
   if (ps_elementDDI) {
     // in last struct element == 0xFFFF
-    while (ps_elementDDI->ui16_element != 0xFFFF)
+    while (DDI() != 0xFFFF)
       data.l_elementDDI.push_back(*ps_elementDDI++);
   }
 }

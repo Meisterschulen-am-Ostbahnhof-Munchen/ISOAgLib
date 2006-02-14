@@ -358,19 +358,19 @@ int main()
 #if defined(USE_ISO_11783)
   const ElementDDI_s s_WorkStateElementDDI[2] =
   {
-    // DDI 141, element 0
-    {141, 0, true, GeneralCommand_c::exactValue},
+    // DDI 141
+    {141, true, GeneralCommand_c::exactValue},
     // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, GeneralCommand_c::noValue}
   };
   const ElementDDI_s s_ApplicationRateElementDDI[3] =
   {
-    // DDI 1, element 2
-    {1, 2, true, GeneralCommand_c::exactValue},
-    // DDI 2, element 4
-    {2, 4, false, GeneralCommand_c::exactValue},
+    // DDI 1
+    {1, true, GeneralCommand_c::exactValue},
+    // DDI 2
+    {2, false, GeneralCommand_c::exactValue},
     // termination entry
-    {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, GeneralCommand_c::noValue}
   };
 #endif
 
@@ -379,6 +379,7 @@ int main()
   arr_procData[cui8_indexWorkState].init(
   #if defined(USE_ISO_11783)
                                          s_WorkStateElementDDI,
+                                         0,
   #endif
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
@@ -393,6 +394,7 @@ int main()
   arr_procData[cui8_indexApplicationRate].init(
   #if defined(USE_ISO_11783)
                                                s_ApplicationRateElementDDI,
+                                               0,
   #endif
   #if defined(USE_DIN_9684)
                                                0, 0x5, 0x0, 0xFF,
@@ -408,6 +410,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_workState(
   #if defined(USE_ISO_11783)
                                          s_WorkStateElementDDI,
+                                         0,
   #endif
   #if defined(USE_DIN_9684)
                                          0, 0x1, 0x0, 0xFF,
@@ -422,6 +425,7 @@ int main()
   IsoAgLib::iProcDataRemote_c c_applicationRate(
   #if defined(USE_ISO_11783)
                                                 s_ApplicationRateElementDDI,
+                                                0,
   #endif
   #if defined(USE_DIN_9684)
                                                 0, 0x5, 0x0, 0xFF,

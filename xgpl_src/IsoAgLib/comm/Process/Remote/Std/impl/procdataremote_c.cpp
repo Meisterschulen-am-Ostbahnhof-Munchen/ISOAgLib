@@ -96,9 +96,9 @@ namespace __IsoAgLib {
   /**
     constructor which can set all element vars
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param rui16_element device element number
     DIN parameter
     @param rui8_lis optional LIS code of this instance
     @param rui8_wert optional WERT code of this instance
@@ -116,6 +116,7 @@ namespace __IsoAgLib {
 ProcDataRemote_c::ProcDataRemote_c(
 #ifdef USE_ISO_11783
                    const IsoAgLib::ElementDDI_s* ps_elementDDI,
+                   uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
                    uint8_t rui8_lis,
@@ -132,6 +133,7 @@ ProcDataRemote_c::ProcDataRemote_c(
   : ProcDataRemoteBase_c(
 #ifdef USE_ISO_11783
                          ps_elementDDI,
+                         rui16_element,
 #endif
 #ifdef USE_DIN_9684
                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -146,9 +148,9 @@ ProcDataRemote_c::ProcDataRemote_c(
   /**
     initialise this ProcDataRemote_c instance to a well defined initial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param rui16_element device element number
     DIN parameter
     @param rui8_lis optional LIS code of this instance
     @param rui8_wert optional WERT code of this instance
@@ -166,6 +168,7 @@ ProcDataRemote_c::ProcDataRemote_c(
 void ProcDataRemote_c::init(
 #ifdef USE_ISO_11783
                             const IsoAgLib::ElementDDI_s* ps_elementDDI,
+                            uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
                             uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
@@ -177,6 +180,7 @@ void ProcDataRemote_c::init(
   ProcDataRemoteBase_c::init(
 #ifdef USE_ISO_11783
                              ps_elementDDI,
+                             rui16_element,
 #endif
 #ifdef USE_DIN_9684
                              rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,

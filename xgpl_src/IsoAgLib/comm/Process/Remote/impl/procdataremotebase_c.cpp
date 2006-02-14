@@ -115,6 +115,7 @@ namespace __IsoAgLib {
 void ProcDataRemoteBase_c::init(
 #ifdef USE_ISO_11783
                                 const IsoAgLib::ElementDDI_s* ps_elementDDI,
+                                uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
                                 uint8_t rui8_lis, uint8_t rui8_wert, uint8_t rui8_inst, uint8_t rui8_zaehlnum,
@@ -128,6 +129,7 @@ void ProcDataRemoteBase_c::init(
   ProcDataBase_c::init(
 #ifdef USE_ISO_11783
                        ps_elementDDI,
+                       rui16_element,
 #endif
 #ifdef USE_DIN_9684
                        rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,

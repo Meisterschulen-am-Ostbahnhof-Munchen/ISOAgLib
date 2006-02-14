@@ -166,6 +166,7 @@ namespace __IsoAgLib {
 ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(
 #ifdef USE_ISO_11783
                                                            const IsoAgLib::ElementDDI_s* ps_elementDDI,
+                                                           uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
                                                            uint8_t rui8_lis,
@@ -187,6 +188,7 @@ ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(
   : ProcDataLocalBase_c(
 #ifdef USE_ISO_11783
                         ps_elementDDI,
+                        rui16_element,
 #endif
 #ifdef USE_DIN_9684
                         rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -244,6 +246,7 @@ ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(
 void ProcDataLocalSimpleMeasure_c::init(
 #ifdef USE_ISO_11783
                                         const IsoAgLib::ElementDDI_s* ps_elementDDI,
+                                        uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
                                         uint8_t rui8_lis,
@@ -266,6 +269,7 @@ void ProcDataLocalSimpleMeasure_c::init(
   ProcDataLocalBase_c::init(
 #ifdef USE_ISO_11783
                             ps_elementDDI,
+                            rui16_element,
 #endif
 #ifdef USE_DIN_9684
                             rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,

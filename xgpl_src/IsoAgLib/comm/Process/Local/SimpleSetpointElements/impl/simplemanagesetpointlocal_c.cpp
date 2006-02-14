@@ -184,6 +184,8 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
           b_change = true;
         }
         break;
+      default:
+        break;
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )

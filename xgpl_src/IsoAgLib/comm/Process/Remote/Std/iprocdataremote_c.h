@@ -163,6 +163,7 @@ public:
   iProcDataRemote_c(
 #ifdef USE_ISO_11783
                     const ElementDDI_s* ps_elementDDI = NULL,
+                    uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
                     uint8_t rui8_lis = 0,
@@ -179,6 +180,7 @@ public:
   : ProcDataRemote_c(
 #ifdef USE_ISO_11783
                      ps_elementDDI,
+                     rui16_element,
 #endif
 #ifdef USE_DIN_9684
                      rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -210,7 +212,7 @@ public:
                     ProcessDataChangeHandler_c *rpc_processDataChangeHandler = NULL,
                     int ri_singletonVecKey = 0)
   : ProcDataRemote_c(
-                     NULL,
+                     NULL, rui16_element,
 #ifdef USE_DIN_9684
                      rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
@@ -221,12 +223,13 @@ public:
     const ElementDDI_s s_tmpElementDDI[2] =
     {
       // if this constructor is used => only exact measurement possible
-      {rui16_DDI, rui16_element, false, GeneralCommand_c::exactValue},
-      {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+      {rui16_DDI, false, GeneralCommand_c::exactValue},
+      {0xFFFF, false, GeneralCommand_c::noValue}
     };
 
    ProcDataRemote_c::init(
                           s_tmpElementDDI,
+                          rui16_element,
 #ifdef USE_DIN_9684
                           rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif
@@ -259,6 +262,7 @@ public:
   void init(
 #ifdef USE_ISO_11783
             const ElementDDI_s* ps_elementDDI,
+            uint16_t rui16_element,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0,
@@ -275,6 +279,7 @@ public:
    {ProcDataRemote_c::init(
 #ifdef USE_ISO_11783
                            ps_elementDDI,
+                           rui16_element,
 #endif
 #ifdef USE_DIN_9684
                            rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -322,12 +327,13 @@ public:
      const ElementDDI_s s_tmpElementDDI[2] =
      {
        // if this init is used => only exact measurement possible
-       {rui16_DDI, rui16_element, false, GeneralCommand_c::exactValue},
-       {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+       {rui16_DDI, false, GeneralCommand_c::exactValue},
+       {0xFFFF, false, GeneralCommand_c::noValue}
      };
 
      ProcDataRemote_c::init(
                             s_tmpElementDDI,
+                            rui16_element,
 #ifdef USE_DIN_9684
                             rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif

@@ -1167,7 +1167,7 @@ bool Process_c::addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceE
 
   if (NULL == pc_remoteProcessData) return false;
 
-  return pc_remoteProcessData->addProprietary2Group(rui16_DDI, rui_deviceElement, b_isSetpoint, ddiType);
+  return pc_remoteProcessData->addProprietary2Group(rui16_DDI, b_isSetpoint, ddiType);
 };
 
 

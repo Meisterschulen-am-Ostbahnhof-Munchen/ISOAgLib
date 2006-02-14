@@ -968,7 +968,7 @@ bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDDI_s& refl_e
     }
   }
 
-  if ( (refl_elementDDI.ui16_DDI == DDI()) && (refl_elementDDI.ui16_element == element()) )
+  if ( refl_elementDDI.ui16_DDI == DDI() )
   {
     b_isSetpoint = refl_elementDDI.b_isSetpoint;
     en_valueGroup = refl_elementDDI.en_valueGroup;

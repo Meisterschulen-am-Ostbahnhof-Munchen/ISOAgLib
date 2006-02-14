@@ -172,6 +172,7 @@ public:
   iProcDataLocal_c(
 #ifdef USE_ISO_11783
                   const ElementDDI_s* ps_elementDDI = NULL,
+                  uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
                   uint8_t rui8_lis = 0,
@@ -192,6 +193,7 @@ public:
     : ProcDataLocal_c(
 #ifdef USE_ISO_11783
                       ps_elementDDI,
+                      rui16_element,
 #endif
 #ifdef USE_DIN_9684
                       rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -233,6 +235,7 @@ public:
     : ProcDataLocal_c(
 #ifdef USE_ISO_11783
                       NULL,
+                      rui16_element,
 #endif
 #ifdef USE_DIN_9684
                       rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -248,13 +251,14 @@ public:
     const ElementDDI_s s_tmpElementDDI[2] =
     {
       // if this constructor is used => only exact measurement possible
-      {rui16_DDI, rui16_element, false, GeneralCommand_c::exactValue},
-      {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+      {rui16_DDI, false, GeneralCommand_c::exactValue},
+      {0xFFFF, false, GeneralCommand_c::noValue}
     };
 
     ProcDataLocal_c::init(
 #ifdef USE_ISO_11783
                       s_tmpElementDDI,
+                      rui16_element,
 #endif
 #ifdef USE_DIN_9684
                       rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -313,6 +317,7 @@ public:
   void init(
 #ifdef USE_ISO_11783
             const ElementDDI_s* ps_elementDDI = NULL,
+            uint16_t rui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis = 0,
@@ -333,6 +338,7 @@ public:
   {ProcDataLocal_c::init(
 #ifdef USE_ISO_11783
                          ps_elementDDI,
+                         rui16_element,
 #endif
 #ifdef USE_DIN_9684
                          rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
@@ -410,12 +416,13 @@ public:
      const ElementDDI_s s_tmpElementDDI[2] =
      {
        // if this init is used => only exact measurement possible
-       {rui16_DDI, rui16_element, false, GeneralCommand_c::exactValue},
-       {0xFFFF, 0xFFFF, false, GeneralCommand_c::noValue}
+       {rui16_DDI, false, GeneralCommand_c::exactValue},
+       {0xFFFF, false, GeneralCommand_c::noValue}
      };
 
      ProcDataLocal_c::init(
                            s_tmpElementDDI,
+                           rui16_element,
 #ifdef USE_DIN_9684
                            rui8_lis, rui8_wert, rui8_inst, rui8_zaehlnum,
 #endif

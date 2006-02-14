@@ -112,8 +112,9 @@ public:
   /**
     constructor which can optional set all member values
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param ui16_element device element number
     DIN parameter
     @param rui8_lis optional LIS code of Process-Data
     @param rui8_wert optional WERT code of Process-Data
@@ -133,6 +134,7 @@ public:
   ProcIdent_c(
 #ifdef USE_ISO_11783
               const IsoAgLib::ElementDDI_s* ps_elementDDI = NULL,
+              uint16_t ui16_element = 0xFFFF,
 #endif
 #ifdef USE_DIN_9684
               uint8_t rui8_lis = 0,
@@ -152,9 +154,9 @@ public:
   /**
     initialisation which can set this process data instance to a defined intial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDDI_s.ui16_element == 0xFFFF)
-
+    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDDI_s which contains DDI, isSetpoint and ValueGroup
+                         (array is terminated by ElementDDI_s.ddi == 0xFFFF)
+    @param ui16_element device element number
     DIN parameter
     @param rui8_lis LIS code of Process-Data
     @param rui8_wert WERT code of Process-Data
@@ -174,6 +176,7 @@ public:
   void init(
 #ifdef USE_ISO_11783
             const IsoAgLib::ElementDDI_s* ps_elementDDI,
+            uint16_t ui16_element,
 #endif
 #ifdef USE_DIN_9684
             uint8_t rui8_lis,
@@ -252,12 +255,7 @@ public:
     deliver value element (only possible if only one elementDDI in list)
     @return element
   */
-  uint16_t element() const{
-   if (data.l_elementDDI.size() == 1)
-      return data.l_elementDDI.begin()->ui16_element;
-    else
-      return 0xFFFF;
-  };
+  uint16_t element() const{ return data.ui16_element; };
 
 #endif
 
@@ -327,16 +325,20 @@ public:
 #ifdef USE_ISO_11783
 
   /**
-    set DDI, element, value group and setpoint/measure type of process msg
+    set DDI, value group and setpoint/measure type of process msg
     @param rl_elementDDI
   */
   void setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI);
 
   /**
-    set DDI, element, value group and setpoint/measure type of process msg (used in assignFromSource)
+    set DDI, value group and setpoint/measure type of process msg (used in assignFromSource)
     @param pl_elementDDI
   */
   void setElementDDI(const std::list<IsoAgLib::ElementDDI_s>* pl_elementDDI);
+
+  /** set device element number
+    * @param  rui16_element */
+  void setElementNumber(uint16_t rui16_element) { data.ui16_element = rui16_element; };
 #endif
 
   /**
@@ -452,7 +454,7 @@ public:
 
   bool add2Group(uint16_t rui16_DDI);
 
-  bool addProprietary2Group(uint16_t rui16_DDI, uint16_t rui16_element, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType);
+  bool addProprietary2Group(uint16_t rui16_DDI, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType);
 
   static void getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t &ref_ddiType, bool &refb_isSetpoint);
 #endif
@@ -490,6 +492,7 @@ private: // Private attributes
 
 #ifdef USE_ISO_11783
      std::list<IsoAgLib::ElementDDI_s> l_elementDDI;
+     uint16_t ui16_element;
 #endif
 
   } data;
