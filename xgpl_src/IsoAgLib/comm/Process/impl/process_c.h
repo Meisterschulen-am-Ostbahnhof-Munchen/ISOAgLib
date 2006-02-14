@@ -369,7 +369,7 @@ public:
     @param rui8_devClass DEVCLASS code of searched local Process Data instance
     @return count of similar local process data entries
   */
-  uint8_t Process_c::procDataLocalCnt(
+  uint8_t procDataLocalCnt(
 #ifdef USE_ISO_11783
                                       uint16_t rui16_DDI,
                                       uint16_t rui16_element,
