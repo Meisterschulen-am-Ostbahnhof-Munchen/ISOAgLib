@@ -591,7 +591,7 @@ void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
   // check if pointer to strcut (array) is set (constructor call with NULL possible!)
   if (ps_elementDDI) {
     // in last struct element == 0xFFFF
-    while (DDI() != 0xFFFF)
+    while (ps_elementDDI->ui16_DDI != 0xFFFF)
       data.l_elementDDI.push_back(*ps_elementDDI++);
   }
 }
