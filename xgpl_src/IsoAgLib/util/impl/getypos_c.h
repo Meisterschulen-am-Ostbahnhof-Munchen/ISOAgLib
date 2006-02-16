@@ -118,10 +118,11 @@ class DevKey_c {
       * @param rui16_devClass optional initial DEVCLASS (device type)
       * @param rui16_pos optional initial device class instance
       */
-    DevKey_c( uint16_t rui16_devClass = 0x7F, uint16_t rui16_pos = 0xF )
     #ifdef USE_ISO_11783
-    : c_isoName( true, 2, rui16_devClass, rui16_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {};
+    DevKey_c( uint8_t rui8_devClass = 0x7F, uint8_t rui8_pos = 0xF )
+    : c_isoName( true, 2, rui8_devClass, rui8_pos, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ) {};
     #else
+    DevKey_c( uint16_t rui16_devClass = 0x7F, uint16_t rui16_pos = 0xF )
     : ui16_data( ( rui16_devClass << 8 ) | ( rui16_pos & 0xF ) ){};
     #endif
 
@@ -156,10 +157,11 @@ class DevKey_c {
 
 
     /** set device class & instance with two seperate parameters */
-    void set( uint16_t rui16_devClass, uint16_t rui16_pos )
     #ifdef USE_ISO_11783
-      { setDevClass( rui16_devClass); setDevClassInst( rui16_pos ); };
+    void set( uint8_t rui8_devClass, uint8_t rui8_pos )
+      { setDevClass( rui8_devClass); setDevClassInst( rui8_pos ); };
     #else
+    void set( uint16_t rui16_devClass, uint16_t rui16_pos )
       { ui16_data = ( ( rui16_devClass << 8 ) | ( rui16_pos & 0xF ) ); };
     #endif
 
@@ -171,17 +173,19 @@ class DevKey_c {
     #endif
 
     /** set DEVCLASS (device type ) */
-    void setDevClass( uint16_t rui16_devClass )
     #ifdef USE_ISO_11783
-      { c_isoName.setDevClass( rui16_devClass );};
+    void setDevClass( uint8_t rui8_devClass )
+      { c_isoName.setDevClass( rui8_devClass );};
     #else
+    void setDevClass( uint16_t rui16_devClass )
       { ui16_data = ( ( rui16_devClass << 8 ) | ( ui16_data & 0xF ) );};
     #endif
     /** set device class instance */
-    void setDevClassInst( uint16_t rui16_pos )
     #ifdef USE_ISO_11783
-      { c_isoName.setDevClassInst( rui16_pos );};
+    void setDevClassInst( uint8_t rui8_pos )
+      { c_isoName.setDevClassInst( rui8_pos );};
     #else
+    void setDevClassInst( uint16_t rui16_pos )
       { ui16_data = ( ( ui16_data & 0xFF00 ) | ( rui16_pos & 0xF ) );};
     #endif
 

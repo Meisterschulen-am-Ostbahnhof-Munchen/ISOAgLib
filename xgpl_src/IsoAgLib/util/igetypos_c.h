@@ -80,8 +80,13 @@ class iDevKey_c : public __IsoAgLib::DevKey_c {
     * @param rui16_devClass optional initial DEVCLASS (device type)
     * @param rui16_pos optional initial device class instance
     */
+  #ifdef USE_ISO_11783
+  iDevKey_c( uint8_t rui8_devClass = 0x7F, uint8_t rui8_pos = 0xF )
+  : DevKey_c( rui8_devClass, rui8_pos ){};
+  #else
   iDevKey_c( uint16_t rui16_devClass = 0x7F, uint16_t rui16_pos = 0xF )
   : DevKey_c( rui16_devClass, rui16_pos ){};
+  #endif
   iDevKey_c( const __IsoAgLib::DevKey_c& refc_src )
     : DevKey_c( refc_src )
   {};
@@ -97,7 +102,11 @@ class iDevKey_c : public __IsoAgLib::DevKey_c {
   iDevKey_c( const uint8_t* rpui8_dataName ) : DevKey_c( rpui8_dataName ) {};
   #endif
   /** set device class & instance with two seperate parameters */
+  #ifdef USE_ISO_11783
+  void set( uint8_t rui8_devClass, uint8_t rui8_pos ) { DevKey_c::set( rui8_devClass, rui8_pos );};
+  #else
   void set( uint16_t rui16_devClass, uint16_t rui16_pos ) { DevKey_c::set( rui16_devClass, rui16_pos );};
+  #endif
   #ifdef USE_ISO_11783
   /** set device class & instance with two seperate parameters */
   void set( const iISOName_c& rrefc_isoName ) { DevKey_c::set( rrefc_isoName );};
@@ -113,9 +122,17 @@ class iDevKey_c : public __IsoAgLib::DevKey_c {
  /** deliver _instance_ ( device type instance number ) */
  uint8_t getDevClassInst( void ) const { return DevKey_c::getDevClassInst();};
  /** set DEVCLASS (device type ) */
+#ifdef USE_ISO_11783
+ void setDevClass( uint8_t rui8_devClass ) { DevKey_c::setDevClass( rui8_devClass );};
+#else
  void setDevClass( uint16_t rui16_devClass ) { DevKey_c::setDevClass( rui16_devClass );};
+#endif
  /** set device class instance */
+#ifdef USE_ISO_11783
+ void setDevClassInst( uint8_t rui8_pos ) { DevKey_c::setDevClassInst( rui8_pos );};
+#else
  void setDevClassInst( uint16_t rui16_pos ) { DevKey_c::setDevClassInst( rui16_pos );};
+#endif
  /** assign value from another iDevKey_c instance */
  const iDevKey_c& operator=( const iDevKey_c& refc_src ) { return static_cast<const iDevKey_c&>( DevKey_c::operator=( refc_src ) );};
  /** compare two iDevKey_c values with operator== */
