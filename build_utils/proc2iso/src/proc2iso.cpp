@@ -315,7 +315,8 @@ void init (const char* xmlFile)
 
   char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
 
-  for (int i=0; i<((stringLength+1)*1000); i++)
+  unsigned int i;
+  for (i=0; i<((stringLength+1)*1000); i++)
   {
     objNameTable [i] = 0x00;
   }
@@ -327,11 +328,14 @@ void init (const char* xmlFile)
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-bytestream.inc");
   char FileName[200];
+#if defined( WIN32 )
+  char *tempFileName = strrchr(partFileName, '\\');
+#else
   char *tempFileName = strrchr(partFileName, '/');
-  uint8_t i;
-  for (i=0; i<strlen(tempFileName); i++)
-    FileName[i]=tempFileName[i];
-  FileName[i] = '\0';
+#endif
+
+  strcpy( FileName, tempFileName ? tempFileName : partFileName );
+	
   partFileA = fopen (partFileName,"wt");
 
   fprintf (partFileA, "const HUGE_MEM uint8_t deviceDescription");
@@ -1469,14 +1473,16 @@ int main(int argC, char* argV[])
   //  should be the file name.
   if (argInd != argC - 1) { usage(); return 1; }
   // get file list with matching files!
-  std::basic_string<char> c_fileName( argV [argInd] );
-  #ifdef WIN32
-  int lastDirPos = c_fileName.find_last_of( "\\" );
-  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-  #else
-  int lastDirPos = c_fileName.find_last_of( "/" );
-  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-  #endif
+    std::basic_string<char> c_fileName( argV [argInd] );
+    #ifdef WIN32
+    int lastDirPos = c_fileName.find_last_of( "\\" );
+    std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+    if (c_directory == "") c_directory = ".\\";
+    #else
+    int lastDirPos = c_fileName.find_last_of( "/" );
+    std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+    if (c_directory == "") c_directory = "./";
+    #endif
   /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
   std::basic_string<char> c_unwantedType = ".inc";
   std::basic_string<char> c_unwantedType2 = ".h";
@@ -1488,7 +1494,6 @@ int main(int argC, char* argV[])
   #ifdef WIN32
   HANDLE    hList;
   TCHAR     szDir[255];
-  TCHAR     szSubDir[255];
   TCHAR    szCurDir[255];
   WIN32_FIND_DATA FileData;
 
