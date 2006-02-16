@@ -370,6 +370,7 @@
 char iso639table [iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
 
 FILE *partFileA;
+FILE *partFileAextern;
 FILE *partFileB;
 FILE *partFileC;
 FILE *partFileD;
@@ -442,6 +443,7 @@ void clean_exit (int return_value, char* error_message=NULL)
     std::cout << error_message;
 
   if (partFileA) fclose (partFileA);
+  if (partFileAextern) fclose (partFileAextern);
 
   if (partFileB) fclose (partFileB);
 
@@ -492,6 +494,8 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileF, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
     fprintf (partFileF, "\n  /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */");
     fprintf (partFileF, "\n  //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);");
+    fprintf (partFileF, "\n  /* Uncomment the following function if you want to react on any incoming VT Status messages */");
+    fprintf (partFileF, "\n  //virtual void eventVtStatusMsg();");
     fprintf (partFileF, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
     fprintf (partFileF, "\n  iObjectPool_%s_c ();", proName);
     fprintf (partFileF, "\n};\n");
@@ -735,6 +739,11 @@ void init (const char* xmlFile)
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-variables.inc");
   partFileA = fopen (partFileName,"wt");
+
+  strncpy (partFileName, xmlFile, 1024);
+  strcat (partFileName, "-variables-extern.inc");
+  partFileAextern = fopen (partFileName,"wt");
+
 
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-attributes.inc");
@@ -2786,6 +2795,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   // ###################################################
 
   fprintf (partFileA, "IsoAgLib::iVtObject%s_c iVtObject%s;\n", otClassnameTable [objType], objName);
+  fprintf (partFileAextern, "extern IsoAgLib::iVtObject%s_c iVtObject%s;\n", otClassnameTable [objType], objName);
   fprintf (partFileB, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s_sROM = {%d", otClassnameTable [objType], objName, objID);
   fprintf (partFileC, "  iVtObject%s.init (&iVtObject%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, objName);
   fprintf (partFileD, "#define iVtObjectID%s %d\n", objName, objID);
