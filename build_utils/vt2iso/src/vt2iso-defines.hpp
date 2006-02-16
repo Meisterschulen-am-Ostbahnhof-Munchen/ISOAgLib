@@ -563,10 +563,11 @@ char fontstyleTable [maxFontstyleTable] [stringLength+1] = {
     "flashinghidden"
 };
 
-#define maxFonttypeTable 3
+#define maxFonttypeTable 4
 char fonttypeTable [maxFonttypeTable] [stringLength+1] = {
     "latin1",
     "latin9",
+    "latin5",
     "proprietary"
 };
 

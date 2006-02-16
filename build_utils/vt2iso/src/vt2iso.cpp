@@ -882,10 +882,10 @@ unsigned int colordepthtoi (char* text_colordepth)
 unsigned int fonttypetoi (char* text_fonttype)
 {
   int l;
-  if ((atoi(text_fonttype) == 0) || (atoi(text_fonttype) == 1) || (atoi(text_fonttype) == 255)) return atoi(text_fonttype);
-  for (l=0; l<3; l++) {
+  if ((atoi(text_fonttype) == 0) || (atoi(text_fonttype) == 1) || (atoi(text_fonttype) == 2) || (atoi(text_fonttype) == 255)) return atoi(text_fonttype);
+  for (l=0; l<maxFonttypeTable; l++) {
     if (strncmp (text_fonttype, fonttypeTable [l], stringLength) == 0) {
-      if (l == 2) return 0xFF;
+      if (l == 3) return 0xFF;
       return l;
     }
   }
@@ -3087,7 +3087,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       if (!attrIsGiven [attrFont_type])
       {
         clean_exit (-1, "INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT! \n \
-        VALID VALUES ARE latin1, latin9 or proprietary! STOPPING PARSER! bye.\n\n");
+        VALID VALUES ARE latin1, latin9, latin5 or proprietary! STOPPING PARSER! bye.\n\n");
       }
 
       if (!(attrIsGiven [attrFont_colour] && attrIsGiven [attrFont_size]))
