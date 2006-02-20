@@ -179,9 +179,9 @@ namespace __IsoAgLib {
 #endif
 
 #define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
-#define DEF_TimeOut_EndOfObjectPool 10000
-#define DEF_TimeOut_StoreVersion 10000
-#define DEF_TimeOut_LoadVersion 10000
+#define DEF_TimeOut_EndOfObjectPool 60000
+#define DEF_TimeOut_StoreVersion 60000
+#define DEF_TimeOut_LoadVersion 60000
 #define DEF_WaitFor_Reupload 5000
 #define DEF_Retries_NormalCommands 2
 #define DEF_Retries_TPCommands 2
