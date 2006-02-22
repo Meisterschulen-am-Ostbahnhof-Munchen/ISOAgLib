@@ -182,11 +182,11 @@ namespace __IsoAgLib
     #endif
     #ifdef USE_DIN_9684
     /** process a DIN9684 base information PGN */
-    virtual bool dinProcessMsg() = 0;
+    virtual bool dinProcessMsg() {return false;};
     /** send a DIN9684 base information PGN
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    virtual bool dinTimeEvent() = 0;
+    virtual bool dinTimeEvent() {return false;};
     #endif
 
     /** Retrieve the last update time of the specified information type*/

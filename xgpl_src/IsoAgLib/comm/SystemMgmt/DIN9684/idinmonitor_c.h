@@ -211,8 +211,8 @@ public:
     @param pbc_iter optional member array iterator which points to searched DINItem_c on success
     @return reference to the searched item
   */
-  iDINItem_c& dinMemberDevKey(const iDevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_MemberIterator *const pbc_iter = NULL)
-  { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberDevKey(rc_devKey, pb_success, rb_forceClaimedAddress, pbc_iter));};
+  iDINItem_c& dinMemberDevKey(const iDevKey_c& rc_devKey, bool *const pb_success, Vec_MemberIterator *const pbc_iter = NULL, bool rb_forceClaimedAddress = false)
+  { return static_cast<iDINItem_c&>(DINMonitor_c::dinMemberDevKey(rc_devKey, pb_success, pbc_iter, rb_forceClaimedAddress));};
 
 #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
   /* *********************************************************** */
