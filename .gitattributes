@@ -1083,6 +1083,8 @@ simulated_io/rs232_send_0 -text
 xgpl_src/IsoAgLib/comm/Base/ibase_c.h_old -text
 xgpl_src/IsoAgLib/comm/Base/impl/base_c.cpp_old -text
 xgpl_src/IsoAgLib/comm/Base/impl/base_c.h_old -text
+xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp -text
+xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h -text
 xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp -text
 xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h -text
 xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp -text
