@@ -366,6 +366,23 @@ int8_t ISOName_c::higherPriThanPar(const uint8_t* rpb_compare) const
   int8_t i8_result = +1;
   int8_t i8_cnt;
 
+#ifdef DEBUG
+if ( rpb_compare == NULL )
+{ // calling function called this function with wrong parameter
+  // - but in production version, we await, that the caller makes sure,
+  //  that the parameters are correct.
+  // So output suitable debug information in DEBUG mode and trigger than an abort() to get a clear indication on this failure.
+  // In real production version, we would have to decide on WHAT to do for this case in such a lowlevel comparison function - what return value, .....
+  INTERNAL_DEBUG_DEVICE
+    << "ERRORR!! ISOName_c::higherPriThanPar() was called with parameter == NULL!!" << EXTERNAL_DEBUG_DEVICE_ENDL
+    << "The this adress was " << (int)*this << EXTERNAL_DEBUG_DEVICE_ENDL
+    << "The program will be aborted now for explicit detection of this erroneous call. Fix the CALLING function - and not this function,"
+    << " as this function makes never sense when called with NULL!!"
+    << EXTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_FLUSH;
+  abort();
+}
+#endif
 
   // if one of the both comparison parameters have 0xFF in the byte 0..5, then only compare
   // device class, -instance and industry group
