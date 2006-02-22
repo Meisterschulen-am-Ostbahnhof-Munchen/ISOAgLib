@@ -193,7 +193,11 @@
 
 /** set the following define, if the lookup result shall be sent via RS232 */
 #define USE_RS232_FOR_DEBUG
-
+/** set the following defines if to test one or more of the base data*/
+#define TEST_TRACTOR_GENERAL
+#define TEST_TRACTOR_MOVING
+#define TEST_TIME
+#define TEST_TRACTOR_PTO
 
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"
@@ -215,9 +219,19 @@
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
-#include <IsoAgLib/comm/Base/itimeposgps_c.h>
-#include <IsoAgLib/comm/Base/itracgeneral_c.h>
-#include <IsoAgLib/comm/Base/itracmove_c.h>
+
+#ifdef TEST_TIME
+  #include <IsoAgLib/comm/Base/itimeposgps_c.h>
+#endif
+#ifdef TEST_TRACTOR_GENERAL
+  #include <IsoAgLib/comm/Base/itracgeneral_c.h>
+#endif
+#ifdef TEST_TRACTOR_MOVING
+  #include <IsoAgLib/comm/Base/itracmove_c.h>
+#endif
+#ifdef TEST_TRACTOR_PTO
+  #include <IsoAgLib/comm/Base/itracpto_c.h>
+#endif
 
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
@@ -275,11 +289,20 @@ int main()
     if ( IsoAgLib::iSystem_c::getTime() > si32_nextDebug )
     { // it's time to print debug msg
       si32_nextDebug = ( IsoAgLib::iSystem_c::getTime() + 1000 );
+
+
+      #ifdef TEST_TRACTOR_MOVING
+      EXTERNAL_DEBUG_DEVICE << "+++++++++++ MOVING ++++++++++" << "\n";
       EXTERNAL_DEBUG_DEVICE << "The theoretical distance of the tractor is now " << getITracMoveInstance().distTheor() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The real distance of the tractor is now " << getITracMoveInstance().distReal() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The theoretical speed  of the tractor is now " << getITracMoveInstance().speedTheor() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The real speed of the tractor is now " << getITracMoveInstance().speedReal() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The rear hitch position of the tractor is now " << int(getITracGeneralInstance().hitchRear()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "The real distance of the tractor is now        " << getITracMoveInstance().distReal() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "The theoretical speed  of the tractor is now   " << getITracMoveInstance().speedTheor() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "The real speed of the tractor is now           " << getITracMoveInstance().speedReal() << "\n";
+        #ifdef TEST_TRACTOR_GENERAL
+        EXTERNAL_DEBUG_DEVICE << "The rear hitch position of the tractor is now  " << int(getITracGeneralInstance().hitchRear()) << "\n";
+        #endif
+      #endif
+
+      #ifdef TEST_TIME
       if ( getITimePosGpsInstance().isCalendarReceived() )
       { // already calendar received
         EXTERNAL_DEBUG_DEVICE << "Already Calendar received with "
@@ -292,6 +315,24 @@ int main()
           << int(getITimePosGpsInstance().second()) << ":"
           << "\n";
       }
+      #endif
+
+      #ifdef TEST_TRACTOR_GENERAL
+      EXTERNAL_DEBUG_DEVICE << "+++++++++++ GENERAL ++++++++++" << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Engine:             " << getITracGeneralInstance().engine() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Rear left draft:    " << getITracGeneralInstance().rearLeftDraft() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Rear right draft:   " << getITracGeneralInstance().rearRightDraft() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Rear draft Newton:  " << getITracGeneralInstance().rearDraftNewton() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Rear draft Nominal: " << getITracGeneralInstance().rearDraftNominal() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Fuel rate:          " << getITracGeneralInstance().fuelRate() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Fuel temperature:   " << getITracGeneralInstance().fuelTemperature() << "\n";
+      #endif
+
+      #ifdef TEST_TRACTOR_PTO
+      EXTERNAL_DEBUG_DEVICE << "+++++++++++ PTO ++++++++++" << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Front:             " << getITracPtoInstance().ptoFront() << "\n";
+      #endif
+
     }
     #else
     static int32_t si32_lastDist = getITracMoveInstance().distTheor();

@@ -18,14 +18,14 @@
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traclight_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracmovesetpoint_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracaux_c.cpp
-../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
@@ -77,6 +77,7 @@
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracaux_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traclight_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h

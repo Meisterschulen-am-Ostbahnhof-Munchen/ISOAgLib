@@ -77,28 +77,13 @@ namespace IsoAgLib {
   class iTracPTO_c : private __IsoAgLib::TracPTO_c {
   public:
     // Public methods
-    /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances, to receive
-        the needed CAN msg with base msg type 1
-        possible errors:
-          * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rb_sendState optional setting to express TECU sending state (default: only receive in implement mode)
-     */
-    void init(const iDevKey_c* rpc_devKey = NULL, bool rb_sendState = false)
-    {TracPTO_c::init(rpc_devKey, rb_sendState);};
     /** config the Base_c object after init -> set pointer to devKey and
         config send/receive of different base msg types
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rb_sendState optional setting to express TECU sending state
+        @param rb_implementMode implement mode (true) or tractor mode (false)
      */
-    void config(const iDevKey_c* rpc_devKey, bool rb_sendState )
-    {TracPTO_c::config(rpc_devKey, rb_sendState);};
-    /** Retrieve the last update time */
-    int32_t lastedTimeSinceUpdate() const {return TracPTO_c::lastedTimeSinceUpdate();}
-    /** Retrieve the time of last update */
-    int32_t lastUpdateTime() const {return TracPTO_c::lastUpdateTime();};
-
+    void config(const iDevKey_c* rpc_devKey, bool rb_implementMode )
+    {TracPTO_c::config(rpc_devKey, rb_implementMode);};
 
 /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
@@ -153,13 +138,6 @@ namespace IsoAgLib {
         @return actual rpm speed of front PTO
       */
     int16_t ptoFront() const { return TracPTO_c::ptoFront();};
-
-
-
-    /** deliver the devKey of the sender of the base data
-        @return DEV_KEY code of member who is sending the intereested base msg type
-      */
-    const iDevKey_c& senderDevKey() const {return static_cast<const iDevKey_c&>(TracPTO_c::senderDevKey());};
 
     #ifdef USE_ISO_11783
     /** deliver explicit information whether front PTO is engaged

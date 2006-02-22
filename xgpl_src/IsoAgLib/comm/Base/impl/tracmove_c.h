@@ -1,7 +1,6 @@
 /***************************************************************************
-                 tracmove_c.h - working on Base Data Msg Type 1;
-                                  stores, updates  and delivers all base
-                                  data informations from CANCustomer_c
+                 tracmove_c.h -   stores, updates and delivers all moving
+                                  data information from CANCustomer_c
                                   derived for CAN sending and receiving
                                   interaction;
                                   from ElementBase_c derived for
@@ -88,23 +87,16 @@
 #ifndef TRACMOVE_C_H
 #define TRACMOVE_C_H
 
-#include <IsoAgLib/typedef.h>
 #include "../ibasetypes.h"
-#include <IsoAgLib/driver/system/impl/system_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
-
-#include "basepkg_c.h"
+#include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
   class TracMove_c;
-  typedef SINGLETON_DERIVED(TracMove_c,ElementBase_c) SingletonTracMove_c;
-  /** working on Base Data Msg Type 1;
-      stores, updates  and delivers all base data informations;
+  typedef SINGLETON_DERIVED(TracMove_c,BaseCommon_c) SingletonTracMove_c;
+  /** stores, updates  and delivers all moving data information;
+      Derive from BaseCommon_c some fundamental funktionality for all base data
       Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
@@ -113,63 +105,22 @@ namespace __IsoAgLib {
 
   class TracMove_c : public SingletonTracMove_c{
   public:// Public methods
-    /* ********************************************* */
-    /** \name Management Functions for class TracMove_c  */
-    /*@{*/
-
-    /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances, to receive
-        the needed CAN msg with base msg type 1,2 and calendar
-        possible errors:
-          * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+    /** config the TracMove_c object after init -> set pointer to devKey and
+        config send/receive of a moving msg type
+        @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param rb_implementMode implement(true) mode or tractor(false) mode
       */
-    void init(const DevKey_c* rpc_devKey = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing );
+    void config(const DevKey_c* rpc_devKey, bool rb_implementMode);
 
-    /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-    void close( void );
-
-    /** functions with actions, which must be performed periodically
-        -> called periodically by Scheduler_c
-        ==> sends base msg if configured in the needed rates
-        possible errors:
-            * dependant error in CANIO_c on CAN send problems
-        @see CANPkg_c::getData
-        @see CANPkgExt_c::getData
-        @see CANIO_c::operator<<
-        @return true -> all planned activities performed in allowed time
-      */
-    bool timeEvent( void );
     /** check if filter boxes shall be created - create only ISO or DIN filters based
         on active local idents which has already claimed an address
         --> avoid to much Filter Boxes
       */
-    void checkCreateReceiveFilter( void );
-
-    /** config the TracMove_c object after init -> set pointer to devKey and
-        config send/receive of different base msg types
-        @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-      */
-    void config(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection);
-    /** Retrieve the last update time of the specified information type
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-    int32_t lastedTimeSinceUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const;
-    /** Retrieve the time of last update */
-    int32_t lastUpdateTime( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const;
+    void checkCreateReceiveFilter( );
 
     /** destructor for TracMove_c which has nothing to do */
-    virtual ~TracMove_c() { close();};
-    /** process received base msg and store updated value for later reading access;
-        called by FilterBox_c::processMsg after receiving a msg
-        possible errors:
-            * Err_c::lbsBaseSenderConflict base msg recevied from different member than before
-        @see CANIO_c::processMsg
-        @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
-      */
-    virtual bool processMsg();
+    virtual ~TracMove_c() { BaseCommon_c::close();};
+
     /*@}*/
 
     /* ******************************************* */
@@ -230,38 +181,17 @@ namespace __IsoAgLib {
       */
     int32_t distTheor() const { return i32_distTheor;};
 
-    /** deliver the devKey of the sender of the base data
-        possible errors:
-          * Err_c::range rui8_typeNr doesn't match valid base msg type number
-        @param rt_typeGrp base msg type no of interest: BaseDataGroup2 | BaseDataGroup3 | BaseDataGroupGps | BaseDataCalendar
-        @return DEV_KEY code of member who is sending the intereested base msg type
-      */
-    const DevKey_c& senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) const;
-
   private:
     // Private methods
-    friend class SINGLETON_DERIVED(TracMove_c,ElementBase_c);
-    /** HIDDEN constructor for a Base_c object instance which can optional
-        set the configuration for send/receive for base msg type 1
+    friend class SINGLETON_DERIVED(TracMove_c,BaseCommon_c);
+    /** HIDDEN constructor for a TracMove_c object instance which can optional
+        set the configuration for send/receive for a moving msg
         NEVER instantiate a variable of type TracMove_c within application
-        only access Base_c via getTracMoveInstance() or getTracMoveInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+        only access TracMove_c via getTracMoveInstance() or getTracMoveInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
         @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+        @param rc_sendMovingDevKey optional Bitmask of base data to send ( default send nothing )
       */
     TracMove_c() {};
-    /** initialize directly after the singleton instance is created.
-        this is called from singleton.h and should NOT be called from the user again.
-        users please use init(...) instead.
-      */
-    void singletonInit();
-    /** deliver reference to data pkg
-        @return reference to the member BasePkg_c, which encapsulates the CAN send structure
-      */
-    BasePkg_c& data(){return c_data;};
-    /** deliver reference to data pkg as reference to CANPkgExt_c
-        to implement the base virtual function correct
-      */
-    CANPkgExt_c& dataBase();
 
     /** update distance values ; react on int16_t overflow
         @param reflVal to be updated value as int32_t variable
@@ -276,37 +206,30 @@ namespace __IsoAgLib {
       */
     static int16_t long2int(const int32_t& rreflVal);
 
-    /** check if a received message should be parsed */
-    bool checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const;
-
     #ifdef USE_DIN_9684
-    /** send a DIN9684 base information PGN.
+    /** send a DIN9684 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool dinTimeEvent( void );
-    /** process a DIN9684 base information PGN */
+    bool dinTimeEvent( );
+    /** process a DIN9684 moving information PGN */
     bool dinProcessMsg();
     #endif
 
     #if defined(USE_ISO_11783)
-    /** send a ISO11783 base information PGN.
+    /** send a ISO11783 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool isoTimeEvent( void );
-    /** send Base1 Group data with ground&theor speed&dist */
-    void isoSendBase1Update( void );
-    /** process a ISO11783 base information PGN */
+    bool isoTimeEvent( );
+    /** send moving data with ground&theor speed&dist */
+  //  void isoSendMovingUpdate( );
+    /** process a ISO11783 moving information PGN */
     bool isoProcessMsg();
+     /** send moving data with ground&theor speed&dist */
+    void isoSendMovingUpdate( );
     #endif
 
   private:
     // Private attributes
-    /** temp data where received data is put */
-    BasePkg_c c_data;
-    /** last time of base_1 msg [msec] */
-    int32_t i32_lastBase1;
-    /** last time of base_2 msg [msec] */
-
     /** distance */
     /** real distance as int32_t value (cumulates 16bit overflows) */
     int32_t i32_distReal;
@@ -322,24 +245,6 @@ namespace __IsoAgLib {
     int16_t i16_speedReal;
     /** theoretical speed */
     int16_t i16_speedTheor;
-
-    /** devKey which act as sender of base msg */
-    const DevKey_c* pc_devKey;
-
-    /** bitmask with selection of all base data types to send */
-    IsoAgLib::BaseDataGroup_t t_mySendSelection;
-    /** DEVKEY of base1 sender */
-    DevKey_c c_sendBase1DevKey;
-
-    #ifdef USE_DIN_9684
-    /** flag to detect, if receive filters for DIN are created */
-    bool b_dinFilterCreated;
-    #endif
-    #ifdef USE_ISO_11783
-    /// General
-    /** flag to detect, if receive filters for ISO are created */
-    bool b_isoFilterCreated;
-    #endif
   };
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)

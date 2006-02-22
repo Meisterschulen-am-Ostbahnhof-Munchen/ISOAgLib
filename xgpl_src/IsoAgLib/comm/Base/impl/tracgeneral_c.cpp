@@ -84,20 +84,16 @@
  *   __IsoAgLib::Foo_c                                                     *
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
+
  ***************************************************************************/
-#include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/istate_c.h>
 #ifdef USE_DIN_9684
   #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
 #endif
 #ifdef USE_ISO_11783
   #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #endif
-#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/iutil_funcs.h>
 #include "tracgeneral_c.h"
 #include "tracpto_c.h"
 
@@ -106,7 +102,7 @@ using namespace std;
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique Base_c singleton instance
+  /** C-style function, to get access to the unique TracGeneral_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
   TracGeneral_c& getTracGeneralInstance( uint8_t rui8_instance )
@@ -114,7 +110,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return TracGeneral_c::instance( rui8_instance );
   };
   #else
-  /** C-style function, to get access to the unique Base_c singleton instance */
+  /** C-style function, to get access to the unique TracGeneral_c singleton instance */
   TracGeneral_c& getTracGeneralInstance( void )
   {
     static TracGeneral_c& c_lbsTracGeneral = TracGeneral_c::instance();
@@ -122,59 +118,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   };
   #endif
 
-  void TracGeneral_c::singletonInit()
-  {
-    setAlreadyClosed();
-    init( NULL, false );
-  }
-
   /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances, to receive
-      the needed CAN msg with base msg type 1,2 and calendar
+      above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+      @param rb_implementMode implement mode (true) or tractor mode (false)
     */
-  void TracGeneral_c::init(const DevKey_c* rpc_devKey, bool rb_sendState)
+  void TracGeneral_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
   {
-    // first register in Scheduler_c
-    getSchedulerInstance4Comm().registerClient( this );
-    c_data.setSingletonKey( getSingletonVecKey() );
-
-    // set the member base msg value vars to NO_VAL codes
-
-    setHitchRear(NO_VAL_8);
-    setHitchFront(NO_VAL_8);
-    i16_engine = NO_VAL_16S;
-
-    // set the timestamps to 0
-    i32_lastEngineHitch =  0;
-    #ifdef USE_DIN_9684
-    i32_lastFuel = 0;
-    i16_rearLeftDraft = i16_rearRightDraft = i16_rearDraftNewton = NO_VAL_16S;
-    ui8_rearDraftNominal = NO_VAL_8;
-    i16_fuelRate = NO_VAL_16S;
-    ui8_fuelTemperature = NO_VAL_8;
-    if ( checkAlreadyClosed() )
-    {
-      b_dinFilterCreated = false;
-    }
-    #endif
     #ifdef USE_ISO_11783
-    i32_lastIsoPositionSimple = 0;
-
-    t_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
-    ui8_maxPowerTime = ui8_frontLinkForce = ui8_rearLinkForce = NO_VAL_8;
-    i16_frontDraft = i16_rearDraft = NO_VAL_16S;
-    ui32_lastMaintainPowerRequest = 0;
-    b_maintainEcuPower = b_maintainActuatorPower = b_maintainPowerForImplInTransport
-      = b_maintainPowerForImplInPark = b_maintainPowerForImplInWork = false;
-
     if ( checkAlreadyClosed() )
     {
-      b_isoFilterCreated = false;
-
       // *************************************************************************************************
       // Added by Martin Wodok to accomodate LANGUAGE_PGN Messages:
       b_languageVtReceived = false;
@@ -183,97 +138,73 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
     #endif
 
+    //call init for handling which is base data independent
+    BaseCommon_c::init(rpc_devKey, rb_implementMode);
+
     // set configure values with call for config
-    config(rpc_devKey, rb_sendState);
     #ifdef USE_DIN_9684
-    configFuel(rpc_devKey, rb_sendState);
+    configFuel(rpc_devKey, rb_implementMode);
     #endif
-
-    // clear state of b_alreadyClosed, so that close() is called one time
-    clearAlreadyClosed();
   };
-
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-  void TracGeneral_c::close( void )
-  {
-    if ( ! checkAlreadyClosed() ) {
-      // avoid another call
-      setAlreadyClosed();
-      // unregister from timeEvent() call by Scheduler_c
-      getSchedulerInstance4Comm().unregisterClient( this );
-    }
-  };
-
-  /** deliver reference to data pkg as reference to CANPkgExt_c
-      to implement the base virtual function correct
-    */
-  __IsoAgLib::CANPkgExt_c& TracGeneral_c::dataBase()
-  {
-    return c_data;
-  }
 
   /** config the TracGeneral_c object after init -> set pointer to devKey and
-      config send/receive of different base msg types
+      config send/receive of different general base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+      @param rb_implementMode implement mode (true) or tractor mode (false)
     */
-  void TracGeneral_c::config(const DevKey_c* rpc_devKey, bool rb_sendState)
+  void TracGeneral_c::config(const DevKey_c* rpc_devKey, bool rb_implementMode)
   { // set configure values
-    pc_devKey = rpc_devKey;
-    b_sendState = rb_sendState;
 
-    // set ui8_sendDevKey to the pointed value, if pointer is valid
-    if ((rpc_devKey != NULL) && ( rb_sendState ) ) c_sendDevKey = *rpc_devKey;
-    else c_sendDevKey.setUnspecified();
+    //call config for handling which is base data independent
+    BaseCommon_c::config(rpc_devKey, rb_implementMode);
+
+    // set the member base msg value vars to NO_VAL codes
+    setHitchRear(NO_VAL_8);
+    setHitchFront(NO_VAL_8);
+    i16_engine = NO_VAL_16S;
+
+    // set the timestamps to 0
+    #ifdef USE_DIN_9684
+    i32_lastFuel = 0;
+    i16_rearLeftDraft = i16_rearRightDraft = i16_rearDraftNewton = NO_VAL_16S;
+    ui8_rearDraftNominal = NO_VAL_8;
+    i16_fuelRate = NO_VAL_16S;
+    ui8_fuelTemperature = NO_VAL_8;
+    #endif
+    #ifdef USE_ISO_11783
+    i32_lastIsoPositionSimple = 0;
+
+    t_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
+    ui8_maxPowerTime = ui8_frontLinkForce = ui8_rearLinkForce = NO_VAL_8;
+    i16_frontDraft = i16_rearDraft = NO_VAL_16S;
+    ui32_lastMaintainPowerRequest = 0;
+    b_maintainEcuPower = b_maintainActuatorPower = false;
+    powerForImplState.inPark = IsoAgLib::IsoInactive;
+    powerForImplState.inTransport = IsoAgLib::IsoInactive;
+    powerForImplState.inWork = IsoAgLib::IsoInactive;
+    #endif
   };
 
   #ifdef USE_DIN_9684
-  /** config the Base_c object after init -> set pointer to devKey and
-      config send/receive of different base msg types
+  /** config the TracGeneral_c object after init -> set pointer to devKey and
+      config send/receive of different general msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_sendState optional setting to express TECU sending state
+      @param rb_implementMode optional setting to express TECU sending state
    */
-  void TracGeneral_c::configFuel(const DevKey_c* rpc_devKey, bool rb_sendState)
+  void TracGeneral_c::configFuel(const DevKey_c* rpc_devKey, bool rb_implementMode)
   { // set configure values
-    pc_devKey = rpc_devKey;
-    b_sendStateFuel = rb_sendState;
+    setDevKey( rpc_devKey );
+    b_sendStateFuel = rb_implementMode;
 
     // set ui8_sendDevKey to the pointed value, if pointer is valid
-    if ((rpc_devKey != NULL) && ( rb_sendState ) ) c_sendFuelDevKey = *rpc_devKey;
+    if ((rpc_devKey != NULL) && ( rb_implementMode ) ) c_sendFuelDevKey = *rpc_devKey;
     else c_sendFuelDevKey.setUnspecified();
   };
   #endif
 
-  /** process received base msg and store updated value for later reading access;
-      called by FilterBox_c::processMsg after receiving a msg
-      possible errors:
-        * LibErr_c::LbsBaseSenderConflict base msg recevied from different member than before
-      @see FilterBox_c::processMsg
-      @see CANIO_c::processMsg
-      @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
-    */
-  bool TracGeneral_c::processMsg()
-  {
-    #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-    if (c_data.identType() == Ident_c::ExtendedIdent)
-    #endif // USE_DIN_9684 && USE_ISO_11783
-    #ifdef USE_ISO_11783
-    { // an ISO11783 base information msg received
-      return isoProcessMsg();
-    }
-    #endif // USE_ISO_11783
-    #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-    else
-    #endif
-    #ifdef USE_DIN_9684
-    return dinProcessMsg();
-    #endif
-    return false;
-  };
-
   /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
-      ==> sends base msg if configured in the needed rates
+      ==> sends general base msg if configured in the needed rates
       possible errors:
         * dependant error in CANIO_c on CAN send problems
       @see CANPkg_c::getData
@@ -281,53 +212,34 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @see CANIO_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
-  bool TracGeneral_c::timeEvent( void )
+  bool TracGeneral_c::timeEvent( )
   {
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    #ifdef USE_ISO_11783
+    BaseCommon_c::timeEvent();
+    #endif
+    #ifdef USE_DIN_9684
+    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
     checkCreateReceiveFilter();
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-
-    // check for different base data types whether the previously
-    // sending node stopped sending -> other nodes can now step in
-    if ( ( !b_sendState )
-      && ( ( ci32_now - i32_lastEngineHitch ) >= 3000 )
-      && ( c_sendDevKey.isSpecified()                 ) )
-    { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-      c_sendDevKey.setUnspecified();
-    }
-    #ifdef USE_DIN_9684
-    if ( ( !b_sendStateFuel  )
-      && ( ( ci32_now - i32_lastFuel ) >= 3000 )
-      && ( c_sendFuelDevKey.isSpecified()      ) )
+    if (   ( !b_sendStateFuel                    )
+        && ( ( ci32_now - i32_lastFuel ) >= 3000 )
+        && ( c_sendFuelDevKey.isSpecified()      ) )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
       c_sendFuelDevKey.setUnspecified();
     }
-    #endif
-    #ifdef USE_DIN_9684
-    if ( ( pc_devKey != NULL ) && (b_sendState||b_sendStateFuel ))
-    #else
-    if ( ( pc_devKey != NULL ) && (b_sendState ))
-    #endif
+    if (  getDevKey() != NULL
+          && ( checkImplementMode() || b_sendStateFuel                               )
+          && ( getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true) ) )
     { // there is at least something configured to send
-      #ifdef USE_ISO_11783
-      if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true))
-      { // stored base information sending ISO member has claimed address
-        isoTimeEvent();
-      }
-      #endif
-      #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-      #endif
-      #ifdef USE_DIN_9684
-      if (getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true))
-      { // stored base information sending DIN member has claimed address
-        dinTimeEvent();
-      }
-      #endif
+      // stored base information sending DIN member has claimed address
+      return dinTimeEvent();
     }
+    return true;
+    #endif
     return true;
   }
 
@@ -335,33 +247,32 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
-  void TracGeneral_c::checkCreateReceiveFilter( void )
+  void TracGeneral_c::checkCreateReceiveFilter( )
   {
     SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
     #ifdef USE_DIN_9684
-    if ( ( !b_dinFilterCreated ) && (c_systemMgmt.existActiveLocalDinMember() ) )
+    if ( ( !checkDinFilterCreated() ) && (c_systemMgmt.existActiveLocalDinMember() ) )
     { // check if needed receive filters for DIN are active
-      b_dinFilterCreated = true;
-      // filter for base data 2
-      c_can.insertFilter(*this, (0x7F << 4),(0x15 << 4), false);
+      setDinFilterCreated();
+      // filter for base data hitch
+      c_can.insertFilter(*this, (0x7F << 4),(0x16 << 4), false);
       // filter for lower priority base data fuel consumption
-      c_can.insertFilter(*this, (0x7C << 4),(0x1C << 4), true);
+      c_can.insertFilter(*this, (0x7F << 4),(0x1C << 4), true);
     }
     #endif
     #ifdef USE_ISO_11783
-
-    if ( ( ! b_isoFilterCreated ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+    if ( ( !checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
-      b_isoFilterCreated = true;
+      setIsoFilterCreated();
       // create FilterBox_c for PGN FRONT_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
                         (static_cast<MASK_TYPE>(FRONT_HITCH_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
-      // create FilterBox_c for PGN BACK_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
+      // create FilterBox_c for PGN REAR_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                        (static_cast<MASK_TYPE>(BACK_HITCH_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+                        (static_cast<MASK_TYPE>(REAR_HITCH_STATE_PGN) << 8), false, Ident_c::ExtendedIdent);
      // create FilterBox_c for PGN MAINTAIN_POWER_REQUEST_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
@@ -380,43 +291,43 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   }
 
   #ifdef USE_DIN_9684
-  /** send a DIN9684 base information PGN
+  /** send a DIN9684 general base information PGN
   * this is only called when sending ident is configured and it has already claimed an address
   */
-  bool TracGeneral_c::dinTimeEvent(void)
+  bool TracGeneral_c::dinTimeEvent()
   {
     CANIO_c& c_can = getCanInstance4Comm();
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*pc_devKey, true).nr();
+    uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*getDevKey(), true).nr();
 
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
-    if ( ( ( ci32_now - i32_lastEngineHitch ) >= 100 ) && ( b_sendState ) )
+    if ( ( lastedTimeSinceUpdate() >= 100 ) && ( !checkImplementMode() ) )
     { // send actual base2 data
-      c_sendDevKey = *pc_devKey;
-      data().setBabo(6);
-      data().setSend(b_send);
-      data().setVal12(i16_rearLeftDraft);
-      data().setVal34(i16_rearRightDraft);
-      data().setVal56(i16_rearDraftNewton);
-      data().setVal7(ui8_rearDraftNominal);
+      setSenderDevKey( *getDevKey() );
+      data().setIdent((0x16 << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
+      data().setUint16Data(0, i16_rearLeftDraft);
+      data().setUint16Data(2, i16_rearRightDraft);
+      data().setUint16Data(4, i16_rearDraftNewton);
+      data().setUint16Data(6, ui8_rearDraftNominal);
+      data().setLen(8);
 
       // CAN_IO::operator<< retreives the information with the help of CAN_Pkg::get_data
       // then it sends the data
       c_can << data();
 
       // update time
-      i32_lastEngineHitch = ci32_now;
+      setUpdateTime(ci32_now);
     }
 
     if ( ( ( ci32_now - i32_lastFuel ) >= 100 ) && ( b_sendStateFuel ) )
     { // send actual base3 data
-      c_sendFuelDevKey = *pc_devKey;
-      data().setBabo(0xC);
-      data().setSend(b_send);
-      data().setVal12(i16_fuelRate);
-      data().setVal3(ui8_fuelTemperature);
+      c_sendFuelDevKey = *getDevKey();
+      data().setIdent((0x1C << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
+      data().setUint16Data(0, i16_fuelRate);
+      data().setUint8Data(2, ui8_fuelTemperature);
+      data().setLen(3);
 
       // CAN_IO::operator<< retreives the information with the help of CAN_Pkg::get_data
       // then it sends the data
@@ -424,65 +335,52 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
       // update time
       i32_lastFuel = ci32_now;
+
     }
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
     return true;
   }
 
-  /** process a DIN9684 base information PGN */
+  /** process a DIN9684 general base information PGN */
   bool TracGeneral_c::dinProcessMsg()
   { // a DIN9684 base information msg received
-    bool b_result = false;
     // store the devKey of the sender of base data
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
+    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().dinSa()))
     { // the sender is not known -> ignore and block interpretation by other classes
       return true;
     }
     // the corresponding sender entry exist in the monitor list
-    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
+    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().dinSa()).devKey();
 
-    // interprete data accordingto BABO
-    switch (data().babo())
+    // interprete data according to BABO
+    switch (dataBabo())
     {
-      case 5: // base data 2: pto, hitch
-        // only take values, if i am not the regular sender
-        // and if actual sender isn't in conflict to previous sender
-        if ( checkParseReceived( c_tempDevKey ) )
-        { // sender is allowed to send
-          getTracPtoInstance4Comm().dinParsePtoFlags( data() );
-          dinParseHitchEngineFlags( data() );
-        }
-        else
-        { // there is a sender conflict
-          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
-        }
-        b_result = true;
-        break;
       case 6: // NEW!! base data 3: rear draft
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
         if ( checkParseReceived( c_tempDevKey ) )
         { // sender is allowed to send
-          // reaer left draft
-          i16_rearLeftDraft = data().val12();
-          // reaer right draft
-          i16_rearRightDraft = data().val34();
-          // reaer total draft Newton
-          i16_rearDraftNewton = data().val56();
-          // reaer total draft Nominal
-          ui8_rearDraftNominal = data().val7();
+          // rear left draft
+          i16_rearLeftDraft = data().getInt16Data( 0 );
+          // rear right draft
+          i16_rearRightDraft = data().getInt16Data( 2 );
+          // rear total draft Newton
+          i16_rearDraftNewton = data().getInt16Data( 4 );
+          // rear total draft Nominal
+          ui8_rearDraftNominal = data().getUint8Data( 6 );
+          data().setLen(8);
 
           // set last time
-          i32_lastEngineHitch = ci32_now;
-          c_sendDevKey = c_tempDevKey;
+          setUpdateTime(ci32_now);
+          setSenderDevKey(c_tempDevKey);
         }
         else
         { // there is a sender conflict
           getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+          return false;
         }
-        b_result = true;
         break;
       case 0xC: // NEW!! fuel consumption
         // only take values, if i am not the regular sender
@@ -490,9 +388,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         if ( checkParseReceivedFuel( c_tempDevKey ) )
         { // sender is allowed to send
           // fuel rate
-          i16_fuelRate =  data().val12();
+          i16_fuelRate =  data().getInt16Data( 0 );
           // fuel temperature
-          ui8_fuelTemperature =  data().val3();
+          ui8_fuelTemperature =  data().getUint8Data( 2 );
+          data().setLen(3);
 
           // set last time
           i32_lastFuel = ci32_now;
@@ -501,38 +400,64 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         else
         { // there is a sender conflict
           getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+          return false;
         }
-        b_result = true;
         break;
     } // end switch
-    return b_result;
-  }
-  /** helper function to do the parsing of the flag data of a
-   * received DIN9684 base message with Pto,Hitch,Engine information
-  */
-  void TracGeneral_c::dinParseHitchEngineFlags(const BasePkg_c& rrefc_pkg)
-  { // engine speed
-    setEngine(rrefc_pkg.val56());
-    // rear hitch
-    setHitchRear(rrefc_pkg.val7());
-    // front hitch
-    setHitchFront(rrefc_pkg.val8());
-    c_sendDevKey = getDinMonitorInstance4Comm().dinMemberNr(rrefc_pkg.send()).devKey();
-    i32_lastEngineHitch = Scheduler_c::getLastTimeEventTrigger();
-  }
-  /** helper function to set the Hitch and Engine flags of a DIN base data message */
-  void TracGeneral_c::dinSetHitchEngineFlags(BasePkg_c& rrefc_pkg)
-  {
-    rrefc_pkg.setVal56(i16_engine);
-    rrefc_pkg.setVal7(hitchRear());
-    rrefc_pkg.setVal8(hitchFront());
+    return true;
   }
 
+  /** check if a received message should be parsed */
+  bool TracGeneral_c::checkParseReceivedFuel(const DevKey_c& rrefc_currentSender)const
+  {
+    return ( checkImplementMode() // I'm not the sender
+            && ( // one of the following conditions must be true
+                   (c_sendFuelDevKey == rrefc_currentSender  ) // actual sender equivalent to last
+                || (c_sendFuelDevKey.isUnspecified()         ) // last sender has not correctly claimed address member
+               )
+          )?true:false;
+  }
+
+  /** helper function to do the parsing of the flag data of a
+   * received DIN9684 general base message with Pto,Hitch,Engine information
+  */
+  void TracGeneral_c::dinParseHitchEngineFlags(const CANPkgExt_c& rrefc_pkg)
+  { // engine speed
+    setEngine(rrefc_pkg.getInt16Data( 4 ));
+    // rear hitch
+    setHitchRear(rrefc_pkg.getUint8Data( 6 ));
+    // front hitch
+    setHitchFront(rrefc_pkg.getUint8Data( 7 ));
+    setSenderDevKey(getDinMonitorInstance4Comm().dinMemberNr(rrefc_pkg.dinSa()).devKey());
+    setUpdateTime(Scheduler_c::getLastTimeEventTrigger());
+  }
+  /** helper function to set the Hitch and Engine flags of a DIN base data message */
+  void TracGeneral_c::dinSetHitchEngineFlags(CANPkgExt_c& rrefc_pkg)
+  {
+    rrefc_pkg.setUint16Data(4, i16_engine);
+    rrefc_pkg.setUint8Data(6, hitchRear());
+    rrefc_pkg.setUint8Data(7, hitchFront());
+  }
   #endif
 
   #ifdef USE_ISO_11783
+  /** send a ISO11783 general base information PGN.
+  * this is only called when sending ident is configured and it has already claimed an address
+  */
+  bool TracGeneral_c::isoTimeEvent( )
+  {
+    if ( ( (lastedTimeSinceUpdate() >= 100) )
+      && ( !checkImplementMode()           ) )
+    {// it's time to send hitch information
+      isoSendMsg();
+    }
+    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+
+    return true;
+  }
+
   /**
-    process a ISO11783 base information PGN
+    process a ISO11783 general base information PGN
   */
   bool TracGeneral_c::isoProcessMsg()
   {
@@ -548,15 +473,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     switch (data().isoPgn() & 0x1FFFF)
     {
       case FRONT_HITCH_STATE_PGN:
-      case BACK_HITCH_STATE_PGN:
+      case REAR_HITCH_STATE_PGN:
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
         if ( checkParseReceived( c_tempDevKey ) )
         { // sender is allowed to send
-          uint8_t ui8_tempHitch = ((data().val1() * 4) / 10);
+          uint8_t ui8_tempHitch = (( data().getUint8Data( 0 ) * 4) / 10);
           if ( (ui8_tempHitch != ERROR_VAL_8)
               && (ui8_tempHitch != NO_VAL_8) ) {
-            switch ( (data().val2() >> 6) & 3 ) {
+            switch ( (data().getUint8Data( 1 ) >> 6) & 3 ) {
             case 0: // not in work
               break;
             case 1: // in work
@@ -573,18 +498,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           if (data().isoPgn() == FRONT_HITCH_STATE_PGN)
           { // front hitch
             setHitchFront(ui8_tempHitch);
-            ui8_frontLinkForce = data().val3();
-            i16_frontDraft = static_cast<int16_t>(data().val4()) + (static_cast<int16_t>(data().val5()) << 8);
+            ui8_frontLinkForce = data().getUint8Data( 2 );
+            i16_frontDraft = static_cast<int16_t>(data().getUint8Data( 3 ) ) + (static_cast<int16_t>(data().getUint8Data( 4 ) ) << 8);
           }
           else
           { // back hitch
             setHitchRear(ui8_tempHitch);
-            ui8_rearLinkForce = data().val3();
-            i16_rearDraft = static_cast<int16_t>(data().val4()) + (static_cast<int16_t>(data().val5()) << 8);
+            ui8_rearLinkForce = data().getUint8Data( 2 );
+            i16_rearDraft = static_cast<int16_t>(data().getUint8Data( 3 ) ) + (static_cast<int16_t>(data().getUint8Data( 4 )) << 8);
           }
           // set last time
-          i32_lastEngineHitch = ci32_now;
-          c_sendDevKey = c_tempDevKey;
+          setUpdateTime(ci32_now);
+          setSenderDevKey(c_tempDevKey);
         }
         else
         { // there is a sender conflict
@@ -593,18 +518,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         b_result = true;
         break;
       case MAINTAIN_POWER_REQUEST_PGN: // maintain power request
-        if ( ( (data().val1() >> 2) & 3) == 1)
+        if ( ( (data().getUint8Data( 1 ) >> 4) & 3) == 1)
           b_maintainEcuPower = true;
-        if ( ( (data().val1() >> 4) & 3) == 1)
+        if ( ( (data().getUint8Data( 0 ) >> 6) & 3) == 1)
           b_maintainActuatorPower = true;
-
-
-        if ( ( (data().val2() >> 6) & 3) == 1)
-          b_maintainPowerForImplInTransport = true;
-        if ( ( (data().val2() >> 4) & 3) == 1)
-          b_maintainPowerForImplInPark = true;
-        if ( ( (data().val2() >> 2) & 3) == 1)
-          b_maintainPowerForImplInWork = true;
+        if ( ( (data().getUint8Data( 1 ) >> 6) & 3) == 1)
+          powerForImplState.inTransport = IsoAgLib::IsoActive;
+         // b_maintainPowerForImplInTransport = true;
+        if ( ( (data().getUint8Data( 1 ) >> 4) & 3) == 1)
+          powerForImplState.inPark = IsoAgLib::IsoActive;
+          //b_maintainPowerForImplInPark = true;
+        if ( ( (data().getUint8Data( 1 ) >> 2) & 3) == 1)
+          powerForImplState.inWork = IsoAgLib::IsoActive;
+          //b_maintainPowerForImplInWork = true;
 
         ui32_lastMaintainPowerRequest = data().time();
         b_result = true;
@@ -618,14 +544,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
             b_languageVtReceived = true;
             for (int i=0; i<8; i++)
             {
-              p8ui8_languageVt[i] = data().getInt32Data(i);
+              p8ui8_languageVt[i] = data().getUint8Data(i);
             }
             break;
           case 0xF0:
             b_languageTecuReceived = true;
             for (int i=0; i<8; i++)
             {
-              p8ui8_languageTecu[i] = data().getInt32Data(i);
+              p8ui8_languageTecu[i] = data().getUint8Data(i);
             }
             break;
           default: // don't care for other language pgns...
@@ -638,106 +564,151 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return b_result;
   }
 
-  /** send a ISO11783 base information PGN.
-  * this is only called when sending ident is configured and it has already claimed an address
-  */
-  bool TracGeneral_c::isoTimeEvent( void )
+  /** send front hitch and rear hitch data msg*/
+  void TracGeneral_c::isoSendMsg()
   {
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
 
+    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*pc_devKey, true).nr();
+    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
     data().setIsoSa(b_sa);
 
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-    if ( ( ( ci32_now - i32_lastEngineHitch ) >= 100 )
-      && ( b_sendState                               ) )
-    { // it's time to send Base2
-      c_sendDevKey = *pc_devKey;
-      CANIO_c& c_can = getCanInstance4Comm();
-      data().setIsoPgn(FRONT_HITCH_STATE_PGN);
-      switch (hitchFront()) {
-        case ERROR_VAL_16S:
-          data().setVal1(hitchFront());
-          data().setVal2(IsoAgLib::IsoError);
-          break;
-        case NO_VAL_16S:
-          data().setVal1(hitchFront());
-          data().setVal2(IsoAgLib::IsoNotAvailable);
-          break;
-        default:
-          data().setVal1(((hitchFront() & 0x7F) * 10) / 4);
-          if ((hitchFront() & 0x80) != 0) data().setVal2(1 << 6); // work
-          else data().setVal2(1);
-          break;
-      }
-      data().setVal3(ui8_frontLinkForce);
-      data().setVal4(i16_frontDraft& 0xFF);
-      data().setVal5(i16_frontDraft >> 8);
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
-
-      data().setIsoPgn(BACK_HITCH_STATE_PGN);
-      switch (hitchRear()) {
-        case ERROR_VAL_16S:
-          data().setVal1(hitchRear());
-          data().setVal2(IsoAgLib::IsoError);
-          break;
-        case NO_VAL_16S:
-          data().setVal1(hitchRear());
-          data().setVal2(IsoAgLib::IsoNotAvailable);
-          break;
-        default:
-          data().setVal1(((hitchRear() & 0x7F) * 10) / 4);
-          if ((hitchRear() & 0x80) != 0) data().setVal2(1 << 6); // work
-          else data().setVal2(1);
-          break;
-      }
-      data().setVal3(ui8_rearLinkForce);
-      data().setVal4(i16_rearDraft& 0xFF);
-      data().setVal5(i16_rearDraft >> 8);
-
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      i32_lastEngineHitch = Scheduler_c::getLastTimeEventTrigger();
+    setSenderDevKey( *getDevKey() );
+    CANIO_c& c_can = getCanInstance4Comm();
+    data().setIsoPgn(FRONT_HITCH_STATE_PGN);
+    switch (hitchFront()) {
+      case ERROR_VAL_16S:
+        data().setUint8Data(0, hitchFront());
+        data().setUint8Data(1, IsoAgLib::IsoError);
+        break;
+      case NO_VAL_16S:
+        data().setUint8Data(0, hitchFront());
+        data().setUint8Data(1, IsoAgLib::IsoNotAvailable);
+        break;
+      default:
+        data().setUint8Data(0, (((hitchFront() & 0x7F) * 10) / 4));
+        if ((hitchFront() & 0x80) != 0) data().setUint8Data(1, (1 << 6) ); // work
+        else data().setUint8Data(1, 1);
+        break;
     }
-    if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+    data().setUint8Data(2, ui8_frontLinkForce);
+    data().setUint8Data(3, i16_frontDraft& 0xFF);
+    data().setUint8Data(4, (i16_frontDraft >> 8) );
+    data().setUint32Data(5, 0);
+    data().setLen(8);
+    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+    // then it sends the data
+    c_can << data();
 
-    return true;
+    data().setIsoPgn(REAR_HITCH_STATE_PGN);
+    switch (hitchRear()) {
+      case ERROR_VAL_16S:
+        data().setUint8Data(0, hitchRear());
+        data().setUint8Data(1, IsoAgLib::IsoError);
+        break;
+      case NO_VAL_16S:
+        data().setUint8Data(0, hitchRear());
+        data().setUint8Data(1, IsoAgLib::IsoNotAvailable);
+        break;
+      default:
+        data().setUint8Data(0, (((hitchRear() & 0x7F) * 10) / 4));
+        if ((hitchRear() & 0x80) != 0) data().setUint8Data(1, (1 << 6) ); // work
+        else data().setUint8Data(1, 1);
+        break;
+    }
+    data().setUint8Data(2, ui8_rearLinkForce);
+    data().setUint8Data(3, (i16_rearDraft& 0xFF) );
+    data().setUint8Data(4, i16_rearDraft >> 8);
+    data().setUint32Data(5, 0);
+    data().setLen(8);
+
+    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+    // then it sends the data
+    c_can << data();
+
+    // update time
+    setUpdateTime(ci32_now);
   }
 
+  /** send iso language data msg*/
+  void TracGeneral_c::isoSendLanguage(const DevKey_c& rpc_devKey)
+  {
+    if (!b_languageVtReceived
+       || ( rpc_devKey.isUnspecified()  )
+       || !getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)
+       )
+    { //if VT has up to now not send the language command there is no sense to send it
+      return;
+    } else
+    {
+      // retreive the actual dynamic sender no of the member with the registered devKey
+      uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
+      data().setIdentType(Ident_c::ExtendedIdent);
+      data().setIsoPri(6);
+      data().setIsoSa(b_sa);
 
-  /** force maintain power from tractor
+      setSenderDevKey( *getDevKey() );
+      CANIO_c& c_can = getCanInstance4Comm();
+      data().setIsoPgn(LANGUAGE_PGN);
+      //Bytes 1,2: language command
+      data().setUint16Data(0, (p8ui8_languageVt[0] | (p8ui8_languageVt[1] << 8)) );
+      //Byte 3: number format; Bit 1-4: reserved, Bit 5,6: time format, Bit 7,8: decimal symbol
+      data().setUint8Data(2, p8ui8_languageVt[2]);
+      //Byte 4: date format
+      data().setUint8Data(3, p8ui8_languageVt[3]);
+      //Byte 5: units of measure; Bit 1,2: mass units, Bit 3,4: volume units, Bit 5,6: area units, Bit 7,8: distance units
+      data().setUint8Data(4, p8ui8_languageVt[4]);
+      //Byte 6: units of measure; Bit 1,2: units system; Bit 3,4; force units, Bit 5,6: pressure units, Bit 7,8: temperature units
+      data().setUint8Data(5, p8ui8_languageVt[5]);
+      //Bytes 7,8: reserved
+      data().setUint8Data(6, p8ui8_languageVt[6] | (p8ui8_languageVt[7] << 8));
+      data().setUint8Data(7, 0);
+      data().setLen(8);
+
+      c_can << data();
+    }
+  }
+
+ /** force maintain power from tractor
     * @param rb_ecuPower true -> maintain ECU power
-    * @param rb_actuatorPower -> maintain actuator power
-    * @param rt_implTransport true -> implement is in transport state
-    * @param rt_implPark true -> implement is in park state
-    * @param rt_implWork true -> implement is in work state
+    * @param rb_actuatorPower true-> maintain actuator power
+    * @param rt_implState in which state is the implement (transport, park, work)
     */
-  void TracGeneral_c::forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoActiveFlag_t rt_implTransport,
-  IsoAgLib::IsoActiveFlag_t rt_implPark, IsoAgLib::IsoActiveFlag_t rt_implWork)
+  void TracGeneral_c::forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
   {
     uint8_t val1 = IsoAgLib::IsoInactive,
             val2 = IsoAgLib::IsoInactive;
-    if (rb_ecuPower)      val1 |= ( IsoAgLib::IsoActive << 6);
-    if (rb_actuatorPower) val1 |= ( IsoAgLib::IsoActive << 4);
+    if (rb_ecuPower)      val1 |= ( IsoAgLib::IsoActive   << 6);
+    else                  val1 |= ( IsoAgLib::IsoInactive << 6);
+    if (rb_actuatorPower) val1 |= ( IsoAgLib::IsoActive   << 4);
+    else                  val1 |= ( IsoAgLib::IsoInactive << 4);
 
-    val2 |= ( rt_implTransport << 6);
-    val2 |= ( rt_implPark << 4);
-    val2 |= ( rt_implWork << 2);
-
+    switch(rt_implState)
+    {
+      case IsoAgLib::implInTransport:
+        val2 |= ( IsoAgLib::IsoActive   << 6);
+        val2 |= ( IsoAgLib::IsoInactive << 4);
+        val2 |= ( IsoAgLib::IsoInactive << 2);
+        break;
+      case IsoAgLib::implInPark:
+        val2 |= ( IsoAgLib::IsoInactive << 6);
+        val2 |= ( IsoAgLib::IsoActive   << 4);
+        val2 |= ( IsoAgLib::IsoInactive << 2);
+      case IsoAgLib::implInWork:
+        val2 |= ( IsoAgLib::IsoInactive << 6);
+        val2 |= ( IsoAgLib::IsoInactive << 4);
+        val2 |= ( IsoAgLib::IsoActive   << 2);
+    }
     data().setIsoPgn(MAINTAIN_POWER_REQUEST_PGN);
-    data().setVal1(val1);
-    data().setVal2(val2);
-    data().setVal34(0);
-    data().setVal56(0);
-    data().setVal78(0);
+    data().setUint8Data(0, val1);
+    data().setUint8Data(1, val2);
+    data().setUint16Data(2, 0);
+    data().setUint16Data(4, 0);
+    data().setUint16Data(6, 0);
+    data().setLen(8);
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
     getCanInstance4Comm() << data();

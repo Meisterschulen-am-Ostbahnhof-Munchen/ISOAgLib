@@ -196,13 +196,16 @@
 
 /** set the following define, if the lookup result shall be sent via RS232 */
 #define USE_RS232_FOR_DEBUG
-
+/** set the following defines if to test one or more of the base data*/
+#define TEST_TRACTOR_LIGHTING
+#define TEST_TRACTOR_GENERAL
+#define TEST_TRACTOR_MOVING
+#define TEST_TIME
 
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */
-//#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/igetypos_c.h>
 
 /* include headers for the needed drivers */
@@ -218,16 +221,41 @@
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
-#include <IsoAgLib/comm/Base/itimeposgps_c.h>
-#include <IsoAgLib/comm/Base/itracgeneral_c.h>
-#include <IsoAgLib/comm/Base/itracmove_c.h>
 
+#ifdef TEST_TIME
+  #include <IsoAgLib/comm/Base/itimeposgps_c.h>
+#endif
+#ifdef TEST_TRACTOR_GENERAL
+  #include <IsoAgLib/comm/Base/itracgeneral_c.h>
+#endif
+#ifdef TEST_TRACTOR_MOVING
+  #include <IsoAgLib/comm/Base/itracmove_c.h>
+#endif
+#ifdef TEST_TRACTOR_LIGHTING
+  #include <IsoAgLib/comm/Base/ext/itraclight_c.h>
+#endif
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
 // with this command the text part "IsoAgLib::" can be avoided, which
 // is needed for the documentation generator
 using namespace IsoAgLib;
+
+#ifdef TEST_TRACTOR_LIGHTING
+/**interpret the IsoActiveFlag_t values as strings when as output on console*/
+std::string getIsoActiveFlag(IsoAgLib::IsoActiveFlag_t t_val)
+{
+  switch ( t_val )
+  {
+    case 0: return "IsoInactive";
+    case 1: return "IsoActive";
+    case 2: return "IsoError";
+    case 3: return "IsoNotAvailable";
+    default: return "there went something wrong!!";
+
+  }
+}
+#endif
 
 int main()
 { // init CAN channel with 250kBaud at channel 0 ( count starts with 0 )
@@ -238,7 +266,7 @@ int main()
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -254,6 +282,11 @@ int main()
   IsoAgLib::iIdentItem_c c_myIdent( &myDevKey,
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
+
+#ifdef TEST_TRACTOR_LIGHTING
+  // configure to send information for lighting on BUS
+  getITracLightInstance().config(&myDevKey);
+#endif
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -280,6 +313,9 @@ int main()
       or
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
+  #ifdef USE_RS232_FOR_DEBUG
+    EXTERNAL_DEBUG_DEVICE << "\n";
+  #endif
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
@@ -288,42 +324,149 @@ int main()
 
     #ifdef USE_RS232_FOR_DEBUG
     static int32_t si32_lastDebug = 0;
+
     if ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) > si32_lastDebug )
     { // it's time to print debug msg
       si32_lastDebug = ( IsoAgLib::iSystem_c::getTime() / 1000 );
-      EXTERNAL_DEBUG_DEVICE << "The theoretical distance of the tractor is now " << getITracMoveInstance().distTheor() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The real distance of the tractor is now " << getITracMoveInstance().distReal() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The theoretical speed  of the tractor is now " << getITracMoveInstance().speedTheor() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The real speed of the tractor is now " << getITracMoveInstance().speedReal() << "\n";
-      EXTERNAL_DEBUG_DEVICE << "The rear hitch position of the tractor is now " << int(getITracGeneralInstance().hitchRear()) << "\n";
-      if ( getITimePosGpsInstance().isCalendarReceived() )
-      { // already calendar received
-        EXTERNAL_DEBUG_DEVICE << "Already Calendar received with "
-          << int(getITimePosGpsInstance().yearLocal()) << ":"
-          << int(getITimePosGpsInstance().monthLocal()) << ":"
-          << int(getITimePosGpsInstance().dayLocal())
-          << "; "
-          << int(getITimePosGpsInstance().hourLocal()) << ":"
-          << int(getITimePosGpsInstance().minuteLocal()) << ":"
-          << int(getITimePosGpsInstance().second()) << ":"
-          << "\n";
-      }
-      EXTERNAL_DEBUG_DEVICE
-        << "Some probably already correct decoded GPS information\n"
-        << "Latitude: " << getITimePosGpsInstance().getGpsLatitudeMinute() << "\n"
-        << "Longitude: " << getITimePosGpsInstance().getGpsLongitudeMinute() << "\n"
-        #if defined(NMEA_2000_FAST_PACKET)
-        << "Altitude: " << getITimePosGpsInstance().getGpsAltitudeCm() << "\n\n"
-        << "Some probably not yet correct decoded GPS information\n"
-        << "GPS Mode: " << getITimePosGpsInstance().getGnssMode() << "\n"
-        << "GPS Speed: " << getITimePosGpsInstance().getGpsSpeedCmSec() << "\n"
-        << "GPS Heading: " << getITimePosGpsInstance().getGpsHeadingRad10Minus4() << "\n"
-        #endif
-        ;
+
+      #ifdef TEST_TRACTOR_LIGHTING
+      //LIGHTING CLASS TEST FUNCTIONALITY
+      EXTERNAL_DEBUG_DEVICE << "\t+++++++++LIGHTING+++++++++\n";
+      IsoAgLib::IsoActiveFlag_t temp;
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::daytimeRunning);
+      EXTERNAL_DEBUG_DEVICE << "daytime running light:              " <<  getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::alternateHead);
+      EXTERNAL_DEBUG_DEVICE << "alternate head light:               " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::lowBeamHead);
+      EXTERNAL_DEBUG_DEVICE << "low beam head light:                " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::highBeamHead);
+      EXTERNAL_DEBUG_DEVICE << "high beam head light:               " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::frontFog);
+      EXTERNAL_DEBUG_DEVICE << "front fog light:                    " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::beacon);
+      EXTERNAL_DEBUG_DEVICE << "beacon light:                       " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::rightTurn);
+      EXTERNAL_DEBUG_DEVICE << "right turn light:                   " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::leftTurn);
+      EXTERNAL_DEBUG_DEVICE << "left turn light:                    " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::backUpLightAlarmHorn);
+      EXTERNAL_DEBUG_DEVICE << "back up light and alarm horn:       " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::centerStop);
+      EXTERNAL_DEBUG_DEVICE << "center stop light:                  " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::rightStop);
+      EXTERNAL_DEBUG_DEVICE << "right stop light:                   " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::leftStop);
+      EXTERNAL_DEBUG_DEVICE << "left stop light:                    " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::implClearance);
+      EXTERNAL_DEBUG_DEVICE << "implement clearance light:          " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::tracClearance);
+      EXTERNAL_DEBUG_DEVICE << "tractor clearance light:            " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::implMarker);
+      EXTERNAL_DEBUG_DEVICE << "implement marker light:             " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::tracMarker);
+      EXTERNAL_DEBUG_DEVICE << "tractor marker light:               " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::rearFog);
+      EXTERNAL_DEBUG_DEVICE << "rear fog light:                     " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::undersideWork);
+      EXTERNAL_DEBUG_DEVICE << "underside work light:               " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::rearLowWork);
+      EXTERNAL_DEBUG_DEVICE << "rear low work light:                " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::rearHighWork);
+      EXTERNAL_DEBUG_DEVICE << "rear high work light:               " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::sideLowWork);
+      EXTERNAL_DEBUG_DEVICE << "side low work light:                " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::sideHighWork);
+      EXTERNAL_DEBUG_DEVICE << "side high work light:               " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::frontLowWork);
+      EXTERNAL_DEBUG_DEVICE << "front low work light:               " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::frontHighWork);
+      EXTERNAL_DEBUG_DEVICE << "front high work light:              " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::implOEMOpt2);
+      EXTERNAL_DEBUG_DEVICE << "implement OEM option 2 light:       " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::implOEMOpt1);
+      EXTERNAL_DEBUG_DEVICE << "implement OEM option 1 light:       " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::implRightForwardWork);
+      EXTERNAL_DEBUG_DEVICE << "implement right forward work light: " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::implLeftForwardWork);
+      EXTERNAL_DEBUG_DEVICE << "implement left forward work light:  " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::dataMsgReq);
+      EXTERNAL_DEBUG_DEVICE << "lighting data message request:      " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::implRightFacingWork);
+      EXTERNAL_DEBUG_DEVICE << "implement right facing work light:  " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::implLeftFacingWork);
+      EXTERNAL_DEBUG_DEVICE << "implement left facing work light:   " << getIsoActiveFlag(temp) << "\n";
+
+      temp = getITracLightInstance().getCommand(IsoAgLib::implRearWork);
+      EXTERNAL_DEBUG_DEVICE << "implement rear work light:          " << getIsoActiveFlag(temp) << "\n";
+
+      getITracLightInstance().sendMessage();
+      #endif
+
+      #ifdef TEST_TRACTOR_MOVING
+      //MOVING CLASS TEST FUNCTIONALITY
+      EXTERNAL_DEBUG_DEVICE << "\t+++++++++MOVING KLASSE+++++++++\n";
+      EXTERNAL_DEBUG_DEVICE << "Distance theoretisch:        " << getITracMoveInstance().distTheor() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Distance real:               " << getITracMoveInstance().distReal() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Geschwindigkeit theoretisch: " << getITracMoveInstance().speedTheor() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Geschwindigkeit real:        " << getITracMoveInstance().speedReal() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Key switch:                  " << getITracGeneralInstance().keySwitch() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Maximum power time:          " << static_cast<int>(getITracGeneralInstance().maxPowerTime()) << "\n";
+      #endif
+
+      #ifdef TEST_TRACTOR_GENERAL
+      //GENERAL CLASS TEST FUNCTIONALITY
+      EXTERNAL_DEBUG_DEVICE << "\t+++++++++GENERAL KLASSE+++++++++\n";
+      EXTERNAL_DEBUG_DEVICE << "Hitch front:                  " << static_cast<int16_t>(getITracGeneralInstance().hitchFront()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Hitch rear:                   " << static_cast<int16_t>(getITracGeneralInstance().hitchRear() ) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Hitch front draft:            " << getITracGeneralInstance().hitchFrontDraft() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Hitch rear draft:             " << getITracGeneralInstance().hitchRearDraft() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Hitch front lower link force: " << getITracGeneralInstance().hitchFrontLowerLinkForce() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Hitch rear lower link force:  " << getITracGeneralInstance().hitchRearLowerLinkForce() << "\n";
+      #endif
+
+      #ifdef TEST_TIME
+        //Time CLASS TEST FUNCTIONALITY
+      EXTERNAL_DEBUG_DEVICE << "\t+++++++++ TIME KLASSE +++++++++\n";
+      EXTERNAL_DEBUG_DEVICE << "Kalender Local:  " << getITimePosGpsInstance().isCalendarReceived() << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Monat UTC:       " << static_cast<int>(getITimePosGpsInstance().monthUtc()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Tag UTC:         " << static_cast<int>(getITimePosGpsInstance().dayUtc()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Stunde UTC:      " << static_cast<int>(getITimePosGpsInstance().hourUtc()) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "Minute UTC:      " << static_cast<int>(getITimePosGpsInstance().minuteUtc()) << "\n";
+      #endif
     }
-    #else
-    static int32_t si32_lastDist = getITracMoveInstance().distTheor();
     #endif
+
   }
   return 1;
 }

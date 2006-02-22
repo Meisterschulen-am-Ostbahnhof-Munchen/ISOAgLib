@@ -80,40 +80,35 @@ class iTimePosGPS_c : private __IsoAgLib::TimePosGPS_c {
 public:
   // Public methods
   /**
-    initialise element which can't be done during construct;
-    above all create the needed FilterBox_c instances, to receive
-    the needed CAN msg with base msg type 1,2 and calendar
-
-    possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-    @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-  */
-  void init(const iDevKey_c* rpc_devKey = NULL, BaseDataGroup_t rt_mySendSelection = BaseDataNothing )
-  {TimePosGPS_c::init(rpc_devKey, rt_mySendSelection);};
-
-  /**
     config the Base_c object after init -> set pointer to devKey and
     config send/receive of different base msg types
     @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+    @param rb_implementMode implement mode (true) or tractor mode (false)!!!
   */
-  void config(const iDevKey_c* rpc_devKey, BaseDataGroup_t rt_mySendSelection )
-  {TimePosGPS_c::config(rpc_devKey, rt_mySendSelection );};
+  void config(const iDevKey_c* rpc_devKey, bool rb_implementMode = true)
+  {TimePosGPS_c::config(rpc_devKey, rb_implementMode );};
+
+  #ifdef USE_ISO_11783
+  /** config the Base_c object after init -> set pointer to devKey and
+      config send/receive of different base msg types
+      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rb_implementMode implement mode (true) or tractor mode (false)!!!
+    */
+  void configGps(const iDevKey_c* rpc_devKey, bool rb_implementMode)
+  {TimePosGPS_c::configGps(rpc_devKey, rb_implementMode );};
   /** Retrieve the last update time of the specified information type
      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
    */
-  int32_t lastedTimeSinceUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
-    {return TimePosGPS_c::lastedTimeSinceUpdate( rt_mySendSelection );};
+  int32_t lastedTimeSinceUpdateGps() const
+    {return TimePosGPS_c::lastedTimeSinceUpdateGps();};
   /** Retrieve the time of last update */
-  int32_t lastUpdateTime( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
-  {return TimePosGPS_c::lastUpdateTime( rt_mySendSelection );};
-
-  #ifdef USE_ISO_11783
-  /** send ISO11783 calendar PGN */
-  void isoSendCalendar(const iDevKey_c& rc_devKey) { return TimePosGPS_c::isoSendCalendar(rc_devKey);};
-  #endif // END of USE_ISO_11783
-
+  int32_t lastUpdateTimeGps() const
+  {return TimePosGPS_c::lastUpdateTimeGps();};
+  /** return a sender which sends commands as a tractor */
+  iDevKey_c& getSenderDevKeyGps() {return static_cast<iDevKey_c&>(TimePosGPS_c::getSenderDevKeyGps());};
+  /** return a sender which sends commands as a tractor */
+  const iDevKey_c& getSenderDevKeyGpsConst() const {return static_cast<const iDevKey_c&>(TimePosGPS_c::getSenderDevKeyGpsConst());};
+  #endif
   /* ******************************************* */
   /** \name Get Values */
   /*@{*/
@@ -272,14 +267,6 @@ public:
   /* ****************************************************** */
   /** \name Retrieve Values which are sent from other ECUs  */
   /*@{*/
-  /** deliver the devKey of the sender of the base data
-      possible errors:
-        * Err_c::range rui8_typeNr doesn't match valid base msg type number
-      @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
-      @return DEV_KEY code of member who is sending the intereested base msg type
-    */
-  const iDevKey_c& senderDevKey(BaseDataGroup_t rt_typeGrp) const { return static_cast<const iDevKey_c&>(TimePosGPS_c::senderDevKey( rt_typeGrp ));};
-
  private:
   /** allow getITimePosGpsInstance() access to shielded TimePosGPS_c class.
     * otherwise __IsoAgLib::getTimePosGpsInstance() wouldn't be accepted by compiler

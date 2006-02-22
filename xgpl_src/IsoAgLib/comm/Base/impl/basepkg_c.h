@@ -1,4 +1,4 @@
-/***************************************************************************
+  /***************************************************************************
                           basepkg_c.h  - header file for CAN telgram
                                         encapsulating object, which presents
                                         the base msg informations through
@@ -123,22 +123,22 @@ public:
     @return reference to the source CANPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
   */
-  virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right);
+//  virtual const CANPkg_c& operator=(const CANPkg_c& rrefc_right);
 
   /* ******************** */
   /* retreiving of values */
   /* ******************** */
-
+#if 0
   /**
     deliver type of base msg BABO
     @return BABO code of base msg (bit 4-7 in identifier)
   */
-  uint8_t babo()const {return pb_internalData[BABO_ARR_POS];};
+  uint8_t babo()const {return (ident(0) >> 4);};
   /**
     deliver sender nr
     @return SEND code of base msg (bit 8-11 in identifier)
   */
-  uint8_t send() const {return pb_internalData[SEND_ARR_POS];};
+  uint8_t send() const {return (ident(0) & 0xF);};
 
   /**
     deliver value of i16_val12
@@ -214,19 +214,6 @@ public:
   /* ***************** */
 
   /**
-    set type of base msg BABO
-    @param rb_val uint8_t value to write into BABO code of ident in base msg (bit 4-7)
-  */
-  void setBabo(uint8_t rb_val){pb_internalData[BABO_ARR_POS] = rb_val; };
-  /**
-    set sender nr
-    @param rb_val uint8_t value to write into SEND code of ident in base msg (bit 8-11)
-  */
-  void setSend(uint8_t rb_val){pb_internalData[SEND_ARR_POS] = rb_val;
-    setIdentType(Ident_c::StandardIdent);
-    };
-
-  /**
     set value of i16_val12
     @param ri16_val integer value to write into data bytes 1,2
   */
@@ -294,13 +281,14 @@ public:
   */
   void setVal36(int32_t ri32_val){i32_val36 = ri32_val;};
   #endif
+#endif
   /**
     overloaded virtual function to translate the string data into flag values;
     needed for assigning informations from another CANPkg_c or CANPkgExt
     @see CANPkg_c::operator=
     @see CANPkgExt_c::operator=
   */
-  virtual void string2Flags();
+//  virtual void string2Flags();
 private:
 // Private methods
 
@@ -312,17 +300,17 @@ private:
     @see CANPkg_c::getData
     @see CANPkgExt_c::getData
   */
-  virtual void flags2String();
+//  virtual void flags2String();
 
   #ifdef USE_ISO_11783
   /**
     translate ISO11783 extended ident string data to flags
   */
-  void isoString2Flags();
+//  void isoString2Flags();
   /**
     translate ISO11783 flag data to extended CAN string
   */
-  void isoFlags2String();
+//  void isoFlags2String();
   #endif
 
 private:

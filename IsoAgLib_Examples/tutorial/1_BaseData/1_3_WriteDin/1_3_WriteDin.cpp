@@ -189,6 +189,11 @@
   #define PRJ_USE_AUTOGEN_CONFIG config_1_3_WriteDin.h
 #endif
 
+/** set the following defines if to test one or more of the base data*/
+#define TEST_TRACTOR_GENERAL
+#define TEST_TRACTOR_MOVING
+#define TEST_TIME
+#define TEST_TRACTOR_PTO
 
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"
@@ -206,7 +211,18 @@
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
-#include <IsoAgLib/comm/Base/itracmove_c.h>
+#ifdef TEST_TIME
+  #include <IsoAgLib/comm/Base/itimeposgps_c.h>
+#endif
+#ifdef TEST_TRACTOR_GENERAL
+  #include <IsoAgLib/comm/Base/itracgeneral_c.h>
+#endif
+#ifdef TEST_TRACTOR_MOVING
+  #include <IsoAgLib/comm/Base/itracmove_c.h>
+#endif
+#ifdef TEST_TRACTOR_PTO
+  #include <IsoAgLib/comm/Base/itracpto_c.h>
+#endif
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
@@ -223,6 +239,7 @@ using namespace IsoAgLib;
 */
 static const int32_t cui32_canChannel = 0;
 
+#ifdef TEST_TRACTOR_MOVING
 /** dummy function to serve a real speed for the demonstration */
 int32_t localGetRealSpeed() { return 34; };
 /** dummy function to serve a theor speed for the demonstration */
@@ -231,6 +248,7 @@ int32_t localGetTheorSpeed() { return 40; };
 int32_t localGetRealDist() { return (iSystem_c::getTime()*localGetRealSpeed()/1000); };
 /** dummy function to serve a teor distance for the demonstration */
 int32_t localGetTheorDist() { return (iSystem_c::getTime()*localGetTheorSpeed()/1000); };
+#endif
 
 
 int main()
@@ -246,8 +264,22 @@ int main()
   // IsoAgLib can change the myDevKey val through the pointer to myDevKey
   IsoAgLib::iIdentItem_c c_myIdent( &myDevKey, myName );
 
-  // configure BaseData_c to send base information for speed and distance on BUS
-  getITracMoveInstance().config(&myDevKey, BaseDataGroup1 );
+  #ifdef TEST_TRACTOR_MOVING
+  // configure TracMove_c to send base information for speed and distance on BUS
+  getITracMoveInstance().config(&myDevKey, false );
+  #endif
+
+  #ifdef TEST_TRACTOR_GENERAL
+  getITracGeneralInstance().config(&myDevKey, false);
+  #endif
+
+  #ifdef TEST_TRACTOR_PTO
+  getITracPtoInstance().config(&myDevKey, false);
+  #endif
+
+  #ifdef TEST_TIME
+  getITimePosGpsInstance().config(&myDevKey, false);
+  #endif
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -280,11 +312,37 @@ int main()
     // all time controlled actions of IsoAgLib
     getISchedulerInstance().timeEvent();
 
+    #ifdef TEST_TIME
+    /***************** TEST TIME *****************/
+    getITimePosGpsInstance().setCalendarLocal(1990, 4, 18, 12, 5, 1, 11);
+    #endif
+
+    #ifdef TEST_TRACTOR_MOVING
+    /***************** TEST MOVING *****************/
     // set current values for speed and distance, so that IsoAgLib can send them on BUS
     getITracMoveInstance().setDistTheor( localGetTheorDist() );
     getITracMoveInstance().setDistReal( localGetRealDist() );
     getITracMoveInstance().setSpeedTheor( localGetTheorSpeed() );
     getITracMoveInstance().setSpeedReal( localGetRealSpeed() );
+    #endif
+
+    #ifdef TEST_TRACTOR_GENERAL
+    /************* TEST GENERAL ****************/
+    getITracGeneralInstance().setEngine(50);
+    getITracGeneralInstance().setRearLeftDraft(10);
+    getITracGeneralInstance().setRearRightDraft(15);
+    getITracGeneralInstance().setRearDraftNewton(250);
+    getITracGeneralInstance().setRearDraftNominal(200);
+    getITracGeneralInstance().setFuelRate(50);
+    getITracGeneralInstance().setFuelTemperature(60);
+    #endif
+
+    #ifdef TEST_TRACTOR_PTO
+    /*********** TEST PTO *************/
+    getITracPtoInstance().setPtoFront(5);
+    getITracPtoInstance().setPtoRear(7);
+    #endif
+
   }
   return 1;
 }

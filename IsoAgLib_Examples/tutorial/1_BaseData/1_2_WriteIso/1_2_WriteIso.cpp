@@ -189,9 +189,21 @@
   #define PRJ_USE_AUTOGEN_CONFIG config_1_2_WriteIso.h
 #endif
 
+/** set the following define, if the lookup result shall be sent via RS232 */
+#define USE_RS232_FOR_DEBUG
+
+#ifdef USE_RS232_FOR_DEBUG
+  #include <supplementary_driver/driver/rs232/irs232io_c.h>
+#endif
 
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"
+
+/** set the following defines if to test one or more of the base data*/
+#define TEST_TRACTOR_GENERAL
+#define TEST_TRACTOR_MOVING
+#define TEST_TIME
+#define TEST_TRACTOR_LIGHTING
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
@@ -206,7 +218,19 @@
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h>
-#include <IsoAgLib/comm/Base/itracmove_c.h>
+
+#ifdef TEST_TIME
+  #include <IsoAgLib/comm/Base/itimeposgps_c.h>
+#endif
+#ifdef TEST_TRACTOR_GENERAL
+  #include <IsoAgLib/comm/Base/itracgeneral_c.h>
+#endif
+#ifdef TEST_TRACTOR_MOVING
+  #include <IsoAgLib/comm/Base/itracmove_c.h>
+#endif
+#ifdef TEST_TRACTOR_LIGHTING
+  #include <IsoAgLib/comm/Base/ext/itraclight_c.h>
+#endif
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
@@ -224,7 +248,8 @@ using namespace IsoAgLib;
 */
 static const int32_t cui32_canChannel = 0;
 
-
+#ifdef TEST_TRACTOR_MOVING
+/*************DUMMY FUNCTIONALITY FOR MOVING *****************/
 /** dummy function to serve a real speed for the demonstration */
 int32_t localGetRealSpeed() { return 34; };
 /** dummy function to serve a theor speed for the demonstration */
@@ -232,8 +257,8 @@ int32_t localGetTheorSpeed() { return 40; };
 /** dummy function to serve a real distance for the demonstration */
 int32_t localGetRealDist() { return (iSystem_c::getTime()*localGetRealSpeed()/1000); };
 /** dummy function to serve a teor distance for the demonstration */
-int32_t localGetTheorDist() { return (iSystem_c::getTime()*localGetTheorSpeed()/1000); };
-
+int32_t localGetTheorDist() {return (iSystem_c::getTime()*localGetTheorSpeed()/1000);}
+#endif
 
 int main()
 { // init CAN channel with 250kBaud at needed channel ( count starts with 0 )
@@ -244,7 +269,7 @@ int main()
 
   // start address claim of the local member "IMI"
   // if DEV_KEY conflicts forces change of device class instance, the
-  // IsoAgLib can cahnge the myDevKey val through the pointer to myDevKey
+  // IsoAgLib can change the myDevKey val through the pointer to myDevKey
   bool b_selfConf = true;
   uint8_t ui8_indGroup = 2,
       b_func = 25,
@@ -261,8 +286,22 @@ int main()
       b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
       ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
 
-  // configure BaseData_c to send base information for speed and distance on BUS
-  getITracMoveInstance().config(&myDevKey, BaseDataGroup1 );
+  #ifdef TEST_TRACTOR_LIGHTING
+  // configure send information for lighting on BUS
+  getITracLightInstance().config(&myDevKey, false );  //tractor mode
+  #endif
+
+  #ifdef TEST_TRACTOR_MOVING
+  getITracMoveInstance().config(&myDevKey, false);
+  #endif
+
+  #ifdef TEST_TRACTOR_GENERAL
+  getITracGeneralInstance().config(&myDevKey, false);
+  #endif
+
+  #ifdef TEST_TIME
+  getITimePosGpsInstance().config(&myDevKey, false);
+  #endif
 
 
   /** IMPORTANT:
@@ -296,11 +335,96 @@ int main()
     // all time controlled actions of IsoAgLib
     getISchedulerInstance().timeEvent();
 
-    // set current values for speed and distance, so that IsoAgLib can send them on BUS
-    getITracMoveInstance().setDistTheor( localGetTheorDist() );
-    getITracMoveInstance().setDistReal( localGetRealDist() );
-    getITracMoveInstance().setSpeedTheor( localGetTheorSpeed() );
-    getITracMoveInstance().setSpeedReal( localGetRealSpeed() );
+    #ifdef USE_RS232_FOR_DEBUG
+      static int32_t si32_lastDebug = 0;
+      if ( ( IsoAgLib::iSystem_c::getTime() / 1000 ) > si32_lastDebug )
+      { // it's time to print debug msg
+        si32_lastDebug = ( IsoAgLib::iSystem_c::getTime() / 1000 );
+
+        #ifdef TEST_TRACTOR_LIGHTING
+        //LIGHTING CLASS TEST FUNCTIONALITY
+        EXTERNAL_DEBUG_DEVICE << "\n";
+        EXTERNAL_DEBUG_DEVICE << "Number of requesting implements. " << getITracLightInstance().getCount() << "\n";
+
+        for (int i = 0; i < getITracLightInstance().getCount(); i++)
+        {
+          EXTERNAL_DEBUG_DEVICE << "State of high beam head: " << getITracLightInstance().getByIndex(i, IsoAgLib::highBeamHead) << "\n";
+        }
+        //LIGHTING CLASS TEST FUNCTIONALITY
+        getITracLightInstance().setCommand(IsoAgLib::daytimeRunning, IsoAgLib::IsoActive);
+        getITracLightInstance().setCommand(IsoAgLib::alternateHead, IsoAgLib::IsoNotAvailable);
+        getITracLightInstance().setCommand(IsoAgLib::lowBeamHead, IsoAgLib::IsoError);
+    //    getITracLightInstance().setCommand(IsoAgLib::highBeamHead, IsoAgLib::IsoActive);
+
+        getITracLightInstance().setCommand(IsoAgLib::frontFog, IsoAgLib::IsoNotAvailable);
+        getITracLightInstance().setCommand(IsoAgLib::beacon, IsoAgLib::IsoNotAvailable);
+        getITracLightInstance().setCommand(IsoAgLib::rightTurn, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::leftTurn, IsoAgLib::IsoInactive);
+
+        getITracLightInstance().setCommand(IsoAgLib::backUpLightAlarmHorn, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::centerStop, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::rightStop, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::leftStop, IsoAgLib::IsoInactive);
+
+        getITracLightInstance().setCommand(IsoAgLib::implClearance, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::tracClearance, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::implMarker, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::tracMarker, IsoAgLib::IsoInactive);
+
+        getITracLightInstance().setCommand(IsoAgLib::rearFog, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::undersideWork, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::rearLowWork, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::rearHighWork, IsoAgLib::IsoInactive);
+
+        getITracLightInstance().setCommand(IsoAgLib::sideLowWork, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::sideHighWork, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::frontLowWork, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::frontHighWork, IsoAgLib::IsoInactive);
+
+        getITracLightInstance().setCommand(IsoAgLib::implOEMOpt2, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::implOEMOpt1, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::implRightForwardWork, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::implLeftForwardWork, IsoAgLib::IsoInactive);
+
+        getITracLightInstance().setCommand(IsoAgLib::dataMsgReq, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::implRightFacingWork, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::implLeftFacingWork, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::implRearWork, IsoAgLib::IsoInactive);
+
+        getITracLightInstance().sendMessage();
+        #endif
+
+        #ifdef TEST_TRACTOR_MOVING
+        //MOVING CLASS TEST FUNCTIONALITY
+        getITracMoveInstance().setSpeedReal(localGetRealSpeed());
+        getITracMoveInstance().setSpeedTheor(localGetTheorSpeed());
+        getITracMoveInstance().setDistTheor(localGetTheorDist());
+        getITracMoveInstance().setDistReal(localGetRealDist());
+        #endif
+
+        #ifdef TEST_TRACTOR_GENERAL
+        //GENERAL CLASS TEST FUNCTIONALITY
+        uint8_t hitchRear = 100;
+        getITracGeneralInstance().setHitchFront(10);
+        getITracGeneralInstance().setHitchRear(hitchRear);
+        getITracGeneralInstance().setHitchFrontDraft(250);
+        getITracGeneralInstance().setHitchRearDraft(200);
+        getITracGeneralInstance().setHitchFrontLowerLinkForce(50);
+        getITracGeneralInstance().setHitchRearLowerLinkForce(60);
+        getITracGeneralInstance().setMaxPowerTime(5);
+        getITracGeneralInstance().setKeySwitch(IsoAgLib::IsoActive);
+        #endif
+
+        #ifdef TEST_TIME
+        int16_t year = 1990;
+        uint8_t month = 4, day = 15, hour = 12, minute = 8, second = 22;
+        getITimePosGpsInstance().setCalendarLocal(year, month, day, hour, minute, second);
+        //getITimePosGpsInstance().setDateUtc(year, month, day);
+        //getITimePosGpsInstance().setTimeUtc(hour, minute, second, msec);
+        #endif
+
+     }
+    #endif
   }
   return 1;
 }

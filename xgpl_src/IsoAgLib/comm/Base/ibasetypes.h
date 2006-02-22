@@ -90,6 +90,48 @@ namespace IsoAgLib {
     IsoGnssGpsSbasGlonass = 4,
     IsoGnssTypeMAX        = 4
   } IsoGnssType_t;
+
+ /** different lighting types; implements and tractor*/
+  typedef enum {
+    daytimeRunning =        1,
+    alternateHead =         2,
+    lowBeamHead =           3,
+    highBeamHead =          4,
+    frontFog =              5,
+    beacon =                6,
+    rightTurn =             7,
+    leftTurn =              8,
+    backUpLightAlarmHorn =  9,
+    centerStop =           10,
+    rightStop =            11,
+    leftStop =             12,
+    implClearance =        13,
+    tracClearance =        14,
+    implMarker =           15,
+    tracMarker =           16,
+    rearFog =              17,
+    undersideWork =        18,
+    rearLowWork =          19,
+    rearHighWork =         20,
+    sideLowWork =          21,
+    sideHighWork =         22,
+    frontLowWork =         23,
+    frontHighWork =        24,
+    implOEMOpt2 =          25,
+    implOEMOpt1 =          26,
+    implRightForwardWork = 27,
+    implLeftForwardWork =  28,
+    dataMsgReq =           29,    //reserved in Lighting data
+    implRightFacingWork =  30,
+    implLeftFacingWork =   31,
+    implRearWork =         32,
+  } IsoCommandFlag_t;
+
+  typedef enum {
+    implInTransport = 1,
+    implInPark =      2,
+    implInWork =      3,
+  } IsoMaintainPower_t;
   #endif
 
   /** define the main groups of base data types */

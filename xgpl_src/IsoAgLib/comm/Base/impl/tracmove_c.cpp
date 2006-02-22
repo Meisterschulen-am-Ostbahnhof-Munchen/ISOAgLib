@@ -1,7 +1,6 @@
 /***************************************************************************
-                 tracmove_c.cpp - working on Base Data Msg Type 1;
-                                  stores, updates  and delivers all base
-                                  data informations from CANCustomer_c
+                 tracmove_c.cpp - stores, updates and delivers all moving
+                                  data information from CANCustomer_c
                                   derived for CAN sending and receiving
                                   interaction;
                                   from ElementBase_c derived for
@@ -85,19 +84,14 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/istate_c.h>
 #ifdef USE_DIN_9684
   #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
 #endif
 #ifdef USE_ISO_11783
   #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #endif
-#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/comm/Base/itracgeneral_c.h>
 #include "tracmove_c.h"
 
@@ -122,201 +116,44 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   };
   #endif
 
-  void TracMove_c::singletonInit()
-  {
-    setAlreadyClosed();
-    init( NULL, IsoAgLib::BaseDataNothing );
-  }
-
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances, to receive
-      the needed CAN msg with base msg type 1,2 and calendar
-      possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+  /** config the TracMove_c object after init -> set pointer to devKey and
+      config send/receive of a moving msg type
+      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rb_implementMode implement(true) mode or tractor(false) mode
     */
-  void TracMove_c::init(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
+  void TracMove_c::config(const DevKey_c* rpc_devKey, bool rb_implementMode)
   {
-    // first register in Scheduler_c
-    getSchedulerInstance4Comm().registerClient( this );
-    c_data.setSingletonKey( getSingletonVecKey() );
+    //call config for handling which is base data independent
+    BaseCommon_c::config(rpc_devKey, rb_implementMode);
 
-    // set the member base msg value vars to NO_VAL codes
-      i16_speedReal = i16_speedTheor = NO_VAL_16S;
+    // set the member msg value vars to NO_VAL codes
+    i16_speedReal = i16_speedTheor = NO_VAL_16S;
 
     // set distance value to 0
     i16_lastDistReal = i16_lastDistTheor = 0;
     i32_distReal = i32_distTheor = 0;
-
-    // set the timestamps to 0
-    i32_lastBase1 = 0;
-    #ifdef USE_DIN_9684
-    if (checkAlreadyClosed())
-    {
-      b_dinFilterCreated = false;
-    }
-    #endif
-
-    #ifdef USE_ISO_11783
-    if (checkAlreadyClosed())
-    {
-      b_isoFilterCreated = false;
-    }
-    #endif
-
-    // set configure values with call for config
-    config(rpc_devKey, rt_mySendSelection);
-
-    // clear state of b_alreadyClosed, so that close() is called one time
-    clearAlreadyClosed();
   };
-
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-  void TracMove_c::close(void) {
-    if (! checkAlreadyClosed()) {
-      // avoid another call
-      setAlreadyClosed();
-      // unregister from timeEvent() call by Scheduler_c
-      getSchedulerInstance4Comm().unregisterClient(this);
-    }
-  };
-
-  /** deliver reference to data pkg as reference to CANPkgExt_c
-      to implement the base virtual function correct
-    */
-  __IsoAgLib::CANPkgExt_c& TracMove_c::dataBase()
-  {
-    return c_data;
-  }
-
-  /** config the TracMove_c object after init -> set pointer to devKey and
-      config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-  void TracMove_c::config(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection)
-  {
-    // set configure values
-    pc_devKey = rpc_devKey;
-    t_mySendSelection = rt_mySendSelection;
-
-    // set ui8_sendDevKey to the pointed value, if pointer is valid
-    if ((rpc_devKey != NULL) && ((t_mySendSelection & IsoAgLib::BaseDataGroup1) != 0)) c_sendBase1DevKey = *rpc_devKey;
-    else c_sendBase1DevKey.setUnspecified();
-  };
-
-  /** Retrieve the last update time of the specified information type
-    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-  int32_t TracMove_c::lastedTimeSinceUpdate(IsoAgLib::BaseDataGroup_t rt_mySendSelection) const
-  {
-    const int32_t ci32_now = System_c::getTime();
-    if (rt_mySendSelection == IsoAgLib::BaseDataGroup1) return (ci32_now - i32_lastBase1);
-    else return 0x7FFFFFFF;
-  }
-  /** Retrieve the time of last update */
-  int32_t TracMove_c::lastUpdateTime( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
-  {
-    if (rt_mySendSelection == IsoAgLib::BaseDataGroup1) return i32_lastBase1;
-    else return 0x7FFFFFFF;
-  }
-
-  /** process received base msg and store updated value for later reading access;
-      called by FilterBox_c::processMsg after receiving a msg
-      possible errors:
-        * LibErr_c::LbsBaseSenderConflict base msg recevied from different member than before
-      @see FilterBox_c::processMsg
-      @see CANIO_c::processMsg
-      @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
-    */
-  bool TracMove_c::processMsg()
-  {
-    #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-    if (c_data.identType() == Ident_c::ExtendedIdent)
-    #endif // USE_DIN_9684 && USE_ISO_11783
-    #ifdef USE_ISO_11783
-    { // an ISO11783 base information msg received
-      return isoProcessMsg();
-    }
-    #endif // USE_ISO_11783
-    #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-    else
-    #endif
-    #ifdef USE_DIN_9684
-    return dinProcessMsg();
-    #endif
-    return false;
-  };
-
-  /** functions with actions, which must be performed periodically
-      -> called periodically by Scheduler_c
-      ==> sends base msg if configured in the needed rates
-      possible errors:
-        * dependant error in CANIO_c on CAN send problems
-      @see CANPkg_c::getData
-      @see CANPkgExt_c::getData
-      @see CANIO_c::operator<<
-      @return true -> all planned activities performed in allowed time
-    */
-  bool TracMove_c::timeEvent(void)
-  {
-    if (Scheduler_c::getAvailableExecTime() == 0) return false;
-
-    checkCreateReceiveFilter();
-    if (Scheduler_c::getAvailableExecTime() == 0) return false;
-
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-
-    // check for different base data types whether the previously
-    // sending node stopped sending -> other nodes can now step in
-    if (((t_mySendSelection & IsoAgLib::BaseDataGroup1) == 0)
-      && ((ci32_now - i32_lastBase1) >= 3000)
-      && (c_sendBase1DevKey.isSpecified()))
-    { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-      c_sendBase1DevKey.setUnspecified();
-    }
-    if ((pc_devKey != NULL) && (t_mySendSelection != IsoAgLib::BaseDataNothing))
-    { // there is at least something configured to send
-      #ifdef USE_ISO_11783
-      if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true))
-      { // stored base information sending ISO member has claimed address
-        isoTimeEvent();
-      }
-      #endif
-      #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-      if (Scheduler_c::getAvailableExecTime() == 0) return false;
-      #endif
-      #ifdef USE_DIN_9684
-      if (getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true))
-      { // stored base information sending DIN member has claimed address
-        dinTimeEvent();
-      }
-      #endif
-    }
-    return true;
-  }
 
   /** check if filter boxes shall be created - create only ISO or DIN filters based
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
-  void TracMove_c::checkCreateReceiveFilter(void)
+  void TracMove_c::checkCreateReceiveFilter()
   {
     SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
     #ifdef USE_DIN_9684
-    if ( ( !b_dinFilterCreated ) && (c_systemMgmt.existActiveLocalDinMember() ) )
+    if ( ( !checkDinFilterCreated() ) && (c_systemMgmt.existActiveLocalDinMember() ) )
     { // check if needed receive filters for DIN are active
-      b_dinFilterCreated = true;
+      setDinFilterCreated();
       // filter for base data 1
-      c_can.insertFilter(*this, (0x7F << 4),(0x14 << 4), false);
+      c_can.insertFilter(*this, (0x7F << 4),(0x14 << 4), true);
     }
     #endif
     #ifdef USE_ISO_11783
-    if ( ( ! b_isoFilterCreated ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
+    if ( ( !checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
-      b_isoFilterCreated = true;
+      setIsoFilterCreated();
       // create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (GROUND_BASED_SPEED_DIST_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
@@ -331,109 +168,90 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   }
 
   #ifdef USE_DIN_9684
-  /** send a DIN9684 base information PGN
+  /** send a DIN9684 moving information PGN
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool TracMove_c::dinTimeEvent(void)
+  bool TracMove_c::dinTimeEvent()
   {
     CANIO_c& c_can = getCanInstance4Comm();
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*pc_devKey, true).nr();
+    uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*getDevKey(), true).nr();
 
-    if (((ci32_now - i32_lastBase1) >= 100)
-      && ((t_mySendSelection & IsoAgLib::BaseDataGroup1) != 0))
-    { // send actual base1 data
-      c_sendBase1DevKey = *pc_devKey;
-      data().setBabo(4);
-      data().setSend(b_send);
-      data().setVal12(i16_speedReal);
-      data().setVal34(i16_speedTheor);
-      data().setVal56(long2int(i32_distReal));
-      data().setVal78(long2int(i32_distTheor));
+    if ( lastedTimeSinceUpdate() >= 100)
+    { // send actual moving data
+      setSenderDevKey( *getDevKey() );
+      data().setIdent((0x14<<4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
+      data().setUint16Data(0, i16_speedReal);
+      data().setUint16Data(2, i16_speedTheor);
+      data().setUint16Data(4, i32_distReal);
+      data().setUint16Data(6, i32_distTheor);
+      data().setLen(8);
 
       // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
       // then it sends the data
       c_can << data();
 
       // update time
-      i32_lastBase1 = ci32_now;
+      setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
     }
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
     return true;
   }
 
-  /** process a DIN9684 base information PGN */
+  /** process a DIN9684 moving information PGN */
   bool TracMove_c::dinProcessMsg()
-  { // a DIN9684 base information msg received
-    bool b_result = false;
-    // store the devKey of the sender of base data
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().send()))
+  { // a DIN9684 moving information msg received
+    // store the devKey of the sender of moving data
+    if (! getDinMonitorInstance4Comm().existDinMemberNr(data().dinSa()))
     { // the sender is not known -> ignore and block interpretation by other classes
       return true;
     }
     // the corresponding sender entry exist in the monitor list
-    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().send()).devKey();
+    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().dinSa()).devKey();
 
     // interprete data accordingto BABO
-    switch (data().babo())
+    switch (dataBabo())
     {
-      case 4: // base data 1: speed, dist
+      case 4: //speed, dist
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( checkParseReceived( c_tempDevKey, c_sendBase1DevKey, IsoAgLib::BaseDataGroup1 ) )
+        if ( checkParseReceived( c_tempDevKey ) )
         { // sender is allowed to send
           // real speed
-          setSpeedReal(data().val12());
+          setSpeedReal(data().getUint16Data( 0 ));
           // theor speed
-          setSpeedTheor(data().val34());
+          setSpeedTheor(data().getUint16Data( 2 ));
           // real dist -> react on 16bit int16_t overflow
-          setOverflowSecure(i32_distReal, i16_lastDistReal, data().val56());
+          setOverflowSecure(i32_distReal, i16_lastDistReal, data().getUint16Data( 4 ));
           // theor dist -> react on 16bit int16_t overflow
-          setOverflowSecure(i32_distTheor, i16_lastDistTheor, data().val78());
+          setOverflowSecure(i32_distTheor, i16_lastDistTheor, data().getUint16Data( 6 ));
 
           // set last time
-          i32_lastBase1 = ci32_now;
-          c_sendBase1DevKey = c_tempDevKey;
+          setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
+          setSenderDevKey(c_tempDevKey);
         }
         else
         { // there is a sender conflict
           getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+          return false;
         }
-        b_result = true;
         break;
     } // end switch
-    return b_result;
+    return true;
   }
-
   #endif
-
-  /** check if a received message should be parsed */
-  bool TracMove_c::checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const
-  {
-    return ( ( ( t_mySendSelection & rt_selfSend   ) == 0 ) // I'm not the sender
-          && ( // one of the following conditions must be true
-              (rrefc_activeSender == rrefc_currentSender) // actual sender equivalent to last
-            || (rrefc_activeSender.isUnspecified() ) // last sender has not correctly claimed address member
-            || ((i32_distReal == -1)&&(i32_distTheor == -1)&&(i16_speedTheor == -1)) // current received data is not valid
-            )
-          )?true:false;
-  };
 
   #ifdef USE_ISO_11783
   /**
-    process a ISO11783 base information PGN
+    process a ISO11783 moving information PGN
   */
   bool TracMove_c::isoProcessMsg()
   {
-    bool b_result = false;
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     IsoAgLib::iTracGeneral_c& c_tracgeneral = IsoAgLib::getITracGeneralInstance();
     #endif
     DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // store the devKey of the sender of base data
     if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
     { // the corresponding sender entry exist in the monitor list
@@ -446,10 +264,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       case WHEEL_BASED_SPEED_DIST_PGN:
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
-        if ( checkParseReceived( c_tempDevKey, c_sendBase1DevKey, IsoAgLib::BaseDataGroup1 ) )
+        if ( checkParseReceived( c_tempDevKey ) )
         { // sender is allowed to send
-          int16_t i16_tempSpeed = data().val12();
-          switch (data().val8() & 3 ) {
+          int16_t i16_tempSpeed = data().getUint16Data( 0 );
+          switch (data().getUint8Data( 7 ) & 3 ) {
           case 0: // driving reverse
             if ( (i16_tempSpeed != ERROR_VAL_16S)
               && (i16_tempSpeed != NO_VAL_16S) ) i16_tempSpeed *= -1;
@@ -468,91 +286,94 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           { // real speed
             setSpeedReal(i16_tempSpeed);
             // real dist
-            setDistReal(static_cast<int32_t>(data().val36()));
+            setDistReal( static_cast<int32_t>(data().getUint32Data( 2 ) ));
           }
           else
           { // wheel based speed
             setSpeedTheor(i16_tempSpeed);
             // wheel based dist
-            setDistTheor(static_cast<int32_t>(data().val36()));
+            setDistTheor( static_cast<int32_t>(data().getUint32Data( 2 )) );
             #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
             // additionally scan for key switch and maximum power time
-            c_tracgeneral.setKeySwitch(IsoAgLib::IsoActiveFlag_t( ( data().val8() >> 2 ) & 3 ));
-            c_tracgeneral.setMaxPowerTime(data().val7());
+            c_tracgeneral.setKeySwitch(IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data( 7 ) >> 2 ) & 3 ));
+            c_tracgeneral.setMaxPowerTime(data().getUint8Data( 6 ) );
             #endif
           }
           // set last time
-          i32_lastBase1 = ci32_now;
-          c_sendBase1DevKey = c_tempDevKey;
+          setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
+          setSenderDevKey(c_tempDevKey);
         }
         else
         { // there is a sender conflict
           getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+          return false;
         }
-        b_result = true;
         break;
     }
-    return b_result;
+    return true;
   }
 
-  /** send a ISO11783 base information PGN.
+  /** send a ISO11783 moving information PGN.
   * this is only called when sending ident is configured and it has already claimed an address
   */
-  bool TracMove_c::isoTimeEvent( void )
+  bool TracMove_c::isoTimeEvent( )
   {
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*pc_devKey, true).nr();
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setIsoSa(b_sa);
-
-    if ( ( ( ci32_now - i32_lastBase1 ) >= 100                   )
-      && ( ( t_mySendSelection & IsoAgLib::BaseDataGroup1 ) != 0 ) )
-    { // it's time to send Base1
-      isoSendBase1Update();
+    if ( ( lastedTimeSinceUpdate()  >= 100 )
+          && !checkImplementMode()         )
+    { // it's time to send moving information
+      isoSendMovingUpdate();
     }
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
     return true;
   }
 
-  /** send Base1 Group data with ground&theor speed&dist */
-  void TracMove_c::isoSendBase1Update( void )
+  /** send moving data with ground&theor speed&dist */
+  void TracMove_c::isoSendMovingUpdate( )
   { // send actual base1 data: ground/wheel based speed/dist
+    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
+
+    #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+    IsoAgLib::iTracGeneral_c& c_tracgeneral = IsoAgLib::getITracGeneralInstance();
+    #endif
     CANIO_c& c_can = getCanInstance4Comm();
-    c_sendBase1DevKey = *pc_devKey;
+    // retreive the actual dynamic sender no of the member with the registered devKey
+    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
+    data().setIdentType(Ident_c::ExtendedIdent);
+    data().setIsoPri(3);
+    data().setIsoSa(b_sa);
+    setSenderDevKey(*getDevKey());
     data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
   #ifdef SYSTEM_PC_VC
-    data().setVal12(abs(i16_speedReal));
+    data().setUint16Data( 0, abs(i16_speedReal));
   #else
-    data().setVal12(CNAMESPACE::abs(i16_speedReal));
+    data().setUint16Data(0, CNAMESPACE::abs(i16_speedReal));
   #endif
-    data().setVal36(i32_distReal);
+    data().setUint32Data(2 ,i32_distReal);
     switch (i16_speedReal) {
       case ERROR_VAL_16S:
-        data().setVal8(IsoAgLib::IsoError);
+        data().setUint8Data(7, IsoAgLib::IsoError);
         break;
       case NO_VAL_16S:
-        data().setVal8(IsoAgLib::IsoNotAvailable);
+        data().setUint8Data(7, IsoAgLib::IsoNotAvailable);
         break;
       default:
-        if (i16_speedReal < 0) data().setVal8(0);
-        else data().setVal8(1);
+        if (i16_speedReal < 0) data().setUint8Data(7, 0);
+        else data().setUint8Data(7, 1);
         break;
     }
+    data().setLen(8);
       // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
       // then it sends the data
     c_can << data();
 
     data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
   #ifdef SYSTEM_PC_VC
-    data().setVal12(abs(i16_speedTheor));
+    data().setUint16Data(0, abs(i16_speedTheor));
   #else
-    data().setVal12(CNAMESPACE::abs(i16_speedTheor));
+    data().setUint16Data(0, CNAMESPACE::abs(i16_speedTheor));
   #endif
-    data().setVal36(i32_distTheor);
+    data().setUint32Data(2, i32_distTheor);
 
     uint8_t b_val8 = IsoAgLib::IsoInactive;
     switch (i16_speedTheor) {
@@ -564,17 +385,26 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         break;
       default:
         if (i16_speedTheor >= 0) b_val8 |= IsoAgLib::IsoActive;
+        else b_val8 |= IsoAgLib::IsoInactive;
         break;
     }
+    data().setUint8Data(7, b_val8);
+    #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+    // additionally scan for key switch and maximum power time
+    data().setUint8Data(6, c_tracgeneral.maxPowerTime() );
+    data().setUint8Data(7,  (c_tracgeneral.keySwitch() << 2) | b_val8);
+    #endif
+    data().setLen(8);
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
     c_can << data();
 
     // update time
-    i32_lastBase1 = Scheduler_c::getLastTimeEventTrigger();
+    setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
   }
   #endif
 
+  #ifdef USE_DIN_9684
   /** update distance values ; react on int16_t overflow
       @param reflVal to be updated value as int32_t variable
       @param refiVal to be updated value as 16bit int16_t variable
@@ -643,21 +473,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     { // there's no overflow -> easy increment reflVal
       reflVal += i16_diff;
     }
-    // store the given int16 val as last in16 val in refiVal
+    // store the given int16 val as last int16 val in refiVal
     refiVal = rrefiNewVal;
   };
-
-  /** deliver the devKey of the sender of the base data
-      possible errors:
-          * Err_c::range rui8_typeNr doesn't match valid base msg type number
-      @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
-      @return DEV_KEY code of member who is sending the intereested base msg type
-    */
-  const DevKey_c& TracMove_c::senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) const {
-    // simply answer first matching result if more than one type is selected
-    if ( ( rt_typeGrp & IsoAgLib::BaseDataGroup1   ) != 0 ) return c_sendBase1DevKey;
-    else return DevKey_c::DevKeyUnspecified;
-  }
+  #endif
 
   /** set the real (radar measured) driven distance with int32_t val
       @param rreflVal value to store as real radar measured distance

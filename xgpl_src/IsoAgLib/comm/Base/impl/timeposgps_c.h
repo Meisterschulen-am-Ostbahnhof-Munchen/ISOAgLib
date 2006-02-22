@@ -88,15 +88,9 @@
 #ifndef TIMEPOSGPS_C_H
 #define TIMEPOSGPS_C_H
 
-#include <IsoAgLib/typedef.h>
-#include "../ibasetypes.h"
-#include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
-#include <IsoAgLib/driver/system/impl/system_c.h>
+#include <IsoAgLib/comm/Base/ibasetypes.h>
+#include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 
-#include "basepkg_c.h"
 #include <ctime>
 
 #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
@@ -153,7 +147,7 @@ class Nmea2000SendStreamer_c : public MultiSendStreamer_c
 #endif // END of NMEA_2000_FAST_PACKET and USE_ISO_11783
 
 class TimePosGPS_c;
-typedef SINGLETON_DERIVED(TimePosGPS_c,ElementBase_c) SingletonTimePosGps_c;
+typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
 
 /** working on GPS data and Calendar;
   stores, updates  and delivers all base data informations;
@@ -173,20 +167,6 @@ public:
   /* ********************************************* */
   /** \name Management Functions for class TimePosGPS_c  */
   /*@{*/
-
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances, to receive
-      the needed CAN msg with base msg type NMEA 2000 GPS and calendar
-      possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-    */
-  void init(const DevKey_c* rpc_devKey = NULL, IsoAgLib::BaseDataGroup_t rt_mySendSelection = IsoAgLib::BaseDataNothing );
-
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-  void close( void );
-
   /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
       ==> sends base msg if configured in the needed rates
@@ -197,50 +177,59 @@ public:
       @see CANIO_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
-  bool timeEvent( void );
+  bool timeEvent(  );
 
   /** check if filter boxes shall be created - create only ISO or DIN filters based
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
-  void checkCreateReceiveFilter( void );
+  void checkCreateReceiveFilter( );
 
   /** config the Base_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+      @param rb_implementMode implement mode (true) or tractor mode (false)!!!
     */
-  void config(const DevKey_c* rpc_devKey, IsoAgLib::BaseDataGroup_t rt_mySendSelection);
-  /** Retrieve the last update time of the specified information type
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-   */
-  int32_t lastedTimeSinceUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const;
-  /** Retrieve the time of last update */
-  int32_t lastUpdateTime( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const;
+  void config(const DevKey_c* rpc_devKey, bool rb_implementMode);
+
+  /** initialise element which can't be done during construct;
+      above all create the needed FilterBox_c instances
+      possible errors:
+        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+      @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rb_implementMode implement(true) mode or tractor(false) mode
+    */
+  virtual void init(const DevKey_c*, bool rb_implementMode = true);
 
   /** destructor for Base_c which has nothing to do */
-  virtual ~TimePosGPS_c() { close();};
+  virtual ~TimePosGPS_c() { BaseCommon_c::close();};
 
-  /** process received base msg and store updated value for later reading access;
-      called by FilterBox_c::processMsg after receiving a msg
-      possible errors:
-        * Err_c::lbsBaseSenderConflict base msg recevied from different member than before
-      @see CANIO_c::processMsg
-      @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
-    */
-  virtual bool processMsg();
 
   #ifdef USE_ISO_11783
+   /** config the Base_c object after init -> set pointer to devKey and
+      config send/receive of different base msg types
+      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rb_implementMode implement mode (true) or tractor mode (false)!!!
+    */
+  void configGps(const DevKey_c* rpc_devKey, bool rb_implementMode);
+
   /** send ISO11783 calendar PGN
-    @param rc_devKey DEV_KEY code off calling item which wants to send
-    @param ri32_time timestamp where calendar was last sent (default autodetect)
     possible errors:
       * dependant error in CANIO_c on CAN send problems
     @see CANPkg_c::getData
     @see CANPkgExt_c::getData
     @see CANIO_c::operator<<
     */
-  void isoSendCalendar(const DevKey_c& rc_devKey);
+  void isoSendCalendar(const DevKey_c& rpc_devKey);
+
+  /** Retrieve the last update time of the specified information type*/
+  int32_t lastedTimeSinceUpdateGps() const;
+  /** Retrieve the time of last update */
+  int32_t lastUpdateTimeGps() const;
+  /** return a sender which sends commands as a tractor */
+  DevKey_c& getSenderDevKeyGps() {return c_sendGpsDevKey;};
+  /** return a sender which sends commands as a tractor */
+  const DevKey_c& getSenderDevKeyGpsConst() const {return c_sendGpsDevKey;};
   #endif // END of USE_ISO_11783
 
   /* ********************************************* */
@@ -440,17 +429,9 @@ public:
   /** deliver age of last gps-update in milliseconds */
   uint16_t getGpsUpdateAge( void ) const { return 2000; /** @todo ACHIM - Implement this dummy function */ };
 
-  /** deliver the devKey of the sender of the base data
-    possible errors:
-      * Err_c::range rui8_typeNr doesn't match valid base msg type number
-    @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2
-    @return DEV_KEY code of member who is sending the interested base msg type
-    */
-  const DevKey_c& senderDevKey(IsoAgLib::BaseDataGroup_t rt_typeGrp) const;
-
 private:
   // Private methods
-  friend class SINGLETON_DERIVED(TimePosGPS_c,ElementBase_c);
+  friend class SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c);
 
   /** HIDDEN constructor for a TimePosGPS_c object instance which can optional
     set the configuration for send/receive for base msg type NMEA 2000 GPS
@@ -461,35 +442,10 @@ private:
     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
     */
   TimePosGPS_c() {};
-  /** initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-    */
-  void singletonInit();
-  /** deliver reference to data pkg
-    @return reference to the member BasePkg_c, which encapsulates the CAN send structure
-    */
-  BasePkg_c& data(){return c_data;};
-  /** deliver reference to data pkg as reference to CANPkgExt_c
-    to implement the base virtual function correct
-    */
-  CANPkgExt_c& dataBase();
-
   /** deliver time between now and last calendar set in [msec]
     @return msec since last calendar set
     */
   int32_t calendarSetAge() const {return (System_c::getTime() - i32_lastCalendarSet);};
-
-  /** check if a received message should be parsed */
-  bool checkParseReceived(const DevKey_c& rrefc_currentSender, const DevKey_c& rrefc_activeSender, IsoAgLib::BaseDataGroup_t rt_selfSend ) const
-  {
-    return ( ( ( t_mySendSelection & rt_selfSend   ) == 0 ) // I'm not the sender
-          && ( // one of the following conditions must be true
-               (rrefc_activeSender == rrefc_currentSender) // actual sender equivalent to last
-            || (rrefc_activeSender.isUnspecified() ) // last sender has not correctly claimed address member
-             )
-           )?true:false;
-  };
 
   #ifdef USE_DIN_9684
   /** send a DIN9684 base information PGN.
@@ -505,7 +461,7 @@ private:
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool isoTimeEvent( void );
+  bool isoTimeEvent( );
 
   /** send position rapid update message */
   void isoSendPositionRapidUpdate( void );
@@ -531,16 +487,12 @@ private:
 
 private:
   // Private attributes
-  /** temp data where received data is put */
-  BasePkg_c c_data;
     /** last time of calendar msg [msec] */
-  int32_t i32_lastCalendar;
+ // int32_t i32_lastCalendar;
     /** last timestamp where calendar was set
     -> use this to calculate new time
     */
   int32_t i32_lastCalendarSet;
-  /** devKey which act as sender of base msg */
-  const DevKey_c* pc_devKey;
 
   /** bit_calendar */
   struct {
@@ -558,13 +510,6 @@ private:
 
   /** bitmask with selection of all base data types to send */
   IsoAgLib::BaseDataGroup_t t_mySendSelection;
-  /** DEVKEY of calendar sender */
-  DevKey_c c_sendCalendarDevKey;
-
-  #ifdef USE_DIN_9684
-  /** flag to detect, if receive filters for DIN are created */
-  bool b_dinFilterCreated;
-  #endif // END of  USE_DIN_9684
 
   /** raw GPS latitude [degree] ; Lat_Min < 0 --> South */
   int32_t i32_latitudeDegree10Minus7;
@@ -573,9 +518,6 @@ private:
 
   #ifdef USE_ISO_11783
   /// General
-  /** flag to detect, if receive filters for ISO are created */
-  bool b_isoFilterCreated;
-
   #ifdef NMEA_2000_FAST_PACKET
   /** last time of ISO GPS msg [msec] */
   int32_t i32_lastIsoPositionStream;

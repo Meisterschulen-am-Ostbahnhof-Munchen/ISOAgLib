@@ -1,9 +1,8 @@
 /***************************************************************************
-                itracmove_c.h  - working on Base Data Msg Type NMEA 200 GPS
-                                  and Calendar; stores, updates  and
-                                  delivers all base data informations
-                                  from CANCustomer_c derived for CAN
-                                  sending and receiving interaction;
+                itracmove_c.h  -  stores, updates and delivers all moving
+                                  data information from CANCustomer_c
+                                  derived for CAN sending and receiving
+                                  interaction;
                                   from ElementBase_c derived for
                                   interaction with other IsoAgLib objects
                              -------------------
@@ -67,8 +66,8 @@
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-  /** working on Base Data Msg Type 1;
-      stores, updates  and delivers all base data informations;
+  /** stores, updates  and delivers all moving data information;
+      Derive from BaseCommon_c some fundamental funktionality for all base data
       Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
@@ -77,32 +76,13 @@ namespace IsoAgLib {
   class iTracMove_c : private __IsoAgLib::TracMove_c {
   public:
     // Public methods
-    /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances, to receive
-        the needed CAN msg with base msg type 1
-        possible errors:
-          * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-      */
-    void init(const iDevKey_c* rpc_devKey = NULL, BaseDataGroup_t rt_mySendSelection = BaseDataNothing)
-    {TracMove_c::init(rpc_devKey, rt_mySendSelection);};
-    /** config the Base_c object after init -> set pointer to devKey and
-        config send/receive of different base msg types
+    /** config the TracMove_c object after init -> set pointer to devKey and
+        config send/receive of different moving msg types
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+        @param rb_implementMode implement mode (true) or tractor mode (false)
       */
-    void config(const iDevKey_c* rpc_devKey, BaseDataGroup_t rt_mySendSelection )
-    {TracMove_c::config(rpc_devKey, rt_mySendSelection );};
-    /** Retrieve the last update time of the specified information type
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
-      */
-    int32_t lastedTimeSinceUpdate( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
-    {return TracMove_c::lastedTimeSinceUpdate( rt_mySendSelection );}
-    /** Retrieve the time of last update */
-    int32_t lastUpdateTime( IsoAgLib::BaseDataGroup_t rt_mySendSelection ) const
-    {return TracMove_c::lastUpdateTime( rt_mySendSelection );};
-
+    void config(const iDevKey_c* rpc_devKey, bool rb_implementMode = true )
+    {TracMove_c::config(rpc_devKey, rb_implementMode );};
 
     /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
@@ -154,18 +134,10 @@ namespace IsoAgLib {
     /** get the real driven distance with int16_t val
         @return actual gear calculated driven distance value
       */
-    int32_t distTheor() const {return TracMove_c::distReal();};
-
-    /** deliver the devKey of the sender of the base data
-        possible errors:
-          * Err_c::range rui8_typeNr doesn't match valid base msg type number
-        @param rt_typeGrp base msg type no of interest: BaseDataGroup1 | BaseDataGroup2 | BaseDataCalendar
-        @return DEV_KEY code of member who is sending the intereested base msg type
-      */
-    const iDevKey_c& senderDevKey(BaseDataGroup_t rt_typeGrp) const {return static_cast<const iDevKey_c&>(TracMove_c::senderDevKey(rt_typeGrp));};
+    int32_t distTheor() const {return TracMove_c::distTheor();};
 
   private:
-    /** allow getITracMoveInstance() access to shielded tracgeneral class.
+    /** allow getITracMoveInstance() access to shielded tracmove class.
       otherwise __IsoAgLib::getTracMoveInstance() wouldn't be accepted by compiler
     */
     #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)

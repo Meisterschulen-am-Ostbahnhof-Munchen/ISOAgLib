@@ -67,53 +67,44 @@
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-  /** working on Base Data Msg Type 2 and 3;
-      stores, updates  and delivers all base data informations;
-      Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
-      Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
-      Derive from SINGLETON to create a Singleton which manages one global accessible singleton
-      per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
-    */
+  /** stores, updates  and delivers all base data informations;
+    Derive from BaseCommon_c some fundamental funktionality for all base data
+    Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
+    Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
+    Derive from SINGLETON to create a Singleton which manages one global accessible singleton
+    per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
+  */
   class iTracGeneral_c : private __IsoAgLib::TracGeneral_c {
   public:
     // Public methods
     /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances, to receive
-        the needed CAN msg with base msg type 2 and 3
+        above all create the needed FilterBox_c instances
         possible errors:
           * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+        @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+        @param rb_implementMode implement mode (true) or tractor mode (false)
       */
-    void init(const iDevKey_c* rpc_devKey = NULL, BaseDataGroup_t rt_mySendSelection = BaseDataNothing)
-    {TracGeneral_c::init(rpc_devKey, rt_mySendSelection);};
-    /** config the Base_c object after init -> set pointer to devKey and
-        config send/receive of different base msg types
-        @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
+    void init(const iDevKey_c* rpc_devKey = NULL, bool rb_implementMode = true)
+    {TracGeneral_c::init(rpc_devKey, rb_implementMode);};
+    /** config the TracGeneral_c object after init -> set pointer to devKey and
+        config send/receive of different general base msg types
+        @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+        @param rb_implementMode implement mode (true) or tractor mode (false)
       */
-    void config(const iDevKey_c* rpc_devKey, BaseDataGroup_t rt_mySendSelection )
-    {TracGeneral_c::config(rpc_devKey, rt_mySendSelection );};
-    /** Retrieve the last update time */
-    int32_t lastedTimeSinceUpdate() const { return TracGeneral_c::lastedTimeSinceUpdate();};
-    /** Retrieve the time of last update */
-    int32_t lastUpdateTime() const { return TracGeneral_c::lastUpdateTime();};
-    /** deliver the devKey of the sender of the base data
-    @return DEV_KEY code of member who is sending the intereested base msg type
-     */
-    const iDevKey_c& senderDevKey() const { return static_cast<const iDevKey_c&>(TracGeneral_c::senderDevKey());};
+    void config(const iDevKey_c* rpc_devKey, bool rb_implementMode = true)
+    {TracGeneral_c::config(rpc_devKey, rb_implementMode );};
 
     /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
     /*@{*/
-    /** set engine speed */
-    void setEngine(int16_t ri16_val) { return TracGeneral_c::setEngine(ri16_val);};
     /** set rear hitch */
     void setHitchRear(uint8_t rb_val) { return TracGeneral_c::setHitchRear(rb_val);};
     /** set front hitch */
     void setHitchFront(uint8_t rb_val) { return TracGeneral_c::setHitchFront(rb_val);};
 
     #ifdef USE_DIN_9684
+    /** set engine speed */
+    void setEngine(int16_t ri16_val) { return TracGeneral_c::setEngine(ri16_val);};
     /** deliver rear left draft */
     void setRearLeftDraft(int16_t ri16_val) { return TracGeneral_c::setRearLeftDraft(ri16_val);};
     /** deliver rear right draft */
@@ -142,24 +133,22 @@ namespace IsoAgLib {
     /** set the maximum power time of the tractor in [min] */
     void setMaxPowerTime(uint8_t rui8_val) { return TracGeneral_c::setMaxPowerTime(rui8_val);};
     /** force maintain power from tractor */
-    void forceMaintainPower(bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoActiveFlag_t rt_implTransport,
-      IsoAgLib::IsoActiveFlag_t rt_implPark, IsoAgLib::IsoActiveFlag_t rt_implWork)
-    { return TracGeneral_c::forceMaintainPower(rb_ecuPower, rb_actuatorPower, rt_implTransport,
-       rt_implPark, rt_implWork);};
+    void forceMaintainPower(bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
+    { return TracGeneral_c::forceMaintainPower(rb_ecuPower, rb_actuatorPower, rt_implState);};
     #endif
     /*@}*/
 
     /* ****************************************************** */
     /** \name Retrieve Values which are sent from other ECUs  */
     /*@{*/
-    /** get engine speed */
-    int16_t engine() const { return TracGeneral_c::engine();};
       /** get rear hitch */
     uint8_t hitchRear() const { return TracGeneral_c::hitchRear();};
     /** get front hitch */
     uint8_t hitchFront() const { return TracGeneral_c::hitchFront();};
 
     #ifdef USE_DIN_9684
+    /** get engine speed */
+    int16_t engine() const { return TracGeneral_c::engine();};
     /** deliver rear left draft */
     int rearLeftDraft() const { return TracGeneral_c::rearLeftDraft();};
     /** deliver rear right draft */
@@ -208,6 +197,9 @@ namespace IsoAgLib {
 
     const uint8_t* getVtLanguage()   const { return TracGeneral_c::getVtLanguage();};
     const uint8_t* getTecuLanguage() const { return TracGeneral_c::getTecuLanguage();};
+
+    /** send iso language data msg*/
+    void isoSendLanguage(const iDevKey_c& rpc_devKey) { TracGeneral_c::isoSendLanguage(rpc_devKey);};
     #endif
     /*@}*/
 

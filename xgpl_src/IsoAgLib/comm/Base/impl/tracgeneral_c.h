@@ -88,53 +88,59 @@
 #ifndef TRACGENERAL_C_H
 #define TRACGENERAL_C_H
 
-#include <IsoAgLib/typedef.h>
 #include "../ibasetypes.h"
-#include <IsoAgLib/driver/system/impl/system_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
+#include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
 
-#include "basepkg_c.h"
 #include <ctime>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-class TracGeneral_c;
-typedef SINGLETON_DERIVED(TracGeneral_c,ElementBase_c) SingletonTracGeneral_c;
-/**
-  working on Base Data Msg Type 1 and 2;
-  stores, updates  and delivers all base data informations;
-  Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
-  Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
-  Derive from SINGLETON to create a Singleton which manages one global accessible singleton
-  per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
-*/
+typedef struct
+{
+  /** maintenance of power for implement in transport state*/
+  unsigned int inTransport: 2;
+  /** maintenance of power for implement in park state*/
+  unsigned int inPark: 2;
+  /** maintenance of power for implement in work state*/
+  unsigned int inWork: 2;
+} maintainPowerForImplState;
 
-class TracGeneral_c  : public SingletonTracGeneral_c {
+class TracGeneral_c;
+typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
+/** stores, updates  and delivers all base data informations;
+    Derive from BaseCommon_c some fundamental funktionality for all base data
+    Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
+    Derive from CANCustomer to register FilterBox'es in CANIO_c to receive CAN messages
+    Derive from SINGLETON to create a Singleton which manages one global accessible singleton
+    per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
+  */
+class TracGeneral_c : public SingletonTracGeneral_c {
 public: // Public methods
   /* ********************************************* */
   /** \name Management Functions for class TracGeneral_c  */
   /*@{*/
 
   /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances, to receive
-      the needed CAN msg with base msg type 1 and 2
+      above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_sendState optional setting to express TECU sending state
-   */
-  void init(const DevKey_c* rpc_devKey = NULL, bool rb_sendState = false );
+      @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rb_implementMode implement mode (true) or tractor mode (false)
+    */
+  void init(const DevKey_c* rpc_devKey = NULL, bool rb_implementMode = false );
 
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-  void close(void);
+  /** config the TracGeneral_c object after init -> set pointer to devKey and
+      config send/receive of different general base msg types
+      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rb_implementMode implement mode (true) or tractor mode (false)
+    */
+  void config(const DevKey_c* rpc_devKey, bool rb_implementMode);
 
   /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
-      ==> sends base msg if configured in the needed rates
+      ==> sends general base msg if configured in the needed rates
       possible errors:
         * dependant error in CANIO_c on CAN send problems
       @see CANPkg_c::getData
@@ -142,51 +148,29 @@ public: // Public methods
       @see CANIO_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
-  bool timeEvent(void);
+  bool timeEvent();
   /** check if filter boxes shall be created - create only ISO or DIN filters based
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
-  void checkCreateReceiveFilter(void);
+  void checkCreateReceiveFilter();
 
-  /** config the Base_c object after init -> set pointer to devKey and
-      config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_sendState optional setting to express TECU sending state
-   */
-  void config(const DevKey_c* rpc_devKey, bool rb_sendState);
-  /** Retrieve the last update time */
-  int32_t lastedTimeSinceUpdate() const { return (System_c::getTime() - i32_lastEngineHitch);};
-  /** Retrieve the time of last update */
-  int32_t lastUpdateTime() const { return i32_lastEngineHitch;};
-    /** deliver the devKey of the sender of the base data
-  @return DEV_KEY code of member who is sending the intereested base msg type
-     */
-  const DevKey_c& senderDevKey() const { return c_sendDevKey;};
+  /** destructor for TracGeneral_c which has nothing to do */
+  virtual ~TracGeneral_c() { BaseCommon_c::close();};
 
-  /** destructor for Base_c which has nothing to do */
-  virtual ~TracGeneral_c() { close();};
-  /** process received base msg and store updated value for later reading access;
-      called by FilterBox_c::processMsg after receiving a msg
-      possible errors:
-          * Err_c::lbsBaseSenderConflict base msg recevied from different member than before
-      @see CANIO_c::processMsg
-      @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
-    */
-  virtual bool processMsg();
   #ifdef USE_DIN_9684
   /** helper function to do the parsing of the flag data of a
    * received DIN9684 base message with Pto,Hitch,Engine information */
-  void dinParseHitchEngineFlags(const BasePkg_c& rrefc_pkg);
-  /** helper function to set the Hitch and Engine flags of a DIN base data message */
-  void dinSetHitchEngineFlags(BasePkg_c& rrefc_pkg);
+  void dinParseHitchEngineFlags(const CANPkgExt_c& rrefc_pkg);
+  /** helper function to set the Hitch and Engine flags of a DIN general base data message */
+  void dinSetHitchEngineFlags(CANPkgExt_c& rrefc_pkg);
 
-  /** config the Base_c object after init -> set pointer to devKey and
-    config send/receive of different base msg types
+  /** config the TracGeneral_c object after init -> set pointer to devKey and
+    config send/receive of different general base msg types
     @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rb_sendState optional setting to express TECU sending state
+    @param rb_implementMode optional setting to express TECU sending state
    */
-  void configFuel(const DevKey_c* rpc_devKey, bool rb_sendState);
+  void configFuel(const DevKey_c* rpc_devKey, bool rb_implementMode);
   #endif
   /*@}*/
 
@@ -194,22 +178,24 @@ public: // Public methods
   /** \name Set Values for periodic send on BUS  */
   /*@{*/
   /**
-  set engine speed
-  @param ri16_val value to store as engine rpm value
-   */
-  void setEngine(int16_t ri16_val){i16_engine = ri16_val;};
-  /**
   set rear hitch
   @param rb_val uint8_t value to store as position of rear hitch
    */
-  void setHitchRear(uint8_t rb_val){ b_hitchRear = rb_val;};
+  void setHitchRear(uint8_t rb_val)
+  { b_hitchRear = rb_val;};
   /**
   set front hitch
   @param rb_val uint8_t value to store as position of front hitch
    */
-  void setHitchFront(uint8_t rb_val){ b_hitchFront = rb_val;};
+  void setHitchFront(uint8_t rb_val)
+  { b_hitchFront = rb_val;};
 
   #ifdef USE_DIN_9684
+  /**
+  set engine speed
+  @param ri16_val value to store as engine rpm value
+   */
+  void setEngine(int16_t ri16_val){i16_engine = ri16_val;};
   /** deliver rear left draft */
   void setRearLeftDraft( int16_t ri16_val ) { i16_rearLeftDraft = ri16_val;};
   /** deliver rear right draft */
@@ -252,24 +238,17 @@ public: // Public methods
   void setMaxPowerTime(uint8_t rui8_val) { ui8_maxPowerTime = rui8_val;};
   /** force maintain power from tractor
     * @param rb_ecuPower true -> maintain ECU power
-    * @param rb_actuatorPower -> maintain actuator power
-    * @param rt_implTransport IsoActive -> implement is in transport state
-    * @param rt_implPark IsoActive -> implement is in park state
-    * @param rt_implWork IsoActive -> implement is in work state
+    * @param rb_actuatorPower true-> maintain actuator power
+    * @param rt_implState in which state is the implement (transport, park, work)
+    * @param rt_val IsoActive -> implement is active in rt_implState
     */
-  void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoActiveFlag_t rt_implTransport,
-    IsoAgLib::IsoActiveFlag_t rt_implPark, IsoAgLib::IsoActiveFlag_t rt_implWork);
+  void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState);
   #endif
   /*@}*/
 
   /* ****************************************************** */
   /** \name Retrieve Values which are sent from other ECUs  */
   /*@{*/
-  /** get engine speed
-      @return actual engine rpm speed value
-    */
-  int16_t engine() const { return i16_engine;};
-
   /** get rear hitch
       @return actual position of rear hitch
     */
@@ -280,6 +259,10 @@ public: // Public methods
   uint8_t hitchFront() const {return b_hitchFront;};
 
   #ifdef USE_DIN_9684
+    /** get engine speed
+      @return actual engine rpm speed value
+    */
+  int16_t engine() const { return i16_engine;};
   /** deliver rear left draft */
   int rearLeftDraft() const { return i16_rearLeftDraft;};
   /** deliver rear right draft */
@@ -292,7 +275,6 @@ public: // Public methods
   int fuelRate() const { return i16_fuelRate;};
   /** deliver fuel temperature °C */
   int fuelTemperature() const { return ui8_fuelTemperature;};
-
   #endif
 
   #ifdef USE_ISO_11783
@@ -330,99 +312,59 @@ public: // Public methods
   bool maintainActuatorPower() const { return b_maintainActuatorPower;};
   /** check whether maintenance of power
     * for implement in transport state was requested */
-  bool maintainPowerForImplInTransport() const { return b_maintainPowerForImplInTransport;};
+  bool maintainPowerForImplInTransport() const { return powerForImplState.inTransport;};
   /** check whether maintenance of power
     * for implement in park state was requested */
-  bool maintainPowerForImplInPark() const { return b_maintainPowerForImplInPark;};
+  bool maintainPowerForImplInPark() const { return powerForImplState.inPark;};
   /** check whether maintenance of power
     * for implement in work state was requested */
-  bool maintainPowerForImplInWork() const { return b_maintainPowerForImplInWork;};
+  bool maintainPowerForImplInWork() const { return powerForImplState.inWork;};
 
   bool isVtLanguageReceived()   const { return b_languageVtReceived; };
   bool isTecuLanguageReceived() const { return b_languageTecuReceived; };
 
   const uint8_t* getVtLanguage()   const { return p8ui8_languageVt; };
   const uint8_t* getTecuLanguage() const { return p8ui8_languageTecu; };
+
+  /** send iso language data msg*/
+  void isoSendLanguage(const DevKey_c& rpc_devKey);
   #endif
   /*@}*/
 
 private:
   // Private methods
-  friend class SINGLETON_DERIVED(TracGeneral_c,ElementBase_c);
+  friend class SINGLETON_DERIVED(TracGeneral_c,BaseCommon_c);
   /** HIDDEN constructor for a TracGeneral_c object instance which can optional
-      set the configuration for send/receive for base msg type 1 and 2
+      set the configuration for send/receive for general base msg
       NEVER instantiate a variable of type TracGeneral_c within application
       only access TracGeneral_c via getTracGeneralInstance() or getTracGeneralInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
-      @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
     */
   TracGeneral_c() {};
-  /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead.
-    */
-  void singletonInit();
-  /** deliver reference to data pkg
-      @return reference to the member BasePkg_c, which encapsulates the CAN send structure
-    */
-  BasePkg_c& data() {return c_data;};
-  /** deliver reference to data pkg as reference to CANPkgExt_c
-      to implement the base virtual function correct
-    */
-  CANPkgExt_c& dataBase();
-
-  /** check if a received message should be parsed */
-  bool checkParseReceived(const DevKey_c& rrefc_currentSender) const
-  {
-    return ( ( !b_sendState ) // I'm not the sender
-          && ( // one of the following conditions must be true
-               (c_sendDevKey == rrefc_currentSender) // actual sender equivalent to last
-            || (c_sendDevKey.isUnspecified() ) // last sender has not correctly claimed address member
-             )
-           )?true:false;
-  };
 
   #ifdef USE_DIN_9684
   /** check if a received message should be parsed */
-  bool checkParseReceivedFuel(const DevKey_c& rrefc_currentSender) const
-  {
-    return ( ( !b_sendStateFuel ) // I'm not the sender
-          && ( // one of the following conditions must be true
-               (c_sendFuelDevKey == rrefc_currentSender) // actual sender equivalent to last
-            || (c_sendFuelDevKey.isUnspecified() ) // last sender has not correctly claimed address member
-             )
-           )?true:false;
-  };
-
-  /** send a DIN9684 base information PGN.
+  bool checkParseReceivedFuel(const DevKey_c& rrefc_currentSender) const;
+  /** send a DIN9684 general base information PGN.
    * this is only called when sending ident is configured and it has already claimed an address
    */
-  bool dinTimeEvent( void );
-  /** process a DIN9684 base information PGN */
+  bool dinTimeEvent();
+  /** process a DIN9684 general base information PGN */
   bool dinProcessMsg();
   #endif
-  #if defined(USE_ISO_11783)
-  /** send a ISO11783 base information PGN.
+
+  #ifdef USE_ISO_11783
+  /** send a ISO11783 general base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool isoTimeEvent(void);
-  /** process a ISO11783 base information PGN */
+  bool isoTimeEvent();
+  /** process a ISO11783 general base information PGN */
   bool isoProcessMsg();
+  /** send front hitch and rear hitch data msg*/
+  void isoSendMsg();
   #endif
 
 private:
   // Private attributes
-  /** temp data where received data is put */
-  BasePkg_c c_data;
-  /** last time of base_2 msg [msec] */
-  int32_t i32_lastEngineHitch;
-  /** flag to store sending state of engine and hitch */
-  bool b_sendState;
-  /** DEVKEY of engine and hitch sender */
-  DevKey_c c_sendDevKey;
-  /** devKey which act as sender of base msg */
-  const DevKey_c* pc_devKey;
-
   /** engine speed */
   int16_t i16_engine;
   /** front hitch data */
@@ -438,9 +380,6 @@ private:
   /** DevKey_c for fuel sender */
   DevKey_c c_sendFuelDevKey;
 
-
-  /** flag to detect, if receive filters for DIN are created */
-  bool b_dinFilterCreated;
   /** NEW from AGCO Fendt Vario: rear left draft */
   int16_t i16_rearLeftDraft;
   /** NEW from AGCO Fendt Vario: rear right draft */
@@ -467,8 +406,6 @@ private:
   bool b_languageTecuReceived;
 
   /// General
-  /** flag to detect, if receive filters for ISO are created */
-  bool b_isoFilterCreated;
   /** last time of ISO GPS msg [msec] */
   int32_t i32_lastIsoPositionSimple;
   /** key switch state */
@@ -490,25 +427,18 @@ private:
   bool b_maintainEcuPower;
   /** state whether maintenance of actuator power was requested */
   bool b_maintainActuatorPower;
-  /** state whether maintenance of power
-    * for implement in transport state was requested */
-  bool b_maintainPowerForImplInTransport;
-  /** state whether maintenance of power
-    * for implement in park state was requested */
-  bool b_maintainPowerForImplInPark;
-  /** state whether maintenance of power
-    * for implement in work state was requested */
-  bool b_maintainPowerForImplInWork;
+  /** maintenance of power for implement state*/
+  maintainPowerForImplState powerForImplState;
   #endif
 };
 
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique Base_c singleton instance
+  /** C-style function, to get access to the unique TracGeneral_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
   TracGeneral_c& getTracGeneralInstance(uint8_t rui8_instance = 0);
   #else
-  /** C-style function, to get access to the unique Base_c singleton instance */
+  /** C-style function, to get access to the unique TracGeneral_c singleton instance */
   TracGeneral_c& getTracGeneralInstance(void);
   #endif
 
