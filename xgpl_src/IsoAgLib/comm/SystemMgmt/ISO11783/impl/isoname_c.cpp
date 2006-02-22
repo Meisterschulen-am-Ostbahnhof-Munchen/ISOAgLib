@@ -375,7 +375,7 @@ if ( rpb_compare == NULL )
   // In real production version, we would have to decide on WHAT to do for this case in such a lowlevel comparison function - what return value, .....
   INTERNAL_DEBUG_DEVICE
     << "ERRORR!! ISOName_c::higherPriThanPar() was called with parameter == NULL!!" << EXTERNAL_DEBUG_DEVICE_ENDL
-    << "The this adress was " << (int)*this << EXTERNAL_DEBUG_DEVICE_ENDL
+    << "The this adress was " << (int)this << EXTERNAL_DEBUG_DEVICE_ENDL
     << "The program will be aborted now for explicit detection of this erroneous call. Fix the CALLING function - and not this function,"
     << " as this function makes never sense when called with NULL!!"
     << EXTERNAL_DEBUG_DEVICE_ENDL;
