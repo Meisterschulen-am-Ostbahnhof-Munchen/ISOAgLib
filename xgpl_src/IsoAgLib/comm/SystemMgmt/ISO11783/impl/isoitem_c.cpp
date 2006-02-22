@@ -86,6 +86,7 @@
 #include "isomonitor_c.h"
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
+#include <IsoAgLib/comm/Base/impl/tracgeneral_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #ifdef USE_EEPROM_IO
 #include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>
@@ -577,6 +578,15 @@ bool ISOItem_c::processMsg(){
             // isoSendCalendar checks if this item (identified by DEV_KEY)
             // is configured to send calendar
             getTimePosGpsInstance4Comm().isoSendCalendar(devKey());
+            b_result = true;
+            break;
+          #endif
+          #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+          case LANGUAGE_PGN: // request for language
+            // call TracGeneral_c function to send language of Tractor-ECU
+            // isoSendLanguage checks if this item (identified by DEV_KEY)
+            // is configured to send language
+            getTracGeneralInstance4Comm().isoSendLanguage(devKey());
             b_result = true;
             break;
           #endif
