@@ -496,7 +496,9 @@ function create_filelist( )
       # no trac light
       COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*traclight*' -a -not -name '*trac*setpoint*' -a -not -name '*tracaux*' \)"
     else
-      COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
+# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files		
+#      COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*trac*setpoint*' \) "
     fi
   fi
   if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
@@ -511,7 +513,9 @@ function create_filelist( )
 	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove_c.*' \)"
 		else
 			# allow tracmove_c.h and tracmovesetpoint_c.h
-	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove*' \)"
+# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files		
+#	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove*' \)"
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove_c.*' \)"
 		fi
   fi
   if [ $PRJ_TRACTOR_PTO -gt 0 ] ; then
@@ -520,7 +524,9 @@ function create_filelist( )
 	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
 		else
 			# allow tracpto_c.h and tracptosetpoint_c.h
-	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
+# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files		
+#	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
 		fi
   fi
   if test $PRJ_TRACTOR_LIGHT -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
@@ -541,10 +547,12 @@ function create_filelist( )
   fi
   if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*'"
-    if [ $PRJ_DATASTREAMS -lt 1 ] ; then
-    	COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.cpp'"
-    fi
     PRJ_MULTIPACKET=1
+  fi
+  if [ $PRJ_DATASTREAMS -lt 1 ] ; then
+		if test $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
+	    COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.cpp'"
+		fi
   fi
   if [ $PRJ_DIN_TERMINAL -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o -path '*/DIN_Terminal/*'"
@@ -986,7 +994,7 @@ function create_autogen_project_config()
 		echo -e "#ifndef USE_EEPROM_IO_YN $ENDLINE\t#define USE_EEPROM_IO_YN NO $ENDLINE#endif" >> $CONFIG_NAME
   fi
 
-	if [ $PRJ_DATASTREAMS -gt 0 ] ; then
+  if test $PRJ_DATASTREAMS -gt 0 -o $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
 		echo -e "#ifndef USE_DATASTREAMS_IO $ENDLINE\t#define USE_DATASTREAMS_IO $ENDLINE#endif" >> $CONFIG_NAME
   else
   	# the default in isoaglib_config.h is to activate
