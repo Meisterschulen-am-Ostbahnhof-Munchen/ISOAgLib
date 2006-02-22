@@ -362,7 +362,7 @@ public:
     @param pbc_iter optional member array iterator which points to searched DINItem_c on success
     @return reference to the searched item
   */
-  DINItem_c& dinMemberDevKey(const DevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress = false, Vec_MemberIterator *const pbc_iter = NULL);
+  DINItem_c& dinMemberDevKey(const DevKey_c& rc_devKey, bool *const pb_success, Vec_MemberIterator *const pbc_iter = NULL, bool rb_forceClaimedAddress = false);
 
   /**
     delete item with specified devKey

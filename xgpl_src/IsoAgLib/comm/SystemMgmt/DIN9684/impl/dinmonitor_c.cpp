@@ -709,7 +709,7 @@ DINItem_c& DINMonitor_c::dinMemberNr(uint8_t rui8_nr)
   @param pbc_iter optional member array iterator which points to searched DINItem_c on success
   @return reference to the searched item
 */
-DINItem_c& DINMonitor_c::dinMemberDevKey(const DevKey_c& rc_devKey, bool *const pb_success, bool rb_forceClaimedAddress, Vec_MemberIterator *const pbc_iter)
+DINItem_c& DINMonitor_c::dinMemberDevKey(const DevKey_c& rc_devKey, bool *const pb_success, Vec_MemberIterator *const pbc_iter, bool rb_forceClaimedAddress)
 {
   *pb_success = (existDinMemberDevKey(rc_devKey, rb_forceClaimedAddress))?true:false;
 
