@@ -211,6 +211,14 @@ public:
   virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
 
+  #ifdef USE_DIN_9684
+    /**
+    deliver sender nr
+    @return SEND code of base msg (bit 8-11 in identifier)
+  */
+  uint8_t dinSa() const {return (ident(0) & 0xF);};
+  #endif
+
   #ifdef USE_ISO_11783
   // begin of block with ISO 11783 CAN formating functions
   /**
