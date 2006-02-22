@@ -494,29 +494,42 @@ function create_filelist( )
   if [ $PRJ_BASE -gt 0 ] ; then
     if [ $PRJ_ISO11783 -lt 1 ] ; then
       # no trac light
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*traclight*' \)"
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*traclight*' -a -not -name '*trac*setpoint*' -a -not -name '*tracaux*' \)"
     else
       COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
     fi
   fi
   if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
-	  COMM_FEATURES="$COMM_FEATURES -o -name 'ibasetypes.h' -o -name 'basepkg_c*'"
+	  COMM_FEATURES="$COMM_FEATURES -o -name 'ibasetypes.h' -o -name 'basecommon_c*'"
 	fi
   if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracgeneral*' \)"
   fi
   if [ $PRJ_TRACTOR_MOVE -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove*' \)"
+		if [ $PRJ_ISO11783 -lt 1 ] ; then
+			# only DIN
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove_c.*' \)"
+		else
+			# allow tracmove_c.h and tracmovesetpoint_c.h
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove*' \)"
+		fi
   fi
   if [ $PRJ_TRACTOR_PTO -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
+		if [ $PRJ_ISO11783 -lt 1 ] ; then
+			# only DIN
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
+		else
+			# allow tracpto_c.h and tracptosetpoint_c.h
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
+		fi
   fi
   if test $PRJ_TRACTOR_LIGHT -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*traclight*' \)"
   else
 	PRJ_TRACTOR_LIGHT=0
   fi
-  if [ $PRJ_TRACTOR_AUX -gt 0 ] ; then
+  if test $PRJ_TRACTOR_AUX -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
+		# tracaux is only defined for ISO 11783
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracaux*' \)"
   fi
   if [ $PRJ_TIME_GPS -gt 0 ] ; then
