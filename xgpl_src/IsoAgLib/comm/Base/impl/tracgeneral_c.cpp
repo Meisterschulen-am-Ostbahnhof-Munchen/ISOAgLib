@@ -231,7 +231,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       c_sendFuelDevKey.setUnspecified();
     }
     if (  getDevKey() != NULL
-          && ( checkImplementMode() || b_sendStateFuel                               )
+          && ( (! checkImplementMode()) || b_sendStateFuel                               )
           && ( getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true) ) )
     { // there is at least something configured to send
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;

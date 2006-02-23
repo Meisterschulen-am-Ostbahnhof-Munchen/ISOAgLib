@@ -238,7 +238,7 @@ namespace __IsoAgLib {
       bit_calendar.month = bit_calendar.day = 1;
     }
     #ifdef USE_ISO_11783
-    if ( !checkImplementMode()
+    if ( !checkImplementModeGps()
       #ifdef NMEA_2000_FAST_PACKET
       && ( ( ci32_now - i32_lastIsoPositionStream  ) >= 3000  )
       && ( ( ci32_now - i32_lastIsoDirectionStream ) >= 3000  )
@@ -257,12 +257,12 @@ namespace __IsoAgLib {
     }
     #endif
 
-    if ( ( getDevKey() != NULL ) && !checkImplementMode())
+    if ( getDevKey() != NULL )
     { // there is at least something configured to send
       #ifdef USE_ISO_11783
       if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true))
       { // stored base information sending ISO member has claimed address
-        isoTimeEvent();
+        if ((!checkImplementMode()) || (!checkImplementModeGps()) ) isoTimeEvent();
       }
       #endif
       #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
@@ -271,7 +271,7 @@ namespace __IsoAgLib {
       #ifdef USE_DIN_9684
       if (getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true))
       { // stored base information sending DIN member has claimed address
-        dinTimeEvent();
+        if (!checkImplementMode()) dinTimeEvent();
       }
       #endif
     }
@@ -363,6 +363,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
   void TimePosGPS_c::configGps(const DevKey_c* rpc_devKey, bool rb_implementMode)
   {
     i32_lastIsoPositionSimple = 0;
+    setDevKey( rpc_devKey );
     #ifdef NMEA_2000_FAST_PACKET
     i32_lastIsoPositionStream = i32_lastIsoDirectionStream = 0;
     t_multiSendSuccessState = MultiSend_c::SendSuccess;
@@ -372,6 +373,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
     #endif // END of NMEA_2000_FAST_PACKET
 
     // *************************************************************************************************
+    b_implementModeGps = rb_implementMode;
     if ((rpc_devKey != NULL) && ( !rb_implementMode) )
     { // GPS send from now on
       c_sendGpsDevKey = *rpc_devKey;
@@ -804,7 +806,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool TimePosGPS_c::isoTimeEvent( void )
+  bool TimePosGPS_c::isoTimeEvent()
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
@@ -822,7 +824,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
       isoSendCalendar(*getDevKey());
     }
 
-    if ( !checkImplementMode() )
+    if ( !checkImplementModeGps() )
     {
       if ( ( ci32_now - i32_lastIsoPositionSimple ) >= 100 )
       {

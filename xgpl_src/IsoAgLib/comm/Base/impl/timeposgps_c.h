@@ -212,6 +212,8 @@ public:
       @param rb_implementMode implement mode (true) or tractor mode (false)!!!
     */
   void configGps(const DevKey_c* rpc_devKey, bool rb_implementMode);
+  /** return if you currently are in implement mode or tractor mode*/
+  bool checkImplementModeGps() const {return b_implementModeGps;};
 
   /** send ISO11783 calendar PGN
     possible errors:
@@ -461,7 +463,7 @@ private:
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool isoTimeEvent( );
+  virtual bool isoTimeEvent( );
 
   /** send position rapid update message */
   void isoSendPositionRapidUpdate( void );
@@ -574,6 +576,7 @@ private:
   #endif // END of NMEA_2000_FAST_PACKET
   /** DEVKEY of GPS data sender */
   DevKey_c c_sendGpsDevKey;
+  bool b_implementModeGps;
   #endif // END of USE_ISO_11783
 };
 
