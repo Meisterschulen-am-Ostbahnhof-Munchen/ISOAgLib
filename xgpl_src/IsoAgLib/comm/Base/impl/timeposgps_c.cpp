@@ -326,6 +326,10 @@ namespace __IsoAgLib {
 void TimePosGPS_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
 {
   BaseCommon_c::init( rpc_devKey, rb_implementMode );
+
+  i32_latitudeDegree10Minus7 = 0;
+  i32_longitudeDegree10Minus7 = 0;
+
   #if defined(USE_ISO_11783)
   // set the GPS mode always to non-sending
   configGps( NULL, true );
