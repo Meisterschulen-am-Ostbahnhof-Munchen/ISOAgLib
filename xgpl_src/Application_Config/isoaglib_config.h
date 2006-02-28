@@ -935,6 +935,7 @@
   #ifdef SYSTEM_PC
     #include <iostream>
     #include <fstream>
+    #include "stdio.h"
     #define INTERNAL_DEBUG_DEVICE std::cout
   	#define INTERNAL_DEBUG_DEVICE_ENDL std::endl
     #define INTERNAL_DEBUG_FLUSH fflush(0);
