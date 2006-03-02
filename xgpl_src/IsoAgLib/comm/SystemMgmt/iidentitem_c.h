@@ -128,7 +128,7 @@ public:
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       ,IState_c::protoOrder_t ren_protoOrder = IState_c::DinOnly
       #endif
-      #ifdef USE_ISO_11783
+      #ifdef USE_WORKING_SET
       ,int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL
       #endif
       , int ri_singletonVecKey = 0
@@ -136,7 +136,7 @@ public:
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       , ren_protoOrder
       #endif
-      #ifdef USE_ISO_11783
+      #ifdef USE_WORKING_SET
       , ri8_slaveCount, rpc_slaveIsoNameList
       #endif
       , ri_singletonVecKey) {};
@@ -162,9 +162,15 @@ public:
       const uint8_t* rpb_name,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa = 254, uint16_t rui16_saEepromAdr = 0xFFFF,
+      #ifdef USE_WORKING_SET
       int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL,
+      #endif
       int ri_singletonVecKey = 0
-      ) : IdentItem_c(rpc_devKey, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey) {};
+      ) : IdentItem_c(rpc_devKey, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr,
+                      #ifdef USE_WORKING_SET
+                      ri8_slaveCount, rpc_slaveIsoNameList,
+                      #endif
+                      ri_singletonVecKey) {};
 #endif
 
 #ifdef USE_ISO_11783
@@ -186,9 +192,15 @@ public:
   iIdentItem_c(iDevKey_c* rpc_devKey,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr = 0xFFFF,
+      #ifdef USE_WORKING_SET
       int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL,
+      #endif
       int ri_singletonVecKey = 0
-      ) : IdentItem_c(rpc_devKey, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey) {};
+      ) : IdentItem_c(rpc_devKey, rpb_isoName, rb_wantedSa, rui16_saEepromAdr,
+                      #ifdef USE_WORKING_SET
+                      ri8_slaveCount, rpc_slaveIsoNameList,
+                      #endif
+                      ri_singletonVecKey) {};
   /**
     constructor for DIN + ISO identity, which starts address claim for this identity
     @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
@@ -213,10 +225,17 @@ public:
   */
   iIdentItem_c(iDevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
+    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+    #ifdef USE_WORKING_SET
+    int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL,
+    #endif
+    int ri_singletonVecKey = 0)
    : IdentItem_c(rpc_devKey, rpb_dinName, rb_selfConf, rui8_indGroup, rb_func, rui16_manufCode, rui32_serNo,
-      rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey) {};
+      rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst,
+      #ifdef USE_WORKING_SET
+      ri8_slaveCount, rpc_slaveIsoNameList,
+      #endif
+      ri_singletonVecKey) {};
   /**
     constructor for ISO identity, which starts address claim for this identity
     @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
@@ -236,10 +255,17 @@ public:
   */
   iIdentItem_c(iDevKey_c* rpc_devKey,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
+    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+    #ifdef USE_WORKING_SET
+    int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL,
+    #endif
+    int ri_singletonVecKey = 0)
    : IdentItem_c(rpc_devKey, rb_selfConf, rui8_indGroup, rb_func, rui16_manufCode, rui32_serNo,
-      rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey) {};
+      rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst,
+      #ifdef USE_WORKING_SET
+      ri8_slaveCount, rpc_slaveIsoNameList,
+      #endif
+      ri_singletonVecKey) {};
 #endif
 #ifdef USE_DIN_9684
   /** deliver pointer to DINItem_c in DINMonitor_c
@@ -282,9 +308,15 @@ public:
       const uint8_t* rpb_name,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa = 254, uint16_t rui16_saEepromAdr = 0xFFFF,
+      #ifdef USE_WORKING_SET
       int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL,
+      #endif
       int ri_singletonVecKey = 0
-      ) { IdentItem_c::start(rpc_devKey, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey);};
+      ) { IdentItem_c::start(rpc_devKey, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr,
+                             #ifdef USE_WORKING_SET
+                             ri8_slaveCount, rpc_slaveIsoNameList,
+                             #endif
+                             ri_singletonVecKey);};
   /**
     explicit start for ISO identity, which starts address claim for this identity
     @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
@@ -303,9 +335,15 @@ public:
   void start(iDevKey_c* rpc_devKey,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr = 0xFFFF,
+      #ifdef USE_WORKING_SET
       int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL,
+      #endif
       int ri_singletonVecKey = 0
-      ) { IdentItem_c::start(rpc_devKey, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey);};
+      ) { IdentItem_c::start(rpc_devKey, rpb_isoName, rb_wantedSa, rui16_saEepromAdr,
+                             #ifdef USE_WORKING_SET
+                             ri8_slaveCount, rpc_slaveIsoNameList,
+                             #endif
+                             ri_singletonVecKey);};
   /**
     explicit start for DIN + ISO identity, which starts address claim for this identity
     @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
@@ -330,10 +368,17 @@ public:
   */
   void start(iDevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
+    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+    #ifdef USE_WORKING_SET
+    int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL,
+    #endif
+    int ri_singletonVecKey = 0)
    { IdentItem_c::start(rpc_devKey, rpb_dinName, rb_selfConf, rui8_indGroup, rb_func, rui16_manufCode, rui32_serNo,
-      rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey);};
+      rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst,
+      #ifdef USE_WORKING_SET
+      ri8_slaveCount, rpc_slaveIsoNameList,
+      #endif
+      ri_singletonVecKey);};
   /**
     explicit start for ISO identity, which starts address claim for this identity
     @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
@@ -358,10 +403,17 @@ public:
   */
   void start(iDevKey_c* rpc_devKey,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0)
+    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+    #ifdef USE_WORKING_SET
+    int8_t ri8_slaveCount = -1, const iDevKey_c* rpc_slaveIsoNameList = NULL,
+    #endif
+    int ri_singletonVecKey = 0)
    { IdentItem_c::start(rpc_devKey, rb_selfConf, rui8_indGroup, rb_func, rui16_manufCode, rui32_serNo,
-      rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst, ri8_slaveCount, rpc_slaveIsoNameList, ri_singletonVecKey);};
+      rb_wantedSa, rui16_saEepromAdr, rb_funcInst, rb_ecuInst,
+      #ifdef USE_WORKING_SET
+      ri8_slaveCount, rpc_slaveIsoNameList,
+      #endif
+      ri_singletonVecKey);};
 #endif
 
 
@@ -370,8 +422,9 @@ public:
     * of a local ident
     */
   void close( void ) { IdentItem_c::close();};
+
   /** check if the ident has claimed address */
-  bool isClaimedAddress( void ) const { return ( itemState( IState_c::ClaimedAddress ) )?true:false;};
+  bool isClaimedAddress( void ) const { return IdentItem_c::isClaimedAddress(); }
 
   /**
     retreive the actual DEV_KEY value of this ident item

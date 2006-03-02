@@ -8,7 +8,7 @@ TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
 APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso 
 
-PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
+PROJ_DEFINES = -DSYSTEM_PC -DDEBUG -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
 
 
 first: all

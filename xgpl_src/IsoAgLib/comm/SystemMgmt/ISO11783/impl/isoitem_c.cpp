@@ -119,10 +119,11 @@ ISOItem_c::ISOItem_c(int32_t ri32_time, const DevKey_c& rc_devKey, uint8_t rui8_
 {
   // mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
-  wsClaimedAddress = false;
-
+  #ifdef USE_WORKING_SET
+  // no need to set "i8_slavesToClaimAddress", as it's initialized when setting state to ClaimedAddress
   // define this item as standalone by default
   pc_masterItem = NULL;
+  #endif
 
   // just use ri32_time to make compiler happy
   // an ISO11783 item must start with timestamp 0
@@ -151,7 +152,9 @@ ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
   : MonitorItem_c(rrefc_src), ui16_saEepromAdr(rrefc_src.ui16_saEepromAdr)
 {// mark this item as prepare address claim if local
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
-  wsClaimedAddress = false;
+
+  #ifdef USE_WORKING_SET
+  // no need of setting "i8_slavesToClaimAddress", as it will be set when setting state to CleaimedAddress!
 
   // check if the master item pointer of the source item
   // is pointing to itself, as then this new created instance shall
@@ -165,6 +168,7 @@ ISOItem_c::ISOItem_c(const ISOItem_c& rrefc_src)
   { // just copy the master pointer from source
     pc_masterItem = rrefc_src.getMaster ();
   }
+  #endif
 
   updateTime(0); // state that this item didn't send an adress claim
   readEepromSa();
@@ -183,7 +187,10 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
 {
   MonitorItem_c::operator=(rrefc_src);
   setItemState(IState_c::itemState_t(IState_c::Member | IState_c::Iso));
-  wsClaimedAddress = false;
+  #ifdef USE_WORKING_SET
+  // no need of setting "i8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
+  /** @todo What to do with the pc_masterItem? */
+  #endif
   updateTime(0); // state that this item didn't send an adress claim
   // mark this item as prepare address claim if local
   ui16_saEepromAdr = rrefc_src.ui16_saEepromAdr;
@@ -199,7 +206,15 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
 /**
   default destructor
 */
-ISOItem_c::~ISOItem_c(){
+ISOItem_c::~ISOItem_c()
+{
+  #ifdef USE_WORKING_SET
+  // check if we were a working-set master
+  if (isMaster()) // => pointing to ourself => workingset-master!
+  { // tell all workingset-slaves now that their master is gone so they are now STANDALONE again
+    getIsoMonitorInstance4Comm().notifyOnWsMasterLoss(*this);
+  }
+  #endif
 }
 
 /**
@@ -371,38 +386,35 @@ bool ISOItem_c::timeEvent( void )
       {
         // no conflict since sent of adress claim since 250ms
         setItemState(IState_c::ClaimedAddress);
-        #ifdef USE_ISO_TERMINAL
-        b_oldVtState = false; // means send out master message out first, but wait for VT Status Message to arrive first!
-        #endif
         // now inform the ISO monitor list change clients on NEW client use
         getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
+        #ifdef USE_WORKING_SET
+          /** @todo To discuss what makes more sense: for now announce working-set directly after address claimed */
+          #if 1
+          triggerWsAnnounce(); // start WS Announce/MaintenanceMsg'ing in case we're master and announced
+          #else
+          i8_slavesToClaimAddress = -2; // indicate that nothing is announced until some "application" triggers announcing!
+          #endif
+        #endif
       }
     }
   }
-  #ifdef USE_ISO_TERMINAL
-  else if ( itemState(IState_c::ClaimedAddress) ) {
-    // *** State ClaimedAddress ***
-    if ( !getIsoTerminalInstance4Comm().isVtActive() ) {
-      wsClaimedAddress = false;
-    } else {
-      // *** VT is Active ***
-      if ( b_oldVtState == false ) {
-        /* VT has just been turned ON */
-        slavesToClaimAddress = -1; // start WS Announce/MaintenanceMsg'ing
-      }
+  #ifdef USE_WORKING_SET
+  else if ( itemState(IState_c::ClaimedAddress) )
+  { // do stuff if completely announced
+    if (isMaster() && (i8_slavesToClaimAddress != 0))
+    { // only master needs to send stuff out after address-claiming
+      if ( i8_slavesToClaimAddress == -1 )
+      { // Announce WS-Master
+        i8_slavesToClaimAddress = getIsoMonitorInstance4Comm().getSlaveCount (this); // slavesToClaimAddress will be 0..numberOfSlaves hopefully
 
-      if ( ( slavesToClaimAddress == -1 ) && ( pc_masterItem == this ) )
-      {
-        slavesToClaimAddress = getIsoMonitorInstance4Comm().getSlaveCount (this); // slavesToClaimAddress will be 0..numberOfSlaves hopefully
-
-        c_pkg.setExtCanPkg8(7, 0, 254, 13, nr(), slavesToClaimAddress+1, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+        c_pkg.setExtCanPkg8(7, 0, 254, 13, nr(), i8_slavesToClaimAddress+1, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         c_can << c_pkg;     // send out "Working Set Master" message on CAN bus
 
-        if (slavesToClaimAddress == 0) wsClaimedAddress = true;
         updateTime();
       }
-      else if ( ( slavesToClaimAddress > 0) && ( pc_masterItem == this ) && ( checkTime(100) ) )
-      {
+      else if ( (i8_slavesToClaimAddress > 0) && ( checkTime(100) ) )
+      { // Announce WS-Slave(s)
         // claim address for next slave
         c_pkg.setIsoPri(7);
         c_pkg.setIsoDp(0);
@@ -410,25 +422,15 @@ bool ISOItem_c::timeEvent( void )
         c_pkg.setIsoPs(12); // global information
         c_pkg.setIsoSa(nr()); // free SA or NACK flag
         // set NAME to CANPkg
-        c_pkg.setName(getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-slavesToClaimAddress, this)->outputString());
+        c_pkg.setName(getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-i8_slavesToClaimAddress, this)->outputString());
         c_can << c_pkg;
 
         // claimed address for one...
-        slavesToClaimAddress--;
+        i8_slavesToClaimAddress--;
 
-        if (slavesToClaimAddress == 0) wsClaimedAddress = true;
-        updateTime();
-      }
-      else if ( ( slavesToClaimAddress == 0 ) && ( pc_masterItem == this ) && ( checkTime(1000) ) )
-      {
-        // send working set maintenance message now every second
-        c_pkg.setExtCanPkg8(7, 0, 231, getIsoTerminalInstance4Comm().getVtSourceAddress (), nr(),
-                            0xFF, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-        c_can << c_pkg;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
         updateTime();
       }
     }
-    b_oldVtState = getIsoTerminalInstance4Comm().isVtActive();
   }
   #endif
 
@@ -673,6 +675,8 @@ uint8_t ISOItem_c::calc_randomWait()
   return uint8_t(ui16_result & 0xFF );
 }
 
+
+#ifdef USE_WORKING_SET
 /**
   returns a pointer to the referenced master ISOItem
 */
@@ -683,10 +687,12 @@ ISOItem_c* ISOItem_c::getMaster () const
 
 /**
   attaches to a working set master and become slave hereby
+  if called with NULL the ISOItem loses working-set membership and becomes STANDALONE again!
 */
 void ISOItem_c::setMaster ( ISOItem_c* rpc_masterItem )
 {
   pc_masterItem = rpc_masterItem;
 }
+#endif
 
 } // end of namespace __IsoAgLib

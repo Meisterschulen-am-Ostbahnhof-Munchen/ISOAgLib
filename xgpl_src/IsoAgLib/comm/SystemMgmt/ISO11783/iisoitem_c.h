@@ -230,8 +230,8 @@ public:
   */
   void setSerNo(uint32_t rui32_serNo) {ISOItem_c::setSerNo(rui32_serNo);};
 
-  /** check if item has claimed address */
-  bool isClaimedAddress() const { return isClaimedAddress(); };
+  /** check if item has announced its working-set description */
+  bool isWsAnnounced() const { return isWsAnnounced(); };
 };
 
 }

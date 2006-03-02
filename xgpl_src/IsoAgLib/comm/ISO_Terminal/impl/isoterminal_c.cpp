@@ -251,7 +251,7 @@ bool ISOTerminal_c::startUploadCommand ()
   if ((actSend->mssObjectString == NULL) && (actSend->vec_uploadBuffer.size() < 9)) {
     /// Fits into a single CAN-Pkg!
     // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
-    c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                           actSend->vec_uploadBuffer [0], actSend->vec_uploadBuffer [1],
                           actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
                           actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
@@ -265,7 +265,7 @@ bool ISOTerminal_c::startUploadCommand ()
     /// Fits into a single CAN-Pkg!
     uint8_t ui8_len = actSend->mssObjectString->getStreamer()->getStreamSize();
 
-    c_data.setExtCanPkg (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
+    c_data.setExtCanPkg (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
     actSend->mssObjectString->getStreamer()->set5ByteCommandHeader (c_data.pb_data);
     int i=5;
     for (; i < ui8_len; i++) c_data.pb_data[i] = actSend->mssObjectString->getStreamer()->getStringToStream() [i-5];
@@ -324,8 +324,16 @@ ISOTerminal_c::singletonInit()
   /// real init() code...
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
-  // register in Scheduler_c to get timeEvents
+  // register in Scheduler_c to get time-events
   getSchedulerInstance4Comm().registerClient( this );
+
+  const uint32_t cui32_filterV = (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8);
+  if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), cui32_filterV, Ident_c::ExtendedIdent))
+      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), cui32_filterV, true, Ident_c::ExtendedIdent);
+
+  const uint32_t cui32_filterL = (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8);
+  if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), cui32_filterL, Ident_c::ExtendedIdent))
+      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), cui32_filterL, true, Ident_c::ExtendedIdent);
 
   localSettings_a.lastReceived = 0; // no language info received yet
   vtState_a.lastReceived = 0; // no vt_statusMessage received yet
@@ -339,11 +347,13 @@ ISOTerminal_c::singletonInit()
   en_uploadType = UploadIdle;
   b_receiveFilterCreated = false;
 
-  vtAliveNew = false;
+  b_vtAliveCurrent = false; // so we detect the rising edge when the VT gets connected!
 
   b_checkSameCommand = true;
 
   ui32_filterAckPGN = 0; // filter not yet inserted!
+
+  //i32_nextWsMaintenanceMsg; needn't be set here, will be set in doStart!
 }
 
 /**
@@ -453,58 +463,85 @@ void ISOTerminal_c::close( void )
 }
 
 
+void ISOTerminal_c::doStart ()
+{
+  /// First, trigger sending of WS-Announce
+  pc_wsMasterIdentItem->getIsoItem()->triggerWsAnnounce();
+  /** @todo /\ maybe wait 1 sec after ws-announcing? but it shouldn't matter. better send right now... */
+  i32_nextWsMaintenanceMsg = 0; // send out ws maintenance message immediately after ws has been announced.
+  /// Second, init all variables to an initial upload state (Upload will not start before ws-announcing is due
+  vtCapabilities_a.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
+  vtCapabilities_a.lastRequestedSoftkeys = 0; // not yet requested vt's capabilities yet
+  vtCapabilities_a.lastReceivedHardware = 0; // not yet (queried and) got answer about vt's capabilities yet
+  vtCapabilities_a.lastRequestedHardware = 0; // not yet requested vt's capabilities yet
+  vtCapabilities_a.lastReceivedFont = 0; // not yet (queried and) got answer about vt's capabilities yet
+  vtCapabilities_a.lastRequestedFont = 0; // not yet requested vt's capabilities yet
+  localSettings_a.lastRequested = 0;
+  localSettings_a.lastReceived = 0;
+  if (en_objectPoolState == OPNoneRegistered)
+  { // no object pool registered, don't go into UploadPool state
+    en_uploadType = UploadIdle;
+  } else
+  { // "OP<was>Registered" || "OP<was>UploadedSuccessfully" || "OPCannotBeUploaded" (on the previous VT: try probably other VT now)
+    en_objectPoolState = OPRegistered; // try (re-)uploading, not caring if it was successfully or not on the last vt!
+
+    en_uploadType = UploadPool;          // Start Pool Uploading sequence!!
+    en_uploadPoolState = UploadPoolInit; // with "UploadInit
+  }
+}
+
+
+void ISOTerminal_c::doStop()
+{
+  vtSourceAddress = 254;
+  // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
+  #ifdef DEBUG_HEAP_USEAGE
+  sui16_sendUploadQueueSize -= q_sendUpload.size();
+  #endif
+  #ifdef USE_LIST_FOR_FIFO
+  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+  q_sendUpload.clear();
+  #else
+  while (!q_sendUpload.empty()) q_sendUpload.pop();
+  #endif
+  if (c_streamer.pc_pool != NULL)
+  { // notify application on lost connection so it can enter a defined safe state
+    c_streamer.pc_pool->eventEnterSafeState ();
+  }
+}
+
 
 void ISOTerminal_c::checkVtStateChange()
 {
-  bool vtAliveOld=vtAliveNew;
-  vtAliveNew=isVtActive();
+  bool b_vtAliveOld = b_vtAliveCurrent;
+  b_vtAliveCurrent = isVtActive();
 
-  if (vtAliveOld != vtAliveNew) {
-    // react on vt alive change "false->true"
-    if (vtAliveNew == true) {
-      // VT has (re-)entered the System - init all necessary states...
-      #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "VT has entered the system, trying to receive all Properties now...\n";
-      #endif
-      vtCapabilities_a.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
-      vtCapabilities_a.lastRequestedSoftkeys = 0; // not yet requested vt's capabilities yet
-      vtCapabilities_a.lastReceivedHardware = 0; // not yet (queried and) got answer about vt's capabilities yet
-      vtCapabilities_a.lastRequestedHardware = 0; // not yet requested vt's capabilities yet
-      vtCapabilities_a.lastReceivedFont = 0; // not yet (queried and) got answer about vt's capabilities yet
-      vtCapabilities_a.lastRequestedFont = 0; // not yet requested vt's capabilities yet
-      localSettings_a.lastRequested = 0;
-      localSettings_a.lastReceived = 0;
-      if (en_objectPoolState == OPNoneRegistered) {
-        en_uploadType = UploadIdle;
-      } else {
-        // in case of "OP<was>Registered", "OP<was>UploadedSuccessfully", "OPCannotBeUploaded" (on the previous VT: try probably other VT now)
-        en_objectPoolState = OPRegistered; // try re-uploading, not caring if it was successfully or not on the last vt!
+  // react on vt alive change "false->true"
+  if (!b_vtAliveOld && b_vtAliveCurrent)
+  { /// OFF --> ON  ***  VT has (re-)entered the system
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << "\n=========================================================================="
+                          << "\n=== VT has entered the system, trying to receive all Properties now... ==="
+                          << "\n=== time: " << HAL::getTime() << " ==="
+                          << "\n==========================================================================\n\n";
 
-        en_uploadType = UploadPool;          // Start Pool Uploading sequence!!
-        en_uploadPoolState = UploadPoolInit; // with "UploadInit
-      }
-    } else {
-    // react on vt alive change "true->false"
-      vtSourceAddress = 254;
-      // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
-      #ifdef DEBUG_HEAP_USEAGE
-      sui16_sendUploadQueueSize -= q_sendUpload.size();
-      #endif
-      #ifdef USE_LIST_FOR_FIFO
-      // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-      q_sendUpload.clear();
-      #else
-      while (!q_sendUpload.empty()) q_sendUpload.pop();
-      #endif
-      if (c_streamer.pc_pool != NULL) {
-        c_streamer.pc_pool->eventEnterSafeState ();
-      }
-    }
+    #endif
+    doStart();
+  }
+  else if (b_vtAliveOld && !b_vtAliveCurrent)
+  { /// ON -> OFF  ***  Connection to VT lost
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << "\n=============================================================================="
+                          << "\n=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
+                          << "\n=== time: " << HAL::getTime() << " ==="
+                          << "\n==============================================================================\n\n";
+    #endif
+    doStop();
   }
 }
 
 /**
-  periodically event -> call timeEvent for all  identities and parent objects
+  periodically event
   @return true -> all planned activities performed in allowed time
 */
 bool ISOTerminal_c::timeEvent( void )
@@ -527,27 +564,14 @@ bool ISOTerminal_c::timeEvent( void )
   }
   #endif
 
-  // register Filter if at least one active ( claimed address )
-  // local ISO IdentItem_c exists (so we're working on an ISO-Bus!
-  if ( ! getSystemMgmtInstance4Comm().existActiveLocalIsoMember() ) return true;
-
-  // do further activities only if registered ident is initialised as ISO
+  // do further activities only if registered ident is initialised as ISO and already successfully address-claimed...
   if ( !pc_wsMasterIdentItem ) return true;
-  if ( pc_wsMasterIdentItem->getIsoItem() == NULL ) return true;
-  //if ( !c_isoMonitor.existIsoMemberDevKey (pc_wsMasterIdentItem->devKey (), true)) return true;
+  if ( !pc_wsMasterIdentItem->isClaimedAddress() ) return true;
 
 /*** Filter/MultiReceive Registration Start ***/
   if ( ! b_receiveFilterCreated )
   { // register to get VTStatus Messages
     b_receiveFilterCreated = true;
-
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-        getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
-
-    ui32_filter = (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-        getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
 
     ui32_filterAckPGN = (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) | static_cast<MASK_TYPE>(pc_wsMasterIdentItem->getIsoItem()->nr())) << 8;
     if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent))
@@ -570,8 +594,18 @@ bool ISOTerminal_c::timeEvent( void )
   // ### Do nothing if there's no VT active ###
   if (!isVtActive()) return true;
 
-  // be kind and wait until "COMPLETE AddressClaim" is finished (WSMaster/Slaves Announce)
-  if ( !pc_wsMasterIdentItem->getIsoItem()->isClaimedAddress() ) return true;
+  // be kind and wait until WSMaster-/Slave-Announce have finished (AddressClaim is already checked above!!), do NOTHING else before.
+  if ( !pc_wsMasterIdentItem->getIsoItem()->isClaimedAndWsAnnounced() ) return true;
+
+  // Check if WS-Maintenance is needed
+  if ((i32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= i32_nextWsMaintenanceMsg))
+  { // Do periodically WS-Maintenance sending (every second)
+    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                          0xFF, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+    getCanInstance4Comm() << c_data;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
+
+    i32_nextWsMaintenanceMsg = HAL::getTime() + 1000;
+  }
 
 
   // If our IsoItem has claimed address, immediately try to get the LANGUAGE_PGN from VT/anyone ;-) (regardless of pool-upload!)
@@ -579,7 +613,7 @@ bool ISOTerminal_c::timeEvent( void )
   { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
     /** @todo Give up somewhen?? Or retry really every 2 seconds? */
     // Get Local Settings (may not be reached, when terminal is switched on after ECU, as VT sends LNAGUAGE Info on startup!
-    c_data.setExtCanPkg3 (6, 0, 234, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+    c_data.setExtCanPkg3 (6, 0, REQUEST_PGN_MSG_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                           (LANGUAGE_PGN & 0xFF), ((LANGUAGE_PGN >> 8)& 0xFF), ((LANGUAGE_PGN >> 16)& 0xFF));
     getCanInstance4Comm() << c_data;      // Command: Request_PGN
     localSettings_a.lastRequested = HAL::getTime();
@@ -648,7 +682,7 @@ bool ISOTerminal_c::timeEvent( void )
       /// Pool-Upload: PRE Phase (Get VT-Properties)
       if (!vtCapabilities_a.lastReceivedSoftkeys && ((vtCapabilities_a.lastRequestedSoftkeys == 0) || ((HAL::getTime()-vtCapabilities_a.lastRequestedSoftkeys) > 1000))) {
         // Get Number Of Soft Keys
-        c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+        c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                               194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
         vtCapabilities_a.lastRequestedSoftkeys = HAL::getTime();
@@ -658,14 +692,14 @@ bool ISOTerminal_c::timeEvent( void )
       }
       if (vtCapabilities_a.lastReceivedSoftkeys && (!vtCapabilities_a.lastReceivedFont) && ((vtCapabilities_a.lastRequestedFont == 0) || ((HAL::getTime()-vtCapabilities_a.lastRequestedFont) > 1000))) {
         // Get Text Font Data
-        c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+        c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                               195, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
         vtCapabilities_a.lastRequestedFont = HAL::getTime();
       }
       if (vtCapabilities_a.lastReceivedSoftkeys && vtCapabilities_a.lastReceivedFont && (!vtCapabilities_a.lastReceivedHardware) && ((vtCapabilities_a.lastRequestedHardware == 0) || ((HAL::getTime()-vtCapabilities_a.lastRequestedHardware) > 1000))) {
         // Get Hardware
-        c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+        c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                               199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Hardware
         vtCapabilities_a.lastRequestedHardware = HAL::getTime();
@@ -690,7 +724,7 @@ bool ISOTerminal_c::timeEvent( void )
             static int b_getVersionsSendTime=0;
             if (b_getVersionsSendTime == 0)
             { // send out get versions first
-              c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+              c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                     223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
               getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
               b_getVersionsSendTime = HAL::getTime();
@@ -703,7 +737,7 @@ bool ISOTerminal_c::timeEvent( void )
 
 
           // Try to "Non Volatile Memory - Load Version" first!
-          c_data.setExtCanPkg8 (7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+          c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                #ifdef LOESCHE_POOL
                                210, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
                                #else
@@ -826,7 +860,6 @@ bool ISOTerminal_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, 
 */
 bool ISOTerminal_c::isVtActive ()
 {
-  /** @todo connction management expansion: recognize NACKs following the WS Maintenance Message! */
   if (vtState_a.lastReceived) {
     if (((int32_t)HAL::getTime() - (int32_t)vtState_a.lastReceived) <= 3000)
     { // comparing as int, so that in case "NOW-time > CAN-time" NO client-reload happens
@@ -934,7 +967,7 @@ void ISOTerminal_c::startObjectPoolUploading ()
     c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.pc_pool->getIVtObjects()[curObject])->fitTerminal ();
   }
 
-  c_data.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+  c_data.setExtCanPkg8(7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                        192 /* 0xC0 */, 0xff, (c_streamer.ui32_streamSize-1) & 0xFF, ((c_streamer.ui32_streamSize-1) >>  8) & 0xFF, ((c_streamer.ui32_streamSize-1) >> 16) & 0xFF, (c_streamer.ui32_streamSize-1) >> 24, 0xff, 0xff);
   getCanInstance4Comm() << c_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
 
@@ -963,7 +996,7 @@ void ISOTerminal_c::finalizeUploading ()
 void ISOTerminal_c::indicateObjectPoolCompletion ()
 {
   // successfully sent, so now send out the "End of Object Pool Message" and wait for response!
-  c_data.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+  c_data.setExtCanPkg8(7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                       18, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
   getCanInstance4Comm() << c_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
   en_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
@@ -990,9 +1023,10 @@ bool ISOTerminal_c::processMsg()
 //  INTERNAL_DEBUG_DEVICE << "Incoming Message: data().isoPgn=" << data().isoPgn() << " - HAL::getTime()=" << HAL::getTime()<<" - data[0]="<<(uint16_t)data().getUint8Data (0)<<"...   ";;
 //  #endif
 
+  /** @todo check for can-pkg-length==8???? */
+
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
   uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
-  bool b_result = false;
 
 #define MACRO_setStateDependantOnError(errByte) \
   ui8_errByte = errByte;
@@ -1016,13 +1050,12 @@ bool ISOTerminal_c::processMsg()
         vtState_a.functionBusy = data().getUint8Data (7);
         // get source address of virtual terminal
         vtSourceAddress = data().isoSa();
-	    if (c_streamer.pc_pool != NULL) {
-	      c_streamer.pc_pool->eventVtStatusMsg();
-	    }
-        return true;
-      default:
-        return false;
+        if (c_streamer.pc_pool != NULL) {
+          c_streamer.pc_pool->eventVtStatusMsg();
+        }
+        break;
     }
+    return true; // VT_TO_GLOBAL is NOT of interest for anyone else!
   }
 
 
@@ -1032,7 +1065,6 @@ bool ISOTerminal_c::processMsg()
   if ( pc_wsMasterIdentItem->getIsoItem() && ((data().isoPgn() & 0x1FFFF) == (uint32_t) (ACKNOWLEDGEMENT_PGN | (pc_wsMasterIdentItem->getIsoItem()->nr()))) )
   { /// on NACK do:
     // for now ignore source address which must be VT of course. (but in case a NACK comes in before the first VT Status Message
-
     // Check if a VT-related message was NACKed. Check embedded PGN for that
     const uint32_t cui32_pgn =  uint32_t (data().getUint8Data(5)) |
                                (uint32_t (data().getUint8Data(6)) << 8) |
@@ -1042,23 +1074,23 @@ bool ISOTerminal_c::processMsg()
       case ECU_TO_VT_PGN:
       case WORKING_SET_MEMBER_PGN:
       case WORKING_SET_MASTER_PGN:
+        /// fake NOT-alive state of VT for now!
         vtState_a.lastReceived = 0; // set VTalive to FALSE, so the queue will be emptied, etc. down below on the state change check.
 
-        // enterSafeState will also be called below!
-        checkVtStateChange();
-
-        /** @todo Maybe re-do address-claim and WSmasterMsg? */
+        #ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
+                              << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
+        #endif
+        checkVtStateChange(); // will also notify application by "eventEnterSafeState"
         break;
     } // switch
+    return true; // (N)ACK for our SA will NOT be of interest for anyone else...
   }
 
 
-  // If VT is not active, don't react on PKGs addressed to us, as VT's not active ;)
-  if (!isVtActive()) return false;
-
-  // If no pool registered, do nothing!
-  if (en_objectPoolState == OPNoneRegistered) return false;
-
+    /// ////////////////////////////////////////////////////////
+   /// we're here now with either LANGUAGE_PGN or VT_TO_ECU_PGN
+  /// ////////////////////////////////////////////////////////
 
         ////////////////////////
        // -->LANGUAGE_PGN<-- //
@@ -1081,8 +1113,19 @@ bool ISOTerminal_c::processMsg()
     if (c_streamer.pc_pool != NULL) {
       c_streamer.pc_pool->eventLanguagePgn(localSettings_a);
     }
+    /** @todo return FALSE so others can react on it? Base_c ?? */
+    /** @todo Use Base_c for getting the VT's language????? */
     return true;
   }
+
+
+  // If VT is not active, don't react on PKGs addressed to us, as VT's not active ;)
+  if (!isVtActive()) return true;
+
+  // If no pool registered, do nothing!
+  if (en_objectPoolState == OPNoneRegistered) return true;
+
+
 
         //////////////////////////////////////////
        // VT to this ECU? -->VT_TO_ECU_PGN<-- ///
@@ -1103,7 +1146,6 @@ bool ISOTerminal_c::processMsg()
                                  data().getUint8Data (6) /* key code */,
                                  data().getUint8Data (0) /* 0 for sk, 1 for button -- matches wasButton? boolean */ );
         }
-        b_result = true;
         break;
       case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
         if (c_streamer.pc_pool) {
@@ -1111,7 +1153,6 @@ bool ISOTerminal_c::processMsg()
                                       data().getUint8Data (4) /* 1 byte value */,
                                       uint32_t( data().getUint8Data (4) ) | (uint32_t( data().getUint8Data (5) ) << 8) | (uint32_t( data().getUint8Data (6) ) << 16)| (uint32_t( data().getUint8Data (7) ) << 24) /* 4 byte value */ );
         }
-        b_result = true;
         break;
       case 0x08:  // Command: "Control Element Function", parameter "VT Input String Value"
         if (c_streamer.pc_pool)
@@ -1124,7 +1165,6 @@ bool ISOTerminal_c::processMsg()
                                                   data().getUint8Data (3) /* total number of bytes */, true, true);
           }
         }
-        b_result = true;
         break;
 
 
@@ -1139,7 +1179,7 @@ bool ISOTerminal_c::processMsg()
 #else
             if (pc_versionLabel != NULL) {
               // Store Version and finalize after "Store Version Response"
-              c_data.setExtCanPkg8(7, 0, 231, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+              c_data.setExtCanPkg8(7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                    208 /* D0 */, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
               getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Store Version
 
@@ -1162,7 +1202,6 @@ bool ISOTerminal_c::processMsg()
         } else {
           // we should be in send mode when receiving an end of objectpool message.. ;)
         }
-        b_result = true;
         break;
 
 #ifdef USE_SIMPLE_AUX_RESPONSE
@@ -1173,10 +1212,7 @@ bool ISOTerminal_c::processMsg()
         data().setIsoSa (pc_wsMasterIdentItem->getIsoItem()->nr());
         data().setIsoPs (vtSourceAddress);
         getCanInstance4Comm() << c_data;
-
-        /// For now simply response without doing anything else with this information. simply ack the assignment!
-
-        b_result=true;
+        /// For now simply respond without doing anything else with this information. simply ack the assignment!
         } break;
 #endif
 
@@ -1187,7 +1223,6 @@ bool ISOTerminal_c::processMsg()
       case 0xA4: // Command: "Command", parameter "Set Audio Volume Response"
       case 0xB2: // Command: "Command", parameter "Delete Object Pool Response"
         MACRO_setStateDependantOnError(2)
-        b_result = true;
         break;
 
       // ### Error field is also on byte 4 (index 3)
@@ -1200,7 +1235,6 @@ bool ISOTerminal_c::processMsg()
       case 0xAD: // Command: "Command", parameter "Change Active Mask Response"
       case 0x92: // Command: "Command", parameter "ESC Response"
         MACRO_setStateDependantOnError(4)
-        b_result = true;
         break;
 
       // ### Error field is also on byte nr. 5 (index 4)
@@ -1211,7 +1245,6 @@ bool ISOTerminal_c::processMsg()
       case 0xAF: // Command: "Command", parameter "Change Attribute Response"
       case 0xB0: // Command: "Command", parameter "Change Priority Response"
         MACRO_setStateDependantOnError(5)
-        b_result = true;
         break;
 
       // ### Error field is also on byte 6 (index 5)
@@ -1220,13 +1253,11 @@ bool ISOTerminal_c::processMsg()
       case 0xB3: // Command: "Command", parameter "Change String Value Response"
       case 0xB4: // Command: "Command", parameter "Change Child Position Response"
         MACRO_setStateDependantOnError(6)
-        b_result = true;
         break;
 
       // ### Error field is on byte 7 (index 6)
       case 0xB1: // Command: "Command", parameter "Change List Item Response"
         MACRO_setStateDependantOnError(7)
-        b_result = true;
         break;
 
       case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
@@ -1240,7 +1271,6 @@ bool ISOTerminal_c::processMsg()
             vtOutOfMemory();
           }
         }
-        b_result = true;
         break;
       case 0xC2: // Command: "Get Technical Data", parameter "Get Number Of Soft Keys Response"
         vtCapabilities_a.skWidth = data().getUint8Data (4);
@@ -1248,14 +1278,12 @@ bool ISOTerminal_c::processMsg()
         vtCapabilities_a.skVirtual = data().getUint8Data (6);
         vtCapabilities_a.skPhysical = data().getUint8Data (7);
         vtCapabilities_a.lastReceivedSoftkeys = HAL::getTime();
-        b_result = true;
         break;
       case 0xC3: // Command: "Get Technical Data", parameter "Get Text Font Data Response"
         vtCapabilities_a.fontSizes = (data().getUint8Data (5) << 1) | 0x01; // 'cause "6x8" is always available!
         vtCapabilities_a.fontSizes += data().getUint8Data (6) << 8; // so we leave out the "Not used" bit!!
         vtCapabilities_a.fontTypes = data().getUint8Data (7);
         vtCapabilities_a.lastReceivedFont = HAL::getTime();
-        b_result = true;
         break;
       case 0xC7: // Command: "Get Technical Data", parameter "Get Hardware Response"
         vtCapabilities_a.hwGraphicType = data().getUint8Data (2);
@@ -1263,7 +1291,6 @@ bool ISOTerminal_c::processMsg()
         vtCapabilities_a.hwWidth = data().getUint8Data (4) + (data().getUint8Data (5) << 8);
         vtCapabilities_a.hwHeight = data().getUint8Data (6) + (data().getUint8Data (7) << 8);
         vtCapabilities_a.lastReceivedHardware = HAL::getTime();
-        b_result = true;
         break;
       case 0xD0: // Command: "Non Volatile Memory", parameter "Store Version Response"
         if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForStoreVersionResponse)) {
@@ -1281,7 +1308,6 @@ bool ISOTerminal_c::processMsg()
               break;
             }
         }
-        b_result = true;
         break;
       case 0xD1: // Command: "Non Volatile Memory", parameter "Load Version Response"
         if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)) {
@@ -1312,7 +1338,6 @@ bool ISOTerminal_c::processMsg()
             }
           }
         }
-        b_result = true;
         break;
     } // switch
 
@@ -1343,7 +1368,7 @@ bool ISOTerminal_c::processMsg()
      **/
   } // VT to this ECU
 
-  return b_result;
+  return true; /** @todo maybe change this when doing multiple vt-clients in one ecu... */
 }
 
 

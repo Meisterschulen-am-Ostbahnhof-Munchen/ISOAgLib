@@ -402,6 +402,15 @@ public:
   */
   uint8_t getSlaveCount (ISOItem_c* rpc_masterItem);
 
+  /**
+    notify that a ws-master is in destruction,
+    so that all slaves can be notified and can set their master to NULL,
+    so they become STANDALONE IsoItems instead then (again).
+    @param xth tells which slave of the working set to get
+    @param rpc_masterItem this is the master of which we want all the slaves
+  */
+  void notifyOnWsMasterLoss (ISOItem_c& rrefc_masterItem);
+
 protected: // Protected methods
   /**
     process system msg with informations which are

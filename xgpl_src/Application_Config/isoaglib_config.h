@@ -761,6 +761,11 @@
 #endif
 
 
+/// auto-define USE_WORKING_SET dependend on the parts that need it!
+#if defined (USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER)
+  #define USE_WORKING_SET
+#endif
+
 /** default values for global masks
     only use first 3 bits (PRI)
     for CAN 2.0A 11bit

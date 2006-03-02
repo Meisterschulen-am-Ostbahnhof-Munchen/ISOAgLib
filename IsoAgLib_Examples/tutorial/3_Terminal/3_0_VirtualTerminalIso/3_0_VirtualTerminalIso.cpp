@@ -433,6 +433,9 @@ void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
   // Nothing done here for now. (Commands being sent out to the VT are ignored by IsoTerminalServer_c)
   // As it's a simple Tutorial example there's nothing in real danger!
   // But take care of this function if using for real!!!
+  #ifdef DEBUG
+  std::cout << "-->eventEnterSafeState<--\n";
+  #endif
 }
 
 void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t /*rui8_unparsedBytes*/, bool /*b_isFirst*/, bool b_isLast)
@@ -447,7 +450,7 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, 
     }
     iVtObjectOSresonible.setValueCopy(c_buffer.c_str());
     #ifdef DEBUG
-    std::cout << "String: " << ch_buffer << ".\n";
+    std::cout << "String: " << c_buffer << ".\n";
     fflush(0);
     #endif
   }

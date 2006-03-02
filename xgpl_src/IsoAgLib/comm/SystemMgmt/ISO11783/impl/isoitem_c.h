@@ -336,17 +336,27 @@ public:
    */
   bool sendSaClaim();
 
+#ifdef USE_WORKING_SET
   // returns NULL if standalone, SELF if it is master itself, or the master ISOItem otherwise.
   ISOItem_c* getMaster () const;
+
+  // attach to a master
+  void setMaster ( ISOItem_c* rpc_masterItem );
 
   // check if this item is a master ( i.e. the master pointer points to itself )
   bool isMaster () const { return ( this == pc_masterItem )?true:false;};
 
-  /** check if item has claimed address */
-  bool isClaimedAddress() const { return wsClaimedAddress; };
+  // this triggers that the ws-master/slave maint. stuff is getting sent out!
+  // if it is already in between sending, it is started all over again, we won't wait and re-send from beginning..
+  void triggerWsAnnounce () { i8_slavesToClaimAddress = -1; }
 
-  // attach to a master
-  void setMaster ( ISOItem_c* rpc_masterItem );
+  /** check if item has announced its working-set description
+    * Only returns TRUE if the Item has also finished AddressClaiming!
+    * Note: If this is NOT a workingset-master, then TRUE is returned here.
+    * BUT: This function should not be called if it's not a master anyway! */
+  bool isClaimedAndWsAnnounced() const { return isMaster() ? (itemState(IState_c::ClaimedAddress) && (i8_slavesToClaimAddress==0))
+                                                           : (itemState(IState_c::ClaimedAddress)); };
+#endif
 
 protected:
 // Protected Methods
@@ -370,20 +380,20 @@ private:
   /** EEPROM adress to store actual SA to use for next run */
   uint16_t ui16_saEepromAdr;
 
+#ifdef USE_WORKING_SET
   /**
     pointer to the master ISOItem_c (if == this, then i'm master myself)
     NULL if not part of a master/slave setup
   */
   ISOItem_c* pc_masterItem;
 
-  #ifdef USE_ISO_TERMINAL
-  int8_t slavesToClaimAddress;
-
-  bool b_oldVtState;
-  #endif
-
-protected:
-  bool wsClaimedAddress;
+  /** i8_slavesToClaimAddress
+    * == -1  waiting to announce WS-master message
+    *  >  0  still so many slaves to announce..
+    * ==  0  announcing complete!
+    */
+  int8_t i8_slavesToClaimAddress;
+#endif
 };
 
 }

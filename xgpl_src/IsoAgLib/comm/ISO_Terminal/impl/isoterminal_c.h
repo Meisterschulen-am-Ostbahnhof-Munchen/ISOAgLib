@@ -490,6 +490,9 @@ private:
   */
   void singletonInit();
 
+  void doStart();
+  void doStop();
+
   void checkVtStateChange();
 
   /** sends "Get Memory" to start uploading process... */
@@ -516,7 +519,7 @@ private: // attributes
   /** register is receive filters are already created */
   bool b_receiveFilterCreated;
 
-  bool vtAliveNew;
+  bool b_vtAliveCurrent;
 
   bool b_checkSameCommand;
 
@@ -557,7 +560,7 @@ private: // attributes
   uploadCommandState_t en_uploadCommandState; // state only used if en_uploadType == "UploadCommand"
   uploadPoolState_t en_uploadPoolState;       // state only used if en_uploadType == "UploadPool"
 
-  uint32_t ui32_filterAckPGN;
+  uint32_t ui32_filterAckPGN; // if NOT 0, it was inserted, so it has to be deleted then at close...
 
   uint32_t ui32_uploadTimestamp;
   uint32_t ui32_uploadTimeout;
@@ -571,6 +574,8 @@ private: // attributes
 
   uint16_t ui16_inputStringId;
   uint8_t ui8_inputStringLength;
+
+  int32_t i32_nextWsMaintenanceMsg;
 
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front

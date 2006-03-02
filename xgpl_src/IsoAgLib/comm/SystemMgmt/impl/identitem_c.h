@@ -154,7 +154,7 @@ public:
       #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
       ,IState_c::protoOrder_t ren_protoOrder = IState_c::DinOnly
       #endif
-      #ifdef USE_ISO_11783
+      #ifdef USE_WORKING_SET
       ,int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL
       #endif
       , int ri_singletonVecKey = 0
@@ -181,7 +181,9 @@ public:
       const uint8_t* rpb_name,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa = 254, uint16_t rui16_saEepromAdr = 0xFFFF,
+      #ifdef USE_WORKING_SET
       int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL,
+      #endif
       int ri_singletonVecKey = 0
       );
 #endif
@@ -205,7 +207,9 @@ public:
   IdentItem_c(DevKey_c* rpc_devKey,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr = 0xFFFF,
+      #ifdef USE_WORKING_SET
       int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL,
+      #endif
       int ri_singletonVecKey = 0
       );
   /**
@@ -232,8 +236,11 @@ public:
   */
   IdentItem_c(DevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0);
+    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+    #ifdef USE_WORKING_SET
+    int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL,
+    #endif
+    int ri_singletonVecKey = 0);
   /**
     constructor for ISO identity, which starts address claim for this identity
     @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
@@ -258,8 +265,11 @@ public:
   */
   IdentItem_c(DevKey_c* rpc_devKey,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0);
+    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+    #ifdef USE_WORKING_SET
+    int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL,
+    #endif
+    int ri_singletonVecKey = 0);
 
   /**
     set this Ident as Working Set Master, create all ISOItem_c slave items
@@ -311,7 +321,9 @@ public:
       const uint8_t* rpb_name,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa = 254, uint16_t rui16_saEepromAdr = 0xFFFF,
+      #ifdef USE_WORKING_SET
       int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL,
+      #endif
       int ri_singletonVecKey = 0
       );
   /**
@@ -332,7 +344,9 @@ public:
   void start(DevKey_c* rpc_devKey,
       const uint8_t* rpb_isoName,
       uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr = 0xFFFF,
+      #ifdef USE_WORKING_SET
       int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL,
+      #endif
       int ri_singletonVecKey = 0
       );
   /**
@@ -359,8 +373,11 @@ public:
   */
   void start(DevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0);
+    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+    #ifdef USE_WORKING_SET
+    int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL,
+    #endif
+    int ri_singletonVecKey = 0);
   /**
     explicit start of activity for ISO identity, which starts address claim for this identity
     @param rpc_devKey pointer to the DEV_KEY variable of this identity, which is resident somewhere else (f.e. main() task)
@@ -385,8 +402,11 @@ public:
   */
   void start(DevKey_c* rpc_devKey,
     bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-    uint8_t rb_ecuInst, int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL, int ri_singletonVecKey = 0);
+    uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+    #ifdef USE_WORKING_SET
+    int8_t ri8_slaveCount = -1, const DevKey_c* rpc_slaveIsoNameList = NULL,
+    #endif
+    int ri_singletonVecKey = 0);
 #endif
 
 
@@ -467,20 +487,22 @@ public:
     #endif
   );
 
+  /** check if the ident has claimed address */
+  bool isClaimedAddress( void ) const { return itemState (IState_c::ClaimedAddress); }
 
 protected:
-/**
-  init local Ident Instance and set all internal values of an ident item with one function call
-  @param rpc_devKey pointer to the variable with the DEV_KEY code of this item (default no timestamp setting)
-  @param rpb_name DIN name (uint8_t[7] array) of this item ( NULL == only ISO )
-  @param rpb_isoName potiner to 64bit ISO11783 NAME string ( NULL == only DIN )
-  @param rb_wantedSa preselected source adress (SA) of the ISO item (fixed SA or last time
-      SA for self conf ISO device) (default 254 for free self-conf)
-  @param rui16_saEepromAdr adress in EEPROM, where the according SA is stored
-      (default 0xFFFF for NO EEPROM store)
-  @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
-*/
-void init(DevKey_c* rpc_devKey = NULL, const uint8_t* rpb_name = NULL
+  /**
+    init local Ident Instance and set all internal values of an ident item with one function call
+    @param rpc_devKey pointer to the variable with the DEV_KEY code of this item (default no timestamp setting)
+    @param rpb_name DIN name (uint8_t[7] array) of this item ( NULL == only ISO )
+    @param rpb_isoName potiner to 64bit ISO11783 NAME string ( NULL == only DIN )
+    @param rb_wantedSa preselected source adress (SA) of the ISO item (fixed SA or last time
+        SA for self conf ISO device) (default 254 for free self-conf)
+    @param rui16_saEepromAdr adress in EEPROM, where the according SA is stored
+        (default 0xFFFF for NO EEPROM store)
+    @param ri_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  */
+  void init(DevKey_c* rpc_devKey = NULL, const uint8_t* rpb_name = NULL
     #ifdef USE_ISO_11783
     , const uint8_t* rpb_isoName = NULL, uint8_t rb_wantedSa = 254, uint16_t rui16_saEepromAdr = 0xFFFF
     #endif
@@ -548,10 +570,12 @@ private:
   #endif
   #ifdef USE_ISO_11783
     ISOItem_c* pc_isoItem;
+    #ifdef USE_WORKING_SET
     const DevKey_c* pc_slaveIsoNameList;
-    uint16_t ui16_saEepromAdr;
     int8_t i8_slaveCount;
+    #endif
     uint8_t b_wantedSa;
+    uint16_t ui16_saEepromAdr;
   #endif
 };
 

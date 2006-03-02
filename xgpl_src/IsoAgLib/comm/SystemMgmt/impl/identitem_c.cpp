@@ -90,6 +90,7 @@
 #ifdef USE_ISO_11783
   #include "../ISO11783/impl/isomonitor_c.h"
 #endif
+/** @todo remove from here??? \/ */
 #ifdef USE_ISO_TERMINAL
   #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 #endif
@@ -116,7 +117,7 @@ IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
     #if defined( USE_ISO_11783 ) && defined( USE_DIN_9684 )
     ,IState_c::protoOrder_t ren_protoOrder
     #endif
-    #if defined( USE_ISO_11783 )
+    #if defined( USE_WORKING_SET )
     ,int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList
     #endif
     , int ri_singletonVecKey )
@@ -125,8 +126,11 @@ IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
     , pc_memberItem( NULL )
   #endif
   #ifdef USE_ISO_11783
-    , pc_isoItem( NULL ), pc_slaveIsoNameList ( rpc_slaveIsoNameList )
-    , ui16_saEepromAdr( 0xFFFF ), i8_slaveCount ( ri8_slaveCount ), b_wantedSa( 254 )
+    , pc_isoItem( NULL )
+    #ifdef USE_WORKING_SET
+    , pc_slaveIsoNameList ( rpc_slaveIsoNameList ), i8_slaveCount ( ri8_slaveCount )
+    #endif
+    , b_wantedSa( 254 ), ui16_saEepromAdr( 0xFFFF )
   #endif
 { // check if called with complete default parameters -> don't start address claim in this case
   if ( rpc_devKey == NULL )
@@ -176,10 +180,15 @@ IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
     const uint8_t* rpb_name,
     const uint8_t* rpb_isoName,
     uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr,
+    #ifdef USE_WORKING_SET
     int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
+    #endif
     int ri_singletonVecKey )
-  : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey ), pc_memberItem( NULL ),
-    pc_isoItem( NULL ), pc_slaveIsoNameList ( rpc_slaveIsoNameList ), ui16_saEepromAdr( rui16_saEepromAdr ), i8_slaveCount ( ri8_slaveCount ), b_wantedSa( rb_wantedSa )
+  : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey ), pc_memberItem( NULL ), pc_isoItem( NULL ),
+    #ifdef USE_WORKING_SET
+    pc_slaveIsoNameList ( rpc_slaveIsoNameList ), i8_slaveCount ( ri8_slaveCount ),
+    #endif
+    b_wantedSa( rb_wantedSa ), ui16_saEepromAdr( rui16_saEepromAdr )
 {
   CNAMESPACE::memset(cpName,'\0',7);
   init( rpc_devKey, rpb_name, rpb_isoName, rb_wantedSa, rui16_saEepromAdr, ri_singletonVecKey );
@@ -205,13 +214,19 @@ IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
 IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
     const uint8_t* rpb_isoName,
     uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr,
+    #ifdef USE_WORKING_SET
     int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
+    #endif
     int ri_singletonVecKey )
   : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey ),
     #ifdef USE_DIN_9684
     pc_memberItem( NULL ),
     #endif
-    pc_isoItem( NULL ), pc_slaveIsoNameList ( rpc_slaveIsoNameList ), ui16_saEepromAdr( rui16_saEepromAdr ), i8_slaveCount ( ri8_slaveCount ), b_wantedSa( rb_wantedSa )
+    pc_isoItem( NULL ),
+    #ifdef USE_WORKING_SET
+    pc_slaveIsoNameList ( rpc_slaveIsoNameList ), i8_slaveCount ( ri8_slaveCount ),
+    #endif
+    b_wantedSa( rb_wantedSa ), ui16_saEepromAdr( rui16_saEepromAdr )
 {
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
@@ -242,13 +257,20 @@ IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
 */
 IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
   bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-  uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
+  uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+  #ifdef USE_WORKING_SET
+  int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
+  #endif
+  int ri_singletonVecKey )
   : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey ),
     #ifdef USE_DIN_9684
     pc_memberItem( NULL ),
     #endif
-    pc_isoItem( NULL ), pc_slaveIsoNameList ( rpc_slaveIsoNameList ), ui16_saEepromAdr( rui16_saEepromAdr ), i8_slaveCount ( ri8_slaveCount ), b_wantedSa( rb_wantedSa )
+    pc_isoItem( NULL ),
+    #ifdef USE_WORKING_SET
+    pc_slaveIsoNameList ( rpc_slaveIsoNameList ), i8_slaveCount ( ri8_slaveCount ),
+    #endif
+    b_wantedSa( rb_wantedSa ), ui16_saEepromAdr( rui16_saEepromAdr )
 
 {
   #ifdef USE_DIN_9684
@@ -289,13 +311,20 @@ IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
 */
 IdentItem_c::IdentItem_c(DevKey_c* rpc_devKey,
   bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-  uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
+  uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+  #ifdef USE_WORKING_SET
+  int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
+  #endif
+  int ri_singletonVecKey )
   : BaseItem_c(System_c::getTime(), IState_c::Active, ri_singletonVecKey ),
     #ifdef USE_DIN_9684
     pc_memberItem( NULL ),
     #endif
-    pc_isoItem( NULL ), pc_slaveIsoNameList ( rpc_slaveIsoNameList ), ui16_saEepromAdr( rui16_saEepromAdr ), i8_slaveCount ( ri8_slaveCount ), b_wantedSa( rb_wantedSa )
+    pc_isoItem( NULL ),
+    #ifdef USE_WORKING_SET
+    pc_slaveIsoNameList ( rpc_slaveIsoNameList ), i8_slaveCount ( ri8_slaveCount ),
+    #endif
+    b_wantedSa( rb_wantedSa ), ui16_saEepromAdr( rui16_saEepromAdr )
 {
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
@@ -356,15 +385,19 @@ void IdentItem_c::start(DevKey_c* rpc_devKey,
     const uint8_t* rpb_name,
     const uint8_t* rpb_isoName,
     uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr,
+    #ifdef USE_WORKING_SET
     int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
+    #endif
     int ri_singletonVecKey )
 {
   close(); // if this item has already claimed an address -> revert this first
   BaseItem_c::set( System_c::getTime(), ri_singletonVecKey );
   b_wantedSa = rb_wantedSa;
   ui16_saEepromAdr = rui16_saEepromAdr;
+  #ifdef USE_WORKING_SET
   i8_slaveCount = ri8_slaveCount;
   pc_slaveIsoNameList = rpc_slaveIsoNameList;
+  #endif
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
@@ -388,15 +421,19 @@ void IdentItem_c::start(DevKey_c* rpc_devKey,
 void IdentItem_c::start(DevKey_c* rpc_devKey,
     const uint8_t* rpb_isoName,
     uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr,
+    #ifdef USE_WORKING_SET
     int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
+    #endif
     int ri_singletonVecKey )
 {
   close(); // if this item has already claimed an address -> revert this first
   BaseItem_c::set( System_c::getTime(), ri_singletonVecKey );
   b_wantedSa = rb_wantedSa;
   ui16_saEepromAdr = rui16_saEepromAdr;
+  #ifdef USE_WORKING_SET
   i8_slaveCount = ri8_slaveCount;
   pc_slaveIsoNameList = rpc_slaveIsoNameList;
+  #endif
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
@@ -426,15 +463,20 @@ void IdentItem_c::start(DevKey_c* rpc_devKey,
 */
 void IdentItem_c::start(DevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
   bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-  uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
+  uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+  #ifdef USE_WORKING_SET
+  int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
+  #endif
+  int ri_singletonVecKey )
 {
   close(); // if this item has already claimed an address -> revert this first
   BaseItem_c::set( System_c::getTime(), ri_singletonVecKey );
   b_wantedSa = rb_wantedSa;
   ui16_saEepromAdr = rui16_saEepromAdr;
+  #ifdef USE_WORKING_SET
   i8_slaveCount = ri8_slaveCount;
   pc_slaveIsoNameList = rpc_slaveIsoNameList;
+  #endif
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
@@ -473,15 +515,20 @@ void IdentItem_c::start(DevKey_c* rpc_devKey, const uint8_t* rpb_dinName,
 */
 void IdentItem_c::start(DevKey_c* rpc_devKey,
   bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rb_func, uint16_t rui16_manufCode,
-  uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst,
-  uint8_t rb_ecuInst, int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList, int ri_singletonVecKey )
+  uint32_t rui32_serNo, uint8_t rb_wantedSa, uint16_t rui16_saEepromAdr, uint8_t rb_funcInst, uint8_t rb_ecuInst,
+  #ifdef USE_WORKING_SET
+  int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList,
+  #endif
+  int ri_singletonVecKey )
 {
   close(); // if this item has already claimed an address -> revert this first
   BaseItem_c::set( System_c::getTime(), ri_singletonVecKey );
   b_wantedSa = rb_wantedSa;
   ui16_saEepromAdr = rui16_saEepromAdr;
+  #ifdef USE_WORKING_SET
   i8_slaveCount = ri8_slaveCount;
   pc_slaveIsoNameList = rpc_slaveIsoNameList;
+  #endif
   #ifdef USE_DIN_9684
   CNAMESPACE::memset(cpName,'\0',7);
   #endif
@@ -692,8 +739,10 @@ bool IdentItem_c::timeEventPreAddressClaim( void ) {
     pc_isoItem->setItemState
       (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim));
 
+    #ifdef USE_WORKING_SET
     // insert all slave ISOItem objects (of not yet there) and set me as their master
     setToMaster ();
+    #endif
 
     pc_isoItem->timeEvent();
 }
@@ -744,7 +793,8 @@ bool IdentItem_c::timeEventActive( void ) {
     if ( (pc_memberItem != NULL) && ( pc_memberItem->devKey() == devKey() ) && ( pc_memberItem->itemState(IState_c::Local) ) )
     {
       bool b_oldAddressClaimState = pc_memberItem->itemState(IState_c::ClaimedAddress);
-      #ifdef USE_ISO_11783
+      /** @todo Check! This code can only be reached when DIN & ISO! \/ */
+      #ifdef USE_WORKING_SET
       // check always for correct master state
       // ( some conflicts with other remote BUS nodes could cause an overwrite
       //    of the master node or of one of the slave node -> this function
@@ -816,11 +866,13 @@ bool IdentItem_c::timeEventActive( void ) {
     {
       if (pc_isoItem->itemState(IState_c::Local)) {
         bool b_oldAddressClaimState = pc_isoItem->itemState(IState_c::ClaimedAddress);
+        #ifdef USE_WORKING_SET
         // check always for correct master state
         // ( some conflicts with other remote BUS nodes could cause an overwrite
         //    of the master node or of one of the slave node -> this function
         //     resets everything to a well defined master->slave state )
         if ( i8_slaveCount >= 0 ) setToMaster();
+        #endif
         pc_isoItem->timeEvent();
         // check if DINItem_c reports now to have finished address claim and store it in Ident_Item
         if ( (pc_isoItem->itemState(IState_c::ClaimedAddress))
@@ -869,8 +921,10 @@ bool IdentItem_c::timeEventActive( void ) {
           pc_isoItem->setItemState
             (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim));
 
+          #ifdef USE_WORKING_SET
           // insert all slave ISOItem objects (if not yet there) and set me as their master
           setToMaster ();
+          #endif
 
           pc_isoItem->timeEvent();
         }
@@ -947,7 +1001,7 @@ bool IdentItem_c::equalNr(uint8_t rui8_nr
   return b_result;
 };
 
-#ifdef USE_ISO_11783
+#ifdef USE_WORKING_SET
 void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const DevKey_c* rpc_slaveIsoNameList)
 {
   ISOItem_c* pc_slaveIsoItem;

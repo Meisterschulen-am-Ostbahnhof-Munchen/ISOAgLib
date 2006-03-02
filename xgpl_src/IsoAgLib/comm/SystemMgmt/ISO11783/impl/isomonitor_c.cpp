@@ -643,14 +643,13 @@ bool ISOMonitor_c::deleteIsoMemberDevKey(const DevKey_c& rc_devKey)
   if (existIsoMemberDevKey(rc_devKey))
   { // set correct state
 
+    #ifdef USE_WORKING_SET
     // Are we deleting a WorkingSetMaster?
-    if ((*pc_isoMemberCache).getMaster() != NULL) {
-      // Tell all WorkingSet-Slaves that they're no more Slaves but only standalones...
-      for (Vec_ISO::iterator pc_iter=vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
-      {
-        if ((*pc_iter).getMaster() == &(*pc_isoMemberCache)) (*pc_iter).setMaster(NULL);
-      }
+    if (pc_isoMemberCache->isMaster())
+    { // yes, so notify all slaves that they're now standalone!
+      notifyOnWsMasterLoss (*pc_isoMemberCache);
     }
+    #endif
 
     // erase it from list (existIsoMemberDevKey sets pc_isoMemberCache to the wanted item)
     vec_isoMember.erase(pc_isoMemberCache);
@@ -666,7 +665,6 @@ bool ISOMonitor_c::deleteIsoMemberDevKey(const DevKey_c& rc_devKey)
       << "\r\n\r\n";
     #endif
     pc_isoMemberCache = vec_isoMember.begin();
-
     return true;
   }
   else
@@ -880,7 +878,6 @@ bool ISOMonitor_c::processMsg(){
   int32_t i32_reqPgn;
 
   ISOItem_c *pc_item = NULL,
-            *pc_itemMaster = NULL,
             *pc_localItemWithSameSa = NULL;
 
   // Handle DESTINATION PGNs
@@ -968,14 +965,17 @@ bool ISOMonitor_c::processMsg(){
   // Handle NON-DESTINATION PGNs
   switch ((data().isoPgn() /* & 0x1FFFF */ )) // isoPgn is already "& 0x1FFFF" !
   {
+    #ifdef USE_WORKING_SET
     case WORKING_SET_MASTER_PGN: // working set master
       b_processed = true;
       if (existIsoMemberNr(data().isoSa()))
       { // ISOItem_c with same SA has to exist!
-        pc_itemMaster = &(isoMemberNr(data().isoSa()));
-        pc_itemMaster->setMaster (pc_itemMaster); // set item as mas
-        // IGNORE THAT WE GOT x MEMBERS FOR NOW
-        // LATER WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
+        ISOItem_c *pc_itemMaster = &(isoMemberNr(data().isoSa()));
+        pc_itemMaster->setMaster (pc_itemMaster); // set item as master
+        /** @todo IGNORE THAT WE GOT x MEMBERS FOR NOW
+            LATER WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
+            for timings see Iso11783-Part1
+          */
       }
       else
       {
@@ -985,7 +985,7 @@ bool ISOMonitor_c::processMsg(){
     case WORKING_SET_MEMBER_PGN: // working set member
       if (existIsoMemberNr(data().isoSa()))
       { // ISOItem_c with same SA exists (THE SA IS THE MASTER!)
-        pc_itemMaster = &(isoMemberNr(data().isoSa()));
+        ISOItem_c *pc_itemMaster = &(isoMemberNr(data().isoSa()));
         // the working set master places the NAME field of each children
         // in the data part of this message type
         pc_item = &(isoMemberDevKey(data().devKey()));
@@ -997,6 +997,7 @@ bool ISOMonitor_c::processMsg(){
         // shouldn't happen!
       }
       break;
+    #endif
     default:
       break;
   } // end switch for NON-DESTINATION pgn
@@ -1004,7 +1005,7 @@ bool ISOMonitor_c::processMsg(){
   return b_processed; // return if msg was processed by ISOMonitor_c
 }
 
-
+#ifdef USE_WORKING_SET
 uint8_t ISOMonitor_c::getSlaveCount (ISOItem_c* rpc_masterItem)
 {
   uint8_t slaveCount;
@@ -1041,6 +1042,19 @@ ISOItem_c* ISOMonitor_c::getSlave (uint8_t index, ISOItem_c* rpc_masterItem)
   return NULL;
 }
 
-
+void
+ISOMonitor_c::notifyOnWsMasterLoss (ISOItem_c& rrefc_masterItem)
+{
+  // iterate through all items and check if they are slaves to the given master
+  for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end(); pc_iter++)
+  { // ALSO notify the master, as this function is NOT ONLY called from ~ISOItem_c(), but also
+    // intentionally from vtDocument_c to get the document NACKed!
+    if (pc_iter->getMaster() == (&rrefc_masterItem))
+    { // this ISOItem has the given MasterIsoItem as Master, so set it free now ;)
+      pc_iter->setMaster (NULL); // for ALL WS-Members (Master AND Slave)
+    }
+  }
+}
+#endif
 
 } // end of namespace __IsoAgLib
