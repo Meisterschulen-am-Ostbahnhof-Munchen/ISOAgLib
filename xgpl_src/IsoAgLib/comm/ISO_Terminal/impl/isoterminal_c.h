@@ -268,17 +268,6 @@ public:
   enum uploadCommandState_t { UploadCommandWaitingForCommandResponse, UploadCommandTimedOut /*, UploadCommandFailed*/ };
   // UploadCommandFailed is obsolete, as we're not retrying and error-responses any more.
 
-  /** struct of the data contained in the "VT Status Message" */
-  typedef struct vtState_s {
-    uint32_t lastReceived; /* Timestamp of last reception */
-
-    /* the following data is extracted from one "VT Status Message" */
-    uint8_t  saOfActiveWorkingSetMaster;
-    uint16_t dataAlarmMask;
-    uint16_t softKeyMask;
-    uint8_t  busyCodes;
-    uint8_t  functionBusy;
-  } vtState_s;
 
   /**
     struct that stores the "Get Number Of Soft Keys Response",
@@ -397,7 +386,7 @@ public:
   uint32_t           getVtHardwareDimension ()       { return (uint32_t) (vtCapabilities_a.hwWidth); };
   uint16_t           getVtFontSizes ()               { return vtCapabilities_a.fontSizes; };
   vtCapabilities_s*  getVtCapabilities ()            { return &vtCapabilities_a; };
-  vtState_s*         getVtState ()                   { return &vtState_a; };
+  const IsoAgLib::vtState_s* getVtState () const     { return &vtState_a; };
   localSettings_s*   getLocalSettings ()             { return &localSettings_a; };
   uint32_t           getUploadBufferSize ();
   uint8_t            getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour) {
@@ -535,7 +524,7 @@ private: // attributes
   uint8_t vtSourceAddress;
 
   /** stores the last "VT Status Message" */
-  vtState_s vtState_a;
+  IsoAgLib::vtState_s vtState_a;
 
   /** gets set as soon as the responses for the requests arrive */
   vtCapabilities_s vtCapabilities_a;

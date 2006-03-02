@@ -109,7 +109,7 @@ typedef __IsoAgLib::ISOTerminal_c::vtCapabilities_s ivtCapabilities_s;
   uint16_t getVtObjectPoolSoftKeyWidth () { return ISOTerminal_c::getVtObjectPoolSoftKeyWidth (); };
   uint16_t getVtObjectPoolSoftKeyHeight () { return ISOTerminal_c::getVtObjectPoolSoftKeyHeight (); };
 
-  vtState_s* getVtState () { return ISOTerminal_c::getVtState (); };
+  const vtState_s* getVtState () const { return ISOTerminal_c::getVtState (); };
 
   uint32_t getUploadBufferSize () { return ISOTerminal_c::getUploadBufferSize (); };
 
