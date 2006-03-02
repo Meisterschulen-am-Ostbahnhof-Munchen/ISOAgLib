@@ -1081,6 +1081,7 @@ bool ISOTerminal_c::processMsg()
         INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
                               << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
         #endif
+        pc_wsMasterIdentItem->getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
         checkVtStateChange(); // will also notify application by "eventEnterSafeState"
         break;
     } // switch
