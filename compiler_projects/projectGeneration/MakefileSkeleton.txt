@@ -1,6 +1,7 @@
 ####### Some Standard Rules
 CC       = gcc
 CXX      = g++
+STRIP	 = strip
 LEX      = flex
 YACC     = yacc
 CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
