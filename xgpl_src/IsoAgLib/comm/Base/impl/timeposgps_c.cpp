@@ -715,7 +715,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
     // check if we want to process the information
     if (
-        ( !checkImplementMode() ) // I'm the sender
+        ( checkMode(IsoAgLib::IdentModeTractor) ) // I'm the sender
         || ( // one of the following conditions must be true
           (c_sendGpsDevKey != c_tempDevKey) // actual sender different to last
         && (c_sendGpsDevKey.isSpecified() ) // last sender has correctly claimed address member
