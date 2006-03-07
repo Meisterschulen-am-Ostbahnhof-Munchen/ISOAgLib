@@ -22,6 +22,9 @@ echo $CMDLINE | sh
 CMDLINE=`echo "perl -p -i -e 's/([^0-9])[\-0-9\.]*(\.zip<\/td>)/\1-$RELEASE_VERION\2/g' readme.txt"`
 echo $CMDLINE | sh
 
+# C) remove old DOC
+find $ISOAGLIB_ROOT -name "*.html" -o -name "*.png" -o -name "*.md5" -o -name "*.map" -exec rm -f {} \;
+
 
 # B) Create Doc
 doxygen Doxyfile
