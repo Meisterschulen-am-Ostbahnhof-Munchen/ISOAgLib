@@ -87,12 +87,6 @@
  ***************************************************************************/
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#ifdef USE_DIN_9684
-  #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
-#endif
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#endif
 #include "tracpto_c.h"
 #include "tracgeneral_c.h"
 
@@ -121,12 +115,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** config the TracPTO_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_implementMode implement mode (true) or tractor mode (false)
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
    */
-  void TracPTO_c::config(const DevKey_c* rpc_devKey, bool rb_implementMode)
+  void TracPTO_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_IdentMode)
   {
     //call config for handling which is base data independent
-    BaseCommon_c::config(rpc_devKey, rb_implementMode);
+    BaseCommon_c::config(rpc_devKey, rt_IdentMode);
     // set the member base msg value vars to NO_VAL codes
     i16_ptoFront = i16_ptoRear = NO_VAL_16S;
 
@@ -156,7 +150,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // check for different base data types whether the previously
     // sending node stopped sending -> other nodes can now step in
-    if ( ( !checkImplementMode()               )
+    if ( ( checkMode(IsoAgLib::IdentModeTractor)  )
       && ( getSenderDevKey().isSpecified() ) )
     { // previously a node sent PTO data
       if ( ( ( ci32_now - i32_lastPtoFront ) < 3000 ) && ( ( ci32_now - i32_lastPtoRear ) < 3000 ) )
@@ -226,7 +220,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
     if (  ( lastedTimeSinceUpdate()  >= 100 )
-      && ( !checkImplementMode()                            ) )
+      &&  checkMode(IsoAgLib::IdentModeTractor) )
     { // send actual base2 data
       setSenderDevKey( *getDevKey() );
       data().setIdent((0x15<<4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
@@ -350,7 +344,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool TracPTO_c::isoTimeEvent( void )
+  bool TracPTO_c::isoTimeEvent(  )
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // retreive the actual dynamic sender no of the member with the registered devKey
@@ -360,7 +354,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setIsoSa(b_sa);
 
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
-    if ( ((ci32_now - i32_lastPtoFront ) >= 100) && checkImplementMode()  )
+    if ( ((ci32_now - i32_lastPtoFront ) >= 100) && checkMode(IsoAgLib::IdentModeTractor)  )
     { // it's time to send Base2
       setSenderDevKey(*getDevKey());
       CANIO_c& c_can = getCanInstance4Comm();

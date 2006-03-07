@@ -86,12 +86,6 @@
  ***************************************************************************/
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-#ifdef USE_DIN_9684
-  #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
-#endif
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#endif
 #include <IsoAgLib/comm/Base/itracgeneral_c.h>
 #include "tracmove_c.h"
 
@@ -119,12 +113,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** config the TracMove_c object after init -> set pointer to devKey and
       config send/receive of a moving msg type
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_implementMode implement(true) mode or tractor(false) mode
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracMove_c::config(const DevKey_c* rpc_devKey, bool rb_implementMode)
+  void TracMove_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
     //call config for handling which is base data independent
-    BaseCommon_c::config(rpc_devKey, rb_implementMode);
+    BaseCommon_c::config(rpc_devKey, rt_identMode);
 
     // set the member msg value vars to NO_VAL codes
     i16_speedReal = i16_speedTheor = NO_VAL_16S;
@@ -319,7 +313,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   bool TracMove_c::isoTimeEvent( )
   {
     if ( ( lastedTimeSinceUpdate()  >= 100 )
-          && !checkImplementMode()         )
+          && checkMode(IsoAgLib::IdentModeTractor)         )
     { // it's time to send moving information
       isoSendMovingUpdate();
     }

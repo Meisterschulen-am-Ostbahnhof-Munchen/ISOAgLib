@@ -90,7 +90,6 @@
 
 #include "../ibasetypes.h"
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
 
 #include <ctime>
 
@@ -127,16 +126,16 @@ public: // Public methods
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_implementMode implement mode (true) or tractor mode (false)
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void init(const DevKey_c* rpc_devKey = NULL, bool rb_implementMode = false );
+  void init(const DevKey_c* rpc_devKey = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
   /** config the TracGeneral_c object after init -> set pointer to devKey and
       config send/receive of different general base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_implementMode implement mode (true) or tractor mode (false)
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void config(const DevKey_c* rpc_devKey, bool rb_implementMode);
+  void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
 
   /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c

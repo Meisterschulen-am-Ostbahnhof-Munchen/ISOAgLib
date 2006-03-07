@@ -151,6 +151,10 @@ namespace IsoAgLib {
     BaseDataGroupAll = 0x3F  ///< Combination of all possible base data
   } BaseDataGroup_t;
 
+  typedef enum {
+    IdentModeTractor = 0,
+    IdentModeImplement = 1
+  } IdentMode_t;
 }; // end namespace
 
 

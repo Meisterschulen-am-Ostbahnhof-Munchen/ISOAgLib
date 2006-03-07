@@ -77,13 +77,28 @@ namespace IsoAgLib {
   class iTracPTO_c : private __IsoAgLib::TracPTO_c {
   public:
     // Public methods
-    /** config the Base_c object after init -> set pointer to devKey and
-        config send/receive of different base msg types
-        @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rb_implementMode implement mode (true) or tractor mode (false)
-     */
-    void config(const iDevKey_c* rpc_devKey, bool rb_implementMode )
-    {TracPTO_c::config(rpc_devKey, rb_implementMode);};
+  /**
+    DEPRECATED CONFIG FUNCTION - PLEASE DO NOT USE ANY MORE AS THIS FUNCTION WILL BE REMOVED SOON
+    config the Base_c object after init -> set pointer to devKey and
+    config send/receive of different base msg types
+    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rb_implementMode implement mode (true) or tractor mode (false)!!!
+  */
+  void config(const iDevKey_c* rpc_devKey, bool rb_implementMode = true)
+  {
+    #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
+    TracPTO_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
+  }
+
+  /**
+    config the Base_c object after init -> set pointer to devKey and
+    config send/receive of different base msg types
+    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+  */
+  void config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
+  { TracPTO_c::config(rpc_devKey, rt_identMode ); }
+
 
 /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */

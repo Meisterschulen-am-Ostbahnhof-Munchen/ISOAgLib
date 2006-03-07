@@ -88,12 +88,6 @@
  ***************************************************************************/
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-#ifdef USE_DIN_9684
-  #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
-#endif
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#endif
 #include "tracgeneral_c.h"
 #include "tracpto_c.h"
 
@@ -123,9 +117,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
       @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_implementMode implement mode (true) or tractor mode (false)
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracGeneral_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
+  void TracGeneral_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
     #ifdef USE_ISO_11783
     if ( checkAlreadyClosed() )
@@ -139,24 +133,24 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     #endif
 
     //call init for handling which is base data independent
-    BaseCommon_c::init(rpc_devKey, rb_implementMode);
+    BaseCommon_c::init(rpc_devKey, rt_identMode);
 
     // set configure values with call for config
     #ifdef USE_DIN_9684
-    configFuel(rpc_devKey, rb_implementMode);
+    configFuel(rpc_devKey, rt_identMode);
     #endif
   };
 
   /** config the TracGeneral_c object after init -> set pointer to devKey and
       config send/receive of different general base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_implementMode implement mode (true) or tractor mode (false)
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracGeneral_c::config(const DevKey_c* rpc_devKey, bool rb_implementMode)
+  void TracGeneral_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   { // set configure values
 
     //call config for handling which is base data independent
-    BaseCommon_c::config(rpc_devKey, rb_implementMode);
+    BaseCommon_c::config(rpc_devKey, rt_identMode);
 
     // set the member base msg value vars to NO_VAL codes
     setHitchRear(NO_VAL_8);
@@ -231,7 +225,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       c_sendFuelDevKey.setUnspecified();
     }
     if (  getDevKey() != NULL
-          && ( (! checkImplementMode()) || b_sendStateFuel                               )
+          && ( checkMode(IsoAgLib::IdentModeTractor) || b_sendStateFuel                               )
           && ( getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true) ) )
     { // there is at least something configured to send
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
@@ -303,7 +297,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
-    if ( ( lastedTimeSinceUpdate() >= 100 ) && ( !checkImplementMode() ) )
+    if ( ( lastedTimeSinceUpdate() >= 100 ) && checkMode(IsoAgLib::IdentModeTractor) )
     { // send actual base2 data
       setSenderDevKey( *getDevKey() );
       data().setIdent((0x16 << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
@@ -410,7 +404,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** check if a received message should be parsed */
   bool TracGeneral_c::checkParseReceivedFuel(const DevKey_c& rrefc_currentSender)const
   {
-    return ( checkImplementMode() // I'm not the sender
+    return ( checkMode(IsoAgLib::IdentModeImplement) // I'm not the sender
             && ( // one of the following conditions must be true
                    (c_sendFuelDevKey == rrefc_currentSender  ) // actual sender equivalent to last
                 || (c_sendFuelDevKey.isUnspecified()         ) // last sender has not correctly claimed address member
@@ -447,7 +441,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracGeneral_c::isoTimeEvent( )
   {
     if ( ( (lastedTimeSinceUpdate() >= 100) )
-      && ( !checkImplementMode()           ) )
+      && ( checkMode(IsoAgLib::IdentModeTractor) ) )
     {// it's time to send hitch information
       isoSendMsg();
     }

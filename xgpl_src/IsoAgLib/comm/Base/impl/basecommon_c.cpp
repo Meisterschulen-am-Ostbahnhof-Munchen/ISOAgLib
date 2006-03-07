@@ -124,9 +124,10 @@ void BaseCommon_c::close( )
     possible errors:
       * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
     @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rb_implementMode implement mode (true) or tractor mode (false)
+    @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+
   */
-void BaseCommon_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
+void BaseCommon_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
 {
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
@@ -147,7 +148,7 @@ void BaseCommon_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
   #endif
 
   // set configure values with call for config
-  config(rpc_devKey, rb_implementMode);
+  config(rpc_devKey, rt_identMode);
 
   // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
@@ -155,18 +156,18 @@ void BaseCommon_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
 
 /** config tractor object after init --> store devKey and mode
     @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rb_implementMode implement(true) mode or tractor(false) mode
+    @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
   */
-void BaseCommon_c::config(const DevKey_c* rpc_devKey, bool rb_implementMode)
+void BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
 {
   // set configure values
   pc_devKey = rpc_devKey; // store the pointer in any case
-  b_implementMode = rb_implementMode;
+  setMode(rt_identMode);
 
   // set the timestamps to 0
   i32_lastMsgReceived = 0;
 
-  if ((rpc_devKey != NULL) && (!rb_implementMode))
+  if ((rpc_devKey != NULL) && checkMode(IsoAgLib::IdentModeTractor))
   { // we are starting in tractor mode - i.e. not-implement-mode
     c_sendDevKey = *rpc_devKey;
   }
@@ -178,7 +179,7 @@ void BaseCommon_c::config(const DevKey_c* rpc_devKey, bool rb_implementMode)
 /** check if a received message should be parsed */
 bool BaseCommon_c::checkParseReceived(const DevKey_c& rrefc_currentSender) const
 {
-  return ( b_implementMode // I'm not the sender
+  return ( checkMode(IsoAgLib::IdentModeImplement) // I'm not the sender
             && ( // one of the following conditions must be true
                    (c_sendDevKey == rrefc_currentSender  ) // actual sender equivalent to last
                 || (c_sendDevKey.isUnspecified()         ) // last sender has not correctly claimed address member
@@ -225,9 +226,6 @@ bool BaseCommon_c::processMsg()
   */
 bool BaseCommon_c::timeEvent()
 {
-  // update time
-  setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
-
   if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
   checkCreateReceiveFilter();
@@ -235,7 +233,7 @@ bool BaseCommon_c::timeEvent()
 
   // check for different base data types whether the previously
   // sending node stopped sending -> other nodes can now step in
-  if ( (!b_implementMode                   )
+  if (  checkMode(IsoAgLib::IdentModeTractor)
         &&(lastedTimeSinceUpdate() >= 3000 )
         && (c_sendDevKey.isSpecified())    )
   { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
@@ -245,12 +243,12 @@ bool BaseCommon_c::timeEvent()
   // check if we are in tractor mode and have a pointer to the sending device key
   #ifdef USE_ISO_11783
   if (  (pc_devKey != NULL                                                   )
-      && (!b_implementMode                                                   )
+      && checkMode(IsoAgLib::IdentModeTractor)
       && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true) )
   #endif
   #ifdef USE_DIN_9684
   if (  (pc_devKey != NULL                                                   )
-      && (!b_implementMode                                                   )
+      && checkMode(IsoAgLib::IdentModeTractor)
       && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true) )
   #endif
   { // stored moving information sending ISO member or DIN member has claimed address

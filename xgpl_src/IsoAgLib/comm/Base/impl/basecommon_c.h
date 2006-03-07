@@ -93,7 +93,7 @@
 #include <IsoAgLib/util/impl/getypos_c.h>
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/canpkg_c.h>
-//#include <IsoAgLib/comm/Base/impl/basepkg_c.h>
+#include <IsoAgLib/comm/Base/ibasetypes.h>
 #ifdef USE_DIN_9684
   #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
 #endif
@@ -123,15 +123,15 @@ namespace __IsoAgLib
         possible errors:
           * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
         @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rb_implementMode implement(true) mode or tractor(false) mode
+        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void init(const DevKey_c*, bool rb_implementMode = true);
+    virtual void init(const DevKey_c*, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
-    /** config tractor object after init --> store devKey and mode
+    /** tractor object after init --> store devKey and mode
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rb_implementMode implement mode (true) or tractor mode (false)
+        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void config(const DevKey_c* rpc_devKey, bool rb_implementMode = true);
+    virtual void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure
@@ -182,28 +182,28 @@ namespace __IsoAgLib
     #endif
     #ifdef USE_DIN_9684
     /** process a DIN9684 base information PGN */
-    virtual bool dinProcessMsg() {return false;};
+    virtual bool dinProcessMsg() {return false;}
     /** send a DIN9684 base information PGN
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    virtual bool dinTimeEvent() {return false;};
+    virtual bool dinTimeEvent() {return false;}
     #endif
 
     /** Retrieve the last update time of the specified information type*/
-    int32_t lastedTimeSinceUpdate() const {return (System_c::getTime() - i32_lastMsgReceived);};
+    int32_t lastedTimeSinceUpdate() const {return (System_c::getTime() - i32_lastMsgReceived);}
     /** Retrieve the time of last update */
-    int32_t lastUpdateTime() const {return i32_lastMsgReceived;};
+    int32_t lastUpdateTime() const {return i32_lastMsgReceived;}
 
     /** check if a received message should be parsed */
     bool checkParseReceived(const DevKey_c& rrefc_currentSender) const;
 
     /** return if you currently are in implement mode or tractor mode*/
-    bool checkImplementMode() const {return b_implementMode;};
+    bool checkMode(IsoAgLib::IdentMode_t rt_identMode) const {return (t_identMode == rt_identMode);}
     #ifdef USE_ISO_11783
     /** check if iso filters have alread been created*/
-    bool checkIsoFilterCreated() const {return b_isoFilterCreated;};
+    bool checkIsoFilterCreated() const {return b_isoFilterCreated;}
     /** set b_isoFilterCreated*/
-    void setIsoFilterCreated() {b_isoFilterCreated = true;};
+    void setIsoFilterCreated() {b_isoFilterCreated = true;}
     /** clear b_isoFilterCreated*/
     void clearIsoFilterCreated() {b_isoFilterCreated = false;}
     #endif
@@ -212,11 +212,11 @@ namespace __IsoAgLib
     deliver type of base msg BABO
     @return BABO code of base msg (bit 4-7 in identifier)
     */
-    uint8_t dataBabo()const {return (CANPkg_c::ident(0) >> 4);};
+    uint8_t dataBabo()const {return (CANPkg_c::ident(0) >> 4);}
     /** check if din filters have alread been created*/
-    bool checkDinFilterCreated() const {return b_dinFilterCreated;};
+    bool checkDinFilterCreated() const {return b_dinFilterCreated;}
     /** set b_dinFilterCreated*/
-    void setDinFilterCreated() {b_dinFilterCreated = true;};
+    void setDinFilterCreated() {b_dinFilterCreated = true;}
     /** clear b_dinFilterCreated*/
     void clearDinFilterCreated() {b_dinFilterCreated = false;}
     #endif
@@ -226,23 +226,21 @@ namespace __IsoAgLib
     /** return a sender which sends commands as a tractor */
     DevKey_c& getSenderDevKey() {return c_sendDevKey;};
     /** return a sender which sends commands as a tractor */
-    const DevKey_c& getSenderDevKeyConst() const {return c_sendDevKey;};
+    const DevKey_c& getSenderDevKeyConst() const {return c_sendDevKey;}
 
 
-    /** operate as implement*/
-    void setImplementMode() {b_implementMode = true;};
-    /** operate as tractor*/
-    void setTractorMode() {b_implementMode = false;};
+    /** set mode to implement or tractor*/
+    void setMode(IsoAgLib::IdentMode_t rt_identMode) {t_identMode = rt_identMode;}
     /** set sender which sends commands as a tractor*/
-    void setSenderDevKey(const DevKey_c& senderDevKey){c_sendDevKey = senderDevKey;};
+    void setSenderDevKey(const DevKey_c& senderDevKey){c_sendDevKey = senderDevKey;}
     /** set sender of a msg*/
-    void setDevKey(const DevKey_c* devKey){pc_devKey = devKey;};
+    void setDevKey(const DevKey_c* devKey){pc_devKey = devKey;}
     /** set last time of data msg [msec]*/
-    void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;};
+    void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
 
   private:
-    /** can be implement mode (true) or tractor mode (false)*/
-    bool b_implementMode;
+    /** can be implement mode or tractor mode*/
+    IsoAgLib::IdentMode_t t_identMode;
     #ifdef USE_DIN_9684
     /** flag to detect, if receive filters for DIN are created */
     bool b_dinFilterCreated;

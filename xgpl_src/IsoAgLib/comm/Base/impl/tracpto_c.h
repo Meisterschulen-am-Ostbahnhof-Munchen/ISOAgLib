@@ -130,9 +130,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** config the Base_c object after init -> set pointer to devKey and
         config send/receive of different base msg types
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rb_implementMode implement mode (true) or tractor mode (false)
+        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    void config(const DevKey_c* rpc_devKey, bool rb_implementMode);
+    void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_IdentMode);
 
     /** destructor for Base_c which has nothing to do */
     virtual ~TracPTO_c() { BaseCommon_c::close();};

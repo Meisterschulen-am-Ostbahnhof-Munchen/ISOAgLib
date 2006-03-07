@@ -89,12 +89,7 @@
 
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
-#ifdef USE_DIN_9684
-  #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
-#endif
 #ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
   // IsoAgLib_Extension
   #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
   #include <IsoAgLib/comm/Multipacket/istream_c.h>
@@ -219,7 +214,7 @@ namespace __IsoAgLib {
       @see CANIO_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
-  bool TimePosGPS_c::timeEvent( void )
+  bool TimePosGPS_c::timeEvent(  )
   {
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
@@ -229,7 +224,7 @@ namespace __IsoAgLib {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
     // check for different base data types whether the previously
-    if ( !checkImplementMode()
+    if ( checkMode(IsoAgLib::IdentModeTractor)
       && ( (lastedTimeSinceUpdate() >= 3000 ) || ( yearUtc() == 0 ) )
       && ( getSenderDevKey().isSpecified()                          ) )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
@@ -262,7 +257,7 @@ namespace __IsoAgLib {
       #ifdef USE_ISO_11783
       if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true))
       { // stored base information sending ISO member has claimed address
-        if ((!checkImplementMode()) || (!checkImplementModeGps()) ) isoTimeEvent();
+        if (checkMode(IsoAgLib::IdentModeTractor) || (!checkImplementModeGps()) ) isoTimeEvent();
       }
       #endif
       #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
@@ -271,7 +266,7 @@ namespace __IsoAgLib {
       #ifdef USE_DIN_9684
       if (getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true))
       { // stored base information sending DIN member has claimed address
-        if (!checkImplementMode()) dinTimeEvent();
+        if (checkMode(IsoAgLib::IdentModeTractor)) dinTimeEvent();
       }
       #endif
     }
@@ -321,11 +316,11 @@ namespace __IsoAgLib {
     possible errors:
       * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
     @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rb_implementMode implement mode (true) or tractor mode (false)
+    @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
   */
-void TimePosGPS_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
+void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
 {
-  BaseCommon_c::init( rpc_devKey, rb_implementMode );
+  BaseCommon_c::init( rpc_devKey, rt_identMode );
 
   i32_latitudeDegree10Minus7 = 0;
   i32_longitudeDegree10Minus7 = 0;
@@ -339,11 +334,11 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
   /** config the TimePosGPS_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_implementMode implement mode (true) or tractor mode (false)!!!
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TimePosGPS_c::config(const DevKey_c* rpc_devKey, bool rb_implementMode)
+  void TimePosGPS_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
-    BaseCommon_c::config(rpc_devKey, rb_implementMode);
+    BaseCommon_c::config(rpc_devKey, rt_identMode);
     // set the member base msg value vars to NO_VAL codes
     bit_calendar.year = 0;
     bit_calendar.month = 1;
@@ -453,7 +448,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
     uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*getDevKey(), true).nr();
 
     if ( ( ( lastedTimeSinceUpdate()) >= 1000)
-      && !checkImplementMode()                 )
+      && checkMode(IsoAgLib::IdentModeTractor)                )
     { // send actual calendar data
       setSenderDevKey( *getDevKey() );
       data().setIdent((0x1F << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
@@ -821,7 +816,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, bool rb_implementMode)
     data().setIsoSa(b_sa);
 
     if ( ( lastedTimeSinceUpdate() >= 1000 )
-      && !checkImplementMode()
+      && checkMode(IsoAgLib::IdentModeTractor)
       && (getDevKey() != NULL) )
     { // send actual calendar data
       setSenderDevKey(*getDevKey());
