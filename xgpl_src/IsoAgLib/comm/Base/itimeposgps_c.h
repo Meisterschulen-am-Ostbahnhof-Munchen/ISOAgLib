@@ -153,11 +153,11 @@ public:
   uint16_t millisecond() const { return TimePosGPS_c::millisecond();};
 
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
-  int32_t getGpsLatitudeDegree10Minus7(void) const { return TimePosGPS_c:: getGpsLatitudeDegree10Minus7();};
+  int32_t getGpsLatitudeDegree10Minus7(void) const { return TimePosGPS_c::getGpsLatitudeDegree10Minus7();};
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLongitudeDegree10Minus7(void) const { return TimePosGPS_c::getGpsLongitudeDegree10Minus7();};
 
-    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+  #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   /** check if an NMEA2000 position signal was received */
   bool isPositionReceived() const { return TimePosGPS_c::isPositionReceived();};
   /** deliver Minute GPS Latitude */
