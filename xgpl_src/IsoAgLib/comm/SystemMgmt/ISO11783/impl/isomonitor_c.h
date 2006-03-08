@@ -280,9 +280,9 @@ public:
     @param rui8_nr member number
     @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ren_status wanted status
-    @return true -> the ISOItem_c was inserted
+    @return pointer to new ISOItem_c or NULL if not succeeded
   */
-  bool insertIsoMember(const DevKey_c& rc_devKey, uint8_t rui8_nr = 0xFF,
+  ISOItem_c* insertIsoMember(const DevKey_c& rc_devKey, uint8_t rui8_nr = 0xFF,
                      IState_c::itemState_t ren_state = IState_c::Active, uint16_t rui16_saEepromAdr = 0xFFFF);
 
   /** register a SaClaimHandler_c */

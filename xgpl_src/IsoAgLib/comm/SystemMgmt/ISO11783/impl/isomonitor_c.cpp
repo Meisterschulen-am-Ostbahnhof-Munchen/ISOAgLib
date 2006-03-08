@@ -471,54 +471,52 @@ bool ISOMonitor_c::isoDevClass2DevKeyClaimedAddress(DevKey_c &refc_devKey)
   @param rui8_nr member number
   @param rui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
   @param ren_status wanted status
-  @return true -> the ISOItem_c was inserted
+  @return pointer to new ISOItem_c or NULL if not succeeded
 */
-bool ISOMonitor_c::insertIsoMember(const DevKey_c& rc_devKey,
+ISOItem_c* ISOMonitor_c::insertIsoMember(const DevKey_c& rc_devKey,
       uint8_t rui8_nr, IState_c::itemState_t ren_state, uint16_t rui16_saEepromAdr)
 {
-  bool b_result = true;
+  ISOItem_c* pc_result = NULL;
 
   // check if another ISOItem_c with same DEV_KEY already exist
   if (existIsoMemberDevKey(rc_devKey))
   { // another member with same DEV_KEY found
     getLbsErrInstance().registerError( LibErr_c::Busy, LibErr_c::LbsSystem );
-    b_result = false; // don't insert
+    return NULL; // don't insert
   }
 
-  if (b_result)
-  { // the insert is allowed
-    // prepare temp item with wanted data
-    c_tempIsoMemberItem.set(System_c::getTime(), rc_devKey, rui8_nr,
-        IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Iso | IState_c::Active),
-        rui16_saEepromAdr, getSingletonVecKey() );
+  // FROM NOW ON WE DECIDE TO (TRY TO) CREATE A NEW ISOItem_c
+  // prepare temp item with wanted data
+  c_tempIsoMemberItem.set(System_c::getTime(), rc_devKey, rui8_nr,
+      IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Iso | IState_c::Active),
+      rui16_saEepromAdr, getSingletonVecKey() );
 
-    // now insert element
-    const uint8_t b_oldSize = vec_isoMember.size();
-    vec_isoMember.push_front(c_tempIsoMemberItem);
-    pc_isoMemberCache = vec_isoMember.begin();
-    if (vec_isoMember.size() <= b_oldSize)
-    { // array didn't grow
-      getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsSystem );
-      b_result = false;
-    }
+  // now insert element
+  const uint8_t b_oldSize = vec_isoMember.size();
+  vec_isoMember.push_front(c_tempIsoMemberItem);
+  pc_isoMemberCache = vec_isoMember.begin();
+  if (vec_isoMember.size() <= b_oldSize)
+  { // array didn't grow
+    getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsSystem );
+  }
+  else
+  { // item was inserted
+    pc_result = &(*pc_isoMemberCache);
     #ifdef DEBUG_HEAP_USEAGE
-    else
-    {
-      sui16_isoItemTotal++;
+    sui16_isoItemTotal++;
 
-      getRs232Instance()
-        << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
-        <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
-        << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
-        << ", Chunk-Alloc: "
-        << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
-        << "\r\n\r\n";
-    }
+    getRs232Instance()
+      << sui16_isoItemTotal << " x ISOItem_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(ISOItem_c), sui16_isoItemTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(ISOItem_c), 1 )
+      << ", Chunk-Alloc: "
+      << sizeSlistTWithChunk( sizeof(ISOItem_c), sui16_isoItemTotal )
+      << "\r\n\r\n";
     #endif
-    vec_isoMember.sort(); // resort the list
-
   }
-  return b_result;
+  vec_isoMember.sort(); // resort the list
+
+  return pc_result;
 };
 
 /** register a SaClaimHandler_c */
@@ -878,42 +876,103 @@ bool ISOMonitor_c::processMsg(){
   int32_t i32_reqPgn;
 
   ISOItem_c *pc_item = NULL,
-            *pc_localItemWithSameSa = NULL;
+            *pc_itemSameSa = NULL,
+            *pc_itemSameDevKey = NULL;
 
   // Handle DESTINATION PGNs
   switch ((data().isoPgn() & 0x1FF00))
   {
     case ADRESS_CLAIM_PGN: // adress claim
-      // if local item has same SA -> let it process the msg first
-      // for suitable reaction
-      if (existIsoMemberNr(data().isoSa()))
-      { // ISOItem_c with same SA exist
-        pc_item = &(isoMemberNr(data().isoSa()));
-        if (pc_item->itemState(IState_c::Local))
-        { // local item has same SA -> let it process msg
-          pc_localItemWithSameSa = pc_item;
+      if ( existIsoMemberDevKey( data().devKey()) )
+      {
+        pc_itemSameDevKey = &(isoMemberDevKey(data().devKey()));
+      }
+      if ( existIsoMemberNr(data().isoSa()) )
+      {
+        pc_itemSameSa = &(isoMemberNr(data().isoSa()));
+      }
+
+      // FIRST REMOVE any REMOTE ISOItem_c with SAME SA but different DevKey_c
+      if ( ( NULL != pc_itemSameSa                       )
+        && ( ! pc_itemSameSa->itemState(IState_c::Local) )
+        && ( pc_itemSameSa->devKey() != data().devKey()  ) )
+      { // REMOVE the node that is pointed by pc_itemSameSa
+        // - the destructor of the ISOItem_c informs all handlers about the loss
+        deleteIsoMemberNr( data().isoSa() );
+        pc_itemSameSa = NULL;
+      }
+
+      // SECOND: trigger total restart of ADR claim for any local ISOItem_c with
+      //         SAME DevKey_c
+      if ( ( NULL != pc_itemSameDevKey ) && ( pc_itemSameDevKey->itemState(IState_c::Local)) )
+      { // in ANY case - when another node sends SA claim with same NAME we MUST restart
+        // as nobody else on the network will detect the NAME clash
+        // - this restart triggers also the REMOVAL of the item pc_itemSameDevKey
+        if ( ( pc_itemSameSa->itemState( IState_c::Local ) ) && ( pc_itemSameSa != pc_itemSameDevKey ) )
+        { // the received adr claim overlaps two different local ISOItem_c --> restart BOTH
+          // (even if pc_itemSameSa would have higher prio - this is needed, as the new remote item would be in conflict by SA with
+          //  the currently existing local pc_itemSameSa )
+          getSystemMgmtInstance4Comm().restartAddressClaim( pc_itemSameSa->devKey() );
+          pc_itemSameSa = NULL;
+        }
+        else if ( pc_itemSameSa != pc_itemSameDevKey )
+        { // the remote ADR claim has SAME DevKey_c AND SAME SA -> set here also pc_itemSameSa to NULL
+          pc_itemSameSa = NULL;
+        }
+        getSystemMgmtInstance4Comm().restartAddressClaim( pc_itemSameDevKey->devKey() );
+        pc_itemSameDevKey = NULL;
+          // DO NOT set b_processed to true as the SA CLAIM shall trigger creation of fresh remote ISOItem_c
+      }
+
+      // THIRD: handle LOCAL item that has same SA
+      if ( ( NULL != pc_itemSameSa ) &&  ( pc_itemSameSa->itemState(IState_c::Local)) )
+      { // there exists a LOCAL item with same SA
+        // --> remove it when it has lower PRIO
+        int8_t i8_higherPrio = pc_itemSameSa->devKey().getConstName().higherPriThanPar(data().name());
+        if ( ( i8_higherPrio < 0                              )
+               || ( ! pc_itemSameSa->itemState(IState_c::ClaimedAddress) ) )
+        { // the LOCAL item has lower PRIO or has not yet fully claimed --> remove it
+          // the function SystemMgmt_c::restartAddressClaim() triggers removal of ISOItem_c
+          // and registers the next address claim try afterwards
+          getSystemMgmtInstance4Comm().restartAddressClaim( pc_itemSameSa->devKey() );
+          pc_itemSameSa = NULL;
+        }
+        else
+        { // let local ISOItem_c process the conflicting adr claim
+          // --> the ISOItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
+          pc_itemSameSa->processMsg();
+          // set b_processed to TRUE, so that the next case FOUR is NOT active
+          // ==>> in case the remote ISOItem_c of the CAN message sender (key NAME)
+          //      exists already with _currently_ another SA in the ISOItem_c
+          //      WE DECIDE TO IGNORE THE SA CLAIM which would lead to a conflicting SA
+          //      ( in case our local ISOItem_c has higher PRIO )
+          b_processed = true;
         }
       }
 
-      // if no item has same DEVKEY -> insert new item
-      if (existIsoMemberDevKey(data().devKey()) == false)
-      { // create new item from received msg
-        // (ISOMonitor_c::insertIsoMember set state bits for member and ISO
-        //  additionally)
-        insertIsoMember(data().devKey(), data().isoSa(),
-                        IState_c::itemState_t(IState_c::AddressClaim));
-        if ( isoMemberNr(data().isoSa()).processMsg() ) b_processed = true;
-      }
-      else
-      { // item with same DEVKEY exist -> let it process
-        if ( isoMemberDevKey(data().devKey()).processMsg() ) b_processed = true;
+      // FOUR handle case where remote node has SAME DevKey_c (i.e. NAME)
+      if ( ( NULL != pc_itemSameDevKey                       )
+        && ( ! pc_itemSameDevKey->itemState(IState_c::Local) )
+        && ( ! b_processed                                   ) ///< this message has not yet been processed
+         )
+      { // there exists a REMOTE item with same DevKey_c
+        // --> simply let this item process
+        if ( pc_itemSameDevKey->processMsg() ) b_processed = true;
       }
 
-      // after processing the received msg by item with same DEVKEY
-      if (pc_localItemWithSameSa != NULL)
-      { // let local item with same SA process msg for suitable reaction
-        if ( pc_localItemWithSameSa->processMsg() ) b_processed = true;
+
+      // create NEW ISOItem_c in case no ISOItem_c with Pkg.DevKey_c exists
+      // and the message has not yet been marked as processed
+      if ( ( NULL == pc_itemSameDevKey ) && ( ! b_processed ) )
+      { // create a suitable ISOItem_c and let it process
+        ISOItem_c* pc_newItem = insertIsoMember(data().devKey(), data().isoSa(),
+                              IState_c::itemState_t(IState_c::AddressClaim));
+        if ( NULL != pc_newItem )
+        { // new entry has been created
+          if ( pc_newItem->processMsg() ) b_processed = true;
+        }
       }
+
       break;
     case REQUEST_PGN_MSG_PGN:   // request for PGN
       i32_reqPgn = (

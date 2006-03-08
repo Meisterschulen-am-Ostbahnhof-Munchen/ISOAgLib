@@ -625,6 +625,14 @@ public:
 
   /*\@}*/
 
+  /**
+   * reset the Addres Claim state by:
+   * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
+   * + remove pointed ISOItem_c and DINItem_c nodes and the respective pointer
+   * @return true -> there was an item with given DevKey_c that has been resetted to IState_c::PreAddressClaim
+   */
+  bool restartAddressClaim( const DevKey_c& rrefc_devKey );
+
 
 private:
   friend class IdentItem_c;

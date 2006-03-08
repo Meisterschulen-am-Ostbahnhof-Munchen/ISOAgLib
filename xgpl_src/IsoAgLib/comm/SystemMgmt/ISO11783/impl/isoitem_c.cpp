@@ -208,6 +208,10 @@ ISOItem_c& ISOItem_c::operator=(const ISOItem_c& rrefc_src)
 */
 ISOItem_c::~ISOItem_c()
 {
+  if ( itemState(IState_c::ClaimedAddress ) )
+  { // broadcast to handler classes the event of LOSS of this SA
+    getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
+  }
   #ifdef USE_WORKING_SET
   // check if we were a working-set master
   if (isMaster()) // => pointing to ourself => workingset-master!
@@ -457,100 +461,35 @@ bool ISOItem_c::processMsg(){
   {
     case ADRESS_CLAIM_PGN: // adress claim
       // check if this item is local
-      if ( (itemState(IState_c::Local)) && (c_pkg.isoSa() == nr()) )
-      { // local item has same SA
-        if ( (itemState(IState_c::AddressClaim))
-          || (itemState(IState_c::ClaimedAddress))
-           )
-        { // local item has already claimed the same adress
-          // -> react suitable for this contention
-          // -> check for NAME
-          int8_t i8_higherPrio = devKey().getConstName().higherPriThanPar(c_pkg.name());
-          if ( ( i8_higherPrio == 1                                                )
-            || ( ( i8_higherPrio == 0 ) && ( itemState(IState_c::ClaimedAddress) ) ) )
-          { // this item has higher prio (lower val) -> send adr claim
-            // OR both items have same prio and this item is already claimed -> stay
-            c_pkg.setIsoSa(nr());
-          }
-          else if ( c_pkg.devKey() == devKey() )
-          { // address claim has same DEVKEY ( device class and -instance )
-            // -> give this instance to the remote one
-            // FIRST INFORM REGISTERED ISO Monitor List change clients
-            // indicate with NULL, that this DevKey_c is no more inside the monitor list
-            getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
-            clearItemState(IState_c::Local);
-            setItemState(IState_c::ClaimedAddress);
-            setNr(c_pkg.isoSa());
-            inputString(c_pkg.name());
-            // now inform the ISO monitor list change clients on NEW client use
-            getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
-          }
-          else
-          { // FIRST INFORM REGISTERED ISO Monitor List change clients
-            // indicate with NULL, that this DevKey_c is no more inside the monitor list
-            getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
-            // local item has lower prio -> search free SA and claim this
-            // or set nr to the code 254 %e.g. no suitbla nr found -> error
-            setNr(getIsoMonitorInstance4Comm().unifyIsoSa(this));
-            c_pkg.setIsoSa(nr());
-            if (nr() != 254)
-            { // free adr found
-              setItemState(IState_c::AddressClaim);
-            }
-            else
-            { // no free self conf adr found -> send NACK with SA=254
-              // (delivered by unifyIsoAdr) -> already stored in nr()
-              setItemState(IState_c::itemState_t(IState_c::Error | IState_c::Off));
-            }
-          } // end else for local item with lower prio
-          // now send adr claim (SA already set dependent on NAME)
-          c_pkg.setIsoPri(6);
-          c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
-          c_pkg.setIsoPf(238);
-          c_pkg.setIsoPs(255); // global information
+      if ( itemState(IState_c::Local ) )
+      { // ISOItem_c::processMsg() is only called for local item, when
+        // this item has higher PRIO, so that we shall reject the SA steal
+        // by resending OUR SA CLAIM
+        c_pkg.setIsoSa(nr());
+        c_pkg.setIsoPri(6);
+        c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
+        c_pkg.setIsoPf(238);
+        c_pkg.setIsoPs(255); // global information
           // set NAME to CANPkg
-          c_pkg.setName(outputString());
+        c_pkg.setName(outputString());
           // now ISOSystemPkg_c has right data -> send
-          getCanInstance4Comm() << c_pkg;
-        } // end if for local item after already sent claim
-      } // end if for local item with same SA
-      else if ( (!itemState(IState_c::Local) )
-             && (itemState(IState_c::ClaimedAddress) )
-             && ( nr() != c_pkg.isoSa() ) )
-      { // this item was already used by other remote ISOItem_c with another SA
-        //  -> possibility to clear any connections to the old SA
-        #ifdef USE_PROCESS
-        Process_c& c_process = getProcessInstance4Comm();
-        // delete any receive filters that are connected to the old SA of this item first,
-        // before the new SA is written
-        c_process.deleteRemoteFilter( devKey() );
-        #endif
-        // INFORM REGISTERED ISO Monitor List change clients
-        // indicate with NULL, that this DevKey_c is no more inside the monitor list
-        getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
-        clearItemState(IState_c::Local);
-        setItemState(IState_c::ClaimedAddress);
-        setNr(c_pkg.isoSa());
-        inputString(c_pkg.name());
-        // now inform the ISO monitor list change clients on NEW client use
-        getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
+        getCanInstance4Comm() << c_pkg;
       }
-      else if ( (!itemState(IState_c::Local))
-             || (!itemState(IState_c::ClaimedAddress)) )
-      { // no local item or local item not yet performed complete address claim
-        // -> simply update this item
-        // (in case this item was local item in address claim state,
-        //  Ident_Item::timeEvent will look for new device class inst/Device Class Instance
-        //  to unify DEVKEY -> if possible it will insert new item for local ident)
-        // INFORM REGISTERED ISO Monitor List change clients
-        // indicate with NULL, that this DevKey_c is no more inside the monitor list
+      else
+      { // remote item (( the case with change of devKey should NO MORE HAPPEN as ISOMonitor_c
+        // simply removes ISOItem_c instances with same SA and different DevKey_c ))
         const bool b_isChange = ( ( c_pkg.devKey() != devKey() ) || ( c_pkg.isoSa() != nr() ) );
         const bool b_wasClaimed = itemState(IState_c::ClaimedAddress);
         if ( b_wasClaimed &&  b_isChange )
         { // the previously using item had already claimed an address
           getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
+          #ifdef USE_PROCESS
+          Process_c& c_process = getProcessInstance4Comm();
+          // delete any receive filters that are connected to the old SA of this item first,
+          // before the new SA is written
+          c_process.deleteRemoteFilter( devKey() );
+          #endif
         }
-        clearItemState(IState_c::Local);
         setItemState(IState_c::ClaimedAddress);
         setNr(c_pkg.isoSa());
         inputString(c_pkg.name());

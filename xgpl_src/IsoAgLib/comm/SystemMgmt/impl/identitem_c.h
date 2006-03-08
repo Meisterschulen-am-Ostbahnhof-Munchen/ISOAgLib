@@ -409,6 +409,13 @@ public:
     int ri_singletonVecKey = 0);
 #endif
 
+  /**
+   * reset the Addres Claim state by:
+   * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
+   * + remove pointed ISOItem_c and DINItem_c nodes and the respective pointer
+   * @return true -> there was an item with given DevKey_c that has been resetted to IState_c::PreAddressClaim
+   */
+  void restartAddressClaim();
 
   /** default destructor which has nothing to do */
   ~IdentItem_c();

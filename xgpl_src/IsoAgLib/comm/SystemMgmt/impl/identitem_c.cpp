@@ -546,6 +546,42 @@ void IdentItem_c::start(DevKey_c* rpc_devKey,
 #endif
 
 
+/**
+ * reset the Addres Claim state by:
+ * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
+ * + remove pointed ISOItem_c and DINItem_c nodes and the respective pointer
+ * @return true -> there was an item with given DevKey_c that has been resetted to IState_c::PreAddressClaim
+ */
+void IdentItem_c::restartAddressClaim()
+{
+#ifdef USE_DIN_9684
+  if ( (pc_memberItem != NULL)
+    && (pc_memberItem->devKey() == devKey()))
+    && (pc_memberItem->itemState( IState_c::Local ))
+     )
+  { // item has claimed address -> send unregister cmd
+        // send an adress release for according number
+        // pc_memberItem->sendAdressRelease();
+        // delete item from memberList - and force send of address release
+    getDinMonitorInstance4Comm().deleteDinMemberDevKey(devKey(), true );
+    pc_memberItem = NULL;
+  }
+#endif
+#ifdef USE_ISO_11783
+  if ( (pc_isoItem != NULL)
+    && (pc_isoItem->devKey() == devKey())
+    && (pc_isoItem->itemState( IState_c::Local ))
+     )
+  { // item has claimed address -> send unregister cmd
+        // delete item from memberList
+    getIsoMonitorInstance4Comm().deleteIsoMemberDevKey(devKey());
+    pc_isoItem = NULL;
+  }
+#endif
+  clearItemState( IState_c::ClaimedAddress );
+  setItemState( IState_c::PreAddressClaim );
+}
+
 /** default destructor which has nothing to do */
 IdentItem_c::~IdentItem_c(){
   close();
@@ -554,32 +590,9 @@ IdentItem_c::~IdentItem_c(){
   * -> IdentItem_c::close() send address release for DIN identities
   */
 void IdentItem_c::close( void )
-{
-  #ifdef USE_DIN_9684
-  if ( (pc_memberItem != NULL)
-    && (pc_memberItem->devKey() == devKey())
-    && (pc_memberItem->itemState(IState_c::ClaimedAddress))
-    )
-    { // item has claimed address -> send unregister cmd
-      // send an adress release for according number
-      // pc_memberItem->sendAdressRelease();
-      // delete item from memberList - and force send of address release
-      getDinMonitorInstance4Comm().deleteDinMemberDevKey(devKey(), true );
-      pc_memberItem = NULL;
-    }
-  #endif
-  #ifdef USE_ISO_11783
-  if ( (pc_isoItem != NULL)
-    && (pc_isoItem->devKey() == devKey())
-    && (pc_isoItem->itemState(IState_c::ClaimedAddress))
-    )
-    { // item has claimed address -> send unregister cmd
-      // delete item from memberList
-      getIsoMonitorInstance4Comm().deleteIsoMemberDevKey(devKey());
-      pc_isoItem = NULL;
-      clearItemState( IState_c::ClaimedAddress );
-    }
-  #endif
+{ // delete the corresponding ISOItem_c and DINItem_c instances
+  // in the respective monitoring lists and set the state to IState_c::PreAddressClaim
+  restartAddressClaim();
   // unregister in SystemMgmt_c
   getSystemMgmtInstance4Comm().unregisterClient( this );
 }
@@ -732,19 +745,20 @@ bool IdentItem_c::timeEventPreAddressClaim( void ) {
   #ifdef USE_ISO_11783
   if ( (itemState(IState_c::Iso)) && (b_devKeySuccessfulUnified) )  {
     // insert element in list
-    getIsoMonitorInstance4Comm().insertIsoMember(devKey(), b_wantedSa,
+    pc_isoItem = getIsoMonitorInstance4Comm().insertIsoMember(devKey(), b_wantedSa,
       IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim), ui16_saEepromAdr);
-    pc_isoItem = &(getIsoMonitorInstance4Comm().isoMemberDevKey(devKey()));
-    // set item as member and as own identity and overwrite old value
-    pc_isoItem->setItemState
-      (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim));
+    if ( pc_isoItem != NULL )
+    { // set item as member and as own identity and overwrite old value
+      pc_isoItem->setItemState
+        (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim));
 
-    #ifdef USE_WORKING_SET
-    // insert all slave ISOItem objects (of not yet there) and set me as their master
-    setToMaster ();
-    #endif
+      #ifdef USE_WORKING_SET
+      // insert all slave ISOItem objects (of not yet there) and set me as their master
+      setToMaster ();
+      #endif
 
-    pc_isoItem->timeEvent();
+      pc_isoItem->timeEvent();
+    }
 }
   #endif
   // set ident_item state to claim address
@@ -914,19 +928,20 @@ bool IdentItem_c::timeEventActive( void ) {
         // in monitor list of ISOMonitor
         if (c_isoMonitor.unifyIsoDevKey(*pc_devKey) ) {
           // insert element in list
-          c_isoMonitor.insertIsoMember(devKey(), b_wantedSa,
+          pc_isoItem =  c_isoMonitor.insertIsoMember(devKey(), b_wantedSa,
             IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim), ui16_saEepromAdr);
-          pc_isoItem = &(c_isoMonitor.isoMemberDevKey(devKey()));
-          // set item as member and as own identity and overwrite old value
-          pc_isoItem->setItemState
-            (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim));
+          if ( NULL != pc_isoItem )
+          { // set item as member and as own identity and overwrite old value
+            pc_isoItem->setItemState
+              (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::Iso | IState_c::PreAddressClaim));
 
-          #ifdef USE_WORKING_SET
-          // insert all slave ISOItem objects (if not yet there) and set me as their master
-          setToMaster ();
-          #endif
+            #ifdef USE_WORKING_SET
+            // insert all slave ISOItem objects (if not yet there) and set me as their master
+            setToMaster ();
+            #endif
 
-          pc_isoItem->timeEvent();
+            pc_isoItem->timeEvent();
+          }
         }
       }
     }
@@ -1026,17 +1041,20 @@ void IdentItem_c::setToMaster (int8_t ri8_slaveCount, const DevKey_c* rpc_slaveI
       if ( getIsoMonitorInstance4Comm().existIsoMemberDevKey(pc_slaveIsoNameList[i]) ) {
         pc_slaveIsoItem = &(getIsoMonitorInstance4Comm().isoMemberDevKey(pc_slaveIsoNameList[i]));
       } else
-      if (getIsoMonitorInstance4Comm().insertIsoMember(pc_slaveIsoNameList[i], 0xFE,
-        IState_c::itemState_t(IState_c::Member | IState_c::Iso | IState_c::PreAddressClaim), 0xFFFF)) {
-        pc_slaveIsoItem = &(getIsoMonitorInstance4Comm().isoMemberDevKey(pc_slaveIsoNameList[i]));
-        // set item as member and as own identity and overwrite old value
-        pc_slaveIsoItem->setItemState
-        (IState_c::itemState_t(IState_c::Member | IState_c::Iso | IState_c::PreAddressClaim));
-      } else {
-        // there is neither a corresponding IsoItem_c in monitor list, nor is there the possibility to
-        // create a new ( memory problem, as insert of new member failed in IsoMonitor_c::insertIsoMember()
-        // failed )
-        return;
+      {
+        pc_slaveIsoItem = getIsoMonitorInstance4Comm().insertIsoMember(pc_slaveIsoNameList[i], 0xFE,
+                  IState_c::itemState_t(IState_c::Member | IState_c::Iso | IState_c::PreAddressClaim), 0xFFFF);
+
+        if ( NULL != pc_slaveIsoItem) {
+          // set item as member and as own identity and overwrite old value
+          pc_slaveIsoItem->setItemState
+          (IState_c::itemState_t(IState_c::Member | IState_c::Iso | IState_c::PreAddressClaim));
+        } else {
+          // there is neither a corresponding IsoItem_c in monitor list, nor is there the possibility to
+          // create a new ( memory problem, as insert of new member failed in IsoMonitor_c::insertIsoMember()
+          // failed )
+          return;
+        }
       }
       // set the isoItem's master....
       pc_slaveIsoItem->setMaster (pc_isoItem);
