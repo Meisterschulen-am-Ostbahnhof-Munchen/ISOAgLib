@@ -104,6 +104,7 @@ class iSensorEventHandler {
     *        from HAL
     */
   virtual void handleDigitalEvent( uint8_t rui8_channel );
+  virtual ~iSensorEventHandler() {};
 };
 
 };
