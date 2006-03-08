@@ -354,41 +354,59 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setIsoSa(b_sa);
 
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
-    if ( ((ci32_now - i32_lastPtoFront ) >= 100) && checkMode(IsoAgLib::IdentModeTractor)  )
-    { // it's time to send Base2
-      setSenderDevKey(*getDevKey());
-      CANIO_c& c_can = getCanInstance4Comm();
+    if ( checkMode(IsoAgLib::IdentModeImplement) )
+    { // check if a previously sending node is still active
+      if ( ( ( ci32_now - i32_lastPtoFront ) >= TIMEOUT_PTO_DISENGAGED ) || (getSenderDevKey().isUnspecified() ) )
+      { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
+        // --> switch values to ZERO
+        i16_ptoFront = 0;
+        t_frontPtoEngaged = IsoAgLib::IsoInactive;
+      }
+      if ( ( ( ci32_now - i32_lastPtoRear ) >= TIMEOUT_PTO_DISENGAGED ) || (getSenderDevKey().isUnspecified() ) )
+      { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
+        // --> switch values to ZERO
+        i16_ptoRear = 0;
+        t_rearPtoEngaged = IsoAgLib::IsoInactive;
+      }
+    }
+    else
+    { // we are in tractor mode
+      if ( (ci32_now - i32_lastPtoFront ) >= 100)
+      { // it's time to send tractor PTO information
+        setSenderDevKey(*getDevKey());
+        CANIO_c& c_can = getCanInstance4Comm();
 
-      data().setIsoPgn(FRONT_PTO_STATE_PGN);
-      data().setUint16Data(0, (ptoFront()*8) ); // ISO defines a resolution of 0.125 per bit!!!
-      data().setUint16Data(2, NO_VAL_16);
+        data().setIsoPgn(FRONT_PTO_STATE_PGN);
+        data().setUint16Data(0, (ptoFront()*8) ); // ISO defines a resolution of 0.125 per bit!!!
+        data().setUint16Data(2, NO_VAL_16);
 
-      uint8_t ui8_val5 = (t_frontPtoEngaged << 6);
-      ui8_val5 |= (t_frontPto1000 << 4);
-      ui8_val5 |= (t_frontPtoEconomy << 2);
-      data().setUint8Data(4, ui8_val5);
-      data().setUint32Data(5, 0);
-      data().setLen(8);
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
+        uint8_t ui8_val5 = (t_frontPtoEngaged << 6);
+        ui8_val5 |= (t_frontPto1000 << 4);
+        ui8_val5 |= (t_frontPtoEconomy << 2);
+        data().setUint8Data(4, ui8_val5);
+        data().setUint32Data(5, 0);
+        data().setLen(8);
+        // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+        // then it sends the data
+        c_can << data();
 
-      data().setIsoPgn(REAR_PTO_STATE_PGN);
-      data().setUint16Data(0, (ptoRear() * 8) ); // ISO defines a resolution of 0.125 per bit!!!
-      data().setUint16Data(2, NO_VAL_16);
+        data().setIsoPgn(REAR_PTO_STATE_PGN);
+        data().setUint16Data(0, (ptoRear() * 8) ); // ISO defines a resolution of 0.125 per bit!!!
+        data().setUint16Data(2, NO_VAL_16);
 
-      ui8_val5 = (t_frontPtoEngaged << 6);
-      ui8_val5 |= (t_frontPto1000 << 4);
-      ui8_val5 |= (t_frontPtoEconomy << 2);
-      data().setUint8Data(4, ui8_val5);
-      data().setUint32Data(5, 0);
-      data().setLen(8);
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
+        ui8_val5 = (t_frontPtoEngaged << 6);
+        ui8_val5 |= (t_frontPto1000 << 4);
+        ui8_val5 |= (t_frontPtoEconomy << 2);
+        data().setUint8Data(4, ui8_val5);
+        data().setUint32Data(5, 0);
+        data().setLen(8);
+        // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+        // then it sends the data
+        c_can << data();
 
-      // update time
-      i32_lastPtoFront = Scheduler_c::getLastTimeEventTrigger();
+        // update time
+        i32_lastPtoFront = Scheduler_c::getLastTimeEventTrigger();
+      }
     }
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
