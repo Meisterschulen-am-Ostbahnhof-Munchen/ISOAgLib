@@ -1019,6 +1019,11 @@ ISOTerminal_c::vtOutOfMemory()
 */
 bool ISOTerminal_c::processMsg()
 {
+  // do not process any messages if we're not working as ISOTerminal_c
+  // NORMALLY better do not compile the ISOTerminal_c class then when you don't need it ;-)
+  /** @todo Decide where to place this check - what makes sense when NOT initialized with an IdentItem? */
+  if ( !pc_wsMasterIdentItem ) return true;
+
 //  #ifdef DEBUG
 //  INTERNAL_DEBUG_DEVICE << "Incoming Message: data().isoPgn=" << data().isoPgn() << " - HAL::getTime()=" << HAL::getTime()<<" - data[0]="<<(uint16_t)data().getUint8Data (0)<<"...   ";;
 //  #endif
