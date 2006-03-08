@@ -153,11 +153,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** set rear PTO
         @param ri16_val value to store as the speed of the rear PTO
       */
-    void setPtoRear(int16_t ri16_val){i16_ptoRear = ri16_val;};
+    void setPtoRear(int16_t ri16_val){i16_ptoRear = ri16_val;
+    #ifdef USE_ISO_11783
+    if ( ri16_val == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
+    #endif
+    };
     /** set front PTO
         @param ri16_val value to store as the speed of the front PTO
       */
-    void setPtoFront(int16_t ri16_val){i16_ptoFront = ri16_val;};
+    void setPtoFront(int16_t ri16_val){i16_ptoFront = ri16_val;
+    #ifdef USE_ISO_11783
+    if ( ri16_val == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
+    #endif
+    };
 
     #ifdef USE_ISO_11783
     /** set explicit information whether front PTO is engaged

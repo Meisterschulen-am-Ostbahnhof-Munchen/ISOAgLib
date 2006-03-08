@@ -371,11 +371,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
     else
     { // we are in tractor mode
-      if ( (ci32_now - i32_lastPtoFront ) >= 100)
-      { // it's time to send tractor PTO information
-        setSenderDevKey(*getDevKey());
-        CANIO_c& c_can = getCanInstance4Comm();
-
+      CANIO_c& c_can = getCanInstance4Comm();
+      setSenderDevKey(*getDevKey());
+      if ( ( (ci32_now - i32_lastPtoFront ) >= 100) && ( t_frontPtoEngaged == IsoAgLib::IsoActive ) )
+      { // it's time to send tractor PTO information and the FRONT PTO is engaged
         data().setIsoPgn(FRONT_PTO_STATE_PGN);
         data().setUint16Data(0, (ptoFront()*8) ); // ISO defines a resolution of 0.125 per bit!!!
         data().setUint16Data(2, NO_VAL_16);
@@ -389,14 +388,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
         // then it sends the data
         c_can << data();
-
+        i32_lastPtoFront = Scheduler_c::getLastTimeEventTrigger();
+      }
+      if ( ( (ci32_now - i32_lastPtoRear ) >= 100) && ( t_rearPtoEngaged == IsoAgLib::IsoActive ) )
+      { // it's time to send tractor PTO information and the REAR PTO is engaged
         data().setIsoPgn(REAR_PTO_STATE_PGN);
         data().setUint16Data(0, (ptoRear() * 8) ); // ISO defines a resolution of 0.125 per bit!!!
         data().setUint16Data(2, NO_VAL_16);
 
-        ui8_val5 = (t_frontPtoEngaged << 6);
-        ui8_val5 |= (t_frontPto1000 << 4);
-        ui8_val5 |= (t_frontPtoEconomy << 2);
+        uint8_t ui8_val5 = (t_rearPtoEngaged << 6);
+        ui8_val5 |= (t_rearPto1000 << 4);
+        ui8_val5 |= (t_rearPtoEconomy << 2);
         data().setUint8Data(4, ui8_val5);
         data().setUint32Data(5, 0);
         data().setLen(8);
@@ -405,7 +407,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         c_can << data();
 
         // update time
-        i32_lastPtoFront = Scheduler_c::getLastTimeEventTrigger();
+        i32_lastPtoRear = Scheduler_c::getLastTimeEventTrigger();
       }
     }
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
