@@ -86,7 +86,7 @@ namespace IsoAgLib {
         @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
         @param rb_implementMode implement mode (true) or tractor mode (false)
       */
-    void init(const iDevKey_c* rpc_devKey = NULL, bool rb_implementMode = true)
+    void init(const iDevKey_c* rpc_devKey = NULL, bool rb_implementMode)
     {
       #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
       TracGeneral_c::init(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
