@@ -825,10 +825,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
 //  getRs232Instance() << "_time in sendReq4AdrCl: " << HAL::getTime() <<"_";
 
   data().setIsoPri(6);
-  // PGN is equivalent to definition of PF and DP in this case
-  //data().setIsoPgn(REQUEST_PGN_MSG_PGN);
-  data().setIsoDp(0);
-  data().setIsoPf(234);
+  data().setIsoPgn(REQUEST_PGN_MSG_PGN);
   data().setIsoPs(255); // global request
   if ( getSystemMgmtInstance4Comm().existActiveLocalMember() )
   { // use the SA of the already active node
@@ -908,29 +905,32 @@ bool ISOMonitor_c::processMsg(){
       { // in ANY case - when another node sends SA claim with same NAME we MUST restart
         // as nobody else on the network will detect the NAME clash
         // - this restart triggers also the REMOVAL of the item pc_itemSameDevKey
-        if ( ( pc_itemSameSa->itemState( IState_c::Local ) ) && ( pc_itemSameSa != pc_itemSameDevKey ) )
-        { // the received adr claim overlaps two different local ISOItem_c --> restart BOTH
-          // (even if pc_itemSameSa would have higher prio - this is needed, as the new remote item would be in conflict by SA with
-          //  the currently existing local pc_itemSameSa )
-          getSystemMgmtInstance4Comm().restartAddressClaim( pc_itemSameSa->devKey() );
+        if ( ( NULL != pc_itemSameSa ) && ( pc_itemSameSa->itemState( IState_c::Local ) ) )
+        { // there is also a SA conflict with a local ISOItem_c
+          if ( pc_itemSameSa != pc_itemSameDevKey )
+          { // the received adr claim overlaps two different local ISOItem_c --> restart BOTH
+            // (even if pc_itemSameSa would have higher prio - this is needed, as the new remote item would be in conflict by SA with
+            //  the currently existing local pc_itemSameSa )
+            getSystemMgmtInstance4Comm().restartAddressClaim( pc_itemSameSa->devKey() );
+          }
+          // in case of sort of SA conflict with a local ISOItem_c, we must avoid a later reaction on this SA conflict
+          // => set the pointer to NULL to indicate the handled conflict
           pc_itemSameSa = NULL;
         }
-        else if ( pc_itemSameSa != pc_itemSameDevKey )
-        { // the remote ADR claim has SAME DevKey_c AND SAME SA -> set here also pc_itemSameSa to NULL
-          pc_itemSameSa = NULL;
-        }
+        // the case of a conflict on SA with a remote ISOItem_c is handled elsewhere as this block is only directed to handle
+        // conflicts with LOCAL ISOItem_c
         getSystemMgmtInstance4Comm().restartAddressClaim( pc_itemSameDevKey->devKey() );
         pc_itemSameDevKey = NULL;
-          // DO NOT set b_processed to true as the SA CLAIM shall trigger creation of fresh remote ISOItem_c
+        // DO NOT set b_processed to true as the SA CLAIM shall trigger creation of fresh remote ISOItem_c
       }
 
       // THIRD: handle LOCAL item that has same SA
-      if ( ( NULL != pc_itemSameSa ) &&  ( pc_itemSameSa->itemState(IState_c::Local)) )
+      if ( ( NULL != pc_itemSameSa ) && ( pc_itemSameSa->itemState(IState_c::Local)) )
       { // there exists a LOCAL item with same SA
         // --> remove it when it has lower PRIO
         int8_t i8_higherPrio = pc_itemSameSa->devKey().getConstName().higherPriThanPar(data().name());
         if ( ( i8_higherPrio < 0                              )
-               || ( ! pc_itemSameSa->itemState(IState_c::ClaimedAddress) ) )
+          || ( ! pc_itemSameSa->itemState(IState_c::ClaimedAddress) ) )
         { // the LOCAL item has lower PRIO or has not yet fully claimed --> remove it
           // the function SystemMgmt_c::restartAddressClaim() triggers removal of ISOItem_c
           // and registers the next address claim try afterwards

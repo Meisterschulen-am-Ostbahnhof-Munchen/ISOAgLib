@@ -349,10 +349,7 @@ bool ISOItem_c::timeEvent( void )
 
         // now nr() has now suitable value
         c_pkg.setIsoPri(6);
-        // PGN is equivalent to definition of PF and DP in this case
-        //c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
-        c_pkg.setIsoDp(0);
-        c_pkg.setIsoPf(238);
+        c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
         c_pkg.setIsoPs(255); // global information
         c_pkg.setIsoSa(nr()); // free SA or NACK flag
         // set NAME to CANPkg
@@ -421,9 +418,7 @@ bool ISOItem_c::timeEvent( void )
       { // Announce WS-Slave(s)
         // claim address for next slave
         c_pkg.setIsoPri(7);
-        c_pkg.setIsoDp(0);
-        c_pkg.setIsoPf(254);
-        c_pkg.setIsoPs(12); // global information
+        c_pkg.setIsoPgn(WORKING_SET_MEMBER_PGN);
         c_pkg.setIsoSa(nr()); // free SA or NACK flag
         // set NAME to CANPkg
         c_pkg.setName(getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-i8_slavesToClaimAddress, this)->outputString());
@@ -468,7 +463,6 @@ bool ISOItem_c::processMsg(){
         c_pkg.setIsoSa(nr());
         c_pkg.setIsoPri(6);
         c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
-        c_pkg.setIsoPf(238);
         c_pkg.setIsoPs(255); // global information
           // set NAME to CANPkg
         c_pkg.setName(outputString());
@@ -478,7 +472,7 @@ bool ISOItem_c::processMsg(){
       else
       { // remote item (( the case with change of devKey should NO MORE HAPPEN as ISOMonitor_c
         // simply removes ISOItem_c instances with same SA and different DevKey_c ))
-        const bool b_isChange = ( ( c_pkg.devKey() != devKey() ) || ( c_pkg.isoSa() != nr() ) );
+        const bool b_isChange = ( ( c_pkg.isoSa() != nr() ) || ( c_pkg.devKey() != devKey() ) );
         const bool b_wasClaimed = itemState(IState_c::ClaimedAddress);
         if ( b_wasClaimed &&  b_isChange )
         { // the previously using item had already claimed an address
@@ -493,7 +487,7 @@ bool ISOItem_c::processMsg(){
         setItemState(IState_c::ClaimedAddress);
         setNr(c_pkg.isoSa());
         inputString(c_pkg.name());
-        if ( (!b_wasClaimed) ||  b_isChange )
+        if ( (!b_wasClaimed) || b_isChange )
         { // now inform the ISO monitor list change clients on NEW client use
           getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
         }
@@ -554,13 +548,12 @@ bool ISOItem_c::sendSaClaim()
   #endif
   ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   c_pkg.setIsoPri(6);
-  c_pkg.setIsoSa(nr());
-  c_pkg.setIsoPgn(ADRESS_CLAIM_PGN); // doppelt gemoppelt ;)
-  c_pkg.setIsoPf(238);
+  c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
   c_pkg.setIsoPs(255); // global information
-            // set NAME to CANPkg
+  c_pkg.setIsoSa(nr());
+  // set NAME to CANPkg
   c_pkg.setName(outputString());
-            // now ISOSystemPkg_c has right data -> send
+  // now ISOSystemPkg_c has right data -> send
   getCanInstance4Comm() << c_pkg;
   return true;
 }
