@@ -322,8 +322,10 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 {
   BaseCommon_c::init( rpc_devKey, rt_identMode );
 
-  i32_latitudeDegree10Minus7 = 0;
-  i32_longitudeDegree10Minus7 = 0;
+  #if !defined(USE_ISO_11783)
+  // if NOT iso, init here (as there's no configGps(...)
+  i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
+  #endif
 
   #if defined(USE_ISO_11783)
   // set the GPS mode always to non-sending
@@ -363,6 +365,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   {
     i32_lastIsoPositionSimple = 0;
     setDevKey( rpc_devKey );
+    i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
     #ifdef NMEA_2000_FAST_PACKET
     i32_lastIsoPositionStream = i32_lastIsoDirectionStream = 0;
     t_multiSendSuccessState = MultiSend_c::SendSuccess;
