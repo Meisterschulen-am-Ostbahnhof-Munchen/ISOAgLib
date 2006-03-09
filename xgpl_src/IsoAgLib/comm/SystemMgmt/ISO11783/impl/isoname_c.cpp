@@ -366,7 +366,7 @@ int8_t ISOName_c::higherPriThanPar(const uint8_t* rpb_compare) const
   int8_t i8_result = +1;
   int8_t i8_cnt;
 
-#ifdef DEBUG
+#if defined(DEBUG) && !(SYSTEM_A1)
 if ( rpb_compare == NULL )
 { // calling function called this function with wrong parameter
   // - but in production version, we await, that the caller makes sure,
