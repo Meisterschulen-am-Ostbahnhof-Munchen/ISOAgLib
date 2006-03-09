@@ -349,9 +349,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
     // this function is only called in TractorMode
     CANIO_c& c_can = getCanInstance4Comm();
+    setSenderDevKey(*getDevKey());
     if ( ( (ci32_now - i32_lastPtoFront ) >= 100) && ( t_frontPtoEngaged == IsoAgLib::IsoActive ) )
     { // it's time to send tractor PTO information and the FRONT PTO is engaged
-      setSenderDevKey(*getDevKey());
       data().setIsoPgn(FRONT_PTO_STATE_PGN);
       data().setUint16Data(0, (ptoFront()*8) ); // ISO defines a resolution of 0.125 per bit!!!
       data().setUint16Data(2, NO_VAL_16);
@@ -371,7 +371,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
     if ( ( (ci32_now - i32_lastPtoRear ) >= 100) && ( t_rearPtoEngaged == IsoAgLib::IsoActive ) )
     { // it's time to send tractor PTO information and the REAR PTO is engaged
-      setSenderDevKey(*getDevKey());
       data().setIsoPgn(REAR_PTO_STATE_PGN);
       data().setUint16Data(0, (ptoRear() * 8) ); // ISO defines a resolution of 0.125 per bit!!!
       data().setUint16Data(2, NO_VAL_16);
