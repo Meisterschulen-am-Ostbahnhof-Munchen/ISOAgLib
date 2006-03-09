@@ -156,7 +156,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     void setPtoRear(int16_t ri16_val){i16_ptoRear = ri16_val;
     #ifdef USE_ISO_11783
     if ( ri16_val == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
-    else setPtoRearEngaged( IsoAgLib::IsoActive );
     #endif
     };
     /** set front PTO
@@ -165,7 +164,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     void setPtoFront(int16_t ri16_val){i16_ptoFront = ri16_val;
     #ifdef USE_ISO_11783
     if ( ri16_val == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
-    else setPtoFrontEngaged( IsoAgLib::IsoActive );
     #endif
     };
 
