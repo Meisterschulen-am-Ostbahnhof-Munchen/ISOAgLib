@@ -94,9 +94,6 @@
 #ifdef USE_ISO_TERMINAL
 #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 #endif
-#ifdef USE_PROCESS
-  #include <IsoAgLib/comm/Process/impl/process_c.h>
-#endif
 
 
 
@@ -477,12 +474,6 @@ bool ISOItem_c::processMsg(){
         if ( b_wasClaimed &&  b_isChange )
         { // the previously using item had already claimed an address
           getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( devKey(), nr() );
-          #ifdef USE_PROCESS
-          Process_c& c_process = getProcessInstance4Comm();
-          // delete any receive filters that are connected to the old SA of this item first,
-          // before the new SA is written
-          c_process.deleteRemoteFilter( devKey() );
-          #endif
         }
         setItemState(IState_c::ClaimedAddress);
         setNr(c_pkg.isoSa());

@@ -117,6 +117,8 @@
   #define getIsoTerminalInstance4Comm()    getIsoTerminalInstance( getSingletonVecKey() )
   #define getMultiReceiveInstance4Comm()   getMultiReceiveInstance( getSingletonVecKey() )
   #define getGpsInstance4Comm()            getGpsInstance( getSingletonVecKey() )
+  #define getTimePosGpsInstance4Comm()     getTimePosGpsInstance( getSingletonVecKey() )
+
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
     * attribute singletonVecKey, which is evaluated by the macro autoInstance()
@@ -239,6 +241,7 @@
   #define getIsoTerminalInstance4Comm()       getIsoTerminalInstance()
   #define getMultiReceiveInstance4Comm()      getMultiReceiveInstance()
   #define getGpsInstance4Comm()               getGpsInstance()
+  #define getTimePosGpsInstance4Comm()        getTimePosGpsInstance()
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
     * attribute singletonVecKey, which is evaluated by the macro autoInstance()

@@ -94,9 +94,6 @@
 #ifdef USE_ISO_TERMINAL
   #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 #endif
-#ifdef USE_PROCESS
-  #include <IsoAgLib/comm/Process/impl/process_c.h>
-#endif
 
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
@@ -897,16 +894,6 @@ bool IdentItem_c::timeEventActive( void ) {
           #ifdef USE_DIN_9684
           // register switch2Announc
           getSchedulerInstance4Comm().registerSwitch2AddressClaim();
-          #endif
-          #ifdef USE_PROCESS
-          uint32_t ui32_nr = pc_isoItem->nr();
-          // only ISO msgs with own SA in PS (destination)
-          uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-          if (!getCanInstance4Comm().existFilter( getProcessInstance4Comm(), (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-          { // create FilterBox
-            getCanInstance4Comm().insertFilter( getProcessInstance4Comm(), (0x1FFFF00UL), ui32_filter, false, Ident_c::ExtendedIdent);
-            b_configure = true;
-          }
           #endif
           #ifdef USE_ISO_TERMINAL
           {

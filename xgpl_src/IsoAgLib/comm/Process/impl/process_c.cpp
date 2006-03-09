@@ -155,8 +155,11 @@ void Process_c::init()
   // first register in Scheduler_c
   getSchedulerInstance4Comm().registerClient( this );
   i32_lastFilterBoxTime = 0;
-  #if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
-  c_devPropertyHandler.init(&c_data);
+  #if defined(USE_ISO_11783)
+  __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+    #ifdef USE_PROC_DATA_DESCRIPTION_POOL
+    c_devPropertyHandler.init(&c_data);
+    #endif
   #endif
   c_data.setSingletonKey( getSingletonVecKey() );
 
@@ -338,9 +341,6 @@ bool Process_c::timeEvent( void ){
   // filters for targeted or partner process data should be created
   if ((i32_time - i32_lastFilterBoxTime) > 1000)  {
     i32_lastFilterBoxTime = i32_time;
-    const DevKey_c *pc_lastFilterDevKey = NULL;
-    const DevKey_c *pc_actDevKey = NULL;
-    uint8_t ui8_lastFilterPri = 0, ui8_actPri = 2;
 
     // create local Base-Proc Filter in case DIN member is active
     #ifdef USE_DIN_9684
@@ -350,26 +350,6 @@ bool Process_c::timeEvent( void ){
       getCanInstance4Comm().insertFilter( *this, (uint16_t)(0x7C << 4),(uint16_t)(0x18 << 4), true);
     }
     #endif
-
-
-    // create FilterBoxes for remote ProcessData if needed
-    for ( pc_searchCacheC2 = c_arrClientC2.begin();
-        ( pc_searchCacheC2 != c_arrClientC2.end() );
-        pc_searchCacheC2++ )
-    { // delete item at pc_timeIter, if pc_searchCacheC2 points to pc_client
-      if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-      pc_actDevKey = &((*pc_searchCacheC2)->ownerDevKey());
-      ui8_actPri = (*pc_searchCacheC2)->pri();
-      if ( (ui8_actPri != ui8_lastFilterPri) && (*pc_actDevKey != DevKey_c::DevKeyUnspecified)
-        && ( ( pc_lastFilterDevKey == NULL ) || (*pc_actDevKey != *pc_lastFilterDevKey) )
-         )
-      { // last FilterBox_c call with other devKey
-        // -> avoid unneccessary calls with search
-        pc_lastFilterDevKey = pc_actDevKey;
-        ui8_lastFilterPri = ui8_actPri;
-        createRemoteFilter(*pc_actDevKey, ui8_actPri);
-      }
-    }
   }
   // the other list elements doesn't need periodic actions
   return b_result;
@@ -1098,58 +1078,6 @@ bool Process_c::updateRemoteCache(
   return b_foundLazy;
 }
 
-/**
-  insert FilterBox_c for receive from remote devKey if needed
-  @param rc_ownerDevKey DEVKEY code of remote owner who sent the message
-  @param rui8_pri PRI code of messages with this process data instance (default 2)
-  @return true -> member exist and Filter Box created
-*/
-bool Process_c::createRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
-  #ifdef USE_DIN_9684
-  rui8_pri
-  #endif
-  )
-{
-  bool b_result = false;
-  MASK_TYPE t_filter;
-  #ifdef USE_DIN_9684
-  if (getDinMonitorInstance4Comm().existDinMemberDevKey(rc_ownerDevKey, true))
-  { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
-    const uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberDevKey(rc_ownerDevKey, true).nr();
-    t_filter = (ui8_recNr | (rui8_pri << 8));
-    #ifdef USE_ISO_11783
-    if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter, Ident_c::StandardIdent))
-    #else
-    if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter))
-    #endif
-    { // no suitable FilterBox_c exist -> create it
-      getCanInstance4Comm().insertFilter( *this, 0x70F, t_filter, false);
-      b_result = true;
-    }
-  }
-  #endif
-  #ifdef USE_ISO_11783
-  if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_ownerDevKey, true))
-  { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
-    const uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberDevKey(rc_ownerDevKey, true).nr();
-    // only receive msg from ui8_recNr / rc_ownerDevKey to all other devices
-    t_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
-    if (!getCanInstance4Comm().existFilter( *this, 0x1FF00FFUL, t_filter, Ident_c::ExtendedIdent))
-    { // no suitable FilterBox_c exist -> create it
-      getCanInstance4Comm().insertFilter( *this, 0x1FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
-      b_result = true;
-    }
-  }
-  #endif
-  // only reconfigure if new FilterBox_c created -> signalled by b_result == true
-  if (b_result)
-  {
-    getCanInstance4Comm().reconfigureMsgObj();
-  }
-
-  return b_result;
-}
-
 #ifdef USE_ISO_11783
 bool Process_c::checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey)
 {
@@ -1257,6 +1185,141 @@ bool Process_c::deleteRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
     getCanInstance4Comm().reconfigureMsgObj();
   }
   return b_result;
+}
+
+/**
+  insert FilterBox_c for receive from remote devKey if needed
+  @param rc_ownerDevKey DEVKEY code of remote owner who sent the message
+  @param rui8_pri PRI code of messages with this process data instance (default 2)
+  @return true -> member exist and Filter Box created
+ */
+bool Process_c::createRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
+#ifdef USE_DIN_9684
+  rui8_pri
+#endif
+                                  )
+{
+  bool b_result = false;
+  MASK_TYPE t_filter;
+  #ifdef USE_DIN_9684
+  if (getDinMonitorInstance4Comm().existDinMemberDevKey(rc_ownerDevKey, true))
+  { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
+    const uint8_t ui8_recNr = getDinMonitorInstance4Comm().dinMemberDevKey(rc_ownerDevKey, true).nr();
+    t_filter = (ui8_recNr | (rui8_pri << 8));
+    #ifdef USE_ISO_11783
+    if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter, Ident_c::StandardIdent))
+    #else
+    if (!getCanInstance4Comm().existFilter( *this, 0x70F, t_filter))
+    #endif
+    { // no suitable FilterBox_c exist -> create it
+      getCanInstance4Comm().insertFilter( *this, 0x70F, t_filter, false);
+      b_result = true;
+    }
+  }
+  #endif
+  #ifdef USE_ISO_11783
+  if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_ownerDevKey, true))
+  { // remote owner exist and has claimed address -> check if suitable FilterBox_c exist
+    const uint8_t ui8_recNr = getIsoMonitorInstance4Comm().isoMemberDevKey(rc_ownerDevKey, true).nr();
+    // only receive msg from ui8_recNr / rc_ownerDevKey to all other devices
+    t_filter = (PROCESS_DATA_PGN << 8) | ui8_recNr;
+    if (!getCanInstance4Comm().existFilter( *this, 0x1FF00FFUL, t_filter, Ident_c::ExtendedIdent))
+    { // no suitable FilterBox_c exist -> create it
+      getCanInstance4Comm().insertFilter( *this, 0x1FF00FFUL, t_filter, false, Ident_c::ExtendedIdent);
+      b_result = true;
+    }
+  }
+  #endif
+  // only reconfigure if new FilterBox_c created -> signalled by b_result == true
+  if (b_result)
+  {
+    getCanInstance4Comm().reconfigureMsgObj();
+  }
+
+  return b_result;
+}
+
+/**
+  * check if any remote process data needs a new receive filter
+  * @return true -> a remote filter has been created
+  */
+bool Process_c::checkCreateRemoteReceiveFilter(const DevKey_c* rpc_checkOnlyOwner)
+{
+  bool b_result = false;
+  const DevKey_c *pc_lastFilterDevKey = NULL;
+  const DevKey_c *pc_actDevKey = NULL;
+  uint8_t ui8_lastFilterPri = 0, ui8_actPri = 2;
+  for ( pc_searchCacheC2 = c_arrClientC2.begin();
+        ( pc_searchCacheC2 != c_arrClientC2.end() );
+        pc_searchCacheC2++ )
+  { // delete item at pc_timeIter, if pc_searchCacheC2 points to pc_client
+    pc_actDevKey = &((*pc_searchCacheC2)->ownerDevKey());
+    ui8_actPri = (*pc_searchCacheC2)->pri();
+    if ( (ui8_actPri != ui8_lastFilterPri) && (*pc_actDevKey != DevKey_c::DevKeyUnspecified)
+      && ( ( NULL == pc_lastFilterDevKey ) || (*pc_actDevKey != *pc_lastFilterDevKey) )
+      && ( ( NULL == rpc_checkOnlyOwner  ) || (*pc_actDevKey == *rpc_checkOnlyOwner ) )
+       )
+    { // last FilterBox_c call with other devKey
+      // -> avoid unneccessary calls with search
+      pc_lastFilterDevKey = pc_actDevKey;
+      ui8_lastFilterPri = ui8_actPri;
+      if ( createRemoteFilter(*pc_actDevKey, ui8_actPri) ) b_result = true;
+    }
+  }
+  return b_result;
+}
+
+/** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+  * @param refc_devKey const reference to the item which ISOItem_c state is changed
+  * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+  */
+void Process_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem )
+{ // create FilterBoxes for remote ProcessData if needed
+  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  { // lcoal ISOItem_c has finished adr claim
+    uint32_t ui32_nr = rpc_newItem->nr();
+          // only ISO msgs with own SA in PS (destination)
+    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    { // create FilterBox
+      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+    }
+  }
+  else
+  { // remote ISOItem_c has finished adr claim
+    checkCreateRemoteReceiveFilter( &refc_devKey );
+  }
+}
+
+/** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+  * @param refc_devKey const reference to the item which ISOItem_c state is changed
+  * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+  */
+void Process_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa )
+{
+  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  { // lcoal ISOItem_c has lost SA
+    uint32_t ui32_nr = rui8_oldSa;
+          // only ISO msgs with own SA in PS (destination)
+    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(PROCESS_DATA_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
+    if (getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    { // create FilterBox
+      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+    }
+  }
+  else
+  { // remote ISOItem_c
+    deleteRemoteFilter(refc_devKey);
+  }
+}
+/** register pointer to a new remote process data instance
+  * this function is called within construction of new remote process data instance
+  */
+bool Process_c::registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
+{
+  const bool cb_result = registerC2( pc_remoteClient );
+  checkCreateRemoteReceiveFilter( &(pc_remoteClient->ownerDevKey()) );
+  return cb_result;
 }
 
 /** unregister pointer to a already registered remote process data instance

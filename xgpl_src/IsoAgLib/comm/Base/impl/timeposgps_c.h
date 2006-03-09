@@ -209,11 +209,11 @@ public:
    /** config the Base_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_implementMode implement mode (true) or tractor mode (false)!!!
+      @param rt_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void configGps(const DevKey_c* rpc_devKey, bool rb_implementMode);
+  void configGps(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identModeGps);
   /** return if you currently are in implement mode or tractor mode*/
-  bool checkImplementModeGps() const {return b_implementModeGps;};
+  bool checkModeGps(IsoAgLib::IdentMode_t rt_identModeGps) const {return (t_identModeGps == rt_identModeGps);}
 
   /** send ISO11783 calendar PGN
     possible errors:
@@ -576,7 +576,7 @@ private:
   #endif // END of NMEA_2000_FAST_PACKET
   /** DEVKEY of GPS data sender */
   DevKey_c c_sendGpsDevKey;
-  bool b_implementModeGps;
+  IsoAgLib::IdentMode_t  t_identModeGps;
   #endif // END of USE_ISO_11783
 };
 

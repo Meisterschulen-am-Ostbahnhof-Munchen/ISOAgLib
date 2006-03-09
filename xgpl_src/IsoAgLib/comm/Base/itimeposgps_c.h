@@ -88,9 +88,11 @@ public:
   */
   void config(const iDevKey_c* rpc_devKey, bool rb_implementMode)
   {
+    #ifdef SYSTEM_PC
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
+    #endif
     TimePosGPS_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
-  }
+  };
 
   /**
     config the Base_c object after init -> set pointer to devKey and
@@ -99,16 +101,28 @@ public:
     @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
   */
   void config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
-  { TimePosGPS_c::config(rpc_devKey, rt_identMode ); }
+  { TimePosGPS_c::config(rpc_devKey, rt_identMode ); };
 
   #ifdef USE_ISO_11783
+   /** config the Base_c object after init -> set pointer to devKey and
+  config send/receive of different base msg types
+  @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+  @param rt_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+    */
+  void configGps(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identModeGps)
+  {TimePosGPS_c::configGps( rpc_devKey, rt_identModeGps);};
   /** config the Base_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rb_implementMode implement mode (true) or tractor mode (false)!!!
     */
   void configGps(const iDevKey_c* rpc_devKey, bool rb_implementMode)
-  {TimePosGPS_c::configGps(rpc_devKey, rb_implementMode );};
+  {
+    #ifdef SYSTEM_PC
+    #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
+    #endif
+    TimePosGPS_c::configGps(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
+  };
   /** Retrieve the last update time of the specified information type
      @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
    */

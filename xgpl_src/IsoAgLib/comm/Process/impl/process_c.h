@@ -149,7 +149,7 @@ typedef SINGLETON_DERIVED_CLIENT2(Process_c, ElementBase_c, ProcDataLocalBase_c,
 
   @author Dipl.-Inform. Achim Spangler
 */
-class Process_c : public SingletonProcess_c
+class Process_c : public SingletonProcess_c,  public __IsoAgLib::SaClaimHandler_c
 {
 public:
   /** initialisation for Process_c
@@ -437,8 +437,7 @@ public:
   /** register pointer to a new remote process data instance
     * this function is called within construction of new remote process data instance
     */
-  bool registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
-    { return registerC2( pc_remoteClient );};
+  bool registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient);
   /** unregister pointer to a already registered remote process data instance
     * this function is called within destruction of remote process data instance
     */
@@ -453,6 +452,16 @@ public:
     @return true -> member exist and Filter Box deleted
   */
   bool deleteRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t rui8_pri = 2);
+   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+    */
+  virtual void reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem );
+   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+    */
+  virtual void reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa );
 
 private: // Private methods
   /**
@@ -521,6 +530,11 @@ private: // Private methods
 #endif
                          uint8_t rui8_devClassReceiver);
 
+  /**
+   * check if any remote process data needs a new receive filter
+   * @return true -> a remote filter has been created
+   */
+  bool checkCreateRemoteReceiveFilter(const DevKey_c* rpc_checkOnlyOwner = NULL);
   /**
     insert FilterBox_c for receive from remote devKey if needed
     @param rc_ownerDevKey DEVKEY code of remote owner who sent the message

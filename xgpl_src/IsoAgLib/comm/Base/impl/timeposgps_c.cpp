@@ -224,7 +224,7 @@ namespace __IsoAgLib {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
     // check for different base data types whether the previously
-    if ( checkMode(IsoAgLib::IdentModeTractor)
+    if ( checkMode(IsoAgLib::IdentModeImplement)
       && ( (lastedTimeSinceUpdate() >= 3000 ) || ( yearUtc() == 0 ) )
       && ( getSenderDevKey().isSpecified()                          ) )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
@@ -233,7 +233,7 @@ namespace __IsoAgLib {
       bit_calendar.month = bit_calendar.day = 1;
     }
     #ifdef USE_ISO_11783
-    if ( !checkImplementModeGps()
+    if ( checkModeGps(IsoAgLib::IdentModeImplement)
       #ifdef NMEA_2000_FAST_PACKET
       && ( ( ci32_now - i32_lastIsoPositionStream  ) >= 3000  )
       && ( ( ci32_now - i32_lastIsoDirectionStream ) >= 3000  )
@@ -257,7 +257,7 @@ namespace __IsoAgLib {
       #ifdef USE_ISO_11783
       if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true))
       { // stored base information sending ISO member has claimed address
-        if (checkMode(IsoAgLib::IdentModeTractor) || (!checkImplementModeGps()) ) isoTimeEvent();
+        if (checkMode(IsoAgLib::IdentModeTractor) || (checkModeGps(IsoAgLib::IdentModeTractor)) ) isoTimeEvent();
       }
       #endif
       #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
@@ -329,7 +329,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
   #if defined(USE_ISO_11783)
   // set the GPS mode always to non-sending
-  configGps( NULL, true );
+  configGps( NULL, IsoAgLib::IdentModeImplement );
   #endif
 }
 
@@ -361,7 +361,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rb_implementMode implement mode (true) or tractor mode (false)!!!
     */
-  void TimePosGPS_c::configGps(const DevKey_c* rpc_devKey, bool rb_implementMode)
+  void TimePosGPS_c::configGps(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t  rt_identModeGps)
   {
     i32_lastIsoPositionSimple = 0;
     setDevKey( rpc_devKey );
@@ -375,8 +375,8 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     #endif // END of NMEA_2000_FAST_PACKET
 
     // *************************************************************************************************
-    b_implementModeGps = rb_implementMode;
-    if ((rpc_devKey != NULL) && ( !rb_implementMode) )
+    t_identModeGps = rt_identModeGps;
+    if ((rpc_devKey != NULL) && ( rt_identModeGps == IsoAgLib::IdentModeTractor ) )
     { // GPS send from now on
       c_sendGpsDevKey = *rpc_devKey;
       #ifdef NMEA_2000_FAST_PACKET
@@ -826,7 +826,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       isoSendCalendar(*getDevKey());
     }
 
-    if ( !checkImplementModeGps() )
+    if ( checkModeGps(IsoAgLib::IdentModeTractor) )
     {
       if ( ( ci32_now - i32_lastIsoPositionSimple ) >= 100 )
       {

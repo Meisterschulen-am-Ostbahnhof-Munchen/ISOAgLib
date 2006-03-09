@@ -86,6 +86,27 @@
 
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
+#ifdef USE_PROCESS
+#include <IsoAgLib/comm/Process/impl/process_c.h>
+#endif
+#ifdef USE_TRACTOR_GENERAL
+#include <IsoAgLib/comm/Base/impl/tracgeneral_c.h>
+#endif
+#ifdef USE_TRACTOR_MOVE
+#include <IsoAgLib/comm/Base/impl/tracmove_c.h>
+#endif
+#ifdef USE_TRACTOR_PTO
+#include <IsoAgLib/comm/Base/impl/tracpto_c.h>
+#endif
+#ifdef USE_TRACTOR_LIGHT
+#include <IsoAgLib/comm/Base/impl/traclight_c.h>
+#endif
+#ifdef USE_TRACTOR_AUX
+#include <IsoAgLib/comm/Base/impl/tracaux_c.h>
+#endif
+#ifdef USE_TIME_GPS
+#include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
+#endif
 
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
@@ -119,6 +140,40 @@ SystemMgmt_c::SystemMgmt_c()
 */
 SystemMgmt_c::~SystemMgmt_c(){
   close();
+}
+
+/**
+  initialize directly after the singleton instance is created.
+  this is called from singleton.h and should NOT be called from the user again.
+  users please use init(...) instead.
+  */
+void SystemMgmt_c::singletonInit()
+{
+  init();
+
+  // NOW INIT ONCE the core singleton classes that correspond to the compile time
+  // configured features of the IsoAgLib
+  #ifdef USE_PROCESS
+  getProcessInstance4Comm().init();
+  #endif
+  #ifdef USE_TRACTOR_GENERAL
+  getTracGeneralInstance4Comm().init();
+  #endif
+  #ifdef USE_TRACTOR_MOVE
+  getTracMoveInstance4Comm().init();
+  #endif
+  #ifdef USE_TRACTOR_PTO
+  getTracPtoInstance4Comm().init();
+  #endif
+  #ifdef USE_TRACTOR_LIGHT
+  getTracLightInstance4Comm().init();
+  #endif
+  #ifdef USE_TRACTOR_AUX
+  getTracAuxInstance4Comm().init();
+  #endif
+  #ifdef USE_TIME_GPS
+  getTimePosGpsInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+  #endif
 }
 
 /**
