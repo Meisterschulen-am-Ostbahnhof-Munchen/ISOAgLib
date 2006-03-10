@@ -230,7 +230,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // there is at least something configured to send
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
       // stored base information sending DIN member has claimed address
-      return dinTimeEvent();
+      return dinTimeEventTracMode();
     }
     return true;
     #endif
@@ -288,7 +288,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** send a DIN9684 general base information PGN
   * this is only called when sending ident is configured and it has already claimed an address
   */
-  bool TracGeneral_c::dinTimeEvent()
+  bool TracGeneral_c::dinTimeEventTracMode()
   {
     CANIO_c& c_can = getCanInstance4Comm();
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
@@ -438,7 +438,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** send a ISO11783 general base information PGN.
   * this is only called when sending ident is configured and it has already claimed an address
   */
-  bool TracGeneral_c::isoTimeEvent( )
+  bool TracGeneral_c::isoTimeEventTracMode( )
   {
     if ( ( (lastedTimeSinceUpdate() >= 100) )
       && ( checkMode(IsoAgLib::IdentModeTractor) ) )

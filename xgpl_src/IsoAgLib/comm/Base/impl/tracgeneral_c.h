@@ -346,7 +346,7 @@ private:
   /** send a DIN9684 general base information PGN.
    * this is only called when sending ident is configured and it has already claimed an address
    */
-  bool dinTimeEvent();
+  bool dinTimeEventTracMode();
   /** process a DIN9684 general base information PGN */
   bool dinProcessMsg();
   #endif
@@ -355,7 +355,7 @@ private:
   /** send a ISO11783 general base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool isoTimeEvent();
+  bool isoTimeEventTracMode();
   /** process a ISO11783 general base information PGN */
   bool isoProcessMsg();
   /** send front hitch and rear hitch data msg*/

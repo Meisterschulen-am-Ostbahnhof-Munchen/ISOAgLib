@@ -165,7 +165,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** send a DIN9684 moving information PGN
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool TracMove_c::dinTimeEvent()
+  bool TracMove_c::dinTimeEventTracMode()
   {
     CANIO_c& c_can = getCanInstance4Comm();
     // retreive the actual dynamic sender no of the member with the registered devKey
@@ -310,7 +310,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** send a ISO11783 moving information PGN.
   * this is only called when sending ident is configured and it has already claimed an address
   */
-  bool TracMove_c::isoTimeEvent( )
+  bool TracMove_c::isoTimeEventTracMode( )
   {
     if ( ( lastedTimeSinceUpdate()  >= 100 )
           && checkMode(IsoAgLib::IdentModeTractor)         )

@@ -241,25 +241,24 @@ bool BaseCommon_c::timeEvent()
   }
 
   // check if we are in tractor mode and have a pointer to the sending device key
-  #ifdef USE_ISO_11783
   if (  (pc_devKey != NULL                                                   )
-      && checkMode(IsoAgLib::IdentModeTractor)
-      && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true) )
+         && checkMode(IsoAgLib::IdentModeTractor)
+  #ifdef USE_ISO_11783
+         && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
   #endif
   #ifdef USE_DIN_9684
-  if (  (pc_devKey != NULL                                                   )
-      && checkMode(IsoAgLib::IdentModeTractor)
-      && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true) )
+         && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true)
   #endif
+      )
   { // stored moving information sending ISO member or DIN member has claimed address
     #ifdef USE_ISO_11783
-      if ( !isoTimeEvent()) return false;
+      if ( !isoTimeEventTracMode()) return false;
     #endif
     #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
       if (Scheduler_c::getAvailableExecTime() == 0) return false;
     #endif
     #ifdef USE_DIN_9684
-      return dinTimeEvent();
+      return dinTimeEventTracMode();
     #endif
   }
   return true;

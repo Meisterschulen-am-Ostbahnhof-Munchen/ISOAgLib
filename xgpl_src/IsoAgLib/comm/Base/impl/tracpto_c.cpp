@@ -203,7 +203,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** send a DIN9684 base information PGN
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool TracPTO_c::dinTimeEvent( void )
+  bool TracPTO_c::dinTimeEventTracMode( )
   {
     CANIO_c& c_can = getCanInstance4Comm();
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
@@ -337,7 +337,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool TracPTO_c::isoTimeEvent(  )
+  bool TracPTO_c::isoTimeEventTracMode(  )
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // retreive the actual dynamic sender no of the member with the registered devKey

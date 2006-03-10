@@ -553,7 +553,7 @@ void IdentItem_c::restartAddressClaim()
 {
 #ifdef USE_DIN_9684
   if ( (pc_memberItem != NULL)
-    && (pc_memberItem->devKey() == devKey()))
+    && (pc_memberItem->devKey() == devKey())
     && (pc_memberItem->itemState( IState_c::Local ))
      )
   { // item has claimed address -> send unregister cmd

@@ -453,7 +453,7 @@ private:
   /** send a DIN9684 base information PGN.
    * this is only called when sending ident is configured and it has already claimed an address
    */
-  bool dinTimeEvent( void );
+  bool dinTimeEventTracMode( );
 
   /** process a DIN9684 base information PGN */
   bool dinProcessMsg();
@@ -463,7 +463,7 @@ private:
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  virtual bool isoTimeEvent( );
+  virtual bool isoTimeEventTracMode( );
 
   /** send position rapid update message */
   void isoSendPositionRapidUpdate( void );

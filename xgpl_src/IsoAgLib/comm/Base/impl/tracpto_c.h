@@ -254,7 +254,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** send a DIN9684 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-    bool dinTimeEvent( );
+    bool dinTimeEventTracMode( );
     /** process a DIN9684 base information PGN */
     bool dinProcessMsg();
     #endif
@@ -262,7 +262,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool isoTimeEvent( );
+    bool isoTimeEventTracMode( );
     /** process a ISO11783 base information PGN */
     bool isoProcessMsg();
     #endif

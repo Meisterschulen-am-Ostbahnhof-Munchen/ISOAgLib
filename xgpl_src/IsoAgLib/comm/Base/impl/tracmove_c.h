@@ -210,7 +210,7 @@ namespace __IsoAgLib {
     /** send a DIN9684 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool dinTimeEvent( );
+    bool dinTimeEventTracMode( );
     /** process a DIN9684 moving information PGN */
     bool dinProcessMsg();
     #endif
@@ -219,7 +219,7 @@ namespace __IsoAgLib {
     /** send a ISO11783 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool isoTimeEvent( );
+    bool isoTimeEventTracMode( );
     /** send moving data with ground&theor speed&dist */
   //  void isoSendMovingUpdate( );
     /** process a ISO11783 moving information PGN */

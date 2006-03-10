@@ -257,7 +257,7 @@ namespace __IsoAgLib {
       #ifdef USE_ISO_11783
       if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true))
       { // stored base information sending ISO member has claimed address
-        if (checkMode(IsoAgLib::IdentModeTractor) || (checkModeGps(IsoAgLib::IdentModeTractor)) ) isoTimeEvent();
+        if (checkMode(IsoAgLib::IdentModeTractor) || (checkModeGps(IsoAgLib::IdentModeTractor)) ) isoTimeEventTracMode();
       }
       #endif
       #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
@@ -266,7 +266,7 @@ namespace __IsoAgLib {
       #ifdef USE_DIN_9684
       if (getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true))
       { // stored base information sending DIN member has claimed address
-        if (checkMode(IsoAgLib::IdentModeTractor)) dinTimeEvent();
+        if (checkMode(IsoAgLib::IdentModeTractor)) dinTimeEventTracMode();
       }
       #endif
     }
@@ -443,7 +443,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   /** send a DIN9684 base information PGN
   * this is only called when sending ident is configured and it has already claimed an address
   */
-  bool TimePosGPS_c::dinTimeEvent( void )
+  bool TimePosGPS_c::dinTimeEventTracMode( )
   {
     CANIO_c& c_can = getCanInstance4Comm();
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
@@ -808,7 +808,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool TimePosGPS_c::isoTimeEvent()
+  bool TimePosGPS_c::isoTimeEventTracMode()
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
