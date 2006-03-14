@@ -160,10 +160,10 @@ void SystemMgmt_c::singletonInit()
   getTracGeneralInstance4Comm().init();
   #endif
   #ifdef USE_TRACTOR_MOVE
-  getTracMoveInstance4Comm().init();
+  getTracMoveInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
   #endif
   #ifdef USE_TRACTOR_PTO
-  getTracPtoInstance4Comm().init();
+  getTracPtoInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
   #endif
   #ifdef USE_TRACTOR_LIGHT
   getTracLightInstance4Comm().init();

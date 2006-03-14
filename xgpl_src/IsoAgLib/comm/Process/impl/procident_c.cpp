@@ -116,6 +116,14 @@
 
 namespace __IsoAgLib {
 
+#ifdef USE_DIN_9684
+/** static instance for all ProcIdent_c objects that is solely used as a temp variable for the function
+ * const DevKey_c& devKey() const
+ * only in DIN 9684 mode
+ */
+DevKey_c ProcIdent_c::c_temp;
+#endif
+
 /**
   constructor which can optional set all member values
     ISO parameter

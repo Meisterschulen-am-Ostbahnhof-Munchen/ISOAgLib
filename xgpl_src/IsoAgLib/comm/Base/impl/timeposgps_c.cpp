@@ -498,10 +498,10 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
         if ( ( data().getUint8Data(0) != 0 ) || ( data().getUint8Data(1) != 0 ) || ( yearUtc() == 0 ) )
         { // store new calendar setting
           #ifdef USE_ISO_11783
-          if ( !checkImplementMode()
+          if ( checkModeGps(IsoAgLib::IdentModeImplement)
             && ( c_sendGpsDevKey.isUnspecified()                    ) )
           #endif
-          { // neither this item now another item is sending GPS data -> this is the best time source
+          { // neither this item nor another item is sending GPS data -> this is the best time source
             setCalendarLocal(
               bcd2dec(data().getUint8Data(0) ) * 100 + bcd2dec(data().getUint8Data(1)),
               bcd2dec(data().getUint8Data(2)), bcd2dec(data().getUint8Data(3)),

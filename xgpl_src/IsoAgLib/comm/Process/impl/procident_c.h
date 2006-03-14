@@ -289,7 +289,7 @@ public:
   {if( ( data.c_devKey.getDevClass() == 0 ) &&  ( data.c_devKey.getDevClassInst() == 0 ) )
                return   data.c_devKey;
           else
-               return           DevKey_c(data.c_devKey.getDevClass(), ownerDevKey().getDevClassInst());};
+          {c_temp.set(data.c_devKey.getDevClass(),ownerDevKey().getDevClassInst() ); return c_temp;}};
   #else
   {return ownerDevKey();};
   #endif
@@ -463,6 +463,13 @@ private: // Private attributes
   /** internal base function for copy constructor and assignement */
   void assignFromSource( const ProcIdent_c& rrefc_src );
 
+  #ifdef USE_DIN_9684
+  /** static instance for all ProcIdent_c objects that is solely used as a temp variable for the function
+    * const DevKey_c& devKey() const
+    * only in DIN 9684 mode
+    */
+  static DevKey_c c_temp;
+  #endif
   /** DEVCLASS code of process data identity */
   const DevKey_c* pc_ownerDevKey; // only defined for own local data, otherwise NULL
   struct _data {

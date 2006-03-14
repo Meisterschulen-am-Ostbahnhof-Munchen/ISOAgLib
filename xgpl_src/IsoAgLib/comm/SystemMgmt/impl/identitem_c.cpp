@@ -86,6 +86,7 @@
 #include "systemmgmt_c.h"
 #ifdef USE_DIN_9684
   #include "../DIN9684/impl/dinmonitor_c.h"
+  #include <IsoAgLib/comm/Process/impl/process_c.h>
 #endif
 #ifdef USE_ISO_11783
   #include "../ISO11783/impl/isomonitor_c.h"
