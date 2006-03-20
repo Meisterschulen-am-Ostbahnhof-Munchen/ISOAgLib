@@ -89,7 +89,9 @@ namespace IsoAgLib {
     void init(const iDevKey_c* rpc_devKey, bool rb_implementMode)
     {
       #ifdef SYSTEM_PC
+#ifndef WIN32
       #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
+#endif
       #endif
       TracGeneral_c::init(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
     };
@@ -112,8 +114,10 @@ namespace IsoAgLib {
   void config(const iDevKey_c* rpc_devKey, bool rb_implementMode = true)
   {
     #ifdef SYSTEM_PC
+#ifndef WIN32
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
-    #endif
+#endif
+	#endif
     TracGeneral_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   }
 
