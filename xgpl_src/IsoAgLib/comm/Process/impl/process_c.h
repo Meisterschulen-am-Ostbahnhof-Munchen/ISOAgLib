@@ -534,7 +534,7 @@ private: // Private methods
    * check if any remote process data needs a new receive filter
    * @return true -> a remote filter has been created
    */
-  bool checkCreateRemoteReceiveFilter(const DevKey_c* rpc_checkOnlyOwner = NULL);
+  bool checkCreateRemoteReceiveFilter();
   /**
     insert FilterBox_c for receive from remote devKey if needed
     @param rc_ownerDevKey DEVKEY code of remote owner who sent the message
@@ -588,6 +588,7 @@ private: // Private attributes
 
 #ifdef USE_ISO_11783
   std::slist<uint32_t> l_filtersToDeleteISO;
+  bool b_needCallOfCheckCreateRemoteReceiveFilter;
 #endif
 
 #ifdef USE_DIN_9684

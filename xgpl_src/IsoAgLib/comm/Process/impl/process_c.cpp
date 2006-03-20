@@ -156,6 +156,7 @@ void Process_c::init()
   getSchedulerInstance4Comm().registerClient( this );
   i32_lastFilterBoxTime = 0;
   #if defined(USE_ISO_11783)
+  b_needCallOfCheckCreateRemoteReceiveFilter = false;
   __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
     #ifdef USE_PROC_DATA_DESCRIPTION_POOL
     c_devPropertyHandler.init(&c_data);
@@ -266,6 +267,11 @@ bool Process_c::timeEvent( void ){
     }
     l_filtersToDeleteISO.clear();
   }
+  if ( b_needCallOfCheckCreateRemoteReceiveFilter )
+  {
+    b_needCallOfCheckCreateRemoteReceiveFilter = false;
+    checkCreateRemoteReceiveFilter();
+  }
 #endif
 
 #ifdef USE_DIN_9684
@@ -322,20 +328,20 @@ bool Process_c::timeEvent( void ){
   #endif
 
   // call the time event for all local data
-  for ( pc_searchCacheC1 = c_arrClientC1.begin();
-       ( pc_searchCacheC1 != c_arrClientC1.end() );
-       pc_searchCacheC1++ )
+  for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
+        ( pc_iter != c_arrClientC1.end() );
+        pc_iter++ )
   { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-    if ( !(*pc_searchCacheC1)->timeEvent() ) b_result = false; /** @todo seemded to segfault here, although this is REALLY STRANGE! */
+    if ( !(*pc_iter)->timeEvent() ) b_result = false; /** @todo seemded to segfault here, although this is REALLY STRANGE! */
   }
   // call the time event for all remote data
-  for ( pc_searchCacheC2 = c_arrClientC2.begin();
-       ( pc_searchCacheC2 != c_arrClientC2.end() );
-       pc_searchCacheC2++ )
+  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
+        ( pc_iter != c_arrClientC2.end() );
+        pc_iter++ )
   { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-    if ( !(*pc_searchCacheC2)->timeEvent() ) b_result = false;
+    if ( !(*pc_iter)->timeEvent() ) b_result = false;
   }
   // if local active member exist - check every second if
   // filters for targeted or partner process data should be created
@@ -1144,11 +1150,11 @@ bool Process_c::deleteRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
        b_found = false;
   MASK_TYPE ui32_filter;
 
-  for ( pc_searchCacheC2 = c_arrClientC2.begin();
-      ( pc_searchCacheC2 != c_arrClientC2.end() );
-      pc_searchCacheC2++ )
+  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
+        ( pc_iter != c_arrClientC2.end() );
+        pc_iter++ )
   {
-    if ((*pc_searchCacheC2)->ownerDevKey() == rc_ownerDevKey) b_found = true;
+    if ((*pc_iter)->ownerDevKey() == rc_ownerDevKey) b_found = true;
   }
   if (b_found)
   { // remote proc data has given onwerDevKey
@@ -1243,21 +1249,20 @@ bool Process_c::createRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t
   * check if any remote process data needs a new receive filter
   * @return true -> a remote filter has been created
   */
-bool Process_c::checkCreateRemoteReceiveFilter(const DevKey_c* rpc_checkOnlyOwner)
+bool Process_c::checkCreateRemoteReceiveFilter()
 {
   bool b_result = false;
   const DevKey_c *pc_lastFilterDevKey = NULL;
   const DevKey_c *pc_actDevKey = NULL;
   uint8_t ui8_lastFilterPri = 0, ui8_actPri = 2;
-  for ( pc_searchCacheC2 = c_arrClientC2.begin();
-        ( pc_searchCacheC2 != c_arrClientC2.end() );
-        pc_searchCacheC2++ )
-  { // delete item at pc_timeIter, if pc_searchCacheC2 points to pc_client
-    pc_actDevKey = &((*pc_searchCacheC2)->ownerDevKey());
-    ui8_actPri = (*pc_searchCacheC2)->pri();
+  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
+        ( pc_iter != c_arrClientC2.end() );
+        pc_iter++ )
+  {
+    pc_actDevKey = &((*pc_iter)->ownerDevKey());
+    ui8_actPri = (*pc_iter)->pri();
     if ( (ui8_actPri != ui8_lastFilterPri) && (*pc_actDevKey != DevKey_c::DevKeyUnspecified)
       && ( ( NULL == pc_lastFilterDevKey ) || (*pc_actDevKey != *pc_lastFilterDevKey) )
-      && ( ( NULL == rpc_checkOnlyOwner  ) || (*pc_actDevKey == *rpc_checkOnlyOwner ) )
        )
     { // last FilterBox_c call with other devKey
       // -> avoid unneccessary calls with search
@@ -1287,7 +1292,7 @@ void Process_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOIte
   }
   else
   { // remote ISOItem_c has finished adr claim
-    checkCreateRemoteReceiveFilter( &refc_devKey );
+    b_needCallOfCheckCreateRemoteReceiveFilter = true;
   }
 }
 
@@ -1318,7 +1323,7 @@ void Process_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t r
 bool Process_c::registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
 {
   const bool cb_result = registerC2( pc_remoteClient );
-  checkCreateRemoteReceiveFilter( &(pc_remoteClient->ownerDevKey()) );
+  b_needCallOfCheckCreateRemoteReceiveFilter = true;
   return cb_result;
 }
 
@@ -1332,18 +1337,18 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
   bool b_otherRemoteWithSameOwner = false;
   MASK_TYPE ui32_filter;
 
-  for ( pc_searchCacheC2 = c_arrClientC2.begin();
-      ( pc_searchCacheC2 != c_arrClientC2.end() );
-      pc_searchCacheC2++ )
+  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
+        ( pc_iter != c_arrClientC2.end() );
+        pc_iter++ )
   {
-    if ( (*pc_searchCacheC2) == pc_remoteClient ) continue;
-    if ((*pc_searchCacheC2)->ownerDevKey() == c_toBeDeletedOwnerDevKey) b_otherRemoteWithSameOwner = true;
+    if ( (*pc_iter) == pc_remoteClient ) continue;
+    if ((*pc_iter)->ownerDevKey() == c_toBeDeletedOwnerDevKey) b_otherRemoteWithSameOwner = true;
   }
 
   unregisterC2( pc_remoteClient );
 
-  // set ptr to a defined position => avoid use of this pc_searchCacheC2 in deleteFilter() which is now postponed (timeEvent())
-  pc_searchCacheC2 = c_arrClientC2.end();
+  // set ptr to a defined position => avoid use of this pc_iter in deleteFilter() which is now postponed (timeEvent())
+  pc_searchCacheC2 = c_arrClientC2.end() - 1;
 
   if ( !b_otherRemoteWithSameOwner )
   { // delete the remote filter that was created to receive messages from that owner
