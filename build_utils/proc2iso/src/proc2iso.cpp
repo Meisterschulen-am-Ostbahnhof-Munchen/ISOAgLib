@@ -344,7 +344,11 @@ void init (const char* xmlFile)
   strcat (partFileName, "-func.h");
   partFileB = fopen (partFileName,"wt");
 
+#if defined( WIN32 )
+  fprintf (partFileB, "#include \"%s\"\n\n", FileName);
+#else
   fprintf (partFileB, "#include \"%s\"\n\n", FileName+1);
+#endif
 
   for (int j=0; j<maxAttributeNames; j++)
   {
