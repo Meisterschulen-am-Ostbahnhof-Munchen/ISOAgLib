@@ -178,6 +178,14 @@ public:
 
   /**
     hook function that gets called after the ISO_Terminal_c instance
+    receives a "Pointing Event" Message
+    @param rui16_xPosition of where the user has clicked (besides buttons and input objects) or touched
+    @param rui16_yPosition of where the user has clicked (besides buttons and input objects) or touched
+  */
+  virtual void eventPointingEvent (uint16_t /*rui16_xPosition*/, uint16_t /*rui16_yPosition*/) {};
+
+  /**
+    hook function that gets called after the ISO_Terminal_c instance
     receives a "VT Change Numeric Value" Message
     @param rui16_objId of the object where the user changed the value
     @param rui8_value the value in 8bit
@@ -230,12 +238,12 @@ public:
     VERY IMPORTANT: THIS FUNCTION CALL MAY OCCUR PRIOR TO AN SUCCESSFULLY UPLOADED POOL !!!!!!!
   */
   virtual void eventLanguagePgn(const localSettings_s& /*rrefs_localSettings*/) {};
- 
+
   /**
     hook function that gets called immediately after recognizing an incoming
     VT status message.
   */
- 
+
   virtual void eventVtStatusMsg() {};
 
   /**

@@ -1153,6 +1153,12 @@ bool ISOTerminal_c::processMsg()
                                  data().getUint8Data (0) /* 0 for sk, 1 for button -- matches wasButton? boolean */ );
         }
         break;
+      case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
+        if (c_streamer.pc_pool) {
+          c_streamer.pc_pool->eventPointingEvent(data().getUint8Data (1) | (data().getUint8Data (2) << 8) /* X position in pixels */,
+              data().getUint8Data (3) | (data().getUint8Data (4) << 8) /* Y position in pixels */);
+        }
+        break;
       case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
         if (c_streamer.pc_pool) {
           c_streamer.pc_pool->eventNumericValue (uint16_t( data().getUint8Data (1) ) | (uint16_t( data().getUint8Data (2) ) << 8) /* objID */,
