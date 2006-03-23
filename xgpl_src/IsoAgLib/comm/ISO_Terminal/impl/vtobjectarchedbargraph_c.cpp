@@ -137,6 +137,12 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
         destMemory [12] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*vtDimension)/opDimension) & 0xFF;
         destMemory [13] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*vtDimension)/opDimension) >> 8;
       }
+      if ( (vtObjectArchedBarGraph_a->barGraphWidth > 0) &&
+           (destMemory [12] == 0) && (destMemory [13] == 0))
+      { // if the arch had a linewidth > 0, then don't allow downscaling to let it become 0!
+        destMemory [12] = 0x01;
+      //destMemory [13] = 0x00; // is already set to 0 as checked in the if-statement!
+      }
       destMemory [14] = vtObjectArchedBarGraph_a->minValue & 0xFF;
       destMemory [15] = vtObjectArchedBarGraph_a->minValue >> 8;
       destMemory [16] = vtObjectArchedBarGraph_a->maxValue & 0xFF;
