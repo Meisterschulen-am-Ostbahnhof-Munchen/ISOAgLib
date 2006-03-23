@@ -114,6 +114,10 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
       } else {
         destMemory [4] = (((uint32_t) vtObjectLineAttributes_a->lineWidth*vtDimension)/opDimension) & 0xFF;
       }
+      if ((vtObjectLineAttributes_a->lineWidth >= 1) && (destMemory [4] == 0))
+      { // if downscaling line-widths of at least 1, do NEVER send 0, at least always send 1!
+        destMemory [4] = 1;
+      }
       destMemory [5] = vtObjectLineAttributes_a->lineArt & 0xFF;
       destMemory [6] = vtObjectLineAttributes_a->lineArt >> 8;
 
