@@ -1067,6 +1067,7 @@ bool ISOTerminal_c::processMsg()
         //////////////////////////////////////////////
        // NACK to this ECU? -->ACKNOWLEDGE_PGN<-- ///
       //////////////////////////////////////////////
+#if !defined( IGNORE_VTSERVER_NACK )	// The NACK must be ignored for the Mueller VT Server
   if ( pc_wsMasterIdentItem->getIsoItem() && ((data().isoPgn() & 0x1FFFF) == (uint32_t) (ACKNOWLEDGEMENT_PGN | (pc_wsMasterIdentItem->getIsoItem()->nr()))) )
   { /// on NACK do:
     // for now ignore source address which must be VT of course. (but in case a NACK comes in before the first VT Status Message
@@ -1092,6 +1093,7 @@ bool ISOTerminal_c::processMsg()
     } // switch
     return true; // (N)ACK for our SA will NOT be of interest for anyone else...
   }
+#endif
 
 
     /// ////////////////////////////////////////////////////////
