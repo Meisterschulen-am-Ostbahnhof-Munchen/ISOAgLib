@@ -43,7 +43,7 @@
 
   <xs:simpleType name="attrFontType">
     <xs:restriction base="xs:string">
-      <xs:pattern value="0|9|255|latin1|latin9|proprietary"/>
+      <xs:pattern value="0|1|2|255|latin1|latin9|latin5|proprietary"/>
     </xs:restriction>
   </xs:simpleType>
 
