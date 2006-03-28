@@ -196,24 +196,43 @@ int16_t configWatchdog()
 int32_t getTime()
 {
   static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
+  static const int64_t msec_per_clock_t = 1000 / clock_t_per_sec;
   struct timeval now;
 
   gettimeofday(&now, 0);
 
-  const uint32_t cui32_now_clock_t = times(NULL)-getStartUpTime();
+  // first fetch the raw clock_t for _now_
+  int64_t i64_now_clock_t = times(NULL);
+  // the static variable will allow us to detect overflow of times() return value
+  static int64_t si64_lastClock_t = i64_now_clock_t;
+  // the static variable will be used to store the overflow offsets from clock_t
+  static int64_t si64_cycleOffset = 0;
 
-  #ifdef DEBUG
-  static int32_t i32_secOffset = 0;
-  int32_t i32_newOffset = ( ( times(NULL) / clock_t_per_sec ) - now.tv_sec );
-  if ( abs(i32_newOffset - i32_secOffset) > 1 )
-  {
-    std::cerr << "\n\n\n\nTIME-OFFSET CHANGED from " << i32_secOffset << " TO " << i32_newOffset
-        << " --> DELTA: " << abs(i32_newOffset - i32_secOffset)
-        << "\n\n\n\n" << std::endl;
-    i32_secOffset = i32_newOffset;
+  if ( i64_now_clock_t < si64_lastClock_t )
+  { // overflow of times() occured --> the "real" clock_t without overflowing
+    // would be greater by one more instance of 0xFFFFFFFFULL
+    si64_cycleOffset += 0xFFFFFFFFULL;
   }
-  #endif
+  // now the si64_lastClock_t is now more needed -> update the value
+  si64_lastClock_t = i64_now_clock_t;
+  // the final overflow secure base clock_t for further calculations to msec
+  // takes the startuptime and the overflow offsets into account
+  i64_now_clock_t += si64_cycleOffset - getStartUpTime();
 
+  int64_t i64_result = int64_t(i64_now_clock_t) * msec_per_clock_t + ( ( now.tv_usec / 1000 ) % msec_per_clock_t );
+  // convert to negative value in case the temp val is larger than the highest positive number of int32_t
+  while ( i64_result > 0x7FFFFFFFLL ) i64_result -= 0xFFFFFFFFULL;
+  static int64_t si64_lastTime = 0;
+
+  if ( (si64_lastTime > i64_result ) && (si64_lastTime - i64_result < msec_per_clock_t ) )
+  { // the time has suffered some sort of jitter as the value base for gettimeofday() and times() can be different
+    // - but make sure, that we don't neglect normal overflow when i64_result jumps from positive to negative
+    i64_result = si64_lastTime;
+  }
+  else si64_lastTime = i64_result;
+
+  return i64_result;
+#if 0
   int32_t i32_result =
       ( ((uint64_t(cui32_now_clock_t)*10ULL) / clock_t_per_sec ) * 100 )
       + ( ( now.tv_usec / 1000 ) % 100 );
@@ -223,6 +242,7 @@ int32_t getTime()
   else si32_lastTime = i32_result;
 
   return i32_result;
+#endif
 }
 
 

@@ -179,24 +179,39 @@ int32_t getClientTime( client_s& ref_receiveClient )
 {
   // use gettimeofday for native LINUX system
   static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
-
+  static const int64_t msec_per_clock_t = 1000 / clock_t_per_sec;
   struct timeval now;
+
   gettimeofday(&now, 0);
 
-  // we use the resulting clock_t from times() call to get SECONDS
-  // as these are independend from settimeofday calls
-  const uint32_t cui32_now_clock_t = times(NULL)-ref_receiveClient.t_startTimeClock;
+  // first fetch the raw clock_t for _now_
+  int64_t i64_now_clock_t = times(NULL);
+  // the static variable will allow us to detect overflow of times() return value
+  static int64_t si64_lastClock_t = i64_now_clock_t;
+  // the static variable will be used to store the overflow offsets from clock_t
+  static int64_t si64_cycleOffset = 0;
 
-  int32_t i32_result =
-      ( ((uint64_t(cui32_now_clock_t)*10ULL) / clock_t_per_sec ) * 100 )
-      + ( ( now.tv_usec / 1000 ) % 100 );
+  if ( i64_now_clock_t < si64_lastClock_t )
+  { // overflow of times() occured --> the "real" clock_t without overflowing
+    // would be greater by one more instance of 0xFFFFFFFFULL
+    si64_cycleOffset += 0xFFFFFFFFULL;
+  }
+  // now the si64_lastClock_t is now more needed -> update the value
+  si64_lastClock_t = i64_now_clock_t;
+  // the final overflow secure base clock_t for further calculations to msec
+  // takes the startuptime and the overflow offsets into account
+  i64_now_clock_t += si64_cycleOffset - ref_receiveClient.t_startTimeClock;
 
-  static int32_t si32_lastTime = 0;
+  int64_t i64_result = int64_t(i64_now_clock_t) * msec_per_clock_t + ( ( now.tv_usec / 1000 ) % msec_per_clock_t );
+  // convert to negative value in case the temp val is larger than the highest positive number of int32_t
+  while ( i64_result > 0x7FFFFFFFLL ) i64_result -= 0xFFFFFFFFULL;
 
-  if (  ref_receiveClient.i32_lastTimeStamp_msec > i32_result ) i32_result = ref_receiveClient.i32_lastTimeStamp_msec;
-  else ref_receiveClient.i32_lastTimeStamp_msec = i32_result;
+  if ( ( ref_receiveClient.i32_lastTimeStamp_msec > i64_result                   )
+    && (ref_receiveClient.i32_lastTimeStamp_msec - i64_result < msec_per_clock_t ) )
+    i64_result = ref_receiveClient.i32_lastTimeStamp_msec;
+  else ref_receiveClient.i32_lastTimeStamp_msec = i64_result;
 
-  return i32_result;
+  return i64_result;
 }
 
 
