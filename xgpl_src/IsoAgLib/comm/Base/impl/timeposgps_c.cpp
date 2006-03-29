@@ -839,6 +839,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
         && ( t_multiSendSuccessState != MultiSend_c::Running  ) )
       {
         if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
+        isoSendPositionStream();
       }
 
       if ( ( ( ci32_now - i32_lastIsoDirectionStream ) >= 1000 )
