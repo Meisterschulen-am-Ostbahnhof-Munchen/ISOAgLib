@@ -195,6 +195,37 @@ int16_t configWatchdog()
  // use gettimeofday for native LINUX system
 int32_t getTime()
 {
+  // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
+  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
+  struct timeval now;
+  gettimeofday(&now, 0);
+  // fetch RAW - non normalized - time in scaling of gettimeofday()
+  int64_t i64_time4Timeofday =
+      int64_t(now.tv_sec*1000) + int64_t(now.tv_usec/1000);
+  // store offset between gettimeofday() and system start
+  static int64_t si64_systemStart4Timeofday = i64_time4Timeofday;
+
+  // static store delta between times() normalization and gettimeofday() norm
+  static int64_t si64_deltaStartTimes =
+      i64_time4Timeofday - int64_t(getStartUpTime()) * ci64_mesecPerClock;
+  // const temp var for current delta
+  const int64_t ci64_deltaNow =
+      i64_time4Timeofday - int64_t(times(NULL)) * ci64_mesecPerClock;
+  // derive change of the normalization delta
+  const int64_t ci64_deltaChange = ci64_deltaNow - si64_deltaStartTimes;
+  if ( abs(ci64_deltaChange) >= 1000 )
+  { // user changed the system clock inbetween
+    si64_deltaStartTimes += ci64_deltaChange;
+    si64_systemStart4Timeofday += ci64_deltaChange;
+  }
+  // now calculate the real time in [msec] since startup
+  i64_time4Timeofday -= si64_systemStart4Timeofday;
+
+  // now derive the well define overflows
+  while ( i64_time4Timeofday > 0x7FFFFFFFLL ) i64_time4Timeofday -= 0xFFFFFFFF;
+
+  return i64_time4Timeofday;
+#if 0
   static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
   static const int64_t msec_per_clock_t = 1000 / clock_t_per_sec;
   struct timeval now;
@@ -232,6 +263,7 @@ int32_t getTime()
   else si64_lastTime = i64_result;
 
   return i64_result;
+#endif
 #if 0
   int32_t i32_result =
       ( ((uint64_t(cui32_now_clock_t)*10ULL) / clock_t_per_sec ) * 100 )
