@@ -202,12 +202,14 @@ int32_t getTime()
   // fetch RAW - non normalized - time in scaling of gettimeofday()
   int64_t i64_time4Timeofday =
       int64_t(now.tv_sec*1000) + int64_t(now.tv_usec/1000);
+
+
   // store offset between gettimeofday() and system start
   static int64_t si64_systemStart4Timeofday = i64_time4Timeofday;
-
   // static store delta between times() normalization and gettimeofday() norm
   static int64_t si64_deltaStartTimes =
       i64_time4Timeofday - int64_t(getStartUpTime()) * ci64_mesecPerClock;
+
   // const temp var for current delta
   const int64_t ci64_deltaNow =
       i64_time4Timeofday - int64_t(times(NULL)) * ci64_mesecPerClock;
@@ -218,9 +220,9 @@ int32_t getTime()
     si64_deltaStartTimes += ci64_deltaChange;
     si64_systemStart4Timeofday += ci64_deltaChange;
   }
+
   // now calculate the real time in [msec] since startup
   i64_time4Timeofday -= si64_systemStart4Timeofday;
-
   // now derive the well define overflows
   while ( i64_time4Timeofday > 0x7FFFFFFFLL ) i64_time4Timeofday -= 0xFFFFFFFF;
 
