@@ -177,6 +177,41 @@ namespace __HAL {
 
 int32_t getClientTime( client_s& ref_receiveClient )
 {
+  struct timeval now4Timeofday;
+  gettimeofday(&now4Timeofday, 0);
+  const clock_t ct_now4Times = times(NULL);
+
+  // store the last timestamp base values for calculation
+  static const int32_t ci32_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
+
+  // retrieve the delta tims from both time sources
+  struct timeval delta4Timeofday;
+  timersub( &now4Timeofday, &ref_receiveClient.t_last4Timeofday, &delta4Timeofday );
+  const int32_t ci32_delta4TimeofdayMsec = (delta4Timeofday.tv_sec * 1000) + ( delta4Timeofday.tv_usec / 1000 );
+  const clock_t ct_delta4TimesMsec       = (ct_now4Times - ref_receiveClient.t_last4times) * ci32_mesecPerClock;
+
+  // only update the last timestamps, when a change of at least one Msec was detected
+  bool b_doUpdateLastTimestamps = false;
+  // decide for which delta time to use to update si32_myNowMsec
+  if ( ( abs( ci32_delta4TimeofdayMsec - ct_delta4TimesMsec ) <= (2 * ci32_mesecPerClock) ) && (ci32_delta4TimeofdayMsec > 0))
+  { // take the msec delta time from gettimeofday() as it is not varying for more than two msec intervals of clock_t ( the resolution of times()
+    ref_receiveClient.i32_lastTimeStamp_msec += ci32_delta4TimeofdayMsec;
+    b_doUpdateLastTimestamps = true;
+  }
+  else if ( ct_delta4TimesMsec > 0 )
+  { // use the delta time from times() as safe fallbackk with lower resolution
+    ref_receiveClient.i32_lastTimeStamp_msec += ct_delta4TimesMsec;
+    b_doUpdateLastTimestamps = true;
+  }
+  if ( b_doUpdateLastTimestamps )
+  { // update now the last timestamps
+    ref_receiveClient.t_last4Timeofday.tv_sec = now4Timeofday.tv_sec; ref_receiveClient.t_last4Timeofday.tv_usec = now4Timeofday.tv_usec;
+    ref_receiveClient.t_last4times            = ct_now4Times;
+  }
+  return ref_receiveClient.i32_lastTimeStamp_msec;
+
+
+#if 0
   // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
   static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
   struct timeval now;
@@ -214,6 +249,7 @@ int32_t getClientTime( client_s& ref_receiveClient )
   else ref_receiveClient.i32_lastTimeStamp_msec = i64_time4Timeofday;
 
   return i64_time4Timeofday;
+#endif
 }
 
 
@@ -656,7 +692,10 @@ static void* command_thread_func(void* ptr)
         s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
 
         s_tmpClient.t_startTimeClock = msqCommandBuf.s_startTimeClock.t_clock;
-        s_tmpClient.i32_lastTimeStamp_msec = 0;
+        s_tmpClient.i32_lastTimeStamp_msec = (times(NULL) - s_tmpClient.t_startTimeClock) * (1000 / sysconf(_SC_CLK_TCK));
+        gettimeofday( &s_tmpClient.t_last4Timeofday, 0 );
+        s_tmpClient.t_last4times = times(NULL);
+
 
         DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
 
