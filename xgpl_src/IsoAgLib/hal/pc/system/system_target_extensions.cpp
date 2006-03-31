@@ -192,9 +192,60 @@ int16_t configWatchdog()
   #endif
 #else
 
+#ifndef __USE_BSD
+# define timersub(a, b, result)                 \
+  do {                        \
+  (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;           \
+  (result)->tv_usec = (a)->tv_usec - (b)->tv_usec;            \
+  if ((result)->tv_usec < 0) {                \
+  --(result)->tv_sec;                 \
+  (result)->tv_usec += 1000000;               \
+}                       \
+} while (0)
+#endif
+
  // use gettimeofday for native LINUX system
 int32_t getTime()
-{
+{ //
+  struct timeval now4Timeofday;
+  gettimeofday(&now4Timeofday, 0);
+  const clock_t ct_now4Times = times(NULL);
+
+  // store the last timestamp base values for calculation
+  static const int32_t ci32_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
+  static struct timeval st_last4Timeofday = { now4Timeofday.tv_sec, now4Timeofday.tv_usec};
+  static clock_t        st_last4times     = ct_now4Times;
+  static int32_t        si32_myNowMsec    = (ct_now4Times - getStartUpTime()) * ci32_mesecPerClock;
+
+  // retrieve the delta tims from both time sources
+  struct timeval delta4Timeofday;
+  timersub( &now4Timeofday, &st_last4Timeofday, &delta4Timeofday );
+  const int32_t ci32_delta4TimeofdayMsec = (delta4Timeofday.tv_sec * 1000) + ( delta4Timeofday.tv_usec / 1000 );
+  const clock_t ct_delta4TimesMsec       = (ct_now4Times - st_last4times) * ci32_mesecPerClock;
+
+  // only update the last timestamps, when a change of at least one Msec was detected
+  bool b_doUpdateLastTimestamps = false;
+  // decide for which delta time to use to update si32_myNowMsec
+  if ( ( abs( ci32_delta4TimeofdayMsec - ct_delta4TimesMsec ) <= (2 * ci32_mesecPerClock) ) && (ci32_delta4TimeofdayMsec > 0))
+  { // take the msec delta time from gettimeofday() as it is not varying for more than two msec intervals of clock_t ( the resolution of times()
+    si32_myNowMsec += ci32_delta4TimeofdayMsec;
+    b_doUpdateLastTimestamps = true;
+  }
+  else if ( ct_delta4TimesMsec > 0 )
+  { // use the delta time from times() as safe fallbackk with lower resolution
+    si32_myNowMsec += ct_delta4TimesMsec;
+    b_doUpdateLastTimestamps = true;
+  }
+  if ( b_doUpdateLastTimestamps )
+  { // update now the last timestamps
+    st_last4Timeofday.tv_sec = now4Timeofday.tv_sec; st_last4Timeofday.tv_usec = now4Timeofday.tv_usec;
+    st_last4times            = ct_now4Times;
+  }
+  return si32_myNowMsec;
+
+#if 0
+
+
   // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
   static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
   struct timeval now;
@@ -227,6 +278,7 @@ int32_t getTime()
   while ( i64_time4Timeofday > 0x7FFFFFFFLL ) i64_time4Timeofday -= 0xFFFFFFFF;
 
   return i64_time4Timeofday;
+#endif
 #if 0
   static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
   static const int64_t msec_per_clock_t = 1000 / clock_t_per_sec;
