@@ -1233,7 +1233,8 @@ MultiSend_c::SendStream_c::abortSend()
   #endif
   if ( b_performAbort )
   {
-    sendIntern();
+    en_sendState = SendFileEnd; // set it to anything OTHER than "SendData",
+    sendIntern(); // so sendIntern() will send with the correct PGN: (E)TP_CONN_MANAGE_PGN
     *pen_sendSuccessNotify = SendAborted;
   }
 }
