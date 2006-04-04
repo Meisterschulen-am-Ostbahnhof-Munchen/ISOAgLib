@@ -180,14 +180,15 @@ namespace __HAL {
   void recalibrateClientTime( client_s& ref_receiveClient )
   {
     const clock_t t_start = times(NULL);
-    struct timeval t_now4Timeofday, t_delta4Timeofday;
+    struct timeval t_now4Timeofday;
     clock_t t_now4Times;
     for ( t_now4Times = times(NULL); ((t_now4Times == t_start) && (((t_now4Times*msecPerClock) % 100) != 0)); t_now4Times = times(NULL) );
     // times(NULL) switched time -> now retrieve startup time for timeofday
     gettimeofday(&t_now4Timeofday, 0);
     const clock_t t_delta4Times = t_now4Times - ref_receiveClient.t_start4Times;
-    timersub( &t_now4Timeofday, &ref_receiveClient.t_start4Timeofday, &t_delta4Timeofday);
-    const int32_t ci32_now4Timeofday = ( t_delta4Timeofday.tv_sec * 1000 ) + ( t_delta4Timeofday.tv_usec / 1000 );
+    const int32_t ci32_now4Timeofday =
+         ((t_now4Timeofday.tv_sec   - ref_receiveClient.t_start4Timeofday.tv_sec) * 1000)
+        +((t_now4Timeofday.tv_usec - ref_receiveClient.t_start4Timeofday.tv_usec) / 1000);
     int32_t i32_deviation = ci32_now4Timeofday - ( t_delta4Times*msecPerClock);
     ref_receiveClient.t_start4Timeofday.tv_usec += ( (i32_deviation%1000) * 1000);
     ref_receiveClient.t_start4Timeofday.tv_sec  += (i32_deviation/1000);
@@ -211,12 +212,13 @@ namespace __HAL {
 
 int32_t getClientTime( client_s& ref_receiveClient )
 {
-  struct timeval t_now4Timeofday, t_delta4Timeofday;
+  struct timeval t_now4Timeofday;
   const clock_t t_delta4Times = times(NULL) - ref_receiveClient.t_start4Times;
   gettimeofday(&t_now4Timeofday, 0);
 
-  timersub( &t_now4Timeofday, &ref_receiveClient.t_start4Timeofday, &t_delta4Timeofday);
-  const int32_t ci32_result4Timeofday = ( t_delta4Timeofday.tv_sec * 1000 ) + ( t_delta4Timeofday.tv_usec / 1000 );
+  const int32_t ci32_result4Timeofday =
+       ((t_now4Timeofday.tv_sec  - ref_receiveClient.t_start4Timeofday.tv_sec) *  1000)
+      +((t_now4Timeofday.tv_usec - ref_receiveClient.t_start4Timeofday.tv_usec) / 1000);
   int32_t i32_result4Times = ((t_delta4Times/clocksPer100Msec)*100) + (ci32_result4Timeofday%100);
   // sometimes it can happen, that the 100-scale is not in sync -> this leads to a deviation of +-100
   // -> trust in this case ci32_result4Timeofday

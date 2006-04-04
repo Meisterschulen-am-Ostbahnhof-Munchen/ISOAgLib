@@ -109,7 +109,7 @@ namespace __HAL {
 static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 
 #ifndef WIN32
-#ifndef __USE_BSD
+#if defined (DEBUG) && !defined(__USE_BSD)
 # define timersub(a, b, result)                 \
   do {                        \
   (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;           \
@@ -120,7 +120,6 @@ static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 }                       \
 } while (0)
 #endif
-
 /** modul local variable for the system startup time in the times(NULL)
  * scale
  */
@@ -147,14 +146,16 @@ void initTimers()
 void recalibrateTimers()
 {
   const clock_t t_start = times(NULL);
-  struct timeval t_now4Timeofday, t_delta4Timeofday;
+  struct timeval t_now4Timeofday;
   clock_t t_now4Times;
   for ( t_now4Times = times(NULL); ((t_now4Times == t_start) && (((t_now4Times*msecPerClock) % 100) != 0)); t_now4Times = times(NULL) );
   // times(NULL) switched time -> now retrieve startup time for timeofday
   gettimeofday(&t_now4Timeofday, 0);
   const clock_t t_delta4Times = t_now4Times - st_startup4Times;
-  timersub( &t_now4Timeofday, &st_startup4Timeofday, &t_delta4Timeofday);
-  const int32_t ci32_now4Timeofday = ( t_delta4Timeofday.tv_sec * 1000 ) + ( t_delta4Timeofday.tv_usec / 1000 );
+
+  const int32_t ci32_now4Timeofday =
+      ((t_now4Timeofday.tv_sec   - st_startup4Timeofday.tv_sec) * 1000)
+      +((t_now4Timeofday.tv_usec - st_startup4Timeofday.tv_usec) / 1000);
   int32_t i32_deviation = ci32_now4Timeofday - ( t_delta4Times*msecPerClock);
   st_startup4Timeofday.tv_usec += ( (i32_deviation%1000) * 1000);
   st_startup4Timeofday.tv_sec  += (i32_deviation/1000);
@@ -274,12 +275,13 @@ int16_t configWatchdog()
  // use gettimeofday for native LINUX system
 int32_t getTime()
 { // fetch the current timestamps of both time sources
-  struct timeval t_now4Timeofday, t_delta4Timeofday;
+  struct timeval t_now4Timeofday;
   const clock_t t_delta4Times = times(NULL) - st_startup4Times;
   gettimeofday(&t_now4Timeofday, 0);
 
-  timersub( &t_now4Timeofday, &st_startup4Timeofday, &t_delta4Timeofday);
-  const int32_t ci32_result4Timeofday = ( t_delta4Timeofday.tv_sec * 1000 ) + ( t_delta4Timeofday.tv_usec / 1000 );
+  const int32_t ci32_result4Timeofday =
+       ((t_now4Timeofday.tv_sec  - st_startup4Timeofday.tv_sec) *  1000)
+      +((t_now4Timeofday.tv_usec - st_startup4Timeofday.tv_usec) / 1000);
   int32_t i32_result4Times = ((t_delta4Times/clocksPer100Msec)*100) + (ci32_result4Timeofday%100);
   // sometimes it can happen, that the 100-scale is not in sync -> this leads to a deviation of +-100
   // -> trust in this case ci32_result4Timeofday
