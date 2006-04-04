@@ -174,82 +174,58 @@ static FILE*  canBusFp[cui32_maxCanBusCnt];
 
 
 namespace __HAL {
+  static clock_t msecPerClock = 10; // typical: 10 as 100 clocks per second are returned by sysconf(_SC_CLK_TCK)
+  static clock_t clocksPer100Msec = 10;      // typical: 10
+
+  void recalibrateClientTime( client_s& ref_receiveClient )
+  {
+    const clock_t t_start = times(NULL);
+    struct timeval t_now4Timeofday, t_delta4Timeofday;
+    clock_t t_now4Times;
+    for ( t_now4Times = times(NULL); ((t_now4Times == t_start) && (((t_now4Times*msecPerClock) % 100) != 0)); t_now4Times = times(NULL) );
+    // times(NULL) switched time -> now retrieve startup time for timeofday
+    gettimeofday(&t_now4Timeofday, 0);
+    const clock_t t_delta4Times = t_now4Times - ref_receiveClient.t_start4Times;
+    timersub( &t_now4Timeofday, &ref_receiveClient.t_start4Timeofday, &t_delta4Timeofday);
+    const int32_t ci32_now4Timeofday = ( t_delta4Timeofday.tv_sec * 1000 ) + ( t_delta4Timeofday.tv_usec / 1000 );
+    int32_t i32_deviation = ci32_now4Timeofday - ( t_delta4Times*msecPerClock);
+    ref_receiveClient.t_start4Timeofday.tv_usec += ( (i32_deviation%1000) * 1000);
+    ref_receiveClient.t_start4Timeofday.tv_sec  += (i32_deviation/1000);
+    while ( ref_receiveClient.t_start4Timeofday.tv_usec >= 1000000 )
+    {
+      ref_receiveClient.t_start4Timeofday.tv_usec -= 1000000;
+      ref_receiveClient.t_start4Timeofday.tv_sec  += 1;
+    }
+    #ifdef DEBUG
+    DEBUG_PRINT("\n\nRECALIBRATE\n\n");
+    #endif
+  }
+  void initClientTime( client_s& ref_receiveClient )
+  {
+    msecPerClock = 1000 / sysconf(_SC_CLK_TCK); // typical: 10 as 100 clocks per second are returned by sysconf(_SC_CLK_TCK)
+    clocksPer100Msec = 100 / msecPerClock;      // typical: 10
+
+    gettimeofday( &ref_receiveClient.t_start4Timeofday, 0 );
+    recalibrateClientTime( ref_receiveClient );
+  }
 
 int32_t getClientTime( client_s& ref_receiveClient )
 {
-  struct timeval now4Timeofday;
-  gettimeofday(&now4Timeofday, 0);
-  const clock_t ct_now4Times = times(NULL);
+  struct timeval t_now4Timeofday, t_delta4Timeofday;
+  const clock_t t_delta4Times = times(NULL) - ref_receiveClient.t_start4Times;
+  gettimeofday(&t_now4Timeofday, 0);
 
-  // store the last timestamp base values for calculation
-  static const int32_t ci32_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
+  timersub( &t_now4Timeofday, &ref_receiveClient.t_start4Timeofday, &t_delta4Timeofday);
+  const int32_t ci32_result4Timeofday = ( t_delta4Timeofday.tv_sec * 1000 ) + ( t_delta4Timeofday.tv_usec / 1000 );
+  int32_t i32_result4Times = ((t_delta4Times/clocksPer100Msec)*100) + (ci32_result4Timeofday%100);
+  // sometimes it can happen, that the 100-scale is not in sync -> this leads to a deviation of +-100
+  // -> trust in this case ci32_result4Timeofday
+  // - in case of deviatoin of larger than 1000 a recalibration is needed (user changed time)
+  const int32_t ci32_deviation = abs( i32_result4Times - ci32_result4Timeofday );
+  if ( ci32_deviation == 100 ) i32_result4Times = ci32_result4Timeofday;
+  else if ( ci32_deviation > 1000 ) recalibrateClientTime(ref_receiveClient);
 
-  // retrieve the delta tims from both time sources
-  struct timeval delta4Timeofday;
-  timersub( &now4Timeofday, &ref_receiveClient.t_last4Timeofday, &delta4Timeofday );
-  const int32_t ci32_delta4TimeofdayMsec = (delta4Timeofday.tv_sec * 1000) + ( delta4Timeofday.tv_usec / 1000 );
-  const clock_t ct_delta4TimesMsec       = (ct_now4Times - ref_receiveClient.t_last4times) * ci32_mesecPerClock;
-
-  // only update the last timestamps, when a change of at least one Msec was detected
-  bool b_doUpdateLastTimestamps = false;
-  // decide for which delta time to use to update si32_myNowMsec
-  if ( ( abs( ci32_delta4TimeofdayMsec - ct_delta4TimesMsec ) <= (2 * ci32_mesecPerClock) ) && (ci32_delta4TimeofdayMsec > 0))
-  { // take the msec delta time from gettimeofday() as it is not varying for more than two msec intervals of clock_t ( the resolution of times()
-    ref_receiveClient.i32_lastTimeStamp_msec += ci32_delta4TimeofdayMsec;
-    b_doUpdateLastTimestamps = true;
-  }
-  else if ( ct_delta4TimesMsec > 0 )
-  { // use the delta time from times() as safe fallbackk with lower resolution
-    ref_receiveClient.i32_lastTimeStamp_msec += ct_delta4TimesMsec;
-    b_doUpdateLastTimestamps = true;
-  }
-  if ( b_doUpdateLastTimestamps )
-  { // update now the last timestamps
-    ref_receiveClient.t_last4Timeofday.tv_sec = now4Timeofday.tv_sec; ref_receiveClient.t_last4Timeofday.tv_usec = now4Timeofday.tv_usec;
-    ref_receiveClient.t_last4times            = ct_now4Times;
-  }
-  return ref_receiveClient.i32_lastTimeStamp_msec;
-
-
-#if 0
-  // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
-  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
-  struct timeval now;
-  gettimeofday(&now, 0);
-  // fetch RAW - non normalized - time in scaling of gettimeofday()
-  int64_t i64_time4Timeofday =
-      int64_t(now.tv_sec*1000) + int64_t(now.tv_usec/1000);
-
-
-  // store offset between gettimeofday() and system start
-  static int64_t si64_systemStart4Timeofday = i64_time4Timeofday;
-  // static store delta between times() normalization and gettimeofday() norm
-  static int64_t si64_deltaStartTimes =
-      i64_time4Timeofday - int64_t(ref_receiveClient.t_startTimeClock) * ci64_mesecPerClock;
-
-  // const temp var for current delta
-  const int64_t ci64_deltaNow =
-      i64_time4Timeofday - int64_t(times(NULL)) * ci64_mesecPerClock;
-  // derive change of the normalization delta
-  const int64_t ci64_deltaChange = ci64_deltaNow - si64_deltaStartTimes;
-  if ( abs(ci64_deltaChange) >= 1000 )
-  { // user changed the system clock inbetween
-    si64_deltaStartTimes += ci64_deltaChange;
-    si64_systemStart4Timeofday += ci64_deltaChange;
-  }
-
-  // now calculate the real time in [msec] since startup
-  i64_time4Timeofday -= si64_systemStart4Timeofday;
-  // now derive the well define overflows
-  while ( i64_time4Timeofday > 0x7FFFFFFFLL ) i64_time4Timeofday -= 0xFFFFFFFF;
-
-  if ( ( ref_receiveClient.i32_lastTimeStamp_msec > i64_time4Timeofday                   )
-    && (ref_receiveClient.i32_lastTimeStamp_msec - i64_time4Timeofday < ci64_mesecPerClock ) )
-    i64_time4Timeofday = ref_receiveClient.i32_lastTimeStamp_msec;
-  else ref_receiveClient.i32_lastTimeStamp_msec = i64_time4Timeofday;
-
-  return i64_time4Timeofday;
-#endif
+  return i32_result4Times;
 }
 
 
@@ -691,11 +667,7 @@ static void* command_thread_func(void* ptr)
         // client process id is used as clientID
         s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
 
-        s_tmpClient.t_startTimeClock = msqCommandBuf.s_startTimeClock.t_clock;
-        s_tmpClient.i32_lastTimeStamp_msec = (times(NULL) - s_tmpClient.t_startTimeClock) * (1000 / sysconf(_SC_CLK_TCK));
-        gettimeofday( &s_tmpClient.t_last4Timeofday, 0 );
-        s_tmpClient.t_last4times = times(NULL);
-
+        initClientTime( s_tmpClient );
 
         DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
 

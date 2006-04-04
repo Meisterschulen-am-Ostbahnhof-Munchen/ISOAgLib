@@ -13,10 +13,8 @@ namespace __HAL {
 // client specific data
 typedef struct {
   int32_t  i32_clientID;
-  clock_t  t_startTimeClock;
-  struct timeval t_last4Timeofday;
-  clock_t  t_last4times;
-  int32_t  i32_lastTimeStamp_msec;
+  clock_t  t_start4Times;
+  struct timeval t_start4Timeofday;
   bool     b_canBufferLock[cui32_maxCanBusCnt][cui8_maxCanObj];
   bool     b_canObjConfigured[cui32_maxCanBusCnt][cui8_maxCanObj];
   uint8_t  ui8_bufXtd[cui32_maxCanBusCnt][cui8_maxCanObj];
