@@ -286,6 +286,9 @@ public:
     uint16_t fontSizes;
     uint8_t  fontTypes;
 
+    uint32_t lastReceivedVersion;
+    uint8_t  iso11783version;  // here the version number of the terminal gets stored as soon as the "VT Get Memory Response" was received
+
     uint32_t lastReceivedSoftkeys;
     uint32_t lastRequestedSoftkeys;
     uint8_t  skPhysical;
@@ -540,12 +543,6 @@ private: // attributes
     can interact in the name of the wsMaster
   */
   IdentItem_c* pc_wsMasterIdentItem;
-
-  /**
-    here the version number of the terminal gets stored as soon as the
-    "VT Get Memory Response" was received
-  */
-  uint8_t iso11783version; // defaults to 0xFE for not yet initialized
 
   char* pc_versionLabel; // NULL if no Version Name is given
 

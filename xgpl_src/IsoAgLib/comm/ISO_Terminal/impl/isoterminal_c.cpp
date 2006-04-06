@@ -83,7 +83,7 @@
 // LOESCHE_POOL will send DeleteVersion INSTEAD of LoadVersion
 //#define LOESCHE_POOL
 //#define GET_VERSIONS
-#define USE_SIMPLE_AUX_RESPONSE
+//#define USE_SIMPLE_AUX_RESPONSE
 
 
 #include "isoterminal_c.h"
@@ -95,6 +95,7 @@
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 
 #include "vttypes.h"
 #include "../ivtobjectpicturegraphic_c.h"
@@ -337,6 +338,7 @@ ISOTerminal_c::singletonInit()
 
   localSettings_a.lastReceived = 0; // no language info received yet
   vtState_a.lastReceived = 0; // no vt_statusMessage received yet
+  vtCapabilities_a.lastReceivedVersion = 0; // interesting for NACK handling, that's why it's reset here!
   vtSourceAddress = 254; // shouldn't be read anyway before vt_statusMessage arrived....
 
   pc_wsMasterIdentItem = NULL;
@@ -476,6 +478,7 @@ void ISOTerminal_c::doStart ()
   vtCapabilities_a.lastRequestedHardware = 0; // not yet requested vt's capabilities yet
   vtCapabilities_a.lastReceivedFont = 0; // not yet (queried and) got answer about vt's capabilities yet
   vtCapabilities_a.lastRequestedFont = 0; // not yet requested vt's capabilities yet
+  vtCapabilities_a.lastReceivedVersion = 0;
   localSettings_a.lastRequested = 0;
   localSettings_a.lastReceived = 0;
   if (en_objectPoolState == OPNoneRegistered)
@@ -494,6 +497,7 @@ void ISOTerminal_c::doStart ()
 void ISOTerminal_c::doStop()
 {
   vtSourceAddress = 254;
+  vtCapabilities_a.lastReceivedVersion = 0;
   // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
   #ifdef DEBUG_HEAP_USEAGE
   sui16_sendUploadQueueSize -= q_sendUpload.size();
@@ -1070,27 +1074,47 @@ bool ISOTerminal_c::processMsg()
 #if !defined( IGNORE_VTSERVER_NACK )	// The NACK must be ignored for the Mueller VT Server
   if ( pc_wsMasterIdentItem->getIsoItem() && ((data().isoPgn() & 0x1FFFF) == (uint32_t) (ACKNOWLEDGEMENT_PGN | (pc_wsMasterIdentItem->getIsoItem()->nr()))) )
   { /// on NACK do:
-    // for now ignore source address which must be VT of course. (but in case a NACK comes in before the first VT Status Message
-    // Check if a VT-related message was NACKed. Check embedded PGN for that
-    const uint32_t cui32_pgn =  uint32_t (data().getUint8Data(5)) |
-                               (uint32_t (data().getUint8Data(6)) << 8) |
-                               (uint32_t (data().getUint8Data(7)) << 16);
-    switch (cui32_pgn)
-    {
-      case ECU_TO_VT_PGN:
-      case WORKING_SET_MEMBER_PGN:
-      case WORKING_SET_MASTER_PGN:
-        /// fake NOT-alive state of VT for now!
-        vtState_a.lastReceived = 0; // set VTalive to FALSE, so the queue will be emptied, etc. down below on the state change check.
+    // check if we have Agrocom/Müller with Version < 3, so we IGNORE this NACK BEFORE the pool is finally uploaded.
 
-        #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
-                              << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
-        #endif
-        pc_wsMasterIdentItem->getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
-        checkVtStateChange(); // will also notify application by "eventEnterSafeState"
-        break;
-    } // switch
+    bool b_ignoreNack = false; // normally DO NOT ignore NACK
+    if (getIsoMonitorInstance().existIsoMemberNr (data().isoSa()))
+    { // sender exists in isomonitor, so query its Manufacturer Code
+      const uint16_t cui16_manufCode = getIsoMonitorInstance().isoMemberNr (data().isoSa()).devKey().getConstName().manufCode();
+      if ( ( (cui16_manufCode == 98) || // Müller Elektronik
+	     (cui16_manufCode == 103)   // Agrocom
+	   ) && ((vtCapabilities_a.lastReceivedVersion == 0) || (vtCapabilities_a.iso11783version < 3)) )
+      {
+        if (en_objectPoolState != OPUploadedSuccessfully)
+        { // mueller/agrocom hack - ignore upload while no objectpool is displayed
+          b_ignoreNack = true;
+        }
+      }
+    }
+
+    if (!b_ignoreNack)
+    {
+      // for now ignore source address which must be VT of course. (but in case a NACK comes in before the first VT Status Message
+      // Check if a VT-related message was NACKed. Check embedded PGN for that
+      const uint32_t cui32_pgn =  uint32_t (data().getUint8Data(5)) |
+                                (uint32_t (data().getUint8Data(6)) << 8) |
+                                (uint32_t (data().getUint8Data(7)) << 16);
+      switch (cui32_pgn)
+      {
+        case ECU_TO_VT_PGN:
+        case WORKING_SET_MEMBER_PGN:
+        case WORKING_SET_MASTER_PGN:
+          /// fake NOT-alive state of VT for now!
+          vtState_a.lastReceived = 0; // set VTalive to FALSE, so the queue will be emptied, etc. down below on the state change check.
+          /** @todo Stop any pool sending (if any) */
+          #ifdef DEBUG
+          INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
+                                << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
+          #endif
+          pc_wsMasterIdentItem->getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
+          checkVtStateChange(); // will also notify application by "eventEnterSafeState"
+          break;
+      } // switch
+    }
     return true; // (N)ACK for our SA will NOT be of interest for anyone else...
   }
 #endif
@@ -1275,7 +1299,8 @@ bool ISOTerminal_c::processMsg()
         break;
 
       case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
-        iso11783version = data().getUint8Data (1);
+        vtCapabilities_a.iso11783version = data().getUint8Data (1);
+        vtCapabilities_a.lastReceivedVersion = HAL::getTime();
         if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForMemoryResponse)) {
           if (data().getUint8Data (2) == 0) {
             // start uploading, there MAY BE enough memory
