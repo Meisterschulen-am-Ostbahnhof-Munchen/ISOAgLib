@@ -123,24 +123,38 @@ static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 /** modul local variable for the system startup time in the times(NULL)
  * scale
  */
+static int64_t si64_startup4TimesMsec;
 static clock_t st_startup4Times;
 /** modul local variable for the system startup time in the times(NULL)
  * scale
  */
-static struct timeval st_startup4Timeofday;
+static int64_t si64_startup4TimeofdayMsec;
 
-static clock_t msecPerClock = 10; // typical: 10 as 100 clocks per second are returned by sysconf(_SC_CLK_TCK)
-static clock_t clocksPer100Msec = 10;//100 / (1000 / sysconf(_SC_CLK_TCK));      // typical: 10
+/** define the amount of MSec per Clock_t, in case the project config didn't this before */
+#ifndef msecPerClock
+  #define msecPerClock 10
+  #define clocksPer100Msec 10
+#endif
 
 void initTimers()
 {
-  msecPerClock = 1000 / sysconf(_SC_CLK_TCK); // typical: 10 as 100 clocks per second are returned by sysconf(_SC_CLK_TCK)
-  clocksPer100Msec = sysconf(_SC_CLK_TCK)/10;//100 / (1000 / sysconf(_SC_CLK_TCK));      // typical: 10
-
+  if ( msecPerClock != (1000 / sysconf(_SC_CLK_TCK)) )
+  { // BIG PROBLEM -> THE DEFINE DURING COMPILE TIME DOES NOT MATCH THE RUNTIME
+    std::cerr << "\n\nVERY BIG PROBLEM!!!\nThis program was compiled with\n#define msecPerClock " << msecPerClock
+        << "\nwhile the runtime system has " << (1000 / sysconf(_SC_CLK_TCK))
+        << "\n\nSO PLEASE add\n#define msecPerClock " << (1000 / sysconf(_SC_CLK_TCK))
+        << "\nto your project configuration header or Makefile, so that a matching binary is built. This program is aborted now, as none of any time calculations will match with this problem.\n\n"
+        << std::endl;
+    abort();
+  }
+  struct timeval st_startup4Timeofday;
   clock_t t_start = times(NULL);
   for ( st_startup4Times = times(NULL); ((st_startup4Times == t_start) && (((st_startup4Times*msecPerClock) % 100) != 0)) ; st_startup4Times = times(NULL) );
   // times(NULL) switched time -> now retrieve startup time for timeofday
   gettimeofday(&st_startup4Timeofday, 0);
+  // now set the startup times
+  si64_startup4TimesMsec = st_startup4Times * msecPerClock;
+  si64_startup4TimeofdayMsec = int64_t(st_startup4Timeofday.tv_sec)*1000LL+int64_t(st_startup4Timeofday.tv_usec/1000);
 }
 
 void recalibrateTimers()
@@ -151,20 +165,14 @@ void recalibrateTimers()
   for ( t_now4Times = times(NULL); ((t_now4Times == t_start) && (((t_now4Times*msecPerClock) % 100) != 0)); t_now4Times = times(NULL) );
   // times(NULL) switched time -> now retrieve startup time for timeofday
   gettimeofday(&t_now4Timeofday, 0);
-  const clock_t t_delta4Times = t_now4Times - st_startup4Times;
+  const int64_t i64_now4TimesMsec = t_now4Times*msecPerClock - si64_startup4TimesMsec;
 
-  const int32_t ci32_now4Timeofday =
-      ((t_now4Timeofday.tv_sec   - st_startup4Timeofday.tv_sec) * 1000)
-      +((t_now4Timeofday.tv_usec - st_startup4Timeofday.tv_usec) / 1000);
-  int32_t i32_deviation = ci32_now4Timeofday - ( t_delta4Times*msecPerClock);
-  st_startup4Timeofday.tv_usec += ( (i32_deviation%1000) * 1000);
-  st_startup4Timeofday.tv_sec  += (i32_deviation/1000);
-  while ( st_startup4Timeofday.tv_usec >= 1000000 )
-  {
-    st_startup4Timeofday.tv_usec -= 1000000;
-    st_startup4Timeofday.tv_sec  += 1;
-  }
-  #ifdef DEBUG
+  const int64_t ci64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-si64_startup4TimeofdayMsec;
+  const int64_t ci64_deviation =  ci64_now4TimeofdayMsec - i64_now4TimesMsec;
+
+  // change startuptime of gettimeofday() so that the deviation is equalized
+  si64_startup4TimeofdayMsec += ci64_deviation;
+#ifdef DEBUG
   DEBUG_PRINT("\n\nRECALIBRATE\n\n");
   #endif
 }
@@ -276,161 +284,27 @@ int16_t configWatchdog()
 int32_t getTime()
 { // fetch the current timestamps of both time sources
   struct timeval t_now4Timeofday;
-  const clock_t t_delta4Times = times(NULL) - st_startup4Times;
+  const int64_t i64_now4TimesMsec = times(NULL)*msecPerClock - si64_startup4TimesMsec;
   gettimeofday(&t_now4Timeofday, 0);
+  const int64_t ci64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-si64_startup4TimeofdayMsec;
 
-  const int32_t ci32_result4Timeofday =
-       ((t_now4Timeofday.tv_sec  - st_startup4Timeofday.tv_sec) *  1000)
-      +((t_now4Timeofday.tv_usec - st_startup4Timeofday.tv_usec) / 1000);
-  int32_t i32_result4Times = ((t_delta4Times/clocksPer100Msec)*100) + (ci32_result4Timeofday%100);
-  // sometimes it can happen, that the 100-scale is not in sync -> this leads to a deviation of +-100
-  // -> trust in this case ci32_result4Timeofday
-  // - in case of deviatoin of larger than 1000 a recalibration is needed (user changed time)
-  const int32_t ci32_deviation = abs( i32_result4Times - ci32_result4Timeofday );
-  if ( ci32_deviation == 100 ) i32_result4Times = ci32_result4Timeofday;
-  else if ( ci32_deviation > 1000 ) recalibrateTimers();
-#if 0
-  // retrieve the delta tims from both time sources
-  struct timeval delta4Timeofday;
-  timersub( &now4Timeofday, &st_last4Timeofday, &delta4Timeofday );
-  const int32_t ci32_delta4TimeofdayMsec = (delta4Timeofday.tv_sec * 1000) + ( delta4Timeofday.tv_usec / 1000 );
-  const clock_t ct_delta4TimesMsec       = (ct_now4Times - st_last4times) * ci32_mesecPerClock;
-
-  // decide for which delta time to use to update si32_myNowMsec
-  if ( ( abs( ci32_delta4TimeofdayMsec - ct_delta4TimesMsec ) <= (5 * ci32_mesecPerClock) ) && (ci32_delta4TimeofdayMsec > 0))
-  { // take the msec delta time from gettimeofday() as it is not varying for more than two msec intervals of clock_t ( the resolution of times()
-    si32_myNowMsec += ci32_delta4TimeofdayMsec;
-    // increment the st_last4Timeofday just by the amount of milliseconds, that
-    // are used for incrementation of si32_myNowMsec
-    // ==> preserve any microseconds in the timeval datastructure
-    st_last4Timeofday.tv_usec += (ci32_delta4TimeofdayMsec % 1000) * 1000;
-    if ( st_last4Timeofday.tv_usec >= 1000000 )
-    { // overflow -> increment tv_sec by one and decrement tv_usec by 1000000
-      st_last4Timeofday.tv_usec -= 1000000;
-      st_last4Timeofday.tv_sec += 1;
-    }
-    st_last4Timeofday.tv_sec += (ci32_delta4TimeofdayMsec / 1000);
-    // simply take current times() return value as last value
-    st_last4times = ct_now4Times;
-  }
-  else if ( ct_delta4TimesMsec > 0 )
-  { // use the delta time from times() as safe fallbackk with lower resolution
-    si32_myNowMsec += ct_delta4TimesMsec;
-    // the gettimeofday() time value is no more in sync with times()
-    // - either user changed system clock or something else bad happened
-    // ==> take the complete current gettimeofday() value
-    st_last4Timeofday.tv_sec = now4Timeofday.tv_sec; st_last4Timeofday.tv_usec = now4Timeofday.tv_usec;
-    st_last4times            = ct_now4Times;
-  }
-#endif
-#ifdef DEBUG
-  struct timeval delta4Timeofday;
-  static int32_t si32_maxPartMsec = 0;
-
-
-  timersub( &t_now4Timeofday, &st_startup4Timeofday, &delta4Timeofday );
-  const int32_t ci32_deltaTest = ( delta4Timeofday.tv_sec * 1000 ) + ( delta4Timeofday.tv_usec / 1000 );
-  static uint32_t sui32_testRuns = 0;
-  static int32_t si32_lastDev = 0;
-  const int32_t ci32_currentDev = ci32_deltaTest - i32_result4Times;
-  if ( ( abs(si32_lastDev - ci32_currentDev) > 5 ) || ( ( sui32_testRuns % 1000 ) == 0 )  )
-  { // debug output
-    std::cout << "Devitation in Time: (Timeofday - getTime())" << (ci32_deltaTest - i32_result4Times)
-        << ", Timeofday absolute: " << ci32_deltaTest
-        << ", getTime() " << i32_result4Times
-        << std::endl;
-    si32_lastDev = ci32_currentDev;
-  }
-  sui32_testRuns++;
-#endif
-  return i32_result4Times;
-
-#if 0
-
-
-  // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
-  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
-  struct timeval now;
-  gettimeofday(&now, 0);
-  // fetch RAW - non normalized - time in scaling of gettimeofday()
-  int64_t i64_time4Timeofday =
-      int64_t(now.tv_sec*1000) + int64_t(now.tv_usec/1000);
-
-
-  // store offset between gettimeofday() and system start
-  static int64_t si64_systemStart4Timeofday = i64_time4Timeofday;
-  // static store delta between times() normalization and gettimeofday() norm
-  static int64_t si64_deltaStartTimes =
-      i64_time4Timeofday - int64_t(getStartUpTime()) * ci64_mesecPerClock;
-
-  // const temp var for current delta
-  const int64_t ci64_deltaNow =
-      i64_time4Timeofday - int64_t(times(NULL)) * ci64_mesecPerClock;
-  // derive change of the normalization delta
-  const int64_t ci64_deltaChange = ci64_deltaNow - si64_deltaStartTimes;
-  if ( abs(ci64_deltaChange) >= 1000 )
-  { // user changed the system clock inbetween
-    si64_deltaStartTimes += ci64_deltaChange;
-    si64_systemStart4Timeofday += ci64_deltaChange;
+  while ( ( ci64_now4TimeofdayMsec > 0x7FFFFFFFLL ) || (i64_now4TimesMsec > 0x7FFFFFFFLL))
+  {
+    si64_startup4TimeofdayMsec += 0xFFFFFFFF;
+    si64_startup4TimesMsec     += 0xFFFFFFFF;
   }
 
-  // now calculate the real time in [msec] since startup
-  i64_time4Timeofday -= si64_systemStart4Timeofday;
-  // now derive the well define overflows
-  while ( i64_time4Timeofday > 0x7FFFFFFFLL ) i64_time4Timeofday -= 0xFFFFFFFF;
+  const int32_t ci32_deviation = i64_now4TimesMsec - ci64_now4TimeofdayMsec;
 
-  return i64_time4Timeofday;
-#endif
-#if 0
-  static const unsigned int clock_t_per_sec = sysconf(_SC_CLK_TCK);
-  static const int64_t msec_per_clock_t = 1000 / clock_t_per_sec;
-  struct timeval now;
-
-  gettimeofday(&now, 0);
-
-  // first fetch the raw clock_t for _now_
-  int64_t i64_now_clock_t = times(NULL);
-  // the static variable will allow us to detect overflow of times() return value
-  static int64_t si64_lastClock_t = i64_now_clock_t;
-  // the static variable will be used to store the overflow offsets from clock_t
-  static int64_t si64_cycleOffset = 0;
-
-  if ( i64_now_clock_t < si64_lastClock_t )
-  { // overflow of times() occured --> the "real" clock_t without overflowing
-    // would be greater by one more instance of 0xFFFFFFFFULL
-    si64_cycleOffset += 0xFFFFFFFFULL;
+  if ( ( ci32_deviation < 1000 ) && (ci32_deviation > -1000))
+  {
+    return ci64_now4TimeofdayMsec;
   }
-  // now the si64_lastClock_t is now more needed -> update the value
-  si64_lastClock_t = i64_now_clock_t;
-  // the final overflow secure base clock_t for further calculations to msec
-  // takes the startuptime and the overflow offsets into account
-  i64_now_clock_t += si64_cycleOffset - getStartUpTime();
-
-  int64_t i64_result = int64_t(i64_now_clock_t) * msec_per_clock_t + ( ( now.tv_usec / 1000 ) % msec_per_clock_t );
-  // convert to negative value in case the temp val is larger than the highest positive number of int32_t
-  while ( i64_result > 0x7FFFFFFFLL ) i64_result -= 0xFFFFFFFFULL;
-  static int64_t si64_lastTime = 0;
-
-  if ( (si64_lastTime > i64_result ) && (si64_lastTime - i64_result < msec_per_clock_t ) )
-  { // the time has suffered some sort of jitter as the value base for gettimeofday() and times() can be different
-    // - but make sure, that we don't neglect normal overflow when i64_result jumps from positive to negative
-    i64_result = si64_lastTime;
+  else
+  {
+    recalibrateTimers();
+    return i64_now4TimesMsec;
   }
-  else si64_lastTime = i64_result;
-
-  return i64_result;
-#endif
-#if 0
-  int32_t i32_result =
-      ( ((uint64_t(cui32_now_clock_t)*10ULL) / clock_t_per_sec ) * 100 )
-      + ( ( now.tv_usec / 1000 ) % 100 );
-  static int32_t si32_lastTime = 0;
-
-  if ( si32_lastTime > i32_result ) i32_result = si32_lastTime;
-  else si32_lastTime = i32_result;
-
-  return i32_result;
-#endif
 }
 
 

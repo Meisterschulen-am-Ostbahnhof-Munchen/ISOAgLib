@@ -173,10 +173,14 @@ static int  canBusIsOpen[cui32_maxCanBusCnt];
 static FILE*  canBusFp[cui32_maxCanBusCnt];
 
 
-namespace __HAL {
-  static clock_t msecPerClock = 10; // typical: 10 as 100 clocks per second are returned by sysconf(_SC_CLK_TCK)
-  static clock_t clocksPer100Msec = 10;      // typical: 10
+/** define the amount of MSec per Clock_t, in case the project config didn't this before */
+#ifndef msecPerClock
+#define msecPerClock 10
+#define clocksPer100Msec 10
+#endif
 
+
+namespace __HAL {
   void recalibrateClientTime( client_s& ref_receiveClient )
   {
     const clock_t t_start = times(NULL);
@@ -185,49 +189,48 @@ namespace __HAL {
     for ( t_now4Times = times(NULL); ((t_now4Times == t_start) && (((t_now4Times*msecPerClock) % 100) != 0)); t_now4Times = times(NULL) );
     // times(NULL) switched time -> now retrieve startup time for timeofday
     gettimeofday(&t_now4Timeofday, 0);
-    const clock_t t_delta4Times = t_now4Times - ref_receiveClient.t_start4Times;
-    const int32_t ci32_now4Timeofday =
-         ((t_now4Timeofday.tv_sec   - ref_receiveClient.t_start4Timeofday.tv_sec) * 1000)
-        +((t_now4Timeofday.tv_usec - ref_receiveClient.t_start4Timeofday.tv_usec) / 1000);
-    int32_t i32_deviation = ci32_now4Timeofday - ( t_delta4Times*msecPerClock);
-    ref_receiveClient.t_start4Timeofday.tv_usec += ( (i32_deviation%1000) * 1000);
-    ref_receiveClient.t_start4Timeofday.tv_sec  += (i32_deviation/1000);
-    while ( ref_receiveClient.t_start4Timeofday.tv_usec >= 1000000 )
-    {
-      ref_receiveClient.t_start4Timeofday.tv_usec -= 1000000;
-      ref_receiveClient.t_start4Timeofday.tv_sec  += 1;
-    }
+    const int64_t i64_now4TimesMsec = t_now4Times*msecPerClock - ref_receiveClient.i64_start4TimesMsec;
+
+    const int64_t ci64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-ref_receiveClient.i64_start4TimeofdayMsec;
+    const int64_t ci64_deviation =  ci64_now4TimeofdayMsec - i64_now4TimesMsec;
+
+    // change startuptime of gettimeofday() so that the deviation is equalized
+    ref_receiveClient.i64_start4TimeofdayMsec += ci64_deviation;
     #ifdef DEBUG
     DEBUG_PRINT("\n\nRECALIBRATE\n\n");
     #endif
   }
   void initClientTime( client_s& ref_receiveClient )
   {
-    msecPerClock = 1000 / sysconf(_SC_CLK_TCK); // typical: 10 as 100 clocks per second are returned by sysconf(_SC_CLK_TCK)
-    clocksPer100Msec = 100 / msecPerClock;      // typical: 10
-
-    gettimeofday( &ref_receiveClient.t_start4Timeofday, 0 );
+    struct timeval t_now4Timeofday;
+    gettimeofday( &t_now4Timeofday, 0 );
+    ref_receiveClient.i64_start4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000);
     recalibrateClientTime( ref_receiveClient );
   }
 
 int32_t getClientTime( client_s& ref_receiveClient )
 {
   struct timeval t_now4Timeofday;
-  const clock_t t_delta4Times = times(NULL) - ref_receiveClient.t_start4Times;
+  const int64_t i64_now4TimesMsec = times(NULL)*msecPerClock - ref_receiveClient.i64_start4TimesMsec;
   gettimeofday(&t_now4Timeofday, 0);
+  const int64_t ci64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-ref_receiveClient.i64_start4TimeofdayMsec;
 
-  const int32_t ci32_result4Timeofday =
-       ((t_now4Timeofday.tv_sec  - ref_receiveClient.t_start4Timeofday.tv_sec) *  1000)
-      +((t_now4Timeofday.tv_usec - ref_receiveClient.t_start4Timeofday.tv_usec) / 1000);
-  int32_t i32_result4Times = ((t_delta4Times/clocksPer100Msec)*100) + (ci32_result4Timeofday%100);
-  // sometimes it can happen, that the 100-scale is not in sync -> this leads to a deviation of +-100
-  // -> trust in this case ci32_result4Timeofday
-  // - in case of deviatoin of larger than 1000 a recalibration is needed (user changed time)
-  const int32_t ci32_deviation = abs( i32_result4Times - ci32_result4Timeofday );
-  if ( ci32_deviation == 100 ) i32_result4Times = ci32_result4Timeofday;
-  else if ( ci32_deviation > 1000 ) recalibrateClientTime(ref_receiveClient);
+  while ( ( ci64_now4TimeofdayMsec > 0x7FFFFFFFLL ) || (i64_now4TimesMsec > 0x7FFFFFFFLL))
+  {
+    ref_receiveClient.i64_start4TimeofdayMsec += 0xFFFFFFFF;
+    ref_receiveClient.i64_start4TimesMsec     += 0xFFFFFFFF;
+  }
 
-  return i32_result4Times;
+  const int32_t ci32_deviation = i64_now4TimesMsec - ci64_now4TimeofdayMsec;
+  if ( ( ci32_deviation < 1000 ) && (ci32_deviation > -1000))
+  {
+    return ci64_now4TimeofdayMsec;
+  }
+  else
+  {
+    recalibrateClientTime(ref_receiveClient);
+    return i64_now4TimesMsec;
+  }
 }
 
 
