@@ -535,13 +535,13 @@ RS232IO_c& RS232IO_c::operator<<(float rf_data)
   possible errors:
       * Err_c::rs232_underflow receive puffer underflow during receive
   @param pb_data pointer to data string
-  @param rui8_len length of data string
+  @param rui16_len length of data string
 */
-void RS232IO_c::receive(uint8_t* pData, uint8_t rui8_len)
+void RS232IO_c::receive(uint8_t* pData, uint16_t rui16_len)
 {
   uint8_t* pb_writer = pData;
-  uint8_t ui8_ind = 0;
-  for (; ui8_ind < rui8_len; ui8_ind++)
+  uint16_t ui16_ind = 0;
+  for (; ui16_ind < rui16_len; ui16_ind++)
   {
     if (eof())
     { // error - puffer empty before reading wanted count of data

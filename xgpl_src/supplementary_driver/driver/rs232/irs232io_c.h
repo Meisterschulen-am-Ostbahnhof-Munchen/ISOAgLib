@@ -303,9 +303,9 @@ public:
     possible errors:
         * Err_c::rs232_underflow receive puffer underflow during receive
     @param pb_data pointer to data string
-    @param rui8_len length of data string
+    @param rui16_len length of data string
   */
-  void receive(uint8_t* pData, uint8_t rui8_len) {RS232IO_c::receive(pData, rui8_len);};
+  void receive(uint8_t* pData, uint16_t rui16_len) {RS232IO_c::receive(pData, rui16_len);};
   /** read a line to the next apperance of '\n'.
       read nothing if the delimiter isn't found.
     @param pui8_data    pointer to puffer for writing the data
