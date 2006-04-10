@@ -181,58 +181,7 @@ static FILE*  canBusFp[cui32_maxCanBusCnt];
 
 
 namespace __HAL {
-#if 0
-  int32_t recalibrateClientTime( client_s& ref_receiveClient )
-  {
-    struct timeval t_now4Timeofday;
-    gettimeofday(&t_now4Timeofday, 0);
-    const int64_t i64_now4TimesMsec = times(NULL)*msecPerClock - ref_receiveClient.i64_start4TimesMsec;
-
-    const int64_t ci64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-ref_receiveClient.i64_start4TimeofdayMsec;
-    const int64_t ci64_deviation =  ci64_now4TimeofdayMsec - i64_now4TimesMsec;
-
-  // change startuptime of gettimeofday() so that the deviation is equalized
-    ref_receiveClient.i64_start4TimeofdayMsec += ci64_deviation;
-    return (ci64_now4TimeofdayMsec - ci64_deviation);
-    #ifdef DEBUG
-    DEBUG_PRINT("\n\nRECALIBRATE\n\n");
-    #endif
-  }
-  void initClientTime( client_s& ref_receiveClient )
-  {
-    struct timeval t_now4Timeofday;
-    gettimeofday( &t_now4Timeofday, 0 );
-    ref_receiveClient.i64_start4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000);
-    recalibrateClientTime( ref_receiveClient );
-  }
-
-int32_t getClientTime( client_s& ref_receiveClient )
-{
-  struct timeval t_now4Timeofday;
-  int64_t i64_now4TimesMsec = times(NULL)*msecPerClock - ref_receiveClient.i64_start4TimesMsec;
-  gettimeofday(&t_now4Timeofday, 0);
-  int64_t i64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-ref_receiveClient.i64_start4TimeofdayMsec;
-
-  while ( ( i64_now4TimeofdayMsec > 0x7FFFFFFFLL ) || (i64_now4TimesMsec > 0x7FFFFFFFLL))
-  {
-    ref_receiveClient.i64_start4TimeofdayMsec += 0xFFFFFFFF;
-    ref_receiveClient.i64_start4TimesMsec     += 0xFFFFFFFF;
-    i64_now4TimesMsec                         -= 0xFFFFFFFF;
-    i64_now4TimeofdayMsec                     -= 0xFFFFFFFF;
-  }
-
-  const int32_t ci32_deviation = i64_now4TimesMsec - i64_now4TimeofdayMsec;
-  if ( ( ci32_deviation < 1000 ) && (ci32_deviation > -1000))
-  {
-    return i64_now4TimeofdayMsec;
-  }
-  else
-  {
-    return recalibrateClientTime( ref_receiveClient );
-  }
-}
-#else
-  void initClientTime( client_s& ref_receiveClient, clock_t rt_startupClock )
+void initClientTime( client_s& ref_receiveClient, clock_t rt_startupClock )
 {
   //  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
   struct timeval now;
@@ -274,8 +223,6 @@ int32_t getClientTime( client_s& ref_receiveClient )
 
   return i64_time4Timeofday;
 }
-
-#endif
 
 } // end namespace
 

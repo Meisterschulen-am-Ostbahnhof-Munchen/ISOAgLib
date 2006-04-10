@@ -109,68 +109,6 @@ namespace __HAL {
 static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 
 #ifndef WIN32
-#if 0
-/** modul local variable for the system startup time in the times(NULL)
- * scale
- */
-static int64_t si64_startup4TimesMsec;
-static clock_t st_startup4Times;
-/** modul local variable for the system startup time in the times(NULL)
- * scale
- */
-static int64_t si64_startup4TimeofdayMsec;
-
-/** define the amount of MSec per Clock_t, in case the project config didn't this before */
-#ifndef msecPerClock
-  #define msecPerClock 10
-  #define clocksPer100Msec 10
-#endif
-
-void initTimers()
-{
-  if ( msecPerClock != (1000 / sysconf(_SC_CLK_TCK)) )
-  { // BIG PROBLEM -> THE DEFINE DURING COMPILE TIME DOES NOT MATCH THE RUNTIME
-    std::cerr << "\n\nVERY BIG PROBLEM!!!\nThis program was compiled with\n#define msecPerClock " << msecPerClock
-        << "\nwhile the runtime system has " << (1000 / sysconf(_SC_CLK_TCK))
-        << "\n\nSO PLEASE add\n#define msecPerClock " << (1000 / sysconf(_SC_CLK_TCK))
-        << "\nto your project configuration header or Makefile, so that a matching binary is built. This program is aborted now, as none of any time calculations will match with this problem.\n\n"
-        << std::endl;
-    abort();
-  }
-  struct timeval st_startup4Timeofday;
-  st_startup4Times = times(NULL);
-  gettimeofday(&st_startup4Timeofday, 0);
-  // now set the startup times
-  si64_startup4TimesMsec = st_startup4Times * msecPerClock;
-  si64_startup4TimeofdayMsec = int64_t(st_startup4Timeofday.tv_sec)*1000LL+int64_t(st_startup4Timeofday.tv_usec/1000);
-}
-
-int32_t recalibrateTimers()
-{
-  struct timeval t_now4Timeofday;
-  gettimeofday(&t_now4Timeofday, 0);
-  const int64_t i64_now4TimesMsec = ( times(NULL) - getStartUpTime())*msecPerClock;
-
-  const int64_t ci64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-si64_startup4TimeofdayMsec;
-  const int64_t ci64_deviation =  ci64_now4TimeofdayMsec - i64_now4TimesMsec;
-
-  // change startuptime of gettimeofday() so that the deviation is equalized
-  si64_startup4TimeofdayMsec += ci64_deviation;
-  return (ci64_now4TimeofdayMsec - ci64_deviation);
-#ifdef DEBUG
-  DEBUG_PRINT("\n\nRECALIBRATE\n\n");
-  #endif
-}
-
-clock_t getStartUpTime()
-{
-  //static const clock_t startUpTime = times(NULL);
-  //return startUpTime;
-  initTimers();
-  return st_startup4Times;
-}
-#else
-
 /** define the amount of MSec per Clock_t, in case the project config didn't this before */
 #ifndef msecPerClock
 #define msecPerClock 10LL
@@ -191,8 +129,6 @@ clock_t getStartUpTime()
   st_startup4Times = times(NULL);
   return st_startup4Times;
 }
-
-#endif
 #endif
 
 
@@ -291,7 +227,6 @@ int16_t configWatchdog()
 
  // use gettimeofday for native LINUX system
 int32_t getTime()
-#if 1
 { // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
   //  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
   static struct timeval now;
@@ -325,35 +260,6 @@ int32_t getTime()
 
   return i64_time4Timeofday;
 }
-
-#else
-// THIS IS ANOTHER ALTERNATIVE APPROACH FOR GETTIME() ON LINUX WITHOUT KERNEL 2.6.x
-  { // fetch the current timestamps of both time sources
-  struct timeval t_now4Timeofday;
-  int64_t i64_now4TimesMsec = times(NULL)*msecPerClock - si64_startup4TimesMsec;
-  gettimeofday(&t_now4Timeofday, 0);
-  int64_t i64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-si64_startup4TimeofdayMsec;
-
-  while ( ( i64_now4TimeofdayMsec > 0x7FFFFFFFLL ) || (i64_now4TimesMsec > 0x7FFFFFFFLL))
-  {
-    si64_startup4TimeofdayMsec += 0xFFFFFFFF;
-    si64_startup4TimesMsec     += 0xFFFFFFFF;
-    i64_now4TimesMsec          -= 0xFFFFFFFF;
-    i64_now4TimeofdayMsec      -= 0xFFFFFFFF;
-  }
-
-  const int32_t ci32_deviation = i64_now4TimesMsec - i64_now4TimeofdayMsec;
-  if ( ( ci32_deviation < 1000 ) && (ci32_deviation > -1000))
-  {
-    return i64_now4TimeofdayMsec;
-  }
-  else
-  {
-    return recalibrateTimers();
-  }
-}
-#endif
-
 #endif
 
 
