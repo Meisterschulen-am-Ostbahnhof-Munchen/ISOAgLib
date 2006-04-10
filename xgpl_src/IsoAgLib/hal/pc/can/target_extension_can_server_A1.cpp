@@ -181,21 +181,19 @@ static FILE*  canBusFp[cui32_maxCanBusCnt];
 
 
 namespace __HAL {
-  void recalibrateClientTime( client_s& ref_receiveClient )
+#if 0
+  int32_t recalibrateClientTime( client_s& ref_receiveClient )
   {
-    const clock_t t_start = times(NULL);
     struct timeval t_now4Timeofday;
-    clock_t t_now4Times;
-    for ( t_now4Times = times(NULL); ((t_now4Times == t_start) && (((t_now4Times*msecPerClock) % 100) != 0)); t_now4Times = times(NULL) );
-    // times(NULL) switched time -> now retrieve startup time for timeofday
     gettimeofday(&t_now4Timeofday, 0);
-    const int64_t i64_now4TimesMsec = t_now4Times*msecPerClock - ref_receiveClient.i64_start4TimesMsec;
+    const int64_t i64_now4TimesMsec = times(NULL)*msecPerClock - ref_receiveClient.i64_start4TimesMsec;
 
     const int64_t ci64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-ref_receiveClient.i64_start4TimeofdayMsec;
     const int64_t ci64_deviation =  ci64_now4TimeofdayMsec - i64_now4TimesMsec;
 
-    // change startuptime of gettimeofday() so that the deviation is equalized
+  // change startuptime of gettimeofday() so that the deviation is equalized
     ref_receiveClient.i64_start4TimeofdayMsec += ci64_deviation;
+    return (ci64_now4TimeofdayMsec - ci64_deviation);
     #ifdef DEBUG
     DEBUG_PRINT("\n\nRECALIBRATE\n\n");
     #endif
@@ -211,28 +209,73 @@ namespace __HAL {
 int32_t getClientTime( client_s& ref_receiveClient )
 {
   struct timeval t_now4Timeofday;
-  const int64_t i64_now4TimesMsec = times(NULL)*msecPerClock - ref_receiveClient.i64_start4TimesMsec;
+  int64_t i64_now4TimesMsec = times(NULL)*msecPerClock - ref_receiveClient.i64_start4TimesMsec;
   gettimeofday(&t_now4Timeofday, 0);
-  const int64_t ci64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-ref_receiveClient.i64_start4TimeofdayMsec;
+  int64_t i64_now4TimeofdayMsec = int64_t(t_now4Timeofday.tv_sec)*1000LL+int64_t(t_now4Timeofday.tv_usec/1000)-ref_receiveClient.i64_start4TimeofdayMsec;
 
-  while ( ( ci64_now4TimeofdayMsec > 0x7FFFFFFFLL ) || (i64_now4TimesMsec > 0x7FFFFFFFLL))
+  while ( ( i64_now4TimeofdayMsec > 0x7FFFFFFFLL ) || (i64_now4TimesMsec > 0x7FFFFFFFLL))
   {
     ref_receiveClient.i64_start4TimeofdayMsec += 0xFFFFFFFF;
     ref_receiveClient.i64_start4TimesMsec     += 0xFFFFFFFF;
+    i64_now4TimesMsec                         -= 0xFFFFFFFF;
+    i64_now4TimeofdayMsec                     -= 0xFFFFFFFF;
   }
 
-  const int32_t ci32_deviation = i64_now4TimesMsec - ci64_now4TimeofdayMsec;
+  const int32_t ci32_deviation = i64_now4TimesMsec - i64_now4TimeofdayMsec;
   if ( ( ci32_deviation < 1000 ) && (ci32_deviation > -1000))
   {
-    return ci64_now4TimeofdayMsec;
+    return i64_now4TimeofdayMsec;
   }
   else
   {
-    recalibrateClientTime(ref_receiveClient);
-    return i64_now4TimesMsec;
+    return recalibrateClientTime( ref_receiveClient );
   }
 }
+#else
+  void initClientTime( client_s& ref_receiveClient, clock_t rt_startupClock )
+{
+  //  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
+  struct timeval now;
+  gettimeofday(&now, 0);
+  // fetch RAW - non normalized - time in scaling of gettimeofday()
+  const int64_t i64_time4Timeofday = int64_t(now.tv_sec)*1000LL + int64_t(now.tv_usec/1000);
 
+  // store offset between gettimeofday() and system start
+  ref_receiveClient.i64_systemStart4Timeofday = i64_time4Timeofday;
+  // static store delta between times() normalization and gettimeofday() norm
+  ref_receiveClient.i64_deltaStartTimes = i64_time4Timeofday - int64_t(rt_startupClock) * msecPerClock;
+}
+
+int32_t getClientTime( client_s& ref_receiveClient )
+{ // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
+  //  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
+  static struct timeval now;
+  gettimeofday(&now, 0);
+  // fetch RAW - non normalized - time in scaling of gettimeofday()
+  int64_t i64_time4Timeofday = int64_t(now.tv_sec)*1000LL + int64_t(now.tv_usec/1000);
+
+  // derive change of the normalization delta
+  const int64_t ci64_deltaChange = i64_time4Timeofday - int64_t(times(NULL)) * msecPerClock - ref_receiveClient.i64_deltaStartTimes;
+  if ( ( ci64_deltaChange >= 1000 ) || ( ci64_deltaChange <= -1000 ) )
+  { // user changed the system clock inbetween
+    ref_receiveClient.i64_deltaStartTimes       += ci64_deltaChange;
+    ref_receiveClient.i64_systemStart4Timeofday += ci64_deltaChange;
+  }
+
+  // now calculate the real time in [msec] since startup
+  i64_time4Timeofday -= ref_receiveClient.i64_systemStart4Timeofday;
+  // now derive the well define overflows
+  while ( i64_time4Timeofday > 0x7FFFFFFFLL )
+  {
+    i64_time4Timeofday                          -= 0xFFFFFFFF;
+    ref_receiveClient.i64_deltaStartTimes       += 0xFFFFFFFF;
+    ref_receiveClient.i64_systemStart4Timeofday += 0xFFFFFFFF;
+  }
+
+  return i64_time4Timeofday;
+}
+
+#endif
 
 } // end namespace
 
@@ -666,13 +709,13 @@ static void* command_thread_func(void* ptr)
         }
 
 
-        // initialize
+        // initialize all contents with ZERO
         memset(&s_tmpClient, 0, sizeof(client_s));
 
         // client process id is used as clientID
         s_tmpClient.i32_clientID = msqCommandBuf.i32_mtype;
 
-        initClientTime( s_tmpClient );
+        initClientTime( s_tmpClient, msqCommandBuf.s_startTimeClock.t_clock );
 
         DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
 

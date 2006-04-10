@@ -63,11 +63,11 @@ static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 static const uint8_t cui8_maxCanObj = 15;
 
 
-// message queues / process id 
+// message queues / process id
 typedef struct {
   int32_t i32_cmdHandle;
   int32_t i32_cmdAckHandle;
-  // client read queue 
+  // client read queue
   int32_t i32_rdHandle;
   // client write queue
   int32_t i32_wrHandle;
@@ -80,10 +80,6 @@ typedef struct {
   int32_t i32_mtype;
   int16_t i16_command;
   union {
-    struct {
-      uint32_t ui32_sec;
-      uint32_t ui32_usec;
-    } s_startTime;
     struct {
       clock_t t_clock;
     } s_startTimeClock;
