@@ -10,14 +10,23 @@
       options='autowrap' value='IsoAgLib' />
     <outputstring pos_x='0' pos_y='8' width='60' height='16'
       background_colour='white' font_attributes='FontAttributesSKM6x8'
-      options='autowrap' value='Tutorial 3.0' />
+      options='autowrap' value='Tutorial 3.1' />
 
-    <language code="ro" />
+    <language code="en" />
+    <language code="de" />
+    <language code="it" />
   </workingset>
 
 
 <!-- Attributes -->
+  <!-- NOTE: With IsoAgLib's approach, you can exchange whole objects, which is helpful if not only the
+       value should be exchanged, but also other atrtibutes or complete objects. See this example with the font_type and font_colour! -->
   <fontattributes name='FontAttributesNormal6x8' font_colour='black' font_size='6x8' font_type="latin1"/>
+
+  <fontattributes name='FontAttributesNormal6x8LangDep' language="en" font_colour='black' font_size='6x8' font_type="latin1"/>
+  <fontattributes name='FontAttributesNormal6x8LangDep' language="de" font_colour='red' font_size='6x8' font_type="latin9"/>
+  <fontattributes name='FontAttributesNormal6x8LangDep' language="it" font_colour='blue' font_size='6x8' font_type="latin9"/>
+
   <fontattributes name='FontAttributesNormal8x12' font_colour='black' font_size='8x12' font_type="latin1"/>
   <fontattributes name='FontAttributesNormal6x8R' font_colour='red' font_size='6x8' font_type="latin1"/>
   <fontattributes name='FontAttributesNormal6x8B' font_colour='blue' font_size='6x8' font_type="latin1" font_style='bold+underlined+italic' />
@@ -44,10 +53,20 @@
   <numbervariable name='ValAccel' value='10' />
   <numbervariable name='ValMiles' value='0' id='1234'/>
 
-  <stringvariable name='StrNone' value='none selected!' />
-  <stringvariable name='StrRed' value='red' />
-  <stringvariable name='StrGreen' value='green' />
-  <stringvariable name='StrBlue' value='blue' />
+  <stringvariable name='StrNone' language="en" value='none selected!'       />
+  <stringvariable name='StrNone' language="de" value='nichts ausgewählt'    />
+  <stringvariable name='StrNone' language="it" value='niente selezionato!'  />
+
+  <stringvariable name='StrRed' language="en" />
+  <stringvariable name='StrRed' language="de" />
+  <stringvariable name='StrRed' language="it" />
+  <stringvariable name='StrGreen' language="en" />
+  <stringvariable name='StrGreen' language="de" />
+  <stringvariable name='StrGreen' language="it" />
+  <stringvariable name='StrBlue' language="en" />
+  <stringvariable name='StrBlue' language="de" />
+  <stringvariable name='StrBlue' language="it" />
+
   <stringvariable name='StrYellow' value='yellow' />
   <stringvariable name='StrCyan' value='cyan' />
   <stringvariable name='StrMagenta' value='magenta' />
@@ -76,8 +95,9 @@
   </container>
 
   <key name='KeyReset' background_colour='white'>
-    <outputstring name='resetTextOS' pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8'
-      value='Reset' horizontal_justification='middle' />
+    <outputstring name='resetTextOS' language="en" value='Reset'      pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8' horizontal_justification='middle' />
+    <outputstring name='resetTextOS' language="de" value='Neustart'   pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8' horizontal_justification='middle' />
+    <outputstring name='resetTextOS' language="it" value='Risettare'  pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8' horizontal_justification='middle' />
   </key>
 
 </objectpool>

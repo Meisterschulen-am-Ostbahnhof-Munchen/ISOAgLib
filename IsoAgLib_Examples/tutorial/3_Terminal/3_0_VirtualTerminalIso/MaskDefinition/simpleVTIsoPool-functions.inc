@@ -5,6 +5,9 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectUnnamed1.init (&iVtObjectUnnamed1_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed2.init (&iVtObjectUnnamed2_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectFontAttributesNormal6x8.init (&iVtObjectFontAttributesNormal6x8_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectFontAttributesNormal6x8LangDep.init (&iVtObjectFontAttributesNormal6x8LangDep_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectFontAttributesNormal6x8LangDep_1.init (&iVtObjectFontAttributesNormal6x8LangDep_1_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectFontAttributesNormal6x8LangDep_2.init (&iVtObjectFontAttributesNormal6x8LangDep_2_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectFontAttributesNormal8x12.init (&iVtObjectFontAttributesNormal8x12_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectFontAttributesNormal6x8R.init (&iVtObjectFontAttributesNormal6x8R_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectFontAttributesNormal6x8B.init (&iVtObjectFontAttributesNormal6x8B_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
@@ -24,9 +27,17 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectValAccel.init (&iVtObjectValAccel_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectValMiles.init (&iVtObjectValMiles_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectStrNone.init (&iVtObjectStrNone_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectStrNone_1.init (&iVtObjectStrNone_1_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectStrNone_2.init (&iVtObjectStrNone_2_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectStrRed.init (&iVtObjectStrRed_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectStrRed_1.init (&iVtObjectStrRed_1_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectStrRed_2.init (&iVtObjectStrRed_2_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectStrGreen.init (&iVtObjectStrGreen_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectStrGreen_1.init (&iVtObjectStrGreen_1_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectStrGreen_2.init (&iVtObjectStrGreen_2_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectStrBlue.init (&iVtObjectStrBlue_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectStrBlue_1.init (&iVtObjectStrBlue_1_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectStrBlue_2.init (&iVtObjectStrBlue_2_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectStrYellow.init (&iVtObjectStrYellow_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectStrCyan.init (&iVtObjectStrCyan_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectStrMagenta.init (&iVtObjectStrMagenta_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
@@ -40,6 +51,8 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectleine.init (&iVtObjectleine_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectKeyReset.init (&iVtObjectKeyReset_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectresetTextOS.init (&iVtObjectresetTextOS_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectresetTextOS_1.init (&iVtObjectresetTextOS_1_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectresetTextOS_2.init (&iVtObjectresetTextOS_2_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectMainMask.init (&iVtObjectMainMask_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectmask1contentscontainer.init (&iVtObjectmask1contentscontainer_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed4.init (&iVtObjectUnnamed4_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
@@ -110,10 +123,13 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectsoftkeysAlarm.init (&iVtObjectsoftkeysAlarm_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
 
   for (int i=0;i<numObjects; i++) {
-    iVtObjects [i]->setOriginSKM (false);
+    iVtObjects [0][i]->setOriginSKM (false);
   }
   for (int i=0;i<numObjects; i++) {
-    iVtObjects [i]->setOriginBTN (NULL);
+    iVtObjects [0][i]->setOriginBTN (NULL);
   }
+  /// The following two lines are in there temporarily, as this needs to be added to vt2iso somehow ;(
+  iVtObjectresetTextOS_1.setOriginSKM (true);
+  iVtObjectresetTextOS_2.setOriginSKM (true);
   b_initAllObjects = true;
 }

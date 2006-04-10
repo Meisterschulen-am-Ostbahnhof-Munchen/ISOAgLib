@@ -271,8 +271,9 @@
 #define attrNew_objectID (99)
 #define attrBytes_in_string (100)
 #define attrCode (101)
+#define attrLanguage (102)
 
-#define maxAttributeNames (102)
+#define maxAttributeNames (103)
 
 
 #define maxObjectTypesToCompare (maxObjectTypes+6)
@@ -495,7 +496,8 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
     "list_index",
     "new_object_id",
     "bytes_in_string",
-    "code"
+    "code",
+    "language"
 };
 
 // Table of possible Macro Commands

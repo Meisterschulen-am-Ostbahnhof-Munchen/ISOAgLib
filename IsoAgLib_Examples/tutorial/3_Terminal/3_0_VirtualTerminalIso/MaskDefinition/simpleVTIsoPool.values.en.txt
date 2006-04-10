@@ -1,0 +1,3 @@
+StrRed, "red"
+StrGreen, "green"
+StrBlue, "blue"

@@ -16,9 +16,9 @@ public:
   /* Uncomment the following function if you want to use command-response handling! */
   //virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);
   /* Uncomment the following function if you want to use a special colour-conversion! */
-  virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
+  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
   /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */
-  virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);
+  //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);
   /* Uncomment the following function if you want to react on any incoming VT Status messages */
   //virtual void eventVtStatusMsg();
   void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);

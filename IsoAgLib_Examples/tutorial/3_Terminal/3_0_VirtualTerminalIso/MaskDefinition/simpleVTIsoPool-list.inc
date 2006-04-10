@@ -21,10 +21,6 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectValSpeed,
   &iVtObjectValAccel,
   &iVtObjectValMiles,
-  &iVtObjectStrNone,
-  &iVtObjectStrRed,
-  &iVtObjectStrGreen,
-  &iVtObjectStrBlue,
   &iVtObjectStrYellow,
   &iVtObjectStrCyan,
   &iVtObjectStrMagenta,
@@ -37,7 +33,6 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectBigLogo,
   &iVtObjectleine,
   &iVtObjectKeyReset,
-  &iVtObjectresetTextOS,
   &iVtObjectMainMask,
   &iVtObjectmask1contentscontainer,
   &iVtObjectUnnamed4,
@@ -108,4 +103,12 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectsoftkeysAlarm
 };
 
-  iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjects, 107, 200, 60, 32) {};
+IsoAgLib::iVtObject_c** all_iVtObjectLists [] = {
+  all_iVtObjects,
+  all_iVtObjects0,
+  all_iVtObjects1,
+  all_iVtObjects2,
+  NULL // indicate end of list
+};
+
+iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists, 102, 6, 200, 60, 32) {};

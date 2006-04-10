@@ -414,18 +414,29 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 }
 
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
-void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully ()
+void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode)
 {
-  iVtObjectColLabel.setValueRef ("Color:"); // this is done so the initial state is up again if VT lost and reconnected!
-  iVtObjectColOS.setVariableReference (colTable [color], true);
-  iVtObjectFontAttributesNormal6x8.setFontColour (fgcolTable [color], true);
-  if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden) iVtObjectcontainerInAllMasks.hide ();
-    updateAccel (valAccel);
-    updateMiles(valMiles);
-  iVtObjectValSpeed.setValue (valSpeed+10000);
-  #ifdef DEBUG
-  std::cout << "-->eventObjectPoolUploadedSuccessfully<--\n";
-  #endif
+  if (rb_wasLanguageUpdate)
+  {
+    /// The update takes place very fast here, so we don't need to perform anything here. Normally one would switch back to normal operation mask
+    /// when it was switched on update to some "Wait while updating language..:" screen!
+    #ifdef DEBUG
+    std::cout << "-->eventObjectPoolUploadedSuccessfully: LANGUAGE UPDATE TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
+    #endif
+  }
+  else
+  {
+    iVtObjectColLabel.setValueRef ("Color:"); // this is done so the initial state is up again if VT lost and reconnected!
+    iVtObjectColOS.setVariableReference (colTable [color], true);
+    iVtObjectFontAttributesNormal6x8.setFontColour (fgcolTable [color], true);
+    if (iVtObjectcontainerInAllMasks.get_vtObjectContainer_a()->hidden) iVtObjectcontainerInAllMasks.hide ();
+      updateAccel (valAccel);
+      updateMiles(valMiles);
+    iVtObjectValSpeed.setValue (valSpeed+10000);
+    #ifdef DEBUG
+    std::cout << "-->eventObjectPoolUploadedSuccessfully: INITIAL UPLOAD TO Index "<<int(ri8_languageIndex)<<". User tried to select ["<<uint8_t(rui16_languageCode>>8)<<uint8_t(rui16_languageCode&0xFF)<<"] <--\n";
+    #endif
+  }
 }
 
 void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
@@ -460,13 +471,15 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t /*rui16_objId*/, 
 void
 iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& rrefs_localSettings)
 {
+  /// THIS FUNCTION SHOULD ONLY BE USED FOR CHANGE IN UNITS, ETC.
+  /// FOR LANGUAGE CHANGE, REFER TO --> "eventObjectPoolUploadedSuccessfully" <--
   char languageCode[2+1]; languageCode[2+1-1] = 0x00;
   languageCode[0] = rrefs_localSettings.languageCode >> 8;
   languageCode[1] = rrefs_localSettings.languageCode & 0xFF;
-  iVtObjectOSlanguage.setValueCopy (languageCode);
   #ifdef DEBUG
   std::cout << "-->eventLanguagePgn("<<languageCode<<")<--\n";
   #endif
+  iVtObjectOSlanguage.setValueCopy (languageCode);
 }
 
 

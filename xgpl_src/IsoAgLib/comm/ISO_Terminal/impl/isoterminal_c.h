@@ -212,19 +212,21 @@ public:
   /** calculate the size of the data source
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
-  uint32_t getStreamSize () { return ui32_streamSize; };
+  uint32_t getStreamSize () { return (ui32_streamSize != 0) ? ui32_streamSize : ui32_streamSizeLang; };
 
   uint8_t getFirstByte () { return 0x11; } // If ISOTerminal streams out, it's because of an Annex C. Object Pool Upload, so 0x11 can be returned ALWAYS!
 
   uint32_t ui32_objectStreamPosition;
   uint32_t ui32_objectStreamPositionStored;
   uint32_t ui32_streamSize;
+  /// Following variable indicates if we're uploading TWO parts or not!
+  uint32_t ui32_streamSizeLang; // if 0, there's only one upload. if != 0 and the first upload finishes, this value is copied to "ui32_streamSize" and this value is set to 0!
 
   /** pointers needed by Scheduler_cMultiSendStreamer */
   IsoAgLib::iVtObject_c** pc_iterObjects;
   IsoAgLib::iVtObject_c** pc_iterObjectsStored;
 
-  // the values of registerIsoObjectPool gets stored here
+  // the values of registerIsoObjectPool get stored here
   IsoAgLib::iIsoTerminalObjectPool_c* pc_pool;
 #define ISO_VT_UPLOAD_BUFFER_SIZE 128
   uint8_t uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
@@ -234,6 +236,12 @@ public:
   uint8_t uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
   uint8_t uploadBufferFilledStored;
   uint8_t uploadBufferPositionStored;
+
+  int8_t i8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
+  int8_t i8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"
+
+  uint16_t ui16_objectPoolUploadingLanguageCode;
+  uint16_t ui16_objectPoolUploadedLanguageCode;
 };
 
 #if 0
@@ -265,8 +273,9 @@ public:
 
   enum uploadType_t { UploadIdle, UploadPool, UploadCommand };
   enum uploadPoolState_t { UploadPoolInit, UploadPoolWaitingForLoadVersionResponse, UploadPoolWaitingForMemoryResponse, UploadPoolUploading, UploadPoolWaitingForEOOResponse, UploadPoolWaitingForStoreVersionResponse, UploadPoolFailed}; /* completely uploaded is now detected by "OPUploadedSuccessfully" */
-  enum uploadCommandState_t { UploadCommandWaitingForCommandResponse, UploadCommandTimedOut /*, UploadCommandFailed*/ };
+  enum uploadCommandState_t { UploadCommandWaitingForCommandResponse, UploadCommandTimedOut, UploadCommandLanguagePoolUpdate /*, UploadCommandFailed*/ };
   // UploadCommandFailed is obsolete, as we're not retrying and error-responses any more.
+  // UploadCommandResponseless is used for cmd:0x11 Object Pool Transfer, as there's NO response sent from the VT and it's a "special" upload...
 
 
   /**
@@ -471,6 +480,7 @@ public:
   bool sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
 
   bool sendCommandDeleteObjectPool ();
+  bool sendCommandUpdateLanguagePool ();
 
   bool queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd=true);
 
@@ -499,10 +509,10 @@ private:
   void checkVtStateChange();
 
   /** sends "Get Memory" to start uploading process... */
-  void startObjectPoolUploading ();
+  void startObjectPoolUploading (bool rb_onlyLanguageStream);
 
   /** sets all states to successfull uploading and call the hook function! */
-  void finalizeUploading ();
+  void finalizeUploading (bool rb_wasLanguageUpdate);
 
   /** send "End of Object Pool" message */
   void indicateObjectPoolCompletion ();
@@ -513,6 +523,8 @@ private:
 
     /** sets state to "OPCannotUpload"... */
   void vtOutOfMemory();
+
+  void setObjectPoolUploadingLanguage();
 
 private: // attributes
 
@@ -549,6 +561,12 @@ private: // attributes
 
   /// General Object-Pool state (empty, loaded, etc.)
   objectPoolState_t en_objectPoolState;
+  /// the following languages are
+  /// -1: not supported-language (==> so using default language for upload, but important to differentiate for the apllication!)
+  ///  0: default language (first in <workingset>-object)
+  ///  1: second language
+  ///  2: third language
+  int8_t i8_vtLanguage; // always valid, as we're waiting for a VT's language first before starting anything...
 
   /**
     Upload-State & Variables

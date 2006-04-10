@@ -7,13 +7,13 @@
 
     <container name='mask1contentscontainer' pos_x='0' pos_y='30' width='200' height='170'>
       <!-- so we have relative values beginning with (0,0) when changing the upper stuff later on -->
-      <outputstring value="Miles:"        pos_x='4' pos_y='14'  width='66' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8' />
-      <outputstring value='Speed is'      pos_x='4' pos_y='27'  width='66' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8' name='speedLabel' />
-      <outputstring value="Accel':"       pos_x='4' pos_y='55'  width='66' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8' />
+      <outputstring value="Miles:"        pos_x='4' pos_y='14'  width='66' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8LangDep' />
+      <outputstring value='Speed is'      pos_x='4' pos_y='27'  width='66' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8LangDep' name='speedLabel' />
+      <outputstring value="Accel':"       pos_x='4' pos_y='55'  width='66' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8LangDep' />
 
-      <outputnumber variable_reference='ValMiles'   pos_x='4' block_col='9' block_font='FontAttributesNormal6x8' pos_y='10' width='60'  height='16' offset='-10000' scale='1' background_colour='white' number_of_decimals='0' format='fixed'  font_attributes='FontAttributesNormal12x16' horizontal_justification='left' />
-      <outputnumber variable_reference='ValSpeed'   pos_x='4' block_col='9' block_font='FontAttributesNormal6x8' pos_y='27' width='18'  height='8'  offset='-10000' scale='1' background_colour='white' number_of_decimals='0' format='fixed'  font_attributes='FontAttributesNormal6x8'   horizontal_justification='left' />
-      <outputnumber variable_reference='ValAccel'   pos_x='4' block_col='9' block_font='FontAttributesNormal6x8' pos_y='55' width='24'  height='8'  offset='-10000' scale='1' background_colour='white' number_of_decimals='0' format='fixed'  font_attributes='FontAttributesNormal8x8'   horizontal_justification='left' />
+      <outputnumber variable_reference='ValMiles'   pos_x='4' block_col='9' block_font='FontAttributesNormal6x8LangDep' pos_y='10' width='60'  height='16' offset='-10000' scale='1' background_colour='white' number_of_decimals='0' format='fixed'  font_attributes='FontAttributesNormal12x16' horizontal_justification='left' />
+      <outputnumber variable_reference='ValSpeed'   pos_x='4' block_col='9' block_font='FontAttributesNormal6x8LangDep' pos_y='27' width='18'  height='8'  offset='-10000' scale='1' background_colour='white' number_of_decimals='0' format='fixed'  font_attributes='FontAttributesNormal6x8'   horizontal_justification='left' />
+      <outputnumber variable_reference='ValAccel'   pos_x='4' block_col='9' block_font='FontAttributesNormal6x8LangDep' pos_y='55' width='24'  height='8'  offset='-10000' scale='1' background_colour='white' number_of_decimals='0' format='fixed'  font_attributes='FontAttributesNormal8x8'   horizontal_justification='left' />
 
       <linearbargraph variable_reference='ValSpeed' pos_x='4' pos_y='36' width='120' height='8' colour='black' target_line_colour='black' number_of_ticks='4' min_value='10000' max_value='10100' options='border+ticks+horizontal+growpositive' />
 

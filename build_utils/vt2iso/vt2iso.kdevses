@@ -1,25 +1,58 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="2" >
-  <Doc0 NumberOfViews="1" URL="file:///home/winkler/Projekte/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
-   <View0 Type="Source" />
+ <DocsAndViews NumberOfDocuments="11" >
+  <Doc0 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
+   <View0 line="2062" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/winkler/Projekte/VtServer/src_test/test_pools/testcase/button/Pool.xml-functions.inc" >
-   <View0 line="2" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso-defines.hpp" >
+   <View0 line="34" Type="Source" />
   </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-attributes.inc" >
+   <View0 line="54" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool0_Variables.xml" >
+   <View0 line="93" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool.values.de.txt" >
+   <View0 line="0" Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool.values.en.txt" >
+   <View0 line="0" Type="Source" />
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool.values.ru.txt" >
+   <View0 line="0" Type="Source" />
+  </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-list.inc" >
+   <View0 line="108" Type="Source" />
+  </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-list00.inc" >
+   <View0 line="1" Type="Source" />
+  </Doc8>
+  <Doc9 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-list01.inc" >
+   <View0 line="1" Type="Source" />
+  </Doc9>
+  <Doc10 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-list02.inc" >
+   <View0 line="0" Type="Source" />
+  </Doc10>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
    <breakpointList/>
   </kdevdebugger>
   <kdevbookmarks>
-   <bookmarks/>
+   <bookmarks>
+    <bookmark url="/home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
+     <mark line="3048" />
+     <mark line="485" />
+     <mark line="366" />
+     <mark line="2950" />
+     <mark line="3039" />
+     <mark line="1901" />
+     <mark line="2056" />
+    </bookmark>
+   </bookmarks>
   </kdevbookmarks>
-  <kdevrbdebugger>
-   <breakpointList/>
-   <watchExpressions/>
-  </kdevrbdebugger>
   <kdevvalgrind>
    <executable path="" params="" />
    <valgrind path="" params="" />

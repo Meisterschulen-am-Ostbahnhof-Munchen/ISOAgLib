@@ -365,10 +365,19 @@
 
 
 
+typedef struct {
+  FILE* partFile;
+  char code [2+1]; // NULL terminated, so it gets comparable by "strcmp", etc.
+  unsigned int count;
+  bool firstLine;
+  char* valueBuffer;
+  unsigned int valueBufferLen;
+} language_s;
+
 
 // ### GLOBALS ###
-#define iso639entries 136
-char iso639table [iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
+#define DEF_iso639entries 136
+char iso639table [DEF_iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
 
 FILE *partFileA;
 FILE *partFileAextern;
@@ -378,6 +387,10 @@ FILE *partFileD;
 FILE *partFileE; bool firstLineFileE = true;
 FILE *partFileF;
 FILE *partFileFderived;
+
+language_s arrs_language [DEF_iso639entries];
+unsigned int ui_languages=0;
+
 
 char xmlFileGlobal [1024+1];
 
@@ -450,10 +463,10 @@ void clean_exit (int return_value, char* error_message=NULL)
 
   if (partFileC) {
     fprintf (partFileC, "\n  for (int i=0;i<numObjects; i++) {");
-    fprintf (partFileC, "\n    iVtObjects [i]->setOriginSKM (false);");
+    fprintf (partFileC, "\n    iVtObjects [0][i]->setOriginSKM (false);");
     fprintf (partFileC, "\n  }");
     fprintf (partFileC, "\n  for (int i=0;i<numObjects; i++) {");
-    fprintf (partFileC, "\n    iVtObjects [i]->setOriginBTN (NULL);");
+    fprintf (partFileC, "\n    iVtObjects [0][i]->setOriginBTN (NULL);");
     fprintf (partFileC, "\n  }");
     fprintf (partFileC, "\n  b_initAllObjects = true;");
     fprintf (partFileC, "\n}\n");
@@ -471,11 +484,29 @@ void clean_exit (int return_value, char* error_message=NULL)
     // write implementation of handler class constructor into list
     // as there the list must be known
     // -> the handler decleration can be included from everywhere
-    fprintf (partFileE, "\n  iObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjects, %d, %d, %d, %d) {};\n",
-    proName, proName, objCount, opDimension, skWidth, skHeight);
+    fprintf (partFileE, "\nIsoAgLib::iVtObject_c** all_iVtObjectLists [] = {");
+    fprintf (partFileE, "\n  all_iVtObjects,");
+    for (unsigned int i=0; i<ui_languages; i++)
+      fprintf (partFileE, "\n  all_iVtObjects%d,", i);
+    fprintf (partFileE, "\n  NULL // indicate end of list");
+    fprintf (partFileE, "\n};\n");
+    int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
+    fprintf (partFileE, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists, %d, %d, %d, %d, %d) {};\n",
+    proName, proName, objCount - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
 
     fclose(partFileE);
   }
+
+  for (unsigned int i=0; i<ui_languages; i++)
+  {
+    fputs ("\n};\n", arrs_language [i].partFile);
+    // write implementation of handler class constructor into list
+    // as there the list must be known
+    // -> the handler decleration can be included from everywhere
+
+    fclose (arrs_language [i].partFile);
+  }
+
   if (partFileF) { // handler class direct
   // NEW:
     fprintf (partFileF, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName );
@@ -489,7 +520,8 @@ void clean_exit (int return_value, char* error_message=NULL)
     fprintf (partFileF, "\n  virtual void eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast);");
     fprintf (partFileF, "\n  /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */");
     fprintf (partFileF, "\n  //virtual void eventStringValueAbort();");
-    fprintf (partFileF, "\n  virtual void eventObjectPoolUploadedSuccessfully ();");
+    fprintf (partFileF, "\n  virtual void eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode);");
+    fprintf (partFileF, "\n  //virtual void eventPrepareForLanguageChange (int8_t ri8_languageIndex, uint16_t rui16_languageCode);");
     fprintf (partFileF, "\n  virtual void eventEnterSafeState ();");
     fprintf (partFileF, "\n  /* Uncomment the following function if you want to use command-response handling! */");
     fprintf (partFileF, "\n  //virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);");
@@ -556,6 +588,10 @@ void clean_exit (int return_value, char* error_message=NULL)
   fprintf (partFileA, "#include \"%s-handler-direct.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
+  for (unsigned int i=0; i<ui_languages; i++)
+  {
+    fprintf (partFileA, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
+  }
   fprintf (partFileA, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
@@ -848,6 +884,19 @@ void defaultAttributes ()
   */
 }
 
+int languageCodeToIndex (char* lc)
+{
+  for (unsigned int index = 0; index<ui_languages; index++)
+  {
+    if ( (arrs_language[index].code [0] == lc[0])
+      && (arrs_language[index].code [1] == lc[1])
+       )
+    {
+      return index;
+    }
+  }
+  return -1; // negative number to indicate language code not found
+}
 
 unsigned int objectIsType (char* lookup_name)
 {
@@ -1841,10 +1890,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
           // Check for correct LanguageCode!
           int lc;
-          for (lc=0; lc<iso639entries; lc++) {
+          for (lc=0; lc<DEF_iso639entries; lc++) {
             if ((iso639table[lc][0] == languageCode[0]) && (iso639table[lc][1] == languageCode[1])) break;
           }
-          if (lc == iso639entries) {
+          if (lc == DEF_iso639entries) {
             // language not found!
             std::cout << "\n\n<language code=\"" << languageCode[0] << languageCode[1] << "\" /> is NOT conform to ISO 639 (Maybe you didn't use lower-case letters?!)! STOPPING PARSER! bye.\n\n";
             clean_exit (-1);
@@ -1853,6 +1902,45 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           fprintf (partFileB, "{%s}", tempString);
           objChildLanguages++;
           firstElement = false;
+
+          /// Also add this language to the intern language-table!
+          char langFileName [1024+1];
+          sprintf (langFileName, "%s-list%02d.inc", xmlFileGlobal, ui_languages);
+          arrs_language [ui_languages].partFile = fopen (langFileName, "wt");
+          sprintf (langFileName, "IsoAgLib::iVtObject_c* all_iVtObjects%d [] = {", ui_languages);
+          fputs (langFileName, arrs_language [ui_languages].partFile);
+          arrs_language [ui_languages].code[0] = languageCode[0];
+          arrs_language [ui_languages].code[1] = languageCode[1];
+          arrs_language [ui_languages].code[2] = 0x00;
+          arrs_language [ui_languages].count = 0;
+          arrs_language [ui_languages].firstLine = true;
+          // Open and read complete languages-files
+          sprintf (langFileName, "%s.values.%s.txt", xmlFileGlobal, arrs_language [ui_languages].code);
+          FILE* tmpHandle = fopen (langFileName, "rb");
+          if (tmpHandle != NULL)
+          {
+            fseek (tmpHandle, 0, SEEK_END);
+            long length = ftell (tmpHandle);
+            fseek (tmpHandle, 0, SEEK_SET);
+            arrs_language [ui_languages].valueBufferLen = length + 1; // we'll internally add an extra NULL-byte!
+            arrs_language [ui_languages].valueBuffer = new (char [arrs_language [ui_languages].valueBufferLen]);
+            fread (arrs_language [ui_languages].valueBuffer, 1, length, tmpHandle);
+            arrs_language [ui_languages].valueBuffer[length+1-1] = 0x00;
+            char *iterate=arrs_language [ui_languages].valueBuffer;
+            char *iterateEnd=iterate+length;
+            while (iterate < iterateEnd)
+            {
+              if ((*iterate == '\n') || (*iterate == '\r')) *iterate = 0x00;
+              iterate++;
+            }
+            fclose (tmpHandle);
+          }
+          else
+          {
+            arrs_language [ui_languages].valueBufferLen = 0; // we'll internally add an extra NULL-byte!
+            arrs_language [ui_languages].valueBuffer = NULL;
+          }
+          ui_languages++;
         }
       }
       if (firstElement == false)
@@ -1953,91 +2041,119 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
              )
            )
         {
-          // get NAME and POS_X and POS_Y attributes out of child
-          if(child->hasAttributes()) {
-            // parse through all attributes
+          bool b_addAsChild=true;
+          // Check if it's an ALTERNATIVE language or NO language at all, then DO NOT add this as child!
+          if(child->hasAttributes())
+          { // see where there may be an LANGUAGE= attribute
             pAttributes = child->getAttributes();
             int nSize = pAttributes->getLength();
-
-            objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
-            is_objChildID = false;
-            is_objChildX = false;
-            is_objChildY = false;
-
-            strcpy (objBlockFont, "NULL");
-            objBlockRow = 0;
-            objBlockCol = 0;
-
-            for(int i=0;i<nSize;++i) {
+            for (int i=0; i<nSize; ++i) {
               DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
               utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
               utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
               // Get NAME and POS_X and POS_Y directly
-              if (strncmp (attr_name, "name", stringLength) == 0) {
-                strncpy (objChildName, attr_value, stringLength);
-                is_objChildName = true;
-              }
-              if (strncmp (attr_name, "id", stringLength) == 0) {
-                objChildID = atoi (attr_value);
-                is_objChildID = true;
-              }
-              if (strncmp (attr_name, "pos_x", stringLength) == 0) {
-                objChildX = atoi (attr_value);
-                is_objChildX = true;
-              }
-              if (strncmp (attr_name, "pos_y", stringLength) == 0) {
-                objChildY = atoi (attr_value);
-                is_objChildY = true;
-              }
-              if (strncmp (attr_name, "block_font", stringLength) == 0) {
-                strcpy (objBlockFont, "&iVtObject");
-                strncat (objBlockFont, attr_value, stringLength-9);
-              }
-              if (strncmp (attr_name, "block_row", stringLength) == 0) {
-                objBlockRow = atoi (attr_value);
-              }
-              if (strncmp (attr_name, "block_col", stringLength) == 0) {
-                objBlockCol = atoi (attr_value);
+              if (strncmp (attr_name, "language", stringLength) == 0)
+              {
+                if (ui_languages > 0)
+                {
+                  if (strncmp (attr_value, arrs_language[0].code, stringLength) != 0)
+                  {
+                    b_addAsChild = false;
+                  }
+                }
               }
             }
           }
-          if (is_objChildName == false)
+
+          if (b_addAsChild)
           {
-            // create auto-named NAME attribute
-            sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
-            ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
-            objNextUnnamedName++;
-            is_objChildName = true;
-          }
-          // give him an ID, although not necessary now...
-          objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
-          if (firstElement) {
-            if (xyNeeded) fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
-            else          fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
-          } else {
-            fprintf (partFileB, ", ");
-          }
-          if (xyNeeded) {
-            if (!(is_objChildX && is_objChildY)) {
-              std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN CHILD-OBJECT OF <"<< node_name <<"> ! STOPPING PARSER! bye.\n\n";
-              clean_exit (-1);
+            // get NAME and POS_X and POS_Y attributes out of child
+            if(child->hasAttributes()) {
+              // parse through all attributes
+              pAttributes = child->getAttributes();
+              int nSize = pAttributes->getLength();
+
+              objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
+              is_objChildID = false;
+              is_objChildX = false;
+              is_objChildY = false;
+
+              strcpy (objBlockFont, "NULL");
+              objBlockRow = 0;
+              objBlockCol = 0;
+
+              for(int i=0;i<nSize;++i) {
+                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                // Get NAME and POS_X and POS_Y directly
+                if (strncmp (attr_name, "name", stringLength) == 0) {
+                  strncpy (objChildName, attr_value, stringLength);
+                  is_objChildName = true;
+                }
+                if (strncmp (attr_name, "id", stringLength) == 0) {
+                  objChildID = atoi (attr_value);
+                  is_objChildID = true;
+                }
+                if (strncmp (attr_name, "pos_x", stringLength) == 0) {
+                  objChildX = atoi (attr_value);
+                  is_objChildX = true;
+                }
+                if (strncmp (attr_name, "pos_y", stringLength) == 0) {
+                  objChildY = atoi (attr_value);
+                  is_objChildY = true;
+                }
+                if (strncmp (attr_name, "block_font", stringLength) == 0) {
+                  strcpy (objBlockFont, "&iVtObject");
+                  strncat (objBlockFont, attr_value, stringLength-9);
+                }
+                if (strncmp (attr_name, "block_row", stringLength) == 0) {
+                  objBlockRow = atoi (attr_value);
+                }
+                if (strncmp (attr_name, "block_col", stringLength) == 0) {
+                  objBlockCol = atoi (attr_value);
+                }
+              }
             }
-            fprintf (partFileB, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
-          } else {
-            // Added this if statement to account for InputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
-            // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
-            if (objChildID == 65535)
+            if (is_objChildName == false)
             {
-              fprintf (partFileB, "{NULL}");
+              // create auto-named NAME attribute
+              sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
+              ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
+              objNextUnnamedName++;
+              is_objChildName = true;
             }
-            else
-            {
-              fprintf (partFileB, "{&iVtObject%s}", objChildName);
+            // give him an ID, although not necessary now...
+            objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
+            if (firstElement) {
+              if (xyNeeded) fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
+              else          fprintf (partFileB, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
+            } else {
+              fprintf (partFileB, ", ");
             }
+            if (xyNeeded) {
+              if (!(is_objChildX && is_objChildY)) {
+                std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN CHILD-OBJECT OF <"<< node_name <<"> ! STOPPING PARSER! bye.\n\n";
+                clean_exit (-1);
+              }
+              fprintf (partFileB, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
+            } else {
+              // Added this if statement to account for InputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
+              // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
+              if (objChildID == 65535)
+              {
+                fprintf (partFileB, "{NULL}");
+              }
+              else
+              {
+                fprintf (partFileB, "{&iVtObject%s}", objChildName);
+              }
+            }
+            objChildObjects++;
+            firstElement = false;
           }
-          objChildObjects++;
-          firstElement = false;
         }
       }
        // all child-elements processed, now:
@@ -2803,17 +2919,135 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   // ### Print out definition, values and init-calls ###
   // ###################################################
 
-  fprintf (partFileA, "IsoAgLib::iVtObject%s_c iVtObject%s;\n", otClassnameTable [objType], objName);
-  fprintf (partFileAextern, "extern IsoAgLib::iVtObject%s_c iVtObject%s;\n", otClassnameTable [objType], objName);
-  fprintf (partFileB, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s_sROM = {%d", otClassnameTable [objType], objName, objID);
-  fprintf (partFileC, "  iVtObject%s.init (&iVtObject%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, objName);
-  fprintf (partFileD, "#define iVtObjectID%s %d\n", objName, objID);
-  if (firstLineFileE) {
-    firstLineFileE = false;
+  FILE *fileList;
+  bool *pb_firstLine;
+
+  char pc_postfix [16+1]; // almost arbitrary number ;)
+  pc_postfix [0] = 0x00;
+  /// MultiLanguage-Support: See which -list.inc file to write object to!
+  if (attrIsGiven [attrLanguage])
+  { // write to special language-list file if language is correct!
+    // search language in list-file-array
+    unsigned int i;
+    for (i=0; i<ui_languages; i++)
+    {
+      if (strcmp (arrs_language[i].code, attrString[attrLanguage]) == 0)
+        break; // found the language! => index is "i"
+    }
+    if ((i==ui_languages) && (ui_languages>0))
+    { // language not found!
+      std::cout << "\n\nYOU NEED TO SPECIFY A VALID LANGUAGE which you have also defined in the <workingset> object! STOPPING PARSER! bye.\n\n";
+      clean_exit (-1);
+    }
+    fileList = arrs_language[i].partFile;
+    pb_firstLine = &arrs_language[i].firstLine;
+    arrs_language[i].count++; // and do NOT count the normal list up!
+    if (i > 0)
+    {
+      sprintf (pc_postfix, "_%d", i);
+    }
+
+    /// Try to retrieve   value='...'   from language-value-file
+    if (arrs_language[i].valueBuffer != NULL)
+    {
+      std::cout << "searching language file for ["<<objName<<"].\n";
+      bool b_foundValue=false;
+      char* bufferCur = arrs_language[i].valueBuffer;
+      char* bufferEnd = bufferCur + arrs_language[i].valueBufferLen;
+      char pc_foundValue [4096+1];
+      while (bufferCur < bufferEnd)
+      {
+        // check this line (\n and \r has been previously converted to 0x00
+        char pc_id [1024+1];
+        char* firstChar=bufferCur;
+        while (*firstChar == ' ') firstChar++;
+        if ( (*firstChar == 0x00)
+          || (strstr (bufferCur, "//") && (strstr (bufferCur, "//") == firstChar))
+           )
+        { // ignore line
+        }
+        else
+        {
+          char* comma = strchr (bufferCur, ',');
+          if (comma)
+          {
+            *comma = 0x00;
+            strcpy (pc_id, bufferCur);
+            *comma = ','; // revert comma-separator
+            comma++; // goto next character following the comma
+            char* firstQuote = strchr (comma, '"');
+            if (firstQuote)
+            {
+              char* nextQuote = strrchr (firstQuote+1, '"');
+              if (nextQuote)
+              { // extract text from inbetween
+                char* destIt = pc_foundValue;
+                for (char* it=firstQuote+1; it < nextQuote; it++)
+                { // extract byte by byte
+                  *destIt++ = *it;
+                }
+                *destIt = 0x00;
+              }
+              else
+              { // no closing quote
+                clean_exit (-1, "No CLOSING quote in the language file!\n");
+              }
+            }
+            else
+            { // no opening quote
+              clean_exit (-1, "No OPENING quote in the language file!\n");
+            }
+            /// BREAK HERE TO WATCH GOTTEN IN THE DIFFERENT CASES!
+            if (strcmp (pc_id, objName) == 0)
+            { // set value and break
+              std::cout << "found language value for [" << objName << "].\n";
+              b_foundValue = true;
+              break;
+            }
+          }
+          else
+          { // no comma found, although it was not a commentary line :(
+            clean_exit (-1, "No COMMA in a non-comment line in the language file!\n");
+          }
+        }
+        // advance to next line
+        int lineLen = strlen (bufferCur)+1; // include terminating 0x00
+        bufferCur += lineLen;
+      }
+
+      if (b_foundValue)
+      {
+        /// Do we have conflicting 'value='s now?
+        if (attrIsGiven [attrValue])
+        {
+          std::cout <<"\n\nConflicting values in ["<< objName <<"]!! Someone put more debug output here, please ;) STOPPING PARSER! bye.\n\n";
+          clean_exit (-1);
+        }
+        else
+        { // override attrValue
+          attrIsGiven [attrValue] = true;
+          strcpy (attrString [attrValue], pc_foundValue);
+        }
+      }
+    }
   } else {
-    fprintf (partFileE, ",");
+    fileList = partFileE;
+    pb_firstLine = &firstLineFileE;
   }
-  fprintf (partFileE, "\n  &iVtObject%s", objName);
+
+  if (*pb_firstLine) {
+    *pb_firstLine = false;
+  } else {
+    fprintf (fileList, ",");
+  }
+  fprintf (fileList, "\n  &iVtObject%s%s", objName, pc_postfix);
+  fprintf (partFileA, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
+  fprintf (partFileAextern, "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName, pc_postfix);
+  fprintf (partFileB, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName, pc_postfix, objID);
+  fprintf (partFileC, "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);\n", objName, pc_postfix, objName, pc_postfix);
+  fprintf (partFileD, "#define iVtObjectID%s%s %d\n", objName, pc_postfix, objID);
+
+
 
 
   if (strcmp ("NULL", attrString [attrVariable_reference]) != 0)
@@ -2888,6 +3122,13 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT IF NO VALUE IS GIVEN! STOPPING PARSER! bye.\n\n");
         }
+/// @todo MAYBE WARN/FAIL HERE WHEN NO LANGUAGE IS GIVEN BUT NO ENTRY IS DEFINED????????
+    /*
+    if (arrs_language[i].valueBuffer == NULL)
+    { // open failed.
+      std::cout << "\n\nLanguage file for code=\"" << arrs_language[i].code[0] << arrs_language[i].code[1] << "\" in object ["<< objName <<"] not found! STOPPING PARSER! bye.\n\n";
+      clean_exit (-1);
+    }*/
         sprintf (attrString [attrValue], "NULL");
       }
       else
@@ -3108,7 +3349,8 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
 
     case otStringvariable:
       if (!attrIsGiven [attrValue]) {
-        if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <stringvariable> OBJECT! STOPPING PARSER! bye.\n\n");
+        std::cout << objName << ":\n  ";
+        if (!(attrIsGiven [attrLength])) clean_exit (-1, "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <stringvariable> OBJECT (as no value= is given)! STOPPING PARSER! bye.\n\n");
         sprintf (attrString [attrValue], "NULL");
       } else {
         //auto-calculate length
@@ -3404,6 +3646,7 @@ int main(int argC, char* argV[])
     std::basic_string<char> c_unwantedType2 = ".h";
     std::basic_string<char> c_unwantedType3 = ".inc-template";
     std::basic_string<char> c_unwantedType4 = ".iop";
+    std::basic_string<char> c_unwantedType5 = ".txt";
     std::basic_string<char> c_directoryCompareItem;
     std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
     strncpy (proName, c_project.c_str(), 1024); proName [1024+1-1] = 0x00;
@@ -3450,6 +3693,7 @@ int main(int argC, char* argV[])
           if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
           if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
           if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) continue;
+          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType5 ) continue;
 
           if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
             c_directoryCompareItem.insert(0, "\\" );
@@ -3483,7 +3727,8 @@ int main(int argC, char* argV[])
         if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
         if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
         if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 4 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) ) continue;
+        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType4 ) ) continue;
+        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType5 ) ) continue;
 
         if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
           c_directoryCompareItem.insert(0, "/" );
@@ -3633,8 +3878,8 @@ int main(int argC, char* argV[])
           // ### main routine starts right here!!! ###
           processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool), c_directory.c_str() ); // must all be included in an objectpool tag !
           if (!is_opDimension) {
-          std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
-          clean_exit (-1);
+            std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
+            clean_exit (-1);
           }
         }
       }

@@ -100,6 +100,7 @@
 #include "vttypes.h"
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectstring_c.h"
+#include "../ivtobjectworkingset_c.h"
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -234,8 +235,11 @@ void ISOTerminal_c::finishUploadCommand ()
 // only being called if there IS a q_sendUpload.front()
 bool ISOTerminal_c::startUploadCommand ()
 {
+  /** @todo Up to now, noone cares for the return code. implement error handling in case multisend couldn't be started? */
+
   // Set new state
   en_uploadType = UploadCommand;
+  // along with UploadCommand ALWAYS set "en_sendSuccess", not only for Multipacket!
   en_uploadCommandState = UploadCommandWaitingForCommandResponse;
 
   // Get first element from queue
@@ -249,21 +253,44 @@ bool ISOTerminal_c::startUploadCommand ()
    /// Use Multi or Single CAN-Pkgs?
   //////////////////////////////////
 
-  if ((actSend->mssObjectString == NULL) && (actSend->vec_uploadBuffer.size() < 9)) {
-    /// Fits into a single CAN-Pkg!
-    // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
-    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                          actSend->vec_uploadBuffer [0], actSend->vec_uploadBuffer [1],
-                          actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
-                          actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
-                          actSend->vec_uploadBuffer [6], actSend->vec_uploadBuffer [7]);
-    getCanInstance4Comm() << c_data;
+  if ((actSend->mssObjectString == NULL) && (actSend->vec_uploadBuffer.size() < 9))
+  { /// Fits into a single CAN-Pkg!
+    if (actSend->vec_uploadBuffer[0] == 0x11)
+    { /// Handle special case of language update
+      // There's NO response for command 0x11!
+      en_uploadCommandState = UploadCommandLanguagePoolUpdate;
 
-    // Save first byte for Response-Checking!
-    ui8_commandParameter = actSend->vec_uploadBuffer [0];
+      // Special send object pool!
+      startObjectPoolUploading (true);
+      if (c_streamer.ui32_streamSizeLang > 0)
+      { // start LANGUAGE part upload!
+        return getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+      }
+      else
+      { // shouldn't happen, but catch case anyway!
+        // nothing was sent out, so set to success so it gets removed simply...
+        en_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
+        return true;
+      }
+    }
+    else
+    { /// normal 8 byte package
+      // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
+      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                            actSend->vec_uploadBuffer [0], actSend->vec_uploadBuffer [1],
+                            actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
+                            actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
+                            actSend->vec_uploadBuffer [6], actSend->vec_uploadBuffer [7]);
+      getCanInstance4Comm() << c_data;
+      // Save first byte for Response-Checking!
+      ui8_commandParameter = actSend->vec_uploadBuffer [0];
+
+      en_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
+      return true;
+    }
   }
-  else if ((actSend->mssObjectString != NULL) && (actSend->mssObjectString->getStreamer()->getStreamSize() < 9)) {
-    /// Fits into a single CAN-Pkg!
+  else if ((actSend->mssObjectString != NULL) && (actSend->mssObjectString->getStreamer()->getStreamSize() < 9))
+  { /// Fits into a single CAN-Pkg!
     uint8_t ui8_len = actSend->mssObjectString->getStreamer()->getStreamSize();
 
     c_data.setExtCanPkg (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
@@ -272,26 +299,29 @@ bool ISOTerminal_c::startUploadCommand ()
     for (; i < ui8_len; i++) c_data.pb_data[i] = actSend->mssObjectString->getStreamer()->getStringToStream() [i-5];
     for (; i < 8;       i++) c_data.pb_data[i] = 0xFF; // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
     getCanInstance4Comm() << c_data;
-
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
+
+    en_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
+    return true;
   }
-  else if (actSend->mssObjectString == NULL) {
-    /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
+  else if (actSend->mssObjectString == NULL)
+  { /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
 
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
 
     return getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
            &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, en_sendSuccess);
-  } else {
+  }
+  else
+  {
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
     return getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
            (MultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),        ECU_TO_VT_PGN, en_sendSuccess);
   }
-  return true;
 }
 
 
@@ -355,7 +385,11 @@ ISOTerminal_c::singletonInit()
 
   ui32_filterAckPGN = 0; // filter not yet inserted!
 
+  /// No need to set the following variables here at singletonInit()
   //i32_nextWsMaintenanceMsg; needn't be set here, will be set in doStart!
+  //uint8_t ui8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"
+  //uint8_t ui8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
+
 }
 
 /**
@@ -454,8 +488,8 @@ void ISOTerminal_c::close( void )
     /** @todo will the IsoItem get lost or get its SA changed? */
     if (ui32_filterAckPGN != 0)
     { // do only if filter could be calculated (IsoItem was needed for that) and was actually inserted!
-      if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-        getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+      if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent))
+         getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent);
     }
     /*** MultiReceive De-Registration ***/
     __IsoAgLib::getMultiReceiveInstance4Comm().deregisterClient(this);
@@ -469,8 +503,8 @@ void ISOTerminal_c::doStart ()
 {
   /// First, trigger sending of WS-Announce
   pc_wsMasterIdentItem->getIsoItem()->triggerWsAnnounce();
-  /** @todo /\ maybe wait 1 sec after ws-announcing? but it shouldn't matter. better send right now... */
   i32_nextWsMaintenanceMsg = 0; // send out ws maintenance message immediately after ws has been announced.
+
   /// Second, init all variables to an initial upload state (Upload will not start before ws-announcing is due
   vtCapabilities_a.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
   vtCapabilities_a.lastRequestedSoftkeys = 0; // not yet requested vt's capabilities yet
@@ -508,6 +542,7 @@ void ISOTerminal_c::doStop()
   #else
   while (!q_sendUpload.empty()) q_sendUpload.pop();
   #endif
+  /** @todo Stop any pool sending (if any) (only interesting if getting NACKed while sending (E)TP) */
   if (c_streamer.pc_pool != NULL)
   { // notify application on lost connection so it can enter a defined safe state
     c_streamer.pc_pool->eventEnterSafeState ();
@@ -543,6 +578,22 @@ void ISOTerminal_c::checkVtStateChange()
     doStop();
   }
 }
+
+
+
+void ISOTerminal_c::setObjectPoolUploadingLanguage()
+{
+  c_streamer.i8_objectPoolUploadingLanguage = i8_vtLanguage;
+  c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
+  if (c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 1) // supporting multilanguage.
+  { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
+    const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
+    const uint8_t* lang = c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[ci8_realUploadingLanguage].language;
+    c_streamer.ui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
+  }
+}
+
+
 
 /**
   periodically event
@@ -636,7 +687,8 @@ bool ISOTerminal_c::timeEvent( void )
   /// Now from here on the Pool's state is: "OPRegistered" or "OPUploadedSuccessfully"
   ////////////////////////////////
   /// UPLOADING --> OBJECT-POOL<--
-  if (en_uploadType == UploadPool) {
+  if (en_uploadType == UploadPool)
+  {
     // Do TIME-OUT Checks ALWAYS!
     if ((en_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)
      || (en_uploadPoolState == UploadPoolWaitingForMemoryResponse)
@@ -656,7 +708,7 @@ bool ISOTerminal_c::timeEvent( void )
         #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "StoreVersion TimedOut!\n";
         #endif
-        finalizeUploading ();
+        finalizeUploading (false); // false == initial upload, was NOT language update
       }
     }
     // Do TIME-OUT Checks ALWAYS! - Check if we expect an (OBJECTPOOL) UPLOAD to fail/finish?
@@ -667,11 +719,20 @@ bool ISOTerminal_c::timeEvent( void )
         } break;
         case __IsoAgLib::MultiSend_c::SendAborted: {
           // aborted sending
-          en_uploadPoolState = UploadPoolFailed;
-          ui32_uploadTimestamp = HAL::getTime();
-          ui32_uploadTimeout = DEF_WaitFor_Reupload; // if it was an object pool, try reuploading in 5 secs...
+          /// re-send the current stream!
+          getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
         } break;
         case __IsoAgLib::MultiSend_c::SendSuccess: {
+          // see what part we just finished
+          if (c_streamer.ui32_streamSize > 0)
+          { // we just finished streaming the GENERAL part, so let's see if we have a LANGUAGE part to stream?
+            c_streamer.ui32_streamSize = 0; // indicate completion of GENERAL upload!
+            if (c_streamer.ui32_streamSizeLang > 0)
+            { // start LANGUAGE part upload!
+              getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
+              break; // we're uploading, do not indicate pool completion ;)
+            }
+          } // else we just finished streaming the LANGUAGE part, so upload is finished now!
           // successfully sent, so do we now have to send out the "End of Object Pool Message"?
           indicateObjectPoolCompletion (); // Send "End of Object Pool" message
         } break;
@@ -717,14 +778,18 @@ bool ISOTerminal_c::timeEvent( void )
       /// Pool-Upload: MAIN Phase (Try2Load / Upload / Try2Save)
       // ### Do MAIN-Phase a) at INIT and b) <timeout> seconds after FAIL
       if ( ((en_uploadPoolState == UploadPoolFailed) && (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)))
-         || (en_uploadPoolState == UploadPoolInit) ) {
+         || (en_uploadPoolState == UploadPoolInit) )
+      {
+        // Take the version that's been set up NOW and try to load/upload it.
+        setObjectPoolUploadingLanguage();
         // Do we want to try to "Load Version" or go directly to uploading?
 // Added this preprocessor so loading of object pools can be prevented for development purposes
 #ifdef NO_LOAD_VERSION
 #else
-        if (pc_versionLabel != NULL) {
-
+        if (pc_versionLabel != NULL)
+        {
           #ifdef GET_VERSIONS
+            // this is for test purposes only!
             static int b_getVersionsSendTime=0;
             if (b_getVersionsSendTime == 0)
             { // send out get versions first
@@ -739,25 +804,34 @@ bool ISOTerminal_c::timeEvent( void )
             }
           #endif
 
+          char lang1, lang2;
+          if (c_streamer.ui16_objectPoolUploadingLanguageCode != 0x0000) {
+            lang1 = c_streamer.ui16_objectPoolUploadingLanguageCode >> 8;
+            lang2 = c_streamer.ui16_objectPoolUploadingLanguageCode & 0xFF;
+          } else {
+            lang1 = pc_versionLabel [5];
+            lang2 = pc_versionLabel [6];
+          }
 
           // Try to "Non Volatile Memory - Load Version" first!
           c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                                #ifdef LOESCHE_POOL
-                               210, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
+                               210,
                                #else
-                               209, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
+                               209,
                                #endif
+                               pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], lang1, lang2);
           getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
                                                //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
         #ifdef LOESCHE_POOL
-          startObjectPoolUploading ();
+          startObjectPoolUploading (false);
         #else
           // start uploading after reception of LoadVersion Response
           en_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
           ui32_uploadTimeout = DEF_TimeOut_LoadVersion;
           ui32_uploadTimestamp = HAL::getTime();
           #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1)...\n";
+          INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<pc_versionLabel [0]<< pc_versionLabel [1]<< pc_versionLabel [2]<< pc_versionLabel [3]<< pc_versionLabel [4]<< lang1<< lang2<<"]...\n";
           #endif
         #endif
         }
@@ -765,7 +839,7 @@ bool ISOTerminal_c::timeEvent( void )
 #endif
         // NO_LOAD_VERSION
         { // Start uploading right now, no "LoadVersion" first
-          startObjectPoolUploading ();
+          startObjectPoolUploading (false); // no language specific upload - normal upload!
         }
       }
     }
@@ -778,29 +852,69 @@ bool ISOTerminal_c::timeEvent( void )
     return true;
 
   /// FROM HERE ON THE OBJECT-POOL >>IS<< UPLOADED SUCCESSFULLY
-  /// NOW HERE THE RUNTIME COMMANDS ARE BEING HANDLED
+  /// HANDLE CASE A) AND B) FROM HERE NOW
 
-
-  if (en_uploadType == UploadCommand) {
-    // NO Response/timeOut for (C.2.3 Object Pool Transfer Message) "UploadObjectPool" - Only for "UploadMultiPaketCommand"
-    if (en_uploadCommandState == UploadCommandWaitingForCommandResponse) {
-      // Waiting for an answer - Did it time out?
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
-        /** @todo check if it was a MultiSend and if it's still running, then give little more waiting! or "connAbort" multisend! */
-        en_uploadCommandState = UploadCommandTimedOut;
-      }
+  /// A) NOW HERE THE LANGUAGE CHANGE IS HANDLED
+  if ( (c_streamer.i8_objectPoolUploadingLanguage == -2) // indicates no update running
+    && (i8_vtLanguage != c_streamer.i8_objectPoolUploadedLanguage)
+     )
+  { // update languages on the fly
+    setObjectPoolUploadingLanguage();
+    /// NOTIFY THE APPLICATION so it can enqueue some commands that are processed BEFORE the update is done
+    /// e.g. switch to a "Wait while changing language..." datamask.
+    if (c_streamer.pc_pool != NULL) {
+      c_streamer.pc_pool->eventPrepareForLanguageChange (c_streamer.i8_objectPoolUploadingLanguage, c_streamer.ui16_objectPoolUploadingLanguageCode);
     }
-    // no ELSE here as the uploadCommandState may has changed above!
-    /** @todo Check if "ConnAbort" comes in, in that case? retry?!! */
 
-    // Are we in "Upload Command"-State and the last Upload failed?
-    if ( (en_uploadCommandState == UploadCommandTimedOut) /* OBSOLETE: || (en_uploadCommandState == UploadCommandFailed) */) {
-      if (ui8_uploadRetry > 0) {
-        ui8_uploadRetry--;
+
+    sendCommandUpdateLanguagePool();
+    // we keep (c_streamer.i8_objectPoolUploadingLanguage != -2), so a change in between doesn't care and won't happen!!
+  }
+
+
+  /// B) NOW HERE THE RUNTIME COMMANDS ARE BEING HANDLED
+  if (en_uploadType == UploadCommand)
+  {
+    // NO Response/timeOut for (C.2.3 Object Pool Transfer Message) "UploadObjectPool" - Only for "UploadMultiPaketCommand"
+    switch (en_sendSuccess)
+    {
+      case __IsoAgLib::MultiSend_c::SendAborted:
+        // If aborted, retry regardless of "ui8_uploadRetry", as it was a multisend problem, not a problem of the command itself!
         startUploadCommand();
-      } else {
-        // No more retries, simply finish this job and go Idle!
-        finishUploadCommand(); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
+        break;
+
+      case __IsoAgLib::MultiSend_c::Running:
+        // increase sent time-stamp, so it matches best the time when the multisend has finished sending, so that the timeout counts from that time on!
+        ui32_uploadTimestamp = HAL::getTime();
+        break;
+
+      case __IsoAgLib::MultiSend_c::SendSuccess: // no break, handle along with default: wait for response!
+      default:
+      { // successfully sent...
+        if (en_uploadCommandState == UploadCommandLanguagePoolUpdate)
+        { // no response is awaited, so we finished sending
+          finishUploadCommand();
+          break; // and done!
+        }
+
+        if (en_uploadCommandState == UploadCommandWaitingForCommandResponse) // won't reach here when "Running", as timestamp is getting get to now above!
+        { // Waiting for an answer - Did it time out?
+          if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
+            en_uploadCommandState = UploadCommandTimedOut;
+          }
+        } // don't break, as "UploadCommandTimedOut" is handled right below!
+
+        // Are we in "Upload Command"-State and the last Upload failed?
+        if ( (en_uploadCommandState == UploadCommandTimedOut) /* OBSOLETE: || (en_uploadCommandState == UploadCommandFailed) */) {
+          if (ui8_uploadRetry > 0) {
+            ui8_uploadRetry--;
+            startUploadCommand();
+          } else {
+            // No more retries, simply finish this job and go Idle!
+            finishUploadCommand(); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
+          }
+        }
+        break;
       }
     }
   } // UploadCommand
@@ -816,7 +930,7 @@ bool ISOTerminal_c::timeEvent( void )
 }
 
 
-// handle all string value between length of 9 and 259 bytes
+// handle all string values between length of 9 and 259 bytes
 bool ISOTerminal_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen)
 {
   // if SA is not the address from the vt -> don't react on stream
@@ -912,7 +1026,17 @@ void ISOTerminalStreamer_c::restoreDataNextStreamPart ()
   */
 void ISOTerminalStreamer_c::resetDataNextStreamPart ()
 {
-  pc_iterObjects = pc_pool->getIVtObjects();
+  uint8_t ui8_streamOffset;
+  if (ui32_streamSize > 0)
+  { // stream GENERAL PART
+    ui8_streamOffset = 0;
+  }
+  else
+  { // stream LANGUAGE PART
+    const int8_t ci8_realUploadingLanguage = (i8_objectPoolUploadingLanguage < 0) ? 0 : i8_objectPoolUploadingLanguage;
+    ui8_streamOffset = ci8_realUploadingLanguage + 1; // skip general pool
+  }
+  pc_iterObjects = pc_pool->getIVtObjects()[ui8_streamOffset];
   ui32_objectStreamPosition = 0;
   uploadBufferPosition = 0;
   uploadBufferFilled = 1;
@@ -962,36 +1086,76 @@ void ISOTerminalStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint
 
 
 
-void ISOTerminal_c::startObjectPoolUploading ()
+void ISOTerminal_c::startObjectPoolUploading (bool rb_onlyLanguageStream)
 {
   // calculate mask_stream size NOW (added 1 byte for "Object Pool Upload Start" Command Byte)
   // because we can't do before we get the color-depth information (0xC7)
-  c_streamer.ui32_streamSize = 1;
-  for (uint32_t curObject=0; curObject < c_streamer.pc_pool->getNumObjects(); curObject++) {
-    c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.pc_pool->getIVtObjects()[curObject])->fitTerminal ();
+
+  c_streamer.ui32_streamSize = 0;
+  c_streamer.ui32_streamSizeLang = 0;
+
+  // *CONDITIONALLY* Calculate GENERAL Part size (always init size to 0 above!)
+  if (!rb_onlyLanguageStream)
+  {
+    for (uint32_t curObject=0; curObject < c_streamer.pc_pool->getNumObjects(); curObject++) {
+      c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.pc_pool->getIVtObjects()[0][curObject])->fitTerminal ();
+    }
   }
 
-  c_data.setExtCanPkg8(7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                       192 /* 0xC0 */, 0xff, (c_streamer.ui32_streamSize-1) & 0xFF, ((c_streamer.ui32_streamSize-1) >>  8) & 0xFF, ((c_streamer.ui32_streamSize-1) >> 16) & 0xFF, (c_streamer.ui32_streamSize-1) >> 24, 0xff, 0xff);
-  getCanInstance4Comm() << c_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
+  // *ALWAYS* Calculate LANGUAGE Part size (if objectpool has multilanguage!)
+  if (c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 0) // supporting multilanguage.
+  { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
+    const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
+    for (uint32_t curObject=0; curObject < c_streamer.pc_pool->getNumObjectsLang(); curObject++) {
+      c_streamer.ui32_streamSizeLang += ((vtObject_c*)c_streamer.pc_pool->getIVtObjects()[ci8_realUploadingLanguage+1][curObject])->fitTerminal ();
+    }
+  } // else: no LANGUAGE SPECIFIC objectpool, so keep this at 0 to indicate this!
 
-  // Now proceed to uploading
-  en_uploadPoolState = UploadPoolWaitingForMemoryResponse;
-  ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-  ui32_uploadTimestamp = HAL::getTime();
+  if (!rb_onlyLanguageStream)
+  {
+    c_data.setExtCanPkg8(7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                        192 /* 0xC0 */, 0xff, (c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) & 0xFF,
+                                              ((c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >>  8) & 0xFF,
+                                              ((c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >> 16) & 0xFF,
+                                              (c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >> 24, 0xff, 0xff);
+    getCanInstance4Comm() << c_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
+
+    c_streamer.ui32_streamSize++;
+
+    // Now proceed to uploading
+    en_uploadPoolState = UploadPoolWaitingForMemoryResponse;
+    ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+    ui32_uploadTimestamp = HAL::getTime();
+  }
+
+  if (c_streamer.ui32_streamSizeLang > 0) // only if there's at least one object being streamed up as LANGUAGE specific objectpool add the CMD byte for size calculation...
+    c_streamer.ui32_streamSizeLang++;
 }
 
 
-void ISOTerminal_c::finalizeUploading ()
+/// finalizeUploading() is getting called after LoadVersion or UploadPool...
+void ISOTerminal_c::finalizeUploading (bool rb_wasLanguageUpdate)
 {
-#ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "now en_objectPoolState = OPUploadedSuccessfully;\n";
-#endif
-  en_uploadType = UploadIdle;
-  en_objectPoolState = OPUploadedSuccessfully;
-  if (c_streamer.pc_pool != NULL) {
-    // there should always a pc_pool, else "finalizeUploading" wouldn't be called!
-    c_streamer.pc_pool->eventObjectPoolUploadedSuccessfully ();
+  c_streamer.i8_objectPoolUploadedLanguage = c_streamer.i8_objectPoolUploadingLanguage;
+  c_streamer.ui16_objectPoolUploadedLanguageCode = c_streamer.ui16_objectPoolUploadingLanguageCode;
+  c_streamer.i8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
+  c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
+  #ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE << "===> finalizeUploading (wasLanguageUpdate?"<<rb_wasLanguageUpdate<<") with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage<<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]\n";
+  #endif
+  if (rb_wasLanguageUpdate)
+  {
+    // no need to set "en_objectPoolState" and "en_uploadType", this is done in "finishUploadCommand()"
+  } else {
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << "Now en_objectPoolState = OPUploadedSuccessfully;\n";
+    #endif
+    en_objectPoolState = OPUploadedSuccessfully;
+    en_uploadType = UploadIdle;
+  }
+  if (c_streamer.pc_pool != NULL)
+  { // there should always a pc_pool, else "finalizeUploading" wouldn't be called!
+    c_streamer.pc_pool->eventObjectPoolUploadedSuccessfully (rb_wasLanguageUpdate, c_streamer.i8_objectPoolUploadedLanguage, c_streamer.ui16_objectPoolUploadedLanguageCode);
   }
 }
 
@@ -1081,8 +1245,8 @@ bool ISOTerminal_c::processMsg()
     { // sender exists in isomonitor, so query its Manufacturer Code
       const uint16_t cui16_manufCode = getIsoMonitorInstance().isoMemberNr (data().isoSa()).devKey().getConstName().manufCode();
       if ( ( (cui16_manufCode == 98) || // Müller Elektronik
-	     (cui16_manufCode == 103)   // Agrocom
-	   ) && ((vtCapabilities_a.lastReceivedVersion == 0) || (vtCapabilities_a.iso11783version < 3)) )
+             (cui16_manufCode == 103)   // Agrocom
+           ) && ((vtCapabilities_a.lastReceivedVersion == 0) || (vtCapabilities_a.iso11783version < 3)) )
       {
         if (en_objectPoolState != OPUploadedSuccessfully)
         { // mueller/agrocom hack - ignore upload while no objectpool is displayed
@@ -1105,7 +1269,6 @@ bool ISOTerminal_c::processMsg()
         case WORKING_SET_MASTER_PGN:
           /// fake NOT-alive state of VT for now!
           vtState_a.lastReceived = 0; // set VTalive to FALSE, so the queue will be emptied, etc. down below on the state change check.
-          /** @todo Stop any pool sending (if any) */
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
                                 << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
@@ -1142,7 +1305,22 @@ bool ISOTerminal_c::processMsg()
     localSettings_a.uForce =       (data().getUint8Data (5) >> 2) & 0x03;
     localSettings_a.uUnitsSystem =  data().getUint8Data (5)       & 0x03;
     // The other fields are reserved. (yet ;-)
-    if (c_streamer.pc_pool != NULL) {
+
+    i8_vtLanguage = -1; // indicate that VT's language is not supported by this WS, so the default language should be used
+
+    if (c_streamer.pc_pool != NULL)
+    {
+      const uint8_t cui8_languages = c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow;
+      for (int i=0; i<cui8_languages; i++)
+      {
+        const uint8_t* lang = c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[i].language;
+        if (localSettings_a.languageCode == ((lang[0] << 8) | lang[1]))
+        {
+          i8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
+          break;
+        }
+      }
+
       c_streamer.pc_pool->eventLanguagePgn(localSettings_a);
     }
     /** @todo return FALSE so others can react on it? Base_c ?? */
@@ -1210,15 +1388,24 @@ bool ISOTerminal_c::processMsg()
      /***************************************************/
     /*** ### ECU Initiated Messages (=Responses) ### ***/
       case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
-        if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForEOOResponse)) {
-          if (data().getUint8Data (1) == 0) {
+        if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForEOOResponse))
+        { /// *** INITIAL POOL UPLOAD ***
+          if (data().getUint8Data (1) == 0)
+          { /// NO Error with UPLOADING pool
 // Added this preprocessor so storing of object pools can be prevented for development purposes
-#ifdef NO_STORE_VERSION
-#else
+#ifndef NO_STORE_VERSION
             if (pc_versionLabel != NULL) {
               // Store Version and finalize after "Store Version Response"
+              char lang1, lang2;
+              if (c_streamer.ui16_objectPoolUploadingLanguageCode != 0x0000) {
+                lang1 = c_streamer.ui16_objectPoolUploadingLanguageCode >> 8;
+                lang2 = c_streamer.ui16_objectPoolUploadingLanguageCode & 0xFF;
+              } else {
+                lang1 = pc_versionLabel [5];
+                lang2 = pc_versionLabel [6];
+              }
               c_data.setExtCanPkg8(7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                                   208 /* D0 */, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], pc_versionLabel [5], pc_versionLabel [6]);
+                                   208 /* D0 */, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], lang1, lang2);
               getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Store Version
 
               // Now wait for response
@@ -1230,15 +1417,28 @@ bool ISOTerminal_c::processMsg()
 #endif // NO_STORE_VERSION
             {
               // Finalize now!
-              finalizeUploading ();
+              finalizeUploading (false); // false == initial upload, was NOT language update
             }
           } else {
             en_uploadPoolState = UploadPoolFailed; // errorcode in ui8_uploadError;
             en_objectPoolState = OPCannotBeUploaded;
             ui8_uploadError = data().getUint8Data (2);
           }
-        } else {
-          // we should be in send mode when receiving an end of objectpool message.. ;)
+        }
+        else if ((en_uploadType == UploadCommand) && (en_uploadCommandState == UploadCommandWaitingForCommandResponse))
+        { /// *** LANGUAGE POOL UPDATE ***
+          MACRO_setStateDependantOnError(2)
+          finalizeUploading (true); // indicate that the language specific objects have been updated. also the user will get notified.
+/** @todo Error Handling!
+          if (data().getUint8Data (2-1) == 0)
+          { /// NO Error with UPDATING pool
+            finalizeUploading (true); // indicate that the language specific objects have been updated. also the user will get notified.
+          }
+          else
+          { /// Error with UPDATING pool
+            /// @todo How to register an error here and how to proceed?
+          }
+*/
         }
         break;
 
@@ -1338,12 +1538,12 @@ bool ISOTerminal_c::processMsg()
             case 1: // Not used
             case 2: // Version label not known
             case 8: // General error
-              finalizeUploading ();
+              finalizeUploading (false); // false == initial upload, was NOT language update
               break;
             case 4: // Insufficient memory available
             default: // well....
               getLbsErrInstance().registerError( LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal );
-              finalizeUploading ();
+              finalizeUploading (false); // false == initial upload, was NOT language update
               break;
             }
         }
@@ -1352,7 +1552,7 @@ bool ISOTerminal_c::processMsg()
         if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)) {
           if ((data().getUint8Data (5) & 0x0F) == 0)
           { // Successfully loaded
-            finalizeUploading ();
+            finalizeUploading (false); // false == initial upload, was NOT language update
             #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) without error...\n";
             #endif
@@ -1370,7 +1570,7 @@ bool ISOTerminal_c::processMsg()
             { // Not used
               // General error
               // Version label not known
-              startObjectPoolUploading (); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
+              startObjectPoolUploading (false); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with VersionNotFound...\n";
               #endif
@@ -1383,22 +1583,30 @@ bool ISOTerminal_c::processMsg()
     // Was it some command that requires queue-deletion & error processing?
     if (ui8_errByte != 0) {
       if (en_uploadType == UploadCommand) { /* if Waiting or Timedout (or Failed <shouldn't happen>) */
-        if (ui8_commandParameter == data().getUint8Data(0)) {
-          /* okay, right response for our current command! */
-          ui8_uploadCommandError = data().getUint8Data(ui8_errByte-1);
-          /// Inform user on success/error of this command
-          if (c_streamer.pc_pool) c_streamer.pc_pool->eventCommandResponse (ui8_uploadCommandError, data().name()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "data().name()"
-          #ifdef DEBUG
-          if (ui8_uploadCommandError != 0)
-          { /* error */
-            INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!\n";
+        if (en_sendSuccess == __IsoAgLib::MultiSend_c::SendSuccess)
+        { /// Our command was successfully sent & responded to, so remove it from the queue
+          if (ui8_commandParameter == data().getUint8Data(0)) {
+            /* okay, right response for our current command! */
+            ui8_uploadCommandError = data().getUint8Data(ui8_errByte-1);
+            /// Inform user on success/error of this command
+            if (c_streamer.pc_pool) c_streamer.pc_pool->eventCommandResponse (ui8_uploadCommandError, data().name()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "data().name()"
+            #ifdef DEBUG
+            if (ui8_uploadCommandError != 0)
+            { /* error */
+              INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!\n";
+            }
+            #endif
+  /* OBSOLETE: no more retries on failed commands! only on time outs!
+            } else {
+              en_uploadCommandState = UploadCommandFailed;
+            }
+  */        finishUploadCommand(); // finish command no matter if "okay" or "error"...
           }
-          #endif
-/* OBSOLETE: no more retries on failed commands! only on time outs!
-          } else {
-            en_uploadCommandState = UploadCommandFailed;
-          }
-*/        finishUploadCommand(); // finish command no matter if "okay" or "error"...
+        }
+        else
+        { /// Our command was Aborted or is still running, so do NOT remove from the queue,
+          // let timeEvent try again / wait for stream to finish sending
+          // DO NOT remove from queue if stream is still running!!
         }
       }
     }
@@ -1592,7 +1800,16 @@ bool ISOTerminal_c::sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object,
 bool ISOTerminal_c::sendCommandDeleteObjectPool ()
 {
   return sendCommand (178 /* Command: Command --- Parameter: Delete Object Pool */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand);
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, true); // don't care for enableReplaceOfCommand parameter actually
+}
+
+bool ISOTerminal_c::sendCommandUpdateLanguagePool ()
+{
+  /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
+  return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, true) // don't care for enableReplaceOfCommand parameter actually - this case shouldn't happen!
+      && sendCommand (0x12 /* Command: Object Pool Transfer --- Parameter: Object Pool Ready */,
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, true); // don't care for enableReplaceOfCommand parameter actually - this case shouldn't happen!
 }
 
 bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
@@ -1656,7 +1873,11 @@ bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableR
           uint8_t ui8_offset = (rref_sendUpload.vec_uploadBuffer[0]);
           if ( (ui8_offset<0x92) || (ui8_offset > 0xB4))
           {
-            //not possible by definition, but for being sure :-)
+            // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
+            if (ui8_offset == 0x12)
+              break;
+
+            // the rest is not possible by definition, but for being sure :-)
             #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--\n";
             #endif

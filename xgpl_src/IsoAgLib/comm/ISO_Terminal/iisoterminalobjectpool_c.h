@@ -214,8 +214,24 @@ public:
   /**
     hook function that gets called immediately after the
     "End Of Object Pool Response" Message was received.
+    @param rb_wasLanguageUpdate TRUE if the object pool was updated while it was already active/being displayed.
+                                FALSE if the object pool was initially uploaded
+    @param ri8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) has been uploaded/updated)
+                             0..(n-1) for the index to the supported languages. 0 is the first (=default) language. 1 the second, etc.
+    @param rui16_languageCode the language code of the uploaded language (one of your supported languages!)
   */
-  virtual void eventObjectPoolUploadedSuccessfully()=0;
+  virtual void eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode)=0;
+
+
+  /**
+    This function is called right before a language update is being sent to the VT,
+    so the application has a chance to e.g. switch to a "Wait while updating language..." datamask
+    before the object pool is being updated...
+    @param ri8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) will be uploaded/updated)
+                             0..(n-1) for the index to the supported languages. 0 is the first (=default) language. 1 the second, etc.
+    @param rui16_languageCode the language code of the afterwards being uploaded language (one of your supported languages!)
+  */
+  virtual void eventPrepareForLanguageChange (int8_t /*ri8_languageIndex*/, uint16_t /*rui16_languageCode*/) {};
 
   /**
     hook function that gets called immediately after recognizing
@@ -231,10 +247,10 @@ public:
   virtual void eventCommandResponse(uint8_t /*rui8_responseCommandError*/, const uint8_t /*rpui8_responseDataBytes*/[8]) {};
 
   /**
-    hook function that gets called immediately after recognizing an incoming
-    LANGUAGE_PGN. react on any change by adjusting your pool to the
-    new language/units/etc. please keep the implementation short as
-    this is directly called from IsoTerminal_c's processMsg();
+    hook function that gets called immediately after recognizing an incoming LANGUAGE_PGN.
+    react on any change by adjusting your pool to the new UNITS.
+    please keep the implementation short as this is directly called from IsoTerminal_c's processMsg();
+    for changing the LANGUAGE please refer to "eventObjectPoolUploadedSuccessfully".
     VERY IMPORTANT: THIS FUNCTION CALL MAY OCCUR PRIOR TO AN SUCCESSFULLY UPLOADED POOL !!!!!!!
   */
   virtual void eventLanguagePgn(const localSettings_s& /*rrefs_localSettings*/) {};
@@ -251,13 +267,19 @@ public:
   */
   virtual void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF)=0;
 
-  iIsoTerminalObjectPool_c(iVtObject_c** r_iVtObjects, uint16_t r_numObjects, uint16_t r_dimension, uint16_t r_skWidth=60, uint16_t r_skHeight=32)
+  iIsoTerminalObjectPool_c(iVtObject_c*** r_iVtObjects, uint16_t r_numObjects, uint16_t r_numObjectsLang, uint16_t r_dimension, uint16_t r_skWidth=60, uint16_t r_skHeight=32)
     : iVtObjects (r_iVtObjects)
     , numObjects (r_numObjects)
+    , numObjectsLang (r_numObjectsLang)
     , dimension (r_dimension)
     , skWidth (r_skWidth)
     , skHeight (r_skHeight)
-    , b_initAllObjects (false) {};
+    , b_initAllObjects (false)
+  {
+    numLang=0;
+    iVtObject_c*** iter = r_iVtObjects+1; // first entry should be the general object pool part!
+    while (*iter++ != NULL) numLang++;
+  };
 
    virtual ~iIsoTerminalObjectPool_c(){};
 
@@ -283,19 +305,26 @@ public:
   };
 
 protected:
-  iVtObject_c** iVtObjects;
+  iVtObject_c*** iVtObjects;
   uint16_t numObjects;
+  uint16_t numObjectsLang;
   uint16_t dimension;
   uint16_t skWidth;
   uint16_t skHeight;
   bool b_initAllObjects;
+  uint8_t numLang;
 
 public:
-  iVtObject_c** getIVtObjects() const { return iVtObjects; };
-  uint16_t      getNumObjects() const { return numObjects; };
-  uint16_t      getDimension()  const { return dimension; };
-  uint16_t      getSkWidth()    const { return skWidth; };
-  uint16_t      getSkHeight()   const { return skHeight; };
+  iVtObject_c*** getIVtObjects()     const { return iVtObjects; }
+  uint16_t       getNumObjects()     const { return numObjects; }
+  uint16_t       getNumObjectsLang() const { return numObjectsLang; }
+  uint16_t       getDimension()      const { return dimension; }
+  uint16_t       getSkWidth()        const { return skWidth; }
+  uint16_t       getSkHeight()       const { return skHeight; }
+  uint8_t        getNumLang()        const { return numLang; }
+
+  iVtObjectWorkingSet_c&
+               getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects); }
 };
 
 } // end namespace IsoAgLib
