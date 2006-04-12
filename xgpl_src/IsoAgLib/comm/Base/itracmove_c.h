@@ -83,7 +83,7 @@ namespace IsoAgLib {
     @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rb_implementMode implement mode (true) or tractor mode (false)!!!
   */
-  void config(const iDevKey_c* rpc_devKey, bool rb_implementMode = true)
+  void config(const iDevKey_c* rpc_devKey, const bool rb_implementMode = true)
   {
     #ifdef SYSTEM_PC
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
@@ -97,7 +97,7 @@ namespace IsoAgLib {
     @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
   */
-  void config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
+  void config(const iDevKey_c* rpc_devKey, const IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
   { TracMove_c::config(rpc_devKey, rt_identMode ); }
 
 
@@ -108,27 +108,78 @@ namespace IsoAgLib {
     /** set the value of real speed (measured by radar)
         @param ri16_val value to store as real radar measured speed
       */
-    void setSpeedReal(int16_t ri16_val) {return TracMove_c::setSpeedReal(ri16_val);};
+    void setSpeedReal(const int16_t ri16_val) {return TracMove_c::setSpeedReal(ri16_val);}
     /** set the value of theoretical speed (calculated from gear)
         @param ri16_val value to store as theoretical gear calculated speed
       */
-    void setSpeedTheor(int16_t ri16_val) {return TracMove_c::setSpeedTheor(ri16_val);};
+    void setSpeedTheor(const int16_t ri16_val) {return TracMove_c::setSpeedTheor(ri16_val);}
     /** set the real (radar measured) driven distance with int16_t val
         @param ri16_val value to store as real radar measured distance
       */
-    void setDistReal(int16_t ri16_val) {return TracMove_c::setDistReal(ri16_val);};
+    void setDistReal(const int16_t ri16_val) {return TracMove_c::setDistReal(ri16_val);}
     /** set the real (radar measured) driven distance with int32_t val
         @param rreflVal value to store as real radar measured distance
       */
-    void setDistReal(const int32_t& rreflVal) {return TracMove_c::setDistReal(rreflVal);};
+    void setDistReal(const int32_t& rreflVal) {return TracMove_c::setDistReal(rreflVal);}
     /** set the theoretical (gear calculated) driven distance with int16_t val
         @param ri16_val value to store as theoretical (gear calculated) driven distance
       */
-    void setDistTheor(int16_t ri16_val) {return TracMove_c::setDistTheor(ri16_val);};
+    void setDistTheor(const int16_t ri16_val) {return TracMove_c::setDistTheor(ri16_val);}
     /** set the theoretical (gear calculated) driven distance with int32_t val
         @param rreflVal value to store as theoretical (gear calculated) driven distance
       */
-    void setDistTheor(const int32_t& rreflVal) {return TracMove_c::setDistTheor(rreflVal);};
+    void setDistTheor(const int32_t& rreflVal) {return TracMove_c::setDistTheor(rreflVal);}
+
+    #ifdef USE_ISO_11783
+    /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
+        @param t_val  direction of travel
+      */
+    void setDirectionTheor(IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setDirectionTheor(t_val);}
+    /** set measured signal indicating either forward or reverse as the real (radar measured) direction of travel
+        @param t_val  direction of travel
+      */
+    void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setDirectionReal(t_val);}
+    /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
+        @param rt_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
+      */
+    void setOperatorDirectionReversed(const IsoAgLib::IsoOperatorDirectionFlag_t rt_val) { TracMove_c::setOperatorDirectionReversed( rt_val );}
+    /** set actual distance traveled by the machine based on the value of selected machine speed
+        @param ui32_val  actual distance traveled
+      */
+    //void setSelectedDistance(const uint32_t ui32_val) {TracMove_c::setSelectedDistance(ui32_val);}
+    /** set indicated current direction of travel of the machine
+        @param t_val  current direction of travel
+      */
+    //void setSelectedDirection(const IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setSelectedDirection(t_val);}
+    /** set commanded direction of the machine
+        @param t_val  commanded direction of travel
+      */
+    void setSelectedDirectionCmd(const IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setSelectedDirectionCmd(t_val);}
+    /** set current value of the speed as determined from a number of sources by the machine
+        @param ui16_val  current value of speed
+      */
+    //void setSelectedSpeed(const uint16_t ui16_val) {TracMove_c::setSelectedSpeed(ui16_val);}
+    /** set present limit status of selected speed
+        @param t_val  limit status
+      */
+    void setSelectedSpeedLimitStatus(const IsoAgLib::IsoLimitFlag_t t_val) {TracMove_c::setSelectedSpeedLimitStatus(t_val);}
+    /** set indicated speed source that is currently being reported in the machine speed parameter
+        @param t_val  speed source that is currently being reported
+      */
+   // void setSelectedSpeedSource(const IsoAgLib::IsoSpeedSourceFlag_t t_val)
+   // {TracMove_c::setSelectedSpeedSource(t_val);}
+    /** set commanded set point value of the machine speed as measured by the selected source
+        @param ui16_val  set point value of the machine speed
+      */
+    void setSelectedSpeedSetPointCmd(const uint16_t ui16_val)
+    {TracMove_c::setSelectedSpeedSetPointCmd(ui16_val);}
+    /** communicate maximum allowed speed to the tractor
+        @param ui16_val  maximum allowed speed
+      */
+    void setSelectedSpeedSetPointLimit(const uint16_t ui16_val)
+    {TracMove_c::setSelectedSpeedSetPointLimit(ui16_val);}
+
+    #endif
     /*@}*/
 
     /* ****************************************************** */
@@ -138,20 +189,67 @@ namespace IsoAgLib {
     /** get the value of real speed (measured by radar)
         @return actual radar measured speed value
       */
-    int16_t speedReal() const {return TracMove_c::speedReal();};
+    int16_t speedReal() const {return TracMove_c::speedReal();}
     /** get the value of theoretical speed (calculated from gear)
         @return theoretical gear calculated speed value
       */
-    int16_t speedTheor() const {return TracMove_c::speedTheor();};
+    int16_t speedTheor() const {return TracMove_c::speedTheor();}
 
     /** get the real driven distance with int16_t val
         @return actual radar measured driven distance value
       */
-    int32_t distReal() const {return TracMove_c::distReal();};
+    int32_t distReal() const {return TracMove_c::distReal();}
     /** get the real driven distance with int16_t val
         @return actual gear calculated driven distance value
       */
-    int32_t distTheor() const {return TracMove_c::distTheor();};
+    int32_t distTheor() const {return TracMove_c::distTheor();}
+
+    #ifdef USE_ISO_11783
+    /** get measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
+        @return  direction of travel
+      */
+    IsoAgLib::IsoDirectionFlag_t directionTheor() {return TracMove_c::directionTheor();}
+    /** get measured signal indicating either forward or reverse as the real (radar measured) direction of travel
+        @return  direction of travel
+      */
+    IsoAgLib::IsoDirectionFlag_t directionReal() {return TracMove_c::directionReal();}
+    /** get parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
+        @return indicates direction (IsoInactive = not reversed; IsoActive = reversed)
+      */
+    IsoAgLib::IsoOperatorDirectionFlag_t operatorDirectionReversed()const { return TracMove_c::operatorDirectionReversed();}
+    /** get actual distance traveled by the machine based on the value of selected machine speed
+        @return  actual distance traveled
+      */
+    uint32_t selectedDistance() const {return TracMove_c::selectedDistance();}
+    /** get current direction of travel of the machine
+        @return  current direction of travel
+      */
+    IsoAgLib::IsoDirectionFlag_t selectedDirection() const {return TracMove_c::selectedDirection();}
+    /** get commanded direction of the machine
+        @return  commanded direction of travel
+      */
+    IsoAgLib::IsoDirectionFlag_t selectedDirectionCmd() const {return TracMove_c::selectedDirectionCmd();}
+    /** get current value of the speed as determined from a number of sources by the machine
+        @return  current value of speed
+      */
+    uint16_t selectedSpeed() {return TracMove_c::selectedSpeed();}
+    /** get present limit status of selected speed
+        @return  limit status
+      */
+    IsoAgLib::IsoLimitFlag_t selectedSpeedLimitStatus() const {return TracMove_c::selectedSpeedLimitStatus();}
+    /** get speed source that is currently being reported in the machine speed parameter
+        @return  speed source that is currently being reported
+      */
+    IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return TracMove_c::selectedSpeedSource();}
+    /** get commanded set point value of the machine speed as measured by the selected source
+        @return  set point value of the machine speed
+      */
+    uint16_t selectedSpeedSetPointCmd() const {return TracMove_c::selectedSpeedSetPointCmd();}
+    /** get communicated maximum allowed speed to the tractor
+        @return  maximum allowed speed
+      */
+    uint16_t selectedSpeedSetPointLimit() const {return TracMove_c::selectedSpeedSetPointLimit();}
+    #endif
 
   private:
     /** allow getITracMoveInstance() access to shielded tracmove class.

@@ -3,7 +3,7 @@
                                   data information from CANCustomer_c
                                   derived for CAN sending and receiving
                                   interaction;
-                                  from ElementBase_c derived for
+                                  from BaseCommon_c derived for
                                   interaction with other IsoAgLib objects
                              -------------------
     begin                 Fri Apr 07 2000
@@ -103,14 +103,15 @@ namespace __IsoAgLib {
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
 
-  class TracMove_c : public SingletonTracMove_c{
+  class TracMove_c : public SingletonTracMove_c
+  {
   public:// Public methods
     /** config the TracMove_c object after init -> set pointer to devKey and
         config send/receive of a moving msg type
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
+    void config(const DevKey_c* rpc_devKey, const IsoAgLib::IdentMode_t rt_identMode);
 
     /** check if filter boxes shall be created - create only ISO or DIN filters based
         on active local idents which has already claimed an address
@@ -119,9 +120,7 @@ namespace __IsoAgLib {
     void checkCreateReceiveFilter( );
 
     /** destructor for TracMove_c which has nothing to do */
-    virtual ~TracMove_c() { BaseCommon_c::close();};
-
-    /*@}*/
+    virtual ~TracMove_c() { BaseCommon_c::close();}
 
     /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
@@ -130,15 +129,15 @@ namespace __IsoAgLib {
     /** set the value of real speed (measured by radar)
         @param ri16_val value to store as real radar measured speed
       */
-    void setSpeedReal(int16_t ri16_val) {i16_speedReal = ri16_val;};
+    void setSpeedReal(const int16_t ri16_val) {i16_speedReal = ri16_val;}
     /** set the value of theoretical speed (calculated from gear)
         @param ri16_val value to store as theoretical gear calculated speed
       */
-    void setSpeedTheor(int16_t ri16_val) {i16_speedTheor = ri16_val;};
+    void setSpeedTheor(const int16_t ri16_val) {i16_speedTheor = ri16_val;}
     /** set the real (radar measured) driven distance with int16_t val
         @param ri16_val value to store as real radar measured distance
       */
-    void setDistReal(int16_t ri16_val)
+    void setDistReal(const int16_t ri16_val)
     { // use function to detect and handle 16bit integer overflows
       setOverflowSecure(i32_distReal, i16_lastDistReal, ri16_val);
     };
@@ -149,7 +148,7 @@ namespace __IsoAgLib {
     /** set the theoretical (gear calculated) driven distance with int16_t val
         @param ri16_val value to store as theoretical (gear calculated) driven distance
       */
-    void setDistTheor(int16_t ri16_val)
+    void setDistTheor(const int16_t ri16_val)
     { // use function to detect and handle 16bit integer overflows
       setOverflowSecure(i32_distTheor, i16_lastDistTheor, ri16_val);
     };
@@ -157,6 +156,56 @@ namespace __IsoAgLib {
         @param rreflVal value to store as theoretical (gear calculated) driven distance
       */
     void setDistTheor(const int32_t& rreflVal);
+
+    #ifdef USE_ISO_11783
+    /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
+        @param t_val  direction of travel
+      */
+    void setDirectionTheor(IsoAgLib::IsoDirectionFlag_t t_val) {t_directionTheor = t_val;}
+    /** set measured signal indicating either forward or reverse as the real (radar measured) direction of travel
+        @param t_val  direction of travel
+      */
+    void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val) {t_directionReal = t_val;}
+    /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
+        @param rt_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
+      */
+    void setOperatorDirectionReversed(const IsoAgLib::IsoOperatorDirectionFlag_t rt_val) { t_operatorDirectionReversed = rt_val;}
+    /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
+    void setStartStopState(const IsoAgLib::IsoActiveFlag_t rt_val) {t_startStopState = rt_val;}
+
+    /** set actual distance traveled by the machine based on the value of selected machine speed
+        @param ui32_val  actual distance traveled
+      */
+//    void setSelectedDistance(const uint32_t ui32_val) {ui32_selectedDistance = ui32_val;}
+    /** set indicated current direction of travel of the machine
+        @param t_val  current direction of travel
+      */
+//    void setSelectedDirection(const IsoAgLib::IsoDirectionFlag_t t_val) {t_selectedDirection = t_val;}
+    /** set commanded direction of the machine
+        @param t_val  commanded direction of travel
+      */
+    void setSelectedDirectionCmd(const IsoAgLib::IsoDirectionFlag_t t_val) {t_selectedDirectionCmd = t_val;}
+    /** set current value of the speed as determined from a number of sources by the machine
+        @param ui16_val  current value of speed
+      */
+//    void setSelectedSpeed(const uint16_t ui16_val) {ui16_selectedSpeed = ui16_val;}
+    /** present limit status of selected speed
+        @param t_val  limit status
+      */
+    void setSelectedSpeedLimitStatus(const IsoAgLib::IsoLimitFlag_t t_val) {t_selectedSpeedLimitStatus = t_val;}
+    /** set indicated speed source that is currently being reported in the machine speed parameter
+        @param t_val  speed source that is currently being reported
+      */
+//    void setSelectedSpeedSource(const IsoAgLib::IsoSpeedSourceFlag_t t_val) {t_selectedSpeedSource = t_val;}
+    /** set commanded set point value of the machine speed as measured by the selected source
+        @param ui16_val  set point value of the machine speed
+      */
+    void setSelectedSpeedSetPointCmd(const uint16_t ui16_val) {ui16_selectedSpeedSetPointCmd = ui16_val;}
+    /** communicate maximum allowed speed to the tractor
+        @param ui16_val  maximum allowed speed
+      */
+    void setSelectedSpeedSetPointLimit(const uint16_t ui16_val) {ui16_selectedSpeedSetPointLimit = ui16_val;}
+    #endif
     /*@}*/
 
     /* ****************************************************** */
@@ -166,20 +215,70 @@ namespace __IsoAgLib {
     /** get the value of real speed (measured by radar)
         @return actual radar measured speed value
       */
-    int16_t speedReal() const { return i16_speedReal;};
+    int16_t speedReal() const { return i16_speedReal;}
     /** get the value of theoretical speed (calculated from gear)
         @return theoretical gear calculated speed value
       */
-    int16_t speedTheor() const { return i16_speedTheor;};
+    int16_t speedTheor() const { return i16_speedTheor;}
 
     /** get the real driven distance with int16_t val
         @return actual radar measured driven distance value
       */
-    int32_t distReal() const { return i32_distReal;};
+    int32_t distReal() const { return i32_distReal;}
     /** get the real driven distance with int16_t val
         @return actual gear calculated driven distance value
       */
-    int32_t distTheor() const { return i32_distTheor;};
+    int32_t distTheor() const { return i32_distTheor;}
+
+    #ifdef USE_ISO_11783
+    /** get measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
+        @return  direction of travel
+      */
+    IsoAgLib::IsoDirectionFlag_t directionTheor() {return t_directionTheor;}
+    /** get measured signal indicating either forward or reverse as the real (radar measured) direction of travel
+        @return  direction of travel
+      */
+    IsoAgLib::IsoDirectionFlag_t directionReal() {return t_directionReal;}
+    /** get parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
+        @return indicates direction (IsoInactive = not reversed; IsoActive = reversed)
+      */
+    IsoAgLib::IsoOperatorDirectionFlag_t operatorDirectionReversed()const { return t_operatorDirectionReversed;}
+    /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
+    IsoAgLib::IsoActiveFlag_t startStopState() const {return t_startStopState;}
+
+    /** get actual distance traveled by the machine based on the value of selected machine speed
+        @return  actual distance traveled
+      */
+    uint32_t selectedDistance() const;
+    /** get current direction of travel of the machine
+        @return  current direction of travel
+      */
+    IsoAgLib::IsoDirectionFlag_t selectedDirection() const;
+    /** get commanded direction of the machine
+        @return  commanded direction of travel
+      */
+    IsoAgLib::IsoDirectionFlag_t selectedDirectionCmd() const {return t_selectedDirectionCmd;}
+    /** get current value of the speed as determined from a number of sources by the machine
+        @return  current value of speed
+      */
+    uint16_t selectedSpeed();
+    /** present limit status of selected speed
+        @return  limit status
+      */
+    IsoAgLib::IsoLimitFlag_t selectedSpeedLimitStatus() const {return t_selectedSpeedLimitStatus;}
+    /** get speed source that is currently being reported in the machine speed parameter
+        @return  speed source that is currently being reported
+      */
+    IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return t_selectedSpeedSource;}
+    /** get commanded set point value of the machine speed as measured by the selected source
+        @return  set point value of the machine speed
+      */
+    uint16_t selectedSpeedSetPointCmd() const {return ui16_selectedSpeedSetPointCmd;}
+    /** get communicated maximum allowed speed to the tractor
+        @return  maximum allowed speed
+      */
+    uint16_t selectedSpeedSetPointLimit() const {return ui16_selectedSpeedSetPointLimit;}
+    #endif
 
   private:
     // Private methods
@@ -188,8 +287,6 @@ namespace __IsoAgLib {
         set the configuration for send/receive for a moving msg
         NEVER instantiate a variable of type TracMove_c within application
         only access TracMove_c via getTracMoveInstance() or getTracMoveInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
-        @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param rc_sendMovingDevKey optional Bitmask of base data to send ( default send nothing )
       */
     TracMove_c() {};
 
@@ -206,6 +303,18 @@ namespace __IsoAgLib {
       */
     static int16_t long2int(const int32_t& rreflVal);
 
+    /** functions with actions, which must be performed periodically
+        -> called periodically by Scheduler_c
+        ==> sends base data msg if configured in the needed rates
+        possible errors:
+          * dependant error in CANIO_c on CAN send problems
+        @see CANPkg_c::getData
+        @see CANPkgExt_c::getData
+        @see CANIO_c::operator<<
+        @return true -> all planned activities performed in allowed time
+      */
+    bool timeEvent();
+
     #ifdef USE_DIN_9684
     /** send a DIN9684 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
@@ -220,17 +329,28 @@ namespace __IsoAgLib {
       * this is only called when sending ident is configured and it has already claimed an address
       */
     bool isoTimeEventTracMode( );
+    /** send a ISO11783 moving information PGN.
+      * this is only called when sending ident is configured and it has already claimed an address
+      */
+    bool isoTimeEventImplementMode( );
     /** send moving data with ground&theor speed&dist */
   //  void isoSendMovingUpdate( );
     /** process a ISO11783 moving information PGN */
     bool isoProcessMsg();
      /** send moving data with ground&theor speed&dist */
-    void isoSendMovingUpdate( );
+    void isoSendMovingTracMode( );
+     /** send moving data with ground&theor speed&dist */
+    void isoSendMovingImplMode( );
+    /** set last time of data msg [msec]*/
+    void setUpdateTimeCmd(int32_t updateTime) {i32_lastMsgReceivedCmd = updateTime;}
+    /** Retrieve the last update time of the specified information type*/
+    int32_t lastedTimeSinceUpdateCmd() const {return (System_c::getTime() - i32_lastMsgReceivedCmd);}
     #endif
 
   private:
     // Private attributes
-    /** distance */
+    uint32_t i32_lastMsgReceivedCmd;
+    /** DISTANCE */
     /** real distance as int32_t value (cumulates 16bit overflows) */
     int32_t i32_distReal;
     /** theoretical distance as int32_t value (cumulates 16bit overflows)*/
@@ -239,12 +359,38 @@ namespace __IsoAgLib {
     int16_t i16_lastDistReal;
     /** last 16bit theoretical distance to cope with 16bit overflows */
     int16_t i16_lastDistTheor;
+    /** parameter indicates whetcher the reported direction is reversed from the perspective of the operator */
+    IsoAgLib::IsoOperatorDirectionFlag_t t_operatorDirectionReversed;
+    /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
+    IsoAgLib::IsoActiveFlag_t t_startStopState;
+    /** actual distance traveled by the machine based on the value of selected machine speed */
+    uint32_t ui32_selectedDistance;
 
-    /** speed */
+    /** DIRECTION */
+    /** measured signal indicating either forward or reverse as the direction of travel */
+    IsoAgLib::IsoDirectionFlag_t t_directionTheor;
+    /** measured signal indicating either forward or reverse as the direction of travel */
+    IsoAgLib::IsoDirectionFlag_t t_directionReal;
+    /** indicates the current direction of travel of the machine */
+    IsoAgLib::IsoDirectionFlag_t t_selectedDirection;
+    /** commanded direction of the machine */
+    IsoAgLib::IsoDirectionFlag_t t_selectedDirectionCmd;
+
+    /** SPEED */
     /** real speed */
     int16_t i16_speedReal;
     /** theoretical speed */
     int16_t i16_speedTheor;
+    /** current value of the speed as determined from a number of sources by the machine */
+    uint16_t ui16_selectedSpeed;
+    /** present limit status of selected speed */
+    IsoAgLib::IsoLimitFlag_t t_selectedSpeedLimitStatus;
+    /** indicates the speed source that is currently being reported in the machine speed parameter */
+    IsoAgLib::IsoSpeedSourceFlag_t t_selectedSpeedSource;
+    /** commanded set point value of the machine speed as measured by the selected source */
+    uint16_t ui16_selectedSpeedSetPointCmd;
+    /** parameter is used by a machine to communicate it's maximum allowed speed to the tractor */
+    uint16_t ui16_selectedSpeedSetPointLimit;
   };
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
