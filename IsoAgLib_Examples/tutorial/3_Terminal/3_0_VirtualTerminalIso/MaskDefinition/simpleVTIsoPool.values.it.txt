@@ -1,3 +1,3 @@
-StrRed, "rosso"
 StrGreen, "verde"
 StrBlue, "blu"
+resetTextOS, "Risettare"

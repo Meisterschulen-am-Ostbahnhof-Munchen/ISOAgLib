@@ -57,15 +57,11 @@
   <stringvariable name='StrNone' language="de" value='nichts ausgewählt'    />
   <stringvariable name='StrNone' language="it" value='niente selezionato!'  />
 
-  <stringvariable name='StrRed' language="en" />
-  <stringvariable name='StrRed' language="de" />
-  <stringvariable name='StrRed' language="it" />
-  <stringvariable name='StrGreen' language="en" />
-  <stringvariable name='StrGreen' language="de" />
-  <stringvariable name='StrGreen' language="it" />
-  <stringvariable name='StrBlue' language="en" />
-  <stringvariable name='StrBlue' language="de" />
-  <stringvariable name='StrBlue' language="it" />
+  <stringvariable name='StrRed' language="en" value="red" />
+  <stringvariable name='StrRed' language="de" value="rot" />
+  <stringvariable name='StrRed' language="it" value="rosso" />
+  <stringvariable name='StrGreen' language="en+de+it" />
+  <stringvariable name='StrBlue' language="*" />
 
   <stringvariable name='StrYellow' value='yellow' />
   <stringvariable name='StrCyan' value='cyan' />
@@ -95,9 +91,7 @@
   </container>
 
   <key name='KeyReset' background_colour='white'>
-    <outputstring name='resetTextOS' language="en" value='Reset'      pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8' horizontal_justification='middle' />
-    <outputstring name='resetTextOS' language="de" value='Neustart'   pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8' horizontal_justification='middle' />
-    <outputstring name='resetTextOS' language="it" value='Risettare'  pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8' horizontal_justification='middle' />
+    <outputstring name='resetTextOS' language="en+de+it" pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesSKM6x8' horizontal_justification='middle' />
   </key>
 
 </objectpool>

@@ -272,8 +272,10 @@
 #define attrBytes_in_string (100)
 #define attrCode (101)
 #define attrLanguage (102)
+#define attrInKey (103)
+#define attrInButton (104)
 
-#define maxAttributeNames (103)
+#define maxAttributeNames (105)
 
 
 #define maxObjectTypesToCompare (maxObjectTypes+6)
@@ -497,7 +499,9 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
     "new_object_id",
     "bytes_in_string",
     "code",
-    "language"
+    "language",
+    "in_key",
+    "in_button"
 };
 
 // Table of possible Macro Commands

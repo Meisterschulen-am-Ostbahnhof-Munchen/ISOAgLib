@@ -122,14 +122,7 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectUnnamed34.init (&iVtObjectUnnamed34_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectsoftkeysAlarm.init (&iVtObjectsoftkeysAlarm_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
 
-  for (int i=0;i<numObjects; i++) {
-    iVtObjects [0][i]->setOriginSKM (false);
-  }
-  for (int i=0;i<numObjects; i++) {
-    iVtObjects [0][i]->setOriginBTN (NULL);
-  }
-  /// The following two lines are in there temporarily, as this needs to be added to vt2iso somehow ;(
-  iVtObjectresetTextOS_1.setOriginSKM (true);
-  iVtObjectresetTextOS_2.setOriginSKM (true);
+  #include "simpleVTIsoPool-functions-origin.inc"
+
   b_initAllObjects = true;
 }

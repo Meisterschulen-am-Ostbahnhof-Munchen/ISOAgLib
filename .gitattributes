@@ -79,6 +79,7 @@ IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/bitm
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/bitmaps/vario/simpleBitmap240.bmp -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-attributes.inc -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-defines.inc -text
+IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-functions-origin.inc -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-functions.inc -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-handler-derived.inc -text
 IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-handler-direct.inc -text
