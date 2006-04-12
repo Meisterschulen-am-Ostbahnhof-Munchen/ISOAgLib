@@ -1,7 +1,5 @@
 /***************************************************************************
-                          baseitem_c.h  - base class for member lists;
-                                    stores access time
-                                    and pointer to root Scheduler_c object
+                          basecommon_c.h  - base class for basa data types
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
@@ -222,17 +220,17 @@ namespace __IsoAgLib
     #endif
 
     /** return sender of a msg*/
-    const DevKey_c* getDevKey() const {return pc_devKey;};
-    /** return a sender which sends commands as a tractor */
-    DevKey_c& getSenderDevKey() {return c_sendDevKey;};
-    /** return a sender which sends commands as a tractor */
-    const DevKey_c& getSenderDevKeyConst() const {return c_sendDevKey;}
-
+    const DevKey_c* getDevKey() const {return pc_devKey;}
+    /** get evkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
+    DevKey_c& getSelectedDataSourceDevKey() {return c_selectedDataSourceDevKey;}
+    /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
+    const DevKey_c& getSelectedDataSourceDevKeyConst() const {return c_selectedDataSourceDevKey;}
 
     /** set mode to implement or tractor*/
     void setMode(IsoAgLib::IdentMode_t rt_identMode) {t_identMode = rt_identMode;}
-    /** set sender which sends commands as a tractor*/
-    void setSenderDevKey(const DevKey_c& senderDevKey){c_sendDevKey = senderDevKey;}
+    /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */
+    void setSelectedDataSourceDevKey(const DevKey_c& rc_dataSourceDevKey){c_selectedDataSourceDevKey = rc_dataSourceDevKey;}
+
     /** set sender of a msg*/
     void setDevKey(const DevKey_c* devKey){pc_devKey = devKey;}
     /** set last time of data msg [msec]*/
@@ -257,12 +255,11 @@ namespace __IsoAgLib
         This pointer is set in config function
       */
     const DevKey_c* pc_devKey;
-    /** DEVKEY of sender which sends commands as a tractor*/
-    DevKey_c c_sendDevKey;
+    /** Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
+    DevKey_c c_selectedDataSourceDevKey;
 
     /** temp data where received data is put */
     CANPkgExt_c c_data;
-    //BasePkg_c c_data;
   };
 
 }// end namespace __IsoAgLib

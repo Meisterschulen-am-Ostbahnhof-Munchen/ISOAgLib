@@ -1,7 +1,5 @@
 /***************************************************************************
-                          baseitem_c.h  - base class for member lists;
-                                    stores access time
-                                    and pointer to root Scheduler_c object
+                          basecommon_c.h  -  base class for basa data types
                              -------------------
     begin                : Fri Apr 07 2000
     copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
@@ -167,13 +165,16 @@ void BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_i
   // set the timestamps to 0
   i32_lastMsgReceived = 0;
 
-  if ((rpc_devKey != NULL) && checkMode(IsoAgLib::IdentModeTractor))
-  { // we are starting in tractor mode - i.e. not-implement-mode
-    c_sendDevKey = *rpc_devKey;
+  //setSelectedDataSourceDevKey is only used in tractor mode
+  if (rt_identMode == IsoAgLib::IdentModeTractor)
+  {
+    if ((rpc_devKey != NULL) )
+    {
+      c_selectedDataSourceDevKey = *rpc_devKey;
+    }
+    else
+      c_selectedDataSourceDevKey.setUnspecified();
   }
-  else
-    c_sendDevKey.setUnspecified();
-
 };
 
 /** check if a received message should be parsed */
@@ -181,8 +182,8 @@ bool BaseCommon_c::checkParseReceived(const DevKey_c& rrefc_currentSender) const
 {
   return ( checkMode(IsoAgLib::IdentModeImplement) // I'm not the sender
             && ( // one of the following conditions must be true
-                   (c_sendDevKey == rrefc_currentSender  ) // actual sender equivalent to last
-                || (c_sendDevKey.isUnspecified()         ) // last sender has not correctly claimed address member
+                   (c_selectedDataSourceDevKey == rrefc_currentSender  ) // actual sender equivalent to last
+                || (c_selectedDataSourceDevKey.isUnspecified()         ) // last sender has not correctly claimed address member
                )
           )?true:false;
 };
@@ -216,7 +217,7 @@ bool BaseCommon_c::processMsg()
 
   /** functions with actions, which must be performed periodically
     -> called periodically by Scheduler_c
-    ==> sends moving msg if configured in the needed rates
+    ==> sends base data msg if configured in the needed rates
     possible errors:
       * dependant error in CANIO_c on CAN send problems
     @see CANPkg_c::getData
@@ -235,9 +236,9 @@ bool BaseCommon_c::timeEvent()
   // sending node stopped sending -> other nodes can now step in
   if (  checkMode(IsoAgLib::IdentModeTractor)
         &&(lastedTimeSinceUpdate() >= 3000 )
-        && (c_sendDevKey.isSpecified())    )
+        && (c_selectedDataSourceDevKey.isSpecified())    )
   { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-    c_sendDevKey.setUnspecified();
+    c_selectedDataSourceDevKey.setUnspecified();
   }
 
   // check if we are in tractor mode and have a pointer to the sending device key
@@ -250,7 +251,7 @@ bool BaseCommon_c::timeEvent()
          && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true)
   #endif
       )
-  { // stored moving information sending ISO member or DIN member has claimed address
+  { // stored base data information sending ISO member or DIN member has claimed address
     #ifdef USE_ISO_11783
       if ( !isoTimeEventTracMode()) return false;
     #endif
