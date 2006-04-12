@@ -1,6 +1,5 @@
 /***************************************************************************
-              tracgeneral_c.cpp - working on Base Data Msg Type 1 and 2;
-                                  stores, updates  and delivers all base
+              tracgeneral_c.cpp - stores, updates  and delivers all base
                                   data informations from CANCustomer_c
                                   derived for CAN sending and receiving
                                   interaction;
@@ -183,16 +182,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** config the TracGeneral_c object after init -> set pointer to devKey and
       config send/receive of different general msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rb_implementMode optional setting to express TECU sending state
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
    */
-  void TracGeneral_c::configFuel(const DevKey_c* rpc_devKey, bool rb_implementMode)
+  void TracGeneral_c::configFuel(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   { // set configure values
     setDevKey( rpc_devKey );
-    b_sendStateFuel = rb_implementMode;
+    t_identModeStateFuel = rt_identMode;
 
     // set ui8_sendDevKey to the pointed value, if pointer is valid
-    if ((rpc_devKey != NULL) && ( rb_implementMode ) ) c_sendFuelDevKey = *rpc_devKey;
-    else c_sendFuelDevKey.setUnspecified();
+    if ( rt_identMode == IsoAgLib::IdentModeTractor)
+    {
+      if (rpc_devKey != NULL ) c_sendFuelDevKey = *rpc_devKey;
+      else c_sendFuelDevKey.setUnspecified();
+    }
   };
   #endif
 
@@ -218,14 +220,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     checkCreateReceiveFilter();
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
-    if (   ( !b_sendStateFuel                    )
+    if (   ( !t_identModeStateFuel                    )
         && ( ( ci32_now - i32_lastFuel ) >= 3000 )
         && ( c_sendFuelDevKey.isSpecified()      ) )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
       c_sendFuelDevKey.setUnspecified();
     }
     if (  getDevKey() != NULL
-          && ( checkMode(IsoAgLib::IdentModeTractor) || b_sendStateFuel                               )
+          && ( checkMode(IsoAgLib::IdentModeTractor) || t_identModeStateFuel         )
           && ( getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true) ) )
     { // there is at least something configured to send
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
@@ -299,7 +301,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     if ( ( lastedTimeSinceUpdate() >= 100 ) && checkMode(IsoAgLib::IdentModeTractor) )
     { // send actual base2 data
-      setSenderDevKey( *getDevKey() );
+      setSelectedDataSourceDevKey( *getDevKey() );
       data().setIdent((0x16 << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
       data().setUint16Data(0, i16_rearLeftDraft);
       data().setUint16Data(2, i16_rearRightDraft);
@@ -315,7 +317,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       setUpdateTime(ci32_now);
     }
 
-    if ( ( ( ci32_now - i32_lastFuel ) >= 100 ) && ( b_sendStateFuel ) )
+    if ( ( ( ci32_now - i32_lastFuel ) >= 100 ) && ( t_identModeStateFuel ) )
     { // send actual base3 data
       c_sendFuelDevKey = *getDevKey();
       data().setIdent((0x1C << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
@@ -366,9 +368,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           ui8_rearDraftNominal = data().getUint8Data( 6 );
           data().setLen(8);
 
-          // set last time
-          setUpdateTime(ci32_now);
-          setSenderDevKey(c_tempDevKey);
+          setSelectedDataSourceDevKey(c_tempDevKey);
         }
         else
         { // there is a sender conflict
@@ -387,8 +387,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           ui8_fuelTemperature =  data().getUint8Data( 2 );
           data().setLen(3);
 
-          // set last time
-          i32_lastFuel = ci32_now;
           c_sendFuelDevKey = c_tempDevKey;
         }
         else
@@ -422,8 +420,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     setHitchRear(rrefc_pkg.getUint8Data( 6 ));
     // front hitch
     setHitchFront(rrefc_pkg.getUint8Data( 7 ));
-    setSenderDevKey(getDinMonitorInstance4Comm().dinMemberNr(rrefc_pkg.dinSa()).devKey());
-    setUpdateTime(Scheduler_c::getLastTimeEventTrigger());
+    setSelectedDataSourceDevKey(getDinMonitorInstance4Comm().dinMemberNr(rrefc_pkg.dinSa()).devKey());
   }
   /** helper function to set the Hitch and Engine flags of a DIN base data message */
   void TracGeneral_c::dinSetHitchEngineFlags(CANPkgExt_c& rrefc_pkg)
@@ -440,8 +437,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   */
   bool TracGeneral_c::isoTimeEventTracMode( )
   {
-    if ( ( (lastedTimeSinceUpdate() >= 100) )
-      && ( checkMode(IsoAgLib::IdentModeTractor) ) )
+    if ( lastedTimeSinceUpdate() >= 100 )
     {// it's time to send hitch information
       isoSendMsg();
     }
@@ -494,16 +490,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
             setHitchFront(ui8_tempHitch);
             ui8_frontLinkForce = data().getUint8Data( 2 );
             i16_frontDraft = static_cast<int16_t>(data().getUint8Data( 3 ) ) + (static_cast<int16_t>(data().getUint8Data( 4 ) ) << 8);
+            t_frontHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
           else
           { // back hitch
             setHitchRear(ui8_tempHitch);
             ui8_rearLinkForce = data().getUint8Data( 2 );
             i16_rearDraft = static_cast<int16_t>(data().getUint8Data( 3 ) ) + (static_cast<int16_t>(data().getUint8Data( 4 )) << 8);
+            t_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
-          // set last time
-          setUpdateTime(ci32_now);
-          setSenderDevKey(c_tempDevKey);
+          setSelectedDataSourceDevKey(c_tempDevKey);
         }
         else
         { // there is a sender conflict
@@ -518,13 +514,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           b_maintainActuatorPower = true;
         if ( ( (data().getUint8Data( 1 ) >> 6) & 3) == 1)
           powerForImplState.inTransport = IsoAgLib::IsoActive;
-         // b_maintainPowerForImplInTransport = true;
         if ( ( (data().getUint8Data( 1 ) >> 4) & 3) == 1)
           powerForImplState.inPark = IsoAgLib::IsoActive;
-          //b_maintainPowerForImplInPark = true;
         if ( ( (data().getUint8Data( 1 ) >> 2) & 3) == 1)
           powerForImplState.inWork = IsoAgLib::IsoActive;
-          //b_maintainPowerForImplInWork = true;
 
         ui32_lastMaintainPowerRequest = data().time();
         b_result = true;
@@ -570,22 +563,29 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setIsoPri(3);
     data().setIsoSa(b_sa);
 
-    setSenderDevKey( *getDevKey() );
+    setSelectedDataSourceDevKey( *getDevKey() );
     CANIO_c& c_can = getCanInstance4Comm();
     data().setIsoPgn(FRONT_HITCH_STATE_PGN);
+    uint8_t ui8_temp = t_frontHitchPosLimitStatus << 3;
     switch (hitchFront()) {
       case ERROR_VAL_16S:
         data().setUint8Data(0, hitchFront());
-        data().setUint8Data(1, IsoAgLib::IsoError);
+        ui8_temp |= ( IsoAgLib::IsoError << 6 );
+        data().setUint8Data(1, ui8_temp);
         break;
       case NO_VAL_16S:
         data().setUint8Data(0, hitchFront());
-        data().setUint8Data(1, IsoAgLib::IsoNotAvailable);
+        ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
+        data().setUint8Data(1, ui8_temp);
         break;
       default:
         data().setUint8Data(0, (((hitchFront() & 0x7F) * 10) / 4));
-        if ((hitchFront() & 0x80) != 0) data().setUint8Data(1, (1 << 6) ); // work
-        else data().setUint8Data(1, 1);
+        if ((hitchFront() & 0x80) != 0)
+        {
+          ui8_temp |= IsoAgLib::IsoActive << 6;
+          data().setUint8Data(1, ui8_temp ); // work
+        }
+        else data().setUint8Data(1, 1); //UND HIER??
         break;
     }
     data().setUint8Data(2, ui8_frontLinkForce);
@@ -598,19 +598,26 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     c_can << data();
 
     data().setIsoPgn(REAR_HITCH_STATE_PGN);
+    ui8_temp = t_rearHitchPosLimitStatus << 3;
     switch (hitchRear()) {
       case ERROR_VAL_16S:
         data().setUint8Data(0, hitchRear());
-        data().setUint8Data(1, IsoAgLib::IsoError);
+        ui8_temp |= ( IsoAgLib::IsoError << 6 );
+        data().setUint8Data(1, ui8_temp);
         break;
       case NO_VAL_16S:
         data().setUint8Data(0, hitchRear());
-        data().setUint8Data(1, IsoAgLib::IsoNotAvailable);
+        ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
+        data().setUint8Data(1, ui8_temp);
         break;
       default:
         data().setUint8Data(0, (((hitchRear() & 0x7F) * 10) / 4));
-        if ((hitchRear() & 0x80) != 0) data().setUint8Data(1, (1 << 6) ); // work
-        else data().setUint8Data(1, 1);
+        if ((hitchRear() & 0x80) != 0)
+        {
+          ui8_temp |= IsoAgLib::IsoActive << 6;
+          data().setUint8Data(1, ui8_temp ); // work
+        }
+        else data().setUint8Data(1, 1); //UND HIER??
         break;
     }
     data().setUint8Data(2, ui8_rearLinkForce);
@@ -644,7 +651,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       data().setIsoPri(6);
       data().setIsoSa(b_sa);
 
-      setSenderDevKey( *getDevKey() );
+      setSelectedDataSourceDevKey( *getDevKey() );
       CANIO_c& c_can = getCanInstance4Comm();
       data().setIsoPgn(LANGUAGE_PGN);
       //Bytes 1,2: language command

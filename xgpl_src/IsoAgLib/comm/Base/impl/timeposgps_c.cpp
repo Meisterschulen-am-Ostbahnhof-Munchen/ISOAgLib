@@ -4,7 +4,7 @@
                                 delivers all base data informations
                                 from CANCustomer_c derived for CAN
                                 sending and receiving interaction;
-                                from ElementBase_c derived for
+                                from BaseCommon_c derived for
                                 interaction with other IsoAgLib objects
                              -------------------
     begin                 Fri Apr 07 2000
@@ -226,9 +226,10 @@ namespace __IsoAgLib {
     // check for different base data types whether the previously
     if ( checkMode(IsoAgLib::IdentModeImplement)
       && ( (lastedTimeSinceUpdate() >= 3000 ) || ( yearUtc() == 0 ) )
-      && ( getSenderDevKey().isSpecified()                          ) )
+      && ( getSelectedDataSourceDevKey().isSpecified()           )
+        )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
-      getSenderDevKey().setUnspecified();
+      getSelectedDataSourceDevKey().setUnspecified();
       bit_calendar.year = bit_calendar.hour = bit_calendar.minute = bit_calendar.second = 0;
       bit_calendar.month = bit_calendar.day = 1;
     }
@@ -376,6 +377,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
     // *************************************************************************************************
     t_identModeGps = rt_identModeGps;
+
     if ((rpc_devKey != NULL) && ( rt_identModeGps == IsoAgLib::IdentModeTractor ) )
     { // GPS send from now on
       c_sendGpsDevKey = *rpc_devKey;
@@ -388,7 +390,8 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     }
     else
     {
-      c_sendGpsDevKey.setUnspecified();
+      if ( rt_identModeGps == IsoAgLib::IdentModeTractor )
+        c_sendGpsDevKey.setUnspecified();
       #ifdef NMEA_2000_FAST_PACKET
       // make sure that the needed multi receive are registered
       getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, false, true);
@@ -453,7 +456,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     if ( ( ( lastedTimeSinceUpdate()) >= 1000)
       && checkMode(IsoAgLib::IdentModeTractor)                )
     { // send actual calendar data
-      setSenderDevKey( *getDevKey() );
+      setSelectedDataSourceDevKey( *getDevKey() );
       data().setIdent((0x1F << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
       data().setUint8Data(0, ( dec2bcd(yearLocal() / 100)) );
       data().setUint8Data(1, ( dec2bcd(yearLocal() % 100)) );
@@ -522,7 +525,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
         if ( ( data().getUint8Data(0) != 0 ) || ( data().getUint8Data(1) != 0 ) )
         { // set last time
           setUpdateTime(ci32_now);
-          setSenderDevKey( c_tempDevKey );
+          setSelectedDataSourceDevKey( c_tempDevKey );
         }
       }
       else
@@ -563,7 +566,6 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
             setCalendarUtc(
             (data().getUint8Data(5) + 1985), data().getUint8Data(3), (data().getUint8Data(4) / 4), (data().getUint8Data(2)),
             (data().getUint8Data(1)), (data().getUint8Data(0) / 4));
-            setSenderDevKey( c_tempDevKey);
           }
           else
           { // only fetch the date, as this information might not be defined by GPS
@@ -574,7 +576,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
           bit_calendar.timezoneHourOffsetMinus24 = data().getUint8Data(7);
           // set last time
           setUpdateTime(ci32_now);
-          setSenderDevKey( c_tempDevKey);
+          setSelectedDataSourceDevKey( c_tempDevKey);
         }
         else
         { // there is a sender conflict
@@ -822,7 +824,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       && checkMode(IsoAgLib::IdentModeTractor)
       && (getDevKey() != NULL) )
     { // send actual calendar data
-      setSenderDevKey(*getDevKey());
+      setSelectedDataSourceDevKey(*getDevKey());
       isoSendCalendar(*getDevKey());
     }
 
@@ -1013,7 +1015,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     */
   void TimePosGPS_c::isoSendCalendar(const DevKey_c& rc_devKey)
   {
-    if ( ( getSenderDevKey() == rc_devKey ) )
+    if ( ( getSelectedDataSourceDevKey() == rc_devKey ) )
     { // this item (identified by DEV_KEY is configured to send
       data().setIsoPgn(TIME_DATE_PGN);
       data().setUint8Data(0, (second() * 4) );

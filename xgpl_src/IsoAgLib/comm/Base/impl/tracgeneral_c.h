@@ -1,10 +1,9 @@
 /***************************************************************************
-               tracgeneral_c.h  - working on Base Data Msg Type 1, 2
-                                  and Calendar; stores, updates  and
+               tracgeneral_c.h  - stores, updates  and
                                   delivers all base data informations
                                   from CANCustomer_c derived for CAN
                                   sending and receiving interaction;
-                                  from ElementBase_c derived for
+                                  from BaseCommon_c derived for
                                   interaction with other IsoAgLib objects
                              -------------------
     begin                 Fri Apr 07 2000
@@ -167,9 +166,9 @@ public: // Public methods
   /** config the TracGeneral_c object after init -> set pointer to devKey and
     config send/receive of different general base msg types
     @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rb_implementMode optional setting to express TECU sending state
+    @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
    */
-  void configFuel(const DevKey_c* rpc_devKey, bool rb_implementMode);
+  void configFuel(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
   #endif
   /*@}*/
 
@@ -242,6 +241,14 @@ public: // Public methods
     * @param rt_val IsoActive -> implement is active in rt_implState
     */
   void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState);
+  /** set present limit status of the front hitch position
+      @param rt_val  limit status of the front hitch position
+    */
+  void setFrontHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t rt_val) {t_frontHitchPosLimitStatus = rt_val;}
+  /** set present limit status of the rear hitch position
+      @param rt_val  limit status of the rear hitch position
+    */
+  void setRearHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t rt_val) {t_rearHitchPosLimitStatus = rt_val;}
   #endif
   /*@}*/
 
@@ -305,6 +312,14 @@ public: // Public methods
     * @return time in [ms] since system start -> comparable to system time
     */
   int32_t lastMaintainPowerRequest() const { return ui32_lastMaintainPowerRequest;};
+  /** get present limit status of the front hitch position
+      @return  limit status of front hitch position
+    */
+  IsoAgLib::IsoLimitFlag_t frontHitchPosLimitStatus()const {return t_frontHitchPosLimitStatus;}
+  /** get present limit status of the rear hitch position
+      @return  limit status of rear hitch position
+    */
+  IsoAgLib::IsoLimitFlag_t rearHitchPosLimitStatus()const {return t_rearHitchPosLimitStatus;}
   /** check whether maintenance of ECU power was requested */
   bool maintainEcuPower() const { return b_maintainEcuPower;};
   /** check whether maintenance of actuator power was requested */
@@ -375,7 +390,7 @@ private:
   /** last time of fuel msg [msec] */
   int32_t i32_lastFuel;
   /** send state for fuel */
-  bool b_sendStateFuel;
+  IsoAgLib::IdentMode_t t_identModeStateFuel;
   /** DevKey_c for fuel sender */
   DevKey_c c_sendFuelDevKey;
 
@@ -419,6 +434,10 @@ private:
   uint8_t ui8_frontLinkForce;
   /** rear nominal lower link force [-100%;100%], res: 0.8%/bit, offset: -100% */
   uint8_t ui8_rearLinkForce;
+  /** set reported the tractor ECU's present limit status of the front hitch position */
+  IsoAgLib::IsoLimitFlag_t t_frontHitchPosLimitStatus;
+  /** set reported the tractor ECU's present limit status of the rear hitch position */
+  IsoAgLib::IsoLimitFlag_t t_rearHitchPosLimitStatus;
 
   /** last time of maintain power request [ms] */
   uint32_t ui32_lastMaintainPowerRequest;

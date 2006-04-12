@@ -121,56 +121,65 @@ namespace IsoAgLib {
     TracGeneral_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   }
 
-  /**
-    config the Base_c object after init -> set pointer to devKey and
-    config send/receive of different base msg types
-    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-  */
-  void config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
-  { TracGeneral_c::config(rpc_devKey, rt_identMode ); }
+  #ifdef USE_DIN_9684
+  /** config the TracGeneral_c object after init -> set pointer to devKey and
+      config send/receive of different general msg types
+      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+    */
+  void configFuel(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  {TracGeneral_c::configFuel(rpc_devKey, rt_identMode);}
+  #endif
 
     /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
     /*@{*/
     /** set rear hitch */
-    void setHitchRear(uint8_t rb_val) { return TracGeneral_c::setHitchRear(rb_val);};
+    void setHitchRear(uint8_t rb_val) { TracGeneral_c::setHitchRear(rb_val);}
     /** set front hitch */
-    void setHitchFront(uint8_t rb_val) { return TracGeneral_c::setHitchFront(rb_val);};
+    void setHitchFront(uint8_t rb_val) { TracGeneral_c::setHitchFront(rb_val);}
 
     #ifdef USE_DIN_9684
     /** set engine speed */
-    void setEngine(int16_t ri16_val) { return TracGeneral_c::setEngine(ri16_val);};
+    void setEngine(int16_t ri16_val) { TracGeneral_c::setEngine(ri16_val);}
     /** deliver rear left draft */
-    void setRearLeftDraft(int16_t ri16_val) { return TracGeneral_c::setRearLeftDraft(ri16_val);};
+    void setRearLeftDraft(int16_t ri16_val) { TracGeneral_c::setRearLeftDraft(ri16_val);}
     /** deliver rear right draft */
-    void setRearRightDraft(int16_t ri16_val) { return TracGeneral_c::setRearRightDraft(ri16_val);};
+    void setRearRightDraft(int16_t ri16_val) { TracGeneral_c::setRearRightDraft(ri16_val);}
     /** deliver rear total draft Newton */
-    void setRearDraftNewton(int16_t ri16_val) { return TracGeneral_c::setRearDraftNewton(ri16_val);};
+    void setRearDraftNewton(int16_t ri16_val) { TracGeneral_c::setRearDraftNewton(ri16_val);}
     /** deliver rear total draft Percent */
-    void setRearDraftNominal(uint8_t rui8_val) { return TracGeneral_c::setRearDraftNominal(rui8_val);};
+    void setRearDraftNominal(uint8_t rui8_val) { TracGeneral_c::setRearDraftNominal(rui8_val);}
     /** deliver fuel consumption L/h */
-    void setFuelRate(int16_t ri16_val) { return TracGeneral_c::setFuelRate(ri16_val);};
+    void setFuelRate(int16_t ri16_val) { TracGeneral_c::setFuelRate(ri16_val);}
     /** deliver fuel temperature °C */
-    void setFuelTemperature(uint8_t rui8_val) { return TracGeneral_c::setFuelTemperature(rui8_val);};
+    void setFuelTemperature(uint8_t rui8_val) { TracGeneral_c::setFuelTemperature(rui8_val);}
     #endif
 
     #ifdef USE_ISO_11783
     /** set front hitch draft */
-    void setHitchFrontDraft(int32_t ri32_val) { return TracGeneral_c::setHitchFrontDraft(ri32_val);};
+    void setHitchFrontDraft(int32_t ri32_val) { TracGeneral_c::setHitchFrontDraft(ri32_val);}
     /** set rear hitch draft */
-    void setHitchRearDraft(int32_t ri32_val) { return TracGeneral_c::setHitchRearDraft(ri32_val);};
+    void setHitchRearDraft(int32_t ri32_val) { TracGeneral_c::setHitchRearDraft(ri32_val);}
     /** set front hitch nominal link force */
-    void setHitchFrontLowerLinkForce(int16_t ri16_val) { return TracGeneral_c::setHitchFrontLowerLinkForce(ri16_val);};
+    void setHitchFrontLowerLinkForce(int16_t ri16_val) { TracGeneral_c::setHitchFrontLowerLinkForce(ri16_val);}
     /** set rear hitch nominal link force */
-    void setHitchRearLowerLinkForce(int16_t ri16_val) { return TracGeneral_c::setHitchRearLowerLinkForce(ri16_val);};
+    void setHitchRearLowerLinkForce(int16_t ri16_val) { TracGeneral_c::setHitchRearLowerLinkForce(ri16_val);}
     /** set the ISO key switch state of the tractor */
-    void setKeySwitch(IsoAgLib::IsoActiveFlag_t rt_val) { return TracGeneral_c::setKeySwitch(rt_val);};
+    void setKeySwitch(IsoAgLib::IsoActiveFlag_t rt_val) { TracGeneral_c::setKeySwitch(rt_val);}
     /** set the maximum power time of the tractor in [min] */
-    void setMaxPowerTime(uint8_t rui8_val) { return TracGeneral_c::setMaxPowerTime(rui8_val);};
+    void setMaxPowerTime(uint8_t rui8_val) { TracGeneral_c::setMaxPowerTime(rui8_val);}
     /** force maintain power from tractor */
     void forceMaintainPower(bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
-    { return TracGeneral_c::forceMaintainPower(rb_ecuPower, rb_actuatorPower, rt_implState);};
+    { TracGeneral_c::forceMaintainPower(rb_ecuPower, rb_actuatorPower, rt_implState);}
+    /** set present limit status of the front hitch position
+          @param rt_val  limit status of the front hitch position
+        */
+    void setFrontHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t rt_val) {TracGeneral_c::setFrontHitchPosLimitStatus(rt_val);}
+    /** set present limit status of the rear hitch position
+        @param rt_val  limit status of the rear hitch position
+      */
+    void setRearHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t rt_val) {TracGeneral_c::setRearHitchPosLimitStatus(rt_val);}
     #endif
     /*@}*/
 
@@ -184,58 +193,66 @@ namespace IsoAgLib {
 
     #ifdef USE_DIN_9684
     /** get engine speed */
-    int16_t engine() const { return TracGeneral_c::engine();};
+    int16_t engine() const { return TracGeneral_c::engine();}
     /** deliver rear left draft */
-    int rearLeftDraft() const { return TracGeneral_c::rearLeftDraft();};
+    int rearLeftDraft() const { return TracGeneral_c::rearLeftDraft();}
     /** deliver rear right draft */
-    int rearRightDraft() const { return TracGeneral_c::rearRightDraft();};
+    int rearRightDraft() const { return TracGeneral_c::rearRightDraft();}
     /** deliver rear total draft Newton */
-    int rearDraftNewton() const { return TracGeneral_c::rearDraftNewton();};
+    int rearDraftNewton() const { return TracGeneral_c::rearDraftNewton();}
     /** deliver rear total draft Percent */
-    int rearDraftNominal() const { return TracGeneral_c::rearDraftNominal();};
+    int rearDraftNominal() const { return TracGeneral_c::rearDraftNominal();}
     /** deliver fuel consumption L/h */
-    int fuelRate() const { return TracGeneral_c::fuelRate();};
+    int fuelRate() const { return TracGeneral_c::fuelRate();}
     /** deliver fuel temperature °C */
-    int fuelTemperature() const { return TracGeneral_c::fuelTemperature();};
+    int fuelTemperature() const { return TracGeneral_c::fuelTemperature();}
     #endif
 
     #ifdef USE_ISO_11783
     /** deliver front hitch draft */
-    int32_t hitchFrontDraft() const { return TracGeneral_c::hitchFrontDraft();};
+    int32_t hitchFrontDraft() const { return TracGeneral_c::hitchFrontDraft();}
     /** deliver rear hitch draft */
-    int32_t hitchRearDraft() const { return TracGeneral_c::hitchRearDraft();};
+    int32_t hitchRearDraft() const { return TracGeneral_c::hitchRearDraft();}
     /** deliver front hitch nominal link force */
-    int16_t hitchFrontLowerLinkForce() const { return TracGeneral_c::hitchFrontLowerLinkForce();};
+    int16_t hitchFrontLowerLinkForce() const { return TracGeneral_c::hitchFrontLowerLinkForce();}
     /** deliver rear hitch nominal link force */
-    int16_t hitchRearLowerLinkForce() const { return TracGeneral_c::hitchRearLowerLinkForce();};
+    int16_t hitchRearLowerLinkForce() const { return TracGeneral_c::hitchRearLowerLinkForce();}
     /** deliver the ISO key switch state of the tractor */
-    IsoAgLib::IsoActiveFlag_t keySwitch() const { return TracGeneral_c:: keySwitch();};
+    IsoAgLib::IsoActiveFlag_t keySwitch() const { return TracGeneral_c:: keySwitch();}
     /** deliver the maximum power time of the tractor in [min] */
-    uint8_t maxPowerTime() const { return TracGeneral_c::maxPowerTime();};
+    uint8_t maxPowerTime() const { return TracGeneral_c::maxPowerTime();}
     /** deliver last receive time of maintain power request */
-    int32_t lastMaintainPowerRequest() const { return TracGeneral_c::lastMaintainPowerRequest();};
+    int32_t lastMaintainPowerRequest() const { return TracGeneral_c::lastMaintainPowerRequest();}
     /** check whether maintenance of ECU power was requested */
-    bool maintainEcuPower() const { return TracGeneral_c::maintainEcuPower();};
+    bool maintainEcuPower() const { return TracGeneral_c::maintainEcuPower();}
     /** check whether maintenance of actuator power was requested */
-    bool maintainActuatorPower() const { return TracGeneral_c::maintainActuatorPower();};
+    bool maintainActuatorPower() const { return TracGeneral_c::maintainActuatorPower();}
     /** check whether maintenance of power
       * for implement in transport state was requested */
-    bool maintainPowerForImplInTransport() const { return TracGeneral_c::maintainPowerForImplInTransport();};
+    bool maintainPowerForImplInTransport() const { return TracGeneral_c::maintainPowerForImplInTransport();}
     /** check whether maintenance of power
       * for implement in park state was requested */
-    bool maintainPowerForImplInPark() const { return TracGeneral_c::maintainPowerForImplInPark();};
+    bool maintainPowerForImplInPark() const { return TracGeneral_c::maintainPowerForImplInPark();}
     /** check whether maintenance of power
       * for implement in work state was requested */
-    bool maintainPowerForImplInWork() const { return TracGeneral_c::maintainPowerForImplInWork();};
+    bool maintainPowerForImplInWork() const { return TracGeneral_c::maintainPowerForImplInWork();}
+    /** get present limit status of the front hitch position
+      @return  limit status of front hitch position
+    */
+    IsoAgLib::IsoLimitFlag_t frontHitchPosLimitStatus()const {return TracGeneral_c::frontHitchPosLimitStatus();}
+    /** get present limit status of the rear hitch position
+        @return  limit status of rear hitch position
+      */
+    IsoAgLib::IsoLimitFlag_t rearHitchPosLimitStatus()const {return TracGeneral_c::rearHitchPosLimitStatus();}
 
-    bool isVtLanguageReceived()   const { return TracGeneral_c::isVtLanguageReceived();};
-    bool isTecuLanguageReceived() const { return TracGeneral_c::isTecuLanguageReceived();};
+    bool isVtLanguageReceived()   const { return TracGeneral_c::isVtLanguageReceived();}
+    bool isTecuLanguageReceived() const { return TracGeneral_c::isTecuLanguageReceived();}
 
-    const uint8_t* getVtLanguage()   const { return TracGeneral_c::getVtLanguage();};
-    const uint8_t* getTecuLanguage() const { return TracGeneral_c::getTecuLanguage();};
+    const uint8_t* getVtLanguage()   const { return TracGeneral_c::getVtLanguage();}
+    const uint8_t* getTecuLanguage() const { return TracGeneral_c::getTecuLanguage();}
 
     /** send iso language data msg*/
-    void isoSendLanguage(const iDevKey_c& rpc_devKey) { TracGeneral_c::isoSendLanguage(rpc_devKey);};
+    void isoSendLanguage(const iDevKey_c& rpc_devKey) { TracGeneral_c::isoSendLanguage(rpc_devKey);}
     #endif
     /*@}*/
 

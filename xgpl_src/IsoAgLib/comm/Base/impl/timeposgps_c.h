@@ -4,7 +4,7 @@
                                       delivers all information
                                       from CANCustomer_c derived for CAN
                                       sending and receiving interaction;
-                                      from ElementBase_c derived for
+                                      from BaseCommon_c derived for
                                       interaction with other IsoAgLib objects
                              -------------------
     begin                 Fri Apr 07 2000

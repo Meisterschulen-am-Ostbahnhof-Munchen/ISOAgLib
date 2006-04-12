@@ -149,7 +149,7 @@ typedef SINGLETON_DERIVED_CLIENT2(Process_c, ElementBase_c, ProcDataLocalBase_c,
 
   @author Dipl.-Inform. Achim Spangler
 */
-class Process_c : public SingletonProcess_c,  public __IsoAgLib::SaClaimHandler_c
+class Process_c : public SingletonProcess_c, public __IsoAgLib::SaClaimHandler_c
 {
 public:
   /** initialisation for Process_c
