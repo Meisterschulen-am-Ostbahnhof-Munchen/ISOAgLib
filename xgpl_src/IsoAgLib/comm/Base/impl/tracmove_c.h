@@ -129,17 +129,17 @@ namespace __IsoAgLib {
     /** set the value of real speed (measured by radar)
         @param ri16_val value to store as real radar measured speed
       */
-    void setSpeedReal(const int16_t ri16_val) {i16_speedReal = ri16_val;}
+    void setSpeedReal(const int32_t ri32_val) {i32_speedReal = ri32_val;}
     /** set the value of theoretical speed (calculated from gear)
         @param ri16_val value to store as theoretical gear calculated speed
       */
-    void setSpeedTheor(const int16_t ri16_val) {i16_speedTheor = ri16_val;}
+    void setSpeedTheor(const int32_t ri32_val) {i32_speedTheor = ri32_val;}
     /** set the real (radar measured) driven distance with int16_t val
         @param ri16_val value to store as real radar measured distance
       */
     void setDistReal(const int16_t ri16_val)
     { // use function to detect and handle 16bit integer overflows
-      setOverflowSecure(i32_distReal, i16_lastDistReal, ri16_val);
+      setOverflowSecure(i32_distReal, i32_lastDistReal, ri16_val);
     };
     /** set the real (radar measured) driven distance with int32_t val
         @param rreflVal value to store as real radar measured distance
@@ -150,7 +150,7 @@ namespace __IsoAgLib {
       */
     void setDistTheor(const int16_t ri16_val)
     { // use function to detect and handle 16bit integer overflows
-      setOverflowSecure(i32_distTheor, i16_lastDistTheor, ri16_val);
+      setOverflowSecure(i32_distTheor, i32_lastDistTheor, ri16_val);
     };
     /** set the theoretical (gear calculated) driven distance with int32_t val
         @param rreflVal value to store as theoretical (gear calculated) driven distance
@@ -188,7 +188,7 @@ namespace __IsoAgLib {
     /** set current value of the speed as determined from a number of sources by the machine
         @param ui16_val  current value of speed
       */
-//    void setSelectedSpeed(const uint16_t ui16_val) {i16_selectedSpeed = ui16_val;}
+//    void setSelectedSpeed(const uint16_t ui16_val) {i32_selectedSpeed = ui16_val;}
     /** present limit status of selected speed
         @param t_val  limit status
       */
@@ -215,11 +215,11 @@ namespace __IsoAgLib {
     /** get the value of real speed (measured by radar)
         @return actual radar measured speed value
       */
-    int16_t speedReal() const { return i16_speedReal;}
+    int32_t speedReal() const { return i32_speedReal;}
     /** get the value of theoretical speed (calculated from gear)
         @return theoretical gear calculated speed value
       */
-    int16_t speedTheor() const { return i16_speedTheor;}
+    int32_t speedTheor() const { return i32_speedTheor;}
 
     /** get the real driven distance with int16_t val
         @return actual radar measured driven distance value
@@ -245,7 +245,6 @@ namespace __IsoAgLib {
     IsoAgLib::IsoOperatorDirectionFlag_t operatorDirectionReversed()const { return t_operatorDirectionReversed;}
     /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
     IsoAgLib::IsoActiveFlag_t startStopState() const {return t_startStopState;}
-
     /** get actual distance traveled by the machine based on the value of selected machine speed
         @return  actual distance traveled
       */
@@ -253,7 +252,7 @@ namespace __IsoAgLib {
     /** get current direction of travel of the machine
         @return  current direction of travel
       */
-    IsoAgLib::IsoDirectionFlag_t selectedDirection() const;
+    IsoAgLib::IsoDirectionFlag_t selectedDirection() const {return t_selectedDirection;}
     /** get commanded direction of the machine
         @return  commanded direction of travel
       */
@@ -261,7 +260,7 @@ namespace __IsoAgLib {
     /** get current value of the speed as determined from a number of sources by the machine
         @return  current value of speed
       */
-    int16_t selectedSpeed();
+    int32_t selectedSpeed() const {return i32_selectedSpeed;}
     /** present limit status of selected speed
         @return  limit status
       */
@@ -356,9 +355,9 @@ namespace __IsoAgLib {
     /** theoretical distance as int32_t value (cumulates 16bit overflows)*/
     int32_t i32_distTheor;
     /** last 16bit real distance to cope with 16bit overflows */
-    int16_t i16_lastDistReal;
+    int16_t i32_lastDistReal;
     /** last 16bit theoretical distance to cope with 16bit overflows */
-    int16_t i16_lastDistTheor;
+    int16_t i32_lastDistTheor;
     #if defined(USE_ISO_11783)
     /** parameter indicates whetcher the reported direction is reversed from the perspective of the operator */
     IsoAgLib::IsoOperatorDirectionFlag_t t_operatorDirectionReversed;
@@ -380,12 +379,12 @@ namespace __IsoAgLib {
 
     /** SPEED */
     /** real speed */
-    int16_t i16_speedReal;
+    int32_t i32_speedReal;
     /** theoretical speed */
-    int16_t i16_speedTheor;
+    int32_t i32_speedTheor;
     #if defined(USE_ISO_11783)
     /** current value of the speed as determined from a number of sources by the machine */
-    uint16_t i16_selectedSpeed;
+    int32_t i32_selectedSpeed;
     /** present limit status of selected speed */
     IsoAgLib::IsoLimitFlag_t t_selectedSpeedLimitStatus;
     /** indicates the speed source that is currently being reported in the machine speed parameter */

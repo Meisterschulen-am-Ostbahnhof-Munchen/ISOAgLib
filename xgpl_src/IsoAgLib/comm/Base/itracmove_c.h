@@ -108,11 +108,11 @@ namespace IsoAgLib {
     /** set the value of real speed (measured by radar)
         @param ri16_val value to store as real radar measured speed
       */
-    void setSpeedReal(const int16_t ri16_val) {return TracMove_c::setSpeedReal(ri16_val);}
+    void setSpeedReal(const int32_t ri32_val) {return TracMove_c::setSpeedReal(ri32_val);}
     /** set the value of theoretical speed (calculated from gear)
         @param ri16_val value to store as theoretical gear calculated speed
       */
-    void setSpeedTheor(const int16_t ri16_val) {return TracMove_c::setSpeedTheor(ri16_val);}
+    void setSpeedTheor(const int32_t ri32_val) {return TracMove_c::setSpeedTheor(ri32_val);}
     /** set the real (radar measured) driven distance with int16_t val
         @param ri16_val value to store as real radar measured distance
       */
@@ -189,11 +189,11 @@ namespace IsoAgLib {
     /** get the value of real speed (measured by radar)
         @return actual radar measured speed value
       */
-    int16_t speedReal() const {return TracMove_c::speedReal();}
+    int32_t speedReal() const {return TracMove_c::speedReal();}
     /** get the value of theoretical speed (calculated from gear)
         @return theoretical gear calculated speed value
       */
-    int16_t speedTheor() const {return TracMove_c::speedTheor();}
+    int32_t speedTheor() const {return TracMove_c::speedTheor();}
 
     /** get the real driven distance with int16_t val
         @return actual radar measured driven distance value
@@ -232,7 +232,7 @@ namespace IsoAgLib {
     /** get current value of the speed as determined from a number of sources by the machine
         @return  current value of speed
       */
-    int16_t selectedSpeed() {return TracMove_c::selectedSpeed();}
+    int32_t selectedSpeed() {return TracMove_c::selectedSpeed();}
     /** get present limit status of selected speed
         @return  limit status
       */
