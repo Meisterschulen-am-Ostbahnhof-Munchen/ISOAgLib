@@ -188,7 +188,7 @@ namespace __IsoAgLib {
     /** set current value of the speed as determined from a number of sources by the machine
         @param ui16_val  current value of speed
       */
-//    void setSelectedSpeed(const uint16_t ui16_val) {ui16_selectedSpeed = ui16_val;}
+//    void setSelectedSpeed(const uint16_t ui16_val) {i16_selectedSpeed = ui16_val;}
     /** present limit status of selected speed
         @param t_val  limit status
       */
@@ -200,11 +200,11 @@ namespace __IsoAgLib {
     /** set commanded set point value of the machine speed as measured by the selected source
         @param ui16_val  set point value of the machine speed
       */
-    void setSelectedSpeedSetPointCmd(const uint16_t ui16_val) {ui16_selectedSpeedSetPointCmd = ui16_val;}
+    void setSelectedSpeedSetPointCmd(const uint16_t ui16_val) {i16_selectedSpeedSetPointCmd = ui16_val;}
     /** communicate maximum allowed speed to the tractor
         @param ui16_val  maximum allowed speed
       */
-    void setSelectedSpeedSetPointLimit(const uint16_t ui16_val) {ui16_selectedSpeedSetPointLimit = ui16_val;}
+    void setSelectedSpeedSetPointLimit(const uint16_t ui16_val) {i16_selectedSpeedSetPointLimit = ui16_val;}
     #endif
     /*@}*/
 
@@ -261,7 +261,7 @@ namespace __IsoAgLib {
     /** get current value of the speed as determined from a number of sources by the machine
         @return  current value of speed
       */
-    uint16_t selectedSpeed();
+    int16_t selectedSpeed();
     /** present limit status of selected speed
         @return  limit status
       */
@@ -273,11 +273,11 @@ namespace __IsoAgLib {
     /** get commanded set point value of the machine speed as measured by the selected source
         @return  set point value of the machine speed
       */
-    uint16_t selectedSpeedSetPointCmd() const {return ui16_selectedSpeedSetPointCmd;}
+    uint16_t selectedSpeedSetPointCmd() const {return i16_selectedSpeedSetPointCmd;}
     /** get communicated maximum allowed speed to the tractor
         @return  maximum allowed speed
       */
-    uint16_t selectedSpeedSetPointLimit() const {return ui16_selectedSpeedSetPointLimit;}
+    uint16_t selectedSpeedSetPointLimit() const {return i16_selectedSpeedSetPointLimit;}
     #endif
 
   private:
@@ -359,6 +359,7 @@ namespace __IsoAgLib {
     int16_t i16_lastDistReal;
     /** last 16bit theoretical distance to cope with 16bit overflows */
     int16_t i16_lastDistTheor;
+    #if defined(USE_ISO_11783)
     /** parameter indicates whetcher the reported direction is reversed from the perspective of the operator */
     IsoAgLib::IsoOperatorDirectionFlag_t t_operatorDirectionReversed;
     /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
@@ -375,22 +376,25 @@ namespace __IsoAgLib {
     IsoAgLib::IsoDirectionFlag_t t_selectedDirection;
     /** commanded direction of the machine */
     IsoAgLib::IsoDirectionFlag_t t_selectedDirectionCmd;
+    #endif
 
     /** SPEED */
     /** real speed */
     int16_t i16_speedReal;
     /** theoretical speed */
     int16_t i16_speedTheor;
+    #if defined(USE_ISO_11783)
     /** current value of the speed as determined from a number of sources by the machine */
-    uint16_t ui16_selectedSpeed;
+    uint16_t i16_selectedSpeed;
     /** present limit status of selected speed */
     IsoAgLib::IsoLimitFlag_t t_selectedSpeedLimitStatus;
     /** indicates the speed source that is currently being reported in the machine speed parameter */
     IsoAgLib::IsoSpeedSourceFlag_t t_selectedSpeedSource;
     /** commanded set point value of the machine speed as measured by the selected source */
-    uint16_t ui16_selectedSpeedSetPointCmd;
+    uint16_t i16_selectedSpeedSetPointCmd;
     /** parameter is used by a machine to communicate it's maximum allowed speed to the tractor */
-    uint16_t ui16_selectedSpeedSetPointLimit;
+    uint16_t i16_selectedSpeedSetPointLimit;
+    #endif
   };
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
