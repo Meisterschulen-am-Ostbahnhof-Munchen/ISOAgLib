@@ -397,6 +397,7 @@ char xmlFileGlobal [1024+1];
 
 char std_bitmap_path [1024+1];
 char fix_bitmap_path [1024+1];
+char spc_autoLanguage[1024+1];
 
 std::basic_string<char> c_project;
 
@@ -612,6 +613,10 @@ void clean_exit (int return_value, char* error_message=NULL)
 
   fprintf (partFileA, "#include \"%s-variables.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-attributes.inc\"\n", xmlFileWithoutPath);
+  for (unsigned int i=0; i<ui_languages; i++)
+  {
+    fprintf (partFileA, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
+  }
   fprintf (partFileA, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFileA, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
@@ -834,7 +839,7 @@ void init (const char* xmlFile)
 }
 
 
-void defaultAttributes ()
+void defaultAttributes (unsigned int r_objType)
 {
   if (!attrIsGiven [attrBackground_colour]) {
     sprintf (attrString [attrBackground_colour], "white");
@@ -884,6 +889,13 @@ void defaultAttributes ()
   if (!attrIsGiven [attrEnabled]) {
     sprintf (attrString [attrEnabled], "yes");
     attrIsGiven [attrEnabled] = true;
+  }
+  if ((r_objType == otStringvariable) || (r_objType == otOutputstring))
+  {
+    if (!attrIsGiven [attrLanguage] && (strlen (spc_autoLanguage) >0)) {
+      sprintf (attrString [attrLanguage], spc_autoLanguage);
+      attrIsGiven [attrLanguage] = true;
+    }
   }
   /*
   if (!attrIsGiven [attr]) {
@@ -1402,6 +1414,7 @@ static unsigned char picBuffer [480*480];
 
 static char attr_name [1024+1];
 static char attr_value [1024+1];
+static char attr_value2 [1024+1];
 static char filename [1024+1];
 
 char objName [stringLength+1];
@@ -1705,9 +1718,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     clean_exit (-1);
   }
 
-  if (objType >= maxObjectTypes) {
-    if (objType == otObjectpool) {
-      // expect (datamask) dimension here
+  if (objType >= maxObjectTypes)
+  {
+    if (objType == otObjectpool)
+    { // expect (datamask) dimension here
       if (n->hasAttributes()) { // parse through all attributes
         pAttributes = n->getAttributes();
         int nSize = pAttributes->getLength();
@@ -1754,6 +1768,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             strcpy (fix_bitmap_path, attr_value);
             continue;
           }
+          if (strncmp (attr_name, "auto_language", stringLength) == 0) {
+            strcpy (spc_autoLanguage, attr_value);
+            continue;
+          }
         }
       }
     }
@@ -1770,10 +1788,21 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       std::cout << "\n\n";
       clean_exit (-1);
     }
+    static bool sb_firstObject=true;
+    if (sb_firstObject)
+    { // first object has to be WorkingSet
+      if (objType != otWorkingset)
+      {
+        std::cout << "\n\nFIRST ELEMENT HAS TO BE <workingset>! Stopping parser. Please put your workingset-object at the top in your <objectpool>!\n\n ";
+        clean_exit (-1);
+      }
+      sb_firstObject = false; // check is only valid for first element!
+    }
+
     getAttributesFromNode(n, true); // true: read name= and id=
 
     // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
-    defaultAttributes ();
+    defaultAttributes (objType);
 
     // get a new ID for this object is not yet done
     objID = getID (objName, (objType == otMacro) ? true: false, is_objID, objID);
@@ -1868,7 +1897,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
     bool backupAttrIsGivenLength = attrIsGiven [attrLength];
 
     // ************* NEW: Language duplicates!! ************
-    if (attrIsGiven [attrLanguage] && (strlen (attrString [attrLanguage]) != 2))
+    if (attrIsGiven [attrLanguage] && (strlen (attrString [attrLanguage]) > 0) && (strlen (attrString [attrLanguage]) != 2))
     { // "*" or multiple languages, so we need to loop!
       if (strcmp (attrString [attrLanguage], "*") == 0)
       { // build all languages we have defined in the working set
@@ -2116,17 +2145,27 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           {
             bool b_foundLanguageAttribute=false; // default: none found in this element!
 
+            if ( (strlen (spc_autoLanguage) > 0) &&
+                (  (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otOutputstring])) ||
+                   (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otStringvariable]))  )
+               )
+            { // use default language
+              b_foundLanguageAttribute = true;
+              strcpy (attr_value, spc_autoLanguage);
+            }
+
             if (child->hasAttributes())
-            { // see where there may be an LANGUAGE= attribute
+            { // see where there may be a LANGUAGE= attribute
               pAttributes = child->getAttributes();
               int nSize = pAttributes->getLength();
               for (int i=0; i<nSize; ++i) {
                 DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
                 utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+                utf16convert ((char *)pAttributeNode->getValue(), attr_value2, 1024);
 
                 if (strncmp (attr_name, "language", stringLength) == 0)
                 {
+                  strcpy (attr_value, attr_value2);
                   b_foundLanguageAttribute = true;
                   break;
                 }
@@ -2138,7 +2177,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             bool b_dupModeChild=false;
 
             /// Duplicate Loop here also!!!!!
-            if (b_foundLanguageAttribute && strlen (attr_value) != 2)
+            if (b_foundLanguageAttribute && (strlen (attr_value) > 0) && (strlen (attr_value) != 2))
             { // "*" or multiple languages, so we need to loop!
               if (strcmp (attr_value, "*") == 0)
               { // build all languages we have defined in the working set
@@ -2172,7 +2211,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
               unsigned int childLang=0;
               bool b_addAsChild=true;
 
-              if (b_foundLanguageAttribute)
+              if (b_foundLanguageAttribute && (strlen (attr_value) > 0))
               {
                 if (ui_languages > 0)
                 {
@@ -3062,7 +3101,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       bool *pb_firstLine;
 
       /// MultiLanguage-Support: See which -list.inc file to write object to!
-      if (attrIsGiven [attrLanguage])
+      if (attrIsGiven [attrLanguage] && (strlen (attrString [attrLanguage]) > 0))
       { // write to special language-list file if language is correct!
         // search language in list-file-array
         for (curLang=0; curLang<ui_languages; curLang++)
@@ -3086,7 +3125,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         /// Try to retrieve   value='...'   from language-value-file
         if (arrs_language[curLang].valueBuffer != NULL)
         {
-          std::cout << "searching language file for ["<<objName<<"].\n";
+          //std::cout << "searching language file for ["<<objName<<"].\n";
           bool b_foundValue=false;
           char* bufferCur = arrs_language[curLang].valueBuffer;
           char* bufferEnd = bufferCur + arrs_language[curLang].valueBufferLen;
@@ -3136,7 +3175,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                 /// BREAK HERE TO WATCH GOTTEN IN THE DIFFERENT CASES!
                 if (strcmp (pc_id, objName) == 0)
                 { // set value and break
-                  std::cout << "found language value for [" << objName << "].\n";
+                  //std::cout << "found language value for [" << objName << "].\n";
                   b_foundValue = true;
                   break;
                 }
@@ -3709,6 +3748,7 @@ int main(int argC, char* argV[])
   fix_bitmap_path [0] = 0x00;
   attr_name [1024+1-1] = 0x00;
   attr_value [1024+1-1] = 0x00;
+  spc_autoLanguage[0] = 0x00; // default to no autoLanguage
 
   memset(localeStr, 0, sizeof localeStr);
 
