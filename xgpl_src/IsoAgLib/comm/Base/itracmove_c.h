@@ -158,7 +158,7 @@ namespace IsoAgLib {
     /** set current value of the speed as determined from a number of sources by the machine
         @param ui16_val  current value of speed
       */
-    //void setSelectedSpeed(const uint16_t ui16_val) {TracMove_c::setSelectedSpeed(ui16_val);}
+    //void setSelectedSpeed(const int16_t i16_val) {TracMove_c::setSelectedSpeed(i16_val);}
     /** set present limit status of selected speed
         @param t_val  limit status
       */
@@ -232,7 +232,7 @@ namespace IsoAgLib {
     /** get current value of the speed as determined from a number of sources by the machine
         @return  current value of speed
       */
-    uint16_t selectedSpeed() {return TracMove_c::selectedSpeed();}
+    int16_t selectedSpeed() {return TracMove_c::selectedSpeed();}
     /** get present limit status of selected speed
         @return  limit status
       */
