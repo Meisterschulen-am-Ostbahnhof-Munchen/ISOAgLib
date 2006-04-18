@@ -3235,12 +3235,12 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
   
   
   
-      if (strcmp ("NULL", attrString [attrVariable_reference]) != 0)
+      if ((strcmp ("NULL", attrString [attrVariable_reference]) != 0) && (strncmp (attrString [attrVariable_reference], "&iVtObject", strlen ("&iVtObject")) != 0))
       { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
         sprintf (tempString, "&iVtObject%s", attrString [attrVariable_reference]);
         sprintf (attrString [attrVariable_reference], "%s", tempString);
       }
-      if (strcmp ("NULL", attrString [attrTarget_value_variable_reference]) != 0)
+      if ((strcmp ("NULL", attrString [attrTarget_value_variable_reference]) != 0) && (strncmp (attrString [attrTarget_value_variable_reference], "&iVtObject", strlen ("&iVtObject")) != 0))
       { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
         sprintf (tempString, "&iVtObject%s", attrString [attrTarget_value_variable_reference]);
         sprintf (attrString [attrTarget_value_variable_reference], "%s", tempString);

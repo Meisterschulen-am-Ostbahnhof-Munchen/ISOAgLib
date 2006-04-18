@@ -292,6 +292,8 @@ private:
   //! @param rpc_stream:
   void sendCurrentCts(DEF_Stream_c_IMPL* rpc_stream);
 
+  bool finishStream (DEF_Stream_c_IMPL& refc_stream);
+
   //  Operation: sendEndOfMessageAck
   //! Parameter:
   //! @param rpc_stream:

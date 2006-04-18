@@ -300,6 +300,7 @@ MultiReceive_c::processMsg()
               , /* Fast-Packet:*/ false
               #endif
               );
+
               if (pc_streamFound != NULL) {
                 // abort, already running stream is interrupted by RTS
                 notifyError(c_tmpRSI, 101);
@@ -757,17 +758,32 @@ MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent
                           )
 { // ~X2C
   std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
-  while (i_list_streams != list_streams.end()) {
-    DEF_Stream_c_IMPL* curStream = &*i_list_streams;
+  while (i_list_streams != list_streams.end())
+  {
+    DEF_Stream_c_IMPL& curStream = *i_list_streams;
     #ifdef NMEA_2000_FAST_PACKET
-    if ((curStream->getIdent() == rc_streamIdent) && (rb_fastPacket == (curStream->getStreamType() == StreamFastPacket))) // .matchRSI (rc_streamIdent) and either "rb_fastPacket == false and Stream not FP" or "rb_fastPacket == true and Stream is FP"!
+    if ((curStream.getIdent() == rc_streamIdent) && (rb_fastPacket == (curStream.getStreamType() == StreamFastPacket))) // .matchRSI (rc_streamIdent) and either "rb_fastPacket == false and Stream not FP" or "rb_fastPacket == true and Stream is FP"!
     #else
-    if (curStream->getIdent() == rc_streamIdent) // .matchRSI (rc_streamIdent)
+    if (curStream.getIdent() == rc_streamIdent) // .matchRSI (rc_streamIdent)
     #endif
     {
-      if (curStream->getStreamingState() != StreamFinishedJustKept)
+      if (curStream.getStreamingState() == StreamFinished)
+      { // finish it now, because a new one will have to be created NOW - do we can't wait with finishing until timeEvent!
+        const bool cb_keepStream = finishStream (curStream);
+        if (cb_keepStream)
+        { // keep it, do NOT delete
+          i_list_streams++;
+          continue;
+        }
+        else
+        { // delete it
+          i_list_streams = list_streams.erase (i_list_streams);
+          continue;
+        }
+      }
+      if (curStream.getStreamingState() != StreamFinishedJustKept)
       { // only return streams that are not "kept". ignore kept streams here for further processing!
-        return curStream;
+        return &curStream;
       }
     }
     i_list_streams++;
@@ -790,7 +806,7 @@ Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
   while (i_list_streams != list_streams.end()) {
     DEF_Stream_c_IMPL* curStream = &*i_list_streams;
     #ifdef NMEA_2000_FAST_PACKET
-    if ((curStream->getIdent().matchSaDa (sa, da))  && (rb_fastPacket == (curStream->getStreamType() == StreamFastPacket)))
+    if ((curStream->getIdent().matchSaDa (sa, da)) && (rb_fastPacket == (curStream->getStreamType() == StreamFastPacket)))
     #else
     if (curStream->getIdent().matchSaDa (sa, da))
     #endif
@@ -845,6 +861,53 @@ MultiReceive_c::processStreamDataChunk_ofMatchingClient(Stream_c* pc_stream, boo
   return b_keepIt;
 }
 
+
+bool
+MultiReceive_c::finishStream (DEF_Stream_c_IMPL& rrefc_stream)
+{
+  bool b_keepStream = false;
+  #ifdef NMEA_2000_FAST_PACKET
+  if ((rrefc_stream.getStreamType() == StreamFastPacket) || (rrefc_stream.getIdent().getDa() == 0xFF))
+  { // FastPacket or BAM
+  #else
+  if (rrefc_stream.getIdent().getDa() == 0xFF)
+  { // BAM
+  #endif
+    for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
+    { // // inform all clients that want Broadcast-TP-Messages
+      MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
+      if (curClientWrapper.ui32_pgn == rrefc_stream.getIdent().getPgn())
+      {
+        if (
+            #ifdef NMEA_2000_FAST_PACKET
+            curClientWrapper.b_isFastPacket ||
+            #endif
+            curClientWrapper.b_alsoBroadcast)
+        {
+          curClientWrapper.pc_client->processPartStreamDataChunk (&rrefc_stream, /*firstChunk*/true/*it's only one, don't care*/, /*b_lastChunk*/true); // don't care about result, as BAMs will NOT be kept anyway!
+        }
+      }
+    }
+    // and DO NOT continue (==> keep b_keepStream == false), so the stream will be removed, as BAM-streams can NOT be kept!
+  }
+  else
+  { // destination specific
+    #ifdef DEBUG
+      INTERNAL_DEBUG_DEVICE << "\nSending End of Message Acknowledge out!\n";
+    #endif
+    sendEndOfMessageAck (&rrefc_stream);
+
+    if (processStreamDataChunk_ofMatchingClient (&rrefc_stream, true))
+    { // keep stream (in "FinishedJustKept" kinda state
+      rrefc_stream.setStreamFinishedJustKept();
+      b_keepStream = true;
+    }
+  }
+  return b_keepStream;
+}
+
+
+
 // //////////////////////////////// +X2C Operation 2851 : timeEvent
 //! Parameter:
 //! @param ri32_endTime:
@@ -854,90 +917,59 @@ MultiReceive_c::timeEvent( void )
   std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
   while(i_list_streams != list_streams.end())
   {
-    DEF_Stream_c_IMPL* pc_stream = &*i_list_streams;
+    DEF_Stream_c_IMPL& refc_stream = *i_list_streams;
     // BEGIN timeEvent every Stream_c
 
     // Check how to proceed with this Stream
-    if (pc_stream->getStreamingState() == StreamFinishedJustKept)
+    if (refc_stream.getStreamingState() == StreamFinishedJustKept)
     { // those streams are only stored for later processing, do NOTHING with them!
       i_list_streams++;
       continue;
     }
-    else if (pc_stream->getStreamingState() == StreamFinished)
+    else if (refc_stream.getStreamingState() == StreamFinished)
     {
-      #ifdef NMEA_2000_FAST_PACKET
-      if ((pc_stream->getStreamType() == StreamFastPacket) || (pc_stream->getIdent().getDa() == 0xFF))
-      { // FastPacket or BAM
-      #else
-      if (pc_stream->getIdent().getDa() == 0xFF)
-      { // BAM
-      #endif
-        for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin(); i_list_clients != list_clients.end(); i_list_clients++)
-        { // // inform all clients that want Broadcast-TP-Messages
-          MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
-          if (curClientWrapper.ui32_pgn == pc_stream->getIdent().getPgn())
-          {
-            if (
-                #ifdef NMEA_2000_FAST_PACKET
-                curClientWrapper.b_isFastPacket ||
-                #endif
-                curClientWrapper.b_alsoBroadcast)
-            {
-              curClientWrapper.pc_client->processPartStreamDataChunk (pc_stream, /*firstChunk*/true/*it's only one, don't care*/, /*b_lastChunk*/true); // don't care about result, as BAMs will NOT be kept anyway!
-            }
-          }
-        }
-        // and DO NOT continue, so the stream will be removed, as BAM-streams can NOT be kept!
+      const bool cb_keepStream = finishStream (refc_stream);
+
+      if (cb_keepStream)
+      { // do NOT delete stream then!
+        i_list_streams++;
       }
       else
-      { // destination specific
-        #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << "\nSending End of Message Acknowledge out!\n";
-        #endif
-        sendEndOfMessageAck(pc_stream);
-
-        if (processStreamDataChunk_ofMatchingClient(pc_stream, true))
-        { // keep stream (in "FinishedJustKept" kinda state
-          pc_stream->setStreamFinishedJustKept();
-          i_list_streams++;
-          continue;
-        }
+      { // if not "continue"d, remove Stream
+        i_list_streams = list_streams.erase (i_list_streams);
       }
-
-      // if not "continue"d, remove Stream
-      i_list_streams = list_streams.erase (i_list_streams);
       continue;
     }
-    else if ((pc_stream->getNextComing() == AwaitCtsSend) && (pc_stream->readyToSendCts()))
+    else if ((refc_stream.getNextComing() == AwaitCtsSend) && (refc_stream.readyToSendCts()))
     { // this case shouldn't happen for BAM / FastPacket
       #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Processing Burst\n";
       #endif
       // CTS after Burst? -> process last Burst!
-      if (pc_stream->getBurstNumber() > 0) { // 0 means that no CTS has been sent, the first incoming burst is nr. 1 !
-        processStreamDataChunk_ofMatchingClient(pc_stream, false);
+      if (refc_stream.getBurstNumber() > 0) { // 0 means that no CTS has been sent, the first incoming burst is nr. 1 !
+        processStreamDataChunk_ofMatchingClient(&refc_stream, false);
         // don't care for result here!
       }
       #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "Send CTS to get first/next burst!\n";
       #endif
-      sendCurrentCts (pc_stream); // will increase the burstCurrent
+      sendCurrentCts (&refc_stream); // will increase the burstCurrent
     }
 
     /// TimeOut-Checks
-    if (pc_stream->timedOut())
+    if (refc_stream.timedOut())
     {
       #ifdef DEBUG
         #ifdef NMEA_2000_FAST_PACKET
-        if (pc_stream->getStreamType() == StreamFastPacket)
+        if (refc_stream.getStreamType() == StreamFastPacket)
           INTERNAL_DEBUG_DEVICE << "\n *** Fast-Packet-";
         else
         #endif
           INTERNAL_DEBUG_DEVICE << "\n *** (E)TP-";
-        INTERNAL_DEBUG_DEVICE << "Stream with SA " << (uint16_t) pc_stream->getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) pc_stream->getNextComing() << " ***\n";
+        INTERNAL_DEBUG_DEVICE << "Stream with SA " << (uint16_t) refc_stream.getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) refc_stream.getNextComing() << " ***\n";
       #endif
-      notifyError(pc_stream->getIdent(), 110);
-      connAbortTellClient (/* send Out ConnAbort Msg*/ true, pc_stream);
+      notifyError(refc_stream.getIdent(), 110);
+      connAbortTellClient (/* send Out ConnAbort Msg*/ true, &refc_stream);
       // remove Stream
       i_list_streams = list_streams.erase (i_list_streams);
       continue;

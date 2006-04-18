@@ -10,7 +10,7 @@
       options='autowrap' value='IsoAgLib' />
     <outputstring pos_x='0' pos_y='8' width='60' height='16'
       background_colour='white' font_attributes='FontAttributesSKM6x8'
-      options='autowrap' value='Tutorial 3.1' />
+      options='autowrap' value='Tutorial 3.0' />
 
     <language code="en" />
     <language code="de" />
