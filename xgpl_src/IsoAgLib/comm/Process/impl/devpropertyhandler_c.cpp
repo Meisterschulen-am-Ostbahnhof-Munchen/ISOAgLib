@@ -520,7 +520,7 @@ DevPropertyHandler_c::timeEvent( void )
         if (!b_receivedStructureLabel)
         {
           #ifdef DEBUG
-          EXTERNAL_DEBUG_DEVICE << "get pool from isoterminal or via default..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          EXTERNAL_DEBUG_DEVICE << "get pool from taskcontroller or via default..." << EXTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           getPoolForUpload();
         }
@@ -914,7 +914,12 @@ DevPropertyHandler_c::startUpload()
   //estimate size of bytestream
   uint32_t ui32_byteStreamLength = pc_devPoolForUpload->devicePoolLength;
   pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                            procCmdPar_RequestOPTransferMsg, (ui32_byteStreamLength & 0xff), (ui32_byteStreamLength >> 8) & 0xff, (ui32_byteStreamLength >> 16) & 0xff, 0xff, 0xff, 0xff, 0xff);
+                          procCmdPar_RequestOPTransferMsg,
+                          (ui32_byteStreamLength & 0xff),
+                          (ui32_byteStreamLength >> 8) & 0xff,
+                          (ui32_byteStreamLength >> 16) & 0xff,
+                          (ui32_byteStreamLength >> 24) & 0xff,
+                          0xff, 0xff, 0xff);
   getCanInstance4Comm() << *pc_data;
   ui32_uploadTimestamp = HAL::getTime();
   ui32_uploadTimeout = DEF_TimeOut_OPTransfer;
