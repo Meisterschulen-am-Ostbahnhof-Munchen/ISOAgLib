@@ -118,7 +118,8 @@ static void usage()
     " -v=xxx     Validation scheme [always | never | auto]. Defaults to auto\n"
     " -n         Enable namespace processing. Defaults to off.\n"
     " -s         Enable schema processing with default path to XML schema. Defaults to off.\n"
-    " -s=xxx.xsd Enable schema processing with XML schema xxx.xsd from given absolute path. Defaults to off.\n"
+    " -s=xxx.xsd Enable schema processing with XML schema xxx.xsd from given path relative to the directory of the device description. \
+                 Defaults to off.\n"
     " -f         Enable full schema constraint checking. Defaults to off.\n"
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
     " -?         Show this help.\n\n"
@@ -1651,15 +1652,13 @@ int main(int argC, char* argV[])
       if ( tmp_str.substr( tmp_str.length()-4 ) != ".xsd" ) clean_exit (4, "Wrong file format for XML schema. Terminating.\n");
     }
 
-
-
     FILE *p_file = fopen (xsdLocation, "r");
-
     if (p_file == (FILE*)NULL)
     {
       std::cerr <<  "Couldn't open XML schema: \"" << xsdLocation << "\""<< std::endl;
       clean_exit (4, "XML-checking error occured. Terminating.\n");
     }
+    fclose (p_file);
 
     XMLCh* propertyValue = XMLString::transcode(xsdLocation);
     parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
