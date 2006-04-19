@@ -1474,16 +1474,16 @@ int main(int argC, char* argV[])
   //  should be the file name.
   if (argInd != argC - 1) { usage(); return 1; }
   // get file list with matching files!
-    std::basic_string<char> c_fileName( argV [argInd] );
-    #ifdef WIN32
-    int lastDirPos = c_fileName.find_last_of( "\\" );
-    std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-    if (c_directory == "") c_directory = ".\\";
-    #else
-    int lastDirPos = c_fileName.find_last_of( "/" );
-    std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
-    if (c_directory == "") c_directory = "./";
-    #endif
+  std::basic_string<char> c_fileName( argV [argInd] );
+  #ifdef WIN32
+  int lastDirPos = c_fileName.find_last_of( "\\" );
+  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+  if (c_directory == "") c_directory = ".\\";
+  #else
+  int lastDirPos = c_fileName.find_last_of( "/" );
+  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+  if (c_directory == "") c_directory = "./";
+  #endif
   /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
   std::basic_string<char> c_unwantedType = ".inc";
   std::basic_string<char> c_unwantedType2 = ".h";
@@ -1652,7 +1652,9 @@ int main(int argC, char* argV[])
       if ( tmp_str.substr( tmp_str.length()-4 ) != ".xsd" ) clean_exit (4, "Wrong file format for XML schema. Terminating.\n");
     }
 
-    FILE *p_file = fopen (xsdLocation, "r");
+    std::string tmp_loc = c_directory + std::string(schemaPath); // trim pathname -> add pathname of device description
+
+    FILE *p_file = fopen (tmp_loc.c_str(), "r");
     if (p_file == (FILE*)NULL)
     {
       std::cerr <<  "Couldn't open XML schema: \"" << xsdLocation << "\""<< std::endl;
