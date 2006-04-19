@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- ### Attribute-Values as simpleTypes ### -->
+  <xs:simpleType name="attrName">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="32"/>
+      <xs:pattern value="[a-zA-Z0-9_.\s]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrVarName">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:pattern value="[a-zA-Z][_a-zA-Z0-9]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrWorkingset_mastername">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(M|m|L|l)[0-9a-fA-F]{16}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrLocalizationLabel">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([0-9a-zA-Z]{7})|([a-zA-Z]{2}[0-9a-fA-F]{10})"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrStructureLabel">
+    <xs:restriction base="xs:string">
+      <xs:length value="7"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrElement_type">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="device|function|bin|section|unit|connector|navigationreference"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrElement_number">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="4095"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrIntTo65535">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(((0x)|(0X))[0-9a-fA-F]{1,4})|(([0-5][0-9]{0,4})|(6[0-4][0-9]{3})|(65[0-4][0-9]{2})|(655[0-2][0-9])|(6553[0-5]))"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!--  -->
+
+  <xs:simpleType name="attrProperties">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="defaultset|setable|[0-3]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrTrigger_methods">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="timeinterval|distanceinterval|thresholdlimits|onchange|counter|[1-2]?[0-9]|3[0-1]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrProperty_value">
+    <xs:restriction base="xs:int">
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrOffset">
+    <xs:restriction base="xs:int">
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrIntTo255">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(((0x)|(0X))[0-9a-fA-F]{1,2})|([1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrScale">
+    <xs:restriction base="xs:float">
+      <xs:minInclusive value='0.000000001'/>
+      <xs:maxInclusive value='100000000.0'/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrNumber_of_decimals">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value='0'/>
+      <xs:maxInclusive value='7'/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrIntTo8">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(0x|0X)?[0-7]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrFunc_Inst">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="((0x|0X)([0-9a-fA-F]|(0|1)[0-9a-fA-F]))|([1-2]?[0-9]|3[0-1])"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrManufacturer_code">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="((0x|0X)0*[0-7]?[0-9a-fA-F]{,2})|([0-9]|[1-9][0-9]{1,3})|20[0-3][0-9]|204[0-7]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrDevice_class">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="((0x|0X)0*[0-7]?[0-9a-fA-F])|([0-9]|[1-9][0-9]|1[01][0-9]|12[0-7])"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrDevice_class_instance">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="((0x|0X)0*[0-9a-fA-F])|([0-9]|1[0-5])"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrWS_identity_number">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="((0x|0X)(0?|1)[0-9a-fA-F]{0,5})|(((1?)[0-9]{1,6})|(20[0-8][0-9]{4})|(209[0-6][0-9]{3})|(20970[0-9]{2})|(20971[0-4][0-9])|(209715(0|1)))"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrFeature_set">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SimpleMeasure"/>
+      <xs:enumeration value="SimpleSetpoint"/>
+      <xs:enumeration value="SimpleSetpointSimpleMeasure"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrTruth">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="true"/>
+      <xs:enumeration value="false"/>
+      <xs:enumeration value="yes"/>
+      <xs:enumeration value="no"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="attrCommand_type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="default"/>
+      <xs:enumeration value="exact"/>
+      <xs:enumeration value="min"/>
+      <xs:enumeration value="max"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:attributeGroup name="attrWSMasterName_split">
+    <xs:attribute use="optional" name="self_configurable_address" type="attrTruth"/>
+    <xs:attribute use="optional" name="industry_group"            type="attrIntTo8"/>
+    <xs:attribute use="optional" name="device_class_instance"     type="attrDevice_class_instance"/>
+    <xs:attribute use="optional" name="device_class"              type="attrDevice_class"/>
+    <xs:attribute use="optional" name="function"                  type="attrIntTo255"/>
+    <xs:attribute use="optional" name="function_instance"         type="attrFunc_Inst"/>
+    <xs:attribute use="optional" name="ecu_instance"              type="attrIntTo8"/>
+    <xs:attribute use="optional" name="manufacturer_code"         type="attrManufacturer_code"/>
+    <xs:attribute use="optional" name="ws_identity_number"        type="attrWS_identity_number"/>
+  </xs:attributeGroup>
+
+  <!-- ### All Object-Types as complexTypes ### -->
+  <xs:complexType name="elemDeviceElement">
+    <xs:sequence>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="deviceprocessdata" type="elemDeviceProcessData"/>
+        <xs:element name="deviceproperty"    type="elemDeviceProperty"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute use="optional" name="designator"     type="attrName"/>
+    <xs:attribute use="required" name="element_type"   type="attrElement_type"/>
+    <xs:attribute use="optional" name="element_number" type="attrElement_number"/>
+    <xs:attribute use="required" name="parent_name"    type="attrName"/>
+  </xs:complexType>
+
+  <xs:complexType name="elemDeviceProcessData">
+    <xs:sequence>
+      <xs:sequence>
+        <xs:element name="devicevaluepresentation"      type="elemDeviceValuePresentation" minOccurs="0"/>
+      </xs:sequence>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="deviceprocessdatacombination" type="elemDeviceProcessDataCombination" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="devicedinprocessdata"         type="elemDeviceDinProcessData" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute use="optional" name="designator"        type="attrName"/>
+    <xs:attribute use="required" name="ddi"               type="attrIntTo65535"/>
+    <xs:attribute use="optional" name="properties"        type="attrProperties"/>
+    <xs:attribute use="optional" name="trigger_methods"   type="attrTrigger_methods"/>
+    <xs:attribute use="required" name="proc_program_name" type="attrVarName"/>
+    <xs:attribute use="optional" name="cumulative_value"  type="attrTruth"/>
+    <xs:attribute use="optional" name="priority"          type="attrIntTo8"/>
+    <xs:attribute use="optional" name="feature_set"       type="attrFeature_set"/>
+  </xs:complexType>
+
+  <xs:complexType name="elemDeviceProperty">
+    <xs:sequence>
+      <xs:element name="devicevaluepresentation" type="elemDeviceValuePresentation" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute use="optional" name="designator"                     type="attrName"/>
+    <xs:attribute use="required" name="ddi"                            type="attrIntTo65535"/>
+    <xs:attribute use="required" name="property_value"                 type="attrProperty_value"/>
+    <xs:attribute use="optional" name="device_value_presentation_name" type="attrName"/>
+  </xs:complexType>
+
+  <xs:complexType name="elemDeviceValuePresentation">
+    <xs:attribute use="optional" name="unit_designator"    type="attrName"/>
+    <xs:attribute use="optional" name="offset"             type="attrOffset"/>
+    <xs:attribute use="required" name="scale"              type="attrScale"/>
+    <xs:attribute use="required" name="number_of_decimals" type="attrNumber_of_decimals"/>
+  </xs:complexType>
+
+  <xs:complexType name="elemDeviceDinProcessData">
+    <xs:attribute use="required" name="wert_inst" type="attrIntTo255"/>
+    <xs:attribute use="optional" name="lis"       type="attrIntTo8"/>
+    <xs:attribute use="optional" name="zaehl_num" type="attrIntTo255"/>
+  </xs:complexType>
+
+  <xs:complexType name="elemDeviceProcessDataCombination">
+    <xs:attribute use="optional" name="ddi"          type="attrIntTo65535"/>
+    <xs:attribute use="optional" name="command_type" type="attrCommand_type"/>
+    <xs:attribute use="required" name="is_setpoint"  type="attrTruth"/>
+  </xs:complexType>
+
+  <!-- ### ROOT ELEMENT ### -->
+  <xs:element name="device">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="deviceelement"  type="elemDeviceElement" minOccurs="1" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute use="optional" name="designator"                 type="attrName"/>
+      <xs:attribute use="required" name="software_version"           type="attrName"/>
+      <xs:attribute use="optional" name="workingset_mastername"      type="attrWorkingset_mastername"/>
+      <xs:attribute use="optional" name="serialnumber"               type="attrName" />
+      <xs:attribute use="required" name="structure_label"            type="attrStructureLabel" />
+      <xs:attribute use="required" name="localization_label"         type="attrLocalizationLabel" />
+      <xs:attribute use="required" name="device_program_name"        type="attrVarName" />
+      <xs:attribute use="optional" name="wanted_sa"                  type="attrIntTo255" />
+      <xs:attribute use="optional" name="store_sa_at_eeprom_address" type="attrIntTo65535" />
+      <xs:attributeGroup ref="attrWSMasterName_split" />
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

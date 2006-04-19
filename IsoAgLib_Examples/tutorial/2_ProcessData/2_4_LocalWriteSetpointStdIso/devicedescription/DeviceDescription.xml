@@ -5,10 +5,10 @@
       <devicedinprocessdata lis="0" wert_inst="0x1" />
     </deviceprocessdata>
     <deviceprocessdata designator="Application Rate" ddi="0x0007" properties="defaultset" trigger_methods="timeinterval" proc_program_name="applicationRate" cumulative_value="false">
-      <deviceprocessdatacombination ddi="0x0001" command_type="exact" is_setpoint="true" combination_element_number="2" />
-      <deviceprocessdatacombination ddi="0x0002" command_type="exact" is_setpoint="false" combination_element_number="4" />
-      <deviceprocessdatacombination ddi="0x0003" command_type="exact" is_setpoint="true" combination_element_number="6" />
-      <deviceprocessdatacombination ddi="0x0004" command_type="exact" is_setpoint="true" combination_element_number="8" />
+      <deviceprocessdatacombination ddi="0x0001" command_type="exact" is_setpoint="true" />
+      <deviceprocessdatacombination ddi="0x0002" command_type="exact" is_setpoint="false" />
+      <deviceprocessdatacombination ddi="0x0003" command_type="exact" is_setpoint="true" />
+      <deviceprocessdatacombination ddi="0x0004" command_type="exact" is_setpoint="true" />
       <devicedinprocessdata lis="0" wert_inst="0x5" />
     </deviceprocessdata>
   </deviceelement>

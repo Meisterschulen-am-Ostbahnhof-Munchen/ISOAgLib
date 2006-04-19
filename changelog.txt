@@ -5,6 +5,11 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
 \section IndexChanges Changes
 
+\subsection Change_K 1.2.1 to 1.2.1(unofficial)
+
+  - support for proc2iso XML schema: new mandatory parameter -s=xxx.xsd for personalized path to xsd-file (see proc2iso --help).
+    former only -s with a default path
+
 \subsection Change_K 1.2.0 to 1.2.1
 
 	- fixes for Win32 RS232 HAL

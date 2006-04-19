@@ -98,7 +98,6 @@ std::vector<std::string> vecstr_dataForCombination;
 std::vector<std::string> vecstr_dataFromDPD (4);
 std::stringstream buffer;
 bool attrIsGiven [maxAttributeNames];
-std::vector<int16_t> veci16_elemNumsFromCombinations;
 bool b_dpdCombination = false;
 static bool b_isFirstDevice = true;
 
@@ -116,12 +115,13 @@ static void usage()
     "Input files are all files starting with <XML file>,\nsorted by alphabetical order.\n"
     "This has been done to give the possibility to split \nlarge XML files into several ones.\n\n"
     "Options:\n"
-    " -v=xxx   Validation scheme [always | never | auto]. Defaults to auto\n"
-    " -n    Enable namespace processing. Defaults to off.\n"
-    " -s    Enable schema processing. Defaults to off.\n"
-    " -f    Enable full schema constraint checking. Defaults to off.\n"
+    " -v=xxx     Validation scheme [always | never | auto]. Defaults to auto\n"
+    " -n         Enable namespace processing. Defaults to off.\n"
+    " -s         Enable schema processing with default path to XML schema. Defaults to off.\n"
+    " -s=xxx.xsd Enable schema processing with XML schema xxx.xsd from given absolute path. Defaults to off.\n"
+    " -f         Enable full schema constraint checking. Defaults to off.\n"
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
-    " -?    Show this help.\n\n"
+    " -?         Show this help.\n\n"
     << std::endl;
 };
 
@@ -335,7 +335,7 @@ void init (const char* xmlFile)
 #endif
 
   strcpy( FileName, tempFileName ? tempFileName : partFileName );
-	
+
   partFileA = fopen (partFileName,"wt");
 
   fprintf (partFileA, "const HUGE_MEM uint8_t deviceDescription");
@@ -430,10 +430,6 @@ void defaultAttributes ()
   if (!attrIsGiven [attrCommand_type]) {
     vecstr_attrString [attrCommand_type] = "exact";
     attrIsGiven [attrCommand_type] = true;
-  }
-  if (!attrIsGiven [attrElement_number_combi]) {
-    vecstr_attrString [attrElement_number_combi] = "-1";
-    attrIsGiven [attrElement_number_combi] = true;
   }
 };
 
@@ -865,7 +861,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           if (!attrIsGiven[attrWorkingset_mastername])
           {
             //alle Attribute zum Workingset_mastername zusammensetzen
-            c_isoname.set(booltoi(       vecstr_attrString [attrSelf_conf].c_str()),
+            c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()),
                           stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
                           stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
                           stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
@@ -1147,10 +1143,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceProcessDataCombination)
           {
             getAttributesFromNode(child, otDeviceProcessDataCombination);
-            if (attrIsGiven[attrElement_number_combi] && (strcmp(vecstr_attrString[attrElement_number_combi].c_str(), "") != 0))
-              veci16_elemNumsFromCombinations.push_back(atoi(vecstr_attrString[attrElement_number_combi].c_str()));
-            else
-              veci16_elemNumsFromCombinations.push_back(-1);
             defaultAttributes ();
             if (!attrIsGiven[attrDdi] || !attrIsGiven[attrSetpoint])
             {
@@ -1234,16 +1226,13 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           // output to header-file
           fprintf(partFileB, "#if defined(USE_ISO_11783)\nuint16_t ui16_%sElementNumber = %i;\n", vecstr_dataForCombination[1].c_str(), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
           fprintf(partFileB, "const IsoAgLib::ElementDDI_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
-          for (uint8_t i=0; i<ui8_amount; i++)
+          uint8_t index=0;
+          for (; index<ui8_amount; index++)
           {
-            if (veci16_elemNumsFromCombinations[i] < 0)
-              fprintf(partFileB, "\t{%s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
-            else
-              fprintf(partFileB, "\t{%s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*i].c_str(), vecstr_dataForCombination[3+3*i].c_str(), vecstr_dataForCombination[4+3*i].c_str());
+            fprintf(partFileB, "\t{%s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*index].c_str(), vecstr_dataForCombination[3+3*index].c_str(), vecstr_dataForCombination[4+3*index].c_str());
           }
-          veci16_elemNumsFromCombinations.clear();
           fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}\n};\n#endif\n\n");
-          for (uint8_t i=0; i<ui8_amount*3; i++)
+          for (index=0; index<ui8_amount*3; index++)
             vecstr_dataForCombination.pop_back();
         }
 
@@ -1401,6 +1390,7 @@ int main(int argC, char* argV[])
   if (argC < 2) { usage(); return 1; }
 
   const char* xmlFile = 0;
+  const char* schemaPath = NULL;
   AbstractDOMParser::ValSchemes valScheme = AbstractDOMParser::Val_Auto;
   bool        doNamespaces    = false;
   bool        doSchema     = false;
@@ -1451,6 +1441,12 @@ int main(int argC, char* argV[])
     {
       doNamespaces = true;
     }
+    else if (!strncmp(argV[argInd], "-s=", 3)
+      ||  !strncmp(argV[argInd], "-S=", 3))
+    {
+      doSchema = true;
+      schemaPath = &argV[argInd][3];
+    }
     else if (!strcmp(argV[argInd], "-s")
       ||  !strcmp(argV[argInd], "-S"))
     {
@@ -1496,9 +1492,10 @@ int main(int argC, char* argV[])
   for (unsigned int i=0; i<strlen(proName); i++) if (proName[i] == '.') { proName[i] = 0x00; break; }
 
   #ifdef WIN32
-  HANDLE    hList;
-  TCHAR     szDir[255];
-  TCHAR    szCurDir[255];
+  HANDLE hList;
+  TCHAR  szDir[255];
+  TCHAR  szSubDir[255];
+  TCHAR  szCurDir[255];
   WIN32_FIND_DATA FileData;
 
   // save current directory
@@ -1634,19 +1631,48 @@ int main(int argC, char* argV[])
     // enable datatype normalization - default is off
     parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
 
+    /** @todo Get path of proc2iso and add it to "proc2iso.xsd" */
     char xsdLocation[1024+1];
-    strcpy (xsdLocation, argV[0]);
-    // now trim exe filename
-    for (int i=strlen(xsdLocation)-1; i >= 0; i--) {
-      if (xsdLocation[i] == '/') { xsdLocation[i+1]=0x00; break; }
+    if (schemaPath == NULL)
+    {
+      strcpy (xsdLocation, argV[0]);
+      // now trim exe filename
+      for (int i=strlen(xsdLocation)-1; i >= 0; i--)
+      {
+        if (xsdLocation[i] == '/') { xsdLocation[i+1]=0x00; break; }
+      }
+      strcat (xsdLocation, "proc2iso.xsd");
     }
-    strcat (xsdLocation, "proc2iso.xsd");
+    else
+    {
+      strcpy (xsdLocation, schemaPath);
+
+      std::string tmp_str = xsdLocation;
+      if ( tmp_str.substr( tmp_str.length()-4 ) != ".xsd" ) clean_exit (4, "Wrong file format for XML schema. Terminating.\n");
+    }
+
+
+
+    FILE *p_file = fopen (xsdLocation, "r");
+
+    if (p_file == (FILE*)NULL)
+    {
+      std::cerr <<  "Couldn't open XML schema: \"" << xsdLocation << "\""<< std::endl;
+      clean_exit (4, "XML-checking error occured. Terminating.\n");
+    }
+
     XMLCh* propertyValue = XMLString::transcode(xsdLocation);
     parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
 
     // And create our error handler and install it
     DOMCountErrorHandler errorHandler;
     parser->setErrorHandler(&errorHandler);
+
+    //
+    //  Get the starting time and kick off the parse of the indicated
+    //  file. Catch any exceptions that might propogate out of it.
+    //
+    std::ifstream fin;
 
     char fURI[1000];
     //initialize the array to zeros

@@ -102,9 +102,8 @@
 #define attrCumulative_value (36)
 #define attrCommand_type (37)
 #define attrSetpoint (38)
-#define attrElement_number_combi (39)
 
-#define maxAttributeNames (40)
+#define maxAttributeNames (39)
 
 
 #define maxObjectTypesToCompare (maxObjectTypes)
@@ -179,8 +178,7 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
       "proc_program_name",
       "cumulative_value",
       "command_type",
-      "is_setpoint",
-      "combination_element_number"
+      "is_setpoint"
 };
 
 #define maxTableID 7
@@ -239,8 +237,8 @@ char featureSetTable [maxFeatureSet] [stringLength+1] = {
     "SimpleSetpointSimpleMeasure"
 };
 
-#define maxCommandoTypes 4
-char CommandoTypeTable [maxCommandoTypes] [stringLength+1] = {
+#define maxCommandTypes 4
+char CommandTypeTable [maxCommandTypes] [stringLength+1] = {
     "exact",
     "default",
     "min",
