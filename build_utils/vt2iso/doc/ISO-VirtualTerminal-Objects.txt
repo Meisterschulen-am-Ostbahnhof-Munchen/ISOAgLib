@@ -1,63 +1,120 @@
-/** @page XMLspec Specification for ISO VirtualTerminal XML files
-\section XMLGeneralNotes General notes
+/** @page XMLspec Information on vt2iso & Specification for ISO VirtualTerminal XML files
+\section XMLGeneralNotes vt2iso Notes & Features
+<b>vt2iso...</b>
 <ul>
-<li> <b>What is vt2iso?</b> vt2iso is an XML->C-Source converter that converts your object-pool (described in XML) to C-source files (that have to be included in your application then).
-<li>This version of vt2iso is designed to work with VTs that support bitmap-scaling (as they're supposed to) but also offers the possibility to include pre-scaled-bitmaps (for VTs that don't scale (as they SHOULD do) if you know their dimension/color-depth). The "normal" bitmaps will be searched in the "std_bitmap_path" and the bitmaps for a fixed-size terminal will be searched in the "fix_bitmap_path".
+<li> ...is an <b>XML to C-Source converter</b> that converts your object-pool (described in XML) to C-source files (that have to be included in your application then).
+<li> ...supports VTs that don't scale picture-graphics (only some old ones out that don't) in order to let the designer add pre-scaled-bitmaps. This is also helpful if you want to supply "better-then-VT-scaled" versions for some VTs.
+<li> ...supports multi-language objectpools. Changing language is support by IsoAgLib's VT-Client and will automatically make use of multi-language pools.
 </ul>
 
 \section XMLUsage Usage in your own project
+First of all, it is very helpful to have a look to the <b> Tutorial 3.0 </b>. Other than that, read on here or contact the IsoAgLib mailing list for further help.
+<p>
+\subsection vt2isoImplementation Modes
+Generally, there are two ways you can implement your generated objectpool into your application: As a <b>Standalone Class (direct)</b> or as a <b>Derived Class (derived)</b>. Note that always both versions are created by vt2iso.
 <ul>
-<li> Take a look at the following example, in which the <i>iObjectPool</i> class is generated for standalone use:
-<li> Include the necessary headers through one collective include file
-\code
-#include "MaskDefinition/simpleVTIsoPool.xml_direct.h"
-\endcode
-<li> Then implement the neccessary methods from <i>iObjectPool_simpleVTIsoPool_c</i>, whereas "simpleVTIsoPool" is generated from the filename!
-\code
-void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t ui8_value, uint32_t ui32_value ) { ... }
-void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast);
-void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ();
-void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton ) { ... }
-void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully () { ... }
-\endcode
-<li> There are more methods that CAN be implemented. If you want to, you have to uncomment them in <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc</i>. These are the following
-\code
-//virtual void eventStringValueAbort();
-//virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);
-//virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whic
-//virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);
-\endcode
-<li> as vt2iso does NOT want to override the manual changes you may have made in the <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc</i> file because of uncommenting some of those methods, it will NOT override this file at the next call of vt2iso, but will name the file <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc-template</i>.
-<li> It's important that <i>eventObjectPoolUploadedSuccessfully</i> updates all necessary values of the objectpool. It will be called everytime the pool is uploaded/loaded from non-volatile-storage (harddisk, flashdisk, etc.). This is also the case when the VT is switched off and on during operation!
-<li> If you want to derive your main-class from <i>iObjectPool_simpleVTIsoPool_c</i>, you should use the following directive
-\code
-#include "MaskDefinition/simpleVTIsoPool.xml_derived-cpp.h"
-\endcode
-in your ".cpp" file (that's why its name is "-cpp.h") and
-\code
-#include "MaskDefinition/simpleVTIsoPool.xml_derived-h.h"
-\endcode
-in your ".h" file (that's why its name is "-h.h").<br> That's all to include.
+  <li> Use the generated <i>iObjectPool</i> class as standalone (direct, as implemented in the Tutorial 3.0):
+    <ul>
+      <li> Take a look at the following example, in which the <i>iObjectPool</i> class is generated for standalone use:
+      <li> Include the necessary headers through one collective include file
+      \code
+      #include "MaskDefinition/simpleVTIsoPool_direct.h"
+      \endcode
+      <li> Then implement the neccessary methods from <i>iObjectPool_simpleVTIsoPool_c</i>, whereas "simpleVTIsoPool" is generated from the filename of your XML!
+      \code
+      void iObjectPool_simpleVTIsoPool_c::eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton) { ... }
+      void iObjectPool_simpleVTIsoPool_c::eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value) { ... }
+      void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast) { ... }
+      void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool rb_wasLanguageUpdate, int8_t ri8_languageIndex, uint16_t rui16_languageCode) { ... }
+      void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState () { ... }
+      \endcode
+      <li> There are more methods that CAN be implemented. If you want to, you have to uncomment them in <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc</i>. These are the following ones:
+      \code
+      //virtual void eventPointingEvent (uint16_t rui16_xPosition, uint16_t rui16_yPosition);
+      //virtual void eventStringValueAbort ();
+      //virtual void eventPrepareForLanguageChange (int8_t ri8_languageIndex, uint16_t rui16_languageCode);
+      //virtual void eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8]);
+      //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whic
+      //virtual void eventLanguagePgn (const localSettings_s& rrefs_localSettings);
+      //virtual void eventVtStatusMsg ();
+      \endcode
+      <li> <b>Note:</b> vt2iso does NOT override the manual changes (uncommenting some of those methods for implementation) you may have made in the <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc</i> file, so it will NOT override this file at the next call of vt2iso, but will name the file <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc-template</i> then. Only if new functions are added there, you may need to copy the template file over or add the new functions from the template file by hand!
+      <li> It's important that <i>eventObjectPoolUploadedSuccessfully</i> updates all necessary values of the objectpool. It will be called everytime the pool is uploaded/loaded from non-volatile-storage (harddisk, flashdisk, etc.). This is also the case when the VT is switched off and on during operation!
 
-<li> In direct use create an instance of that class like the following code:
-\code
-static iObjectPool_simpleVTIsoPool_c MyObjectPool_c;
-\endcode
-<li> In all cases init the ISO-Terminal the following way (If no WorkingSet-Name is given, the pool won't be saved in nv-storage from the VT!):
-\code
-getIisoTerminalInstance().init(&c_myIdent, &MyPool_c, "WS-Name");
-\endcode
-Please refer to IsoAgLib::iISOTerminal_c::init(...) for more information.
+      <li> In direct use create an instance of that class like the following code:
+      \code
+      static iObjectPool_simpleVTIsoPool_c MyObjectPool_c;
+      \endcode
+    </ul>
+  <li> Use the generated <i>iObjectPool</i> class to derive your class from (derived):
+    <ul>
+      <li> If you want to derive your main-class from <i>iObjectPool_simpleVTIsoPool_c</i>, you should use the following directive
+      \code
+      #include "MaskDefinition/simpleVTIsoPool.xml_derived-cpp.h"
+      \endcode
+      in your ".cpp" file (that's why its name is "-cpp.h") and
+      \code
+      #include "MaskDefinition/simpleVTIsoPool.xml_derived-h.h"
+      \endcode
+      in your ".h" file (that's why its name is "-h.h").<br> That's all to include.
+    </ul>
 </ul>
+
+In all cases init the ISO-Terminal the following way (If no WorkingSet-Name is given (NULL), the pool won't be saved in nv-storage from the VT!):
+\code
+getIisoTerminalInstance().init (&c_myIdent, &MyPool_c, "WS-Name");
+// Refer to IsoAgLib::iISOTerminal_c::init(...) for more information.
+\endcode
+<p>
+\subsection Function Control Flow
+Assuming the following (illustrating) sequences, the according handlers will be called as described here:
+<ol>
+  <li> The objectpool has been uploaded or loaded from nonvolatile-storage successfully. It's being (up)loaded in the language currently setup, or the default language (if the setup language is not supported in the workingset). <b>eventObjectPoolUploadedSuccessfully</b> will be called with paramter <b>rb_wasLanguageUpdate == false</b> and the language it was uploaded to the VT in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information").
+  <li> The Operator changes the language. If there's an update of the objectpool required, <b>eventPrepareForLanguageChange</b> is called (with the new \ref LanguageInfo "Language Information") so the application can issue some commands BEFORE the partial object pool will take place. This is important if the partial language pool update takes a while (when there're many language-dependend objects) and the ECU won't be able react on anything. So the best thing would be to issue a change to a special "Wait while changing language..."-mask here.
+       (Note that this may not occur on all changes. Changing from one unsupported language to another unsupported will NOT lead to anything (no pool update, no handler getting called!))
+  <li> After the language update has succeeded, <b>eventObjectPoolUploadedSuccessfully</b> will be called with paramter <b>rb_wasLanguageUpdate == true</b> and the language it was changed to in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information"). Based on <b>rb_wasLanguageUpdate == true</b> it can now be switched back from the "Wait while changing language..."-mask if it was changed to such a mask.
+  <li> Now lets assume that the VT drops off-line. The workingset has to enter a safe state according to the ISO specs, so <b>eventEnterSafeState ()</b> is being called. The application should then stop all VT operation (change commands, etc.) for now.
+  <li> After the VT is turned back on and the objectpool has been successfully re(up)loaded, <b>eventObjectPoolUploadedSuccessfully</b> will be called again with paramter <b>rb_wasLanguageUpdate == false</b> and the language it was uploaded to the VT in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b>.
+</ol>
+During operation the following events can occur, which will lead to the their associated handlers being called:
+<ul>
+  <li> The operator presses a softkey or button: <b>eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton)</b>
+  <li> The operator enters a numeric value in an InputNumber field, (de)selects an InputBoolean field or selects an entry of an InputList: <b>eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value)</b>
+  <li> The operator enters text in an InputString field: <b>eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast)</b> - for normal operation only react when rb_isLast==true See the Tutorial 3.0 example.
+  <li> The operator presses on the touch-screen or alike in a region where no input field has been placed, so <b>eventPointingEvent (uint16_t rui16_xPosition, uint16_t rui16_yPosition)</b> gets called. NOTE that the positions are the actual positions from the VT and NOT positions from your objectpool. Remember that your objectpool's coordinates/size are probably scaled to completely fill out the mask's area! ALSO NOTE that this MAY BE CHANGED at a later time to deliver unified objectpool coordinates, or probably both to avoid any misinterpretation. So for now you'll have to dived the coordinates by the scaling factor!
+  <li> If due to some connection problems a string value activation command, that is being sent via TransportProtocol, from the VT to the ECU is aborted in between, <b>eventStringValueAbort()</b> is called. You need ONLY care for this event if you do partial parsing of the string via eventStringValue. If you only parse the string when it's completely received (by b_isLast==true), then you do NOT have to care about this message (which is the normal case!).
+  <li> If you care for the response of a command, you can overload <b>eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8])</b>. It will be called when receiving a response. I a message times out, NO notification is done yet.
+</ul>
+The next events can occur anytime, not only when the objectpool is on display!
+<ul>
+  <li> When the operator changes Language, Units, Time-Display, etc. the handler <b>eventLanguagePgn (const localSettings_s& rrefs_localSettings)</b> will be called.
+  <li> When the VT sends it Status Message, the <b>eventVtStatusMsg()</b> handler is called. If you want to react on those messages, override the function, if not, do not bother at all (normal case).
+</ul>
+During upload, the following function will get called:
+<ul>
+  <li> <b>convertColour (...)</b>: Its purpose is to map the colours of the objectpool to the colours that can be display. Remember, we have to display correctly on 2- and 16-color VTs, too! Normally the default implementation should do a good job if you don't use any of the colors 16-255...
+</ul>
+
 
 \section XMLGeneralStructure General structure of the XML-file(s)
 <ul>
-<li> You can split your object-pool-definition to several XML files so you don't have one big XML file.
-<li> The parser will treat all XML files matching your base-filename (for example <i>simpleVTIsoPool.xml</i>) as one big XML file, ordered alphabetically.
-<li> Thus having created the files <i>simpleVTIsoPool.xml-0_WorkingSetAndVariables</i> and <i>simpleVTIsoPool.xml-1_DataMask1</i>, you'd simply pass the base-filename <b>simpleVTIsoPool.xml</b> as parameter to the conversion script.
-\endcode
-<li> Only the first XML file in alphabetical order MUST HAVE the <i>dimension='...'</i> and <i>std_bitmap_path='...'</i> and <i>fix_bitmap_path='...'</i> attributes set.
-<li> Only the first XML file in alphabetical order CAN HAVE the <i>sk_width='...'</i> and <i>sk_height='...'</i> attributes set. If not given, the softkey-size defaults to 60x32.
+  <li> You can split your object-pool-definition to several XML files so you don't have one big XML file. It's NO difference if you split it up or not - it's only for readability!
+  <li> The parser will treat all XML files matching your base-filename (for example <i>simpleVTIsoPool</i>) as one big XML file, ordered alphabetically.
+  <li> Thus having created the files <i>simpleVTIsoPool00_WorkingSetAndVariables.xml</i> and <i>simpleVTIsoPool01_DataMask1.xml</i>, you'd simply pass the base-filename <b>simpleVTIsoPool</b> as parameter to the conversion script (which invokes vt2iso).
+  <li> Root-Attributes (given in &lt;objectpool&gt;)
+    <ul>
+      <li> Only the first XML file in alphabetical order MUST HAVE the following attributes:
+        <ul>
+          <li> <i>dimension='...'</i>: Specify the datamask-size for which you're designing your objectpool's datamask (it's square, so one dimension is enough). IsoAgLib will automatically scale to the VT's datamask size.
+          <li> <i>std_bitmap_path='...'</i>: Specify the path to the standard/normal bitmaps.
+          <li> <i>fix_bitmap_path='...'</i>: Specify the path to the fixed-size bitmaps.
+        </ul>
+      <li> Only the first XML file in alphabetical order CAN HAVE the following attributes:
+        <ul>
+          <li> <i>sk_width='...'</i> and <i>sk_height='...'</i> (defaults to 60x32): Specify the softkeymask-size for which you're designing your objectpool's softkeymask. IsoAgLib will automatically scale & center to the VT's softkeymask size.
+          <li> <i>auto_language='...'</i> (defaults to unused): Specify in which languages the objects InputString and StringVariable should be available automatically. This value is simply set as default for <i>language='...'</i> in those objects. You can enumerate the languages like <i>language='en+de+it'</i> or specify all languages using '*'. For more information see \ref MultiLanguage "MultiLanguage".
+        </ul>
+    </ul>
 </ul>
 Take a look at the following snippet of <i>simpleVTIsoPool.xml-0_WorkingSetAndVariables</i>, which is the first in alpabetical order and has the dimension and path-attributes set:
 \code
@@ -91,6 +148,27 @@ Now here's a snippet from <i>simpleVTIsoPool.xml-1_DataMask1</i>:
   <!-- still more objects in this objectpool can be defined now... -->
 </objectpool>
 \endcode
+
+\section MultiLanguage HOW TO design a multi-language objectpool
+As you already specify in the \<workingset\> object which languages are supported by this workingset, vt2iso/IsoAgLib uses these languages for the multi-language support.
+
+You can either not specify any language at all (if you only have one fix language in your workingset) or use the multilanguage feature and specify a number of languages like
+\code
+  <workingset name='MyMultiLanguageWorkingSet' background_colour='white' selectable='yes' active_mask='MyDataMask1'>
+    <!-- WorkingSet Descriptor Object shall be included here -->
+    <language code='en' /> <!-- Note that the first language is the default language! -->
+    <language code='de' />
+    <language code='it' />
+  </workingset>
+\endcode
+Note that the first language is the default language! The default language is used when the operator selects a language from the VT's language selection that is NOT supported by the workingset, i.e. is not listed in the \<workingset\> object.
+
+Important to know is that there will be two parts generated from your object pool: The <i>general</i> part and the <i>language specific</i> part.
+Without specifying the language in an object, the object will be placed in the general part.
+
+Now you have to decide which objects should depend on the selected language. Not only texts-objects can be exchanged but also any kind of object, e.g. picture-graphics, font-attributes, etc.
+If you want to ... work-in-progress...
+
 
 \section XMLNamingConvention Naming-Conventions for \< TAG attribute =' value ' \>
 <ul>
@@ -204,6 +282,7 @@ There are two ways of using/referencing objects:
 Note that the <i> pos_x </i> and <i> pos_y </i> attributes are always associated with the parent object, hence in the first example the position is given in the outputstring objects and in the second example it (as it makes no sense specifying it in the outputstrings here) is given in the include_object reference (include_object and include_macro are no real own object but parts of the parent object!).
 <p>
 Now how does the <picturegraphic> object implementation work?<br>
+Note that the "normal/standard" bitmaps will be searched in the "std_bitmap_path" and the fixed-size-bitmaps will be searched in the "fix_bitmap_path". Simply add these attributes in the &lt;objectpool&gt; element in your first XML file.
 The attributes of <picturegraphic> mean:
 <ul>
   <li> file='<filename>': default value for all bitmap-depths. Will simply set file='<filename>', file4='<filename>' and file8='<filename>' as default. This can be overridden by
