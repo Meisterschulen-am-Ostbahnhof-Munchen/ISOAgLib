@@ -249,6 +249,30 @@ namespace IsoAgLib {
     IsoSimulatedSpeed = 4,       ///< speed source is simulated
     IsoNotAvailableSpeed = 7       ///<corresponding function is not available in service provider
   } IsoSpeedSourceFlag_t;
+
+  /** use an enum for the different states of ISO flags for the implement work state */
+  typedef enum {
+    IsoNotReadyForFieldWork = 0, ///< Implement is not ready for field work
+    IsoReadyForFieldWork = 1,    ///< Implement is ready for field work
+    IsoErrorWork = 2,       ///< corresponding function is in error state, and thus not useable
+    IsoNotAvailableWork = 3 ///< corresponding function is not available/not implemented in service provider
+  } IsoImplWorkFlag_t;
+
+  /** use an enum for the different states of ISO flags for the implement transport state */
+  typedef enum {
+    IsoNotTransported = 0,       ///< Implement may not be transported
+    IsoTransported = 1,          ///< Implement may be transported
+    IsoErrorTransport = 2,       ///< corresponding function is in error state, and thus not useable
+    IsoNotAvailableTransport = 3 ///< corresponding function is not available/not implemented in service provider
+  } IsoImplTransportFlag_t;
+
+  /** use an enum for the different states of ISO flags for the implement park state */
+  typedef enum {
+    IsoNotDisconnected = 0,       ///< Implement may not be disconnected
+    IsoDisconnect = 1,            ///< Implement may be disconnected
+    IsoErrorPark = 2,       ///< corresponding function is in error state, and thus not useable
+    IsoNotAvailablePark = 3 ///< corresponding function is not available/not implemented in service provider
+  } IsoImplParkFlag_t;
   #endif
 
   /** define the main groups of base data types */

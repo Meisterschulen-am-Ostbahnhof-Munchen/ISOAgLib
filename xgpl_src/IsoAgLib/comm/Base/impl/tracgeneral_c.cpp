@@ -172,9 +172,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     i16_frontDraft = i16_rearDraft = NO_VAL_16S;
     ui32_lastMaintainPowerRequest = 0;
     b_maintainEcuPower = b_maintainActuatorPower = false;
-    powerForImplState.inPark = IsoAgLib::IsoInactive;
-    powerForImplState.inTransport = IsoAgLib::IsoInactive;
-    powerForImplState.inWork = IsoAgLib::IsoInactive;
+    implState.inPark =      IsoAgLib::IsoNotAvailablePark;
+    implState.inTransport = IsoAgLib::IsoNotTransported;
+    implState.inWork =      IsoAgLib::IsoDisconnect;
+    t_frontHitchPosLimitStatus = t_rearHitchPosLimitStatus = IsoAgLib::IsoNotAvailableLimit;
     #endif
   };
 
@@ -211,8 +212,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracGeneral_c::timeEvent( )
   {
     #ifdef USE_ISO_11783
-    BaseCommon_c::timeEvent();
+    return BaseCommon_c::timeEvent();
     #endif
+
     #ifdef USE_DIN_9684
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
@@ -226,6 +228,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
       c_sendFuelDevKey.setUnspecified();
     }
+
     if (  getDevKey() != NULL
           && ( checkMode(IsoAgLib::IdentModeTractor) || t_identModeStateFuel         )
           && ( getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true) ) )
@@ -236,7 +239,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
     return true;
     #endif
-    return true;
   }
 
   /** check if filter boxes shall be created - create only ISO or DIN filters based
@@ -446,14 +448,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return true;
   }
 
-  /**
-    process a ISO11783 general base information PGN
-  */
+  /** process a ISO11783 general base information PGN */
   bool TracGeneral_c::isoProcessMsg()
   {
     bool b_result = false;
     DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
-    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // store the devKey of the sender of base data
     if (getIsoMonitorInstance4Comm().existIsoMemberNr(data().isoSa()))
     { // the corresponding sender entry exist in the monitor list
@@ -508,16 +507,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         b_result = true;
         break;
       case MAINTAIN_POWER_REQUEST_PGN: // maintain power request
-        if ( ( (data().getUint8Data( 1 ) >> 4) & 3) == 1)
+        if ( ( (data().getUint8Data( 0 ) >> 4) & 3) == 1)
           b_maintainEcuPower = true;
+        else
+          b_maintainEcuPower = false;
         if ( ( (data().getUint8Data( 0 ) >> 6) & 3) == 1)
           b_maintainActuatorPower = true;
-        if ( ( (data().getUint8Data( 1 ) >> 6) & 3) == 1)
-          powerForImplState.inTransport = IsoAgLib::IsoActive;
-        if ( ( (data().getUint8Data( 1 ) >> 4) & 3) == 1)
-          powerForImplState.inPark = IsoAgLib::IsoActive;
-        if ( ( (data().getUint8Data( 1 ) >> 2) & 3) == 1)
-          powerForImplState.inWork = IsoAgLib::IsoActive;
+        else
+          b_maintainActuatorPower = false;
+
+        implState.inTransport = ( (data().getUint8Data( 1 ) >> 6) & 3 );
+        implState.inPark =      ( (data().getUint8Data( 1 ) >> 4) & 3 );
+        implState.inWork =      ( (data().getUint8Data( 1 ) >> 2) & 3 );
 
         ui32_lastMaintainPowerRequest = data().time();
         b_result = true;
@@ -585,7 +586,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           ui8_temp |= IsoAgLib::IsoActive << 6;
           data().setUint8Data(1, ui8_temp ); // work
         }
-        else data().setUint8Data(1, 1); //UND HIER??
+        else
+        {
+          ui8_temp |= IsoAgLib::IsoInactive << 6;
+          data().setUint8Data(1, ui8_temp);
+        }
         break;
     }
     data().setUint8Data(2, ui8_frontLinkForce);
@@ -598,6 +603,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     c_can << data();
 
     data().setIsoPgn(REAR_HITCH_STATE_PGN);
+    ui8_temp = 0;
     ui8_temp = t_rearHitchPosLimitStatus << 3;
     switch (hitchRear()) {
       case ERROR_VAL_16S:
@@ -617,7 +623,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           ui8_temp |= IsoAgLib::IsoActive << 6;
           data().setUint8Data(1, ui8_temp ); // work
         }
-        else data().setUint8Data(1, 1); //UND HIER??
+        else
+        {
+          ui8_temp |= IsoAgLib::IsoInactive << 6;
+          data().setUint8Data(1, ui8_temp);
+        }
         break;
     }
     data().setUint8Data(2, ui8_rearLinkForce);
@@ -680,37 +690,42 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracGeneral_c::forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
   {
-    uint8_t val1 = IsoAgLib::IsoInactive,
+     uint8_t val1 = IsoAgLib::IsoInactive,
             val2 = IsoAgLib::IsoInactive;
-    if (rb_ecuPower)      val1 |= ( IsoAgLib::IsoActive   << 6);
-    else                  val1 |= ( IsoAgLib::IsoInactive << 6);
-    if (rb_actuatorPower) val1 |= ( IsoAgLib::IsoActive   << 4);
-    else                  val1 |= ( IsoAgLib::IsoInactive << 4);
+    if (rb_ecuPower)
+      val1 |= ( IsoAgLib::IsoActive   << 6);
+    else
+      val1 |= ( IsoAgLib::IsoInactive << 6);
+    if (rb_actuatorPower)
+      val1 |= ( IsoAgLib::IsoActive   << 4);
+    else
+      val1 |= ( IsoAgLib::IsoInactive << 4);
 
     switch(rt_implState)
     {
       case IsoAgLib::implInTransport:
-        val2 |= ( IsoAgLib::IsoActive   << 6);
-        val2 |= ( IsoAgLib::IsoInactive << 4);
-        val2 |= ( IsoAgLib::IsoInactive << 2);
+        val2 |= ( implState.inTransport         << 6);
+        val2 |= ( IsoAgLib::IsoNotAvailablePark << 4);
+        val2 |= ( IsoAgLib::IsoNotAvailableWork << 2);
         break;
       case IsoAgLib::implInPark:
-        val2 |= ( IsoAgLib::IsoInactive << 6);
-        val2 |= ( IsoAgLib::IsoActive   << 4);
-        val2 |= ( IsoAgLib::IsoInactive << 2);
+        val2 |= ( IsoAgLib::IsoNotAvailableTransport << 6);
+        val2 |= ( implState.inPark                   << 4);
+        val2 |= ( IsoAgLib::IsoNotAvailableWork      << 2);
       case IsoAgLib::implInWork:
-        val2 |= ( IsoAgLib::IsoInactive << 6);
-        val2 |= ( IsoAgLib::IsoInactive << 4);
-        val2 |= ( IsoAgLib::IsoActive   << 2);
+        val2 |= ( IsoAgLib::IsoNotAvailableTransport << 6);
+        val2 |= ( IsoAgLib::IsoNotAvailablePark      << 4);
+        val2 |= ( implState.inWork                   << 2);
     }
     data().setIsoPgn(MAINTAIN_POWER_REQUEST_PGN);
     data().setUint8Data(0, val1);
     data().setUint8Data(1, val2);
-    data().setUint16Data(2, 0);
-    data().setUint16Data(4, 0);
+    //reserved fields
+    data().setUint32Data(2, 0);
     data().setUint16Data(6, 0);
     data().setLen(8);
-    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+
+    // CANIO_c::operator<< retrieves the information with the help of CANPkg_c::getData
     // then it sends the data
     getCanInstance4Comm() << data();
   }

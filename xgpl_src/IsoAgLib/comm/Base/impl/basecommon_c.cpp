@@ -169,13 +169,11 @@ void BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_i
   if (rt_identMode == IsoAgLib::IdentModeTractor)
   {
     if ((rpc_devKey != NULL) )
-    {
       c_selectedDataSourceDevKey = *rpc_devKey;
-    }
     else
       c_selectedDataSourceDevKey.setUnspecified();
   }
-};
+}
 
 /** check if a received message should be parsed */
 bool BaseCommon_c::checkParseReceived(const DevKey_c& rrefc_currentSender) const
@@ -186,7 +184,7 @@ bool BaseCommon_c::checkParseReceived(const DevKey_c& rrefc_currentSender) const
                 || (c_selectedDataSourceDevKey.isUnspecified()         ) // last sender has not correctly claimed address member
                )
           )?true:false;
-};
+}
 
 /** process received moving msg and store updated value for later reading access;
     called by FilterBox_c::processMsg after receiving a msg
@@ -213,7 +211,7 @@ bool BaseCommon_c::processMsg()
   return dinProcessMsg();
   #endif
   return false;
-};
+}
 
   /** functions with actions, which must be performed periodically
     -> called periodically by Scheduler_c
@@ -242,26 +240,40 @@ bool BaseCommon_c::timeEvent()
   }
 
   // check if we are in tractor mode and have a pointer to the sending device key
-  if (  (pc_devKey != NULL                                                   )
-         && checkMode(IsoAgLib::IdentModeTractor)
-  #ifdef USE_ISO_11783
-         && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
-  #endif
-  #ifdef USE_DIN_9684
-         && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true)
-  #endif
-      )
-  { // stored base data information sending ISO member or DIN member has claimed address
+  if ( checkMode(IsoAgLib::IdentModeTractor) )
+  {
+    if (  (pc_devKey != NULL                                                   )
     #ifdef USE_ISO_11783
-      if ( !isoTimeEventTracMode()) return false;
-    #endif
-    #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-      if (Scheduler_c::getAvailableExecTime() == 0) return false;
+          && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
     #endif
     #ifdef USE_DIN_9684
-      return dinTimeEventTracMode();
+          && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true)
     #endif
+        )
+    { // stored base data information sending ISO member or DIN member has claimed address
+      #ifdef USE_ISO_11783
+        if ( !isoTimeEventTracMode()) return false;
+      #endif
+      #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
+        if (Scheduler_c::getAvailableExecTime() == 0) return false;
+      #endif
+      #ifdef USE_DIN_9684
+        return dinTimeEventTracMode();
+      #endif
+    }
   }
+  #ifdef USE_ISO_11783
+  else
+  { // we are in implement mode; check if we have a pointer to the sending device key
+    if (   (pc_devKey != NULL                                                 )
+         && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
+       )
+    {
+      if ( !isoTimeEventImplMode()) return false;
+      if (Scheduler_c::getAvailableExecTime() == 0) return false;
+    }
+  }
+  #endif
   return true;
 }
 

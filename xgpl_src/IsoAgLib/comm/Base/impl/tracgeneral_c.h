@@ -87,7 +87,7 @@
 #ifndef TRACGENERAL_C_H
 #define TRACGENERAL_C_H
 
-#include "../ibasetypes.h"
+#include <IsoAgLib/comm/Base/ibasetypes.h>
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 
 #include <ctime>
@@ -97,13 +97,13 @@ namespace __IsoAgLib {
 
 typedef struct
 {
-  /** maintenance of power for implement in transport state*/
+  /** indicates the transport state of an implement connected to a tractor or power unit */
   unsigned int inTransport: 2;
-  /** maintenance of power for implement in park state*/
+  /** indicates the state of an implement where it may be disconnected from a tractor or power unit */
   unsigned int inPark: 2;
-  /** maintenance of power for implement in work state*/
+  /** indicates that an implement is connected to a tractor or power unit and is ready for work */
   unsigned int inWork: 2;
-} maintainPowerForImplState;
+} indicatedStateImpl_t;
 
 class TracGeneral_c;
 typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
@@ -156,6 +156,13 @@ public: // Public methods
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};
 
+  /** force maintain power from tractor
+    * @param rb_ecuPower true -> maintain ECU power
+    * @param rb_actuatorPower true-> maintain actuator power
+    * @param rt_implState in which state is the implement (transport, park, work)
+    */
+  void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState);
+
   #ifdef USE_DIN_9684
   /** helper function to do the parsing of the flag data of a
    * received DIN9684 base message with Pto,Hitch,Engine information */
@@ -193,19 +200,19 @@ public: // Public methods
   set engine speed
   @param ri16_val value to store as engine rpm value
    */
-  void setEngine(int16_t ri16_val){i16_engine = ri16_val;};
+  void setEngine(int16_t ri16_val){i16_engine = ri16_val;}
   /** deliver rear left draft */
-  void setRearLeftDraft( int16_t ri16_val ) { i16_rearLeftDraft = ri16_val;};
+  void setRearLeftDraft( int16_t ri16_val ) { i16_rearLeftDraft = ri16_val;}
   /** deliver rear right draft */
-  void setRearRightDraft( int16_t ri16_val ) { i16_rearRightDraft = ri16_val;};
+  void setRearRightDraft( int16_t ri16_val ) { i16_rearRightDraft = ri16_val;}
   /** deliver rear total draft Newton */
-  void setRearDraftNewton( int16_t ri16_val ) { i16_rearDraftNewton = ri16_val;};
+  void setRearDraftNewton( int16_t ri16_val ) { i16_rearDraftNewton = ri16_val;}
   /** deliver rear total draft Percent */
-  void setRearDraftNominal( uint8_t rui8_val ) { ui8_rearDraftNominal = rui8_val;};
+  void setRearDraftNominal( uint8_t rui8_val ) { ui8_rearDraftNominal = rui8_val;}
   /** deliver fuel consumption L/h */
-  void setFuelRate( int16_t ri16_val ) { i16_fuelRate = ri16_val;};
+  void setFuelRate( int16_t ri16_val ) { i16_fuelRate = ri16_val;}
   /** deliver fuel temperature °C */
-  void setFuelTemperature( uint8_t rui8_val ) { ui8_fuelTemperature = rui8_val;};
+  void setFuelTemperature( uint8_t rui8_val ) { ui8_fuelTemperature = rui8_val;}
   #endif
 
   #ifdef USE_ISO_11783
@@ -216,31 +223,36 @@ public: // Public methods
   /** set rear hitch draft
     * @return rear hitch draft [-320.000N;322.550N]; 1N/bit
     */
-  void setHitchRearDraft(int32_t ri32_val) { i16_rearDraft = ((ri32_val + 320000) / 10);};
+  void setHitchRearDraft(int32_t ri32_val) { i16_rearDraft = ((ri32_val + 320000) / 10);}
   /** set front hitch nominal link force
     * @return front nominal link force [-100%;100%]; 1 promille per bit
     */
-  void setHitchFrontLowerLinkForce(int16_t ri16_val) { ui8_frontLinkForce = ((ri16_val + 1000) / 8);};
+  void setHitchFrontLowerLinkForce(int16_t ri16_val) { ui8_frontLinkForce = ((ri16_val + 1000) / 8);}
   /** set rear hitch nominal link force
     * @return rear nominal link force [-100%;100%]; 1 promille per bit
     */
-  void setHitchRearLowerLinkForce(int16_t ri16_val) { ui8_rearLinkForce = ((ri16_val + 1000) / 8);};
+  void setHitchRearLowerLinkForce(int16_t ri16_val) { ui8_rearLinkForce = ((ri16_val + 1000) / 8);}
   /**
     * set the ISO key switch state of the tractor
     * @param rt_val IsoActive -> key switch ON
     */
-  void setKeySwitch(IsoAgLib::IsoActiveFlag_t rt_val) { t_keySwitch = rt_val;};
+  void setKeySwitch(IsoAgLib::IsoActiveFlag_t rt_val) { t_keySwitch = rt_val; }
   /** set the maximum power time of the tractor in [min]
     * @return maximum power time of the tractor in [min]
     */
-  void setMaxPowerTime(uint8_t rui8_val) { ui8_maxPowerTime = rui8_val;};
-  /** force maintain power from tractor
-    * @param rb_ecuPower true -> maintain ECU power
-    * @param rb_actuatorPower true-> maintain actuator power
-    * @param rt_implState in which state is the implement (transport, park, work)
-    * @param rt_val IsoActive -> implement is active in rt_implState
+  void setMaxPowerTime(uint8_t rui8_val) { ui8_maxPowerTime = rui8_val;}
+  /** set state of implement in transport state
+    * @param rt_val state of implement in transport state
     */
-  void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState);
+  void setMaintainPowerForImplInTransport(IsoAgLib::IsoImplTransportFlag_t rt_val) { implState.inTransport = rt_val; }
+  /** set state of implement in park state
+    * @param rt_val state of implement in park state
+    */
+  void setMaintainPowerForImplInPark(IsoAgLib::IsoImplParkFlag_t rt_val) { implState.inPark = rt_val;}
+  /** set state of implement in work
+    * @param rt_val state of implement in work state
+    */
+  void setMaintainPowerForImplInWork(IsoAgLib::IsoImplWorkFlag_t rt_val) { implState.inWork = rt_val;}
   /** set present limit status of the front hitch position
       @param rt_val  limit status of the front hitch position
     */
@@ -321,24 +333,25 @@ public: // Public methods
     */
   IsoAgLib::IsoLimitFlag_t rearHitchPosLimitStatus()const {return t_rearHitchPosLimitStatus;}
   /** check whether maintenance of ECU power was requested */
-  bool maintainEcuPower() const { return b_maintainEcuPower;};
+  bool maintainEcuPower() const { return b_maintainEcuPower;}
   /** check whether maintenance of actuator power was requested */
-  bool maintainActuatorPower() const { return b_maintainActuatorPower;};
+  bool maintainActuatorPower() const { return b_maintainActuatorPower;}
   /** check whether maintenance of power
     * for implement in transport state was requested */
-  bool maintainPowerForImplInTransport() const { return powerForImplState.inTransport;};
+  IsoAgLib::IsoImplTransportFlag_t maintainPowerForImplInTransport() const
+  { return IsoAgLib::IsoImplTransportFlag_t(implState.inTransport); }
   /** check whether maintenance of power
     * for implement in park state was requested */
-  bool maintainPowerForImplInPark() const { return powerForImplState.inPark;};
+  IsoAgLib::IsoImplParkFlag_t maintainPowerForImplInPark() const {return IsoAgLib::IsoImplParkFlag_t(implState.inPark);}
   /** check whether maintenance of power
     * for implement in work state was requested */
-  bool maintainPowerForImplInWork() const { return powerForImplState.inWork;};
+  IsoAgLib::IsoImplWorkFlag_t maintainPowerForImplInWork() const {return IsoAgLib::IsoImplWorkFlag_t(implState.inWork);}
 
-  bool isVtLanguageReceived()   const { return b_languageVtReceived; };
-  bool isTecuLanguageReceived() const { return b_languageTecuReceived; };
+  bool isVtLanguageReceived()   const { return b_languageVtReceived; }
+  bool isTecuLanguageReceived() const { return b_languageTecuReceived; }
 
-  const uint8_t* getVtLanguage()   const { return p8ui8_languageVt; };
-  const uint8_t* getTecuLanguage() const { return p8ui8_languageTecu; };
+  const uint8_t* getVtLanguage()   const { return p8ui8_languageVt; }
+  const uint8_t* getTecuLanguage() const { return p8ui8_languageTecu; }
 
   /** send iso language data msg*/
   void isoSendLanguage(const DevKey_c& rpc_devKey);
@@ -371,6 +384,8 @@ private:
     * this is only called when sending ident is configured and it has already claimed an address
     */
   bool isoTimeEventTracMode();
+  /** DUMMY nothing to do!! */
+  bool isoTimeEventImplMode() {return true;}
   /** process a ISO11783 general base information PGN */
   bool isoProcessMsg();
   /** send front hitch and rear hitch data msg*/
@@ -445,8 +460,8 @@ private:
   bool b_maintainEcuPower;
   /** state whether maintenance of actuator power was requested */
   bool b_maintainActuatorPower;
-  /** maintenance of power for implement state*/
-  maintainPowerForImplState powerForImplState;
+  /** indicated state of an implement */
+  indicatedStateImpl_t implState;
   #endif
 };
 

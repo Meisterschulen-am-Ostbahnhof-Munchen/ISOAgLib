@@ -177,6 +177,10 @@ namespace __IsoAgLib
       * this is only called when sending ident is configured and it has already claimed an address
       */
     virtual bool isoTimeEventTracMode() = 0;
+    /** send a ISO11783 base information PGN.
+      * this is only called when sending ident is configured and it has already claimed an address
+      */
+    virtual bool isoTimeEventImplMode() = 0;
     #endif
     #ifdef USE_DIN_9684
     /** process a DIN9684 base information PGN */

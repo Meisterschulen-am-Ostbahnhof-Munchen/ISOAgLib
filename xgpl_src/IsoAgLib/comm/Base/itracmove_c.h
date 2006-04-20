@@ -131,14 +131,6 @@ namespace IsoAgLib {
     void setDistTheor(const int32_t& rreflVal) {return TracMove_c::setDistTheor(rreflVal);}
 
     #ifdef USE_ISO_11783
-    /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
-        @param t_val  direction of travel
-      */
-    void setDirectionTheor(IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setDirectionTheor(t_val);}
-    /** set measured signal indicating either forward or reverse as the real (radar measured) direction of travel
-        @param t_val  direction of travel
-      */
-    void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setDirectionReal(t_val);}
     /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
         @param rt_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
       */

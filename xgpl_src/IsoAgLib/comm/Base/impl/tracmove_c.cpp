@@ -139,8 +139,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     ui32_selectedDistance = 0;
     i32_selectedSpeed = 0xFFFF;
     t_selectedDirection = t_directionReal = t_directionTheor = IsoAgLib::IsoNotAvailableDirection;
-    t_selectedDirectionCmd = IsoAgLib::IsoNotAvailableDirection ;
-    t_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed ;
+    t_selectedDirectionCmd = IsoAgLib::IsoNotAvailableDirection;
+    t_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed;
+    t_selectedSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
     i16_selectedSpeedSetPointCmd = 0;
     i16_selectedSpeedSetPointLimit = 0;
     #endif
@@ -259,42 +260,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   }
   #endif
 
-  /** functions with actions, which must be performed periodically
-      -> called periodically by Scheduler_c
-      ==> sends base data msg if configured in the needed rates
-      possible errors:
-        * dependant error in CANIO_c on CAN send problems
-      @see CANPkg_c::getData
-      @see CANPkgExt_c::getData
-      @see CANIO_c::operator<<
-      @return true -> all planned activities performed in allowed time
-    */
-  bool TracMove_c::timeEvent()
-  {
-    if (checkMode(IsoAgLib::IdentModeTractor))
-      return BaseCommon_c::timeEvent();
-    #ifdef USE_ISO_11783
-    else
-    {
-      if (Scheduler_c::getAvailableExecTime() == 0) return false;
-      checkCreateReceiveFilter();
-      if (Scheduler_c::getAvailableExecTime() == 0) return false;
-
-      // check if we are in implement mode and have a pointer to the sending device key
-      if (  (getDevKey() != NULL                                                   )
-            && checkMode(IsoAgLib::IdentModeImplement)
-            && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)
-          )
-      { // stored base data information sending ISO member has claimed address
-          if ( !isoTimeEventImplementMode()) return false;
-
-          if (Scheduler_c::getAvailableExecTime() == 0) return false;
-      }
-    }
-    #endif
-    return true;
-  }
-
   #ifdef USE_ISO_11783
   /**
     process a ISO11783 moving information PGN
@@ -347,7 +312,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             setSpeedReal(i32_tempSpeed);
             // real dist
             setDistReal( static_cast<int32_t>(data().getUint32Data( 2 ) ));
-            setDirectionReal( IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7) & 0x3 ) );
+            t_directionReal = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7) & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
             EXTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << "\n";
             #endif
@@ -362,9 +327,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             c_tracgeneral.setKeySwitch(IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data( 7 ) >> 2 ) & 0x3 ));
             c_tracgeneral.setMaxPowerTime(data().getUint8Data( 6 ) );
             #endif
-            setOperatorDirectionReversed(IsoAgLib::IsoOperatorDirectionFlag_t( ( data().getUint8Data(7) >> 6) & 0x3) );
-            setStartStopState(IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data(7) >> 4) & 0x3) );
-            setDirectionTheor( IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7)       & 0x3 ) );
+            t_operatorDirectionReversed = IsoAgLib::IsoOperatorDirectionFlag_t( ( data().getUint8Data(7) >> 6) & 0x3);
+            t_startStopState = IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data(7) >> 4) & 0x3);
+            t_directionTheor = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7)       & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
             EXTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << "\n";
             #endif
@@ -416,7 +381,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** send a ISO11783 moving information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool TracMove_c::isoTimeEventImplementMode( )
+  bool TracMove_c::isoTimeEventImplMode( )
   {
     if ( lastedTimeSinceUpdateCmd()  >= 100 )
     { // it's time to send moving information
@@ -432,11 +397,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   { // send actual base1 data: ground/wheel based speed/dist
     if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
 
+    CANIO_c& c_can = getCanInstance4Comm();
+
     #ifdef USE_RS232_FOR_DEBUG
     EXTERNAL_DEBUG_DEVICE << "SEND IMPL senderDevKey: " <<  static_cast<const int>(getSelectedDataSourceDevKey().getDevClass() ) << "\n";
     #endif
 
-    CANIO_c& c_can = getCanInstance4Comm();
     // retreive the actual dynamic sender no of the member with the registered devKey
     uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
     data().setIdentType(Ident_c::ExtendedIdent);
@@ -543,8 +509,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     data().setUint8Data(6, c_tracgeneral.maxPowerTime() );
     b_val8 |= (c_tracgeneral.keySwitch() << 2);
     #endif
-    b_val8 |= (operatorDirectionReversed() << 6);
-    b_val8 |= (startStopState() << 4);
+    b_val8 |= (t_operatorDirectionReversed << 6);
+    b_val8 |= (t_startStopState << 4);
     b_val8 |= t_directionTheor;
     data().setUint8Data(7, b_val8);
 
@@ -612,22 +578,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     // update time
     setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
-  }
-
-  /** get actual distance traveled by the machine based on the value of selected machine speed
-      @return  actual distance traveled
-    */
-  uint32_t TracMove_c::selectedDistance() const
-  {
-    #if ( ( defined(USE_BASE) || defined(USE_TIME_GPS) ) && defined NMEA_2000_FAST_PACKET )
-    IsoAgLib::TimePosGPS_c& c_timeposgps = IsoAgLib::getITimePosGpsInstance();
-    //if (c_timeposgps.getGpsSpeedCmSec() != )
-    return c_timeposgps.getGpsSpeedCmSec();
-    #endif
-    if (i32_distReal != 0)
-      return i32_distReal;
-    else
-      return i32_distTheor;
   }
   #endif
 

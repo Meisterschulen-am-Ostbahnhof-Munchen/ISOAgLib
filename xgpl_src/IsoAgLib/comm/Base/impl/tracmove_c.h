@@ -158,14 +158,6 @@ namespace __IsoAgLib {
     void setDistTheor(const int32_t& rreflVal);
 
     #ifdef USE_ISO_11783
-    /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
-        @param t_val  direction of travel
-      */
-    void setDirectionTheor(IsoAgLib::IsoDirectionFlag_t t_val) {t_directionTheor = t_val;}
-    /** set measured signal indicating either forward or reverse as the real (radar measured) direction of travel
-        @param t_val  direction of travel
-      */
-    void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val) {t_directionReal = t_val;}
     /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
         @param rt_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
       */
@@ -173,30 +165,14 @@ namespace __IsoAgLib {
     /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
     void setStartStopState(const IsoAgLib::IsoActiveFlag_t rt_val) {t_startStopState = rt_val;}
 
-    /** set actual distance traveled by the machine based on the value of selected machine speed
-        @param ui32_val  actual distance traveled
-      */
-//    void setSelectedDistance(const uint32_t ui32_val) {ui32_selectedDistance = ui32_val;}
-    /** set indicated current direction of travel of the machine
-        @param t_val  current direction of travel
-      */
-//    void setSelectedDirection(const IsoAgLib::IsoDirectionFlag_t t_val) {t_selectedDirection = t_val;}
     /** set commanded direction of the machine
         @param t_val  commanded direction of travel
       */
     void setSelectedDirectionCmd(const IsoAgLib::IsoDirectionFlag_t t_val) {t_selectedDirectionCmd = t_val;}
-    /** set current value of the speed as determined from a number of sources by the machine
-        @param ui16_val  current value of speed
-      */
-//    void setSelectedSpeed(const uint16_t ui16_val) {i32_selectedSpeed = ui16_val;}
     /** present limit status of selected speed
         @param t_val  limit status
       */
     void setSelectedSpeedLimitStatus(const IsoAgLib::IsoLimitFlag_t t_val) {t_selectedSpeedLimitStatus = t_val;}
-    /** set indicated speed source that is currently being reported in the machine speed parameter
-        @param t_val  speed source that is currently being reported
-      */
-//    void setSelectedSpeedSource(const IsoAgLib::IsoSpeedSourceFlag_t t_val) {t_selectedSpeedSource = t_val;}
     /** set commanded set point value of the machine speed as measured by the selected source
         @param ui16_val  set point value of the machine speed
       */
@@ -248,7 +224,7 @@ namespace __IsoAgLib {
     /** get actual distance traveled by the machine based on the value of selected machine speed
         @return  actual distance traveled
       */
-    uint32_t selectedDistance() const;
+    uint32_t selectedDistance() const {return ui32_selectedDistance;}
     /** get current direction of travel of the machine
         @return  current direction of travel
       */
@@ -302,18 +278,6 @@ namespace __IsoAgLib {
       */
     static int16_t long2int(const int32_t& rreflVal);
 
-    /** functions with actions, which must be performed periodically
-        -> called periodically by Scheduler_c
-        ==> sends base data msg if configured in the needed rates
-        possible errors:
-          * dependant error in CANIO_c on CAN send problems
-        @see CANPkg_c::getData
-        @see CANPkgExt_c::getData
-        @see CANIO_c::operator<<
-        @return true -> all planned activities performed in allowed time
-      */
-    bool timeEvent();
-
     #ifdef USE_DIN_9684
     /** send a DIN9684 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
@@ -327,7 +291,9 @@ namespace __IsoAgLib {
     /** send a ISO11783 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool isoTimeEventTracMode( );
+    bool isoTimeEventTracMode();
+    /** DUMMY nothing to do!! */
+    bool isoTimeEventImplMode();
     /** send a ISO11783 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
@@ -359,14 +325,14 @@ namespace __IsoAgLib {
     /** last 16bit theoretical distance to cope with 16bit overflows */
     int16_t i32_lastDistTheor;
     #if defined(USE_ISO_11783)
-    /** parameter indicates whetcher the reported direction is reversed from the perspective of the operator */
-    IsoAgLib::IsoOperatorDirectionFlag_t t_operatorDirectionReversed;
-    /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
-    IsoAgLib::IsoActiveFlag_t t_startStopState;
     /** actual distance traveled by the machine based on the value of selected machine speed */
     uint32_t ui32_selectedDistance;
+    /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
+    IsoAgLib::IsoActiveFlag_t t_startStopState;
 
     /** DIRECTION */
+    /** parameter indicates whetcher the reported direction is reversed from the perspective of the operator */
+    IsoAgLib::IsoOperatorDirectionFlag_t t_operatorDirectionReversed;
     /** measured signal indicating either forward or reverse as the direction of travel */
     IsoAgLib::IsoDirectionFlag_t t_directionTheor;
     /** measured signal indicating either forward or reverse as the direction of travel */

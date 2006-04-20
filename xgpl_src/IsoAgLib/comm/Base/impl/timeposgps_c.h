@@ -463,7 +463,9 @@ private:
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  virtual bool isoTimeEventTracMode( );
+  virtual bool isoTimeEventTracMode();
+  /** DUMMY nothing to do!! */
+  bool isoTimeEventImplMode() {return true;}
 
   /** send position rapid update message */
   void isoSendPositionRapidUpdate( void );

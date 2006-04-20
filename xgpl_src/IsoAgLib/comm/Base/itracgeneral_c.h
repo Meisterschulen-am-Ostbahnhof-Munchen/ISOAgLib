@@ -180,6 +180,18 @@ namespace IsoAgLib {
         @param rt_val  limit status of the rear hitch position
       */
     void setRearHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t rt_val) {TracGeneral_c::setRearHitchPosLimitStatus(rt_val);}
+    /** set state of implement in transport state
+        * @param rt_val state of implement in transport state
+        */
+    void setMaintainPowerForImplInTransport(IsoAgLib::IsoImplTransportFlag_t rt_val) { TracGeneral_c::setMaintainPowerForImplInTransport(rt_val); }
+      /** set state of implement in park state
+        * @param rt_val state of implement in park state
+        */
+    void setMaintainPowerForImplInPark(IsoAgLib::IsoImplParkFlag_t rt_val) { TracGeneral_c::setMaintainPowerForImplInPark(rt_val);}
+      /** set state of implement in work
+        * @param rt_val state of implement in work state
+        */
+    void setMaintainPowerForImplInWork(IsoAgLib::IsoImplWorkFlag_t rt_val) { TracGeneral_c::setMaintainPowerForImplInWork(rt_val);}
     #endif
     /*@}*/
 
@@ -229,13 +241,13 @@ namespace IsoAgLib {
     bool maintainActuatorPower() const { return TracGeneral_c::maintainActuatorPower();}
     /** check whether maintenance of power
       * for implement in transport state was requested */
-    bool maintainPowerForImplInTransport() const { return TracGeneral_c::maintainPowerForImplInTransport();}
+    IsoAgLib::IsoImplTransportFlag_t maintainPowerForImplInTransport() const { return TracGeneral_c::maintainPowerForImplInTransport();}
     /** check whether maintenance of power
       * for implement in park state was requested */
-    bool maintainPowerForImplInPark() const { return TracGeneral_c::maintainPowerForImplInPark();}
+    IsoAgLib::IsoImplParkFlag_t maintainPowerForImplInPark() const { return TracGeneral_c::maintainPowerForImplInPark();}
     /** check whether maintenance of power
       * for implement in work state was requested */
-    bool maintainPowerForImplInWork() const { return TracGeneral_c::maintainPowerForImplInWork();}
+    IsoAgLib::IsoImplWorkFlag_t maintainPowerForImplInWork() const { return TracGeneral_c::maintainPowerForImplInWork();}
     /** get present limit status of the front hitch position
       @return  limit status of front hitch position
     */
