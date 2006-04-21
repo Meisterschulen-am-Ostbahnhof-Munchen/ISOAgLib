@@ -1652,7 +1652,11 @@ int main(int argC, char* argV[])
       if ( tmp_str.substr( tmp_str.length()-4 ) != ".xsd" ) clean_exit (4, "Wrong file format for XML schema. Terminating.\n");
     }
 
-    std::string tmp_loc = c_directory + std::string(schemaPath); // trim pathname -> add pathname of device description
+    std::string tmp_loc;
+    if (schemaPath == NULL)
+      tmp_loc = c_directory;
+    else
+      tmp_loc = c_directory + std::string(schemaPath); // trim pathname -> add pathname of device description
 
     FILE *p_file = fopen (tmp_loc.c_str(), "r");
     if (p_file == (FILE*)NULL)
