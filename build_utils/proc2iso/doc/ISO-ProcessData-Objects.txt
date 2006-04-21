@@ -116,7 +116,6 @@ Next table gives a review of all available attributes with value range.
 <tr><td>cumulative_value</td><td> \ref XMLCumulativeValue "Cumulative value" </td></tr>
 <tr><td>command_type</td><td> \ref XMLCommandType "Command types" </td></tr>
 <tr><td>is_setpoint</td><td> \ref XMLCommandType "Set point" </td></tr>
-<tr><td>combination_element_number</td><td> Is used if the device element number doesn't correspond with the element number in the \ref XMLDPC "deviceprocessdatacombination" </td></tr>
 </table>
 
 \section XMLAttributesForElement Allowed attributes for a XML-element
@@ -163,7 +162,6 @@ If an attribute is not required, it means that is will be set to a default value
 <tr><td> \anchor XMLDPC deviceprocessdatacombination </td><td> ddi </td><td> yes </td></tr>
 <tr><td>  </td><td> command_type </td><td> no </td></tr>
 <tr><td>  </td><td> is_setpoint </td><td> yes </td></tr>
-<tr><td>  </td><td> combination_element_number </td><td> no </td></tr>
 <tr><td> \anchor XMLDVP devicevaluepresentation </td><td> offset </td><td> yes </td></tr>
 <tr><td>  </td><td> scale </td><td> yes </td></tr>
 <tr><td>  </td><td> number_of_decimals </td><td> yes </td></tr>
@@ -184,7 +182,7 @@ If you want to specify what type a device element is, the attribute value has a 
 
 \section XMLTriggerMethods Trigger methods
 If you want to specify the trigger method for a device process data, the attribute value has a range of 0...31 (see ISO 11873-10 Annex A.4), alternatively you can use one of the following 5 trigger method constants:<p>
-<table><tr><th> Name of device element type </th></tr>
+<table><tr><th> Name of trigger method </th></tr>
 <tr><td> (1) timeinterval</td></tr>
 <tr><td> (2) distanceinterval</td></tr>
 <tr><td> (4) threshold limits</td></tr>
