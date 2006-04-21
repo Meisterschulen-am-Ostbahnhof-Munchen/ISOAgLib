@@ -767,20 +767,6 @@ MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c rc_streamIdent
     if (curStream.getIdent() == rc_streamIdent) // .matchRSI (rc_streamIdent)
     #endif
     {
-      if (curStream.getStreamingState() == StreamFinished)
-      { // finish it now, because a new one will have to be created NOW - do we can't wait with finishing until timeEvent!
-        const bool cb_keepStream = finishStream (curStream);
-        if (cb_keepStream)
-        { // keep it, do NOT delete
-          i_list_streams++;
-          continue;
-        }
-        else
-        { // delete it
-          i_list_streams = list_streams.erase (i_list_streams);
-          continue;
-        }
-      }
       if (curStream.getStreamingState() != StreamFinishedJustKept)
       { // only return streams that are not "kept". ignore kept streams here for further processing!
         return &curStream;
@@ -804,16 +790,30 @@ Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
 {
   std::list<DEF_Stream_c_IMPL>::iterator i_list_streams = list_streams.begin();
   while (i_list_streams != list_streams.end()) {
-    DEF_Stream_c_IMPL* curStream = &*i_list_streams;
+    DEF_Stream_c_IMPL& curStream = *i_list_streams;
     #ifdef NMEA_2000_FAST_PACKET
-    if ((curStream->getIdent().matchSaDa (sa, da)) && (rb_fastPacket == (curStream->getStreamType() == StreamFastPacket)))
+    if ((curStream.getIdent().matchSaDa (sa, da)) && (rb_fastPacket == (curStream.getStreamType() == StreamFastPacket)))
     #else
-    if (curStream->getIdent().matchSaDa (sa, da))
+    if (curStream.getIdent().matchSaDa (sa, da))
     #endif
     {
-      if (curStream->getStreamingState() != StreamFinishedJustKept)
+      if (curStream.getStreamingState() == StreamFinished)
+      { // finish it now, because a new one will have to be created NOW - do we can't wait with finishing until timeEvent!
+        const bool cb_keepStream = finishStream (curStream);
+        if (cb_keepStream)
+        { // keep it, do NOT delete
+          i_list_streams++;
+          continue;
+        }
+        else
+        { // delete it
+          i_list_streams = list_streams.erase (i_list_streams);
+          continue;
+        }
+      }
+      if (curStream.getStreamingState() != StreamFinishedJustKept)
       { // only return streams that are not "kept". ignore kept streams here for further processing!
-        return curStream;
+        return &curStream;
       }
     }
     i_list_streams++;
