@@ -8,19 +8,18 @@
 </ul>
 
 \section XMLUsage Usage in your own project
-First of all, it is very helpful to have a look to the <b> Tutorial 3.0 </b>. Other than that, read on here or contact the IsoAgLib mailing list for further help.
+First of all, it is very helpful to have a look to the <b> Tutorial 3.0</b>. Other than that, read on here or take a look at the section \ref IndexGettingHelp "Getting Help".
 <p>
 \subsection vt2isoImplementation Modes
 Generally, there are two ways you can implement your generated objectpool into your application: As a <b>Standalone Class (direct)</b> or as a <b>Derived Class (derived)</b>. Note that always both versions are created by vt2iso.
 <ul>
   <li> Use the generated <i>iObjectPool</i> class as standalone (direct, as implemented in the Tutorial 3.0):
     <ul>
-      <li> Take a look at the following example, in which the <i>iObjectPool</i> class is generated for standalone use:
       <li> Include the necessary headers through one collective include file
       \code
       #include "MaskDefinition/simpleVTIsoPool_direct.h"
       \endcode
-      <li> Then implement the neccessary methods from <i>iObjectPool_simpleVTIsoPool_c</i>, whereas "simpleVTIsoPool" is generated from the filename of your XML!
+      <li> Then implement the necessary methods from <i>iObjectPool_simpleVTIsoPool_c</i>, whereas "simpleVTIsoPool" is generated from the filename of your XML!
       \code
       void iObjectPool_simpleVTIsoPool_c::eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton) { ... }
       void iObjectPool_simpleVTIsoPool_c::eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value) { ... }
@@ -39,7 +38,7 @@ Generally, there are two ways you can implement your generated objectpool into y
       //virtual void eventVtStatusMsg ();
       \endcode
       <li> <b>Note:</b> vt2iso does NOT override the manual changes (uncommenting some of those methods for implementation) you may have made in the <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc</i> file, so it will NOT override this file at the next call of vt2iso, but will name the file <i>MaskDefinition/simpleVTIsoPool-handler-direct.inc-template</i> then. Only if new functions are added there, you may need to copy the template file over or add the new functions from the template file by hand!
-      <li> It's important that <i>eventObjectPoolUploadedSuccessfully</i> updates all necessary values of the objectpool. It will be called everytime the pool is uploaded/loaded from non-volatile-storage (harddisk, flashdisk, etc.). This is also the case when the VT is switched off and on during operation!
+      <li> Note that <i>eventObjectPoolUploadedSuccessfully</i> will be called everytime the pool is uploaded/loaded from non-volatile-storage (harddisk, flashdisk, etc.). This is also the case when the VT is switched off and on during operation!
 
       <li> In direct use create an instance of that class like the following code:
       \code
@@ -56,7 +55,7 @@ Generally, there are two ways you can implement your generated objectpool into y
       \code
       #include "MaskDefinition/simpleVTIsoPool.xml_derived-h.h"
       \endcode
-      in your ".h" file (that's why its name is "-h.h").<br> That's all to include.
+      in your ".h" file (that's why its name is "-h.h").<br> That's all to include. Simply public-derive your (main-)class from <i>iObjectPool</i> now.
     </ul>
 </ul>
 
@@ -69,10 +68,10 @@ getIisoTerminalInstance().init (&c_myIdent, &MyPool_c, "WS-Name");
 \subsection Function Control Flow
 Assuming the following (illustrating) sequences, the according handlers will be called as described here:
 <ol>
-  <li> The objectpool has been uploaded or loaded from nonvolatile-storage successfully. It's being (up)loaded in the language currently setup, or the default language (if the setup language is not supported in the workingset). <b>eventObjectPoolUploadedSuccessfully</b> will be called with paramter <b>rb_wasLanguageUpdate == false</b> and the language it was uploaded to the VT in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information").
-  <li> The Operator changes the language. If there's an update of the objectpool required, <b>eventPrepareForLanguageChange</b> is called (with the new \ref LanguageInfo "Language Information") so the application can issue some commands BEFORE the partial object pool will take place. This is important if the partial language pool update takes a while (when there're many language-dependend objects) and the ECU won't be able react on anything. So the best thing would be to issue a change to a special "Wait while changing language..."-mask here.
+  <li> The objectpool has just been uploaded or loaded from nonvolatile-storage successfully. It has then been (up)loaded in the language currently setup, or the default language (if the setup language is not supported in the workingset). <b>eventObjectPoolUploadedSuccessfully</b> will be called with paramter <b>rb_wasLanguageUpdate == false</b> and the language it was uploaded to the VT in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information").
+  <li> The Operator changes the language. If there's an update of the objectpool required, <b>eventPrepareForLanguageChange</b> is called (with the new \ref LanguageInfo "Language Information") so the application can issue some commands BEFORE the partial object pool update will take place. This is important if the partial language pool update takes a while (when there're many language-dependend objects) and the ECU won't be able to react on anything. So the best thing would be to issue a change to a special "Wait while changing language..."-mask here.
        (Note that this may not occur on all changes. Changing from one unsupported language to another unsupported will NOT lead to anything (no pool update, no handler getting called!))
-  <li> After the language update has succeeded, <b>eventObjectPoolUploadedSuccessfully</b> will be called with paramter <b>rb_wasLanguageUpdate == true</b> and the language it was changed to in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information"). Based on <b>rb_wasLanguageUpdate == true</b> it can now be switched back from the "Wait while changing language..."-mask if it was changed to such a mask.
+  <li> After the language update has succeeded, <b>eventObjectPoolUploadedSuccessfully</b> will be called with paramter <b>rb_wasLanguageUpdate == true</b> and the language it was changed to in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information"). Based on <b>rb_wasLanguageUpdate == true</b> it can now be switched back from the "Wait while changing language..."-mask if it was changed to such a mask before.
   <li> Now lets assume that the VT drops off-line. The workingset has to enter a safe state according to the ISO specs, so <b>eventEnterSafeState ()</b> is being called. The application should then stop all VT operation (change commands, etc.) for now.
   <li> After the VT is turned back on and the objectpool has been successfully re(up)loaded, <b>eventObjectPoolUploadedSuccessfully</b> will be called again with paramter <b>rb_wasLanguageUpdate == false</b> and the language it was uploaded to the VT in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b>.
 </ol>
@@ -80,9 +79,9 @@ During operation the following events can occur, which will lead to the their as
 <ul>
   <li> The operator presses a softkey or button: <b>eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton)</b>
   <li> The operator enters a numeric value in an InputNumber field, (de)selects an InputBoolean field or selects an entry of an InputList: <b>eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value)</b>
-  <li> The operator enters text in an InputString field: <b>eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast)</b> - for normal operation only react when rb_isLast==true See the Tutorial 3.0 example.
-  <li> The operator presses on the touch-screen or alike in a region where no input field has been placed, so <b>eventPointingEvent (uint16_t rui16_xPosition, uint16_t rui16_yPosition)</b> gets called. NOTE that the positions are the actual positions from the VT and NOT positions from your objectpool. Remember that your objectpool's coordinates/size are probably scaled to completely fill out the mask's area! ALSO NOTE that this MAY BE CHANGED at a later time to deliver unified objectpool coordinates, or probably both to avoid any misinterpretation. So for now you'll have to dived the coordinates by the scaling factor!
-  <li> If due to some connection problems a string value activation command, that is being sent via TransportProtocol, from the VT to the ECU is aborted in between, <b>eventStringValueAbort()</b> is called. You need ONLY care for this event if you do partial parsing of the string via eventStringValue. If you only parse the string when it's completely received (by b_isLast==true), then you do NOT have to care about this message (which is the normal case!).
+  <li> The operator enters text in an InputString field: <b>eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast)</b> - for normal operation only react when <i>rb_isLast==true</i>. See the Tutorial 3.0 example.
+  <li> The operator presses on the touch-screen or alike in a region where no input field has been placed, so <b>eventPointingEvent (uint16_t rui16_xPosition, uint16_t rui16_yPosition)</b> gets called. NOTE that the positions are the actual positions from the VT and NOT positions from your objectpool. Remember that your objectpool's coordinates/size are probably scaled to completely fill out the mask's area! ALSO NOTE that this MAY BE CHANGED at a later time to deliver unified objectpool coordinates, or probably both to avoid any misinterpretation. So for now you'll have to divide the coordinates by the scaling factor!
+  <li> If due to some connection problems a string value activation command, that is being sent via TransportProtocol, from the VT to the ECU is aborted in between, <b>eventStringValueAbort()</b> is called. You need ONLY care for this event if you do partial parsing of the string via eventStringValue. If you only parse the string when it's completely received (by b_isLast==true), then you do NOT have to care about this event (which is the normal case!).
   <li> If you care for the response of a command, you can overload <b>eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8])</b>. It will be called when receiving a response. I a message times out, NO notification is done yet.
 </ul>
 The next events can occur anytime, not only when the objectpool is on display!
@@ -92,13 +91,13 @@ The next events can occur anytime, not only when the objectpool is on display!
 </ul>
 During upload, the following function will get called:
 <ul>
-  <li> <b>convertColour (...)</b>: Its purpose is to map the colours of the objectpool to the colours that can be display. Remember, we have to display correctly on 2- and 16-color VTs, too! Normally the default implementation should do a good job if you don't use any of the colors 16-255...
+  <li> <b>convertColour (...)</b>: Its purpose is to map the colours of the objectpool to the colours that can be actually displayed on the connected VT. Remember that we have to display correctly on 2- and 16-color VTs, too! Normally the default implementation should do a good job if you don't use any of the colors 16-255...
 </ul>
 
 
 \section XMLGeneralStructure General structure of the XML-file(s)
 <ul>
-  <li> You can split your object-pool-definition to several XML files so you don't have one big XML file. It's NO difference if you split it up or not - it's only for readability!
+  <li> You can split your object-pool-definition to several XML files so you don't have one big XML file. It's NO difference if you split it up or not - it's only for your own structuring and readability!
   <li> The parser will treat all XML files matching your base-filename (for example <i>simpleVTIsoPool</i>) as one big XML file, ordered alphabetically.
   <li> Thus having created the files <i>simpleVTIsoPool00_WorkingSetAndVariables.xml</i> and <i>simpleVTIsoPool01_DataMask1.xml</i>, you'd simply pass the base-filename <b>simpleVTIsoPool</b> as parameter to the conversion script (which invokes vt2iso).
   <li> Root-Attributes (given in &lt;objectpool&gt;)
@@ -115,6 +114,7 @@ During upload, the following function will get called:
           <li> <i>auto_language='...'</i> (defaults to unused): Specify in which languages the objects InputString and StringVariable should be available automatically. This value is simply set as default for <i>language='...'</i> in those objects. You can enumerate the languages like <i>language='en+de+it'</i> or specify all languages using '*'. For more information see \ref MultiLanguage "MultiLanguage".
         </ul>
     </ul>
+  <li> Note that the first element MUST be the \<workingset\> element.
 </ul>
 Take a look at the following snippet of <i>simpleVTIsoPool.xml-0_WorkingSetAndVariables</i>, which is the first in alpabetical order and has the dimension and path-attributes set:
 \code
@@ -149,28 +149,8 @@ Now here's a snippet from <i>simpleVTIsoPool.xml-1_DataMask1</i>:
 </objectpool>
 \endcode
 
-\section MultiLanguage HOW TO design a multi-language objectpool
-As you already specify in the \<workingset\> object which languages are supported by this workingset, vt2iso/IsoAgLib uses these languages for the multi-language support.
 
-You can either not specify any language at all (if you only have one fix language in your workingset) or use the multilanguage feature and specify a number of languages like
-\code
-  <workingset name='MyMultiLanguageWorkingSet' background_colour='white' selectable='yes' active_mask='MyDataMask1'>
-    <!-- WorkingSet Descriptor Object shall be included here -->
-    <language code='en' /> <!-- Note that the first language is the default language! -->
-    <language code='de' />
-    <language code='it' />
-  </workingset>
-\endcode
-Note that the first language is the default language! The default language is used when the operator selects a language from the VT's language selection that is NOT supported by the workingset, i.e. is not listed in the \<workingset\> object.
-
-Important to know is that there will be two parts generated from your object pool: The <i>general</i> part and the <i>language specific</i> part.
-Without specifying the language in an object, the object will be placed in the general part.
-
-Now you have to decide which objects should depend on the selected language. Not only texts-objects can be exchanged but also any kind of object, e.g. picture-graphics, font-attributes, etc.
-If you want to ... work-in-progress...
-
-
-\section XMLNamingConvention Naming-Conventions for \< TAG attribute =' value ' \>
+\section XMLNamingConvention Naming-Conventions for \<TAG attribute='value'\>
 <ul>
 <li> Everything is named according to <b>ISO 11783</b>.
 <li> <b>Tag</b>s are written WITHOUT underscores/spaces (for example "<picturegraphic>").
@@ -188,56 +168,185 @@ If you want to ... work-in-progress...
 <li> IMPORTANT: When using own IDs/KeyCodes, try not to interfere with the automatically generated numbers: Use Object-IDs greater than 256 for not interfering with Macros.
 </ul>
 
-\section XMLAttributes Important note on Attributes and Exchangeable SoftKey Elements
+
+
+\section MultiLanguage HOW TO design a multi-language objectpool
+As you already specify in the \<workingset\> object which languages are supported by this workingset, vt2iso/IsoAgLib uses these languages for the multi-language support.
+
+You can either not specify any language at all (if you only have one fix language in your workingset) or use the multilanguage feature and specify a number of languages like
+\code
+  <workingset name='MyMultiLanguageWorkingSet' background_colour='white' selectable='yes' active_mask='MyDataMask1'>
+    <!-- WorkingSet Descriptor Object shall be included here -->
+    <language code='en' /> <!-- Note that the first language is the default language! -->
+    <language code='de' />
+    <language code='it' />
+  </workingset>
+\endcode
+Note that the first language is the default language! The default language is used when the operator selects a language from the VT's language selection that is NOT supported by the workingset, i.e. is not listed in the \<workingset\> object.
+
+
+\subsection LanguageInfo General Language Information
+There are always two parameters when it's about language information (as e.g. passed in <i>eventPrepareForLanguageChange</i>:
+<ol>
+  <li> <b> The Language Index (signed 8 bit)</b>:
+    <ul>
+      <li> <i>\< 0</i> means a language that your workingset does NOT support - your default language is used instead (index 0) for uploading.
+      <li> <i>== 0</i> means the default language. This is the first language given - in the example above this would be english ('en').
+      <li> <i>\> 0</i> means the alternative languages. 1 is for the second language, 2 for third language - in the example above this would be german ('de') and italian ('it') respectively.
+    </ul>
+  <li> <b> The Language Code (unsigned 16 bit)</b>: The two-letter language code according to ISO 639 is coded in the 16 bit number as follows (only if you're supporting 2 or more language! - else its value is 0x0000):
+    \code
+      ui16_languageCode = (char1 << 8) | char2;
+    \endcode
+      To convert the language code into a string, you could use the following code snippet.
+    \code
+      char str_languageCode [2+1];
+      str_languageCode [0] = ui16_languageCode >> 8;
+      str_languageCode [1] = ui16_languageCode & 0xFF;
+      str_languageCode [2] = 0x00;
+    \endcode
+    Note that the language code represents the language that is actually being used and NOT necessarily the language the user set up in the VT (which the workingset may not support). So actually a language index less than 0 means (just like 0) that the default language is used - but this way you can differentiate between the operator willingly selecting your default language (index==0) and the operator selecting an unsupported language (<0).
+</ol>
+
+
+\subsection Designating objects to be multi-language
+There will be two parts generated from your object pool: The <i>general</i> part and the <i>language specific</i> part.
+Without specifying the language in an object, the object will be placed in the general part. To put an object into the language specific part, just use the <i>language='...'</i> attribute.
+If you put one object into the language specific part, then an object of the same name/ID has to be in the object pool for ALL supported languages. The objects needn't be of the same type, as you may wish to express something textual in one language and graphical in another.
+See the following example:
+\code
+  <stringvariable name='StrNone' language="en" value='none selected!'       />
+  <stringvariable name='StrNone' language="de" value='nichts ausgewählt'    />
+  <stringvariable name='StrNone' language="it" value='niente selezionato!'  />
+\endcode
+You can also specify more languages at once or use the asterisk to make it available in all languages (this makes only sense when getting different values from the language-text-files, see further below).
+\code
+  <stringvariable name='StrRed'   language="en+it" value="red" />       <!--- I don't know 'red' in italian, so they will also get 'red' here -->
+  <stringvariable name='StrRed'   language="de"    value="rot" />       <!--- Yes, I do know german, so 'rot' should be displayed when the VT is set to german -->
+
+  <stringvariable name='StrGreen' language="en+de+it" value="green" />  <!-- Note that this actually works, but makes no sense, as all languages have the same value. -->
+  <stringvariable name='StrBlue'  language="*"        value="blue" />   <!-- "*" has the same meaning as "en+de+it". Same senseless... -->
+\endcode
+If you are just to exchange the texts of objects given in the <i>value='...'</i> attribute, you can just enter the languages for which you have the value attribute stored in the language-text files and the <i>value='...'</i> attribute will be automatically taken from those files. See \ref ValueFile "Naming and Format of language file" for further information on these files. You can also combine the different approachs, so it could look like the following:
+\code
+  <stringvariable name='StrYellow' language='en' value='yellow' />
+  <stringvariable name='StrYellow' language='de+it' />
+\endcode
+The values for the german and italian version of StrYellow will be taken out of their corresponding language-value-file. Normally it makes sense to put all languages in language-value-files and simply add <i>language='*'</i> to the object.
+
+\section ValueFile Naming and structure of language-value-files
+Given a language in an object and omitting the <i>value='...'</i> attribute, vt2iso will search through the so called language-value-files for the value of that specific language. The filename is built from the name passed to vt2iso (in our example above 'simpleVTIsoPool') and the addition '.values.LC.txt' whereas 'LC' is being replaced by the language-code. For the english language the result would be 'simpleVTIsoPool.values.en.txt'.
+
+The structure of the files is best described with the following example from the Tutorial 3.0:
+\code
+StrGreen, "grün"
+StrBlue, "blau"
+resetTextOS, "Neustart"
+\endcode
+The first column describes the object's name, then followed by a separating comma. After that the value surrounded by quotation marks is expected. That's all.
+
+
+
+
+\section XMLAttributes Important rules for designing correct object pools
+It is VERY IMPORTANT that you don't judge your objectpool's appearance only by displaying it at one specific VT. There are many pitfalls one could run into (Well, I also made this experience).
+
+
+
+\subsection Accounting the three different scaling areas
+When an object pool is being scaled to fit the VT's dimension, there are three areas that get different scaling (and centering) applied:
 <ul>
-<li> It is very important that you DO NOT use the same Attributes (Font, Line, ...) in Data/Alarm AND Softkey masks as different scalings have to be applied.<br>So I recommend for example to define a <b>FontAttributesDataAlarmMask6x8</b> and a <b>FontAttributesSoftkeyMask6x8</b> object.<br>
-Take a look at the following example snippet:
+  <li> <b>The Datamask</b>: Everything here gets scaled by the factor <i>VTdimension / OPdimension</i>. As the datamask is square, no centering is required.
+  <li> <b>The Softkeymask</b>: Everything here gets scaled by the lesser one of the factors <i>VTwidthSK / OPwidthSK</i> and <i>VTheightSK / OPwheightSK</i>. Along with scaling, the contents of the softkeys are then finally centered (In future revisions, scaling of softkeys may be made user-configurable).
+  <li> <b>The Buttons</b>: Every button has its own factor and centering. This is due to the fact that the outer border of the button (the width/height given in the button-object) is scaled by the same factor as any other datamask-object, but the inner space left to place objects differs, because the border decreases the inner space by a fixed amount of 4 pixels on all side. This is best illustrated on a short example: A button in a datamask area designed for 200x200 has a size of 10x10. Substracting the borders (4 pixels left, right, up and down), the useable area inside the button is 2x2 pixels. Now when this pool gets scaled to a 400x400 VT, the datamask's scaling-factor is 2. This scales the button to 20x20, but its border remains the same width. The useable area is then 12x12. So the scaling-factor for this button's inner-area is 6, in contrast to the datamask's factor of 2. Note that this deviance of the buttons' factors will get smaller for larger buttons and greater for smaller ones (as seen in the extreme example!).
+</ul>
+
+As there's different scaling applied, an object can only be placed (or be referenced from) one of the three areas.
+This accounts to any parent-included object as any other object that is being scaled. Note that this does imply FontAttributes, LineAttributes and the like, too! So you can NOT use/reference the same fontattributes object from e.g. a datamask and a softkeymask. (It may look okay when no scaling is applied, but try another VT :-)
+
+So you need to define separate objects that can be used in the different areas. Take a look at the following example snippet:
 \code
 <!-- Attributes for Data-/Alarm-Masks -->
-  <fontattributes name='FontAttrNormal6x8' font_colour='black' font_size='6x8' font_type='latin1' />
-  <fontattributes name='FontAttrNormal8x8' font_colour='black' font_size='8x8' font_type='latin1' />
-  <fontattributes name='FontAttrNormal12x16red' font_colour='red' font_size='12x16' font_type='latin1' />
-  <lineattributes name='LineAttrNormal' line_colour='black' line_width='1' line_art='1111111111111111'/>
-  <lineattributes name='LineAttrNormalDot' line_colour='black' line_width='1' line_art='1010101010101010'/>
+  <fontattributes name='FontAttrNormal6x8'      font_colour='black' font_size='6x8'   font_type='latin1' />
+  <fontattributes name='FontAttrNormal8x8'      font_colour='black' font_size='8x8'   font_type='latin1' />
+  <fontattributes name='FontAttrNormal12x16red' font_colour='red'   font_size='12x16' font_type='latin1' />
+  <lineattributes name='LineAttrNormal'         line_colour='black' line_width='1'    line_art='1111111111111111'/>
+  <lineattributes name='LineAttrNormalDot'      line_colour='black' line_width='1'    line_art='1010101010101010'/>
 
 <!-- Attributes for SoftKey-Masks -->
-  <fontattributes name='FontAttrSKM6x8' font_colour='black' font_size='6x8' font_type='latin1' />
-  <fontattributes name='FontAttrSKM8x8' font_colour='black' font_size='8x8' font_type='latin1' />
+  <fontattributes name='FontAttrSKM6x8'   font_colour='black' font_size='6x8'   font_type='latin1' />
+  <fontattributes name='FontAttrSKM8x8'   font_colour='black' font_size='8x8'   font_type='latin1' />
   <fontattributes name='FontAttrSKM12x16' font_colour='black' font_size='12x16' font_type='latin1' />
-  <lineattributes name='LineAttrSKM' line_colour='black' line_width='1' line_art='1111111111111111'/>
+  <lineattributes name='LineAttrSKM'      line_colour='black' line_width='1'    line_art='1111111111111111'/>
+
+<!-- Attributes for Buttons -->
+  <fontattributes name='FontAttr6x8Button60x40'   font_colour='black' font_size='6x8'   font_type='latin1' />
+  <fontattributes name='FontAttr12x16Button60x40' font_colour='black' font_size='12x16' font_type='latin1' />
+  <fontattributes name='FontAttr6x8Button124x76'  font_colour='black' font_size='6x8'   font_type='latin9' />
 \endcode
-<li> You can't define exchangeable contents in a SoftKey (lets take an OutputString with "On" and one with "Off" for example), instead you'll have to do exchangeable SoftKeys. Objects not known where they'll be used in can't be auto-detected from the Auto-Scale function. Keep in mind that scaling of the SoftKeys may differ from scaling of the Data-/Alarm-Masks!<br>
-Take a look at the following <b>WRONG</b> example snippet, keep in mind the outputstrings are defined directly in &lt;objectpool&gt; and not inside somewhere else, so there's no way they could be auto-detected (how should anybody know that switchOn/OffText should be scaled according to softkeys?):
+
+
+
+
+IsoAgLib does its best to detect in which area all your objects are placed to apply the necessary scaling. What it can't know by itself are objects that are just defined somewhere without being used in another object right now,
+but will be used during runtime by changing some object pointer to point to it. For those objects you need to specify this knowledge directly using the <i>in_key='yes'</i> and <i>in_button='MyButton1'</i> attributes. Note that this is also meta-information which is only needed for the VT-client side to scale accordingly during upload of the object pool.
+
 \code
-<outputstring name='switchOnText'  width='12' height='8' background_colour='white'
-              font_attributes='FontAttributesSKM6x8' value='On'  horizontal_justification='left' />
+<objectpool {attributes}>
+  <outputstring name='switchOnText' width='12' height='8' background_colour='white'
+                font_attributes='fa6x8SKM' value='On'  horizontal_justification='left' in_key='yes' />
 
-<outputstring name='switchOffText' width='18' height='8' background_colour='white'
-              font_attributes='FontAttributesSKM6x8' value='Off' horizontal_justification='left' />
+  <outputstring name='switchOffText' width='18' height='8' background_colour='white'
+                font_attributes='fa6x8SKM' value='Off' horizontal_justification='left' in_key='yes' />
 
-<softkeymask name='SoftKeyMask1'>
-  <key name='KeySwitch' background_colour='white'>
-    <objectpointer name='switchPointer' pos_x='0' pos_y='0' value='switchOnText' />
-  </key>
-</softkeymask>
+  <outputnumber name='buttonChoice1' font_attributes='fa6x8ButtonChoice' in_button='MyButton1' />
+  <outputnumber name='buttonChoice2' font_attributes='fa6x8ButtonChoice' in_button='MyButton1' />
+  <outputnumber name='buttonChoice3' font_attributes='fa6x8ButtonChoice' in_button='MyButton1' />
+
+  <button name='MyButton1'>
+    <objectpointer name='buttonPtr' pos_x='0' pos_y='0' value='buttonChoice1' />
+  </button>
+
+  <softkeymask name='SoftKeyMask1'>
+    <key name='KeySwitch' background_colour='white'>
+      <objectpointer name='switchPointer' pos_x='0' pos_y='0' value='switchOnText' />
+    </key>
+  </softkeymask>
+</objectpool>
 \endcode
 
-Here's the <b>CORRECT</b> example snippet (not the texts are exchanged, but the whole softkeys - this way it's clear that switchOn/OffText are to be scaled for use in softkeys!):
+
+
+\subsection Philosophy: Up- or downscaling?
+
+The IsoAgLib-approach in designing object pools is to design for datamasks of 200x200 pixel and softkeymasks of 60x32 (or square 32x32),
+because these are the minimum requirements a VT has to fulfill, so only up-scaling will be done. If you would design an object pool for e.g. 400x400,
+you must be aware of the fact that this won't bring you any benefit, because you shouldn't e.g. use any font like 6x8, because when uploaded to a 200x200 VT
+it can't be scaled down to 3x4, so 6x8 would also be used and probably half of your text get clipped.
+
+
+
+\subsection Gaps in the masks / Font-relative positioning
+
+As the font-attributes can't be scaled with the exact scaling-factor, the best matching font-size is being used. Scaling an objectpool from 200x200 to 240x240 will result in a scaling factor of 1.2. Scaling a 6x8 font by 1.2 will result in a theoretical font size of 7.2x9.6. So only the next possible smaller font-size can be used, which is again 6x8. So there's a \"gap\" after the text outputed. This gap doesn't harm unless you want to place some other object directly at the right end side of the text.
+A common use case would be a line of text assemled by four output objects, e.g. "Change position 00 to item 07" If this is split up into the output-strings "Change position ", "to item" and two output-number fields, then this gap would really not look nice but disturbing.
+So you can additionally to the <i>pos_x</i> and <i>pos_y</i> attributes specify the position of an object dependent on the real scaled size of a given font-attributes object. Simply take a look at the following example:
 \code
-<key name='KeySwitchOn' background_colour='white'>
-  <outputstring name='switchOnText'  pos_x='0' pos_y='0' width='12' height='8' background_colour='white'
-                font_attributes='FontAttributesSKM6x8' value='On'  horizontal_justification='left' />
-</key>
-<key name='KeySwitchOff' background_colour='white'>
-  <outputstring name='switchOffText' pos_x='0' pos_y='0' width='18' height='8' background_colour='white'
-                font_attributes='FontAttributesSKM6x8' value='Off' horizontal_justification='left' />
-</key>
+<datamask {attributes]>
+  {objects, objects...}
 
-<softkeymask name='SoftKeyMask1'>
-  <objectpointer name='switchPointer' value='KeySwitchOn' />
-</softkeymask>
+  <outputstring {attributes} pos_x='10' pos_y='64' value='Change position' font_attributes='fa8x12' />
+  <outputnumber {attributes} pos_x='10' pos_y='64' value='0'               font_attributes='fa8x12' block_font='fa8x12' block_col='16' />
+  <outputstring {attributes} pos_x='10' pos_y='64' value='to item'         font_attributes='fa8x12' block_font='fa8x12' block_col='19' />
+  <outputnumber {attributes} pos_x='10' pos_y='64' value='0'               font_attributes='fa8x12' block_font='fa8x12' block_col='27' />
+</datamask>
 \endcode
-</ul>
+
+Note that also <i>block_row='...'</i> can be used (alternatively/additionally) and the positions are actually set in the parent object (datamask/container) and are NOT attributes the object itself.
+This mechanism is also NOT something from the ISO standard but an internal calculation position during upload-time. The font-relative positions will then simply be added to the normal positions.
+
+
+
 
 \section XMLNesting Using objects: Allowed object nesting
 
