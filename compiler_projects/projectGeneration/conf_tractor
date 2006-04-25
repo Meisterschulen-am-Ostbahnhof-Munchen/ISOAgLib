@@ -153,27 +153,43 @@ PRJ_ISO11783=1
 #                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
 # PRJ_MULTIPACKET_STREAM_CHUNK=1
 
-# select if base data like tractor speed, distance, ISO GPS, PTO RPM
-# shall be gathered from BUS ( either receive or send )
-PRJ_BASE=1
+# all BASE data are selected
+# if only special BASE data should be used select one or more of the following parts
+# PRJ_BASE=0
 
 # only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
 # PRJ_TRACTOR_GENERAL=0
 
-# only incorporate parts from BASE that provide tractor distance and speed information
+# only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
 # PRJ_TRACTOR_MOVE=0
 
 # only incorporate parts from BASE that provide tractor PTO information
+# this part includes tractor pto set point data which is not available in the 
+# free ISOAgLib edition. If you are interested in this feature please contact OSB AG 
 # PRJ_TRACTOR_PTO=0
 
 # only incorporate parts from BASE that provide tractor lighting information
+# this part is only defined for ISO 11783
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
 # PRJ_TRACTOR_LIGHT=0
 
 # only incorporate parts from BASE that provide tractor auxiliary valve information
+# this part is only defined for ISO 11783
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
 # PRJ_TRACTOR_AUX=0
 
 # only incorporate parts from BASE that provide time and GPS information
 # PRJ_TIME_GPS=0
+
+# only incorporate parts from BASE that provide tractor guidance information
+# this part is only defined for ISO 11783
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# PRJ_TRACTOR_GUIDANCE=0
+
+# only incorporate parts from BASE that provide tractor certification information
+# this part is only defined for ISO 11783
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# PRJ_TRACTOR_CERTIFICATION=0
 
 # ###############################################################
 # Process Data Communication Setup

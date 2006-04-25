@@ -115,6 +115,8 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + PRJ_TRACTOR_PTO (only incorporate parts from BASE that provide tractor PTO information)
 # + PRJ_TRACTOR_LIGHT (only incorporate parts from BASE that provide tractor lighting information)
 # + PRJ_TRACTOR_AUX (only incorporate parts from BASE that provide tractor auxiliary valve information)
+# + PRJ_TRACTOR_GUIDANCE (only incorporate parts from BASE that provide tractor guidance information)
+# + PRJ_TRACTOR_CERTIFICATION (only incorporate parts from BASE that provide tractor certification information)
 # + PRJ_TIME_GPS (only incorporate parts from BASE that provide time and GPS information)
 # + PRJ_PROCESS ( specify if process data should be used ; default 0 )
 #   - PRJ_FIELDSTAR_GPS ( specify if process data based decode of Fieldstar or LBS+ GPS data is wanted; default 0 )
@@ -273,6 +275,12 @@ function check_set_correct_variables()
   fi
   if [ "A$PRJ_TIME_GPS" = "A" ] ; then
   	PRJ_TIME_GPS=0
+  fi
+  if [ "A$PRJ_TRACTOR_GUIDANCE" = "A" ] ; then
+  	PRJ_TRACTOR_GUIDANCE=0
+  fi
+  if [ "A$PRJ_TRACTOR_CERTIFICATION" = "A" ] ; then
+  	PRJ_TRACTOR_CERTIFICATION=0
   fi
 
 
@@ -497,15 +505,15 @@ function create_filelist( )
       COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*traclight*' -a -not -name '*trac*setpoint*' -a -not -name '*tracaux*' \)"
     else
 # until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files		
-#      COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*trac*setpoint*' \) "
+      COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
+#      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*trac*setpoint*' \) "
     fi
   fi
-  if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
+  if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 -o $PRJ_TRACTOR_GUIDANCE -gt 0 -o $PRJ_TRACTOR_CERTIFICATION -gt 0; then
 	  COMM_FEATURES="$COMM_FEATURES -o -name 'ibasetypes.h' -o -name 'basecommon_c*'"
 	fi
   if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracgeneral*' \)"
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracgeneral_c*' \)"
   fi
   if [ $PRJ_TRACTOR_MOVE -gt 0 ] ; then
 		if [ $PRJ_ISO11783 -lt 1 ] ; then
@@ -525,8 +533,8 @@ function create_filelist( )
 		else
 			# allow tracpto_c.h and tracptosetpoint_c.h
 # until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files		
-#	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
-	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
+	#    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
 		fi
   fi
   if test $PRJ_TRACTOR_LIGHT -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
@@ -537,6 +545,20 @@ function create_filelist( )
   if test $PRJ_TRACTOR_AUX -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
 		# tracaux is only defined for ISO 11783
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracaux*' \)"
+	else
+	PRJ_TRACTOR_AUX=0	
+	fi
+	if test $PRJ_TRACTOR_GUIDANCE -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
+		# tracguidance is only defined for ISO 11783
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracguidance*' \)"
+	else
+	PRJ_TRACTOR_GUIDANCE=0	
+  fi
+	if test $PRJ_TRACTOR_CERTIFICATION -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
+		# tracguidance is only defined for ISO 11783
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*traccert*' \)"
+	else
+	PRJ_TRACTOR_CERTIFICATION=0	
   fi
   if [ $PRJ_TIME_GPS -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*timeposgps*' \)"
@@ -945,6 +967,12 @@ function create_autogen_project_config()
 	fi
 	if [ $PRJ_TRACTOR_AUX -gt 0 ] ; then
 		echo -e "#ifndef USE_TRACTOR_AUX $ENDLINE\t#define USE_TRACTOR_AUX $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+	if [ $PRJ_TRACTOR_GUIDANCE -gt 0 ] ; then
+		echo -e "#ifndef USE_TRACTOR_GUIDANCE $ENDLINE\t#define USE_TRACTOR_GUIDANCE $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+	if [ $PRJ_TRACTOR_CERTIFICATION -gt 0 ] ; then
+		echo -e "#ifndef USE_TRACTOR_CERTIFICATION $ENDLINE\t#define USE_TRACTOR_CERTIFICATION $ENDLINE#endif" >> $CONFIG_NAME
 	fi
 	if [ $PRJ_TIME_GPS -gt 0 ] ; then
 		echo -e "#ifndef USE_TIME_GPS $ENDLINE\t#define USE_TIME_GPS $ENDLINE#endif" >> $CONFIG_NAME
