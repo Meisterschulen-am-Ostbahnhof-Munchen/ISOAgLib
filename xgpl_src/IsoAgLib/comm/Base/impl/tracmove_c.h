@@ -119,13 +119,48 @@ namespace __IsoAgLib {
       */
     void checkCreateReceiveFilter( );
 
+    /** update selected speed with actually best available speed
+        @param t_speedSrc  from which source is the speed available
+      */
+    void updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc);
+
+    /** update distance and direction with the actually best available distance and direction
+        @param t_distanceSrc  from which source is the distance and direction available
+      */
+    void updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc);
+
     /** destructor for TracMove_c which has nothing to do */
     virtual ~TracMove_c() { BaseCommon_c::close();}
 
     /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
     /*@{*/
+    #ifdef USE_DIN_9684
+    /** set the value of real speed (measured by radar)
+        @param ri16_val value to store as real radar measured speed
+      */
+    void setSpeedReal(const int16_t ri16_val) {i16_speedReal = ri16_val;}
+    /** set the value of theoretical speed (calculated from gear)
+        @param ri16_val value to store as theoretical gear calculated speed
+      */
+    void setSpeedTheor(const int16_t ri16_val) {i16_speedTheor = ri16_val;}
+    /** set the real (radar measured) driven distance with int16_t val
+        @param ri16_val value to store as real radar measured distance
+      */
+    void setDistReal(const uint16_t rui16_val)
+    { // use function to detect and handle 16bit integer overflows
+      setOverflowSecure(ui32_distReal, ui16_lastDistReal, rui16_val);
+    };
+    /** set the theoretical (gear calculated) driven distance with int16_t val
+        @param ri16_val value to store as theoretical (gear calculated) driven distance
+      */
+    void setDistTheor(const uint16_t rui16_val)
+    { // use function to detect and handle 16bit integer overflows
+      setOverflowSecure(ui32_distTheor, ui16_lastDistTheor, rui16_val);
+    };
+    #endif
 
+    #ifdef USE_ISO_11783
     /** set the value of real speed (measured by radar)
         @param ri16_val value to store as real radar measured speed
       */
@@ -134,30 +169,22 @@ namespace __IsoAgLib {
         @param ri16_val value to store as theoretical gear calculated speed
       */
     void setSpeedTheor(const int32_t ri32_val) {i32_speedTheor = ri32_val;}
-    /** set the real (radar measured) driven distance with int16_t val
-        @param ri16_val value to store as real radar measured distance
-      */
-    void setDistReal(const int16_t ri16_val)
-    { // use function to detect and handle 16bit integer overflows
-      setOverflowSecure(i32_distReal, i32_lastDistReal, ri16_val);
-    };
-    /** set the real (radar measured) driven distance with int32_t val
-        @param rreflVal value to store as real radar measured distance
-      */
-    void setDistReal(const int32_t& rreflVal);
-    /** set the theoretical (gear calculated) driven distance with int16_t val
-        @param ri16_val value to store as theoretical (gear calculated) driven distance
-      */
-    void setDistTheor(const int16_t ri16_val)
-    { // use function to detect and handle 16bit integer overflows
-      setOverflowSecure(i32_distTheor, i32_lastDistTheor, ri16_val);
-    };
     /** set the theoretical (gear calculated) driven distance with int32_t val
         @param rreflVal value to store as theoretical (gear calculated) driven distance
       */
-    void setDistTheor(const int32_t& rreflVal);
-
-    #ifdef USE_ISO_11783
+    void setDistTheor(const uint32_t& rreflVal);
+    /** set the real (radar measured) driven distance with int32_t val
+        @param rreflVal value to store as real radar measured distance
+      */
+    void setDistReal(const uint32_t& rreflVal);
+    /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
+        @return  direction of travel
+      */
+    void setDirectionTheor(IsoAgLib::IsoDirectionFlag_t t_val) {t_directionTheor = t_val;}
+    /** set measured signal indicating either forward or reverse as the real (radar measured) direction of travel
+        @return  direction of travel
+      */
+    void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val) {t_directionReal = t_val;}
     /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
         @param rt_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
       */
@@ -165,6 +192,22 @@ namespace __IsoAgLib {
     /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
     void setStartStopState(const IsoAgLib::IsoActiveFlag_t rt_val) {t_startStopState = rt_val;}
 
+    /** set actual distance traveled by the machine based on the value of selected machine speed
+        @param i32_val  actual distance
+      */
+    void setSelectedDistance(uint32_t i32_val) {ui32_selectedDistance = i32_val;}
+    /** set current direction of travel of the machine
+        @param t_val  current direction of travel
+      */
+    void setSelectedDirection(IsoAgLib::IsoDirectionFlag_t t_val) {t_selectedDirection = t_val;}
+    /** get current value of the speed as determined from a number of sources by the machine
+        @param i32_val  current value of speed
+      */
+    void setSelectedSpeed(int32_t i32_val)  {i32_selectedSpeed = i32_val;}
+    /** set speed source that is currently being reported in the machine speed parameter
+        @param t_val  actual speed source
+      */
+    void setSelectedSpeedSource(IsoAgLib::IsoSpeedSourceFlag_t t_val) {t_selectedSpeedSource = t_val;}
     /** set commanded direction of the machine
         @param t_val  commanded direction of travel
       */
@@ -187,7 +230,34 @@ namespace __IsoAgLib {
     /* ****************************************************** */
     /** \name Retrieve Values which are sent from other ECUs  */
     /*@{*/
+    #ifdef USE_DIN_9684
+    /** get the value of real speed (measured by radar)
+        @return actual radar measured speed value
+      */
+    int16_t speedReal() const { return i16_speedReal;}
+    /** get the value of theoretical speed (calculated from gear)
+        @return theoretical gear calculated speed value
+      */
+    int16_t speedTheor() const { return i16_speedTheor;}
+    /** get the real driven distance with int16_t val
+        @return actual radar measured driven distance value
+      */
+    uint16_t distReal() const { return ui32_distReal;}
+    /** get the real driven distance with int16_t val
+        @return actual gear calculated driven distance value
+      */
+    uint16_t distTheor() const  { return ui32_distTheor;}
+    #endif
 
+    #ifdef USE_ISO_11783
+    /** get the real driven distance with int16_t val
+        @return actual radar measured driven distance value
+      */
+    uint32_t distReal() const { return ui32_distReal;}
+    /** get the real driven distance with int16_t val
+        @return actual gear calculated driven distance value
+      */
+    uint32_t distTheor() const { return ui32_distTheor;}
     /** get the value of real speed (measured by radar)
         @return actual radar measured speed value
       */
@@ -196,17 +266,6 @@ namespace __IsoAgLib {
         @return theoretical gear calculated speed value
       */
     int32_t speedTheor() const { return i32_speedTheor;}
-
-    /** get the real driven distance with int16_t val
-        @return actual radar measured driven distance value
-      */
-    int32_t distReal() const { return i32_distReal;}
-    /** get the real driven distance with int16_t val
-        @return actual gear calculated driven distance value
-      */
-    int32_t distTheor() const { return i32_distTheor;}
-
-    #ifdef USE_ISO_11783
     /** get measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
         @return  direction of travel
       */
@@ -270,15 +329,14 @@ namespace __IsoAgLib {
         @param refiVal to be updated value as 16bit int16_t variable
         @param rrefiNewVal new value given as reference to 16bit int
       */
-    static void setOverflowSecure(int32_t& reflVal, int16_t& refiVal, const int16_t& rrefiNewVal);
+    static void setOverflowSecure(uint32_t& reflVal, uint16_t& refiVal, const uint16_t& rrefiNewVal);
 
+    #ifdef USE_DIN_9684
     /** get int16_t overflowed val from long
         @param rreflVal value as int32_t (32bit) variable
         @return 16bit int16_t calculated with counting overflow from 32767 to (-32766)
       */
-    static int16_t long2int(const int32_t& rreflVal);
-
-    #ifdef USE_DIN_9684
+    static uint16_t long2int(const uint32_t& rreflVal);
     /** send a DIN9684 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
@@ -288,6 +346,11 @@ namespace __IsoAgLib {
     #endif
 
     #if defined(USE_ISO_11783)
+    /** get int16_t overflowed val from long
+        @param rreflVal value as int32_t (32bit) variable
+        @return 16bit int16_t calculated with counting overflow from 32767 to (-32766)
+      */
+    static uint32_t long2int(const uint32_t& rreflVal);
     /** send a ISO11783 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
@@ -307,24 +370,42 @@ namespace __IsoAgLib {
      /** send moving data with ground&theor speed&dist */
     void isoSendMovingImplMode( );
     /** set last time of data msg [msec]*/
-    void setUpdateTimeCmd(int32_t updateTime) {i32_lastMsgReceivedCmd = updateTime;}
+ //   void setUpdateTimeCmd(int32_t updateTime) {i32_lastMsgReceivedCmd = updateTime;}
     /** Retrieve the last update time of the specified information type*/
-    int32_t lastedTimeSinceUpdateCmd() const {return (System_c::getTime() - i32_lastMsgReceivedCmd);}
+//    int32_t lastedTimeSinceUpdateCmd() const {return (System_c::getTime() - i32_lastMsgReceivedCmd);}
     #endif
 
   private:
     // Private attributes
-    uint32_t i32_lastMsgReceivedCmd;
+ //   uint32_t i32_lastMsgReceivedCmd;
+    /** actually selected speed source */
+    IsoAgLib::SpeedSource_t t_speedSource;
+    /** actually selected distance and direction source */
+    IsoAgLib::DistanceDirectionSource_t t_distDirecSource;
+    /** last time when selected speed data was processed */
+    uint32_t ui32_lastUpdateTimeSpeed;
+    /** last time when direction and distance data was processed */
+    uint32_t ui32_lastUpdateTimeDistDirec;
     /** DISTANCE */
+    #ifdef USE_DIN_9684
     /** real distance as int32_t value (cumulates 16bit overflows) */
-    int32_t i32_distReal;
+    uint32_t ui32_distReal;
     /** theoretical distance as int32_t value (cumulates 16bit overflows)*/
-    int32_t i32_distTheor;
+    uint32_t ui32_distTheor;
+    #endif
     /** last 16bit real distance to cope with 16bit overflows */
-    int16_t i32_lastDistReal;
+    uint16_t ui16_lastDistReal;
     /** last 16bit theoretical distance to cope with 16bit overflows */
-    int16_t i32_lastDistTheor;
+    uint16_t ui16_lastDistTheor;
     #if defined(USE_ISO_11783)
+    /** real distance as int32_t value (cumulates 16bit overflows) */
+    uint32_t ui32_distReal;
+    /** theoretical distance as int32_t value (cumulates 16bit overflows)*/
+    uint32_t ui32_distTheor;
+    /** last 16bit real distance to cope with 16bit overflows */
+    uint32_t ui32_lastDistReal;
+    /** last 16bit theoretical distance to cope with 16bit overflows */
+    uint32_t ui32_lastDistTheor;
     /** actual distance traveled by the machine based on the value of selected machine speed */
     uint32_t ui32_selectedDistance;
     /** start/stop state BE AWARE THIS IS A DUMMY BECAUSE DESCRIPTION IS NOT TO FIND IN AMENDMENT 1*/
@@ -344,11 +425,17 @@ namespace __IsoAgLib {
     #endif
 
     /** SPEED */
+    #ifdef USE_DIN_9684
+    /** real speed */
+    int16_t i16_speedReal;
+    /** theoretical speed */
+    int16_t i16_speedTheor;
+    #endif
+    #if defined(USE_ISO_11783)
     /** real speed */
     int32_t i32_speedReal;
     /** theoretical speed */
     int32_t i32_speedTheor;
-    #if defined(USE_ISO_11783)
     /** current value of the speed as determined from a number of sources by the machine */
     int32_t i32_selectedSpeed;
     /** present limit status of selected speed */

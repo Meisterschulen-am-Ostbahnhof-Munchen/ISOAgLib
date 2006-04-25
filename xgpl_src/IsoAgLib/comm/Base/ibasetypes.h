@@ -247,15 +247,15 @@ namespace IsoAgLib {
     IsoNavigationBasedSpeed = 2, ///< speed source is navigation-based
     IsoBlendedSpeed = 3,         ///< speed source is "blended"
     IsoSimulatedSpeed = 4,       ///< speed source is simulated
-    IsoNotAvailableSpeed = 7       ///<corresponding function is not available in service provider
+    IsoNotAvailableSpeed = 7     ///<corresponding function is not available in service provider
   } IsoSpeedSourceFlag_t;
 
   /** use an enum for the different states of ISO flags for the implement work state */
   typedef enum {
     IsoNotReadyForFieldWork = 0, ///< Implement is not ready for field work
     IsoReadyForFieldWork = 1,    ///< Implement is ready for field work
-    IsoErrorWork = 2,       ///< corresponding function is in error state, and thus not useable
-    IsoNotAvailableWork = 3 ///< corresponding function is not available/not implemented in service provider
+    IsoErrorWork = 2,            ///< corresponding function is in error state, and thus not useable
+    IsoNotAvailableWork = 3      ///< corresponding function is not available/not implemented in service provider
   } IsoImplWorkFlag_t;
 
   /** use an enum for the different states of ISO flags for the implement transport state */
@@ -268,11 +268,31 @@ namespace IsoAgLib {
 
   /** use an enum for the different states of ISO flags for the implement park state */
   typedef enum {
-    IsoNotDisconnected = 0,       ///< Implement may not be disconnected
-    IsoDisconnect = 1,            ///< Implement may be disconnected
+    IsoNotDisconnected = 0, ///< Implement may not be disconnected
+    IsoDisconnect = 1,      ///< Implement may be disconnected
     IsoErrorPark = 2,       ///< corresponding function is in error state, and thus not useable
     IsoNotAvailablePark = 3 ///< corresponding function is not available/not implemented in service provider
   } IsoImplParkFlag_t;
+
+/** use an enum for the different sources of the selected speed */
+  typedef enum
+  {
+    NoSpeed = 0,
+    WheelBasedSpeed = 1,
+    GroundBasedSpeed = 2,
+    GpsBasedSpeed = 3,
+    SelectedSpeed = 4
+  }SpeedSource_t;
+
+/** use an enum for the different sources of distance and direction */
+  typedef enum
+  {
+    NoDistDirec = 0,
+    WheelBasedDistDirec = 1,
+    GroundBasedDistDirec = 2,
+    SelectedDistDirec = 3
+  }DistanceDirectionSource_t;
+
   #endif
 
   /** define the main groups of base data types */

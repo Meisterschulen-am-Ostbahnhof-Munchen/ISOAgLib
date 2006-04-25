@@ -125,25 +125,36 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     //call config for handling which is base data independent
     BaseCommon_c::config(rpc_devKey, rt_identMode);
 
-    // set the member msg value vars to NO_VAL codes
-    i32_speedReal = i32_speedTheor = 0xFFFF;
     // set distance value to 0
-    i32_lastDistReal = i32_lastDistTheor = 0;
-    i32_distReal = i32_distTheor = 0;
+    ui16_lastDistReal = ui16_lastDistTheor = 0;
+    ui32_distReal = ui32_distTheor = 0;
+
+    #ifdef USE_DIN_9684
+    // set the member msg value vars to NO_VAL codes
+    i16_speedReal = i16_speedTheor = NO_VAL_16S;
+    #endif
 
     #ifdef USE_ISO_11783
-    i32_lastMsgReceivedCmd = 0;
+    // set the member msg value vars to NO_VAL codes
+    i32_speedReal = i32_speedTheor = NO_VAL_16;
+
+//    i32_lastMsgReceivedCmd = 0;
     t_operatorDirectionReversed = IsoAgLib::IsoNotAvailableReversed;
     t_startStopState = IsoAgLib::IsoNotAvailable;
 
     ui32_selectedDistance = 0;
-    i32_selectedSpeed = 0xFFFF;
+    i32_selectedSpeed = NO_VAL_16;
     t_selectedDirection = t_directionReal = t_directionTheor = IsoAgLib::IsoNotAvailableDirection;
     t_selectedDirectionCmd = IsoAgLib::IsoNotAvailableDirection;
     t_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed;
     t_selectedSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
     i16_selectedSpeedSetPointCmd = 0;
     i16_selectedSpeedSetPointLimit = 0;
+
+    t_speedSource = IsoAgLib::NoSpeed;
+    t_distDirecSource = IsoAgLib::NoDistDirec;
+    ui32_lastUpdateTimeSpeed = 3000;
+    ui32_lastUpdateTimeDistDirec = 3000;
     #endif
   };
 
@@ -170,19 +181,35 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       // create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (GROUND_BASED_SPEED_DIST_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                        (static_cast<MASK_TYPE>(GROUND_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
+                        (static_cast<MASK_TYPE>(GROUND_BASED_SPEED_DIST_PGN) << 8),
+                        #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+                         false,
+                        #endif
+                         Ident_c::ExtendedIdent);
       // create FilterBox_c for PGN WHEEL_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (WHEEL_BASED_SPEED_DIST_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                        (static_cast<MASK_TYPE>(WHEEL_BASED_SPEED_DIST_PGN) << 8), false, Ident_c::ExtendedIdent);
+                        (static_cast<MASK_TYPE>(WHEEL_BASED_SPEED_DIST_PGN) << 8),
+                        #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+                         false,
+                        #endif
+                         Ident_c::ExtendedIdent);
       // create FilterBox_c for PGN SELECTED_SPEED_CMDClientBase, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (SELECTED_SPEED_CMD << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                        (static_cast<MASK_TYPE>(SELECTED_SPEED_CMD) << 8), false, Ident_c::ExtendedIdent);
+                        (static_cast<MASK_TYPE>(SELECTED_SPEED_CMD) << 8),
+                        #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+                         false,
+                        #endif
+                         Ident_c::ExtendedIdent);
       // create FilterBox_c for PGN SELECTED_SPEED_MESSAGE, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (SELECTED_SPEED_MESSAGE << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                        (static_cast<MASK_TYPE>(SELECTED_SPEED_MESSAGE) << 8), true, Ident_c::ExtendedIdent);
+                        (static_cast<MASK_TYPE>(SELECTED_SPEED_MESSAGE) << 8),
+                        #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+                         true,
+                        #endif
+                         Ident_c::ExtendedIdent);
     }
     #endif
   }
@@ -201,10 +228,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     { // send actual moving data
       setSelectedDataSourceDevKey( *getDevKey() );
       data().setIdent((0x14<<4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
-      data().setUint16Data(0, i32_speedReal);
-      data().setUint16Data(2, i32_speedTheor);
-      data().setUint16Data(4, i32_distReal);
-      data().setUint16Data(6, i32_distTheor);
+      data().setUint16Data(0, i16_speedReal);
+      data().setUint16Data(2, i16_speedTheor);
+      data().setUint16Data(4, ui32_distReal);
+      data().setUint16Data(6, ui32_distTheor);
       data().setLen(8);
 
       // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
@@ -243,9 +270,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           // theor speed
           setSpeedTheor(data().getUint16Data( 2 ));
           // real dist -> react on 16bit int16_t overflow
-          setOverflowSecure(i32_distReal, i32_lastDistReal, data().getUint16Data( 4 ));
+          setOverflowSecure(ui32_distReal, ui16_lastDistReal, data().getUint16Data( 4 ));
           // theor dist -> react on 16bit int16_t overflow
-          setOverflowSecure(i32_distTheor, i32_lastDistTheor, data().getUint16Data( 6 ));
+          setOverflowSecure(ui32_distTheor, ui16_lastDistTheor, data().getUint16Data( 6 ));
 
           setSelectedDataSourceDevKey(c_tempDevKey);
         }
@@ -286,7 +313,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     {
       case GROUND_BASED_SPEED_DIST_PGN:
       case WHEEL_BASED_SPEED_DIST_PGN:
-      case SELECTED_SPEED_MESSAGE:
         // only take values, if i am not the regular sender
         // and if actual sender isn't in conflict to previous sender
         if ( ( checkParseReceived( c_tempDevKey ) ) )/*|| noch keine normale geschw empfangen */
@@ -294,16 +320,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           int32_t i32_tempSpeed = data().getUint16Data(0);
           switch (data().getUint8Data( 7 ) & 3 ) {
           case 0: // driving reverse
-            if ( (i32_tempSpeed != ERROR_VAL_16S)
-              && (i32_tempSpeed !=  0xFFFF) ) i32_tempSpeed *= -1;
+            if ( (i32_tempSpeed != ERROR_VAL_16)
+              && (i32_tempSpeed !=  NO_VAL_16) ) i32_tempSpeed *= -1;
             break;
           case 1: // driving forward
             break;
           case 2: // ERROR
-            i32_tempSpeed = ERROR_VAL_16S;
+            i32_tempSpeed = ERROR_VAL_16;
             break;
-          case 3: // not available
-            i32_tempSpeed = NO_VAL_16S;
+          case 3: // if direction has the value not available it is expected that speed is positive
+            //i32_tempSpeed = NO_VAL_16;
             break;
           }
 
@@ -316,8 +342,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             #ifdef USE_RS232_FOR_DEBUG
             EXTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << "\n";
             #endif
+            uint32_t tempTime = (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeSpeed);
+            if ( t_speedSource <= IsoAgLib::GroundBasedSpeed && i32_speedReal != NO_VAL_16
+                || (tempTime >= TIMEOUT_SENDING_NODE && tempTime < 4000)
+               )
+            {
+              updateSpeed(IsoAgLib::GroundBasedSpeed);
+            }
+            tempTime = (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeDistDirec);
+            if ( t_distDirecSource <= IsoAgLib::GroundBasedDistDirec && ui32_distReal != NO_VAL_16
+                || (tempTime >= TIMEOUT_SENDING_NODE && tempTime < 4000)
+               )
+            {
+              updateDistanceDirection(IsoAgLib::GroundBasedDistDirec);
+            }
+
           }
-          else if (data().isoPgn() == WHEEL_BASED_SPEED_DIST_PGN)
+          else
           { // wheel based speed
             setSpeedTheor(i32_tempSpeed);
             // wheel based dist
@@ -332,18 +373,48 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             t_directionTheor = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7)       & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
             EXTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(c_tempDevKey.getDevClass() ) << "\n";
+            bool tempor = t_speedSource <= IsoAgLib::WheelBasedSpeed;
+            uint32_t temporar = (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeSpeed);
             #endif
-          } else
-          { //SELECTED_SPEED_MESSAGE
-            i32_selectedSpeed = i32_tempSpeed;
-            ui32_selectedDistance =                                         data().getUint16Data(2);
-            t_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t(       ( (data().getUint8Data(7) >> 5) & 0x7) );
-            t_selectedSpeedSource =      IsoAgLib::IsoSpeedSourceFlag_t( ( (data().getUint8Data(7) >> 2) & 0x7) );
-            t_selectedDirection =        IsoAgLib::IsoDirectionFlag_t(   ( (data().getUint8Data(7) >> 0) & 0x3) );
+            if (t_speedSource <= IsoAgLib::WheelBasedSpeed
+                || ( (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeSpeed) >= TIMEOUT_SENDING_NODE)
+               )
+            {
+              updateSpeed(IsoAgLib::WheelBasedSpeed);
+            }
+            if (t_distDirecSource <= IsoAgLib::WheelBasedDistDirec
+                || ( (Scheduler_c::getLastTimeEventTrigger() - ui32_lastUpdateTimeDistDirec) >= TIMEOUT_SENDING_NODE)
+               )
+            {
+              updateDistanceDirection(IsoAgLib::WheelBasedDistDirec);
+            }
           }
           setSelectedDataSourceDevKey(c_tempDevKey);
         }
         else
+        { // there is a sender conflict
+          getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
+          return false;
+        }
+        break;
+      case SELECTED_SPEED_MESSAGE:
+        // only take values, if i am not the regular sender
+        // and if actual sender isn't in conflict to previous sender
+        if ( ( checkParseReceived( c_tempDevKey ) ) )
+        {
+          i32_selectedSpeed =                                             data().getUint16Data(0);
+          ui32_selectedDistance =                                         data().getUint16Data(2);
+          t_selectedSpeedSource =      IsoAgLib::IsoSpeedSourceFlag_t( ( (data().getUint8Data(7) >> 2) & 0x7) );
+          t_selectedDirection =        IsoAgLib::IsoDirectionFlag_t(   ( (data().getUint8Data(7) >> 0) & 0x3) );
+          t_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t(       ( (data().getUint8Data(7) >> 5) & 0x7) );
+
+          setSelectedDataSourceDevKey(c_tempDevKey);
+
+          // update time for selected speed
+          ui32_lastUpdateTimeSpeed = Scheduler_c::getLastTimeEventTrigger();
+          ui32_lastUpdateTimeDistDirec = Scheduler_c::getLastTimeEventTrigger();
+
+        } else
         { // there is a sender conflict
           getLbsErrInstance().registerError( LibErr_c::LbsBaseSenderConflict, LibErr_c::LbsBase );
           return false;
@@ -362,6 +433,65 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         break;
     }
     return true;
+  }
+
+  void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc)
+  {
+    switch(t_speedSrc)
+    {
+      case IsoAgLib::SelectedSpeed:
+        t_speedSource = IsoAgLib::SelectedSpeed; //nothing more to do because variables are already set
+        break;
+      #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
+      case IsoAgLib::GpsBasedSpeed:
+        t_speedSource = IsoAgLib::GpsBasedSpeed;
+        t_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
+        i32_selectedSpeed = getGpsSpeedCmSec();
+        break;
+      #endif
+      case IsoAgLib::GroundBasedSpeed:
+        t_speedSource = IsoAgLib::GroundBasedSpeed;
+        t_selectedSpeedSource = IsoAgLib::IsoGroundBasedSpeed;
+        i32_selectedSpeed = i32_speedReal;
+        break;
+      case IsoAgLib::WheelBasedSpeed:
+        t_speedSource = IsoAgLib::WheelBasedSpeed;
+        t_selectedSpeedSource = IsoAgLib::IsoWheelBasedSpeed;
+        i32_selectedSpeed = i32_speedTheor;
+        break;
+      default:
+        t_speedSource = IsoAgLib::NoSpeed;
+        t_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed;
+        break;
+    }
+    // update time
+    ui32_lastUpdateTimeSpeed = Scheduler_c::getLastTimeEventTrigger();
+  }
+
+  void TracMove_c::updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)
+  {
+    //select the direction of the tractor and distance in reference to the selected speed source
+    switch(t_distanceSrc)
+    {
+      case IsoAgLib::SelectedDistDirec:
+        t_distDirecSource = IsoAgLib::SelectedDistDirec; //nothing more to do because variables are already set
+        break;
+      case IsoAgLib::GroundBasedDistDirec:
+        t_distDirecSource = IsoAgLib::GroundBasedDistDirec;
+        ui32_selectedDistance = ui32_distReal;
+        t_selectedDirection = t_directionReal;
+        break;
+      case IsoAgLib::WheelBasedDistDirec:
+        t_distDirecSource = IsoAgLib::WheelBasedDistDirec;
+        ui32_selectedDistance = ui32_distTheor;
+        t_selectedDirection = t_directionTheor;
+        break;
+      default:
+        t_distDirecSource = IsoAgLib::NoDistDirec;
+        break;
+    }
+    // update time
+    ui32_lastUpdateTimeDistDirec = Scheduler_c::getLastTimeEventTrigger();
   }
 
   /** send a ISO11783 moving information PGN.
@@ -383,7 +513,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   bool TracMove_c::isoTimeEventImplMode( )
   {
-    if ( lastedTimeSinceUpdateCmd()  >= 100 )
+    if ( lastedTimeSinceUpdate()  >= 100 )
     { // it's time to send moving information
      isoSendMovingImplMode();
     }
@@ -425,7 +555,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     c_can << data();
 
     // update time
-    setUpdateTimeCmd( Scheduler_c::getLastTimeEventTrigger() );
+    setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
   }
 
   /** send moving data with ground&theor speed&dist */
@@ -450,6 +580,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     setSelectedDataSourceDevKey(*getDevKey());
 
+    if ( (i32_speedReal == NO_VAL_16) && (ui32_distReal == 0) )
+      return; //do not send message becaus only default data is available
     data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
   #ifdef SYSTEM_PC_VC
     data().setUint16Data( 0, abs(i32_speedReal));
@@ -457,13 +589,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     uint16_t temp = CNAMESPACE::abs(i32_speedReal);
     data().setUint16Data(0, CNAMESPACE::abs(i32_speedReal));
   #endif
-    data().setUint32Data(2 ,i32_distReal);
+    data().setUint32Data(2 ,ui32_distReal);
     uint8_t b_val8 = 0;
     switch (i32_speedReal) {
-      case ERROR_VAL_16S:
+      case ERROR_VAL_16:
         t_directionReal = IsoAgLib::IsoErrorDirection;
         break;
-      case  0xFFFF:
+      case  NO_VAL_16:
         t_directionReal = IsoAgLib::IsoNotAvailableDirection;
         break;
       default:
@@ -480,20 +612,22 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       // then it sends the data
     c_can << data();
 
+    if ( (i32_speedTheor == NO_VAL_16) && (ui32_distTheor == 0) )
+      return; //do not send message becaus only default data is available
     data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
   #ifdef SYSTEM_PC_VC
     data().setUint16Data(0, abs(i32_speedTheor));
   #else
     data().setUint16Data(0, CNAMESPACE::abs(i32_speedTheor));
   #endif
-    data().setUint32Data(2, i32_distTheor);
+    data().setUint32Data(2, ui32_distTheor);
 
     b_val8 = 0;
     switch (i32_speedTheor) {
-      case ERROR_VAL_16S:
+      case ERROR_VAL_16:
         t_directionTheor = IsoAgLib::IsoErrorDirection;
         break;
-      case 0xFFFF:
+      case NO_VAL_16:
         t_directionTheor = IsoAgLib::IsoNotAvailableDirection;
         break;
       default:
@@ -518,45 +652,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     // then it sends the data
     c_can << data();
 
+    if ( (i32_selectedSpeed == NO_VAL_16) && (ui32_selectedDistance == 0) )
+      return; //do not send message becaus only default data is available
     data().setIsoPgn(SELECTED_SPEED_MESSAGE);
     uint8_t ui8_temp = 0;
-
-    // select best available speed and store which is actually the best available speed source
-    if ( CNAMESPACE::abs(i32_speedReal) <= 0xFAFF)
-    { //ground based speed
-      t_selectedSpeedSource = IsoAgLib::IsoGroundBasedSpeed;
-      i32_selectedSpeed = i32_speedReal;
-    }
-    else
-    { //wheel based speed
-      t_selectedSpeedSource = IsoAgLib::IsoWheelBasedSpeed;
-      i32_selectedSpeed = i32_speedTheor;
-    }
-
-    //select the direction of the tractor and distance in reference to the selected speed source
-    switch(t_selectedSpeedSource)
-    {
-      case IsoAgLib::IsoWheelBasedSpeed:
-        t_selectedDirection = t_directionTheor;
-        ui32_selectedDistance = i32_distTheor;
-        break;
-      case IsoAgLib::IsoGroundBasedSpeed:
-        t_selectedDirection = t_directionReal;
-        ui32_selectedDistance = i32_distReal;
-        break;
-      case IsoAgLib::IsoNavigationBasedSpeed:
-        //t_selectedDirection = ;
-        break;
-      case IsoAgLib::IsoBlendedSpeed:
-        //t_selectedDirection = ;
-        break;
-      case IsoAgLib::IsoSimulatedSpeed:
-        //t_selectedDirection = ;
-        break;
-      case 7:
-        t_selectedDirection = IsoAgLib::IsoNotAvailableDirection;
-        break;
-    }
 
     #ifdef SYSTEM_PC_VC
     data().setUint16Data(0, abs(i32_selectedSpeed));
@@ -587,7 +686,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @param refiVal to be updated value as 16bit int16_t variable
       @param rrefiNewVal new value given as reference to 16bit int
     */
-  void TracMove_c::setOverflowSecure(int32_t& reflVal, int16_t& refiVal, const int16_t& rrefiNewVal)
+  void TracMove_c::setOverflowSecure(uint32_t& reflVal, uint16_t& refiVal, const uint16_t& rrefiNewVal)
   {
     // definition area [0..i32_maxVal] with overflow
     // 10000 of Fendt; 32767 of DIN
@@ -655,36 +754,50 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   };
   #endif
 
+  #ifdef USE_ISO_11783
   /** set the real (radar measured) driven distance with int32_t val
       @param rreflVal value to store as real radar measured distance
     */
-  void TracMove_c::setDistReal(const int32_t& rreflVal)
+  void TracMove_c::setDistReal(const uint32_t& rreflVal)
   {
-    i32_distReal = rreflVal;
-    // set the int16_t value regarding the overflow counting
-    i32_lastDistReal = long2int(rreflVal);
+    ui32_distReal = rreflVal;
+    // set the int32_t value regarding the overflow counting
+    ui32_lastDistReal = long2int(rreflVal);
   };
 
   /** set the theoretical (gear calculated) driven distance with int32_t val
       @param rreflVal value to store as theoretical (gear calculated) driven distance
     */
-  void TracMove_c::setDistTheor(const int32_t& rreflVal)
+  void TracMove_c::setDistTheor(const uint32_t& rreflVal)
   {
-    i32_distTheor = rreflVal;
-    // set the int16_t value regarding the overflow counting
-    i32_lastDistTheor = long2int(rreflVal);
+    ui32_distTheor = rreflVal;
+
+    // set the int32_t value regarding the overflow counting
+    ui32_lastDistTheor = long2int(rreflVal);
   };
+  #endif
 
   /** get int16_t overflowed val from long
       @param rreflVal value as int32_t (32bit) variable
       @return 16bit int16_t calculated with counting overflow from 32767 to (-32766)
     */
-  int16_t TracMove_c::long2int(const int32_t& rreflVal)
+  #ifdef USE_DIN_9684
+  uint16_t TracMove_c::long2int(const uint32_t& rreflVal)
+  #endif
+  #ifdef USE_ISO_11783
+  uint32_t TracMove_c::long2int(const uint32_t& rreflVal)
+  #endif
   {
     // Version mit [0..10000] und Uberlauf a la Fendt Vario
-    //int32_t i32_mod =  rreflVal % 10000;
+    //uint32_t ui32_mod =  rreflVal % 10000;
+    #ifdef USE_DIN_9684
     // Version mit [0..32767] und Uberlauf a la Scheduler_c DIN 9684
-    int32_t i32_mod =  rreflVal % 32767;
-    return i32_mod;
+    uint32_t ui32_mod =  rreflVal % 32767;
+    #endif
+    #ifdef USE_ISO_11783
+    // Version mit [0..4211082] und Uberlauf a la Scheduler_c ISO 11783
+    uint32_t ui32_mod =  rreflVal % 4211081;
+    #endif
+    return ui32_mod;
   };
 } // End Namespace __IsoAglib

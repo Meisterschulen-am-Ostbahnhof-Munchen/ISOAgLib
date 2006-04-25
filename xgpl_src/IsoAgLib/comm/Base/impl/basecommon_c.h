@@ -240,6 +240,9 @@ namespace __IsoAgLib
     /** set last time of data msg [msec]*/
     void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
 
+
+    /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
+    static const uint16_t TIMEOUT_SENDING_NODE = 3000;
   private:
     /** can be implement mode or tractor mode*/
     IsoAgLib::IdentMode_t t_identMode;

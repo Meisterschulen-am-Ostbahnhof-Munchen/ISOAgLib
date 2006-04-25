@@ -96,6 +96,7 @@
   #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
   #include <IsoAgLib/util/iutil_funcs.h>
 #endif
+#include <IsoAgLib/comm/Base/itracmove_c.h>
 
 using namespace std;
 
@@ -236,10 +237,10 @@ namespace __IsoAgLib {
     #ifdef USE_ISO_11783
     if ( checkModeGps(IsoAgLib::IdentModeImplement)
       #ifdef NMEA_2000_FAST_PACKET
-      && ( ( ci32_now - i32_lastIsoPositionStream  ) >= 3000  )
-      && ( ( ci32_now - i32_lastIsoDirectionStream ) >= 3000  )
+      && ( ( ci32_now - i32_lastIsoPositionStream  ) >= TIMEOUT_SENDING_NODE  )
+      && ( ( ci32_now - i32_lastIsoDirectionStream ) >= TIMEOUT_SENDING_NODE  )
       #endif
-      && ( ( ci32_now - i32_lastIsoPositionSimple  ) >= 3000  )
+      && ( ( ci32_now - i32_lastIsoPositionSimple  ) >= TIMEOUT_SENDING_NODE  )
       && ( c_sendGpsDevKey.isSpecified()                      ) )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
       c_sendGpsDevKey.setUnspecified();
@@ -298,14 +299,22 @@ namespace __IsoAgLib {
       // create FilterBox_c for PGN TIME_DATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                        (static_cast<MASK_TYPE>(TIME_DATE_PGN) << 8), false, Ident_c::ExtendedIdent);
+                        (static_cast<MASK_TYPE>(TIME_DATE_PGN) << 8),
+                        #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+                         false,
+                        #endif
+                         Ident_c::ExtendedIdent);
       // *************************************************************************************************
       // Added by Brad Cox to accomodate NMEA 2000 GPS Messages:
 
       // GNSS Position Rapid Update
       // mask: (0x1FFFF << 8) filter: (NMEA_GPS_POSITON_RAPID_UPDATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
-                    (static_cast<MASK_TYPE>(NMEA_GPS_POSITON_RAPID_UPDATE_PGN) << 8), true, Ident_c::ExtendedIdent);
+                    (static_cast<MASK_TYPE>(NMEA_GPS_POSITON_RAPID_UPDATE_PGN) << 8),
+                        #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+                         true,
+                        #endif
+                     Ident_c::ExtendedIdent);
 
       // *************************************************************************************************
     }
@@ -595,6 +604,11 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
           // set last time
           i32_lastIsoPositionSimple = ci32_now;
           c_sendGpsDevKey = c_tempDevKey;
+
+          #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
+          IsoAgLib::iTracMove_c& c_tracmove = IsoAgLib::getITracMoveInstance();
+          c_tracmove.updateSpeed(IsoAgLib::GpsBasedSpeed);
+          #endif
         }
         break;
       // **********************************************************
