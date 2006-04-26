@@ -204,6 +204,11 @@
 #define TEST_TRACTOR_MOVING
 #define TEST_TIME
 #define TEST_TRACTOR_LIGHTING
+#define TEST_TRACPTOSETPOINT
+#define TEST_TRACAUX
+#define TEST_TRACPTO
+#define TEST_TRACCERT
+#define TEST_TRACGUIDANCE
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
@@ -231,6 +236,22 @@
 #ifdef TEST_TRACTOR_LIGHTING
   #include <IsoAgLib/comm/Base/ext/itraclight_c.h>
 #endif
+#ifdef TEST_TRACPTOSETPOINT
+  #include <IsoAgLib/comm/Base/ext/itracptosetpoint_c.h>
+#endif
+#ifdef TEST_TRACAUX
+  #include <IsoAgLib/comm/Base/ext/itracaux_c.h>
+#endif
+#ifdef TEST_TRACPTO
+  #include <IsoAgLib/comm/Base/itracpto_c.h>
+#endif
+#ifdef TEST_TRACCERT
+  #include <IsoAgLib/comm/Base/ext/itraccert_c.h>
+#endif
+#ifdef TEST_TRACGUIDANCE
+  #include <IsoAgLib/comm/Base/ext/itracguidance_c.h>
+#endif
+
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
 // -> include all elements of this area for easy access
@@ -251,13 +272,122 @@ static const int32_t cui32_canChannel = 0;
 #ifdef TEST_TRACTOR_MOVING
 /*************DUMMY FUNCTIONALITY FOR MOVING *****************/
 /** dummy function to serve a real speed for the demonstration */
-int32_t localGetRealSpeed() { return 34; };
+int32_t localGetRealSpeed() { return (iSystem_c::getTime()*34/1000);; }
 /** dummy function to serve a theor speed for the demonstration */
-int32_t localGetTheorSpeed() { return 40; };
+int32_t localGetTheorSpeed() { return (iSystem_c::getTime()*40/1000); }
 /** dummy function to serve a real distance for the demonstration */
-int32_t localGetRealDist() { return (iSystem_c::getTime()*localGetRealSpeed()/1000); };
+int32_t localGetRealDist() { return (iSystem_c::getTime()*localGetRealSpeed()/1000); }
 /** dummy function to serve a teor distance for the demonstration */
-int32_t localGetTheorDist() {return (iSystem_c::getTime()*localGetTheorSpeed()/1000);}
+int32_t localGetTheorDist() { return (iSystem_c::getTime()*localGetTheorSpeed()/1000);}
+
+/**interpret the IsoDirectionFlag values as strings when output on console*/
+std::string getIsoDirectionFlag(IsoAgLib::IsoDirectionFlag_t t_val)
+{
+  switch ( t_val )
+  {
+    case 0: return "IsoReverse";
+    case 1: return "IsoForward";
+    case 2: return "IsoErrorReset";
+    case 3: return "IsoNotAvailableDirection";
+    default: return "there went something wrong!!";
+  }
+}
+#endif
+
+#ifdef TEST_TRACAUX
+/**interpret the IsoAuxFlagExtended values as strings when output on console*/
+std::string getIsoAuxFlagExtended(IsoAgLib::IsoAuxFlagExtended_t t_val)
+{
+  switch ( t_val )
+  {
+    case 0: return "IsoBlocked";
+    case 1: return "IsoExtend";
+    case 2: return "IsoRetract";
+    case 3: return "IsoFloating";
+    case 14: return "IsoError";
+    case 15: return "IsoNotAvailable";
+    default: return "there went something wrong!!";
+  }
+}
+/**interpret the IsoAuxFlag values as strings when output on console*/
+std::string getIsoAuxFlag(IsoAgLib::IsoAuxFlag_t t_val)
+{
+  switch ( t_val )
+  {
+    case 0: return "IsoBlock";
+    case 1: return "IsoFloat";
+    case 2: return "IsoError";
+    case 3: return "IsoNotAvailable";
+    default: return "there went something wrong!!";
+  }
+}
+#endif
+
+#ifdef TEST_TRACGUIDANCE
+/**interpret IsoSteerFlag values as strings when output on console*/
+std::string IsoSteerFlag(IsoAgLib::IsoSteerFlag_t t_val)
+{
+  switch ( t_val )
+  {
+    case 0: return "IsoNotIntendedToSteer";
+    case 1: return "IsoIntendedToSteer";
+    case 2: return "IsoReserved";
+    case 3: return "IsoNotAvailableSteer";
+    default: return "there went something wrong!!";
+  }
+}
+#endif
+
+#ifdef TEST_TRACTOR_GENERAL
+/**interpret IsoImplWorkFlag values as strings when output on console*/
+std::string getIsoImplWorkFlag(IsoAgLib::IsoImplWorkFlag_t t_val)
+{
+  switch ( t_val )
+  {
+    case 0: return "IsoNotReadyForFieldWork";
+    case 1: return "IsoReadyForFieldWork";
+    case 2: return "IsoErrorWork";
+    case 3: return "IsoNotAvailableWork";
+    default: return "there went something wrong!!";
+  }
+}
+
+/**interpret IsoImplTransportFlag values as strings when output on console*/
+std::string getIsoImplTransportFlag(IsoAgLib::IsoImplTransportFlag_t t_val)
+{
+  switch ( t_val )
+  {
+    case 0: return "IsoNotTransported";
+    case 1: return "IsoTransported";
+    case 2: return "IsoErrorTransport";
+    case 3: return "IsoNotAvailableTransport";
+    default: return "there went something wrong!!";
+  }
+}
+
+/**interpret IsoImplParkFlag values as strings when output on console*/
+std::string getIsoImplParkFlag(IsoAgLib::IsoImplParkFlag_t t_val)
+{
+  switch ( t_val )
+  {
+    case 0: return "IsoNotDisconnected";
+    case 1: return "IsoDisconnect";
+    case 2: return "IsoErrorPark";
+    case 3: return "IsoNotAvailablePark";
+    default: return "there went something wrong!!";
+  }
+}
+#endif
+
+#if defined TEST_TRACPTO
+/** dummy function to serve a pto speed for demonstration */
+uint16_t localGetPtoOutputShaft(uint16_t t_val) { return ( t_val % 8032); }
+#endif
+#if defined TEST_TRACTOR_MOVING
+/** dummy function to serve a pto speed for demonstration */
+int32_t localGetSpeedReal(int32_t t_val) { return ( t_val ); }
+/** dummy function to serve a pto speed for demonstration */
+int32_t localGetSpeedTheor(int32_t t_val) { return ( t_val ); }
 #endif
 
 int main()
@@ -288,21 +418,41 @@ int main()
 
   #ifdef TEST_TRACTOR_LIGHTING
   // configure send information for lighting on BUS
-  getITracLightInstance().config(&myDevKey, false );  //tractor mode
+  getITracLightInstance().config(&myDevKey, IsoAgLib::IdentModeTractor );  //tractor mode
   #endif
 
   #ifdef TEST_TRACTOR_MOVING
-  getITracMoveInstance().config(&myDevKey, false);
+  getITracMoveInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TRACTOR_GENERAL
-  getITracGeneralInstance().config(&myDevKey, false);
+  getITracGeneralInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
   #endif
 
   #ifdef TEST_TIME
-  getITimePosGpsInstance().config(&myDevKey, false);
+  getITimePosGpsInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
   #endif
 
+  #ifdef TEST_TRACAUX
+  getITracAuxInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  #endif
+
+  #ifdef TEST_TRACPTO
+  getITracPtoInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  #endif
+
+  #ifdef TEST_TRACCERT
+  getITracCertInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  #endif
+
+  #ifdef TEST_TRACGUIDANCE
+  getITracGuidanceInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
+  #endif
+
+  #ifdef TEST_TRACPTOSETPOINT
+  //pto set point tractor mode, no sending of data
+  getITracPtoSetPointInstance().config(NULL, IsoAgLib::IdentModeTractor);
+  #endif
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
@@ -329,6 +479,19 @@ int main()
       or
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
+  #if defined TEST_TRACPTO
+  uint16_t ui16_outputShaft = 0;
+  uint16_t ui16_outputShaftSetPoint = 0;
+  #endif
+  #if defined TEST_TRACTOR_MOVING
+  int32_t i32_speedReal = -5000;
+  int32_t i32_speedTheor = -2000;
+  uint32_t ui32_tempTheorDist = 0;
+  uint32_t ui32_tempRealDist = 0;
+  #endif
+  #if defined TEST_TRACTOR_GENERAL || defined TEST_TRACTOR_MOVING
+  uint32_t count = 0;
+  #endif
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
@@ -354,7 +517,7 @@ int main()
         getITracLightInstance().setCommand(IsoAgLib::daytimeRunning, IsoAgLib::IsoActive);
         getITracLightInstance().setCommand(IsoAgLib::alternateHead, IsoAgLib::IsoNotAvailable);
         getITracLightInstance().setCommand(IsoAgLib::lowBeamHead, IsoAgLib::IsoError);
-    //    getITracLightInstance().setCommand(IsoAgLib::highBeamHead, IsoAgLib::IsoActive);
+        getITracLightInstance().setCommand(IsoAgLib::highBeamHead, IsoAgLib::IsoActive);
 
         getITracLightInstance().setCommand(IsoAgLib::frontFog, IsoAgLib::IsoNotAvailable);
         getITracLightInstance().setCommand(IsoAgLib::beacon, IsoAgLib::IsoNotAvailable);
@@ -386,20 +549,35 @@ int main()
         getITracLightInstance().setCommand(IsoAgLib::implRightForwardWork, IsoAgLib::IsoInactive);
         getITracLightInstance().setCommand(IsoAgLib::implLeftForwardWork, IsoAgLib::IsoInactive);
 
-        getITracLightInstance().setCommand(IsoAgLib::dataMsgReq, IsoAgLib::IsoInactive);
+        getITracLightInstance().setCommand(IsoAgLib::dataMsgReq, IsoAgLib::IsoActive);
         getITracLightInstance().setCommand(IsoAgLib::implRightFacingWork, IsoAgLib::IsoInactive);
         getITracLightInstance().setCommand(IsoAgLib::implLeftFacingWork, IsoAgLib::IsoInactive);
         getITracLightInstance().setCommand(IsoAgLib::implRearWork, IsoAgLib::IsoInactive);
 
-        getITracLightInstance().sendMessage();
+     //   getITracLightInstance().sendMessage();
         #endif
 
         #ifdef TEST_TRACTOR_MOVING
         //MOVING CLASS TEST FUNCTIONALITY
-        getITracMoveInstance().setSpeedReal(localGetRealSpeed());
-        getITracMoveInstance().setSpeedTheor(localGetTheorSpeed());
-        getITracMoveInstance().setDistTheor(localGetTheorDist());
-        getITracMoveInstance().setDistReal(localGetRealDist());
+        i32_speedReal = i32_speedReal +50;
+        i32_speedTheor = i32_speedTheor + 100;
+        ui32_tempTheorDist += abs(i32_speedReal);
+        ui32_tempRealDist += abs(i32_speedTheor);
+
+        if(count > 15)
+          getITracMoveInstance().setSpeedReal(localGetSpeedReal(i32_speedReal));
+        if (count < 10)
+        getITracMoveInstance().setSpeedTheor(localGetSpeedTheor(i32_speedTheor));
+        getITracMoveInstance().setDistTheor(ui32_tempTheorDist);
+        getITracMoveInstance().setDistReal(ui32_tempRealDist);
+        getITracMoveInstance().setOperatorDirectionReversed(IsoAgLib::IsoReversed);
+        //getITracMoveInstance().setSelectedSpeed(100);
+        //getITracMoveInstance().setSelectedSpeedSource(IsoAgLib::IsoNavigationBasedSpeed);
+
+        EXTERNAL_DEBUG_DEVICE << "\t+++++++++ Moving KLASSE +++++++++\n";
+        EXTERNAL_DEBUG_DEVICE << "selected direction command:       " << getIsoDirectionFlag(getITracMoveInstance().selectedDirectionCmd() ) << "\n";
+        EXTERNAL_DEBUG_DEVICE << "selected speed set point command: " << getITracMoveInstance().selectedSpeedSetPointCmd() << "\n";
+        EXTERNAL_DEBUG_DEVICE << "selected speed set point limit:   " << getITracMoveInstance().selectedSpeedSetPointLimit() << "\n";
         #endif
 
         #ifdef TEST_TRACTOR_GENERAL
@@ -411,8 +589,24 @@ int main()
         getITracGeneralInstance().setHitchRearDraft(200);
         getITracGeneralInstance().setHitchFrontLowerLinkForce(50);
         getITracGeneralInstance().setHitchRearLowerLinkForce(60);
+        getITracGeneralInstance().setFrontHitchPosLimitStatus(IsoAgLib::IsoOperatorLimited);
+        getITracGeneralInstance().setRearHitchPosLimitStatus(IsoAgLib::IsoLimitedLow);
+
         getITracGeneralInstance().setMaxPowerTime(5);
-        getITracGeneralInstance().setKeySwitch(IsoAgLib::IsoActive);
+        if (count % 3 == 1)
+          getITracGeneralInstance().setKeySwitch(IsoAgLib::IsoActive);
+        if ( (count % 5) == 1)
+        {
+          getITracGeneralInstance().setKeySwitch(IsoAgLib::IsoInactive);
+
+          EXTERNAL_DEBUG_DEVICE << "Key switch state changed from ON to OFF.\n";
+          EXTERNAL_DEBUG_DEVICE << "Maintain ecu power for 2 seconds:      " << getITracGeneralInstance().maintainEcuPower() << "\n";
+          EXTERNAL_DEBUG_DEVICE << "Maintain actuatur power for 2 seconds: " << getITracGeneralInstance().maintainActuatorPower() << "\n";
+          EXTERNAL_DEBUG_DEVICE << "Implement in work:                     " << getIsoImplWorkFlag(getITracGeneralInstance().maintainPowerForImplInWork() ) << "\n";
+          EXTERNAL_DEBUG_DEVICE << "Implement in transport:                " << getIsoImplTransportFlag(getITracGeneralInstance().maintainPowerForImplInTransport()) << "\n";
+          EXTERNAL_DEBUG_DEVICE << "Implement in park:                     " << getIsoImplParkFlag(getITracGeneralInstance().maintainPowerForImplInPark()) << "\n";
+        }
+        count++;
         #endif
 
         #ifdef TEST_TIME
@@ -423,6 +617,91 @@ int main()
         //getITimePosGpsInstance().setTimeUtc(hour, minute, second, msec);
         #endif
 
+        #ifdef TEST_TRACPTOSETPOINT
+        //TRACTOR PTO SET POINT CLASS TEST FUNCTIONALITY
+        EXTERNAL_DEBUG_DEVICE << "\t+++++++++ Pto Set Point KLASSE +++++++++\n";
+        EXTERNAL_DEBUG_DEVICE << "Front hitch pos cmd:  "     << static_cast<int>(getITracPtoSetPointInstance().frontHitchPosCmd() ) << "\n";
+        EXTERNAL_DEBUG_DEVICE << "Front pto set point cmd:  " << getITracPtoSetPointInstance().frontPtoSetPointCmd() << "\n";
+        EXTERNAL_DEBUG_DEVICE << "Front pto engagement:  "    << getITracPtoSetPointInstance().frontPtoEngagement() << "\n";
+        EXTERNAL_DEBUG_DEVICE << "Front pto mode:  "          << getITracPtoSetPointInstance().frontPtoMode() << "\n";
+        EXTERNAL_DEBUG_DEVICE << "Front pto economy mode:  "  << getITracPtoSetPointInstance().frontPtoEconomyMode() << "\n";
+        #endif
+
+        #ifdef TEST_TRACPTO
+        ui16_outputShaft = ui16_outputShaft +10;
+        ui16_outputShaftSetPoint = ui16_outputShaftSetPoint + 50;
+        getITracPtoInstance().setPtoFront(localGetPtoOutputShaft(ui16_outputShaft));
+        getITracPtoInstance().setPtoRear(localGetPtoOutputShaft(ui16_outputShaftSetPoint));
+        getITracPtoInstance().setPtoFrontEngaged(IsoAgLib::IsoActive);
+        getITracPtoInstance().setPtoRearEngaged(IsoAgLib::IsoActive);
+        getITracPtoInstance().setPtoFront1000(IsoAgLib::IsoInactive);
+        getITracPtoInstance().setFrontPtoSetPoint(1000);
+        getITracPtoInstance().setPtoRearEconomy(IsoAgLib::IsoError);
+        getITracPtoInstance().setFrontPtoEngagementReqStatus(IsoAgLib::IsoExternalReqAccepted);
+        getITracPtoInstance().setRearPtoEngagementReqStatus(IsoAgLib::IsoControlOverride);
+        getITracPtoInstance().setFrontPtoModeReqStatus(IsoAgLib::IsoNotAvailableReq);
+        getITracPtoInstance().setRearPtoModeReqStatus(IsoAgLib::IsoErrorReq);
+        getITracPtoInstance().setFrontPtoEconomyModeReqStatus(IsoAgLib::IsoExternalReqAccepted);
+        getITracPtoInstance().setRearPtoEconomyModeReqStatus(IsoAgLib::IsoErrorReq);
+        getITracPtoInstance().setFrontPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitedHigh);
+        getITracPtoInstance().setRearPtoShaftSpeedLimitStatus(IsoAgLib::IsoNotLimited);
+        #endif
+
+        #ifdef TEST_TRACAUX
+        //TRACTOR AUXILIARY VALVE CLASS TEST FUNCTIONALITY
+        int extendPortFlow = -125;
+        EXTERNAL_DEBUG_DEVICE << "\t+++++++++ AUXILIARY VALVE KLASSE +++++++++\n";
+        if ( !getITracAuxInstance().setExtendPortEstFlow(2, extendPortFlow) )
+          EXTERNAL_DEBUG_DEVICE << "Either extend port flow estimated value is not between -125 to 125 or valve number is not betwenn 0 - 15.\n";
+        if ( !getITracAuxInstance().setRetractPortEstFlow(2, 125) )
+          EXTERNAL_DEBUG_DEVICE << "Either retract port flow estimated value is not between -125 to 125 or valve number is not betwenn 0 - 15.\n";
+        if ( !getITracAuxInstance().setEstFailSaveMode(2, IsoAgLib::IsoFloat) )
+          EXTERNAL_DEBUG_DEVICE << "(estFailSaveMode) Valve number is not between 0 - 15.\n";
+        if ( !getITracAuxInstance().setEstValveState(2, IsoAgLib::IsoErrorAuxExt) )
+          EXTERNAL_DEBUG_DEVICE << "(estValveState) Valve number is not between 0 - 15.\n";
+        if ( !getITracAuxInstance().setExtendPortMeasuredFlow(2, 125) )
+          EXTERNAL_DEBUG_DEVICE << "Either extend port flow measured value is not between -125 to 125 or valve number is not betwenn 0 - 15.\n";
+        if ( !getITracAuxInstance().setRetractPortMeasuredFlow(2, 126) )
+          EXTERNAL_DEBUG_DEVICE << "Either retract port flow measured value is not between -125 to 125 or valve number is not betwenn 0 - 15.\n";
+        if ( !getITracAuxInstance().setExtendPortPressure(2, 321000) )
+          EXTERNAL_DEBUG_DEVICE << "Either extend port pressure value is not between 0 - 321275 or valve number is not betwenn 0 - 15.\n";
+        if ( !getITracAuxInstance().setRetractPortPressure(2, 13) )
+          EXTERNAL_DEBUG_DEVICE << "Either retract port pressure value is not between 0 - 321275 or valve number is not betwenn 0 - 15.\n";
+        if ( !getITracAuxInstance().setReturnPortPressure(2, 0) )
+          EXTERNAL_DEBUG_DEVICE << "Either return port pressure value is not between 0 - 4000 or valve number is not betwenn 0 - 15.\n";
+        if ( !getITracAuxInstance().setEstValveLimitStatus(2, IsoAgLib::IsoLimitedLow) )
+          EXTERNAL_DEBUG_DEVICE << "(estValveLimitStatus) Valve number is not between 0 - 15.\n";
+        if ( !getITracAuxInstance().setMeasuredValveLimitStatus(2, IsoAgLib::IsoNotLimited) )
+          EXTERNAL_DEBUG_DEVICE << "(measuredValveLimitStatus) Valve number is not between 0 - 15.\n";
+
+        EXTERNAL_DEBUG_DEVICE << "command port flow:  "      << static_cast<int>( getITracAuxInstance().cmdPortFlow(2) ) << "\n";
+        EXTERNAL_DEBUG_DEVICE << "command fail save mode:  " << getIsoAuxFlag( getITracAuxInstance().cmdFailSaveMode(2) ) << "\n";
+        EXTERNAL_DEBUG_DEVICE << "command valve state:  "    << getIsoAuxFlagExtended( getITracAuxInstance().cmdValveState(2) ) << "\n";
+
+        #endif
+
+        #ifdef TEST_TRACCERT
+        //TRACTOR CERTIFICATION CLASS TEST FUNCTIONALITY
+        getITracCertInstance().setCertReferenceNumber(1530);
+        getITracCertInstance().setCertLabID(650);
+        getITracCertInstance().setIsobusCertYear(2006) ;
+        getITracCertInstance().setIsobusCertRevision(IsoAgLib::IsoFourthRev);
+        getITracCertInstance().setIsobusCertLabType(IsoAgLib::IsoEUCert);
+        getITracCertInstance().setMinimumECU(IsoAgLib::IsoCert);
+        #endif
+
+        #ifdef TEST_TRACGUIDANCE
+        //TRACTOR GUIDANCE CLASS TEST FUNCTIONALITY
+        EXTERNAL_DEBUG_DEVICE << "\t+++++++++ Guidance KLASSE +++++++++\n";
+        EXTERNAL_DEBUG_DEVICE << "curvature command:             " << getITracGuidanceInstance().curvatureCmd() << "\n";
+        EXTERNAL_DEBUG_DEVICE << "request reset command status:  " << IsoSteerFlag( getITracGuidanceInstance().curvatureCmdStatus() ) << "\n";
+
+        getITracGuidanceInstance().setEstCurvature(3126);
+        getITracGuidanceInstance().setRequestResetCmdStatus(IsoAgLib::IsoResetRequired);
+        getITracGuidanceInstance().setSteeringInputPosStatus(IsoAgLib::IsoCorrectPos);
+        getITracGuidanceInstance().setSteeringSystemReadiness(IsoAgLib::IsoSystemNotReady);
+        getITracGuidanceInstance().setMechanicalSystemLogout(IsoAgLib::IsoActive);
+        #endif
      }
     #endif
   }
