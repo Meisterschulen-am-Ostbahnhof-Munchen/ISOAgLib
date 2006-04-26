@@ -119,8 +119,9 @@ static void usage()
     " -v=xxx     Validation scheme [always | never | auto]. Defaults to auto\n"
     " -n         Enable namespace processing. Defaults to off.\n"
     " -s         Enable schema processing with default path to XML schema. Defaults to off.\n"
-    " -s=xxx.xsd Enable schema processing with XML schema xxx.xsd from given path relative to the directory of the device description. \
-                 Defaults to off.\n"
+    " -s=xxx.xsd Enable schema processing with XML schema xxx.xsd either from the path relative to the directory of the device description\n \
+           OR the absolute pathname starting with '/' (Linux) or '\\' (Win).\n \
+           Defaults to off.\n"
     " -f         Enable full schema constraint checking. Defaults to off.\n"
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
     " -?         Show this help.\n\n"
@@ -233,10 +234,10 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
   bool isThere = false;
   unsigned int foundID = 0;
 
-  for (unsigned int i=0; i<objCount; i++)
-    std::cout << "index: " << i << " " <<  &objNameTable [i*(stringLength+1)] << " - " << vecstr_objTableIDTable[i] << " - " <<
-        objIDTable [i] << std::endl;
-  std::cout << std::endl;
+//   for (unsigned int i=0; i<objCount; i++)
+//     std::cout << "index: " << i << " " <<  &objNameTable [i*(stringLength+1)] << " - " << vecstr_objTableIDTable[i] << " - " <<
+//         objIDTable [i] << std::endl;
+//   std::cout << std::endl;
 
   // first check if ID is there already
   for (unsigned int i=0; i<objCount; i++)
@@ -1655,12 +1656,21 @@ int main(int argC, char* argV[])
     if (schemaPath == NULL)
       tmp_loc = c_directory;
     else
-      tmp_loc = c_directory + std::string(schemaPath); // trim pathname -> add pathname of device description
+    {
+#ifdef WIN32
+      if (schemaPath[0] == '\\')
+#else
+      if (schemaPath[0] == '/')
+#endif
+        tmp_loc = std::string(schemaPath);
+      else
+        tmp_loc = c_directory + std::string(schemaPath); // trim pathname -> add pathname of device description
+    }
 
     FILE *p_file = fopen (tmp_loc.c_str(), "r");
     if (p_file == (FILE*)NULL)
     {
-      std::cerr <<  "Couldn't open XML schema: \"" << xsdLocation << "\""<< std::endl;
+      std::cerr <<  "Couldn't open XML schema: \"" << tmp_loc.c_str() << "\""<< std::endl;
       clean_exit (4, "XML-checking error occured. Terminating.\n");
     }
     fclose (p_file);
