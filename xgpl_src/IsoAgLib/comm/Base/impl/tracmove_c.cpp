@@ -584,10 +584,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       return; //do not send message becaus only default data is available
     data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
   #ifdef SYSTEM_PC_VC
-    data().setUint16Data( 0, abs(i32_speedReal));
+    data().setUint16Data( 0, labs(i32_speedReal));
   #else
-    uint16_t temp = CNAMESPACE::abs(i32_speedReal);
-    data().setUint16Data(0, CNAMESPACE::abs(i32_speedReal));
+    uint16_t temp = CNAMESPACE::labs(i32_speedReal);
+    data().setUint16Data(0, CNAMESPACE::labs(i32_speedReal));
   #endif
     data().setUint32Data(2 ,ui32_distReal);
     uint8_t b_val8 = 0;
@@ -616,9 +616,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       return; //do not send message becaus only default data is available
     data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
   #ifdef SYSTEM_PC_VC
-    data().setUint16Data(0, abs(i32_speedTheor));
+    data().setUint16Data(0, labs(i32_speedTheor));
   #else
-    data().setUint16Data(0, CNAMESPACE::abs(i32_speedTheor));
+    data().setUint16Data(0, CNAMESPACE::labs(i32_speedTheor));
   #endif
     data().setUint32Data(2, ui32_distTheor);
 
@@ -658,10 +658,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     uint8_t ui8_temp = 0;
 
     #ifdef SYSTEM_PC_VC
-    data().setUint16Data(0, abs(i32_selectedSpeed));
+    data().setUint16Data(0, labs(i32_selectedSpeed));
     #else
-    temp = CNAMESPACE::abs(i32_selectedSpeed);
-    data().setUint16Data(0, CNAMESPACE::abs(i32_selectedSpeed));
+    temp = CNAMESPACE::labs(i32_selectedSpeed);
+    data().setUint16Data(0, CNAMESPACE::labs(i32_selectedSpeed));
     #endif
     data().setUint32Data(2, ui32_selectedDistance);
     ui8_temp |= (t_selectedSpeedLimitStatus << 5);
@@ -698,13 +698,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     // check if there was an overflow = diff is greater than half of def area (per sign side)
     #ifdef SYSTEM_PC_VC
-    if ((abs(i16_diff) > i32_maxDefFendt/2) || (abs(i16_diff) > i32_maxDefDin/2))
+    if ((labs(i16_diff) > i32_maxDefFendt/2) || (labs(i16_diff) > i32_maxDefDin/2))
     { // one of the overflow checks triggers
-      if (abs(i16_diff) > i32_maxDefFendt/2)
+      if (labs(i16_diff) > i32_maxDefFendt/2)
     #else
-    if ((CNAMESPACE::abs(i16_diff) > i32_maxDefFendt/2) || (CNAMESPACE::abs(i16_diff) > i32_maxDefDin/2))
+    if ((CNAMESPACE::labs(i16_diff) > i32_maxDefFendt/2) || (CNAMESPACE::labs(i16_diff) > i32_maxDefDin/2))
     { // one of the overflow checks triggers
-      if (CNAMESPACE::abs(i16_diff) > i32_maxDefFendt/2)
+      if (CNAMESPACE::labs(i16_diff) > i32_maxDefFendt/2)
     #endif
       { // the old wrong fendt limit triggers
         if (rrefiNewVal > refiVal)
@@ -719,9 +719,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         }
       }
       #ifdef SYSTEM_PC_VC
-      if (abs(i16_diff) > i32_maxDefDin/2)
+      if (labs(i16_diff) > i32_maxDefDin/2)
       #else
-      if (CNAMESPACE::abs(i16_diff) > i32_maxDefDin/2)
+      if (CNAMESPACE::labs(i16_diff) > i32_maxDefDin/2)
       #endif
     { // the correct DIN limit triggers
         if (rrefiNewVal > refiVal)
