@@ -49,7 +49,7 @@
   <kdevdebugger>
     <general>
       <dbgshell></dbgshell>
-      <programargs>/home/winkler/Projekte/TaskController/src_test/test_pools/firstpool/Device_Description.xml</programargs>
+      <programargs>-n -f -v=always -s=../../../IsoAgLib/build_utils/proc2iso/bin/proc2iso.xsd /home/winkler/Projekte/TaskController/src_test/test_pools/firstpool/Device_Description.xml</programargs>
       <gdbpath></gdbpath>
       <configGdbScript></configGdbScript>
       <runShellScript></runShellScript>

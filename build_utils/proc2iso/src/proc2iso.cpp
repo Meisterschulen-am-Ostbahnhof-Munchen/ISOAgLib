@@ -86,6 +86,7 @@ unsigned int countDETID = 0;
 unsigned int countDVPID = 0;
 unsigned int countDPTID = 0;
 unsigned int countDPDID = 0;
+unsigned int countDPCID = 0;
 unsigned int objNextAutoID;
 unsigned int kcNextAutoID;
 unsigned int objNextUnnamedName;
@@ -232,6 +233,11 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
   bool isThere = false;
   unsigned int foundID = 0;
 
+  for (unsigned int i=0; i<objCount; i++)
+    std::cout << "index: " << i << " " <<  &objNameTable [i*(stringLength+1)] << " - " << vecstr_objTableIDTable[i] << " - " <<
+        objIDTable [i] << std::endl;
+  std::cout << std::endl;
+
   // first check if ID is there already
   for (unsigned int i=0; i<objCount; i++)
   {
@@ -240,14 +246,18 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
     {
       //get objType by entry in objTabelIDTable
       char objTypeByTableID[3];
-      unsigned int objTypeFound;
+      unsigned int ui_objCntFound = 0;
       strncpy(objTypeByTableID, vecstr_objTableIDTable[i].c_str(), 3);
       for (uint8_t cnt=0; cnt<maxTableID; cnt++)
       {
-        if (strncmp(objTypeByTableID, TableIDTable[cnt], 3) == 0) objTypeFound = cnt;
+        if (strncmp(objTypeByTableID, TableIDTable[cnt], 3) == 0)
+        {
+          ui_objCntFound = cnt;
+          break;
+        }
       }
       //cmp with that of given object
-      if (objTypeFound == objType)
+      if (ui_objCntFound == objType)
       {
         foundID = objIDTable [i];
         isThere = true;
@@ -289,9 +299,12 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
         countDETID++;
         break;
       case otDeviceProcessData:
-      case otDeviceProcessDataCombination:
         sprintf(tempBuffer, "DPD%d", countDPDID);
         countDPDID++;
+        break;
+      case otDeviceProcessDataCombination:
+        sprintf(tempBuffer, "DPC%d", countDPCID);
+        countDPCID++;
         break;
       case otDeviceProperty:
         sprintf(tempBuffer, "DPT%d", countDPTID);
@@ -304,8 +317,8 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
     }
     vecstr_objTableIDTable.push_back(std::string(tempBuffer));
   }
-  //std::cout << "foundID: " << foundID << " " << std::endl;
-  //std::cout << "objName: " << objName << std::endl;
+//   std::cout << "foundID: " << foundID << " " << std::endl;
+//   std::cout << "objName: " << objName << std::endl;
   return (foundID);
 };
 
@@ -731,6 +744,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         case otDevice:
         case otDeviceProcessData:
         case otDeviceProcessDataCombination:
+        case otDeviceValuePresentation:
           objNeedsName=true;
       }
 
@@ -798,31 +812,12 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 objNextUnnamedName++;
                 is_objChildName = true;
               }
+
               // give him an ID, although not necessary now...
               objChildID = getID (objChildName, is_objChildID, objChildID, objectIsType(XMLString::transcode(child->getNodeName())));
               //store that ID for later output in the bytestream-file
               vecstr_childID.push_back(objChildID);
               objChildObjects++;
-
-              // if current child is otDeviceProcessData: check if there are more then one otDeviceProcessDataCombination
-              // => generate more child IDs
-              if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceProcessData)
-              {
-                bool b_firstLoop = TRUE;
-                for ( DOMNode *subChild = child->getFirstChild(); subChild != 0; subChild=subChild->getNextSibling() )
-                {
-                  if (objectIsType(XMLString::transcode(subChild->getNodeName())) == otDeviceProcessDataCombination)
-                  { // ID for one child alread created => start with second child
-                    if (!b_firstLoop) {
-                      objChildID = getID(objChildName, is_objChildID, objChildID, objectIsType(XMLString::transcode(child->getNodeName())));
-                      vecstr_childID.push_back(objChildID);
-                      objChildObjects++;
-                    } else
-                      b_firstLoop = FALSE;
-                  }
-                }
-              }
-
             }
           }
         }
@@ -1114,8 +1109,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         }
         buf_length_dpd += vecstr_attrString[attrDesignator].size();
         //device_value_presentation_object_id
-        buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) & 0xFF) << ", "
-                << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) >> 8) & 0xFF);
+        buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) & 0xFF) << ", "
+            << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) >> 8) & 0xFF);
         buf_length_dpd += 2;
         vecstr_dataFromDPD[2] = vecstr_attrString[attrDevice_value_presentation_name].c_str();
         vecstr_dataFromDPD[3] = vecstr_attrString[attrDesignator];
@@ -1137,8 +1132,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           // get next ID from vec saved during processing otDeviceElement
           if ( vecstr_childID_DET.size() )
           {
-            ui16_newObjChildID = vecstr_childID_DET.back();
-            vecstr_childID_DET.pop_back();
+            ui16_newObjChildID = vecstr_childID_DET.front();
+            vecstr_childID_DET.erase(vecstr_childID_DET.begin());
           }
 
           if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceProcessDataCombination)
@@ -1163,9 +1158,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             str_designator.append(vecstr_attrString[attrCommand_type]);
 
             //output: tableID & objID
-            buffer  << ", \n'" << TableIDTable [otDeviceProcessDataCombination][0] << "', "
-                    << "'" << TableIDTable [otDeviceProcessDataCombination][1]   << "', "
-                    << "'" << TableIDTable [otDeviceProcessDataCombination][2]   << "', "
+            buffer  << ", \n'" << TableIDTable [otDeviceProcessData][0] << "', "
+                    << "'" << TableIDTable [otDeviceProcessData][1]   << "', "
+                    << "'" << TableIDTable [otDeviceProcessData][2]   << "', "
                     << uint16_t(ui16_newObjChildID & 0xFF)             << ", "
                     << uint16_t((ui16_newObjChildID >> 8) & 0xFF)      << ", ";
             buf_length += 5;
@@ -1192,8 +1187,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             }
             buf_length += str_designator.size();
             //device_value_presentation_object_id
-            buffer  << (idOrName_toi(vecstr_dataFromDPD[2].c_str(), 1) & 0xFF) << ", "
-                    << ((idOrName_toi(vecstr_dataFromDPD[2].c_str(), 1) >> 8) & 0xFF);
+            buffer  << (idOrName_toi(vecstr_dataFromDPD[2].c_str(), otDeviceValuePresentation) & 0xFF) << ", "
+                    << ((idOrName_toi(vecstr_dataFromDPD[2].c_str(), otDeviceValuePresentation) >> 8) & 0xFF);
             buf_length += 2;
             fprintf( partFileA, "%s", buffer.str().c_str() );
             buffer.str("");
@@ -1640,7 +1635,11 @@ int main(int argC, char* argV[])
       // now trim exe filename
       for (int i=strlen(xsdLocation)-1; i >= 0; i--)
       {
+#ifdef WIN32
+        if (xsdLocation[i] == '\\') { xsdLocation[i+1]=0x00; break; }
+#else
         if (xsdLocation[i] == '/') { xsdLocation[i+1]=0x00; break; }
+#endif
       }
       strcat (xsdLocation, "proc2iso.xsd");
     }

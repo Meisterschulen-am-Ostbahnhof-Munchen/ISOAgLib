@@ -1,7 +1,8 @@
 /** @page XMLProcSpec Specification for ISO ProcessData XML files (device description)
 \section XMLGeneralNotes General notes
 <ul>
-  <li>This version of proc2iso is designed to work with TCs. It parses a device description given in xml format and generates a bytestream for the upload to the TC and a header file <br>
+  <li>This version of proc2iso is designed to work with TCs. It parses a device description given in xml format and generates a C++-bytestream for
+      the upload to the TC and a C++-header file <br>
       with the necessary declarations for the correct constructors (see tutorials 2_0 to 2_6).
 </ul>
 
@@ -18,7 +19,8 @@
 bool b_registerSuccess = getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(&c_myIdent, deviceDescription_de,
                          ui32_arrayLength_de, true);
 \endcode
-<li> If the device pool was registered successfully the function returns true. The ending of <i>deviceDescription_xx</i> and <i>ui32_arrayLength_xx</i> depends on the language <br>
+<li> If the device pool was registered successfully the function returns true. The ending of <i>deviceDescription_xx</i> and
+     <i>ui32_arrayLength_xx</i> depends on the language <br>
      code in the localizationlabel of the device description and has to be hand customized.
 
 \section XMLGeneralStructure General structure of the XML-file
@@ -52,8 +54,10 @@ Note that XML-elements which don't contain any nested element are closed that wa
 
 \section XMLNamingConvention Naming-Conventions for \< TAG attribute =' value ' \>
 <ul>
-<li> All elements are named according to <b>ISO 11783</b>. A further XML-element was added to enable processdata elements with more than one DDI (e.g. with min and max values). It is called <b>deviceprocessdatacombination</b>.<br>
-<i>Example:</i> processdata Bale Size: there are five different defined DDI's for the bale size. Sometimes it is necessary to measure several values from one processdata.
+<li> All elements are named according to <b>ISO 11783</b>. A further XML-element was added to enable processdata elements with more than one DDI
+     (e.g. with min and max values). It is called <b>deviceprocessdatacombination</b>.<br>
+     <i>Example:</i> processdata Bale Size: there are five different defined DDI's for the bale size. Sometimes it is necessary to measure several
+     values from one processdata.
 <li> <b>Tag</b>s are written WITHOUT underscores or spaces (for example "<deviceprocessdata>").
 <li> <b>Attribute</b>s are written only WITH underscores (for example "command_type=").
 <li> <b>Values</b> are written WITHOUT underscores or spaces, the name of the XML-element is an exception (for example "defaultset").
@@ -63,10 +67,10 @@ Note that XML-elements which don't contain any nested element are closed that wa
 The following table shows which objects may be included into which other.
 <table>
 <tr><th>  Name of XML-Tag </th> <th> Allowed inclusion of objects of following types
-</th></tr><tr><td>  device                        </td><td> DeviceElement </td>
+</th></tr><tr><td>  device                        </td><td> DeviceElement | DeviceValuePresentation</td>
 </td></tr><tr><td>  deviceelement                 </td><td> DeviceProcessData | DeviceProperty
-</td></tr><tr><td>  deviceprocessdata             </td><td> DeviceDinProcessData | DeviceValuePresentation | DeviceProcessDataCombination
-</td></tr><tr><td>  deviceproperty                </td><td> DeviceValuePresentation
+</td></tr><tr><td>  deviceprocessdata             </td><td> DeviceDinProcessData | DeviceProcessDataCombination
+</td></tr><tr><td>  deviceproperty                </td><td> none
 </td></tr><tr><td>  devicedinprocessdata          </td><td> none
 </td></tr><tr><td>  deviceprocessdatacombination  </td><td> none
 </td></tr><tr><td>  devicevaluepresentation       </td><td> none
@@ -81,14 +85,16 @@ Next table gives a review of all available attributes with value range.
 <tr><td>workingset_mastername</td><td> Double Integer, \ref XMLWSName "Special treatment of Working Set Master NAME"</td></tr>
 <tr><td>serialnumber</td><td> Device Serial Number, max. 32 chars </td></tr>
 <tr><td>structure_label</td><td> Label given by Device to identify Device Description Structure, max. 7 chars </td></tr>
-<tr><td>localization_label</td><td> Label given by Device to identify Device Description Localization (Byte 1 to 6 defined by the Language Command PGN <br> (see ISO 11873-7), Byte 7 is reserved and set to 0xFF) </td></tr>
+<tr><td>localization_label</td><td> Label given by Device to identify Device Description Localization (Byte 1 to 6 defined by the Language Command
+        PGN <br> (see ISO 11873-7), Byte 7 is reserved and set to 0xFF) </td></tr>
 <tr><td>element_type</td><td> \ref XMLDETType or directly 1..7 </td></tr>
 <tr><td>element_number</td><td> Integer, 0...4095 </td></tr>
 <tr><td>parent_name</td><td> Name of parent DeviceElementObject or DeviceObject to establish a hierarchical of device elements </td></tr>
 <tr><td>ddi</td><td> Integer, 0...65535 </td></tr>
 <tr><td>properties</td><td> Integer, 1 or 2</td></tr>
 <tr><td>trigger_methods</td><td> \ref XMLTriggerMethods "Trigger methods" </td></tr>
-<tr><td>device_value_presentation_name</td><td> Is used, if a DeviceValuePresentationObject is referenced. If nothing is referenced leave it out. </td></tr>
+<tr><td>device_value_presentation_name</td><td> Is used, if a DeviceValuePresentationObject is referenced. If nothing is referenced leave it out.
+        </td></tr>
 <tr><td>property_value</td><td> Signed Integer, -2<sup>31</sup>...(2<sup>31</sup>-1) </td></tr>
 <tr><td>lis</td><td> \ref XMLDIN "Using DIN" </td></tr>
 <tr><td>wert_inst</td><td> \ref XMLDIN "Using DIN" </td></tr>
@@ -103,14 +109,16 @@ Next table gives a review of all available attributes with value range.
 <tr><td>wanted_sa</td><td> Integer, default: 128 </td></tr>
 <tr><td>function_instance</td><td> 5 Bit, 0...32, default: 0 </td></tr>
 <tr><td>ecu_instance</td><td> 3 Bit, 0...8, default: 0 </td></tr>
-<tr><td>store_sa_at_eeprom_address</td><td> if a source address (sa) was assigned to a self-configurable device, that sa should be assigned too for next powercycle, <br>
+<tr><td>store_sa_at_eeprom_address</td><td> if a source address (sa) was assigned to a self-configurable device, that sa should be assigned too
+        for next powercycle, <br>
         default: 0xFFFF </td></tr>
 <tr><td>manufacturer_code</td><td> 11 Bit, 0...2048 </td></tr>
 <tr><td>device_class</td><td> 7 Bit, 0...128 </td></tr>
 <tr><td>device_class_instance</td><td> 4 Bit, 0...16 </td></tr>
 <tr><td>ws_identity_number</td><td> 21 Bit, 0...2097152 </td></tr>
 <tr><td>feature_set</td><td> \ref XMLFeatureSet "Feature set" </td></tr>
-<tr><td>priority</td><td> Is used as a parameter in the processdata contructor and is a priority code of messages with this processdata instance. <br>It is set to 2 by default. </td></tr>
+<tr><td>priority</td><td> Is used as a parameter in the processdata contructor and is a priority code of messages with this processdata
+        instance. <br>It is set to 2 by default. </td></tr>
 <tr><td>device_program_name</td><td> String, name of the device in the main-file</td></tr>
 <tr><td>proc_program_name</td><td> String, name of the processdata in the main-file </td></tr>
 <tr><td>cumulative_value</td><td> \ref XMLCumulativeValue "Cumulative value" </td></tr>
@@ -119,7 +127,8 @@ Next table gives a review of all available attributes with value range.
 </table>
 
 \section XMLAttributesForElement Allowed attributes for a XML-element
-The following listing shows for every XML-element what attributes are available. If an attribute is required it has to be set to a valid value otherwise the parser interrupts. <br>
+The following listing shows for every XML-element what attributes are available. If an attribute is required it has to be set to a valid value
+otherwise the parser interrupts. <br>
 If an attribute is not required, it means that is will be set to a default value.
 <table><tr><th> XML-element </th><th> Name of attribute </th><th> Required </th></tr>
 <tr><td> \anchor XMLDVC device </td><td> designator </td><td> yes </td></tr>
@@ -147,7 +156,7 @@ If an attribute is not required, it means that is will be set to a default value
 <tr><td> \anchor XMLDPD deviceprocessdata </td><td> designator </td><td> yes </td></tr>
 <tr><td>  </td><td> ddi </td><td> yes </td></tr>
 <tr><td>  </td><td> properties </td><td> no </td></tr>
-<tr><td>  </td><td> trigger_methodss </td><td> no </td></tr>
+<tr><td>  </td><td> trigger_methods </td><td> no </td></tr>
 <tr><td>  </td><td> proc_program_name </td><td> yes </td></tr>
 <tr><td>  </td><td> cumulative_value </td><td> no </td></tr>
 <tr><td>  </td><td> priority </td><td> no </td></tr>
@@ -165,11 +174,12 @@ If an attribute is not required, it means that is will be set to a default value
 <tr><td> \anchor XMLDVP devicevaluepresentation </td><td> offset </td><td> yes </td></tr>
 <tr><td>  </td><td> scale </td><td> yes </td></tr>
 <tr><td>  </td><td> number_of_decimals </td><td> yes </td></tr>
-<tr><td>  </td><td> designator </td><td> no </td></tr>
+<tr><td>  </td><td> designator </td><td> yes </td></tr>
 </table>
 
 \section XMLDETType Device Element Types
-If you want to specify what type a device element is, the attribute value has a range of 1...7 (see ISO 11873-10 Annex A.3), alternatively you can use one of the following 7 device element type constants:<p>
+If you want to specify what type a device element is, the attribute value has a range of 1...7 (see ISO 11873-10 Annex A.3), alternatively you
+can use one of the following 7 device element type constants:<p>
 <table><tr><th> Name of device element type </th></tr>
 <tr><td>(1) device</td></tr>
 <tr><td>(2) function</td></tr>
@@ -181,7 +191,8 @@ If you want to specify what type a device element is, the attribute value has a 
 </table>
 
 \section XMLTriggerMethods Trigger methods
-If you want to specify the trigger method for a device process data, the attribute value has a range of 0...31 (see ISO 11873-10 Annex A.4), alternatively you can use one of the following 5 trigger method constants:<p>
+If you want to specify the trigger method for a device process data, the attribute value has a range of 0...31 (see ISO 11873-10 Annex A.4),
+alternatively you can use one of the following 5 trigger method constants:<p>
 <table><tr><th> Name of trigger method </th></tr>
 <tr><td> (1) timeinterval</td></tr>
 <tr><td> (2) distanceinterval</td></tr>
@@ -191,16 +202,19 @@ If you want to specify the trigger method for a device process data, the attribu
 </table>
 
 \section XMLFeatureSet Feature Set
-Commonly, there are several processdata value for measurement, but if the user is sure that there is only one processdata value for measuring, he can decide to chose between the following
+Commonly, there are several processdata value for measurement, but if the user is sure that there is only one processdata value for measuring,
+he can decide to chose between the following
 <table><tr><th> value of feature_set </th></tr>
 <tr><td> "" </td><td> (recommended) just leave that attribute out </td></tr>
 <tr><td> SimpleMeasure</td><td> only one value will be measured (the last, although several process data values are available) </td></tr>
 <tr><td> SimpleSetpoint</td><td> only one value will be set point (the last, although several process data values are available) </td></tr>
-<tr><td> SimpleSetpointSimpleMeasure</td><td> only one value will be measured and set point (the last, although there are more process data values) </td></tr>
+<tr><td> SimpleSetpointSimpleMeasure</td><td> only one value will be measured and set point (the last, although there are more process data
+values) </td></tr>
 </table>
 
 \section XMLDIN Using DIN
-To ensure the support to corresponding DIN standard, there are a further XML-element and some additional attributes which are only used for DIN. If they are not given they will be set to default values.
+To ensure the support to corresponding DIN standard, there are a further XML-element and some additional attributes which are only used for DIN.
+If they are not given they will be set to default values.
 These values are necessary for the constructor built.
 Have a look at the following codesnippet:
 \code
@@ -219,7 +233,8 @@ For further information to DIN elements see <b>DIN 9684-1</b>.
 
 \section XMLCumulativeValue Cumulative value
 <ul>
-<li> Cumulative values are values like area, distance or time. The value of the measure data sets is updated on master value update dependent on the value increment since the last master value update.
+<li> Cumulative values are values like area, distance or time. The value of the measure data sets is updated on master value update dependent
+on the value increment since the last master value update.
 <li> If a remote member resets his data set copy, datas of other members aren't changed<br>
 <li> Non-cumulative values like speed, state, rpm are not updated by increment. They are set directly.<br>
 \ref XMLTruth "Truth values"
@@ -243,7 +258,8 @@ Possible values of is_setpoint: \ref XMLTruth "Truth values"
 \section XMLWSName Special treatment of Working Set Master NAME
 <ul>
 <li> The Working Set Master NAME is also called isoname. It consists of nine parts with different information.
-<li> First possibility is to specify the working set master name as a whole double integer with 8 byte. It has to start with the character <b>L</b> (for least significant bit) or <b>M</b> (most significant bit).
+<li> First possibility is to specify the working set master name as a whole double integer with 8 byte. It has to start with the character
+<b>L</b> (for least significant bit) or <b>M</b> (most significant bit).
 <li> That is necessary because of different storage methods (endianess).
 </ul>
 The workingset master name looks like that:
@@ -257,7 +273,8 @@ The other possibility is to specify every single part of the workingset master n
 <device [...] self_configurable_address="false" industry_group="2" device_class_instance="0" device_class="1" function="25" function_instance="0"
  ecu_instance="0" manufacturer_code="0x17" ws_identity_number="0x1BB000" [...]/>
 \endcode
-If <b>self_configurable_address</b>, <b>industry_group</b>, <b>function</b>, <b>function_instance</b> and <b>ecu_instance</b> are not given they will be set to default values.
+If <b>self_configurable_address</b>, <b>industry_group</b>, <b>function</b>, <b>function_instance</b> and <b>ecu_instance</b> are not given
+they will be set to default values.
 Value ranges are defined in section \ref XMLReference "Reference for correct attribute names".
 
 \section XMLTruth Truth values

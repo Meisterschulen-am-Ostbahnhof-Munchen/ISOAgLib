@@ -118,14 +118,13 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
 };
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
-    /* "device", */                       ombDeviceElement,
+    /* "device", */                       ombDeviceElement | ombDeviceValuePresentation,
     /* "deviceelement" */                 ombDeviceProcessData | ombDeviceProperty,
-    /* "deviceprocessdata" */             ombDeviceDinProcessData | ombDeviceValuePresentation | ombDeviceProcessDataCombination,
-    /* "deviceproperty" */                ombDeviceValuePresentation,
+    /* "deviceprocessdata" */             ombDeviceDinProcessData | ombDeviceProcessDataCombination,
+    /* "deviceproperty" */                0,
     /* "devicedinprocessdata" */          0,
     /* "deviceprocessdatacombination" */  0,
     /* "devicevaluepresentation" */       0
-
 };
 
 char otClassnameTable [maxObjectTypes] [stringLength+1] = {
@@ -135,7 +134,7 @@ char otClassnameTable [maxObjectTypes] [stringLength+1] = {
     "DeviceProperty",
     "DeviceDinProcessData",
     "DeviceProcessDataCombination",
-    "DeviceValuePresentation",
+    "DeviceValuePresentation"
 };
 
 
@@ -188,7 +187,7 @@ char TableIDTable [maxTableID] [stringLength+1] = {
     "DPD",
     "DPT",
     "DDP",
-    "DPD",
+    "DPC",
     "DVP"
 };
 

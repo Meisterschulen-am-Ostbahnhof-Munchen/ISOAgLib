@@ -191,7 +191,6 @@
       <xs:choice maxOccurs="unbounded">
         <xs:element name="deviceprocessdatacombination" type="elemDeviceProcessDataCombination" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="devicedinprocessdata"         type="elemDeviceDinProcessData" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:element name="devicevaluepresentation"      type="elemDeviceValuePresentation" minOccurs="0" maxOccurs="1"/>
       </xs:choice>
     </xs:sequence>
     <xs:attribute use="optional" name="designator"                     type="attrName"/>
@@ -206,9 +205,6 @@
   </xs:complexType>
 
   <xs:complexType name="elemDeviceProperty">
-    <xs:sequence>
-      <xs:element name="devicevaluepresentation" type="elemDeviceValuePresentation" minOccurs="0"/>
-    </xs:sequence>
     <xs:attribute use="optional" name="designator"                     type="attrName"/>
     <xs:attribute use="required" name="ddi"                            type="attrIntTo65535"/>
     <xs:attribute use="required" name="property_value"                 type="attrProperty_value"/>
@@ -240,6 +236,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="deviceelement"  type="elemDeviceElement" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element name="devicevaluepresentation"  type="elemDeviceValuePresentation" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute use="optional" name="designator"                 type="attrName"/>
       <xs:attribute use="required" name="software_version"           type="attrName"/>
