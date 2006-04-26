@@ -6,7 +6,7 @@
     <xs:restriction base="xs:string">
       <xs:minLength value="0"/>
       <xs:maxLength value="32"/>
-      <xs:pattern value="[a-zA-Z0-9_.\s]*"/>
+      <xs:pattern value="[a-zA-Z0-9_./\s]*"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -50,7 +50,7 @@
 
   <xs:simpleType name="attrIntTo65535">
     <xs:restriction base="xs:string">
-      <xs:pattern value="(((0x)|(0X))[0-9a-fA-F]{1,4})|(([0-5][0-9]{0,4})|(6[0-4][0-9]{3})|(65[0-4][0-9]{2})|(655[0-2][0-9])|(6553[0-5]))"/>
+      <xs:pattern value="(((0x)|(0X))[0-9a-fA-F]{1,4})|(([0-5]*[0-9]{1,4})|(6[0-4][0-9]{3})|(65[0-4][0-9]{2})|(655[0-2][0-9])|(6553[0-5]))"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -188,22 +188,21 @@
 
   <xs:complexType name="elemDeviceProcessData">
     <xs:sequence>
-      <xs:sequence>
-        <xs:element name="devicevaluepresentation"      type="elemDeviceValuePresentation" minOccurs="0"/>
-      </xs:sequence>
       <xs:choice maxOccurs="unbounded">
         <xs:element name="deviceprocessdatacombination" type="elemDeviceProcessDataCombination" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="devicedinprocessdata"         type="elemDeviceDinProcessData" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="devicevaluepresentation"      type="elemDeviceValuePresentation" minOccurs="0" maxOccurs="1"/>
       </xs:choice>
     </xs:sequence>
-    <xs:attribute use="optional" name="designator"        type="attrName"/>
-    <xs:attribute use="required" name="ddi"               type="attrIntTo65535"/>
-    <xs:attribute use="optional" name="properties"        type="attrProperties"/>
-    <xs:attribute use="optional" name="trigger_methods"   type="attrTrigger_methods"/>
-    <xs:attribute use="required" name="proc_program_name" type="attrVarName"/>
-    <xs:attribute use="optional" name="cumulative_value"  type="attrTruth"/>
-    <xs:attribute use="optional" name="priority"          type="attrIntTo8"/>
-    <xs:attribute use="optional" name="feature_set"       type="attrFeature_set"/>
+    <xs:attribute use="optional" name="designator"                     type="attrName"/>
+    <xs:attribute use="required" name="ddi"                            type="attrIntTo65535"/>
+    <xs:attribute use="optional" name="properties"                     type="attrProperties"/>
+    <xs:attribute use="optional" name="trigger_methods"                type="attrTrigger_methods"/>
+    <xs:attribute use="required" name="proc_program_name"              type="attrVarName"/>
+    <xs:attribute use="optional" name="cumulative_value"               type="attrTruth"/>
+    <xs:attribute use="optional" name="priority"                       type="attrIntTo8"/>
+    <xs:attribute use="optional" name="feature_set"                    type="attrFeature_set"/>
+    <xs:attribute use="optional" name="device_value_presentation_name" type="attrName"/>
   </xs:complexType>
 
   <xs:complexType name="elemDeviceProperty">
@@ -217,6 +216,7 @@
   </xs:complexType>
 
   <xs:complexType name="elemDeviceValuePresentation">
+    <xs:attribute use="required" name="designator"         type="attrName"/>
     <xs:attribute use="optional" name="unit_designator"    type="attrName"/>
     <xs:attribute use="optional" name="offset"             type="attrOffset"/>
     <xs:attribute use="required" name="scale"              type="attrScale"/>
