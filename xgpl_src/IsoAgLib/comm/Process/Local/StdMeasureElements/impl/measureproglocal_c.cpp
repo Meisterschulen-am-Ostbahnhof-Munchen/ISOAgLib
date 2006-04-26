@@ -218,7 +218,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         break;
       #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       case Proc_c::DistProp:
-        pc_iter->start(getTracMoveInstance4Comm().distTheor());
+        pc_iter->start(int32_t(getTracMoveInstance4Comm().distTheor()));
         en_accumProp = Proc_c::AccumDist;
         break;
       #endif
@@ -232,7 +232,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         pc_iter->start(i32_accel);
         break;
       case Proc_c::MedIncr:
-        pc_iter->start(med());
+        pc_iter->start(med());//getTracMoveInstance4Comm
         break;
       case Proc_c::MinIncr:
         pc_iter->start(min());
@@ -292,7 +292,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         break;
       #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       case Proc_c::DistProp:
-        pc_iter->start(getTracMoveInstance4Comm().distTheor());
+        pc_iter->start(int32_t(getTracMoveInstance4Comm().distTheor()));
         en_accumProp = Proc_c::AccumDist;
         break;
       #endif
@@ -491,7 +491,7 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
         break;
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        b_singleTest = pc_iter->updateTrigger(getTracMoveInstance4Comm().distTheor());
+        b_singleTest = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
@@ -614,7 +614,7 @@ void MeasureProgLocal_c::setVal(float rf_val){
         break;
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        b_singleTest = pc_iter->updateTrigger(getTracMoveInstance4Comm().distTheor());
+        b_singleTest = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
@@ -966,7 +966,7 @@ bool MeasureProgLocal_c::timeEvent( void )
         break;
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        b_singleTest = pc_iter->updateTrigger(getTracMoveInstance4Comm().distTheor());
+        b_singleTest = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
         #endif
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         // update med/integ
