@@ -507,7 +507,7 @@ unsigned int propertytoi (const char *text_property)
 {
   int l, retval=0;
   for (l=0; l<maxProperty; l++) {
-    if (strncmp (text_property, PropertyTable [l], stringLength) == 0) retval += (uint64_t(1)<<l);
+    if (strstr (text_property, PropertyTable [l]) != 0) retval += (uint64_t(1)<<l);
   }
   return retval;
 };
