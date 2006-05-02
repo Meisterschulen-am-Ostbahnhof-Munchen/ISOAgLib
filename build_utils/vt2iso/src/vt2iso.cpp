@@ -532,6 +532,10 @@ void clean_exit (int return_value, char* error_message=NULL)
 
   for (unsigned int i=0; i<ui_languages; i++)
   {
+    if (arrs_language [i].firstLine)
+    { // put in at least one entry so that compiler doesn't error out (gcc doesn't care, but others do!)
+      fputs ("\n  NULL", arrs_language [i].partFile);
+    }
     fputs ("\n};\n", arrs_language [i].partFile);
     // write implementation of handler class constructor into list
     // as there the list must be known

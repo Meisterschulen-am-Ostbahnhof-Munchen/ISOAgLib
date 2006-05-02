@@ -1,52 +1,13 @@
-<?xml version = '1.0' encoding = 'UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
-<<<<<<< .mine
- <DocsAndViews NumberOfDocuments="2" >
-=======
- <DocsAndViews NumberOfDocuments="3" >
->>>>>>> .r1641
-  <Doc0 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
-<<<<<<< .mine
-   <View0 Type="Source" />
-=======
-   <View0 line="601" Type="Source" />
->>>>>>> .r1641
-  </Doc0>
-<<<<<<< .mine
-  <Doc1 NumberOfViews="1" URL="file:///home/winkler/Projekte/TaskController/IsoAgLib/build_utils/vt2iso/bin/vt2iso.xsd" >
-   <View0 line="208" Type="Source" />
-  </Doc1>
-=======
-  <Doc1 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso-defines.hpp" >
-   <View0 line="67" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h" >
-   <View0 line="790" Type="Source" />
-  </Doc2>
->>>>>>> .r1641
- </DocsAndViews>
+ <DocsAndViews NumberOfDocuments="0" />
  <pluginList>
   <kdevdebugger>
    <breakpointList/>
   </kdevdebugger>
   <kdevbookmarks>
-   <bookmarks>
-    <bookmark url="/home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
-     <mark line="1891" />
-     <mark line="2333" />
-     <mark line="1790" />
-     <mark line="3100" />
-     <mark line="2183" />
-     <mark line="366" />
-     <mark line="3002" />
-     <mark line="486" />
-     <mark line="895" />
-     <mark line="2153" />
-     <mark line="3091" />
-     <mark line="1919" />
-    </bookmark>
-   </bookmarks>
+   <bookmarks/>
   </kdevbookmarks>
   <kdevvalgrind>
    <executable path="" params="" />
