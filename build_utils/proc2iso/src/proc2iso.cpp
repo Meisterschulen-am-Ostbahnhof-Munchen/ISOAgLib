@@ -1328,10 +1328,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << uint16_t((objID >> 8) & 0xFF)      << ", ";
         buf_length += 5;
         //offset
-        buffer  << uint16_t(vecstr_attrString[attrOffset][0]) << ", "
-                << uint16_t(vecstr_attrString[attrOffset][1]) << ", "
-                << uint16_t(vecstr_attrString[attrOffset][2]) << ", "
-                << uint16_t(vecstr_attrString[attrOffset][3]) << ", ";
+        uint32_t ui32_offset = atoi (vecstr_attrString[attrOffset].c_str());
+        buffer  << uint16_t(ui32_offset & 0xFF) << ", "
+            << uint16_t((ui32_offset >> 8) & 0xFF) << ", "
+            << uint16_t((ui32_offset >> 16) & 0xFF) << ", "
+            << uint16_t((ui32_offset >> 24) & 0xFF) << ", ";
         buf_length += 4;
         //scale
         float f_temp = atof(vecstr_attrString[attrScale].c_str());
