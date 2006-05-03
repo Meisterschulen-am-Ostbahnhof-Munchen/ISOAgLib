@@ -382,7 +382,43 @@ void ProcDataLocal_c::processProg(){
   c_measureprog.processProg();
 }
 
+#ifdef USE_ISO_11783
+/**
+  allow local client to actively start a measurement program
+  (to react on a incoming "start" command for default data logging)
+  @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
+  @param ri32_increment
+  @param rpc_receiverDevice commanding DEV_KEY
+  @return true -> measurement started
+*/
+bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+                                       int32_t ri32_increment, const DevKey_c* rpc_receiverDevice )
+{
+  if ( !rpc_receiverDevice )
+    // get devKey of TC from last TC status message
+    rpc_receiverDevice = getProcessInstance4Comm().getTcDevKey();
 
+  // if still no rpc_receiverDevice => get it from ISO monitor list
+  if ( !rpc_receiverDevice )
+  {  // get TC dev key (device class 0)
+    const ISOItem_c& c_tcISOItem = getIsoMonitorInstance().isoMemberDevClassInd(0 /* rui8_devClass */, 0 /* rui8_ind */, TRUE /* rb_forceClaimedAddress */);
+    rpc_receiverDevice = &(c_tcISOItem.devKey());
+  }
+
+  return c_measureprog.startDataLogging(ren_type, static_cast<Proc_c::progType_t>(pri()), ri32_increment, rpc_receiverDevice);
+}
+
+/**
+  stop all measurement progs in all local process instances, started with given devKey
+  @param refc_devKey
+*/
+void ProcDataLocal_c::stopRunningMeasurement(const DevKey_c& refc_devKey)
+{
+  c_measureprog.stopRunningMeasurement(refc_devKey);
+}
+
+
+#endif
 
 
 } // end of namespace __IsoAgLib

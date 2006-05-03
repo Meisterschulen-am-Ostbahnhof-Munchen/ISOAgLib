@@ -370,7 +370,7 @@ bool Process_c::timeEvent( void ){
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
- bool Process_c::processMsg(){
+bool Process_c::processMsg(){
 
 #if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
@@ -527,6 +527,19 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
                    ).processMsg();
     b_result = true;
   }
+
+  
+#if defined(USE_ISO_11783)
+  // process TC status message
+  if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (c_data[0] == 0xE))
+  {    
+    // update devKey of TC
+    pc_tcDevKey = &(data().memberSend().devKey());
+    // @todo: TC status messages are not yet used (e.g. to stop default data logging)
+    //processTcStatusMsg(c_data.dataRawCmdLong(), data().memberSend().devKey());
+    b_result = true;
+  }
+#endif
 
   return b_result;
 }
@@ -1375,5 +1388,25 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
 
 };
 
+#ifdef USE_ISO_11783
+/**
+  process TC status messages:
+  - task status suspended: stop running measurement (started by default data logging)
+  @param i32_tcStatus
+  @param refc_devKey  device key of TC
+  @return TRUE
+*/
+bool Process_c::processTcStatusMsg(int32_t i32_tcStatus, const DevKey_c& refc_devKey)
+{  
+  if (Proc_c::Suspended == i32_tcStatus)
+  {  
+    for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin(); pc_iter != c_arrClientC1.end(); pc_iter++ )
+    {
+      (*pc_iter)->stopRunningMeasurement(refc_devKey);
+    }
+  }
+  return TRUE;
+}
+#endif
 
 } // end of namespace __IsoAgLib

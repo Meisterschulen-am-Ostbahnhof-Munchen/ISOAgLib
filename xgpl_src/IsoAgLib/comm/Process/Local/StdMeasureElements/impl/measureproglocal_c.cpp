@@ -421,6 +421,13 @@ bool MeasureProgLocal_c::processMsg(){
       int32_t i32_val = c_pkg.dataRawCmdLong();
       resetValMod(c_pkg.c_generalCommand.getValueGroup(), i32_val);
 
+      #ifdef USE_ISO_11783
+      if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
+      { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
+        getProcessInstance4Comm().processTcStatusMsg(Proc_c::Suspended, c_pkg.memberSend().devKey());
+      }
+      #endif
+
       // resetted val is automatically sent
       b_result = true;
       // call handler function if handler class is registered
@@ -430,6 +437,14 @@ bool MeasureProgLocal_c::processMsg(){
     else
     { // read -> answer wanted value
       sendValMod( c_pkg.c_generalCommand.getValueGroup(), c_pkg.memberSend().devKey(), Proc_c::progType_t(c_pkg.pri()));
+
+#ifdef USE_ISO_11783
+      if ((Proc_c::defaultDataLoggingDDI == c_pkg.DDI()) &&
+          (processDataConst().getProcessDataChangeHandler() != NULL ))
+        // call handler function if handler class is registered
+        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), processData().pkgDataLong(), c_pkg.memberSend().devKey());
+#endif
+
       b_result = true;
     } // read
   }

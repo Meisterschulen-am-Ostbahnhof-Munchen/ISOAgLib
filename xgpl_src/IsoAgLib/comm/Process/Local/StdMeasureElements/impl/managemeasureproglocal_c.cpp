@@ -87,6 +87,7 @@
 #include "managemeasureproglocal_c.h"
 #include "../../../impl/process_c.h"
 
+
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #include <IsoAgLib/util/impl/util_funcs.h>
@@ -622,5 +623,54 @@ bool ManageMeasureProgLocal_c::updateProgCache(uint8_t rui8_type, const DevKey_c
   return b_result;
 }
 
+#ifdef USE_ISO_11783
+/**
+  allow local client to actively start a measurement program
+  (to react on a incoming "start" command for default data logging)
+  @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
+  @param ren_progType program type: Proc_c::Base, Proc_c::Target
+  @param ri32_increment
+  @param rpc_receiverDevice commanding DEV_KEY
+  @return true -> rpc_receiverDevice is set
+*/
+bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+                                                Proc_c::progType_t ren_progType, 
+                                                int32_t ri32_increment, const DevKey_c* rpc_receiverDevice )
+{
+  if ( !rpc_receiverDevice )
+    return FALSE;
+      
+  // create new item if none found
+  updateProgCache(ren_progType, *rpc_receiverDevice, true);
+
+  pc_progCache->setDevKey(*rpc_receiverDevice);
+    
+  if (Proc_c::TimeProp == ren_type)
+    pc_progCache->addSubprog(ren_type, CNAMESPACE::labs(ri32_increment));
+  else
+    pc_progCache->addSubprog(ren_type, ri32_increment);
+
+  pc_progCache->start(ren_progType, ren_type, Proc_c::DoVal);
+
+  return TRUE;
+}
+
+/**
+  stop all measurement progs in all local process instances, started with given devKey
+  @param refc_devKey
+*/
+void ManageMeasureProgLocal_c::stopRunningMeasurement(const DevKey_c& refc_devKey)
+{
+  Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
+  for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
+  { // check if devKey and type fit
+    if ((pc_iter->devKey() == refc_devKey) && pc_iter->started())
+    {
+      pc_iter->stop();
+    }
+  }
+}
+
+#endif
 
 } // end of namespace __IsoAgLib

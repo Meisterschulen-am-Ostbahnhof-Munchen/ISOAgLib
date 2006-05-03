@@ -170,6 +170,15 @@ class ProcessDataChangeHandler_c {
    * @return true -> handler class reacted on change event
    */
  virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey );
+
+ /** react on received value request for default data logging (DDI 0xDFFF)
+   * (can be used to start measurement programms in local process data instances)
+   * @param rc_src general event source class, which provides conversion functions to get needed event source class
+   * @param ri32_val new value, which caused the event (for immediate access)
+   * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+   * @return true -> handler class reacted on change event
+   */
+ virtual bool processDefaultLoggingStart( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey );
 };
 }
 #endif

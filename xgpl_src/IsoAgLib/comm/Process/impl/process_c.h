@@ -467,6 +467,21 @@ public:
     */
   virtual void reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa );
 #endif
+#ifdef USE_ISO_11783
+  /**
+    process TC status messages:
+    - task status suspended: stop running measurement (started by default data logging)
+    @param i32_tcStatus
+    @param refc_devKey  device key of TC
+    @return TRUE
+  */
+  bool processTcStatusMsg(int32_t i32_tcStatus, const DevKey_c& refc_devKey);
+  /**
+    @return devKey, saved from TC status messages
+  */
+  const DevKey_c* getTcDevKey() { return pc_tcDevKey; };
+#endif
+
 private: // Private methods
   /**
     update the cache with search for according ProcDataLocalBase_c item
@@ -598,6 +613,11 @@ private: // Private attributes
 #ifdef USE_DIN_9684
   std::slist<uint32_t> l_filtersToDeleteDIN;
 #endif
+
+#ifdef USE_ISO_11783
+  const DevKey_c* pc_tcDevKey;
+#endif
+ 
 };
 
 

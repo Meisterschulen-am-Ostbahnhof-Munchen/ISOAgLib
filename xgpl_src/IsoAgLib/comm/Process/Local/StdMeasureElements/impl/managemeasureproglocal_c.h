@@ -176,6 +176,27 @@ private:
   /** set value for all registered Measure Progs */
   void setGlobalVal( float rf_val );
   #endif // USE_FLOAT_DATA_TYPE
+
+#ifdef USE_ISO_11783
+  /**
+    allow local client to actively start a measurement program
+    (to react on a incoming "start" command for default data logging)
+    @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
+    @param ren_progType program type: Proc_c::Base, Proc_c::Target
+    @param ri32_increment
+    @param rpc_receiverDevice commanding DEV_KEY
+    @return true -> rpc_receiverDevice is set
+  */
+  bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+                        Proc_c::progType_t ren_progType,
+                        int32_t ri32_increment, const DevKey_c* rpc_receiverDevice );
+  /**
+    stop all measurement progs in all local process instances, started with given devKey
+    @param refc_devKey
+  */
+  void stopRunningMeasurement(const DevKey_c& refc_devKey);
+#endif
+
  protected:
   friend class ProcDataLocal_c;
   friend class ProcDataLocalSimpleSetpoint_c;

@@ -359,6 +359,15 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   bool sendMasterMeasurementVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
 
+#ifdef USE_ISO_11783
+  /**
+    stop all measurement progs in all local process instances, started with given devKey
+    (not used for simple measurement)
+    @param refc_devKey
+  */
+  virtual void stopRunningMeasurement(const DevKey_c& /* refc_devKey */) {};
+#endif
+
  protected:
   /** processing of a setpoint message.
       this base class variant checks only, if a setpoint cmd was recieved

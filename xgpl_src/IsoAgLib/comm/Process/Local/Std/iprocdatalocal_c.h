@@ -680,6 +680,12 @@ public:
   iSetpointLocal_c& setpoint( void )
     { return static_cast<iSetpointLocal_c&>(ProcDataLocal_c::setpoint()); };
 
+#ifdef USE_ISO_11783
+  bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+                        int32_t ri32_increment, const iDevKey_c* rpc_receiverDevice = NULL )
+    { return ProcDataLocal_c::startDataLogging(ren_type, ri32_increment, rpc_receiverDevice); };
+#endif
+
 };
 
 }

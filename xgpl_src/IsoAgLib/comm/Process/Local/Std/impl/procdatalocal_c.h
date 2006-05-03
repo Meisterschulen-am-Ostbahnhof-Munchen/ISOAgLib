@@ -379,6 +379,24 @@ public:
   */
   virtual bool timeEvent( void );
 
+#ifdef USE_ISO_11783
+  /**
+    allow local client to actively start a measurement program
+    (to react on a incoming "start" command for default data logging)
+    @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
+    @param ri32_increment
+    @param rpc_receiverDevice commanding DEV_KEY
+    @return true -> measurement started
+  */
+  bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+                        int32_t ri32_increment, const DevKey_c* rpc_receiverDevice = NULL );
+  /**
+    stop all measurement progs in all local process instances, started with given devKey
+    @param refc_devKey
+  */
+  virtual void stopRunningMeasurement(const DevKey_c& refc_devKey);
+#endif
+
 private: // Private methods
 #ifdef USE_EEPROM_IO
   /**

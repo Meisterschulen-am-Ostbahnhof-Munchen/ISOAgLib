@@ -148,6 +148,12 @@ public:
   /** enum type for proportional type used for calculating accumulated vaslues */
   enum accumProp_t {AccumNone, AccumDist = 1, AccumTime = 4};
 
+  /** enum type for special DDIs */
+  enum specialDDI_t {defaultDataLoggingDDI = 0xDFFF};
+
+  /** enum type for task status */
+  enum taskStatus_t {NoTask = 0, Initial = 1, Running = 2, Suspended = 3, Finished = 4 };
+
   /** default unused constructor */
   Proc_c(){};
   /** default unused destructor */
