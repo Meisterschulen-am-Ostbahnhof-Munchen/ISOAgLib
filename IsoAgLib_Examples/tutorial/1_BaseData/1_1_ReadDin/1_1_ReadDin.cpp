@@ -194,10 +194,10 @@
 /** set the following define, if the lookup result shall be sent via RS232 */
 #define USE_RS232_FOR_DEBUG
 /** set the following defines if to test one or more of the base data*/
-#define TEST_TRACTOR_GENERAL
+//#define TEST_TRACTOR_GENERAL
 #define TEST_TRACTOR_MOVING
-#define TEST_TIME
-#define TEST_TRACTOR_PTO
+//#define TEST_TIME
+//#define TEST_TRACTOR_PTO
 
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"

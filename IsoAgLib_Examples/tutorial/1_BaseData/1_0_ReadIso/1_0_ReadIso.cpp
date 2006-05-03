@@ -200,12 +200,12 @@
 //#define TEST_TRACTOR_LIGHTING
 #define TEST_TRACTOR_GENERAL
 #define TEST_TRACTOR_MOVING
-#define TEST_TIME
-#define TEST_TRACPTOSETPOINT
-#define TEST_TRACAUX
-#define TEST_TRACPTO
-#define TEST_TRACCERT
-#define TEST_TRACGUIDANCE
+// #define TEST_TIME
+// #define TEST_TRACPTOSETPOINT
+// #define TEST_TRACAUX
+// #define TEST_TRACPTO
+// #define TEST_TRACCERT
+// #define TEST_TRACGUIDANCE
 
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"

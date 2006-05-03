@@ -202,13 +202,13 @@
 /** set the following defines if to test one or more of the base data*/
 #define TEST_TRACTOR_GENERAL
 #define TEST_TRACTOR_MOVING
-#define TEST_TIME
-#define TEST_TRACTOR_LIGHTING
-#define TEST_TRACPTOSETPOINT
-#define TEST_TRACAUX
-#define TEST_TRACPTO
-#define TEST_TRACCERT
-#define TEST_TRACGUIDANCE
+// #define TEST_TIME
+// #define TEST_TRACTOR_LIGHTING
+// #define TEST_TRACPTOSETPOINT
+// #define TEST_TRACAUX
+// #define TEST_TRACPTO
+// #define TEST_TRACCERT
+// #define TEST_TRACGUIDANCE
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
@@ -564,12 +564,23 @@ int main()
         ui32_tempTheorDist += abs(i32_speedReal);
         ui32_tempRealDist += abs(i32_speedTheor);
 
-        if(count > 15)
-          getITracMoveInstance().setSpeedReal(localGetSpeedReal(i32_speedReal));
-        if (count < 10)
+       // if(count > 15)
+        if (count > 10 && count < 20)
+  ;//      getITracMoveInstance().setSpeedReal(localGetSpeedReal(i32_speedReal));
+        else {
+  //      getITracMoveInstance().setSpeedReal(localGetSpeedReal(0xFF00));
+        getITracMoveInstance().setDistReal(0xFFFFFFFF);
+        }
         getITracMoveInstance().setSpeedTheor(localGetSpeedTheor(i32_speedTheor));
+        if (i32_speedReal < 0)
+          getITracMoveInstance().setDirectionReal(IsoAgLib::IsoReverse);
+        else
+          getITracMoveInstance().setDirectionReal(IsoAgLib::IsoForward);
+        if (i32_speedTheor < 0)
+          getITracMoveInstance().setDirectionTheor(IsoAgLib::IsoReverse);
+        else
+          getITracMoveInstance().setDirectionTheor(IsoAgLib::IsoForward);
         getITracMoveInstance().setDistTheor(ui32_tempTheorDist);
-        getITracMoveInstance().setDistReal(ui32_tempRealDist);
         getITracMoveInstance().setOperatorDirectionReversed(IsoAgLib::IsoReversed);
         //getITracMoveInstance().setSelectedSpeed(100);
         //getITracMoveInstance().setSelectedSpeedSource(IsoAgLib::IsoNavigationBasedSpeed);
