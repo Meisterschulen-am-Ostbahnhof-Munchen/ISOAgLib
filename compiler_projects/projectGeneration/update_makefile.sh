@@ -502,7 +502,7 @@ function create_filelist( )
   if [ $PRJ_BASE -gt 0 ] ; then
     if [ $PRJ_ISO11783 -lt 1 ] ; then
       # no trac light
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*traclight*' -a -not -name '*trac*setpoint*' -a -not -name '*tracaux*' \)"
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*traclight*' -a -not -name '*trac*setpoint*' -a -not -name '*tracaux*' -a -not -name '*tracguidance*' -a -not -name '*traccert*' \)"
     else
 # until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files		
       COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
