@@ -149,7 +149,10 @@ typedef SINGLETON_DERIVED_CLIENT2(Process_c, ElementBase_c, ProcDataLocalBase_c,
 
   @author Dipl.-Inform. Achim Spangler
 */
-class Process_c : public SingletonProcess_c, public __IsoAgLib::SaClaimHandler_c
+class Process_c : public SingletonProcess_c
+#if defined(USE_ISO_11783)
+, public __IsoAgLib::SaClaimHandler_c
+#endif
 {
 public:
   /** initialisation for Process_c
@@ -452,6 +455,7 @@ public:
     @return true -> member exist and Filter Box deleted
   */
   bool deleteRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t rui8_pri = 2);
+#if defined(USE_ISO_11783)
    /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
    * @param refc_devKey const reference to the item which ISOItem_c state is changed
    * @param rpc_newItem pointer to the currently corresponding ISOItem_c
@@ -462,7 +466,7 @@ public:
    * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
     */
   virtual void reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa );
-
+#endif
 private: // Private methods
   /**
     update the cache with search for according ProcDataLocalBase_c item

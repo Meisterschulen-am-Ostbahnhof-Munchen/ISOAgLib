@@ -100,6 +100,7 @@ namespace IsoAgLib {
   void config(const iDevKey_c* rpc_devKey, const IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
   { TracMove_c::config(rpc_devKey, rt_identMode ); }
 
+  #ifdef USE_ISO_11783
   /** update selected speed with actually best available speed
       @param t_speedSrc  from which source is the speed available
     */
@@ -109,29 +110,11 @@ namespace IsoAgLib {
       @param t_distanceSrc  from which source is the distance and direction available
     */
   void updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc) {TracMove_c::updateDistanceDirection(t_distanceSrc);}
+  #endif
 
     /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
     /*@{*/
-    #ifdef USE_DIN_9684
-    /** set the value of real speed (measured by radar)
-        @param ri16_val value to store as real radar measured speed
-      */
-    void setSpeedReal(const int16_t ri16_val) {TracMove_c::setSpeedReal(ri16_val);}
-    /** set the value of theoretical speed (calculated from gear)
-        @param ri16_val value to store as theoretical gear calculated speed
-      */
-    void setSpeedTheor(const int16_t ri16_val) {TracMove_c::setSpeedTheor(ri16_val);}
-    /** set the theoretical (gear calculated) driven distance with int16_t val
-        @param ri16_val value to store as theoretical (gear calculated) driven distance
-      */
-    void setDistTheor(const uint16_t rui16_val) {TracMove_c::setDistTheor(rui16_val);}
-    /** set the real (radar measured) driven distance with int16_t val
-        @param ri16_val value to store as real radar measured distance
-      */
-    void setDistReal(const uint16_t rui16_val) {TracMove_c::setDistReal(rui16_val);}
-    #endif
-    #ifdef USE_ISO_11783
     /** set the value of real speed (measured by radar)
         @param ri16_val value to store as real radar measured speed
       */
@@ -148,6 +131,8 @@ namespace IsoAgLib {
         @param rreflVal value to store as theoretical (gear calculated) driven distance
       */
     void setDistTheor(const uint32_t& rreflVal) {TracMove_c::setDistTheor(rreflVal);}
+
+    #ifdef USE_ISO_11783
     /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
         @return  direction of travel
       */
@@ -195,32 +180,12 @@ namespace IsoAgLib {
       */
     void setSelectedSpeedSetPointLimit(const uint16_t ui16_val)
     {TracMove_c::setSelectedSpeedSetPointLimit(ui16_val);}
-
     #endif
     /*@}*/
 
     /* ****************************************************** */
     /** \name Retrieve Values which are sent from other ECUs  */
     /*@{*/
-    #ifdef USE_DIN_9684
-    /** get the value of real speed (measured by radar)
-        @return actual radar measured speed value
-      */
-    int16_t speedReal() const {return TracMove_c::speedReal();}
-    /** get the value of theoretical speed (calculated from gear)
-        @return theoretical gear calculated speed value
-      */
-    int16_t speedTheor() const {return TracMove_c::speedTheor();}
-    /** get the real driven distance with int16_t val
-        @return actual radar measured driven distance value
-      */
-    uint16_t distReal() const {return TracMove_c::distReal();}
-    /** get the real driven distance with int16_t val
-        @return actual gear calculated driven distance value
-      */
-    uint16_t distTheor() const {return TracMove_c::distTheor();}
-    #endif
-    #ifdef USE_ISO_11783
     /** get the value of real speed (measured by radar)
         @return actual radar measured speed value
       */
@@ -237,6 +202,8 @@ namespace IsoAgLib {
         @return actual gear calculated driven distance value
       */
     uint32_t distTheor() const {return TracMove_c::distTheor();}
+
+    #ifdef USE_ISO_11783
     /** get measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
         @return  direction of travel
       */

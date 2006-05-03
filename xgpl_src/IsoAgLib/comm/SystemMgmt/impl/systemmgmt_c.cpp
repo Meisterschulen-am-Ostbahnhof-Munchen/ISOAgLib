@@ -99,10 +99,10 @@
 #include <IsoAgLib/comm/Base/impl/tracpto_c.h>
 #endif
 #ifdef USE_TRACTOR_LIGHT
-#include <IsoAgLib/comm/Base/impl/traclight_c.h>
+#include <IsoAgLib/comm/Base/ext/impl/traclight_c.h>
 #endif
 #ifdef USE_TRACTOR_AUX
-#include <IsoAgLib/comm/Base/impl/tracaux_c.h>
+#include <IsoAgLib/comm/Base/ext/impl/tracaux_c.h>
 #endif
 #ifdef USE_TIME_GPS
 #include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
@@ -154,10 +154,10 @@ void SystemMgmt_c::singletonInit()
   // NOW INIT ONCE the core singleton classes that correspond to the compile time
   // configured features of the IsoAgLib
   #ifdef USE_PROCESS
-  getProcessInstance4Comm().init();
+  getProcessInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
   #endif
   #ifdef USE_TRACTOR_GENERAL
-  getTracGeneralInstance4Comm().init();
+  getTracGeneralInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
   #endif
   #ifdef USE_TRACTOR_MOVE
   getTracMoveInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
@@ -166,10 +166,10 @@ void SystemMgmt_c::singletonInit()
   getTracPtoInstance4Comm().init( NULL, IsoAgLib::IdentModeImplement );
   #endif
   #ifdef USE_TRACTOR_LIGHT
-  getTracLightInstance4Comm().init();
+  getTracLightInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
   #endif
   #ifdef USE_TRACTOR_AUX
-  getTracAuxInstance4Comm().init();
+  getTracAuxInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
   #endif
   #ifdef USE_TIME_GPS
   getTimePosGpsInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);

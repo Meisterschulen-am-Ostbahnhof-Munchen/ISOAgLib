@@ -126,18 +126,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     BaseCommon_c::config(rpc_devKey, rt_identMode);
 
     // set distance value to 0
-    ui16_lastDistReal = ui16_lastDistTheor = 0;
+    ui32_lastDistReal = ui32_lastDistTheor = 0;
     ui32_distReal = ui32_distTheor = 0;
 
-    #ifdef USE_DIN_9684
-    // set the member msg value vars to NO_VAL codes
-    i16_speedReal = i16_speedTheor = NO_VAL_16;
-    #endif
-
-    #ifdef USE_ISO_11783
     // set the member msg value vars to NO_VAL codes
     i32_speedReal = i32_speedTheor = NO_VAL_16;
 
+    #ifdef USE_ISO_11783
 //    i32_lastMsgReceivedCmd = 0;
     t_operatorDirectionReversed = IsoAgLib::IsoNotAvailableReversed;
     t_startStopState = IsoAgLib::IsoNotAvailable;
@@ -228,8 +223,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     { // send actual moving data
       setSelectedDataSourceDevKey( *getDevKey() );
       data().setIdent((0x14<<4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
-      data().setUint16Data(0, i16_speedReal);
-      data().setUint16Data(2, i16_speedTheor);
+      data().setUint16Data(0, i32_speedReal);
+      data().setUint16Data(2, i32_speedTheor);
       data().setUint16Data(4, ui32_distReal);
       data().setUint16Data(6, ui32_distTheor);
       data().setLen(8);
@@ -270,9 +265,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           // theor speed
           setSpeedTheor(data().getUint16Data( 2 ));
           // real dist -> react on 16bit int16_t overflow
-          setOverflowSecure(ui32_distReal, ui16_lastDistReal, data().getUint16Data( 4 ));
+          setOverflowSecure(ui32_distReal, ui32_lastDistReal, data().getUint16Data( 4 ));
           // theor dist -> react on 16bit int16_t overflow
-          setOverflowSecure(ui32_distTheor, ui16_lastDistTheor, data().getUint16Data( 6 ));
+          setOverflowSecure(ui32_distTheor, ui32_lastDistTheor, data().getUint16Data( 6 ));
 
           setSelectedDataSourceDevKey(c_tempDevKey);
         }
@@ -739,7 +734,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   };
   #endif
 
-  #ifdef USE_ISO_11783
   /** set the real (radar measured) driven distance with int32_t val
       @param rreflVal value to store as real radar measured distance
     */
@@ -760,28 +754,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     // set the int32_t value regarding the overflow counting
     ui32_lastDistTheor = long2int(rreflVal);
   };
-  #endif
 
   /** get int16_t overflowed val from long
       @param rreflVal value as int32_t (32bit) variable
       @return 16bit int16_t calculated with counting overflow from 32767 to (-32766)
     */
-  #ifdef USE_DIN_9684
-  uint16_t TracMove_c::long2int(const uint32_t& rreflVal)
-  #endif
-  #ifdef USE_ISO_11783
   uint32_t TracMove_c::long2int(const uint32_t& rreflVal)
-  #endif
   {
+    uint32_t ui32_mod;
     // Version mit [0..10000] und Uberlauf a la Fendt Vario
     //uint32_t ui32_mod =  rreflVal % 10000;
     #ifdef USE_DIN_9684
     // Version mit [0..32767] und Uberlauf a la Scheduler_c DIN 9684
-    uint32_t ui32_mod =  rreflVal % 32767;
+    ui32_mod =  rreflVal % 32767;
     #endif
     #ifdef USE_ISO_11783
     // Version mit [0..4211082] und Uberlauf a la Scheduler_c ISO 11783
-    uint32_t ui32_mod =  rreflVal % 4211081;
+    ui32_mod =  rreflVal % 4211081;
     #endif
     return ui32_mod;
   };

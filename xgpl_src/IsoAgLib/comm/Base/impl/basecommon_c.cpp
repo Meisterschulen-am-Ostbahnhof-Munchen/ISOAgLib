@@ -242,34 +242,37 @@ bool BaseCommon_c::timeEvent()
   // check if we are in tractor mode and have a pointer to the sending device key
   if ( checkMode(IsoAgLib::IdentModeTractor) )
   {
-    if (  (pc_devKey != NULL                                                   )
-    #ifdef USE_ISO_11783
-          && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
-    #endif
     #ifdef USE_DIN_9684
+    if (  (pc_devKey != NULL                                                   )
           && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true)
-    #endif
         )
     { // stored base data information sending ISO member or DIN member has claimed address
-      #ifdef USE_ISO_11783
-        if ( !isoTimeEventTracMode()) return false;
-      #endif
-      #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
-        if (Scheduler_c::getAvailableExecTime() == 0) return false;
-      #endif
-      #ifdef USE_DIN_9684
-        return dinTimeEventTracMode();
-      #endif
+      if (Scheduler_c::getAvailableExecTime() == 0) return false;
+
+      return dinTimeEventTracMode();
     }
+    #endif
+
+    #ifdef USE_ISO_11783
+    if (  (pc_devKey != NULL                                                   )
+          && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
+        )
+    { // stored base data information sending ISO member or DIN member has claimed address
+      if (Scheduler_c::getAvailableExecTime() == 0) return false;
+
+      if ( !isoTimeEventTracMode()) return false;
+    }
+    #endif
   }
   #ifdef USE_ISO_11783
-  else
+  else //implement mode
   { // we are in implement mode; check if we have a pointer to the sending device key
     if (   (pc_devKey != NULL                                                 )
-         && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
-       )
+        && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
+      )
     {
       if ( !isoTimeEventImplMode()) return false;
+
       if (Scheduler_c::getAvailableExecTime() == 0) return false;
     }
   }

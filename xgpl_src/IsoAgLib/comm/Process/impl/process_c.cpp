@@ -1273,7 +1273,7 @@ bool Process_c::checkCreateRemoteReceiveFilter()
   }
   return b_result;
 }
-
+#if defined(USE_ISO_11783)
 /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
   * @param refc_devKey const reference to the item which ISOItem_c state is changed
   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
@@ -1317,6 +1317,7 @@ void Process_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t r
     deleteRemoteFilter(refc_devKey);
   }
 }
+#endif
 /** register pointer to a new remote process data instance
   * this function is called within construction of new remote process data instance
   */
