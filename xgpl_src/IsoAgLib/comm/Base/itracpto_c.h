@@ -86,7 +86,7 @@ namespace IsoAgLib {
   */
   void config(const iDevKey_c* rpc_devKey, const bool rb_implementMode = true)
   {
-    #ifdef SYSTEM_PC
+    #if __GNUC__
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
     #endif
     TracPTO_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));

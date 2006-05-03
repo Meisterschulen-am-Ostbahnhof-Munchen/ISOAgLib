@@ -88,10 +88,8 @@ public:
   */
   void config(const iDevKey_c* rpc_devKey, bool rb_implementMode)
   {
-    #ifdef SYSTEM_PC
-#ifndef WIN32
+    #if __GNUC__
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
-#endif
     #endif
     TimePosGPS_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   };
@@ -120,10 +118,8 @@ public:
     */
   void configGps(const iDevKey_c* rpc_devKey, bool rb_implementMode)
   {
-    #ifdef SYSTEM_PC
-#ifndef WIN32
+    #if __GNUC__
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
-#endif
     #endif
     TimePosGPS_c::configGps(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   };
