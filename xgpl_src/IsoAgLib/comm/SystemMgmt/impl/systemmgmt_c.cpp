@@ -154,7 +154,7 @@ void SystemMgmt_c::singletonInit()
   // NOW INIT ONCE the core singleton classes that correspond to the compile time
   // configured features of the IsoAgLib
   #ifdef USE_PROCESS
-  getProcessInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+  getProcessInstance4Comm().init();
   #endif
   #ifdef USE_TRACTOR_GENERAL
   getTracGeneralInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
