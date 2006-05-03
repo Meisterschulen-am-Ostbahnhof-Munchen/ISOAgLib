@@ -161,6 +161,8 @@ void Process_c::init()
     #ifdef USE_PROC_DATA_DESCRIPTION_POOL
     c_devPropertyHandler.init(&c_data);
     #endif
+  pc_tcDevKey = NULL;
+  en_lastTcStatus = Proc_c::NoTask;
   #endif
   c_data.setSingletonKey( getSingletonVecKey() );
 
@@ -535,8 +537,7 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
   {    
     // update devKey of TC
     pc_tcDevKey = &(data().memberSend().devKey());
-    // @todo: TC status messages are not yet used (e.g. to stop default data logging)
-    //processTcStatusMsg(c_data.dataRawCmdLong(), data().memberSend().devKey());
+    processTcStatusMsg(c_data.dataRawCmdLong(), data().memberSend().devKey());
     b_result = true;
   }
 #endif
@@ -1396,15 +1397,22 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
   @param refc_devKey  device key of TC
   @return TRUE
 */
-bool Process_c::processTcStatusMsg(int32_t i32_tcStatus, const DevKey_c& refc_devKey)
-{  
-  if (Proc_c::Suspended == i32_tcStatus)
-  {  
-    for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin(); pc_iter != c_arrClientC1.end(); pc_iter++ )
+bool Process_c::processTcStatusMsg(int32_t i32_tcStatus, const DevKey_c& refc_devKey, bool rb_skipLastTcStatus)
+{
+  if ((i32_tcStatus != en_lastTcStatus) || rb_skipLastTcStatus)
+  { // process status message only when TC status change happens
+    // or rb_skipLastTcStatus is set (when set value command with value 0 for DDI 0xDFFF is received)
+    if (Proc_c::Suspended == i32_tcStatus)
     {
-      (*pc_iter)->stopRunningMeasurement(refc_devKey);
+      for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin(); pc_iter != c_arrClientC1.end(); pc_iter++ )
+      {
+        (*pc_iter)->stopRunningMeasurement(refc_devKey);
+      }
     }
   }
+  if (!rb_skipLastTcStatus)
+    en_lastTcStatus = static_cast<Proc_c::taskStatus_t>(i32_tcStatus);
+    
   return TRUE;
 }
 #endif

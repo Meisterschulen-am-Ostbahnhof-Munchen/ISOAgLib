@@ -424,7 +424,7 @@ bool MeasureProgLocal_c::processMsg(){
       #ifdef USE_ISO_11783
       if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
-        getProcessInstance4Comm().processTcStatusMsg(Proc_c::Suspended, c_pkg.memberSend().devKey());
+        getProcessInstance4Comm().processTcStatusMsg(Proc_c::Suspended, c_pkg.memberSend().devKey(), TRUE /* rb_skipLastTcStatus */);
       }
       #endif
 
