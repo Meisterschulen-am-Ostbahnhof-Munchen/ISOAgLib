@@ -105,14 +105,18 @@ namespace __IsoAgLib {
 /**
   default constructor for MsgObj_c which only init all member values defined start state
 */
-MsgObj_c::MsgObj_c(){
+MsgObj_c::MsgObj_c()
+  : arrPfilterBox()
+{
   // set all member variables to initial values
+  #if 0
   setCntFilterBox(0);
+  for (int16_t i = 0; i < FILTER_BOX_PER_MSG_OBJ; i++) arrPfilterBox[i] = NULL;
+  #endif
   c_filter.setEmpty(true);
   setBusNumber(0);
   setMsgObjNr(0);
   setIsOpen(false);
-  for (int16_t i = 0; i < FILTER_BOX_PER_MSG_OBJ; i++) arrPfilterBox[i] = NULL;
 }
 
 /**
@@ -121,7 +125,6 @@ MsgObj_c::MsgObj_c(){
 */
 MsgObj_c::MsgObj_c(const MsgObj_c& src)
 { // set all member variables to the corresponding value from the source instance
-  setCntFilterBox(src.cnt_filterBox());
   c_filter = src.c_filter;
   setMsgObjNr(src.msgObjNr());
   // if constructor for src is later closed, the correlated CAN msg object would
@@ -130,7 +133,13 @@ MsgObj_c::MsgObj_c(const MsgObj_c& src)
   setIsOpen(false);
 
   // copy the registered pointers to FilterBox_c instances
+  #if 0
+  setCntFilterBox(src.cnt_filterBox());
   for (int16_t i = 0; i < cnt_filterBox(); i++) arrPfilterBox[i] = src.arrPfilterBox[i];
+  #else
+  arrPfilterBox.clear();
+  arrPfilterBox = src.arrPfilterBox;
+  #endif
 }
 
 /** destructor of MsgObj_c instance, which closes the hardware MsgObj_c */
@@ -205,7 +214,11 @@ bool MsgObj_c::merge(MsgObj_c& right)
   }
 
   #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+  #if 0
   for ( int i = 0; i < cnt_filterBox(); i++ )
+  #else
+  for ( int i = 0; i < arrPfilterBox.size(); i++ )
+  #endif
   {
     #ifdef SYSTEM_PC
     std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
@@ -246,6 +259,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
     #endif
     #endif
   }
+  #if 0
   #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
     #if CAN_INSTANCE_CNT == 1
     static uint16_t sui16_maxFilterPerMsgObjCnt = 0;
@@ -268,7 +282,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
     }
   #endif
   setCntFilterBox(cnt_filterBox() + right.cnt_filterBox());
-
+  #endif
   //exit function with success indication
   return true;
 }
@@ -280,15 +294,18 @@ bool MsgObj_c::merge(MsgObj_c& right)
       * range wrong BUS or MsgObj number stored in this instance
 */
 void MsgObj_c::close(){
-  setCntFilterBox(0);
   c_filter.setEmpty(true);
 
   // the member function closeCan checks isOpen() and closes the BIOS object
   // if needed
   closeCan();
 
+  #if 0
   for (int16_t i = 0; i < FILTER_BOX_PER_MSG_OBJ; i++) arrPfilterBox[i] = NULL;
   setCntFilterBox( 0 );
+  #else
+  arrPfilterBox.clear();
+  #endif
 }
 
 /**
@@ -329,7 +346,7 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
       return true;
     }
   }
-
+  #if 0
   if (cnt_filterBox() < FILTER_BOX_PER_MSG_OBJ)
   { // insertion of pointer is possible -> register the pointer
     // insert pointer in array
@@ -362,6 +379,19 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
     getLbsErrInstance().registerError( LibErr_c::CanOverflow, LibErr_c::Can );
     return false;
   }
+  #else
+  const unsigned int cui_oldSize = arrPfilterBox.size();
+  arrPfilterBox.push_back( rrefc_box );
+  if ( arrPfilterBox.size() > cui_oldSize )
+  { // fine
+    return true;
+  }
+  else
+  { // vector didn't grow --> out of memory
+    getLbsErrInstance().registerError( LibErr_c::CanOverflow, LibErr_c::Can );
+    return false;
+  }
+  #endif
 }
 
 /**
@@ -373,8 +403,9 @@ bool MsgObj_c::insertFilterBox(FilterRef rrefc_box){
   @return true -> given FilterBox_c was deleted from local reference array
 */
 bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box){
-  int16_t i = 0;
   bool b_result = false;
+  #if 0
+  int16_t i = 0;
   // search the a pointer to the given filter box
   for (; i < cnt_filterBox(); i++)
   {
@@ -397,6 +428,21 @@ bool MsgObj_c::deleteFilterBox(FilterRef rrefc_box){
   { // to be deleted reference not found
     getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Can );
   }
+  #else
+  for ( std::vector<FilterRef>::iterator iter = arrPfilterBox.begin() ; iter != arrPfilterBox.end(); iter++ )
+  {
+    if ( *iter == rrefc_box )
+    { // to be deleted iterator is found
+      arrPfilterBox.erase( iter );
+      b_result = true;
+      break;
+    }
+  }
+  if ( !b_result )
+  { // nothing has been erased
+    getLbsErrInstance().registerError( LibErr_c::ElNonexistent, LibErr_c::Can );
+  }
+  #endif
   return b_result;
 }
 

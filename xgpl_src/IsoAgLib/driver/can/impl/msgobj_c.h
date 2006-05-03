@@ -262,7 +262,15 @@ public:
     deliver count of contained FilterBox_c pointers
     @return count of references to FilterBox_c instances
   */
-  uint8_t cnt_filterBox()const {return bit_data.cnt_filterBox;};
+  uint8_t cnt_filterBox()const
+  {
+    #if 0
+    return bit_data.cnt_filterBox;
+    #else
+    return arrPfilterBox.size();
+    #endif
+  };
+  #if 0
   /**
     delivers amount of insertable arrPfilterBox pointers
     @return amount of references to FilterBox_c which could be inserted into/handled by this MsgObj_c
@@ -270,6 +278,7 @@ public:
   uint8_t getFilterBoxCapacity(){
     return (FILTER_BOX_PER_MSG_OBJ - cnt_filterBox());
   };
+  #endif
   /**
     start processing a received CAN msg
     (called by interrupt function)  (uses BIOS function)
@@ -314,26 +323,30 @@ public:
 private:
   // Private attributes
   /** array of pointer to appointed arrPfilterBox instances */
-  FilterRef arrPfilterBox[FILTER_BOX_PER_MSG_OBJ];
+  std::vector<FilterRef> arrPfilterBox;
+//  FilterRef arrPfilterBox[FILTER_BOX_PER_MSG_OBJ];
   /** Ident_c filter for this msgObj */
   Ident_c c_filter;
   /** msgObjNr */
   struct {
 	  uint16_t ui8_msgObjNr  : 7;
 		uint16_t isLocked      : 1;
+    #if 0
     uint16_t cnt_filterBox : 4;
+    #endif
     uint16_t isOpen        : 1;
     uint16_t busNumber     : 3;
   } bit_data;
 private:
 // Private methods
-
+  #if 0
   /**
     set counter for appointed arrPfilterBox instances
     @param rb_val wanted counter for appointed arrPfilterBox instances
   */
   void setCntFilterBox(uint8_t rb_val)
     {bit_data.cnt_filterBox = rb_val;};
+  #endif
   /**
     set if a CAN msg object is open for this instance
     -> if the close function must be called in destructor

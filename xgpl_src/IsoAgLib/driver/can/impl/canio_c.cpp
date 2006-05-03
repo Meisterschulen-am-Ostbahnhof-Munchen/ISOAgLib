@@ -1159,7 +1159,9 @@ void CANIO_c::CheckSetCntMsgObj(){
 
         // store new min only if capacity of left is enough for objects of right
         if ((i16_tempDist < i16_minDistance)
+          #if 0
           && (pc_leftInd->getFilterBoxCapacity() >= pc_rightInd->cnt_filterBox())
+          #endif
           && (pc_leftInd->filter().identType() == pc_rightInd->filter().identType())
            )
         {
