@@ -1226,9 +1226,9 @@ bool ISOTerminal_c::processMsg()
         if (c_streamer.pc_pool != NULL) {
           c_streamer.pc_pool->eventVtStatusMsg();
         }
-        break;
+        return true; // VT Status Message is NOT of interest for anyone else!
     }
-    return true; // VT_TO_GLOBAL is NOT of interest for anyone else!
+    return false; // VT_TO_GLOBAL IS of interest for anyone else, because of AUX Assignment, etc...
   }
 
 
