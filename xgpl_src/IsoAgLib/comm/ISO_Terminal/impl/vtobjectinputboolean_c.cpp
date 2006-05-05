@@ -96,7 +96,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectInputBoolean_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
-                               uint16_t sourceOffset)
+                               objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectInputBoolean_a
 #define MACRO_vtObjectTypeS iVtObjectInputBoolean_s

@@ -186,7 +186,7 @@ namespace __IsoAgLib {
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
 int16_t
-vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, uint16_t sourceOffset)
+vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectPictureGraphic_a
 #define MACRO_vtObjectTypeS iVtObjectPictureGraphic_s

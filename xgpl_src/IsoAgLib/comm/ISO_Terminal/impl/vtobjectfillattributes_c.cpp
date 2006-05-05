@@ -100,7 +100,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectFillAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
-                                 uint16_t sourceOffset)
+                                 objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectFillAttributes_a
 #define MACRO_vtObjectTypeS iVtObjectFillAttributes_s

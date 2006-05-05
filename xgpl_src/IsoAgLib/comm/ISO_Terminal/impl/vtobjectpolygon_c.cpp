@@ -99,8 +99,8 @@ namespace __IsoAgLib {
 //! @param sourceOffset:
 int16_t
 vtObjectPolygon_c::stream(uint8_t* destMemory,
-                                 uint16_t maxBytes,
-                                 uint16_t sourceOffset)
+                          uint16_t maxBytes,
+                          objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectPolygon_a
 #define MACRO_vtObjectTypeS iVtObjectPolygon_s
@@ -142,7 +142,7 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
     }
     MACRO_streamPolygonPoints(14);
 
-    MACRO_streamEventMacro(14+vtObjectPolygon_a->numberOfPoints * 4);
+    MACRO_streamEventMacro(14U+vtObjectPolygon_a->numberOfPoints * 4U);
     return curBytes;
 } // -X2C
 

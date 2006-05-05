@@ -95,7 +95,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectObjectPointer_c::stream(uint8_t* destMemory,
                                 uint16_t /*maxBytes*/,
-                                uint16_t sourceOffset)
+                                objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectObjectPointer_a
 #define MACRO_vtObjectTypeS iVtObjectObjectPointer_s

@@ -97,7 +97,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectButton_c::stream(uint8_t* destMemory,
                          uint16_t maxBytes,
-                         uint16_t sourceOffset)
+                         objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectButton_a
 #define MACRO_vtObjectTypeS iVtObjectButton_s
@@ -123,7 +123,7 @@ vtObjectButton_c::stream(uint8_t* destMemory,
     }
 
     MACRO_streamObjectXYcenteredInButton(13);
-    MACRO_streamEventMacro(13+vtObjectButton_a->numberOfObjectsToFollow*6);
+    MACRO_streamEventMacro(13U+vtObjectButton_a->numberOfObjectsToFollow*6U);
     return curBytes;
 } // -X2C
 

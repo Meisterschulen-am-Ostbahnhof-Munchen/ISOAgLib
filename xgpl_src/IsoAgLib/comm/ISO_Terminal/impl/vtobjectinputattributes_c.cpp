@@ -97,8 +97,8 @@ namespace __IsoAgLib {
 //! @param sourceOffset:
 int16_t
 vtObjectInputAttributes_c::stream(uint8_t* destMemory,
-                                 uint16_t maxBytes,
-                                 uint16_t sourceOffset)
+                                  uint16_t maxBytes,
+                                  objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectInputAttributes_a
 #define MACRO_vtObjectTypeS iVtObjectInputAttributes_s
@@ -115,7 +115,7 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
       curBytes += 5;
     }
 
-    while ((sourceOffset >= 5) && (sourceOffset < (5+vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
+    while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
     {
       if (vtObjectInputAttributes_a->validationString == NULL)
       {
@@ -129,13 +129,13 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
       sourceOffset++;
     }
 
-    if ((sourceOffset == (5 + vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
+    if ((sourceOffset == (5U + vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
     {
       destMemory [curBytes] = vtObjectInputAttributes_a->numberOfMacrosToFollow;
       curBytes++;
       sourceOffset++;
     }
-    MACRO_streamEventMacro(6+vtObjectInputAttributes_a->length);
+    MACRO_streamEventMacro(6U+vtObjectInputAttributes_a->length);
     return curBytes;
 } // -X2C
 

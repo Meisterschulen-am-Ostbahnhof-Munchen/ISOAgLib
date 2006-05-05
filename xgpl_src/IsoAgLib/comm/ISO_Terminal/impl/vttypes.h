@@ -137,6 +137,16 @@ class vtObjectAuxiliaryInput_c;
 
 } // end namespace __IsoAgLib
 
+// Use the following define in your project's define-settings if you are using objects larger than 64KB
+// If there are objects larger and this define is NOT set, a compile error will be issued automatically.
+// vt2iso will generate this dependend error automatically when creating objects larger than 64KB
+//#define USE_OBJECTS_LARGER_THAN_64K
+
+#ifdef USE_OBJECTS_LARGER_THAN_64K
+typedef uint32_t objRange_t;
+#else
+typedef uint16_t objRange_t;
+#endif
 
 #define MACRO_localVars \
     MACRO_vtObjectTypeS* MACRO_vtObjectTypeA = (MACRO_vtObjectTypeS *) vtObject_a;
@@ -202,13 +212,13 @@ class vtObjectAuxiliaryInput_c;
 
 #define MACRO_streamObject(bytesBefore) \
     uint16_t nrObject = (sourceOffset-(bytesBefore)) / 2; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+2) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+2) <= maxBytes)) { \
       /* write out an object */ \
       if(MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject != NULL) { \
         destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject->getID() & 0xFF; \
         destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject->getID() >> 8; \
       } else { \
-      destMemory [curBytes]   = 0xFF; \
+        destMemory [curBytes]   = 0xFF; \
         destMemory [curBytes+1] = 0xFF; \
       } \
       nrObject++; \
@@ -218,7 +228,7 @@ class vtObjectAuxiliaryInput_c;
 
 #define MACRO_streamObjectXY(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       /* write out an object_X_Y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
@@ -244,7 +254,7 @@ class vtObjectAuxiliaryInput_c;
     MACRO_scaleSKLocalVars \
     int16_t centerX = (vtButtonWidth -  ((opButtonWidth *factorM)/factorD)) >>1; \
     int16_t centerY = (vtButtonHeight - ((opButtonHeight*factorM)/factorD)) >>1; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       MACRO_getBlockfont  \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
@@ -263,7 +273,7 @@ class vtObjectAuxiliaryInput_c;
     MACRO_scaleSKLocalVars \
     int16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factorM)/factorD)) >>1; \
     int16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factorM)/factorD)) >>1; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       MACRO_getBlockfont  \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
@@ -279,7 +289,7 @@ class vtObjectAuxiliaryInput_c;
 
 #define MACRO_streamEventMacro(bytesBefore) \
     uint16_t nrEventMacro = (sourceOffset-(bytesBefore)) / 2; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2*MACRO_vtObjectTypeA->numberOfMacrosToFollow)) && ((curBytes+2) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2U*MACRO_vtObjectTypeA->numberOfMacrosToFollow)) && ((curBytes+2) <= maxBytes)) { \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->macrosToFollow [nrEventMacro].event; \
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->macrosToFollow [nrEventMacro].vtObjectMacro->getID() & 0xFF; /* Macro ObjID must be 0-255 !! */ \
@@ -290,7 +300,7 @@ class vtObjectAuxiliaryInput_c;
 
 #define MACRO_streamLanguages(bytesBefore)\
     uint16_t nrLanguageCode = (sourceOffset-(bytesBefore)) / 2; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2*MACRO_vtObjectTypeA->numberOfLanguagesToFollow)) && ((curBytes+2) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2U*MACRO_vtObjectTypeA->numberOfLanguagesToFollow)) && ((curBytes+2) <= maxBytes)) { \
       /* write out a two character Language Code pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->languagesToFollow [nrLanguageCode].language[0]; \
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->languagesToFollow [nrLanguageCode].language[1]; \
@@ -309,7 +319,7 @@ class vtObjectAuxiliaryInput_c;
 /* M.Wodok's Version... */
 #define MACRO_streamPolygonPoints(bytesBefore) \
     uint16_t nrPointXY = (sourceOffset-(bytesBefore)) >>2; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+4*MACRO_vtObjectTypeA->numberOfPoints)) && ((curBytes+4) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+4U*MACRO_vtObjectTypeA->numberOfPoints)) && ((curBytes+4) <= maxBytes)) { \
       int32_t xBlock, yBlock; \
         xBlock = 0; \
         yBlock = 0; \

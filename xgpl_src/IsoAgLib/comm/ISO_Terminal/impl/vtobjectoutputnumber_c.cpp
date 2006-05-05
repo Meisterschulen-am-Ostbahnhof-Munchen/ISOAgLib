@@ -98,7 +98,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectOutputNumber_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
-                               uint16_t sourceOffset)
+                               objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectOutputNumber_a
 #define MACRO_vtObjectTypeS iVtObjectOutputNumber_s

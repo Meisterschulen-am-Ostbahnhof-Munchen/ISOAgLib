@@ -96,7 +96,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectAlarmMask_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
-                            uint16_t sourceOffset)
+                            objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectAlarmMask_a
 #define MACRO_vtObjectTypeS iVtObjectAlarmMask_s
@@ -126,7 +126,7 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
     }
 
     MACRO_streamObjectXY(10);
-    MACRO_streamEventMacro(10+vtObjectAlarmMask_a->numberOfObjectsToFollow*6);
+    MACRO_streamEventMacro(10U+vtObjectAlarmMask_a->numberOfObjectsToFollow*6U);
     return curBytes;
 } // -X2C
 

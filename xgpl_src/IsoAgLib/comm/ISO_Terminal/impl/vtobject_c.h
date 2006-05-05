@@ -107,7 +107,7 @@ public:
   //! @param sourceOffset:
   virtual int16_t stream(uint8_t* destMemory,
                          uint16_t maxBytes,
-                         uint16_t sourceOffset) = 0;
+                         objRange_t sourceOffset) = 0;
 
   //  Operation: fitTerminal
   virtual uint32_t fitTerminal() = 0;

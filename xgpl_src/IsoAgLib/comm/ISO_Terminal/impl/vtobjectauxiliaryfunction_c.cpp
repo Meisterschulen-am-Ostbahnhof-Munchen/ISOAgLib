@@ -94,7 +94,7 @@ namespace __IsoAgLib {
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
 int16_t
-vtObjectAuxiliaryFunction_c::stream(uint8_t* destMemory, uint16_t maxBytes, uint16_t sourceOffset)
+vtObjectAuxiliaryFunction_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectAuxiliaryFunction_a
 #define MACRO_vtObjectTypeS iVtObjectAuxiliaryFunction_s

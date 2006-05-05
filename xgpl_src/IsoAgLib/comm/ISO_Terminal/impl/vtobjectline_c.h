@@ -105,7 +105,7 @@ public:
   //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 uint16_t sourceOffset);
+                 objRange_t sourceOffset);
 
   //  Operation: init
   //! Parameter:

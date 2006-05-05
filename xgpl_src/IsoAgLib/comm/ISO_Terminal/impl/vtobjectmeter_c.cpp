@@ -95,8 +95,8 @@ namespace __IsoAgLib {
 //! @param sourceOffset:
 int16_t
 vtObjectMeter_c::stream(uint8_t* destMemory,
-                                 uint16_t maxBytes,
-                                 uint16_t sourceOffset)
+                        uint16_t maxBytes,
+                        objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectMeter_a
 #define MACRO_vtObjectTypeS iVtObjectMeter_s

@@ -96,7 +96,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectInputList_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
-                            uint16_t sourceOffset)
+                            objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectInputList_a
 #define MACRO_vtObjectTypeS iVtObjectInputList_s
@@ -128,7 +128,7 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
     }
 
     MACRO_streamObject(13);
-    MACRO_streamEventMacro(13+vtObjectInputList_a->numberOfObjectsToFollow*2);
+    MACRO_streamEventMacro(13U+vtObjectInputList_a->numberOfObjectsToFollow*2U);
     return curBytes;
 } // -X2C
 

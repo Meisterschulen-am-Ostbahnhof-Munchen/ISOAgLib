@@ -101,8 +101,8 @@ namespace __IsoAgLib {
 //! @param sourceOffset:
 int16_t
 vtObjectRectangle_c::stream(uint8_t* destMemory,
-                                 uint16_t maxBytes,
-                                 uint16_t sourceOffset)
+                            uint16_t maxBytes,
+                            objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectRectangle_a
 #define MACRO_vtObjectTypeS iVtObjectRectangle_s

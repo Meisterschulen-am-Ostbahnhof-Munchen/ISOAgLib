@@ -1602,6 +1602,8 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
       }
     }
 
+    static bool b_largeObject = false;
+    bool b_oldLarge = b_largeObject;
     // Print out raw data or rle_data?
     if (options & (uint64_t(1)<<(2+actDepth))) { // rle1, rle4 or rle8 "STILL" set?
       //// +++ RLE-COMPRESSED OUTPUT +++
@@ -1621,6 +1623,7 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
           << " bytes and uncompressed bitmap-size of "<< c_Bitmap.objRawBitmapBytes [actDepth] <<" bytes.\n";
       std::cout << "Bitmap PixelCount: " << PixelCount << ", Width: " << c_Bitmap.getWidth() << ", Height: " << c_Bitmap.getHeight() << "\n\n";
       c_Bitmap.objRawBitmapBytes [actDepth] = rleBytes;
+      if (rleBytes > 65000) b_largeObject = true; // normally 65535-restAttributesSize would be enough, but don't care, go save!
     } else {
       //// +++ NORMAL UNCOMPRESSED OUTPUT +++
       if (actDepth == 1) { // nur der lesbarkeit halber!!
@@ -1634,8 +1637,15 @@ void openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &
           fprintf (partFileB, ", %d", picBuffer [i]);
         }
       }
+      if (c_Bitmap.objRawBitmapBytes [actDepth] > 65000) b_largeObject = true; // normally 65535-restAttributesSize would be enough, but don't care, go save!
     }
     fprintf (partFileB, "};\n");
+    if (!b_oldLarge && b_largeObject)
+    {
+      fprintf (partFileB, "#ifndef USE_OBJECTS_LARGER_THAN_64K\n");
+      fprintf (partFileB, "  #error \"Your objectpool has large object(s) so you need to compile your project with the   USE_OBJECTS_LARGER_THAN_64K   define set.\"\n");
+      fprintf (partFileB, "#endif\n");
+    }
   } // for actDepth...
 }
 

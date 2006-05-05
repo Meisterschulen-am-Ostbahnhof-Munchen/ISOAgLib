@@ -1,7 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="0" />
+ <DocsAndViews NumberOfDocuments="2" >
+  <Doc0 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
+   <View0 line="1644" Type="Source" />
+  </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vttypes.h" >
+   <View0 line="144" Type="Source" />
+  </Doc1>
+ </DocsAndViews>
  <pluginList>
   <kdevdebugger>
    <breakpointList/>

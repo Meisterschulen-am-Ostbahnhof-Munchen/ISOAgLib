@@ -95,7 +95,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
                               uint16_t maxBytes,
-                              uint16_t sourceOffset)
+                              objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectSoftKeyMask_a
 #define MACRO_vtObjectTypeS iVtObjectSoftKeyMask_s
@@ -114,7 +114,7 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
   }
 
   MACRO_streamObject(6);
-  MACRO_streamEventMacro(6+vtObjectSoftKeyMask_a->numberOfObjectsToFollow*2);
+  MACRO_streamEventMacro(6+vtObjectSoftKeyMask_a->numberOfObjectsToFollow*2U);
   return curBytes;
 } // -X2C
 

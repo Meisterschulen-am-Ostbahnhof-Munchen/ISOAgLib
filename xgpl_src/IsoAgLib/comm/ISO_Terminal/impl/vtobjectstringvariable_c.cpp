@@ -97,7 +97,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectStringVariable_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
-                                 uint16_t sourceOffset)
+                                 objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectStringVariable_a
 #define MACRO_vtObjectTypeS iVtObjectStringVariable_s
@@ -113,7 +113,7 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
     sourceOffset += 5;
   }
 
-  while ((sourceOffset >= 5) && (sourceOffset < (5+vtObjectStringVariable_a->length)) && ((curBytes+1) <= maxBytes)) {
+  while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObjectStringVariable_a->length)) && ((curBytes+1) <= maxBytes)) {
     destMemory [curBytes] = vtObjectStringVariable_a->value [sourceOffset-5];
     curBytes++;
     sourceOffset++;

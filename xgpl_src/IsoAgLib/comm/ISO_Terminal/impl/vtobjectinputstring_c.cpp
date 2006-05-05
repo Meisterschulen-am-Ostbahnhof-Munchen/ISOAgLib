@@ -101,7 +101,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectInputString_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
-                               uint16_t sourceOffset)
+                               objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectInputString_a
 #define MACRO_vtObjectTypeS iVtObjectInputString_s
@@ -152,7 +152,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
     }
 
 
-    while ((sourceOffset >= 17) && (sourceOffset < (17+vtObjectInputString_a->length)) && ((curBytes+1) <= maxBytes)) {
+    while ((sourceOffset >= 17U) && (sourceOffset < (17U+vtObjectInputString_a->length)) && ((curBytes+1) <= maxBytes)) {
       if (vtObjectInputString_a->value == NULL)
         destMemory [curBytes] = 0x00;
       else
@@ -161,7 +161,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
       sourceOffset++;
     }
 
-    if ((sourceOffset == (17 + vtObjectInputString_a->length)) && ((curBytes+1) <= maxBytes)) {
+    if ((sourceOffset == (17U + vtObjectInputString_a->length)) && ((curBytes+1) <= maxBytes)) {
       destMemory [curBytes] = vtObjectInputString_a->enabled;
       curBytes++;
       sourceOffset++;
@@ -169,7 +169,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
       curBytes++;
       sourceOffset++;
     }
-    MACRO_streamEventMacro(19+vtObjectInputString_a->length);
+    MACRO_streamEventMacro(19U+vtObjectInputString_a->length);
     return curBytes;
 } // -X2C
 

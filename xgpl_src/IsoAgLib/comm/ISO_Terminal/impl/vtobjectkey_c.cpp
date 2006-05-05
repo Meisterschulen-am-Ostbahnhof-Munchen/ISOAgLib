@@ -98,7 +98,7 @@ namespace __IsoAgLib {
 int16_t
 vtObjectKey_c::stream(uint8_t* destMemory,
                       uint16_t maxBytes,
-                      uint16_t sourceOffset)
+                      objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectKey_a
 #define MACRO_vtObjectTypeS iVtObjectKey_s
@@ -118,7 +118,7 @@ vtObjectKey_c::stream(uint8_t* destMemory,
     }
 
     MACRO_streamObjectXYcenteredInSoftKey(7);
-    MACRO_streamEventMacro(7+vtObjectKey_a->numberOfObjectsToFollow*6);
+    MACRO_streamEventMacro(7U+vtObjectKey_a->numberOfObjectsToFollow*6U);
     return curBytes;
 } // -X2C
 

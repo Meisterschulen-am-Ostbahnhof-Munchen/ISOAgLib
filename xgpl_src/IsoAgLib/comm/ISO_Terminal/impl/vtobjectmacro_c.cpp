@@ -95,8 +95,8 @@ namespace __IsoAgLib {
 //! @param sourceOffset: 
 int16_t
 vtObjectMacro_c::stream(uint8_t* destMemory,
-                                uint16_t maxBytes,
-                                uint16_t sourceOffset)
+                        uint16_t maxBytes,
+                        objRange_t sourceOffset)
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectMacro_a
 #define MACRO_vtObjectTypeS iVtObjectMacro_s
@@ -119,8 +119,8 @@ vtObjectMacro_c::stream(uint8_t* destMemory,
       curBytes += 5;
       sourceOffset += 5;
     }
-    
-    while ((sourceOffset >= 5) && (sourceOffset < (5+vtObjectMacro_a->numBytesToFollow)) && ((curBytes+1) <= maxBytes)) 
+
+    while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObjectMacro_a->numBytesToFollow)) && ((curBytes+1) <= maxBytes)) 
     {
       destMemory [curBytes] = vtObjectMacro_a->commandsToFollow [sourceOffset-5];
       curBytes++;
