@@ -148,7 +148,7 @@ vtObjectLineAttributes_c::fitTerminal()
 void
 vtObjectLineAttributes_c::setLineAttributes(uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject, bool b_enableReplaceOfCmd) {
   if (b_updateObject) {
-    saveValue8 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s), newLineColour);
+    saveValue8 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s), __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newLineColour, this, IsoAgLib::LineColour));
     saveValue8 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth), sizeof(iVtObjectLineAttributes_s), newLineWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s), newLineArt);
   }

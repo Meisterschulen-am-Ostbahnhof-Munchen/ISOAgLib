@@ -151,7 +151,7 @@ void vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, uint8_t ne
 {// ~X2C
   if (b_updateObject) {
     saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType),   sizeof(iVtObjectFillAttributes_s), newFillType);
-    saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), newFillColour);
+    saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newFillColour, this, IsoAgLib::FillColour));
     saveValueP (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s), newFillPattern);
   }
   __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd);
