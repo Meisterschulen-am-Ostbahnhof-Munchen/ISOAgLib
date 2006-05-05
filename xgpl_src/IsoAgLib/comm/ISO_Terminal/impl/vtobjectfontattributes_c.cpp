@@ -110,7 +110,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
     destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectFontAttributes_a->fontColour, this, IsoAgLib::FontColour);
     destMemory [4] = ui8_fontSizeScaled; // size() must have been called before to prepare!!!!
     destMemory [5] = vtObjectFontAttributes_a->fontType;
-    destMemory [6] = vtObjectFontAttributes_a->fontStyle;
+    destMemory [6] = vtObjectFontAttributes_a->fontStyle & __IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities()->fontTypes;
     destMemory [7] = vtObjectFontAttributes_a->numberOfMacrosToFollow;
     sourceOffset += 8;
     curBytes += 8;
