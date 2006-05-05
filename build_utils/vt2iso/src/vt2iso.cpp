@@ -1152,8 +1152,20 @@ unsigned int fontstyletoi (char *text_fontstyle)
 {
   int l, retval=0;
   for (l=0; l<maxFontstyleTable; l++) {
-    if (strstr (text_fontstyle, fontstyleTable [l]) != NULL) {
-      retval += (uint64_t(1)<<l);
+    char *pos=strstr (text_fontstyle, fontstyleTable [l]);
+    if (pos != NULL)
+    {
+      bool b_flashingInverted = false;
+      if (l==4)
+      { // "inverted" - only take if it's NOT flashing inverted!
+        if (pos >= text_fontstyle+strlen (fontstyleTable [5])-strlen (fontstyleTable [4]))
+        { // now check if the part left of it is "flashing" - in this case, do NOT consider this one as inverted!
+          if (strncmp (pos-(strlen (fontstyleTable [5])-strlen (fontstyleTable [4])), fontstyleTable [5], strlen (fontstyleTable [5])) == 0)
+            b_flashingInverted = true;
+        }
+      }
+      if (!b_flashingInverted)
+        retval += (uint64_t(1)<<l);
     }
   }
   return retval;
