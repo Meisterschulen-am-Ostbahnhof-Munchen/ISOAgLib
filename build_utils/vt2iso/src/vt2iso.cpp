@@ -3279,8 +3279,10 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
       switch (objType)
       {
         case otWorkingset:
-          if (!attrIsGiven [attrActive_mask]) clean_exit (-1, "YOU NEED TO SPECIFY THE active_mask= ATTRIBUTE FOR THE <workingset> OBJECT! STOPPING PARSER! bye.\n\n");
-          fprintf (partFileB, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]), attrString [attrActive_mask]);
+          if (!attrIsGiven [attrActive_mask] && (booltoi (attrString [attrSelectable]) == 1)) clean_exit (-1, "YOU NEED TO SPECIFY THE active_mask= ATTRIBUTE FOR THE <workingset> OBJECT (if selectable='yes'!)! STOPPING PARSER! bye.\n\n");
+          if (booltoi (attrString [attrSelectable]) == 0)
+               fprintf (partFileB, ", %d, %d, NULL",         colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]));
+          else fprintf (partFileB, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), booltoi (attrString [attrSelectable]), attrString [attrActive_mask]);
           break;
   
         case otDatamask:

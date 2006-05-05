@@ -111,15 +111,13 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
         destMemory [2] = 0; // Object Type = Working Set
         destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectWorkingSet_a->backgroundColour, this, IsoAgLib::BackgroundColour);
         destMemory [4] = vtObjectWorkingSet_a->selectable;
-
         if (vtObjectWorkingSet_a->activeMask != NULL) {
             destMemory [5] = vtObjectWorkingSet_a->activeMask->getID() & 0xFF;
             destMemory [6] = vtObjectWorkingSet_a->activeMask->getID() >> 8;
         } else {
-            destMemory [5] = 0xFF;
-            destMemory [6] = 0xFF;
+            destMemory [5] = 0; // using 0x00 here as 0xFFFF is NOT allowed
+            destMemory [6] = 0; // using 0x00 here as 0xFFFF is NOT allowed
         }
-
         destMemory [7] = vtObjectWorkingSet_a->numberOfObjectsToFollow;
         destMemory [8] = vtObjectWorkingSet_a->numberOfMacrosToFollow;
         destMemory [9] = vtObjectWorkingSet_a->numberOfLanguagesToFollow;
