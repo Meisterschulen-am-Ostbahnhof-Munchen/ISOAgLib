@@ -1183,6 +1183,9 @@ MultiSend_c::SendStream_c::processMsg()
 bool
 MultiSend_c::processMsg()
 {
+  if (data().getLen() != 8)
+    return true; // All corrupted (E)TP-Packages should NOT be of interest for anybody...
+
   // don't process if no response from target of multi packet send
   // give DINMaskUpload_c a try
   SendStream_c* pc_sendStreamFound = getSendStream(data().empf(), data().send()); // sa/da swapped, of course ;-) !

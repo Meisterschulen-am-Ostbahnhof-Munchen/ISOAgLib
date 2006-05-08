@@ -251,6 +251,9 @@ MultiReceive_c::processMsg()
       return true; /* no other CAN-Customer should be interested in that one */\
     }
 
+  if (data().getLen() != 8)
+    return true; // All corrupt (E)TP-Packages are NOT of interest for any other CAN-Customer - who would want corrupted packages?
+
   bool b_ePgn=false;
   bool b_eCmd=false;
   StreamType_t t_streamType; // will be set before used, see MACRO_t_streamType_checkInvalid
@@ -551,19 +554,17 @@ MultiReceive_c::processMsg()
             if (data().isoPs() == 0xFF)
             {
               notifyError(c_tmpRSI, 114);
-              /// Do NOT propagate abortion of BAM to client!
-              //connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
-              removeStream (pc_streamFound);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** BAM sequence error ***\n";
               #endif
             } else {
               notifyError(c_tmpRSI, 109);
-              connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to wrong DATA, see msg before! ***\n";
               #endif
             }
+            // \/ will take care of NOT sending out the connAbort/TellingClient if it was a Broadcast!
+            connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
           }
           // further handling (send next CTS) is moved to timeEvent, so we don't get confused with CM/DATA PGNs, as they come very fast!
 
@@ -1059,7 +1060,7 @@ void
 MultiReceive_c::sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi)
 { // ~X2C
   if (rc_rsi.getDa() == 0xFF)
-  { // NEVER answer to a packet that was sent to GLOBAL ADDRESS 0xFF !
+  { // NEVER answer to a packet that was sent to GLOBAL ADDRESS 0xFF !        
     return;
   }
 
@@ -1080,11 +1081,14 @@ MultiReceive_c::connAbortTellClient(bool rb_sendConnAbort, Stream_c* rpc_stream)
   if (rb_sendConnAbort)
     sendConnAbort(rpc_stream->getStreamType(), rpc_stream->getIdent());
 
-  // search Client and tell about connAbort
-  IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(rpc_stream->getIdent());
-  if (pc_clientFound) {
-    pc_clientFound->reactOnAbort (rpc_stream);
-  }
+  if (rpc_stream->getIdent().getDa() != 0xFF)
+  {
+    // search Client and tell about connAbort
+    IsoAgLib::MultiReceiveClient_c* pc_clientFound = getClient(rpc_stream->getIdent());
+    if (pc_clientFound) {
+      pc_clientFound->reactOnAbort (rpc_stream);
+    }
+  } // else: // NEVER promote aborts from BROADCASTS, because there's no partial parsing possible, so no need to inform the user...
 }
 
 

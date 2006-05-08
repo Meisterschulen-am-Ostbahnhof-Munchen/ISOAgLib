@@ -90,24 +90,6 @@ public:
 #endif
 #ifdef USE_ISO_11783
 
-#if 0
-  /**
-    send a ISO target multipacket message with active retrieve of data-parts to send
-    @param rb_send dynamic member no of sender
-    @param rb_empf dynamic member no of receiver
-    @param rpc_mss allow active build of data stream parts for upload by deriving data source class
-                  from MultiSendStreamer_c, which defines virtual functions to control the
-                  retrieve of data to send. This is especially important for ISO_Terminal,
-                  which assembles the data pool dependent on the terminal capabilities during upload
-                  ( e.g. bitmap variants )
-    @param ri32_pgn PGN to use for the upload
-    @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
-            is written by MultiSend_c
-    @return true -> MultiSend_c was ready -> mask is spooled to target
-  */
-  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t* rpen_sendSuccessNotify)
-    {return MultiSend_c::sendIsoTarget(rb_send, rb_empf, rpc_mss, ri32_pgn, rpen_sendSuccessNotify );};
-#endif
 
   /**
     send a ISO target multipacket message
