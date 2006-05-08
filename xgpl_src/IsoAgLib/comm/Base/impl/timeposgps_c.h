@@ -95,7 +95,7 @@
 
 #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
   #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
-  #include <IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h>
+  #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
   #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #endif // END of NMEA_2000_FAST_PACKET and USE_ISO_11783
 
@@ -105,7 +105,7 @@ namespace __IsoAgLib {
 #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
 
 class MultiSendPkg_c;
-class Nmea2000SendStreamer_c : public MultiSendStreamer_c
+class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
   public:
     Nmea2000SendStreamer_c() : ui16_currentSendPosition(0), ui16_storedSendPosition(0) {};

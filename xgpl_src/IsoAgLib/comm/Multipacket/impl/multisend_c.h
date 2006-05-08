@@ -445,8 +445,8 @@ public: // methods
   bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
   #if defined(NMEA_2000_FAST_PACKET)
   bool sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
-  bool sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
-#endif
+  bool sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
+  #endif
 
   /**
     send a ISO broadcast multipacket message
