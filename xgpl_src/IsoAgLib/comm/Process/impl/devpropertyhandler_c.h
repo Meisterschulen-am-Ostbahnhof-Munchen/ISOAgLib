@@ -89,7 +89,7 @@
 #include "processpkg_c.h"
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
 #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h>
+#include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 
 #include <map>
@@ -125,7 +125,7 @@ public:
 
 
 class MultiSendPkg_c;
-class DevPropertyHandler_c : public MultiSendStreamer_c,  ClientBase
+class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c,  ClientBase
 {
   public:
     DevPropertyHandler_c() : ui16_currentSendPosition(0), ui16_storedSendPosition(0) {};
