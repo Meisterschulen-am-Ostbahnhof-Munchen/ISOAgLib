@@ -551,6 +551,8 @@ compiler_projects/SIMU/traktor.cmm -text
 compiler_projects/SIMU/xcsL33M.hex -text
 compiler_projects/SIMU/xf2_4lau.hex -text
 compiler_projects/VC6/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.dsp eol=crlf
+compiler_projects/VC6/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.sln -text
+compiler_projects/VC6/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.vcproj -text
 compiler_projects/VC6/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__sys.dsp eol=crlf
 compiler_projects/VC6/0_0_AddressClaimIso/0_0_AddressClaimIso__sontheim__simulating.dsp eol=crlf
 compiler_projects/VC6/0_0_AddressClaimIso/0_0_AddressClaimIso__sontheim__sys.dsp eol=crlf
