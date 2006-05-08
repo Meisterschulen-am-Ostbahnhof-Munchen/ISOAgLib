@@ -800,7 +800,6 @@ compiler_projects/VC6/tractor/tractor__vector_canlib__simulating.dsp eol=crlf
 compiler_projects/VC6/tractor/tractor__vector_canlib__sys.dsp eol=crlf
 compiler_projects/VC6/tractor/tractor__vector_xl_drv_lib__simulating.dsp eol=crlf
 compiler_projects/VC6/tractor/tractor__vector_xl_drv_lib__sys.dsp eol=crlf
-compiler_projects/VCNet/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.sln -text
 compiler_projects/VCNet/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.vcproj -text
 compiler_projects/kdevelop_qmake/0_0_AddressClaimIso/0_0_AddressClaimIso.kdevelop -text
 compiler_projects/kdevelop_qmake/0_0_AddressClaimIso/0_0_AddressClaimIso.kdevelop.filelist -text
