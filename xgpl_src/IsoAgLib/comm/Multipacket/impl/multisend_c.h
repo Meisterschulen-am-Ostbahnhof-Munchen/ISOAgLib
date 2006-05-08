@@ -117,12 +117,16 @@
 #define ConnAbort      255
 
 
-// Begin Namespace __IsoAgLib
-namespace __IsoAgLib {
-
+// Begin Namespace IsoAgLib
+namespace IsoAgLib {
 /** predeclare some classes from IsoAgLib namespace */
 class iMultiSend_c;
-class MultiSendStreamer_c;
+class iMultiSendStreamer_c;
+}
+
+
+// Begin Namespace __IsoAgLib
+namespace __IsoAgLib {
 
 // forward declarations
 class vtObjectString_c;
@@ -179,14 +183,14 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
 
     /// Object construction
     SendStream_c(MultiSend_c& rrefc_multiSend SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA ) : SINGLETON_PARENT_CONSTRUCTOR pc_multiSend (&rrefc_multiSend)
-{}; // does NOT initialize anything, use "init(...)" directly after construction!!!!
-    void initIso (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
+      {}; // does NOT initialize anything, use "init(...)" directly after construction!!!!
+    void initIso (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
       #if defined(NMEA_2000_FAST_PACKET)
       , bool rb_useFastPacket = false
       #endif
     );
     void initDin (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rpen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout);
-    void init    (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rpen_sendSuccessNotify, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType, bool rb_ext, uint16_t rui16_delay);
+    void init    (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rpen_sendSuccessNotify, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType, bool rb_ext, uint16_t rui16_delay);
 
     /**
       perform periodical actions
@@ -344,7 +348,7 @@ public: // idle was thrown out as it's now idle if no SendStream is in the list 
     /** DIN transfer cmd */
     uint8_t b_fileCmd;
     /** pointer to an IsoAgLib::MultiSendStreamer_c class which streams out parts of the stream step by step */
-    MultiSendStreamer_c* pc_mss;
+    IsoAgLib::iMultiSendStreamer_c* pc_mss;
 
   /// Initialized on Init - ISO-Specific
     /** ISO integrates the PGN of the multipacket message */
@@ -425,7 +429,7 @@ public: // methods
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
+  bool sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
 
   /**
     send a ISO target multipacket message
@@ -540,7 +544,7 @@ private: // Private methods
                   ( e.g. bitmap variants )
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoIntern(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
+  bool sendIsoIntern(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
   #if defined(NMEA_2000_FAST_PACKET)
   , bool rb_useFastPacket = false
   #endif

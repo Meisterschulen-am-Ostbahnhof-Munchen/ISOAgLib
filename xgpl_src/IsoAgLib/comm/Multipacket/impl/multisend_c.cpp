@@ -87,7 +87,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "multisend_c.h"
-#include "multisendstreamer_c.h"
+#include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
 
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
@@ -280,7 +280,7 @@ SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& ref_source)
 //////////////////////////////////////
 
 void
-MultiSend_c::SendStream_c::init (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType, bool rb_ext, uint16_t rui16_delay)
+MultiSend_c::SendStream_c::init (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType, bool rb_ext, uint16_t rui16_delay)
 {
   b_send = rb_send;
   b_empf = rb_empf;
@@ -308,7 +308,7 @@ MultiSend_c::SendStream_c::init (uint8_t rb_send, uint8_t rb_empf, const HUGE_ME
 
 
 void
-MultiSend_c::SendStream_c::initIso (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
+MultiSend_c::SendStream_c::initIso (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
   #if defined(NMEA_2000_FAST_PACKET)
   , bool rb_useFastPacket
   #endif
@@ -520,7 +520,7 @@ bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8
   @param rb_send dynamic member no of sender
   @param rb_empf dynamic member no of receiver
   @param rpc_mss allow active build of data stream parts for upload by deriving data source class
-                 from IsoAgLib::MultiSendStreamer_c, which defines virtual functions to control the
+                 from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                  retrieve of data to send. This is especially important for ISO_Terminal,
                  which assembles the data pool dependent on the terminal capabilities during upload
                  ( e.g. bitmap variants )
@@ -530,7 +530,7 @@ bool MultiSend_c::sendDin(uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
 bool
-MultiSend_c::sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+MultiSend_c::sendIsoTarget(uint8_t rb_send, uint8_t rb_empf, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
 {
   return sendIsoIntern(rb_send, rb_empf, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, IsoTarget);
 }
@@ -575,7 +575,7 @@ bool MultiSend_c::sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, HUGE_MEM u
 { // no MSS here, not supported by IsoFastPacket
   return sendIsoIntern(rb_send, rb_empf, rhpb_data, ri32_dataSize, rrefen_sendSuccessNotify, ri32_pgn, NULL, IsoTarget, true);
 }
-bool MultiSend_c::sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, MultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
+bool MultiSend_c::sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, IsoAgLib::iMultiSendStreamer_c* rpc_mss, int32_t ri32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
 { // o MSS here, not supported by IsoFastPacket
   return sendIsoIntern(rb_send, rb_empf, NULL, rpc_mss->getStreamSize(), rrefen_sendSuccessNotify, ri32_pgn, rpc_mss, IsoTarget, true);
 }
@@ -593,14 +593,14 @@ bool MultiSend_c::sendIsoFastPacket(uint8_t rb_send, uint8_t rb_empf, MultiSendS
   @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
           is written by MultiSend_c
   @param rpc_mss allow active build of data stream parts for upload by deriving data source class
-                 from IsoAgLib::MultiSendStreamer_c, which defines virtual functions to control the
+                 from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                  retrieve of data to send. This is especially important for ISO_Terminal,
                  which assembles the data pool dependent on the terminal capabilities during upload
                  ( e.g. bitmap variants )
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
 bool
-MultiSend_c::sendIsoIntern (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ri32_pgn, MultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
+MultiSend_c::sendIsoIntern (uint8_t rb_send, uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ri32_pgn, IsoAgLib::iMultiSendStreamer_c* rpc_mss, msgType_t ren_msgType
   #if defined(NMEA_2000_FAST_PACKET)
   , bool rb_useFastPacket
   #endif

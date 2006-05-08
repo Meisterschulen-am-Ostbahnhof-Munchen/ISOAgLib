@@ -125,7 +125,7 @@
 #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h>
 #include <IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h>
+#include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
 #include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
 #include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
@@ -182,7 +182,7 @@ public:
   as some STL aware compilers don't support multiple inheritance
   ( e.g. IAR ). So this helper construction was defined.
 */
-class ISOTerminalStreamer_c : public MultiSendStreamer_c
+class ISOTerminalStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
 
 public:

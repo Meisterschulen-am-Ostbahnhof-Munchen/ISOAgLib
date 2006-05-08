@@ -320,7 +320,7 @@ bool ISOTerminal_c::startUploadCommand ()
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
     return getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
-           (MultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),        ECU_TO_VT_PGN, en_sendSuccess);
+           (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(), ECU_TO_VT_PGN, en_sendSuccess);
   }
 }
 

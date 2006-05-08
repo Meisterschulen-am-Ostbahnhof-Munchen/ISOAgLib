@@ -85,7 +85,7 @@
 
 
 // +X2C includes
-#include <IsoAgLib/comm/Multipacket/impl/multisendstreamer_c.h>
+#include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
 #include "vtobject_c.h"
 // ~X2C
 
@@ -94,7 +94,7 @@ namespace __IsoAgLib {
 class MultiSendPkg_c;
 
 /** helper class to avoid multiple inheritance by vtObjectString_c */
-class vtObjectStringStreamer_c : public MultiSendStreamer_c
+class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
  public:
 
