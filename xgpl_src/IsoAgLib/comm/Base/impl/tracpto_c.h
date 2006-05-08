@@ -137,23 +137,48 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /*@{*/
 
     /** set rear PTO
-        @param ri16_val value to store as the speed of the rear PTO
+      @param ri16_val value to store as the speed of the rear PTO [1RPM]
       */
     void setPtoRear(const int16_t ri16_val)
     {
-      i16_ptoRear = ( ri16_val / 8 );
+      i16_ptoRear8DigitPerRpm = ( ri16_val * 8 );
       #ifdef USE_ISO_11783
       if ( ri16_val == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
+      else                 setPtoRearEngaged( IsoAgLib::IsoActive );
       #endif
     };
     /** set front PTO
-        @param ri16_val value to store as the speed of the front PTO
+        @param ri16_val value to store as the speed of the front PTO [1RPM]
       */
     void setPtoFront(const int16_t ri16_val)
     {
-      i16_ptoFront = ( ri16_val / 8 );
+      i16_ptoFront8DigitPerRpm = ( ri16_val * 8 );
       #ifdef USE_ISO_11783
       if ( ri16_val == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
+      else                 setPtoFrontEngaged( IsoAgLib::IsoActive );
+      #endif
+    };
+
+    /** set rear PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
+    @param ri16_val8DigitPerRpm value to store as the speed of the rear PTO [1/8RPM]
+     */
+    void setPtoRear8DigitPerRpm(const int16_t ri16_val8DigitPerRpm)
+    {
+      i16_ptoRear8DigitPerRpm = ri16_val8DigitPerRpm;
+      #ifdef USE_ISO_11783
+      if ( ri16_val8DigitPerRpm == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
+      else                             setPtoRearEngaged( IsoAgLib::IsoActive );
+      #endif
+    };
+    /** set front PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
+    @param ri16_val8DigitPerRpm value to store as the speed of the front PTO [1/8RPM]
+     */
+    void setPtoFront8DigitPerRpm(const int16_t ri16_val8DigitPerRpm)
+    {
+      i16_ptoFront8DigitPerRpm = ri16_val8DigitPerRpm;
+      #ifdef USE_ISO_11783
+      if ( ri16_val8DigitPerRpm == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
+      else                             setPtoFrontEngaged( IsoAgLib::IsoActive );
       #endif
     };
 
@@ -183,13 +208,21 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       */
     void setPtoRearEconomy(const IsoAgLib::IsoActiveFlag_t rt_val) { t_rearPtoEconomy = rt_val;}
     /** set measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
-        @param ri16_val
+        @param ri16_val requested RPM [1RPM]
       */
-    void setFrontPtoSetPoint(const uint16_t ri16_val)  { ui16_frontPtoSetPoint = ( ri16_val / 8 );}
+    void setFrontPtoSetPoint(const uint16_t ri16_val)  { ui16_frontPtoSetPoint8DigitPerRpm = ( ri16_val * 8 );}
     /** set measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
-        @param ri16_val
+        @param ri16_val requested RPM [1RPM]
       */
-    void setRearPtoSetPoint(const uint16_t ri16_val)  { ui16_rearPtoSetPoint = ( ri16_val / 8 );}
+    void setRearPtoSetPoint(const uint16_t ri16_val)  { ui16_rearPtoSetPoint8DigitPerRpm = ( ri16_val * 8 );}
+    /** set measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
+        @param ri16_val8DigitPerRpm requested RPM [1/8RPM]
+     */
+    void setFrontPtoSetPoint8DigitPerRpm(const uint16_t ri16_val8DigitPerRpm)  { ui16_frontPtoSetPoint8DigitPerRpm = ri16_val8DigitPerRpm;}
+    /** set measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
+        @param ri16_val8DigitPerRpm requested RPM [1/8RPM]
+     */
+    void setRearPtoSetPoint8DigitPerRpm(const uint16_t ri16_val8DigitPerRpm)  { ui16_rearPtoSetPoint8DigitPerRpm = ri16_val8DigitPerRpm;}
     /** set reported tractor ECU's status of front engagement
         @param rt_val  status to set
       */
@@ -236,13 +269,22 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /*@{*/
 
     /** get rear pto
-        @return actual rpm speed of rear PTO
+        @return actual rpm speed of rear PTO [1RPM]
       */
-    int16_t ptoRear() const { return ( i16_ptoRear * 8 );};
+    int16_t ptoRear() const { return ( i16_ptoRear8DigitPerRpm / 8 );};
     /** get front pto
-        @return actual rpm speed of front PTO
+        @return actual rpm speed of front PTO [1RPM]
       */
-    int16_t ptoFront() const { return ( i16_ptoFront * 8 );};
+    int16_t ptoFront() const { return ( i16_ptoFront8DigitPerRpm / 8 );};
+
+    /** get rear pto
+      @return actual rpm speed of rear PTO [1/8RPM]
+     */
+    int16_t ptoRear8DigitPerRpm() const { return ( i16_ptoRear8DigitPerRpm);};
+    /** get front pto
+      @return actual rpm speed of front PTO [1/8RPM]
+     */
+    int16_t ptoFront8DigitPerRpm() const { return ( i16_ptoFront8DigitPerRpm);};
 
 
     #ifdef USE_ISO_11783
@@ -271,13 +313,21 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       */
     IsoAgLib::IsoActiveFlag_t ptoRearEconomy() const { return t_rearPtoEconomy;}
     /** get measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
-        @return measured value of the set point
+        @return measured value of the set point [1RPM]
       */
-    uint16_t frontPtoSetPoint() const { return ( ui16_frontPtoSetPoint * 8 );}
+    uint16_t frontPtoSetPoint() const { return ( ui16_frontPtoSetPoint8DigitPerRpm / 8 );}
     /** get measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
-        @return measured value of the set point
+        @return measured value of the set point [1RPM]
       */
-    uint16_t rearPtoSetPoint() const { return ( ui16_rearPtoSetPoint * 8 );}
+    uint16_t rearPtoSetPoint() const { return ( ui16_rearPtoSetPoint8DigitPerRpm / 8 );}
+    /** get measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
+        @return measured value of the set point [1/8RPM]
+     */
+    uint16_t frontPtoSetPoint8DigitPerRpm() const { return ui16_frontPtoSetPoint8DigitPerRpm;}
+    /** get measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
+        @return measured value of the set point [1/8RPM]
+     */
+    uint16_t rearPtoSetPoint8DigitPerRpm() const { return ui16_rearPtoSetPoint8DigitPerRpm;}
     /** get reported tractor ECU's status of front engagement
         @return  reported status
       */
@@ -338,8 +388,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       * this is only called when sending ident is configured and it has already claimed an address
       */
     bool isoTimeEventTracMode( );
-    /** DUMMY nothing to do!! */
-    bool isoTimeEventImplMode() {return true;}
+    /** Detect stop of PTO update from tractor -> indication for stopped PTO */
+    bool isoTimeEventImplMode();
     /** process a ISO11783 base information PGN */
     bool isoProcessMsg();
     #endif
@@ -351,10 +401,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** last time of pto rear data msg [msec] */
     int32_t i32_lastPtoRear;
 
-    /** pto rear */
-    int16_t i16_ptoRear;
-    /** pto front */
-    int16_t i16_ptoFront;
+    /** pto rear [1/8RPM] */
+    int16_t i16_ptoRear8DigitPerRpm;
+    /** pto front [1/8RPM] */
+    int16_t i16_ptoFront8DigitPerRpm;
 
     #ifdef USE_ISO_11783
     /// General
@@ -370,10 +420,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     IsoAgLib::IsoActiveFlag_t t_frontPtoEconomy;
     /** economy mode of rear PTO */
     IsoAgLib::IsoActiveFlag_t t_rearPtoEconomy;
-    /** measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft */
-    uint16_t ui16_frontPtoSetPoint;
-    /** measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft */
-    uint16_t ui16_rearPtoSetPoint;
+    /** measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft [1/8RPM] */
+    uint16_t ui16_frontPtoSetPoint8DigitPerRpm;
+    /** measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft [1/8RPM] */
+    uint16_t ui16_rearPtoSetPoint8DigitPerRpm;
     /** report tractor ECU's status of front engagement */
     IsoAgLib::IsoReqFlag_t t_frontPtoEngagementReqStatus;
     /** report tractor ECU's status of rear engagement */

@@ -122,17 +122,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     //call config for handling which is base data independent
     BaseCommon_c::config(rpc_devKey, rt_IdentMode);
     // set the member base msg value vars to NO_VAL codes
-    i16_ptoFront = i16_ptoRear = NO_VAL_16S;
+    i16_ptoFront8DigitPerRpm = i16_ptoRear8DigitPerRpm = NO_VAL_16S;
 
     // set the timestamps to 0
     i32_lastPtoFront = i32_lastPtoRear = 0;
     #ifdef USE_ISO_11783
-    ui16_frontPtoSetPoint = ui16_rearPtoSetPoint = NO_VAL_16;
     t_frontPtoEngaged = t_rearPtoEngaged
     = t_frontPto1000 = t_rearPto1000
     = t_frontPtoEconomy = t_rearPtoEconomy = IsoAgLib::IsoNotAvailable; // mark as not available
-    ui16_frontPtoSetPoint = 0;
-    ui16_rearPtoSetPoint = 0;
+    ui16_frontPtoSetPoint8DigitPerRpm = 0;
+    ui16_rearPtoSetPoint8DigitPerRpm = 0;
     t_frontPtoEngagementReqStatus = t_rearPtoEngagementReqStatus
     = t_frontPtoModeReqStatus = t_rearPtoModeReqStatus
     = t_frontPtoEconomyModeReqStatus = t_rearPtoEconomyModeReqStatus = IsoAgLib::IsoNotAvailableReq;
@@ -216,7 +215,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       return true;
     }
     // the corresponding sender entry exist in the monitor list
-    DevKey_c c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().dinSa()).devKey();
+    const DevKey_c& c_tempDevKey = getDinMonitorInstance4Comm().dinMemberNr(data().dinSa()).devKey();
 
     // interprete data accordingto BABO
     if (dataBabo() == 5) {
@@ -241,15 +240,22 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
    * received DIN9684 base message with Pto,Hitch,Engine information */
   void TracPTO_c::dinParsePtoFlags(const CANPkgExt_c& rrefc_pkg)
   { // rear pto
-    setPtoRear( rrefc_pkg.getUint16Data(0) * 8 );
+    setPtoRear( rrefc_pkg.getUint16Data(0) );
     // front pto
-    setPtoFront(rrefc_pkg.getUint16Data(2) * 8 );
+    setPtoFront(rrefc_pkg.getUint16Data(2) );
+
+    // set last time
+    setUpdateTime(Scheduler_c::getLastTimeEventTrigger());
+
   }
   /** helper function to set the Hitch and Engine flags of a DIN base data message */
   void TracPTO_c::dinSetPtoFlags(CANPkgExt_c& rrefc_pkg)
   {
-    rrefc_pkg.setUint16Data(0, ptoRear() / 8 );
-    rrefc_pkg.setUint16Data(2, ptoFront() / 8 );
+    rrefc_pkg.setUint16Data(0, ptoRear() );
+    rrefc_pkg.setUint16Data(2, ptoFront() );
+
+    // set last time
+    setUpdateTime(Scheduler_c::getLastTimeEventTrigger());
   }
   #endif
 
@@ -275,27 +281,27 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
         { // front PTO
           //i32_lastPtoFront = ci32_now;
-          i16_ptoFront = data().getUint16Data(0);
-          ui16_frontPtoSetPoint = data().getUint16Data(2);
-          t_frontPtoEngaged = IsoAgLib::IsoActiveFlag_t(          ( data().getUint8Data(4) >> 6) & 3 );
-          t_frontPto1000 =    IsoAgLib::IsoActiveFlag_t(          ( data().getUint8Data(4) >> 4) & 3 );
-          t_frontPtoEconomy = IsoAgLib::IsoActiveFlag_t(          ( data().getUint8Data(4) >> 2) & 3 );
-          t_frontPtoEngagementReqStatus =   IsoAgLib::IsoReqFlag_t( data().getUint8Data(4)       & 3 );
-          t_frontPtoModeReqStatus =         IsoAgLib::IsoReqFlag_t( (data().getUint8Data(5) >> 6) & 3 );
-          t_frontPtoEconomyModeReqStatus =  IsoAgLib::IsoReqFlag_t( (data().getUint8Data(5) >> 4) & 3 );
+          i16_ptoFront8DigitPerRpm          = data().getUint16Data(0);
+          ui16_frontPtoSetPoint8DigitPerRpm = data().getUint16Data(2);
+          t_frontPtoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
+          t_frontPto1000    = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 4) & 3 );
+          t_frontPtoEconomy = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 2) & 3 );
+          t_frontPtoEngagementReqStatus   = IsoAgLib::IsoReqFlag_t(    data().getUint8Data(4)       & 3 );
+          t_frontPtoModeReqStatus         = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 6) & 3 );
+          t_frontPtoEconomyModeReqStatus  = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 4) & 3 );
           t_frontPtoShaftSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( (data().getUint8Data(5) >> 1) & 0x7 );
         }
         else
         { // back PTO
           //i32_lastPtoRear = ci32_now;
-          i16_ptoRear = data().getUint16Data(0);
-          ui16_rearPtoSetPoint = data().getUint16Data(2);
-          t_rearPtoEngaged = IsoAgLib::IsoActiveFlag_t(         ( data().getUint8Data(4) >> 6) & 3 );
-          t_rearPto1000 =    IsoAgLib::IsoActiveFlag_t(         ( data().getUint8Data(4) >> 4) & 3 );
-          t_rearPtoEconomy = IsoAgLib::IsoActiveFlag_t(         ( data().getUint8Data(4) >> 2) & 3 );
-          t_rearPtoEngagementReqStatus =  IsoAgLib::IsoReqFlag_t( data().getUint8Data(4)       & 3 );
-          t_rearPtoModeReqStatus =        IsoAgLib::IsoReqFlag_t( (data().getUint8Data(5) >> 6) & 3 );
-          t_rearPtoEconomyModeReqStatus = IsoAgLib::IsoReqFlag_t( (data().getUint8Data(5) >> 4) & 3 );
+          i16_ptoRear8DigitPerRpm          = data().getUint16Data(0);
+          ui16_rearPtoSetPoint8DigitPerRpm = data().getUint16Data(2);
+          t_rearPtoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
+          t_rearPto1000    = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 4) & 3 );
+          t_rearPtoEconomy = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 2) & 3 );
+          t_rearPtoEngagementReqStatus   = IsoAgLib::IsoReqFlag_t(    data().getUint8Data(4)       & 3 );
+          t_rearPtoModeReqStatus         = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 6) & 3 );
+          t_rearPtoEconomyModeReqStatus  = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 4) & 3 );
           t_rearPtoShaftSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( (data().getUint8Data(5) >> 1) & 0x7 );
         }
         // set last time
@@ -315,7 +321,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   bool TracPTO_c::isoTimeEventTracMode(  )
   {
-    int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // retreive the actual dynamic sender no of the member with the registered devKey
     uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
     data().setIdentType(Ident_c::ExtendedIdent);
@@ -330,8 +336,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // it's time to send tractor PTO information and the FRONT PTO is engaged
       data().setIsoPgn(FRONT_PTO_STATE_PGN);
       uint8_t ui8_val;
-      data().setUint16Data(0, i16_ptoFront);
-      data().setUint16Data(2, ui16_frontPtoSetPoint);
+      data().setUint16Data(0, i16_ptoFront8DigitPerRpm);
+      data().setUint16Data(2, ui16_frontPtoSetPoint8DigitPerRpm);
       ui8_val =  (t_frontPtoEngaged             << 6);
       ui8_val |= (t_frontPto1000                << 4);
       ui8_val |= (t_frontPtoEconomy             << 2);
@@ -356,8 +362,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // it's time to send tractor PTO information and the REAR PTO is engaged
       data().setIsoPgn(REAR_PTO_STATE_PGN);
       uint8_t ui8_val;
-      data().setUint16Data(0, i16_ptoRear ); // ISO defines a resolution of 0.125 per bit!!!
-      data().setUint16Data(2, ui16_rearPtoSetPoint);
+      data().setUint16Data(0, i16_ptoRear8DigitPerRpm ); // ISO defines a resolution of 0.125 per bit!!!
+      data().setUint16Data(2, ui16_rearPtoSetPoint8DigitPerRpm);
 
       ui8_val =  (t_rearPtoEngaged             << 6);
       ui8_val |= (t_rearPto1000                << 4);
@@ -379,25 +385,31 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       // update time
       i32_lastPtoRear = Scheduler_c::getLastTimeEventTrigger();
     }
-    if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
-    ci32_now = Scheduler_c::getLastTimeEventTrigger();
+    return true;
+  }
+
+  /** Detect stop of PTO update from tractor -> indication for stopped PTO */
+  bool TracPTO_c::isoTimeEventImplMode()
+  {
+    const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // check for different pto data types whether the previously
     // sending node stopped sending -> other nodes can now step in
     if ( ( ( ci32_now - i32_lastPtoFront ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
-      i16_ptoFront = 0;
+      i16_ptoFront8DigitPerRpm = 0;
       t_frontPtoEngaged = IsoAgLib::IsoInactive;
     }
     if ( ( ( ci32_now - i32_lastPtoRear ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
-      i16_ptoRear = 0;
+      i16_ptoRear8DigitPerRpm = 0;
       t_rearPtoEngaged = IsoAgLib::IsoInactive;
     }
     return true;
   }
+
   #endif
 
 } // End Namespace __IsoAgLib
