@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="0_0_AddressClaimIso"
-	ProjectGUID="{55E748F6-904D-4F50-A03A-C6BE29137906}"
+	ProjectGUID="{488D9291-2B7C-4B34-BD79-A820DA1614FF}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -23,10 +23,10 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\..\IsoAgLib_Examples\tutorial\0_SystemMgmt\0_0_AddressClaimIso"
+				AdditionalIncludeDirectories="C:\STLport\stlport,..\..\..\..\IsoAgLib,..\..\..\..\IsoAgLib\xgpl_src,..\..\..\IsoAgLib_Examples\tutorial\0_SystemMgmt\0_0_AddressClaimIso"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;PRJ_USE_AUTOGEN_CONFIG=config_0_0_AddressClaimIso.h"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Release/0_0_AddressClaimIso__simulating__simulating.pch"
@@ -40,10 +40,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib stlport_static_r50.lib"
 				OutputFile=".\Release/0_0_AddressClaimIso__simulating__simulating.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="c:\stlport\lib"
 				ProgramDatabaseFile=".\Release/0_0_AddressClaimIso__simulating__simulating.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
@@ -83,10 +84,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\IsoAgLib_Examples\tutorial\0_SystemMgmt\0_0_AddressClaimIso"
+				AdditionalIncludeDirectories="C:\STLport\stlport,..\..\..\..\IsoAgLib,..\..\..\..\IsoAgLib\xgpl_src,..\..\..\IsoAgLib_Examples\tutorial\0_SystemMgmt\0_0_AddressClaimIso"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;PRJ_USE_AUTOGEN_CONFIG=config_0_0_AddressClaimIso.h"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Debug/0_0_AddressClaimIso__simulating__simulating.pch"
 				AssemblerListingLocation=".\Debug/"
@@ -100,10 +101,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib stlport_static_r50.lib"
 				OutputFile=".\Debug/0_0_AddressClaimIso__simulating__simulating.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="c:\stlport\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/0_0_AddressClaimIso__simulating__simulating.pdb"
 				SubSystem="1"
