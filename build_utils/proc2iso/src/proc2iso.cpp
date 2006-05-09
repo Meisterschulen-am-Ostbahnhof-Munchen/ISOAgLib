@@ -118,7 +118,6 @@ static void usage()
     "Options:\n"
     " -v=xxx     Validation scheme [always | never | auto]. Defaults to auto\n"
     " -n         Enable namespace processing. Defaults to off.\n"
-    " -s         Enable schema processing with default path to XML schema. Defaults to off.\n"
     " -s=xxx.xsd Enable schema processing with XML schema xxx.xsd either from the path relative to the directory of the device description\n \
            OR the absolute pathname starting with '/' (Linux) or '\\' (Win).\n \
            Defaults to off.\n"
@@ -1490,10 +1489,6 @@ int main(int argC, char* argV[])
       doSchema = true;
       schemaPath = &argV[argInd][3];
     }
-    else if (!strcmp(argV[argInd], "-s") || !strcmp(argV[argInd], "-S"))
-    {
-      doSchema = true;
-    }
     else if (!strcmp(argV[argInd], "-f") || !strcmp(argV[argInd], "-F"))
     {
       schemaFullChecking = true;
@@ -1681,6 +1676,7 @@ int main(int argC, char* argV[])
     if (schemaPath == NULL)
     {
       strcpy (xsdLocation, argV[0]);
+      std::cout << xsdLocation << std::endl;
       // now trim exe filename
       for (int i=strlen(xsdLocation)-1; i >= 0; i--)
       {
