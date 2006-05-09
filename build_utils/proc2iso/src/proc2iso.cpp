@@ -93,7 +93,7 @@ unsigned int objNextUnnamedName;
 unsigned int objCount;
 
 std::vector<std::string> vecstr_attrString (maxAttributeNames);
-std::vector<std::string> vecstr_objTableIDTable;
+std::vector<std::string> vecstr_objtableIDTable;
 std::vector<std::string> vecstr_constructor (7);
 std::vector<std::string> vecstr_dataForCombination;
 std::vector<std::string> vecstr_dataFromDPD (4);
@@ -145,30 +145,29 @@ void clean_exit (int return_value, char* error_message=NULL)
   // Write Direct Includes
   char* pc_lastDirectoryBackslash, *pc_lastDirectorySlash;
   char xmlFileWithoutPath[255];
-  pc_lastDirectoryBackslash = strrchr( xmlFileGlobal, '\\' );
-  pc_lastDirectorySlash = strrchr( xmlFileGlobal, '/' );
+  pc_lastDirectoryBackslash = strrchr(xmlFileGlobal, '\\');
+  pc_lastDirectorySlash = strrchr(xmlFileGlobal, '/');
 
-  if ( ( pc_lastDirectoryBackslash == NULL ) && ( pc_lastDirectorySlash == NULL ) )
+  if ((pc_lastDirectoryBackslash == NULL) && (pc_lastDirectorySlash == NULL))
   { // no path found
-    strncpy( xmlFileWithoutPath, xmlFileGlobal, 254 );
+    strncpy(xmlFileWithoutPath, xmlFileGlobal, 254);
   }
-  else if ( ( pc_lastDirectoryBackslash == NULL ) && ( pc_lastDirectorySlash != NULL ) )
+  else if ((pc_lastDirectoryBackslash == NULL) && (pc_lastDirectorySlash != NULL))
   { // only UNIX style slash found
-    strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
+    strncpy(xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254);
   }
-  else if ( ( pc_lastDirectoryBackslash != NULL ) && ( pc_lastDirectorySlash == NULL ) )
+  else if ((pc_lastDirectoryBackslash != NULL) && (pc_lastDirectorySlash == NULL))
   { // only WIN32 style Backslash found
-    strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
+    strncpy(xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254);
   }
-  else if ( pc_lastDirectoryBackslash > pc_lastDirectorySlash )
+  else if (pc_lastDirectoryBackslash > pc_lastDirectorySlash)
   { // last backslash is behind last slash - cas of mixed directory seperators
-    strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
+    strncpy(xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254);
   }
   else
   { // last slash is behind last backslash - cas of mixed directory seperators
-    strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
+    strncpy(xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254);
   }
-
   exit (return_value);
 };
 
@@ -235,7 +234,7 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
   unsigned int foundID = 0;
 
 //   for (unsigned int i=0; i<objCount; i++)
-//     std::cout << "index: " << i << " " <<  &objNameTable [i*(stringLength+1)] << " - " << vecstr_objTableIDTable[i] << " - " <<
+//     std::cout << "index: " << i << " " <<  &objNameTable [i*(stringLength+1)] << " - " << vecstr_objtableIDTable[i] << " - " <<
 //         objIDTable [i] << std::endl;
 //   std::cout << std::endl;
 
@@ -248,10 +247,10 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
       //get objType by entry in objTabelIDTable
       char objTypeByTableID[3];
       unsigned int ui_objCntFound = 0;
-      strncpy(objTypeByTableID, vecstr_objTableIDTable[i].c_str(), 3);
+      strncpy(objTypeByTableID, vecstr_objtableIDTable[i].c_str(), 3);
       for (uint8_t cnt=0; cnt<maxTableID; cnt++)
       {
-        if (strncmp(objTypeByTableID, TableIDTable[cnt], 3) == 0)
+        if (strncmp(objTypeByTableID, tableIDTable[cnt], 3) == 0)
         {
           ui_objCntFound = cnt;
           break;
@@ -267,7 +266,8 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
     }
   }
 
-  if (!isThere) {
+  if (!isThere)
+  {
     if (objType == otDevice)
     {
       b_isFirstDevice = false;
@@ -276,9 +276,12 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
     else
     {
       // check what's the new ID to be
-      if (wishingID) {
+      if (wishingID)
+      {
         foundID = wishID;
-      } else {
+      }
+      else
+      {
         foundID = objNextAutoID;
         objNextAutoID--;
       }
@@ -287,7 +290,7 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
     objIDTable [objCount] = foundID;
     strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
     objCount++;
-    // insert TableID and number to vecstr_objTableIDTable
+    // insert TableID and number to vecstr_objtableIDTable
     char tempBuffer[6];
     switch (objType)
     {
@@ -316,7 +319,7 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
         countDVPID++;
         break;
     }
-    vecstr_objTableIDTable.push_back(std::string(tempBuffer));
+    vecstr_objtableIDTable.push_back(std::string(tempBuffer));
   }
 //   std::cout << "foundID: " << foundID << " " << std::endl;
 //   std::cout << "objName: " << objName << std::endl;
@@ -343,13 +346,13 @@ void init (const char* xmlFile)
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-bytestream.inc");
   char FileName[200];
-#if defined( WIN32 )
+#if defined(WIN32)
   char *tempFileName = strrchr(partFileName, '\\');
 #else
   char *tempFileName = strrchr(partFileName, '/');
 #endif
 
-  strcpy( FileName, tempFileName ? tempFileName : partFileName );
+  strcpy(FileName, tempFileName ? tempFileName : partFileName);
 
   partFileA = fopen (partFileName,"wt");
 
@@ -359,90 +362,105 @@ void init (const char* xmlFile)
   strcat (partFileName, "-func.h");
   partFileB = fopen (partFileName,"wt");
 
-#if defined( WIN32 )
+#if defined(WIN32)
   fprintf (partFileB, "#include \"%s\"\n\n", FileName);
 #else
   fprintf (partFileB, "#include \"%s\"\n\n", FileName+1);
 #endif
 
-  for (int j=0; j<maxAttributeNames; j++)
-  {
-    vecstr_attrString[j].clear();
-  }
+  for (int j=0; j<maxAttributeNames; j++) vecstr_attrString[j].clear();
 };
 
 
 void defaultAttributes ()
 {
-  if (!attrIsGiven [attrSelf_conf]) {
+  if (!attrIsGiven [attrSelf_conf])
+  {
     vecstr_attrString [attrSelf_conf] = "true";
     attrIsGiven [attrSelf_conf] = true;
   }
-  if (!attrIsGiven [attrIndustry_group]) {
+  if (!attrIsGiven [attrIndustry_group])
+  {
     vecstr_attrString [attrIndustry_group] = "2";
     attrIsGiven [attrIndustry_group] = true;
   }
-  if (!attrIsGiven [attrFunction]) {
+  if (!attrIsGiven [attrFunction])
+  {
     vecstr_attrString [attrFunction] = "25";
     attrIsGiven [attrFunction] = true;
   }
-  if (!attrIsGiven [attrWanted_SA]) {
+  if (!attrIsGiven [attrWanted_SA])
+  {
     vecstr_attrString [attrWanted_SA] = "128";
     attrIsGiven [attrWanted_SA] = true;
   }
-  if (!attrIsGiven [attrFunc_Inst]) {
+  if (!attrIsGiven [attrFunc_Inst])
+  {
     vecstr_attrString [attrFunc_Inst] = "0";
     attrIsGiven [attrFunc_Inst] = true;
   }
-  if (!attrIsGiven [attrECU_Inst]) {
+  if (!attrIsGiven [attrECU_Inst])
+  {
     vecstr_attrString [attrECU_Inst] = "0";
     attrIsGiven [attrECU_Inst] = true;
   }
-  if (!attrIsGiven [attrStore_SA_at_EEPROM_address]) {
+  if (!attrIsGiven [attrStore_SA_at_EEPROM_address])
+  {
     vecstr_attrString [attrStore_SA_at_EEPROM_address] = "0xFFFF";
     attrIsGiven [attrStore_SA_at_EEPROM_address] = true;
   }
-  if (!attrIsGiven [attrElement_number]) {
+  if (!attrIsGiven [attrElement_number])
+  {
     vecstr_attrString [attrElement_number] = "0xFF";
     attrIsGiven [attrElement_number] = true;
   }
-  if (!attrIsGiven [attrPriority]) {
+  if (!attrIsGiven [attrPriority])
+  {
     vecstr_attrString [attrPriority] = "2";
     attrIsGiven [attrPriority] = true;
   }
-  if (!attrIsGiven [attrFeature_set]) {
+  if (!attrIsGiven [attrFeature_set])
+  {
     vecstr_attrString [attrFeature_set] = "";
     attrIsGiven [attrFeature_set] = true;
   }
-  if (!attrIsGiven [attrProperties]) {
+  if (!attrIsGiven [attrProperties])
+  {
     vecstr_attrString [attrProperties] = "0";
     attrIsGiven [attrProperties] = true;
   }
-  if (!attrIsGiven [attrTrigger_methods]) {
+  if (!attrIsGiven [attrTrigger_methods])
+  {
     vecstr_attrString [attrTrigger_methods] = "0";
     attrIsGiven [attrTrigger_methods] = true;
   }
-  if (!attrIsGiven [attrDevice_value_presentation_name]) {
+  if (!attrIsGiven [attrDevice_value_presentation_name])
+  {
     vecstr_attrString [attrDevice_value_presentation_name] = "65535";
     attrIsGiven [attrDevice_value_presentation_name] = true;
   }
-  if (!attrIsGiven [attrLis]) {
+  if (!attrIsGiven [attrLis])
+  {
     vecstr_attrString [attrLis] = "0";
     attrIsGiven [attrLis] = true;
   }
-  if (!attrIsGiven [attrWert_inst]) {
+  if (!attrIsGiven [attrWert_inst])
+  {
     vecstr_attrString [attrWert_inst] = "0xFF";
     attrIsGiven [attrWert_inst] = true;
   }
-  if (!attrIsGiven [attrZaehl_num]) {
+  if (!attrIsGiven [attrZaehl_num])
+  {
     vecstr_attrString [attrZaehl_num] = "0xFF";
     attrIsGiven [attrZaehl_num] = true;
   }
-  if (!attrIsGiven [attrCumulative_value]) {
+  if (!attrIsGiven [attrCumulative_value])
+  {
     vecstr_attrString [attrCumulative_value] = "false";
     attrIsGiven [attrCumulative_value] = true;
   }
-  if (!attrIsGiven [attrCommand_type]) {
+  if (!attrIsGiven [attrCommand_type])
+  {
     vecstr_attrString [attrCommand_type] = "exact";
     attrIsGiven [attrCommand_type] = true;
   }
@@ -451,10 +469,9 @@ void defaultAttributes ()
 
 unsigned int objectIsType (char* lookup_name)
 {
-  for (int i=0; i<maxObjectTypesToCompare; i++) {
-    if (0 == strncmp (lookup_name, otCompTable [i], stringLength)) {
-      return i;
-    }
+  for (int i=0; i<maxObjectTypesToCompare; i++)
+  {
+    if (0 == strncmp (lookup_name, otCompTable [i], stringLength)) return i;
   }
   return 0xFFFF;
 };
@@ -474,16 +491,14 @@ unsigned int booltoi (const char *text_bool)
 {
   int l;
   char text_bool_lowered[stringLength];
-  for ( int ind = 0; ind < stringLength; ind++) text_bool_lowered[ind] = tolower( text_bool[ind] );
-  for (l=0; l<maxTruthTable; l++) {
-    if (strncmp (text_bool_lowered, truthTable [l], stringLength) == 0) {
-      return true;
-    }
+  for (int ind = 0; ind < stringLength; ind++) text_bool_lowered[ind] = tolower(text_bool[ind]);
+  for (l=0; l<maxTruthTable; l++)
+  {
+    if (strncmp (text_bool_lowered, truthTable [l], stringLength) == 0) return true;
   }
-  for (l=0; l<maxFalseTable; l++) {
-    if (strncmp (text_bool_lowered, falseTable [l], stringLength) == 0) {
-      return false;
-    }
+  for (l=0; l<maxFalseTable; l++)
+  {
+    if (strncmp (text_bool_lowered, falseTable [l], stringLength) == 0) return false;
   }
   std::cout << "INVALID TRUTH VALUE '" << text_bool << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   clean_exit (-1);
@@ -494,9 +509,8 @@ unsigned int booltoi (const char *text_bool)
 unsigned int elementtypetoi (const char *text_elemtype)
 {
   int l;
-  for (l=0; l<maxDeviceElementType; l++) {
-    if (strncmp (text_elemtype, DeviceElementTypeTable [l], stringLength) == 0) return l+1;
-  }
+  for (l=0; l<maxDeviceElementType; l++)
+    if (strncmp (text_elemtype, deviceElementTypeTable [l], stringLength) == 0) return l+1;
   std::cout << "INVALID DEVICE ELEMENT TYPE VALUE '" << text_elemtype << " ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   clean_exit (-1);
   return 0; // to make compiler happy
@@ -506,9 +520,9 @@ unsigned int elementtypetoi (const char *text_elemtype)
 unsigned int propertytoi (const char *text_property)
 {
   int l, retval=0;
-  for (l=0; l<maxProperty; l++) {
-    if (strstr (text_property, PropertyTable [l]) != 0) retval += (uint64_t(1)<<l);
-  }
+  for (l=0; l<maxProperty; l++)
+    if (strstr (text_property, propertyTable [l]) != 0) retval += (uint64_t(1)<<l);
+
   return retval;
 };
 
@@ -516,10 +530,20 @@ unsigned int propertytoi (const char *text_property)
 unsigned int triggermethodtoi (const char *text_trigger)
 {
   int l, retval=0;
-  for (l=0; l<maxTriggerMethods; l++) {
-    if (strstr (text_trigger, TriggerMethodTable [l]) != 0) retval += (uint64_t(1)<<l);
-  }
+  for (l=0; l<maxTriggerMethods; l++)
+    if (strstr (text_trigger, triggerMethodTable [l]) != 0) retval += (uint64_t(1)<<l);
+
   return retval;
+};
+
+
+unsigned int commandtypetoi (const char *text_command)
+{
+  int l;
+  for (l=0; l<maxFeatureSet; l++)
+    if (strcmp (text_command, commandTypeTable [l]) != 0) return l+1;
+
+  return 0;
 };
 
 
@@ -530,10 +554,7 @@ uint32_t stringtonumber(const char *text_number, int8_t ui8_bitRange, int8_t i8_
   char p_text_number[32];
 
   uint8_t i;
-  for (i=0; i < strlen(text_number); i++)
-  {
-    p_text_number[i] = tolower (text_number[i]);
-  }
+  for (i=0; i < strlen(text_number); i++) p_text_number[i] = tolower (text_number[i]);
   p_text_number[i] = 0x00;
   //check if hex or decimal number
   if (strncmp((p_text_number), "0x", 2) == 0) //yes, it is a hex number
@@ -603,44 +624,52 @@ bool firstElement=true;
 void utf16convert (char* source, char* destin, int count)
 {
   int i=-1;
-  do {
+  do
+  {
     i++;
     destin [i] = source [(i*2)];
   } while (destin [i] != 0x00);
 }
 
 
-void getAttributesFromNode(DOMNode *node, unsigned int objType) {
+void getAttributesFromNode(DOMNode *node, unsigned int objType)
+{
   DOMNamedNodeMap *pAttributes;
-  if (node->hasAttributes()) { // parse through all attributes
+  if (node->hasAttributes())
+  { // parse through all attributes
     pAttributes = node->getAttributes();
     int nSize = pAttributes->getLength();
 
     // empty all possible attribute-values...
-    for (int j=0; j<maxAttributeNames; j++) {
+    for (int j=0; j<maxAttributeNames; j++)
+    {
       vecstr_attrString [j].clear();
       attrIsGiven [j] = false;
     }
 
     // now get all attributes listed in the <tag ...> element
-    for (int i=0;i<nSize;++i) {
+    for (int i=0;i<nSize;++i)
+    {
       DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
       utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
       utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
-      if (strncmp (attr_name, "designator", stringLength) == 0) {
-          strncpy (objName, attr_value, stringLength);
-          vecstr_attrString[attrDesignator] = attr_value;
-          attrIsGiven[attrDesignator] = true;
-          // DEBUG-OUT
-          //std::cout << "FOUND ATTR: IND " << attrDesignator << ":= " << attrNameTable [attrDesignator] << " -> " << vecstr_attrString[attrDesignator] << ":"
-          //<< attrIsGiven [attrDesignator] << "\n";
-          continue;
+      if (strncmp (attr_name, "designator", stringLength) == 0)
+      {
+        strncpy (objName, attr_value, stringLength);
+        vecstr_attrString[attrDesignator] = attr_value;
+        attrIsGiven[attrDesignator] = true;
+        // DEBUG-OUT
+        //std::cout << "FOUND ATTR: IND " << attrDesignator << ":= " << attrNameTable [attrDesignator] << " -> " << vecstr_attrString[attrDesignator] << ":"
+        //<< attrIsGiven [attrDesignator] << "\n";
+        continue;
       }
 
       int l;
-      for (l=0; l<maxAttributeNames; l++) {
-        if (strncmp (attr_name, attrNameTable [l], stringLength) == 0) {
+      for (l=0; l<maxAttributeNames; l++)
+      {
+        if (strncmp (attr_name, attrNameTable [l], stringLength) == 0)
+        {
           vecstr_attrString [l] = attr_value;
           attrIsGiven [l] = true;
           // DEBUG-OUT
@@ -714,13 +743,14 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
   if (objType < maxObjectTypes)
   {
-    if (( (uint64_t(1)<<objType) & ombType) == 0) {
+    if (((uint64_t(1)<<objType) & ombType) == 0)
+    {
       // ERROR: Unallowed <TAG> here?!
       std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << ">\nPOSSIBLE TAGS HERE WOULD BE: ";
-      for (int j=0; j<maxObjectTypesToCompare; j++) {
-        if ((uint64_t(1)<<j) & ombType) {
+      for (int j=0; j<maxObjectTypesToCompare; j++)
+      {
+        if ((uint64_t(1)<<j) & ombType)
           std::cout << " <" << otCompTable [j] << ">  ";
-        }
       }
       std::cout << "\n\n";
       clean_exit (-1);
@@ -784,7 +814,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             if (child->getNodeType() == DOMNode::ELEMENT_NODE)
             {
               // get NAME attributes out of child
-              if(child->hasAttributes()) {
+              if(child->hasAttributes())
+              {
                 // parse through all attributes
                 pAttributes = child->getAttributes();
                 int nSize = pAttributes->getLength();
@@ -793,13 +824,15 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 is_objChildName = false;
                 is_objChildID = false;
 
-                for(int i=0;i<nSize;++i) {
+                for(int i=0;i<nSize;++i)
+                {
                   DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
                   utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
                   utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
                   // Get NAME directly
-                  if (strncmp (attr_name, "designator", stringLength) == 0) {
+                  if (strncmp (attr_name, "designator", stringLength) == 0)
+                  {
                     strncpy (objChildName, attr_value, stringLength);
                     is_objChildName = true;
                   }
@@ -838,8 +871,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE software_version= AND structure_label= AND localization_label= ATTRIBUTES FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
         }
-        if ( !((vecstr_attrString[attrStructure_label].size() == 7) || (vecstr_attrString[attrStructure_label].size() == 14)) ||
-             !((vecstr_attrString[attrLocalization_label].size() == 7) || (vecstr_attrString[attrLocalization_label].size() == 12 ))
+        if (!((vecstr_attrString[attrStructure_label].size() == 7) || (vecstr_attrString[attrStructure_label].size() == 14)) ||
+            !((vecstr_attrString[attrLocalization_label].size() == 7) || (vecstr_attrString[attrLocalization_label].size() == 12))
            )
         {
           clean_exit (-1, "structure_label= AND localization_label= ATTRIBUTES FOR THE <device> OBJECT NEED A LENGTH OF 7 BYTES! STOPPING PARSER! bye.\n\n");
@@ -848,6 +881,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           clean_exit (-1, "YOU NEED TO SPECIFY device_program_name= ATTRIBUTE FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
         }
+
         if (!(attrIsGiven[attrWorkingset_mastername] ||
             (attrIsGiven[attrManufacturer_code] && attrIsGiven[attrWS_identity_number] && attrIsGiven[attrDevice_class] && attrIsGiven[attrDevice_class_instance])))
         {
@@ -917,9 +951,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           languageCmdCode[1] = vecstr_attrString[attrLocalization_label][1];
 
           for (i=0; i<vecstr_attrString[attrLocalization_label].size(); i++)
-          {
             vecstr_attrString[attrLocalization_label][i] = tolower(vecstr_attrString[attrLocalization_label][i]);
-          }
 
           uint8_t ui8_tempLocalName[5];
           for (i=0; i<5; i++)
@@ -939,56 +971,54 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             firstElement =false;
             buffer  << "_" << languageCmdCode[0] << languageCmdCode[1] << " [] = {0x61, \n'";
             buf_length++;
-          } else
-          {
-            buffer  << ", '";
           }
-          buffer  <<        TableIDTable [objType][0] << "', "
-                  << "'" << TableIDTable [objType][1] << "', "
-                  << "'" << TableIDTable [objType][2] << "', "
+          else
+            buffer  << ", '";
+
+          buffer  <<        tableIDTable [objType][0] << "', "
+                  << "'" << tableIDTable [objType][1] << "', "
+                  << "'" << tableIDTable [objType][2] << "', "
                   << uint16_t(objID & 0xFF)           << ", "
                   << uint16_t((objID >> 8) & 0xFF)    << ", ";
           buf_length += 5;
+
           //length of designator
           buffer << vecstr_attrString[attrDesignator].size() << ", ";
           buf_length++;
+
           //designator
           for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
-          {
               buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
-          }
           buf_length += vecstr_attrString[attrDesignator].size();
+
           //length of software_version
           buffer << vecstr_attrString[attrSoftware_version].size() << ", ";
           buf_length++;
+
           //software_version
           for (i=0;i<vecstr_attrString[attrSoftware_version].size();i++)
-          {
             buffer << "'" << vecstr_attrString[attrSoftware_version][i] << "', ";
-          }
           buf_length += vecstr_attrString[attrSoftware_version].size();
+
           //workingset_mastername
           mastername = c_isoname.outputString();
-          for (i=0; i<8; i++)
-          {
-            buffer << (uint16_t)mastername[i] << ", ";
-          }
+          for (i=0; i<8; i++) buffer << (uint16_t)mastername[i] << ", ";
           buf_length += 8;
+
           //length serialnumber
           buffer << vecstr_attrString[attrSerial_number].size() << ", ";
           buf_length++;
+
           //serialnumber
           for (i=0;i<vecstr_attrString[attrSerial_number].size();i++)
-          {
             buffer << "'" << vecstr_attrString[attrSerial_number][i] << "', ";
-          }
           buf_length += vecstr_attrString[attrSerial_number].size();
+
           //structure_label
           for (i=0;i<vecstr_attrString[attrStructure_label].size();i++)
-          {
             buffer << "'" << vecstr_attrString[attrStructure_label][i] << "', ";
-          }
           buf_length += 7;
+
           //localization_label
           buffer  << "'" << languageCmdCode[0] << "', '" << languageCmdCode[1] << "', ";
           for (i=0;i<5;i++)
@@ -999,11 +1029,12 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
               buffer << (uint16_t) ui8_tempLocalName[i];
           }
           buf_length += 7;
-          fprintf( partFileA, "%s", buffer.str().c_str() );
+
+          fprintf(partFileA, "%s", buffer.str().c_str());
           buffer.str("");
-          fprintf( partFileB, "IsoAgLib::iDevKey_c %sDevKey(0x%x, 0x%x);\n\n",
+          fprintf(partFileB, "IsoAgLib::iDevKey_c %sDevKey(0x%x, 0x%x);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.devClass(), c_isoname.devClassInst());
-          fprintf( partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sDevKey, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISO_TERMINAL \n , 0, NULL\n #endif\n);\n\n",
+          fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(&%sDevKey, %s, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n #ifdef USE_ISO_TERMINAL \n , 0, NULL\n #endif\n);\n\n",
                    vecstr_attrString[attrDevProgVarName].c_str(), c_isoname.selfConf()? "true" : "false",
                    c_isoname.indGroup(), c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(),
                    atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
@@ -1017,39 +1048,44 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE element_type= AND parent_name= ATTRIBUTES FOR THE <deviceelement> OBJECT! STOPPING PARSER! bye.\n\n");
         }
+
         vecstr_dataForCombination.clear();
         //save element_number for later use in deviceprocessdatacombination
         vecstr_dataForCombination.push_back(vecstr_attrString[attrElement_number].c_str());
         //output: tableID & objID
-        buffer  << ", \n'" << TableIDTable [objType][0] << "', "
-                << "'" << TableIDTable [objType][1]   << "', "
-                << "'" << TableIDTable [objType][2]   << "', "
+        buffer  << ", \n'" << tableIDTable [objType][0] << "', "
+                << "'" << tableIDTable [objType][1]   << "', "
+                << "'" << tableIDTable [objType][2]   << "', "
                 << uint16_t(objID & 0xFF)             << ", "
                 << uint16_t((objID >> 8) & 0xFF)      << ", ";
         buf_length += 5;
+
         //elementtype
         buffer << elementtypetoi(vecstr_attrString[attrElement_type].c_str()) << ", ";
         buf_length++;
+
         //length of designator
         buffer << vecstr_attrString[attrDesignator].size() << ", ";
         buf_length++;
+
         //designator
         for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
-        {
-            buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
-        }
+          buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
         buf_length += vecstr_attrString[attrDesignator].size();
+
         //element_number
-        buffer  << (stringtonumber(vecstr_attrString[attrElement_number].c_str(), 0, -1) & 0xFF) << ", "
-                << ((stringtonumber(vecstr_attrString[attrElement_number].c_str(), 0, -1) >> 8) & 0xFF) << ", ";
+        buffer << (stringtonumber(vecstr_attrString[attrElement_number].c_str(), 0, -1) & 0xFF) << ", "
+               << ((stringtonumber(vecstr_attrString[attrElement_number].c_str(), 0, -1) >> 8) & 0xFF) << ", ";
         buf_length += 2;
+
         //parent_name
-        buffer  << (idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType) & 0xFF) << ", "
-                << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType) >> 8) & 0xFF) << ", ";
+        buffer << (idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType) & 0xFF) << ", "
+               << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType) >> 8) & 0xFF) << ", ";
         buf_length += 2;
+
         //number_of_objects_to_follow
-        buffer  << uint16_t(objChildObjects & 0xFF) << ", "
-                << uint16_t((objChildObjects >> 8) & 0xFF);
+        buffer << uint16_t(objChildObjects & 0xFF) << ", "
+               << uint16_t((objChildObjects >> 8) & 0xFF);
         buf_length += 2;
 
         for (it_childID = vecstr_childID.begin(); it_childID != vecstr_childID.end(); it_childID++)
@@ -1057,13 +1093,12 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           buffer << ", " << uint16_t(*it_childID & 0xFF) << ", " << uint16_t((*it_childID >> 8) & 0xFF);
           buf_length += 2;
         }
-        fprintf( partFileA, "%s", buffer.str().c_str() );
+
+        fprintf(partFileA, "%s", buffer.str().c_str());
         buffer.str("");
         vecstr_constructor[2] = vecstr_attrString[attrElement_number].c_str();
-
         // save ID vector of device element childrens for later use in otDeviceProcessData
         vecstr_childID_DET = vecstr_childID;
-
         break;
       case otDeviceProcessData:
       {
@@ -1075,43 +1110,47 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           clean_exit (-1, "YOU NEED TO SPECIFY proc_program_name= ATTRIBUTE FOR THE <deviceprocessdata> OBJECT! STOPPING PARSER! bye.\n\n");
         }
+
         // save attrProcProgVarName for deviceprocessdatacombination
         if (vecstr_dataForCombination.size() == 2) vecstr_dataForCombination.pop_back();
         if (vecstr_dataForCombination.size() < 2) vecstr_dataForCombination.push_back(vecstr_attrString[attrProcProgVarName].c_str());
 
         buf_length_dpd = 0;
-
         //output: tableID & objID
-        buffer  << ", \n'" << TableIDTable [objType][0] << "', "
-                << "'" << TableIDTable [objType][1]   << "', "
-                << "'" << TableIDTable [objType][2]   << "', "
-                << uint16_t(objID & 0xFF)             << ", "
-                << uint16_t((objID >> 8) & 0xFF)      << ", ";
+        buffer << ", \n'" << tableIDTable [objType][0] << "', "
+               << "'" << tableIDTable [objType][1]   << "', "
+               << "'" << tableIDTable [objType][2]   << "', "
+               << uint16_t(objID & 0xFF)             << ", "
+               << uint16_t((objID >> 8) & 0xFF)      << ", ";
         buf_length_dpd += 5;
+
         //ddi
-        buffer  << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF) << ", "
-                << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF)  << ", ";
+        buffer << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF) << ", "
+               << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF)  << ", ";
         buf_length_dpd += 2;
+
         //properties
-        buffer  << propertytoi(vecstr_attrString[attrProperties].c_str()) << ", ";
+        buffer << propertytoi(vecstr_attrString[attrProperties].c_str()) << ", ";
         buf_length_dpd++;
         vecstr_dataFromDPD[0] = vecstr_attrString[attrProperties].c_str();
+
         //triggermethods
-        buffer  << triggermethodtoi(vecstr_attrString[attrTrigger_methods].c_str()) << ", ";
+        buffer << triggermethodtoi(vecstr_attrString[attrTrigger_methods].c_str()) << ", ";
         buf_length_dpd++;
         vecstr_dataFromDPD[1] = vecstr_attrString[attrTrigger_methods].c_str();
+
         //length of designator
         buffer << vecstr_attrString[attrDesignator].size() << ", ";
         buf_length_dpd++;
+
         //designator
         for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
-        {
           buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
-        }
         buf_length_dpd += vecstr_attrString[attrDesignator].size();
+
         //device_value_presentation_object_id
-        buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) & 0xFF) << ", "
-            << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) >> 8) & 0xFF);
+        buffer << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) & 0xFF) << ", "
+               << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), otDeviceValuePresentation) >> 8) & 0xFF);
         buf_length_dpd += 2;
         vecstr_dataFromDPD[2] = vecstr_attrString[attrDevice_value_presentation_name].c_str();
         vecstr_dataFromDPD[3] = vecstr_attrString[attrDesignator];
@@ -1122,7 +1161,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         vecstr_constructor[6] = vecstr_attrString[attrDdi].c_str();
 
         bool b_DinDPD = false;
-
         // process DeviceProcessDataCombination childs
         for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
         {
@@ -1131,7 +1169,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
           uint16_t ui16_newObjChildID = 0;
           // get next ID from vec saved during processing otDeviceElement
-          if ( vecstr_childID_DET.size() )
+          if (vecstr_childID_DET.size())
           {
             ui16_newObjChildID = vecstr_childID_DET.front();
             vecstr_childID_DET.erase(vecstr_childID_DET.begin());
@@ -1145,35 +1183,36 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             {
               clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= AND is_setpoint= ATTRIBUTES FOR THE <deviceprocessdatacombination> OBJECT! STOPPING PARSER! bye.\n\n");
             }
+
             b_dpdCombination = true;
             // kill previous buffer, filled above
             buffer.str("");
             buf_length_dpd = 0;
 
             //designator
-            std::string str_designator = vecstr_dataFromDPD[3];
-            if ( vecstr_attrString[attrSetpoint] == "false")
-              str_designator.append(" Measure ");
-            else
-              str_designator.append(" Setpoint ");
-            str_designator.append(vecstr_attrString[attrCommand_type]);
+            char tmpBuf [33];
+            sprintf (tmpBuf, "%s_%u", vecstr_dataFromDPD[3].c_str(), commandtypetoi(vecstr_attrString[attrCommand_type].c_str()));
+            std::string str_designator = tmpBuf;
 
             //output: tableID & objID
-            buffer  << ", \n'" << TableIDTable [otDeviceProcessData][0] << "', "
-                    << "'" << TableIDTable [otDeviceProcessData][1]   << "', "
-                    << "'" << TableIDTable [otDeviceProcessData][2]   << "', "
-                    << uint16_t(ui16_newObjChildID & 0xFF)             << ", "
-                    << uint16_t((ui16_newObjChildID >> 8) & 0xFF)      << ", ";
+            buffer << ", \n'" << tableIDTable [otDeviceProcessData][0] << "', "
+                   << "'" << tableIDTable [otDeviceProcessData][1]   << "', "
+                   << "'" << tableIDTable [otDeviceProcessData][2]   << "', "
+                   << uint16_t(ui16_newObjChildID & 0xFF)             << ", "
+                   << uint16_t((ui16_newObjChildID >> 8) & 0xFF)      << ", ";
             buf_length += 5;
+
             //ddi
-            buffer  << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF) << ", "
-                    << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF)  << ", ";
+            buffer << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF) << ", "
+                   << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF) << ", ";
             buf_length += 2;
+
             //properties
-            buffer  << propertytoi(vecstr_dataFromDPD[0].c_str()) << ", ";
+            buffer << propertytoi(vecstr_dataFromDPD[0].c_str()) << ", ";
             buf_length++;
+
             //triggermethods
-            buffer  << triggermethodtoi(vecstr_dataFromDPD[1].c_str()) << ", ";
+            buffer << triggermethodtoi(vecstr_dataFromDPD[1].c_str()) << ", ";
             buf_length++;
 
             //length of designator
@@ -1183,22 +1222,20 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
 
             // vecstr_dataFromDPD[3]
             for (uint16_t i = 0;i<str_designator.size();i++)
-            {
               buffer << "'" << str_designator[i] << "', ";
-            }
             buf_length += str_designator.size();
+
             //device_value_presentation_object_id
-            buffer  << (idOrName_toi(vecstr_dataFromDPD[2].c_str(), otDeviceValuePresentation) & 0xFF) << ", "
-                    << ((idOrName_toi(vecstr_dataFromDPD[2].c_str(), otDeviceValuePresentation) >> 8) & 0xFF);
+            buffer << (idOrName_toi(vecstr_dataFromDPD[2].c_str(), otDeviceValuePresentation) & 0xFF) << ", "
+                   << ((idOrName_toi(vecstr_dataFromDPD[2].c_str(), otDeviceValuePresentation) >> 8) & 0xFF);
             buf_length += 2;
-            fprintf( partFileA, "%s", buffer.str().c_str() );
+            fprintf(partFileA, "%s", buffer.str().c_str());
             buffer.str("");
 
             // save values for later output into header file
             vecstr_dataForCombination.push_back(vecstr_attrString[attrDdi].c_str());
             vecstr_dataForCombination.push_back(vecstr_attrString[attrSetpoint].c_str());
             vecstr_dataForCombination.push_back(vecstr_attrString[attrCommand_type].c_str());
-
           }
 
           if (objectIsType(XMLString::transcode(child->getNodeName())) == otDeviceDinProcessData)
@@ -1233,33 +1270,33 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             vecstr_dataForCombination.pop_back();
         }
 
-        fprintf( partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
-        fprintf( partFileB, "\n#ifdef USE_ISO_11783\n");
-        if ( b_dpdCombination )
-          fprintf( partFileB, "s_%sElementDDI,\nui16_%sElementNumber, ", vecstr_constructor[5].c_str(), vecstr_dataForCombination[1].c_str());
+        fprintf(partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
+        fprintf(partFileB, "\n#ifdef USE_ISO_11783\n");
+        if (b_dpdCombination)
+          fprintf(partFileB, "s_%sElementDDI,\nui16_%sElementNumber, ", vecstr_constructor[5].c_str(), vecstr_dataForCombination[1].c_str());
         else
-          fprintf( partFileB, "0x%x, 0x%x, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_constructor[2].c_str(), 0, -1));
+          fprintf(partFileB, "0x%x, 0x%x, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_constructor[2].c_str(), 0, -1));
 
         b_dpdCombination = FALSE;
 
-        fprintf( partFileB, "\n#endif\n");
-        fprintf( partFileB, "#ifdef USE_DIN_9684\n");
+        fprintf(partFileB, "\n#endif\n");
+        fprintf(partFileB, "#ifdef USE_DIN_9684\n");
 
-        if ( b_DinDPD )
-          fprintf( partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
+        if (b_DinDPD)
+          fprintf(partFileB, "0x%x, 0x%x, 0x%x, 0x%x, ", atoi(vecstr_attrString[attrLis].c_str()),
                   (stringtonumber(vecstr_attrString[attrWert_inst].c_str(), 0, -1) & 0x0F), ((stringtonumber(vecstr_attrString[attrWert_inst].c_str(), 0, -1) >> 4) & 0xF),
                   stringtonumber(vecstr_attrString[attrZaehl_num].c_str(), 0, -1));
         else
-          fprintf( partFileB, "0x0, 0x0, 0x0, 0x0, ");
+          fprintf(partFileB, "0x0, 0x0, 0x0, 0x0, ");
 
-        fprintf( partFileB, "\n#endif\n");
-        fprintf( partFileB, "%sDevKey, 0x%x, %sDevKey, &%sDevKey, %s",
-                  vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
-                  vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
-        fprintf( partFileB, "\n#ifdef USE_EEPROM_IO\n");
-        fprintf( partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
-        fprintf( partFileB, "\n#endif\n");
-        fprintf( partFileB, ");\n\n" );
+        fprintf(partFileB, "\n#endif\n");
+        fprintf(partFileB, "%sDevKey, 0x%x, %sDevKey, &%sDevKey, %s",
+                vecstr_constructor[0].c_str(), atoi(vecstr_constructor[1].c_str()), vecstr_constructor[0].c_str(),
+                vecstr_constructor[0].c_str(), vecstr_constructor[4].c_str());
+        fprintf(partFileB, "\n#ifdef USE_EEPROM_IO\n");
+        fprintf(partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
+        fprintf(partFileB, "\n#endif\n");
+        fprintf(partFileB, ");\n\n");
 
         // if we have at least one DeviceProcessDataCombination => buffer_length_dpd is already reseted to 0 and buffer already written
         buf_length += buf_length_dpd;
@@ -1267,8 +1304,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         // no DeviceProcessDataCombination found => write now
         if (strcmp(buffer.str().c_str(), "") != 0)
         {
-            fprintf( partFileA, "%s", buffer.str().c_str() );
-            buffer.str("");
+          fprintf(partFileA, "%s", buffer.str().c_str());
+          buffer.str("");
         }
 
         break;
@@ -1278,62 +1315,71 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= AND property_value= ATTRIBUTES FOR THE <deviceproperty> OBJECT! STOPPING PARSER! bye.\n\n");
         }
+
         //output: tableID & objID
-        buffer  << ", \n'" << TableIDTable [objType][0] << "', "
-                << "'" << TableIDTable [objType][1]   << "', "
-                << "'" << TableIDTable [objType][2]   << "', "
-                << uint16_t(objID & 0xFF)             << ", "
-                << uint16_t((objID >> 8) & 0xFF)      << ", ";
+        buffer << ", \n'" << tableIDTable [objType][0] << "', "
+               << "'" << tableIDTable [objType][1]     << "', "
+               << "'" << tableIDTable [objType][2]     << "', "
+               << uint16_t(objID & 0xFF)               << ", "
+               << uint16_t((objID >> 8) & 0xFF)        << ", ";
         buf_length += 5;
+
         //ddi
-        buffer  << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF)  << ", "
-                << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF)  << ", ";
+        buffer << (stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) & 0xFF) << ", "
+               << ((stringtonumber(vecstr_attrString[attrDdi].c_str(), 0, -1) >> 8) & 0xFF) << ", ";
         buf_length += 2;
+
         //property_value
-        buffer  << uint16_t(vecstr_attrString[attrProperty_value][0])  << ", "
-                << uint16_t(vecstr_attrString[attrProperty_value][1])  << ", "
-                << uint16_t(vecstr_attrString[attrProperty_value][2])  << ", "
-                << uint16_t(vecstr_attrString[attrProperty_value][3])  << ", ";
+        buffer << uint16_t(vecstr_attrString[attrProperty_value][0]) << ", "
+               << uint16_t(vecstr_attrString[attrProperty_value][1]) << ", "
+               << uint16_t(vecstr_attrString[attrProperty_value][2]) << ", "
+               << uint16_t(vecstr_attrString[attrProperty_value][3]) << ", ";
         buf_length += 4;
+
         //length of designator
         buffer << vecstr_attrString[attrDesignator].size() << ", ";
         buf_length++;
+
         //designator
         for (i = 0;i<vecstr_attrString[attrDesignator].size();i++)
-        {
-            buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
-        }
+          buffer << "'" << vecstr_attrString[attrDesignator][i] << "', ";
         buf_length += vecstr_attrString[attrDesignator].size();
+
         //device_value_presentation_object_id
-        buffer  << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) & 0xFF) << ", "
-                << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) >> 8) & 0xFF);
+        buffer << (idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) & 0xFF) << ", "
+               << ((idOrName_toi(vecstr_attrString[attrDevice_value_presentation_name].c_str(), parentObjType) >> 8) & 0xFF);
         buf_length += 2;
-        fprintf( partFileA, "%s", buffer.str().c_str() );
+
+        fprintf(partFileA, "%s", buffer.str().c_str());
         buffer.str("");
         break;
+
       case otDeviceDinProcessData:
-        break;
       case otDeviceProcessDataCombination:
         break;
+
       case otDeviceValuePresentation:
         if (!attrIsGiven[attrOffset] || !attrIsGiven[attrScale] || !attrIsGiven[attrNumber_of_decimals])
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE offset= AND scale= AND number_of_decimals= ATTRIBUTES FOR THE <devicevaluepresentation> OBJECT! STOPPING PARSER! bye.\n\n");
         }
+
         //output: tableID & objID
-        buffer  << ", \n'" << TableIDTable [objType][0] << "', "
-                << "'" << TableIDTable [objType][1]   << "', "
-                << "'" << TableIDTable [objType][2]   << "', "
-                << uint16_t(objID & 0xFF)             << ", "
-                << uint16_t((objID >> 8) & 0xFF)      << ", ";
+        buffer  << ", \n'" << tableIDTable [objType][0] << "', "
+                << "'" << tableIDTable [objType][1]     << "', "
+                << "'" << tableIDTable [objType][2]     << "', "
+                << uint16_t(objID & 0xFF)               << ", "
+                << uint16_t((objID >> 8) & 0xFF)        << ", ";
         buf_length += 5;
+
         //offset
         uint32_t ui32_offset = atoi (vecstr_attrString[attrOffset].c_str());
-        buffer  << uint16_t(ui32_offset & 0xFF) << ", "
-            << uint16_t((ui32_offset >> 8) & 0xFF) << ", "
-            << uint16_t((ui32_offset >> 16) & 0xFF) << ", "
-            << uint16_t((ui32_offset >> 24) & 0xFF) << ", ";
+        buffer << uint16_t(ui32_offset & 0xFF)         << ", "
+               << uint16_t((ui32_offset >> 8) & 0xFF)  << ", "
+               << uint16_t((ui32_offset >> 16) & 0xFF) << ", "
+               << uint16_t((ui32_offset >> 24) & 0xFF) << ", ";
         buf_length += 4;
+
         //scale
         float f_temp = atof(vecstr_attrString[attrScale].c_str());
         uint8_t *pui8_temp = (uint8_t*)&f_temp;
@@ -1342,12 +1388,15 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
                 << uint16_t(pui8_temp[2]) << ", "
                 << uint16_t(pui8_temp[3]) << ", ";
         buf_length += 4;
+
         //number_of_decimals
         buffer << atoi(vecstr_attrString[attrNumber_of_decimals].c_str()) << ", ";
         buf_length++;
+
         //length of unitdesignator
         buffer << vecstr_attrString[attrUnitdesignator].size() << ", ";
         buf_length++;
+
         //unit_designator
         for (i = 0;i<vecstr_attrString[attrUnitdesignator].size();i++)
         {
@@ -1357,10 +1406,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
             buffer << "'" << vecstr_attrString[attrUnitdesignator][i] << "', ";
         }
         buf_length += vecstr_attrString[attrUnitdesignator].size();
-        fprintf( partFileA, "%s", buffer.str().c_str() );
+
+        fprintf(partFileA, "%s", buffer.str().c_str());
         buffer.str("");
         break;
-      }
+    }
   }
 
   // Add all Child-Elements recursively
@@ -1369,9 +1419,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
   for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
   {
     if (child->getNodeType() == DOMNode::ELEMENT_NODE)
-    {
       processElement (child, omcType, rc_workDir, objType);
-    }
   }
 }
 
@@ -1417,8 +1465,7 @@ int main(int argC, char* argV[])
       usage();
       return 2;
     }
-    else if (!strncmp(argV[argInd], "-v=", 3)
-      ||  !strncmp(argV[argInd], "-V=", 3))
+    else if (!strncmp(argV[argInd], "-v=", 3) || !strncmp(argV[argInd], "-V=", 3))
     {
       const char* const parm = &argV[argInd][3];
 
@@ -1434,24 +1481,20 @@ int main(int argC, char* argV[])
         return 2;
       }
     }
-    else if (!strcmp(argV[argInd], "-n")
-     ||  !strcmp(argV[argInd], "-N"))
+    else if (!strcmp(argV[argInd], "-n") || !strcmp(argV[argInd], "-N"))
     {
       doNamespaces = true;
     }
-    else if (!strncmp(argV[argInd], "-s=", 3)
-      ||  !strncmp(argV[argInd], "-S=", 3))
+    else if (!strncmp(argV[argInd], "-s=", 3) || !strncmp(argV[argInd], "-S=", 3))
     {
       doSchema = true;
       schemaPath = &argV[argInd][3];
     }
-    else if (!strcmp(argV[argInd], "-s")
-      ||  !strcmp(argV[argInd], "-S"))
+    else if (!strcmp(argV[argInd], "-s") || !strcmp(argV[argInd], "-S"))
     {
       doSchema = true;
     }
-    else if (!strcmp(argV[argInd], "-f")
-      ||  !strcmp(argV[argInd], "-F"))
+    else if (!strcmp(argV[argInd], "-f") || !strcmp(argV[argInd], "-F"))
     {
       schemaFullChecking = true;
     }
@@ -1462,8 +1505,7 @@ int main(int argC, char* argV[])
     }
     else
     {
-      std::cerr << "Unknown option '" << argV[argInd]
-      << "', ignoring it\n" << std::endl;
+      std::cerr << "Unknown option '" << argV[argInd] << "', ignoring it\n" << std::endl;
     }
   }
 
@@ -1471,17 +1513,17 @@ int main(int argC, char* argV[])
   //  should be the file name.
   if (argInd != argC - 1) { usage(); return 1; }
   // get file list with matching files!
-  std::basic_string<char> c_fileName( argV [argInd] );
+  std::basic_string<char> c_fileName(argV [argInd]);
   #ifdef WIN32
-  int lastDirPos = c_fileName.find_last_of( "\\" );
-  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+  int lastDirPos = c_fileName.find_last_of("\\");
+  std::basic_string<char> c_directory = c_fileName.substr(0, lastDirPos+1);
   if (c_directory == "") c_directory = ".\\";
   #else
-  int lastDirPos = c_fileName.find_last_of( "/" );
-  std::basic_string<char> c_directory = c_fileName.substr( 0, lastDirPos+1 );
+  int lastDirPos = c_fileName.find_last_of("/");
+  std::basic_string<char> c_directory = c_fileName.substr(0, lastDirPos+1);
   if (c_directory == "") c_directory = "./";
   #endif
-  /* globally defined */  c_project = c_fileName.substr( lastDirPos+1 );
+  /* globally defined */  c_project = c_fileName.substr(lastDirPos+1);
   std::basic_string<char> c_unwantedType = ".inc";
   std::basic_string<char> c_unwantedType2 = ".h";
   std::basic_string<char> c_directoryCompareItem;
@@ -1506,7 +1548,7 @@ int main(int argC, char* argV[])
     std::cerr <<  "Couldn't open the directory."<< std::endl;
 
     CHAR szBuf[80];
-      DWORD dw = GetLastError();
+    DWORD dw = GetLastError();
     sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
     printf(szBuf);
     HRESULT_FROM_WIN32(dw);
@@ -1514,7 +1556,7 @@ int main(int argC, char* argV[])
   }
 
   // Get the proper directory path
-  wsprintf(szDir, TEXT("*") );
+  wsprintf(szDir, TEXT("*"));
   hList = FindFirstFile(szDir, &FileData);
   if (hList != INVALID_HANDLE_VALUE)
   {   // Traverse through the directory structure
@@ -1523,15 +1565,16 @@ int main(int argC, char* argV[])
       if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
       {
         c_directoryCompareItem = FileData.cFileName;
-        if ( c_directoryCompareItem[0] == '.' ) continue;
+        if (c_directoryCompareItem[0] == '.') continue;
         if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
-        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
-        if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
+        if (c_directoryCompareItem.substr(c_directoryCompareItem.length()-4) == c_unwantedType) continue;
+        if (c_directoryCompareItem.substr(c_directoryCompareItem.length()-2) == c_unwantedType2) continue;
 
-        if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
-          c_directoryCompareItem.insert(0, "\\" );
-          c_directoryCompareItem.insert(0, c_directory );
-          strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
+        if (c_directoryCompareItem.find(c_project) != std::string::npos)
+        {
+          c_directoryCompareItem.insert(0, "\\");
+          c_directoryCompareItem.insert(0, c_directory);
+          strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str());
           amountXmlFiles++;
           //std::cout << "found: " << c_directoryCompareItem << "\n";
         }
@@ -1552,22 +1595,25 @@ int main(int argC, char* argV[])
   if (dp != NULL)
   {
     dirent *ep;
-    while ((ep = readdir (dp))) {
+    while ((ep = readdir (dp)))
+    {
       c_directoryCompareItem = ep->d_name;
-      if ( c_directoryCompareItem[0] == '.' ) continue;
-      if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
-      if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
-      if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
+      if (c_directoryCompareItem[0] == '.') continue;
+      if ((c_directoryCompareItem.length() > 1) && (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
+      if ((c_directoryCompareItem.length() > 4) && (c_directoryCompareItem.substr(c_directoryCompareItem.length()-4) == c_unwantedType )) continue;
+      if ((c_directoryCompareItem.length() > 2) && (c_directoryCompareItem.substr(c_directoryCompareItem.length()-2) == c_unwantedType2)) continue;
 
-      if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
-        c_directoryCompareItem.insert(0, "/" );
-        c_directoryCompareItem.insert(0, c_directory );
-        strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str() );
+      if (c_directoryCompareItem.find(c_project) != std::string::npos)
+      {
+        c_directoryCompareItem.insert(0, "/");
+        c_directoryCompareItem.insert(0, c_directory);
+        strcpy (xmlFiles [amountXmlFiles], c_directoryCompareItem.c_str());
         amountXmlFiles++;
       }
     }
     closedir(dp);
-  } else
+  }
+  else
   {
     std::cerr <<  "Couldn't open the directory." << std::endl;
     return 0;
@@ -1576,10 +1622,13 @@ int main(int argC, char* argV[])
 
   // now sort this list
   bool stillSorting;
-  do {
+  do
+  {
     stillSorting=false;
-    for (int a=1; a< amountXmlFiles; a++) {
-      if (strcmp (xmlFiles [a-1], xmlFiles [a]) > 0) {
+    for (int a=1; a< amountXmlFiles; a++)
+    {
+      if (strcmp (xmlFiles [a-1], xmlFiles [a]) > 0)
+      {
         strcpy (xmlFileTemp, xmlFiles [a]);
         strcpy (xmlFiles [a], xmlFiles [a-1]);
         strcpy (xmlFiles [a-1], xmlFileTemp);
@@ -1600,23 +1649,21 @@ int main(int argC, char* argV[])
     // Initialize the XML4C system
     try
     {
-      if (strlen(localeStr)) {
+      if (strlen(localeStr))
         XMLPlatformUtils::Initialize(localeStr);
-      } else {
+      else
         XMLPlatformUtils::Initialize("de_DE");
-      }
     }
     catch (const XMLException& toCatch)
     {
-      std::cerr << "Error during initialization! :\n"
-        << StrX(toCatch.getMessage()) << std::endl;
+      std::cerr << "Error during initialization! :\n" << StrX(toCatch.getMessage()) << std::endl;
       return 1;
     }
 
     // Instantiate the DOM parser.
     static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
     DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
-    DOMBuilder  *parser = ((DOMImplementationLS*)impl)->createDOMBuilder(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+    DOMBuilder *parser = ((DOMImplementationLS*)impl)->createDOMBuilder(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
 
     parser->setFeature(XMLUni::fgDOMNamespaces, doNamespaces);
     parser->setFeature(XMLUni::fgXercesSchema, doSchema);
@@ -1650,7 +1697,7 @@ int main(int argC, char* argV[])
       strcpy (xsdLocation, schemaPath);
 
       std::string tmp_str = xsdLocation;
-      if ( tmp_str.substr( tmp_str.length()-4 ) != ".xsd" ) clean_exit (4, "Wrong file format for XML schema. Terminating.\n");
+      if (tmp_str.substr(tmp_str.length()-4) != ".xsd") clean_exit (4, "Wrong file format for XML schema. Terminating.\n");
     }
 
     std::string tmp_loc;
@@ -1736,10 +1783,13 @@ int main(int argC, char* argV[])
     {
       std::cout << "\nErrors occurred, no output available\n" << std::endl;
       errorOccurred = true;
-    } else {
-      if (doc) {
+    }
+    else
+    {
+      if (doc)
+      {
         // ### main routine starts right here!!! ###
-        processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otDevice), c_directory.c_str() ); // must all be included in an device tag !
+        processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otDevice), c_directory.c_str()); // must all be included in an device tag !
         if (!deviceElementExists) clean_exit(-1, "YOU MUST SPECIFY AT LEAST ONE deviceelement OBJECT! STOPPING PARSER!\n\n");
         fprintf (partFileA, "};\n");
         fprintf (partFileA, "\nstatic const uint32_t ui32_arrayLength_%c%c = %d;\n", languageCmdCode[0], languageCmdCode[1], buf_length);

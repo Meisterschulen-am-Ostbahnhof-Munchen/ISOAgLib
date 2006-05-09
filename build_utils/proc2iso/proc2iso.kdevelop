@@ -49,7 +49,7 @@
   <kdevdebugger>
     <general>
       <dbgshell></dbgshell>
-      <programargs>/home/winkler/Projekte/TaskController/IsoAgLib/build_utils/proc2iso/invalid.xml</programargs>
+      <programargs>/home/winkler/Projekte/TaskController/src_test/test_pools/firstpool/Device_Description.xml</programargs>
       <gdbpath></gdbpath>
       <configGdbScript></configGdbScript>
       <runShellScript></runShellScript>

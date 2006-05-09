@@ -5,7 +5,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
 \section IndexChanges Changes
 
-\subsection Change_K 1.2.1 to 1.2.1(unofficial)
+\subsection Change_K 1.2.1 to 1.2.2(unofficial)
 
   - support for proc2iso XML schema: new mandatory parameter -s=xxx.xsd for personalized path to xsd-file (see proc2iso --help).
     former only -s with a default path

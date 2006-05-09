@@ -181,7 +181,7 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
 };
 
 #define maxTableID 7
-char TableIDTable [maxTableID] [stringLength+1] = {
+char tableIDTable [maxTableID] [stringLength+1] = {
     "DVC",
     "DET",
     "DPD",
@@ -192,7 +192,7 @@ char TableIDTable [maxTableID] [stringLength+1] = {
 };
 
 #define maxDeviceElementType 7
-char DeviceElementTypeTable [maxDeviceElementType] [stringLength+1] = {
+char deviceElementTypeTable [maxDeviceElementType] [stringLength+1] = {
     "device",
     "function",
     "bin",
@@ -203,13 +203,13 @@ char DeviceElementTypeTable [maxDeviceElementType] [stringLength+1] = {
 };
 
 #define maxProperty 2
-char PropertyTable [maxProperty] [stringLength+1] = {
+char propertyTable [maxProperty] [stringLength+1] = {
     "defaultset",
     "setable"
 };
 
 #define maxTriggerMethods 5
-char TriggerMethodTable [maxTriggerMethods] [stringLength+1] = {
+char triggerMethodTable [maxTriggerMethods] [stringLength+1] = {
     "timeinterval",
     "distanceinterval",
     "thresholdlimits",
@@ -229,15 +229,16 @@ char falseTable [maxFalseTable] [stringLength+1] = {
     "false"
 };
 
-#define maxFeatureSet 3
+#define maxFeatureSet 4
 char featureSetTable [maxFeatureSet] [stringLength+1] = {
+    "Standard",
     "SimpleMeasure",
     "SimpleSetpoint",
     "SimpleSetpointSimpleMeasure"
 };
 
 #define maxCommandTypes 4
-char CommandTypeTable [maxCommandTypes] [stringLength+1] = {
+char commandTypeTable [maxCommandTypes] [stringLength+1] = {
     "exact",
     "default",
     "min",

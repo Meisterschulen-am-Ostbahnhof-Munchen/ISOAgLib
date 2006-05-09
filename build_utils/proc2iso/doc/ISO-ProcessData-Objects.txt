@@ -153,7 +153,7 @@ If an attribute is not required, it means that is will be set to a default value
 <tr><td>  </td><td> element_type </td><td> yes </td></tr>
 <tr><td>  </td><td> element_number </td><td> no </td></tr>
 <tr><td>  </td><td> parent_name </td><td> yes </td></tr>
-<tr><td> \anchor XMLDPD deviceprocessdata </td><td> designator </td><td> yes </td></tr>
+<tr><td> \anchor XMLDPD deviceprocessdata </td><td> designator </td><td> yes, \ref XMLProcessDataName "restricted" to 30 chars </td></tr>
 <tr><td>  </td><td> ddi </td><td> yes </td></tr>
 <tr><td>  </td><td> properties </td><td> no </td></tr>
 <tr><td>  </td><td> trigger_methods </td><td> no </td></tr>
@@ -171,10 +171,11 @@ If an attribute is not required, it means that is will be set to a default value
 <tr><td> \anchor XMLDPC deviceprocessdatacombination </td><td> ddi </td><td> yes </td></tr>
 <tr><td>  </td><td> command_type </td><td> no </td></tr>
 <tr><td>  </td><td> is_setpoint </td><td> yes </td></tr>
-<tr><td> \anchor XMLDVP devicevaluepresentation </td><td> offset </td><td> yes </td></tr>
+<tr><td> \anchor XMLDVP devicevaluepresentation </td><td> designator </td><td> yes </td></tr>
+<tr><td>  </td><td> offset </td><td> yes </td></tr>
 <tr><td>  </td><td> scale </td><td> yes </td></tr>
 <tr><td>  </td><td> number_of_decimals </td><td> yes </td></tr>
-<tr><td>  </td><td> designator </td><td> yes </td></tr>
+<tr><td>  </td><td> unit_designator </td><td> no </td></tr>
 </table>
 
 \section XMLDETType Device Element Types
@@ -205,7 +206,7 @@ alternatively you can use one of the following 5 trigger method constants:<p>
 Commonly, there are several processdata value for measurement, but if the user is sure that there is only one processdata value for measuring,
 he can decide to chose between the following
 <table><tr><th> value of feature_set </th></tr>
-<tr><td> "" </td><td> (recommended) just leave that attribute out </td></tr>
+<tr><td> Standard </td><td> (recommended) just leave that attribute out </td></tr>
 <tr><td> SimpleMeasure</td><td> only one value will be measured (the last, although several process data values are available) </td></tr>
 <tr><td> SimpleSetpoint</td><td> only one value will be set point (the last, although several process data values are available) </td></tr>
 <tr><td> SimpleSetpointSimpleMeasure</td><td> only one value will be measured and set point (the last, although there are more process data
@@ -242,10 +243,10 @@ on the value increment since the last master value update.
 
 \section XMLCommandType Command types and set point
 <table><tr><th> Command types </th></tr>
-<tr><td> exact </td></tr>
-<tr><td> default </td></tr>
-<tr><td> min </td></tr>
-<tr><td> max </td></tr>
+  <tr><td> exact </td></tr>
+  <tr><td> default </td></tr>
+  <tr><td> min </td></tr>
+  <tr><td> max </td></tr>
 </table>
 <p>
 Possible values of is_setpoint: \ref XMLTruth "Truth values"
@@ -254,6 +255,21 @@ Possible values of is_setpoint: \ref XMLTruth "Truth values"
 <li> If is_setpoint is <b>false</b>, all measurements are exact.
 <li> If is_setpoint is <b>true</b>, all measurements are set point.
 </ul>
+
+\section XMLProcessDataName "About the designator of a DeviceProcessData element"
+Using one processdata element with a DDI group needs some naming convention. For every \ref XMLDPC "deviceprocessdatacombination" the
+command_type attribute is required. So the designator of the deviceprocessdata is extend with '_x'. x stands for:
+<p>
+<table><tr><th></th><th> Command types </th></tr>
+  <tr><td> 0 </td><td> exact </td></tr>
+  <tr><td> 1 </td><td> default </td></tr>
+  <tr><td> 2 </td><td> min </td></tr>
+  <tr><td> 3 </td><td> max </td></tr>
+</table>
+<p>
+E.g. CylinderPressure_1 means a default value DDI. For those two additional characters the length of the deviceprocessdata designator is
+restricted to a length of 30 characters.
+
 
 \section XMLWSName Special treatment of Working Set Master NAME
 <ul>

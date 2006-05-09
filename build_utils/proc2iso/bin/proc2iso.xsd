@@ -10,6 +10,14 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="attrNameRestricted">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="30"/>
+      <xs:pattern value="[a-zA-Z0-9_./\s]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:simpleType name="attrVarName">
     <xs:restriction base="xs:string">
       <xs:minLength value="1"/>
@@ -136,6 +144,7 @@
 
   <xs:simpleType name="attrFeature_set">
     <xs:restriction base="xs:string">
+      <xs:enumeration value="Standard"/>
       <xs:enumeration value="SimpleMeasure"/>
       <xs:enumeration value="SimpleSetpoint"/>
       <xs:enumeration value="SimpleSetpointSimpleMeasure"/>
@@ -193,7 +202,7 @@
         <xs:element name="devicedinprocessdata"         type="elemDeviceDinProcessData" minOccurs="0" maxOccurs="unbounded"/>
       </xs:choice>
     </xs:sequence>
-    <xs:attribute use="optional" name="designator"                     type="attrName"/>
+    <xs:attribute use="optional" name="designator"                     type="attrNameRestricted"/>
     <xs:attribute use="required" name="ddi"                            type="attrIntTo65535"/>
     <xs:attribute use="optional" name="properties"                     type="attrProperties"/>
     <xs:attribute use="optional" name="trigger_methods"                type="attrTrigger_methods"/>
