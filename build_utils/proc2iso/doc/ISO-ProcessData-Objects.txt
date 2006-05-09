@@ -258,7 +258,7 @@ Possible values of is_setpoint: \ref XMLTruth "Truth values"
 
 \section XMLProcessDataName "About the designator of a DeviceProcessData element"
 Using one processdata element with a DDI group needs some naming convention. For every \ref XMLDPC "deviceprocessdatacombination" the
-command_type attribute is required. So the designator of the deviceprocessdata is extend with '_x'. x stands for:
+command_type attribute is required. So the designator of the deviceprocessdata is extended with '_x'. x stands for:
 <p>
 <table><tr><th></th><th> Command types </th></tr>
   <tr><td> 0 </td><td> exact </td></tr>
@@ -268,7 +268,7 @@ command_type attribute is required. So the designator of the deviceprocessdata i
 </table>
 <p>
 E.g. CylinderPressure_1 means a default value DDI. For those two additional characters the length of the deviceprocessdata designator is
-restricted to a length of 30 characters.
+restricted to 30 characters.
 
 
 \section XMLWSName Special treatment of Working Set Master NAME

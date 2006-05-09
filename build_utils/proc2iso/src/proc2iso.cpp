@@ -541,7 +541,7 @@ unsigned int commandtypetoi (const char *text_command)
 {
   int l;
   for (l=0; l<maxFeatureSet; l++)
-    if (strcmp (text_command, commandTypeTable [l]) != 0) return l+1;
+    if (strcmp (text_command, commandTypeTable [l]) == 0) return l;
 
   return 0;
 };
