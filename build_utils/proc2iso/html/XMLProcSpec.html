@@ -378,21 +378,29 @@ If is_setpoint is <b>true</b>, all measurements are set point. </li>
 </ul>
 <h2><a class="anchor" name="XMLProcessDataName">
 "About the designator of a DeviceProcessData element"</a></h2>
-Using one processdata element with a DDI group needs some naming convention. For every <a class="el" href="XMLProcSpec.html#XMLDPC">deviceprocessdatacombination</a> the command_type attribute is required. So the designator of the deviceprocessdata is extended with '_x'. x stands for: <p>
+Using a processdata element with a DDI group needs some naming convention. For every <a class="el" href="XMLProcSpec.html#XMLDPC">deviceprocessdatacombination</a> the command_type and if measurement or not attribute is required. So the designator of the deviceprocessdata is extended with '_x'. x stands for: <p>
 <table border="1" cellspacing="3" cellpadding="3">
 <tr>
-<th></th><th>Command types  </th></tr>
+<th>extension</th><th>Command types  </th></tr>
 <tr>
-<td>0 </td><td>exact  </td></tr>
+<td>0 </td><td>exact setpoint  </td></tr>
 <tr>
-<td>1 </td><td>default  </td></tr>
+<td>1 </td><td>default (is always setpoint)  </td></tr>
 <tr>
-<td>2 </td><td>min  </td></tr>
+<td>2 </td><td>min setpoint  </td></tr>
 <tr>
-<td>3 </td><td>max  </td></tr>
+<td>3 </td><td>max setpoint  </td></tr>
+<tr>
+<td>4 </td><td>exact measurement  </td></tr>
+<tr>
+<td>- </td><td>not used  </td></tr>
+<tr>
+<td>6 </td><td>min measurement  </td></tr>
+<tr>
+<td>7 </td><td>max measurement  </td></tr>
 </table>
 <p>
-E.g. CylinderPressure_1 means a default value DDI. For those two additional characters the length of the deviceprocessdata designator is restricted to 30 characters.<h2><a class="anchor" name="XMLWSName">
+E.g. CylinderPressure_4 means a exact measurement value DDI. For those two additional characters the length of the deviceprocessdata designator is restricted to 30 characters.<h2><a class="anchor" name="XMLWSName">
 Special treatment of Working Set Master NAME</a></h2>
 <ul>
 <li>
@@ -417,7 +425,7 @@ Truth values</a></h2>
 <tr>
 <td>false/no  </td></tr>
 </table>
-<hr size="1"><address style="align: right;"><small>Generated on Tue May 9 15:27:26 2006 for proc2iso.kdevelop by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Tue May 9 16:51:53 2006 for proc2iso.kdevelop by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.4 </small></address>
 </body>

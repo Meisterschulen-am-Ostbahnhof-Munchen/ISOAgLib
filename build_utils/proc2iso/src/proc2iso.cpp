@@ -538,11 +538,22 @@ unsigned int triggermethodtoi (const char *text_trigger)
 
 unsigned int commandtypetoi (const char *text_command)
 {
-  int l;
+  int l, retval = 0;
   for (l=0; l<maxFeatureSet; l++)
-    if (strcmp (text_command, commandTypeTable [l]) == 0) return l;
+  {
+    if (strcmp (text_command, commandTypeTable [l]) == 0)
+    {
+      retval = l;
+      break;
+    }
+  }
 
-  return 0;
+  if (retval == 1) return retval; // default is never used as measure, always as setpoint
+
+  if ((strcmp(vecstr_attrString[attrSetpoint].c_str(), "false") == 0) || (strcmp(vecstr_attrString[attrSetpoint].c_str(), "no") == 0))
+    return retval+4;
+
+  return retval;
 };
 
 
