@@ -394,10 +394,10 @@ Now how does the <picturegraphic> object implementation work?<br>
 Note that the "normal/standard" bitmaps will be searched in the "std_bitmap_path" and the fixed-size-bitmaps will be searched in the "fix_bitmap_path". Simply add these attributes in the &lt;objectpool&gt; element in your first XML file.
 The attributes of <picturegraphic> mean:
 <ul>
-  <li> file='<filename>': default value for all bitmap-depths. Will simply set file='<filename>', file4='<filename>' and file8='<filename>' as default. This can be overridden by
-  <li> file1='<filename1bit>': Filename for the 2-colored bitmap (will override value set by file='...' (if given)).
-  <li> file4='<filename4bit>': Filename for the 16-colored bitmap (will override value set by file='...' (if given)).
-  <li> file8='<filename8bit>': Filename for the 256-colored bitmap (will override value set by file='...' (if given)).
+  <li> file='<filename>': default value for all bitmap-depths. Will simply set file1='<filename>', file4='<filename>' and file8='<filename>' as default. This can be overridden by
+  <li> file1='<filename1bit>': Filename for the 2-colored bitmap (will override value set by file='<filename>' (if given)).
+  <li> file4='<filename4bit>': Filename for the 16-colored bitmap (will override value set by file='<filename>' (if given)).
+  <li> file8='<filename8bit>': Filename for the 256-colored bitmap (will override value set by file='<filename>' (if given)).
   <li> rle='<mode>': Try RLE-encoding for "1bit"-bitmaps, "4bit"-bitmaps or "8bit"-bitmaps. If set to "auto" it will try to RLE-encode every bitmap generated.
   <li> format='...': The given bitmap should be treated as a 1bit/4bit/8bit-bitmap. This means for:
         <ul>
