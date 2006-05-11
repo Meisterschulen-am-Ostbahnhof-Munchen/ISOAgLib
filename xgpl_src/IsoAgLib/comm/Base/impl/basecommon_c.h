@@ -85,19 +85,11 @@
 #ifndef BASE_COMMON_H
 #define BASE_COMMON_H
 
-#include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
-#include <IsoAgLib/util/impl/canpkg_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Base/ibasetypes.h>
-#ifdef USE_DIN_9684
-  #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
-#endif
-#ifdef USE_ISO_11783
-  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib
