@@ -851,7 +851,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   if (b_sendOwnSa)
   {
     #ifdef DEBUG
-    EXTERNAL_DEBUG_DEVICE << "Send checking SA request" << EXTERNAL_DEBUG_DEVICE_ENDL;
+    EXTERNAL_DEBUG_DEVICE << "Send checking SA request (sendRequestForClaimedAddress())" << EXTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     const uint8_t cui8_localCnt = getSystemMgmtInstance4Comm().localIsoMemberCnt();
     for ( uint8_t ui8_ind = 0; ui8_ind < cui8_localCnt; ui8_ind++ )
@@ -994,10 +994,11 @@ bool ISOMonitor_c::processMsg(){
           {
             for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
                   pc_iterItem != vec_isoMember.end(); pc_iterItem++)
-            { // let pc_iterItem process if local
+            { // let all local pc_iterItem process process this request
               if (pc_iterItem->itemState(IState_c::Local))
-                return pc_iterItem->processMsg();
+                if ( pc_iterItem->processMsg()) b_processed = true;
             }
+            return b_processed;
           }
           else
           { // check if item with SA == isoPs exist and let it process
