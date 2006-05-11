@@ -322,7 +322,13 @@ bool ISOItem_c::timeEvent( void )
     int32_t i32_lastAdrRequestTime = c_isoMonitor.lastIsoSaRequest();
     if (i32_lastAdrRequestTime != -1)
     {
-      if ((i32_time - i32_lastAdrRequestTime) > (1250 + calc_randomWait()))
+      int32_t i32_wait = 1250 + calc_randomWait();
+      if ( ( c_isoMonitor.isoMemberCnt( true ) < 1 ) && (i32_wait < 2500))
+      { // no claimed ISOISOItem_c nodes in the monitor list --> i.e. we received no adr claim
+        // --> when we are the only ECU on ISOBUS, it doesn't hurt to wait at least 2500 msec after last Req
+        i32_wait = 2500;
+      }
+      if ((i32_time - i32_lastAdrRequestTime) > i32_wait)
       { // last iso adress claim request is still valid and should have been
         // answered till now
         //check if this item is self conf
@@ -535,7 +541,7 @@ bool ISOItem_c::sendSaClaim()
   if ( ! itemState(IState_c::Local) ) return false;
   // now this ISOItem should/can send a SA claim
   #ifdef DEBUG
-  EXTERNAL_DEBUG_DEVICE << "Send checking SA request" << EXTERNAL_DEBUG_DEVICE_ENDL;
+  EXTERNAL_DEBUG_DEVICE << "Send SA claim (sendSaClaim())" << EXTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   ISOSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   c_pkg.setIsoPri(6);
