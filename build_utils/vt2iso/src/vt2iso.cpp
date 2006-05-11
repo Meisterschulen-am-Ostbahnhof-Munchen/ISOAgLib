@@ -643,13 +643,49 @@ void clean_exit (int return_value, char* error_message=NULL)
 }
 
 
+unsigned int strlenUnescaped (const char* pcc_string)
+{
+  int i_unescapedLength=0;
+  char c_current;
+  bool b_lastWasEscapeChar=false;
+  while ((c_current=*pcc_string++) != 0x00)
+  {
+    if ((c_current == '\\') && (!b_lastWasEscapeChar))
+    { // this is the escape character
+      b_lastWasEscapeChar=true;
+    }
+    else
+    { // count as normal character
+      i_unescapedLength++;
+      b_lastWasEscapeChar=false;
+    }
+  }
+  if (b_lastWasEscapeChar) clean_exit (-1, "Unproperly escaped string. Bailing out. Check your strings!");
+
+  return i_unescapedLength;
+}
+
 
 void copyWithQuoteAndLength (char *dest, const char *src, unsigned int len)
 {
   *dest++ = '"';
-  unsigned int take = (strlen(src) <= len) ? strlen(src) : len;
+  unsigned int take = (strlenUnescaped(src) <= len) ? strlenUnescaped(src) : len;
   unsigned int i=0;
-  for (; i<take; i++) *dest++ = *src++;
+  bool b_lastWasEscapeChar=false;
+  for (; i<take;)
+  { // copy probably escaped string
+    if ((*src == '\\') && (!b_lastWasEscapeChar))
+    {
+      b_lastWasEscapeChar=true;
+      // do NOT increment i!
+    }
+    else
+    {
+      b_lastWasEscapeChar=false;
+      i++;
+    }
+    *dest++ = *src++;
+  }
   for (; i<len; i++) *dest++ = ' '; // fill with spaces if necessary
   *dest++ = '"';
   *dest = 0x00;
@@ -3203,7 +3239,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           else
           {
             //auto-calculate string length
-            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true; }
+            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlenUnescaped (attrString [attrValue])); attrIsGiven [attrLength] = true; }
             if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrEnabled]))
             {
               clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND enabled = ATTRIBUTES FOR THE <inputstring> OBJECT! STOPPING PARSER! bye.\n\n");
@@ -3266,7 +3302,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             // Direct Value
             if (!attrIsGiven [attrLength]) {
               // Auto-calculate Length-field
-              sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true;
+              sprintf (attrString [attrLength], "%d", strlenUnescaped (attrString [attrValue])); attrIsGiven [attrLength] = true;
             }
             if (!(attrIsGiven [attrWidth] && attrIsGiven [attrHeight] && attrIsGiven [attrFont_attributes] && attrIsGiven [attrLength])) {
                 clean_exit (-1, "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT! STOPPING PARSER! bye.\n\n");
@@ -3423,7 +3459,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             sprintf (attrString [attrValue], "NULL");
           } else {
             //auto-calculate length
-            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValue])); attrIsGiven [attrLength] = true; }
+            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlenUnescaped (attrString [attrValue])); attrIsGiven [attrLength] = true; }
             copyWithQuoteAndLength (tempString, attrString [attrValue], atoi (attrString [attrLength]));
         //     sprintf (tempString, "\"%s\"", attrString [attrValue]);
             sprintf (attrString [attrValue], "%s", tempString);
@@ -3478,7 +3514,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
             sprintf (attrString [attrValidation_string], "NULL");
           } else {
             // auto-calculate string-length
-            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlen (attrString [attrValidation_string])); attrIsGiven [attrLength] = true; }
+            if (!attrIsGiven [attrLength]) { sprintf (attrString [attrLength], "%d", strlenUnescaped (attrString [attrValidation_string])); attrIsGiven [attrLength] = true; }
             sprintf (tempString, "\"%s\"", attrString [attrValidation_string]);
             sprintf (attrString [attrValidation_string], "%s", tempString);
           }
