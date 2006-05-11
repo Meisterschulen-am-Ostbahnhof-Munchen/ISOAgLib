@@ -87,8 +87,6 @@ namespace IsoAgLib {
   {
     #if __GNUC__
     #  warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
-	#else
-	#  pragma message ( "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool" )
     #elif defined WIN32
     #pragma message ("deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool")
     #endif
