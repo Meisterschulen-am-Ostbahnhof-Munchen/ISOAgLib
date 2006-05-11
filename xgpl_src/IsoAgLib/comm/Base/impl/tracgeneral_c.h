@@ -87,7 +87,6 @@
 #ifndef TRACGENERAL_C_H
 #define TRACGENERAL_C_H
 
-#include <IsoAgLib/comm/Base/ibasetypes.h>
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 
 #include <ctime>
@@ -156,12 +155,14 @@ public: // Public methods
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};
 
+  #ifdef USE_ISO_11783
   /** force maintain power from tractor
     * @param rb_ecuPower true -> maintain ECU power
     * @param rb_actuatorPower true-> maintain actuator power
     * @param rt_implState in which state is the implement (transport, park, work)
     */
   void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState);
+  #endif
 
   #ifdef USE_DIN_9684
   /** helper function to do the parsing of the flag data of a
