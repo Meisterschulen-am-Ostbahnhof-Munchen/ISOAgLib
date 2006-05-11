@@ -82,7 +82,18 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+
+#include <IsoAgLib/util/impl/cancustomer_c.h>
+#include <IsoAgLib/util/impl/canpkg_c.h>
+#ifdef USE_DIN_9684
+  #include <IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h>
+#endif
+#ifdef USE_ISO_11783
+  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#endif
+
 #include "basecommon_c.h"
+#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -232,7 +243,7 @@ bool BaseCommon_c::timeEvent()
 
   // check for different base data types whether the previously
   // sending node stopped sending -> other nodes can now step in
-  if (  checkMode(IsoAgLib::IdentModeTractor)
+  if (  checkMode(IsoAgLib::IdentModeImplement)
         &&(lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE )
         && (c_selectedDataSourceDevKey.isSpecified())    )
   { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
@@ -241,7 +252,13 @@ bool BaseCommon_c::timeEvent()
 
   // check if we are in tractor mode and have a pointer to the sending device key
   if ( checkMode(IsoAgLib::IdentModeTractor) )
-  {
+  { // all tractor mode timeEvent() functions have the only target to send messages,
+    // --> leave this timeEvent() chain already here, when getDevKey() is not valid or the corresponding
+    //     device has not already claimed an address
+    if ( getDevKey() == NULL ) return true;
+    // all further timeEvent triggerd actions are only useful, if the local configured sending DevKey_c
+    // (accessible by getDevKey() ) has already claimed an address and is thusly allowed to send data on the BUS
+    if (!getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true)) return true;
     #ifdef USE_DIN_9684
     if (  (pc_devKey != NULL                                                   )
           && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true)
@@ -267,14 +284,9 @@ bool BaseCommon_c::timeEvent()
   #ifdef USE_ISO_11783
   else //implement mode
   { // we are in implement mode; check if we have a pointer to the sending device key
-    if (   (pc_devKey != NULL                                                 )
-        && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
-      )
-    {
-      if ( !isoTimeEventImplMode()) return false;
+    if ( !isoTimeEventImplMode()) return false;
 
-      if (Scheduler_c::getAvailableExecTime() == 0) return false;
-    }
+    if (Scheduler_c::getAvailableExecTime() == 0) return false;
   }
   #endif
   return true;
