@@ -87,7 +87,6 @@
 #ifndef TRACPTO_C_H
 #define TRACPTO_C_H
 
-#include "../ibasetypes.h"
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
