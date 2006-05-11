@@ -231,6 +231,8 @@
   #define getTracGeneralInstance4Comm()       getTracGeneralInstance()
   #define getTracMoveInstance4Comm()          getTracMoveInstance()
   #define getTracPtoInstance4Comm()           getTracPtoInstance()
+  #define getTracLightInstance4Comm()         getTracLightInstance()
+  #define getTracAuxInstance4Comm()           getTracAuxInstance()
   #define getSystemMgmtInstance4Comm()        getSystemMgmtInstance()
   #define getDinMonitorInstance4Comm()        getDinMonitorInstance()
   #define getIsoMonitorInstance4Comm()        getIsoMonitorInstance()
