@@ -48,17 +48,13 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
-
+#ifndef __TYPEDEF_H__
+#define __TYPEDEF_H__
 
 // include interface aplication relevant configuration settings
 //#include <Application_Config/isoaglib_config.h>
 #include <IsoAgLib/hal/config.h>
 #include <IsoAgLib/util/compiler_adoption.h>
-
-
-#ifndef __TYPEDEF_H__
-#define __TYPEDEF_H__
-
 
 /* ****************************************** */
 /* * include of typedef header files */
