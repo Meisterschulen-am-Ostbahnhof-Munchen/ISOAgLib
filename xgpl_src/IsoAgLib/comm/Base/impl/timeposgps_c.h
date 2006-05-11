@@ -88,16 +88,7 @@
 #ifndef TIMEPOSGPS_C_H
 #define TIMEPOSGPS_C_H
 
-#include <IsoAgLib/comm/Base/ibasetypes.h>
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
-
-#include <ctime>
-
-#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
-  #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
-  #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
-  #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-#endif // END of NMEA_2000_FAST_PACKET and USE_ISO_11783
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
