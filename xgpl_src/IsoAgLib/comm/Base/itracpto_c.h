@@ -88,6 +88,8 @@ namespace IsoAgLib {
   {
     #if __GNUC__
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
+    #elif defined WIN32
+    #pragma message ("deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool")
     #endif
     TracPTO_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   }

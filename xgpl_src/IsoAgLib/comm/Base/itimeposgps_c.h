@@ -90,6 +90,8 @@ public:
   {
     #if __GNUC__
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
+    #elif defined WIN32
+    #pragma message ("deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool")
     #endif
     TimePosGPS_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   };
@@ -120,6 +122,8 @@ public:
   {
     #if __GNUC__
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
+    #elif defined WIN32
+    #pragma message ("deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool")
     #endif
     TimePosGPS_c::configGps(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   };
