@@ -89,6 +89,8 @@ namespace IsoAgLib {
     #  warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
 	#else
 	#  pragma message ( "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool" )
+    #elif defined WIN32
+    #pragma message ("deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool")
     #endif
     TracMove_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   }
@@ -155,10 +157,6 @@ namespace IsoAgLib {
         @param t_val  current direction of travel
       */
     void setSelectedDirection(const IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setSelectedDirection(t_val);}
-    /** set commanded direction of the machine
-        @param t_val  commanded direction of travel
-      */
-    void setSelectedDirectionCmd(const IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setSelectedDirectionCmd(t_val);}
     /** set current value of the speed as determined from a number of sources by the machine
         @param ui16_val  current value of speed
       */
@@ -172,16 +170,6 @@ namespace IsoAgLib {
       */
     void setSelectedSpeedSource(const IsoAgLib::IsoSpeedSourceFlag_t t_val)
     {TracMove_c::setSelectedSpeedSource(t_val);}
-    /** set commanded set point value of the machine speed as measured by the selected source
-        @param ui16_val  set point value of the machine speed
-      */
-    void setSelectedSpeedSetPointCmd(const uint16_t ui16_val)
-    {TracMove_c::setSelectedSpeedSetPointCmd(ui16_val);}
-    /** communicate maximum allowed speed to the tractor
-        @param ui16_val  maximum allowed speed
-      */
-    void setSelectedSpeedSetPointLimit(const uint16_t ui16_val)
-    {TracMove_c::setSelectedSpeedSetPointLimit(ui16_val);}
     #endif
     /*@}*/
 
@@ -226,10 +214,6 @@ namespace IsoAgLib {
         @return  current direction of travel
       */
     IsoAgLib::IsoDirectionFlag_t selectedDirection() const {return TracMove_c::selectedDirection();}
-    /** get commanded direction of the machine
-        @return  commanded direction of travel
-      */
-    IsoAgLib::IsoDirectionFlag_t selectedDirectionCmd() const {return TracMove_c::selectedDirectionCmd();}
     /** get current value of the speed as determined from a number of sources by the machine
         @return  current value of speed
       */
@@ -242,14 +226,6 @@ namespace IsoAgLib {
         @return  speed source that is currently being reported
       */
     IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return TracMove_c::selectedSpeedSource();}
-    /** get commanded set point value of the machine speed as measured by the selected source
-        @return  set point value of the machine speed
-      */
-    uint16_t selectedSpeedSetPointCmd() const {return TracMove_c::selectedSpeedSetPointCmd();}
-    /** get communicated maximum allowed speed to the tractor
-        @return  maximum allowed speed
-      */
-    uint16_t selectedSpeedSetPointLimit() const {return TracMove_c::selectedSpeedSetPointLimit();}
     #endif
 
   private:
