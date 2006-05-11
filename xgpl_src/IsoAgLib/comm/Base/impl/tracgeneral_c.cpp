@@ -223,7 +223,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
 
     if (   ( !t_identModeStateFuel                    )
-        && ( ( ci32_now - i32_lastFuel ) >= 3000 )
+        && ( ( ci32_now - i32_lastFuel ) >= TIMEOUT_SENDING_NODE )
         && ( c_sendFuelDevKey.isSpecified()      ) )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
       c_sendFuelDevKey.setUnspecified();
@@ -371,6 +371,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           data().setLen(8);
 
           setSelectedDataSourceDevKey(c_tempDevKey);
+          setUpdateTime( ci32_now );
         }
         else
         { // there is a sender conflict
@@ -390,6 +391,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
           data().setLen(3);
 
           c_sendFuelDevKey = c_tempDevKey;
+          setUpdateTime( ci32_now );
         }
         else
         { // there is a sender conflict
@@ -499,6 +501,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
             t_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
           setSelectedDataSourceDevKey(c_tempDevKey);
+          setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
         }
         else
         { // there is a sender conflict
