@@ -185,7 +185,7 @@ public:
     @return true -> CAN ident fits to local filter/mask definition
   */
   inline bool matchMsgId(MASK_TYPE rt_ident, Ident_c::identType_t rt_type )
-    {return ( (c_mask.masked(rt_ident) == c_filter.ident()) && (rt_type==identType()) );};
+  { return ( (c_mask.masked(rt_ident) == c_mask.masked(c_filter)) && (rt_type == identType()) );}
 
   /**
     checks, if FilterBox_c definition given by rc_mask and rc_filter is the same
