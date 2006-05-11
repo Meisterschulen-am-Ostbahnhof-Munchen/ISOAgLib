@@ -138,46 +138,46 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** set rear PTO
       @param ri16_val value to store as the speed of the rear PTO [1RPM]
       */
-    void setPtoRear(const int16_t ri16_val)
+    void setPtoRear(const uint16_t rui16_val)
     {
-      i16_ptoRear8DigitPerRpm = ( ri16_val * 8 );
+      ui16_ptoRear8DigitPerRpm = ( rui16_val * 8 );
       #ifdef USE_ISO_11783
-      if ( ri16_val == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
+      if ( rui16_val == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
       else                 setPtoRearEngaged( IsoAgLib::IsoActive );
       #endif
     };
     /** set front PTO
         @param ri16_val value to store as the speed of the front PTO [1RPM]
       */
-    void setPtoFront(const int16_t ri16_val)
+    void setPtoFront(const uint16_t rui16_val)
     {
-      i16_ptoFront8DigitPerRpm = ( ri16_val * 8 );
+      ui16_ptoFront8DigitPerRpm = ( rui16_val * 8 );
       #ifdef USE_ISO_11783
-      if ( ri16_val == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
-      else                 setPtoFrontEngaged( IsoAgLib::IsoActive );
+      if ( rui16_val == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
+      else                  setPtoFrontEngaged( IsoAgLib::IsoActive );
       #endif
     };
 
     /** set rear PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
     @param ri16_val8DigitPerRpm value to store as the speed of the rear PTO [1/8RPM]
      */
-    void setPtoRear8DigitPerRpm(const int16_t ri16_val8DigitPerRpm)
+    void setPtoRear8DigitPerRpm(const uint16_t rui16_val8DigitPerRpm)
     {
-      i16_ptoRear8DigitPerRpm = ri16_val8DigitPerRpm;
+      ui16_ptoRear8DigitPerRpm = rui16_val8DigitPerRpm;
       #ifdef USE_ISO_11783
-      if ( ri16_val8DigitPerRpm == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
-      else                             setPtoRearEngaged( IsoAgLib::IsoActive );
+      if ( rui16_val8DigitPerRpm == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
+      else                              setPtoRearEngaged( IsoAgLib::IsoActive );
       #endif
     };
     /** set front PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
     @param ri16_val8DigitPerRpm value to store as the speed of the front PTO [1/8RPM]
      */
-    void setPtoFront8DigitPerRpm(const int16_t ri16_val8DigitPerRpm)
+    void setPtoFront8DigitPerRpm(const uint16_t rui16_val8DigitPerRpm)
     {
-      i16_ptoFront8DigitPerRpm = ri16_val8DigitPerRpm;
+      ui16_ptoFront8DigitPerRpm = rui16_val8DigitPerRpm;
       #ifdef USE_ISO_11783
-      if ( ri16_val8DigitPerRpm == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
-      else                             setPtoFrontEngaged( IsoAgLib::IsoActive );
+      if ( rui16_val8DigitPerRpm == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
+      else                              setPtoFrontEngaged( IsoAgLib::IsoActive );
       #endif
     };
 
@@ -270,20 +270,20 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** get rear pto
         @return actual rpm speed of rear PTO [1RPM]
       */
-    int16_t ptoRear() const { return ( i16_ptoRear8DigitPerRpm / 8 );};
+    uint16_t ptoRear() const { return ( ui16_ptoRear8DigitPerRpm / 8 );};
     /** get front pto
         @return actual rpm speed of front PTO [1RPM]
       */
-    int16_t ptoFront() const { return ( i16_ptoFront8DigitPerRpm / 8 );};
+    uint16_t ptoFront() const { return ( ui16_ptoFront8DigitPerRpm / 8 );};
 
     /** get rear pto
       @return actual rpm speed of rear PTO [1/8RPM]
      */
-    int16_t ptoRear8DigitPerRpm() const { return ( i16_ptoRear8DigitPerRpm);};
+    uint16_t ptoRear8DigitPerRpm() const { return ( ui16_ptoRear8DigitPerRpm);};
     /** get front pto
       @return actual rpm speed of front PTO [1/8RPM]
      */
-    int16_t ptoFront8DigitPerRpm() const { return ( i16_ptoFront8DigitPerRpm);};
+    uint16_t ptoFront8DigitPerRpm() const { return ( ui16_ptoFront8DigitPerRpm);};
 
 
     #ifdef USE_ISO_11783
@@ -401,9 +401,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     int32_t i32_lastPtoRear;
 
     /** pto rear [1/8RPM] */
-    int16_t i16_ptoRear8DigitPerRpm;
+    uint16_t ui16_ptoRear8DigitPerRpm;
     /** pto front [1/8RPM] */
-    int16_t i16_ptoFront8DigitPerRpm;
+    uint16_t ui16_ptoFront8DigitPerRpm;
 
     #ifdef USE_ISO_11783
     /// General

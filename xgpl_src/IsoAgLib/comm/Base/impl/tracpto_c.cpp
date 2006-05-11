@@ -122,7 +122,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     //call config for handling which is base data independent
     BaseCommon_c::config(rpc_devKey, rt_IdentMode);
     // set the member base msg value vars to NO_VAL codes
-    i16_ptoFront8DigitPerRpm = i16_ptoRear8DigitPerRpm = NO_VAL_16S;
+    ui16_ptoFront8DigitPerRpm = ui16_ptoRear8DigitPerRpm = NO_VAL_16S;
 
     // set the timestamps to 0
     i32_lastPtoFront = i32_lastPtoRear = 0;
@@ -283,7 +283,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
         { // front PTO
           i32_lastPtoFront = ci32_now;
-          i16_ptoFront8DigitPerRpm          = data().getUint16Data(0);
+          ui16_ptoFront8DigitPerRpm         = data().getUint16Data(0);
           ui16_frontPtoSetPoint8DigitPerRpm = data().getUint16Data(2);
           t_frontPtoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
           t_frontPto1000    = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 4) & 3 );
@@ -296,7 +296,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         else
         { // back PTO
           i32_lastPtoRear = ci32_now;
-          i16_ptoRear8DigitPerRpm          = data().getUint16Data(0);
+          ui16_ptoRear8DigitPerRpm         = data().getUint16Data(0);
           ui16_rearPtoSetPoint8DigitPerRpm = data().getUint16Data(2);
           t_rearPtoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
           t_rearPto1000    = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 4) & 3 );
@@ -339,7 +339,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // it's time to send tractor PTO information and the FRONT PTO is engaged
       data().setIsoPgn(FRONT_PTO_STATE_PGN);
       uint8_t ui8_val;
-      data().setUint16Data(0, i16_ptoFront8DigitPerRpm);
+      data().setUint16Data(0, ui16_ptoFront8DigitPerRpm);
       data().setUint16Data(2, ui16_frontPtoSetPoint8DigitPerRpm);
       ui8_val =  (t_frontPtoEngaged             << 6);
       ui8_val |= (t_frontPto1000                << 4);
@@ -365,7 +365,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // it's time to send tractor PTO information and the REAR PTO is engaged
       data().setIsoPgn(REAR_PTO_STATE_PGN);
       uint8_t ui8_val;
-      data().setUint16Data(0, i16_ptoRear8DigitPerRpm ); // ISO defines a resolution of 0.125 per bit!!!
+      data().setUint16Data(0, ui16_ptoRear8DigitPerRpm ); // ISO defines a resolution of 0.125 per bit!!!
       data().setUint16Data(2, ui16_rearPtoSetPoint8DigitPerRpm);
 
       ui8_val =  (t_rearPtoEngaged             << 6);
@@ -401,13 +401,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ( ( ci32_now - i32_lastPtoFront ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
-      i16_ptoFront8DigitPerRpm = 0;
+      ui16_ptoFront8DigitPerRpm = 0;
       t_frontPtoEngaged = IsoAgLib::IsoInactive;
     }
     if ( ( ( ci32_now - i32_lastPtoRear ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
-      i16_ptoRear8DigitPerRpm = 0;
+      ui16_ptoRear8DigitPerRpm = 0;
       t_rearPtoEngaged = IsoAgLib::IsoInactive;
     }
     return true;

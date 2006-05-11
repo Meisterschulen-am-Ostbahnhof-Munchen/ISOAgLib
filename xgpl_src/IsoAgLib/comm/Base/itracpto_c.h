@@ -111,11 +111,11 @@ namespace IsoAgLib {
     /** set rear PTO
         @param ri16_val value to store as the speed of the rear PTO
       */
-    void setPtoRear(const int16_t ri16_val) { TracPTO_c::setPtoRear(ri16_val);}
+    void setPtoRear(const uint16_t rui16_val) { TracPTO_c::setPtoRear(rui16_val);}
     /** set front PTO
         @param ri16_val value to store as the speed of the front PTO
       */
-    void setPtoFront(const int16_t ri16_val) { TracPTO_c::setPtoFront(ri16_val);}
+    void setPtoFront(const uint16_t rui16_val) { TracPTO_c::setPtoFront(rui16_val);}
 
     #ifdef USE_ISO_11783
     /** set explicit information whether front PTO is engaged
@@ -198,11 +198,11 @@ namespace IsoAgLib {
     /** get rear pto
         @return actual rpm speed of rear PTO
       */
-    int16_t ptoRear() const { return TracPTO_c::ptoRear();}
+    uint16_t ptoRear() const { return TracPTO_c::ptoRear();}
     /** get front pto
         @return actual rpm speed of front PTO
       */
-    int16_t ptoFront() const { return TracPTO_c::ptoFront();}
+    uint16_t ptoFront() const { return TracPTO_c::ptoFront();}
 
     #ifdef USE_ISO_11783
     /** deliver explicit information whether front PTO is engaged
