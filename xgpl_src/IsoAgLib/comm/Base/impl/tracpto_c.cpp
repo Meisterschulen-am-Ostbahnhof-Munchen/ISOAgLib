@@ -92,7 +92,7 @@
 
 using namespace std;
 
-#define TIMEOUT_PTO_DISENGAGED 300
+#define TIMEOUT_PTO_DISENGAGED 3000
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
@@ -228,6 +228,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         // parse other information
         getTracGeneralInstance4Comm().dinParseHitchEngineFlags( data() );
         setSelectedDataSourceDevKey( c_tempDevKey );
+        setUpdateTime( ci32_now );
       }
       return true;
     }
@@ -274,13 +275,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     if (((data().isoPgn() & 0x1FFFF) == FRONT_PTO_STATE_PGN) || ((data().isoPgn() & 0x1FFFF) == REAR_PTO_STATE_PGN))
     {
+      const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
       if ( checkParseReceived( c_tempDevKey ) )
       { // sender is allowed to send
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
         { // front PTO
-          //i32_lastPtoFront = ci32_now;
+          i32_lastPtoFront = ci32_now;
           i16_ptoFront8DigitPerRpm          = data().getUint16Data(0);
           ui16_frontPtoSetPoint8DigitPerRpm = data().getUint16Data(2);
           t_frontPtoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
@@ -293,7 +295,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         }
         else
         { // back PTO
-          //i32_lastPtoRear = ci32_now;
+          i32_lastPtoRear = ci32_now;
           i16_ptoRear8DigitPerRpm          = data().getUint16Data(0);
           ui16_rearPtoSetPoint8DigitPerRpm = data().getUint16Data(2);
           t_rearPtoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
@@ -306,6 +308,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         }
         // set last time
         setSelectedDataSourceDevKey(c_tempDevKey);
+        setUpdateTime( ci32_now );
       }
       else
       { // there is a sender conflict
@@ -319,7 +322,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-  bool TracPTO_c::isoTimeEventTracMode(  )
+  bool TracPTO_c::isoTimeEventTracMode( )
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // retreive the actual dynamic sender no of the member with the registered devKey
