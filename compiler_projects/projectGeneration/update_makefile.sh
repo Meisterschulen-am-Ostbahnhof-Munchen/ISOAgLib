@@ -257,7 +257,18 @@ function check_set_correct_variables()
 
   if [ "A$PRJ_BASE" = "A" ] ; then
   	PRJ_BASE=0
-  fi
+	elif [ $PRJ_BASE -gt 0 ] ; then
+		# activate all base data sub-features, when PRJ_BASE is activated
+		PRJ_TRACTOR_GENERAL=1
+		PRJ_TRACTOR_MOVE=1
+		PRJ_TRACTOR_PTO=1
+		PRJ_TIME_GPS=1
+		PRJ_TRACTOR_LIGHT=1
+		PRJ_TRACTOR_AUX=1
+		PRJ_TRACTOR_GUIDANCE=1
+		PRJ_TRACTOR_CERTIFICATION=1
+	fi
+
   if [ "A$PRJ_TRACTOR_GENERAL" = "A" ] ; then
   	PRJ_TRACTOR_GENERAL=0
   fi
@@ -282,6 +293,21 @@ function check_set_correct_variables()
   if [ "A$PRJ_TRACTOR_CERTIFICATION" = "A" ] ; then
   	PRJ_TRACTOR_CERTIFICATION=0
   fi
+
+	# deactivate all BASE sub-features that are not supported in DIN
+	# and also deactivate the features that are only available with the extension directories
+	EXT_BASE_SRC="$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/comm/Base/ext"
+
+	if test $PRJ_ISO11783 -lt 1  -o ! -d $EXT_BASE_SRC  ; then
+		# ISO is not active -> deactivate all ISO only features
+		echo "Deactivate all ISO specific features, that are only available for registered users."
+		echo "Either ISO11783 was not activated, OR the directory $EXT_BASE_SRC with the extensional modules does not exist."
+		echo "Please contact a.spangler@osb-ag.de when you want to register as user so that you can access the extensions area."
+		PRJ_TRACTOR_LIGHT=0
+		PRJ_TRACTOR_AUX=0
+		PRJ_TRACTOR_GUIDANCE=0
+		PRJ_TRACTOR_CERTIFICATION=0
+	fi
 
 
   if [ "A$PRJ_PROCESS" = "A" ] ; then
@@ -953,28 +979,28 @@ function create_autogen_project_config()
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_BASE -gt 0 ; then
+	if test $PRJ_TRACTOR_GENERAL -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_GENERAL $ENDLINE\t#define USE_TRACTOR_GENERAL $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if test $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_BASE -gt 0 ; then
+	if test $PRJ_TRACTOR_MOVE -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_MOVE $ENDLINE\t#define USE_TRACTOR_MOVE $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if test $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_BASE -gt 0 ; then
+	if test $PRJ_TRACTOR_PTO -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_PTO $ENDLINE\t#define USE_TRACTOR_PTO $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if test $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_BASE -gt 0 ; then
+	if test $PRJ_TRACTOR_LIGHT -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_LIGHT $ENDLINE\t#define USE_TRACTOR_LIGHT $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if test $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_BASE -gt 0 ; then
+	if test $PRJ_TRACTOR_AUX -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_AUX $ENDLINE\t#define USE_TRACTOR_AUX $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if test $PRJ_TRACTOR_GUIDANCE -gt 0 -o $PRJ_BASE -gt 0 ; then
+	if test $PRJ_TRACTOR_GUIDANCE -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_GUIDANCE $ENDLINE\t#define USE_TRACTOR_GUIDANCE $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if test $PRJ_TRACTOR_CERTIFICATION -gt 0 -o $PRJ_BASE -gt 0 ; then
+	if test $PRJ_TRACTOR_CERTIFICATION -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_CERTIFICATION $ENDLINE\t#define USE_TRACTOR_CERTIFICATION $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if test $PRJ_TIME_GPS -gt 0 -o $PRJ_BASE -gt 0 ; then
+	if test $PRJ_TIME_GPS -gt 0 ; then
 		echo -e "#ifndef USE_TIME_GPS $ENDLINE\t#define USE_TIME_GPS $ENDLINE#endif" >> $CONFIG_NAME
 	fi
 
