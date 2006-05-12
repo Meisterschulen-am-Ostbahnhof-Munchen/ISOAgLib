@@ -72,7 +72,7 @@ XERCESCROOT=/usr/include/xercesc
 LD_LIBRARY_PATH=/usr/lib/xercesc/
 
 PLATFORM = LINUX
-COMPILER = g++-3.3
+COMPILER = g++
 GCC = yes
 GXX = yes
 CXXFLAGS =  -g  -Wall -O  -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB
