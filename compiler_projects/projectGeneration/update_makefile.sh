@@ -504,7 +504,7 @@ function create_filelist( )
       # no trac light
       COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*traclight*' -a -not -name '*trac*setpoint*' -a -not -name '*tracaux*' -a -not -name '*tracguidance*' -a -not -name '*traccert*' \)"
     else
-# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files		
+# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files
       COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
 #      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*trac*setpoint*' \) "
     fi
@@ -521,7 +521,7 @@ function create_filelist( )
 	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove_c.*' \)"
 		else
 			# allow tracmove_c.h and tracmovesetpoint_c.h
-# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files		
+# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files
 #	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove*' \)"
 	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove_c.*' \)"
 		fi
@@ -532,7 +532,7 @@ function create_filelist( )
 	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
 		else
 			# allow tracpto_c.h and tracptosetpoint_c.h
-# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files		
+# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files
       COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
 	#    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
 		fi
@@ -546,19 +546,19 @@ function create_filelist( )
 		# tracaux is only defined for ISO 11783
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracaux*' \)"
 	else
-	PRJ_TRACTOR_AUX=0	
+	PRJ_TRACTOR_AUX=0
 	fi
 	if test $PRJ_TRACTOR_GUIDANCE -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
 		# tracguidance is only defined for ISO 11783
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracguidance*' \)"
 	else
-	PRJ_TRACTOR_GUIDANCE=0	
+	PRJ_TRACTOR_GUIDANCE=0
   fi
 	if test $PRJ_TRACTOR_CERTIFICATION -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
 		# tracguidance is only defined for ISO 11783
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*traccert*' \)"
 	else
-	PRJ_TRACTOR_CERTIFICATION=0	
+	PRJ_TRACTOR_CERTIFICATION=0
   fi
   if [ $PRJ_TIME_GPS -gt 0 ] ; then
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*timeposgps*' \)"
@@ -953,28 +953,28 @@ function create_autogen_project_config()
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
+	if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_BASE -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_GENERAL $ENDLINE\t#define USE_TRACTOR_GENERAL $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if [ $PRJ_TRACTOR_MOVE -gt 0 ] ; then
+	if test $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_BASE -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_MOVE $ENDLINE\t#define USE_TRACTOR_MOVE $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if [ $PRJ_TRACTOR_PTO -gt 0 ] ; then
+	if test $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_BASE -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_PTO $ENDLINE\t#define USE_TRACTOR_PTO $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if [ $PRJ_TRACTOR_LIGHT -gt 0 ] ; then
+	if test $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_BASE -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_LIGHT $ENDLINE\t#define USE_TRACTOR_LIGHT $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if [ $PRJ_TRACTOR_AUX -gt 0 ] ; then
+	if test $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_BASE -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_AUX $ENDLINE\t#define USE_TRACTOR_AUX $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if [ $PRJ_TRACTOR_GUIDANCE -gt 0 ] ; then
+	if test $PRJ_TRACTOR_GUIDANCE -gt 0 -o $PRJ_BASE -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_GUIDANCE $ENDLINE\t#define USE_TRACTOR_GUIDANCE $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if [ $PRJ_TRACTOR_CERTIFICATION -gt 0 ] ; then
+	if test $PRJ_TRACTOR_CERTIFICATION -gt 0 -o $PRJ_BASE -gt 0 ; then
 		echo -e "#ifndef USE_TRACTOR_CERTIFICATION $ENDLINE\t#define USE_TRACTOR_CERTIFICATION $ENDLINE#endif" >> $CONFIG_NAME
 	fi
-	if [ $PRJ_TIME_GPS -gt 0 ] ; then
+	if test $PRJ_TIME_GPS -gt 0 -o $PRJ_BASE -gt 0 ; then
 		echo -e "#ifndef USE_TIME_GPS $ENDLINE\t#define USE_TIME_GPS $ENDLINE#endif" >> $CONFIG_NAME
 	fi
 
