@@ -298,8 +298,9 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
       sprintf(name, "can_%hx_%x_", bBusNumber, ptConfig->dwId);
       if (ptConfig->bXtd) strcat(name, "ext");
       else strcat(name, "std");
-
-      can_input[bBusNumber][bMsgObj] = fopen(name, "r");
+      // when the needed simulated input file does not exist at standard place, we try locally
+      // at the execution directory - here we open with creation mode, so that the program doesn't abort
+      can_input[bBusNumber][bMsgObj] = fopen(name, "w+");
     }
     // END: Added by M.Wodok 6.12.04
 
