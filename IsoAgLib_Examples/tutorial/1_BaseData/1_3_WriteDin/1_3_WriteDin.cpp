@@ -190,10 +190,20 @@
 #endif
 
 /** set the following defines if to test one or more of the base data*/
-//#define TEST_TRACTOR_GENERAL
-#define TEST_TRACTOR_MOVING
-//#define TEST_TIME
-//#define TEST_TRACTOR_PTO
+//the defines are set with the update_makefile skript if in the corresponding config_1_0_ReadDin
+//the defines are set. All base data is defined if the USE_BASE define is active
+#ifdef USE_TRACTOR_GENERAL
+  #define TEST_TRACTOR_GENERAL
+#endif
+#ifdef USE_TRACTOR_MOVE
+  #define TEST_TRACTOR_MOVING
+#endif
+#ifdef USE_TIME_GPS
+  #define TEST_TIME
+#endif
+#ifdef USE_BASE_TRACPTO
+  #define TEST_TRACPTO
+#endif
 
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"

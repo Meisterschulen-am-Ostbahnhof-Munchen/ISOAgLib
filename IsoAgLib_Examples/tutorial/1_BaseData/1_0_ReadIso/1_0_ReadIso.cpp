@@ -197,15 +197,34 @@
 /** set the following define, if the lookup result shall be sent via RS232 */
 #define USE_RS232_FOR_DEBUG
 /** set the following defines if to test one or more of the base data*/
-//#define TEST_TRACTOR_LIGHTING
-#define TEST_TRACTOR_GENERAL
-#define TEST_TRACTOR_MOVING
-// #define TEST_TIME
-// #define TEST_TRACPTOSETPOINT
-// #define TEST_TRACAUX
-// #define TEST_TRACPTO
-// #define TEST_TRACCERT
-// #define TEST_TRACGUIDANCE
+//the defines are set with the update_makefile skript if in the corresponding config_1_0_ReadIso
+//the defines are set. All base data is defined if the USE_BASE define is active
+#ifdef USE_TRACTOR_LIGHT
+  #define TEST_TRACTOR_LIGHTING
+#endif
+#ifdef USE_TRACTOR_GENERAL
+  #define TEST_TRACTOR_GENERAL
+#endif
+#ifdef USE_TRACTOR_MOVE
+  #define TEST_TRACTOR_MOVING
+  #define TEST_TRACMOVESETPOINT
+#endif
+#ifdef USE_TIME_GPS
+  #define TEST_TIME
+#endif
+#ifdef USE_TRACTOR_AUX
+  #define TEST_TRACAUX
+#endif
+#ifdef USE_BASE_TRACPTO
+  #define TEST_TRACPTO
+  #define TEST_TRACPTOSETPOINT
+#endif
+#ifdef USE_TRACTOR_CERTIFICATION
+  #define TEST_TRACCERT
+#endif
+#ifdef USE_TRACTOR_GUIDANCE
+  #define TEST_TRACGUIDANCE
+#endif
 
 // include the central interface header for the hardware adaption layer part
 // of the "IsoAgLib"
@@ -241,6 +260,9 @@
 #endif
 #ifdef TEST_TRACPTOSETPOINT
   #include <IsoAgLib/comm/Base/ext/itracptosetpoint_c.h>
+#endif
+#ifdef TEST_TRACMOVESETPOINT
+  #include <IsoAgLib/comm/Base/ext/itracmovesetpoint_c.h>
 #endif
 #ifdef TEST_TRACPTO
   #include <IsoAgLib/comm/Base/itracpto_c.h>
@@ -503,10 +525,6 @@ int main()
   getITracLightInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
   #endif
 
-  #ifdef TEST_TRACTOR_MOVING
-  getITracMoveInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
-  #endif
-
   #ifdef TEST_TRACPTOSETPOINT
   //pto set point commands are send from implement!!
   getITracPtoSetPointInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
@@ -518,6 +536,10 @@ int main()
 
   #ifdef TEST_TRACGUIDANCE
   getITracGuidanceInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
+  #endif
+
+  #ifdef TEST_TRACMOVESETPOINT
+  getITracMoveSetPointInstance().config(&myDevKey, IsoAgLib::IdentModeImplement);
   #endif
 
   /** IMPORTANT:
@@ -554,6 +576,9 @@ int main()
   #if defined TEST_TRACPTOSETPOINT
   uint8_t hitchPos = 0;
   uint16_t outputShaft = 0;
+  #endif
+  #ifdef TEST_TRACGUIDANCE
+  int curvatureCmd = -100;
   #endif
   while ( iSystem_c::canEn() )
   { // run main loop
@@ -685,11 +710,13 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "selected distance:           " << getITracMoveInstance().selectedDistance() << "\n";
       EXTERNAL_DEBUG_DEVICE << "selected speed limit status: " << getIsoLimitFlag(getITracMoveInstance().selectedSpeedLimitStatus() ) << "\n";
       EXTERNAL_DEBUG_DEVICE << "selected direction:          " << getIsoDirectionFlag(getITracMoveInstance().selectedDirection() ) << "\n";
+      #endif
 
-      getITracMoveInstance().setSelectedDirectionCmd(IsoAgLib::IsoForward);
-      getITracMoveInstance().setSelectedSpeedSetPointCmd(30547);
-      getITracMoveInstance().setSelectedSpeedSetPointLimit(253);
-
+      #ifdef TEST_TRACMOVESETPOINT
+      //MOVING SET POINT CLASS TEST FUNCTIONALITY
+      getITracMoveSetPointInstance().setSelectedDirectionCmd(IsoAgLib::IsoForward);
+      getITracMoveSetPointInstance().setSelectedSpeedSetPointCmd(30547);
+      getITracMoveSetPointInstance().setSelectedSpeedSetPointLimit(253);
       #endif
 
       #ifdef TEST_TRACTOR_GENERAL
@@ -776,7 +803,7 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "estimated valve limit status: " << getIsoLimitFlag(getITracAuxInstance().estValveLimitStatus(2) ) << "\n";
       EXTERNAL_DEBUG_DEVICE << "measured valve limit status:  " << getIsoLimitFlag(getITracAuxInstance().measuredValveLimitStatus(2) ) << "\n";
 
-      if ( !getITracAuxInstance().setCmdPortFlow(2, 100) )
+      if ( !getITracAuxInstance().setCmdPortFlow(0, 100) )
         EXTERNAL_DEBUG_DEVICE << "Either command port flow value is not between 0 - 100 or valve number is not betwenn 0 - 15.\n";
       if ( !getITracAuxInstance().setCmdFailSaveMode(2, IsoAgLib::IsoBlock) )
         EXTERNAL_DEBUG_DEVICE << "(cmdFailSaveMode) Valve number is not between 0 - 15.\n";
@@ -803,7 +830,8 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "steering system readiness:      " << getIsoSteerReadinessFlag(getITracGuidanceInstance().steeringSystemReadiness() ) << "\n";
       EXTERNAL_DEBUG_DEVICE << "mechanical system logout:       " << getIsoActiveFlag(getITracGuidanceInstance().mechanicalSystemLogout() ) << "\n";
 
-      getITracGuidanceInstance().setCurvatureCmd(-4086);
+      curvatureCmd += 3;
+      getITracGuidanceInstance().setCurvatureCmd(curvatureCmd);
       getITracGuidanceInstance().setCurvatureCmdStatus(IsoAgLib::IsoIntendedToSteer);
       #endif
     }

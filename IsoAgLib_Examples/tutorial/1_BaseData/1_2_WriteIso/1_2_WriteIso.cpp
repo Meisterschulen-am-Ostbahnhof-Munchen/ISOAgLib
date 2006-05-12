@@ -200,18 +200,37 @@
 // of the "IsoAgLib"
 
 /** set the following defines if to test one or more of the base data*/
-#define TEST_TRACTOR_GENERAL
-#define TEST_TRACTOR_MOVING
-// #define TEST_TIME
-// #define TEST_TRACTOR_LIGHTING
-// #define TEST_TRACPTOSETPOINT
-// #define TEST_TRACAUX
-// #define TEST_TRACPTO
-// #define TEST_TRACCERT
-// #define TEST_TRACGUIDANCE
+//the defines are set with the update_makefile skript if in the corresponding config_1_2_WriteIso
+//the defines are set. All base data is defined if the USE_BASE define is active
+#ifdef USE_TRACTOR_LIGHT
+  #define TEST_TRACTOR_LIGHTING
+#endif
+#ifdef USE_TRACTOR_GENERAL
+  #define TEST_TRACTOR_GENERAL
+#endif
+#ifdef USE_TRACTOR_MOVE
+ #define TEST_TRACTOR_MOVING
+ #define TEST_TRACMOVESETPOINT
+#endif
+#ifdef USE_TIME_GPS
+ #define TEST_TIME
+#endif
+#ifdef USE_TRACTOR_AUX
+ #define TEST_TRACAUX
+#endif
+#ifdef USE_BASE_TRACPTO
+ #define TEST_TRACPTO
+ #define TEST_TRACPTOSETPOINT
+#endif
+#ifdef USE_TRACTOR_CERTIFICATION
+ #define TEST_TRACCERT
+#endif
+#ifdef USE_TRACTOR_GUIDANCE
+ #define TEST_TRACGUIDANCE
+#endif
 
 /* include some needed util headers */
-//#include <IsoAgLib/util/config.h>
+#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/igetypos_c.h>
 
 /* include headers for the needed drivers */
@@ -238,6 +257,9 @@
 #endif
 #ifdef TEST_TRACPTOSETPOINT
   #include <IsoAgLib/comm/Base/ext/itracptosetpoint_c.h>
+#endif
+#ifdef TEST_TRACMOVESETPOINT
+  #include <IsoAgLib/comm/Base/ext/itracmovesetpoint_c.h>
 #endif
 #ifdef TEST_TRACAUX
   #include <IsoAgLib/comm/Base/ext/itracaux_c.h>
@@ -269,7 +291,7 @@ using namespace IsoAgLib;
 */
 static const int32_t cui32_canChannel = 0;
 
-#ifdef TEST_TRACTOR_MOVING
+#if defined TEST_TRACTOR_MOVING || defined TEST_TRACMOVESETPOINT
 /*************DUMMY FUNCTIONALITY FOR MOVING *****************/
 /** dummy function to serve a real speed for the demonstration */
 int32_t localGetRealSpeed() { return (iSystem_c::getTime()*34/1000);; }
@@ -449,9 +471,8 @@ int main()
   getITracGuidanceInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
   #endif
 
-  #ifdef TEST_TRACPTOSETPOINT
-  //pto set point tractor mode, no sending of data
-  getITracPtoSetPointInstance().config(NULL, IsoAgLib::IdentModeTractor);
+  #ifdef TEST_TRACMOVESETPOINT
+  getITracMoveSetPointInstance().config(&myDevKey, IsoAgLib::IdentModeTractor);
   #endif
 
   /** IMPORTANT:
@@ -491,6 +512,12 @@ int main()
   #endif
   #if defined TEST_TRACTOR_GENERAL || defined TEST_TRACTOR_MOVING
   uint32_t count = 0;
+  #endif
+  #ifdef TEST_TRACAUX
+  int extendPortFlow = -125;
+  #endif
+  #ifdef TEST_TRACGUIDANCE
+  int estCurvature = 0;
   #endif
   while ( iSystem_c::canEn() )
   { // run main loop
@@ -566,10 +593,10 @@ int main()
 
        // if(count > 15)
         if (count > 10 && count < 20)
-  ;//      getITracMoveInstance().setSpeedReal(localGetSpeedReal(i32_speedReal));
+          getITracMoveInstance().setSpeedReal(localGetSpeedReal(i32_speedReal));
         else {
-  //      getITracMoveInstance().setSpeedReal(localGetSpeedReal(0xFF00));
-        getITracMoveInstance().setDistReal(0xFFFFFFFF);
+          getITracMoveInstance().setSpeedReal(localGetSpeedReal(0xFF00));
+          getITracMoveInstance().setDistReal(0xFFFFFFFF);
         }
         getITracMoveInstance().setSpeedTheor(localGetSpeedTheor(i32_speedTheor));
         if (i32_speedReal < 0)
@@ -582,13 +609,20 @@ int main()
           getITracMoveInstance().setDirectionTheor(IsoAgLib::IsoForward);
         getITracMoveInstance().setDistTheor(ui32_tempTheorDist);
         getITracMoveInstance().setOperatorDirectionReversed(IsoAgLib::IsoReversed);
-        //getITracMoveInstance().setSelectedSpeed(100);
+if (count < 5 )
+        getITracMoveInstance().setSelectedSpeed(count);
+else
+        getITracMoveInstance().setSelectedSpeed(256);
         //getITracMoveInstance().setSelectedSpeedSource(IsoAgLib::IsoNavigationBasedSpeed);
+        count++;
+        #endif
 
-        EXTERNAL_DEBUG_DEVICE << "\t+++++++++ Moving KLASSE +++++++++\n";
-        EXTERNAL_DEBUG_DEVICE << "selected direction command:       " << getIsoDirectionFlag(getITracMoveInstance().selectedDirectionCmd() ) << "\n";
-        EXTERNAL_DEBUG_DEVICE << "selected speed set point command: " << getITracMoveInstance().selectedSpeedSetPointCmd() << "\n";
-        EXTERNAL_DEBUG_DEVICE << "selected speed set point limit:   " << getITracMoveInstance().selectedSpeedSetPointLimit() << "\n";
+        #ifdef TEST_TRACMOVESETPOINT
+        //MOVING SET POINT CLASS TEST FUNCTIONALITY
+        EXTERNAL_DEBUG_DEVICE << "\t+++++++++ Moving SET POINT KLASSE +++++++++\n";
+        EXTERNAL_DEBUG_DEVICE << "selected direction command:       " << getIsoDirectionFlag(getITracMoveSetPointInstance().selectedDirectionCmd() ) << "\n";
+        EXTERNAL_DEBUG_DEVICE << "selected speed set point command: " << getITracMoveSetPointInstance().selectedSpeedSetPointCmd() << "\n";
+        EXTERNAL_DEBUG_DEVICE << "selected speed set point limit:   " << getITracMoveSetPointInstance().selectedSpeedSetPointLimit() << "\n";
         #endif
 
         #ifdef TEST_TRACTOR_GENERAL
@@ -660,7 +694,7 @@ int main()
 
         #ifdef TEST_TRACAUX
         //TRACTOR AUXILIARY VALVE CLASS TEST FUNCTIONALITY
-        int extendPortFlow = -125;
+        extendPortFlow += 2;
         EXTERNAL_DEBUG_DEVICE << "\t+++++++++ AUXILIARY VALVE KLASSE +++++++++\n";
         if ( !getITracAuxInstance().setExtendPortEstFlow(2, extendPortFlow) )
           EXTERNAL_DEBUG_DEVICE << "Either extend port flow estimated value is not between -125 to 125 or valve number is not betwenn 0 - 15.\n";
@@ -672,7 +706,7 @@ int main()
           EXTERNAL_DEBUG_DEVICE << "(estValveState) Valve number is not between 0 - 15.\n";
         if ( !getITracAuxInstance().setExtendPortMeasuredFlow(2, 125) )
           EXTERNAL_DEBUG_DEVICE << "Either extend port flow measured value is not between -125 to 125 or valve number is not betwenn 0 - 15.\n";
-        if ( !getITracAuxInstance().setRetractPortMeasuredFlow(2, 126) )
+        if ( !getITracAuxInstance().setRetractPortMeasuredFlow(2, 100) )
           EXTERNAL_DEBUG_DEVICE << "Either retract port flow measured value is not between -125 to 125 or valve number is not betwenn 0 - 15.\n";
         if ( !getITracAuxInstance().setExtendPortPressure(2, 321000) )
           EXTERNAL_DEBUG_DEVICE << "Either extend port pressure value is not between 0 - 321275 or valve number is not betwenn 0 - 15.\n";
@@ -685,10 +719,9 @@ int main()
         if ( !getITracAuxInstance().setMeasuredValveLimitStatus(2, IsoAgLib::IsoNotLimited) )
           EXTERNAL_DEBUG_DEVICE << "(measuredValveLimitStatus) Valve number is not between 0 - 15.\n";
 
-        EXTERNAL_DEBUG_DEVICE << "command port flow:  "      << static_cast<int>( getITracAuxInstance().cmdPortFlow(2) ) << "\n";
+        EXTERNAL_DEBUG_DEVICE << "command port flow:  "      << static_cast<int>( getITracAuxInstance().cmdPortFlow(0) ) << "\n";
         EXTERNAL_DEBUG_DEVICE << "command fail save mode:  " << getIsoAuxFlag( getITracAuxInstance().cmdFailSaveMode(2) ) << "\n";
         EXTERNAL_DEBUG_DEVICE << "command valve state:  "    << getIsoAuxFlagExtended( getITracAuxInstance().cmdValveState(2) ) << "\n";
-
         #endif
 
         #ifdef TEST_TRACCERT
@@ -707,7 +740,8 @@ int main()
         EXTERNAL_DEBUG_DEVICE << "curvature command:             " << getITracGuidanceInstance().curvatureCmd() << "\n";
         EXTERNAL_DEBUG_DEVICE << "request reset command status:  " << IsoSteerFlag( getITracGuidanceInstance().curvatureCmdStatus() ) << "\n";
 
-        getITracGuidanceInstance().setEstCurvature(3126);
+        estCurvature += 2;
+        getITracGuidanceInstance().setEstCurvature(estCurvature);
         getITracGuidanceInstance().setRequestResetCmdStatus(IsoAgLib::IsoResetRequired);
         getITracGuidanceInstance().setSteeringInputPosStatus(IsoAgLib::IsoCorrectPos);
         getITracGuidanceInstance().setSteeringSystemReadiness(IsoAgLib::IsoSystemNotReady);
