@@ -292,4 +292,28 @@ bool BaseCommon_c::timeEvent()
   return true;
 }
 
+#ifdef USE_ISO_11783
+/** process a ISO11783 base information PGN */
+bool BaseCommon_c::isoProcessMsg()
+{ return false;}
+/** send a ISO11783 base information PGN.
+  * this is only called when sending ident is configured and it has already claimed an address
+  */
+bool BaseCommon_c::isoTimeEventTracMode()
+{ return true;}
+/** send a ISO11783 base information PGN.
+  * this is only called when sending ident is configured and it has already claimed an address
+  */
+bool BaseCommon_c::isoTimeEventImplMode()
+{ return true;}
+#endif
+#ifdef USE_DIN_9684
+/** process a DIN9684 base information PGN */
+bool BaseCommon_c::dinProcessMsg() {return false;}
+/** send a DIN9684 base information PGN
+  * this is only called when sending ident is configured and it has already claimed an address
+  */
+bool BaseCommon_c::dinTimeEventTracMode() {return true;}
+#endif
+
 }// end namespace __IsoAgLib

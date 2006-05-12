@@ -283,9 +283,9 @@ namespace __IsoAgLib {
     /** send a DIN9684 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool dinTimeEventTracMode( );
+    virtual bool dinTimeEventTracMode( );
     /** process a DIN9684 moving information PGN */
-    bool dinProcessMsg();
+    virtual bool dinProcessMsg();
     #endif
 
     /** get int16_t overflowed val from long
@@ -298,15 +298,13 @@ namespace __IsoAgLib {
     /** send a ISO11783 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool isoTimeEventTracMode();
-    /** DUMMY nothing to do!! */
-    bool isoTimeEventImplMode() { return true; }
+    virtual bool isoTimeEventTracMode();
     /** send a ISO11783 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool isoTimeEventImplementMode( );
+    virtual bool isoTimeEventImplementMode( );
     /** process a ISO11783 moving information PGN */
-    bool isoProcessMsg();
+    virtual bool isoProcessMsg();
      /** send moving data with ground&theor speed&dist */
     void isoSendMovingTracMode( );
      /** send moving data with ground&theor speed&dist */

@@ -378,19 +378,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** send a DIN9684 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
     */
-    bool dinTimeEventTracMode( );
+    virtual bool dinTimeEventTracMode( );
     /** process a DIN9684 base information PGN */
-    bool dinProcessMsg();
+    virtual bool dinProcessMsg();
     #endif
     #if defined(USE_ISO_11783)
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    bool isoTimeEventTracMode( );
+    virtual bool isoTimeEventTracMode( );
     /** Detect stop of PTO update from tractor -> indication for stopped PTO */
-    bool isoTimeEventImplMode();
+    virtual bool isoTimeEventImplMode();
     /** process a ISO11783 base information PGN */
-    bool isoProcessMsg();
+    virtual bool isoProcessMsg();
     #endif
 
   private:

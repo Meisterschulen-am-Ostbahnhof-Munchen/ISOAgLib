@@ -444,10 +444,10 @@ private:
   /** send a DIN9684 base information PGN.
    * this is only called when sending ident is configured and it has already claimed an address
    */
-  bool dinTimeEventTracMode( );
+  virtual bool dinTimeEventTracMode( );
 
   /** process a DIN9684 base information PGN */
-  bool dinProcessMsg();
+  virtual bool dinProcessMsg();
   #endif // END of USE_DIN_9684
 
   #if defined(USE_ISO_11783)
@@ -455,14 +455,12 @@ private:
     * this is only called when sending ident is configured and it has already claimed an address
     */
   virtual bool isoTimeEventTracMode();
-  /** DUMMY nothing to do!! */
-  bool isoTimeEventImplMode() {return true;}
 
   /** send position rapid update message */
   void isoSendPositionRapidUpdate( void );
 
   /** process a ISO11783 base information PGN */
-  bool isoProcessMsg();
+  virtual bool isoProcessMsg();
 
   #if defined(NMEA_2000_FAST_PACKET)
   /** send position as detailed stream */
