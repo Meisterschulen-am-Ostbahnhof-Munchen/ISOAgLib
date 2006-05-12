@@ -228,7 +228,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         // parse other information
         getTracGeneralInstance4Comm().dinParseHitchEngineFlags( data() );
         setSelectedDataSourceDevKey( c_tempDevKey );
-        setUpdateTime( ci32_now );
+        setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
       }
       return true;
     }
