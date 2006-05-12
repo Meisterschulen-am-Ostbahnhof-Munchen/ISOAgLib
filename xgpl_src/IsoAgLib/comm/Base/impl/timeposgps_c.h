@@ -88,6 +88,7 @@
 #ifndef TIMEPOSGPS_C_H
 #define TIMEPOSGPS_C_H
 
+#include <ctime>
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 
 // Begin Namespace __IsoAgLib
