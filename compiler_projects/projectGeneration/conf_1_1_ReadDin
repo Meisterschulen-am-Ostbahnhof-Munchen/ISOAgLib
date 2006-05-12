@@ -95,7 +95,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"|"linux_server_client"
-USE_CAN_DRIVER="linux_server_client"
+USE_CAN_DRIVER="simulating"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"
@@ -148,7 +148,7 @@ PRJ_DIN9684=1
 
 # all BASE data are selected
 # if only special BASE data should be used select one or more of the following parts
-# PRJ_BASE=0
+PRJ_BASE=1
 
 # only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
 # PRJ_TRACTOR_GENERAL=0
@@ -157,18 +157,18 @@ PRJ_DIN9684=1
 # PRJ_TRACTOR_MOVE=0
 
 # only incorporate parts from BASE that provide tractor PTO information
-# this part includes tractor pto set point data which is not available in the 
-# free ISOAgLib edition. If you are interested in this feature please contact OSB AG 
+# this part includes tractor pto set point data which is not available in the
+# free ISOAgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_PTO=0
 
 # only incorporate parts from BASE that provide tractor lighting information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_LIGHT=0
 
 # only incorporate parts from BASE that provide tractor auxiliary valve information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_AUX=0
 
 # only incorporate parts from BASE that provide time and GPS information
@@ -176,12 +176,12 @@ PRJ_DIN9684=1
 
 # only incorporate parts from BASE that provide tractor guidance information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_GUIDANCE=0
 
 # only incorporate parts from BASE that provide tractor certification information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_CERTIFICATION=0
 
 # ###############################################################
