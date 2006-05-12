@@ -53,6 +53,7 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectresetTextOS.init (&iVtObjectresetTextOS_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectresetTextOS_1.init (&iVtObjectresetTextOS_1_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectresetTextOS_2.init (&iVtObjectresetTextOS_2_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectInputMiles.init (&iVtObjectInputMiles_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectMainMask.init (&iVtObjectMainMask_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectmask1contentscontainer.init (&iVtObjectmask1contentscontainer_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed4.init (&iVtObjectUnnamed4_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
@@ -66,7 +67,7 @@ void iObjectPool_simpleVTIsoPool_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
   iVtObjectColOS.init (&iVtObjectColOS_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectAccelArchedBarGraph.init (&iVtObjectAccelArchedBarGraph_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectOpsFakeMileage.init (&iVtObjectOpsFakeMileage_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
-  iVtObjectInputMiles.init (&iVtObjectInputMiles_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
+  iVtObjectChangeAwayPointer.init (&iVtObjectChangeAwayPointer_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectInputListTypFakeMiles.init (&iVtObjectInputListTypFakeMiles_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed12.init (&iVtObjectUnnamed12_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);
   iVtObjectUnnamed13.init (&iVtObjectUnnamed13_sROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);

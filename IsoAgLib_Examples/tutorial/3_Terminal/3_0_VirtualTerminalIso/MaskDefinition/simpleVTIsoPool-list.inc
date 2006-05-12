@@ -33,6 +33,7 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectBigLogo,
   &iVtObjectleine,
   &iVtObjectKeyReset,
+  &iVtObjectInputMiles,
   &iVtObjectMainMask,
   &iVtObjectmask1contentscontainer,
   &iVtObjectUnnamed4,
@@ -46,7 +47,7 @@ IsoAgLib::iVtObject_c* all_iVtObjects [] = {
   &iVtObjectColOS,
   &iVtObjectAccelArchedBarGraph,
   &iVtObjectOpsFakeMileage,
-  &iVtObjectInputMiles,
+  &iVtObjectChangeAwayPointer,
   &iVtObjectInputListTypFakeMiles,
   &iVtObjectUnnamed12,
   &iVtObjectUnnamed13,
@@ -111,4 +112,4 @@ IsoAgLib::iVtObject_c** all_iVtObjectLists [] = {
   NULL // indicate end of list
 };
 
-iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists, 102, 6, 200, 60, 32) {};
+iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists, 103, 6, 200, 60, 32) {};

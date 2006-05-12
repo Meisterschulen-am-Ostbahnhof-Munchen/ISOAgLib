@@ -2,6 +2,12 @@
 
 <objectpool>
 
+  <inputnumber name='InputMiles'
+               width='36' height='8' offset='0' scale='1'
+               background_colour='white' number_of_decimals='0' format='fixed'
+               font_attributes='FontAttributesNormal6x8R' horizontal_justification='left'
+               enabled='yes' min_value='0' max_value='999999' />
+
   <datamask id='1101' name='MainMask' background_colour='white' soft_key_mask='softkeys1' >
     <include_object pos_x='0' pos_y='0' name='containerInAllMasks' />
 
@@ -28,12 +34,8 @@
 
       <archedbargraph name='AccelArchedBarGraph' width='40' height='40' pos_x='4' block_col='13' block_font='FontAttributesNormal6x8' pos_y='50' start_angle='10' end_angle='80' colour='olive' target_line_colour='purple' bar_graph_width='5' min_value='+9985' max_value='10015' value='+10000' target_value='+10000' options='border+targetline+clockwise'/>
 
-      <outputstring name="OpsFakeMileage" value="Fake Mileage"      pos_x='4' pos_y='70'  width='72' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8R' />
-      <inputnumber name='InputMiles'
-                   pos_x='4' pos_y='70' width='36' height='8' offset='0' scale='1'
-                   background_colour='white' number_of_decimals='0' format='fixed'
-                   font_attributes='FontAttributesNormal6x8R' horizontal_justification='left'
-                   enabled='yes' min_value='0' max_value='999999' block_col='13' block_font='FontAttributesNormal6x8' />
+      <outputstring name="OpsFakeMileage" value="Fake Mileage"   pos_x='4' pos_y='70' width='72' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8R' />
+      <objectpointer name="ChangeAwayPointer" value="InputMiles" pos_x='4' pos_y='70' block_col='13' block_font='FontAttributesNormal6x8'/>
 
       <include_object name="OpsFakeMileage" pos_x='4' pos_y='74'  width='72' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8R' block_row='1' block_font='FontAttributesNormal6x8' />
       <inputlist name='InputListTypFakeMiles' pos_x='4' pos_y='74' width='24' height='8' block_col='13' block_row='1' block_font='FontAttributesNormal6x8' >

@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 // #define DEBUG_RAPID_UPDATE
-
+// #define DEBUG_TOGGLE_POINTER
 
 /* *********************************************************************** */
 /** \example 3_0_VirtualTerminalIso.cpp
@@ -222,6 +222,8 @@
 // with this command the text part "IsoAgLib::" can be avoided, which
 // is needed for the documentation generator
 using namespace IsoAgLib;
+
+
 
 
 
@@ -560,6 +562,21 @@ int main()
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
+#ifdef DEBUG_TOGGLE_POINTER
+    {
+      static int32_t si32_lastPtrTime = 0;
+      int32_t i32_nowTime = HAL::getTime();
+      if ((i32_nowTime - si32_lastPtrTime) > 5000) {
+        static bool sb_togglePtr = false;
+        if (sb_togglePtr)
+             iVtObjectChangeAwayPointer.setValue (NULL);
+        else iVtObjectChangeAwayPointer.setValue (&iVtObjectInputMiles);
+        sb_togglePtr = !sb_togglePtr;
+        si32_lastPtrTime = i32_nowTime;
+      }
+    }
+#endif
+
 #ifdef DEBUG_RAPID_UPDATE
     {
       static int32_t si32_lastTime = 0;
