@@ -246,7 +246,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           setOverflowSecure(ui32_distTheor, ui32_lastDistTheor, data().getUint16Data( 6 ));
 
           setSelectedDataSourceDevKey(c_tempDevKey);
-          setUpdateTime( ci32_now );
+          setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
         }
         else
         { // there is a sender conflict

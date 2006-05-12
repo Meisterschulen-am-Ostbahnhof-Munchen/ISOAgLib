@@ -299,10 +299,6 @@ namespace __IsoAgLib {
       * this is only called when sending ident is configured and it has already claimed an address
       */
     virtual bool isoTimeEventTracMode();
-    /** send a ISO11783 moving information PGN.
-      * this is only called when sending ident is configured and it has already claimed an address
-      */
-    virtual bool isoTimeEventImplementMode( );
     /** process a ISO11783 moving information PGN */
     virtual bool isoProcessMsg();
      /** send moving data with ground&theor speed&dist */
