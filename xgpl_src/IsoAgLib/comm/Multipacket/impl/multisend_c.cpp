@@ -1074,15 +1074,16 @@ MultiSend_c::SendStream_c::processMsg()
             } else {
               // we're streaming on, so save this position if it should happen we resend from here...
               pc_mss->saveDataNextStreamPart ();
-              if (b_ext) {
-                ui32_offset += b_pkgSent;
-              }
             }
           }
           else
-          {
-            // nothing to do here, as "i32_DC = read_DC();" from above sets the "i32_DC" to where it wants data
+          { // nothing to do here, as "i32_DC = read_DC();" from above sets the "i32_DC" to where it wants data
             // in the case of "uint8_t[]" random access is possible, so that should be enough in my opinion --mjw
+          }
+
+          if ((ui32_pkgCTSd != ui32_lastNextPacketNumberToSend) && b_ext)
+          { // increase DPO
+            ui32_offset += b_pkgSent;
           }
           // update NextPacketNumberToSend!
           ui32_lastNextPacketNumberToSend = ui32_pkgCTSd;
