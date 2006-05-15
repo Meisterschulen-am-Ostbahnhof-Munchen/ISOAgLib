@@ -317,6 +317,8 @@ void SetpointLocal_c::acceptNewMaster( bool rb_accept){
             pc_master->setDefault(pc_registerCache->getDefault());
 
           vec_register.erase( pc_registerCache );
+          // set pc_registerCache to valid value
+          pc_registerCache = pc_master;
           #ifdef DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
