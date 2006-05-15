@@ -68,26 +68,26 @@ getIisoTerminalInstance().init (&c_myIdent, &MyPool_c, "WS-Name");
 \subsection Function Control Flow
 Assuming the following (illustrating) sequences, the according handlers will be called as described here:
 <ol>
-  <li> The objectpool has just been uploaded or loaded from nonvolatile-storage successfully. It has then been (up)loaded in the language currently setup, or the default language (if the setup language is not supported in the workingset). <b>eventObjectPoolUploadedSuccessfully</b> will be called with paramter <b>rb_wasLanguageUpdate == false</b> and the language it was uploaded to the VT in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information").
+  <li> The objectpool has just been uploaded or loaded from nonvolatile-storage successfully. It has then been (up)loaded in the language currently setup, or the default language (if the setup language is not supported in the workingset). <b>eventObjectPoolUploadedSuccessfully</b> will be called with parameter <b>rb_wasLanguageUpdate == false</b>, the language the objectpool was uploaded to the VT in the parameters <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information").
   <li> The Operator changes the language. If there's an update of the objectpool required, <b>eventPrepareForLanguageChange</b> is called (with the new \ref LanguageInfo "Language Information") so the application can issue some commands BEFORE the partial object pool update will take place. This is important if the partial language pool update takes a while (when there're many language-dependend objects) and the ECU won't be able to react on anything. So the best thing would be to issue a change to a special "Wait while changing language..."-mask here.
        (Note that this may not occur on all changes. Changing from one unsupported language to another unsupported will NOT lead to anything (no pool update, no handler getting called!))
-  <li> After the language update has succeeded, <b>eventObjectPoolUploadedSuccessfully</b> will be called with paramter <b>rb_wasLanguageUpdate == true</b> and the language it was changed to in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information"). Based on <b>rb_wasLanguageUpdate == true</b> it can now be switched back from the "Wait while changing language..."-mask if it was changed to such a mask before.
+  <li> After the language update has succeeded, <b>eventObjectPoolUploadedSuccessfully</b> will be called with parameter <b>rb_wasLanguageUpdate == true</b> and the language it was changed to in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b> (see \ref LanguageInfo "Language Information"). Based on <b>rb_wasLanguageUpdate == true</b> it can now be switched back from the "Wait while changing language..."-mask if it was changed to such a mask before.
   <li> Now lets assume that the VT drops off-line. The workingset has to enter a safe state according to the ISO specs, so <b>eventEnterSafeState ()</b> is being called. The application should then stop all VT operation (change commands, etc.) for now.
-  <li> After the VT is turned back on and the objectpool has been successfully re(up)loaded, <b>eventObjectPoolUploadedSuccessfully</b> will be called again with paramter <b>rb_wasLanguageUpdate == false</b> and the language it was uploaded to the VT in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b>.
+  <li> After the VT is turned back on and the objectpool has been successfully re(up)loaded, <b>eventObjectPoolUploadedSuccessfully</b> will be called again with parameter <b>rb_wasLanguageUpdate == false</b> and the language it was uploaded to the VT in <b>ri8_languageIndex</b> and <b>rui16_languageCode</b>.
 </ol>
-During operation the following events can occur, which will lead to the their associated handlers being called:
+During operation the following events can occur, which will lead to their associated handlers being called:
 <ul>
-  <li> The operator presses a softkey or button: <b>eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton)</b>
+  <li> The operator presses a softkey or button. <b>eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton)</b>
   <li> The operator enters a numeric value in an InputNumber field, (de)selects an InputBoolean field or selects an entry of an InputList: <b>eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value)</b>
-  <li> The operator enters text in an InputString field: <b>eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast)</b> - for normal operation only react when <i>rb_isLast==true</i>. See the Tutorial 3.0 example.
+  <li> The operator enters text in an InputString field. <b>eventStringValue (uint16_t rui16_objId, uint8_t rui8_length, StreamInput_c &refc_streaminput, uint8_t rui8_unparsedBytes, bool b_isFirst, bool b_isLast)</b> - for normal operation only react when <i>rb_isLast==true</i>. See the Tutorial 3.0 example.
   <li> The operator presses on the touch-screen or alike in a region where no input field has been placed, so <b>eventPointingEvent (uint16_t rui16_xPosition, uint16_t rui16_yPosition)</b> gets called. NOTE that the positions are the actual positions from the VT and NOT positions from your objectpool. Remember that your objectpool's coordinates/size are probably scaled to completely fill out the mask's area! ALSO NOTE that this MAY BE CHANGED at a later time to deliver unified objectpool coordinates, or probably both to avoid any misinterpretation. So for now you'll have to divide the coordinates by the scaling factor!
   <li> If due to some connection problems a string value activation command, that is being sent via TransportProtocol, from the VT to the ECU is aborted in between, <b>eventStringValueAbort()</b> is called. You need ONLY care for this event if you do partial parsing of the string via eventStringValue. If you only parse the string when it's completely received (by b_isLast==true), then you do NOT have to care about this event (which is the normal case!).
-  <li> If you care for the response of a command, you can overload <b>eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8])</b>. It will be called when receiving a response. I a message times out, NO notification is done yet.
+  <li> If you care for the response of a command, you can overload <b>eventCommandResponse (uint8_t rui8_responseCommandError, const uint8_t rpui8_responseDataBytes[8])</b>. It will be called when receiving a response. If a message times out, NO notification is done yet.
 </ul>
 The next events can occur anytime, not only when the objectpool is on display!
 <ul>
   <li> When the operator changes Language, Units, Time-Display, etc. the handler <b>eventLanguagePgn (const localSettings_s& rrefs_localSettings)</b> will be called.
-  <li> When the VT sends it Status Message, the <b>eventVtStatusMsg()</b> handler is called. If you want to react on those messages, override the function, if not, do not bother at all (normal case).
+  <li> When the VT sends its Status Message, the <b>eventVtStatusMsg()</b> handler is called. If you want to react on those messages, override the function, if not, do not bother at all (normal case).
 </ul>
 During upload, the following function will get called:
 <ul>
@@ -171,7 +171,7 @@ Now here's a snippet from <i>simpleVTIsoPool.xml-1_DataMask1</i>:
 
 
 \section MultiLanguage HOW TO design a multi-language objectpool
-As you already specify in the \<workingset\> object which languages are supported by this workingset, vt2iso/IsoAgLib uses these languages for the multi-language support.
+As you already specified in the \<workingset\> object which languages are supported by this workingset, vt2iso/IsoAgLib uses these languages for the multi-language support.
 
 You can either not specify any language at all (if you only have one fix language in your workingset) or use the multilanguage feature and specify a number of languages like
 \code
@@ -227,14 +227,14 @@ You can also specify more languages at once or use the asterisk to make it avail
   <stringvariable name='StrGreen' language="en+de+it" value="green" />  <!-- Note that this actually works, but makes no sense, as all languages have the same value. -->
   <stringvariable name='StrBlue'  language="*"        value="blue" />   <!-- "*" has the same meaning as "en+de+it". Same senseless... -->
 \endcode
-If you are just to exchange the texts of objects given in the <i>value='...'</i> attribute, you can just enter the languages for which you have the value attribute stored in the language-text files and the <i>value='...'</i> attribute will be automatically taken from those files. See \ref ValueFile "Naming and Format of language file" for further information on these files. You can also combine the different approachs, so it could look like the following:
+If you are just to exchange the texts of objects given in the <i>value='...'</i> attribute, you can just enter the languages for which you have the value attribute stored in the language-text files and the <i>value='...'</i> attribute will be automatically taken from those files. See \ref ValueFile "Naming, Format and Structure of language file" for further information on these files. You can also combine the different approachs, so it could look like the following:
 \code
   <stringvariable name='StrYellow' language='en' value='yellow' />
   <stringvariable name='StrYellow' language='de+it' />
 \endcode
 The values for the german and italian version of StrYellow will be taken out of their corresponding language-value-file. Normally it makes sense to put all languages in language-value-files and simply add <i>language='*'</i> to the object.
 
-\section ValueFile Naming and structure of language-value-files
+\section ValueFile Naming, Format and Structure of language-value-files
 Given a language in an object and omitting the <i>value='...'</i> attribute, vt2iso will search through the so called language-value-files for the value of that specific language. The filename is built from the name passed to vt2iso (in our example above 'simpleVTIsoPool') and the addition '.values.LC.txt' whereas 'LC' is being replaced by the language-code. For the english language the result would be 'simpleVTIsoPool.values.en.txt'.
 
 The structure of the files is best described with the following example from the Tutorial 3.0:
@@ -328,8 +328,8 @@ it can't be scaled down to 3x4, so 6x8 would also be used and probably half of y
 
 \subsection Gaps in the masks / Font-relative positioning
 
-As the font-attributes can't be scaled with the exact scaling-factor, the best matching font-size is being used. Scaling an objectpool from 200x200 to 240x240 will result in a scaling factor of 1.2. Scaling a 6x8 font by 1.2 will result in a theoretical font size of 7.2x9.6. So only the next possible smaller font-size can be used, which is again 6x8. So there's a \"gap\" after the text outputed. This gap doesn't harm unless you want to place some other object directly at the right end side of the text.
-A common use case would be a line of text assemled by four output objects, e.g. "Change position 00 to item 07" If this is split up into the output-strings "Change position ", "to item" and two output-number fields, then this gap would really not look nice but disturbing.
+As the font-attributes can't be scaled with the exact scaling-factor, the best matching font-size is being used. Scaling an objectpool from 200x200 to 240x240 will result in a scaling factor of 1.2. Scaling a 6x8 font by 1.2 will result in a theoretical font size of 7.2x9.6. So only the next possible smaller font-size can be used, which is again 6x8. So there's a "gap" after the text outputed. This gap doesn't harm unless you want to place some other object directly at the right end side of the text.
+A common use case would be a line of text assembled by four output objects, e.g. "Change position 00 to item 07" If this is split up into the output-strings "Change position ", "to item" and two output-number fields, then this gap would really not look nice but disturbing.
 So you can additionally to the <i>pos_x</i> and <i>pos_y</i> attributes specify the position of an object dependent on the real scaled size of a given font-attributes object. Simply take a look at the following example:
 \code
 <datamask {attributes]>
