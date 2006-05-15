@@ -196,6 +196,11 @@
 
 /** set the following define, if the lookup result shall be sent via RS232 */
 #define USE_RS232_FOR_DEBUG
+
+#ifdef USE_RS232_FOR_DEBUG
+ #include <supplementary_driver/driver/rs232/irs232io_c.h>
+#endif
+
 /** set the following defines if to test one or more of the base data*/
 //the defines are set with the update_makefile skript if in the corresponding config_1_0_ReadIso
 //the defines are set. All base data is defined if the USE_BASE define is active
@@ -206,8 +211,8 @@
   #define TEST_TRACTOR_GENERAL
 #endif
 #ifdef USE_TRACTOR_MOVE
-  #define TEST_TRACTOR_MOVING
-  #define TEST_TRACMOVESETPOINT
+ #define TEST_TRACTOR_MOVING
+ #define TEST_TRACMOVESETPOINT
 #endif
 #ifdef USE_TIME_GPS
   #define TEST_TIME
@@ -230,15 +235,12 @@
 // of the "IsoAgLib"
 
 /* include some needed util headers */
+#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/igetypos_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <IsoAgLib/driver/can/icanio_c.h>
-
-#ifdef USE_RS232_FOR_DEBUG
-  #include <supplementary_driver/driver/rs232/irs232io_c.h>
-#endif
 
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
