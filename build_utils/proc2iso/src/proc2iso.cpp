@@ -118,10 +118,13 @@ static void usage()
     "Options:\n"
     " -v=xxx     Validation scheme [always | never | auto]. Defaults to auto\n"
     " -n         Enable namespace processing. Defaults to off.\n"
-    " -s=xxx.xsd Enable schema processing with XML schema xxx.xsd either from the path relative to the directory of the device description\n \
-           OR the absolute pathname starting with '/' (Linux) or '\\' (Win).\n \
-           Defaults to off.\n"
     " -f         Enable full schema constraint checking. Defaults to off.\n"
+
+    " -s=xxx.xsd \
+      Enable scheme processing with XML scheme xxx.xsd either from the path relative to the directory of the device description\n \
+      OR the absolute pathname starting with '/' (Linux) or '\\' (Win).\n \
+      Defaults to off. \
+      Using an XML scheme will also set the necessary options for namespace, validation scheme and full schema constraint checking \n"
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
     " -?         Show this help.\n\n"
     << std::endl;
@@ -1498,6 +1501,9 @@ int main(int argC, char* argV[])
     else if (!strncmp(argV[argInd], "-s=", 3) || !strncmp(argV[argInd], "-S=", 3))
     {
       doSchema = true;
+      doNamespaces = true;
+      schemaFullChecking = true;
+      valScheme = AbstractDOMParser::Val_Always;
       schemaPath = &argV[argInd][3];
     }
     else if (!strcmp(argV[argInd], "-f") || !strcmp(argV[argInd], "-F"))

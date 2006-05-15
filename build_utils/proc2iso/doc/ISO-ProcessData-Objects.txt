@@ -1,7 +1,7 @@
 /** @page XMLProcSpec Specification for ISO ProcessData XML files (device description)
 \section XMLGeneralNotes General notes
 <ul>
-  <li>This version of proc2iso is designed to work with TCs. It parses a device description given in xml format and generates a C++-bytestream for
+  <li>This version of proc2iso is designed to work with TCs. It parses a device description given in XML format and generates a C++-bytestream for
       the upload to the TC and a C++-header file <br>
       with the necessary declarations for the correct constructors (see tutorials 2_0 to 2_6).
 </ul>
@@ -21,7 +21,7 @@ bool b_registerSuccess = getIProcessInstance().getDevPropertyHandlerInstance().r
 \endcode
 <li> If the device pool was registered successfully the function returns true. The ending of <i>deviceDescription_xx</i> and
      <i>ui32_arrayLength_xx</i> depends on the language <br>
-     code in the localizationlabel of the device description and has to be hand customized.
+     code in the localization label of the device description and has to be hand customized.
 
 \section XMLGeneralStructure General structure of the XML-file
 First of all some general rules for the structure of a device description.
@@ -35,7 +35,6 @@ Have a look at a little codesnippet to show that root element:
 [...]
 </device>
 \endcode
-<li> Every XML-element which could contain nested elements has to be "closed" with a closing tag <b></device ></b>
 </ul>
 A further code example shows how XML-elements have to be nested in the root element:
 \code
@@ -50,14 +49,13 @@ A further code example shows how XML-elements have to be nested in the root elem
   </deviceelement>
 </device>
 \endcode
-Note that XML-elements which don't contain any nested element are closed that way: <b><devicedinprocessdata [...] /></b>.
 
 \section XMLNamingConvention Naming-Conventions for \< TAG attribute =' value ' \>
 <ul>
 <li> All elements are named according to <b>ISO 11783</b>. A further XML-element was added to enable processdata elements with more than one DDI
      (e.g. with min and max values). It is called <b>deviceprocessdatacombination</b>.<br>
-     <i>Example:</i> processdata Bale Size: there are five different defined DDI's for the bale size. Sometimes it is necessary to measure several
-     values from one processdata.
+     <i>Example:</i> processdata Bale Size: there are five different defined DDI's for the bale size. Often it is necessary to get several
+     measurement or setpoint values from one processdata.
 <li> <b>Tag</b>s are written WITHOUT underscores or spaces (for example "<deviceprocessdata>").
 <li> <b>Attribute</b>s are written only WITH underscores (for example "command_type=").
 <li> <b>Values</b> are written WITHOUT underscores or spaces, the name of the XML-element is an exception (for example "defaultset").
@@ -78,7 +76,7 @@ The following table shows which objects may be included into which other.
 </table>
 
 \section XMLReference Reference for correct attribute names
-Next table gives a review of all available attributes with value range.
+Next table gives an overview of all available attributes with value range.
 <table><tr><th> attribute name </th><th> attribute type</th></tr>
 <tr><td>designator</td><td> Chose a name which is descriptive for the represented element, max. 32 chars </td></tr>
 <tr><td>software_version</td><td> Device software version, max. 32 chars</td></tr>

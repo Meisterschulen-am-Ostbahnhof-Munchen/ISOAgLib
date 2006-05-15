@@ -9,7 +9,7 @@
 General notes</a></h2>
 <ul>
 <li>
-This version of proc2iso is designed to work with TCs. It parses a device description given in xml format and generates a C++-bytestream for the upload to the TC and a C++-header file <br>
+This version of proc2iso is designed to work with TCs. It parses a device description given in XML format and generates a C++-bytestream for the upload to the TC and a C++-header file <br>
  with the necessary declarations for the correct constructors (see tutorials 2_0 to 2_6). </li>
 </ul>
 <h2><a class="anchor" name="XMLUsage">
@@ -28,7 +28,7 @@ To make that device description known in the TC client it has to be stored in a 
 </pre></div> </li>
 <li>
 If the device pool was registered successfully the function returns true. The ending of <em>deviceDescription_xx</em> and <em>ui32_arrayLength_xx</em> depends on the language <br>
- code in the localizationlabel of the device description and has to be hand customized.<p>
+ code in the localization label of the device description and has to be hand customized.<p>
 </li>
 </ul>
 <h2><a class="anchor" name="XMLGeneralStructure">
@@ -43,8 +43,6 @@ Per XML-file only one <b>&lt;device&gt;</b> XML-element is allowed. It is the ro
 [...]
 &lt;/device&gt;
 </pre></div> </li>
-<li>
-Every XML-element which could contain nested elements has to be "closed" with a closing tag <b>&lt;/device&gt;</b> </li>
 </ul>
 A further code example shows how XML-elements have to be nested in the root element: <div class="fragment"><pre class="fragment">&lt;device designator=<span class="stringliteral">"Device1"</span> software_version=<span class="stringliteral">"0.1"</span> workingset_mastername=<span class="stringliteral">"Ma00a1900ffe0001b"</span> serialnumber=<span class="stringliteral">"WXYZ999"</span> structure_label=<span class="stringliteral">"STRUCT4"</span>
         localization_label=<span class="stringliteral">"de50015A56FF"</span> device_program_name=<span class="stringliteral">"myDevice"</span>&gt;
@@ -56,12 +54,12 @@ A further code example shows how XML-elements have to be nested in the root elem
     &lt;/deviceprocessdata&gt;
   &lt;/deviceelement&gt;
 &lt;/device&gt;
-</pre></div> Note that XML-elements which don't contain any nested element are closed that way: <b>&lt;devicedinprocessdata [...] /&gt;</b>.<h2><a class="anchor" name="XMLNamingConvention">
+</pre></div><h2><a class="anchor" name="XMLNamingConvention">
 Naming-Conventions for &lt; TAG attribute =' value ' &gt;</a></h2>
 <ul>
 <li>
 All elements are named according to <b>ISO 11783</b>. A further XML-element was added to enable processdata elements with more than one DDI (e.g. with min and max values). It is called <b>deviceprocessdatacombination</b>.<br>
- <em>Example:</em> processdata Bale Size: there are five different defined DDI's for the bale size. Sometimes it is necessary to measure several values from one processdata. </li>
+ <em>Example:</em> processdata Bale Size: there are five different defined DDI's for the bale size. Often it is necessary to get several measurement or setpoint values from one processdata. </li>
 <li>
 <b>Tag</b>s are written WITHOUT underscores or spaces (for example "&lt;deviceprocessdata&gt;"). </li>
 <li>
@@ -91,7 +89,7 @@ The following table shows which objects may be included into which other. <table
 </table>
 <h2><a class="anchor" name="XMLReference">
 Reference for correct attribute names</a></h2>
-Next table gives a review of all available attributes with value range. <table border="1" cellspacing="3" cellpadding="3">
+Next table gives an overview of all available attributes with value range. <table border="1" cellspacing="3" cellpadding="3">
 <tr>
 <th>attribute name </th><th>attribute type </th></tr>
 <tr>
@@ -425,7 +423,7 @@ Truth values</a></h2>
 <tr>
 <td>false/no  </td></tr>
 </table>
-<hr size="1"><address style="align: right;"><small>Generated on Tue May 9 16:51:53 2006 for proc2iso.kdevelop by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Mon May 15 09:35:14 2006 for proc2iso.kdevelop by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.4 </small></address>
 </body>
