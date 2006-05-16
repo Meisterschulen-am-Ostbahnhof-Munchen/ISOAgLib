@@ -38,8 +38,8 @@ const IsoAgLib::ElementDDI_s s_applicationRateElementDDI[] =
 {
 	{0x0001, true, IsoAgLib::GeneralCommand_c::exactValue},
 	{0x0002, false, IsoAgLib::GeneralCommand_c::exactValue},
-	{0x0003, true, IsoAgLib::GeneralCommand_c::exactValue},
-	{0x0004, true, IsoAgLib::GeneralCommand_c::exactValue},
+	{0x0003, true, IsoAgLib::GeneralCommand_c::defaultValue},
+	{0x0004, true, IsoAgLib::GeneralCommand_c::minValue},
 	// termination entry
 	{0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}
 };

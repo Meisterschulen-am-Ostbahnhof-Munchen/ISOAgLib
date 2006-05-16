@@ -7,8 +7,8 @@
     <deviceprocessdata designator="Application Rate" ddi="0x0007" properties="defaultset" trigger_methods="timeinterval" proc_program_name="applicationRate" cumulative_value="false">
       <deviceprocessdatacombination ddi="0x0001" command_type="exact" is_setpoint="true" />
       <deviceprocessdatacombination ddi="0x0002" command_type="exact" is_setpoint="false" />
-      <deviceprocessdatacombination ddi="0x0003" command_type="exact" is_setpoint="true" />
-      <deviceprocessdatacombination ddi="0x0004" command_type="exact" is_setpoint="true" />
+      <deviceprocessdatacombination ddi="0x0003" command_type="default" is_setpoint="true" />
+      <deviceprocessdatacombination ddi="0x0004" command_type="min" is_setpoint="true" />
       <devicedinprocessdata lis="0" wert_inst="0x5" />
     </deviceprocessdata>
   </deviceelement>
