@@ -436,7 +436,7 @@ int main()
 
 
   // add a further DDI now -> that should be added to the group of s_applicationRateElementDDI
-  bool b_successfullyAddedDDI = IsoAgLib::getIProcessInstance().checkAndAddMatchingDDI2Group(2, 2, c_remoteDeviceType);
+  bool b_successfullyAddedDDI = IsoAgLib::getIProcessInstance().checkAndAddMatchingDDI2Group(2 /* DDI */, 0 /* device element ID */, c_remoteDeviceType);
 
   /** IMPORTANT:
     - The following loop could be replaced of any repeating call of
