@@ -89,10 +89,10 @@
 #include <IsoAgLib/comm/Base/itracgeneral_c.h>
 #include "tracmove_c.h"
 
-//#define USE_RS232_FOR_DEBUG
-#ifdef USE_RS232_FOR_DEBUG
-  #include <supplementary_driver/driver/rs232/irs232io_c.h>
+#if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
+#include <IsoAgLib/comm/Base/itimeposgps_c.h>
 #endif
+
 
 using namespace std;
 
@@ -375,7 +375,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         // and if actual sender isn't in conflict to previous sender
         if ( ( checkParseReceived( c_tempDevKey ) ) )
         {
-          t_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t(       ( (data().getUint8Data(7) >> 5) & 0x7) );
+          t_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (data().getUint8Data(7) >> 5) & 0x7) );
+          t_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( data().getUint8Data(7) & 0x3);
 
           setSelectedDataSourceDevKey(c_tempDevKey);
           setUpdateTime( ci32_now );
@@ -383,7 +384,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           if (data().getUint16Data(0) <= 0xFAFF) //valid selected speed?
           {
             i32_selectedSpeed = data().getUint16Data(0);
-            t_selectedSpeedSource =      IsoAgLib::IsoSpeedSourceFlag_t( ( (data().getUint8Data(7) >> 2) & 0x7) );
+            t_selectedSpeedSource =  IsoAgLib::IsoSpeedSourceFlag_t( ( (data().getUint8Data(7) >> 2) & 0x7) );
             updateSpeed(IsoAgLib::SelectedSpeed);
             if (t_selectedDirection == IsoAgLib::IsoReverse)
               i32_selectedSpeed *= -1; //driving reverse
@@ -411,6 +412,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
   void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc)
   {
+    #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
+    IsoAgLib::iTimePosGPS_c& c_timeposgps = IsoAgLib::getITimePosGpsInstance();
+    #endif
     switch(t_speedSrc)
     {
       case IsoAgLib::SelectedSpeed:
@@ -420,7 +424,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       case IsoAgLib::GpsBasedSpeed:
         t_speedSource = IsoAgLib::GpsBasedSpeed;
         t_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
-        i32_selectedSpeed = getGpsSpeedCmSec();
+        i32_selectedSpeed = c_timeposgps.getGpsSpeedCmSec();
         break;
       #endif
       case IsoAgLib::GroundBasedSpeed:
@@ -499,6 +503,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     data().setLen(8);
 
     #ifdef USE_RS232_FOR_DEBUG
+    EXTERNAL_DEBUG_DEVICE << "getDevKey: " <<  static_cast<const int>(getDevKey()->getDevClass() ) << "\n";
     EXTERNAL_DEBUG_DEVICE << "SEND TRAC senderDevKey: " <<  static_cast<const int>(getSelectedDataSourceDevKey().getDevClass() ) << "\n";
     #endif
 
