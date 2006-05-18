@@ -93,7 +93,7 @@
   // IsoAgLib_Extension
   #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
   #include <IsoAgLib/comm/Multipacket/istream_c.h>
-  #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp>
+  #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
   #include <IsoAgLib/util/iutil_funcs.h>
 #endif
 #include <IsoAgLib/comm/Base/itracmove_c.h>
