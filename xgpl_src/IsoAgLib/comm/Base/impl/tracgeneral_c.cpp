@@ -89,6 +89,7 @@
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include "tracgeneral_c.h"
 #include "tracpto_c.h"
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
 
 using namespace std;
 
@@ -263,6 +264,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ( !checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setIsoFilterCreated();
+      // create FilterBox_c for REQUEST_PGN_MSG_PGN, LANGUAGE_PGN
+      getIsoRequestPgnInstance4Comm().registerPGN (*this, LANGUAGE_PGN); // request for language
       // create FilterBox_c for PGN FRONT_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
@@ -287,6 +290,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
     #endif
   }
+
 
   #ifdef USE_DIN_9684
   /** send a DIN9684 general base information PGN
@@ -554,6 +558,21 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
     return b_result;
   }
+
+
+  bool TracGeneral_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t /*rui8_da*/)
+  {
+    if (checkMode (IsoAgLib::IdentModeTractor))
+    {
+      // call TracGeneral_c function to send language of Tractor-ECU
+      // isoSendLanguage checks if this item (identified by DEV_KEY)
+      // is configured to send language
+      isoSendLanguage (*getDevKey());
+      return true;
+    }
+    return false;
+  };
+
 
   /** send front hitch and rear hitch data msg*/
   void TracGeneral_c::isoSendMsg()

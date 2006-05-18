@@ -118,6 +118,7 @@
   #define getMultiReceiveInstance4Comm()   getMultiReceiveInstance( getSingletonVecKey() )
   #define getGpsInstance4Comm()            getGpsInstance( getSingletonVecKey() )
   #define getTimePosGpsInstance4Comm()     getTimePosGpsInstance( getSingletonVecKey() )
+  #define getIsoRequestPgnInstance4Comm()  getIsoRequestPgnInstance(getSingletonVecKey())
 
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
@@ -144,7 +145,7 @@
     * the IsoAgLib, so that the additional overhead of SingletonVec is avoided
     */
   #define SINGLETON( CLASS ) Singleton<CLASS>
-  /** the macro SINGLETON allows to define classes independent from the value
+  /** the macro SINGLETON_DERIVED allows to define classes independent from the value
     * of PRT_INSTANCE_CNT, so that the compiler selects the appropriate base class during
     * compile time
     * this variant is used by the compiler, if only one ISO11783 or DIN9684 BUS (common case) has to be managed by
@@ -244,6 +245,7 @@
   #define getMultiReceiveInstance4Comm()      getMultiReceiveInstance()
   #define getGpsInstance4Comm()               getGpsInstance()
   #define getTimePosGpsInstance4Comm()        getTimePosGpsInstance()
+  #define getIsoRequestPgnInstance4Comm()     getIsoRequestPgnInstance()
   /** the class ClientBase delivers the base information, to concat client class instances
     * with the corresponding server class instance. This is realized by the single
     * attribute singletonVecKey, which is evaluated by the macro autoInstance()
@@ -302,9 +304,8 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
-
-
 #include <vector>
+
 /** BaseSingleton class for classes which need only ONE instance per project
   */
 template<class T> class Singleton

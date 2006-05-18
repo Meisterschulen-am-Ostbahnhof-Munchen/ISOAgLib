@@ -491,44 +491,11 @@ bool ISOItem_c::processMsg(){
       }
       b_result = true;
     break;
-    case REQUEST_PGN_MSG_PGN: // request for PGN
-      int32_t i32_reqPgn = (
-                          (static_cast<int32_t>(c_pkg.operator[](0)))
-                        | (static_cast<int32_t>(c_pkg.operator[](1)) << 8)
-                        | (static_cast<int32_t>(c_pkg.operator[](2)) << 16)
-                        );
-      if ((c_pkg.isoPs() == nr()) || (c_pkg.isoPs() == 255))
-      { // this item should answer the request
-        switch (i32_reqPgn)
-        {
-          case ADRESS_CLAIM_PGN: // request for adress claim
-            if ( sendSaClaim() ) b_result = true;
-            break;
-          #if defined(USE_BASE) || defined(USE_TIME_GPS)
-          case TIME_DATE_PGN: // request for calendar
-            // call Base_c function to send calendar
-            // isoSendCalendar checks if this item (identified by DEV_KEY)
-            // is configured to send calendar
-            getTimePosGpsInstance4Comm().isoSendCalendar(devKey());
-            b_result = true;
-            break;
-          #endif
-          #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
-          case LANGUAGE_PGN: // request for language
-            // call TracGeneral_c function to send language of Tractor-ECU
-            // isoSendLanguage checks if this item (identified by DEV_KEY)
-            // is configured to send language
-            getTracGeneralInstance4Comm().isoSendLanguage(devKey());
-            b_result = true;
-            break;
-          #endif
-        }
-      }
-    break;
   } // end switch
 
   return b_result;
 };
+
 
 /** send a SA claim message
   * - needed to respond on request for claimed SA fomr other nodes

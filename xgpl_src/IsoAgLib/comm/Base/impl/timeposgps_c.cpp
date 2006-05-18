@@ -102,6 +102,7 @@
   #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
 #endif // END of NMEA_2000_FAST_PACKET and USE_ISO_11783
 #include <IsoAgLib/comm/Base/itracmove_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
 
 using namespace std;
 
@@ -301,6 +302,8 @@ namespace __IsoAgLib {
     if ( ( ! checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setIsoFilterCreated();
+       // create FilterBox_c for PGN REQUEST_PGN_MSG_PGN, TIME_DATE_PGN
+      getIsoRequestPgnInstance4Comm().registerPGN (*this, TIME_DATE_PGN); // request for calendar
       // create FilterBox_c for PGN TIME_DATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
@@ -613,6 +616,21 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     }
     return true;
   }
+
+
+  bool TimePosGPS_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t /*rui8_da*/)
+  {
+    if (checkMode(IsoAgLib::IdentModeTractor))
+    {
+      // call Base_c function to send calendar
+      // isoSendCalendar checks if this item (identified by DEV_KEY)
+      // is configured to send calendar
+      isoSendCalendar(*getDevKey());
+      return true;
+    }
+    return false;
+  };
+
 
   #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   /** check if an NMEA2000 position signal was received */

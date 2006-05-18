@@ -87,6 +87,7 @@
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#include "isorequestpgn_c.h"
 
 #ifdef USE_PROCESS
   #include <IsoAgLib/comm/Process/impl/process_c.h>
@@ -181,8 +182,10 @@ void ISOMonitor_c::init( void )
     getSchedulerInstance4Comm().registerClient( this );
 
     bool b_configure = false;
-    if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FF00) << 8), MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN) << 8), false, Ident_c::ExtendedIdent))
-      b_configure = true;
+
+    // add filter REQUEST_PGN_MSG_PGN via ISORequestPGN_c
+    getIsoRequestPgnInstance4Comm().registerPGN (*this, ADRESS_CLAIM_PGN); // request for adress claim
+
     if (getCanInstance4Comm().insertFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), false, Ident_c::ExtendedIdent))
       b_configure = true;
     FilterBox_c* pc_filterBoxWsMaster
@@ -213,7 +216,8 @@ void ISOMonitor_c::close( void ) {
     setAlreadyClosed();
     getSchedulerInstance4Comm().unregisterClient( this );
 
-    getCanInstance4Comm().deleteFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FF00) << 8), MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN) << 8), Ident_c::ExtendedIdent);
+    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, ADRESS_CLAIM_PGN); // request for adress claim
+
     getCanInstance4Comm().deleteFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), Ident_c::ExtendedIdent);
     getCanInstance4Comm().deleteFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), Ident_c::ExtendedIdent);
     getCanInstance4Comm().deleteFilter( *this, MASK_TYPE(static_cast<MASK_TYPE>(0x1FFFF) << 8), MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), Ident_c::ExtendedIdent);
@@ -868,9 +872,9 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   important for managing of members
   @return true -> message processed by ISOMonitor_c; false -> process msg by ServiceMonitor
 */
-bool ISOMonitor_c::processMsg(){
+bool ISOMonitor_c::processMsg()
+{
   bool b_processed = false;
-  int32_t i32_reqPgn;
 
   ISOItem_c *pc_item = NULL,
             *pc_itemSameSa = NULL,
@@ -974,44 +978,6 @@ bool ISOMonitor_c::processMsg(){
       }
 
       break;
-    case REQUEST_PGN_MSG_PGN:   // request for PGN
-      i32_reqPgn = (
-                    (static_cast<int32_t>(data().operator[](0)))
-                  | (static_cast<int32_t>(data().operator[](1)) << 8)
-                  | (static_cast<int32_t>(data().operator[](2)) << 16)
-                  );
-      switch (i32_reqPgn)
-      {
-        case ADRESS_CLAIM_PGN: // request for adress claim
-          // update time of last adress claim request
-           b_processed = true;
-           setLastIsoSaRequest(data().time()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
-           // don't break because default handling is true for
-           // adress claim request, too
-        default:
-          // if isoPs is 255 let all local item answer
-          if (data().isoPs() == 255)
-          {
-            for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
-                  pc_iterItem != vec_isoMember.end(); pc_iterItem++)
-            { // let all local pc_iterItem process process this request
-              if (pc_iterItem->itemState(IState_c::Local))
-                if ( pc_iterItem->processMsg()) b_processed = true;
-            }
-            return b_processed;
-          }
-          else
-          { // check if item with SA == isoPs exist and let it process
-            // if local
-            if (existIsoMemberNr(data().isoPs()))
-            { // check if local
-              if (isoMemberNr(data().isoPs()).itemState(IState_c::Local))
-                return isoMemberNr(data().isoPs()).processMsg();
-            }
-          }
-        break;
-      }
-      break;
 #ifdef USE_PROCESS
     case PROCESS_DATA_PGN:
       static_cast<__IsoAgLib::CANPkg_c&>(getProcessInstance4Comm().data())
@@ -1064,6 +1030,41 @@ bool ISOMonitor_c::processMsg(){
 
   return b_processed; // return if msg was processed by ISOMonitor_c
 }
+
+
+bool
+ISOMonitor_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t rui8_da)
+{
+  // Only handling ADRESS_CLAIM_PGN here, no other RequestPGNs registered
+  // if handling multiple PGNs, insert a switch statement
+  // update time of last adress claim request
+  setLastIsoSaRequest (getIsoRequestPgnInstance4Comm().getTimeOfLastRequest()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
+  // don't break because default handling is true for
+  // adress claim request, too
+  // if isoPs is 255 let all local item answer
+  if (rui8_da == 255)
+  {
+    bool b_processedRequestPGN = false;
+    for (Vec_ISOIterator pc_iterItem = vec_isoMember.begin();
+          pc_iterItem != vec_isoMember.end(); pc_iterItem++)
+    { // let all local pc_iterItem process process this request
+      if (pc_iterItem->itemState(IState_c::Local))
+        b_processedRequestPGN |= pc_iterItem->sendSaClaim();
+    }
+    return b_processedRequestPGN; //return value doesn't matter, because the request was for GLOBAL (255), so it isn't NACKed anyway
+  }
+  else
+  { // check if item with SA == isoPs exist and let it process
+    // if local
+    if (existIsoMemberNr(rui8_da))
+    { // check if local
+      if (isoMemberNr(rui8_da).itemState(IState_c::Local))
+        return isoMemberNr(rui8_da).sendSaClaim();
+    }
+    return false; // this case can't be reached, as isorequestpgn_c won't call us, if it wouldn't knew (by us :-) that we have such a local member!
+  }
+};
+
 
 #ifdef USE_WORKING_SET
 uint8_t ISOMonitor_c::getSlaveCount (ISOItem_c* rpc_masterItem)

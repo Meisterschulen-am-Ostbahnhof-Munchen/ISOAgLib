@@ -90,6 +90,7 @@
 
 #include <ctime>
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -149,7 +150,7 @@ typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
   per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
 
-class TimePosGPS_c : public SingletonTimePosGps_c
+class TimePosGPS_c : public SingletonTimePosGps_c, public ISORequestPGNHandler_c
 #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
     , public IsoAgLib::MultiReceiveClient_c
 #endif // END of NMEA_2000_FAST_PACKET and USE_ISO_11783
@@ -196,15 +197,16 @@ public:
   /** destructor for Base_c which has nothing to do */
   virtual ~TimePosGPS_c() { BaseCommon_c::close();};
 
+  bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
 
   #ifdef USE_ISO_11783
    /** config the Base_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
-      @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
   void configGps(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identModeGps);
-  /** return if you currently are in implement mode or tractor mode*/
+  /** return if you currently are in gps mode*/
   bool checkModeGps(IsoAgLib::IdentMode_t rt_identModeGps) const {return (t_identModeGps == rt_identModeGps);}
 
   /** send ISO11783 calendar PGN

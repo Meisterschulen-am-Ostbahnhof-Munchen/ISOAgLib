@@ -98,6 +98,7 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include "isosystempkg_c.h"
 #include "isoitem_c.h"
+#include "isorequestpgnhandler_c.h"
 
 #include <map>
 #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && __GNUC__ >= 3
@@ -143,7 +144,7 @@ typedef SINGLETON_DERIVED(ISOMonitor_c, ElementBase_c) SingletonISOMonitor_c;
   @see ISOItem
   @author Dipl.-Inform. Achim Spangler
 */
-class ISOMonitor_c : public SingletonISOMonitor_c
+class ISOMonitor_c : public SingletonISOMonitor_c, public ISORequestPGNHandler_c
 {
 private:
   // private typedef alias names
@@ -410,6 +411,8 @@ public:
     @param rpc_masterItem this is the master of which we want all the slaves
   */
   void notifyOnWsMasterLoss (ISOItem_c& rrefc_masterItem);
+
+  bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
 
 protected: // Protected methods
   /**

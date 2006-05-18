@@ -9,6 +9,8 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
   - support for proc2iso XML schema: new mandatory parameter -s=xxx.xsd for personalized path to xsd-file (see proc2iso --help).
     former only -s with a default path
+  - support for processdata designators up to 30 chars to enable a differentiation between the deviceprocessdatacombination (DDI groups)
+  - added special class ISORequestPGN_c to answer REQUEST_PGN_MSG_PGN appropriate if any other class registered for that filter could not answer
 
 \subsection Change_K 1.2.0 to 1.2.1
 

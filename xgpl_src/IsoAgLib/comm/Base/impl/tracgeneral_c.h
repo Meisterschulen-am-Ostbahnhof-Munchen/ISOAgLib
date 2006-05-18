@@ -88,6 +88,7 @@
 #define TRACGENERAL_C_H
 
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
+#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
 
 #include <ctime>
 
@@ -113,7 +114,8 @@ typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
     Derive from SINGLETON to create a Singleton which manages one global accessible singleton
     per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
-class TracGeneral_c : public SingletonTracGeneral_c {
+class TracGeneral_c : public SingletonTracGeneral_c, public ISORequestPGNHandler_c
+{
 public: // Public methods
   /* ********************************************* */
   /** \name Management Functions for class TracGeneral_c  */
@@ -123,7 +125,7 @@ public: // Public methods
       above all create the needed FilterBox_c instances
       possible errors:
         * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
   void init(const DevKey_c* rpc_devKey = NULL, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
@@ -154,6 +156,8 @@ public: // Public methods
 
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};
+
+  bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
 
   #ifdef USE_ISO_11783
   /** force maintain power from tractor
