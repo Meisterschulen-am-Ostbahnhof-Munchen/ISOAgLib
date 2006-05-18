@@ -92,6 +92,11 @@
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
 
+#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
+#include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
+#include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
+#endif
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 

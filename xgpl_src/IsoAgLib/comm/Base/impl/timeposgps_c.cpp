@@ -93,16 +93,12 @@
   // IsoAgLib_Extension
   #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
   #include <IsoAgLib/comm/Multipacket/istream_c.h>
-  #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
+  #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp>
   #include <IsoAgLib/util/iutil_funcs.h>
 #endif
-#if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
-  #include <IsoAgLib/comm/Multipacket/multireceiveclient_c.h>
-  #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
-  #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-#endif // END of NMEA_2000_FAST_PACKET and USE_ISO_11783
 #include <IsoAgLib/comm/Base/itracmove_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
+
 
 using namespace std;
 
