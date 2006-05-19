@@ -531,7 +531,7 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
   }
 
   
-#if defined(USE_ISO_11783)
+#ifdef USE_ISO_11783
   // process TC status message
   if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (c_data[0] == 0xE))
   {    

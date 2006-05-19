@@ -371,10 +371,21 @@ void ProcDataLocal_c::resetEeprom( MeasureProgLocal_c* pc_progItem )
 
 /** process a setpoint message */
 void ProcDataLocal_c::processSetpoint(){
-  c_setpoint.processMsg();
-  // call base class processMsg to detect if this is a setpoint cmd
-  // to reset the measurement value
-  ProcDataLocalBase_c::processSetpoint();
+  switch (getProcessInstance4Comm().data().c_generalCommand.getCommand())
+  {
+    case GeneralCommand_c::setValue:
+    case GeneralCommand_c::requestValue:
+      c_setpoint.processMsg();
+#ifdef USE_DIN_9684
+      // call base class processMsg to detect if this is a setpoint cmd
+      // to reset the measurement value
+      ProcDataLocalBase_c::processSetpoint();
+#endif
+      break;
+    default:
+      // process measurement commands even if this DDI is defined as a setpoint 
+      c_measureprog.processProg();
+  }
 }
 
 /** process a measure prog message for local process data */

@@ -225,9 +225,10 @@ MeasureProgBase_c::~MeasureProgBase_c(){
       * Err_c::badAlloc not enough memory to add new subprog
   @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
   @param ri32_increment increment value
+  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return true -> subprog was created successfully; fals -> out-of-memory error
 */
- bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment){
+ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment, Proc_c::doSend_t ren_doSend){
   if (ren_type == Proc_c::TimeProp) en_accumProp = Proc_c::AccumTime;
   else if (ren_type == Proc_c::DistProp) en_accumProp = Proc_c::AccumDist;
 
@@ -236,7 +237,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   for (pc_subprog = vec_measureSubprog.begin();
        pc_subprog != vec_measureSubprog.end(); pc_subprog++)
   {
-     if (pc_subprog->type() == ren_type) break;
+     if ((pc_subprog->type() == ren_type) && (pc_subprog->doSend() == ren_doSend)) break;
   }
 
   if (pc_subprog != vec_measureSubprog.end())
@@ -246,7 +247,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   else
   { // no subprog with same type exist -> insert new one
     const uint8_t b_oldSize = vec_measureSubprog.size();
-    vec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ri32_increment));
+    vec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ri32_increment));
     if (b_oldSize >= vec_measureSubprog.size())
     { // array didn't grow
       getLbsErrInstance().registerError( LibErr_c::BadAlloc, LibErr_c::LbsProcess );
@@ -301,11 +302,10 @@ void MeasureProgBase_c::forceSubprogType(Proc_c::type_t ren_type)
   start a measuring programm
   @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
   @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
-  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg)
+  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return always true; only relevant for overoaded methods in derived classes
 */
-bool MeasureProgBase_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend){
+bool MeasureProgBase_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // register values
   en_progType = ren_progType; // base or target msg
   en_doSend = (ren_doSend != Proc_c::DoNone)?ren_doSend : en_doSend;
@@ -318,9 +318,11 @@ bool MeasureProgBase_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t re
 /**
   stop all running subprog
   @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
+  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+  @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return always true; only relevant for overoaded methods in derived classes
 */
-bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/){
+bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_type */, Proc_c::doSend_t /* ren_doSend */){
   // clear the array with all subprogs -> no trigger test is done on value set
   #ifdef DEBUG_HEAP_USEAGE
   sui16_MeasureProgBaseTotal -= vec_measureSubprog.size();
@@ -626,6 +628,28 @@ bool MeasureProgBase_c::processMsg(){
   { // mark that msg already edited
     b_edited = true;
 
+    // set en_doSend (for ISO)
+    GeneralCommand_c::ValueGroup_t en_valueGroup = c_pkg.c_generalCommand.getValueGroup();
+          
+    Proc_c::doSend_t en_doSend = Proc_c::DoVal;  //default send data mode
+    if (c_pkg.c_generalCommand.checkIsSetpoint())
+      en_doSend = Proc_c::DoValForExactSetpoint; // measurement for exact value setpoint
+
+    switch (en_valueGroup)
+    {
+      case GeneralCommand_c::minValue:
+        en_doSend = Proc_c::DoValForMinSetpoint; // measurement for min value setpoint
+        break;
+      case GeneralCommand_c::maxValue:
+        en_doSend = Proc_c::DoValForMaxSetpoint; // measurement for max value setpoint
+        break;
+      case GeneralCommand_c::defaultValue:
+        en_doSend = Proc_c::DoValForDefaultSetpoint; // measurement for default value setpoint
+        break;
+      default:
+        ;
+    }
+
     // programm controlling command
     // mod=4 || mod=5
     if (en_command == GeneralCommand_c::measurementDistanceValue ||
@@ -638,7 +662,7 @@ bool MeasureProgBase_c::processMsg(){
         en_command == GeneralCommand_c::measurementMinimumThresholdValueStart ||
         en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
       // increment
-      processIncrementMsg();
+      processIncrementMsg(en_doSend);
 
 
     uint8_t b_cmd = c_pkg.data(0);
@@ -662,55 +686,43 @@ bool MeasureProgBase_c::processMsg(){
     if (en_command == GeneralCommand_c::measurementStop)
        stop();
 
-    // ISO
+    // ISO, local
     if (en_command == GeneralCommand_c::measurementDistanceValueStart ||
         en_command == GeneralCommand_c::measurementTimeValueStart ||
         en_command == GeneralCommand_c::measurementChangeThresholdValueStart ||
         en_command == GeneralCommand_c::measurementMinimumThresholdValueStart ||
         en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
     {
-      // if dataLong() == 0 => stop
-      if (c_pkg.dataLong() != 0) {
-        Proc_c::type_t en_type = Proc_c::NullType;
-        switch (en_command) {
-          case GeneralCommand_c::measurementTimeValueStart:
-            en_type = Proc_c::TimeProp;
-            break;
-          case GeneralCommand_c::measurementDistanceValueStart:
-            en_type = Proc_c::DistProp;
-            break;
-          case GeneralCommand_c::measurementChangeThresholdValueStart:
-            en_type = Proc_c::OnChange;
-            break;
-          case GeneralCommand_c::measurementMaximumThresholdValueStart:
-            en_type = Proc_c::MaximumThreshold;
-            break;
-          case GeneralCommand_c::measurementMinimumThresholdValueStart:
-            en_type = Proc_c::MinimumThreshold;
-            break;
-          default: ;
-        }
+      Proc_c::type_t en_type = Proc_c::NullType;
+      switch (en_command) {
+        case GeneralCommand_c::measurementTimeValueStart:
+          en_type = Proc_c::TimeProp;
+          break;
+        case GeneralCommand_c::measurementDistanceValueStart:
+          en_type = Proc_c::DistProp;
+          break;
+        case GeneralCommand_c::measurementChangeThresholdValueStart:
+          en_type = Proc_c::OnChange;
+          break;
+        case GeneralCommand_c::measurementMaximumThresholdValueStart:
+          en_type = Proc_c::MaximumThreshold;
+          break;
+        case GeneralCommand_c::measurementMinimumThresholdValueStart:
+          en_type = Proc_c::MinimumThreshold;
+          break;
+        default: ;
+      }
 
+      // if dataLong() == 0 => stop
+      if (c_pkg.dataLong() != 0)
+      {
         if (en_type != Proc_c::NullType)
-        {
-          GeneralCommand_c::ValueGroup_t en_valueGroup = c_pkg.c_generalCommand.getValueGroup();
-          Proc_c::doSend_t en_doSend = Proc_c::DoVal;
-          switch (en_valueGroup)
-          {
-            case GeneralCommand_c::minValue:
-              en_doSend = Proc_c::DoMin;
-              break;
-            case GeneralCommand_c::maxValue:
-              en_doSend = Proc_c::DoMax;
-              break;
-            default:
-              ;
-          }
           start(static_cast<Proc_c::progType_t>(c_pkg.pri()), en_type, en_doSend);
-        }
       }
       else
-       stop();
+       // call MeasureProgLocal_c::stop() with TRUE and en_type != Proc_c::NullType
+       // => only the appropriate MeasureSubprog_c is deleted (selective stop)
+       stop(TRUE /* b_deleteSubProgs */, en_type, en_doSend);
     }
   }
 
@@ -878,8 +890,9 @@ void MeasureProgBase_c::reset(uint8_t rb_comm){
 
   possible errors:
       * Err_c::badAlloc not enough memory to add new subprog
+  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
 */
-void MeasureProgBase_c::processIncrementMsg(){
+void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
   // set c_devKey to caller of prog
@@ -892,26 +905,26 @@ void MeasureProgBase_c::processIncrementMsg(){
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValue ||
       c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart)
     // time proportional
-    addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(i32_val));
+    addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(i32_val), ren_doSend);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValue ||
       c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart)
     // distance proportional
-    addSubprog(Proc_c::DistProp, i32_val);
+    addSubprog(Proc_c::DistProp, i32_val, ren_doSend);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValue ||
       c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
     // change threshold proportional
     // @todo: was DistProp ?
-    addSubprog(Proc_c::OnChange, i32_val);
+    addSubprog(Proc_c::OnChange, i32_val, ren_doSend);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart)
     // change threshold proportional
-    addSubprog(Proc_c::MaximumThreshold, i32_val);
+    addSubprog(Proc_c::MaximumThreshold, i32_val, ren_doSend);
 
   if (c_pkg.c_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart)
     // change threshold proportional
-    addSubprog(Proc_c::MinimumThreshold, i32_val);
+    addSubprog(Proc_c::MinimumThreshold, i32_val, ren_doSend);
 
 }
 

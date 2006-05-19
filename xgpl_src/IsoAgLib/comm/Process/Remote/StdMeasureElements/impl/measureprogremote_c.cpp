@@ -144,7 +144,7 @@ MeasureProgRemote_c::~MeasureProgRemote_c(){
       * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
       * dependant error in CAN_IO
   @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
-  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg)
+  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::doSend_t ren_doSend){
@@ -170,12 +170,11 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::doSend_
       * dependant error in CAN_IO
   @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
   @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
-  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg)
+  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return true -> command successful sent
 */
-bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend){
-
+bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
+{
   bool b_sendResult = true;
   // test ren_progType
   if ((ren_progType & Proc_c::Base | Proc_c::Target) == 0)
@@ -207,6 +206,9 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
   for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
        pc_subprog != vec_measureSubprog.end(); pc_subprog++)
   { // send the suitable increment creating message to the remote system
+
+    if (pc_subprog->doSend() != ren_doSend)
+      continue;
 
     GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
 
@@ -264,18 +266,31 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
 
     if (en_command != GeneralCommand_c::noCommand)
     {
-       int32_t i32_tmpValue = pc_subprog->increment();
+      int32_t i32_tmpValue = pc_subprog->increment();
 
-       // DIN time prog: negative value!
-       if (en_command == GeneralCommand_c::measurementTimeValue)
-         i32_tmpValue = -i32_tmpValue;
+      // DIN time prog: negative value!
+      if (en_command == GeneralCommand_c::measurementTimeValue)
+        i32_tmpValue = -i32_tmpValue;
 
-       // prepare general command in process pkg
-       getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
-                                                                   GeneralCommand_c::exactValue,
-                                                                   en_command);
-       if (!processData().sendValDevKey(ren_progType, devKey(), i32_tmpValue))
-          b_sendResult = false;
+      bool b_isSetpoint = FALSE;
+      GeneralCommand_c::ValueGroup_t en_valueGroup;
+      if (Proc_c::DoVal != ren_doSend)
+        // start measurement for a sepoint DDI in proc data instance
+        b_isSetpoint = TRUE;
+
+      switch (ren_doSend)
+      {
+        case Proc_c::DoValForDefaultSetpoint: en_valueGroup = GeneralCommand_c::defaultValue; break;
+        case Proc_c::DoValForMinSetpoint:     en_valueGroup = GeneralCommand_c::minValue; break;
+        case Proc_c::DoValForMaxSetpoint:     en_valueGroup = GeneralCommand_c::maxValue; break;
+        default:                              en_valueGroup = GeneralCommand_c::exactValue;
+      }
+
+      // prepare general command in process pkg
+      getProcessInstance4Comm().data().c_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
+                                                                  en_valueGroup, en_command);
+      if (!processData().sendValDevKey(ren_progType, devKey(), i32_tmpValue))
+         b_sendResult = false;
     }
   }
 
@@ -326,9 +341,11 @@ bool MeasureProgRemote_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t 
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
   @param b_deleteSubProgs is only used for ISO
+  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+  @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return true -> command successful sent
 */
-bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
+bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   bool b_result = true;
 
   // if stored remote devKey isn't valid exit this function
@@ -352,8 +369,17 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
 
     // send stop command for each program
     for (Vec_MeasureSubprog::iterator pc_subprog = vec_measureSubprog.begin();
-         pc_subprog != vec_measureSubprog.end(); pc_subprog++)
+         pc_subprog != vec_measureSubprog.end();)
     {
+      if (Proc_c::NullType != ren_type)
+      { // when a specific type is given (e.g. TimeProp...) => do a selective stop (match subprog type and doSend)
+        if ((pc_subprog->type() != ren_type) || (pc_subprog->doSend() != ren_doSend))
+        {
+          pc_subprog++;
+          continue;
+        }
+      }
+      
       GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
 
       switch (pc_subprog->type())
@@ -380,12 +406,30 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
 
       if (en_command != GeneralCommand_c::noCommand)
       {
+        bool b_isSetpoint = FALSE;
+        GeneralCommand_c::ValueGroup_t en_valueGroup;
+        if (Proc_c::DoVal != pc_subprog->doSend())
+          // stop measurement for a sepoint DDI in proc data instance
+          b_isSetpoint = TRUE;
+         
+        switch (pc_subprog->doSend())
+        {
+          case Proc_c::DoValForDefaultSetpoint: en_valueGroup = GeneralCommand_c::defaultValue; break;
+          case Proc_c::DoValForMinSetpoint:     en_valueGroup = GeneralCommand_c::minValue; break;
+          case Proc_c::DoValForMaxSetpoint:     en_valueGroup = GeneralCommand_c::maxValue; break;
+          default:                              en_valueGroup = GeneralCommand_c::exactValue;
+        }
+
         // prepare general command in process pkg
-        getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
-                                                                    GeneralCommand_c::exactValue,
-                                                                    en_command);
+        getProcessInstance4Comm().data().c_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
+                                                                    en_valueGroup, en_command);
         b_result = processData().sendValDevKey(ui8_pri, devKey(), int32_t(0));
       }
+
+      if (b_deleteSubProgs)
+        pc_subprog = vec_measureSubprog.erase(pc_subprog);
+      else
+        pc_subprog++;
     }
   }
 
@@ -401,11 +445,9 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs){
       // DIN: pd=0, mod=6
       b_result = processData().sendValDevKey(ui8_pri, devKey(), int32_t(0));
     }
-  }
-
-  // call base function to delete the subprogs (always true for DIN)
-  if(b_deleteSubProgs)
+    // call base function to delete the subprogs (always true for DIN)
     MeasureProgBase_c::stop();
+  }
 
   return b_result;
 }

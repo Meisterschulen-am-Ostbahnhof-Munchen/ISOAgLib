@@ -197,7 +197,7 @@ MeasureProgLocal_c::~MeasureProgLocal_c(){
       * dependant error in CANIO_c on send problems
   @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
   @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg
+  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
   @param ri32_masterVal actual master value to start with
   @return true -> starting values sent with success
 */
@@ -210,6 +210,10 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
   // start the given subprog items
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
+    if (pc_iter->doSend() != ren_doSend)
+      //MeasureSubprog_c not matching!
+      continue;
+      
     switch (pc_iter->type() & ren_type)
     {
       case Proc_c::TimeProp:
@@ -257,7 +261,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
   } // for
 
   // send first values: if now without success mark for later resend with true
-  b_triggeredIncrement = (sendRegisteredVals())? false:true;
+  b_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
 
   // return if successful sent starting values
   return b_triggeredIncrement;
@@ -271,7 +275,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
       * dependant error in CANIO_c on send problems
   @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
   @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg
+  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
   @param rf_masterVal actual master value to start with
   @return true -> starting values sent with success
 */
@@ -284,6 +288,10 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
   // start the given subprog items
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
+    if (pc_iter->doSend() != ren_doSend)
+      //MeasureSubprog_c not matching!
+      continue;
+    
     switch (pc_iter->type() & ren_type)
     {
       case Proc_c::TimeProp:
@@ -331,7 +339,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
   } // for
 
   // send first values: if now without success mark for later resend with true
-  b_triggeredIncrement = (sendRegisteredVals())? false:true;
+  b_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
 
   // return if successful sent starting values
   return b_triggeredIncrement;
@@ -346,7 +354,7 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
       * dependant error in CANIO_c on send problems
   @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
   @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg
+  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
   @return true -> starting values sent with success
 */
 bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
@@ -366,25 +374,38 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CANIO_c on send problems
   @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
+  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+  @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return true -> stop values sent with success
 */
-bool MeasureProgLocal_c::stop(bool /*b_deleteSubProgs*/){
+bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // send the registered values
   bool b_sendResult = sendRegisteredVals();
-  // call base function
-  MeasureProgBase_c::stop();
+  if (Proc_c::NullType == ren_type)
+    // DIN: call base function
+    MeasureProgBase_c::stop();
+  else
+  { // ISO: clear only the appropriate MeasureSubprog from the sub prog list
+    for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end();)
+    {
+      if ((pc_iter->type() == ren_type) && (pc_iter->doSend() == ren_doSend))
+        pc_iter = vec_measureSubprog.erase(pc_iter);
+      else
+        pc_iter++;
+    }
+  }
 
   return b_sendResult;
 }
 
 /**
-  send a sub-information (selected by MOD) to a specified target (selected by GPT)
-  @param rui8_mod MOD code of the value type to send
+  send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
+  @param en_valueGroup value group to send
   @param rc_targetDevKey DevKey of target
   @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @return true -> successful sent
 */
-bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType ) const {
+bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().c_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, GeneralCommand_c::setValue);
@@ -396,6 +417,53 @@ bool MeasureProgLocal_c::sendValMod( GeneralCommand_c::ValueGroup_t en_valueGrou
   return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, valMod(en_valueGroup));
 #endif
 }
+
+/**
+  send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
+  @param en_valueGroup value group to send
+  @param rc_targetDevKey DevKey of target
+  @param ren_type optional PRI specifier of the message (default Proc_c::Target )
+  @return true -> successful sent
+*/
+bool MeasureProgLocal_c::sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType) const {
+  // prepare general command in process pkg
+  getProcessInstance4Comm().data().c_generalCommand.setValues(TRUE /* isSetpoint */, false, /* isRequest */
+                                                              en_valueGroup, GeneralCommand_c::setValue);
+  return processDataConst().sendValDevKey(ren_progType, rc_targetDevKey, setpointValMod(en_valueGroup));
+}
+
+/**
+  deliver to en_valueGroup according setpoint from a master setpoint
+  @param en_valueGroup of wanted subtype
+  @return value of specified subtype
+*/
+int32_t MeasureProgLocal_c::setpointValMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
+  int32_t i32_value = 0;
+  ProcDataLocalBase_c* pc_procdata = pprocessData();
+  if (pc_procdata->setpointExistMaster())
+  {    
+    switch (en_valueGroup)
+    {
+      case GeneralCommand_c::exactValue:
+        i32_value = pc_procdata->setpointExactValue();
+        break;
+      case GeneralCommand_c::defaultValue:
+        i32_value = pc_procdata->setpointDefaultValue();
+        break;
+      case GeneralCommand_c::minValue:
+        i32_value = pc_procdata->setpointMinValue();
+        break;
+      case GeneralCommand_c::maxValue:
+        i32_value = pc_procdata->setpointMaxValue();
+        break;
+      default:
+        // wrong range
+        getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsProcess );
+    }
+  }
+  return i32_value;
+}
+
 
 /**
   process a message: reset command or value requests
@@ -703,11 +771,34 @@ void MeasureProgLocal_c::setVal(float rf_val){
   possible errors:
     * dependant error in ProcDataLocal_c if EMPF or SEND not valid
     * dependant error in CANIO_c on send problems
+  @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
   @return true -> value send triggered and performed with success
 */
-bool MeasureProgLocal_c::sendRegisteredVals(){
+bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   bool b_success = false;
 
+#ifdef USE_ISO_11783
+  GeneralCommand_c::ValueGroup_t en_valueGroup;
+    
+  switch (ren_doSend)
+  {
+    case Proc_c::DoValForDefaultSetpoint: en_valueGroup = GeneralCommand_c::defaultValue; break;
+    case Proc_c::DoValForMinSetpoint:     en_valueGroup = GeneralCommand_c::minValue; break;
+    case Proc_c::DoValForMaxSetpoint:     en_valueGroup = GeneralCommand_c::maxValue; break;
+    case Proc_c::DoValForExactSetpoint:   en_valueGroup = GeneralCommand_c::exactValue; break;
+    default:                              en_valueGroup = GeneralCommand_c::noValue;
+  }
+
+  if (GeneralCommand_c::noValue != en_valueGroup)
+    // get value from corresponding setpoint and send it
+    b_success = (sendSetpointValMod( en_valueGroup, devKey(), en_progType))?true : b_success;
+
+  // normal measurement (no measurement on setpoint DDI)
+  if (Proc_c::DoVal == ren_doSend)
+    b_success = (sendValMod( GeneralCommand_c::exactValue, devKey(), en_progType))?true : b_success;
+  
+#elif defined(USE_DIN_9684)
+  
   if (checkDoSend(Proc_c::DoVal))
   {
     // call send function
@@ -735,6 +826,7 @@ bool MeasureProgLocal_c::sendRegisteredVals(){
     // call send function
     b_success = (sendValMod( GeneralCommand_c::medValue, devKey(), en_progType))?true : b_success;
   }
+#endif
 
   return b_success;
 }
@@ -969,6 +1061,7 @@ bool MeasureProgLocal_c::timeEvent( void )
 
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
+    b_triggeredIncrement = false;
     switch (pc_iter->type())
     {
       case Proc_c::TimeProp:
@@ -998,25 +1091,26 @@ bool MeasureProgLocal_c::timeEvent( void )
       default:
         break;
     } // switch
-  } // for
 
-  // if b_triggeredIncrement == true the registered values should be sent
-  // if needed an old unsuccessfull send try is redone
-  if (b_triggeredIncrement)
-  { // send the registered values
+    // if b_triggeredIncrement == true the registered values should be sent
+    // if needed an old unsuccessfull send try is redone (deactivated!)
+    if (b_triggeredIncrement)
+    { // send the registered values
 
-    if ( (b_checkMin && i32_minVal > val() ) ||
-         (b_checkMax && i32_maxVal < val() )
-       )
-    {
-      // omit this value send
-      b_triggeredIncrement = false;
-      return true;
+      if ( (b_checkMin && i32_minVal > val() ) ||
+           (b_checkMax && i32_maxVal < val() )
+        )
+      {
+        // omit this value send
+        b_triggeredIncrement = false;
+        continue;
+      }
+
+      // if at least one send try had success reset b_triggeredIncrement
+      if (sendRegisteredVals(pc_iter->doSend())) b_triggeredIncrement = false;
     }
-
-    // if at least one send try had success reset b_triggeredIncrement
-    if (sendRegisteredVals()) b_triggeredIncrement = false;
   }
+  
   return true;
 }
 

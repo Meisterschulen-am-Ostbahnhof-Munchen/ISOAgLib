@@ -359,6 +359,33 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   bool sendMasterMeasurementVal( const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
 
+  /**
+    check if a setpoint master exists
+    (used for accessing setpoint values from measure progs)
+    @return true -> setpoint master exists
+  */
+  virtual bool setpointExistMaster() const { return false;};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return exact value of master setpoint
+  */
+  virtual int32_t setpointExactValue() const { return 0;};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return default value of master setpoint
+  */
+  virtual int32_t setpointDefaultValue() const { return 0;};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return min value of master setpoint
+  */
+  virtual int32_t setpointMinValue() const { return 0;};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return max value of master setpoint
+  */
+  virtual int32_t setpointMaxValue() const { return 0;};
+
 #ifdef USE_ISO_11783
   /**
     stop all measurement progs in all local process instances, started with given devKey

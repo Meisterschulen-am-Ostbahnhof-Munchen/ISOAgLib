@@ -52,7 +52,7 @@
 /* *********************************************************************** */
 /** \example 2_7_RemoteReadDataStdIso.cpp
  * This tutorial shall provide a simple base program, which creates some
- * remote process data, for which a measurement program is started for
+ * remote process data, for which several measurement programs are started for
  * automatic periodic value update.
  * Demonstrate optional usage of handler class with a method which is automatically
  * called on each measurement value receive.
@@ -342,14 +342,14 @@ int main()
 #endif
 
 #if defined(USE_ISO_11783)
-  const ElementDDI_s s_workStateElementDDI[2] =
+  const ElementDDI_s s_workStateElementDDI[] =
   {
     // DDI 141,
     {141, true, GeneralCommand_c::exactValue},
     // termination entry
     {0xFFFF, false, GeneralCommand_c::noValue}
   };
-  const ElementDDI_s s_applicationRateElementDDI[5] =
+  const ElementDDI_s s_applicationRateElementDDI[] =
   {
     // DDI 1,
     {1, true, GeneralCommand_c::exactValue},
@@ -463,11 +463,13 @@ int main()
       or
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
+  uint16_t ui16_cnt = 0;
+  
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
 
-    IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
+    IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 150 );
 
     // all time controlled actions of IsoAgLib
     IsoAgLib::getISchedulerInstance().timeEvent();
@@ -481,8 +483,8 @@ int main()
       #ifdef USE_PROC_HANDLER
       //arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 4000);
       //arr_procData[cui8_indexWorkState].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
-      arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 4000);
-      arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+      //arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 4000);
+      //arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
       #else
       c_workState.prog().addSubprog(Proc_c::TimeProp, 4000);
       c_workState.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
@@ -495,7 +497,7 @@ int main()
       b_runningPrograms = false;
       #ifdef USE_PROC_HANDLER
       arr_procData[cui8_indexWorkState].prog().stop();
-      //arr_procData[cui8_indexApplicationRate].prog().stop();
+      arr_procData[cui8_indexApplicationRate].prog().stop();
       #else
       c_workState.prog().stop();
       c_applicationRate.prog().stop();
@@ -514,6 +516,88 @@ int main()
       handleRemoteApplicationRate( c_applicationRate.masterVal() );
     }
     #endif
+
+    if (b_runningPrograms)
+    { // some examples for different measurement types (use 2_4_LocalWriteSetpointStdIso.cpp for local side!)
+#ifdef USE_PROC_HANDLER
+      ui16_cnt++;
+      if (ui16_cnt == 20)
+      {
+        arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 2000);
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+        LOG_INFO << "\r\nstart measurement for DDI 2 (normal time increment measurement)" << "\r\n";
+      }
+      if (ui16_cnt == 120)
+      {
+        arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 500, Proc_c::DoValForExactSetpoint);
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForExactSetpoint);
+        LOG_INFO << "\r\nstart measurement for DDI 1 (measurement for exact setpoint)" << "\r\n";
+      }
+      if (ui16_cnt == 220)
+      {
+        arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000, Proc_c::DoValForDefaultSetpoint);
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
+        LOG_INFO << "\r\nstart measurement for DDI 3 (measurement for default setpoint)" << "\r\n";
+      }
+    
+      if (ui16_cnt % 50 == 0 && ui16_cnt > 400 && ui16_cnt <600)
+      {
+        arr_procData[cui8_indexApplicationRate].setSetpointMasterVal(ui16_cnt);
+        arr_procData[cui8_indexApplicationRate].setpoint().setDefault(ui16_cnt*2);
+        LOG_INFO << "\r\nset new values for exact and default setpoint" << "\r\n";
+      }
+    
+      if (ui16_cnt == 700)
+      {
+        arr_procData[cui8_indexApplicationRate].prog().stop(TRUE /* b_deleteSubProgs */, Proc_c::TimeProp, Proc_c::DoValForExactSetpoint);
+        LOG_INFO << "\r\nstop measurement for exact setpoint (DDI 1)" << "\r\n";
+      }
+      if (ui16_cnt == 800)
+      {
+        // corresponding MeasureSubprog_c isn't deleted
+        arr_procData[cui8_indexApplicationRate].prog().stop(FALSE /* b_deleteSubProgs */, Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
+        LOG_INFO << "\r\nstop measurement for default setpoint (DDI 3)" << "\r\n";
+      }
+      if (ui16_cnt == 900)
+      {
+        arr_procData[cui8_indexApplicationRate].prog().stop(TRUE /* b_deleteSubProgs */, Proc_c::TimeProp, Proc_c::DoVal);
+        LOG_INFO << "\r\nstop time proportional measurement for DDI 2" << "\r\n";
+      }
+      
+      if (ui16_cnt == 1000)
+      {
+        arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000, Proc_c::DoVal);
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+        // use still existing measure sub prog for default setpoint
+        arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
+        LOG_INFO << "\r\nstarting measurement for DDI 2 and 3 again" << "\r\n";
+      }
+
+      if (ui16_cnt == 1100)
+      {
+        // stop all measure progs and delete sub progs
+        arr_procData[cui8_indexApplicationRate].prog().stop();
+        LOG_INFO << "\r\nstopping measurement for DDI 2 and 3" << "\r\n";
+      }
+
+      if (ui16_cnt == 1200)
+      { 
+        arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 300, Proc_c::DoValForDefaultSetpoint);
+        arr_procData[cui8_indexWorkState].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
+        LOG_INFO << "\r\nstart measurement for DDI 141" << "\r\n";
+      }
+      if (ui16_cnt == 1300)
+      {
+        arr_procData[cui8_indexWorkState].setSetpointMasterVal(ui16_cnt);
+        LOG_INFO << "\r\nsend exact setpoint values for DDI 141" << "\r\n";
+      }
+      if (ui16_cnt == 1400)
+      {
+        arr_procData[cui8_indexWorkState].prog().stop();
+        LOG_INFO << "\r\nstopping measurement for DDI 141" << "\r\n";
+      }
+#endif  
+    }
   }
   return 1;
 }

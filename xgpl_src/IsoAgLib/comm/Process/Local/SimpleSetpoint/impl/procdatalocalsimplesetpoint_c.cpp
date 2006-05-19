@@ -85,6 +85,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "procdatalocalsimplesetpoint_c.h"
+#include "../../../impl/process_c.h"
 
 namespace __IsoAgLib {
 
@@ -365,10 +366,21 @@ void ProcDataLocalSimpleSetpoint_c::processProg(){
 }
 /** process a setpoint message */
 void ProcDataLocalSimpleSetpoint_c::processSetpoint(){
-  c_setpoint.processSetpoint();
-  // call base function to perform some processing steps for all kinds of
-  // local process data
-  ProcDataLocalBase_c::processSetpoint();
+  switch (getProcessInstance4Comm().data().c_generalCommand.getCommand())
+  {
+    case GeneralCommand_c::setValue:
+    case GeneralCommand_c::requestValue:
+      c_setpoint.processSetpoint();
+#ifdef USE_DIN_9684
+      // call base class processMsg to detect if this is a setpoint cmd
+      // to reset the measurement value
+      ProcDataLocalBase_c::processSetpoint();
+#endif
+      break;
+    default:
+      // process measurement commands even if this DDI is defined as a setpoint 
+      c_measureprog.processProg();
+  }
 }
 
 } // end of namespace __IsoAgLib

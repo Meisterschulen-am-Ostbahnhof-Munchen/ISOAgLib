@@ -189,12 +189,12 @@ public:
       * dependant error in CANIO_c on send problems
     @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @param ri32_masterVal actual master value to start with
     @return true -> starting values sent with success
   */
   bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend, int32_t ri32_masterVal);
+             Proc_c::doSend_t ren_doSend, int32_t ri32_masterVal);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     start a measuring programm with new master measurement value
@@ -204,12 +204,12 @@ public:
       * dependant error in CANIO_c on send problems
     @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @param rf_masterVal actual float master value to start with
     @return true -> starting values sent with success
   */
   bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend, float rf_masterVal);
+             Proc_c::doSend_t ren_doSend, float rf_masterVal);
 #endif
   /**
     start a measuring program without new master measurement value
@@ -219,11 +219,10 @@ public:
       * dependant error in CANIO_c on send problems
     @param ren_progType process msg type: Proc_c::Base, Proc_c::Target
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @return true -> starting values sent with success
   */
-  virtual bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend);
+  virtual bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
   /**
     stop local measuring programs -> send actual values
 
@@ -231,9 +230,12 @@ public:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CANIO_c on send problems
     @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
+    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @return true -> stop values sent with success
   */
-  virtual bool stop(bool b_deleteSubProgs = true);
+  virtual bool stop(bool b_deleteSubProgs = true, Proc_c::type_t ren_type = Proc_c::NullType,
+                    Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
   /**
     deliver med val
     @return actual medium value
@@ -247,13 +249,29 @@ public:
   float medFloat(bool rb_sendRequest = false) const {return ((i32_medCnt > 0) && (rb_sendRequest || !rb_sendRequest))?(f_medSum/(float)i32_medCnt):(0.0F);};
 #endif
   /**
-    send a sub-information (selected by MOD) to a specified target (selected by GPT)
-    @param rui8_mod MOD code of the value type to send
+    send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
+    @param en_valueGroup value group to send
     @param rc_targetDevKey DevKey of target
     @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
-  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target ) const;
+  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType = Proc_c::Target) const;
+
+  /**
+    send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
+    @param en_valueGroup value group to send
+    @param rc_targetDevKey DevKey of target
+    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
+    @return true -> successful sent
+  */
+  bool sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const DevKey_c& rc_targetDevKey, Proc_c::progType_t ren_progType) const;
+  /**
+    deliver to en_valueGroup according setpoint from a master setpoint
+    @param en_valueGroup of wanted subtype
+    @return value of specified subtype
+  */
+  int32_t setpointValMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
+
   /**
     process a message: reset command or value requests
 
@@ -289,9 +307,10 @@ public:
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CANIO_c on send problems
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @return true -> value send triggered and performed with success
   */
-  bool sendRegisteredVals();
+  bool sendRegisteredVals(Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
     init the element vals

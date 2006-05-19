@@ -185,9 +185,10 @@ public:
         * Err_c::badAlloc not enough memory to add new subprog
     @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ri32_increment increment value
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
   */
-  bool addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment);
+  bool addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
   /**
     LBS+ uses positive values even for time proportional measure prog
     -> only the start cmd choose increment type
@@ -198,17 +199,20 @@ public:
     start a measuring programm
     @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
     @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg)
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
   */
   virtual bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend);
+                     Proc_c::doSend_t ren_doSend);
   /**
     stop all running subprog
     @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
   */
-  virtual bool stop(bool b_deleteSubProgs = true);
+  virtual bool stop(bool b_deleteSubProgs = true, Proc_c::type_t ren_type = Proc_c::NullType,
+                    Proc_c::doSend_t ren_doSend = Proc_c::DoNone);
   /**
     check if this measure prog is running
     @return true -> program is running
@@ -616,8 +620,9 @@ private: // Private methods
 
     possible errors:o
         * Err_c::badAlloc not enough memory to add new subprog
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   */
-  void processIncrementMsg();
+  void processIncrementMsg(Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
 private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE

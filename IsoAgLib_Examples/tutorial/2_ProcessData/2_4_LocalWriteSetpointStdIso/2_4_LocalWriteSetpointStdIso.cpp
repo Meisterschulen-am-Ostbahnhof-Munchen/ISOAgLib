@@ -246,9 +246,9 @@ uint32_t ui32_localDummyApplicationRate;
 
 /** dummy function to decide on acceptance of received setpoint */
 bool localIsAcceptableWorkState( const IsoAgLib::iDevKey_c& rc_deviceType, uint32_t rui32_setpointValue )
-{ // just for demo - accept from other than device type 1 only values smaller than 255
+{ // just for demo - accept from other than device type 1 or 2 only values smaller than 255
 
-  if ( rc_deviceType.getDevClass() < 2 )
+  if ( rc_deviceType.getDevClass() < 3 )
   {
     ui8_localDummyWorkState = rui32_setpointValue;
     return true;
@@ -260,8 +260,8 @@ bool localIsAcceptableWorkState( const IsoAgLib::iDevKey_c& rc_deviceType, uint3
 }
 
 bool localIsAcceptableApplicationRate( const IsoAgLib::iDevKey_c& rc_deviceType, uint32_t rui32_setpointValue )
-{ // just for demo - accept from other than device type 1 only values smaller than 255
-  if ( ( rc_deviceType.getDevClass() == 1 ) || ( rui32_setpointValue < 255 ) )
+{ // just for demo - accept from other than device type 1 or 2 only values smaller than 255
+  if ( ( rc_deviceType.getDevClass() < 3 ) || ( rui32_setpointValue < 255 ) )
   {
     ui32_localDummyApplicationRate = rui32_setpointValue;
     return true;
@@ -275,7 +275,15 @@ bool localIsAcceptableApplicationRate( const IsoAgLib::iDevKey_c& rc_deviceType,
 /** dummy function to retrieve if the implement is at the moment in working state */
 uint8_t getCurrentWorkState( void ) { return ui8_localDummyWorkState;};
 /** dummy function to retrieve currently realized application rate ( is probably in reality slightly different from setpoint ) */
-uint8_t getCurrentApplicationRate( void ) { return ui32_localDummyApplicationRate;};
+uint8_t getCurrentApplicationRate( void )
+{
+  static int8_t i8_deviation = 1;
+  if (i8_deviation > 0)
+     i8_deviation = -1;
+  else
+    i8_deviation = 1;
+ return ui32_localDummyApplicationRate + i8_deviation;
+};
 
 #ifdef USE_PROC_HANDLER
 
@@ -428,9 +436,11 @@ int main()
 
   while ( iSystem_c::canEn() )
   { // run main loop
+    
+    IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
+
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
-
     IsoAgLib::getISchedulerInstance().timeEvent();
 
     #ifndef USE_PROC_HANDLER

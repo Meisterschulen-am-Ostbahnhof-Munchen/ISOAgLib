@@ -340,6 +340,32 @@ public:
   */
   virtual bool timeEvent( void );
 
+  /**
+    check if a setpoint master exists
+    (used for accessing setpoint values from measure progs)
+    @return true -> setpoint master exists
+  */
+  virtual bool setpointExistMaster() const { return true;};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return exact value of master setpoint
+  */
+  virtual int32_t setpointExactValue() const { return setpointConst().setpointMasterVal();};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return default value of master setpoint
+  */
+  virtual int32_t setpointDefaultValue() const { return setpointConst().setpointMasterVal();};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return min value of master setpoint
+  */
+  virtual int32_t setpointMinValue() const { return setpointConst().setpointMasterVal();};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return max value of master setpoint
+  */
+  virtual int32_t setpointMaxValue() const { return setpointConst().setpointMasterVal();};
 
 private: // Private methods
 #ifdef USE_EEPROM_IO

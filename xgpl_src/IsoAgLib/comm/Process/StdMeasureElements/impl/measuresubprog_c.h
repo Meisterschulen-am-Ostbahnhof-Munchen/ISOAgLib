@@ -106,20 +106,22 @@ public:
   /**
     default constructor which can optionally set increment type, increment and running state
     @param ren_type optional increment type (default time proportional)
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @param ri32_increment optional increment value of ren_type (default 0)
     @param rb_started optional running state (default off)
     @param ri32_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, int32_t ri32_increment = 0, bool rb_started = false, int32_t ri32_lastVal = 0);
+  MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, Proc_c::doSend_t ren_doSend = Proc_c::DoVal, int32_t ri32_increment = 0, bool rb_started = false, int32_t ri32_lastVal = 0);
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     default constructor which can optionally set increment type, increment and running state
     @param ren_type increment type
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @param rf_increment increment value of ren_type
     @param rb_started optional running state (default off)
     @param rf_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::type_t ren_type, float rf_increment, bool rb_started = false, float rf_lastVal = 0.0);
+  MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float rf_increment, bool rb_started = false, float rf_lastVal = 0.0);
 #endif
   /**
     operator= for Subprogs
@@ -147,6 +149,18 @@ public:
     @param ren_type wanted increment type of this subprogram
   */
   void setType(Proc_c::type_t ren_type){en_type = ren_type;};
+  
+  /**
+    deliver subprog data send type
+    @return data send type of this measure subprogram increment
+  */
+  Proc_c::doSend_t doSend(){return en_doSend;};
+  /**
+    set subprog data send type
+    @param ren_doSend wanted data send type of this measure subprogram
+  */
+  void setDoSend_t(Proc_c::doSend_t ren_doSend){en_doSend = ren_doSend;};
+  
   /**
     deliver the increment value of this subprog
     @return increment value
@@ -297,6 +311,7 @@ private: // Private attributes
     (the managed increment type)
   */
   Proc_c::type_t en_type;
+  Proc_c::doSend_t en_doSend;
 private: // Private methods
   /**
     calculate a single identifying value for easier compare of Subprogs

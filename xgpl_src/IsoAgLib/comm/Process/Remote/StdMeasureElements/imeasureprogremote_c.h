@@ -83,7 +83,7 @@ public:
         * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
         * dependant error in CAN_IO
     @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg)
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> command successful sent
   */
   bool start(Proc_c::progType_t ren_progType, Proc_c::doSend_t ren_doSend)
@@ -98,11 +98,10 @@ public:
         * dependant error in CAN_IO
     @param ren_progType wanted msg type for measure prog (Proc_c::Base, Proc_c::Target)
     @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoMed, Proc_c::DoInteg)
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> command successful sent
   */
-  bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend)
+  bool start(Proc_c::progType_t ren_progType, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
         {return MeasureProgRemote_c::start(ren_progType, ren_type, ren_doSend);};
 
   /**
@@ -127,9 +126,12 @@ public:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @param b_deleteSubProgs is only used for ISO
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> command successful sent
   */
-  bool stop(bool b_deleteSubProgs = true) {return MeasureProgRemote_c::stop(b_deleteSubProgs);};
+  bool stop(bool b_deleteSubProgs = true, Proc_c::type_t ren_type = Proc_c::NullType, Proc_c::doSend_t ren_doSend = Proc_c::DoVal)
+       {return MeasureProgRemote_c::stop(b_deleteSubProgs, ren_type, ren_doSend);};
   /**
     deliver time of last receive of new measurement value
     (val, min, max, integ or med)
@@ -193,10 +195,11 @@ public:
         * Err_c::badAlloc not enough memory to add new subprog
     @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
     @param ri32_increment increment value
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
   */
-  bool addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment)
-      {return MeasureProgRemote_c::addSubprog(ren_type, ri32_increment);};
+  bool addSubprog(Proc_c::type_t ren_type, int32_t ri32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal)
+      {return MeasureProgRemote_c::addSubprog(ren_type, ri32_increment, ren_doSend);};
 
   /**
     deliver value

@@ -143,7 +143,9 @@ public:
   enum progType_t {UndefinedProg = 0xFF, Base = 1, Target = 2, Partner = 5 };
 
   /** enum type for to sending values */
-  enum doSend_t {DoNone = 0, DoVal = 1, DoMed = 2, DoInteg = 4, DoDelta = 8, DoAccel = 16, DoMin = 32, DoMax = 64};
+  enum doSend_t {DoNone = 0, DoVal = 1, DoMed = 2, DoInteg = 4, DoDelta = 8, DoAccel = 16, DoMin = 32, DoMax = 64,
+                 // ISO specific
+                 DoValForExactSetpoint = 0x80, DoValForDefaultSetpoint = 0x100, DoValForMinSetpoint = 0x200, DoValForMaxSetpoint = 0x400};
 
   /** enum type for proportional type used for calculating accumulated vaslues */
   enum accumProp_t {AccumNone, AccumDist = 1, AccumTime = 4};

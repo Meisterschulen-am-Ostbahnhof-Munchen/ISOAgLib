@@ -94,12 +94,14 @@ namespace __IsoAgLib {
 /**
   default constructor which can optionally set increment type, increment and running state
   @param ren_type optional increment type (default time proportional)
+  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @param ri32_increment optional increment value of ren_type (default 0)
   @param rb_started optional running state (default off)
   @param ri32_lastVal optional value of last trigger event (default 0)
 */
-MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, int32_t ri32_increment, bool rb_started, int32_t ri32_lastVal){
+MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ri32_increment, bool rb_started, int32_t ri32_lastVal){
   en_type = ren_type;
+  en_doSend = ren_doSend;
   i32_increment = ri32_increment;
   b_started = rb_started;
   i32_lastVal = ri32_lastVal;
@@ -108,12 +110,14 @@ MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, int32_t ri32_increme
 /**
   default constructor which can optionally set increment type, increment and running state
   @param ren_type optional increment type (default time proportional)
+  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @param rf_increment increment value of ren_type
   @param rb_started optional running state (default off)
   @param rf_lastVal optional value of last trigger event (default 0)
 */
-MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, float rf_increment, bool rb_started, float rf_lastVal){
+MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float rf_increment, bool rb_started, float rf_lastVal){
   en_type = ren_type;
+  en_doSend = ren_doSend;
   f_increment = rf_increment;
   b_started = rb_started;
   f_lastVal = rf_lastVal;
@@ -127,6 +131,7 @@ MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, float rf_increment, 
 const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& rrefc_src){
   b_started = rrefc_src.b_started;
   en_type = rrefc_src.en_type;
+  en_doSend = rrefc_src.en_doSend;
   i32_increment = rrefc_src.i32_increment;
   i32_lastVal = rrefc_src.i32_lastVal;
   return rrefc_src;
@@ -139,6 +144,7 @@ const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& rref
 MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& rrefc_src){
   b_started = rrefc_src.b_started;
   en_type = rrefc_src.en_type;
+  en_doSend = rrefc_src.en_doSend;
   i32_increment = rrefc_src.i32_increment;
   i32_lastVal = rrefc_src.i32_lastVal;
 }
@@ -156,7 +162,7 @@ void MeasureSubprog_c::start(int32_t ri32_lastVal, int32_t ri32_increment){
   // if wanted store given values (in both cases 0 is interpreted as not wanted)
   if (ri32_increment != 0) i32_increment = ri32_increment;
   if (ri32_lastVal != 0) i32_lastVal = ri32_lastVal;
-
+  
   // register as started
   b_started = true;
 }

@@ -379,6 +379,33 @@ public:
   */
   virtual bool timeEvent( void );
 
+  /**
+    check if a setpoint master exists
+    (used for accessing setpoint values from measure progs)
+    @return true -> setpoint master exists
+  */
+  virtual bool setpointExistMaster() const { return setpointConst().existMaster();};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return exact value of master setpoint
+  */
+  virtual int32_t setpointExactValue() const { return setpointConst().masterConst().exact();};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return default value of master setpoint
+  */
+  virtual int32_t setpointDefaultValue() const { return setpointConst().masterConst().getDefault();};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return min value of master setpoint
+  */
+  virtual int32_t setpointMinValue() const { return setpointConst().masterConst().min();};
+  /**
+    (used for accessing setpoint values from measure progs)
+    @return max value of master setpoint
+  */
+  virtual int32_t setpointMaxValue() const { return setpointConst().masterConst().max();};
+
 #ifdef USE_ISO_11783
   /**
     allow local client to actively start a measurement program
