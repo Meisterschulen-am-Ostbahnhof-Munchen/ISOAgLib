@@ -273,6 +273,15 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       * @return true -> handler class reacted on change event
       */
     virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey, bool rb_change );
+    /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
+      * (remote system which manages the process data, local or other system sent previously a
+      *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
+      * @param rc_src general event source class, which provides conversion functions to get needed event source class
+      * @param ri32_val new value, which caused the event (for immediate access)
+      * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
+      * @return true -> handler class reacted on change event
+    */
+    virtual bool processSetpointResponse( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey );
 };
 
 bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& /* rc_callerDevKey */, bool rb_change )
@@ -297,6 +306,14 @@ bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_
   // answer to IsoAgLib that this new setpoint is handled
   return true;
 }
+
+bool MyProcDataHandler_c::processSetpointResponse( EventSource_c /* rc_src */, int32_t ri32_val, const iDevKey_c& /* rc_callerDevKey */)
+{
+  LOG_INFO << "\r\nnew setpoint response value received: " << ri32_val << "\r\n";
+  // answer to IsoAgLib that this new setpoint is handled
+  return true;
+}
+
 
 // create one class instance for the handler
 MyProcDataHandler_c c_myMeasurementHandler;
