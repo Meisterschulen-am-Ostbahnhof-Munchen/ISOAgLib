@@ -145,7 +145,9 @@ build_utils/vt2iso/Doxyfile -text
 build_utils/vt2iso/FreeImage.dll -text
 build_utils/vt2iso/Makefile.incl -text
 build_utils/vt2iso/Makefile.paintlib -text
+build_utils/vt2iso/Release/FreeImage.dll -text
 build_utils/vt2iso/Release/vt2iso.exe -text
+build_utils/vt2iso/Release/xerces-c_2_5_0D.dll -text
 build_utils/vt2iso/Vt2Iso.dev -text
 build_utils/vt2iso/Vt2Iso.exe -text
 build_utils/vt2iso/bin/vt2iso -text
