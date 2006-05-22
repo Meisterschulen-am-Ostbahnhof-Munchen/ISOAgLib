@@ -59,3 +59,27 @@ myDeviceDevKey, 0x2, myDeviceDevKey, &myDeviceDevKey, false
 #endif
 );
 
+#if defined(USE_ISO_11783)
+uint16_t ui16_defaultLoggingElementNumber = 0;
+const IsoAgLib::ElementDDI_s s_defaultLoggingElementDDI[] =
+{
+	{0xDFFF, false, IsoAgLib::GeneralCommand_c::exactValue},
+	// termination entry
+	{0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}
+};
+#endif
+
+IsoAgLib::iProcDataLocal_c c_defaultLogging(
+#ifdef USE_ISO_11783
+s_defaultLoggingElementDDI,
+ui16_defaultLoggingElementNumber, 
+#endif
+#ifdef USE_DIN_9684
+0x0, 0x1, 0x0, 0xff, 
+#endif
+myDeviceDevKey, 0x2, myDeviceDevKey, &myDeviceDevKey, false
+#ifdef USE_EEPROM_IO
+, 0xffff
+#endif
+);
+

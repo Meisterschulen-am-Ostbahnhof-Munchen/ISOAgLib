@@ -11,5 +11,9 @@
       <deviceprocessdatacombination ddi="0x0004" command_type="min" is_setpoint="true" />
       <devicedinprocessdata lis="0" wert_inst="0x5" />
     </deviceprocessdata>
+    <deviceprocessdata designator="default data logging DDI" ddi="0xDFFF" properties="defaultset" trigger_methods="timeinterval" proc_program_name="defaultLogging" cumulative_value="false">
+      <deviceprocessdatacombination ddi="0xDFFF" command_type="exact" is_setpoint="false" />
+      <devicedinprocessdata lis="0" wert_inst="0x1" />
+    </deviceprocessdata>
   </deviceelement>
 </device>

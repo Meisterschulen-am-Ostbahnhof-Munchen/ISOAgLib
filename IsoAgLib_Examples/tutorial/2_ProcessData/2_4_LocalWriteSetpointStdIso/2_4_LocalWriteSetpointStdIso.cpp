@@ -311,12 +311,14 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 
 bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iDevKey_c& rc_setpointSender, bool rb_change)
 {
-
   if ( ! rb_change )
   { // don't handle succeeding setpoints which don't contain new value - maybe still relevant for other applications
     return false; // indicate that this information is not again handled - just ignored
   }
 
+#ifdef USE_ISO_11783
+  std::cout << "processSetpointSet called for DDI " << rc_src.makeIProcDataLocal()->getDDIfromCANPkg() << std::endl;
+#endif
   // use helper function to get automatically casted pointer to used process data type
   uint16_t ui16_index = rc_src.makeIProcDataLocal() - arr_procData;
   switch ( ui16_index )
