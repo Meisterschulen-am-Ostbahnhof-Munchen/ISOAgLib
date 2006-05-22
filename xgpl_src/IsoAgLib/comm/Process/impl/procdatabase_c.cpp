@@ -508,4 +508,15 @@ IState_c::itemState_t ProcDataBase_c::getIStateForDevKey( const DevKey_c& rc_dev
 }
 #endif
 
+#ifdef USE_ISO_11783
+/**
+  deliver DDI from last received can pkg
+  @return DDI
+*/
+uint16_t ProcDataBase_c::getDDIfromCANPkg( void ) const
+{
+  return getProcessPkg().DDI();
+}
+#endif
+
 } // end of namespace __IsoAgLib

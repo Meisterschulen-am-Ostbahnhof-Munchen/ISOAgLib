@@ -267,6 +267,11 @@ public:
   @return element
    */
   uint16_t element() const  { return ProcIdent_c::element();};
+  /**
+    deliver DDI from last received can pkg
+    @return DDI
+  */
+  uint16_t getDDIfromCANPkg() const { return ProcDataBase_c::getDDIfromCANPkg();};
 #endif
 
 

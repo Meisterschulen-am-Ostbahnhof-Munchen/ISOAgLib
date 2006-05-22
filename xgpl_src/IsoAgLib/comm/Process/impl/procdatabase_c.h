@@ -321,6 +321,12 @@ public:
     @return IState_c::itemState_t
   */
   IState_c::itemState_t getIStateForDevKey( const DevKey_c& rc_devKey );
+
+  /**
+    deliver DDI from last received can pkg
+    @return DDI
+  */
+  uint16_t getDDIfromCANPkg( void ) const;
 #endif
 
 protected: // Protected methods

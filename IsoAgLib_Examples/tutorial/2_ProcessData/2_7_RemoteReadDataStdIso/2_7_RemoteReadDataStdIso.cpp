@@ -286,7 +286,6 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 
 bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& /* rc_callerDevKey */, bool rb_change )
 {
-
   if ( ! rb_change )
   { // don't handle values which don't contain new value - maybe still relevant for other applications
     return false; // indicate that this information is not again handled - just ignored
@@ -300,7 +299,9 @@ bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_
       handleRemoteWorkState( ri32_val );
       break;
     case cui8_indexApplicationRate:
-      handleRemoteApplicationRate( ri32_val );
+      if (rc_src.makeIProcDataRemote()->getDDIfromCANPkg() == 2)
+        // measurement value for DDI 2 (measured application rate)
+        handleRemoteApplicationRate( ri32_val );
       break;
   }
   // answer to IsoAgLib that this new setpoint is handled
@@ -309,7 +310,7 @@ bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c rc_src, int32_
 
 bool MyProcDataHandler_c::processSetpointResponse( EventSource_c /* rc_src */, int32_t ri32_val, const iDevKey_c& /* rc_callerDevKey */)
 {
-  LOG_INFO << "\r\nnew setpoint response value received: " << ri32_val << "\r\n";
+  LOG_INFO << "new setpoint response value received: " << ri32_val << "\r\n";
   // answer to IsoAgLib that this new setpoint is handled
   return true;
 }
@@ -536,7 +537,7 @@ int main()
 
     if (b_runningPrograms)
     { // some examples for different measurement types (use 2_4_LocalWriteSetpointStdIso.cpp for local side!)
-#ifdef USE_PROC_HANDLER
+#ifdef USE_PROC_HANDLER      
       ui16_cnt++;
       if (ui16_cnt == 20)
       {
@@ -559,8 +560,8 @@ int main()
     
       if (ui16_cnt % 50 == 0 && ui16_cnt > 400 && ui16_cnt <600)
       {
-        arr_procData[cui8_indexApplicationRate].setSetpointMasterVal(ui16_cnt);
-        arr_procData[cui8_indexApplicationRate].setpoint().setDefault(ui16_cnt*2);
+        arr_procData[cui8_indexApplicationRate].setSetpointMasterVal(ui16_cnt / 10);
+        arr_procData[cui8_indexApplicationRate].setpoint().setDefault(ui16_cnt / 10);
         LOG_INFO << "\r\nset new values for exact and default setpoint" << "\r\n";
       }
     
@@ -613,7 +614,7 @@ int main()
         arr_procData[cui8_indexWorkState].prog().stop();
         LOG_INFO << "\r\nstopping measurement for DDI 141" << "\r\n";
       }
-#endif  
+#endif
     }
   }
   return 1;

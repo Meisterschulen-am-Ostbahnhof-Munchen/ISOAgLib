@@ -454,6 +454,22 @@ void SetpointRemote_c::processSet(){
          || ( c_answeredMaster.devKey() != c_empfDevKey )
          || ( ! c_answeredMaster.master() )
           ) b_change = true;
+
+#ifdef USE_ISO_11783
+      bool b_changeMeasurement;
+      switch (c_pkg.c_generalCommand.getValueGroup())
+      { // compare new value with corresponding last value
+        case GeneralCommand_c::exactValue:   b_changeMeasurement = (c_answeredMaster.exact() != i32_val); break;
+        case GeneralCommand_c::defaultValue: b_changeMeasurement = (c_answeredMaster.getDefault() != i32_val); break;
+        case GeneralCommand_c::minValue:     b_changeMeasurement = (c_answeredMaster.min() != i32_val); break;
+        case GeneralCommand_c::maxValue:     b_changeMeasurement = (c_answeredMaster.max() != i32_val); break;
+        default:                             b_changeMeasurement = FALSE;
+      }        
+      // call processMeasurementUpdate handler function in case a measurement prog is running for this setpoint DDI
+      if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) )
+        processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, c_pkg.memberSend().devKey(), b_changeMeasurement);
+#endif
+          
       c_answeredMaster.setValMod( i32_val, c_pkg.c_generalCommand.getValueGroup());
       // set the devKey of the actual master
       c_answeredMaster.setDevKey( c_empfDevKey);
@@ -461,6 +477,7 @@ void SetpointRemote_c::processSet(){
       c_answeredMaster.setValid( true);
       // set for completness themaster flag
       c_answeredMaster.setMaster( true);
+
     }
   }
   // check if it was a master release command
