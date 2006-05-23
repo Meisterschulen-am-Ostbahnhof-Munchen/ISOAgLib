@@ -234,18 +234,34 @@ ISORequestPGN_c::checkIfAlreadyRegistered (ISORequestPGNHandler_c &ref_PGNHandle
 bool
 ISORequestPGN_c::processMsg ()
 {
+  /// it is not allowed to have source address 0xFF
+  /// it needs to be != 0xFF
+  if (data().isoSa() == 0xFF)
+    return true;
+
   uint32_t ui32_reqPgn;
-// since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
-//  if ((data().isoPgn() & 0x1FF00) == REQUEST_PGN_MSG_PGN)
-//  { // request for PGN
+  // since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
+  //  if ((data().isoPgn() & 0x1FF00) == REQUEST_PGN_MSG_PGN)
+  //  { // request for PGN
   ui32_reqPgn = (
                 (static_cast<int32_t>(data().operator[](0)))
               | (static_cast<int32_t>(data().operator[](1)) << 8)
               | (static_cast<int32_t>(data().operator[](2)) << 16)
               );
+
+  /// in case of ISOItem_c has no address claimed yet it has sa 0xFE
+  /// that ISOItem_c is not allowed to send any other REQUEST_PGN_MSG_PGN than ADDRESS_CLAIM_PGN
+  /// Mike said: FE can request anything it wants ;-) so we'll do it!
+  //     if ((data().isoSa() == 0xFE) && (ui32_reqPgn != ADDRESS_CLAIM_PGN))
+  //       return true;
+  //     else
+
+  /// if the ISOItem_c is not in the monitor list, ignore this request
+  if (!getIsoMonitorInstance4Comm().existIsoMemberNr (data().isoSa())) return true;
+
   bool b_distributeToClients = false;
   // if isoPs is 255 let all local item answer
-  if (data().isoPs() == 255)
+  if (data().isoPs() == 0xFF)
   {
     b_distributeToClients = true;
   }
@@ -290,6 +306,8 @@ ISORequestPGN_c::processMsg ()
       data().setUint8Data ((7-1), (ui32_purePgn >> 8) & 0xFF);
       data().setUint8Data ((8-1), (ui32_purePgn >> 16) & 0xFF);
       data().setLen (8);
+
+      __IsoAgLib::getCanInstance4Comm() << c_data;
     }
   }
   return true;
