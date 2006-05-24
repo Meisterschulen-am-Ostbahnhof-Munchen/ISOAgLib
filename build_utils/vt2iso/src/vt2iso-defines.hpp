@@ -50,7 +50,7 @@
 	typedef long int long int64_t;
 #endif
 
-#define stringLength 256
+#define stringLength 1024
 
 
 // Object Types
