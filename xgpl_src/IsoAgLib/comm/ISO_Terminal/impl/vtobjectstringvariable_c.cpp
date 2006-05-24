@@ -135,12 +135,29 @@ vtObjectStringVariable_c::fitTerminal()
   return 5+vtObjectStringVariable_a->length;
 } // -X2C
 
+
+// //////////////////////////////// +X2C Operation 237 : setValueCopyUTF8
+//! Parameter:
+//! @param newValue:
+//! @param b_updateObject:
+void
+vtObjectStringVariable_c::setValueCopyUTF8 (const char* newValue, uint8_t rui8_fontType, bool b_updateObject, bool b_enableReplaceOfCmd)
+{
+  const uint16_t cui16_strLen = strlen (newValue);
+  char pc_iso8859 [cui16_strLen+1];
+
+  convertStringUnicodeTo8859 (newValue, cui16_strLen, pc_iso8859, rui8_fontType);
+
+  setValueCopy (pc_iso8859, b_updateObject, b_enableReplaceOfCmd);
+}
+
+
 // //////////////////////////////// +X2C Operation 236 : setValueCopy
 //! Parameter:
 //! @param newValue:
 //! @param b_updateObject:
 void
-vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 { // ~X2C
   if (b_updateObject) {
     // check if not already RAM string buffer?

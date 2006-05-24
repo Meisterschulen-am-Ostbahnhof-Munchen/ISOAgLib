@@ -115,7 +115,7 @@ public:
   void init(const iVtObjectStringVariable_s* vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectStringVariableSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectStringVariable_a
-  iVtObjectStringVariable_s* get_vtObjectStringVariable_a() { return (iVtObjectStringVariable_s *)vtObject_a; };
+  iVtObjectStringVariable_s* get_vtObjectStringVariable_a() { return (iVtObjectStringVariable_s *)vtObject_a; }
 
   //  Operation: vtObjectStringVariable_c
   vtObjectStringVariable_c();
@@ -127,7 +127,8 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopy(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setValueCopyUTF8(const char* newValue, uint8_t rui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: setValueRef
   //! Parameter:

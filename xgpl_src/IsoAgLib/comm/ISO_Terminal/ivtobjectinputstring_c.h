@@ -100,6 +100,14 @@ public:
     vtObjectInputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
+  //  Operation: setValueCopyUTF8
+  //! Parameter:
+  //! @param newValue:
+  //! @param b_updateObject:
+  void setValueCopyUTF8(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectInputString_c::setValueCopyUTF8 (newValue, b_updateObject, b_enableReplaceOfCmd);
+  };
+
   //  Operation: setVariableReference
   //! Parameter:
   //! @param newVariable:

@@ -55,7 +55,7 @@
 
 // +X2C includes
 #include "impl/vtobjectoutputstring_c.h"
-#include "ivtobjectstringvariable_c.h"
+//#include "ivtobjectstringvariable_c.h"
 // ~X2C
 
 // Begin Namespace IsoAgLib
@@ -82,7 +82,7 @@ public:
   iVtObjectOutputString_s* get_vtObjectOutputString_a() { return vtObjectOutputString_c::get_vtObjectOutputString_a(); };
 
 
-  //  Operation: setValue
+  //  Operation: setValueCopy
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
@@ -90,7 +90,15 @@ public:
     vtObjectOutputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
-  //  Operation: setValue
+  //  Operation: setValueCopyUTF8
+  //! Parameter:
+  //! @param newValue:
+  //! @param b_updateObject:
+  void setValueCopyUTF8(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+    vtObjectOutputString_c::setValueCopyUTF8 (newValue, b_updateObject, b_enableReplaceOfCmd);
+  };
+
+  //  Operation: setValueRef
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:

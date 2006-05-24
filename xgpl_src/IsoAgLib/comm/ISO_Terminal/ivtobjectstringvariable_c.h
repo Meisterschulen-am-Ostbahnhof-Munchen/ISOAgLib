@@ -55,6 +55,7 @@
 
 // +X2C includes
 #include "impl/vtobjectstringvariable_c.h"
+#include "ivtobjectoutputstring_c.h"
 // ~X2C
 
 // Begin Namespace IsoAgLib
@@ -77,13 +78,34 @@ public:
   };
 
   //  Operation: get_vtObjectStringVariable_a
-  iVtObjectStringVariable_s* get_vtObjectStringVariable_a() { return vtObjectStringVariable_c::get_vtObjectStringVariable_a (); };
+  iVtObjectStringVariable_s* get_vtObjectStringVariable_a() {
+    return vtObjectStringVariable_c::get_vtObjectStringVariable_a ();
+  }
 
   //  Operation: setValueCopy
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) { vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd); };
+  void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
+  }
+
+  //  Operation: setValueCopyUTF8
+  //! Parameter:
+  //! @param newValue:
+  //! @param b_updateObject:
+  void setValueCopyUTF8(const char* newValue, uint8_t rui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectStringVariable_c::setValueCopyUTF8 (newValue, rui8_fontType, b_updateObject, b_enableReplaceOfCmd);
+  }
+
+  //  Operation: setValueCopyUTF8
+  //! Parameter:
+  //! @param newValue:
+  //! @param b_updateObject:
+  void setValueCopyUTF8(const char* newValue, iVtObjectOutputString_c& rrefc_ops, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    const uint8_t cui8_fontType = rrefc_ops.get_vtObjectOutputString_a()->fontAttributes->get_vtObjectFontAttributes_a()->fontType;
+    vtObjectStringVariable_c::setValueCopyUTF8 (newValue, cui8_fontType, b_updateObject, b_enableReplaceOfCmd);
+  }
 
   //  Operation: setValueRef
   //! Parameter:

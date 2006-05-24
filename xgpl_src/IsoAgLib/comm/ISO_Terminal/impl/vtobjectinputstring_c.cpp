@@ -81,6 +81,8 @@
  ***************************************************************************/
 
 
+#include <IsoAgLib/util/impl/util_funcs.h>
+
 #include "vtobjectinputstring_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectinputattributes_c.h"
@@ -196,6 +198,26 @@ vtObjectInputString_c::updateEnable(bool b_enableOrDisable)
   MACRO_localVars;
   vtObjectInputString_a->enabled=b_enableOrDisable;
 } // -X2C
+
+
+
+// //////////////////////////////// +X2C Operation 237 : setValueCopyUTF8
+//! Parameter:
+//! @param newValue:
+//! @param b_updateObject:
+void
+vtObjectInputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
+{
+  const uint16_t cui16_strLen = strlen (newValue);
+  char pc_iso8859 [cui16_strLen+1];
+
+  const uint8_t cui8_fontType = get_vtObjectInputString_a()->fontAttributes->get_vtObjectFontAttributes_a()->fontType;
+
+  convertStringUnicodeTo8859 (newValue, cui16_strLen, pc_iso8859, cui8_fontType);
+
+  setValueCopy (pc_iso8859, b_updateObject, b_enableReplaceOfCmd);
+}
+
 
 // //////////////////////////////// +X2C Operation 237 : setValueCopy
 //! Parameter:

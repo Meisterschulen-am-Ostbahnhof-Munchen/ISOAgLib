@@ -116,7 +116,7 @@ public:
   void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
 
   //  Operation: get_vtObjectSoftKeyMask_a
-  iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a() { return (iVtObjectSoftKeyMask_s *)vtObject_a; };
+  iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a() { return (iVtObjectSoftKeyMask_s *)vtObject_a; }
 
   //  Operation: vtObjectSoftKeyMask_c
   vtObjectSoftKeyMask_c();

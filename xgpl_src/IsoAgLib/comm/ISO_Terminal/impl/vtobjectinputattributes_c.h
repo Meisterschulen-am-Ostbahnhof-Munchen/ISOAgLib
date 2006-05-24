@@ -116,7 +116,7 @@ public:
   void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectInputAttributes_a
-  iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return (iVtObjectInputAttributes_s *)vtObject_a; };
+  iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return (iVtObjectInputAttributes_s *)vtObject_a; }
 
   //  Operation: vtObjectInputAttributes_c
   vtObjectInputAttributes_c();

@@ -83,7 +83,9 @@
 #include "vtobjectoutputstring_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
+#include "../ivtobjectstringvariable_c.h"
 #include "isoterminal_c.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -196,6 +198,24 @@ vtObjectOutputString_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
     vtObjectOutputString_a->fontAttributes->setOriginBTN (p_btn);
   }
 }
+
+// //////////////////////////////// +X2C Operation 237 : setValueCopyUTF8
+//! Parameter:
+//! @param newValue:
+//! @param b_updateObject:
+void
+vtObjectOutputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
+{
+  const uint16_t cui16_strLen = strlen (newValue);
+  char pc_iso8859 [cui16_strLen+1];
+
+  const uint8_t cui8_fontType = get_vtObjectOutputString_a()->fontAttributes->get_vtObjectFontAttributes_a()->fontType;
+
+  convertStringUnicodeTo8859 (newValue, cui16_strLen, pc_iso8859, cui8_fontType);
+
+  setValueCopy (pc_iso8859, b_updateObject, b_enableReplaceOfCmd);
+}
+
 
 // //////////////////////////////// +X2C Operation 237 : setValueCopy
 //! Parameter:

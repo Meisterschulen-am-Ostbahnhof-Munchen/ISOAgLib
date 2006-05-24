@@ -309,5 +309,64 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
 
 /** convert big endian textual unsigned int up to 16Bit number representation into little endian uint8_t string of specified size */
 void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_target );
+
+
+
+#ifdef USE_VT_UNICODE_SUPPORT
+  /// Define UNICODE REPLACEMENT CHARACTER
+  #define DEF_UNICODE_REPLACEMENT_CHAR 0xFFFD
+  /// Define ISO-8859 REPLACEMENT CHARACTER (for any iso8859)
+  #define DEF_ISO8859_REPLACEMENT_CHAR 0x20
+
+  // forward declarations for inline functions!
+  extern const uint16_t p96ui16_8859_2 [96];
+  extern const uint16_t p96ui16_8859_4 [96];
+  extern const uint16_t p96ui16_8859_5 [96];
+  extern const uint16_t p96ui16_8859_7 [96];
+  extern const uint16_t p96ui16_8859_15 [96];
+  extern const uint16_t* pp96ui16_8859s [8];
+
+  inline uint16_t convert8859ToUnicode (uint8_t rui8_char, uint8_t rui8_encoding)
+  {
+    if ((rui8_char < 0xA0) || (rui8_encoding == 0))
+    { // direct mapping for [0x00..0x9F] and latin-1
+      return uint16_t (rui8_char);
+    }
+    else // (rui8_char >= 0xA0) && (rui8_encoding != 0)
+    { // lookup!
+      return pp96ui16_8859s [rui8_encoding] [rui8_char - 0xA0]; // checking for valid encoding is omitted for performance reasons - there shouldn't be wrong entries in FontAttributes anyway!
+    }
+  }
+
+  /// @todo OPTIMIZE: Reverse lookup up to now done a slow but non-space-consuming way. To be optimized later on using a generated reverse lookup table */
+  /// keep inlined, as it will be optimized, so it's smaller then!
+  inline uint8_t convertUnicodeTo8859 (uint16_t rui16_unicode, uint8_t rui8_encoding)
+  {
+    if (rui8_encoding == 0)
+    {
+      if (rui16_unicode >= 0x100)
+        return DEF_ISO8859_REPLACEMENT_CHAR; // return iso8859-Replacement Character
+      else
+        return uint8_t (rui16_unicode);
+    }
+    const uint16_t* p96ui16_8859s = pp96ui16_8859s [rui8_encoding];
+    if (rui16_unicode != DEF_UNICODE_REPLACEMENT_CHAR)
+    {
+      for (uint16_t ui16_cur=0xA0; ui16_cur < 0x100; ui16_cur++)
+      {
+        if (*p96ui16_8859s++ == rui16_unicode)
+        {
+          return uint8_t (ui16_cur);
+        }
+      }
+    }
+    return DEF_ISO8859_REPLACEMENT_CHAR; // default to iso8859-Replacement Character in case the char's not found;
+  }
+
+  void convertString8859ToUnicode (const std::string& rrefstr_iso8859, std::string& rrefstr_unicode, uint8_t rui8_encoding);
+  void convertStringUnicodeTo8859 (const char* rpui8_stringUnicode, uint16_t rui16_stringUnicodeLength, char* rpui8_iso8859buffer, uint8_t rui8_encoding);
+  void push_backUTF8 (std::string& rrefstr_string, uint16_t rui16_unicode);
+#endif
+
 } // end of namespace __IsoAgLib
 #endif

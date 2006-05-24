@@ -86,7 +86,6 @@
 
 // +X2C includes
 #include "../ivtobjectstring_c.h"
-#include "../ivtobjectstringvariable_c.h"
 #include "isoterminal_c.h"
 // ~X2C
 
@@ -117,7 +116,7 @@ public:
   void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectOutputStringSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectOutputString_a
-  iVtObjectOutputString_s* get_vtObjectOutputString_a() { return (iVtObjectOutputString_s *)vtObject_a; };
+  iVtObjectOutputString_s* get_vtObjectOutputString_a() { return (iVtObjectOutputString_s *)vtObject_a; }
 
   //  Operation: vtObjectOutputString_c
   vtObjectOutputString_c();
@@ -139,17 +138,18 @@ public:
 
 
 
-  //  Operation: setValueCopy
+  //  Operation: setValueCopy / setValueCopyUTF8
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopy(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setValueCopyUTF8(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: setValueRef
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   // //////////////////////////////////
   // All special Attribute-Set methods

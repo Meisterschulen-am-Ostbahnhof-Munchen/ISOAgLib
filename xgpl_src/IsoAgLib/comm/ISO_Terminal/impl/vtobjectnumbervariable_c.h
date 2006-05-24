@@ -115,7 +115,7 @@ public:
   void init(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectNumberVariableSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectNumberVariable_a
-  iVtObjectNumberVariable_s* get_vtObjectNumberVariable_a() { return (iVtObjectNumberVariable_s *)vtObject_a; };
+  iVtObjectNumberVariable_s* get_vtObjectNumberVariable_a() { return (iVtObjectNumberVariable_s *)vtObject_a; }
 
   //  Operation: vtObjectNumberVariable_c
   vtObjectNumberVariable_c();

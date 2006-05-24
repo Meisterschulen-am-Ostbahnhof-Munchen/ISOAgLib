@@ -117,7 +117,7 @@ public:
   void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
 
   //  Operation: get_vtObjectDataMask_a
-  iVtObjectDataMask_s* get_vtObjectDataMask_a() { return (iVtObjectDataMask_s *)vtObject_a; };
+  iVtObjectDataMask_s* get_vtObjectDataMask_a() { return (iVtObjectDataMask_s *)vtObject_a; }
 
   //  Operation: vtObjectDataMask_c
   vtObjectDataMask_c();

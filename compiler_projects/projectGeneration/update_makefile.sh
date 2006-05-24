@@ -161,6 +161,9 @@ function check_set_correct_variables()
   	USE_LITTLE_ENDIAN_CPU=1
   fi
 
+  if [ "A$USE_VT_UNICODE_SUPPORT" = "A" ] ; then
+    USE_VT_UNICODE_SUPPORT=0
+  fi
 
   if [ "A$CAN_BUS_CNT" = "A" ] ; then
   	CAN_BUS_CNT=1
@@ -975,6 +978,9 @@ function create_autogen_project_config()
 		echo -e "#define USE_RS232_OVER_CAN$ENDLINE" >> $CONFIG_NAME
 	fi
 
+  if [ $USE_VT_UNICODE_SUPPORT -gt 0 ] ; then
+    echo -e "#define USE_VT_UNICODE_SUPPORT$ENDLINE" >> $CONFIG_NAME
+  fi
 
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME

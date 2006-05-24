@@ -116,7 +116,7 @@ public:
   void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA){vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunctionSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
 
   //  Operation: get_vtObjectAuxiliaryFunction_a
-  iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a(){return (iVtObjectAuxiliaryFunction_s *)vtObject_a;};
+  iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a() {return (iVtObjectAuxiliaryFunction_s *)vtObject_a;}
 
   //  Operation: vtObjectAuxiliaryFunction_c
   vtObjectAuxiliaryFunction_c();

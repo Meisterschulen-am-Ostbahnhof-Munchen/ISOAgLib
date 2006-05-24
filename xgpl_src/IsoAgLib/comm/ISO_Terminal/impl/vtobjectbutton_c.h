@@ -116,7 +116,7 @@ public:
   void init(const iVtObjectButton_s* vtObjectButtonSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectButtonSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
   //  Operation: get_vtObjectButton_a
-  iVtObjectButton_s* get_vtObjectButton_a() { return (iVtObjectButton_s *)vtObject_a; };
+  iVtObjectButton_s* get_vtObjectButton_a() { return (iVtObjectButton_s *)vtObject_a; }
 
   //  Operation: vtObjectButton_c
   vtObjectButton_c();

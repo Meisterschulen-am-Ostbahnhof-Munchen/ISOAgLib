@@ -218,5 +218,25 @@ inline void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t*
 inline void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_target )
 { __IsoAgLib::bigEndianDecNumberText2CanStringUint( rc_src, pui8_target );};
 
+
+#ifdef USE_VT_UNICODE_SUPPORT
+
+inline uint16_t convert8859ToUnicode (uint8_t rui8_char, uint8_t rui8_encoding)
+{ return __IsoAgLib::convert8859ToUnicode (rui8_char, rui8_encoding); }
+
+inline uint8_t convertUnicodeTo8859 (uint16_t rui16_unicode, uint8_t rui8_encoding)
+{ return __IsoAgLib::convertUnicodeTo8859 (rui16_unicode, rui8_encoding); }
+
+inline void convertString8859ToUnicode (const std::string& rrefstr_iso8859, std::string& rrefstr_unicode, uint8_t rui8_encoding)
+{ __IsoAgLib::convertString8859ToUnicode (rrefstr_iso8859, rrefstr_unicode, rui8_encoding); }
+
+inline void convertStringUnicodeTo8859 (const char* rpui8_stringUnicode, uint16_t rui16_stringUnicodeLength, char* rpui8_iso8859buffer, uint8_t rui8_encoding)
+{ __IsoAgLib::convertStringUnicodeTo8859 (rpui8_stringUnicode, rui16_stringUnicodeLength, rpui8_iso8859buffer, rui8_encoding); }
+
+inline void push_backUTF8 (std::string& rrefstr_string, uint16_t rui16_unicode)
+{ push_backUTF8 (rrefstr_string, rui16_unicode); }
+
+#endif
+
 } // end of namespace
 #endif
