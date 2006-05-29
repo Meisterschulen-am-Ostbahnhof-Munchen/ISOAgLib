@@ -90,6 +90,7 @@ public:
     vtObjectOutputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
+#ifdef USE_VT_UNICODE_SUPPORT
   //  Operation: setValueCopyUTF8
   //! Parameter:
   //! @param newValue:
@@ -97,6 +98,7 @@ public:
   void setValueCopyUTF8(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setValueCopyUTF8 (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
+#endif
 
   //  Operation: setValueRef
   //! Parameter:

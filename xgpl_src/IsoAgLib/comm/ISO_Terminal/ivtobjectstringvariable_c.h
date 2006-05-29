@@ -90,6 +90,7 @@ public:
     vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
+#ifdef USE_VT_UNICODE_SUPPORT
   //  Operation: setValueCopyUTF8
   //! Parameter:
   //! @param newValue:
@@ -106,6 +107,7 @@ public:
     const uint8_t cui8_fontType = rrefc_ops.get_vtObjectOutputString_a()->fontAttributes->get_vtObjectFontAttributes_a()->fontType;
     vtObjectStringVariable_c::setValueCopyUTF8 (newValue, cui8_fontType, b_updateObject, b_enableReplaceOfCmd);
   }
+#endif
 
   //  Operation: setValueRef
   //! Parameter:
