@@ -41,8 +41,8 @@
 #ifndef USE_EEPROM_IO_YN 
 	#define USE_EEPROM_IO_YN NO 
 #endif
-#ifndef USE_DATASTREAMS_IO_YN 
-	#define USE_DATASTREAMS_IO_YN NO 
+#ifndef USE_DATASTREAMS_IO 
+	#define USE_DATASTREAMS_IO 
 #endif
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 

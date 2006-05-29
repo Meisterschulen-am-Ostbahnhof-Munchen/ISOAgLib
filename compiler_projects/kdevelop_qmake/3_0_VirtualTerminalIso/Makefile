@@ -8,7 +8,7 @@ TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
 APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso 
 
-PROJ_DEFINES = -DSYSTEM_PC -DDEBUG -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
+PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
 
 
 first: all
@@ -23,6 +23,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
@@ -109,10 +110,11 @@ can_server: $(OBJECTS_SERVER)
 ####### Some Standard Rules
 CC       = gcc
 CXX      = g++
+STRIP	 = strip
 LEX      = flex
 YACC     = yacc
-CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
-CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
+CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
 LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)

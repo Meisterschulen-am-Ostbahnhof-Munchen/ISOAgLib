@@ -142,6 +142,9 @@ public:
 
   bool setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
+  bool controlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime);
+
+  bool setAudioVolume (uint8_t rui8_volume);
 }; // ~X2C
 
 } // end of namespace __IsoAgLib

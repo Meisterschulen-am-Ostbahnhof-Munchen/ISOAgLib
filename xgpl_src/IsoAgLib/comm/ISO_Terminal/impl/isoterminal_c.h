@@ -479,6 +479,9 @@ public:
 
   bool sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
 
+  bool sendCommandControlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime);
+  bool sendCommandSetAudioVolume (uint8_t rui8_volume);
+
   bool sendCommandDeleteObjectPool ();
   bool sendCommandUpdateLanguagePool ();
 

@@ -115,6 +115,23 @@ public:
     return vtObjectWorkingSet_c::setChildPosition(rpc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
+  //  Operation: controlAudioDevice
+  //! Parameter:
+  //! @param rui8_repetitions
+  //! @param rui16_frequency
+  //! @param rui16_onTime
+  //! @param rui16_offTime
+  bool controlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime) {
+    return vtObjectWorkingSet_c::controlAudioDevice (rui8_repetitions, rui16_frequency, rui16_onTime, rui16_offTime);
+  }
+
+  //  Operation: setAudioVolume
+  //! Parameter:
+  //! @param rui8_volume The Volume given in percent. Range 0..100
+  bool setAudioVolume (uint8_t rui8_volume) {
+    return vtObjectWorkingSet_c::setAudioVolume (rui8_volume);
+  }
+
 }; // ~X2C
 
 } // end of namespace IsoAgLib

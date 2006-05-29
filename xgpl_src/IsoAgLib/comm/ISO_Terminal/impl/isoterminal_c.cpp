@@ -1728,11 +1728,11 @@ bool ISOTerminal_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_ob
 bool ISOTerminal_c::sendCommandChangeEndPoint(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (169 /* Command: Command --- Parameter: Change Size */,
-          rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-          newWidth & 0xFF, newWidth >> 8,
-          newHeight & 0xFF, newHeight >> 8,
-          newLineAttributes,
-          DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      newWidth & 0xFF, newWidth >> 8,
+                      newHeight & 0xFF, newHeight >> 8,
+                      newLineAttributes,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool ISOTerminal_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
@@ -1795,6 +1795,22 @@ bool ISOTerminal_c::sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object,
   } else {
     return false;
   }
+}
+
+bool ISOTerminal_c::sendCommandControlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime)
+{
+  return sendCommand (163 /* Command: Command --- Parameter: Control Audio Device */,
+                      rui8_repetitions,
+                      rui16_frequency & 0xFF, rui16_frequency >> 8,
+                      rui16_onTime & 0xFF, rui16_onTime >> 8,
+                      rui16_offTime & 0xFF, rui16_offTime >> 8,
+                      DEF_TimeOut_NormalCommand, false); // don't care for enable-same command stuff
+}
+
+bool ISOTerminal_c::sendCommandSetAudioVolume (uint8_t rui8_volume)
+{
+  return sendCommand (164 /* Command: Command --- Parameter: Set Audio Volume */,
+                      rui8_volume, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, false); // don't care for enableReplaceOfCommand parameter actually
 }
 
 bool ISOTerminal_c::sendCommandDeleteObjectPool ()

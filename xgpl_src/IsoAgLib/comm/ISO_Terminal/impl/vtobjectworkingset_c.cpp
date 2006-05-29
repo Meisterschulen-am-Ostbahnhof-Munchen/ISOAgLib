@@ -185,6 +185,19 @@ vtObjectWorkingSet_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, i
   return genericChangeChildPosition (rpc_childObject, x, y, b_updateObject, vtObjectWorkingSet_a->numberOfObjectsToFollow, (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *) vtObjectWorkingSet_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd);
 }
 
+bool
+vtObjectWorkingSet_c::controlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime)
+{
+  return __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandControlAudioDevice (rui8_repetitions, rui16_frequency, rui16_onTime, rui16_offTime);
+}
+
+bool
+vtObjectWorkingSet_c::setAudioVolume (uint8_t rui8_volume)
+{
+  return __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandSetAudioVolume (rui8_volume);
+}
+
+
 // //////////////////////////////// +X2C Operation 235 : setOriginSKM
 //! Parameter:
 //! @param b_SKM:
