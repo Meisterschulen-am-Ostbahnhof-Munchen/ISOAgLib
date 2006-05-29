@@ -1271,7 +1271,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
           uint8_t ui8_amount = vecstr_dataForCombination.size();
           ui8_amount = (ui8_amount-2) / 3;
           // output to header-file
-          fprintf(partFileB, "#if defined(USE_ISO_11783)\nuint16_t ui16_%sElementNumber = %i;\n", vecstr_dataForCombination[1].c_str(), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
+          fprintf(partFileB, "#if defined(USE_ISO_11783)\nstatic const uint16_t scui16_%sElementNumber = %i;\n", vecstr_dataForCombination[1].c_str(), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
           fprintf(partFileB, "const IsoAgLib::ElementDDI_s s_%sElementDDI[] =\n{\n", vecstr_dataForCombination[1].c_str());
           uint8_t index=0;
           for (; index<ui8_amount; index++)
@@ -1286,7 +1286,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         fprintf(partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
         fprintf(partFileB, "\n#ifdef USE_ISO_11783\n");
         if (b_dpdCombination)
-          fprintf(partFileB, "s_%sElementDDI,\nui16_%sElementNumber, ", vecstr_constructor[5].c_str(), vecstr_dataForCombination[1].c_str());
+          fprintf(partFileB, "s_%sElementDDI,\nscui16_%sElementNumber, ", vecstr_constructor[5].c_str(), vecstr_dataForCombination[1].c_str());
         else
           fprintf(partFileB, "0x%x, 0x%x, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_constructor[2].c_str(), 0, -1));
 
