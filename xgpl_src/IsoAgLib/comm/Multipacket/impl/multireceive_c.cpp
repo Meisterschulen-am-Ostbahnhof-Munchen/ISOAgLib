@@ -324,12 +324,12 @@ MultiReceive_c::processMsg()
               uint32_t ui32_numPkg = (ui32_msgSize + 6) / 7;
               // check for TP-RTS if pkg-count matches the calculated AND if size > 0
               if (((ui8_dataByte0 == 0x10) && (data().getUint8Data(3) != ui32_numPkg))
-                || (ui32_msgSize < 9)) {
-                // This handles both
+                || (ui32_msgSize < 9))
+              { // This handles both
                 notifyError(c_tmpRSI, 102);
                 sendConnAbort (t_streamType, c_tmpRSI);
                 #ifdef DEBUG
-                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (Wrong Pkg Number || msgSize < 9) ***\n";
+                INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (Wrong Pkg Amount || msgSize < 9) ***\n";
                 #endif
                 return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
               }
@@ -560,7 +560,7 @@ MultiReceive_c::processMsg()
             } else {
               notifyError(c_tmpRSI, 109);
               #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to wrong DATA, see msg before! ***\n";
+              INTERNAL_DEBUG_DEVICE << "\n*** ConnectionAbort due to (E)TP.DATA, but wrong sequence number, see msg before! ***\n";
               #endif
             }
             // \/ will take care of NOT sending out the connAbort/TellingClient if it was a Broadcast!
