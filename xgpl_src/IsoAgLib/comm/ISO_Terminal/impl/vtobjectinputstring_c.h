@@ -143,11 +143,13 @@ public:
   //! @param b_updateObject:
   void setValueCopy(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
+#ifdef USE_VT_UNICODE_SUPPORT
   //  Operation: setValueCopyUTF8
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopyUTF8(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+#endif
 
   //  Operation: setSize
   //! Parameter:

@@ -200,7 +200,7 @@ vtObjectInputString_c::updateEnable(bool b_enableOrDisable)
 } // -X2C
 
 
-
+#ifdef USE_VT_UNICODE_SUPPORT
 // //////////////////////////////// +X2C Operation 237 : setValueCopyUTF8
 //! Parameter:
 //! @param newValue:
@@ -217,6 +217,7 @@ vtObjectInputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObje
 
   setValueCopy (pc_iso8859, b_updateObject, b_enableReplaceOfCmd);
 }
+#endif
 
 
 // //////////////////////////////// +X2C Operation 237 : setValueCopy

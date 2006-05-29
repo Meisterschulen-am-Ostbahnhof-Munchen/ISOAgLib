@@ -199,6 +199,7 @@ vtObjectOutputString_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
   }
 }
 
+#ifdef USE_VT_UNICODE_SUPPORT
 // //////////////////////////////// +X2C Operation 237 : setValueCopyUTF8
 //! Parameter:
 //! @param newValue:
@@ -215,7 +216,7 @@ vtObjectOutputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObj
 
   setValueCopy (pc_iso8859, b_updateObject, b_enableReplaceOfCmd);
 }
-
+#endif
 
 // //////////////////////////////// +X2C Operation 237 : setValueCopy
 //! Parameter:

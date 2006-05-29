@@ -143,7 +143,9 @@ public:
   //! @param newValue:
   //! @param b_updateObject:
   void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+#ifdef USE_VT_UNICODE_SUPPORT 
   void setValueCopyUTF8(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+#endif
 
   //  Operation: setValueRef
   //! Parameter:

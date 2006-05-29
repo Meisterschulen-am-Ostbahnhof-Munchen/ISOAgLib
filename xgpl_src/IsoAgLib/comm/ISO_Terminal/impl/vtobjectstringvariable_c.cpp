@@ -136,6 +136,7 @@ vtObjectStringVariable_c::fitTerminal()
 } // -X2C
 
 
+#ifdef USE_VT_UNICODE_SUPPORT
 // //////////////////////////////// +X2C Operation 237 : setValueCopyUTF8
 //! Parameter:
 //! @param newValue:
@@ -150,7 +151,7 @@ vtObjectStringVariable_c::setValueCopyUTF8 (const char* newValue, uint8_t rui8_f
 
   setValueCopy (pc_iso8859, b_updateObject, b_enableReplaceOfCmd);
 }
-
+#endif
 
 // //////////////////////////////// +X2C Operation 236 : setValueCopy
 //! Parameter:
