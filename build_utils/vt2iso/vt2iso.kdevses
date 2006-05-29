@@ -1,25 +1,22 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="6" >
+ <DocsAndViews NumberOfDocuments="5" >
   <Doc0 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso.cpp" >
-   <View0 line="2365" Type="Source" />
+   <View0 line="2833" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2iso-defines.hpp" >
-   <View0 Type="Source" />
+   <View0 line="492" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool0_Variables.xml" >
    <View0 Type="Source" />
   </Doc2>
   <Doc3 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-attributes.inc" >
-   <View0 line="2" Type="Source" />
+   <View0 Type="Source" />
   </Doc3>
   <Doc4 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/vt2isoimagebase_c.cpp" >
-   <View0 line="195" Type="Source" />
+   <View0 line="0" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/wodokm/Projects/AGCO/VtServer/IsoAgLib/build_utils/vt2iso/src/FreeImage.h" >
-   <View0 line="447" Type="Source" />
-  </Doc5>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
