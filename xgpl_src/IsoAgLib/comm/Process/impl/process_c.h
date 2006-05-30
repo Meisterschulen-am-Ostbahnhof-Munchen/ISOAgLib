@@ -471,12 +471,12 @@ public:
   /**
     process TC status messages:
     - task status suspended: stop running measurement (started by default data logging)
-    @param i32_tcStatus
+    @param ui8_tcStatus
     @param refc_devKey         device key of TC
     @param rb_skipLastTcStatus TRUE => don't check for changed TC status
     @return TRUE
   */
-  bool processTcStatusMsg(int32_t i32_tcStatus, const DevKey_c& refc_devKey, bool rb_skipLastTcStatus = FALSE);
+  bool processTcStatusMsg(uint8_t ui8_tcStatus, const DevKey_c& refc_devKey, bool rb_skipLastTcStatus = FALSE);
   /**
     @return devKey, saved from TC status messages
   */
@@ -619,7 +619,7 @@ private: // Private attributes
 
 #ifdef USE_ISO_11783
   const DevKey_c* pc_tcDevKey;
-  Proc_c::taskStatus_t en_lastTcStatus;
+  uint8_t ui8_lastTcStatus;
 #endif
  
 };
