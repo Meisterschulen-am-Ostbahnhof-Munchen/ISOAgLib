@@ -89,6 +89,9 @@
 #include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
 #endif
 #include <vector>
+#ifdef USE_VT_UNICODE_SUPPORT
+#include <string>
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
