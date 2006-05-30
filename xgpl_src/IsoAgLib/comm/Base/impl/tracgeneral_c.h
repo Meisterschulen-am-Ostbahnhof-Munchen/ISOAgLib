@@ -88,7 +88,9 @@
 #define TRACGENERAL_C_H
 
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
+#if defined USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
+#endif
 
 #include <ctime>
 
@@ -114,7 +116,10 @@ typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
     Derive from SINGLETON to create a Singleton which manages one global accessible singleton
     per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
-class TracGeneral_c : public SingletonTracGeneral_c, public ISORequestPGNHandler_c
+class TracGeneral_c : public SingletonTracGeneral_c
+#if defined USE_ISO_11783
+, public ISORequestPGNHandler_c
+#endif
 {
 public: // Public methods
   /* ********************************************* */
@@ -157,9 +162,9 @@ public: // Public methods
   /** destructor for TracGeneral_c which has nothing to do */
   virtual ~TracGeneral_c() { BaseCommon_c::close();};
 
+  #if defined USE_ISO_11783
   bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
 
-  #ifdef USE_ISO_11783
   /** force maintain power from tractor
     * @param rb_ecuPower true -> maintain ECU power
     * @param rb_actuatorPower true-> maintain actuator power

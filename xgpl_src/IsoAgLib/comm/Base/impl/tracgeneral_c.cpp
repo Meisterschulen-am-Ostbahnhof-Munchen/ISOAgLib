@@ -89,7 +89,9 @@
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include "tracgeneral_c.h"
 #include "tracpto_c.h"
+#if defined USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
+#endif
 
 using namespace std;
 

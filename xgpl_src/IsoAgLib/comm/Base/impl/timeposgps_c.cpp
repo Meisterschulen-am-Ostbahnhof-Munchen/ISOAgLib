@@ -97,7 +97,9 @@
   #include <IsoAgLib/util/iutil_funcs.h>
 #endif
 #include <IsoAgLib/comm/Base/itracmove_c.h>
+#if defined USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
+#endif
 
 
 using namespace std;

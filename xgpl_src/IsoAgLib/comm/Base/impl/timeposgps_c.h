@@ -90,7 +90,9 @@
 
 #include <ctime>
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
+#ifdef USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
+#endif
 
 #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
 #include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
@@ -155,7 +157,10 @@ typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
   per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
 
-class TimePosGPS_c : public SingletonTimePosGps_c, public ISORequestPGNHandler_c
+class TimePosGPS_c : public SingletonTimePosGps_c
+#ifdef USE_ISO_11783
+        , public ISORequestPGNHandler_c
+#endif
 #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
     , public IsoAgLib::MultiReceiveClient_c
 #endif // END of NMEA_2000_FAST_PACKET and USE_ISO_11783
@@ -202,9 +207,9 @@ public:
   /** destructor for Base_c which has nothing to do */
   virtual ~TimePosGPS_c() { BaseCommon_c::close();};
 
+  #ifdef USE_ISO_11783
   bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
 
-  #ifdef USE_ISO_11783
    /** config the Base_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
