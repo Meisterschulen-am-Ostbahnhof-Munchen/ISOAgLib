@@ -651,6 +651,84 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   #endif // END of USE_FLOAT_DATA_TYPE || USE_DIN_GPS
 
   #ifdef NMEA_2000_FAST_PACKET
+  /** set the GPS time in UTC timezone.
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+  */
+  void TimePosGPS_c::setTimeUtcGps(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec )
+  {
+    bit_gpsTime.hour = rb_hour;
+    bit_gpsTime.minute = rb_minute;
+    bit_gpsTime.second = rb_second;
+    bit_gpsTime.msec = rui16_msec;
+    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
+      setTimeUtc( rb_hour, rb_minute, rb_second, rui16_msec );
+    }
+  }
+  /** set the calendar hour value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_hour actual calendar hour value
+   */
+  void TimePosGPS_c::setHourUtcGps(uint8_t rb_hour)
+  {
+    bit_gpsTime.hour = rb_hour;
+    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
+      setHourUtc( rb_hour);
+    }
+  }
+  /** set the calendar minute value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_minute actual calendar minute value
+   */
+  void TimePosGPS_c::setMinuteUtcGps(uint8_t rb_minute)
+  {
+    bit_gpsTime.minute = rb_minute;
+    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
+      setMinuteUtc( rb_minute );
+    }
+  }
+  /** set the calendar second value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_second actual calendar second value
+   */
+  void TimePosGPS_c::setSecondUtcGps(uint8_t rb_second)
+  {
+    bit_gpsTime.second = rb_second;
+    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
+      setSecond( rb_second );
+    }
+  }
+  /** set the calendar millisecond value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_millisecond actual calendar second value
+   */
+  void TimePosGPS_c::setMillisecondUtcGps(uint16_t rui16_millisecond)
+  {
+    bit_gpsTime.msec = rui16_millisecond;
+    if ( getSelectedDataSourceDevKey().isUnspecified() )
+    { // no active source for the GPS independent time / date is specified -> so update the other UTC time also from GPS
+      setMillisecond( rui16_millisecond );
+    }
+  }
+
   /** deliver GPS receive qualitiy */
   void TimePosGPS_c::setGnssMode( IsoAgLib::IsoGnssMethod_t rt_newVal )
   {
@@ -780,10 +858,17 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
         const time_t t_tempUnixTime = ( time_t(ui16_daysSince1970) * time_t(60 * 60 * 24) ) + (ui32_milliseconds/1000);
         tm* UtcNow = gmtime( &t_tempUnixTime );
-        if ( ( UtcNow != NULL ) && ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar   ) != 0  ))
-        { // now read the tm data strcture as I'm currently sending time
-          setCalendarUtc((UtcNow->tm_year+1900), UtcNow->tm_mon, UtcNow->tm_mday,
-                          UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
+        if ( UtcNow != NULL )
+        {
+          if ( ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar   ) != 0  ) || (getSelectedDataSourceDevKey().isUnspecified()))
+          { // update the normal UTC time from GPS time, as we are either sending the calendar + time PGN _or_
+            // there is currently no other active sender of this PGN --> other getter functions of this application should get
+            // the GPS time as notmal UTC time
+            setCalendarUtc((UtcNow->tm_year+1900), UtcNow->tm_mon, UtcNow->tm_mday,
+                            UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
+          }
+          // now set also the pure GPS time
+          setTimeUtcGps(UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
         }
         // now read Latitude --> convert into double [degree]
         getDegree10Minus7FromStream( refc_stream, i32_latitudeDegree10Minus7 );
@@ -974,7 +1059,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     // use helper function to transfer value to the byte vector
     number2LittleEndianString( ui8_positionSequenceID, writeRef );
 
-    struct tm testTime = { second(), minuteUtc(), hourUtc(), dayUtc(),(monthUtc()-1),(yearUtc()-1900),0,0,-1
+    struct tm testTime = { secondUtcGps(), minuteUtcGps(), hourUtcGps(), dayUtc(),(monthUtc()-1),(yearUtc()-1900),0,0,-1
                           #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                           , 0, NULL
                           #endif
@@ -982,7 +1067,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     const time_t secondsSince1970 = mktime( &testTime );
     // calculate the days
     const uint16_t ui16_daysSince1970 = secondsSince1970 / ( 60 * 60 *24 );
-    const uint32_t ui32_milliseconds = ( ( ( ( ( ( hourUtc() * 60 ) + minuteUtc() ) * 60 ) + second() ) * 1000 ) + millisecond()) * 10;
+    const uint32_t ui32_milliseconds = ( ( ( ( ( ( hourUtcGps() * 60 ) + minuteUtcGps() ) * 60 ) + secondUtcGps() ) * 1000 ) + millisecondUtcGps()) * 10;
     // write Position Date as Days since 1.1.1970
     number2LittleEndianString( ui16_daysSince1970, writeRef );
     // write Position Time as Milliseconds*10 per day

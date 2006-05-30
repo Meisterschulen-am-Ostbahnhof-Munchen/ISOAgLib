@@ -294,6 +294,46 @@ public:
   void setGpsLongitudeDegree10Minus7( int32_t ri32_newVal ) { i32_longitudeDegree10Minus7 = ri32_newVal; };
 
   #if defined(NMEA_2000_FAST_PACKET)
+  /** set the GPS time in UTC timezone.
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   */
+  void setTimeUtcGps(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
+  /** set the calendar hour value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_hour actual calendar hour value
+   */
+  void setHourUtcGps(uint8_t rb_hour);
+  /** set the calendar minute value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_minute actual calendar minute value
+   */
+  void setMinuteUtcGps(uint8_t rb_minute);
+  /** set the calendar second value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_second actual calendar second value
+   */
+  void setSecondUtcGps(uint8_t rb_second);
+  /** set the calendar millisecond value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_millisecond actual calendar second value
+   */
+  void setMillisecondUtcGps(uint16_t rui16_millisecond);
+
   /** deliver GPS altitude - [cm] */
   void setGpsAltitudeCm( uint32_t rui32_newVal ) { ui32_altitudeCm = rui32_newVal; };
   /** deliver GPS receive qualitiy */
@@ -398,7 +438,7 @@ public:
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLongitudeDegree10Minus7( void ) const { return i32_longitudeDegree10Minus7; };
 
-    #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
+  #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
   /** check if an NMEA2000 position signal was received */
   bool isPositionReceived() const;
   /** deliver Minute GPS Latitude */
@@ -412,6 +452,22 @@ public:
   #endif // END of USE_FLOAT_DATA_TYPE and USE_DIN_GPS
 
   #ifdef NMEA_2000_FAST_PACKET
+  /** get the GPS UTC hour value
+    @return actual GPS UTC hour value
+   */
+  uint8_t hourUtcGps() const {return bit_gpsTime.hour;};
+  /** get the GPS UTC minute value
+      @return actual GPS UTC minute value
+   */
+  uint8_t minuteUtcGps() const {return bit_gpsTime.minute;};
+  /** get the GPS UTC second value
+      @return actual GPS UTC second value
+   */
+  uint8_t secondUtcGps() const {return bit_gpsTime.second;};
+  /** get the GPS UTC millisecond value
+      @return actual GPS UTC millisecond value
+   */
+  uint16_t millisecondUtcGps() const {return bit_gpsTime.msec;};
   /** deliver GPS altitude - [cm] */
   uint32_t getGpsAltitudeCm( void ) const { return ui32_altitudeCm; };
   /** deliver GPS receive qualitiy */
@@ -433,7 +489,9 @@ public:
   #endif // END NMEA_2000_FAST_PACKET
 
   /** deliver age of last gps-update in milliseconds */
-  uint16_t getGpsUpdateAge( void ) const { return 2000; /** @todo ACHIM - Implement this dummy function */ };
+  uint16_t getGpsUpdateAge( void ) const
+  { if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple) return (System_c::getTime() - i32_lastIsoPositionStream);
+    else                                                        return (System_c::getTime() - i32_lastIsoPositionSimple);};
 
 private:
   // Private methods
@@ -535,6 +593,14 @@ private:
   int32_t i32_lastIsoPositionSimple;
 
   #ifdef NMEA_2000_FAST_PACKET
+  /** GPS time in UTC */
+  struct {
+    uint16_t hour : 6;
+    uint16_t minute : 6;
+    uint16_t second : 6;
+    uint16_t msec   : 10;
+  } bit_gpsTime;
+
   /** GPS altitude - [cm] */
   uint32_t ui32_altitudeCm;
   /** GNSS Method and Quality */

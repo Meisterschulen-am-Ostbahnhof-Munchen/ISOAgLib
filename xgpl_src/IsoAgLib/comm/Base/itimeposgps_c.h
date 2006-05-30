@@ -189,6 +189,22 @@ public:
   #endif // END of USE_FLOAT_DATA_TYPE and USE_DIN_GPS
 
   #ifdef NMEA_2000_FAST_PACKET
+  /** get the GPS UTC hour value
+      @return actual GPS UTC hour value
+   */
+  uint8_t hourUtcGps() const {return TimePosGPS_c::hourUtcGps();};
+  /** get the GPS UTC minute value
+      @return actual GPS UTC minute value
+   */
+  uint8_t minuteUtcGps() const {return TimePosGPS_c::minuteUtcGps();};
+  /** get the GPS UTC second value
+      @return actual GPS UTC second value
+   */
+  uint8_t secondUtcGps() const {return TimePosGPS_c::secondUtcGps();};
+  /** get the GPS UTC millisecond value
+      @return actual GPS UTC millisecond value
+   */
+  uint16_t millisecondUtcGps() const {return TimePosGPS_c::millisecondUtcGps();};
   /** deliver GPS altitude - [cm] */
   uint32_t getGpsAltitudeCm(void) const { return TimePosGPS_c::getGpsAltitudeCm();};
   /** deliver GPS receive qualitiy */
@@ -246,6 +262,46 @@ public:
   { return TimePosGPS_c::setGpsLongitudeDegree10Minus7(ri32_newVal);};
 
   #if defined(NMEA_2000_FAST_PACKET)
+  /** set the GPS time in UTC timezone.
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   */
+  void setTimeUtcGps(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0)
+    {TimePosGPS_c::setTimeUtcGps( rb_hour, rb_minute, rb_second, rui16_msec );};
+  /** set the calendar hour value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_hour actual calendar hour value
+   */
+  void setHourUtcGps(uint8_t rb_hour) {TimePosGPS_c::setHourUtcGps( rb_hour );};
+  /** set the calendar minute value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_minute actual calendar minute value
+   */
+  void setMinuteUtcGps(uint8_t rb_minute) {TimePosGPS_c::setMinuteUtcGps( rb_minute );};
+  /** set the calendar second value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_second actual calendar second value
+   */
+  void setSecondUtcGps(uint8_t rb_second) {TimePosGPS_c::setSecondUtcGps( rb_second );};
+  /** set the calendar millisecond value
+   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
+   *  setTimeUtc().
+   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
+   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
+   *  @param rb_millisecond actual calendar second value
+   */
+  void setMillisecondUtcGps(uint16_t rui16_millisecond) {TimePosGPS_c::setMillisecondUtcGps( rui16_millisecond );};
   /** deliver GPS altitude - [cm] */
   void setGpsAltitudeCm( uint32_t rui32_newVal )
   { return TimePosGPS_c::setGpsAltitudeCm(rui32_newVal);};
