@@ -113,9 +113,24 @@ FileStreamOutput_c::open (const char* filename, FileMode_t rt_mode)
 
 //  Operation: close
 bool
-FileStreamOutput_c::close (bool b_deleteFile)
+FileStreamOutput_c::close (bool b_deleteFile, bool b_sync)
 {
-  c_targetHandle.close();
+  if (b_sync)
+  { // get path name from file name
+    const std::string::size_type size = str_openedFile.rfind('/');
+    std::string str_path; 
+    if (std::string::npos == size)
+      // no path in file name
+      str_path = ".";
+    else
+      str_path = str_openedFile.substr(0, size);
+
+    // sync file and directory entry
+    c_targetHandle.close(str_path.c_str());
+  }
+  else
+    c_targetHandle.close(NULL);
+  
   if (b_deleteFile) {
     #ifdef DEBUG
     std::cout << "Removing file " << str_openedFile.c_str() << ".\n";

@@ -136,3 +136,27 @@ TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 
 	return *this;
 }
+
+//! close a output stream
+//! Parameter:
+//! @param pathname if pathname != NULL => sync file and path
+void TargetFileStreamOutput_c::close(const char* pathname)
+{
+  if (pathname)
+  {
+    (static_cast<std::ofstream*>(this))->flush();
+#if defined(__GNUC__) && __GNUC__ < 3
+    fsync((static_cast<std::ofstream*>(this))->rdbuf()->fd());
+#else
+    (static_cast<std::ofstream*>(this))->rdbuf()->pubsync();
+#endif
+    // sync also directory entry (not done by fsync!)
+    int fd = ::open(pathname, O_RDONLY);
+    if (-1 != fd)
+    {
+      fsync(fd);
+      ::close(fd);
+    }
+  }
+  static_cast<std::ofstream*>(this)->close();
+}

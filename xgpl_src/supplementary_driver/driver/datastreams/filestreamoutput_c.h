@@ -112,7 +112,7 @@ public:
 
   //  Operation: close
   //! close an output stream
-  bool close (bool b_deleteFile=false);
+  bool close (bool b_deleteFile=false, bool b_sync=false);
 
   //  Operation: operator<<
   //! write to output stream
@@ -135,6 +135,5 @@ private:
 
   std::string str_openedFile;
 }; // ~X2C
-
 
 #endif // -X2C

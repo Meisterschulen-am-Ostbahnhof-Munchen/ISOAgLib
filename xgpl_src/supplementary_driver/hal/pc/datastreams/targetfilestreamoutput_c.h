@@ -95,6 +95,12 @@
 #include <supplementary_driver/hal/datastreams.h>
 #include <string>
 
+#ifndef WIN32
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#endif
 // +X2C includes
 // ~X2C
 
@@ -108,7 +114,8 @@ public:
 	//! open a output stream
 	bool open( const char* filename, FileMode_t rt_mode );
 	//! close a output stream
-	void close() { static_cast<std::ofstream*>(this)->close();};
+  //! @param pathname if pathname != NULL => sync file and path
+	void close( const char* pathname = NULL);
 
   //  Operation: operator<<
   //! Parameter:
@@ -123,7 +130,7 @@ public:
 
   // Operation: good
   virtual bool good() const { return static_cast<const std::ofstream*>(this)->good();};
-}; // ~X2C
 
+}; // ~X2C
 
 #endif // -X2C
