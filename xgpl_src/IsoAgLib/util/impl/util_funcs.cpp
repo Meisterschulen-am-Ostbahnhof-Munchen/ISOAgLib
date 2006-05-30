@@ -702,7 +702,7 @@ const uint16_t* pp96ui16_8859s [8] =
 void convertString8859ToUnicode (const std::string& rrefstr_iso8859, std::string& rrefstr_unicode, uint8_t rui8_encoding)
 {
   std::string::const_iterator cit_str8859;
-  rrefstr_unicode.clear ();
+  rrefstr_unicode.erase ();
   for (cit_str8859=rrefstr_iso8859.begin(); cit_str8859 != rrefstr_iso8859.end(); cit_str8859++)
   {
     uint8_t byte = *cit_str8859;
