@@ -58,7 +58,7 @@ bool Vt2IsoImagePaintlib_c::openBitmap( const char* filename )
     bool result = false;
 	reset();
 	i_curScanLineY = -1;
-	
+
     plDecoder.MakeBmpFromFile (filename, &plBitmap);
 	if (1)
     {
@@ -79,7 +79,7 @@ void Vt2IsoImagePaintlib_c::close( void )
 	reset();
 }
 
-/** check and adopt scanline */
+/** check and adapt scanline */
 void Vt2IsoImagePaintlib_c::checkUpdateScanline( unsigned int rui_y )
 {
 	if ( i_curScanLineY != rui_y )

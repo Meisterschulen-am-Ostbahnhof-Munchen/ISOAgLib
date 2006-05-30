@@ -1,6 +1,6 @@
 /***************************************************************************
                           sensor_target_extensions.cpp - some extensions to the used
-                                             BIOS; for adaptions to the
+                                             BIOS; for adaptations to the
                                              needed BIOS functions which
                                              can't be implemented in inline
                                              functions in bios_namespace_xx.h
@@ -149,8 +149,8 @@ static uint16_t _prevCounter[SENSOR_ARRAY_SIZE];
 	void counterIrq_8(){counterIrqFlex(8);}
 	void counterIrq_9(){counterIrqFlex(9);}
 
-	static counterIrqFunction irqFuncArr[SENSOR_ARRAY_SIZE] = 
-		{ 
+	static counterIrqFunction irqFuncArr[SENSOR_ARRAY_SIZE] =
+		{
 		  &counterIrq_0
 		, &counterIrq_1
 		, &counterIrq_2
@@ -269,7 +269,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //	<< "config_digin_freq( "
-//	<< (uint16_t) rb_channel << ", " 
+//	<< (uint16_t) rb_channel << ", "
 //	<< (uint16_t) wTime << ", "
 //	<< (uint16_t) numPulsesToAvg << " ) returns  "
 //	<< configretval << "\r";

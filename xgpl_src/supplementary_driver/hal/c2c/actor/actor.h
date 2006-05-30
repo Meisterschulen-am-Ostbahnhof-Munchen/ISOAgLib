@@ -61,7 +61,7 @@
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
    In this header only the groups for error codes, global system
-   functions and CAN must be adopted to a new platform.
+   functions and CAN must be adapted to a new platform.
    If a simple name mapping is not possible for a specific
    function, the module targetExtensions can be used to implement
    the needed activity. The implementation of the PC version
@@ -116,7 +116,7 @@ namespace __HAL {
    inline function with call to orig BIOS function)
    functions between all IsoAgLib calls for BIOS and the corresponding BIOS functions
    --> simply replace the call to the corresponding BIOS function in this header
-       for adaption to new platform
+       for adaptation to new platform
  */
 namespace HAL
 {
@@ -154,7 +154,7 @@ namespace HAL
   */
   inline int16_t setDigout(uint8_t rui8_channel, uint16_t wPWMValue)
     {return __HAL::set_digout(rui8_channel, wPWMValue);};
-  
+
   /** deliver the actual current of the digital output
     * @param rui8_channel channel to check
     * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )

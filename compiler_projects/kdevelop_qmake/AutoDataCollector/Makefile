@@ -33,6 +33,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
@@ -43,7 +44,6 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp  \
@@ -57,20 +57,10 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traclight_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracmovesetpoint_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracaux_c.cpp  \
-		../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp  \
+		../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp  \
 		../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp  \
@@ -88,40 +78,19 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/specificrecordconfig_c.cpp  \
 		../../../IsoAgLib_Examples/autodatacollector.cpp  
 
-
-#Special Sources for CAN Server
-SOURCES_SERVER = ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
-
-#Special Rules for CAN Server
-OBJ_DIR_SERVER  = objects_server
-OBJECTS_SERVER = $(patsubst %.cpp,$(OBJ_DIR_SERVER)/%.o,$(notdir $(SOURCES_SERVER)))
-DEPS_SERVER := $(patsubst %.o,%.d,$(OBJECTS_SERVER))
-
-$(OBJ_DIR_SERVER)/%.d :
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) 2>/dev/null | \
-	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_SERVER)/$$1!' > $@
-
-$(OBJ_DIR_SERVER)/%.o : $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) $(OBJ_DIR_SERVER)/%.d
-	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.o,%,$@).cpp,$(SOURCES_SERVER))
-
-include $(DEPS_SERVER)
-
-can_server: $(OBJECTS_SERVER)
-	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS)
 ####### Some Standard Rules
 CC       = gcc
 CXX      = g++
+STRIP	 = strip
 LEX      = flex
 YACC     = yacc
-CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
-CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
+CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
 LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
 LINK     = g++
-LFLAGS   = -pthread
+LFLAGS   =
 LIBS     = $(SUBLIBS)  $(BIOS_LIB)
 AR       = ar cqs
 RANLIB   =
@@ -167,7 +136,7 @@ $(OBJ_DIR)/%.o : $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) $(OB
 ####### Build rules
 deps : $(DEPS)
 
-all: can_server Makefile $(TARGET)
+all: Makefile $(TARGET)
 $(TARGET):  $(OBJECTS)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 
@@ -194,7 +163,7 @@ FORCE:
 
 ####### Install
 
-install: can_server
+install:
 
-uninstall: can_server
+uninstall:
 

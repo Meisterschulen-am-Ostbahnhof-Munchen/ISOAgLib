@@ -69,7 +69,7 @@ class Vt2IsoImageFreeImage_c : public Vt2IsoImageBase_c
 	virtual unsigned int getB( unsigned int rui_x, unsigned int rui_y );
 
  private:
-	/** check and adopt scanline */
+	/** check and adapt scanline */
 	void checkUpdateScanline( unsigned int rui_y );
 
 	FIBITMAP *bitmap;

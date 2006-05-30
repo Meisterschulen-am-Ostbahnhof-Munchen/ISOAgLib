@@ -7,7 +7,7 @@
 
 
  \section PrjSpec1_5_WriteFlexibleDin__c2c__sys__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -347,7 +347,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -414,7 +414,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__esx__sys__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -754,7 +754,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -821,7 +821,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__imi__sys__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -1161,7 +1161,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -1228,7 +1228,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_linux__linux_server_client__rte List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver linux_server_client and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -1568,7 +1568,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -1635,7 +1635,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_linux__linux_server_client__simulating List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver linux_server_client and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -1975,7 +1975,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -2042,7 +2042,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_linux__linux_server_client__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver linux_server_client and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -2382,7 +2382,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -2449,7 +2449,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_linux__simulating__rte List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver simulating and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -2789,7 +2789,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -2856,7 +2856,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_linux__simulating__simulating List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -3196,7 +3196,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -3263,7 +3263,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_linux__simulating__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -3603,7 +3603,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -3670,7 +3670,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_win32__simulating__simulating List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -4010,7 +4010,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -4077,7 +4077,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_win32__simulating__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -4417,7 +4417,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -4484,7 +4484,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_win32__sontheim__simulating List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver sontheim and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -4824,7 +4824,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -4891,7 +4891,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_win32__sontheim__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver sontheim and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -5231,7 +5231,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -5298,7 +5298,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_win32__vector_canlib__simulating List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver vector_canlib and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -5638,7 +5638,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -5705,7 +5705,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_win32__vector_canlib__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver vector_canlib and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -6045,7 +6045,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -6112,7 +6112,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_win32__vector_xl_drv_lib__simulating List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver vector_xl_drv_lib and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -6452,7 +6452,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -6519,7 +6519,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pc_win32__vector_xl_drv_lib__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver vector_xl_drv_lib and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -6859,7 +6859,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -6926,7 +6926,7 @@ PRJ_BASE=1
 
 
  \section PrjSpec1_5_WriteFlexibleDin__pm167__sys__sys List of configuration settings for 1_5_WriteFlexibleDin with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_1_5_WriteFlexibleDin in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_1_5_WriteFlexibleDin
@@ -7266,7 +7266,7 @@ PRJ_BASE=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -7336,7 +7336,7 @@ PRJ_BASE=1
 
 
  \section PrjConfig1_5_WriteFlexibleDin List of configuration settings for 1_5_WriteFlexibleDin
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/1_BaseData/1_5_WriteFlexibleDin/config_1_5_WriteFlexibleDin.h 
+ This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/1_BaseData/1_5_WriteFlexibleDin/config_1_5_WriteFlexibleDin.h
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_1_5_WriteFlexibleDin.h ( Important: place the directory of the application source files in the include search path )
 
@@ -7344,21 +7344,21 @@ PRJ_BASE=1
 \code
 // File: config_1_5_WriteFlexibleDin.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_1_5_WriteFlexibleDin" 
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_1_5_WriteFlexibleDin"
 //            Perform changes direct in the feature and project setup file conf_1_5_WriteFlexibleDin
-//  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after
+//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_1_5_WriteFlexibleDin" call,
 //                    if the corresponding value in isoaglib_config.h changed
-#define CAN_BUS_CNT 1 
+#define CAN_BUS_CNT 1
 
-#define CAN_BUS_USED 0 
+#define CAN_BUS_USED 0
 
-#define CAN_INSTANCE_CNT 1 
+#define CAN_INSTANCE_CNT 1
 
-#define PRT_INSTANCE_CNT 1 
+#define PRT_INSTANCE_CNT 1
 
-#define RS232_INSTANCE_CNT 1 
+#define RS232_INSTANCE_CNT 1
 
 // Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory.
 // Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian.
@@ -7366,8 +7366,8 @@ PRJ_BASE=1
 // which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO and DIN ) - and other way.
 #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 
-#ifndef USE_BASE 
-	#define USE_BASE 
+#ifndef USE_BASE
+	#define USE_BASE
 #endif
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
@@ -7382,22 +7382,22 @@ PRJ_BASE=1
 #ifndef NO
   #define NO 0
 #endif
-#ifndef USE_PROCESS_YN 
-	#define USE_PROCESS_YN NO 
+#ifndef USE_PROCESS_YN
+	#define USE_PROCESS_YN NO
 #endif
-#ifndef USE_EEPROM_IO_YN 
-	#define USE_EEPROM_IO_YN NO 
+#ifndef USE_EEPROM_IO_YN
+	#define USE_EEPROM_IO_YN NO
 #endif
-#ifndef USE_DATASTREAMS_IO_YN 
-	#define USE_DATASTREAMS_IO_YN NO 
+#ifndef USE_DATASTREAMS_IO_YN
+	#define USE_DATASTREAMS_IO_YN NO
 #endif
-#ifndef USE_DIN_9684 
-	#define USE_DIN_9684 
+#ifndef USE_DIN_9684
+	#define USE_DIN_9684
 #endif
 
 // The following configuration values can be overwritten.
 // These settings are initially defined in isoaglib_config.h .
-// These settings are in commented-out, so that you can activate and adopt them by
+// These settings are in commented-out, so that you can activate and adapt them by
 // moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG
 
 /// select reaction on powerdown detection - can be manually overridden in project config file
@@ -7527,7 +7527,7 @@ PRJ_BASE=1
 // #define CONFIG_EEPROM_USE_CAN_EXT_IDENT 0
 
 
-// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!
+// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
 
@@ -7621,7 +7621,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/c2c/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -7749,7 +7749,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/esx/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -7877,7 +7877,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/imi/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -8007,7 +8007,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -8141,7 +8141,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -8275,7 +8275,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -8408,7 +8408,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -8541,7 +8541,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -8674,7 +8674,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -8807,7 +8807,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -8940,7 +8940,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -9073,7 +9073,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -9206,7 +9206,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -9339,7 +9339,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -9472,7 +9472,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -9605,7 +9605,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -9738,7 +9738,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -9870,7 +9870,7 @@ PRJ_BASE=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pm167/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h

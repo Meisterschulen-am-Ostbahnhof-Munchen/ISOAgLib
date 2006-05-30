@@ -61,7 +61,7 @@
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
    In this header only the groups for error codes, global system
-   functions and CAN must be adopted to a new platform.
+   functions and CAN must be adapted to a new platform.
    If a simple name mapping is not possible for a specific
    function, the module targetExtensions can be used to implement
    the needed activity. The implementation of the PC version
@@ -123,7 +123,7 @@ namespace __HAL {
    inline function with call to orig BIOS function)
    functions between all IsoAgLib calls for BIOS and the corresponding BIOS functions
    --> simply replace the call to the corresponding BIOS function in this header
-       for adaption to new platform
+       for adaptation to new platform
  */
 namespace HAL
 {
@@ -194,13 +194,13 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 
     return retval;
     };
-  
+
   /**
 	This function sets the digital Output over mask.
 	The Bit 0, 1, 2... represent the Output 1, 2, 3...
 	If the bit is set with wOutputMask, the appropriate bit from wDigitalValue will be taken
 	over the mask out.
-	If the bit is not set in the mask, the output remains unchanged. 
+	If the bit is not set in the mask, the output remains unchanged.
 
     @return error state (C_NO_ERR == o.k.)
   */
@@ -218,7 +218,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 
     return retval;
     };
-  
+
   /** deliver the actual current of the digital output
     * @param rui8_channel channel to check
     * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )

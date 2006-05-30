@@ -2,10 +2,10 @@
 // IMPORTANT: Never change the first block of this header manually!!!
 //            All manual changes are overwritten by the next call of "update_makefile.sh conf_2_0_LocalReadDataStdIso" 
 //            Perform changes direct in the feature and project setup file conf_2_0_LocalReadDataStdIso
-//  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after
-//                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
-//                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_2_0_LocalReadDataStdIso" call,
-//                    if the corresponding value in isoaglib_config.h changed
+//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
+//                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
+//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_2_0_LocalReadDataStdIso" call,
+//                      if the corresponding value in isoaglib_config.h changed
 #define CAN_BUS_CNT 1 
 
 #define CAN_BUS_USED 0 
@@ -62,7 +62,7 @@
 
 // The following configuration values can be overwritten.
 // These settings are initially defined in isoaglib_config.h .
-// These settings are in commented-out, so that you can activate and adopt them by
+// These settings are in commented-out, so that you can activate and adapt them by
 // moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG
 
 /// select reaction on powerdown detection - can be manually overridden in project config file
@@ -192,5 +192,5 @@
 // #define CONFIG_EEPROM_USE_CAN_EXT_IDENT 0
 
 
-// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!
+// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG

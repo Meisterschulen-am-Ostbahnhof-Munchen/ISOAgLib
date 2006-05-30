@@ -838,7 +838,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit80]
-FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
 Compile=1

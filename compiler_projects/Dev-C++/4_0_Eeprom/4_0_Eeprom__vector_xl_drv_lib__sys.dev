@@ -688,7 +688,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit65]
-FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=4_0_Eeprom
 Compile=1

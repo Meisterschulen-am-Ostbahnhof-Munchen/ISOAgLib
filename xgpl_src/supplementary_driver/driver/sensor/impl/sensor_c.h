@@ -86,7 +86,7 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
-#include <IsoAgLib/util/compiler_adoption.h>
+#include <IsoAgLib/util/compiler_adaptation.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

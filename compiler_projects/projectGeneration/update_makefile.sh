@@ -954,10 +954,10 @@ function create_autogen_project_config()
 	echo "// IMPORTANT: Never change the first block of this header manually!!!" >> $CONFIG_NAME
 	echo "//            All manual changes are overwritten by the next call of \"update_makefile.sh $CONF_FILE\" " >> $CONFIG_NAME
 	echo "//            Perform changes direct in the feature and project setup file $CONF_FILE"  >> $CONFIG_NAME
-	echo "//  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after" >> $CONFIG_NAME
-	echo "//                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there."  >> $CONFIG_NAME
-	echo "//                    All commented out defines in the middle block will be upated on next \"update_makefile.sh $CONF_FILE\" call,"  >> $CONFIG_NAME
-	echo "//                    if the corresponding value in isoaglib_config.h changed" >> $CONFIG_NAME
+	echo "//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after" >> $CONFIG_NAME
+	echo "//                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there."  >> $CONFIG_NAME
+	echo "//                      All commented out defines in the middle block will be upated on next \"update_makefile.sh $CONF_FILE\" call,"  >> $CONFIG_NAME
+	echo "//                      if the corresponding value in isoaglib_config.h changed" >> $CONFIG_NAME
 	echo -e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define CAN_BUS_USED $CAN_BUS_USED $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
@@ -1100,7 +1100,7 @@ function create_autogen_project_config()
 	# write overwriteable parts of isoaglib_config.h
 	echo -e "$ENDLINE// The following configuration values can be overwritten." >> $CONFIG_NAME
 	echo "// These settings are initially defined in isoaglib_config.h ." >> $CONFIG_NAME
-	echo "// These settings are in commented-out, so that you can activate and adopt them by" >> $CONFIG_NAME
+	echo "// These settings are in commented-out, so that you can activate and adapt them by" >> $CONFIG_NAME
 	echo -e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG$ENDLINE"  >> $CONFIG_NAME
 
 	for conf_line in `grep "#define CONFIG_" ../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/isoaglib_config.h | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g'` ; do
@@ -1114,7 +1114,7 @@ function create_autogen_project_config()
 			echo -e -n "$ENDLINE" >> $CONFIG_NAME
 		fi
 	done
-	echo -e "$ENDLINE// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!" >> $CONFIG_NAME
+	echo -e "$ENDLINE// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!" >> $CONFIG_NAME
 	FRESH=`grep -c "// START_INDIVIDUAL_PROJECT_CONFIG" $CONFIG_NAME.bak`
 	if [ $FRESH -lt 1 ] ; then
 		echo "// START_INDIVIDUAL_PROJECT_CONFIG" >> $CONFIG_NAME
@@ -1847,7 +1847,7 @@ case "$USE_TARGET_SYSTEM" in
 	exit 1 ;;
 esac
 
-# check for corrext CAN driver - and automatically adopt to embedded targets
+# check for corrext CAN driver - and automatically adapt to embedded targets
 if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
 	USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
 fi

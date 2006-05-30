@@ -708,7 +708,7 @@
 				RelativePath="..\..\..\xgpl_src\IsoAgLib\util\impl\canpkgext_c.h">
 			</File>
 			<File
-				RelativePath="..\..\..\xgpl_src\IsoAgLib\util\compiler_adoption.h">
+				RelativePath="..\..\..\xgpl_src\IsoAgLib\util\compiler_adaptation.h">
 			</File>
 			<File
 				RelativePath="..\..\..\xgpl_src\IsoAgLib\util\config.h">

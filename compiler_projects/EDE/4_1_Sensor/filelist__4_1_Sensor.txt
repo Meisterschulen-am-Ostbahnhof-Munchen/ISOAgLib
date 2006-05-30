@@ -63,7 +63,7 @@
 ..\..\..\xgpl_src\IsoAgLib\util\liberr_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\igetypos_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
-..\..\..\xgpl_src\IsoAgLib\util\compiler_adoption.h
+..\..\..\xgpl_src\IsoAgLib\util\compiler_adaptation.h
 ..\..\..\xgpl_src\Application_Config\isoaglib_config.h
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\typedef.h
 ..\..\..\xgpl_src\IsoAgLib\hal\config.h

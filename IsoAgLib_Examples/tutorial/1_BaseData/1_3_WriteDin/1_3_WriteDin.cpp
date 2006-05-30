@@ -111,7 +111,7 @@
  * the generation script update_makefile.sh is described in
  * \ref PrjSpec1_3_WriteDin__pc_linux__simulating__simulating .
  *
- * The adopted project specifications for different setups:
+ * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
@@ -205,7 +205,7 @@
   #define TEST_TRACPTO
 #endif
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */

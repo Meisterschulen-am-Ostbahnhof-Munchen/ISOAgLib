@@ -22,7 +22,7 @@
 **	USE_T6_TIMER	Define if T6/T5 must be used rather than T3/T2.	  *
 **                                                                        *
 **************************************************************************/
-// Adaptions for mitron with C167
+// Adaptations for mitron with C167
 #define USE_T6_TIMER
 #define LONGPERIOD
 

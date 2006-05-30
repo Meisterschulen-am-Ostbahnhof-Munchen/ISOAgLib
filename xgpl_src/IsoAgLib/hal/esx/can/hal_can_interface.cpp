@@ -56,7 +56,7 @@
 /* **********************************************************
  * The module halCanInterface implements a standard
  * interface for the CAN interactions of the IsoAgLib
- * This way the the adoption of the IsoAgLib can be
+ * This way the the adaptation of the IsoAgLib can be
  * better restricted to the various BIOS specific the
  * directories xgpl_src/IsoAgLib/hal/xx/can/ .
  * ********************************************************** */

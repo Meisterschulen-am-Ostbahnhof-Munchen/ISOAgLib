@@ -374,7 +374,7 @@ PRJ_ISO_TERMINAL=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 

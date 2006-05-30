@@ -27,18 +27,14 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinsystempkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvect_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinitem_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
@@ -52,10 +48,11 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 ####### Some Standard Rules
 CC       = gcc
 CXX      = g++
+STRIP	 = strip
 LEX      = flex
 YACC     = yacc
-CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
-CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
+CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
 LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)

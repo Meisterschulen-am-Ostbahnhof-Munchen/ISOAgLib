@@ -129,7 +129,7 @@
  * the generation script update_makefile.sh is described in
  * \ref PrjSpec2_3_LocalReadDataSimpleMeasureSetpointIso__pc_linux__simulating__simulating .
  *
- * The adopted project specifications for different setups:
+ * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
@@ -207,7 +207,7 @@
 	#define PRJ_USE_AUTOGEN_CONFIG config_2_3_LocalReadDataSimpleMeasureSetpointIso.h
 #endif
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */
@@ -284,7 +284,7 @@ int main()
 	while ( iSystem_c::canEn() )
 	{ // run main loop
     IsoAgLib::iCANIO_c::waitUntilCanReceiveOrTimeout( 50 );
-    
+
 		// IMPORTANT: call main timeEvent function for
 		// all time controlled actions of IsoAgLib
 		IsoAgLib::getISchedulerInstance().timeEvent();

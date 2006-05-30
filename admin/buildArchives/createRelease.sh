@@ -14,11 +14,11 @@ ISOAGLIB_ROOT=`pwd`
 echo "StartDir: $START, Script: $SCRIPT_DIR, Root: $ISOAGLIB_ROOT, Release: $RELEASE_VERION"
 
 
-# A) Adopt Doxyfile to create correct release string
+# A) Adapt Doxyfile to create correct release string
 CMDLINE=`echo "perl -p -i -e 's/(PROJECT_NUMBER\s*=)\s*[^\n]*/\1 $RELEASE_VERION/g' Doxyfile"`
 echo $CMDLINE | sh
 
-# B) adopt Download links to release version
+# B) adapt Download links to release version
 CMDLINE=`echo "perl -p -i -e 's/([^0-9])[\-0-9\.]*(\.zip<\/td>)/\1-$RELEASE_VERION\2/g' readme.txt"`
 echo $CMDLINE | sh
 

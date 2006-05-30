@@ -728,7 +728,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit69]
-FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=4_1_Sensor
 Compile=1

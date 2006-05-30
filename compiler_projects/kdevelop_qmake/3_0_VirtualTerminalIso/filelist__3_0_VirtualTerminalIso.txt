@@ -75,6 +75,7 @@
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
@@ -104,7 +105,7 @@
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h

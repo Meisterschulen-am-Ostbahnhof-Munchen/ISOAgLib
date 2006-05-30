@@ -350,7 +350,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -764,7 +764,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -1178,7 +1178,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -1592,7 +1592,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -2006,7 +2006,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -2420,7 +2420,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -2834,7 +2834,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -3248,7 +3248,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -3662,7 +3662,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -4076,7 +4076,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -4490,7 +4490,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -4904,7 +4904,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -5318,7 +5318,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -5732,7 +5732,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -6146,7 +6146,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -6560,7 +6560,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -6974,7 +6974,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -7388,7 +7388,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -7472,7 +7472,7 @@ PRJ_RS232=1
 // IMPORTANT: Never change the first block of this header manually!!!
 //            All manual changes are overwritten by the next call of "update_makefile.sh conf_AutoDataCollector" 
 //            Perform changes direct in the feature and project setup file conf_AutoDataCollector
-//  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after
+//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_AutoDataCollector" call,
 //                    if the corresponding value in isoaglib_config.h changed
@@ -7532,7 +7532,7 @@ PRJ_RS232=1
 
 // The following configuration values can be overwritten.
 // These settings are initially defined in isoaglib_config.h .
-// These settings are in commented-out, so that you can activate and adopt them by
+// These settings are in commented-out, so that you can activate and adapt them by
 // moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG
 
 /// select reaction on powerdown detection - can be manually overridden in project config file
@@ -7662,7 +7662,7 @@ PRJ_RS232=1
 // #define CONFIG_EEPROM_USE_CAN_EXT_IDENT 0
 
 
-// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!
+// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
 
@@ -7792,7 +7792,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -7999,7 +7999,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -8206,7 +8206,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -8419,7 +8419,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -8640,7 +8640,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -8861,7 +8861,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -9081,7 +9081,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -9301,7 +9301,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -9521,7 +9521,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -9741,7 +9741,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -9961,7 +9961,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -10181,7 +10181,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -10401,7 +10401,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -10621,7 +10621,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -10841,7 +10841,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -11061,7 +11061,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -11281,7 +11281,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
@@ -11496,7 +11496,7 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h

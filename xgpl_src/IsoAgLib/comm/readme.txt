@@ -102,7 +102,7 @@
 	* <b>Detailed Description:</b> \ref MultiMsgPage
 	* The IsoAgLib implements currently only the send of data streams with more than eight data byte.
 	* But this is enough for the main targets LBS+ terminal project upload and ISO Virutal Terminal
-	* access for handling of user interface. The implementation adopts to the different variations
+	* access for handling of user interface. The implementation adapts to the different variations
 	* from the common protocol.
 	*
 	* @subsection CommOverIsoTerminal Overview on ISO 11783 Virtual Terminal

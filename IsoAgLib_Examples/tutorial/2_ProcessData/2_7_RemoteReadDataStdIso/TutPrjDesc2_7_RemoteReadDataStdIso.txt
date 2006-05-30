@@ -7,7 +7,7 @@
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__c2c__sys__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -349,7 +349,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -416,7 +416,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__esx__sys__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -758,7 +758,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -825,7 +825,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__imi__sys__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -1167,7 +1167,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -1234,7 +1234,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_linux__linux_server_client__rte List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver linux_server_client and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -1576,7 +1576,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -1643,7 +1643,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_linux__linux_server_client__simulating List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver linux_server_client and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -1985,7 +1985,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -2052,7 +2052,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_linux__linux_server_client__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver linux_server_client and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -2394,7 +2394,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -2461,7 +2461,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__rte List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver simulating and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -2803,7 +2803,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -2870,7 +2870,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__simulating List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -3212,7 +3212,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -3279,7 +3279,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -3621,7 +3621,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -3688,7 +3688,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_win32__simulating__simulating List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -4030,7 +4030,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -4097,7 +4097,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_win32__simulating__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -4439,7 +4439,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -4506,7 +4506,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_win32__sontheim__simulating List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver sontheim and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -4848,7 +4848,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -4915,7 +4915,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_win32__sontheim__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver sontheim and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -5257,7 +5257,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -5324,7 +5324,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__simulating List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver vector_canlib and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -5666,7 +5666,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -5733,7 +5733,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_canlib__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver vector_canlib and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -6075,7 +6075,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -6142,7 +6142,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__simulating List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver vector_xl_drv_lib and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -6484,7 +6484,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -6551,7 +6551,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pc_win32__vector_xl_drv_lib__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver vector_xl_drv_lib and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -6893,7 +6893,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -6960,7 +6960,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__pm167__sys__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/
  Use the file conf_2_7_RemoteReadDataStdIso in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_2_7_RemoteReadDataStdIso
@@ -7302,7 +7302,7 @@ PROC_REMOTE_STD=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -7372,7 +7372,7 @@ PROC_REMOTE_STD=1
 
 
  \section PrjConfig2_7_RemoteReadDataStdIso List of configuration settings for 2_7_RemoteReadDataStdIso
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso/config_2_7_RemoteReadDataStdIso.h 
+ This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_7_RemoteReadDataStdIso/config_2_7_RemoteReadDataStdIso.h
  This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_2_7_RemoteReadDataStdIso.h ( Important: place the directory of the application source files in the include search path )
 
@@ -7380,21 +7380,21 @@ PROC_REMOTE_STD=1
 \code
 // File: config_2_7_RemoteReadDataStdIso.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_2_7_RemoteReadDataStdIso" 
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_2_7_RemoteReadDataStdIso"
 //            Perform changes direct in the feature and project setup file conf_2_7_RemoteReadDataStdIso
-//  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after
+//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_2_7_RemoteReadDataStdIso" call,
 //                    if the corresponding value in isoaglib_config.h changed
-#define CAN_BUS_CNT 1 
+#define CAN_BUS_CNT 1
 
-#define CAN_BUS_USED 0 
+#define CAN_BUS_USED 0
 
-#define CAN_INSTANCE_CNT 1 
+#define CAN_INSTANCE_CNT 1
 
-#define PRT_INSTANCE_CNT 1 
+#define PRT_INSTANCE_CNT 1
 
-#define RS232_INSTANCE_CNT 1 
+#define RS232_INSTANCE_CNT 1
 
 // Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory.
 // Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian.
@@ -7418,22 +7418,22 @@ PROC_REMOTE_STD=1
 // Decide if float shall be used for the project
 #define USE_FLOAT_DATA_TYPE
 
-#ifndef USE_PROCESS 
-  #define USE_PROCESS 
+#ifndef USE_PROCESS
+  #define USE_PROCESS
 #endif
-#ifndef USE_EEPROM_IO_YN 
-	#define USE_EEPROM_IO_YN NO 
+#ifndef USE_EEPROM_IO_YN
+	#define USE_EEPROM_IO_YN NO
 #endif
-#ifndef USE_DATASTREAMS_IO_YN 
-	#define USE_DATASTREAMS_IO_YN NO 
+#ifndef USE_DATASTREAMS_IO_YN
+	#define USE_DATASTREAMS_IO_YN NO
 #endif
-#ifndef USE_ISO_11783 
-	#define USE_ISO_11783 
+#ifndef USE_ISO_11783
+	#define USE_ISO_11783
 #endif
 
 // The following configuration values can be overwritten.
 // These settings are initially defined in isoaglib_config.h .
-// These settings are in commented-out, so that you can activate and adopt them by
+// These settings are in commented-out, so that you can activate and adapt them by
 // moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG
 
 /// select reaction on powerdown detection - can be manually overridden in project config file
@@ -7563,7 +7563,7 @@ PROC_REMOTE_STD=1
 // #define CONFIG_EEPROM_USE_CAN_EXT_IDENT 0
 
 
-// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!
+// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
 
@@ -7655,7 +7655,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -7786,7 +7786,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -7917,7 +7917,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -8050,7 +8050,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -8187,7 +8187,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -8324,7 +8324,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -8460,7 +8460,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -8596,7 +8596,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -8732,7 +8732,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -8868,7 +8868,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -9004,7 +9004,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -9140,7 +9140,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -9276,7 +9276,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -9412,7 +9412,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -9548,7 +9548,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -9684,7 +9684,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -9820,7 +9820,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
@@ -9955,7 +9955,7 @@ PROC_REMOTE_STD=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h

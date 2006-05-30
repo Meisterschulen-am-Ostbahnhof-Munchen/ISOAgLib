@@ -448,7 +448,7 @@ MonitorItem_c& SystemMgmt_c::memberDevKey(const DevKey_c& rc_devKey, bool rb_for
 
 /**
   check if member is in one of the member lists for DIN or ISO with wanted DEV_KEY,
-  adopt instance if member with claimed address with other device class inst exist
+  adapt instance if member with claimed address with other device class inst exist
   @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
   @param ren_searchOrder define search order
     (IState_c::DinOnly or IState_c::IsoOnly or IState_c::DinIso or IState_c::IsoDin)

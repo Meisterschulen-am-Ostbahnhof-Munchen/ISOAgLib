@@ -58,7 +58,7 @@
 #include <rte_serial.h>
 
 #include "rs232_target_extensions.h"
-#include <IsoAgLib/util/compiler_adoption.h>
+#include <IsoAgLib/util/compiler_adaptation.h>
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <cstdio>
 #include <cstring>

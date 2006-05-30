@@ -49,7 +49,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 	- new Linux CAN HAL driver uses Linux kernel message queues for CAN communication between several local applications
 	  with or without real CAN cards --> several applications can easily constitude a CAN BUS without any hardware
 	- class GetyPos_c was renamed to DevKey_c to express the meaning for users who don't know DIN 9684
-	- new HAl adoptions to further <b>STW</b> ECU types supported by users
+	- new HAl adaptations to further <b>STW</b> ECU types supported by users
 	- proper support of NMEA2000 GPS strings
 	- several enhancements regarding VT client and network management
 	- XML-Schema pre-validation of vt2iso XML files
@@ -78,7 +78,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 	- add driver for <b>Sontheim CAN cards</b> ( tested only with CANLPT, but in theory designed according general API documentation, as all card
 		differences are handled by the driver, <b>extract the files from the Sontheim API ZIP in the directory <i>C:\\Development\\Sontheim</i> if you want to
 		use the tutorial project files without changes</b> )
-	- adopted the check for new messages in Win32 CAN cards to RTE style
+	- adapted the check for new messages in Win32 CAN cards to RTE style
 	- added basic language handling and AUX functions handling into ISO Terminal
 	- added <b>ISO 11783 Virtual Terminal</b> connection management, so that the pool is automatically
 		reloaded on reconnection ( changed terminal properties are regarded )
@@ -107,7 +107,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 	- unify number intervals of CAN HAL for BUS and MsgObj numbers to start with <b>0</b> for each type of HAL ( avoid HAL dependent offset constants ).
 	- change default path for Win32 CAN card manufacturer driver library files ( API DLLs and Headers ) to <i>C:\\Development</i> so that all users can install their
 		driver files to the corresponding location, if they want to avoid changing all default VC++ project files ( if pathes like <i>C:\\Development\\CANLIB</i> are still
-		not acceptable, update_makefile.sh can be used to create VC++ DSP files based on adopted conf_x_y project feature setup files )
+		not acceptable, update_makefile.sh can be used to create VC++ DSP files based on adapted conf_x_y project feature setup files )
 	- fix bug in handling of counter input, which prevented ESX BIOS counting functions from correct work ( these functions work only if now application IRQ handler is specified )
 	- fix bug in handling of PWM output diagnose ( the state detection didn't work right ) and move this diagnose function in new
 		ESX HAL file actor_target_extensions.cpp
@@ -193,8 +193,8 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 	- partitioning of sources in different packages. A base package contains system management, base tractor information
 			and CAN driver. All optional modules like process data or EEPROM driver can now
 			be downloaded as separate source archives.
-	- ISO<i><sub>AgLib</sub></i> specific CAN driver module to ease hardware adoption
-	- collection of all files which must be edited for hardware adoption to one directory and reduction of the amount
+	- ISO<i><sub>AgLib</sub></i> specific CAN driver module to ease hardware adaptation
+	- collection of all files which must be edited for hardware adaptation to one directory and reduction of the amount
 			of affected files
 
 */

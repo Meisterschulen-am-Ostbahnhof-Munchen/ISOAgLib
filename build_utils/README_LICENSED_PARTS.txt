@@ -6,5 +6,5 @@ The subdirectory vt2iso contains the GPL license protected utility vt2iso for cr
 ISO 11783 virtual terminal masks. These files are protected by the GPL license without
 any exception, as no application shall link against parts of this directory.
 
-The shell scripts and BAT files within this directory can be freely used and adopted for 
+The shell scripts and BAT files within this directory can be freely used and adapted for
 other projects.

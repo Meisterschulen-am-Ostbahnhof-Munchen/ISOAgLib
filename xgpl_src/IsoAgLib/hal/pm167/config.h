@@ -53,7 +53,7 @@
 
 // include target independent configs
 #include <Application_Config/isoaglib_config.h>
-#include <IsoAgLib/util/compiler_adoption.h>
+#include <IsoAgLib/util/compiler_adaptation.h>
 
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
 // -> all needed offsets shall be added at the lowest possible layer

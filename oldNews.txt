@@ -20,7 +20,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 			as default for Sontheim )
 	- <b>2004-12-09:</b> As some so called "Extended EC++" compilers like IAR don't support multiple inheritance and additionally place their individual tailored version of STL
 		<b>not</b> in the ANSI C++ conformant namespace <b>std</b> the ISO<i><sub>AgLib</sub></i> was changed to <b>not use any multiple inheritance</b> and is now
-		<b>flexible to retrieve STL elements from the namespace STL_NAMESPACE, which can be defined individual for each compiler in the header <i>compiler_adoption.h</i></b><br>
+		<b>flexible to retrieve STL elements from the namespace STL_NAMESPACE, which can be defined individual for each compiler in the header <i>compiler_adaptation.h</i></b><br>
 		Therefore the ISO<i><sub>AgLib</sub></i> is now usable for all compilers which use this "Extended EC++" subset of ANSI C++
 	- <b>2004-12-10:</b> List of used C++ features which aren't mapped by simple <b>EC++</b> compilers which doesn't use the <b>Extended EC++</b> specification
 		is written in \ref InfReqCompiler ( there are also some general notes on compiler use )

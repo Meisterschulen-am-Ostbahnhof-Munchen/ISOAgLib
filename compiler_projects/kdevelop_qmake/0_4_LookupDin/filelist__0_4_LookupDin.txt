@@ -17,10 +17,9 @@
 ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
-../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
@@ -68,7 +67,7 @@
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h

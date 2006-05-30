@@ -7,8 +7,6 @@
 TARGET = 0_4_LookupDin
 ISOAGLIB_PATH = ../../..
 APP_INC = -I../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_4_LookupDin 
-BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
-BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
 
 PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_0_4_LookupDin.h
 
@@ -35,10 +33,9 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
-		../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp  \
+		../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp  \
 		../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
@@ -48,40 +45,19 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
 		../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_4_LookupDin/0_4_LookupDin.cpp  
 
-
-#Special Sources for CAN Server
-SOURCES_SERVER = ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \
-		../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
-
-#Special Rules for CAN Server
-OBJ_DIR_SERVER  = objects_server
-OBJECTS_SERVER = $(patsubst %.cpp,$(OBJ_DIR_SERVER)/%.o,$(notdir $(SOURCES_SERVER)))
-DEPS_SERVER := $(patsubst %.o,%.d,$(OBJECTS_SERVER))
-
-$(OBJ_DIR_SERVER)/%.d :
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) 2>/dev/null | \
-	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_SERVER)/$$1!' > $@
-
-$(OBJ_DIR_SERVER)/%.o : $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) $(OBJ_DIR_SERVER)/%.d
-	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.o,%,$@).cpp,$(SOURCES_SERVER))
-
-include $(DEPS_SERVER)
-
-can_server: $(OBJECTS_SERVER)
-	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS)
 ####### Some Standard Rules
 CC       = gcc
 CXX      = g++
+STRIP	 = strip
 LEX      = flex
 YACC     = yacc
-CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
-CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
+CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
 LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
 LINK     = g++
-LFLAGS   = -pthread
+LFLAGS   =
 LIBS     = $(SUBLIBS)  $(BIOS_LIB)
 AR       = ar cqs
 RANLIB   =
@@ -127,7 +103,7 @@ $(OBJ_DIR)/%.o : $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) $(OB
 ####### Build rules
 deps : $(DEPS)
 
-all: can_server Makefile $(TARGET)
+all: Makefile $(TARGET)
 $(TARGET):  $(OBJECTS)
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 
@@ -154,7 +130,7 @@ FORCE:
 
 ####### Install
 
-install: can_server
+install:
 
-uninstall: can_server
+uninstall:
 

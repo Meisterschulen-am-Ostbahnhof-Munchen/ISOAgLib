@@ -65,7 +65,7 @@
 
 // include interface aplication relevant configuration settings
 #include <Application_Config/isoaglib_config.h>
-#include <IsoAgLib/util/compiler_adoption.h>
+#include <IsoAgLib/util/compiler_adaptation.h>
 
 #define HAL_CAN_BITRATE_LIST {10, 20, 40, 50, 100, 125, 250, 500, 1000}
 #define HAL_CAN_BITRATE_CNT 9

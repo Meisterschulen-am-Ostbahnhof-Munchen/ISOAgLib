@@ -122,7 +122,7 @@
  * the generation script update_makefile.sh is described in
  * \ref PrjSpec2_6_LocalWriteSetpointSimpleSetpointIso__pc_linux__simulating__simulating .
  *
- * The adopted project specifications for different setups:
+ * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
@@ -200,7 +200,7 @@
   #define PRJ_USE_AUTOGEN_CONFIG config_2_6_LocalWriteSetpointSimpleSetpointIso.h
 #endif
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */

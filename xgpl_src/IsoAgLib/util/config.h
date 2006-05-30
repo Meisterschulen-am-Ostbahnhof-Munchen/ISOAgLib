@@ -1,10 +1,10 @@
 /***************************************************************************
                           config.h  - central configuration
                                                     definitions
-                             -------------------                                         
+                             -------------------
     begin                : Sun Jul 3 2001
-    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                         
-    email                : a.spangler@osb-ag:de                                     
+    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler
+    email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -56,7 +56,7 @@
 #define __MASTER_CONFIG_HEADER_H__
 
 #include "../typedef.h"
-#include "compiler_adoption.h"
+#include "compiler_adaptation.h"
 
 
 /* ****************************************** */
@@ -120,8 +120,8 @@ enum proc_specCmd_t {setpointReleaseCmd = 1, setpointErrCmd = 2, noVal_32s = 4, 
   #define THROW_CONT_EL_NONEXIST
   #define THROW_PRECOND_VIOLATION
 #endif
- 
-	
+
+
 
 // special Scheduler_c values
 #define SETPOINT_RELEASE_COMMAND  NO_VAL_32S

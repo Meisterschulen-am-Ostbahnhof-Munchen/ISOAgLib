@@ -1,6 +1,6 @@
 /***************************************************************************
                           sensor_target_extensions.cpp - some extensions to the used
-                                             BIOS; for adaptions to the
+                                             BIOS; for adaptations to the
                                              needed BIOS functions which
                                              can't be implemented in inline
                                              functions in bios_namespace_xx.h

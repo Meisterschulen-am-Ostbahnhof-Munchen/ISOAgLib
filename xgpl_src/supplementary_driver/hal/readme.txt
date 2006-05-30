@@ -1,7 +1,7 @@
 /** @page SuppHalPage Structure of HAL for Supplementary Parts of IsoAgLib
 	The directory structure of the ISO<i><sub>AgLib</sub></i> HAL
-	is designed to ease quick adotion to new platform types.
-	Please see \ref MainHalAdoptionNew for details.
+	is designed to ease quick adaptation to new platform types.
+	Please see \ref MainHalAdaptationNew for details.
 
 	\section SuppHalStructure Structure of HAL for Main Parts
 	\subsection SupplHalEsx HAL for Supplementary Drivers on ESX of STW

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          sensor.h - definition of Hardware Abstraction 
+                          sensor.h - definition of Hardware Abstraction
                                      Layer for sensor functions for ESXu
                              -------------------
     begin                : Wed Mar 15 2000
@@ -61,7 +61,7 @@
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
    In this header only the groups for error codes, global system
-   functions and CAN must be adopted to a new platform.
+   functions and CAN must be adapted to a new platform.
    If a simple name mapping is not possible for a specific
    function, the module targetExtensions can be used to implement
    the needed activity. The implementation of the ESXu version
@@ -141,7 +141,7 @@ namespace __HAL {
    inline function with call to orig BIOS function)
    functions between all IsoAgLib calls for BIOS and the corresponding BIOS functions
    --> simply replace the call to the corresponding BIOS function in this header
-       for adaption to new platform
+       for adaptation to new platform
  */
 namespace HAL
 {
@@ -342,7 +342,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
     @return temperature in degree [-40..120 C]
   */
   inline int16_t  getAdcTemp( void )
-    { 
+    {
 	__HAL::t_Sys_AnalogData t_Sys_AnalogData;
 	__HAL::get_system_analogdata(&t_Sys_AnalogData);
 

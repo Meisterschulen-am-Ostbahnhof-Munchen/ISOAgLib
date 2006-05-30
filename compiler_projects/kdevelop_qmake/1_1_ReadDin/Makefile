@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = 1_1_ReadDin
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/1_BaseData/1_1_ReadDin 
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/1_BaseData/1_1_ReadDin
 
 PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_1_1_ReadDin.h
 
@@ -33,12 +33,12 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
+		../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp  \
 		../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp  \
 		../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp  \
@@ -49,15 +49,16 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/1_BaseData/1_1_ReadDin/1_1_ReadDin.cpp  
+		../../../IsoAgLib_Examples/tutorial/1_BaseData/1_1_ReadDin/1_1_ReadDin.cpp
 
 ####### Some Standard Rules
 CC       = gcc
 CXX      = g++
+STRIP	 = strip
 LEX      = flex
 YACC     = yacc
-CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
-CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
+CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
 LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)

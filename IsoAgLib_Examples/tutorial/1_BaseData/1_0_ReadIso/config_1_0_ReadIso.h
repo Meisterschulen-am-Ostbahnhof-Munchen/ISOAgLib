@@ -2,10 +2,10 @@
 // IMPORTANT: Never change the first block of this header manually!!!
 //            All manual changes are overwritten by the next call of "update_makefile.sh conf_1_0_ReadIso" 
 //            Perform changes direct in the feature and project setup file conf_1_0_ReadIso
-//  ALLOWED ADOPTION: Move the to be adopted defines from the middle block to the end after
-//                    the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
-//                    All commented out defines in the middle block will be upated on next "update_makefile.sh conf_1_0_ReadIso" call,
-//                    if the corresponding value in isoaglib_config.h changed
+//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
+//                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
+//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_1_0_ReadIso" call,
+//                      if the corresponding value in isoaglib_config.h changed
 #define CAN_BUS_CNT 1 
 
 #define CAN_BUS_USED 0 
@@ -24,6 +24,30 @@
 
 #ifndef USE_BASE 
 	#define USE_BASE 
+#endif
+#ifndef USE_TRACTOR_GENERAL 
+	#define USE_TRACTOR_GENERAL 
+#endif
+#ifndef USE_TRACTOR_MOVE 
+	#define USE_TRACTOR_MOVE 
+#endif
+#ifndef USE_TRACTOR_PTO 
+	#define USE_TRACTOR_PTO 
+#endif
+#ifndef USE_TRACTOR_LIGHT 
+	#define USE_TRACTOR_LIGHT 
+#endif
+#ifndef USE_TRACTOR_AUX 
+	#define USE_TRACTOR_AUX 
+#endif
+#ifndef USE_TRACTOR_GUIDANCE 
+	#define USE_TRACTOR_GUIDANCE 
+#endif
+#ifndef USE_TRACTOR_CERTIFICATION 
+	#define USE_TRACTOR_CERTIFICATION 
+#endif
+#ifndef USE_TIME_GPS 
+	#define USE_TIME_GPS 
 #endif
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
@@ -47,8 +71,8 @@
 #ifndef USE_EEPROM_IO_YN 
 	#define USE_EEPROM_IO_YN NO 
 #endif
-#ifndef USE_DATASTREAMS_IO_YN 
-	#define USE_DATASTREAMS_IO_YN NO 
+#ifndef USE_DATASTREAMS_IO 
+	#define USE_DATASTREAMS_IO 
 #endif
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 
@@ -56,7 +80,7 @@
 
 // The following configuration values can be overwritten.
 // These settings are initially defined in isoaglib_config.h .
-// These settings are in commented-out, so that you can activate and adopt them by
+// These settings are in commented-out, so that you can activate and adapt them by
 // moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG
 
 /// select reaction on powerdown detection - can be manually overridden in project config file
@@ -186,5 +210,5 @@
 // #define CONFIG_EEPROM_USE_CAN_EXT_IDENT 0
 
 
-// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADOPTIONS!!!
+// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG

@@ -55,7 +55,7 @@
   * @section SystemMgmtAddressClaim Address Claim of Local Device
   * All address claim variants have in common, that they require a pointer to a
   * variable of type GetyPos_c which defines the device type
-  * of the own device. This way the IsoAgLib can adopt the
+  * of the own device. This way the IsoAgLib can adapt the
   * device instance number, if the initial device instance number
   * is already used, so that an alternaticve free number has to be chosen.
   * This change is written directly in the pointed variabls, so that

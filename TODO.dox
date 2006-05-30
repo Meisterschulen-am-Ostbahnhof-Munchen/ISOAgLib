@@ -3,9 +3,9 @@
     \todo Verify and test with the help of extending the test cases
          controlled by simulated CAN I/O.
 
-    \todo Adopt Hardware-Adaption-Layer to new targets
+    \todo Adapt Hardware-Adaptation-Layer to new targets
 
-	\todo Adopt possible changes between ISO 11783 draft and final release
+	\todo Adapt possible changes between ISO 11783 draft and final release
          after publishing of ISO 11783 (final)
 
 	\todo Integrate manager for ISO 11783 virtual terminal with intelligent

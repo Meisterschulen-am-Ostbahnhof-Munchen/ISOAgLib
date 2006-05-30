@@ -111,7 +111,7 @@
  * the generation script update_makefile.sh is described in
  * \ref PrjSpec1_2_WriteIso__pc_linux__simulating__simulating .
  *
- * The adopted project specifications for different setups:
+ * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
@@ -196,7 +196,7 @@
   #include <supplementary_driver/driver/rs232/irs232io_c.h>
 #endif
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /** set the following defines if to test one or more of the base data*/

@@ -63,7 +63,7 @@
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
    In this header the groups for error codes, global system
-   functions and CAN must be adopted to a new platform.
+   functions and CAN must be adapted to a new platform.
    If a simple name mapping is not possible for a specific
    function, the module targetExtensions can be used to implement
    the needed activity. The implementation of the C2C version
@@ -91,7 +91,7 @@ namespace __HAL {
    inline function with call to orig BIOS function)
    functions between all IsoAgLib calls for BIOS and the corresponding BIOS functions
    --> simply replace the call to the corresponding BIOS function in this header
-       for adaption to new platform
+       for adaptation to new platform
  */
 namespace HAL
 {
@@ -217,12 +217,12 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 
   /**
     init the Task Call
-	This function permits cyclic and/or delayed calls of user functions. If 0 is tranferred as parameter 
+	This function permits cyclic and/or delayed calls of user functions. If 0 is tranferred as parameter
 	for wInterval, the function call will occur only once. (For starting the tasks start task timer
-	(word wBasicTick) has to be queried.) 
+	(word wBasicTick) has to be queried.)
 	The ordering of the task into the interrupt system uses the transfer parameter wHandle. If a zero-pointer
-	is used in the user function parameter, the function will stop when the handle is called. 
-	The maximum number of tasks is limited to 4. 
+	is used in the user function parameter, the function will stop when the handle is called.
+	The maximum number of tasks is limited to 4.
   */
   inline int16_t initTaskCall( uint16_t wHandle, uint16_t wInterval, uint16_t wOffset, void (* pfFunction)(void) )
     {
@@ -246,7 +246,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
     Get Task Overload
 	If a task has already been running and is called up a second time by a timer interrupt,
 	a flag is set. The function get_task_overload returns the condition of this flag.
-	With reset_task_overload this flag can be deleted. 
+	With reset_task_overload this flag can be deleted.
   */
   inline int16_t getTaskOverload ( uint16_t /*wHandle*/ )
     {

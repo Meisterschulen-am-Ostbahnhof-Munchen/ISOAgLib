@@ -114,7 +114,7 @@
  * the generation script update_makefile.sh is described in
  * \ref PrjSpec2_7_RemoteReadDataStdIso__pc_linux__simulating__simulating .
  *
- * The adopted project specifications for different setups:
+ * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
@@ -192,7 +192,7 @@
   #define PRJ_USE_AUTOGEN_CONFIG config_2_7_RemoteReadDataStdIso.h
 #endif
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */
@@ -482,7 +482,7 @@ int main()
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownOnCanEnLoss )
   */
   uint16_t ui16_cnt = 0;
-  
+
   while ( iSystem_c::canEn() )
   { // run main loop
     // IMPORTANT: call main timeEvent function for
@@ -537,7 +537,7 @@ int main()
 
     if (b_runningPrograms)
     { // some examples for different measurement types (use 2_4_LocalWriteSetpointStdIso.cpp for local side!)
-#ifdef USE_PROC_HANDLER      
+#ifdef USE_PROC_HANDLER
       ui16_cnt++;
       if (ui16_cnt == 20)
       {
@@ -557,14 +557,14 @@ int main()
         arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
         LOG_INFO << "\r\nstart measurement for DDI 3 (measurement for default setpoint)" << "\r\n";
       }
-    
+
       if (ui16_cnt % 50 == 0 && ui16_cnt > 400 && ui16_cnt <600)
       {
         arr_procData[cui8_indexApplicationRate].setSetpointMasterVal(ui16_cnt / 10);
         arr_procData[cui8_indexApplicationRate].setpoint().setDefault(ui16_cnt / 10);
         LOG_INFO << "\r\nset new values for exact and default setpoint" << "\r\n";
       }
-    
+
       if (ui16_cnt == 700)
       {
         arr_procData[cui8_indexApplicationRate].prog().stop(TRUE /* b_deleteSubProgs */, Proc_c::TimeProp, Proc_c::DoValForExactSetpoint);
@@ -581,7 +581,7 @@ int main()
         arr_procData[cui8_indexApplicationRate].prog().stop(TRUE /* b_deleteSubProgs */, Proc_c::TimeProp, Proc_c::DoVal);
         LOG_INFO << "\r\nstop time proportional measurement for DDI 2" << "\r\n";
       }
-      
+
       if (ui16_cnt == 1000)
       {
         arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 1000, Proc_c::DoVal);
@@ -599,7 +599,7 @@ int main()
       }
 
       if (ui16_cnt == 1200)
-      { 
+      {
         arr_procData[cui8_indexWorkState].prog().addSubprog(Proc_c::TimeProp, 300, Proc_c::DoValForDefaultSetpoint);
         arr_procData[cui8_indexWorkState].prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoValForDefaultSetpoint);
         LOG_INFO << "\r\nstart measurement for DDI 141" << "\r\n";

@@ -65,14 +65,14 @@
 /* *********************************************************************** */
 /** \example test_hal.cpp
  * This example was written to check most of the HAL functions. It was used
- * for the adoption of the mitron167 hal. You may use this also for test and
+ * for the adaptation of the mitron167 hal. You may use this also for test and
  * creation of new HAL sets. Please contribute your extensions to the
  * IsoAgLib mailing list, so that this example can get a real testsuite for
- * HAL adoption.
+ * HAL adaptation.
  *                                                                         */
 /* *************************************************************************/
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 #include <IsoAgLib/util/config.h>
 // #include <IsoAgLib/driver/system/isystem.h>

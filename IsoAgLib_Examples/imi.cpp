@@ -90,7 +90,7 @@
  * </ul>.                                                                  */
 /* *************************************************************************/
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/system/isystem_c.h>

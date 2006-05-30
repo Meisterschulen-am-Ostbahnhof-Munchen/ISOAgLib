@@ -1068,7 +1068,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit103]
-FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1

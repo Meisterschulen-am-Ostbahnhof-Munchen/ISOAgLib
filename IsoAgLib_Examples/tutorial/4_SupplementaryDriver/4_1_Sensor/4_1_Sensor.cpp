@@ -110,7 +110,7 @@
  * the generation script update_makefile.sh is described in
  * \ref PrjSpec4_1_Sensor__pc_linux__simulating__simulating .
  *
- * The adopted project specifications for different setups:
+ * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
@@ -188,7 +188,7 @@
 	#define PRJ_USE_AUTOGEN_CONFIG config_4_1_Sensor.h
 #endif
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */
@@ -276,7 +276,7 @@ int main()
 	// create Digin which uses hardware interrupt function
 	// ( keep in mind, that most BIOS/OS will have some consolidation method to
 	//   avoid reaction on erroneous signals - so use this very immediate reaction on your own risc )
-	MyDiginIrqHandle myHandler; 
+	MyDiginIrqHandle myHandler;
 	bool b_useStaticRead = false;
 	IsoAgLib::iDigitalI_c c_diginIrqTest( 4, IsoAgLib::iSensor_c::OnHigh, b_useStaticRead, &myHandler );
 

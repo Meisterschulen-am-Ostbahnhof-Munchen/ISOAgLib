@@ -7,6 +7,7 @@
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
@@ -16,7 +17,6 @@
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.cpp
@@ -27,10 +27,9 @@
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
-../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
@@ -46,8 +45,10 @@
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
@@ -73,14 +74,13 @@
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
-../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
-../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/impl/procdataremotebase_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/Remote/SimpleMeasureElements/impl/simplemanagemeasureprogremote_c.h

@@ -54,7 +54,7 @@
 // include interface aplication relevant configuration settings
 //#include <Application_Config/isoaglib_config.h>
 #include <IsoAgLib/hal/config.h>
-#include <IsoAgLib/util/compiler_adoption.h>
+#include <IsoAgLib/util/compiler_adaptation.h>
 
 /* ****************************************** */
 /* * include of typedef header files */

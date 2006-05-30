@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = 1_4_WriteFlexibleIso
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples/tutorial/1_BaseData/1_4_WriteFlexibleIso 
+APP_INC = -I../../../IsoAgLib_Examples/tutorial/1_BaseData/1_4_WriteFlexibleIso
 
 PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_1_4_WriteFlexibleIso.h
 
@@ -23,22 +23,15 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traclight_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracmovesetpoint_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracaux_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
@@ -47,15 +40,16 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../IsoAgLib_Examples/tutorial/1_BaseData/1_4_WriteFlexibleIso/1_4_WriteFlexibleIso.cpp  
+		../../../IsoAgLib_Examples/tutorial/1_BaseData/1_4_WriteFlexibleIso/1_4_WriteFlexibleIso.cpp
 
 ####### Some Standard Rules
 CC       = gcc
 CXX      = g++
+STRIP	 = strip
 LEX      = flex
 YACC     = yacc
-CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
-CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Wpointer-arith $(PROJ_DEFINES)
+CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wstrict-prototypes -Wpointer-arith $(PROJ_DEFINES)
 LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)

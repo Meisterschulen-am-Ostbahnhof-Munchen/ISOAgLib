@@ -648,7 +648,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit61]
-FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=5_0_InternalCan
 Compile=1

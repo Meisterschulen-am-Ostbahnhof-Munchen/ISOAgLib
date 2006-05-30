@@ -159,18 +159,18 @@ PRJ_ISO11783=1
 # PRJ_TRACTOR_MOVE=0
 
 # only incorporate parts from BASE that provide tractor PTO information
-# this part includes tractor pto set point data which is not available in the 
-# free ISOAgLib edition. If you are interested in this feature please contact OSB AG 
+# this part includes tractor pto set point data which is not available in the
+# free ISOAgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_PTO=0
 
 # only incorporate parts from BASE that provide tractor lighting information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_LIGHT=0
 
 # only incorporate parts from BASE that provide tractor auxiliary valve information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_AUX=0
 
 # only incorporate parts from BASE that provide time and GPS information
@@ -178,12 +178,12 @@ PRJ_ISO11783=1
 
 # only incorporate parts from BASE that provide tractor guidance information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_GUIDANCE=0
 
 # only incorporate parts from BASE that provide tractor certification information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_CERTIFICATION=0
 
 # ###############################################################
@@ -371,7 +371,7 @@ PRJ_RS232=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 

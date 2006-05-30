@@ -169,7 +169,7 @@ public:
 
   /**
     check if member is in member list with wanted DEV_KEY,
-    adopt instance if member with claimed address with other device class inst exist
+    adapt instance if member with claimed address with other device class inst exist
     @param refc_devKey DEV_KEY to search (-> it's updated if member with claimed address with other dev class inst is found)
     @return true -> member with claimed address with given DEVCLASS found (and refc_devKey has now its DEV_KEY)
   */

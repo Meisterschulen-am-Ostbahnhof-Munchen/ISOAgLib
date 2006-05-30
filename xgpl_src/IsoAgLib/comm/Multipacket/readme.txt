@@ -8,7 +8,7 @@
   * type. The application can check in both cases for the current state of the data upload, so that
   * the application can react on the complete upload, failed transaction or other events.
   *
-  * As the ISO_Terminal class provides the capability to adopt the GUI definition to the capabilities
+  * As the ISO_Terminal class provides the capability to adapt the GUI definition to the capabilities
   * of the terminal, the upload mechanism needs a mechanism to calculate the dynamic parts in small
   * pieces without heavy usage of the heap - it wouldn't be acceptable to allocate the complete
   * dynamic mask pool in the heap.

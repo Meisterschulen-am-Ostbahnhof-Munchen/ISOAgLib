@@ -1,6 +1,6 @@
 /***************************************************************************
                           sensor_target_extensions.cpp - some extensions to the used
-                                             BIOS; for adaptions to the
+                                             BIOS; for adaptations to the
                                              needed BIOS functions which
                                              can't be implemented in inline
                                              functions in bios_namespace_xx.h
@@ -75,7 +75,7 @@
 		get_digin_period() is very unprecise as long as the
 		chosen timebase is not 80 times larger than the signal period.
 		--> the better precision is worth while the more calculation afford
-	*/ 
+	*/
 #define CALC_PERDIOD_FROM_FREQ
 
 namespace __HAL {
@@ -230,7 +230,7 @@ int16_t init_counter(uint8_t rb_channel, uint16_t rui16_timebase, bool rb_activH
         break;
       }
     }
-		
+
 	  if (rb_channel < 5)
 	  { /* set prescaler */
 			_b_prescale_1_4Index = ui16_tempPrescaleInd;

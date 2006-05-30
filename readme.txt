@@ -88,14 +88,14 @@ The ISO<i><sub>AgLib</sub></i> is designed to provide the following main feature
 - provide <b>complete Open Source toolchain for ISO 11783 development - including virtual terminal</b> <br>
 	Masks are defined with XML notation, which is then converted to ROM-eable variable arrays which are then
 	included in an object module of the project. ISO<i><sub>AgLib</sub></i> provides a simple function call
-	to register the mask pool. ISO<i><sub>AgLib</sub></i> performs then some runtime adoption to terminal properties
+	to register the mask pool. ISO<i><sub>AgLib</sub></i> performs then some runtime adaptation to terminal properties
 	( choose useable colour depth of bitmaps, scaling, including handling of cases where
 	layout properties like text alignment should be conserved even if no font of scaled size is available ) and finishes this process
-	by an automatic upload of the adopted pool. Already active pools can be handled with simple access functions for control,
+	by an automatic upload of the adapted pool. Already active pools can be handled with simple access functions for control,
 	and some easy handler functions for reaction on user input.<br>
 	<b>Core target of ISO<i><sub>AgLib</sub></i> Virtual Terminal design:</b><br>
 	- Enable creation of one single mask pool, that fits all terminal configurations
-	- Provide attributes for project specific control of the runtim adoption
+	- Provide attributes for project specific control of the runtim adaptation
 	- Allow flexible addition of further attributes, if automatic layout control must be optimized for some terminal properties ( e.g. amount of softkeys )
 
 	All these actions are demonstrated in the tutorial example \ref 3_0_VirtualTerminalIso.cpp .<br>
@@ -104,11 +104,11 @@ The ISO<i><sub>AgLib</sub></i> is designed to provide the following main feature
 	Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> if you are interested in this tool for your own use, as Brad
 	Cox indicated already, that he might be willing to provide this undest some conditions. <br>
 	But this tool would only help to start the virtual mask definition with XML, as this method provides some additional attributes to
-	control the automatic runtime adoption of the single core mask pool to the different terminal properties ( e.g. font size dependent spacing ).
+	control the automatic runtime adaptation of the single core mask pool to the different terminal properties ( e.g. font size dependent spacing ).
 - provide flexible and capable process data implementation as backbone for all documenting and control interaction
 		(e.g. trigger dependent measurement value send, allow setpoint intervals with MIN / MAX,
 		enable N --&gt; 1 relation between user and provider of process data)
-- narrow hardware adoption afford to small set of files with hardware adoption layer
+- narrow hardware adaptation afford to small set of files with hardware adaptation layer
 - greatest part of ISO<i><sub>AgLib</sub></i> source code can be used without any changes for different platforms
 - enable project specific feature selection, source code maintenance and extension by strict modular design
 - facilitate development of application for both DIN 9684 and ISO 11783
@@ -278,11 +278,11 @@ for integration.
 \subsection StructureModularity Modular Design
 The ISO<i><sub>AgLib</sub></i> is modularized according to the different functional
 components. Only a small part of the modules is obligatory for all systems,
-so that an individual project can adopt the capability and Flash ROM size
+so that an individual project can adapt the capability and Flash ROM size
 to the specific needs.<br>
 
 \subsection StructureLayers Layered Design
-The ISO<i><sub>AgLib</sub></i> is designed for easy adoption to new hardware platforms. Thereby the greatest
+The ISO<i><sub>AgLib</sub></i> is designed for easy adaptation to new hardware platforms. Thereby the greatest
 part of the software can be used without any changes for all hardware types. The more this common software
 part is used, the better the quality can get. <br>
 The layered structure is described by the following diagram:
@@ -491,7 +491,7 @@ The development of the central control unit for the chlorophyll sensor
 so that Fritzmeier accepted to fund the development of ISO 11783 virtual terminal support in ISO<i><sub>AgLib</sub></i> .
 
 \subsection IndexFirstWin32Users Thanks to eager and patient initial developers with Win32
-As the ISO<i><sub>AgLib</sub></i> is mainly developed on LINUX, all Win32 specific adoptions
+As the ISO<i><sub>AgLib</sub></i> is mainly developed on LINUX, all Win32 specific adaptations
 including driver mappings and project file generation for Win32 IDEs weren't optimal until
 first users like <b>Brad Cox</b> started to try ISO<i><sub>AgLib</sub></i> in combination with
 <b>Microsoft Visual Studio C++</b> . As a result, ISO<i><sub>AgLib</sub></i>:
@@ -521,7 +521,7 @@ help contributing for their implementation with source code.
 	- Calculate the RAM + ROM resource need of the ISO<i><sub>AgLib</sub></i> tutorial example programs
 		for some embedded architectures with different feature lists<br>
 		<b>Performed on request or in case somebody is volunteering</b>
-	- Extending documentation on virtual terminal support and driver adoption architecture<br>
+	- Extending documentation on virtual terminal support and driver adaptation architecture<br>
 		<b>Ongoing process</b>
 	- Extend tutorial examples<br>
 		<b>Ongoing process when need for some more practical demonstration is detected<br>
@@ -610,7 +610,7 @@ The <a href="mailto:a.spangler@osb-ag.de">maintainers</a> can offer workshops in
 <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
 where all members can learn:
 	- <b>XML</b> design and definition of <b>ISO 11783 Virtual Terminal</b> mask pools
-	- possibilities to create flexible mask definitions which can be automatically adopted by the ISO<i><sub>AgLib</sub></i> to the properties of the connected terminal:
+	- possibilities to create flexible mask definitions which can be automatically adapted by the ISO<i><sub>AgLib</sub></i> to the properties of the connected terminal:
 		- multi-language string handling
 		- scaling to screen size
 		- selection of available font size that is corresponding to the scaling factor of the complete layout
@@ -618,7 +618,7 @@ where all members can learn:
 	- integration of <b>IDE</b> of choice ( some project file format types are automatically supported )
 	- integration of <b>ISO 11783</b> communication with existing application code ( ways to define interface modules )
 	- integration of process data management to allow terminal independent control and monitoring access to an implement
-	- adoption to individual target platform ( creation of corresponding <b>H</b>ardware <b>A</b>bstraction <b>L</b>ayer - HAL )
+	- adaptation to individual target platform ( creation of corresponding <b>H</b>ardware <b>A</b>bstraction <b>L</b>ayer - HAL )
 	- test of application with the <b>R</b>ealtime <b>T</b>est <b>E</b>nvironment ( RTE ), which is another also Open Source
 		project of <a href="http://www.osb-ag.de">OSB AG</a> for test of embedded applications ( not only useable for ISO 11783 networks )
 	- ...
@@ -629,10 +629,10 @@ interested developers. These workshops can be performed at the
  location, or at any location of choice. <a href="http://www.osb-ag.de">OSB AG</a> can also offer closed workshops for the developers of one
 company.
 
-\subsection IndexHalAdoption Support for Adoption to Individual Target Platform
-Even if the adoption of the ISO<i><sub>AgLib</sub></i> to an individual target platform ( OS or BIOS ) is eased
-by the compact HAL definition, <a href="http://www.osb-ag.de">OSB AG</a> can offer support for this adoption or can perform the
-complete adoption. Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for details.
+\subsection IndexHalAdaptation Support for Adaptation to Individual Target Platform
+Even if the adaptation of the ISO<i><sub>AgLib</sub></i> to an individual target platform ( OS or BIOS ) is eased
+by the compact HAL definition, <a href="http://www.osb-ag.de">OSB AG</a> can offer support for this adaptation or can perform the
+complete adaptation. Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for details.
 
 \subsection IndexSupportContract Support Contract
 Like other Open Source projects, the maintainers can provide some free support, which is restricted by
@@ -656,7 +656,7 @@ extensions, which are needed for projects of <a href="http://www.osb-ag.de">OSB 
 But as the ISO 11783 standard definition contains a lot of functions, which are not needed for the own
 projects of the ISO<i><sub>AgLib</sub></i> maintainers, they will be only integrated if other users contribute them, or if
 <a href="http://www.osb-ag.de">OSB AG</a> is asked to develop them. This is also true for several enhancements of ISO Virtual Terminal mask definitions, which
-would enable a more capable and more flexible adoption to the features of the connected terminal. <br>
+would enable a more capable and more flexible adaptation to the features of the connected terminal. <br>
 Some examples:
 	- GUI tool to define the XML mask definition ( easier than edit of pure ASCII )
 	- individual rules for selection of bitmap version in relation to size and color depth of connected
@@ -946,7 +946,7 @@ It is used by commercial IDEs like Borland C++ Builder 6 and Tasking EDE ( since
 Installation Steps:
 -# Download STLport from http://www.stlport.org/archive/STLport-4.6.2.tar.gz ( other versions at http://www.stlport.org/download.html )
 -# extract to location like <i>C:\\</i> ( or use other directory - then change the following examples according to your individual path )
--# <b>rename directory C:\\STLport-4.6.2 to C:\\STLport , so that the scripts and automatically created paths needn't be adopted to new versions of STLport</b>
+-# <b>rename directory C:\\STLport-4.6.2 to C:\\STLport , so that the scripts and automatically created paths needn't be adapted to new versions of STLport</b>
 -# Configure and install STLport
 	- with native IOSTREAMS of VC6 ( <b>recommended</b> ):<br>
 		- simply uncomment the #define _STLP_NO_OWN_IOSTREAMS in the config header C:\\STLport\\stlport\\stl_user_config.h
@@ -959,7 +959,7 @@ Installation Steps:
 		use installation overview from http://doc.ece.uci.edu/~mlai/notes/stlport_in_vc.html
 		( the BAT vcvars32.bat is not located at C:\\Program Files\Microsoft Visual Studio\VC98 but in C:\\Program Files\\Microsoft Visual Studio\\VC98\\Bin )
 -# look at STLport own documentation from local installation file://C:/STLport/doc/install.html and file://C:/STLport/doc/select_io.html for further information
--# make shure that you adopt the feature setup files to reflect a differing path to your STLport installation ( C:\\STLport is default setting )
+-# make shure that you adapt the feature setup files to reflect a differing path to your STLport installation ( C:\\STLport is default setting )
 
 
 
@@ -1010,7 +1010,7 @@ The Tasking Compiler of version >= 7.56 is handling C++ in a sufficient manner a
 a conformant STL ( important: the STL version 8.0 consumed too much memory - try one of the newer versions, as Tasking
 introduced some compiler switches to avoid code bloat by STLport - just ask Tasking for the 7.56 STL version, if the ROM overhead
 is still too big; the overhead was caused by the change from
-and adopted SGI STL to the STLport system; while SGI STL uses templates only, the STLport defines several STL functions
+and adapted SGI STL to the STLport system; while SGI STL uses templates only, the STLport defines several STL functions
 as functions which can be compiled to a linkeable library; this approach is fine, as long as the target linker is able
 to select just the needed functions from the STLport libraries; at least Tasking Compiler Version 8.0 included a lot too much
 object code into the firmware, so that the overhead was not acceptible ).
@@ -1032,7 +1032,7 @@ configuration call with iRS232IO_c::setSndPufferSize and iRS232IO_c::setRecPuffe
 - Then compile your project with DEBUG_CAN_BUFFER_FILLING ( activate it in the feature setup file of your project )
 - Check the RS232 output for fill grade of CAN buffers ( the MAX amount of buffered CAN messages per BUS is printed )
 - Calculate the needed memory for RS232 ( corresponds to CONFIG_RS232_DEFAULT_SND_PUF_SIZE or the overridden value ) and CAN ( corresponds to the MAX output from step above )
-- Adopt the buffer size value ( leave some additional space )
+- Adapt the buffer size value ( leave some additional space )
 
 \section InstallIsoToolVt2Iso HOWTO Install vt2iso - Tool for Creation of ISO 11783 Virtual Terminal Masks
 
@@ -1057,7 +1057,7 @@ black and white ).<br>
 The FreeImage library can be best compiled from source for LINUX ( simple to compile with make based on
 provided Makefile ).
 Please make sure that the library and include files are installed to system directories ( need root user to install )
-or adopt the Makefiles on your own ( no support by author for this config ).
+or adapt the Makefiles on your own ( no support by author for this config ).
 The FreeImage library may also be available as a ready made binary distribution.
 
 \subsubsection FreeImageWin32 Installation of Free Image Library on Win32
@@ -1155,7 +1155,7 @@ The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as fol
 <li>Download either the current <b>CANLIB</b> or <b>XL Driver Library</b> driver
 <li>Install the driver with the <i>SETUP.EXE</i> to the directory <i>C:\\Development\\CANLIB</i> ( <b>don't rename the contained
 		root directories <i>CANLIB</i> resp. <i>XL Driver Library</i> as the ISO<i><sub>AgLib</sub></i>
-		uses them </b> ; you can install to another location - but then you have to adopt the conf_* feature setup files
+		uses them </b> ; you can install to another location - but then you have to adapt the conf_* feature setup files
 		to your individual path before you execute the update_makefile.sh )
 <li>Set the project configuration file conf_* ( e.g. conf_0_0_AddressClaimIso ) as follows:<ol>
 	<li>set the variables <i>USE_WIN32_HEADER_DIRECTORY</i> and <i>USE_WIN32_LIB_DIRECTORY</i> to your
@@ -1181,11 +1181,11 @@ The integration of ISO<i><sub>AgLib</sub></i> and Vector CAN drivers runs as fol
 The integration of the Sontheim CAN card driver target_extension_can_w32_sontheim_canlpt.cpp is comparable to the Vector Informatik case. But here, Sontheim placed
 the API simply into a ZIP file which doesn't define a folder and doesn't provide a SETUP.EXE. Thus you should manually place the ZIP contents
 to the path <b><i>C:\\Development\\Sontheim</i></b> , if you want to use the provided tutorial example project files without the need to call update_makefile.sh
-for creation of adopted project files.
+for creation of adapted project files.
 
 This strategy can be mapped to other Win32 or LINUX CAN cards as well. Please contact the
-<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for help on adoption and please
-send a running adoption back to the project.
+<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for help on adaptation and please
+send a running adaptation back to the project.
 
 
 \subsection ScriptOptions Available Command Line Options for update_makefile.sh
@@ -1308,7 +1308,7 @@ The basic hardware setup of your target ( including CAN hardware/driver ) can be
 	- <b>PRT_INSTANCE_CNT</b> count of CAN channels where the communication protocol shall be supported - the IsoAgLib can be used as gateway to
 	                          route traffic between the connected CAN interfaces ( or you could support DIN 9684 and ISO 11783 at two seperate
 	                          connectors in parallel time - this is really working in practise )
-	- <b>RS232_INSTANCE_CNT</b> defines amount of RS232 instances that are supported in parallel. When the ECU shall communicate on more than one channel, this variable has to be adopted to the channel amount.
+	- <b>RS232_INSTANCE_CNT</b> defines amount of RS232 instances that are supported in parallel. When the ECU shall communicate on more than one channel, this variable has to be adapted to the channel amount.
 
 \subsubsection ConfCoreComm Core Communication Setup
 Setup of most important communication features:
@@ -1401,7 +1401,7 @@ The following config variables should match the need of most cross compilers:
 	- <b>USE_EMBED_LIBS</b> needed library files ( please seperate entries by whitespace )
 	- <b>USE_EMBED_BIOS_SRC</b> special source files from the BIOS/OS which must be inserted into the sources list
 	     ( e.g. startup files which could be delivered as asm file and must be compiled during runtime,
-	     as the BIOS/OS allows there some individual adoption ) ( please seperate entries by whitespace )
+	     as the BIOS/OS allows there some individual adaptation ) ( please seperate entries by whitespace )
 	- <b>USE_EMBED_ILO</b> linker / locater control file which defines HEAPSIZE and other important project specific target settings for link time
 
 \subsubsection ConfBuildWin32 Build System Configuration for Win32 ( like Visual C++ and Dev-C++ )
@@ -1433,7 +1433,7 @@ Now ISO<i><sub>AgLib</sub></i> can access all of them if you specify:
 
 which is the default setting. The script <i>update_makefile.sh</i> will find all versions of the driver.
 
-The ISO<i><sub>AgLib</sub></i> HAL adoption to the Vector-Informatik CAN driver can be configured by the configuration file
+The ISO<i><sub>AgLib</sub></i> HAL adaptation to the Vector-Informatik CAN driver can be configured by the configuration file
 for a specific hardware type ( list <i>{ HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI }</i> - the XL driver
 places the "XL_" string in front of the card type name, so that both CANLIB and XL can be used with the same conf_* type names ).
 As a special option, ISO<i><sub>AgLib</sub></i> can use all real hardware channels it finds, so that your EXE can be flexibly
@@ -1790,7 +1790,7 @@ PRJ_RS232_OVER_CAN=1
 # which must be inserted into the sources list
 # ( e.g. startup files which could be delivered as
 #   asm file and must be compiled during runtime,
-#   as the BIOS/OS allows there some individual adoption )
+#   as the BIOS/OS allows there some individual adaptation )
 # ( please seperate entries by whitespace )
 # USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 
@@ -1891,8 +1891,8 @@ The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic pro
 &nbsp;<br>
 
 The main basic design principles of the ISO<i><sub>AgLib</sub></i> are:
-	- use Hardware-Adaption-Layer to restrict hardware dependent parts, to
-    ease adoption to different ECU types
+	- use Hardware-Adaptation-Layer to restrict hardware dependent parts, to
+    ease adaptation to different ECU types
 	- use hardware independent Communication-Layer, which implements all interaction via ISO11783 or DIN9684/CAN
 	- very capable and flexible design -&gt; e.g. it can handle received setpoints from a group of
     different senders, so that the main application can decide, which sender to accept
@@ -1922,7 +1922,7 @@ Softwareentwicklung", A.: Ralf Kühnel, V.: Addison-Wesley):
 - existence&nbsp;of specific software for sub tasks which should be integrated
 - complexity of algorithms which could be subdivided in distributed parts
 - tough or impossible design of global control
-Criteria for the modelling as agents are in the view of the single devices:- need for adoption to frequently changing environments
+Criteria for the modelling as agents are in the view of the single devices:- need for adaptation to frequently changing environments
 - partial and possibly erroneous information about environment
 - restricted prediction of environment
 - possibility of environment&nbsp;changes which are only partially induced  by own activities
@@ -1946,7 +1946,7 @@ Therefore the ISO<i><sub>AgLib</sub></i> provides the following services:<br>
 -# several remote devices can independently reset the stored
    value, if they have registered a measuring program (time or distance proportional
    or value dependent triggered sending of values)<br>
--# process data can be flexible created or deleted during runtime to adopt to actual information needs
+-# process data can be flexible created or deleted during runtime to adapt to actual information needs
 -# all information types are handled with the same API
 -# each information type (e.g. application rate) is addressed by an unique identifier
    which contains the device type (e.g. spreader), mounting position and location
@@ -2039,7 +2039,7 @@ The ISO<i><sub>AgLib</sub></i> <b>doesn't use:</b>
 	- runtime type identification ( RTTI )
 	- exception handling
 
-Thus compilers which support the so called <b>Extended EC++</b> specification can be used, as long as they provide an adopted
+Thus compilers which support the so called <b>Extended EC++</b> specification can be used, as long as they provide an adapted
 version of the STL.
 List of known <b>Extended EC++</b> aware Compilers ( please inform <a href="mailto:a.spangler@osb-ag:de">me</a> if you know other
 <b>Extended EC++</b> compilers which match these requirements ):

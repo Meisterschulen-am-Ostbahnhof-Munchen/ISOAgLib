@@ -91,7 +91,6 @@
 #include "canpkg_c.h"
 #include <IsoAgLib/util/impl/util_funcs.h>
 
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /** extended version of CANPkg_c which overwrites the

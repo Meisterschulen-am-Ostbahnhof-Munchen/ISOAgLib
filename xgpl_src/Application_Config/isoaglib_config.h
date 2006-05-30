@@ -53,8 +53,8 @@
 #ifndef _ISOAGLIB_CONFIG_H_
 #define _ISOAGLIB_CONFIG_H_
 
-/** \page Hardwareadoption Howto adopt IsoAgLib to new platform
-  This page describes the needed steps to adopt the IsoAgLib to an new
+/** \page Hardwareadaptation Howto adapt IsoAgLib to new platform
+  This page describes the needed steps to adapt the IsoAgLib to an new
   platform type.<ul>
   <li> define a new SYSTEM_XX define in the header isoaglib_config.h
   <li> comment out all the other SYSTEM_YY constants in isoaglib_config.h
@@ -63,14 +63,14 @@
   <li> create new directories IsoAgLib/hal/XY (and
        optional supplementary_driver/hal/XY) as copy from
        IsoAgLib/hal/esx (and optional supplementary_driver/hal/esx)
-  <li> adopt the files within IsoAgLib/hal/XY
+  <li> adapt the files within IsoAgLib/hal/XY
        (and optional IsoAgLib/hal/XY) to your platform<ol>
     <li> config.h, typedef.h and errcodes.h platform specific config settings (e.g. type name for 16bit integer)
     <li> in each of the subdirectories
       FOO elem { can, eeprom, system (,actor, rs232, sensor ) }
     <ol>
-      <li>\<FOO\>.h -> adopt calls to wanted target BIOS/OS
-      <li>\<FOO\>_target_extensions.h/cc -> implement functions which aren't included in standard library of target ( i.e. which can't be adopted by simple name mapping and
+      <li>\<FOO\>.h -> adapt calls to wanted target BIOS/OS
+      <li>\<FOO\>_target_extensions.h/cc -> implement functions which aren't included in standard library of target ( i.e. which can't be adapted by simple name mapping and
       parameter reordering )
       <li>hal_can_interface.h/cc -> standardized CAN implementation ( simple name mapping is not suitable for CAN )
     </ol>
@@ -1023,7 +1023,7 @@
 /* ******************************************************** */
 /**
  * \name Define subdirectory name dependent on platform type
- * for adoption to new SYSTEM_XX add new #elif part to set
+ * for adaptation to new SYSTEM_XX add new #elif part to set
  * according subdirectory name in IsoAgLib/hal/
  * Additionally define the offset value of the lowest possible
  * CAN MsgObj ( STW BIOS starts counting with 1, other start with 0 )

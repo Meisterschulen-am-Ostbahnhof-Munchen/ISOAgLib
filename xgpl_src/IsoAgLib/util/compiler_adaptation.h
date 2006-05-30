@@ -1,5 +1,5 @@
 /***************************************************************************
-                          compiler_adoption.h  - defines to produce shorter
+                          compiler_adaptation.h  - defines to produce shorter
                                                  symbol names durig compile
                                                  (needed as workaround for buggy compilers)
                              -------------------

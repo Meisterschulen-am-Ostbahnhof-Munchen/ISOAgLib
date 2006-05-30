@@ -102,7 +102,7 @@
  * the generation script update_makefile.sh is described in
  * \ref PrjSpectractor__pc_linux__simulating__simulating .
  *
- * The adopted project specifications for different setups:
+ * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
@@ -180,7 +180,7 @@
   #define PRJ_USE_AUTOGEN_CONFIG config_tractor.h
 #endif
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */
@@ -342,77 +342,6 @@ void MyInternalCanHandler_c::init()
 */
 bool MyInternalCanHandler_c::processMsg()
 {
-<<<<<<< .mine
-  IsoAgLib::iTimePosGPS_c& c_timePosGps = IsoAgLib::getITimePosGpsInstance();
-  IsoAgLib::iTracGeneral_c& c_tracGeneral = IsoAgLib::getITracGeneralInstance();
-  IsoAgLib::iTracMove_c& c_tracMove = IsoAgLib::getITracMoveInstance();
-  IsoAgLib::iTracPTo_c& c_tracPto = IsoAgLib::getITracPtoInstance();
-  // simply set the fresh received value update at IsoAgLib
-  // - the timeEvent of internal Base_c will then trigger send
-  //   of corresponding CAN messages at the right time period
-  switch ( c_myData.ident() )
-  {
-    case InternalSpeed:
-      // await real and theor speed in one message with each two byte
-      // signed integer
-      c_tracMove.setSpeedReal(  c_myData.getInt16Data( 0 ) );
-      c_tracMove.setSpeedTheor( c_myData.getInt16Data( 2 ) );
-      return true;
-    case InternalDistance:
-      // await real and theor distance in one message with each four byte
-      // signed integer
-      c_tracMove.setDistReal(  c_myData.getInt32Data( 0 ) );
-      c_tracMove.setDistTheor( c_myData.getInt32Data( 4 ) );
-      return true;
-    case InternalPtoFront:
-      // await front PTO: RPM in first two byte as signed int,
-      // third byte as IsoActiveFlag_t the engage state
-      // fourth byte as IsoActiveFlag_t the 1000-mode
-      // fivth byte as IsoActiveFlag_t the economy mode
-      // signed integer
-      c_tracPto.setPtoFront(                        c_myData.getInt16Data( 0 ) );
-      c_tracPto.setPtoFrontEngaged( IsoActiveFlag_t(c_myData.getUint8Data( 2 ) ) );
-      c_tracPto.setPtoFront1000(    IsoActiveFlag_t(c_myData.getUint8Data( 3 ) ) );
-      c_tracPto.setPtoFrontEconomy( IsoActiveFlag_t(c_myData.getUint8Data( 4 ) ) );
-      return true;
-    case InternalPtoRear:
-      // await rear PTO: RPM in first two byte as signed int,
-      // third byte as IsoActiveFlag_t the engage state
-      // fourth byte as IsoActiveFlag_t the 1000-mode
-      // fivth byte as IsoActiveFlag_t the economy mode
-      // signed integer
-      c_tracPto.setPtoRear(                        c_myData.getInt16Data( 0 ) );
-      c_tracPto.setPtoRearEngaged( IsoActiveFlag_t(c_myData.getUint8Data( 2 ) ) );
-      c_tracPto.setPtoRear1000(    IsoActiveFlag_t(c_myData.getUint8Data( 3 ) ) );
-      c_tracPto.setPtoRearEconomy( IsoActiveFlag_t(c_myData.getUint8Data( 4 ) ) );
-      return true;
-    case InternalRpm:
-      // await engine RPM as 2 byte signed integer
-      c_tracGeneral.setEngine( c_myData.getInt16Data( 0 ) );
-      return true;
-    case InternalPower:
-      // await key switch state as one byte IsoActiveFlag_t
-      // await max possible power time as one byte unsigned integer [minute]
-      c_tracGeneral.setKeySwitch( IsoActiveFlag_t( c_myData.getUint8Data( 0 ) ) );
-      c_tracGeneral.setMaxPowerTime(               c_myData.getUint16Data( 1 ) );
-      return true;
-    case InternalCalendar:
-      // await first two byte unsigned int year,
-      // then each unsigned int one byte:
-      // month, day, hour, minute, second
-      c_timePosGps.setCalendar(
-        c_myData.getUint16Data( 0 ), // year
-        c_myData.getUint8Data( 2 ),  // month
-        c_myData.getUint8Data( 3 ),  // day
-        c_myData.getUint8Data( 4 ),  // hour
-        c_myData.getUint8Data( 5 ),  // minute
-        c_myData.getUint8Data( 6 )   // second
-      );
-      return true;
-    default:
-      return false;
-  }
-=======
   IsoAgLib::iTimePosGPS_c& c_timePosGps = IsoAgLib::getITimePosGpsInstance();
   IsoAgLib::iTracGeneral_c& c_tracGeneral = IsoAgLib::getITracGeneralInstance();
   IsoAgLib::iTracMove_c& c_tracMove = IsoAgLib::getITracMoveInstance();
@@ -482,7 +411,6 @@ bool MyInternalCanHandler_c::processMsg()
     default:
       return false;
   }
->>>>>>> .r1433
 }
 
 /**  Operation: dataBase

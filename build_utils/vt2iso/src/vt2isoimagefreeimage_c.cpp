@@ -126,7 +126,7 @@ void Vt2IsoImageFreeImage_c::close( void )
  FreeImage_Unload(bitmap);
  reset();
 }
-/** check and adopt scanline */
+/** check and adapt scanline */
 void Vt2IsoImageFreeImage_c::checkUpdateScanline( unsigned int rui_y )
 {
  if ( i_curScanLineY != rui_y )

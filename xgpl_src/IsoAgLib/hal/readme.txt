@@ -1,22 +1,22 @@
 /** @page MainHalPage Structure of HAL for Main Parts of IsoAgLib
 	The directory structure of the ISO<i><sub>AgLib</sub></i> HAL
-	is designed to ease quick adotion to new platform types.
+	is designed to ease quick adaptation to new platform types.
 
-	\section MainHalAdoptionNew Adoption to New Platform
-	The following steps are enough for adoption to a new hardware:
+	\section MainHalAdaptationNew Adaptation to New Platform
+	The following steps are enough for adaptation to a new hardware:
 	-# create a new SYSTEM_XY define in the header isoaglib_config.h for your platform ( compare to SYSTEM_ESX )
 	-# create a new #elif setting in isoaglib_config.h where the directory name for the HAL of the new platform is defined ( compare to SYSTEM_ESX )
 	-# create a copy of the directory <i>\<xgpl_src/IsoAgLib/hal/esx\></i> with the directory name as specified in isoaglib_config.h
 	-# do this also for <i>\<xgpl_src/supplementary_driver/hal/esx\></i> if you intend to use ISO<i><sub>AgLib</sub></i> for actor, rs232 or sensor
-	-# adopt the files in the new directories to your specific needs
-		- adopt #include statements for platform specific library / BIOS / RTOS
-		- adopt config settings in config.h ( compare to esx/config.h )
-		- adopt typedefs settings in typedef.h ( compare to esx/typedef.h )
-		- adopt the function mapping in the several files <i>\<target\>/\<device\>/\<device\>.h</i>
+	-# adapt the files in the new directories to your specific needs
+		- adapt #include statements for platform specific library / BIOS / RTOS
+		- adapt config settings in config.h ( compare to esx/config.h )
+		- adapt typedefs settings in typedef.h ( compare to esx/typedef.h )
+		- adapt the function mapping in the several files <i>\<target\>/\<device\>/\<device\>.h</i>
 		- implement functionality which is not provided by platform library in file named like system<b>_target_extensions.h</b> and system<b>_target_extensions.cpp</b>
-		- adopt CAN layer in hal_can_interface.h and hal_can_interface.cpp ( some CAN implementations use parameter structures which can't be mapped with inline functions )
+		- adapt CAN layer in hal_can_interface.h and hal_can_interface.cpp ( some CAN implementations use parameter structures which can't be mapped with inline functions )
 	-# insert your new SYSTEM_XY setting in your Makefiles or project configuration
-	-# send your adoption to <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> , so that your adoption can be used and possibly optimized
+	-# send your adaptation to <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> , so that your adaptation can be used and possibly optimized
 	   within the user community
 
 	\section MainHalStructure Structure of HAL for Main Parts
@@ -36,9 +36,9 @@
 		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
 		hal_esx     [label="HAL for ESX of STW\nobligatory for this platform", color="green2"];
 
-		h_esx_system [label="Target Adpotion of Base System Calls\nobligatory for this platform", color="green2", URL="\ref esx/system/system.h"];
-		h_esx_can   [label="Target Adoption of CAN IO\nobligatory for this platform", color="green2", URL="\ref esx/can/can.h"];
-		h_esx_eeprom [label="Target Adoption of EEPROM\noptional;needed from other features", color="greenyellow", URL="\ref esx/eeprom/eeprom.h"];
+		h_esx_system [label="Target Adaptation of Base System Calls\nobligatory for this platform", color="green2", URL="\ref esx/system/system.h"];
+		h_esx_can   [label="Target Adaptation of CAN IO\nobligatory for this platform", color="green2", URL="\ref esx/can/can.h"];
+		h_esx_eeprom [label="Target Adaptation of EEPROM\noptional;needed from other features", color="greenyellow", URL="\ref esx/eeprom/eeprom.h"];
 		h_esx_conf  [label="ESX specific Configuration Settings\nobligatory", color="green2", shape="ellipse", URL="\ref esx/config.h"];
 		h_esx_type  [label="ESX specific Typedefs\nobligatory", color="green2", shape="ellipse", URL="\ref esx/typedef.h"];
 		h_esx_err   [label="ESX specific Errcode Mapping\nobligatory", color="green2", shape="ellipse", URL="\ref esx/errcodes.h"];

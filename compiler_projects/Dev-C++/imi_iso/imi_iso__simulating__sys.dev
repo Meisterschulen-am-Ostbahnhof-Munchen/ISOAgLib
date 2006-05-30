@@ -1028,7 +1028,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit99]
-FileName=../../../xgpl_src/IsoAgLib/util/compiler_adoption.h
+FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=imi_iso
 Compile=1

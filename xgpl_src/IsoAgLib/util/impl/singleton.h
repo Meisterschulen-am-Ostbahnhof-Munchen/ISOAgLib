@@ -3,7 +3,7 @@
 
 #include <Application_Config/isoaglib_config.h>
 
-#include "../compiler_adoption.h"
+#include "../compiler_adaptation.h"
 
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
   /** the macro SINGLETON allows to define classes independent from the value

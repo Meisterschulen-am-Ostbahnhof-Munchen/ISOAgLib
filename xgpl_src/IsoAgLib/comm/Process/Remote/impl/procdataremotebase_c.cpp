@@ -194,7 +194,7 @@ void ProcDataRemoteBase_c::setCommanderDevKey(const DevKey_c* rpc_devKey)
 /**
   perform periodic actions
   ProcDataRemoteBase_c::timeEvent
-  -> adopt here the ownerDevKey to an existing item, when DevClass/-Instance are matching, but the other fields are
+  -> adapt here the ownerDevKey to an existing item, when DevClass/-Instance are matching, but the other fields are
      differen ( don't change anything, if there is an item with identic DEVKEY setting
   @return true -> all planned executions performed
 */

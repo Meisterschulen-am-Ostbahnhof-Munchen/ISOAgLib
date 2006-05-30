@@ -109,7 +109,7 @@
  * the generation script update_makefile.sh is described in
  * \ref PrjSpec4_2_Pwm__pc_linux__simulating__simulating .
  *
- * The adopted project specifications for different setups:
+ * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
@@ -187,7 +187,7 @@
 	#define PRJ_USE_AUTOGEN_CONFIG config_4_2_Pwm.h
 #endif
 
-// include the central interface header for the hardware adaption layer part
+// include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */
@@ -338,7 +338,7 @@ int main()
 			<< ", current state: " << c_pwmCurrentDiagnose.get()
 			<< " and PWM output voltage: " << c_pwmCurrentDiagnose.getDigoutAdc()
 			<< "[mV]\r\n";
-		
+
 		// do some more evaluation
 		IsoAgLib::getIrs232Instance()
 			<< "c_pwmCurrentSimple is currently set to: " << c_pwmCurrentSimple.get()

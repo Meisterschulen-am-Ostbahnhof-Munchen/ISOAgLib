@@ -370,7 +370,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\config.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\compiler_adoption.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\compiler_adaptation.h
 # End Source File
 
 # Begin Source File

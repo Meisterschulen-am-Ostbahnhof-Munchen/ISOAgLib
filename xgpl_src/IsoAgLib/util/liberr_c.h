@@ -58,7 +58,7 @@
 
 #include "../typedef.h"
 #include <IsoAgLib/util/impl/singleton.h>
-#include "compiler_adoption.h"
+#include "compiler_adaptation.h"
 #include <bitset>
 
 
