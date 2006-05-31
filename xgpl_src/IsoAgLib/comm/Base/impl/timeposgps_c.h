@@ -488,11 +488,16 @@ public:
   int16_t pdop10Minus2() const { return i16_pdop;};
   #endif // END NMEA_2000_FAST_PACKET
 
+#if defined(USE_ISO_11783) && defined (NMEA_2000_FAST_PACKET)
   /** deliver age of last gps-update in milliseconds */
   uint16_t getGpsUpdateAge( void ) const
   { if ( i32_lastIsoPositionStream > i32_lastIsoPositionSimple) return (System_c::getTime() - i32_lastIsoPositionStream);
     else                                                        return (System_c::getTime() - i32_lastIsoPositionSimple);};
-
+#elif defined(USE_ISO_11783)
+      /** deliver age of last gps-update in milliseconds */
+  uint16_t getGpsUpdateAge( void ) const
+  { return (System_c::getTime() - i32_lastIsoPositionSimple);};
+#endif
 private:
   // Private methods
   friend class SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c);
