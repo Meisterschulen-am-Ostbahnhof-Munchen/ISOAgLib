@@ -273,34 +273,34 @@ int16_t getSnr(uint8_t *snrDat)
 /* configuration of the system supervisor*/
 int16_t  configWd(tWDConfig *tConfigArray)
 {
-  printf("configWd aufgerufen mit MaxTime %hu, MinTime %hu, UDmax %hu, UDmin %hd\n",
+  DEBUG_PRINT4("configWd aufgerufen mit MaxTime %hu, MinTime %hu, UDmax %hu, UDmin %hd\n",
     tConfigArray->bWDmaxTime, tConfigArray->bWDminTime, tConfigArray->bUDmax, tConfigArray->bUDmin);
   return 0;
 }
 void wdTriggern(void)
 {
-  //printf("<WD>");
+  //DEBUG_PRINT("<WD>");
 }
 int16_t wdReset(void)
 {
-  printf("WD reset\n");
+  DEBUG_PRINT("WD reset\n");
   return 1;
 }
 void startTaskTimer ( void )
 {
-  printf("startTaskTimer mit %d aufgerufen\n", T_TASK_BASIC );
+  DEBUG_PRINT1("startTaskTimer mit %d aufgerufen\n", T_TASK_BASIC );
 }
 /* get the cpu frequency*/
 int16_t  getCpuFreq(void)
 {
-  printf("getCpuFreq aufgerufen\n");
+  DEBUG_PRINT("getCpuFreq aufgerufen\n");
   return 20;
 }
 
 /* to activate the power selfholding*/
 void stayingAlive(void)
 {
-  printf("staying alive aktiviert\n");
+  DEBUG_PRINT("staying alive aktiviert\n");
 }
 
 /* to deactivate the power selfholding*/
@@ -309,7 +309,7 @@ void powerDown(void)
   if ( getOn_offSwitch() == 0 )
   { // CAN_EN is OFF -> stop now system
     can_stopDriver();
-    printf("System Stop aufgerufen\n");
+    DEBUG_PRINT("System Stop aufgerufen\n");
   }
 }
 
@@ -362,7 +362,7 @@ int16_t  getOn_offSwitch(void)
 /* switch relais on or off*/
 void setRelais(boolean bitState)
 {
-  printf("setRelais(%d) aufgerufen", bitState);
+  DEBUG_PRINT1("setRelais(%d) aufgerufen", bitState);
 }
 
 int16_t KeyGetByte(uint8_t *p)
