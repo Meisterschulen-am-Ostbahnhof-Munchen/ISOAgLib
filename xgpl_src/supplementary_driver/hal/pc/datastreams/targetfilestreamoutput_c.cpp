@@ -147,9 +147,6 @@ void TargetFileStreamOutput_c::close(const char* pathname)
     (static_cast<std::ofstream*>(this))->flush();
 #if defined(__GNUC__) && __GNUC__ < 3
     fsync((static_cast<std::ofstream*>(this))->rdbuf()->fd());
-#else
-    (static_cast<std::ofstream*>(this))->rdbuf()->pubsync();
-#endif
     // sync also directory entry (not done by fsync!)
     int fd = ::open(pathname, O_RDONLY);
     if (-1 != fd)
@@ -157,6 +154,9 @@ void TargetFileStreamOutput_c::close(const char* pathname)
       fsync(fd);
       ::close(fd);
     }
+#else
+    (static_cast<std::ofstream*>(this))->rdbuf()->pubsync();
+#endif
   }
   static_cast<std::ofstream*>(this)->close();
 }
