@@ -91,9 +91,8 @@
 #include "../multireceiveclient_c.h"
 
 // IsoAgLib
-#ifdef USE_ISO_11783
+#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#endif
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/driver/can/impl/filterbox_c.h>
@@ -138,33 +137,34 @@ static const uint8_t scui8_tpPriority=6;
 
 
 
-/** the mask is set to 1FF0000, as we're accepting for EVERY destination address first. afterwards list_clients is getting search for matching destination address */
-#define MACRO_insertFilterIfNotYetExists_mask1FF0000_setRef(mpPGN,reconf,ref) \
+/** the mask is set to 1FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards list_clients is getting search for matching destination address */
+#define MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(mpPGN,LocalSa,reconf,ref) \
   { \
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
+    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
     ref = NULL; \
-    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
     { /* create FilterBox */ \
-      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x1FF0000UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent); \
+      ref = __IsoAgLib::getCanInstance4Comm().insertFilter(*this, (0x1FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent); \
     } \
   }
 
-#define MACRO_insertFilterIfNotYetExists_mask1FF0000_useRef(mpPGN,reconf,ref) \
+#define MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(mpPGN,LocalSa,reconf,ref) \
   { \
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
-    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
+    if (!__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
     { /* create FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, ref); \
+      __IsoAgLib::getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, reconf, __IsoAgLib::Ident_c::ExtendedIdent, ref); \
     } \
   }
 
-/** the mask is set to 1FF0000, as we're accepting for EVERY destination address first. afterwards list_clients is getting search for matching destination address */
-#define MACRO_deleteFilterIfExists_mask1FF0000(mpPGN) \
+
+/** the mask is set to 1FFFF00, as we're accepting for EVERY _local_ destination address first. afterwards list_clients is getting search for matching destination address */
+#define MACRO_deleteFilterIfExists_mask1FFFF00(mpPGN,LocalSa) \
   { \
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(mpPGN << 8)); \
-    if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
+    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(mpPGN) | static_cast<MASK_TYPE>(LocalSa)) << 8); \
+    if (__IsoAgLib::getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent)) \
     { /* delete FilterBox */ \
-      __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, (0x1FF0000UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent); \
+      __IsoAgLib::getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, __IsoAgLib::Ident_c::ExtendedIdent); \
     } \
   }
 
@@ -1006,8 +1006,6 @@ MultiReceive_c::getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStre
   return NULL;
 }
 
-
-
 /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
 void
 MultiReceive_c::removeKeptStream(IsoAgLib::iStream_c* rpc_keptStream)
@@ -1152,13 +1150,6 @@ MultiReceive_c::init()
     // register to get ISO monitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
 
-    /*** Filter Registration Start ***/
-    __IsoAgLib::FilterBox_c* refFB;
-    MACRO_insertFilterIfNotYetExists_mask1FF0000_setRef(TP_CONN_MANAGE_PGN,false,refFB)
-    MACRO_insertFilterIfNotYetExists_mask1FF0000_useRef(TP_DATA_TRANSFER_PGN,false,refFB)
-    MACRO_insertFilterIfNotYetExists_mask1FF0000_setRef(ETP_CONN_MANAGE_PGN,false,refFB)
-    MACRO_insertFilterIfNotYetExists_mask1FF0000_useRef(ETP_DATA_TRANSFER_PGN,true,refFB)
-    /*** Filter Registration End ***/
   }
 
 } // -X2C
@@ -1177,10 +1168,6 @@ MultiReceive_c::close( void )
     list_streams.clear();
     list_clients.clear();
 
-    MACRO_deleteFilterIfExists_mask1FF0000(ETP_DATA_TRANSFER_PGN)
-    MACRO_deleteFilterIfExists_mask1FF0000(ETP_CONN_MANAGE_PGN)
-    MACRO_deleteFilterIfExists_mask1FF0000(TP_DATA_TRANSFER_PGN)
-    MACRO_deleteFilterIfExists_mask1FF0000(TP_CONN_MANAGE_PGN)
   }
 } // -X2C
 
@@ -1330,6 +1317,18 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, 
       << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
+  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  { // lcoal ISOItem_c has finished adr claim
+    uint32_t ui32_nr = rpc_newItem->nr();
+
+    /*** Filter Registration Start ***/
+    __IsoAgLib::FilterBox_c* refFB;
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(TP_CONN_MANAGE_PGN,ui32_nr,false,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(TP_DATA_TRANSFER_PGN,ui32_nr,false,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_setRef(ETP_CONN_MANAGE_PGN,ui32_nr,false,refFB)
+    MACRO_insertFilterIfNotYetExists_mask1FFFF00_useRef(ETP_DATA_TRANSFER_PGN,ui32_nr,true,refFB)
+    /*** Filter Registration End ***/
+  }
   for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();
        i_list_clients++)
@@ -1350,11 +1349,7 @@ MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, 
   */
 void
 MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
-                                          #ifdef DEBUG
                                           refc_devKey
-                                          #else
-                                          /*refc_devKey*/
-                                          #endif
                                           , uint8_t rui8_oldSa )
 {
 #ifdef DEBUG
@@ -1363,6 +1358,15 @@ MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
       << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
+  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  { // lcoal ISOItem_c has lost SA
+    uint32_t ui32_nr = rui8_oldSa;
+    MACRO_deleteFilterIfExists_mask1FFFF00(ETP_DATA_TRANSFER_PGN,ui32_nr)
+    MACRO_deleteFilterIfExists_mask1FFFF00(ETP_CONN_MANAGE_PGN,ui32_nr)
+    MACRO_deleteFilterIfExists_mask1FFFF00(TP_DATA_TRANSFER_PGN,ui32_nr)
+    MACRO_deleteFilterIfExists_mask1FFFF00(TP_CONN_MANAGE_PGN,ui32_nr)
+  }
+
   // Notify all registered clients
   for (std::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = list_clients.begin();
        i_list_clients != list_clients.end();

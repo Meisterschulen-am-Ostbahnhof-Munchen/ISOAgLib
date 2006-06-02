@@ -107,6 +107,7 @@
 
 #ifdef USE_ISO_11783
 //  #include <IsoAgLib/comm/ISO_Terminal/ivtobjectstring_c.h>
+  #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #endif
 
 #if defined( IOP_OUTPUT ) && defined( SYSTEM_PC )
@@ -366,8 +367,6 @@ MultiSend_c::init(void)
     // first register in Scheduler_c
     getSchedulerInstance4Comm().registerClient( this );
     c_data.setSingletonKey( getSingletonVecKey() );
-    // register to get ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
 
     // set BYTE-ORDER of MultiSendPkg_c
     data().setByteOrder(LSB_MSB);
@@ -377,20 +376,13 @@ MultiSend_c::init(void)
     bool b_isReconfigNeeded = false;
 
   #if defined(USE_ISO_11783)
-    // register to get TP/ETP Messages
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
-      b_isReconfigNeeded = true;
-    }
-    ui32_filter = (static_cast<MASK_TYPE>(ETP_CONN_MANAGE_PGN) << 8);
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FF0000UL), ui32_filter, Ident_c::ExtendedIdent))
-    { // create FilterBox
-      getCanInstance4Comm().insertFilter( *this, (0x1FF0000UL), ui32_filter, false, Ident_c::ExtendedIdent);
-      b_isReconfigNeeded = true;
-    }
+    // register to get ISO monitor list changes
+  __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
   #endif
+  // ###################
+  // Receive filters for ISO 11783 are created selectively in the SA claim handler, so that
+  // only messages that are directed to a local SA are received
+  // ###################
   #ifdef USE_DIN_TERMINAL
     // create filter to receive service to broadcast member messages from LBS+
     if (!getCanInstance4Comm().existFilter( *this, (uint16_t)0x700,(uint16_t)0x700))
@@ -1244,6 +1236,88 @@ MultiSend_c::SendStream_c::abortSend()
 }
 
 
+#if defined(USE_ISO_11783)
+/** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+ * @param refc_devKey const reference to the item which ISOItem_c state is changed
+ * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+ */
+void MultiSend_c::reactOnMonitorListAdd( const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem )
+{
+  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  { // lcoal ISOItem_c has finished adr claim
+    bool b_isReconfigNeeded = false;
+    uint32_t ui32_nr = rpc_newItem->nr();
+    // only ISO msgs with own SA in PS (destination)
+    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    { // create FilterBox
+      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+      b_isReconfigNeeded = true;
+    }
+
+    ui32_filter = ((static_cast<MASK_TYPE>(ETP_CONN_MANAGE_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
+    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    { // create FilterBox
+      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filter, true, Ident_c::ExtendedIdent);
+      b_isReconfigNeeded = true;
+    }
+    if ( b_isReconfigNeeded ) getCanInstance4Comm().reconfigureMsgObj();
+  }
+
+  #ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
+      << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
+      << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
+  // no resurrection here as we do NOT (yet) save the devKey/isoname to our SendStream_c instances in the list...
+  // this can be done later if someone thinks that makes sense...
+
+}
+
+/** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+ * @param refc_devKey const reference to the item which ISOItem_c state is changed
+ * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+ */
+void MultiSend_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t rui8_oldSa )
+{
+  if ( getSystemMgmtInstance4Comm().existLocalMemberDevKey(refc_devKey) )
+  { // lcoal ISOItem_c has lost SA
+    uint32_t ui32_nr = rui8_oldSa;
+    // only ISO msgs with own SA in PS (destination)
+    uint32_t ui32_filter = ((static_cast<MASK_TYPE>(TP_CONN_MANAGE_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
+    if (getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    { // create FilterBox
+      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+    }
+    ui32_filter = ((static_cast<MASK_TYPE>(ETP_CONN_MANAGE_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
+    if (getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
+    { // create FilterBox
+      getCanInstance4Comm().deleteFilter( *this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
+    }
+  }
+  #ifdef DEBUG
+  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
+      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
+      << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
+      << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
+  for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
+  {
+    if (pc_iter->matchSa (rui8_oldSa) || pc_iter->matchDa (rui8_oldSa))
+    { // SendStream found in list, abort and erase!
+      pc_iter->abortSend();
+      pc_iter = list_sendStream.erase (pc_iter);
+    }
+    else
+    { // SendStream not yet found
+      pc_iter++;
+    }
+  }
+}
+#endif
+
+
 
 /**
   send a message -> set the ident and initiate sending to CAN
@@ -1545,59 +1619,5 @@ MultiSend_c::abortSend (uint8_t rb_send, uint8_t rb_empf)
     }
   }
 }
-
-
-
-/** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-  * @param refc_devKey const reference to the item which ISOItem_c state is changed
-  * @param rpc_newItem pointer to the currently corresponding ISOItem_c
-    */
-void
-MultiSend_c::reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem )
-{
-#ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
-      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
-      << "NOW use SA: " << int(rpc_newItem->nr()) << "\n\n"
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-  // no resurrection here as we do NOT (yet) save the devKey/isoname to our SendStream_c instances in the list...
-  // this can be done later if someone thinks that makes sense...
-}
-
-/** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-  * @param refc_devKey const reference to the item which ISOItem_c state is changed
-  * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
-  */
-void
-MultiSend_c::reactOnMonitorListRemove( const __IsoAgLib::DevKey_c&
-                                        #ifdef DEBUG
-                                        refc_devKey
-                                        #else
-                                        /*refc_devKey*/
-                                        #endif
-                                        , uint8_t rui8_oldSa )
-{
-#ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListRemove() handles LOSS of ISOItem_c for device with DevClass: " << int(refc_devKey.getDevClass())
-      << ", Instance: " << int(refc_devKey.getDevClassInst()) << ", and manufacturer ID: " << int(refc_devKey.getConstName().manufCode())
-      << " and PREVIOUSLY used SA: " << int(rui8_oldSa) << "\n\n"
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-  for (std::list<SendStream_c>::iterator pc_iter=list_sendStream.begin(); pc_iter != list_sendStream.end();)
-  {
-    if (pc_iter->matchSa (rui8_oldSa) || pc_iter->matchDa (rui8_oldSa))
-    { // SendStream found in list, abort and erase!
-      pc_iter->abortSend();
-      pc_iter = list_sendStream.erase (pc_iter);
-    }
-    else
-    { // SendStream not yet found
-      pc_iter++;
-    }
-  }
-}
-
-
 
 } // end namespace __IsoAgLib

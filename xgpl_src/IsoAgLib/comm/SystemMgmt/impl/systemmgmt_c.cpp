@@ -107,6 +107,10 @@
 #ifdef USE_TIME_GPS
 #include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
 #endif
+#ifdef DEF_Stream_IMPL
+#include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
+#endif
 
 namespace __IsoAgLib {
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
@@ -173,6 +177,10 @@ void SystemMgmt_c::singletonInit()
   #endif
   #ifdef USE_TIME_GPS
   getTimePosGpsInstance4Comm().init(NULL, IsoAgLib::IdentModeImplement);
+  #endif
+  #ifdef DEF_Stream_IMPL
+  getMultiReceiveInstance4Comm().init();
+  getMultiSendInstance4Comm().init();
   #endif
 }
 

@@ -95,7 +95,11 @@
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
+
+#ifdef USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#endif
+
 #include "multisendpkg_c.h"
 
 #include <list>
@@ -166,7 +170,10 @@ public:
 
   @author Dipl.-Inform. Achim Spangler
 */
-class MultiSend_c : public SINGLETON_DERIVED(MultiSend_c, ElementBase_c), public __IsoAgLib::SaClaimHandler_c
+class MultiSend_c : public SINGLETON_DERIVED(MultiSend_c, ElementBase_c)
+#if defined(USE_ISO_11783)
+, public __IsoAgLib::SaClaimHandler_c
+#endif
 {
 public: // idle was thrown out as it's now idle if no SendStream is in the list for this specific sa/da-pair!
   enum sendState_t { /*Idle,*/ SendRts, AwaitCts, SendData, SendPauseTillCts, /* DecideAfterSend, */ AwaitEndofmsgack, SendFileEnd
@@ -386,19 +393,6 @@ public: // methods
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
 
-
-   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
-   * @param refc_devKey const reference to the item which ISOItem_c state is changed
-   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
-    */
-  virtual void reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem );
-   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
-   * @param refc_devKey const reference to the item which ISOItem_c state is changed
-   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
-    */
-  virtual void reactOnMonitorListRemove( const __IsoAgLib::DevKey_c& refc_devKey, uint8_t rui8_oldSa );
-
-
   #ifdef USE_DIN_TERMINAL
   /**
     send a DIN multipacket message for terminal accoring to LBS+
@@ -415,6 +409,16 @@ public: // methods
   bool sendDin(uint8_t rb_send, const uint8_t rb_empf, const HUGE_MEM uint8_t* rhpb_data, int32_t ri32_dataSize, uint16_t rui16_msgSize, sendSuccess_t& rrefen_sendSuccessNotify, uint16_t rb_fileCmd, bool rb_abortOnTimeout = false);
   #endif
   #ifdef USE_ISO_11783
+   /** this function is called by ISOMonitor_c when a new CLAIMED ISOItem_c is registered.
+   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param rpc_newItem pointer to the currently corresponding ISOItem_c
+    */
+  virtual void reactOnMonitorListAdd( const __IsoAgLib::DevKey_c& refc_devKey, const __IsoAgLib::ISOItem_c* rpc_newItem );
+   /** this function is called by ISOMonitor_c when a device looses its ISOItem_c.
+   * @param refc_devKey const reference to the item which ISOItem_c state is changed
+   * @param rui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+    */
+  virtual void reactOnMonitorListRemove( const __IsoAgLib::DevKey_c& refc_devKey, uint8_t rui8_oldSa );
    /**
     send a ISO target multipacket message with active retrieve of data-parts to send
     @param rb_send dynamic member no of sender

@@ -104,9 +104,7 @@ namespace IsoAgLib {
 #include <IsoAgLib/util/impl/elementbase_c.h>
 #include <IsoAgLib/util/impl/getypos_c.h>
 
-#ifdef USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#endif
 
 // stl
 #include <list>
@@ -136,7 +134,7 @@ namespace __IsoAgLib {
 
 /** struct for client definition */
 class MultiReceiveClientWrapper_s : public ClientBase {
- public:
+  public:
   MultiReceiveClientWrapper_s( IsoAgLib::MultiReceiveClient_c* rpc_client,
                                uint8_t rui8_clientAddress,
                                uint32_t rui32_pgn,
@@ -168,10 +166,7 @@ typedef SINGLETON_DERIVED(MultiReceive_c,__IsoAgLib::ElementBase_c) SingletonMul
 
 //  +X2C Class 192 : MultiReceive_c
 //!  Stereotype: 76
-class MultiReceive_c : public SingletonMultiReceive_c
-#ifdef USE_ISO_11783
-, public __IsoAgLib::SaClaimHandler_c
-#endif
+class MultiReceive_c : public SingletonMultiReceive_c, public __IsoAgLib::SaClaimHandler_c
 {
 
 public:
@@ -252,7 +247,6 @@ public:
   bool isAtLeastOneWithFirstByte(uint8_t firstByte);
 
   IsoAgLib::iStream_c* getFinishedJustKeptStream (IsoAgLib::iStream_c* rpc_lastKeptStream);
-
 
 protected:
 
