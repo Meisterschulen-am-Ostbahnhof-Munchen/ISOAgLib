@@ -504,8 +504,10 @@ MultiReceive_c::processMsg()
 
 
 
-          case 0x15: // decimal 21
-          case 0x11: // decimal 17
+          case 0x15: // decimal 21 ETP.CM_CTS  --> this is only sent by receiver of a multi send
+          case 0x17: // decimal 23 ETP.CM_EOMA --> this is only sent by receiver of a multi send
+          case 0x11: // decimal 17 TP.CM_CTS
+          case 0x13: // decimal 19 TP.CM_EndOfMsgACK
             ////////////////////////
             /// CTS (for MultiSend)
             // ignore here and simply pass on to MultiSend (using return false)
@@ -1060,7 +1062,7 @@ void
 MultiReceive_c::sendConnAbort(StreamType_t rt_streamType, IsoAgLib::ReceiveStreamIdentifier_c rc_rsi)
 { // ~X2C
   if (rc_rsi.getDa() == 0xFF)
-  { // NEVER answer to a packet that was sent to GLOBAL ADDRESS 0xFF !        
+  { // NEVER answer to a packet that was sent to GLOBAL ADDRESS 0xFF !
     return;
   }
 
