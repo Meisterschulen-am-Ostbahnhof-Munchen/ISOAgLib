@@ -700,7 +700,7 @@ FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
     uint8_t tempMsgObjNr = minReceiveObjNr() + b_oldSize;
     #ifdef DEBUG
     EXTERNAL_DEBUG_DEVICE << "insertFilterBox with bus number: " << static_cast<int>(ui8_busNumber)  << " and FilterBoxNr: " << static_cast<int>(b_oldSize) << EXTERNAL_DEBUG_DEVICE_ENDL;
-    EXTERNAL_DEBUG_DEVICE << "                     mask: " << c_newMask.ident() << std::hex << " filter: " << c_newFilter.ident() << std::dec << EXTERNAL_DEBUG_DEVICE_ENDL;
+    EXTERNAL_DEBUG_DEVICE << "                     mask: "  << std::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << std::dec << EXTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     arrFilterBox.push_back(c_tempFilterBox);
     arrFilterBox.back().configCan(ui8_busNumber, tempMsgObjNr);
