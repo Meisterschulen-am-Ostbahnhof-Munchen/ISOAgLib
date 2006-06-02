@@ -275,10 +275,15 @@ bool ISOMonitor_c::timeEvent( void ){
     // --> each client MUST have answered until now if it's still alive
     for(Vec_ISOIterator pc_iter = vec_isoMember.begin(); pc_iter != vec_isoMember.end();)
     { // delete item, if it didn't answer longer than CONFIG_ISO_ITEM_MAX_AGE since last adress claim request
-      if ( ( pc_iter->lastTime() < lastIsoSaRequest() )
+      if ( ( (pc_iter->lastTime()+CONFIG_ISO_ITEM_MAX_AGE) < lastIsoSaRequest() )
         && ( !(pc_iter->itemState(IState_c::Local))   ) )
       { // its last AdrClaim is too old - it didn't react on the last request
         // was it too late for the first time??
+        // special case: when the rate of ReqForAdrClaimed is at about CONFIG_ISO_ITEM_MAX_AGE
+        // a node migth answer just in time to the _previous_ request, which is in turn _before_ the last
+        // detected request on BUS
+        // -->> regard the client only as stale, when the last AdrClaim was longer than CONFIG_ISO_ITEM_MAX_AGE
+        //      before the newest ReqForAdrClaimed on BUS
         if ( pc_iter->itemState( IState_c::PossiblyOffline) )
         { // it's too late the second time -> remove it
           Vec_ISOIterator pc_iterDelete = pc_iter;
