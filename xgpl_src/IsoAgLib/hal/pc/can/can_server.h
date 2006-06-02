@@ -7,20 +7,32 @@
 #include <sys/time.h>
 #include <time.h>
 
+#include <vector>
 
 namespace __HAL {
+
+typedef struct {
+  bool     b_canBufferLock;
+  bool     b_canObjConfigured;
+  uint8_t  ui8_bufXtd;
+  uint8_t  ui8_bMsgType;
+  uint32_t ui32_filter;
+  uint32_t ui32_mask_xtd;
+  uint16_t ui16_mask_std;
+  uint16_t ui16_size;
+
+} tMsgObj;
 
 // client specific data
 typedef struct {
   int32_t  i32_clientID;
   int64_t i64_systemStart4Timeofday;
   int64_t i64_deltaStartTimes;
-  bool     b_canBufferLock[cui32_maxCanBusCnt][cui8_maxCanObj];
-  bool     b_canObjConfigured[cui32_maxCanBusCnt][cui8_maxCanObj];
-  uint8_t  ui8_bufXtd[cui32_maxCanBusCnt][cui8_maxCanObj];
-  uint8_t  ui8_bMsgType[cui32_maxCanBusCnt][cui8_maxCanObj];
-  uint32_t ui32_filter[cui32_maxCanBusCnt][cui8_maxCanObj];
-  uint16_t ui16_size[cui32_maxCanBusCnt][cui8_maxCanObj];
+  
+  //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
+  //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
+  std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
+  
   uint16_t ui16_globalMask[cui32_maxCanBusCnt];
   uint32_t ui32_globalMask[cui32_maxCanBusCnt];
   uint32_t ui32_lastMask[cui32_maxCanBusCnt];
@@ -33,6 +45,11 @@ typedef struct {
 class server_c {
 public:
   server_c();
+//  : b_logMode(FALSE), b_inputFileMode(FALSE), i32_lastPipeId(0)
+//  {
+//     memset(f_canOutput, 0, sizeof(f_canOutput));
+//      memset(ui16_globalMask, 0, sizeof(ui16_globalMask));
+//  }
   msqData_s msqDataServer;
   std::list<client_s> l_clients;
   std::string logFileBase;

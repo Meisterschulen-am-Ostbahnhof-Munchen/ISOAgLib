@@ -96,7 +96,9 @@
 
 // include declarations of objects for dynamic array
 #include "ident_c.h"
-#include "msgobj_c.h"
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  #include "msgobj_c.h"
+#endif
 #include "filterbox_c.h"
 
 // headers for string manipulation
@@ -143,21 +145,25 @@ class CANIO_c : public SingletonCANIO_c {
     define dynamic array of MsgObj_c instances for each hardware
     MsgObj_c one object instances in array
   */
-  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::slist<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrMsgObj;
-  #else
-  typedef STL_NAMESPACE::slist<MsgObj_c> ArrMsgObj;
-  #endif
-  /**
-    define dynamic array of FilterBox_c instances;
-    if a __IsoAgLib::CANCustomer_c creates one FilterBox_c definitions,
-    one object instance is inserted in array
-  */
-  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::slist<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrFilterBox;
-  #else
-  typedef STL_NAMESPACE::slist<FilterBox_c> ArrFilterBox;
-  #endif
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+    #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+    typedef STL_NAMESPACE::slist<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrMsgObj;
+    #else
+    typedef STL_NAMESPACE::slist<MsgObj_c> ArrMsgObj;
+    #endif
+    /**
+      define dynamic array of FilterBox_c instances;
+      if a __IsoAgLib::CANCustomer_c creates one FilterBox_c definitions,
+      one object instance is inserted in array
+    */
+    #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+    typedef STL_NAMESPACE::slist<FilterBox_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrFilterBox;
+    #else
+    typedef STL_NAMESPACE::slist<FilterBox_c> ArrFilterBox;
+    #endif
+   #else
+   typedef STL_NAMESPACE::vector<FilterBox_c> ArrFilterBox;
+   #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
 
  public:
 
@@ -196,12 +202,10 @@ class CANIO_c : public SingletonCANIO_c {
     @see HAL::configCanObj
     @see Ident_c::t_identType
   */
-  bool init(uint8_t rui8_busNumber,
-        uint16_t rui16_bitrate,
-        Ident_c::identType_t ren_identType,
-        uint8_t rui8_minObjNr,
-        uint8_t rui8_maxObjNr
-        );
+bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
+                   Ident_c::identType_t ren_identType, uint8_t rui8_minObjNr
+                   ,  uint8_t rui8_maxObjNr
+                  );
   /** check if this CANIO_c instance is configured so that it can be used to send */
   bool isReady2Send() const { return ( ui8_busNumber != 0xFF )?true:false;};
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
@@ -213,7 +217,6 @@ class CANIO_c : public SingletonCANIO_c {
     @see HAL::closeCan
   */
   ~CANIO_c(){close();};
-
 
   /**
     periodically called function which does
@@ -301,7 +304,6 @@ class CANIO_c : public SingletonCANIO_c {
       const Ident_c& rc_compMask, const Ident_c& rc_compFilter,
       ArrFilterBox::iterator* rpc_iter = NULL);
 
-
   /**
     create a Filter Box with specified rui32_mask/rui32_filter
     on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
@@ -338,10 +340,32 @@ class CANIO_c : public SingletonCANIO_c {
                             uint32_t rui32_filter, bool rb_reconfigImmediate,
                             const Ident_c::identType_t rt_identType,
                             uint32_t rt_connectedMask, uint32_t rt_connectedFilter, const Ident_c::identType_t rt_connectedIdentType);
+
   /**
     reconfigure the MsgObj after insert/delete of FilterBox
   */
   bool reconfigureMsgObj();
+
+  /**
+    verify given BUS number and MsgObj number, if they are correct
+    (mostly used by MsgObj_c to verify itself)
+    @param rui8_busNr number of the BUS
+    @param rui8_msgobjNr number of the MsgObj
+    @return true -> values are correct
+  */
+  bool verifyBusMsgobjNr(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
+
+/**
+    helper function to search all FilterBoxes for matching
+    instance which maps to received CAN messages
+    ( needed if the coordinated FilterBoxes don't match,
+      especially important to process messages from global
+      CAN MsgObj which doesn't have explicit connected FilterBox
+      instances )
+    @param rui32_ident Ident of received CAN message
+    @return is another filterbox found?
+  */
+  bool canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type, ArrFilterBox::iterator& rref_arrFilterBoxIter, bool rb_start );
 
   /**
     delete a FilerBox definition
@@ -355,15 +379,6 @@ class CANIO_c : public SingletonCANIO_c {
   bool deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
       MASK_TYPE rui32_mask, MASK_TYPE rui32_filter,
       const Ident_c::identType_t rt_identType = DEFAULT_IDENT_TYPE);
-
-  /**
-    verify given BUS number and MsgObj number, if they are correct
-    (mostly used by MsgObj_c to verify itself)
-    @param rui8_busNr number of the BUS
-    @param rui8_msgobjNr number of the MsgObj
-    @return true -> values are correct
-  */
-  bool verifyBusMsgobjNr(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 
   /**
     initiate processing of all received msg
@@ -404,21 +419,9 @@ class CANIO_c : public SingletonCANIO_c {
     @return true -> there was send error and send retry stopped
   */
   bool stopSendRetryOnErr();
-  /**
-    helper function to search all FilterBoxes for matching
-    instance which maps to received CAN messages
-    ( needed if the coordinated FilterBoxes don't match,
-      especially important to process messages from global
-      CAN MsgObj which doesn't have explicit connected FilterBox
-      instances )
-    @param rui32_ident Ident of received CAN message
-    @return is another filterbox found?
-  */
-  bool canMsg2FilterBox( uint32_t rui32_ident, Ident_c::identType_t rt_type, ArrFilterBox::iterator& rref_arrFilterBoxIter, bool rb_start );
-
 
  protected: // Protected methods
-
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   /**
     evaluate common bits of all defined filterBox
     instances and set it in mask -> build up global mask
@@ -428,7 +431,6 @@ class CANIO_c : public SingletonCANIO_c {
       resulting MsgObj_c instances
   */
   void getCommonFilterMaskAfterMerge();
-
   /**
     build unique MsgObj_c's based on given
     global mask (different FilterBox_c def's can result in one
@@ -440,7 +442,6 @@ class CANIO_c : public SingletonCANIO_c {
     @see FilterBox
   */
   int16_t FilterBox2MsgObj();
-
   /**
     checks if count of preconfigured msgObj
     is allowed; shrink by merging the objects
@@ -450,7 +451,7 @@ class CANIO_c : public SingletonCANIO_c {
     @see MsgObj
   */
   void CheckSetCntMsgObj();
-
+#endif //SYSTEM_WITH_ENHANCED_CAN_HAL
 
  private: // private methods
   friend class CAN_SINGLETON( CANIO_c );
@@ -465,27 +466,47 @@ class CANIO_c : public SingletonCANIO_c {
     users please use init(...) instead.
   */
   void singletonInit();
-
   /**
     deliver min msg obj nr
     @return min msg obj nr
   */
-  uint8_t minMsgObjNr()const{return ui8_min_msgObjLimit;};
-  /**
-    deliver max msg obj nr
-    @return max msg obj nr
-  */
-  uint8_t maxMsgObjNr()const{return ui8_maxMsgObjLimit;};
+  uint8_t minHALMsgObjNr()const{return ui8_min_msgObjLimit;};
   /**
     set min msg obj nr
     @param rb_limit wanted min msg obj nr
   */
-  void setMinMsgObjNr(uint8_t rb_limit){ui8_min_msgObjLimit = rb_limit;};
+  void setMinHALMsgObjNr(uint8_t rb_limit){ui8_min_msgObjLimit = rb_limit;}
+  /** search for a FilterBox with given mask and filter
+      @param  rt_mask    filterBox mask
+      @param  rt_filter  filterBox filter
+      @return            located FilterBox or NULL if not exist
+    */
+  FilterBox_c* getFilterBox(Ident_c& rt_mask, Ident_c& rt_filter) const;
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  /**
+    deliver max msg obj nr
+    @return max msg obj nr
+  */
+  uint8_t maxHALMsgObjNr()const{return ui8_maxMsgObjLimit;};
   /**
     set max msg obj nr
     @param rb_limit wanted max msg obj nr
   */
-  void setMaxMsgObjNr(uint8_t rb_limit){ui8_maxMsgObjLimit = rb_limit;};
+  void setMaxHALMsgObjNr(uint8_t rb_limit){ui8_maxMsgObjLimit = rb_limit;}
+  /**
+    call the needed HAL function for setting the new global masks,
+    without invalidating already open send and last msg obj.
+  */
+  bool registerChangedGlobalMasks(void);
+#endif
+  /** get offset for received messages
+      @return offset for received messages
+    */
+  uint8_t updateMinReceiveObjNr();
+  /** get offset for received messages
+      @return offset for received messages
+    */
+  uint8_t minReceiveObjNr() const {return ui8_minReceiveObjNr;};
   /**
     switch CAN bitrate (possible during runtime
     with automatic reconfiguring of CAN MsgObj)
@@ -497,27 +518,18 @@ class CANIO_c : public SingletonCANIO_c {
     @param rui16_bitrate wanted CAN bitrate
   */
   bool baseCanInit(uint16_t rui16_bitrate);
-  /**
-    call the needed HAL function for setting the new global masks,
-    without invalidating already open send and last msg obj.
-  */
-  bool registerChangedGlobalMasks(void);
-
+#ifdef DEBUG
+void doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr);
+#endif
 
 // Private attributes
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   /**
     dynamic array of MsgObj_c which manages each one a
     hardware CAN object
     @see MsgObj
   */
   ArrMsgObj arrMsgObj;
-  /**
-    dynamic array of FilterBox_c instances which
-    represents the demanded filter boxes
-    @see FilterBox
-  */
-  ArrFilterBox arrFilterBox;
-
   /**
     temp MsgObj_c for inserting of new msgObj instances
     @see MsgObj
@@ -529,6 +541,13 @@ class CANIO_c : public SingletonCANIO_c {
     @see MsgObj
   */
   MsgObj_c c_lastMsgObj;
+#endif
+  /**
+    dynamic array of FilterBox_c instances which
+    represents the demanded filter boxes
+    @see FilterBox
+  */
+  ArrFilterBox arrFilterBox;
   /**
     temp filer box to avoid new/delete for each insert of a filterBox
     @see FilterBox
@@ -564,19 +583,22 @@ class CANIO_c : public SingletonCANIO_c {
     (for each BUS one  CANIO_c instance)
   */
   uint8_t ui8_busNumber;
-
   /**
     min limit of allowed msgObj numbers for this CANIO_c instance
     (important for multithreading environments where different
      Processes must share one BUS)
   */
   uint8_t ui8_min_msgObjLimit;
+  /** minimal obj nr that can be used for a receive msg obj which is dependent of identType_t */
+  uint8_t ui8_minReceiveObjNr;
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   /**
     max limit of allowed msgObj numbers for this CANIO_c instance
     (important for multithreading environments where different
      Processes must share one BUS)
   */
   uint8_t ui8_maxMsgObjLimit;
+#endif
   /** count of CAN messages which were processed during last timeEvent() / processMsg() call
     * this helps Scheduler_c to decide about needed double retrigger of CANIO_c::processMsg()
     * at high CAN BUS load (important to avoid overflow of CAN buffers in HAL

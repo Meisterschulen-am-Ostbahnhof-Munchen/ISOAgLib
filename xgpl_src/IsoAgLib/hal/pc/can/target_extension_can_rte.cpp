@@ -88,14 +88,28 @@ static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 static can_c* rteCan_c [cui32_maxCanBusCnt];
 static rtd_can_bus_state_t rteCanBusState[cui32_maxCanBusCnt];
 
-static can_data* rec_buf[cui32_maxCanBusCnt][15];
-static int16_t rec_bufCnt[cui32_maxCanBusCnt][15];
-static int16_t rec_bufSize[cui32_maxCanBusCnt][15];
-static int16_t rec_bufOut[cui32_maxCanBusCnt][15];
-static int16_t rec_bufIn[cui32_maxCanBusCnt][15];
-static bool rec_bufXtd[cui32_maxCanBusCnt][15];
-static uint32_t rec_bufFilter[cui32_maxCanBusCnt][15];
-static bool b_canBufferLock[cui32_maxCanBusCnt][15];
+typedef struct {
+
+can_data* rec_buf;
+int16_t rec_bufCnt;
+int16_t rec_bufSize;
+int16_t rec_bufOut;
+int16_t rec_bufIn;
+bool rec_bufXtd;
+uint32_t rec_bufFilter;
+bool b_canBufferLock;
+
+bool b_canObjConfigured;
+
+uint32_t ui32_mask_xtd;
+uint16_t ui16_mask_std;
+
+} tMsgObj;
+
+//typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
+//ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
+std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
+ 
 int32_t i32_lastReceiveTime;
 
 static uint16_t ui16_globalMask[cui32_maxCanBusCnt];
@@ -142,11 +156,15 @@ int16_t can_startDriver()
     rteCan_c[ind] = NULL;
     canlogDat[ind] = NULL;
     b_busOpened[ind] = false;
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+    // configure vector arrMsgObj[ind] with 15 elements
+    arrMsgObj[ind].resize(15);
     for (uint8_t ui8_nr = 0; ui8_nr < 15; ui8_nr++)
     {
-      rec_bufSize[ind][ui8_nr] = 0;
-      rec_bufCnt[ind][ui8_nr] = 0;
+      arrMsgObj[ind][ui8_nr].rec_bufSize = 0;
+      arrMsgObj[ind][ui8_nr].rec_bufCnt = 0;
     }
+#endif
   }
 
 //  cout << "Trying to connect to rte1... ";
@@ -182,6 +200,9 @@ int16_t can_stopDriver()
     delete (rteCan_c [ind]);
   }
 
+  for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
+      arrMsgObj[i].clear();
+
   return HAL_NO_ERR;
 }
 
@@ -196,7 +217,7 @@ int32_t can_lastReceiveTime()
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
   checkMsg();
-  return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < 15))?rec_bufCnt[bBusNumber][bMsgObj]:0;
+  return ((bBusNumber < cui32_maxCanBusCnt)&&(bMsgObj < arrMsgObj[bBusNumber].size()))?arrMsgObj[bBusNumber][bMsgObj].rec_bufCnt:0;
 };
 
 bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
@@ -208,7 +229,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
     if ( b_busOpened[busInd] )
     {
       if (openBus < 0) openBus = busInd;
-      for ( unsigned int msgInd = 0; msgInd < 15; msgInd++) if ( rec_bufCnt[busInd][msgInd] > 0 ) return true;
+      for ( unsigned int msgInd = 0; msgInd < arrMsgObj[busInd].size(); msgInd++) if ( arrMsgObj[busInd][msgInd].rec_bufCnt > 0 ) return true;
     }
   }
   if ( openBus >= 0 )
@@ -233,8 +254,8 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 */
 bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 {
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
-  else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> arrMsgObj[rui8_busNr].size()-1 ) ) return true;
+  else if ( arrMsgObj[rui8_busNr][rui8_msgobjNr].b_canBufferLock ) return true;
   else return false;
 }
 
@@ -247,7 +268,7 @@ int16_t closeCan ( uint8_t bBusNumber )
   }
   b_busOpened[bBusNumber] = false;
 
-  for (int i=0; i < 15; i++) {
+  for (int i=0; i < arrMsgObj[bBusNumber].size(); i++) {
     closeCanObj (bBusNumber, i);
   }
 
@@ -257,6 +278,10 @@ int16_t closeCan ( uint8_t bBusNumber )
   arr_canQueue[2].clear();
   arr_canQueue[3].clear();
 
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  arrMsgObj[bBusNumber].clear();
+#endif
+  
   return HAL_NO_ERR;
 };
 
@@ -290,35 +315,59 @@ int16_t getCanBusStatus(uint8_t bBusNumber, tCanBusStatus* ptStatus )
 
 int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 {
-  if (rec_bufCnt[bBusNumber][bMsgObj] == -1)
+  if (arrMsgObj[bBusNumber][bMsgObj].rec_bufCnt == -1)
   { // it's a send object -> call native clear transmit
 //    ncdFlushTransmitQueue(gPortHandle, gChannelMask);
   }
   else
   { // set receive buffer to 0
-    rec_bufCnt[bBusNumber][bMsgObj] = 0;
-    rec_bufOut[bBusNumber][bMsgObj] = 0;
-    rec_bufIn[bBusNumber][bMsgObj] = 0;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufCnt = 0;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufOut = 0;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufIn = 0;
   }
   return HAL_NO_ERR;
 }
 
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig )
 {
-  b_canBufferLock[bBusNumber][bMsgObj] = false;
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+    if (bMsgObj >= arrMsgObj[bBusNumber].size()) {
+        // add new elements in the vector with resize
+        arrMsgObj[bBusNumber].resize(bMsgObj + 1);
+    } else {
+        // reconfigure element -> reinit rec_buf
+        if (arrMsgObj[bBusNumber][bMsgObj].rec_buf != NULL) 
+            delete [] (arrMsgObj[bBusNumber][bMsgObj].rec_buf);
+    }
+       
+  arrMsgObj[bBusNumber][bMsgObj].rec_bufSize = 0;
+  arrMsgObj[bBusNumber][bMsgObj].rec_bufCnt = 0;
+
+  arrMsgObj[bBusNumber][bMsgObj].b_canObjConfigured = true;
+#endif
+  
+  arrMsgObj[bBusNumber][bMsgObj].b_canBufferLock = false;
   if (ptConfig->bMsgType == TX)
   { /* Sendeobjekt */
-    rec_bufSize[bBusNumber][bMsgObj] = -1;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufSize = -1;
   }
   else
   { // empfangsobjekt
-    rec_bufXtd[bBusNumber][bMsgObj] = ptConfig->bXtd;
-    rec_buf[bBusNumber][bMsgObj] = new can_data[ptConfig->wNumberMsgs*20];
-    rec_bufSize[bBusNumber][bMsgObj] = ptConfig->wNumberMsgs*20;
-    rec_bufCnt[bBusNumber][bMsgObj] = 0;
-    rec_bufOut[bBusNumber][bMsgObj] = 0;
-    rec_bufIn[bBusNumber][bMsgObj] = 0;
-    rec_bufFilter[bBusNumber][bMsgObj] = ptConfig->dwId;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufXtd = ptConfig->bXtd;
+    arrMsgObj[bBusNumber][bMsgObj].rec_buf = new can_data[ptConfig->wNumberMsgs*20];
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufSize = ptConfig->wNumberMsgs*20;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufCnt = 0;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufOut = 0;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufIn = 0;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufFilter = ptConfig->dwId;
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+    if (ptConfig->bXtd == 0)
+      arrMsgObj[bBusNumber][bMsgObj].ui16_mask_std = ptConfig->mask;
+    else
+      arrMsgObj[bBusNumber][bMsgObj].ui32_mask_xtd = ptConfig->mask;
+#endif
 
     // clear list for CAN Pkg
     arr_canQueue[bBusNumber].clear();
@@ -328,14 +377,26 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
   return HAL_NO_ERR;
 };
 
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd )
+#else
+int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32_t mask, uint8_t bXtd )
+#endif
 {
-  b_canBufferLock[bBusNumber][bMsgObj] = false;
-  if (rec_bufSize[bBusNumber][bMsgObj] > -1)
+  arrMsgObj[bBusNumber][bMsgObj].b_canBufferLock = false;
+  if (arrMsgObj[bBusNumber][bMsgObj].rec_bufSize > -1)
   { // active receive object
-    rec_bufFilter[bBusNumber][bMsgObj] = dwId;
-    rec_bufXtd[bBusNumber][bMsgObj] = bXtd;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufFilter = dwId;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufXtd = bXtd;
   }
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  if (bXtd == 0)
+    arrMsgObj[bBusNumber][bMsgObj].ui16_mask_std = mask;
+  else
+    arrMsgObj[bBusNumber][bMsgObj].ui32_mask_xtd = mask;
+#endif
+
   return HAL_NO_ERR;
 }
 
@@ -355,29 +416,37 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 //  {
 //    rteCan_c [rui8_busNr]->poll ();
 //  }
-  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+  arrMsgObj[rui8_busNr][rui8_msgobjNr].b_canBufferLock = rb_doLock;
   return HAL_NO_ERR;
 }
 
 
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
-  b_canBufferLock[bBusNumber][bMsgObj] = false;
-  if (rec_bufSize[bBusNumber][bMsgObj] == -1)
+  arrMsgObj[bBusNumber][bMsgObj].b_canObjConfigured = false;
+  arrMsgObj[bBusNumber][bMsgObj].b_canBufferLock = false;
+  if (arrMsgObj[bBusNumber][bMsgObj].rec_bufSize == -1)
   { /* Sendeobjekt */
-    rec_bufSize[bBusNumber][bMsgObj] = -1;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufSize = -1;
   }
   else
   { // empfangsobjekt
-    delete [] (rec_buf[bBusNumber][bMsgObj]);
-    rec_bufSize[bBusNumber][bMsgObj] = -1;
-    rec_bufCnt[bBusNumber][bMsgObj] = 0;
-    rec_bufOut[bBusNumber][bMsgObj] = 0;
-    rec_bufIn[bBusNumber][bMsgObj] = 0;
+    delete [] (arrMsgObj[bBusNumber][bMsgObj].rec_buf);
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufSize = -1;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufCnt = 0;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufOut = 0;
+    arrMsgObj[bBusNumber][bMsgObj].rec_bufIn = 0;
 
     // clear list for CAN Pkg
     arr_canQueue[bBusNumber].clear();
   }
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+    // erase element if it is the last in the vector, otherwise it can stay there
+  while (arrMsgObj[bBusNumber].back().b_canObjConfigured == false)
+      arrMsgObj[bBusNumber].pop_back();
+#endif
+  
   return HAL_NO_ERR;
 };
 
@@ -421,22 +490,47 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t /* bMsgObj */, tSend * ptSend )
 
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 {
-  if (rec_bufCnt[bBusNumber][bMsgObj] > 0)
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  uint8_t ui8_useMsgObj = bMsgObj;
+#else
+  uint8_t ui8_useMsgObj = bMsgObj;
+  if (bMsgObj == 0xFF) {
+    int32_t i32_minReceivedTime = -1;  
+    int32_t i32_compareTime;
+    int16_t i16_tmp;
+    for (int16_t i16_obj = 0; i16_obj < arrMsgObj[bBusNumber].size(); i16_obj++) {
+        i16_tmp = arrMsgObj[bBusNumber][i16_obj].rec_bufOut;
+        i32_compareTime = arrMsgObj[bBusNumber][i16_obj].rec_buf[i16_tmp].i32_time;
+        if ((arrMsgObj[bBusNumber][i16_obj].rec_bufCnt > 0)
+                && (i32_compareTime < i32_minReceivedTime || i32_minReceivedTime == -1))
+        {
+            i32_minReceivedTime = i32_compareTime;
+            ui8_useMsgObj = i16_obj;
+        }   
+    }
+    if (i32_minReceivedTime == -1)
+        return HAL_RANGE_ERR;
+  }
+#endif
+    
+  if (arrMsgObj[bBusNumber][ui8_useMsgObj].rec_bufCnt > 0)
   { // data received
     i32_lastReceiveTime = getTime();
     // get access to data
-    int16_t i16_out = rec_bufOut[bBusNumber][bMsgObj];
-    can_data* pc_data = &(rec_buf[bBusNumber][bMsgObj][i16_out]);
+    int16_t i16_out = arrMsgObj[bBusNumber][ui8_useMsgObj].rec_bufOut;
+    can_data* pc_data = &(arrMsgObj[bBusNumber][ui8_useMsgObj].rec_buf[i16_out]);
     // copy data
     ptReceive->dwId = pc_data->i32_ident;
     ptReceive->bDlc = pc_data->b_dlc;
     ptReceive->tReceiveTime.l1ms = pc_data->i32_time;
     ptReceive->bXtd = pc_data->b_xtd;
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+    ptReceive->bMsgObj = ui8_useMsgObj;
+#endif
     memcpy(ptReceive->abData, pc_data->pb_data, pc_data->b_dlc);
-
     // update ringpuffer
-    rec_bufOut[bBusNumber][bMsgObj] = ((i16_out + 1) % rec_bufSize[bBusNumber][bMsgObj]);
-    rec_bufCnt[bBusNumber][bMsgObj] -= 1;
+    arrMsgObj[bBusNumber][ui8_useMsgObj].rec_bufOut = ((i16_out + 1) % arrMsgObj[bBusNumber][ui8_useMsgObj].rec_bufSize);
+    arrMsgObj[bBusNumber][ui8_useMsgObj].rec_bufCnt -= 1;
   }
   return HAL_NO_ERR;
 };
@@ -493,60 +587,83 @@ static int send(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t id, uint
   }
   #endif
 
-  for (int16_t i16_obj = 0; i16_obj < 15; i16_obj++)
+  for (int16_t i16_obj = 0; i16_obj < arrMsgObj[b_bus].size(); i16_obj++)
   { // compare received msg with filter
     int16_t i16_in;
     can_data* pc_data;
-    if ( b_canBufferLock[b_bus][i16_obj] )
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL  
+    if ( !arrMsgObj[b_bus][i16_obj].b_canObjConfigured )
+      continue;
+#endif
+    
+    if ( arrMsgObj[b_bus][i16_obj].b_canBufferLock )
     { // don't even check this MsgObj as it shall not receive messages
       continue;
     }
     if
     (
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
       (
         ( i16_obj < 14 )
       && (
-          ( (rec_bufXtd[b_bus][i16_obj] == 1)
+          ( (arrMsgObj[b_bus][i16_obj].rec_bufXtd == 1)
           && (b_xtd == 1)
-          && (rec_bufSize[b_bus][i16_obj] > 0)
-          && ( (id & ui32_globalMask[b_bus]) ==  ((rec_bufFilter[b_bus][i16_obj]) & ui32_globalMask[b_bus]) )
+          && (arrMsgObj[b_bus][i16_obj].rec_bufSize > 0)
+          && ( (id & ui32_globalMask[b_bus]) ==  ((arrMsgObj[b_bus][i16_obj].rec_bufFilter) & ui32_globalMask[b_bus]) )
           )
-        || ( (rec_bufXtd[b_bus][i16_obj] == 0)
+        || ( (arrMsgObj[b_bus][i16_obj].rec_bufXtd == 0)
           && (b_xtd == 0)
-          && (rec_bufSize[b_bus][i16_obj] > 0)
-          && ( (id & ui16_globalMask[b_bus]) ==  (rec_bufFilter[b_bus][i16_obj] & ui16_globalMask[b_bus]) )
+          && (arrMsgObj[b_bus][i16_obj].rec_bufSize > 0)
+          && ( (id & ui16_globalMask[b_bus]) ==  (arrMsgObj[b_bus][i16_obj].rec_bufFilter & ui16_globalMask[b_bus]) )
           )
         )
       )
     || (
         ( i16_obj == 14 )
       && (
-          ( (rec_bufXtd[b_bus][i16_obj] == 1)
+          ( (arrMsgObj[b_bus][i16_obj].rec_bufXtd == 1)
           && (b_xtd == 1)
-          && (rec_bufSize[b_bus][i16_obj] > 0)
-          && ( (id & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) == ((rec_bufFilter[b_bus][i16_obj]) & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) )
+          && (arrMsgObj[b_bus][i16_obj].rec_bufSize > 0)
+          && ( (id & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) == ((arrMsgObj[b_bus][i16_obj].rec_bufFilter) & ui32_globalMask[b_bus] & ui32_lastMask[b_bus]) )
           )
-        || ( (rec_bufXtd[b_bus][i16_obj] == 0)
+        || ( (arrMsgObj[b_bus][i16_obj].rec_bufXtd == 0)
           && (b_xtd == 0)
-          && (rec_bufSize[b_bus][i16_obj] > 0)
-          && ( (id & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) == (rec_bufFilter[b_bus][i16_obj] & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) )
+          && (arrMsgObj[b_bus][i16_obj].rec_bufSize > 0)
+          && ( (id & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) == (arrMsgObj[b_bus][i16_obj].rec_bufFilter & ui16_globalMask[b_bus] & ui32_lastMask[b_bus]) )
           )
         )
       )
+#else
+    (
+     ( (arrMsgObj[b_bus][i16_obj].rec_bufXtd == 1)
+       && (b_xtd == 1)
+       && (arrMsgObj[b_bus][i16_obj].rec_bufSize > 0)
+       && ( (id & arrMsgObj[b_bus][i16_obj].ui32_mask_xtd) ==  (arrMsgObj[b_bus][i16_obj].rec_bufFilter & arrMsgObj[b_bus][i16_obj].ui32_mask_xtd) )
+     )
+     || 
+     ( (arrMsgObj[b_bus][i16_obj].rec_bufXtd == 0)
+       && (b_xtd == 0)
+       && (arrMsgObj[b_bus][i16_obj].rec_bufSize > 0)
+       && ( (id & arrMsgObj[b_bus][i16_obj].ui16_mask_std) ==  (arrMsgObj[b_bus][i16_obj].rec_bufFilter & arrMsgObj[b_bus][i16_obj].ui16_mask_std) )
+     )
+    )
+#endif
     )
     { // received msg fits actual filter
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
       if ( i16_obj == 14 ) std::cout << "\n\n Put MSG in LAST-MSG-OBJ\n" << std::endl;
-      i16_in = rec_bufIn[b_bus][i16_obj];
-      rec_bufIn[b_bus][i16_obj] = ((i16_in + 1) % rec_bufSize[b_bus][i16_obj]);
-      if (rec_bufCnt[b_bus][i16_obj] >= rec_bufSize[b_bus][i16_obj])
+#endif
+      i16_in = arrMsgObj[b_bus][i16_obj].rec_bufIn;
+      arrMsgObj[b_bus][i16_obj].rec_bufIn = ((i16_in + 1) % arrMsgObj[b_bus][i16_obj].rec_bufSize);
+      if (arrMsgObj[b_bus][i16_obj].rec_bufCnt >= arrMsgObj[b_bus][i16_obj].rec_bufSize)
       { // overflow -> insert new, and overwrite oldest msg in buffer
-        rec_bufOut[b_bus][i16_obj] = rec_bufIn[b_bus][i16_obj];
+        arrMsgObj[b_bus][i16_obj].rec_bufOut = arrMsgObj[b_bus][i16_obj].rec_bufIn;
       }
       else
       {
-        rec_bufCnt[b_bus][i16_obj] += 1;
+        arrMsgObj[b_bus][i16_obj].rec_bufCnt += 1;
       }
-      pc_data = &(rec_buf[b_bus][i16_obj][i16_in]);
+      pc_data = &(arrMsgObj[b_bus][i16_obj].rec_buf[i16_in]);
       pc_data->i32_time = getTime();
       pc_data->i32_ident = id;
       pc_data->b_dlc = size;

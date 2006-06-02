@@ -48,6 +48,11 @@ struct can_data {
   uint8_t b_dlc;
   uint8_t b_xtd;
   uint8_t pb_data[8];
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  uint8_t bMsgObj;
+#endif
+
 };
 
 struct can_recv_data {
@@ -107,7 +112,8 @@ typedef struct {
       uint16_t ui16_wNumberMsgs;
       uint16_t ui16_queryLockResult;
       // byte 12-15
-      int32_t  i32_fill2;
+      // always ui32_mask even if it is only used with SYSTEM_WITH_ENHANCED_CAN_HAL -> avoid preprocessor
+      uint32_t ui32_mask;
     } s_config;
     struct {
       // byte 0-3

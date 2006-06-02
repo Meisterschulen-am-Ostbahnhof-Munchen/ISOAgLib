@@ -67,6 +67,7 @@
 #define _HAL_PC_CAN_INTERFACE_H_
 
 #include "../typedef.h"
+#include "../config.h"
 
 namespace __IsoAgLib { class Ident_c; class CANPkg_c;}
 
@@ -260,7 +261,11 @@ bool can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval );
           HAL_CONFIG_ERR == BUS not initialised or error during buffer allocation
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, uint8_t rb_rxtx);
+#else
+int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, __IsoAgLib::Ident_c& rrefc_mask, uint8_t rb_rxtx);
+#endif
 
 /**
   change the Ident_c of an already initialised MsgObj
@@ -272,7 +277,11 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident);
+#else
+int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, __IsoAgLib::Ident_c& rrefc_mask);
+#endif
 
 /**
   lock a MsgObj to avoid further placement of messages into buffer.
@@ -334,6 +343,10 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
   HAL_WARN_ERR == BUS WARN or no received message
 */
 int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, int32_t &reflIdent);
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+int32_t can_useNextMsgobjNumber(uint8_t rui8_busNr, int32_t &reflIdent);
+#endif
 
 /**
   transfer front element in buffer into the pointed CANPkg_c;

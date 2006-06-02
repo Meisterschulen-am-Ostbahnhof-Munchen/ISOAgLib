@@ -91,6 +91,11 @@ int16_t can_startDriver()
   msqCommand_s msqCommandBuf;
 
   DEBUG_PRINT("can_startDriver called\n");
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
+#else
+  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
+#endif
 
   int16_t i16_rc = ca_createMsqs(msqDataClient);
 
@@ -215,7 +220,6 @@ int16_t getCanBusStatus(uint8_t /*bBusNumber*/, tCanBusStatus* /*ptStatus*/)
 {
   //DEBUG_PRINT1("getCanBusStatus, bus %d\n", bBusNumber);
 
-//  fprintf(stderr,"getCanBusStatus fuer BUS %d\n", bBusNumber);
   return HAL_NO_ERR;
 }
 
@@ -226,7 +230,11 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
 
   msqCommand_s msqCommandBuf;
 
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+#else
+  if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
+#endif
 
   msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_CONFIG;
@@ -235,6 +243,11 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
   msqCommandBuf.s_config.ui8_bXtd = ptConfig->bXtd;
   msqCommandBuf.s_config.ui8_bMsgType = ptConfig->bMsgType;
   msqCommandBuf.s_config.ui32_dwId = ptConfig->dwId;
+  
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  msqCommandBuf.s_config.ui32_mask = ptConfig->mask;
+#endif
+  
   msqCommandBuf.s_config.ui16_wNumberMsgs = ptConfig->wNumberMsgs;
 
   // read/write queue is cleared by server!
@@ -249,9 +262,12 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
   msqCommand_s msqCommandBuf;
 
   DEBUG_PRINT2("closeCanObj, bus %d, obj %d\n", bBusNumber, bMsgObj);
-  if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
 
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+#else
+  if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
+#endif
 
   msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
   msqCommandBuf.i16_command = COMMAND_CLOSEOBJ;
@@ -263,12 +279,19 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 
 };
 
-
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_t bXtd )
+#else
+int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32_t mask, uint8_t bXtd )
+#endif
 {
 
   DEBUG_PRINT2("chgCanObjId, bus %d, obj %d\n", bBusNumber, bMsgObj);
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+#else
+  if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
+#endif
 
   msqCommand_s msqCommandBuf;
 
@@ -278,6 +301,10 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   msqCommandBuf.s_config.ui8_obj = bMsgObj;
   msqCommandBuf.s_config.ui8_bXtd = bXtd;
   msqCommandBuf.s_config.ui32_dwId = dwId;
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  msqCommandBuf.s_config.ui32_mask = mask;
+#endif
 
   return send_command(&msqCommandBuf, &msqDataClient);
 
@@ -298,7 +325,11 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 
   DEBUG_PRINT3("lockCanObj, bus %d, obj %d, lock %d\n", rui8_busNr, rui8_msgobjNr, rb_doLock);
 
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+#else
+  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
+#endif
 
   msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
 
@@ -328,9 +359,11 @@ bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 
   DEBUG_PRINT2("getCanMsgObjLocked, bus %d, obj %d\n", rui8_busNr, rui8_msgobjNr);
 
-  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
-
-  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr > cui8_maxCanObj - 1 ) ) return true;
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) || ( rui8_msgobjNr > cui8_maxCanObj-1 ) ) return true;
+#else
+  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return true;
+#endif
   else {
 
     msqCommandBuf.i32_mtype = msqDataClient.i32_pid;
@@ -354,7 +387,11 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 
   DEBUG_PRINT2("clearCanObjBuf, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+#else
+  if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
+#endif
 
   clearReadQueue(bBusNumber, bMsgObj, msqDataClient.i32_rdHandle, msqDataClient.i32_pid);
   clearWriteQueue(bBusNumber, bMsgObj, msqDataClient.i32_wrHandle, msqDataClient.i32_pid);
@@ -440,10 +477,20 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 
   //DEBUG_PRINT2("getCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
+#else
+  if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
+#endif
 
-  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assemble_mtype(msqDataClient.i32_pid, bBusNumber, bMsgObj), IPC_NOWAIT)) == -1)
-    return HAL_UNKNOWN_ERR;
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  const uint8_t cui8_useMsgObj = bMsgObj;
+#else
+  const uint8_t cui8_useMsgObj = (bMsgObj != 0xFF)?bMsgObj:0;
+#endif
+ 
+  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assemble_mtype(msqDataClient.i32_pid, bBusNumber, cui8_useMsgObj), IPC_NOWAIT)) == -1)
+      return HAL_UNKNOWN_ERR;
 
   i32_lastReceiveTime = getTime();
 
@@ -452,6 +499,9 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   can_data* pc_data = &(msqReadBuf.s_canData);
   // copy data
   ptReceive->dwId = pc_data->i32_ident;
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  ptReceive->bMsgObj = pc_data->bMsgObj;
+#endif
   ptReceive->bDlc = pc_data->b_dlc;
   // prevent timestamp which is in the future! (because of 10ms clock jitter)
   ptReceive->tReceiveTime.l1ms = (i32_lastReceiveTime > pc_data->i32_time) ? pc_data->i32_time : i32_lastReceiveTime;

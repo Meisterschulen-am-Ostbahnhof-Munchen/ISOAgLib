@@ -217,7 +217,7 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
 void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_delete) {
 
   for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
-    for (uint8_t j=0; j<cui8_maxCanObj; j++) {
+    for (uint8_t j=0; j<iter_delete->arrMsgObj[i].size(); j++) {
       clearReadQueue(i, j, pc_serverData->msqDataServer.i32_rdHandle, iter_delete->i32_clientID);
       clearWriteQueue(i, j, pc_serverData->msqDataServer.i32_wrHandle, iter_delete->i32_clientID);
     }
@@ -225,8 +225,14 @@ void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_
   if (iter_delete->i32_pipeHandle)
     close(iter_delete->i32_pipeHandle);
 
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  for (uint8_t k=0; k<cui32_maxCanBusCnt; k++)
+    iter_delete->arrMsgObj[k].clear();
+#endif
+
   // erase sets iterator to next client
   iter_delete = pc_serverData->l_clients.erase(iter_delete);
+
 }
 
 } // end namespace __HAL

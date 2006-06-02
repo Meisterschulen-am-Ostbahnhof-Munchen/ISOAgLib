@@ -114,6 +114,12 @@ namespace __IsoAgLib {
 
   @author Dipl.-Inform. Achim Spangler
 */
+typedef enum
+{
+  IdleState = 0xff,
+  InactiveState = 0xfe
+} filterBoxState_t;
+
 class FilterBox_c {
 public:
   /**
@@ -137,12 +143,11 @@ public:
      @exception badAlloc
   */
   FilterBox_c(CANCustomer_c* rpc_customer,
-             MASK_TYPE rt_mask, MASK_TYPE rt_filter,
-             Ident_c::identType_t ren_identType = Ident_c::StandardIdent, FilterBox_c* rpc_filterBox = NULL);
+              MASK_TYPE rt_mask, MASK_TYPE rt_filter,
+              Ident_c::identType_t ren_identType = Ident_c::StandardIdent, FilterBox_c* rpc_filterBox = NULL);
 
   /**
     copy constructor which uses data of another FilterBox_c instance
-
     @param rrefc_src reference to the source FilterBox_c instance for copying
      @exception badAlloc
   */
@@ -153,7 +158,6 @@ public:
 
   /**
     copy values of rrefc_src FilterBox_c object to this instance
-
     possible errors:
         * Err_c::badAlloc on not enough memory for copying puffed CAN msg from source
 
@@ -164,6 +168,32 @@ public:
 
   /** clear the data of this instance */
   void clearData();
+
+  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  /**   close the BIOS filterbox object of this instance and close hardware CAN filterbox object */
+  void closeHAL();
+  /** check if this filterBox_c instance is really in use
+      @return true -> filterBox is not in use
+  */
+  bool isIdle() {return (ui8_busNumber == IdleState && ui8_filterBoxNr == IdleState);}
+  #endif
+  /** store new can customer with same filter and mask
+      @param pc_cancustomer  new can customer
+    */
+  void insertCustomer(CANCustomer_c* pc_cancustomer) {vec_customer.push_back(pc_cancustomer);}
+  /**
+    configures the CAN hardware of given FilterBox (uses BIOS function with EXTENDED_HAL)
+
+    possible errors:
+        * hwConfig used CAN BUS wans't configured properly
+        * range given BUS or FilterBox number not in allowed area
+        * hwBusy wanted FilterBox already in use
+        * unspecified some other error
+    @param rui8_busNumber BUS number, where this instance should act
+    @param rui8_FilterBoxNr CAN hardware msg number for BIOS interaction
+    @return true -> BIOS CAN object without errors configured
+  */
+  bool configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr);
 
   /* *************************************** */
   /* ******* filter/mask managing ********** */
@@ -177,7 +207,7 @@ public:
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
   */
   void set(const Ident_c& rrefc_mask, const Ident_c& rrefc_filter,
-             CANCustomer_c *_customer = NULL, FilterBox_c* rpc_filterBox = NULL);
+           CANCustomer_c *pc_customer = NULL, FilterBox_c* rpc_filterBox = NULL);
 
   /**
     check if ID from a CAN msg matches this FilterBox
@@ -196,8 +226,17 @@ public:
   bool equalFilterMask(const Ident_c& rc_mask, const Ident_c& rc_filter) const
     {return ((c_mask == rc_mask) && (c_filter == rc_filter));};
 
-	bool equalCustomer( const __IsoAgLib::CANCustomer_c& rref_customer )
-	{ return (&rref_customer == pc_customer)?true:false;};
+  /** checks, if Filter_Box_c has already stored given customer
+      @param rref_customer  customer to compare
+      @return               true -> customer already stored
+    */
+	bool equalCustomer( const __IsoAgLib::CANCustomer_c& rref_customer ) const;
+
+  /** delete CANCustomer_c instance from array
+      @param  rref_customer  CANCustomer to delete
+      @return                true -> no more cancustomers exist, whole filterbox can be deleted
+    */
+  bool deleteFilter(const __IsoAgLib::CANCustomer_c& rref_customer);
   /**
     deliver the type of the FilterBox_c ident
   */
@@ -218,18 +257,15 @@ public:
   */
   const Ident_c& filter() const {return c_filter;};
 
+  #ifdef DEBUG_CAN_BUFFER_FILLING
+  /** some debug messages */
+  void FilterBox_c::doDebug(uint8_t rui8_busNumber);
+  #endif
+
 
   /* ************************************************** */
   /* ***** insert/get/process puffered CANPkg_c ******** */
   /* ************************************************** */
-
-  /**
-    deliver a pointer to the CANPkg_c of the customer, so that
-    MsgObj_c::processMsg can control the insertion of received
-    data
-    @return pointer to CANPkg_c of CANCustomer
-  */
-  CANPkgExt_c* customersCanPkg() const { return &(pc_customer->dataBase());};
 
   /**
     control the processing of a received message
@@ -250,8 +286,12 @@ private:
   Ident_c c_mask;
   /** c_additionalMask for this FilterBox_c insance (used for intentionally merging objects to one MsgObj! */
   Ident_c c_additionalMask;
-  /** pointer to pc_customer CANCustomer_c which works with the received CAN data */
-  CANCustomer_c* pc_customer;
+  /**vector of pointer to pc_customer CANCustomer_c which works with the received CAN data */
+  std::vector<CANCustomer_c*> vec_customer;
+  /** number of message object */
+  uint8_t ui8_filterBoxNr; //use like ui8_msgObjNr from msgobj_c class
+  /** BUS Number for systems with more than one BUS */
+  uint8_t ui8_busNumber;
 };
 }
 #endif

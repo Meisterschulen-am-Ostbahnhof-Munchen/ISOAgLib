@@ -87,18 +87,26 @@ static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 static int32_t i32_cinterfBeginBusWarnOff[cui32_maxCanBusCnt];
 static int32_t i32_cinterfBeginBit1err[cui32_maxCanBusCnt];
 static int32_t i32_cinterfLastSuccSend[cui32_maxCanBusCnt];
-static int32_t i32_cinterfMsgobjSuccSend[cui32_maxCanBusCnt][15];
 static int32_t i32_cinterfLastSuccReceive[cui32_maxCanBusCnt];
-static uint8_t ui8_cinterfLastSendBufCnt[cui32_maxCanBusCnt][15];
 /** array of 100msec. timeslice conters of received and sent msg per BUS [uint8_t] */
 static uint16_t gwCinterfBusLoad[cui32_maxCanBusCnt][10];
 /** actual index in gwBusLoad */
 static uint8_t gb_cinterfBusLoadSlice[cui32_maxCanBusCnt];
 __IsoAgLib::Ident_c c_cinterfIdent;
 
-/** store size of each MsgObj - needed to answer the Free Item Cnt */
-static uint8_t ui8_cinterfBufSize[cui32_maxCanBusCnt][15];
+typedef struct {
 
+uint8_t ui8_cinterfLastSendBufCnt;
+int32_t i32_cinterfMsgobjSuccSend;
+uint8_t ui8_cinterfBufSize;
+
+bool b_canObjConfigured;
+
+} tHalCan;
+
+//typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
+//ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
+static std::vector<tHalCan> arrHalCan[cui32_maxCanBusCnt];
 
 /* ******************************************************* */
 /* ***************** Status Checking ********************* */
@@ -175,19 +183,19 @@ void updateSuccSendTimestamp(uint8_t rui8_busNr)
   int16_t i16_actCnt;
   int32_t i32_now = getTime();
   // cnt 0xFF ist sign, that this MsgObj isn't configured for send
-  for (uint8_t ui8_ind = 0; ui8_ind < 14; ui8_ind++)
+  for (uint8_t ui8_ind = 0; ui8_ind < arrHalCan[rui8_busNr].size()-1; ui8_ind++)
   {
     // test if is given obj is configured for send
-    if (ui8_cinterfLastSendBufCnt[rui8_busNr][ui8_ind] == 0xFF)
+    if (arrHalCan[rui8_busNr][ui8_ind].ui8_cinterfLastSendBufCnt == 0xFF)
       break; // end this check if first not send obj is found
     i16_actCnt = getCanMsgBufCount (rui8_busNr, (ui8_ind+1));
     if ((i16_actCnt >= 0) &&
-        (i16_actCnt < ui8_cinterfLastSendBufCnt[rui8_busNr][ui8_ind])
+        (i16_actCnt < arrHalCan[rui8_busNr][ui8_ind].ui8_cinterfLastSendBufCnt)
         )
     { // since last send call at least one msg sent
-      i32_cinterfMsgobjSuccSend[rui8_busNr][ui8_ind] = i32_now;
+      arrHalCan[rui8_busNr][ui8_ind].i32_cinterfMsgobjSuccSend = i32_now;
       i32_cinterfLastSuccSend[rui8_busNr] = i32_now;
-      ui8_cinterfLastSendBufCnt[rui8_busNr][ui8_ind] = uint8_t(i16_actCnt);
+      arrHalCan[rui8_busNr][ui8_ind].ui8_cinterfLastSendBufCnt = uint8_t(i16_actCnt);
     }
   }
 }
@@ -285,7 +293,7 @@ bool can_stateGlobalBit1err(uint8_t rui8_busNr)
 int32_t can_stateMsgobjTxok(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
   updateSuccSendTimestamp(rui8_busNr);
-  return i32_cinterfMsgobjSuccSend[rui8_busNr][(rui8_msgobjNr)];
+  return arrHalCan[rui8_busNr][(rui8_msgobjNr)].i32_cinterfMsgobjSuccSend;
 }
 
 /**
@@ -346,7 +354,7 @@ int16_t can_stateMsgobjFreecnt(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
   int16_t i16_msgcnt = getCanMsgBufCount(rui8_busNr, rui8_msgobjNr);
   if ((i16_msgcnt == HAL_CONFIG_ERR) || (i16_msgcnt == HAL_RANGE_ERR)) return i16_msgcnt;
-  else return ( ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr] - i16_msgcnt);
+  else return ( arrHalCan[rui8_busNr][rui8_msgobjNr].ui8_cinterfBufSize - i16_msgcnt);
 }
 
 /**
@@ -390,8 +398,14 @@ int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t 
   i32_cinterfLastSuccSend[rui8_busNr] = i32_now;
   i32_cinterfLastSuccReceive[rui8_busNr] = i32_now;
   // cnt 0xFF ist sign, that this MsgObj isn't configured for send
-  memset((ui8_cinterfLastSendBufCnt[rui8_busNr]), 0xFF, 15);
-  for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++)i32_cinterfMsgobjSuccSend[rui8_busNr][ui8_ind] = i32_now;
+  //memset((ui8_cinterfLastSendBufCnt[rui8_busNr]), 0xFF, 15);
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  arrHalCan[rui8_busNr].resize(15);
+  for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++) {
+      arrHalCan[rui8_busNr][ui8_ind].i32_cinterfMsgobjSuccSend = i32_now;
+      arrHalCan[rui8_busNr][ui8_ind].ui8_cinterfLastSendBufCnt = 0xFF;
+  }
+#endif
 
   gb_cinterfBusLoadSlice[rui8_busNr] = 0;
   memset((gwCinterfBusLoad[rui8_busNr]),0,10);
@@ -428,6 +442,7 @@ int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rb_maskStd, uint32_t r
 */
 int16_t can_configGlobalClose(uint8_t rui8_busNr)
 {
+  arrHalCan[rui8_busNr].clear();
   return closeCan(rui8_busNr);
 }
 
@@ -450,17 +465,42 @@ int16_t can_configGlobalClose(uint8_t rui8_busNr)
           HAL_CONFIG_ERR == BUS not initialised or error during buffer allocation
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
-int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, uint8_t rb_rxtx)
+int16_t can_configMsgobjInit(uint8_t rui8_busNr,
+        uint8_t rui8_msgobjNr,
+        __IsoAgLib::Ident_c& rrefc_ident,
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+        __IsoAgLib::Ident_c& rrefc_mask,
+#endif
+        uint8_t rb_rxtx)
 {
   tCanObjConfig* pt_config = &t_cinterfMsgobjConfig;
   pt_config->dwId = rrefc_ident.ident();
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  pt_config->mask = rrefc_mask.ident();
+#endif
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  // add a new element in the vector (simply resize with old size + 1)
+  //arrHalCan[rui8_busNr].resize(arrHalCan[rui8_busNr].size() + 1);
+  if (rui8_msgobjNr >= arrHalCan[rui8_busNr].size()) {
+      // add new elements in the vector with resize
+      arrHalCan[rui8_busNr].resize(rui8_msgobjNr + 1);
+  } else {
+      // reconfigure element
+  }
+  
+  arrHalCan[rui8_busNr][rui8_msgobjNr].b_canObjConfigured = true;
+  int32_t i32_now = getTime();
+  arrHalCan[rui8_busNr][rui8_msgobjNr].i32_cinterfMsgobjSuccSend = i32_now;
+#endif
 
   if (rrefc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
     pt_config->bXtd = DEFAULT_IDENT_TYPE;
   else pt_config->bXtd = rrefc_ident.identType();
   if (rb_rxtx == 0)
   { // receive
-    ui8_cinterfLastSendBufCnt[rui8_busNr][(rui8_msgobjNr)] = 0xFF;
+    arrHalCan[rui8_busNr][(rui8_msgobjNr)].ui8_cinterfLastSendBufCnt = 0xFF;
     pt_config->bMsgType = RX;
     pt_config->wNumberMsgs = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
     const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
@@ -475,11 +515,11 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
   }
   else
   { // send
-    ui8_cinterfLastSendBufCnt[rui8_busNr][(rui8_msgobjNr)] = 0;
+    arrHalCan[rui8_busNr][(rui8_msgobjNr)].ui8_cinterfLastSendBufCnt = 0;
     pt_config->bMsgType = TX;
     pt_config->wNumberMsgs = CONFIG_CAN_SEND_BUFFER_SIZE;
   }
-  ui8_cinterfBufSize[rui8_busNr][rui8_msgobjNr] = uint8_t(pt_config->wNumberMsgs);
+  arrHalCan[rui8_busNr][rui8_msgobjNr].ui8_cinterfBufSize = uint8_t(pt_config->wNumberMsgs);
   pt_config->bTimeStamped = true;
   pt_config->wPause = 0;
   pt_config->pfIrqFunction = 0;
@@ -497,10 +537,17 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgL
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident)
 {
   return chgCanObjId(rui8_busNr, rui8_msgobjNr, rrefc_ident.ident(), rrefc_ident.identType());
 }
+#else
+int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, __IsoAgLib::Ident_c& rrefc_mask)
+{
+  return chgCanObjId(rui8_busNr, rui8_msgobjNr, rrefc_ident.ident(), rrefc_mask.ident(), rrefc_ident.identType());
+}
+#endif
 
 /**
   lock a MsgObj to avoid further placement of messages into buffer.
@@ -541,6 +588,12 @@ int16_t can_configMsgobjSendpause(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, uin
 */
 int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+    arrHalCan[rui8_busNr][rui8_msgobjNr].b_canObjConfigured = false; 
+    // erase element if it is the last in the vector, otherwise it can stay there
+    while (arrHalCan[rui8_busNr].back().b_canObjConfigured == false)
+        arrHalCan[rui8_busNr].pop_back();
+#endif
   return closeCanObj(rui8_busNr, rui8_msgobjNr);
 }
 
@@ -599,10 +652,10 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
 { // check if some msg were sent from buffer
 
   tSend* pt_send = &t_cinterfMsgobjSend;
-  uint8_t b_count = ui8_cinterfLastSendBufCnt[rui8_busNr][(rui8_msgobjNr)];
+  uint8_t b_count = arrHalCan[rui8_busNr][(rui8_msgobjNr)].ui8_cinterfLastSendBufCnt;
 
   updateSuccSendTimestamp(rui8_busNr);
-  b_count = ui8_cinterfLastSendBufCnt[rui8_busNr][(rui8_msgobjNr)];
+  b_count = arrHalCan[rui8_busNr][(rui8_msgobjNr)].ui8_cinterfLastSendBufCnt;
   // CANPkgExt_c::getData transforms flag data to ident and 8byte string
   rpc_data->getData(pt_send->dwId, pt_send->bXtd, pt_send->bDlc, pt_send->abData);
   // pt_send->dwId = rpc_data->ident();
@@ -621,7 +674,7 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
     updateCanBusLoad(rui8_busNr, (pt_send->bDlc + 2));
   }
   // increase counter of to be sent msg in buffer
-  ui8_cinterfLastSendBufCnt[rui8_busNr][(rui8_msgobjNr)] = b_count + 1;
+  arrHalCan[rui8_busNr][(rui8_msgobjNr)].ui8_cinterfLastSendBufCnt = b_count + 1;
   return sendCanMsg(rui8_busNr, rui8_msgobjNr, pt_send);
 }
 
@@ -646,9 +699,11 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   // only take new msg from BIOS buffer if not previously
   // buffered for detecting of the received ident
   if (!b_cinterfBufferedReceivedMsg)
-  { // to-be-processed item is not yet buttered in pt_receive -> read from driver
+  {
+  // to-be-processed item is not yet buttered in pt_receive -> read from driver
     i16_retVal = getCanMsg(rui8_busNr, rui8_msgobjNr, pt_receive);
   }
+  
   if ((i16_retVal == HAL_NO_ERR) || (i16_retVal == HAL_OVERFLOW_ERR) || (i16_retVal == HAL_WARN_ERR))
   {
     if (pt_receive->tReceiveTime.l1ms == 0)
@@ -660,6 +715,32 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   }
   return i16_retVal;
 }
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+int32_t can_useNextMsgobjNumber(uint8_t rui8_busNr, int32_t &refMsgobjNr)
+{
+  tReceive* pt_receive = &t_cinterfMsgobjReceive;
+  int16_t i16_retVal = HAL_NO_ERR;
+  // only take new msg from BIOS buffer if not previously
+  // buffered for detecting of the received ident
+  if (!b_cinterfBufferedReceivedMsg)
+  { // to-be-processed item is not yet buttered in pt_receive -> read from driver
+    i16_retVal = getCanMsg(rui8_busNr, 0xFF , pt_receive);
+  }
+  
+  if ((i16_retVal == HAL_NO_ERR) || (i16_retVal == HAL_OVERFLOW_ERR) || (i16_retVal == HAL_WARN_ERR))
+  {
+    if (pt_receive->tReceiveTime.l1ms == 0)
+      i32_cinterfLastSuccReceive[rui8_busNr] = getTime();
+    else
+      i32_cinterfLastSuccReceive[rui8_busNr] = pt_receive->tReceiveTime.l1ms;
+    b_cinterfBufferedReceivedMsg = true;
+    refMsgobjNr = pt_receive->bMsgObj;
+  }
+  return i16_retVal;
+}
+#endif // SYSTEM_WITH_ENHANCED_CAN_HAL
+
 
 /**
   transfer front element in buffer into the pointed CANPkg_c;
@@ -687,6 +768,8 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
   int16_t i16_retVal = HAL_NO_ERR;
   // only take new msg from BIOS buffer if not previously
   // buffered for detecting of the received ident
+  
+  
   if (!b_cinterfBufferedReceivedMsg)
     i16_retVal = getCanMsg(rui8_busNr, rui8_msgobjNr, pt_receive);
 
@@ -738,7 +821,7 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
 */
 void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
-  b_cinterfBufferedReceivedMsg = ((rui8_msgobjNr < 15)&&(rui8_busNr < cui32_maxCanBusCnt))?false:true;
+  b_cinterfBufferedReceivedMsg = ((rui8_msgobjNr < arrHalCan[rui8_busNr].size())&&(rui8_busNr < cui32_maxCanBusCnt))?false:true;
 }
 
 

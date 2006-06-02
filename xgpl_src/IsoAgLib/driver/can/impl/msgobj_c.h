@@ -270,7 +270,8 @@ public:
     return arrPfilterBox.size();
     #endif
   };
-  #if 0
+
+#if 0
   /**
     delivers amount of insertable arrPfilterBox pointers
     @return amount of references to FilterBox_c which could be inserted into/handled by this MsgObj_c
@@ -278,7 +279,7 @@ public:
   uint8_t getFilterBoxCapacity(){
     return (FILTER_BOX_PER_MSG_OBJ - cnt_filterBox());
   };
-  #endif
+#endif
   /**
     start processing a received CAN msg
     (called by interrupt function)  (uses BIOS function)

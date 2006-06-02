@@ -74,6 +74,8 @@
 #include "../errcodes.h"
 #include "hal_can_interface.h"
 
+#include "../config.h"
+
 #include <cstdio>
 
 /**
@@ -285,8 +287,13 @@ namespace HAL
             C_CONFIG == BUS not initialised or error during buffer allocation
             C_RANGE == wrong BUS or MsgObj number
   */
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   inline int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, uint8_t rb_rxtx)
     {return __HAL::can_configMsgobjInit(rui8_busNr, rui8_msgobjNr, rrefc_ident, rb_rxtx);};
+#else
+  inline int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, __IsoAgLib::Ident_c& rrefc_mask, uint8_t rb_rxtx)
+    {return __HAL::can_configMsgobjInit(rui8_busNr, rui8_msgobjNr, rrefc_ident, rrefc_mask, rb_rxtx);};
+#endif
 
   /**
     change the Ident_c of an already initialised MsgObj
@@ -298,8 +305,13 @@ namespace HAL
             C_CONFIG == BUS not initialised or ident can't be changed
             C_RANGE == wrong BUS or MsgObj number
   */
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   inline int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident)
     {return __HAL::can_configMsgobjChgid(rui8_busNr, rui8_msgobjNr, rrefc_ident);};
+#else
+  inline int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, __IsoAgLib::Ident_c& rrefc_mask)
+    {return __HAL::can_configMsgobjChgid(rui8_busNr, rui8_msgobjNr, rrefc_ident, rrefc_mask);};
+#endif
 
   /**
     lock a MsgObj to avoid further placement of messages into buffer.
@@ -379,6 +391,10 @@ namespace HAL
   */
   inline int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, int32_t &reflIdent)
     {return __HAL::can_useMsgobjReceivedIdent(rui8_busNr, rui8_msgobjNr, reflIdent);};
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  inline int32_t can_useNextMsgobjNumber(uint8_t rui8_busNr, int32_t &reflIdent)
+    {return __HAL::can_useNextMsgobjNumber(rui8_busNr, reflIdent);};
+#endif
 
   /**
     transfer front element in buffer into the pointed CANPkg_c;

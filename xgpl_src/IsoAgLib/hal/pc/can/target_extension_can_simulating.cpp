@@ -59,25 +59,55 @@
 #ifdef WIN32
        #include <windows.h>
 #endif
+
+#include <vector>
+
 namespace __HAL {
 
 // globale Filehandle fuer simulierte CAN Input
 static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
-static FILE* can_input[cui32_maxCanBusCnt][15];
+//static FILE* can_input[cui32_maxCanBusCnt][15];
 static FILE* can_output[cui32_maxCanBusCnt][2];
-static tReceive pRead[cui32_maxCanBusCnt][15];
-static tIRQ_FUNCTION can_irq[cui32_maxCanBusCnt][15];
-static uint8_t pOpen[cui32_maxCanBusCnt][15];
-static uint8_t pSendOpen[cui32_maxCanBusCnt][15];
-static uint8_t dateiende[cui32_maxCanBusCnt][15];
-static int32_t lastCloseTimeArr[cui32_maxCanBusCnt][15];
-static bool b_canBufferLock[cui32_maxCanBusCnt][15];
+//static tReceive pRead[cui32_maxCanBusCnt][15];
+//static tIRQ_FUNCTION can_irq[cui32_maxCanBusCnt][15];
+//static uint8_t pOpen[cui32_maxCanBusCnt][15];
+//static uint8_t pSendOpen[cui32_maxCanBusCnt][15];
+//static uint8_t dateiende[cui32_maxCanBusCnt][15];
+//static int32_t lastCloseTimeArr[cui32_maxCanBusCnt][15];
+//static bool b_canBufferLock[cui32_maxCanBusCnt][15];
 int32_t i32_lastSendTime;
 int32_t i32_lastReceiveTime;
 int32_t i32_lastCloseTime = 0;
 uint16_t ui16_sendPause;
 
-static boolean pb_bXtd[cui32_maxCanBusCnt][15];
+///////////////
+
+typedef struct {
+
+FILE* can_input;
+tReceive pRead;
+tIRQ_FUNCTION can_irq;
+uint8_t pOpen;
+uint8_t pSendOpen;
+uint8_t dateiende;
+int32_t lastCloseTimeArr;
+bool b_canBufferLock;
+
+boolean pb_bXtd;
+
+} tMsgObj;
+
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  tMsgObj arrMsgObj[cui32_maxCanBusCnt][15];
+#else
+  //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
+  //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
+  std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
+#endif
+ 
+///////////////
+
+//static boolean pb_bXtd[cui32_maxCanBusCnt][15];
 
 int16_t can_startDriver()
 {
@@ -86,6 +116,11 @@ int16_t can_startDriver()
 }
 int16_t can_stopDriver()
 {
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+	
+  for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
+	  arrMsgObj[i].clear();
+#endif
   return HAL_NO_ERR;
 }
 
@@ -98,10 +133,14 @@ int32_t can_lastReceiveTime()
 
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if((bBusNumber > 1)&&(bMsgObj > 14)) return HAL_RANGE_ERR;
-  if (pOpen[bBusNumber][bMsgObj] != 1) return 0;
-  if (dateiende[bBusNumber][bMsgObj] == 1) return 0;
-  return (pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms <= getTime())?1:0;
+#else
+  if((bBusNumber > 1)&&(bMsgObj > arrMsgObj[bBusNumber].size()-1 )) return HAL_RANGE_ERR;
+#endif
+  if (arrMsgObj[bBusNumber][bMsgObj].pOpen != 1) return 0;
+  if (arrMsgObj[bBusNumber][bMsgObj].dateiende == 1) return 0;
+  return (arrMsgObj[bBusNumber][bMsgObj].pRead.tReceiveTime.l1ms <= getTime())?1:0;
 }
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {
@@ -111,10 +150,12 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   static bool firstCall = true;
   if ( firstCall )
   {
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL 
     for (i=0; i < 15; i++)
     {
-      pOpen[bBusNumber][i] = pSendOpen[bBusNumber][i] = lastCloseTimeArr[bBusNumber][i] = 0;
+      arrMsgObj[bBusNumber][i].pOpen = arrMsgObj[bBusNumber][i].pSendOpen = arrMsgObj[bBusNumber][i].lastCloseTimeArr = 0;
     }
+#endif
     i32_lastSendTime = 0;
     ui16_sendPause = 0;
   }
@@ -136,7 +177,11 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   {
     for ( unsigned int busInd = 0; busInd < cui32_maxCanBusCnt; busInd++)
     {
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
       for ( unsigned int msgInd = 0; msgInd < 15; msgInd++ )
+#else
+      for ( unsigned int msgInd = 0; msgInd < arrMsgObj[busInd].size(); msgInd++ )
+#endif
       {
         if ( getCanMsgBufCount( busInd, msgInd ) > 0 ) return true;
       }
@@ -164,8 +209,12 @@ int16_t changeGlobalMask ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlob
 */
 bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 {
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return true;
-  else if ( b_canBufferLock[rui8_busNr][rui8_msgobjNr] ) return true;
+#else
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> arrMsgObj[rui8_busNr].size()-1 ) ) return true;
+#endif
+  else if ( arrMsgObj[rui8_busNr][rui8_msgobjNr].b_canBufferLock ) return true;
   else return false;
 }
 
@@ -173,19 +222,27 @@ int16_t closeCan ( uint8_t bBusNumber )
 {
   printf("can_close fuer BUS %d\n", bBusNumber);
   i32_lastCloseTime = getTime();
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   for (int i=0; i < 15; i++)
+#else
+  for (int i=0; i < arrMsgObj[bBusNumber].size(); i++)
+#endif
   {
-    if ( pOpen[bBusNumber][i] == 1 )
+    if ( arrMsgObj[bBusNumber][i].pOpen == 1 )
     {
-      fclose(can_input[bBusNumber][i]);
-      pOpen[bBusNumber][i] = 0;
+      fclose(arrMsgObj[bBusNumber][i].can_input);
+      arrMsgObj[bBusNumber][i].pOpen = 0;
     }
-    if ( pSendOpen[bBusNumber][i] == 1 )
+    if ( arrMsgObj[bBusNumber][i].pSendOpen == 1 )
     {
       fclose(can_output[bBusNumber][i]);
-      pSendOpen[bBusNumber][i] = 0;
+      arrMsgObj[bBusNumber][i].pSendOpen = 0;
     }
   }
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  arrMsgObj[bBusNumber].clear();
+#endif
   return HAL_NO_ERR;
 }
 
@@ -203,40 +260,40 @@ int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
 void scanCanMsgLine( uint8_t bBusNumber,uint8_t bMsgObj )
 {
   char zeile[100];
-  printf("lese naechste Zeile aus BUS %d und Objekt %d\n", bBusNumber, bMsgObj);
+  //printf("lese naechste Zeile aus BUS %d und Objekt %d\n", bBusNumber, bMsgObj);
   while ( true )
   { // read lines till timestamp is >= last close time
-    fgets(zeile, 99, can_input[bBusNumber][bMsgObj]);
+    fgets(zeile, 99, arrMsgObj[bBusNumber][bMsgObj].can_input);
     if ( strlen( zeile ) == 0 )
     {
-      if ( feof(can_input[bBusNumber][bMsgObj]) )
+      if ( feof(arrMsgObj[bBusNumber][bMsgObj].can_input) )
       {
-        dateiende[bBusNumber][bMsgObj] = 1;
+        arrMsgObj[bBusNumber][bMsgObj].dateiende = 1;
         break;
       }
       else continue;
     }
     int iResult = sscanf(zeile, "%u %x  %hx %hx %hx %hx %hx %hx %hx %hx \n",
-      &(pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms), &(pRead[bBusNumber][bMsgObj].dwId),
-      &(pRead[bBusNumber][bMsgObj].abData[0]), &(pRead[bBusNumber][bMsgObj].abData[1]),
-      &(pRead[bBusNumber][bMsgObj].abData[2]), &(pRead[bBusNumber][bMsgObj].abData[3]),
-      &(pRead[bBusNumber][bMsgObj].abData[4]), &(pRead[bBusNumber][bMsgObj].abData[5]),
-      &(pRead[bBusNumber][bMsgObj].abData[6]), &(pRead[bBusNumber][bMsgObj].abData[7]));
+      &(arrMsgObj[bBusNumber][bMsgObj].pRead.tReceiveTime.l1ms), &(arrMsgObj[bBusNumber][bMsgObj].pRead.dwId),
+      &(arrMsgObj[bBusNumber][bMsgObj].pRead.abData[0]), &(arrMsgObj[bBusNumber][bMsgObj].pRead.abData[1]),
+      &(arrMsgObj[bBusNumber][bMsgObj].pRead.abData[2]), &(arrMsgObj[bBusNumber][bMsgObj].pRead.abData[3]),
+      &(arrMsgObj[bBusNumber][bMsgObj].pRead.abData[4]), &(arrMsgObj[bBusNumber][bMsgObj].pRead.abData[5]),
+      &(arrMsgObj[bBusNumber][bMsgObj].pRead.abData[6]), &(arrMsgObj[bBusNumber][bMsgObj].pRead.abData[7]));
 
     // check for close time
-    if ( ( pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms >= lastCloseTimeArr[bBusNumber][bMsgObj] )
+    if ( ( arrMsgObj[bBusNumber][bMsgObj].pRead.tReceiveTime.l1ms >= arrMsgObj[bBusNumber][bMsgObj].lastCloseTimeArr )
       && ( iResult != EOF ) )
     {
-      pRead[bBusNumber][bMsgObj].bDlc = iResult;
-      printf("vorabgelesene Zeile in BIOS Funktion:\n%s\n", zeile);
+      arrMsgObj[bBusNumber][bMsgObj].pRead.bDlc = iResult;
+      //printf("vorabgelesene Zeile in BIOS Funktion:\n%s\n", zeile);
       break;
     }
     else printf( "ignore old message from file with timestamp %u with last close time %i\n",
-                  pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms, lastCloseTimeArr[bBusNumber][bMsgObj]);
-    if ( feof(can_input[bBusNumber][bMsgObj]) != 0 )
+                  arrMsgObj[bBusNumber][bMsgObj].pRead.tReceiveTime.l1ms, arrMsgObj[bBusNumber][bMsgObj].lastCloseTimeArr);
+    if ( feof(arrMsgObj[bBusNumber][bMsgObj].can_input) != 0 )
     { // if actual time after last message in this file, set the "dateiende" flag
       printf("in getCanMsg die letzte Zeile geliefert, keine neue Zeile in Buffer gelesen, da Dateiende erreicht\n");
-      dateiende[bBusNumber][bMsgObj] = 1;
+      arrMsgObj[bBusNumber][bMsgObj].dateiende = 1;
       break;
     }
   }
@@ -247,9 +304,16 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
   char name[50];
   char zeile[100];
 
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  // add a new element in the vector (simply resize with old size + 1)
+  arrMsgObj[bBusNumber].resize(arrMsgObj[bBusNumber].size() + 1);
+  bMsgObj = arrMsgObj[bBusNumber].size()-1;
+  
+  arrMsgObj[bBusNumber][bMsgObj].pOpen = arrMsgObj[bBusNumber][bMsgObj].pSendOpen = arrMsgObj[bBusNumber][bMsgObj].lastCloseTimeArr = 0;
+#endif
 
-  pb_bXtd[bBusNumber][bMsgObj] = ptConfig->bXtd;
-  b_canBufferLock[bBusNumber][bMsgObj] = false;
+  arrMsgObj[bBusNumber][bMsgObj].pb_bXtd = ptConfig->bXtd;
+  arrMsgObj[bBusNumber][bMsgObj].b_canBufferLock = false;
 
   /* test ob sendeobjekt configuriert wird */
   if (ptConfig->bMsgType == TX)
@@ -262,9 +326,9 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
     if (ptConfig->bXtd) strcat(name, "ext");
     else strcat(name, "std");
 
-    if ( pSendOpen[bBusNumber][bMsgObj] != 1 )
+    if ( arrMsgObj[bBusNumber][bMsgObj].pSendOpen != 1 )
     {
-      pSendOpen[bBusNumber][bMsgObj] = 1;
+      arrMsgObj[bBusNumber][bMsgObj].pSendOpen = 1;
       can_output[bBusNumber][bMsgObj] = fopen(name, "a+");
       // BEGIN: Added by M.Wodok 6.12.04
       if (can_output[bBusNumber][bMsgObj] == NULL) {
@@ -292,24 +356,24 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
     if (ptConfig->bXtd) strcat(name, "ext");
     else strcat(name, "std");
 
-    can_input[bBusNumber][bMsgObj] = fopen(name, "r");
+    arrMsgObj[bBusNumber][bMsgObj].can_input = fopen(name, "r");
     // BEGIN: Added by M.Wodok 6.12.04
-    if (can_input[bBusNumber][bMsgObj] == NULL) {
+    if (arrMsgObj[bBusNumber][bMsgObj].can_input == NULL) {
       sprintf(name, "can_%hx_%x_", bBusNumber, ptConfig->dwId);
       if (ptConfig->bXtd) strcat(name, "ext");
       else strcat(name, "std");
       // when the needed simulated input file does not exist at standard place, we try locally
       // at the execution directory - here we open with creation mode, so that the program doesn't abort
-      can_input[bBusNumber][bMsgObj] = fopen(name, "w+");
+      arrMsgObj[bBusNumber][bMsgObj].can_input = fopen(name, "w+");
     }
     // END: Added by M.Wodok 6.12.04
 
     printf("Versuch Datei mit Name %s zum lesen zu oeffnen\n", name);
 
-    dateiende[bBusNumber][bMsgObj] = 0;
-    pRead[bBusNumber][bMsgObj].bXtd = ptConfig->bXtd;
-    can_irq[bBusNumber][bMsgObj] = ptConfig->pfIrqFunction;
-    pOpen[bBusNumber][bMsgObj] = 1;
+    arrMsgObj[bBusNumber][bMsgObj].dateiende = 0;
+    arrMsgObj[bBusNumber][bMsgObj].pRead.bXtd = ptConfig->bXtd;
+    arrMsgObj[bBusNumber][bMsgObj].can_irq = ptConfig->pfIrqFunction;
+    arrMsgObj[bBusNumber][bMsgObj].pOpen = 1;
 
     /* erste Zeile einlesen */
     scanCanMsgLine( bBusNumber, bMsgObj );
@@ -322,10 +386,10 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   char name[50];
   char zeile[100];
 
-  b_canBufferLock[bBusNumber][bMsgObj] = false;
-  if (pOpen[bBusNumber][bMsgObj] != 1) return 0;
+  arrMsgObj[bBusNumber][bMsgObj].b_canBufferLock = false;
+  if (arrMsgObj[bBusNumber][bMsgObj].pOpen != 1) return 0;
 
-  pb_bXtd[bBusNumber][bMsgObj] = bXtd;
+  arrMsgObj[bBusNumber][bMsgObj].pb_bXtd = bXtd;
 #ifdef WIN32
   sprintf(name, "..\\..\\..\\simulated_io\\can_%hx_%x_", bBusNumber, dwId);
 #else
@@ -334,16 +398,16 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
   if (bXtd) strcat(name, "ext");
   else strcat(name, "std");
 
-  fclose(can_input[bBusNumber][bMsgObj]);
-  can_input[bBusNumber][bMsgObj] = fopen(name, "r");
+  fclose(arrMsgObj[bBusNumber][bMsgObj].can_input);
+  arrMsgObj[bBusNumber][bMsgObj].can_input = fopen(name, "r");
 
   // BEGIN: Added by M.Wodok 6.12.04
-  if (can_input[bBusNumber][bMsgObj] == NULL) {
+  if (arrMsgObj[bBusNumber][bMsgObj].can_input == NULL) {
     sprintf(name, "can_%hx_%x_", bBusNumber, dwId);
     if (bXtd) strcat(name, "ext");
     else strcat(name, "std");
 
-    can_input[bBusNumber][bMsgObj] = fopen(name, "r");
+    arrMsgObj[bBusNumber][bMsgObj].can_input = fopen(name, "r");
   }
   // END: Added by M.Wodok 6.12.04
 
@@ -363,7 +427,7 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint8_
 int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 { // first get waiting messages
   checkMsg();
-  b_canBufferLock[rui8_busNr][rui8_msgobjNr] = rb_doLock;
+  arrMsgObj[rui8_busNr][rui8_msgobjNr].b_canBufferLock = rb_doLock;
   return HAL_NO_ERR;
 }
 
@@ -379,20 +443,25 @@ int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)
 int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
 {
   printf("closeCanObj fuer bus %d und objekt %d\n", bBusNumber, bMsgObj);
-  b_canBufferLock[bBusNumber][bMsgObj] = false;
-  if ((bMsgObj < 2) && ( pSendOpen[bBusNumber][bMsgObj] == 1))
+  arrMsgObj[bBusNumber][bMsgObj].b_canBufferLock = false;
+  if ((bMsgObj < 2) && ( arrMsgObj[bBusNumber][bMsgObj].pSendOpen == 1))
   {
     fclose(can_output[bBusNumber][bMsgObj]);
-    pSendOpen[bBusNumber][bMsgObj] = 0;
+    arrMsgObj[bBusNumber][bMsgObj].pSendOpen = 0;
   }
   else
   {
-    if (pOpen[bBusNumber][bMsgObj] == 1)
+    if (arrMsgObj[bBusNumber][bMsgObj].pOpen == 1)
     {
-      fclose(can_input[bBusNumber][bMsgObj]);
-      pOpen[bBusNumber][bMsgObj] = 0;
+      fclose(arrMsgObj[bBusNumber][bMsgObj].can_input);
+      arrMsgObj[bBusNumber][bMsgObj].pOpen = 0;
     }
   }
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+	arrMsgObj[bBusNumber].erase(arrMsgObj[bBusNumber].begin()+bMsgObj);
+#endif
+  
   return HAL_NO_ERR;
 };
 
@@ -412,7 +481,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
       i32_sendTimestamp, ptSend->dwId,
       data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
     printf(
-      "%05d %-8x  %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx",
+      "test 1 - %05d %-8x  %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx",
       i32_sendTimestamp, ptSend->dwId,
       data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
     if ( ptSend->dwId == 0x10 )
@@ -425,7 +494,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
       i32_sendTimestamp, ptSend->dwId,
       data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
     printf(
-      "%05d %-8x  %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx",
+      "test 2 - %05d %-8x  %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx",
       i32_sendTimestamp, ptSend->dwId,
       data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
   }
@@ -443,7 +512,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   char zeile[100];
   int32_t empfangszeit;
 
-  if (getTime() < pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms)
+  if (getTime() < arrMsgObj[bBusNumber][bMsgObj].pRead.tReceiveTime.l1ms)
   {
     /* zeit noch nicht erreicht */
     return 0;
@@ -451,14 +520,14 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   else
   {
     i32_lastReceiveTime = getTime();
-    ptReceive->dwId = pRead[bBusNumber][bMsgObj].dwId;
-    memcpy(ptReceive->abData, pRead[bBusNumber][bMsgObj].abData, 8);
-    ptReceive->bDlc = pRead[bBusNumber][bMsgObj].bDlc = 8;
-    ptReceive->tReceiveTime.l1ms = pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms ;
-    ptReceive->bXtd = pb_bXtd[bBusNumber][bMsgObj];
-    lastCloseTimeArr[bBusNumber][bMsgObj] = pRead[bBusNumber][bMsgObj].tReceiveTime.l1ms;
+    ptReceive->dwId = arrMsgObj[bBusNumber][bMsgObj].pRead.dwId;
+    memcpy(ptReceive->abData, arrMsgObj[bBusNumber][bMsgObj].pRead.abData, 8);
+    ptReceive->bDlc = arrMsgObj[bBusNumber][bMsgObj].pRead.bDlc = 8;
+    ptReceive->tReceiveTime.l1ms = arrMsgObj[bBusNumber][bMsgObj].pRead.tReceiveTime.l1ms ;
+    ptReceive->bXtd = arrMsgObj[bBusNumber][bMsgObj].pb_bXtd;
+    arrMsgObj[bBusNumber][bMsgObj].lastCloseTimeArr = arrMsgObj[bBusNumber][bMsgObj].pRead.tReceiveTime.l1ms;
 
-    printf("in getCanMsg len rec %d und dat %d\n",ptReceive->bDlc, pRead[bBusNumber][bMsgObj].bDlc);
+    //printf("in getCanMsg len rec %d und dat %d\n",ptReceive->bDlc, arrMsgObj[bBusNumber][bMsgObj].pRead.bDlc);
 
     /* naechste Zeile einlesen */
     scanCanMsgLine( bBusNumber, bMsgObj );
@@ -469,6 +538,9 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 
 int16_t checkMsg()
 {
+
+printf("checkMsg\n");
+	
   int16_t i = 0, j = 0;
   int16_t result = 0;
   int16_t empfangen = 0;
@@ -489,34 +561,34 @@ int16_t checkMsg()
     {
         for (i=0; i < 15; i++)
         {
-          if ((pOpen[j][i] == 1) && (feof(can_input[j][i]) == 0))
+          if ((arrMsgObj[j][i].pOpen == 1) && (feof(arrMsgObj[j][i].can_input) == 0))
           {
             /* dateiende noch nicht erreicht */
             result = 1;
           }
-          else if ((pOpen[j][i] == 1) && (feof(can_input[j][i]) != 0))
+          else if ((arrMsgObj[j][i].pOpen == 1) && (feof(arrMsgObj[j][i].can_input) != 0))
           {
-            if (dateiende[j][i] == 0)
+            if (arrMsgObj[j][i].dateiende == 0)
             {
               printf("Dateiende von Bus %d und Objekt %d erreicht\n", j,i);
-              dateiende[j][i] = 1;
+              arrMsgObj[j][i].dateiende = 1;
             }
           }
-          if ((result == 1)&&(pOpen[j][i] == 1) && (pRead[j][i].tReceiveTime.l1ms < getTime()) && (dateiende[j][i] == 0))
+          if ((result == 1)&&(arrMsgObj[j][i].pOpen == 1) && (arrMsgObj[j][i].pRead.tReceiveTime.l1ms < getTime()) && (arrMsgObj[j][i].dateiende == 0))
           {
             /* zeitstempel ist erreicht -> verarbeiten */
-            if ( can_irq[j][i] != NULL )
+            if ( arrMsgObj[j][i].can_irq != NULL )
             {
-              if ( b_canBufferLock[j][i] )
+              if ( arrMsgObj[j][i].b_canBufferLock )
               { // don't even check this MsgObj as it shall not receive messages
                 // -> read next line as a message with current timestamp shall be ignored from file
                 printf( "ignore message at BUS %d and Object %d with timestamp %d, as this message object is currently locked\n",
-                  j, i, pRead[j][i].tReceiveTime.l1ms);
+                  j, i, arrMsgObj[j][i].pRead.tReceiveTime.l1ms);
                 scanCanMsgLine( j, i );
                 continue;
               }
-              printf("rufe irq fun fuer BUS %d und Objekt %d auf bei zeit %d und CAN-Zeit %d\n", j, i, getTime(), pRead[j][i].tReceiveTime.l1ms);
-              *(can_irq[j][i])(j,i,NULL);
+              printf("rufe irq fun fuer BUS %d und Objekt %d auf bei zeit %d und CAN-Zeit %d\n", j, i, getTime(), arrMsgObj[j][i].pRead.tReceiveTime.l1ms);
+              *(arrMsgObj[j][i].can_irq)(j,i,NULL);
             }
             empfangen++;
             // printf("bei check %d telegramme empfangen\n", empfangen);

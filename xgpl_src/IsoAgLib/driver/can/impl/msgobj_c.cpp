@@ -582,8 +582,6 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
       {
         if (arrPfilterBox[i]->matchMsgId(i32_ident, c_filter.identType()))
         { // ident of received data matches the filter of the i'th registered FilterBox
-          CANPkgExt_c* pc_target = arrPfilterBox[i]->customersCanPkg();
-          HAL::can_useMsgobjGet(rui8_busNumber, msgObjNr(), pc_target);
           if ( arrPfilterBox[i]->processMsg() )
           { // customer indicated, that he processed the received data
             b_processed = true;
@@ -611,8 +609,6 @@ uint8_t MsgObj_c::processMsg(uint8_t rui8_busNumber, bool rb_forceProcessAll){
               if ( b_foundOne )
               { // matching instance found
                 HAL::wdTriggern();
-                CANPkgExt_c* pc_target = pc_iFilterBox->customersCanPkg();
-                HAL::can_useMsgobjGet(rui8_busNumber, msgObjNr(), pc_target);
                 b_processed = pc_iFilterBox->processMsg();
               }
             } while (b_foundOne && !b_processed); // if one found, try if another one can be found!
@@ -655,6 +651,12 @@ bool MsgObj_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_msgNr){
     // store ui8_busNumber for later close of can
     setBusNumber(rui8_busNumber);
     setMsgObjNr(rui8_msgNr);
+
+    //store busNumber and msgNr for each filterBox
+    for(uint8_t i = 0; i < arrPfilterBox.size(); i++)
+    {
+      arrPfilterBox[i]->configCan(rui8_busNumber, rui8_msgNr);
+    }
   }
   if (c_filter.identType() == Ident_c::BothIdent) c_filter.setIdentType(DEFAULT_IDENT_TYPE);
   switch (HAL::can_configMsgobjInit(rui8_busNumber, rui8_msgNr, c_filter, 0))

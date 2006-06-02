@@ -109,6 +109,11 @@ typedef struct
   uint8_t bDlc;                           /** Anzahl der empfangenen Daten */
   uint8_t abData[8];                      /** Datenpuffer */
   tTime tReceiveTime;             /** Zeitpunkt Empfang */
+
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  uint8_t bMsgObj;
+#endif
+  
 } tReceive;
 
 
@@ -122,6 +127,10 @@ typedef struct                  /** Struktur Konfigurierung von Nachrichtenobjek
   uint16_t wPause;                         /** Pausenzeit fuer verzoegertes Senden */
   tIRQ_FUNCTION pfIrqFunction;         /** Funktionszeiger fuer "Anwenderdefinierte" Fkt nach
                                        * Can HW Interrupt*/
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  uint32_t mask;
+#endif
+  
 } tCanObjConfig;
 
 } // end namespace __HAL
