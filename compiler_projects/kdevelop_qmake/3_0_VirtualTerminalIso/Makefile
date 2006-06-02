@@ -8,7 +8,7 @@ TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
 APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso 
 
-PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
+PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h -DSYSTEM_WITH_ENHANCED_CAN_HAL
 
 
 first: all
@@ -79,7 +79,6 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
-		../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
