@@ -163,6 +163,8 @@ public:
     @return voltage at external reference [mV]
   */
   static int16_t  getExternalSensorPowerVoltage( void ) { return HAL::getAdc_u85();};
+  /** control the relay which is responsible for activation of the PWM output */
+  static int16_t setRelais( bool rb_activateRelaisForPwm );
 
   /**
     deliver the CanEn setting -> if system goes down

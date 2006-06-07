@@ -155,13 +155,22 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
     HAL::startTaskTimer();
     // configure POWER HOLD after loss of CAN_EN
 		setPowerdownStrategy( rt_strategy );
+#ifdef CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
     // set Relais to ON
     HAL::setRelais(ON);
+#endif
   }
   // avoid second call of sensible ECU functions
   b_firstCall = false;
   return b_result;
 }
+/** control the relay which is responsible for activation of the PWM output */
+int16_t System_c::setRelais( bool rb_activateRelaisForPwm )
+{
+  if ( rb_activateRelaisForPwm ) return HAL::setRelais(ON);
+  else                           return HAL::setRelais(OFF);
+}
+
 /**
 	default behaviour of IsoAgLib is to activate power hold, so that
 	the application can decide on its own, if a CAN_EN loss shall cause
