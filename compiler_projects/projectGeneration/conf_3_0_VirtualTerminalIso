@@ -94,6 +94,16 @@ USE_TARGET_SYSTEM="pc_linux"
 # typical cases for BIG ENDIAN are some ARM and mostly all Motorola 68k and PowerPC CPUs
 # USE_LITTLE_ENDIAN_CPU=1
 
+# IsoAgLib switches by default the system relais to ON on startup
+# this can be avoided by setting PRJ_DO_NOT_START_RELAIS_ON_STARTUP to 1
+# PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
+
+# select enhanced CAN processing which is only available for some
+# CAN architectures, wher the OS/BIOS does already provide selective
+# receive with individual <filters, mask> combinations
+# default: off
+# PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+
 # select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
@@ -163,18 +173,18 @@ PRJ_ISO_TERMINAL=1
 # PRJ_TRACTOR_MOVE=0
 
 # only incorporate parts from BASE that provide tractor PTO information
-# this part includes tractor pto set point data which is not available in the 
-# free ISOAgLib edition. If you are interested in this feature please contact OSB AG 
+# this part includes tractor pto set point data which is not available in the
+# free ISOAgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_PTO=0
 
 # only incorporate parts from BASE that provide tractor lighting information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_LIGHT=0
 
 # only incorporate parts from BASE that provide tractor auxiliary valve information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_AUX=0
 
 # only incorporate parts from BASE that provide time and GPS information
@@ -182,12 +192,12 @@ PRJ_ISO_TERMINAL=1
 
 # only incorporate parts from BASE that provide tractor guidance information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_GUIDANCE=0
 
 # only incorporate parts from BASE that provide tractor certification information
 # this part is only defined for ISO 11783
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG 
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_CERTIFICATION=0
 
 # ###############################################################

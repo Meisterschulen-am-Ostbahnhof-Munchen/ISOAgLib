@@ -161,11 +161,22 @@ function check_set_correct_variables()
   	USE_LITTLE_ENDIAN_CPU=1
   fi
 
+	# option to not switch the system relais to ON, on startup
+	# (default: set relais to ON on startup)
+  if [ "A$PRJ_DO_NOT_START_RELAIS_ON_STARTUP" = "A" ] ; then
+  	PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
+  fi
+
+
   if [ "A$USE_VT_UNICODE_SUPPORT" = "A" ] ; then
     USE_VT_UNICODE_SUPPORT=0
   fi
 
-  if [ "A$CAN_BUS_CNT" = "A" ] ; then
+  if [ "A$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" = "A" ] ; then
+    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+  fi
+
+if [ "A$CAN_BUS_CNT" = "A" ] ; then
   	CAN_BUS_CNT=1
   fi
   if [ "A$CAN_BUS_USED" = "A" ] ; then
@@ -619,17 +630,27 @@ function create_filelist( )
     fi
   fi
 
-	DRIVER_FEATURES=" -path '*/driver/can/*' -o  -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*' -o -path '*/hal/"$HAL_PATH"/system*' -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'"
+	DRIVER_FEATURES=" -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*' -o -path '*/hal/"$HAL_PATH"/system*' -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'"
 
 
   echo "CAN driver: $USE_CAN_DRIVER"
 	if [ $USE_CAN_DRIVER = "simulating" ] ; then
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_simulating*'"
+		if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+			echo 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.'
+			echo 'Thus the project files will be generated without enhanced CAN processing'
+			PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+		fi
 	elif [ $USE_CAN_DRIVER = "rte" ] ; then
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_rte*'"
 	elif [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'"
 	elif [ $USE_CAN_DRIVER = "sys" ] ; then
+		if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+			echo 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.'
+			echo 'Thus the project files will be generated without enhanced CAN processing'
+			PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+		fi
 		PLATFORM=`uname`
 		if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 			DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_linux_sys*'"
@@ -696,6 +717,14 @@ function create_filelist( )
 		fi
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/rs232_target_extensions.h'"
   fi
+
+	# add the standard driver directory sources for CAN
+	if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+		DRIVER_FEATURES="$DRIVER_FEATURES -o \( -path '*/driver/can/*' -a -not -name 'msgobj*' \)"
+	else
+		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/can/*'"
+	fi
+
 
   LIB_ROOT="../$ISO_AG_LIB_PATH/xgpl_src"
   SRC_EXT="\( -name '*.c' -o -name "*.cc" -o -name "*.cpp" \)"
@@ -974,6 +1003,12 @@ function create_autogen_project_config()
 		echo -e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
 	fi
 
+	if [ $PRJ_DO_NOT_START_RELAIS_ON_STARTUP -gt 0 ] ; then
+		echo -e "#define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >> $CONFIG_NAME
+	else
+		echo -e "// #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >> $CONFIG_NAME
+	fi
+
 	if [ $PRJ_RS232_OVER_CAN -gt 0 ] ; then
 		echo -e "#define USE_RS232_OVER_CAN$ENDLINE" >> $CONFIG_NAME
 	fi
@@ -981,6 +1016,11 @@ function create_autogen_project_config()
   if [ $USE_VT_UNICODE_SUPPORT -gt 0 ] ; then
     echo -e "#define USE_VT_UNICODE_SUPPORT$ENDLINE" >> $CONFIG_NAME
   fi
+
+  if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+    echo -e "#define SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
+  fi
+
 
 	if [ $PRJ_BASE -gt 0 ] ; then
 		echo -e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME
