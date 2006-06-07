@@ -621,7 +621,17 @@ bool ISOTerminal_c::timeEvent( void )
 
   // do further activities only if registered ident is initialised as ISO and already successfully address-claimed...
   if ( !pc_wsMasterIdentItem ) return true;
-  if ( !pc_wsMasterIdentItem->isClaimedAddress() ) return true;
+  if ( !pc_wsMasterIdentItem->isClaimedAddress() )
+  { // remove any created receive filter, so that a new one can be created on SA change
+    if (ui32_filterAckPGN != 0)
+    { // do only if filter could be calculated (IsoItem was needed for that) and was actually inserted!
+      if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent))
+        getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent);
+      ui32_filterAckPGN = 0;
+      b_receiveFilterCreated = false;
+    }
+    return true;
+  }
 
 /*** Filter/MultiReceive Registration Start ***/
   if ( ! b_receiveFilterCreated )
