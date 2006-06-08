@@ -165,10 +165,10 @@ bool System_c::init( bool rb_forceReinit, IsoAgLib::SystemPowerdownStrategy_t rt
   return b_result;
 }
 /** control the relay which is responsible for activation of the PWM output */
-int16_t System_c::setRelais( bool rb_activateRelaisForPwm )
+void System_c::setRelais( bool rb_activateRelaisForPwm )
 {
-  if ( rb_activateRelaisForPwm ) return HAL::setRelais(ON);
-  else                           return HAL::setRelais(OFF);
+  if ( rb_activateRelaisForPwm ) HAL::setRelais(ON);
+  else                           HAL::setRelais(OFF);
 }
 
 /**
