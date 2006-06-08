@@ -489,7 +489,7 @@ int16_t can_configMsgobjInit(uint8_t rui8_busNr,
   } else {
       // reconfigure element
   }
-  
+
   arrHalCan[rui8_busNr][rui8_msgobjNr].b_canObjConfigured = true;
   int32_t i32_now = getTime();
   arrHalCan[rui8_busNr][rui8_msgobjNr].i32_cinterfMsgobjSuccSend = i32_now;
@@ -589,7 +589,7 @@ int16_t can_configMsgobjSendpause(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, uin
 int16_t can_configMsgobjClose(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-    arrHalCan[rui8_busNr][rui8_msgobjNr].b_canObjConfigured = false; 
+    arrHalCan[rui8_busNr][rui8_msgobjNr].b_canObjConfigured = false;
     // erase element if it is the last in the vector, otherwise it can stay there
     while (arrHalCan[rui8_busNr].back().b_canObjConfigured == false)
         arrHalCan[rui8_busNr].pop_back();
@@ -703,7 +703,7 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   // to-be-processed item is not yet buttered in pt_receive -> read from driver
     i16_retVal = getCanMsg(rui8_busNr, rui8_msgobjNr, pt_receive);
   }
-  
+
   if ((i16_retVal == HAL_NO_ERR) || (i16_retVal == HAL_OVERFLOW_ERR) || (i16_retVal == HAL_WARN_ERR))
   {
     if (pt_receive->tReceiveTime.l1ms == 0)
@@ -727,7 +727,7 @@ int32_t can_useNextMsgobjNumber(uint8_t rui8_busNr, int32_t &refMsgobjNr)
   { // to-be-processed item is not yet buttered in pt_receive -> read from driver
     i16_retVal = getCanMsg(rui8_busNr, 0xFF , pt_receive);
   }
-  
+
   if ((i16_retVal == HAL_NO_ERR) || (i16_retVal == HAL_OVERFLOW_ERR) || (i16_retVal == HAL_WARN_ERR))
   {
     if (pt_receive->tReceiveTime.l1ms == 0)
@@ -768,8 +768,8 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
   int16_t i16_retVal = HAL_NO_ERR;
   // only take new msg from BIOS buffer if not previously
   // buffered for detecting of the received ident
-  
-  
+
+
   if (!b_cinterfBufferedReceivedMsg)
     i16_retVal = getCanMsg(rui8_busNr, rui8_msgobjNr, pt_receive);
 
@@ -821,7 +821,10 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
 */
 void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 {
-  b_cinterfBufferedReceivedMsg = ((rui8_msgobjNr < arrHalCan[rui8_busNr].size())&&(rui8_busNr < cui32_maxCanBusCnt))?false:true;
+  if ((rui8_msgobjNr < arrHalCan[rui8_busNr].size())&&(rui8_busNr < cui32_maxCanBusCnt))
+  { // valid parameters
+    b_cinterfBufferedReceivedMsg = false;
+  }
 }
 
 
