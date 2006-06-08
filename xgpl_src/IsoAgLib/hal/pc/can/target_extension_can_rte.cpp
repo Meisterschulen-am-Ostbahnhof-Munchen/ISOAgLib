@@ -108,8 +108,8 @@ uint16_t ui16_mask_std;
 
 //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
 //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
-std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
- 
+static std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
+
 int32_t i32_lastReceiveTime;
 
 static uint16_t ui16_globalMask[cui32_maxCanBusCnt];
@@ -281,7 +281,7 @@ int16_t closeCan ( uint8_t bBusNumber )
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   arrMsgObj[bBusNumber].clear();
 #endif
-  
+
   return HAL_NO_ERR;
 };
 
@@ -337,16 +337,16 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptCo
         arrMsgObj[bBusNumber].resize(bMsgObj + 1);
     } else {
         // reconfigure element -> reinit rec_buf
-        if (arrMsgObj[bBusNumber][bMsgObj].rec_buf != NULL) 
+        if (arrMsgObj[bBusNumber][bMsgObj].rec_buf != NULL)
             delete [] (arrMsgObj[bBusNumber][bMsgObj].rec_buf);
     }
-       
+
   arrMsgObj[bBusNumber][bMsgObj].rec_bufSize = 0;
   arrMsgObj[bBusNumber][bMsgObj].rec_bufCnt = 0;
 
   arrMsgObj[bBusNumber][bMsgObj].b_canObjConfigured = true;
 #endif
-  
+
   arrMsgObj[bBusNumber][bMsgObj].b_canBufferLock = false;
   if (ptConfig->bMsgType == TX)
   { /* Sendeobjekt */
@@ -446,7 +446,7 @@ int16_t closeCanObj ( uint8_t bBusNumber,uint8_t bMsgObj )
   while (arrMsgObj[bBusNumber].back().b_canObjConfigured == false)
       arrMsgObj[bBusNumber].pop_back();
 #endif
-  
+
   return HAL_NO_ERR;
 };
 
@@ -495,10 +495,14 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 #else
   uint8_t ui8_useMsgObj = bMsgObj;
   if (bMsgObj == 0xFF) {
-    int32_t i32_minReceivedTime = -1;  
+    int32_t i32_minReceivedTime = -1;
     int32_t i32_compareTime;
     int16_t i16_tmp;
     for (int16_t i16_obj = 0; i16_obj < arrMsgObj[bBusNumber].size(); i16_obj++) {
+        if (arrMsgObj[bBusNumber][i16_obj].rec_bufSize == -1)
+        { // object is used for send
+          continue;
+        }
         i16_tmp = arrMsgObj[bBusNumber][i16_obj].rec_bufOut;
         i32_compareTime = arrMsgObj[bBusNumber][i16_obj].rec_buf[i16_tmp].i32_time;
         if ((arrMsgObj[bBusNumber][i16_obj].rec_bufCnt > 0)
@@ -506,13 +510,13 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
         {
             i32_minReceivedTime = i32_compareTime;
             ui8_useMsgObj = i16_obj;
-        }   
+        }
     }
     if (i32_minReceivedTime == -1)
-        return HAL_RANGE_ERR;
+        return HAL_UNKNOWN_ERR;
   }
 #endif
-    
+
   if (arrMsgObj[bBusNumber][ui8_useMsgObj].rec_bufCnt > 0)
   { // data received
     i32_lastReceiveTime = getTime();
@@ -591,11 +595,11 @@ static int send(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t id, uint
   { // compare received msg with filter
     int16_t i16_in;
     can_data* pc_data;
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL  
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
     if ( !arrMsgObj[b_bus][i16_obj].b_canObjConfigured )
       continue;
 #endif
-    
+
     if ( arrMsgObj[b_bus][i16_obj].b_canBufferLock )
     { // don't even check this MsgObj as it shall not receive messages
       continue;
@@ -640,7 +644,7 @@ static int send(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t id, uint
        && (arrMsgObj[b_bus][i16_obj].rec_bufSize > 0)
        && ( (id & arrMsgObj[b_bus][i16_obj].ui32_mask_xtd) ==  (arrMsgObj[b_bus][i16_obj].rec_bufFilter & arrMsgObj[b_bus][i16_obj].ui32_mask_xtd) )
      )
-     || 
+     ||
      ( (arrMsgObj[b_bus][i16_obj].rec_bufXtd == 0)
        && (b_xtd == 0)
        && (arrMsgObj[b_bus][i16_obj].rec_bufSize > 0)
