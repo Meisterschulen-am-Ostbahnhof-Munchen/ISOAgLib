@@ -1456,6 +1456,7 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
 */
 void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
 { // simply increment read position without further interpretation
+  if ( ( rui8_busNr > 1 ) || ( rui8_msgobjNr> 14 ) ) return;
   popDataFromCanRingBuffer( rui8_busNr, rui8_msgobjNr );
 }
 
