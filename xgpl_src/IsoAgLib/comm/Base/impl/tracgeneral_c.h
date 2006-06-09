@@ -194,13 +194,13 @@ public: // Public methods
   /*@{*/
   /**
   set rear hitch
-  @param rb_val uint8_t value to store as position of rear hitch
+  @param rb_val uint8_t value to store as position of rear hitch [%]
    */
   void setHitchRear(uint8_t rb_val)
   { b_hitchRear = rb_val;};
   /**
   set front hitch
-  @param rb_val uint8_t value to store as position of front hitch
+  @param rb_val uint8_t value to store as position of front hitch [%]
    */
   void setHitchFront(uint8_t rb_val)
   { b_hitchFront = rb_val;};
@@ -278,11 +278,11 @@ public: // Public methods
   /** \name Retrieve Values which are sent from other ECUs  */
   /*@{*/
   /** get rear hitch
-      @return actual position of rear hitch
+      @return actual position of rear hitch [%]
     */
   uint8_t hitchRear() const {return b_hitchRear;};
   /** get front hitch
-      @return actual position of front hitch
+      @return actual position of front hitch [%]
     */
   uint8_t hitchFront() const {return b_hitchFront;};
 

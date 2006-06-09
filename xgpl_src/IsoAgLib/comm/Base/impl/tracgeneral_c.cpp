@@ -475,7 +475,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         // and if actual sender isn't in conflict to previous sender
         if ( checkParseReceived( c_tempDevKey ) )
         { // sender is allowed to send
-          uint8_t ui8_tempHitch = (( data().getUint8Data( 0 ) * 4) / 10);
+          uint8_t ui8_tempHitch = (( data().getUint8Data( 0 ) * 4) / 10 );
           if ( (ui8_tempHitch != ERROR_VAL_8)
               && (ui8_tempHitch != NO_VAL_8) ) {
             switch ( (data().getUint8Data( 1 ) >> 6) & 3 ) {
@@ -604,7 +604,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         data().setUint8Data(1, ui8_temp);
         break;
       default:
-        data().setUint8Data(0, (((hitchFront() & 0x7F) * 10) / 4));
+        data().setUint8Data(0, ((hitchFront() & 0x7F)*10/4));
         if ((hitchFront() & 0x80) != 0)
         {
           ui8_temp |= IsoAgLib::IsoActive << 6;
@@ -641,7 +641,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         data().setUint8Data(1, ui8_temp);
         break;
       default:
-        data().setUint8Data(0, (((hitchRear() & 0x7F) * 10) / 4));
+        data().setUint8Data(0, ((hitchRear() & 0x7F)*10/4));
         if ((hitchRear() & 0x80) != 0)
         {
           ui8_temp |= IsoAgLib::IsoActive << 6;

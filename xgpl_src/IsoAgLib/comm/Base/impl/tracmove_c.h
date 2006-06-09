@@ -110,7 +110,7 @@ namespace __IsoAgLib {
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    void config(const DevKey_c* rpc_devKey, const IsoAgLib::IdentMode_t rt_identMode);
+    void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
 
     /** check if filter boxes shall be created - create only ISO or DIN filters based
         on active local idents which has already claimed an address

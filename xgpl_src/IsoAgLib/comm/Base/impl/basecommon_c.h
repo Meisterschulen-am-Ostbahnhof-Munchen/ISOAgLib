@@ -184,7 +184,7 @@ namespace __IsoAgLib
     #endif
 
     /** Retrieve the last update time of the specified information type*/
-    int32_t lastedTimeSinceUpdate() const {return (System_c::getTime() - i32_lastMsgReceived);}
+    int32_t lastedTimeSinceUpdate() const { return (System_c::getTime() - i32_lastMsgReceived);}
     /** Retrieve the time of last update */
     int32_t lastUpdateTime() const {return i32_lastMsgReceived;}
 

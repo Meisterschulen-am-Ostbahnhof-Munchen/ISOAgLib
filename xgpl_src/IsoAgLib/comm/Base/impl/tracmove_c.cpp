@@ -120,7 +120,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TracMove_c::config(const DevKey_c* rpc_devKey, const IsoAgLib::IdentMode_t rt_identMode)
+  void TracMove_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
     //call config for handling which is base data independent
     BaseCommon_c::config(rpc_devKey, rt_identMode);

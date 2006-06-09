@@ -78,32 +78,32 @@ namespace IsoAgLib {
   public:
     // Public methods
 
-    /** DEPRECATED CONFIG FUNCTION - PLEASE DO NOT USE ANY MORE AS THIS FUNCTION WILL BE REMOVED SOON
-        initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances
-        possible errors:
-          * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-        @param rb_implementMode implement mode (true) or tractor mode (false)
-      */
-    void init(const iDevKey_c* rpc_devKey, bool rb_implementMode)
-    {
-      #if __GNUC__
-      #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
-      #elif defined WIN32
-      #pragma message ("deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool")
-      #endif
-      TracGeneral_c::init(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
-    };
-    /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances
-        possible errors:
-          * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      */
-    void init(const iDevKey_c* rpc_devKey = NULL, IsoAgLib::IdentMode_t rt_IdentMode = IsoAgLib::IdentModeImplement)
-    {TracGeneral_c::init(rpc_devKey, rt_IdentMode);};
+  /** DEPRECATED CONFIG FUNCTION - PLEASE DO NOT USE ANY MORE AS THIS FUNCTION WILL BE REMOVED SOON
+      initialise element which can't be done during construct;
+      above all create the needed FilterBox_c instances
+      possible errors:
+        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+      @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rb_implementMode implement mode (true) or tractor mode (false)
+    */
+  void init(const iDevKey_c* rpc_devKey, bool rb_implementMode)
+  {
+    #if __GNUC__
+    #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
+    #elif defined WIN32
+    #pragma message ("deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool")
+    #endif
+    TracGeneral_c::init(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
+  };
+  /** initialise element which can't be done during construct;
+      above all create the needed FilterBox_c instances
+      possible errors:
+        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
+      @param rpc_devKey optional pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+    */
+  void init(const iDevKey_c* rpc_devKey = NULL, IsoAgLib::IdentMode_t rt_IdentMode = IsoAgLib::IdentModeImplement)
+  {TracGeneral_c::init(rpc_devKey, rt_IdentMode);};
   /**
     DEPRECATED CONFIG FUNCTION - PLEASE DO NOT USE ANY MORE AS THIS FUNCTION WILL BE REMOVED SOON
     config the Base_c object after init -> set pointer to devKey and
@@ -120,6 +120,14 @@ namespace IsoAgLib {
 	  #endif
     TracGeneral_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   }
+  /**
+    config the iTracGeneral_c object after init -> set pointer to devKey and
+    config send/receive of different base msg types
+    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+  */
+  void config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
+  { TracGeneral_c::config(rpc_devKey, rt_identMode ); }
 
   #ifdef USE_DIN_9684
   /** config the TracGeneral_c object after init -> set pointer to devKey and

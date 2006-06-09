@@ -117,7 +117,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    void config(const DevKey_c* rpc_devKey, const IsoAgLib::IdentMode_t rt_IdentMode);
+    void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_IdentMode);
 
     /** destructor for Base_c which has nothing to do */
     virtual ~TracPTO_c() { BaseCommon_c::close();};

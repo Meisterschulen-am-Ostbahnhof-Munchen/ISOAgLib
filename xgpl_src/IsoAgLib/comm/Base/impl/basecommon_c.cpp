@@ -250,43 +250,38 @@ bool BaseCommon_c::timeEvent()
     c_selectedDataSourceDevKey.setUnspecified();
   }
 
+
+  if ( ( getDevKey() != NULL )
+    && (!getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true)) )
+  { // local dev key for sending is registrated, but it is not yet fully claimed
+    // --> nothing to do
+    return true;
+  }
+
   // check if we are in tractor mode and have a pointer to the sending device key
   if ( checkMode(IsoAgLib::IdentModeTractor) )
   { // all tractor mode timeEvent() functions have the only target to send messages,
     // --> leave this timeEvent() chain already here, when getDevKey() is not valid or the corresponding
     //     device has not already claimed an address
     if ( getDevKey() == NULL ) return true;
-    // all further timeEvent triggerd actions are only useful, if the local configured sending DevKey_c
-    // (accessible by getDevKey() ) has already claimed an address and is thusly allowed to send data on the BUS
-    if (!getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true)) return true;
+    // now:
+    // 1) getDevKey() != NULL
+    // 2) getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true) indicates, that a corresponding
+    //    item has already performed its address claim
+    // ==> we can directly call sending time event in this case
+    bool b_result = true;
     #ifdef USE_DIN_9684
-    if (  (pc_devKey != NULL                                                   )
-          && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKey, true)
-        )
-    { // stored base data information sending ISO member or DIN member has claimed address
-      if (Scheduler_c::getAvailableExecTime() == 0) return false;
-
-      return dinTimeEventTracMode();
-    }
+    if ( !dinTimeEventTracMode()) b_result = false;
     #endif
-
     #ifdef USE_ISO_11783
-    if (  (pc_devKey != NULL                                                   )
-          && getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKey, true)
-        )
-    { // stored base data information sending ISO member or DIN member has claimed address
-      if (Scheduler_c::getAvailableExecTime() == 0) return false;
-
-      if ( !isoTimeEventTracMode()) return false;
-    }
+    if ( !isoTimeEventTracMode()) b_result = false;
     #endif
+    return b_result;
   }
   #ifdef USE_ISO_11783
-  else //implement mode
-  { // we are in implement mode; check if we have a pointer to the sending device key
+  else
+  { // we are in implement mode
     if ( !isoTimeEventImplMode()) return false;
-
-    if (Scheduler_c::getAvailableExecTime() == 0) return false;
   }
   #endif
   return true;
