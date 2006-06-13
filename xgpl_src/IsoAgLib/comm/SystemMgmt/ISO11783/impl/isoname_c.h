@@ -158,6 +158,22 @@ public:
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0);
 
 
+  /** IsoAgLib-specific enum for often used types of "functions" of IsoNames */
+  enum ecuType_t {
+    ecuTypeANYOTHER, // not one of the following
+    ecuTypeTractorECU,
+    ecuTypeTaskControl,
+    ecuTypeVirtualTerminal,
+    ecuTypeFileServerOrPrinter,
+    ecuTypeNavigation
+  };
+
+  /**
+    deliver type of ECU: Tractor, VT, Navigation, etc.
+  */
+  ecuType_t getEcuType() const;
+
+
   /**
     deliver the data NAME string as pointer to 8byte string
     @return const pointer to 8 uint8_t string with NAME

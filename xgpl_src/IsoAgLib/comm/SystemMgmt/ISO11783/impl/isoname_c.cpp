@@ -173,6 +173,34 @@ void ISOName_c::set(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devCla
 }
 
 
+ISOName_c::ecuType_t ISOName_c::getEcuType() const
+{
+  const uint8_t cui8_func = func();
+  switch (cui8_func)
+  {
+    case 23: return ecuTypeNavigation;
+    case 29: return ecuTypeVirtualTerminal;
+    case 61: return ecuTypeFileServerOrPrinter;
+    default:
+      if (cui8_func >= 128)
+      {
+        if (indGroup() == 2) // Agricultural & Forestry
+        {
+          if (devClass() == 0) // Non-specific systems
+          {
+            switch (cui8_func)
+            {
+              case 130: return ecuTypeTaskControl;
+              case 134: return ecuTypeTractorECU;
+              default:  break;
+            }
+          }
+        }
+      }
+      break;
+  }
+  return ecuTypeANYOTHER;
+}
 
 
 /**

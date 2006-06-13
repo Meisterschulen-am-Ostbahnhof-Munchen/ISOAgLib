@@ -318,6 +318,72 @@ bool ISOMonitor_c::timeEvent( void ){
   return true;
 }
 
+
+/**
+  deliver the count of members in the Monitor-List with given ECU-Type (which is an own IsoAgLib-definition!)
+  which optional (!!) match the condition of address claim state
+  @param rui8_ecuType searched ECU-Type code
+  @param rb_forceClaimedAddress true -> only members with claimed address are used
+        (optional, default false)
+  @return count of members in Monitor-List with ECU-Type == rui8_ecuType
+*/
+uint8_t ISOMonitor_c::isoMemberEcuTypeCnt (ISOName_c::ecuType_t r_ecuType, bool rb_forceClaimedAddress)
+{
+  uint8_t b_result = 0;
+  for (Vec_ISOIterator pc_iter = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
+  {
+    if ( ((pc_iter->devKey().getConstName().getEcuType() == r_ecuType))
+      && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
+    {
+      b_result++;
+      pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
+    }
+  }
+  return b_result;
+}
+
+/**
+  deliver one of the members with specific ECU_Type (which is an own IsoAgLib-definition!)
+  which optional (!!) match the condition of address claim state
+  check first with isoMemberEcuTypeCnt if enough members with wanted ECU-Type and
+  optional (!!) property are registered in Monitor-List
+  @see isoMemberEcuTypeCnt
+
+  possible errors:
+    * Err_c::range there exist less than rui8_ind members with ECU-Type rui8_ecuType
+  @param rui8_ecuType searched ECU-Type code
+  @param rui8_ind position of the wanted member in the
+                sublist of member with given ECU-Type (first item has rui8_ind == 0 !!)
+  @param rb_forceClaimedAddress true -> only members with claimed address are used
+        (optional, default false)
+  @return reference to searched element
+*/
+ISOItem_c& ISOMonitor_c::isoMemberEcuTypeInd (ISOName_c::ecuType_t r_ecuType, uint8_t rui8_ind, bool rb_forceClaimedAddress)
+{
+  int8_t c_cnt = -1;
+  for (Vec_ISOIterator pc_iter  = vec_isoMember.begin() ; pc_iter != vec_isoMember.end(); pc_iter++)
+  {
+    if ( ((pc_iter->devKey().getConstName().getEcuType()) == r_ecuType)
+      && (!rb_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
+    {
+      c_cnt++;
+      if (c_cnt == rui8_ind)
+      {
+        pc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
+        break; //searched Item found (first element has 0)break; //searched Item found (first element has 0)
+      }
+    }
+  }
+  // check if rui8_ind was in correct range
+  if (rui8_ind != c_cnt)
+  { // wrong range of rui8_ind
+    getLbsErrInstance().registerError( LibErr_c::Range, LibErr_c::LbsSystem );
+  }
+  return *pc_isoMemberCache;
+}
+
+
+
 /**
   deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
   which optional (!!) match the condition of address claim state

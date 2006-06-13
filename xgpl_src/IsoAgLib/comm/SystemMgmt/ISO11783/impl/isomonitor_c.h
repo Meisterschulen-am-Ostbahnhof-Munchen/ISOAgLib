@@ -195,7 +195,7 @@ public:
     @return amount of ISO members with claimed address
   */
   uint8_t isoMemberCnt(bool rb_forceClaimedAddress = false)
-    {return isoMemberDevClassCnt(0xFF, rb_forceClaimedAddress);};
+    {return isoMemberDevClassCnt(0xFF, rb_forceClaimedAddress);}
   /**
     deliver the n'th ISO member in monitor list which optional (!!)
     match the condition of address claim state
@@ -213,7 +213,36 @@ public:
     @return reference to searched element
   */
   ISOItem_c& isoMemberInd(uint8_t rui8_ind, bool rb_forceClaimedAddress = false)
-    {return isoMemberDevClassInd(0xFF, rui8_ind, rb_forceClaimedAddress);};
+    {return isoMemberDevClassInd(0xFF, rui8_ind, rb_forceClaimedAddress);}
+
+  /**
+    deliver the count of members in the Monitor-List with given ECU-Type (which is an own IsoAgLib-definition!)
+    which optional (!!) match the condition of address claim state
+    @param rui8_ecuType searched ECU-Type code
+    @param rb_forceClaimedAddress true -> only members with claimed address are used
+          (optional, default false)
+    @return count of members in Monitor-List with ECU-Type == rui8_ecuType
+  */
+  uint8_t isoMemberEcuTypeCnt (ISOName_c::ecuType_t r_ecuType, bool rb_forceClaimedAddress = false);
+
+  /**
+    deliver one of the members with specific ECU_Type (which is an own IsoAgLib-definition!)
+    which optional (!!) match the condition of address claim state
+    check first with isoMemberEcuTypeCnt if enough members with wanted ECU-Type and
+    optional (!!) property are registered in Monitor-List
+    @see isoMemberEcuTypeCnt
+
+    possible errors:
+      * Err_c::range there exist less than rui8_ind members with ECU-Type rui8_ecuType
+    @param rui8_ecuType searched ECU-Type code
+    @param rui8_ind position of the wanted member in the
+                  sublist of member with given ECU-Type (first item has rui8_ind == 0 !!)
+    @param rb_forceClaimedAddress true -> only members with claimed address are used
+          (optional, default false)
+    @return reference to searched element
+  */
+  ISOItem_c& isoMemberEcuTypeInd (ISOName_c::ecuType_t r_ecuType, uint8_t rui8_ind, bool rb_forceClaimedAddress = false);
+
 
   /**
     deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
