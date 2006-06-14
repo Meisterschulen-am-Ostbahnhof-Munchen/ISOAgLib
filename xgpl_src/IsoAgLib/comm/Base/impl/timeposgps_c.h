@@ -91,7 +91,7 @@
 #include <ctime>
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
 #ifdef USE_ISO_11783
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
+  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
 #endif
 
 #if defined(NMEA_2000_FAST_PACKET) && defined(USE_ISO_11783)
@@ -209,7 +209,8 @@ public:
 
   #ifdef USE_ISO_11783
   bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
-
+  /** force a request for pgn for time/date information */
+  bool sendRequestUpdateTimeDate();
    /** config the Base_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
@@ -556,8 +557,6 @@ private:
 
 private:
   // Private attributes
-    /** last time of calendar msg [msec] */
- // int32_t i32_lastCalendar;
     /** last timestamp where calendar was set
     -> use this to calculate new time
     */

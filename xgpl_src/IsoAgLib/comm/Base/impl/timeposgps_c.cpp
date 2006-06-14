@@ -300,8 +300,7 @@ namespace __IsoAgLib {
     if ( ( ! checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setIsoFilterCreated();
-       // create FilterBox_c for PGN REQUEST_PGN_MSG_PGN, TIME_DATE_PGN
-      getIsoRequestPgnInstance4Comm().registerPGN (*this, TIME_DATE_PGN); // request for calendar
+
       // create FilterBox_c for PGN TIME_DATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
@@ -348,7 +347,27 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     */
   void TimePosGPS_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
+    #ifdef USE_ISO_11783
+    //store old mode to decide to register or unregister to request for pgn
+    IsoAgLib::IdentMode_t t_oldMode = getMode();
+    #endif
+    //call config for handling which is base data independent
     BaseCommon_c::config(rpc_devKey, rt_identMode);
+
+    #ifdef USE_ISO_11783
+    if (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
+    {  // a change from Implement mode to Tractor mode occured
+      // create FilterBox_c for REQUEST_PGN_MSG_PGN, TIME_DATE_PGN
+      getIsoRequestPgnInstance4Comm().registerPGN (*this, TIME_DATE_PGN); // request for time and date
+    }
+
+    if (t_oldMode == IsoAgLib::IdentModeTractor && rt_identMode == IsoAgLib::IdentModeImplement)
+    {  // a change from Tractor mode to Implement mode occured
+      // unregister from request for pgn, because in implement mode no request should be answered
+      getIsoRequestPgnInstance4Comm().unregisterPGN (*this, TIME_DATE_PGN);
+    }
+    #endif
+
     // set the member base msg value vars to NO_VAL codes
     bit_calendar.year = 0;
     bit_calendar.month = 1;
@@ -364,6 +383,14 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   };
 
 #if defined(USE_ISO_11783)
+  /** force a request for pgn for time/date information */
+  bool TimePosGPS_c::sendRequestUpdateTimeDate()
+  {
+    if ( checkMode(IsoAgLib::IdentModeImplement) )
+      return BaseCommon_c::sendPgnRequest(TIME_DATE_PGN);
+    else
+      return false;
+  }
    /** config the Base_c object after init -> set pointer to devKey and
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
@@ -616,13 +643,19 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   }
 
 
-  bool TimePosGPS_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t /*rui8_da*/)
+  bool TimePosGPS_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t rui8_da)
   {
-    if (checkMode(IsoAgLib::IdentModeTractor))
-    {
-      // call Base_c function to send calendar
-      // isoSendCalendar checks if this item (identified by DEV_KEY)
-      // is configured to send calendar
+    if ( NULL == getDevKey() ) return false;
+    if ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) return false;
+
+    // now we can be sure, that we are in tractor mode, and the registered tractor device key
+    // belongs to an already claimed IsoItem_c --> we are allowed to send
+    if ( ( getIsoMonitorInstance4Comm().isoMemberDevKey( *getDevKey() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
+    { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
+      // DevKey_c (getDevKey())
+      // call TracGeneral_c function to send language of Tractor-ECU
+      // isoSendLanguage checks if this item (identified by DEV_KEY)
+      // is configured to send language
       isoSendCalendar(*getDevKey());
       return true;
     }
@@ -1128,6 +1161,9 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     */
   void TimePosGPS_c::isoSendCalendar(const DevKey_c& rc_devKey)
   {
+    if ( getDevKey() == NULL ) return;
+    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
+
     if ( ( getSelectedDataSourceDevKey() == rc_devKey ) )
     { // this item (identified by DEV_KEY is configured to send
       data().setIsoPgn(TIME_DATE_PGN);

@@ -105,6 +105,11 @@ namespace __IsoAgLib
       */
     void singletonInit();
 
+    /** constructor */
+    BaseCommon_c() : t_identMode(IsoAgLib::IdentModeImplement) {};
+    /** destructor */
+    ~BaseCommon_c() {};
+
     /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
     void close( );
 
@@ -163,6 +168,8 @@ namespace __IsoAgLib
     virtual bool timeEvent();
 
     #ifdef USE_ISO_11783
+    /** send a PGN request */
+    bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN);
     /** process a ISO11783 base information PGN */
     virtual bool isoProcessMsg();
     /** send a ISO11783 base information PGN.
@@ -222,6 +229,8 @@ namespace __IsoAgLib
     /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
     const DevKey_c& getSelectedDataSourceDevKeyConst() const {return c_selectedDataSourceDevKey;}
 
+    /** get actual mode */
+    IsoAgLib::IdentMode_t getMode() const {return t_identMode;}
     /** set mode to implement or tractor*/
     void setMode(IsoAgLib::IdentMode_t rt_identMode) {t_identMode = rt_identMode;}
     /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */

@@ -150,7 +150,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracGeneral_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   { // set configure values
-
+    #ifdef USE_ISO_11783
+    //store old mode to decide to register or unregister to request for pgn
+    IsoAgLib::IdentMode_t t_oldMode = getMode();
+    #endif
     //call config for handling which is base data independent
     BaseCommon_c::config(rpc_devKey, rt_identMode);
 
@@ -168,6 +171,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     ui8_fuelTemperature = NO_VAL_8;
     #endif
     #ifdef USE_ISO_11783
+    if (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
+    { // a change from Implement mode to Tractor mode occured
+      // create FilterBox_c for REQUEST_PGN_MSG_PGN, LANGUAGE_PGN
+      getIsoRequestPgnInstance4Comm().registerPGN (*this, LANGUAGE_PGN); // request for language
+    }
+
+    if (t_oldMode == IsoAgLib::IdentModeTractor && rt_identMode == IsoAgLib::IdentModeImplement)
+    { // a change from Tractor mode to Implement mode occured
+      // unregister from request for pgn, because in implement mode no request should be answered
+      getIsoRequestPgnInstance4Comm().unregisterPGN (*this, LANGUAGE_PGN);
+    }
+
     i32_lastIsoPositionSimple = 0;
 
     t_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
@@ -266,8 +281,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ( !checkIsoFilterCreated() ) && ( c_systemMgmt.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setIsoFilterCreated();
-      // create FilterBox_c for REQUEST_PGN_MSG_PGN, LANGUAGE_PGN
-      getIsoRequestPgnInstance4Comm().registerPGN (*this, LANGUAGE_PGN); // request for language
       // create FilterBox_c for PGN FRONT_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x1FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x1FFFF) << 8),
@@ -449,7 +462,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   {
     if ( lastedTimeSinceUpdate() >= 100 )
     {// it's time to send hitch information
-      isoSendMsg();
+      isoSendMessage();
     }
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
@@ -561,15 +574,20 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return b_result;
   }
 
-
-  bool TracGeneral_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t /*rui8_da*/)
+  bool TracGeneral_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t rui8_da)
   {
-    if (checkMode (IsoAgLib::IdentModeTractor))
-    {
+    if ( NULL == getDevKey() ) return false;
+    if ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) return false;
+
+    // now we can be sure, that we are in tractor mode, and the registered tractor device key
+    // belongs to an already claimed IsoItem_c --> we are allowed to send
+    if ( ( getIsoMonitorInstance4Comm().isoMemberDevKey( *getDevKey() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
+    { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
+      // DevKey_c (getDevKey())
       // call TracGeneral_c function to send language of Tractor-ECU
       // isoSendLanguage checks if this item (identified by DEV_KEY)
       // is configured to send language
-      isoSendLanguage (*getDevKey());
+      isoSendLanguage();
       return true;
     }
     return false;
@@ -577,8 +595,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
 
   /** send front hitch and rear hitch data msg*/
-  void TracGeneral_c::isoSendMsg()
+  void TracGeneral_c::isoSendMessage()
   {
+    if ( getDevKey() == NULL ) return;
     if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
 
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
@@ -669,10 +688,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   }
 
   /** send iso language data msg*/
-  void TracGeneral_c::isoSendLanguage(const DevKey_c& rpc_devKey)
+  void TracGeneral_c::isoSendLanguage()
   {
-    if (!b_languageVtReceived
-       || ( rpc_devKey.isUnspecified()  )
+    if ( getDevKey() == NULL ) return;
+
+    if (  !b_languageVtReceived
+       || ( getDevKey()->isUnspecified()  )
        || !getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)
        )
     { //if VT has up to now not send the language command there is no sense to send it
@@ -752,6 +773,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // CANIO_c::operator<< retrieves the information with the help of CANPkg_c::getData
     // then it sends the data
     getCanInstance4Comm() << data();
+  }
+  /** force a request for pgn for language information */
+  bool TracGeneral_c::sendRequestUpdateLanguage()
+  {
+    if ( checkMode(IsoAgLib::IdentModeImplement) )
+      return BaseCommon_c::sendPgnRequest(LANGUAGE_PGN);
+    else
+      return false;
   }
   #endif
 

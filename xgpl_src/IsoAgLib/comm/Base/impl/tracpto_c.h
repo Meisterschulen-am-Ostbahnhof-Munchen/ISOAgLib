@@ -88,8 +88,45 @@
 #define TRACPTO_C_H
 
 #include <IsoAgLib/comm/Base/impl/basecommon_c.h>
+#ifdef USE_ISO_11783
+  #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
+#endif
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
+
+/** decide which pto information to send (front/rear) */
+typedef enum
+{
+  sendFrontPto = 0,
+  sendRearPto  = 1
+} SendPtoData_t;
+
+/** pto information */
+typedef struct
+{
+  /** last time of pto data msg [msec] */
+  int32_t i32_lastPto;
+  /** pto [1/8RPM] */
+  uint16_t ui16_pto8DigitPerRpm;
+  #ifdef USE_ISO_11783
+  /** measured value of the set point of the rotational speed of the power take-off (PTO) output shaft [1/8RPM] */
+  uint16_t ui16_ptoSetPoint8DigitPerRpm;
+  /** PTO engaged */
+  IsoAgLib::IsoActiveFlag_t t_ptoEngaged : 2;
+  /** mode of PTO: true == 1000 n/min; false == 540 n/min */
+  IsoAgLib::IsoActiveFlag_t t_pto1000 : 2;
+  /** economy mode of PTO */
+  IsoAgLib::IsoActiveFlag_t t_ptoEconomy : 2;
+  /** report tractor ECU's status of engagement */
+  IsoAgLib::IsoReqFlag_t t_ptoEngagementReqStatus : 2;
+  /** report tractor ECU's status of mode */
+  IsoAgLib::IsoReqFlag_t t_ptoModeReqStatus : 2;
+  /** report tractor ECU's status of economy mode */
+  IsoAgLib::IsoReqFlag_t t_ptoEconomyModeReqStatus : 2;
+  /** present limit status of pto shaft speed */
+  IsoAgLib::IsoLimitFlag_t t_ptoShaftSpeedLimitStatus : 3;
+  #endif
+} PtoData_t;
 
   class TracPTO_c;
   typedef SINGLETON_DERIVED(TracPTO_c,BaseCommon_c) SingletonTracPto_c;
@@ -101,7 +138,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
 
-  class TracPTO_c : public SingletonTracPto_c{
+  class TracPTO_c : public SingletonTracPto_c
+              #ifdef USE_ISO_11783
+                  , public ISORequestPGNHandler_c
+              #endif
+  {
   public:// Public methods
     /* ********************************************* */
     /** \name Management Functions for class TracPTO_c  */
@@ -140,7 +181,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       */
     void setPtoRear(const uint16_t rui16_val)
     {
-      ui16_ptoRear8DigitPerRpm = ( rui16_val * 8 );
+      t_ptoRear.ui16_pto8DigitPerRpm = ( rui16_val * 8 );
       #ifdef USE_ISO_11783
       if ( rui16_val == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
       else                 setPtoRearEngaged( IsoAgLib::IsoActive );
@@ -151,7 +192,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       */
     void setPtoFront(const uint16_t rui16_val)
     {
-      ui16_ptoFront8DigitPerRpm = ( rui16_val * 8 );
+      t_ptoFront.ui16_pto8DigitPerRpm = ( rui16_val * 8 );
       #ifdef USE_ISO_11783
       if ( rui16_val == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
       else                  setPtoFrontEngaged( IsoAgLib::IsoActive );
@@ -163,7 +204,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
      */
     void setPtoRear8DigitPerRpm(const uint16_t rui16_val8DigitPerRpm)
     {
-      ui16_ptoRear8DigitPerRpm = rui16_val8DigitPerRpm;
+      t_ptoRear.ui16_pto8DigitPerRpm = rui16_val8DigitPerRpm;
       #ifdef USE_ISO_11783
       if ( rui16_val8DigitPerRpm == 0 ) setPtoRearEngaged( IsoAgLib::IsoInactive );
       else                              setPtoRearEngaged( IsoAgLib::IsoActive );
@@ -174,7 +215,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
      */
     void setPtoFront8DigitPerRpm(const uint16_t rui16_val8DigitPerRpm)
     {
-      ui16_ptoFront8DigitPerRpm = rui16_val8DigitPerRpm;
+      t_ptoFront.ui16_pto8DigitPerRpm = rui16_val8DigitPerRpm;
       #ifdef USE_ISO_11783
       if ( rui16_val8DigitPerRpm == 0 ) setPtoFrontEngaged( IsoAgLib::IsoInactive );
       else                              setPtoFrontEngaged( IsoAgLib::IsoActive );
@@ -182,84 +223,95 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     };
 
     #ifdef USE_ISO_11783
+    bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
+    /** force a request for pgn for front pto state */
+    bool sendRequestUpdateFront();
+    /** force a request for pgn for rear pto state */
+    bool sendRequestUpdateRear();
+    /** send pto data message
+        @param t_sendptodata  send pto front or pto rear
+      */
+    void isoSendMessage(SendPtoData_t t_sendptodata);
     /** set explicit information whether front PTO is engaged
       * @param rt_val IsoActive -> PTO is engaged
       */
-    void setPtoFrontEngaged(const IsoAgLib::IsoActiveFlag_t rt_val) { t_frontPtoEngaged = rt_val; }
+    void setPtoFrontEngaged(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoFront.t_ptoEngaged = rt_val; }
     /** set explicit information whether rear PTO is engaged
       * @param rt_val IsoActive -> PTO is engaged
       */
-    void setPtoRearEngaged(const IsoAgLib::IsoActiveFlag_t rt_val) { t_rearPtoEngaged = rt_val;}
+    void setPtoRearEngaged(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoRear.t_ptoEngaged = rt_val;}
     /** set std RPM of front PTO (1000 n/min; 540 n/min)
       * @param rt_val IsoActive == 1000 n/min; false == 540 n/min
       */
-    void setPtoFront1000(const IsoAgLib::IsoActiveFlag_t rt_val) { t_frontPto1000 = rt_val;}
+    void setPtoFront1000(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoFront.t_pto1000 = rt_val;}
     /** set std RPM of rear PTO (1000 n/min; 540 n/min)
       * @param rt_val IsoActive == 1000 n/min; false == 540 n/min
       */
-    void setPtoRear1000(const IsoAgLib::IsoActiveFlag_t rt_val) { t_rearPto1000 = rt_val;}
+    void setPtoRear1000(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoRear.t_pto1000 = rt_val;}
     /** set economy mode of front PTO
       * @param rt_val IsoActive -> front PTO is in economy mode
       */
-    void setPtoFrontEconomy(const IsoAgLib::IsoActiveFlag_t rt_val) { t_frontPtoEconomy = rt_val;}
+    void setPtoFrontEconomy(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoFront.t_ptoEconomy = rt_val;}
     /** set economy mode of rear PTO
       * @param rt_val IsoActive -> rear PTO is in economy mode
       */
-    void setPtoRearEconomy(const IsoAgLib::IsoActiveFlag_t rt_val) { t_rearPtoEconomy = rt_val;}
+    void setPtoRearEconomy(const IsoAgLib::IsoActiveFlag_t rt_val) { t_ptoRear.t_ptoEconomy = rt_val;}
     /** set measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
         @param ri16_val requested RPM [1RPM]
       */
-    void setFrontPtoSetPoint(const uint16_t ri16_val)  { ui16_frontPtoSetPoint8DigitPerRpm = ( ri16_val * 8 );}
+    void setFrontPtoSetPoint(const uint16_t ri16_val)  { t_ptoFront.ui16_ptoSetPoint8DigitPerRpm = ( ri16_val * 8 );}
     /** set measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
         @param ri16_val requested RPM [1RPM]
       */
-    void setRearPtoSetPoint(const uint16_t ri16_val)  { ui16_rearPtoSetPoint8DigitPerRpm = ( ri16_val * 8 );}
+    void setRearPtoSetPoint(const uint16_t ri16_val)  { t_ptoRear.ui16_ptoSetPoint8DigitPerRpm = ( ri16_val * 8 );}
     /** set measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
         @param ri16_val8DigitPerRpm requested RPM [1/8RPM]
      */
-    void setFrontPtoSetPoint8DigitPerRpm(const uint16_t ri16_val8DigitPerRpm)  { ui16_frontPtoSetPoint8DigitPerRpm = ri16_val8DigitPerRpm;}
+    void setFrontPtoSetPoint8DigitPerRpm(const uint16_t ri16_val8DigitPerRpm)
+    { t_ptoFront.ui16_ptoSetPoint8DigitPerRpm = ri16_val8DigitPerRpm;}
     /** set measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
         @param ri16_val8DigitPerRpm requested RPM [1/8RPM]
      */
-    void setRearPtoSetPoint8DigitPerRpm(const uint16_t ri16_val8DigitPerRpm)  { ui16_rearPtoSetPoint8DigitPerRpm = ri16_val8DigitPerRpm;}
+    void setRearPtoSetPoint8DigitPerRpm(const uint16_t ri16_val8DigitPerRpm)
+    { t_ptoRear.ui16_ptoSetPoint8DigitPerRpm = ri16_val8DigitPerRpm;}
     /** set reported tractor ECU's status of front engagement
         @param rt_val  status to set
       */
-    void setFrontPtoEngagementReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_frontPtoEngagementReqStatus = rt_val;}
+    void setFrontPtoEngagementReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoFront.t_ptoEngagementReqStatus = rt_val;}
     /** set reported tractor ECU's status of rear engagement
         @param rt_val  status to set
       */
-    void setRearPtoEngagementReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_rearPtoEngagementReqStatus = rt_val;}
+    void setRearPtoEngagementReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoRear.t_ptoEngagementReqStatus = rt_val;}
 
     /** set reported tractor ECU's status of front mode
         @param rt_val  status to set
       */
-    void setFrontPtoModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_frontPtoModeReqStatus = rt_val;}
+    void setFrontPtoModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoFront.t_ptoModeReqStatus = rt_val;}
 
     /** set reported tractor ECU's status of rear mode
         @param rt_val  status to set
       */
-    void setRearPtoModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_rearPtoModeReqStatus = rt_val;}
+    void setRearPtoModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoRear.t_ptoModeReqStatus = rt_val;}
 
     /** set reported tractor ECU's status of front economy mode
         @param rt_val  status to set
       */
-    void setFrontPtoEconomyModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_frontPtoEconomyModeReqStatus = rt_val;}
+    void setFrontPtoEconomyModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoFront.t_ptoEconomyModeReqStatus = rt_val;}
 
     /** set reported tractor ECU's status of rear economy mode
         @param rt_val  status to set
       */
-    void setRearPtoEconomyModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_rearPtoEconomyModeReqStatus = rt_val;}
+    void setRearPtoEconomyModeReqStatus(IsoAgLib::IsoReqFlag_t rt_val) {t_ptoRear.t_ptoEconomyModeReqStatus = rt_val;}
 
     /** set present limit status of front pto shaft speed
         @param rt_val  status to set
       */
-    void setFrontPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitFlag_t rt_val) {t_frontPtoShaftSpeedLimitStatus = rt_val;}
+    void setFrontPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitFlag_t rt_val) {t_ptoFront.t_ptoShaftSpeedLimitStatus = rt_val;}
 
     /** set present limit status of rear pto shaft speed
         @param rt_val  status to set
       */
-    void setRearPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitFlag_t rt_val) {t_rearPtoShaftSpeedLimitStatus = rt_val;}
+    void setRearPtoShaftSpeedLimitStatus(IsoAgLib::IsoLimitFlag_t rt_val) {t_ptoRear.t_ptoShaftSpeedLimitStatus = rt_val;}
     #endif
     /*@}*/
 
@@ -270,95 +322,95 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** get rear pto
         @return actual rpm speed of rear PTO [1RPM]
       */
-    uint16_t ptoRear() const { return ( ui16_ptoRear8DigitPerRpm / 8 );};
+    uint16_t ptoRear() const { return ( t_ptoRear.ui16_pto8DigitPerRpm / 8 );};
     /** get front pto
         @return actual rpm speed of front PTO [1RPM]
       */
-    uint16_t ptoFront() const { return ( ui16_ptoFront8DigitPerRpm / 8 );};
+    uint16_t ptoFront() const { return ( t_ptoFront.ui16_pto8DigitPerRpm / 8 );};
 
     /** get rear pto
       @return actual rpm speed of rear PTO [1/8RPM]
      */
-    uint16_t ptoRear8DigitPerRpm() const { return ( ui16_ptoRear8DigitPerRpm);};
+    uint16_t ptoRear8DigitPerRpm() const { return ( t_ptoRear.ui16_pto8DigitPerRpm);};
     /** get front pto
       @return actual rpm speed of front PTO [1/8RPM]
      */
-    uint16_t ptoFront8DigitPerRpm() const { return ( ui16_ptoFront8DigitPerRpm);};
+    uint16_t ptoFront8DigitPerRpm() const { return ( t_ptoFront.ui16_pto8DigitPerRpm);};
 
 
     #ifdef USE_ISO_11783
     /** deliver explicit information whether front PTO is engaged
       * @return IsoActive -> PTO is engaged
       */
-    IsoAgLib::IsoActiveFlag_t ptoFrontEngaged() const { return t_frontPtoEngaged;}
+    IsoAgLib::IsoActiveFlag_t ptoFrontEngaged() const { return t_ptoFront.t_ptoEngaged;}
     /** deliver explicit information whether rear PTO is engaged
       * @return IsoActive -> PTO is engaged
       */
-    IsoAgLib::IsoActiveFlag_t ptoRearEngaged() const { return t_rearPtoEngaged;}
+    IsoAgLib::IsoActiveFlag_t ptoRearEngaged() const { return t_ptoRear.t_ptoEngaged;}
     /** deliver std RPM of front PTO (1000 n/min; 540 n/min)
       * @return IsoActive == 1000 n/min; false == 540 n/min
       */
-    IsoAgLib::IsoActiveFlag_t ptoFront1000() const { return t_frontPto1000;}
+    IsoAgLib::IsoActiveFlag_t ptoFront1000() const { return t_ptoFront.t_pto1000;}
     /** deliver std RPM of rear PTO (1000 n/min; 540 n/min)
       * @return IsoActive == 1000 n/min; false == 540 n/min
       */
-    IsoAgLib::IsoActiveFlag_t ptoRear1000() const { return t_rearPto1000;}
+    IsoAgLib::IsoActiveFlag_t ptoRear1000() const { return t_ptoRear.t_pto1000;}
     /** deliver economy mode of front PTO
       * @return IsoActive -> front PTO is in economy mode
       */
-    IsoAgLib::IsoActiveFlag_t ptoFrontEconomy() const { return t_frontPtoEconomy;}
+    IsoAgLib::IsoActiveFlag_t ptoFrontEconomy() const { return t_ptoFront.t_ptoEconomy;}
     /** deliver economy mode of rear PTO
       * @return IsoActive -> rear PTO is in economy mode
       */
-    IsoAgLib::IsoActiveFlag_t ptoRearEconomy() const { return t_rearPtoEconomy;}
+    IsoAgLib::IsoActiveFlag_t ptoRearEconomy() const { return t_ptoRear.t_ptoEconomy;}
     /** get measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
         @return measured value of the set point [1RPM]
       */
-    uint16_t frontPtoSetPoint() const { return ( ui16_frontPtoSetPoint8DigitPerRpm / 8 );}
+    uint16_t frontPtoSetPoint() const { return ( t_ptoFront.ui16_ptoSetPoint8DigitPerRpm / 8 );}
     /** get measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
         @return measured value of the set point [1RPM]
       */
-    uint16_t rearPtoSetPoint() const { return ( ui16_rearPtoSetPoint8DigitPerRpm / 8 );}
+    uint16_t rearPtoSetPoint() const { return ( t_ptoRear.ui16_ptoSetPoint8DigitPerRpm / 8 );}
     /** get measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
         @return measured value of the set point [1/8RPM]
      */
-    uint16_t frontPtoSetPoint8DigitPerRpm() const { return ui16_frontPtoSetPoint8DigitPerRpm;}
+    uint16_t frontPtoSetPoint8DigitPerRpm() const { return t_ptoFront.ui16_ptoSetPoint8DigitPerRpm;}
     /** get measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft
         @return measured value of the set point [1/8RPM]
      */
-    uint16_t rearPtoSetPoint8DigitPerRpm() const { return ui16_rearPtoSetPoint8DigitPerRpm;}
+    uint16_t rearPtoSetPoint8DigitPerRpm() const { return t_ptoRear.ui16_ptoSetPoint8DigitPerRpm;}
     /** get reported tractor ECU's status of front engagement
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t frontPtoEngagementReqStatus() const {return t_frontPtoEngagementReqStatus;}
+    IsoAgLib::IsoReqFlag_t frontPtoEngagementReqStatus() const {return t_ptoFront.t_ptoEngagementReqStatus;}
     /** get reported tractor ECU's status of rear engagement
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t rearPtoEngagementReqStatus() const {return t_rearPtoEngagementReqStatus;}
+    IsoAgLib::IsoReqFlag_t rearPtoEngagementReqStatus() const {return t_ptoRear.t_ptoEngagementReqStatus;}
     /** get reported tractor ECU's status of front mode
          @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t frontPtoModeReqStatus() const {return t_frontPtoModeReqStatus;}
+    IsoAgLib::IsoReqFlag_t frontPtoModeReqStatus() const {return t_ptoFront.t_ptoModeReqStatus;}
     /** get reported tractor ECU's status of rear mode
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t rearPtoModeReqStatus() const {return t_rearPtoModeReqStatus;}
+    IsoAgLib::IsoReqFlag_t rearPtoModeReqStatus() const {return t_ptoRear.t_ptoModeReqStatus;}
     /** get reported tractor ECU's status of front economy mode
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t frontPtoEconomyModeReqStatus() const {return t_frontPtoEconomyModeReqStatus;}
+    IsoAgLib::IsoReqFlag_t frontPtoEconomyModeReqStatus() const {return t_ptoFront.t_ptoEconomyModeReqStatus;}
     /** get reported tractor ECU's status of rear economy mode
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t rearPtoEconomyModeReqStatus()const {return t_rearPtoEconomyModeReqStatus;}
+    IsoAgLib::IsoReqFlag_t rearPtoEconomyModeReqStatus()const {return t_ptoRear.t_ptoEconomyModeReqStatus;}
     /** get present limit status of front pto shaft speed
         @return  present limit status
       */
-    IsoAgLib::IsoLimitFlag_t frontPtoShaftSpeedLimitStatus() const {return t_frontPtoShaftSpeedLimitStatus;}
+    IsoAgLib::IsoLimitFlag_t frontPtoShaftSpeedLimitStatus() const {return t_ptoFront.t_ptoShaftSpeedLimitStatus;}
     /** get present limit status of rear pto shaft speed
         @return  present limit status
       */
-    IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return t_rearPtoShaftSpeedLimitStatus;}
+    IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return t_ptoRear.t_ptoShaftSpeedLimitStatus;}
     #endif
     /*@}*/
 
@@ -395,51 +447,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   private:
     // Private attributes
-    /** last time of pto front data msg [msec] */
-    int32_t i32_lastPtoFront;
-    /** last time of pto rear data msg [msec] */
-    int32_t i32_lastPtoRear;
-
-    /** pto rear [1/8RPM] */
-    uint16_t ui16_ptoRear8DigitPerRpm;
-    /** pto front [1/8RPM] */
-    uint16_t ui16_ptoFront8DigitPerRpm;
-
-    #ifdef USE_ISO_11783
-    /// General
-    /** front PTO engaged */
-    IsoAgLib::IsoActiveFlag_t t_frontPtoEngaged;
-    /** rear PTO engaged */
-    IsoAgLib::IsoActiveFlag_t t_rearPtoEngaged;
-    /** mode of front PTO: true == 1000 n/min; false == 540 n/min */
-    IsoAgLib::IsoActiveFlag_t t_frontPto1000;
-    /** mode of rear PTO: true == 1000 n/min; false == 540 n/min */
-    IsoAgLib::IsoActiveFlag_t t_rearPto1000;
-    /** economy mode of front PTO */
-    IsoAgLib::IsoActiveFlag_t t_frontPtoEconomy;
-    /** economy mode of rear PTO */
-    IsoAgLib::IsoActiveFlag_t t_rearPtoEconomy;
-    /** measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft [1/8RPM] */
-    uint16_t ui16_frontPtoSetPoint8DigitPerRpm;
-    /** measured value of the set point of the rotational speed of the rear power take-off (PTO) output shaft [1/8RPM] */
-    uint16_t ui16_rearPtoSetPoint8DigitPerRpm;
-    /** report tractor ECU's status of front engagement */
-    IsoAgLib::IsoReqFlag_t t_frontPtoEngagementReqStatus;
-    /** report tractor ECU's status of rear engagement */
-    IsoAgLib::IsoReqFlag_t t_rearPtoEngagementReqStatus;
-    /** report tractor ECU's status of front mode */
-    IsoAgLib::IsoReqFlag_t t_frontPtoModeReqStatus;
-    /** report tractor ECU's status of rear mode */
-    IsoAgLib::IsoReqFlag_t t_rearPtoModeReqStatus;
-    /** report tractor ECU's status of front economy mode */
-    IsoAgLib::IsoReqFlag_t t_frontPtoEconomyModeReqStatus;
-    /** report tractor ECU's status of rear economy mode */
-    IsoAgLib::IsoReqFlag_t t_rearPtoEconomyModeReqStatus;
-    /** present limit status of front pto shaft speed */
-    IsoAgLib::IsoLimitFlag_t t_frontPtoShaftSpeedLimitStatus;
-    /** present limit status of rear pto shaft speed */
-    IsoAgLib::IsoLimitFlag_t t_rearPtoShaftSpeedLimitStatus;
-    #endif
+    /** pto front information */
+    PtoData_t t_ptoFront;
+    /** pto rear information */
+    PtoData_t t_ptoRear;
   };
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)

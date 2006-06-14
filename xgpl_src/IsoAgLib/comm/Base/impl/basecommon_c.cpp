@@ -91,9 +91,9 @@
 #ifdef USE_ISO_11783
   #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #endif
-
 #include "basecommon_c.h"
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
+#include <IsoAgLib/driver/can/impl/canio_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -301,7 +301,47 @@ bool BaseCommon_c::isoTimeEventTracMode()
   */
 bool BaseCommon_c::isoTimeEventImplMode()
 { return true;}
+
+/** send a PGN request */
+bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
+{
+  data().setIsoPri(6);
+  // set PGN first, as this might overwrite the PS field
+  data().setIsoPgn(REQUEST_PGN_MSG_PGN);
+
+  /// if the ISOItem_c is not in the monitor list, ignore this request
+  if ( getSystemMgmtInstance4Comm().existActiveLocalMember() )
+  { // use the SA of the already active node
+    data().setIsoSa(getSystemMgmtInstance4Comm().getActiveLocalMember().nr());
+  }
+  else
+  { // there exists no local ident which is in claimed state -> we are not allowed to send on ISOBUS
+    return false;
+  }
+
+  // now check and retrieve the target
+  if ( ( getSelectedDataSourceDevKeyConst().isSpecified() )
+    && ( getIsoMonitorInstance4Comm().existIsoMemberDevKey( getSelectedDataSourceDevKeyConst(), true ) ) )
+  { // we have a valid tractor data source, that can be asked directly
+    data().setIsoPs( getIsoMonitorInstance4Comm().isoMemberDevKey( getSelectedDataSourceDevKeyConst(), true ).nr() );
+  }
+  else
+  { // there is no selected tractor registered --> ask to global
+    data().setIsoPs(255); // global request
+  }
+
+  // built request data string
+  uint8_t pb_requestString[4];
+  pb_requestString[0] = (ui32_requestedPGN & 0xFF);
+  pb_requestString[1] = ((ui32_requestedPGN >> 8)& 0xFF);
+  pb_requestString[2] = ((ui32_requestedPGN >> 16)& 0xFF);
+  data().setDataString(pb_requestString, 3);
+  // now ISOSystemPkg_c has right data -> send
+  getCanInstance4Comm() << data();
+  return true;
+}
 #endif
+
 #ifdef USE_DIN_9684
 /** process a DIN9684 base information PGN */
 bool BaseCommon_c::dinProcessMsg() {return false;}

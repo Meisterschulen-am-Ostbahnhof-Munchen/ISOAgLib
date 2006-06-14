@@ -117,9 +117,9 @@ typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
     per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
 class TracGeneral_c : public SingletonTracGeneral_c
-#if defined USE_ISO_11783
-, public ISORequestPGNHandler_c
-#endif
+                    #if defined USE_ISO_11783
+                    , public ISORequestPGNHandler_c
+                    #endif
 {
 public: // Public methods
   /* ********************************************* */
@@ -164,6 +164,8 @@ public: // Public methods
 
   #if defined USE_ISO_11783
   bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
+  /** force a request for pgn for language information */
+  bool sendRequestUpdateLanguage();
 
   /** force maintain power from tractor
     * @param rb_ecuPower true -> maintain ECU power
@@ -364,7 +366,7 @@ public: // Public methods
   const uint8_t* getTecuLanguage() const { return p8ui8_languageTecu; }
 
   /** send iso language data msg*/
-  void isoSendLanguage(const DevKey_c& rpc_devKey);
+  void isoSendLanguage();
   #endif
   /*@}*/
 
@@ -397,7 +399,7 @@ private:
   /** process a ISO11783 general base information PGN */
   virtual bool isoProcessMsg();
   /** send front hitch and rear hitch data msg*/
-  void isoSendMsg();
+  void isoSendMessage();
   #endif
 
 private:

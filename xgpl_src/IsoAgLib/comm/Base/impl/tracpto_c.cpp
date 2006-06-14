@@ -89,6 +89,9 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "tracpto_c.h"
 #include "tracgeneral_c.h"
+#ifdef USE_ISO_11783
+ #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
+#endif
 
 using namespace std;
 
@@ -119,23 +122,43 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
    */
   void TracPTO_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_IdentMode)
   {
+    #ifdef USE_ISO_11783
+    //store old mode to decide to register or unregister from request for pgn
+    IsoAgLib::IdentMode_t t_oldMode = getMode();
+    #endif
     //call config for handling which is base data independent
     BaseCommon_c::config(rpc_devKey, rt_IdentMode);
-    // set the member base msg value vars to NO_VAL codes
-    ui16_ptoFront8DigitPerRpm = ui16_ptoRear8DigitPerRpm = NO_VAL_16S;
 
+    // set the member base msg value vars to NO_VAL codes
+    t_ptoFront.ui16_pto8DigitPerRpm = t_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16S;
     // set the timestamps to 0
-    i32_lastPtoFront = i32_lastPtoRear = 0;
+    t_ptoFront.i32_lastPto = t_ptoRear.i32_lastPto = 0;
     #ifdef USE_ISO_11783
-    t_frontPtoEngaged = t_rearPtoEngaged
-    = t_frontPto1000 = t_rearPto1000
-    = t_frontPtoEconomy = t_rearPtoEconomy = IsoAgLib::IsoNotAvailable; // mark as not available
-    ui16_frontPtoSetPoint8DigitPerRpm = 0;
-    ui16_rearPtoSetPoint8DigitPerRpm = 0;
-    t_frontPtoEngagementReqStatus = t_rearPtoEngagementReqStatus
-    = t_frontPtoModeReqStatus = t_rearPtoModeReqStatus
-    = t_frontPtoEconomyModeReqStatus = t_rearPtoEconomyModeReqStatus = IsoAgLib::IsoNotAvailableReq;
-    t_frontPtoShaftSpeedLimitStatus = t_rearPtoShaftSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
+    if (   (t_oldMode == IsoAgLib::IdentModeImplement && rt_IdentMode == IsoAgLib::IdentModeTractor)
+        || (t_oldMode == IsoAgLib::IdentModeTractor && rt_IdentMode == IsoAgLib::IdentModeImplement)
+       )
+    { // a change from Implement to Tractor mode or a change from Tractor to Implement mode occured
+      const uint8_t pgnCount = 2;
+      const uint32_t pgnArray[pgnCount] = {FRONT_PTO_STATE_PGN, REAR_PTO_STATE_PGN};
+
+      if (t_oldMode == IsoAgLib::IdentModeImplement)
+        // register to request for pgn
+        // create FilterBox_c for REQUEST_PGN_MSG_PGN, FRONT_PTO_STATE_PGN
+        getIsoRequestPgnInstance4Comm().registerPGN (*this, pgnCount, pgnArray); // request for front pto state
+      else
+        // unregister from request for pgn, because in implement mode no requests should be answered
+        getIsoRequestPgnInstance4Comm().unregisterPGN (*this, pgnCount, pgnArray);
+    }
+
+    t_ptoFront.t_ptoEngaged = t_ptoRear.t_ptoEngaged
+    = t_ptoFront.t_pto1000 = t_ptoRear.t_pto1000
+    = t_ptoFront.t_ptoEconomy = t_ptoRear.t_ptoEconomy = IsoAgLib::IsoNotAvailable; // mark as not available
+    t_ptoFront.ui16_ptoSetPoint8DigitPerRpm = 0;
+    t_ptoRear.ui16_ptoSetPoint8DigitPerRpm = 0;
+    t_ptoFront.t_ptoEngagementReqStatus = t_ptoRear.t_ptoEngagementReqStatus
+    = t_ptoFront.t_ptoModeReqStatus = t_ptoRear.t_ptoModeReqStatus
+    = t_ptoFront.t_ptoEconomyModeReqStatus = t_ptoRear.t_ptoEconomyModeReqStatus = IsoAgLib::IsoNotAvailableReq;
+    t_ptoFront.t_ptoShaftSpeedLimitStatus = t_ptoRear.t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
     #endif
   };
 
@@ -261,6 +284,32 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   #endif
 
   #ifdef USE_ISO_11783
+  bool TracPTO_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t /*rui8_sa**/, uint8_t rui8_da)
+  {
+    if ( NULL == getDevKey() ) return false;
+    if ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) return false;
+
+    // now we can be sure, that we are in tractor mode, and the registered tractor device key
+    // belongs to an already claimed IsoItem_c --> we are allowed to send
+    if ( ( getIsoMonitorInstance4Comm().isoMemberDevKey( *getDevKey() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
+    { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
+      // DevKey_c (getDevKey())
+      // call TracPto_c function to send pto informtation
+      // isoSendMessage checks if this item (identified by DEV_KEY)
+      // is configured to send pto information
+      if ( rui32_pgn == FRONT_PTO_STATE_PGN  && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
+      {
+        isoSendMessage(sendFrontPto);
+      }
+      if ( rui32_pgn == REAR_PTO_STATE_PGN && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
+      {
+        isoSendMessage(sendRearPto);
+      }
+      return true;
+    }
+    return false;
+  }
+
   /**
     process a ISO11783 base information PGN
   */
@@ -280,35 +329,31 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       // and if actual sender isn't in conflict to previous sender
       if ( checkParseReceived( c_tempDevKey ) )
       { // sender is allowed to send
+        PtoData_t* pt_ptoData = NULL;
         if (data().isoPgn() == FRONT_PTO_STATE_PGN)
         { // front PTO
-          i32_lastPtoFront = ci32_now;
-          ui16_ptoFront8DigitPerRpm         = data().getUint16Data(0);
-          ui16_frontPtoSetPoint8DigitPerRpm = data().getUint16Data(2);
-          t_frontPtoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
-          t_frontPto1000    = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 4) & 3 );
-          t_frontPtoEconomy = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 2) & 3 );
-          t_frontPtoEngagementReqStatus   = IsoAgLib::IsoReqFlag_t(    data().getUint8Data(4)       & 3 );
-          t_frontPtoModeReqStatus         = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 6) & 3 );
-          t_frontPtoEconomyModeReqStatus  = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 4) & 3 );
-          t_frontPtoShaftSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( (data().getUint8Data(5) >> 1) & 0x7 );
+          pt_ptoData = &t_ptoFront;
         }
         else
-        { // back PTO
-          i32_lastPtoRear = ci32_now;
-          ui16_ptoRear8DigitPerRpm         = data().getUint16Data(0);
-          ui16_rearPtoSetPoint8DigitPerRpm = data().getUint16Data(2);
-          t_rearPtoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
-          t_rearPto1000    = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 4) & 3 );
-          t_rearPtoEconomy = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 2) & 3 );
-          t_rearPtoEngagementReqStatus   = IsoAgLib::IsoReqFlag_t(    data().getUint8Data(4)       & 3 );
-          t_rearPtoModeReqStatus         = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 6) & 3 );
-          t_rearPtoEconomyModeReqStatus  = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 4) & 3 );
-          t_rearPtoShaftSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( (data().getUint8Data(5) >> 1) & 0x7 );
+        { // rear PTO
+          pt_ptoData = &t_ptoRear;
         }
+
+        pt_ptoData->i32_lastPto = ci32_now;
+        pt_ptoData->ui16_pto8DigitPerRpm         = data().getUint16Data(0);
+        pt_ptoData->ui16_ptoSetPoint8DigitPerRpm = data().getUint16Data(2);
+        pt_ptoData->t_ptoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
+        pt_ptoData->t_pto1000    = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 4) & 3 );
+        pt_ptoData->t_ptoEconomy = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 2) & 3 );
+        pt_ptoData->t_ptoEngagementReqStatus   = IsoAgLib::IsoReqFlag_t(    data().getUint8Data(4)       & 3 );
+        pt_ptoData->t_ptoModeReqStatus         = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 6) & 3 );
+        pt_ptoData->t_ptoEconomyModeReqStatus  = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 4) & 3 );
+        pt_ptoData->t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( (data().getUint8Data(5) >> 1) & 0x7 );
+
         // set last time
         setSelectedDataSourceDevKey(c_tempDevKey);
-        setUpdateTime( ci32_now );
+        // update time
+        pt_ptoData->i32_lastPto = Scheduler_c::getLastTimeEventTrigger();
       }
       else
       { // there is a sender conflict
@@ -325,68 +370,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracPTO_c::isoTimeEventTracMode( )
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setIsoSa(b_sa);
+
+    if ( ( (ci32_now - t_ptoFront.i32_lastPto ) >= 100) && ( t_ptoFront.t_ptoEngaged == IsoAgLib::IsoActive ) )
+    { // it's time to send tractor PTO information and the FRONT PTO is engaged
+      isoSendMessage(sendFrontPto);
+    }
 
     if (Scheduler_c::getAvailableExecTime() == 0) return false;
-    // this function is only called in TractorMode
-    CANIO_c& c_can = getCanInstance4Comm();
-    setSelectedDataSourceDevKey(*getDevKey());
-    if ( ( (ci32_now - i32_lastPtoFront ) >= 100) && ( t_frontPtoEngaged == IsoAgLib::IsoActive ) )
-    { // it's time to send tractor PTO information and the FRONT PTO is engaged
-      data().setIsoPgn(FRONT_PTO_STATE_PGN);
-      uint8_t ui8_val;
-      data().setUint16Data(0, ui16_ptoFront8DigitPerRpm);
-      data().setUint16Data(2, ui16_frontPtoSetPoint8DigitPerRpm);
-      ui8_val =  (t_frontPtoEngaged             << 6);
-      ui8_val |= (t_frontPto1000                << 4);
-      ui8_val |= (t_frontPtoEconomy             << 2);
-      ui8_val |= (t_frontPtoEngagementReqStatus << 0);
-      data().setUint8Data(4, ui8_val);
-      ui8_val = 0;
-      ui8_val |= (t_frontPtoModeReqStatus         << 6);
-      ui8_val |= (t_frontPtoEconomyModeReqStatus  << 4);
-      ui8_val |= (t_frontPtoShaftSpeedLimitStatus << 1);
-      data().setUint8Data(5, ui8_val);
-      //reserved fields
-      data().setUint16Data(6, 0);
-      data().setLen(8);
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
 
-      // update time
-      i32_lastPtoFront = Scheduler_c::getLastTimeEventTrigger();
-    }
-    if ( ( (ci32_now - i32_lastPtoRear ) >= 100) && ( t_rearPtoEngaged == IsoAgLib::IsoActive ) )
+    if ( ( (ci32_now - t_ptoRear.i32_lastPto ) >= 100) && ( t_ptoRear.t_ptoEngaged == IsoAgLib::IsoActive ) )
     { // it's time to send tractor PTO information and the REAR PTO is engaged
-      data().setIsoPgn(REAR_PTO_STATE_PGN);
-      uint8_t ui8_val;
-      data().setUint16Data(0, ui16_ptoRear8DigitPerRpm ); // ISO defines a resolution of 0.125 per bit!!!
-      data().setUint16Data(2, ui16_rearPtoSetPoint8DigitPerRpm);
-
-      ui8_val =  (t_rearPtoEngaged             << 6);
-      ui8_val |= (t_rearPto1000                << 4);
-      ui8_val |= (t_rearPtoEconomy             << 2);
-      ui8_val |= (t_rearPtoEngagementReqStatus << 0);
-      data().setUint8Data(4, ui8_val);
-      ui8_val = 0;
-      ui8_val |= (t_rearPtoModeReqStatus         << 6);
-      ui8_val |= (t_rearPtoEconomyModeReqStatus  << 4);
-      ui8_val |= (t_rearPtoShaftSpeedLimitStatus << 1);
-      data().setUint8Data(5, ui8_val);
-      //reserved fields
-      data().setUint16Data(6, 0);
-      data().setLen(8);
-      // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
-      // then it sends the data
-      c_can << data();
-
-      // update time
-      i32_lastPtoRear = Scheduler_c::getLastTimeEventTrigger();
+      isoSendMessage(sendRearPto);
     }
 
     return true;
@@ -398,21 +392,91 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
     // check for different pto data types whether the previously
     // sending node stopped sending -> other nodes can now step in
-    if ( ( ( ci32_now - i32_lastPtoFront ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
+    if ( ( ( ci32_now - t_ptoFront.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
-      ui16_ptoFront8DigitPerRpm = 0;
-      t_frontPtoEngaged = IsoAgLib::IsoInactive;
+      t_ptoFront.ui16_pto8DigitPerRpm = 0;
+      t_ptoFront.t_ptoEngaged = IsoAgLib::IsoInactive;
     }
-    if ( ( ( ci32_now - i32_lastPtoRear ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
+    if ( ( ( ci32_now - t_ptoRear.i32_lastPto ) >= TIMEOUT_PTO_DISENGAGED ) || (getSelectedDataSourceDevKey().isUnspecified() ) )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
-      ui16_ptoRear8DigitPerRpm = 0;
-      t_rearPtoEngaged = IsoAgLib::IsoInactive;
+      t_ptoRear.ui16_pto8DigitPerRpm = 0;
+      t_ptoRear.t_ptoEngaged = IsoAgLib::IsoInactive;
     }
     return true;
   }
 
+  /** send pto data message
+      @param t_sendptodata  send pto front or pto rear
+    */
+  void TracPTO_c::isoSendMessage(SendPtoData_t t_sendptodata)
+  {
+    if ( getDevKey() == NULL ) return;
+    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
+
+    // retreive the actual dynamic sender no of the member with the registered devKey
+    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
+    data().setIdentType(Ident_c::ExtendedIdent);
+    data().setIsoPri(3);
+    data().setIsoSa(b_sa);
+    data().setLen(8);
+
+    CANIO_c& c_can = getCanInstance4Comm();
+    setSelectedDataSourceDevKey(*getDevKey());
+
+    PtoData_t* pt_ptoData = NULL;
+    if (t_sendptodata == sendFrontPto)
+    {
+      data().setIsoPgn(FRONT_PTO_STATE_PGN);
+      pt_ptoData = &t_ptoFront;
+    }
+    else
+    { //sendRearPto
+      data().setIsoPgn(REAR_PTO_STATE_PGN);
+      pt_ptoData = &t_ptoRear;
+    }
+
+    uint8_t ui8_val;
+    data().setUint16Data(0, pt_ptoData->ui16_pto8DigitPerRpm);
+    data().setUint16Data(2, pt_ptoData->ui16_ptoSetPoint8DigitPerRpm);
+    ui8_val =  (pt_ptoData->t_ptoEngaged             << 6);
+    ui8_val |= (pt_ptoData->t_pto1000                << 4);
+    ui8_val |= (pt_ptoData->t_ptoEconomy             << 2);
+    ui8_val |= (pt_ptoData->t_ptoEngagementReqStatus << 0);
+    data().setUint8Data(4, ui8_val);
+    ui8_val = 0;
+    ui8_val |= (pt_ptoData->t_ptoModeReqStatus         << 6);
+    ui8_val |= (pt_ptoData->t_ptoEconomyModeReqStatus  << 4);
+    ui8_val |= (pt_ptoData->t_ptoShaftSpeedLimitStatus << 1);
+    data().setUint8Data(5, ui8_val);
+    //reserved fields
+    data().setUint16Data(6, 0);
+
+    // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
+    // then it sends the data
+    c_can << data();
+
+    // update time
+    pt_ptoData->i32_lastPto = Scheduler_c::getLastTimeEventTrigger();
+  }
+
+  /** force a request for pgn for front pto state */
+  bool TracPTO_c::sendRequestUpdateFront()
+  {
+    if ( checkMode(IsoAgLib::IdentModeImplement) )
+      return BaseCommon_c::sendPgnRequest(FRONT_PTO_STATE_PGN);
+    else
+      return false;
+  }
+  /** force a request for pgn for rear pto state */
+  bool TracPTO_c::sendRequestUpdateRear()
+  {
+    if ( checkMode(IsoAgLib::IdentModeImplement) )
+      return BaseCommon_c::sendPgnRequest(REAR_PTO_STATE_PGN);
+    else
+      return false;
+  }
   #endif
 
 } // End Namespace __IsoAgLib
