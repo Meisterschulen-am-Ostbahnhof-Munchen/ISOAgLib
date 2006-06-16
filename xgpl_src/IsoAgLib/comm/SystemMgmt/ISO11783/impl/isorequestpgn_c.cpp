@@ -244,9 +244,9 @@ ISORequestPGN_c::processMsg ()
   //  if ((data().isoPgn() & 0x1FF00) == REQUEST_PGN_MSG_PGN)
   //  { // request for PGN
   ui32_reqPgn = (
-                (static_cast<int32_t>(data().operator[](0)))
-              | (static_cast<int32_t>(data().operator[](1)) << 8)
-              | (static_cast<int32_t>(data().operator[](2)) << 16)
+                (static_cast<uint32_t>(data().operator[](0)))
+              | (static_cast<uint32_t>(data().operator[](1)) << 8)
+              | (static_cast<uint32_t>(data().operator[](2)) << 16)
               );
 
   /// in case of ISOItem_c has no address claimed yet it has sa 0xFE
@@ -257,7 +257,8 @@ ISORequestPGN_c::processMsg ()
   //     else
 
   /// if the ISOItem_c is not in the monitor list, ignore this request
-  if (!getIsoMonitorInstance4Comm().existIsoMemberNr (data().isoSa())) return true;
+  if ((data().isoSa() != 0xFE) && (!getIsoMonitorInstance4Comm().existIsoMemberNr (data().isoSa())))
+    return true;
 
   bool b_distributeToClients = false;
   // if isoPs is 255 let all local item answer
@@ -284,7 +285,7 @@ ISORequestPGN_c::processMsg ()
         b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN(ui32_reqPgn, data().nr(), data().isoPs());
     }
 
-    if ((data().isoPs() != 255) && !b_processedByAnyClient) // no client could answer the Request PNG, so NACK it!
+    if ((data().isoPs() != 0xFF) && !b_processedByAnyClient) // no client could answer the Request PGN, so NACK it!
     {
       uint32_t ui32_purePgn = ui32_reqPgn;
       if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
