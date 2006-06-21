@@ -1221,6 +1221,28 @@ function create_makefile()
 		echo -n " -D$SinglePrjDefine" >> $MakefileName
 	done
 	echo "" >> $MakefileName
+	
+	echo -e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileName
+	if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
+		echo "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >> $MakefileName
+		
+	else
+		case $PRJ_DEFINES in 
+			*SYSTEM_A1*) 
+				echo "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >> $MakefileName
+				echo "SYSTEM_A1"
+				;;
+			*SYSTEM_MCC*)
+				echo "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >> $MakefileName
+				echo "SYSTEM_MCC"
+				;;
+			*) 
+				echo "COMPILER_BINARY_PRE = " >> $MakefileName
+				;;
+		esac
+	fi	
+	
+	
 
 	echo -e "\n\nfirst: all\n" >> $MakefileName
 	echo "####### Files" >> $MakefileName
@@ -1250,7 +1272,6 @@ function create_makefile()
 
 		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileName
 	fi
-
 
 	cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt >> $MakefileName
 
