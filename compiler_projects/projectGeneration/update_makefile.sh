@@ -1209,7 +1209,7 @@ function create_makefile()
 
 	echo "" >> $MakefileName
 	if [ $USE_CAN_DRIVER = "rte" -o $USE_RS232_DRIVER = "rte" ] ; then
-		echo "BIOS_LIB = ../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/lib/librte_client.a" >> $MakefileName
+		echo "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >> $MakefileName
 
 		echo -n "BIOS_INC = -I../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/rte_client_lib" >> $MakefileName
 		echo -n " -I../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/include" >> $MakefileName

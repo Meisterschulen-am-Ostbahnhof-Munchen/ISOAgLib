@@ -572,7 +572,8 @@ static int ackHdl(rtd_handler_para_t*, rte_return_t ) {
 }
 
 /*! Handler for incoming CAN messages. */
-static int send(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t id, uint8_t size, const void *data)
+static int send(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t id, uint8_t size, const void *data,
+                rte_client_t cid, rtd_can_event_flag_t flag, uint8_t /*code*/)
 {
   static rte_time_t lastTime;
   uint8_t b_bus = para->rtd_msg->channel;
@@ -581,15 +582,16 @@ static int send(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t id, uint
   if (!b_busOpened[b_bus])
     return -1;
 
-  // first check if the actual received msg is echo of previously sent msg
-  #if 0
-  if ( count( arr_canQueue[ b_bus ].begin(), arr_canQueue[ b_bus ].end(), RteCanPkg( id, b_xtd, size, (const uint8_t*)data ) ) > 0 ) {
-    //handler is called for receive of echo of previously sent msg -> just erase msg from list and return
-    std::cout << "ECHO Empfang" << std::endl;
-    arr_canQueue[ b_bus ].erase( find( arr_canQueue[ b_bus ].begin(), arr_canQueue[ b_bus ].end(), RteCanPkg( id, b_xtd, size, (const uint8_t*)data ) ) );
-    return 0;
+
+  if (0 != flag)
+  { /* ERROR has been reported. */
+    return -1;
   }
-  #endif
+
+  if ( rteCan_c [b_bus]->get_cid() == cid )
+  { // echo of this rte client
+    return -1;
+  }
 
   for (int16_t i16_obj = 0; i16_obj < arrMsgObj[b_bus].size(); i16_obj++)
   { // compare received msg with filter
@@ -770,7 +772,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
 
   // build parameter string with sprintf to handle different baudrates
   char parameterString[50];
-  sprintf( parameterString, "C%d,R,B%d,E0,L0", bBusNumber, wBitrate );
+  sprintf( parameterString, "C%d,R,B%d,E1,L0", bBusNumber, wBitrate );
   rteCan_c [bBusNumber]->set_parameters( parameterString );
   #if 0
   if (bBusNumber == 0)
@@ -783,7 +785,7 @@ int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uin
   rteCan_c [bBusNumber]->set_acknowledge_handler( ackHdl, rteCan_c [bBusNumber]);
   rteCan_c [bBusNumber]->set_identify_handler( ident_hdl, rteCan_c [bBusNumber]);
   rteCan_c [bBusNumber]->set_send_handler( send, rteCan_c [bBusNumber] );
-  rteCan_c [bBusNumber]->set_set_bus_state_handler( setBusState, rteCan_c [bBusNumber] );
+//  rteCan_c [bBusNumber]->set_set_bus_state_handler( setBusState, rteCan_c [bBusNumber] );
 
   // Set Global Masks
   ui16_globalMask[bBusNumber] = wGlobMask;
