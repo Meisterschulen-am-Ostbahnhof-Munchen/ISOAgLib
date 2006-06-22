@@ -1210,10 +1210,8 @@ function create_makefile()
 	echo "" >> $MakefileName
 	if [ $USE_CAN_DRIVER = "rte" -o $USE_RS232_DRIVER = "rte" ] ; then
 		echo "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >> $MakefileName
-
-		echo -n "BIOS_INC = -I../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/rte_client_lib" >> $MakefileName
-		echo -n " -I../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/include" >> $MakefileName
-		echo " -I../$ISO_AG_LIB_PATH/commercial_BIOS/bios_pc.testserver/sw" >> $MakefileName
+		# the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
+		echo -n "BIOS_INC =" >> $MakefileName
 	fi
 
 	echo -n -e "\nPROJ_DEFINES = -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileName
@@ -1221,14 +1219,14 @@ function create_makefile()
 		echo -n " -D$SinglePrjDefine" >> $MakefileName
 	done
 	echo "" >> $MakefileName
-	
+
 	echo -e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileName
 	if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
 		echo "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >> $MakefileName
-		
+
 	else
-		case $PRJ_DEFINES in 
-			*SYSTEM_A1*) 
+		case $PRJ_DEFINES in
+			*SYSTEM_A1*)
 				echo "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >> $MakefileName
 				echo "SYSTEM_A1"
 				;;
@@ -1236,13 +1234,13 @@ function create_makefile()
 				echo "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >> $MakefileName
 				echo "SYSTEM_MCC"
 				;;
-			*) 
+			*)
 				echo "COMPILER_BINARY_PRE = " >> $MakefileName
 				;;
 		esac
-	fi	
-	
-	
+	fi
+
+
 
 	echo -e "\n\nfirst: all\n" >> $MakefileName
 	echo "####### Files" >> $MakefileName
