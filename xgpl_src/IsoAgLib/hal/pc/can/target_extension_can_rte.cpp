@@ -108,7 +108,8 @@ uint16_t ui16_mask_std;
 
 //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
 //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
-static std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
+typedef std::vector<tMsgObj>  ArrMsgOb_t;
+static ArrMsgOb_t* arrMsgObj;
 
 int32_t i32_lastReceiveTime;
 
@@ -148,7 +149,10 @@ static FILE* canlogDat[cui32_maxCanBusCnt];
 // static rte_time_t t_rteOffset = RTE_NEVER;
 
 int16_t can_startDriver()
-{
+{  
+    
+  arrMsgObj = new ArrMsgOb_t [cui32_maxCanBusCnt];
+
   // open the driver
   for ( uint32_t ind = 0; ind < cui32_maxCanBusCnt; ind++ )
   {
@@ -159,7 +163,7 @@ int16_t can_startDriver()
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     // configure vector arrMsgObj[ind] with 15 elements
     arrMsgObj[ind].resize(15);
-    for (uint8_t ui8_nr = 0; ui8_nr < 15; ui8_nr++)
+    for (uint8_t ui8_nr = 0; ui8_nr < arrMsgObj[ind].size(); ui8_nr++)
     {
       arrMsgObj[ind][ui8_nr].rec_bufSize = 0;
       arrMsgObj[ind][ui8_nr].rec_bufCnt = 0;
@@ -203,6 +207,8 @@ int16_t can_stopDriver()
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
       arrMsgObj[i].clear();
 
+  delete[] arrMsgObj;
+   
   return HAL_NO_ERR;
 }
 
