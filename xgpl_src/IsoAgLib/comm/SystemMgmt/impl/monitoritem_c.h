@@ -92,7 +92,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/util/impl/devkey_c.h>
 //#include "baseitem_c.h"
 
 // Begin Namespace __IsoAgLib

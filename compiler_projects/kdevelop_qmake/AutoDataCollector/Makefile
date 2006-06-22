@@ -6,9 +6,9 @@
 ####### Project specific variables
 TARGET = AutoDataCollector
 ISOAGLIB_PATH = ../../..
-APP_INC = -I../../../IsoAgLib_Examples 
+APP_INC = -I../../../IsoAgLib_Examples
 BIOS_LIB = ../../../commercial_BIOS/bios_pc.testserver/lib/librte_client.a
-BIOS_INC = -I../../../commercial_BIOS/bios_pc.testserver/rte_client_lib -I../../../commercial_BIOS/bios_pc.testserver/include -I../../../commercial_BIOS/bios_pc.testserver/sw
+BIOS_INC =
 
 PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h -DUSE_CAN_EEPROM_EDITOR
 
@@ -76,7 +76,7 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/gpsmanager_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/procdatamanager_c.cpp  \
 		../../../IsoAgLib_Examples/AutoDataCollector_Classes/specificrecordconfig_c.cpp  \
-		../../../IsoAgLib_Examples/autodatacollector.cpp  
+		../../../IsoAgLib_Examples/autodatacollector.cpp
 
 ####### Some Standard Rules
 CC       = gcc

@@ -28,12 +28,8 @@
 ../../../xgpl_src/IsoAgLib/comm/Process/Local/impl/procdatalocalbase_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/Local/SimpleSetpointElements/impl/simplemanagesetpointlocal_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/DIN_Terminal/impl/dinmaskupload_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
@@ -67,6 +63,7 @@
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
+../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
 ../../../xgpl_src/IsoAgLib/util/impl/getypos_c.h
@@ -83,6 +80,7 @@
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/igetypos_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
+../../../xgpl_src/IsoAgLib/util/idevkey_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 ../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
@@ -102,16 +100,10 @@
 ../../../xgpl_src/Application_Config/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisend_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/istream_c.h
 ../../../xgpl_src/IsoAgLib/comm/Multipacket/imultisendstreamer_c.h
-../../../xgpl_src/IsoAgLib/comm/Multipacket/imultireceive_c.h
 ../../../xgpl_src/IsoAgLib/comm/DIN_Terminal/impl/dinmaskupload_c.h
 ../../../xgpl_src/IsoAgLib/comm/DIN_Terminal/dinmaskuploadstructures_t.h
 ../../../xgpl_src/IsoAgLib/comm/DIN_Terminal/idinmaskupload_c.h

@@ -86,8 +86,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "cancustomer_c.h"
-#include "getypos_c.h"
-#include "../igetypos_c.h"
+#include "devkey_c.h"
+#include "../idevkey_c.h"
 
 namespace IsoAgLib {
 /** constant for default parameters and initialization, where the device type is not yet spcified.

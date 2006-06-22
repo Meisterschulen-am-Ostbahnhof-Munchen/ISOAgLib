@@ -314,7 +314,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\getypos_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\devkey_c.h
 # End Source File
 
 # Begin Source File
@@ -362,7 +362,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\util\liberr_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\igetypos_c.h
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\idevkey_c.h
 # End Source File
 
 # Begin Source File

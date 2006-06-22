@@ -91,7 +91,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/util/impl/devkey_c.h>
 #include <IsoAgLib/comm/Process/impl/generalcommand_c.h>
 
 // Begin Namespace __IsoAgLib

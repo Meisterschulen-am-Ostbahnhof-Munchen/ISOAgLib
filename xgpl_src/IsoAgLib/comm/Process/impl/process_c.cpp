@@ -530,11 +530,11 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
     b_result = true;
   }
 
-  
+
 #ifdef USE_ISO_11783
   // process TC status message
   if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (c_data[0] == 0xE))
-  {    
+  {
     // update devKey of TC
     pc_tcDevKey = &(data().memberSend().devKey());
     processTcStatusMsg(c_data.dataRawCmdLong(), data().memberSend().devKey());
@@ -1354,7 +1354,9 @@ void Process_c::reactOnMonitorListRemove( const DevKey_c& refc_devKey, uint8_t r
 bool Process_c::registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
 {
   const bool cb_result = registerC2( pc_remoteClient );
+#ifdef USE_ISO_11783
   b_needCallOfCheckCreateRemoteReceiveFilter = true;
+#endif
   return cb_result;
 }
 
@@ -1428,7 +1430,7 @@ bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const DevKey_c& refc_de
   }
   if (!rb_skipLastTcStatus)
     ui8_lastTcStatus = ui8_tcStatus;
-    
+
   return TRUE;
 }
 #endif

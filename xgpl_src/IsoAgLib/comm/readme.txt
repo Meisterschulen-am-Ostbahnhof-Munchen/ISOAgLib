@@ -63,7 +63,7 @@
 	* The class IsoAgLib::iSystemMgmt_c has a list of all local identities, where an address claim is performed at the
 	* System-Startup and which must send responses on several network management requests.
 	* Additionally IsoAgLib::iSystemMgmt_c provides functions to search for a network node corresponding to its
-	* GetyPos_c ( device type ) or its address. Thereby both DIN 9684 and ISO 11783 monitor lists are
+	* DevKey_c ( device type ) or its address. Thereby both DIN 9684 and ISO 11783 monitor lists are
 	* searched - as far as the individual protocol is activated/compiled for the project.
 	*
 	* @subsection CommOverIsoSystem Overview on ISO 11783 Monitor List
@@ -77,7 +77,7 @@
 	* @subsection CommOverDinSystem Overview on DIN 9684 Monitor List
 	* <b>Detailed Description:</b> \ref SystemMgmtAnnDin
 	* The class IsoAgLib::iDINMonitor_c has a monitor list of all DIN 9684 network nodes.
-	* It's mostly used by the application to search for a device by its GETYPOS - and to get its dynamic address.
+	* It's mostly used by the application to search for a device by its DEVKEY - and to get its dynamic address.
 	* It's also used internally to claim address and manage local DIN 9684 identities ( \ref IsoAgLib::iDINItem_c ).
 	*
 	* @section CommOverLbsBase Overview on Base Data

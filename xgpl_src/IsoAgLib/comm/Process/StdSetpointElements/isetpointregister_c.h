@@ -59,7 +59,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/setpointregister_c.h"
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 #include "../generalcommand_c.h"
 
 // Begin Namespace IsoAgLib

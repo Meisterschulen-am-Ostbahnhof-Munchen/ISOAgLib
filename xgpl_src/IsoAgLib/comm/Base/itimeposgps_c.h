@@ -60,7 +60,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 #include "ibasetypes.h"
 #include "impl/timeposgps_c.h"
 
@@ -229,8 +229,10 @@ public:
   int16_t pdop10Minus2() const { return TimePosGPS_c::pdop10Minus2();};
   #endif // END NMEA_2000_FAST_PACKET
 
+  #if defined(USE_ISO_11783)
   /** deliver age of last gps-update in milliseconds */
   uint16_t getGpsUpdateAge(void) const { return TimePosGPS_c::getGpsUpdateAge();};
+  #endif
 
   /* ******************************************* */
   /** \name Set Values */

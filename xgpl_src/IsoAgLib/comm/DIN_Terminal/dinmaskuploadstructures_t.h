@@ -58,7 +58,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 #include <IsoAgLib/typedef.h>
 
 /** the class DINMaskUpload_c uses a constant C-Array

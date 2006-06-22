@@ -60,7 +60,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/monitoritem_c.h"
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 
 // Begin Namespace IsoAgLibSystemMgmt_c
 namespace IsoAgLib {

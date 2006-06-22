@@ -22,6 +22,8 @@
 // which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO and DIN ) - and other way.
 #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 
+// #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
+
 #ifndef USE_PROC_DATA_DESCRIPTION_POOL 
 	#define USE_PROC_DATA_DESCRIPTION_POOL 
 #endif

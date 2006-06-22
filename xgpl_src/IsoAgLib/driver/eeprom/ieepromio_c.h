@@ -56,7 +56,7 @@
 #define IEEPROM_IO_H
 
 #include "impl/eepromio_c.h"
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 // #include <string>
 
 using std::basic_string;

@@ -37,13 +37,13 @@
       {0x70000, LBS_PLUS_PROJECT_VISISTART},   ///< ROM adress of visibility definition in ECU
       {0x00000080, LBS_PLUS_PROJECT_VISISIZE}  ///< size of visibility definition in ECU
     };
-    /** example GetyPos_c of local ident, which acts as terminal uploader */
-    IsoAgLib::GetyPos_c *pc_getypos = IsoAgLib::GetyPos_c( 2, 0 );
+    /** example DevKey_c of local ident, which acts as terminal uploader */
+    IsoAgLib::DevKey_c *pc_devkey = IsoAgLib::DevKey_c( 2, 0 );
 
     /** structure with assembled terminal project definition */
     const IsoAgLib::t_maskDefinition sVarioMask = {
-      pc_getypos,               ///< pointer to local gtp
-      IsoAgLib::GetyPos_c(1, 2), ///< GetyPos of Terminal
+      pc_devkey,               ///< pointer to local gtp
+      IsoAgLib::DevKey_c(1, 2), ///< DevKey of Terminal
       "VARIO_T",                ///< name of Fendt Vario Term
       IsoAgLib::FendtVario,      ///< is LBS+ terminal
       pVarioConfigStartVektor,  ///< string with visibility config settings

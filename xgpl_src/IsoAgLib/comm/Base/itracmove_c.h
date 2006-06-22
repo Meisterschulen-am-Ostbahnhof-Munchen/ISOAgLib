@@ -59,7 +59,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 #include "ibasetypes.h"
 #include "impl/tracmove_c.h"
 

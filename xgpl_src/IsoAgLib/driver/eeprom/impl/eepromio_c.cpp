@@ -84,7 +84,7 @@
 #include "eepromio_c.h"
 #include <IsoAgLib/hal/system.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/util/impl/devkey_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

@@ -729,7 +729,7 @@
 				RelativePath="..\..\..\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.h">
 			</File>
 			<File
-				RelativePath="..\..\..\xgpl_src\IsoAgLib\util\impl\getypos_c.h">
+				RelativePath="..\..\..\xgpl_src\IsoAgLib\util\impl\devkey_c.h">
 			</File>
 			<File
 				RelativePath="..\..\..\xgpl_src\IsoAgLib\hal\pc\can\hal_can_interface.h">
@@ -753,7 +753,7 @@
 				RelativePath="..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.h">
 			</File>
 			<File
-				RelativePath="..\..\..\xgpl_src\IsoAgLib\util\igetypos_c.h">
+				RelativePath="..\..\..\xgpl_src\IsoAgLib\util\idevkey_c.h">
 			</File>
 			<File
 				RelativePath="..\..\..\xgpl_src\IsoAgLib\driver\can\iident_c.h">

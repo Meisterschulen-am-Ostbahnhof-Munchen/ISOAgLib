@@ -98,7 +98,7 @@
   #include "../ISO11783/impl/isoitem_c.h"
 #endif
 
-#include "../../../util/impl/getypos_c.h"
+#include "../../../util/impl/devkey_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

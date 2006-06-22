@@ -90,7 +90,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/util/impl/devkey_c.h>
 #include <IsoAgLib/util/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
 #include "generalcommand_c.h"

@@ -56,7 +56,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/dinserviceitem_c.h"
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

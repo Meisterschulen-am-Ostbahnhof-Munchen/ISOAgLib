@@ -59,7 +59,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/identitem_c.h"
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 
 #ifdef USE_DIN_9684
   #include "DIN9684/idinitem_c.h"

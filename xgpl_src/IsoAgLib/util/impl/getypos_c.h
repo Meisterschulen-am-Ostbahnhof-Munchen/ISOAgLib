@@ -1,5 +1,5 @@
 /***************************************************************************
-                          getypos_c.h - class DevKey_c combines device class
+                          devkey_c.h - class DevKey_c combines device class
                                       ( GETY_POS for DIN 9684 ) and instance
                                       number ( POS for DIN 9684 )
                              -------------------

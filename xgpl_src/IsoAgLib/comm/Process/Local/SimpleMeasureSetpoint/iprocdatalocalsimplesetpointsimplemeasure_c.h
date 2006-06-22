@@ -61,7 +61,7 @@
 #include "impl/procdatalocalsimplesetpointsimplemeasure_c.h"
 #include "../SimpleSetpointElements/isimplemanagesetpointlocal_c.h"
 #include "../../proc_c.h"
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 #include "../../generalcommand_c.h"
 
 // Begin Namespace IsoAgLib

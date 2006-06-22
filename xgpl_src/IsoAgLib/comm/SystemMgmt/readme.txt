@@ -54,7 +54,7 @@
   *
   * @section SystemMgmtAddressClaim Address Claim of Local Device
   * All address claim variants have in common, that they require a pointer to a
-  * variable of type GetyPos_c which defines the device type
+  * variable of type DevKey_c which defines the device type
   * of the own device. This way the IsoAgLib can adapt the
   * device instance number, if the initial device instance number
   * is already used, so that an alternaticve free number has to be chosen.
@@ -67,7 +67,7 @@
   * \code
   * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h\>
   * // define device type := 2, device instance := 0
-  * IsoAgLib::GetyPos_c c_myType( 2, 0 );
+  * IsoAgLib::DevKey_c c_myType( 2, 0 );
   * // define 7-char DIN name
   * char c_myName[] = "Hi-You";
   * // Direct address claim on construction ( i.e. definition of variable )
@@ -93,7 +93,7 @@
   * \code
   * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h\>
   * // define device type := 2, device instance := 0
-  * IsoAgLib::GetyPos_c c_myType( 2, 0 );
+  * IsoAgLib::DevKey_c c_myType( 2, 0 );
   * // use 64bit NAME definition as 8-byte uint8_t array
   * uint8_t isoName[8];
   * // set the value of the array from EEPROM or somewhere else
@@ -157,7 +157,7 @@
   * \code
   * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h\>
   * // define device type := 2, device instance := 0
-  * IsoAgLib::GetyPos_c c_myType( 2, 0 );
+  * IsoAgLib::DevKey_c c_myType( 2, 0 );
   * // simply define instance of variable wihtout initialisation for specific value
   * IsoAgLib::iIdentItem_c c_isoItemLaterDecide;
   * bool b_startDin = false;

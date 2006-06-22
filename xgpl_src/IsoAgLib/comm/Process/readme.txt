@@ -256,7 +256,7 @@
   * This is achieved by the CAN data formating and low-level processing class __IsoAgLib::ProcessPkg_c, which
   * detects dependent on the receiver ( for send of msg ) and/or sender ( for receive of msg )
   * and its protocol state, which protocol format to use. This is achieved by IsoAgLib::iSystemMgmt_c
-  * which provides functions to derive the protocol type of a ECU based on it GetyPos == device_type/_instance setting.
+  * which provides functions to derive the protocol type of a ECU based on it DevKey == device_type/_instance setting.
   *
   * @subsection ConvertDataDictionary Conversion between old DIN 9684 Data Dictionary and new ISO 11783 Data Dictionary
   * It is planned to keep the Data Dictionary unique for both protocol variants, and to implement an internal
@@ -291,7 +291,7 @@
   * // declare extern example function ( dummy )
   * extern void doSomething( IsoAgLib::iProcDataLocal_c *pc_localProc );
   * // set device type of local ECU: fertilizer
-  * IsoAgLib::GetyPos_c myGtp( 5, 0 );
+  * IsoAgLib::DevKey_c myGtp( 5, 0 );
   * // initialise variable upon construction/definition
   * // local process data for "on/off mechanical" [0/0x64] of fertilizer spreader (LIS=0, GETY=5, WERT=1, INST=0)
   * // with full working width (ZAEHLNUM 0xFF), POS, GETY_POS of local data (can vary from previously given GETY and POS),
@@ -322,7 +322,7 @@
   * ( %i.e. register measure programs and handle send of data, ... ).
   * \code
   * // define device type of remote ECU ( from which we want measurement data )
-  * IsoAgLib::GetyPos_c remoteGtp( 1, 0 );
+  * IsoAgLib::DevKey_c remoteGtp( 1, 0 );
   * // define remote process data to gather information of remote work state
   * // use PRI = 2 ( target process data for DIN )
   * IsoAgLib::iProcDataRemote_c c_remoteWorkState( 0, myGtp, 0x1, 0x0, 0xFF, 2, remoteGtp, &myGtp);
@@ -353,14 +353,14 @@
   *     // sent a new setpoint value)
   *     // rc_src general event source class, which provides conversion functions to get needed event source class
   *     // ri32_val new value, which caused the event (for immediate access)
-  *     // rc_callerGetyPos IsoAgLib::GetyPos of calling device - i.e. which sent new setpoint
+  *     // rc_callerDevKey IsoAgLib::DevKey of calling device - i.e. which sent new setpoint
   *     // return true -> handler class reacted on change event
-  *     virtual bool processSetpointSet( EventSource_c rc_src, int32_t ri32_val, IsoAgLib::GetyPos_c rc_callerGetyPos, bool rb_changed );
+  *     virtual bool processSetpointSet( EventSource_c rc_src, int32_t ri32_val, IsoAgLib::DevKey_c rc_callerDevKey, bool rb_changed );
   * };
   * // implement the handler function, which is called on each received setpoint
-  * bool MyProcessDataHandler_c::processSetpointSet( EventSource_c rc_src, int32_t ri32_val, IsoAgLib::GetyPos_c rc_callerGetyPos, bool rb_changed ) {
+  * bool MyProcessDataHandler_c::processSetpointSet( EventSource_c rc_src, int32_t ri32_val, IsoAgLib::DevKey_c rc_callerDevKey, bool rb_changed ) {
   * { // %e.g. check for device type of commanding ECU
-  *   if ( rc_callerGetyPos.getGety() == 0x1 ) {
+  *   if ( rc_callerDevKey.getGety() == 0x1 ) {
   *     // reaction on setpoints sent by device type 1
   *   }
   *   else if ( abs( ri32_val - currentVal ) < 10 )

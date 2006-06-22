@@ -86,7 +86,7 @@
 #define BASE_COMMON_H
 
 #include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/util/impl/getypos_c.h>
+#include <IsoAgLib/util/impl/devkey_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Base/ibasetypes.h>

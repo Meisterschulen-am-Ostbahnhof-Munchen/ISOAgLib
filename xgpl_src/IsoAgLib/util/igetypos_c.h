@@ -1,5 +1,5 @@
 /***************************************************************************
-                          igetypos_c.h - class iDevKey_c combines device class
+                          idevkey_c.h - class iDevKey_c combines device class
                                       ( GETY_POS for DIN 9684 ) and instance
                                       number ( POS for DIN 9684 )
                              -------------------
@@ -60,7 +60,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "impl/getypos_c.h"
+#include "impl/devkey_c.h"
 #ifdef USE_ISO_11783
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
 #endif

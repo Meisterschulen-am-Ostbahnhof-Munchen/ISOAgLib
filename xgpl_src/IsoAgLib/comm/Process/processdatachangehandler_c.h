@@ -58,7 +58,7 @@
 #ifndef PROCESSDATACHANGEHANDLER_H
 #define PROCESSDATACHANGEHANDLER_H
 
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 
 // predeclare __IsoAgLib_c::ProcDataBase_c
 namespace __IsoAgLib {

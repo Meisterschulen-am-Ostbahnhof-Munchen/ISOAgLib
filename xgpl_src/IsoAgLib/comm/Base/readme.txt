@@ -95,7 +95,7 @@
   *
   * \code
   * /// check for device type of calendar sender -> start sending if sender is a dummy calendar sender
-  * const GetyPos_c cc_dummyCalendarSender( 1, 0 );
+  * const DevKey_c cc_dummyCalendarSender( 1, 0 );
   * if ( IsoAgLib::getIBaseInstance().senderGtp( BaseDataCalendar ) == cc_dummyCalendarSender ) {
   *   // start sending as this ECU has better calendar informaiton source
   *   // but stay for Grp1 and Grp2 in receive-only mode

@@ -95,7 +95,7 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <supplementary_driver/driver/sensor/ianalogi_c.h>
-#include <IsoAgLib/util/igetypos_c.h>
+#include <IsoAgLib/util/idevkey_c.h>
 
 #ifdef USE_EEPROM_IO
   #include <IsoAgLib/driver/eeprom/ieepromio_c.h>
