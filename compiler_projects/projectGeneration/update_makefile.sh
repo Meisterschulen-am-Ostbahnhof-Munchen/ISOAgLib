@@ -622,12 +622,17 @@ function create_filelist( )
   fi
   if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
   	PRJ_MULTIPACKET=1
-    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/i*multi*' -o -path '*/Multipacket/impl/stream_c.*' -o -path '*/Multipacket/istream_c.*'"
-    if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
-	    COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamchunk_c.*' -o -path '*/Multipacket/impl/chunk_c.*'"
-	  else
-	  	COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamlinear_c.*'"
-    fi
+  	if [ $PRJ_ISO11783 -gt 0 ] ; then
+			COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/i*multi*' -o -path '*/Multipacket/impl/stream_c.*' -o -path '*/Multipacket/istream_c.*'"
+			if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
+				COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamchunk_c.*' -o -path '*/Multipacket/impl/chunk_c.*'"
+			else
+				COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamlinear_c.*'"
+			fi
+		else
+		# for pure DIN9684 - just incorporate multiSEND
+			COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/i*multisend*'"
+		fi
   fi
 
 	DRIVER_FEATURES=" -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*' -o -path '*/hal/"$HAL_PATH"/system*' -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'"
