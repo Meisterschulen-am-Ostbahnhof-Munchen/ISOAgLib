@@ -145,7 +145,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   }
   if ( DEF_SerialPointer(rui8_channel) == NULL ) DEF_SerialPointer(rui8_channel) = new serial_c;
   DEF_SerialPointer(rui8_channel)->set_channel( 0 );
-  DEF_SerialPointer(rui8_channel)->set_send_handler( rs232_send_handler, 0 );
+  DEF_SerialPointer(rui8_channel)->set_send_handler( rs232_send_handler );
   DEF_SerialPointer(rui8_channel)->set_line_parameters( param );
   DEF_SerialPointer(rui8_channel)->set_echo( false );
   return HAL_NO_ERR;
