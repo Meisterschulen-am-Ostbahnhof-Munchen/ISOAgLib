@@ -192,8 +192,9 @@ public:
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
     */
-  void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
+  bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
 
   /** initialise element which can't be done during construct;
       above all create the needed FilterBox_c instances
@@ -215,8 +216,9 @@ public:
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
     */
-  void configGps(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identModeGps);
+  bool configGps(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identModeGps);
   /** return if you currently are in gps mode*/
   bool checkModeGps(IsoAgLib::IdentMode_t rt_identModeGps) const {return (t_identModeGps == rt_identModeGps);}
 
@@ -511,7 +513,13 @@ private:
     @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
     */
-  TimePosGPS_c() {};
+  TimePosGPS_c()
+              #ifdef USE_ISO_11783
+                : c_sendGpsDevKey(),
+                  pc_devKeyGps(),
+                  t_identModeGps( IsoAgLib::IdentModeImplement )
+              #endif
+{}
   /** deliver time between now and last calendar set in [msec]
     @return msec since last calendar set
     */
@@ -530,6 +538,8 @@ private:
   #if defined(USE_ISO_11783)
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
+      @pre  function is only called in tractor mode
+      @see  BaseCommon_c::timeEvent()
     */
   virtual bool isoTimeEventTracMode();
 
@@ -650,6 +660,10 @@ private:
   #endif // END of NMEA_2000_FAST_PACKET
   /** DEVKEY of GPS data sender */
   DevKey_c c_sendGpsDevKey;
+  /** devKey which act as sender of a msg: either responses on behalf of implement or commands as tractor.
+      This pointer is set in config function
+    */
+  const DevKey_c* pc_devKeyGps;
   IsoAgLib::IdentMode_t  t_identModeGps;
   #endif // END of USE_ISO_11783
 };

@@ -147,15 +147,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       config send/receive of different general base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
     */
-  void TracGeneral_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracGeneral_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   { // set configure values
     #ifdef USE_ISO_11783
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
     #endif
     //call config for handling which is base data independent
-    BaseCommon_c::config(rpc_devKey, rt_identMode);
+    //if something went wrong leave function before something is configured
+    if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
 
     // set the member base msg value vars to NO_VAL codes
     setHitchRear(NO_VAL_8);
@@ -195,6 +197,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     implState.inWork =      IsoAgLib::IsoDisconnect;
     t_frontHitchPosLimitStatus = t_rearHitchPosLimitStatus = IsoAgLib::IsoNotAvailableLimit;
     #endif
+    return true;
   };
 
   #ifdef USE_DIN_9684
@@ -202,18 +205,44 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       config send/receive of different general msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
    */
-  void TracGeneral_c::configFuel(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
-  { // set configure values
-    setDevKey( rpc_devKey );
-    t_identModeStateFuel = rt_identMode;
-
-    // set ui8_sendDevKey to the pointed value, if pointer is valid
-    if ( rt_identMode == IsoAgLib::IdentModeTractor)
-    {
-      if (rpc_devKey != NULL ) c_sendFuelDevKey = *rpc_devKey;
-      else c_sendFuelDevKey.setUnspecified();
+  bool TracGeneral_c::configFuel(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identModeFuel)
+  {
+    if (   rt_identModeFuel == IsoAgLib::IdentModeTractor
+        && rpc_devKey == NULL
+      )
+    { // the application is in tractor mode but has no valid devKey
+      // IMPORTANT: if we are in tractor mode we MUST have a valid devKey otherwise the configuration makes no sense
+      #ifdef DEBUG
+        EXTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with devKey == NULL and\
+                                  IdentModeTractor. Is is not allowed that the devKey ist NULL in combination\
+                                  with tractor mode." << "\n";
+      #endif
+      #if defined DEBUG && SYSTEM_PC
+        abort();
+      #endif
+      getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsBase );
+      return false;
     }
+    // set configure values
+    i32_lastFuel = 0;
+
+    t_identModeStateFuel = rt_identModeFuel;
+    pc_devKeyFuel = rpc_devKey; //store the pointer in any case
+
+    i16_fuelRate = 0;
+    ui8_fuelTemperature = 0;
+
+    if ( rt_identModeFuel == IsoAgLib::IdentModeTractor )
+    { //now it is guaranteed that the rpc_devKey is != NULL
+      c_sendFuelDevKey = *rpc_devKey;
+    }
+    else if ( rt_identModeFuel == IsoAgLib::IdentModeImplement)
+    {
+      c_sendFuelDevKey.setUnspecified();
+    }
+    return true;
   };
   #endif
 
@@ -247,10 +276,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       c_sendFuelDevKey.setUnspecified();
     }
 
-    if (  getDevKey() != NULL
-          && ( checkMode(IsoAgLib::IdentModeTractor) || t_identModeStateFuel         )
-          && ( getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true) ) )
+    if ( checkMode(IsoAgLib::IdentModeTractor) )
     { // there is at least something configured to send
+      // getDevKey must be != NULL, because we are in tractor mode
       if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
       // stored base information sending DIN member has claimed address
       return dinTimeEventTracMode();
@@ -315,13 +343,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   {
     CANIO_c& c_can = getCanInstance4Comm();
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*getDevKey(), true).nr();
+    uint8_t b_send;
 
     if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
 
-    if ( ( lastedTimeSinceUpdate() >= 100 ) && checkMode(IsoAgLib::IdentModeTractor) )
+    if ( ( lastedTimeSinceUpdate() >= 100 ) && getDinMonitorInstance4Comm().existDinMemberDevKey(*getDevKey(), true) )
     { // send actual base2 data
+      b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*getDevKey(), true).nr();
       setSelectedDataSourceDevKey( *getDevKey() );
       data().setIdent((0x16 << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
       data().setUint16Data(0, i16_rearLeftDraft);
@@ -338,8 +366,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       setUpdateTime(ci32_now);
     }
 
-    if ( ( ( ci32_now - i32_lastFuel ) >= 100 ) && ( t_identModeStateFuel ) )
+    if ( ( ( ci32_now - i32_lastFuel ) >= 100 ) && getDinMonitorInstance4Comm().existDinMemberDevKey(*pc_devKeyFuel, true) )
     { // send actual base3 data
+      b_send = getDinMonitorInstance4Comm().dinMemberDevKey(*pc_devKeyFuel, true).nr();
       c_sendFuelDevKey = *getDevKey();
       data().setIdent((0x1C << 4 | b_send), __IsoAgLib::Ident_c::StandardIdent );
       data().setUint16Data(0, i16_fuelRate);
@@ -456,8 +485,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   #ifdef USE_ISO_11783
   /** send a ISO11783 general base information PGN.
-  * this is only called when sending ident is configured and it has already claimed an address
-  */
+    * this is only called when sending ident is configured and it has already claimed an address
+      @pre  function is only called in tractor mode
+      @see  BaseCommon_c::timeEvent()
+    */
   bool TracGeneral_c::isoTimeEventTracMode( )
   {
     if ( lastedTimeSinceUpdate() >= 100 )
@@ -593,10 +624,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return false;
   };
 
-
-  /** send front hitch and rear hitch data msg*/
+  /** send front hitch and rear hitch data msg
+      @see  CANIO_c::operator<<
+    */
   void TracGeneral_c::isoSendMessage()
-  {
+  { //check for devKey and if address claim has yet occured, because this function can also bo called
+    //independent from timeEvent() function
     if ( getDevKey() == NULL ) return;
     if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
 
@@ -687,10 +720,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     setUpdateTime(ci32_now);
   }
 
-  /** send iso language data msg*/
+  /** send iso language data msg
+      @see  TracGeneral_c::processMsgRequestPGN
+      @see  CANIO_c::operator<<
+    */
   void TracGeneral_c::isoSendLanguage()
   {
-    if ( getDevKey() == NULL ) return;
+    //language is only send in tractor mode
+    if ( checkMode(IsoAgLib::IdentModeImplement) ) return;
 
     if (  !b_languageVtReceived
        || ( getDevKey()->isUnspecified()  )
@@ -729,10 +766,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   }
 
  /** force maintain power from tractor
-    * @param rb_ecuPower true -> maintain ECU power
-    * @param rb_actuatorPower true-> maintain actuator power
-    * @param rt_implState in which state is the implement (transport, park, work)
-    */
+     @see  CANIO_c::operator<<
+     @param rb_ecuPower true -> maintain ECU power
+     @param rb_actuatorPower true-> maintain actuator power
+     @param rt_implState in which state is the implement (transport, park, work)
+   */
   void TracGeneral_c::forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState)
   {
      uint8_t val1 = IsoAgLib::IsoInactive,

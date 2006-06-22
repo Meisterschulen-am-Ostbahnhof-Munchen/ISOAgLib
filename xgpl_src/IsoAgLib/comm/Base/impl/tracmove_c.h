@@ -110,7 +110,7 @@ namespace __IsoAgLib {
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
+    bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
 
     /** check if filter boxes shall be created - create only ISO or DIN filters based
         on active local idents which has already claimed an address
@@ -295,16 +295,18 @@ namespace __IsoAgLib {
     static uint32_t long2int(const uint32_t& rreflVal);
 
     #if defined(USE_ISO_11783)
-    /** send a ISO11783 moving information PGN.
-      * this is only called when sending ident is configured and it has already claimed an address
-      */
+  /** send a ISO11783 moving information PGN.
+    * this is only called when sending ident is configured and it has already claimed an address
+      @pre  function is only called in tractor mode
+      @see  BaseCommon_c::timeEvent()
+    */
     virtual bool isoTimeEventTracMode();
     /** process a ISO11783 moving information PGN */
     virtual bool isoProcessMsg();
-     /** send moving data with ground&theor speed&dist */
+    /** send moving data with ground&theor speed&dist
+        @see  CANIO_c::operator<<
+      */
     void isoSendMovingTracMode( );
-     /** send moving data with ground&theor speed&dist */
-    void isoSendMovingImplMode( );
     #endif
 
   private:

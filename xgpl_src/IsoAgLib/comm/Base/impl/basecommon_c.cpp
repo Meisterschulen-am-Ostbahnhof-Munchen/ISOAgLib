@@ -166,9 +166,26 @@ void BaseCommon_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 /** config tractor object after init --> store devKey and mode
     @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+    @return true -> configuration was successfull
   */
-void BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+bool BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
 {
+  if (   rt_identMode == IsoAgLib::IdentModeTractor
+      && rpc_devKey == NULL
+     )
+  { // the application is in tractor mode but has no valid devKey
+    // IMPORTANT: if we are in tractor mode we MUST have a valid devKey otherwise the configuration makes no sense
+    #ifdef DEBUG
+      EXTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with devKey == NULL and\
+                                IdentModeTractor. Is is not allowed that the devKey ist NULL in combination\
+                                with tractor mode." << "\n";
+    #endif
+    #if defined DEBUG && SYSTEM_PC
+      abort();
+    #endif
+    getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsBase );
+    return false;
+  }
   // set configure values
   pc_devKey = rpc_devKey; // store the pointer in any case
   setMode(rt_identMode);
@@ -179,11 +196,13 @@ void BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_i
   //setSelectedDataSourceDevKey is only used in tractor mode
   if (rt_identMode == IsoAgLib::IdentModeTractor)
   {
-    if ((rpc_devKey != NULL) )
-      c_selectedDataSourceDevKey = *rpc_devKey;
-    else
-      c_selectedDataSourceDevKey.setUnspecified();
+    c_selectedDataSourceDevKey = *rpc_devKey;
   }
+  else
+  { //implement mode
+    c_selectedDataSourceDevKey.setUnspecified();
+  }
+  return true;
 }
 
 /** check if a received message should be parsed */
@@ -250,7 +269,6 @@ bool BaseCommon_c::timeEvent()
     c_selectedDataSourceDevKey.setUnspecified();
   }
 
-
   if ( ( getDevKey() != NULL )
     && (!getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true)) )
   { // local dev key for sending is registrated, but it is not yet fully claimed
@@ -261,9 +279,6 @@ bool BaseCommon_c::timeEvent()
   // check if we are in tractor mode and have a pointer to the sending device key
   if ( checkMode(IsoAgLib::IdentModeTractor) )
   { // all tractor mode timeEvent() functions have the only target to send messages,
-    // --> leave this timeEvent() chain already here, when getDevKey() is not valid or the corresponding
-    //     device has not already claimed an address
-    if ( getDevKey() == NULL ) return true;
     // now:
     // 1) getDevKey() != NULL
     // 2) getSystemMgmtInstance4Comm().existLocalMemberDevKey(*getDevKey(), true) indicates, that a corresponding

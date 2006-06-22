@@ -119,11 +119,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       config send/receive of a moving msg type
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
     */
-  void TracMove_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  bool TracMove_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
     //call config for handling which is base data independent
-    BaseCommon_c::config(rpc_devKey, rt_identMode);
+    //if something went wrong leave function before something is configured
+    if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
 
     // set distance value to 0
     ui32_lastDistReal = ui32_lastDistTheor = 0;
@@ -147,6 +149,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     ui32_lastUpdateTimeSpeed = 3000;
     ui32_lastUpdateTimeDistDirec = 3000;
     #endif
+    return true;
   };
 
   /** check if filter boxes shall be created - create only ISO or DIN filters based
@@ -474,6 +477,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
   /** send a ISO11783 moving information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
+      @pre  function is only called in tractor mode
+      @see  BaseCommon_c::timeEvent()
     */
   bool TracMove_c::isoTimeEventTracMode( )
   {
@@ -486,10 +491,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     return true;
   }
 
-  /** send moving data with ground&theor speed&dist */
+  /** send moving data with ground&theor speed&dist
+      @pre  function is only called in tractor mode and only from isoTimeEventTracMode
+      @see  CANIO_c::operator<<
+    */
   void TracMove_c::isoSendMovingTracMode( )
-  { // send actual base1 data: ground/wheel based speed/dist
-    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
+  { // there is no need to check for address claim because this is already done in the timeEvent
+    // function of base class BaseCommon_c
 
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     IsoAgLib::iTracGeneral_c& c_tracgeneral = IsoAgLib::getITracGeneralInstance();

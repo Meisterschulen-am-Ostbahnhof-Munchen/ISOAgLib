@@ -119,23 +119,25 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
    */
-  void TracPTO_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_IdentMode)
+  bool TracPTO_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
     #ifdef USE_ISO_11783
     //store old mode to decide to register or unregister from request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
     #endif
     //call config for handling which is base data independent
-    BaseCommon_c::config(rpc_devKey, rt_IdentMode);
+    //if something went wrong leave function before something is configured
+    if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
 
     // set the member base msg value vars to NO_VAL codes
     t_ptoFront.ui16_pto8DigitPerRpm = t_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16S;
     // set the timestamps to 0
     t_ptoFront.i32_lastPto = t_ptoRear.i32_lastPto = 0;
     #ifdef USE_ISO_11783
-    if (   (t_oldMode == IsoAgLib::IdentModeImplement && rt_IdentMode == IsoAgLib::IdentModeTractor)
-        || (t_oldMode == IsoAgLib::IdentModeTractor && rt_IdentMode == IsoAgLib::IdentModeImplement)
+    if (   (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
+        || (t_oldMode == IsoAgLib::IdentModeTractor && rt_identMode == IsoAgLib::IdentModeImplement)
        )
     { // a change from Implement to Tractor mode or a change from Tractor to Implement mode occured
       const uint8_t pgnCount = 2;
@@ -160,6 +162,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     = t_ptoFront.t_ptoEconomyModeReqStatus = t_ptoRear.t_ptoEconomyModeReqStatus = IsoAgLib::IsoNotAvailableReq;
     t_ptoFront.t_ptoShaftSpeedLimitStatus = t_ptoRear.t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoNotAvailableLimit;
     #endif
+    return true;
   };
 
   /** check if filter boxes shall be created - create only ISO or DIN filters based
@@ -366,6 +369,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
+      @pre  function is only called in tractor mode
+      @see  BaseCommon_c::timeEvent()
     */
   bool TracPTO_c::isoTimeEventTracMode( )
   {
@@ -409,11 +414,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   /** send pto data message
       @param t_sendptodata  send pto front or pto rear
+      @see  TracCert_c::processMsgRequestPGN
+      @see  CANIO_c::operator<<
     */
   void TracPTO_c::isoSendMessage(SendPtoData_t t_sendptodata)
   {
     if ( getDevKey() == NULL ) return;
     if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
+
+    CANIO_c& c_can = getCanInstance4Comm();
 
     // retreive the actual dynamic sender no of the member with the registered devKey
     uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
@@ -422,7 +431,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setIsoSa(b_sa);
     data().setLen(8);
 
-    CANIO_c& c_can = getCanInstance4Comm();
     setSelectedDataSourceDevKey(*getDevKey());
 
     PtoData_t* pt_ptoData = NULL;

@@ -157,8 +157,9 @@ typedef struct
         config send/receive of different base msg types
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+        @return true -> configuration was successfull
       */
-    void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_IdentMode);
+    bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_IdentMode);
 
     /** destructor for Base_c which has nothing to do */
     virtual ~TracPTO_c() { BaseCommon_c::close();};
@@ -230,6 +231,8 @@ typedef struct
     bool sendRequestUpdateRear();
     /** send pto data message
         @param t_sendptodata  send pto front or pto rear
+        @see  TracCert_c::processMsgRequestPGN
+        @see  CANIO_c::operator<<
       */
     void isoSendMessage(SendPtoData_t t_sendptodata);
     /** set explicit information whether front PTO is engaged
@@ -437,6 +440,8 @@ typedef struct
     #if defined(USE_ISO_11783)
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
+        @pre  function is only called in tractor mode
+        @see  BaseCommon_c::timeEvent()
       */
     virtual bool isoTimeEventTracMode( );
     /** Detect stop of PTO update from tractor -> indication for stopped PTO */

@@ -263,7 +263,7 @@ namespace __IsoAgLib {
       #ifdef USE_ISO_11783
       if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true))
       { // stored base information sending ISO member has claimed address
-        if (checkMode(IsoAgLib::IdentModeTractor) || (checkModeGps(IsoAgLib::IdentModeTractor)) ) isoTimeEventTracMode();
+        if ( checkMode(IsoAgLib::IdentModeTractor) ) isoTimeEventTracMode();
       }
       #endif
       #if defined(USE_ISO_11783) && defined(USE_DIN_9684)
@@ -276,6 +276,16 @@ namespace __IsoAgLib {
       }
       #endif
     }
+    #ifdef USE_ISO_11783
+    if ( pc_devKeyGps != NULL )
+    { // there is at least something configured to send
+
+      if (getIsoMonitorInstance4Comm().existIsoMemberDevKey(*pc_devKeyGps, true))
+      { // stored base information sending ISO member has claimed address
+        if (checkModeGps(IsoAgLib::IdentModeTractor) ) isoTimeEventTracMode();
+      }
+    }
+    #endif
     return true;
   }
 
@@ -283,7 +293,7 @@ namespace __IsoAgLib {
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
-  void TimePosGPS_c::checkCreateReceiveFilter( void )
+  void TimePosGPS_c::checkCreateReceiveFilter( )
   {
     SystemMgmt_c& c_systemMgmt = getSystemMgmtInstance4Comm();
     CANIO_c &c_can = getCanInstance4Comm();
@@ -335,6 +345,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   #endif
 
   #if defined(USE_ISO_11783)
+  pc_devKeyGps = NULL;
   // set the GPS mode always to non-sending
   configGps( NULL, IsoAgLib::IdentModeImplement );
   #endif
@@ -344,15 +355,17 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
     */
-  void TimePosGPS_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  bool TimePosGPS_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
   {
     #ifdef USE_ISO_11783
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
     #endif
     //call config for handling which is base data independent
-    BaseCommon_c::config(rpc_devKey, rt_identMode);
+    //if something went wrong leave function before something is configured
+    if ( !BaseCommon_c::config(rpc_devKey, rt_identMode) ) return false;
 
     #ifdef USE_ISO_11783
     if (t_oldMode == IsoAgLib::IdentModeImplement && rt_identMode == IsoAgLib::IdentModeTractor)
@@ -380,6 +393,8 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     bit_calendar.timezoneHourOffsetMinus24 = 24;
 
     i32_lastCalendarSet = 0;
+
+    return true;
   };
 
 #if defined(USE_ISO_11783)
@@ -395,11 +410,32 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       config send/receive of different base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rb_implementMode implement mode (true) or tractor mode (false)!!!
+      @return true -> configuration was successfull
     */
-  void TimePosGPS_c::configGps(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t  rt_identModeGps)
+  bool TimePosGPS_c::configGps(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t  rt_identModeGps)
   {
+    if (   rt_identModeGps == IsoAgLib::IdentModeTractor
+        && rpc_devKey == NULL
+      )
+    { // the application is in tractor mode but has no valid devKey
+      // IMPORTANT: if we are in tractor mode we MUST have a valid devKey otherwise the configuration makes no sense
+      #ifdef DEBUG
+        EXTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with devKey == NULL and\
+                                  IdentModeTractor. Is is not allowed that the devKey ist NULL in combination\
+                                  with tractor mode." << "\n";
+      #endif
+      #if defined DEBUG && SYSTEM_PC
+        abort();
+      #endif
+      getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsBase );
+      return false;
+    }
+    //set configure values
     i32_lastIsoPositionSimple = 0;
-    setDevKey( rpc_devKey );
+
+    pc_devKeyGps = rpc_devKey;
+    t_identModeGps = rt_identModeGps;
+
     i32_latitudeDegree10Minus7 = i32_longitudeDegree10Minus7 = 0x7FFFFFFF;
     #ifdef NMEA_2000_FAST_PACKET
     i32_lastIsoPositionStream = i32_lastIsoDirectionStream = 0;
@@ -409,11 +445,9 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     ui8_satelliteCnt = 0;
     #endif // END of NMEA_2000_FAST_PACKET
 
-    // *************************************************************************************************
-    t_identModeGps = rt_identModeGps;
-
-    if ((rpc_devKey != NULL) && ( rt_identModeGps == IsoAgLib::IdentModeTractor ) )
+    if ( rt_identModeGps == IsoAgLib::IdentModeTractor )
     { // GPS send from now on
+      // because wer are in tractor mode the rpc_devKey cannot be NULL
       c_sendGpsDevKey = *rpc_devKey;
       #ifdef NMEA_2000_FAST_PACKET
       // also remove any previously registered MultiReceive connections
@@ -423,9 +457,8 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       #endif // END of NMEA_2000_FAST_PACKET
     }
     else
-    {
-      if ( rt_identModeGps == IsoAgLib::IdentModeTractor )
-        c_sendGpsDevKey.setUnspecified();
+    { // IdentModeImplement
+      c_sendGpsDevKey.setUnspecified();
       #ifdef NMEA_2000_FAST_PACKET
       // make sure that the needed multi receive are registered
       getMultiReceiveInstance4Comm().registerClient(NMEA_GPS_POSITON_DATA_PGN,   0xFF, this, true, false, true);
@@ -433,6 +466,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       c_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of NMEA_2000_FAST_PACKET
     }
+    return true;
   }
 
   /** Retrieve the last update time of the specified information type
@@ -653,9 +687,9 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     if ( ( getIsoMonitorInstance4Comm().isoMemberDevKey( *getDevKey() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
     { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
       // DevKey_c (getDevKey())
-      // call TracGeneral_c function to send language of Tractor-ECU
-      // isoSendLanguage checks if this item (identified by DEV_KEY)
-      // is configured to send language
+      // call TimePosGPS_c function to send time/date
+      // isoSendCalendar checks if this item (identified by DEV_KEY)
+      // is configured to send time/date
       isoSendCalendar(*getDevKey());
       return true;
     }
@@ -955,27 +989,23 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
   /** send a ISO11783 base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
+      @pre  function is only called in tractor mode
+      @see  BaseCommon_c::timeEvent()
     */
   bool TimePosGPS_c::isoTimeEventTracMode()
   {
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
 
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setIsoSa(b_sa);
-
     if ( ( lastedTimeSinceUpdate() >= 1000 )
-      && checkMode(IsoAgLib::IdentModeTractor)
-      && (getDevKey() != NULL) )
-    { // send actual calendar data
+      && checkMode(IsoAgLib::IdentModeTractor) )
+    { // getDevKey() must be != NULL, because we are in tractor mode
+      // send actual calendar data
       setSelectedDataSourceDevKey(*getDevKey());
       isoSendCalendar(*getDevKey());
     }
 
     if ( checkModeGps(IsoAgLib::IdentModeTractor) )
-    {
+    { // pc_devKeyGps must be != NULL, because we are in tractor mode
       if ( ( ci32_now - i32_lastIsoPositionSimple ) >= 100 )
       {
         if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
@@ -1004,6 +1034,12 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   /** send position rapid update message */
   void TimePosGPS_c::isoSendPositionRapidUpdate( void )
   {
+    // retreive the actual dynamic sender no of the member with the registered devKey
+    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*pc_devKeyGps, true).nr();
+    data().setIdentType(Ident_c::ExtendedIdent);
+    data().setIsoPri(3);
+    data().setIsoSa(b_sa);
+
     data().setIsoPgn(NMEA_GPS_POSITON_RAPID_UPDATE_PGN);
     data().setInt32Data(0, i32_latitudeDegree10Minus7 );
     data().setInt32Data(4, i32_longitudeDegree10Minus7);
@@ -1161,8 +1197,13 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     */
   void TimePosGPS_c::isoSendCalendar(const DevKey_c& rc_devKey)
   {
-    if ( getDevKey() == NULL ) return;
-    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
+    if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_devKey, true)) return;
+
+    // retreive the actual dynamic sender no of the member with the registered devKey
+    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(rc_devKey, true).nr();
+    data().setIdentType(Ident_c::ExtendedIdent);
+    data().setIsoPri(6);
+    data().setIsoSa(b_sa);
 
     if ( ( getSelectedDataSourceDevKey() == rc_devKey ) )
     { // this item (identified by DEV_KEY is configured to send

@@ -105,38 +105,41 @@ namespace IsoAgLib {
   void init(const iDevKey_c* rpc_devKey = NULL, IsoAgLib::IdentMode_t rt_IdentMode = IsoAgLib::IdentModeImplement)
   {TracGeneral_c::init(rpc_devKey, rt_IdentMode);};
   /**
-    DEPRECATED CONFIG FUNCTION - PLEASE DO NOT USE ANY MORE AS THIS FUNCTION WILL BE REMOVED SOON
-    config the Base_c object after init -> set pointer to devKey and
-    config send/receive of different base msg types
-    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rb_implementMode implement mode (true) or tractor mode (false)!!!
-  */
-  void config(const iDevKey_c* rpc_devKey, bool rb_implementMode = true)
+      DEPRECATED CONFIG FUNCTION - PLEASE DO NOT USE ANY MORE AS THIS FUNCTION WILL BE REMOVED SOON
+      config the Base_c object after init -> set pointer to devKey and
+      config send/receive of different base msg types
+      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rb_implementMode implement mode (true) or tractor mode (false)!!!
+      @return true -> configuration was successfull
+   */
+  bool config(const iDevKey_c* rpc_devKey, bool rb_implementMode = true)
   {
     #if __GNUC__
     #warning "deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool"
     #elif defined WIN32
     #pragma message ("deprecated, use IsoAgLib::IdentMode_t as parameter instead of bool")
 	  #endif
-    TracGeneral_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
+    return TracGeneral_c::config(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   }
   /**
-    config the iTracGeneral_c object after init -> set pointer to devKey and
-    config send/receive of different base msg types
-    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-  */
-  void config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
-  { TracGeneral_c::config(rpc_devKey, rt_identMode ); }
+      config the iTracGeneral_c object after init -> set pointer to devKey and
+      config send/receive of different base msg types
+      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rt_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
+    */
+  bool config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
+  { return TracGeneral_c::config(rpc_devKey, rt_identMode ); }
 
   #ifdef USE_DIN_9684
   /** config the TracGeneral_c object after init -> set pointer to devKey and
       config send/receive of different general msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
     */
-  void configFuel(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
-  {TracGeneral_c::configFuel(rpc_devKey, rt_identMode);}
+  bool configFuel(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
+  { return TracGeneral_c::configFuel(rpc_devKey, rt_identMode);}
   #endif
 
     /* ******************************************* */

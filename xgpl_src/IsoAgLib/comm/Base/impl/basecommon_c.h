@@ -106,7 +106,11 @@ namespace __IsoAgLib
     void singletonInit();
 
     /** constructor */
-    BaseCommon_c() : t_identMode(IsoAgLib::IdentModeImplement) {};
+    BaseCommon_c() : t_identMode(IsoAgLib::IdentModeImplement),
+                     i32_lastMsgReceived(0),
+                     pc_devKey(),
+                     c_selectedDataSourceDevKey()
+                   {}
     /** destructor */
     ~BaseCommon_c() {};
 
@@ -126,7 +130,7 @@ namespace __IsoAgLib
         @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
         @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
+    virtual bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
 
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure
@@ -236,8 +240,6 @@ namespace __IsoAgLib
     /** set Devkey of data source (e.g. tractor, terminal) which sends commands exclusively */
     void setSelectedDataSourceDevKey(const DevKey_c& rc_dataSourceDevKey){c_selectedDataSourceDevKey = rc_dataSourceDevKey;}
 
-    /** set sender of a msg*/
-    void setDevKey(const DevKey_c* devKey){pc_devKey = devKey;}
     /** set last time of data msg [msec]*/
     void setUpdateTime(int32_t updateTime) {i32_lastMsgReceived = updateTime;}
 
@@ -245,6 +247,8 @@ namespace __IsoAgLib
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE = 3000;
   private:
+    /** set sender of a msg*/
+    void setDevKey(const DevKey_c* devKey){pc_devKey = devKey;}
     /** can be implement mode or tractor mode*/
     IsoAgLib::IdentMode_t t_identMode;
     #ifdef USE_DIN_9684

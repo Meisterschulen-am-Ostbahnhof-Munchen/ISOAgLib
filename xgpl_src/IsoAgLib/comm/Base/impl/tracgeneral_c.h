@@ -139,8 +139,9 @@ public: // Public methods
       config send/receive of different general base msg types
       @param rpc_devKey pointer to the DEV_KEY variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
     */
-  void config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
+  bool config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
 
   /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
@@ -166,13 +167,6 @@ public: // Public methods
   bool processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
   /** force a request for pgn for language information */
   bool sendRequestUpdateLanguage();
-
-  /** force maintain power from tractor
-    * @param rb_ecuPower true -> maintain ECU power
-    * @param rb_actuatorPower true-> maintain actuator power
-    * @param rt_implState in which state is the implement (transport, park, work)
-    */
-  void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState);
   #endif
 
   #ifdef USE_DIN_9684
@@ -183,11 +177,12 @@ public: // Public methods
   void dinSetHitchEngineFlags(CANPkgExt_c& rrefc_pkg);
 
   /** config the TracGeneral_c object after init -> set pointer to devKey and
-    config send/receive of different general base msg types
-    @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      config send/receive of different general base msg types
+      @param rpc_devKey pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
+      @return true -> configuration was successfull
    */
-  void configFuel(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
+  bool configFuel(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode);
   #endif
   /*@}*/
 
@@ -305,6 +300,8 @@ public: // Public methods
   int fuelRate() const { return i16_fuelRate;};
   /** deliver fuel temperature °C */
   int fuelTemperature() const { return ui8_fuelTemperature;};
+  /** return if you currently are in implement mode or tractor mode*/
+  bool checkModeFuel(IsoAgLib::IdentMode_t rt_identModeFuel) const {return (t_identModeStateFuel == rt_identModeFuel);}
   #endif
 
   #ifdef USE_ISO_11783
@@ -365,8 +362,18 @@ public: // Public methods
   const uint8_t* getVtLanguage()   const { return p8ui8_languageVt; }
   const uint8_t* getTecuLanguage() const { return p8ui8_languageTecu; }
 
-  /** send iso language data msg*/
+  /** send iso language data msg
+      @see  TracGeneral_c::processMsgRequestPGN
+      @see  CANIO_c::operator<<
+    */
   void isoSendLanguage();
+  /** force maintain power from tractor
+      @see  CANIO_c::operator<<
+      @param rb_ecuPower true -> maintain ECU power
+      @param rb_actuatorPower true-> maintain actuator power
+      @param rt_implState in which state is the implement (transport, park, work)
+    */
+  void forceMaintainPower( bool rb_ecuPower, bool rb_actuatorPower, IsoAgLib::IsoMaintainPower_t rt_implState);
   #endif
   /*@}*/
 
@@ -376,10 +383,17 @@ private:
   /** HIDDEN constructor for a TracGeneral_c object instance which can optional
       set the configuration for send/receive for general base msg
       NEVER instantiate a variable of type TracGeneral_c within application
-      only access TracGeneral_c via getTracGeneralInstance() or getTracGeneralInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+      only access TracGeneral_c via getTracGeneralInstance() or getTracGeneralInstance( int riLbsBusNr )
+      in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
     */
-  TracGeneral_c() {};
-
+  TracGeneral_c()
+                  #ifdef USE_DIN_9684
+                   :i32_lastFuel(0),
+                    t_identModeStateFuel(IsoAgLib::IdentModeImplement),
+                    c_sendFuelDevKey(),
+                    pc_devKeyFuel()
+                  #endif
+  {};
   #ifdef USE_DIN_9684
   /** check if a received message should be parsed */
   bool checkParseReceivedFuel(const DevKey_c& rrefc_currentSender) const;
@@ -394,11 +408,15 @@ private:
   #ifdef USE_ISO_11783
   /** send a ISO11783 general base information PGN.
     * this is only called when sending ident is configured and it has already claimed an address
+      @pre  function is only called in tractor mode
+      @see  BaseCommon_c::timeEvent()
     */
   virtual bool isoTimeEventTracMode();
   /** process a ISO11783 general base information PGN */
   virtual bool isoProcessMsg();
-  /** send front hitch and rear hitch data msg*/
+  /** send front hitch and rear hitch data msg
+      @see  CANIO_c::operator<<
+    */
   void isoSendMessage();
   #endif
 
@@ -418,6 +436,7 @@ private:
   IsoAgLib::IdentMode_t t_identModeStateFuel;
   /** DevKey_c for fuel sender */
   DevKey_c c_sendFuelDevKey;
+  const DevKey_c* pc_devKeyFuel;
 
   /** NEW from AGCO Fendt Vario: rear left draft */
   int16_t i16_rearLeftDraft;
