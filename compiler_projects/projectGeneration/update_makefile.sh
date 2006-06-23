@@ -965,6 +965,15 @@ function create_autogen_project_config()
     for FIRST_REL_APP_PATH in $REL_APP_PATH ; do
 	# CONFIG_NAME=../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/.config_$PROJECT.h
 	CONFIG_NAME=../$ISO_AG_LIB_PATH/$FIRST_REL_APP_PATH/config_$PROJECT.h
+			VERSION_FILE_NAME=../$ISO_AG_LIB_PATH/$FIRST_REL_APP_PATH/version.h
+			if [ ! -f $VERSION_FILE_NAME ] ; then
+				echo    "#ifndef POOL_VERSION"            > $VERSION_FILE_NAME
+				echo -e "\t#define POOL_VERSION=\"1.0\""     >> $VERSION_FILE_NAME
+				echo    "#endif"                         >> $VERSION_FILE_NAME
+				echo    "#ifndef FIRMWARE_VERSION"       >> $VERSION_FILE_NAME
+				echo -e "\t#define FIRMWARE_VERSION=\"1.0\"" >> $VERSION_FILE_NAME
+				echo    "#endif"                         >> $VERSION_FILE_NAME
+			fi
 	break;
     done
 
@@ -992,6 +1001,10 @@ function create_autogen_project_config()
 	echo "//                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there."  >> $CONFIG_NAME
 	echo "//                      All commented out defines in the middle block will be upated on next \"update_makefile.sh $CONF_FILE\" call,"  >> $CONFIG_NAME
 	echo "//                      if the corresponding value in isoaglib_config.h changed" >> $CONFIG_NAME
+
+	echo -e "\n\n// include an external file for definition of pool and firmware versions" >> $CONFIG_NAME
+	echo    "#include \"version.h\""  >> $CONFIG_NAME
+
 	echo -e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define CAN_BUS_USED $CAN_BUS_USED $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
@@ -1212,6 +1225,10 @@ function create_makefile()
 		echo -n "-I../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH " >> $MakefileName
   done
 
+	echo -e "\n####### Include a version definition file into the Makefile context - when this file exists"  >> $MakefileName
+	echo    "-include versions.mk" >> $MakefileName
+
+
 	echo "" >> $MakefileName
 	if [ $USE_CAN_DRIVER = "rte" -o $USE_RS232_DRIVER = "rte" ] ; then
 		echo "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >> $MakefileName
@@ -1219,7 +1236,7 @@ function create_makefile()
 		echo -n "BIOS_INC =" >> $MakefileName
 	fi
 
-	echo -n -e "\nPROJ_DEFINES = -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileName
+	echo -n -e "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileName
 	for SinglePrjDefine in $PRJ_DEFINES ; do
 		echo -n " -D$SinglePrjDefine" >> $MakefileName
 	done
