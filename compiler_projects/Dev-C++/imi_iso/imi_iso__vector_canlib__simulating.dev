@@ -888,7 +888,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit85]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/getypos_c.h
+FileName=../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
 CompileCpp=1
 Folder=imi_iso
 Compile=1
@@ -1008,7 +1008,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit97]
-FileName=../../../xgpl_src/IsoAgLib/util/igetypos_c.h
+FileName=../../../xgpl_src/IsoAgLib/util/idevkey_c.h
 CompileCpp=1
 Folder=imi_iso
 Compile=1

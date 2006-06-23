@@ -928,7 +928,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit89]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/getypos_c.h
+FileName=../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1
@@ -1048,7 +1048,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit101]
-FileName=../../../xgpl_src/IsoAgLib/util/igetypos_c.h
+FileName=../../../xgpl_src/IsoAgLib/util/idevkey_c.h
 CompileCpp=1
 Folder=3_0_VirtualTerminalIso
 Compile=1

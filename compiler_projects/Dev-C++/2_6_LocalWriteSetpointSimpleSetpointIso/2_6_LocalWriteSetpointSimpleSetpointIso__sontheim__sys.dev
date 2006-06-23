@@ -698,7 +698,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit66]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/getypos_c.h
+FileName=../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
 Compile=1
@@ -818,7 +818,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit78]
-FileName=../../../xgpl_src/IsoAgLib/util/igetypos_c.h
+FileName=../../../xgpl_src/IsoAgLib/util/idevkey_c.h
 CompileCpp=1
 Folder=2_6_LocalWriteSetpointSimpleSetpointIso
 Compile=1
