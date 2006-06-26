@@ -968,10 +968,10 @@ function create_autogen_project_config()
 			VERSION_FILE_NAME=../$ISO_AG_LIB_PATH/$FIRST_REL_APP_PATH/version.h
 			if [ ! -f $VERSION_FILE_NAME ] ; then
 				echo    "#ifndef POOL_VERSION"            > $VERSION_FILE_NAME
-				echo -e "\t#define POOL_VERSION=\"1.0\""     >> $VERSION_FILE_NAME
+				echo -e "\t#define POOL_VERSION 1.0"     >> $VERSION_FILE_NAME
 				echo    "#endif"                         >> $VERSION_FILE_NAME
 				echo    "#ifndef FIRMWARE_VERSION"       >> $VERSION_FILE_NAME
-				echo -e "\t#define FIRMWARE_VERSION=\"1.0\"" >> $VERSION_FILE_NAME
+				echo -e "\t#define FIRMWARE_VERSION 1.0" >> $VERSION_FILE_NAME
 				echo    "#endif"                         >> $VERSION_FILE_NAME
 			fi
 	break;
