@@ -202,7 +202,16 @@ public:
     @param rb_pos
     @return ident value
   */
-  MASK_TYPE ident(uint8_t rb_pos) const {return pb_ident[rb_pos];};
+  MASK_TYPE ident(uint8_t rb_pos) const {
+#if defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN )
+    return pb_ident[rb_pos];
+#elif defined(  OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN )
+    return pb_ident[sizeof(MASK_TYPE) - 1 - rb_pos];
+#else
+    // this bitshift operation is independent of the big/little endianess of the CPU
+    return ((t_ident >> (rb_pos*8)) & 0xFF);
+#endif
+  };
   /**
     check if Ident_c is set as empty (needed for MsgObj)
   */
@@ -246,7 +255,7 @@ private:
   union {
     MASK_TYPE t_ident;
     uint8_t pb_ident[sizeof(MASK_TYPE)];
-    uint16_t pui16_ident[sizeof(MASK_TYPE)/2];
+//    uint16_t pui16_ident[sizeof(MASK_TYPE)/2];
   };
   struct {
     identType_t type : 2;

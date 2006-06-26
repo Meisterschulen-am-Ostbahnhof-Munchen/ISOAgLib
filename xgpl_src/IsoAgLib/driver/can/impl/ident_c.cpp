@@ -149,7 +149,16 @@ namespace __IsoAgLib
   */
   void Ident_c::set(uint8_t rb_val, uint8_t rb_pos, identType_t ren_identType)
   {
+#if defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN )
     pb_ident[rb_pos] = rb_val;
+#elif defined(  OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN )
+    pb_ident[sizeof(MASK_TYPE) - 1 - rb_pos] = rb_val;
+#else
+    const uint bitCount = (rb_pos*8);
+    MASK_TYPE clearMask = ~(0xFF << bitCount);
+    t_ident &= clearMask;
+    t_ident |= (MASK_TYPE(rb_val) << (rb_pos*8));
+#endif
     data.type = ren_identType;
     data.empty = 0;
   }
