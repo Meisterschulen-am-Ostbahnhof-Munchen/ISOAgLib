@@ -179,25 +179,25 @@ public:
     @param rui8_pos uint8_t position in CAN data string
     @param ri16_val value to set
   */
-  void setData(uint8_t rui8_pos, int16_t ri16_val){CNAMESPACE::memcpy((pb_data + rui8_pos), &ri16_val, sizeof(int16_t));};
+  void setData(uint8_t rui8_pos, int16_t ri16_val);
   /**
     set an uint16_t value at variable uint8_t position
     @param rui8_pos uint8_t position in CAN data string
     @param rui16_val value to set
   */
-  void setData(uint8_t rui8_pos, uint16_t rui16_val){CNAMESPACE::memcpy((pb_data + rui8_pos), &rui16_val, sizeof(uint16_t));};
+  void setData(uint8_t rui8_pos, uint16_t rui16_val);
   /**
     set an int32_t value at variable uint8_t position
     @param rui8_pos uint8_t position in CAN data string
     @param ri32_val value to set
   */
-  void setData(uint8_t rui8_pos, int32_t ri32_val){CNAMESPACE::memcpy((pb_data + rui8_pos), &ri32_val, sizeof(int32_t));};
+  void setData(uint8_t rui8_pos, int32_t ri32_val);
   /**
     set an uint32_t value at variable uint8_t position
     @param rui8_pos uint8_t position in CAN data string
     @param rui32_val value to set
   */
-  void setData(uint8_t rui8_pos, uint32_t rui32_val){CNAMESPACE::memcpy((pb_data + rui8_pos), &rui32_val, sizeof(uint32_t));};
+  void setData(uint8_t rui8_pos, uint32_t rui32_val);
   /**
     set the uint8_t order for two uint8_t integer values, as %e.g. Fieldstar
     Terminals use the unusual order MSB_LSB

@@ -396,7 +396,7 @@ bool DINMaskUpload_c::processMsg(){
                 {
                   pb_temp2[ui8_tempInd] = pb_temp1[3 - ui8_tempInd];
                 }
-                CNAMESPACE::memcpy( ((uint8_t*)&i32_swVers),pb_temp2, 4);
+                numberRef2LittleEndianString( i32_swVers, pb_temp2 );
                 break;
               }
             }

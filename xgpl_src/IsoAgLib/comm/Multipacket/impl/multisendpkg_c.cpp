@@ -186,6 +186,48 @@ void MultiSendPkg_c::setData_2ByteInteger(uint8_t rb_pos, uint16_t rui16_val)
 }
 
 /**
+  set an integer value at variable uint8_t position
+  @param rui8_pos uint8_t position in CAN data string
+  @param ri16_val value to set
+  */
+void MultiSendPkg_c::setData(uint8_t rui8_pos, int16_t ri16_val)
+{
+  numberRef2LittleEndianString( ri16_val, (pb_data + rui8_pos) );
+}
+
+/**
+set an uint16_t value at variable uint8_t position
+@param rui8_pos uint8_t position in CAN data string
+@param rui16_val value to set
+  */
+void MultiSendPkg_c::setData(uint8_t rui8_pos, uint16_t rui16_val)
+{
+  numberRef2LittleEndianString( rui16_val, (pb_data + rui8_pos) );
+}
+
+/**
+set an int32_t value at variable uint8_t position
+@param rui8_pos uint8_t position in CAN data string
+@param ri32_val value to set
+  */
+void MultiSendPkg_c::setData(uint8_t rui8_pos, int32_t ri32_val)
+{
+  numberRef2LittleEndianString( ri32_val, (pb_data + rui8_pos) );
+}
+
+/**
+set an uint32_t value at variable uint8_t position
+@param rui8_pos uint8_t position in CAN data string
+@param rui32_val value to set
+  */
+void MultiSendPkg_c::setData(uint8_t rui8_pos, uint32_t rui32_val)
+{
+  numberRef2LittleEndianString( rui32_val, (pb_data + rui8_pos) );
+}
+
+
+
+/**
   set the 7 uint8_t data part of transfer message
   @param rpb_source source data pointer
   @param ri32_pos uint8_t position in data string to start
