@@ -296,6 +296,7 @@ bool BaseCommon_c::timeEvent()
   #ifdef USE_ISO_11783
   else
   { // we are in implement mode
+    // call this function also if devKey == NULL, because some functions do settings which are independent from devKey
     if ( !isoTimeEventImplMode()) return false;
   }
   #endif
