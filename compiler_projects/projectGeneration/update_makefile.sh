@@ -1020,6 +1020,11 @@ function create_autogen_project_config()
 	else
 		echo -e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
 	fi
+	if [ $USE_BIG_ENDIAN_CPU -gt 0 ] ; then
+		echo -e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN$ENDLINE" >> $CONFIG_NAME
+	else
+		echo -e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN$ENDLINE" >> $CONFIG_NAME
+	fi
 
 	if [ $PRJ_DO_NOT_START_RELAIS_ON_STARTUP -gt 0 ] ; then
 		echo -e "#define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >> $CONFIG_NAME
@@ -1285,8 +1290,16 @@ function create_makefile()
 	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
 		mkdir -p objects_server
 		echo -e "\n#Special Sources for CAN Server" >> $MakefileName
-		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \\" >> $MakefileName
-		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileName
+		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_general.cpp \\" >> $MakefileName
+    case $PRJ_DEFINES in
+			*SYSTEM_MCC*) 
+		    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_pcan.cpp \\" >> $MakefileName
+				;;
+			*) 
+		    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \\" >> $MakefileName
+		    ;;
+    esac
+    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileName
 		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp" >> $MakefileName
 		echo -e "\n#Special Rules for CAN Server" >> $MakefileName
 
