@@ -4,10 +4,13 @@
 #include <list>
 #include <string>
 #include "can_msq.h"
+#include "can_typedef.h"
 #include <sys/time.h>
 #include <time.h>
 
 #include <vector>
+
+using namespace __HAL;
 
 namespace __HAL {
 
@@ -75,6 +78,17 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData);
 // iterator reference because releaseClient erases client
 void releaseClient(server_c* pc_serverData, std::list<client_s>::iterator& iter_delete);
 
+
 } // end namespace
+
+/////////////////////////////////////////////////////////////////////////
+// Driver Function Declarations
+
+int ca_InitApi_1 ();
+int ca_ResetCanCard_1(void);
+int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData);
+int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData);
+int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* pc_serverData);
+int ca_GetcanBusIsOpen_1 (int busId);
 
 #endif

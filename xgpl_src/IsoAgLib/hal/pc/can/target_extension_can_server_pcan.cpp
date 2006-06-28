@@ -57,7 +57,7 @@
  ***************************************************************************/
 
 // do not use can bus, operation is based on message forwarding in server
-#ifndef SYSTEM_A1
+#ifndef SYSTEM_MCC
 #define SIMULATE_BUS_MODE 1
 #endif
 
@@ -89,6 +89,9 @@
 #include <pthread.h>
 #include <linux/version.h>
 
+//
+#include <linux/types.h>
+
 #include "can_server.h"
 #include "can_msq.h"
 
@@ -101,16 +104,13 @@ using namespace __HAL;
  *  comment this define out to eliminate this */
 #ifdef WIN32
   #define CAN_SERVER_LOG_PATH ".\\can_server.log"
-#elif defined( SYSTEM_A1 )
+#elif defined( SYSTEM_PCAN )
   #define CAN_SERVER_LOG_PATH "/sd0/settings/can_server.log"
 #else
   #define CAN_SERVER_LOG_PATH "./can_server.log"
 #endif
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////
-// Wachendorff stuff...
 
 #define MSGTYPE_EXTENDED        0x02            /* extended frame */
 #define MSGTYPE_STANDARD        0x00            /* standard frame */
@@ -119,23 +119,78 @@ using namespace __HAL;
 #define CAN_MAGIC_NUMBER        'z'
 #define MYSEQ_START             0x80
 
-// kernel 2.6 needs type for third argument and not sizeof()
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-#define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, sizeof(canmsg))
-#define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, sizeof(canmsg))
-#else
-#define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, canmsg)
-#define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, canmsg)
+//****************************************************************************
+// DEFINES
+
+//****************************************************************************
+// compatibilty defines
+#if defined(DWORD) || defined(WORD) || defined(BYTE)
+#error "double define for DWORD, WORD, BYTE found"
 #endif
 
-struct CANmsg {
-        unsigned        id;
-        int             msg_type;
-        int             len;
-        unsigned char   data[8];
-        unsigned long   time;           /* timestamp in msec, at read only */
-};
-typedef struct CANmsg canmsg;
+#ifdef __KERNEL__
+#define DWORD  u32
+#define WORD   u16
+#define BYTE   u8
+#else
+#define DWORD  __u32
+#define WORD   __u16
+#define BYTE   __u8
+#endif
+
+//****************************************************************************
+// ioctls control codes
+#define PCAN_INIT           _IOWR(CAN_MAGIC_NUMBER, MYSEQ_START,     TPCANInit)
+#define PCAN_WRITE_MSG      _IOW (CAN_MAGIC_NUMBER, MYSEQ_START + 1, TPCANMsg)
+#define PCAN_READ_MSG       _IOR (CAN_MAGIC_NUMBER, MYSEQ_START + 2, TPCANRdMsg)
+#define PCAN_GET_STATUS     _IOR (CAN_MAGIC_NUMBER, MYSEQ_START + 3, TPSTATUS)
+#define PCAN_DIAG           _IOR (CAN_MAGIC_NUMBER, MYSEQ_START + 4, TPDIAG)
+#define PCAN_BTR0BTR1       _IOWR(CAN_MAGIC_NUMBER, MYSEQ_START + 5, TPBTR0BTR1)
+#define PCAN_GET_EXT_STATUS _IOR (CAN_MAGIC_NUMBER, MYSEQ_START + 6, TPEXTENDEDSTATUS)
+
+// device nodes minor base. Must be the same as defined in the driver (file pcan_mpc5200.c).
+#define PCAN_MSCAN_MINOR_BASE     40
+
+// parameter wBTR0BTR1
+// bitrate codes of BTR0/BTR1 registers
+/*
+ * ATTENTION: The BTR0BT1 values depend on the IPB-Clock of the motherboard. Please
+ * take a look at the "README.peak-mpc5200" file of the driver distibution for 
+ * further information.
+ */
+// (IPB-Clock = 132MHz)
+#define CAN_BAUD_500K   0x0a6f                             // 500 kBit/s
+#define CAN_BAUD_250K   0x156f                             // 250 kBit/s
+#define CAN_BAUD_125K   0x2b6f                             // 125 kBit/s
+#define CAN_BAUD_100K   0xb66f                             // 100 kBit/s
+// (IPB-Clock = 66MHz)
+//#define CAN_BAUD_500K   0x054f                             // 500 kBit/s
+//#define CAN_BAUD_250K   0x0a6f                             // 250 kBit/s
+//#define CAN_BAUD_125K   0x156f                             // 125 kBit/s
+//#define CAN_BAUD_100K   0x9d4f                             // 100 kBit/s
+
+//****************************************************************************
+// structures to communicate via ioctls
+typedef struct
+{
+  WORD wBTR0BTR1;        // merged BTR0 and BTR1 register of the SJA100
+  BYTE ucCANMsgType;     // 11 or 29 bits - put MSGTYPE_... in here
+  BYTE ucListenOnly;     // listen only mode when != 0
+} TPCANInit;             // for PCAN_INIT
+
+typedef struct
+{
+  DWORD ID;              // 11/29 bit code
+  BYTE  MSGTYPE;         // bits of MSGTYPE_*
+  BYTE  LEN;             // count of data bytes (0..8)
+  BYTE  DATA[8];         // data bytes, up to 8
+} TPCANMsg;              // for PCAN_WRITE_MSG
+
+typedef struct
+{
+  TPCANMsg Msg;          // the above message
+  DWORD    dwTime;       // a timestamp in msec, read only
+} TPCANRdMsg;            // for PCAN_READ_MSG
 
 
 
@@ -150,6 +205,7 @@ int ca_GetcanBusIsOpen_1 (int busId)
 {
   return canBusIsOpen[busId];
 }
+
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -223,22 +279,25 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
 
   DEBUG_PRINT1("init can channel %d\n", channel);
 
-  int btr0 = 0;
-  int btr1 = 1;
 
+  int wBTR0BTR1;
+  
   switch ( wBitrate ) {
-    case 100: { btr0 = 0xc3; btr1 = 0x3e;} break;
-    case 125: { btr0 = 0xc3; btr1 = 0x3a;} break;
-    case 250: { btr0 = 0xc1; btr1 = 0x3a;} break;
-    case 500: { btr0 = 0xc0; btr1 = 0x3a;} break;
+    case 100: { wBTR0BTR1 = CAN_BAUD_100K;} break;
+    case 125: { wBTR0BTR1 = CAN_BAUD_125K;} break;
+    case 250: { wBTR0BTR1 = CAN_BAUD_250K;} break;
+    case 500: { wBTR0BTR1 = CAN_BAUD_500K;} break;
   }
-            
+  
+  //default value = extended
+  int nCANMsgType = 1;
+
   if( !canBusIsOpen[channel] ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", channel);
 
     char fname[32];
 #ifndef SIMULATE_BUS_MODE
-    sprintf( fname, "/dev/wecan%u", channel );
+    sprintf( fname, "/dev/pcan%u", PCAN_MSCAN_MINOR_BASE + channel );
 #else
     sprintf( fname, "/dev/null");
 #endif
@@ -252,15 +311,24 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
       return 0;
     }
 
-    // Set baud rate to 250 and turn on extended IDs
-    // For Opus A1, it is done by sending the following string to the can_device
-    {
-      char buf[16];
-      sprintf( buf, "i 0x%2x%2x e\n", btr0 & 0xFF, btr1 & 0xFF );     //, (extended?" e":" ") extended is not being passed in! Don't use it!
+#ifndef SIMULATE_BUS_MODE
+    ///////////////
+    // pcan modification
+    ///////////////
 
-      DEBUG_PRINT3("write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
-      write(pc_serverData->can_device[channel], buf, strlen(buf));
-    }
+      printf("Init CAN Driver with PCAN_INIT\n");
+    
+      TPCANInit init;
+
+      init.wBTR0BTR1    = wBTR0BTR1;    // combined BTR0 and BTR1 register of the SJA100
+      init.ucCANMsgType = (nCANMsgType) ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD;  // 11 or 29 bits
+      init.ucListenOnly = 0;            // listen only mode when != 0
+
+      //write(pc_serverData->can_device[channel], buf, strlen(buf));
+      if ((ioctl(pc_serverData->can_device[channel], PCAN_INIT, &init)) < 0)
+        return 0;
+    ////////////////
+#endif
 
     canBusIsOpen[channel] = true;
     return 1;
@@ -299,15 +367,14 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData
 //  fprintf(stderr,"Transmitting data to channel %d\n", channel);
 
 
-  CANmsg msg;
-  msg.id = ptSend->dwId;
-  msg.msg_type = ( ptSend->bXtd ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD );
-  msg.len = ptSend->bDlc;
-  msg.time = 0;
+  TPCANMsg msg;
+  msg.ID = ptSend->dwId;
+  msg.MSGTYPE = ( ptSend->bXtd ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD );
+  msg.LEN = ptSend->bDlc;
 
-  for( int i=0; i<msg.len; i++ )
-    msg.data[i] = ptSend->abData[i];
-
+  for( int i=0; i<msg.LEN; i++ )
+    msg.DATA[i] = ptSend->abData[i];
+  
 #ifndef SIMULATE_BUS_MODE
 
 // select call should not be necessary during write
@@ -345,16 +412,16 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData
   int ret = 0;
 
   if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
-    ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+    ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_WRITE_MSG, &msg);
 
 #ifdef DEBUG_IOCTL
     if (ret < 0) {
       perror("ca_TransmitCanCard_1 ioctl");
 
       // try to read
-      CANmsg msg;
-      ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_READ_MSG, &msg);
-      printf("id 0x%x msg_type 0x%x len 0x%x data 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x time 0x%x\n", msg.id, msg.msg_type, msg.len, msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4], msg.data[5], msg.data[6], msg.data[7], msg.time);
+      TPCANRdMsg msg;
+      ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_READ_MSG, &msg);
+      printf("id 0x%x msg_type 0x%x len 0x%x data 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x time 0x%x\n", msg.Msg.ID, msg.Msg.MSGTYPE, msg.Msg.LEN, msg.Msg.DATA[0], msg.Msg.DATA[1], msg.Msg.DATA[2], msg.Msg.DATA[3], msg.Msg.DATA[4], msg.Msg.DATA[5], msg.Msg.DATA[6], msg.Msg.DATA[7], msg.dwTime);
 
       if (ret < 0) {
         perror("ioctl read after write");
@@ -378,22 +445,21 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData
 int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* pc_serverData)
 {
 
-  CANmsg msg;
-  int ret = ioctl(pc_serverData->can_device[ui8_bus], CAN_READ_MSG, &msg);
+  TPCANRdMsg msg;
+  int ret = ioctl(pc_serverData->can_device[ui8_bus], PCAN_READ_MSG, &msg);
 
   if (ret < 0) {
     return ret;
   } else {
     receiveData->b_bus = ui8_bus;
-    receiveData->msg.i32_ident = msg.id;
-    receiveData->msg.b_xtd = (msg.msg_type & MSGTYPE_EXTENDED) == MSGTYPE_EXTENDED;
-    receiveData->msg.b_dlc = msg.len;
-    receiveData->msg.i32_time = msg.time;
-    memcpy( receiveData->msg.pb_data, msg.data, msg.len );
+    receiveData->msg.i32_ident = msg.Msg.ID;
+    receiveData->msg.b_xtd = (msg.Msg.MSGTYPE & MSGTYPE_EXTENDED) == MSGTYPE_EXTENDED;
+    receiveData->msg.b_dlc = msg.Msg.LEN;
+    receiveData->msg.i32_time = msg.dwTime;
+    memcpy( receiveData->msg.pb_data, msg.Msg.DATA, msg.Msg.LEN );
   }
     
   return 1;
 
 }
-
 
