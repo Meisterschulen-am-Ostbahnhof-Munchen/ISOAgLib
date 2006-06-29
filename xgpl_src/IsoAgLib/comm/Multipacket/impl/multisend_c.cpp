@@ -414,6 +414,7 @@ void MultiSend_c::close( void ) {
 
 /** default destructor which has nothing to do */
 MultiSend_c::~MultiSend_c(){
+  close();
 }
 
 
