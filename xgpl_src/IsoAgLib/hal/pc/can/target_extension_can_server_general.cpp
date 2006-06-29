@@ -284,10 +284,10 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           DEBUG_PRINT1("mtype: 0x%08x\n", assemble_mtype(iter->i32_clientID, b_bus, i32_obj));
           msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, i32_obj);
 #else
-          msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, 0);
+          msqReadBuf.i32_mtype = assemble_mtype(iter->i32_clientID, b_bus, 0xFF);
           msqReadBuf.s_canData.bMsgObj = i32_obj;
 #endif
-          
+
           int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
           if (i_rcSnd == -1)
           {
@@ -910,7 +910,7 @@ static void* command_thread_func(void* ptr)
 /////////////////////////////////////////////////////////////////////////
 
 
-    
+
 int main(int argc, char *argv[])
 {
   pthread_t thread_registerClient, thread_canWrite;
@@ -922,7 +922,7 @@ int main(int argc, char *argv[])
 #else
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
 #endif
-  
+
   if (argc > 1 && strcmp(argv[1], "--help") == 0) {
     usage();
     exit(0);

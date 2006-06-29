@@ -243,11 +243,11 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
   msqCommandBuf.s_config.ui8_bXtd = ptConfig->bXtd;
   msqCommandBuf.s_config.ui8_bMsgType = ptConfig->bMsgType;
   msqCommandBuf.s_config.ui32_dwId = ptConfig->dwId;
-  
+
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   msqCommandBuf.s_config.ui32_mask = ptConfig->mask;
 #endif
-  
+
   msqCommandBuf.s_config.ui16_wNumberMsgs = ptConfig->wNumberMsgs;
 
   // read/write queue is cleared by server!
@@ -486,12 +486,11 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   const uint8_t cui8_useMsgObj = bMsgObj;
 #else
-  const uint8_t cui8_useMsgObj = (bMsgObj != 0xFF)?bMsgObj:0;
+  const uint8_t cui8_useMsgObj = (bMsgObj != 0xFF)?bMsgObj:0xFF;
 #endif
- 
-  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assemble_mtype(msqDataClient.i32_pid, bBusNumber, cui8_useMsgObj), IPC_NOWAIT)) == -1)
-      return HAL_UNKNOWN_ERR;
 
+  if ((i16_rc = msgrcv(msqDataClient.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), assemble_mtype(msqDataClient.i32_pid, bBusNumber, cui8_useMsgObj), IPC_NOWAIT)) == -1)
+    return HAL_UNKNOWN_ERR;
   i32_lastReceiveTime = getTime();
 
   // data received

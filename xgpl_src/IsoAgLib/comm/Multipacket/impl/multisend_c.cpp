@@ -1019,8 +1019,10 @@ MultiSend_c::SendStream_c::processMsg()
       INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- CTS received!\nFor Date from DC: " << i32_DC
         << "\n";
       #endif
-      // clear send buffer
-      getCanInstance4Comm().sendCanClearbuf();
+      /** @todo WHY WAS THE SEND BUFFER CLEARED AT THIS POSITION??
+        // clear send buffer
+        getCanInstance4Comm().sendCanClearbuf();
+      */
       if (   (en_sendState == AwaitCts)
           || (en_sendState == SendPauseTillCts)
           || (en_sendState == AwaitEndofmsgack)
