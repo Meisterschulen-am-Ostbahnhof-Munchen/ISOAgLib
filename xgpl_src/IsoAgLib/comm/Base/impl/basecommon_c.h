@@ -173,7 +173,7 @@ namespace __IsoAgLib
 
     #ifdef USE_ISO_11783
     /** send a PGN request */
-    bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN);
+    bool sendPgnRequest(uint32_t ui32_requestedPGN);
     /** process a ISO11783 base information PGN */
     virtual bool isoProcessMsg();
     /** send a ISO11783 base information PGN.

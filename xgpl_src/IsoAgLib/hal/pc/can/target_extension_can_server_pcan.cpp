@@ -155,7 +155,7 @@ using namespace __HAL;
 // bitrate codes of BTR0/BTR1 registers
 /*
  * ATTENTION: The BTR0BT1 values depend on the IPB-Clock of the motherboard. Please
- * take a look at the "README.peak-mpc5200" file of the driver distibution for 
+ * take a look at the "README.peak-mpc5200" file of the driver distibution for
  * further information.
  */
 // (IPB-Clock = 132MHz)
@@ -281,18 +281,18 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
 
 
   int wBTR0BTR1;
-  
+
   switch ( wBitrate ) {
     case 100: { wBTR0BTR1 = CAN_BAUD_100K;} break;
     case 125: { wBTR0BTR1 = CAN_BAUD_125K;} break;
     case 250: { wBTR0BTR1 = CAN_BAUD_250K;} break;
     case 500: { wBTR0BTR1 = CAN_BAUD_500K;} break;
   }
-  
+
   //default value = extended
   int nCANMsgType = 1;
 
-  if( !canBusIsOpen[channel] ) {
+  if( canBusIsOpen[channel] == -1 ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", channel);
 
     char fname[32];
@@ -317,7 +317,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
     ///////////////
 
       printf("Init CAN Driver with PCAN_INIT\n");
-    
+
       TPCANInit init;
 
       init.wBTR0BTR1    = wBTR0BTR1;    // combined BTR0 and BTR1 register of the SJA100
@@ -374,7 +374,7 @@ int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData
 
   for( int i=0; i<msg.LEN; i++ )
     msg.DATA[i] = ptSend->abData[i];
-  
+
 #ifndef SIMULATE_BUS_MODE
 
 // select call should not be necessary during write
@@ -458,7 +458,7 @@ int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* p
     receiveData->msg.i32_time = msg.dwTime;
     memcpy( receiveData->msg.pb_data, msg.Msg.DATA, msg.Msg.LEN );
   }
-    
+
   return 1;
 
 }

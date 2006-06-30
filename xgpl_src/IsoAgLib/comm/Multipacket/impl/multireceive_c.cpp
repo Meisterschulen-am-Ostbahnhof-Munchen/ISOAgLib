@@ -262,9 +262,9 @@ MultiReceive_c::processMsg()
 
   // Always get sure that the can-pkg from "data()" is NOT written to unless it's FULLY PARSED!
 
-  uint8_t ui8_pgnFormat = MACRO_pgnFormatOfPGN(data().isoPgn()); // e.g. 0xC826 >> 8 == 0xC8
-  uint8_t ui8_dataByte0 = data().getUint8Data(0);
-//uint8_t ui8_da = MACRO_pgnSpecificOfPGN(data().isoPgn());
+  const uint8_t ui8_pgnFormat = data().isoPf();
+  const uint8_t ui8_dataByte0 = data().getUint8Data(0);
+//uint8_t ui8_da = data().isoPs();
 //uint8_t ui8_sa = data().isoSa();
 
   ui32_pgn =  uint32_t (data().getUint8Data(5)) |

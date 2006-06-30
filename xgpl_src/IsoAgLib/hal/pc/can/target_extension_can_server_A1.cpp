@@ -247,7 +247,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
 
     pc_serverData->can_device[channel] = open(fname, O_RDWR | O_NONBLOCK);
 
-    if (!pc_serverData->can_device[channel]) {
+    if (pc_serverData->can_device[channel] == -1) {
       DEBUG_PRINT1("Could not open CAN bus%d\n",channel);
       return 0;
     }

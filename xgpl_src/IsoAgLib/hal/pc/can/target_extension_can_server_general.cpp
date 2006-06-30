@@ -92,6 +92,15 @@
 #include "can_server.h"
 #include "can_msq.h"
 
+#ifdef DEBUG
+  //backtrace
+  #include <unistd.h>
+  #include <execinfo.h>
+
+  char*  reserve_memory_heap;
+#endif
+
+
 using namespace __HAL;
 
 
@@ -909,7 +918,37 @@ static void* command_thread_func(void* ptr)
 
 /////////////////////////////////////////////////////////////////////////
 
+#ifdef DEBUG
+void print_trace (void)
+{
+    void * array[100];
+    int size;
+    char ** strings;
+    int i;
 
+    int pid = getpid();
+
+    size = backtrace (array, 100);
+    strings = backtrace_symbols (array, size);
+
+    fprintf (stderr,"Obtained %i stack frames.\n", size);
+
+    for (i = 0; i < size; i++)
+    {
+        fprintf (stderr,"(%d) %s\n", pid, strings[i]);
+    }
+}
+
+
+void segfaulthand(int i)
+{
+    delete[] reserve_memory_heap;
+
+    print_trace();
+    killpg( 0, 9 ); // pgid 0 means process group of current process.
+    exit(-1);
+}
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -969,6 +1008,10 @@ int main(int argc, char *argv[])
     printf("error creating queues\n");
     exit(1);
   }
+#ifdef DEBUG
+  reserve_memory_heap = new char[4096];
+  signal(11,segfaulthand);
+#endif
 
   printf("creating threads\n");
 
