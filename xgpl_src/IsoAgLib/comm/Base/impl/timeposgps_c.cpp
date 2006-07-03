@@ -394,6 +394,8 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
     i32_lastCalendarSet = 0;
 
+    b_timeDatePgnReceived = FALSE;
+
     return true;
   };
 
@@ -645,6 +647,8 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
           // set last time
           setUpdateTime(ci32_now);
           setSelectedDataSourceDevKey( c_tempDevKey);
+          
+          b_timeDatePgnReceived = TRUE;
         }
         else
         { // there is a sender conflict
@@ -839,7 +843,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   {
     if ( ( ( rc_ident.getPgn() == NMEA_GPS_POSITON_DATA_PGN   )
             || ( rc_ident.getPgn() == NMEA_GPS_DIRECTION_DATA_PGN ) )
-            && ( ( t_mySendSelection & IsoAgLib::BaseDataGps   ) == 0 ) )
+            &&  checkModeGps(IsoAgLib::IdentModeImplement) )
     { // this a NMEA multi stream of interest where we don't send it
       return true;
     }
@@ -893,7 +897,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
     // check if we want to process the information
     if (
-        ( checkMode(IsoAgLib::IdentModeTractor) ) // I'm the sender
+        ( checkModeGps(IsoAgLib::IdentModeTractor) ) // I'm the sender
         || ( // one of the following conditions must be true
           (c_sendGpsDevKey != c_tempDevKey) // actual sender different to last
         && (c_sendGpsDevKey.isSpecified() ) // last sender has correctly claimed address member
@@ -927,7 +931,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
         tm* UtcNow = gmtime( &t_tempUnixTime );
         if ( UtcNow != NULL )
         {
-          if ( ( ( t_mySendSelection & IsoAgLib::BaseDataCalendar   ) != 0  ) || (getSelectedDataSourceDevKey().isUnspecified()))
+          if ( checkMode(IsoAgLib::IdentModeTractor) || getSelectedDataSourceDevKey().isUnspecified())
           { // update the normal UTC time from GPS time, as we are either sending the calendar + time PGN _or_
             // there is currently no other active sender of this PGN --> other getter functions of this application should get
             // the GPS time as notmal UTC time

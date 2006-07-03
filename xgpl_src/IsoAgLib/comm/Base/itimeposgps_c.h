@@ -132,7 +132,6 @@ public:
     return TimePosGPS_c::configGps(rpc_devKey, (rb_implementMode ? IsoAgLib::IdentModeImplement : IsoAgLib::IdentModeTractor));
   };
   /** Retrieve the last update time of the specified information type
-     @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
    */
   int32_t lastedTimeSinceUpdateGps() const
     {return TimePosGPS_c::lastedTimeSinceUpdateGps();};
@@ -149,6 +148,9 @@ public:
   /*@{*/
   /** check if a calendar information was received since init */
   bool isCalendarReceived() const { return TimePosGPS_c::isCalendarReceived();};
+  /** check if a TIME_DATE_PGN was received since config */
+  bool isTimeDatePgnReceived() const { return TimePosGPS_c::isTimeDatePgnReceived();};
+
   /** get the calendar year value */
   int16_t yearLocal() const { return TimePosGPS_c::yearLocal();};
   /** get the calendar year value */

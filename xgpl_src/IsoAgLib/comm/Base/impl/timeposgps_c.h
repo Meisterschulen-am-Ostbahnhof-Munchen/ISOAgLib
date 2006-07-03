@@ -387,6 +387,9 @@ public:
   /// Getter functions
   /** check if a calendar information was received since init */
   bool isCalendarReceived() const;
+  /** check if a TIME_DATE_PGN was received since config */
+  bool isTimeDatePgnReceived() const { return b_timeDatePgnReceived;};
+  
   /** get the calendar year value
       @return actual calendar year value
     */
@@ -510,8 +513,6 @@ private:
     and calendar
     NEVER instantiate a variable of type TimePosGPS_c within application
     only access TimePosGPS_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
-    @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param rt_mySendSelection optional Bitmask of base data to send ( default send nothing )
     */
   TimePosGPS_c()
               #ifdef USE_ISO_11783
@@ -572,6 +573,8 @@ private:
     */
   int32_t i32_lastCalendarSet;
 
+  bool b_timeDatePgnReceived;
+
   /** bit_calendar */
   struct {
     uint16_t year : 12;
@@ -585,9 +588,6 @@ private:
     uint16_t timezoneHourOffsetMinus24 : 6;
   } bit_calendar;
   const struct CNAMESPACE::tm* Utc2LocalTime() const;
-
-  /** bitmask with selection of all base data types to send */
-  IsoAgLib::BaseDataGroup_t t_mySendSelection;
 
   /** raw GPS latitude [degree] ; Lat_Min < 0 --> South */
   int32_t i32_latitudeDegree10Minus7;
