@@ -161,6 +161,11 @@ function check_set_correct_variables()
   	USE_LITTLE_ENDIAN_CPU=1
   fi
 
+# set default USE_BIG_ENDIAN_CPU, so that quick number variable to CAN string conversions are possible
+  if [ "A$USE_BIG_ENDIAN_CPU" = "A" ] ; then
+  	USE_BIG_ENDIAN_CPU=0
+  fi
+
 	# option to not switch the system relais to ON, on startup
 	# (default: set relais to ON on startup)
   if [ "A$PRJ_DO_NOT_START_RELAIS_ON_STARTUP" = "A" ] ; then
@@ -1292,10 +1297,10 @@ function create_makefile()
 		echo -e "\n#Special Sources for CAN Server" >> $MakefileName
 		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_general.cpp \\" >> $MakefileName
     case $PRJ_DEFINES in
-			*SYSTEM_MCC*) 
+			*SYSTEM_MCC*)
 		    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_pcan.cpp \\" >> $MakefileName
 				;;
-			*) 
+			*)
 		    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \\" >> $MakefileName
 		    ;;
     esac
