@@ -123,7 +123,7 @@ void int2Float(const void *const pvFrom, float *const pf_to)
   #if FLOAT_WORD_ORDER == WORD_HI_LO
     // change first and last two bytes for float access
     uint16_t* pui16_to = (uint16_t*)pf_to;
-    const uint16_t* *const pui16_from = (const uint16_t *const)pvFrom;
+    const uint16_t *const pui16_from = (const uint16_t *const)pvFrom;
     pui16_to[0] = pui16_from[1];
     pui16_to[1] = pui16_from[0];
   #elif FLOAT_WORD_ORDER == BYTE_HI_LO
@@ -135,7 +135,7 @@ void int2Float(const void *const pvFrom, float *const pf_to)
     pb_to[3] = pb_from[0];
   #elif FLOAT_WORD_ORDER == WORD_LO_HI
     uint32_t* pui32_to = (uint32_t*)pf_to;
-    const uint32_t* *const pui32_from = (const uint32_t *const)pvFrom;
+    const uint32_t *const pui32_from = (const uint32_t *const)pvFrom;
     pui32_to[0] = pui32_from[0];
   #else
     uint8_t *pb_to = (uint8_t*)pf_to;
@@ -184,7 +184,7 @@ void float2Int(const float *const pf_from, void *const pvTo)
   #if FLOAT_WORD_ORDER == WORD_HI_LO
     // change first and last two bytes for float access
     uint16_t* pui16_to = (uint16_t*)pvTo;
-    const uint16_t* *const pui16_from = (const uint16_t *const)pf_from;
+    const uint16_t *const pui16_from = (const uint16_t *const)pf_from;
     pui16_to[0] = pui16_from[1];
     pui16_to[1] = pui16_from[0];
   #elif FLOAT_WORD_ORDER == BYTE_HI_LO
@@ -196,7 +196,7 @@ void float2Int(const float *const pf_from, void *const pvTo)
     pb_to[3] = pb_from[0];
   #elif FLOAT_WORD_ORDER == WORD_LO_HI
     uint32_t* pui32_to = (uint32_t*)pvTo;
-    const uint32_t* *const pui32_from = (const uint32_t *const)pf_from;
+    const uint32_t *const pui32_from = (const uint32_t *const)pf_from;
     pui32_to[0] = pui32_from[0];
   #else
     uint8_t *pb_to = (uint8_t*)pvTo;

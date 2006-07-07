@@ -212,6 +212,7 @@
 
 #define WORD_LO_HI 0
 #define WORD_HI_LO 1
+#define BYTE_HI_LO 2
 
 /* ******************************************************** */
 /**
