@@ -199,9 +199,9 @@ typedef struct
 /////////////////////////////////////////////////////////////////////////
 // Local Data
 
-static int  canBusIsOpen[cui32_maxCanBusCnt];
+static bool  canBusIsOpen[cui32_maxCanBusCnt];
 
-int ca_GetcanBusIsOpen_1 (int busId)
+bool ca_GetcanBusIsOpen_1 (int busId)
 {
   return canBusIsOpen[busId];
 }
@@ -292,7 +292,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
   //default value = extended
   int nCANMsgType = 1;
 
-  if( canBusIsOpen[channel] == -1 ) {
+  if( !canBusIsOpen[channel] ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", channel);
 
     char fname[32];
@@ -306,7 +306,7 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
 
     pc_serverData->can_device[channel] = open(fname, O_RDWR | O_NONBLOCK);
 
-    if (!pc_serverData->can_device[channel]) {
+    if (pc_serverData->can_device[channel] == -1) {
       DEBUG_PRINT1("Could not open CAN bus%d\n",channel);
       return 0;
     }

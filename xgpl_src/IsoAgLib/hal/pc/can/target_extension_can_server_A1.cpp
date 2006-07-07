@@ -144,9 +144,9 @@ typedef struct CANmsg canmsg;
 /////////////////////////////////////////////////////////////////////////
 // Local Data
 
-static int  canBusIsOpen[cui32_maxCanBusCnt];
+static bool  canBusIsOpen[cui32_maxCanBusCnt];
 
-int ca_GetcanBusIsOpen_1 (int busId)
+bool ca_GetcanBusIsOpen_1 (int busId)
 {
   return canBusIsOpen[busId];
 }

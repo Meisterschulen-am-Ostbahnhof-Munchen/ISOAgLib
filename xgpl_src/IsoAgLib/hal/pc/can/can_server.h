@@ -89,6 +89,6 @@ int ca_ResetCanCard_1(void);
 int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData);
 int ca_TransmitCanCard_1(tSend* ptSend, uint8_t ui8_bus, server_c* pc_serverData);
 int ca_ReceiveCanCard_1(can_recv_data* receiveData, uint8_t ui8_bus, server_c* pc_serverData);
-int ca_GetcanBusIsOpen_1 (int busId);
+bool ca_GetcanBusIsOpen_1 (int busId);
 
 #endif
