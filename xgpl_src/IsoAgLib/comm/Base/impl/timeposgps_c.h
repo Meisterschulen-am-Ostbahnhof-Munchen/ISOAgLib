@@ -289,7 +289,7 @@ public:
   /** set the time in UTC timezone */
   void setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec = 0);
   /** set the actual calendar year value */
-  void setYearUtc(uint16_t rui16_year){i32_lastCalendarSet = System_c::getTime();bit_calendar.year = rui16_year;};
+  void setYearUtc(uint16_t rui16_year){i32_lastCalendarSet = System_c::getTime();bit_calendar.year = rui16_year; t_cachedLocalSeconds1970AtLastSet = 0;};
 
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
   void setGpsLatitudeDegree10Minus7( int32_t ri32_newVal ) { i32_latitudeDegree10Minus7 = ri32_newVal; };
@@ -358,27 +358,27 @@ public:
   /** set the calendar month value
     @param rb_month actual calendar month value
     */
-  void setMonthUtc(uint8_t rb_month){i32_lastCalendarSet = System_c::getTime();bit_calendar.month = rb_month;};
+  void setMonthUtc(uint8_t rb_month){i32_lastCalendarSet = System_c::getTime();bit_calendar.month = rb_month; t_cachedLocalSeconds1970AtLastSet = 0;};
   /** set the calendar day value
     @param rb_day actual calendar day value
     */
-  void setDayUtc(uint8_t rb_day){i32_lastCalendarSet = System_c::getTime();bit_calendar.day = rb_day;};
+  void setDayUtc(uint8_t rb_day){i32_lastCalendarSet = System_c::getTime();bit_calendar.day = rb_day; t_cachedLocalSeconds1970AtLastSet = 0;};
   /** set the calendar hour value
     @param rb_hour actual calendar hour value
     */
-  void setHourUtc(uint8_t rb_hour){i32_lastCalendarSet = System_c::getTime();bit_calendar.hour = rb_hour;};
+  void setHourUtc(uint8_t rb_hour){i32_lastCalendarSet = System_c::getTime();bit_calendar.hour = rb_hour; t_cachedLocalSeconds1970AtLastSet = 0;};
   /** set the calendar minute value
     @param rb_minute actual calendar minute value
     */
-  void setMinuteUtc(uint8_t rb_minute){i32_lastCalendarSet = System_c::getTime();bit_calendar.minute = rb_minute;};
+  void setMinuteUtc(uint8_t rb_minute){i32_lastCalendarSet = System_c::getTime();bit_calendar.minute = rb_minute; t_cachedLocalSeconds1970AtLastSet = 0;};
   /** set the calendar second value
     @param rb_second actual calendar second value
     */
-  void setSecond(uint8_t rb_second){i32_lastCalendarSet = System_c::getTime();bit_calendar.second = rb_second;};
+  void setSecond(uint8_t rb_second){i32_lastCalendarSet = System_c::getTime();bit_calendar.second = rb_second; t_cachedLocalSeconds1970AtLastSet = 0;};
   /** set the calendar millisecond value
     @param rb_millisecond actual calendar second value
     */
-  void setMillisecond(uint16_t rui16_millisecond){i32_lastCalendarSet = System_c::getTime();bit_calendar.msec = rui16_millisecond;};
+  void setMillisecond(uint16_t rui16_millisecond){i32_lastCalendarSet = System_c::getTime();bit_calendar.msec = rui16_millisecond; t_cachedLocalSeconds1970AtLastSet = 0;};
   /** set the local time to UTC time offsets */
   void setLocalTimeOffsets( int16_t ri16_hourOffset, uint16_t rui16_minuteOffset )
   {bit_calendar.timezoneHourOffsetMinus24 = (ri16_hourOffset+24); bit_calendar.timezoneMinuteOffset = rui16_minuteOffset;};
@@ -387,57 +387,61 @@ public:
   /// Getter functions
   /** check if a calendar information was received since init */
   bool isCalendarReceived() const;
-  /** check if a TIME_DATE_PGN was received since config */
-  bool isTimeDatePgnReceived() const { return b_timeDatePgnReceived;};
   
   /** get the calendar year value
       @return actual calendar year value
     */
-  int16_t yearLocal() const;
+  int16_t yearLocal();
   /** get the calendar year value
     @return actual calendar year value
     */
-  int16_t yearUtc() const {return bit_calendar.year;};
+  int16_t yearUtc();
+  
   /** get the calendar month value
     @return actual calendar month value
     */
-  uint8_t monthLocal() const;
+  uint8_t monthLocal();
   /** get the calendar month value
     @return actual calendar month value
     */
-  uint8_t monthUtc() const {return bit_calendar.month;};
+  uint8_t monthUtc();
   /** get the calendar day value
     @return actual calendar day value
     */
-  uint8_t dayLocal() const;
+  uint8_t dayLocal();
   /** get the calendar day value
     @return actual calendar day value
     */
-  uint8_t dayUtc() const {return bit_calendar.day + (calendarSetAge() / 86400000);};
+  uint8_t dayUtc();
   /** get the calendar hour value
     @return actual calendar hour value
     */
-  uint8_t hourLocal() const;
+  uint8_t hourLocal();
   /** get the calendar hour value
     @return actual calendar hour value
     */
-  uint8_t hourUtc() const {return ((bit_calendar.hour + (calendarSetAge() / 3600000))%24);};
+  uint8_t hourUtc();
   /** get the calendar minute value
     @return actual calendar minute value
     */
-  uint8_t minuteLocal() const;
+  uint8_t minuteLocal();
   /** get the calendar minute value
     @return actual calendar minute value
     */
-  uint8_t minuteUtc() const {return ((bit_calendar.minute + (calendarSetAge() / 60000))%60);};
+  uint8_t minuteUtc();
   /** get the calendar second value
     @return actual calendar second value
     */
-  uint8_t second() const {return ((bit_calendar.second + (calendarSetAge() / 1000))%60);};
+  uint8_t second();
   /** get the calendar millisecond value
       @return actual calendar second value
     */
   uint16_t millisecond() const {return ((bit_calendar.msec + calendarSetAge())%1000);};
+
+  /** deliver UTC time in struct tm instead of separate calls to minuteUtc(), hourUtc(), ... to reduce load
+    @return struct tm
+  */
+  struct CNAMESPACE::tm* currentUtcTm();
 
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLatitudeDegree10Minus7( void ) const { return i32_latitudeDegree10Minus7; };
@@ -573,7 +577,12 @@ private:
     */
   int32_t i32_lastCalendarSet;
 
-  bool b_timeDatePgnReceived;
+      /** last timestamp where calendar was set
+    -> use this to calculate new time
+    */
+  time_t t_cachedLocalSeconds1970AtLastSet;
+
+  time_t t_tzOffset;
 
   /** bit_calendar */
   struct {
@@ -587,7 +596,7 @@ private:
     uint16_t timezoneMinuteOffset : 6;
     uint16_t timezoneHourOffsetMinus24 : 6;
   } bit_calendar;
-  const struct CNAMESPACE::tm* Utc2LocalTime() const;
+  const struct CNAMESPACE::tm* Utc2LocalTime();
 
   /** raw GPS latitude [degree] ; Lat_Min < 0 --> South */
   int32_t i32_latitudeDegree10Minus7;

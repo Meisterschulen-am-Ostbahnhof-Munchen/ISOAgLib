@@ -349,6 +349,19 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   // set the GPS mode always to non-sending
   configGps( NULL, IsoAgLib::IdentModeImplement );
   #endif
+
+  // 01.01.1970 00:00:00
+  struct tm t_testTime = {0, 0, 0, 1, 0, 70, 0 , 0 ,-1
+                          #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                          , 0, NULL
+                          #endif
+                         };
+
+  t_tzOffset = - mktime(&t_testTime);
+  if (1 == t_tzOffset)
+  { // mktime returned -1 => error  
+    t_tzOffset = 0;
+  }
 }
 
   /** config the TimePosGPS_c object after init -> set pointer to devKey and
@@ -394,7 +407,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
     i32_lastCalendarSet = 0;
 
-    b_timeDatePgnReceived = FALSE;
+    t_cachedLocalSeconds1970AtLastSet = 0;
 
     return true;
   };
@@ -647,8 +660,6 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
           // set last time
           setUpdateTime(ci32_now);
           setSelectedDataSourceDevKey( c_tempDevKey);
-          
-          b_timeDatePgnReceived = TRUE;
         }
         else
         { // there is a sender conflict
@@ -935,7 +946,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
           { // update the normal UTC time from GPS time, as we are either sending the calendar + time PGN _or_
             // there is currently no other active sender of this PGN --> other getter functions of this application should get
             // the GPS time as notmal UTC time
-            setCalendarUtc((UtcNow->tm_year+1900), UtcNow->tm_mon, UtcNow->tm_mday,
+            setCalendarUtc((UtcNow->tm_year+1900), UtcNow->tm_mon + 1, UtcNow->tm_mday,
                             UtcNow->tm_hour, UtcNow->tm_min, UtcNow->tm_sec, (ui32_milliseconds%1000));
           }
           // now set also the pure GPS time
@@ -1132,14 +1143,22 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     // use helper function to transfer value to the byte vector
     number2LittleEndianString( ui8_positionSequenceID, writeRef );
 
-    struct tm testTime = { secondUtcGps(), minuteUtcGps(), hourUtcGps(), dayUtc(),(monthUtc()-1),(yearUtc()-1900),0,0,-1
-                          #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
-                          , 0, NULL
-                          #endif
-                          };
-    const time_t secondsSince1970 = mktime( &testTime );
-    // calculate the days
-    const uint16_t ui16_daysSince1970 = secondsSince1970 / ( 60 * 60 *24 );
+    uint16_t ui16_daysSince1970 = 0; // standard value (or 0xFFFF?), if UTC date is not set (= 01.01.1900)
+
+    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+
+    if (p_tm)
+    { // testTime is only used for calculation of ui16_daysSince1970 => use time 12:00:00 to avoid daylight setting influence
+      struct tm testTime = {0, 0, 12, p_tm->tm_mday, p_tm->tm_mon, p_tm->tm_year, 0,0,-1
+                            #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                            , 0, NULL
+                            #endif
+                            };
+      // compensate mktime() time zone influence:
+      const time_t secondsSince1970 = mktime( &testTime ) + t_tzOffset;
+      // calculate the days
+      ui16_daysSince1970 = secondsSince1970 / ( 60 * 60 *24 );
+    }
     const uint32_t ui32_milliseconds = ( ( ( ( ( ( hourUtcGps() * 60 ) + minuteUtcGps() ) * 60 ) + secondUtcGps() ) * 1000 ) + millisecondUtcGps()) * 10;
     // write Position Date as Days since 1.1.1970
     number2LittleEndianString( ui16_daysSince1970, writeRef );
@@ -1212,12 +1231,26 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     if ( ( getSelectedDataSourceDevKey() == rc_devKey ) )
     { // this item (identified by DEV_KEY is configured to send
       data().setIsoPgn(TIME_DATE_PGN);
-      data().setUint8Data(0, (second() * 4) );
-      data().setUint8Data(1, minuteUtc());
-      data().setUint8Data(2, hourUtc());
-      data().setUint8Data(3, monthUtc());
-      data().setUint8Data(4, dayUtc() * 4);
-      data().setUint8Data(5, yearUtc() - 1985);
+      
+      const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+      if (NULL != p_tm)
+      {
+        data().setUint8Data(0, (p_tm->tm_sec * 4) );
+        data().setUint8Data(1, p_tm->tm_min);
+        data().setUint8Data(2, p_tm->tm_hour);
+        data().setUint8Data(3, p_tm->tm_mon + 1);
+        data().setUint8Data(4, p_tm->tm_mday * 4);
+        data().setUint8Data(5, p_tm->tm_year + 1900 - 1985);
+      }
+      else
+      {
+        data().setUint8Data(0, 0);
+        data().setUint8Data(1, 0);
+        data().setUint8Data(2, 0);
+        data().setUint8Data(3, 1);
+        data().setUint8Data(4, 4);
+        data().setUint8Data(5, 0);
+      }
       data().setUint8Data(6, bit_calendar.timezoneMinuteOffset );
       data().setUint8Data(7, bit_calendar.timezoneHourOffsetMinus24 );
 
@@ -1268,7 +1301,8 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   void TimePosGPS_c::setCalendarUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec)
   {
     i32_lastCalendarSet = System_c::getTime();
-
+    t_cachedLocalSeconds1970AtLastSet = 0;
+    
     bit_calendar.year   = ri16_year;
     bit_calendar.month  = rb_month;
     bit_calendar.day    = rb_day;
@@ -1290,17 +1324,18 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   void TimePosGPS_c::setCalendarLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day, uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec )
   {
     i32_lastCalendarSet = System_c::getTime();
-
+    t_cachedLocalSeconds1970AtLastSet = 0;
     struct ::tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
                              rb_day,(rb_month-1),(ri16_year-1900),0,0,-1
                              #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                              , 0, NULL
                              #endif
                             };
-
+    // argument of mktime is interpreted as local time (system time zone influence!)
     const time_t middle = mktime( &testTime );
+    // compensate system time zone setting: call localtime() and not gmtime()
     const struct ::tm* normalizedTime = localtime( &middle );
-
+    
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
     bit_calendar.day    = normalizedTime->tm_mday;
@@ -1314,13 +1349,15 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   void TimePosGPS_c::setDateLocal(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day)
   {
     i32_lastCalendarSet = System_c::getTime();
+    t_cachedLocalSeconds1970AtLastSet = 0;
 
+    // @todo: calender time consists of UTC time and local date?
     struct ::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
                              rb_day,(rb_month-1),(ri16_year-1900),0,0,-1
                              #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                              , 0, NULL
                              #endif
-                            };
+                           };
 
     const time_t middle = mktime( &testTime );
     const struct ::tm* normalizedTime = localtime( &middle );
@@ -1334,6 +1371,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   void TimePosGPS_c::setDateUtc(int16_t ri16_year, uint8_t rb_month, uint8_t rb_day)
   {
     i32_lastCalendarSet = System_c::getTime();
+    t_cachedLocalSeconds1970AtLastSet = 0;
     bit_calendar.year   = ri16_year;
     bit_calendar.month  = rb_month;
     bit_calendar.day    = rb_day;
@@ -1343,15 +1381,20 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   void TimePosGPS_c::setTimeLocal(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec)
   {
     i32_lastCalendarSet = System_c::getTime();
+    t_cachedLocalSeconds1970AtLastSet = 0;
 
-    struct ::tm testTime = {rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
-                            bit_calendar.day,(bit_calendar.month-1),(bit_calendar.year-1900),0,0,-1
+    struct ::tm testTime = { rb_second, int(rb_minute)-int(bit_calendar.timezoneMinuteOffset), (int(rb_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
+                             bit_calendar.day,(bit_calendar.month-1),
+                             (bit_calendar.year == 0) ? 70 : (bit_calendar.year-1900), // in case bit_calendar.year is not yet set: use 1970
+                             0,0,-1
                              #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                              , 0, NULL
                              #endif
-                            };
+                           };
 
+    // argument of mktime is interpreted as local time (system time zone influence!)
     const time_t middle = mktime( &testTime );
+    // compensate system time zone setting: call localtime() and not gmtime()
     const struct ::tm* normalizedTime = localtime( &middle );
 
     bit_calendar.hour   = normalizedTime->tm_hour;
@@ -1364,36 +1407,34 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   void TimePosGPS_c::setTimeUtc(uint8_t rb_hour, uint8_t rb_minute, uint8_t rb_second, uint16_t rui16_msec)
   {
     i32_lastCalendarSet = System_c::getTime();
+    t_cachedLocalSeconds1970AtLastSet = 0;
     bit_calendar.hour   = rb_hour;
     bit_calendar.minute = rb_minute;
     bit_calendar.second = rb_second;
     bit_calendar.msec   = rui16_msec;
   }
 
-  const struct ::tm* TimePosGPS_c::Utc2LocalTime() const
+  const struct ::tm* TimePosGPS_c::Utc2LocalTime()
   {
-    struct ::tm testTime = {
-      bit_calendar.second + ((calendarSetAge() / 1000)%60),
-      bit_calendar.minute+bit_calendar.timezoneMinuteOffset+ ((calendarSetAge() / 60000)%60),
-      (int(bit_calendar.hour)+int(bit_calendar.timezoneHourOffsetMinus24)-24) + ((calendarSetAge() / 3600000)%24),
-      bit_calendar.day + (calendarSetAge() / 86400000),
-      (bit_calendar.month-1),
-      (bit_calendar.year-1900),
-      0,0,-1
-      #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
-      , 0, NULL
-      #endif
-    };
-
-    const time_t middle = mktime( &testTime );
-    return localtime( &middle );
+    if (0 == t_cachedLocalSeconds1970AtLastSet)
+    {
+      // set t_cachedLocalSeconds1970AtLastSet
+      currentUtcTm();
+    }
+     
+    const time_t t_secondsSince1970Local = t_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000
+                                           + (bit_calendar.timezoneHourOffsetMinus24 - 24) * 60 * 60  // negative offsets => increased local time
+                                           + bit_calendar.timezoneMinuteOffset * 60;
+    
+    // compensate system time zone setting: call localtime() and not gmtime()
+    return localtime( &t_secondsSince1970Local ); 
   }
 
   /**
   get the calendar year value
   @return actual calendar year value
   */
-  int16_t TimePosGPS_c::yearLocal() const
+  int16_t TimePosGPS_c::yearLocal()
   {
     return Utc2LocalTime()->tm_year+1900;
   }
@@ -1402,7 +1443,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   get the calendar month value
   @return actual calendar month value
   */
-  uint8_t TimePosGPS_c::monthLocal() const
+  uint8_t TimePosGPS_c::monthLocal()
   { // month is delivered with range [0..11] -> add 1
     return Utc2LocalTime()->tm_mon+1;
   }
@@ -1411,7 +1452,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   get the calendar day value
   @return actual calendar day value
   */
-  uint8_t TimePosGPS_c::dayLocal() const
+  uint8_t TimePosGPS_c::dayLocal()
   {
     return Utc2LocalTime()->tm_mday;
   }
@@ -1420,7 +1461,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   get the calendar hour value
   @return actual calendar hour value
   */
-  uint8_t TimePosGPS_c::hourLocal() const
+  uint8_t TimePosGPS_c::hourLocal()
   {
     return Utc2LocalTime()->tm_hour;
   }
@@ -1429,10 +1470,63 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   get the calendar minute value
   @return actual calendar minute value
   */
-  uint8_t TimePosGPS_c::minuteLocal() const
+  uint8_t TimePosGPS_c::minuteLocal()
   {
     return Utc2LocalTime()->tm_min;
   };
 
+  int16_t TimePosGPS_c::yearUtc()
+  {
+    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    return (NULL != p_tm) ? p_tm->tm_year + 1900 : 0;
+  }
+  uint8_t TimePosGPS_c::monthUtc()
+  {
+    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    return (NULL != p_tm) ? p_tm->tm_mon + 1 : 0;
+  }
+  uint8_t TimePosGPS_c::dayUtc()
+  {
+    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    return (NULL != p_tm) ? p_tm->tm_mday : 0;
+  }
+  uint8_t TimePosGPS_c::hourUtc()
+  {
+    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    return (NULL != p_tm) ? p_tm->tm_hour : 0;
+  }
+  uint8_t TimePosGPS_c::minuteUtc()
+  {
+    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    return (NULL != p_tm) ? p_tm->tm_min : 0;
+  }
+  uint8_t TimePosGPS_c::second()
+  {
+    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    return (NULL != p_tm) ? p_tm->tm_sec : 0;
+  }
+
+  struct CNAMESPACE::tm* TimePosGPS_c::currentUtcTm()
+  {
+    if ( 0 == t_cachedLocalSeconds1970AtLastSet)
+    { // recalculate seconds from bit_calendar struct
+      // compensate system time zone setting (part 1)
+      struct tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
+                             bit_calendar.day, bit_calendar.month-1,
+                             (bit_calendar.year == 0) ? 70 : (bit_calendar.year-1900), // in case bit_calendar.year is not yet set: use 1970
+                             0,0,-1
+                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                             , 0, NULL
+                                  #endif
+                            };
+      t_cachedLocalSeconds1970AtLastSet = mktime( &testTime );
+      if (-1 == t_cachedLocalSeconds1970AtLastSet) return NULL;
+    }
+    
+    const time_t t_secondsSince1970 = t_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000;
+    
+    // compensate system time zone setting (part 2)
+    return localtime( &t_secondsSince1970 );
+  }
 } // namespace __IsoAgLib
 

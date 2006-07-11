@@ -138,41 +138,46 @@ public:
   /** Retrieve the time of last update */
   int32_t lastUpdateTimeGps() const
   {return TimePosGPS_c::lastUpdateTimeGps();};
-  /** return a sender which sends commands as a tractor */
+  /** return a sender which sends GPS commands as a tractor */
   iDevKey_c& getSenderDevKeyGps() {return static_cast<iDevKey_c&>(TimePosGPS_c::getSenderDevKeyGps());};
-  /** return a sender which sends commands as a tractor */
+  /** return a sender which sends GPS commands as a tractor */
   const iDevKey_c& getSenderDevKeyGpsConst() const {return static_cast<const iDevKey_c&>(TimePosGPS_c::getSenderDevKeyGpsConst());};
+
+  /** @return TRUE => data source dev key is specified */
+  bool checkDataSourceSpecified() { return TimePosGPS_c::checkDataSourceSpecified();};
   #endif
+
+  /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
+  const iDevKey_c& getSelectedDataSourceDevKeyConst() const {return static_cast<const iDevKey_c&>(TimePosGPS_c::getSelectedDataSourceDevKeyConst());};
+
   /* ******************************************* */
   /** \name Get Values */
   /*@{*/
   /** check if a calendar information was received since init */
   bool isCalendarReceived() const { return TimePosGPS_c::isCalendarReceived();};
-  /** check if a TIME_DATE_PGN was received since config */
-  bool isTimeDatePgnReceived() const { return TimePosGPS_c::isTimeDatePgnReceived();};
 
   /** get the calendar year value */
-  int16_t yearLocal() const { return TimePosGPS_c::yearLocal();};
+  int16_t yearLocal() { return TimePosGPS_c::yearLocal();};
   /** get the calendar year value */
-  int16_t yearUtc() const { return TimePosGPS_c::yearUtc();};
+  int16_t yearUtc(){ return TimePosGPS_c::yearUtc();};
   /** get the calendar month value */
-  uint8_t monthLocal() const { return TimePosGPS_c::monthLocal();};
+  uint8_t monthLocal() { return TimePosGPS_c::monthLocal();};
   /** get the calendar month value */
-  uint8_t monthUtc() const { return TimePosGPS_c::monthUtc();};
+  uint8_t monthUtc() { return TimePosGPS_c::monthUtc();};
   /** get the calendar day value */
-  uint8_t dayLocal() const { return TimePosGPS_c::dayLocal();};
+  uint8_t dayLocal() { return TimePosGPS_c::dayLocal();};
   /** get the calendar day value */
-  uint8_t dayUtc() const { return TimePosGPS_c::dayUtc();};
+  uint8_t dayUtc() { return TimePosGPS_c::dayUtc();};
   /** get the calendar hour value */
-  uint8_t hourLocal() const { return TimePosGPS_c::hourLocal();};
+  uint8_t hourLocal() { return TimePosGPS_c::hourLocal();};
   /** get the calendar hour value */
-  uint8_t hourUtc() const { return TimePosGPS_c::hourUtc();};
+  uint8_t hourUtc() { return TimePosGPS_c::hourUtc();};
   /** get the calendar minute value */
-  uint8_t minuteLocal() const { return TimePosGPS_c::minuteLocal();};
+  uint8_t minuteLocal() { return TimePosGPS_c::minuteLocal();};
   /** get the calendar minute value */
-  uint8_t minuteUtc() const { return TimePosGPS_c::minuteUtc();};
+  uint8_t minuteUtc() { return TimePosGPS_c::minuteUtc();};
   /** get the calendar second value */
-  uint8_t second() const { return TimePosGPS_c::second();};
+  uint8_t second() { return TimePosGPS_c::second();};
   /** get the calendar millisecond value */
   uint16_t millisecond() const { return TimePosGPS_c::millisecond();};
 
