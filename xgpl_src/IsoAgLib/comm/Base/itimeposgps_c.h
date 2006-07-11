@@ -144,7 +144,7 @@ public:
   const iDevKey_c& getSenderDevKeyGpsConst() const {return static_cast<const iDevKey_c&>(TimePosGPS_c::getSenderDevKeyGpsConst());};
 
   /** @return TRUE => data source dev key is specified */
-  bool checkDataSourceSpecified() { return TimePosGPS_c::checkDataSourceSpecified();};
+  bool checkDataSourceSpecified() { return TimePosGPS_c::getSelectedDataSourceDevKeyConst().isSpecified();};
   #endif
 
   /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */
