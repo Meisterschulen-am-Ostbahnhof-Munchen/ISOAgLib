@@ -80,8 +80,8 @@ namespace __HAL {
 
 
 // globals
-static msqData_s msqDataClient;
-static int32_t i32_lastReceiveTime;
+static msqData_s msqDataClient = {-1,-1,-1,-1,-1,-1};
+static int32_t i32_lastReceiveTime = 0;
 
 
 /////////////////////////////////////////////////////////////////////////
