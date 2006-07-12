@@ -127,18 +127,15 @@ bool CANCustomer_c::processMsg()
   return false;
 }
 
-/** create dummy instance to return something
-    in the dummy implementation of CANCustomer_c::dataBase();
-    YOU SHOULD NEVER CALL THIS BASE FUNCTION!
-  */
-static CANPkgExt_c c_dummyPkg;
 /**
   virtual function which delivers a pointer to the CANCustomer
   specific CANPkgExt_c instance
+    YOU SHOULD NEVER CALL THIS BASE FUNCTION!
 */
 CANPkgExt_c& CANCustomer_c::dataBase()
 { // dummy function - just to allow classes to (inderectly) derive from
   // CANCustomer_c without the need to implement this function
+  static CANPkgExt_c c_dummyPkg;
   return c_dummyPkg;
 }
 

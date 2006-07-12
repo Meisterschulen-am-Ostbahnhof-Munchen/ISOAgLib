@@ -300,12 +300,13 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           int i_rcSnd=msgsnd(pc_serverData->msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(int32_t), IPC_NOWAIT);
           if (i_rcSnd == -1)
           {
-            DEBUG_PRINT1("error in msgsnd (errno: %d)\n", errno);
+            int error = errno;
+            DEBUG_PRINT2("error in msgsnd (errno: %d) %s\n", error, strerror(error));
             #ifdef CAN_SERVER_LOG_PATH
             std::ofstream logging( CAN_SERVER_LOG_PATH );
             logging << "error in msgsnd (errno: " << errno << ")" << std::endl;
             #endif
-            if (errno == EAGAIN)
+            if (error == EAGAIN)
             { // queue is full => remove oldest msg and try again
               msqWrite_s msqWriteBuf;
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
