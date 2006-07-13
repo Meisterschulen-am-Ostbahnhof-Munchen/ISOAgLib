@@ -151,23 +151,6 @@ using namespace __HAL;
 // device nodes minor base. Must be the same as defined in the driver (file pcan_mpc5200.c).
 #define PCAN_MSCAN_MINOR_BASE     40
 
-// parameter wBTR0BTR1
-// bitrate codes of BTR0/BTR1 registers
-/*
- * ATTENTION: The BTR0BT1 values depend on the IPB-Clock of the motherboard. Please
- * take a look at the "README.peak-mpc5200" file of the driver distibution for
- * further information.
- */
-// (IPB-Clock = 132MHz)
-#define CAN_BAUD_500K   0x0a6f                             // 500 kBit/s
-#define CAN_BAUD_250K   0x156f                             // 250 kBit/s
-#define CAN_BAUD_125K   0x2b6f                             // 125 kBit/s
-#define CAN_BAUD_100K   0xb66f                             // 100 kBit/s
-// (IPB-Clock = 66MHz)
-//#define CAN_BAUD_500K   0x054f                             // 500 kBit/s
-//#define CAN_BAUD_250K   0x0a6f                             // 250 kBit/s
-//#define CAN_BAUD_125K   0x156f                             // 125 kBit/s
-//#define CAN_BAUD_100K   0x9d4f                             // 100 kBit/s
 
 //****************************************************************************
 // structures to communicate via ioctls
@@ -177,6 +160,12 @@ typedef struct
   BYTE ucCANMsgType;     // 11 or 29 bits - put MSGTYPE_... in here
   BYTE ucListenOnly;     // listen only mode when != 0
 } TPCANInit;             // for PCAN_INIT
+
+typedef struct
+{
+  DWORD dwBitRate;       // in + out, bitrate in bits per second
+  WORD  wBTR0BTR1;       // out only: the result
+} TPBTR0BTR1;
 
 typedef struct
 {
@@ -279,19 +268,6 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
 
   DEBUG_PRINT1("init can channel %d\n", channel);
 
-
-  int wBTR0BTR1;
-
-  switch ( wBitrate ) {
-    case 100: { wBTR0BTR1 = CAN_BAUD_100K;} break;
-    case 125: { wBTR0BTR1 = CAN_BAUD_125K;} break;
-    case 250: { wBTR0BTR1 = CAN_BAUD_250K;} break;
-    case 500: { wBTR0BTR1 = CAN_BAUD_500K;} break;
-  }
-
-  //default value = extended
-  int nCANMsgType = 1;
-
   if( !canBusIsOpen[channel] ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", channel);
 
@@ -315,18 +291,26 @@ int ca_InitCanCard_1 (uint32_t channel, int wBitrate, server_c* pc_serverData)
     ///////////////
     // pcan modification
     ///////////////
-
-      printf("Init CAN Driver with PCAN_INIT\n");
-
+     
+      TPBTR0BTR1 ratix;
       TPCANInit init;
+      
+      // init wBitrate
+      DEBUG_PRINT1("Init Bitrate with PCAN_BTR0BTR1 wBitrate =%d\n",wBitrate*1000);
+      ratix.dwBitRate = wBitrate * 1000;
+      ratix.wBTR0BTR1 = 0;
+      if ((ioctl(pc_serverData->can_device[channel], PCAN_BTR0BTR1, &ratix)) < 0)
+        return 0;
 
-      init.wBTR0BTR1    = wBTR0BTR1;    // combined BTR0 and BTR1 register of the SJA100
-      init.ucCANMsgType = (nCANMsgType) ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD;  // 11 or 29 bits
+      // init CanMsgType (if extended Can Msg of not)
+      DEBUG_PRINT1("Init CAN Driver with PCAN_INIT wBitrate =%x\n",ratix.wBTR0BTR1);
+      //default value = extended
+      init.wBTR0BTR1    = ratix.wBTR0BTR1;
+      init.ucCANMsgType = MSGTYPE_EXTENDED;  // 11 or 29 bits
       init.ucListenOnly = 0;            // listen only mode when != 0
-
-      //write(pc_serverData->can_device[channel], buf, strlen(buf));
       if ((ioctl(pc_serverData->can_device[channel], PCAN_INIT, &init)) < 0)
         return 0;
+      
     ////////////////
 #endif
 
