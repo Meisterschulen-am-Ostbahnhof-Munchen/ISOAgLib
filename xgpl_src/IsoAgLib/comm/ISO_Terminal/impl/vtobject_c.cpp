@@ -105,7 +105,7 @@ void
 vtObject_c::setAttributeFloat(uint8_t attrID, float newValue, bool b_enableReplaceOfCmd)
 { // ~X2C
   uint32_t ui32_convertedFloat;
-  float2Int (&newValue, &ui32_convertedFloat);
+  floatVar2LittleEndianStream (&newValue, &ui32_convertedFloat);
   setAttribute (attrID, ui32_convertedFloat, b_enableReplaceOfCmd);
 } // -X2C
 

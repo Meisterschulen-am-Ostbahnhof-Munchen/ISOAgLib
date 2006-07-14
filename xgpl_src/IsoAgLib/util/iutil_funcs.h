@@ -67,7 +67,7 @@ inline int32_t mul1Div1Mul2Div2(int32_t ri32_mul_1, int32_t ri32_div_1, int32_t 
   @param pvFrom source data string
   @param pf_to target float value
 */
-inline void int2Float(const void *const pvFrom, float *const pf_to) { __IsoAgLib::int2Float( pvFrom, pf_to ); };
+inline void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to) { __IsoAgLib::littleEndianStream2FloatVar( pvFrom, pf_to ); };
 /**
   copy float value to 4 uint8_t data string into pointer;
   use e.g. to access uint8_t memory representation of
@@ -76,7 +76,7 @@ inline void int2Float(const void *const pvFrom, float *const pf_to) { __IsoAgLib
   @param pf_from source float value
   @param pvTo target data string
 */
-inline void float2Int(const float *const pf_from, void *const pvTo) { __IsoAgLib::float2Int( pf_from, pvTo );};
+inline void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo) { __IsoAgLib::floatVar2LittleEndianStream( pf_from, pvTo );};
 
 
 /** calculate the total allocated HEAP for:

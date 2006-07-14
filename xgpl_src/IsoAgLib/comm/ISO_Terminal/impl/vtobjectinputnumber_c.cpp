@@ -144,7 +144,7 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
       destMemory [27] = (vtObjectInputNumber_a->offset >> 16) & 0xFF;
       destMemory [28] = (vtObjectInputNumber_a->offset >> 24) & 0xFF;
 
-      __IsoAgLib::float2Int (&vtObjectInputNumber_a->scale, &destMemory[29]);
+      __IsoAgLib::floatVar2LittleEndianStream (&vtObjectInputNumber_a->scale, &destMemory[29]);
 
       destMemory [33] = vtObjectInputNumber_a->numberOfDecimals;
       destMemory [34] = vtObjectInputNumber_a->format;

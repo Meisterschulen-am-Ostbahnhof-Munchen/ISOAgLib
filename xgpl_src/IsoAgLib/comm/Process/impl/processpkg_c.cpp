@@ -203,7 +203,7 @@ int32_t ProcessPkg_c::dataLong()const{
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      int2Float(pb_procData, ((float*)(&i32_result)));
+      littleEndianStream2FloatVar(pb_procData, ((float*)(&i32_result)));
       break;
 #endif
   }
@@ -231,7 +231,7 @@ uint32_t ProcessPkg_c::dataUlong()const{
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      int2Float(pb_procData, ((float*)(&ulResult)));
+      littleEndianStream2FloatVar(pb_procData, ((float*)(&ulResult)));
       break;
 #endif
   }
@@ -257,7 +257,7 @@ float ProcessPkg_c::dataFloat()const{
       f_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
       break;
     case float_val:
-      int2Float(pb_procData, &f_result);
+      littleEndianStream2FloatVar(pb_procData, &f_result);
       break;
     case cmdVal:
       f_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
@@ -330,7 +330,7 @@ void ProcessPkg_c::setData(int32_t ri32_val, proc_valType_t ren_procValType)
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      float2Int( ((float *const)(&ri32_val)), pb_procData);
+      floatVar2LittleEndianStream( ((float *const)(&ri32_val)), pb_procData);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;
@@ -363,7 +363,7 @@ void ProcessPkg_c::setData(uint32_t ri32_val, proc_valType_t ren_procValType)
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      float2Int( ((float *const)(&ri32_val)), pb_procData);
+      floatVar2LittleEndianStream( ((float *const)(&ri32_val)), pb_procData);
       set_d(1);
       break;
 #endif
@@ -430,7 +430,7 @@ void ProcessPkg_c::setData(float rf_val, proc_valType_t ren_procValType)
       bit_data.b_valType = ren_procValType;
       break;
     case float_val:
-      float2Int(&rf_val, pb_procData);
+      floatVar2LittleEndianStream(&rf_val, pb_procData);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;

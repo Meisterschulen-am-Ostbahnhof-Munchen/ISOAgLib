@@ -142,7 +142,7 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
       destMemory [19] = (vtObjectOutputNumber_a->offset >> 16) & 0xFF;
       destMemory [20] = (vtObjectOutputNumber_a->offset >> 24) & 0xFF;
 
-      __IsoAgLib::float2Int (&vtObjectOutputNumber_a->scale, &destMemory[21]);
+      __IsoAgLib::floatVar2LittleEndianStream (&vtObjectOutputNumber_a->scale, &destMemory[21]);
 
       destMemory [25] = vtObjectOutputNumber_a->numberOfDecimals;
       destMemory [26] = vtObjectOutputNumber_a->format;

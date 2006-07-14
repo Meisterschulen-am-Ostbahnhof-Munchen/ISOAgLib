@@ -115,7 +115,7 @@ int32_t mul1Div1Mul2Div2(int32_t ri32_mul_1, int32_t ri32_div_1, int32_t ri32_mu
   @param pvFrom source data string
   @param pf_to target float value
 */
-void int2Float(const void *const pvFrom, float *const pf_to);
+void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to);
 /**
   copy float value to 4 uint8_t data string into pointer;
   use e.g. to access uint8_t memory representation of
@@ -124,7 +124,7 @@ void int2Float(const void *const pvFrom, float *const pf_to);
   @param pf_from source float value
   @param pvTo target data string
 */
-void float2Int(const float *const pf_from, void *const pvTo);
+void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo);
 
 /** calculate the total allocated HEAP for:
   - slist<T> with given size of T

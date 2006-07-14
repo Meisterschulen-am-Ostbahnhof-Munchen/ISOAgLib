@@ -118,32 +118,30 @@ int32_t mul1Div1Mul2Div2(int32_t ri32_mul_1, int32_t ri32_div_1, int32_t ri32_mu
   @param pvFrom source data string
   @param pf_to target float value
 */
-void int2Float(const void *const pvFrom, float *const pf_to)
+void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
 {
+  uint8_t *pb_to = (uint8_t*)pf_to;
+  const uint8_t *const pb_from   = (const uint8_t *)pvFrom;
   #if FLOAT_WORD_ORDER == WORD_HI_LO
     // change first and last two bytes for float access
-    uint16_t* pui16_to = (uint16_t*)pf_to;
-    const uint16_t *const pui16_from = (const uint16_t *const)pvFrom;
-    pui16_to[0] = pui16_from[1];
-    pui16_to[1] = pui16_from[0];
+    pb_to[0] = pb_from[2];
+    pb_to[1] = pb_from[3];
+    pb_to[2] = pb_from[0];
+    pb_to[3] = pb_from[1];
   #elif FLOAT_WORD_ORDER == BYTE_HI_LO
-    uint8_t *pb_to = (uint8_t*)pf_to;
-    const uint8_t *const pb_from   = (const uint8_t *)pvFrom;
     pb_to[0] = pb_from[3];
     pb_to[1] = pb_from[2];
     pb_to[2] = pb_from[1];
     pb_to[3] = pb_from[0];
   #elif FLOAT_WORD_ORDER == WORD_LO_HI
-    uint32_t* pui32_to = (uint32_t*)pf_to;
-    const uint32_t *const pui32_from = (const uint32_t *const)pvFrom;
-    pui32_to[0] = pui32_from[0];
+    pb_to[0] = pb_from[0];
+    pb_to[1] = pb_from[1];
+    pb_to[2] = pb_from[2];
+    pb_to[3] = pb_from[3];
   #else
-    uint8_t *pb_to = (uint8_t*)pf_to;
-    const uint8_t *const pb_from   = (const uint8_t *)pvFrom;
-
     const float d = 716.532287598;
     const uint32_t u32 = *((const uint32_t*)(&d));
-    
+
     const uint8_t ref_u8_LE[sizeof(uint32_t)] = { '\x11', '\x22', '\x33', '\x44' };
     const uint8_t ref_u8_BE[sizeof(uint32_t)] = { '\x44', '\x33', '\x22', '\x11' };
     const uint8_t ref_u8_ME[sizeof(uint32_t)] = { '\x33', '\x44', '\x11', '\x22' };
@@ -153,22 +151,30 @@ void int2Float(const void *const pvFrom, float *const pf_to)
     const uint32_t *ref_u32_ME =  (const uint32_t*)(ref_u8_ME);
 
     if (u32 == *ref_u32_LE) {
-      memcpy(pb_to, pb_from, 4);
+      // analogous to WORD_LO_HI
+      pb_to[0] = pb_from[0];
+      pb_to[1] = pb_from[1];
+      pb_to[2] = pb_from[2];
+      pb_to[3] = pb_from[3];
     } else if (u32 == *ref_u32_BE) {
+      // analogous to BYTE_HI_LO
       pb_to[0] = pb_from[3];
       pb_to[1] = pb_from[2];
       pb_to[2] = pb_from[1];
       pb_to[3] = pb_from[0];
     } else if (u32 == *ref_u32_ME) {
-      memcpy(pb_to, pb_from+2, 2);
-      memcpy(pb_to+2, pb_from, 2);
+      // analogous to WORD_HI_LO
+      pb_to[0] = pb_from[2];
+      pb_to[1] = pb_from[3];
+      pb_to[2] = pb_from[0];
+      pb_to[3] = pb_from[1];
     } else {
       #ifdef DEBUG
       EXTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << EXTERNAL_DEBUG_DEVICE_ENDL;
       abort();
       #endif
     }
-    
+
   #endif
 }
 /**
@@ -179,32 +185,30 @@ void int2Float(const void *const pvFrom, float *const pf_to)
   @param pf_from source float value
   @param pvTo target data string
 */
-void float2Int(const float *const pf_from, void *const pvTo)
+void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo)
 {
+  uint8_t *pb_to = (uint8_t*)pvTo;
+  const uint8_t *const pb_from   = (const uint8_t *)pf_from;
   #if FLOAT_WORD_ORDER == WORD_HI_LO
     // change first and last two bytes for float access
-    uint16_t* pui16_to = (uint16_t*)pvTo;
-    const uint16_t *const pui16_from = (const uint16_t *const)pf_from;
-    pui16_to[0] = pui16_from[1];
-    pui16_to[1] = pui16_from[0];
+    pb_to[0] = pb_from[2];
+    pb_to[1] = pb_from[3];
+    pb_to[2] = pb_from[0];
+    pb_to[3] = pb_from[1];
   #elif FLOAT_WORD_ORDER == BYTE_HI_LO
-    uint8_t *pb_to = (uint8_t*)pvTo;
-    const uint8_t *const pb_from   = (const uint8_t *)pf_from;
     pb_to[0] = pb_from[3];
     pb_to[1] = pb_from[2];
     pb_to[2] = pb_from[1];
     pb_to[3] = pb_from[0];
   #elif FLOAT_WORD_ORDER == WORD_LO_HI
-    uint32_t* pui32_to = (uint32_t*)pvTo;
-    const uint32_t *const pui32_from = (const uint32_t *const)pf_from;
-    pui32_to[0] = pui32_from[0];
+    pb_to[0] = pb_from[0];
+    pb_to[1] = pb_from[1];
+    pb_to[2] = pb_from[2];
+    pb_to[3] = pb_from[3];
   #else
-    uint8_t *pb_to = (uint8_t*)pvTo;
-    const uint8_t *const pb_from   = (const uint8_t *)pf_from;
-
     const float d = 716.532287598;
     const uint32_t u32 = *((const uint32_t*)(&d));
-    
+
     const uint8_t ref_u8_LE[sizeof(uint32_t)] = { '\x11', '\x22', '\x33', '\x44' };
     const uint8_t ref_u8_BE[sizeof(uint32_t)] = { '\x44', '\x33', '\x22', '\x11' };
     const uint8_t ref_u8_ME[sizeof(uint32_t)] = { '\x33', '\x44', '\x11', '\x22' };
@@ -214,22 +218,30 @@ void float2Int(const float *const pf_from, void *const pvTo)
     const uint32_t *ref_u32_ME =  (const uint32_t*)(ref_u8_ME);
 
     if (u32 == *ref_u32_LE) {
-      memcpy(pb_to, pb_from, 4);
+      // analogous to WORD_LO_HI
+      pb_to[0] = pb_from[0];
+      pb_to[1] = pb_from[1];
+      pb_to[2] = pb_from[2];
+      pb_to[3] = pb_from[3];
     } else if (u32 == *ref_u32_BE) {
+      // analogous to BYTE_HI_LO
       pb_to[0] = pb_from[3];
       pb_to[1] = pb_from[2];
       pb_to[2] = pb_from[1];
       pb_to[3] = pb_from[0];
     } else if (u32 == *ref_u32_ME) {
-      memcpy(pb_to, pb_from+2, 2);
-      memcpy(pb_to+2, pb_from, 2);
+      // analogous to WORD_HI_LO
+      pb_to[0] = pb_from[2];
+      pb_to[1] = pb_from[3];
+      pb_to[2] = pb_from[0];
+      pb_to[3] = pb_from[1];
     } else {
       #ifdef DEBUG
       EXTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << EXTERNAL_DEBUG_DEVICE_ENDL;
       abort();
       #endif
     }
-    
+
   #endif
 }
 

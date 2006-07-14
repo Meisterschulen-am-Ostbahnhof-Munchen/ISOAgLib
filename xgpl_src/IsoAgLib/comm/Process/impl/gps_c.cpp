@@ -255,7 +255,7 @@ bool GPS_c::processMsg(){
         if ((i32_tempVal & 0x8000) > 0)f_latitude *= -1.0F;
         break;
       case 2: // altitude
-        int2Float(&i32_tempVal, &f_altitude);
+        littleEndianStream2FloatVar(&i32_tempVal, &f_altitude);
         break;
       case 3: // pos-fix-time
         // first check if new second is different from last
@@ -303,7 +303,7 @@ bool GPS_c::processMsg(){
         #endif
         break;
       case 5: // hdop
-        int2Float(&i32_tempVal, &f_hdop);
+        littleEndianStream2FloatVar(&i32_tempVal, &f_hdop);
         break;
       case 7: // receiver-mode
         if (((i32_tempVal >> 8) & 0xFF) == 0x2)en_recMode = gps;

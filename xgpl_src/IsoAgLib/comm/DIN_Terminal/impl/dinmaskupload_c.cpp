@@ -389,7 +389,7 @@ bool DINMaskUpload_c::processMsg(){
               {
                 f_swVers = (float)((float)activeMask().pt_syncArray[ui8_syncInd].i32_val / 100.0F);
                 uint8_t pb_temp1[4], pb_temp2[4];
-                float2Int(&f_swVers, pb_temp1);
+                floatVar2LittleEndianStream(&f_swVers, pb_temp1);
                 // swap all bytes 1->4 ==> 4->1
 
                 for (uint8_t ui8_tempInd = 0; ui8_tempInd < 4; ui8_tempInd++)
