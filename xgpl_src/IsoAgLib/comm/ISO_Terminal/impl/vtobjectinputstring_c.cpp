@@ -81,9 +81,8 @@
  ***************************************************************************/
 
 
-#include <IsoAgLib/util/impl/util_funcs.h>
-
 #include "vtobjectinputstring_c.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectinputattributes_c.h"
 #include "../ivtobjectinputstring_c.h"
