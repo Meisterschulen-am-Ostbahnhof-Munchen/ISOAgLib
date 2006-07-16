@@ -580,9 +580,9 @@ private:
       /** last timestamp where calendar was set
     -> use this to calculate new time
     */
-  time_t t_cachedLocalSeconds1970AtLastSet;
+  CNAMESPACE::time_t t_cachedLocalSeconds1970AtLastSet;
 
-  time_t t_tzOffset;
+  CNAMESPACE::time_t t_tzOffset;
 
   /** bit_calendar */
   struct {
