@@ -46,7 +46,7 @@ some parts, even after reading the presented documentation.
 \subsection IndexGettingHelp Getting Help
 Please send any questions you can really not solve based on the present documentation to the <a href="http://linux90.idvnet.de/pipermail/isoaglib/">email list of ISO<i><sub>AgLib</sub></i> </a> ,
 as there not only the maintainers can try to help you out. Please <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">subscribe to the email list</a> before you start to
-<a href="mailto:isoaglib@linux90.idvnet.de">send emails</a> .
+<a href="mailto:isoaglib@linux90:idvnet:de">send emails</a> .
 
 
 
@@ -439,7 +439,7 @@ Red Hat, the original creator of the eCos, and the current maintainers of this p
 The goal of the license is to serve the eCos user community as a whole. It allows all eCos users to develop products without paying anybody anything, no matter how many developers are working on the product or how many units will be shipped. The license also guarantees that the eCos source code will always be freely available. This applies not only to the core eCos code itself but also to any changes that anybody makes to the core. In particular, it should prevent any company or individual contributing code to the system and then later claiming that all eCos users are now guilty of copyright or patent infringements and have to pay royalties. It should also prevent any company from making some small improvements, calling the result a completely new system, and releasing this under a new and less generous license.
 
 
-The license does <i>not</i> require users to release the source code of any <i>applications</i> that are developed with eCos. However, if anybody makes any changes to code covered by the eCos license, or writes new files derived in any way from eCos code, then we believe that the entire user community should have the opportunity to benefit from this. The license stipulates that these changes must be made available in source code form to all recipients of binaries based on the modified code, either by including the sources along with the binaries you deliver (or with any device containing such binaries) or with a written offer to supply the source code to the general public for three years. It is perhaps most practical for eCos developers to make the source code available online and inform those who are receiving binaries containing eCos code, and probably also the eCos maintainers, about the location of the code. See the <a href="http://www.gnu.org/copyleft/GPL_with_exception.html">full text of the GPL</a> for the most authoritative definition of the obligations.
+The license does <i>not</i> require users to release the source code of any <i>applications</i> that are developed with eCos. However, if anybody makes any changes to code covered by the eCos license, or writes new files derived in any way from eCos code, then we believe that the entire user community should have the opportunity to benefit from this. The license stipulates that these changes must be made available in source code form to all recipients of binaries based on the modified code, either by including the sources along with the binaries you deliver (or with any device containing such binaries) or with a written offer to supply the source code to the general public for three years. It is perhaps most practical for eCos developers to make the source code available online and inform those who are receiving binaries containing eCos code, and probably also the eCos maintainers, about the location of the code. See the <a href="http://www.gnu.org/licenses/ecos-license.html">text of the eCos license</a> for the most authoritative definition of the obligations.
 
 
 Although it is not strictly necessary to contribute the modified code back to the eCos open source project, we are always pleased to receive code contributions and hope that developers will also be keen to give back in return for what they received from the eCos project completely free of charge. The eCos maintainers are responsible for deciding whether such contributions should be applied to the public repository. In addition, a
@@ -590,7 +590,7 @@ normal for Open Source projects like ISO<i><sub>AgLib</sub></i> to fork the proj
 can't or doesn't want to change the style of maintenance as requested. As far as possible, <a href="http://www.osb-ag.de">OSB AG</a>
 will do everything to avoid such a fork.<br>
 A comparable fork was performed by users and developers of the X11R6 server project for UNIX style operating systems - <b>XFree86</b>.
-Caused by some licensing issues, a fork of the <a href="http://www.xfree86.org/">XFree86</a> was created by the <a href="http://freedesktop.org/XOrg">X.Org Foundation</a>,
+Caused by some licensing issues, a fork of the <a href="http://www.xfree86.org/">XFree86</a> was created by the <a href="http://X.Org">X.Org Foundation</a>,
 which also appreciated by several graphic card manufacturers, as they can integrate their drivers with the new management method in a better way.
 <br>
 &nbsp;<br>
@@ -606,7 +606,7 @@ important starting information, the learning afford to get a running tutorial ex
 requires at least some time ). Additionally the <b>object oriented</b> development style might be new to most of the potential users.<br>
 
 \subsection IndexWorkshop Tutorial Workshops for Development with IsoAgLib
-The <a href="mailto:a.spangler@osb-ag.de">maintainers</a> can offer workshops in co-operation with
+The <a href="mailto:a.spangler@osb-ag:de">maintainers</a> can offer workshops in co-operation with
 <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
 where all members can learn:
 	- <b>XML</b> design and definition of <b>ISO 11783 Virtual Terminal</b> mask pools
@@ -840,7 +840,7 @@ detect <b>conflicts</b> during one of the next updates, if your local changes in
 repository. Subversion ( like CVS ) will preserve both versions of the affected <b>lines</b>, so that you can manually
 decide on the "right" merge. If you don't detect such a conflict, you might be irritated by some syntax error messages from your compiler
 or you might get some execution errors on shell scripts like update_makefile.sh . This is caused by the way Subversion presents the both
-versions within the affected file. You might look <a href="http://tortoisesvn.tigris.org/docs/TortoiseSVN_en/ch04s07.html">here</a> for more
+versions within the affected file. You might look <a href="http://tortoisesvn.sourceforge.net/docs/release/TortoiseSVN_en/ch05s06.html">here</a> for more
 information on the markers which are used to show conflicts ( comparable to CVS ).<br>
 Subversion will create unchanged copies of your last base version, the current version from repository and your personal changed file,
 so that you can also simply continue to use yours ( foo.mine ) or the newest ( foo.rNN - NN the number of the current version ) version.
@@ -856,7 +856,7 @@ So either you sign a support contract to get personal support.<br>
 Or you direct your help requests to the community of ISO<i><sub>AgLib</sub></i> users and developers, who can be reached by the <a href="http://linux90.idvnet.de/pipermail/isoaglib/">email list</a>
 or <a href="https://linux90.idvnet.de/pipermail/isoaglib/">email list (HTTPS)</a>
 ( subscribe <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">here</a> or <a href="https://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">there (HTTPS)</a>
-and send mail <a href="mailto:isoaglib@linux90.idvnet.de">there</a> ). This way all users can help each other
+and send mail <a href="mailto:isoaglib@linux90:idvnet:de">there</a> ). This way all users can help each other
 without the dependency on the maintainers. New feature wishes, bug reports and other change suggestions can be discussed there, too.<br>
 Please keep in mind, that you might be one time the helping party, while you could need help from another user the other time.<br>
 Please keep this also in mind, if the company name in the email address of the asking user is not one of your best friends - maybe he can help you another time also.<br>
@@ -870,7 +870,7 @@ If you don't want to download the big archive with the generated documentation
 source and the contained informative text files.
 <b>Steps:</b><ol>
 <li>Download and install Doxygen from http://www.stack.nl/~dimitri/doxygen/ for your specific plattform
-<li>Download and install graphviz with the tool "dot" from http://www.research.att.com/sw/tools/graphviz/download.html
+<li>Download and install graphviz with the tool "dot" from http://www.graphviz.org/Download.php
 <li>Let Doxygen create the documentation with the config file "Doxyfile" which is located in the project root directory
 </ol>
 
@@ -888,12 +888,12 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
 \subsection InformationInTutorials Information in Tutorial Examples
 
-Please start your learning phase with the several tutorial examples, so that you can get
-a guided tour through the several options and features of the library.
-Each example has several links to informative HTML pages where you can more and deeper information
-on the presented topics.
+Please start your learning phase with the tutorial examples to get a guided tour through the
+various options and features of the library.
+Each example has several links to informative HTML pages from where you can get more and
+deeper information on the presented topics.
 
-Look at <a href="examples.html">Example Page</a> for the available tutorial examples.
+Look at the <a href="examples.html">Example Page</a> for the available tutorial examples.
 
 \subsection DDDocumentation Documentation Overview Pages
 
@@ -1222,7 +1222,7 @@ Please set additionally the SYSTEM_FOO for the wanted platform - ./compiler_proj
 run.
 Thus with these two DEFINE settings, the compiler can generate a clean running executable / HEX.
 
-Report bugs to <Achim.Spangler@osb-ag.de>.
+Report bugs to <Achim.Spangler@osb-ag:de>.
 
 \endcode
 
@@ -1905,7 +1905,7 @@ The main basic design principles of the ISO<i><sub>AgLib</sub></i> are:
 
 The ISO<i><sub>AgLib</sub></i> version <b>1.0.0rc1</b> is running stable, as it's already used for the
 <a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor MiniVeg N</a>
-of the manufacturer <a href="www.fritzmeier.de">Fritzmeier</a> . As it's verified with automated tests, that the final device
+of the manufacturer <a href="http://www.fritzmeier.de">Fritzmeier</a> . As it's verified with automated tests, that the final device
 is fitting to all defined requirements, the ISO<i><sub>AgLib</sub></i> will at least provide a robust correct function at least for this application.
 
 In case the ISO<i><sub>AgLib</sub></i> would suffer some problems for other applications, you can be sure that the author
@@ -2079,7 +2079,7 @@ parts written in C and C++ without any problems.<br>
 \subsection InfReqProgrammingSkills Programming Skills
 As long as the ISO<i><sub>AgLib</sub></i> should only be used as it is, without
 analysing or optimizing it, the needed additional C++ skills (in relation
-to C) are small. The <b>28</b> current <a href="examplex.html">tutorial examples</a> and the three real
+to C) are small. The <b>28</b> current <a href="examples.html">tutorial examples</a> and the three real
 research world examples provide a sufficient introduction in the usage of
 C++ and the ISO<i><sub>AgLib</sub></i>.<br>
 As soon as the internals of the ISO<i><sub>AgLib</sub></i> should be understood, the needed level of C++ skills is increased dependent on the configuration of the ISO<i><sub>AgLib</sub></i>. Companies who are interested in a reliable guarantee that needed bugfixes
@@ -2087,7 +2087,7 @@ or extensions are realized by external developers (if local developers
 are not familiar with C++ and the ISO<i><sub>AgLib</sub></i>) should contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
  to establish commercial support contracts including training, project attendance and ISO<i><sub>AgLib</sub></i> ISO 900x certification.<br>
 <br><b>
-Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should start with the <a href="examplex.html">tutorial examples</a>.</b><br>
+Everybody who wants to get familiar with the ISO<i><sub>AgLib</sub></i> should start with the <a href="examples.html">tutorial examples</a>.</b><br>
 */
 
 /*! \page outlook Further Development and Applications of IsoAgLib
