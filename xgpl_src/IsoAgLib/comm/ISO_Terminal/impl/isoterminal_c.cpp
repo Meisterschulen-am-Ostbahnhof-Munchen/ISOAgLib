@@ -227,7 +227,7 @@ void ISOTerminal_c::finishUploadCommand ()
   #endif
 
   #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << ".\n";
+  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << std::endl;
   #endif
 }
 
@@ -1980,7 +1980,7 @@ bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableR
   #endif
 
   #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << ".\n";
+  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << std::endl;
   //dumpQueue(); /* to see all enqueued cmds after every enqueued cmd */
   #endif
   /** push(...) has no return value */
