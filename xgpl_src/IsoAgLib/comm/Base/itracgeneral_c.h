@@ -276,6 +276,8 @@ namespace IsoAgLib {
 
     /** send iso language data msg*/
     void isoSendLanguage() { TracGeneral_c::isoSendLanguage();}
+    /** force a request for pgn for language information */
+    bool sendRequestUpdateLanguage() { return TracGeneral_c::sendRequestUpdateLanguage(); }
     #endif
     /*@}*/
 

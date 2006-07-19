@@ -354,7 +354,7 @@ bool ISOItem_c::timeEvent( void )
         c_pkg.setIsoPri(6);
         c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
         c_pkg.setIsoPs(255); // global information
-        c_pkg.setIsoSa(nr()); // free SA or NACK flag
+        c_pkg.setMonitorItemForSA( this ); // free SA or NACK flag
         // set NAME to CANPkg
         c_pkg.setName(outputString());
         // now ISOSystemPkg_c has right data -> send
@@ -412,7 +412,7 @@ bool ISOItem_c::timeEvent( void )
       { // Announce WS-Master
         i8_slavesToClaimAddress = getIsoMonitorInstance4Comm().getSlaveCount (this); // slavesToClaimAddress will be 0..numberOfSlaves hopefully
 
-        c_pkg.setExtCanPkg8(7, 0, 254, 13, nr(), i8_slavesToClaimAddress+1, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+        c_pkg.setExtCanPkg8(7, 0, (WORKING_SET_MASTER_PGN>>8), (WORKING_SET_MASTER_PGN&0xFF), nr(), i8_slavesToClaimAddress+1, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         c_can << c_pkg;     // send out "Working Set Master" message on CAN bus
 
         updateTime();
@@ -422,7 +422,7 @@ bool ISOItem_c::timeEvent( void )
         // claim address for next slave
         c_pkg.setIsoPri(7);
         c_pkg.setIsoPgn(WORKING_SET_MEMBER_PGN);
-        c_pkg.setIsoSa(nr()); // free SA or NACK flag
+        c_pkg.setMonitorItemForSA( this ); // free SA or NACK flag
         // set NAME to CANPkg
         c_pkg.setName(getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-i8_slavesToClaimAddress, this)->outputString());
         c_can << c_pkg;
@@ -463,7 +463,7 @@ bool ISOItem_c::processMsg(){
       { // ISOItem_c::processMsg() is only called for local item, when
         // this item has higher PRIO, so that we shall reject the SA steal
         // by resending OUR SA CLAIM
-        c_pkg.setIsoSa(nr());
+        c_pkg.setMonitorItemForSA( this );
         c_pkg.setIsoPri(6);
         c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
         c_pkg.setIsoPs(255); // global information
@@ -514,7 +514,7 @@ bool ISOItem_c::sendSaClaim()
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
   c_pkg.setIsoPs(255); // global information
-  c_pkg.setIsoSa(nr());
+  c_pkg.setMonitorItemForSA( this );
   // set NAME to CANPkg
   c_pkg.setName(outputString());
   // now ISOSystemPkg_c has right data -> send

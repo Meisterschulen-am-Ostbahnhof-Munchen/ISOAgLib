@@ -134,7 +134,6 @@ void BaseCommon_c::close( )
       * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
     @param rpc_devKey optional pointer to the DEV_KEY variable of the responsible member instance (pointer enables automatic value update if var val is changed)
     @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-
   */
 void BaseCommon_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode)
 {
@@ -328,7 +327,7 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   /// if the ISOItem_c is not in the monitor list, ignore this request
   if ( getSystemMgmtInstance4Comm().existActiveLocalMember() )
   { // use the SA of the already active node
-    data().setIsoSa(getSystemMgmtInstance4Comm().getActiveLocalMember().nr());
+    data().setMonitorItemForSA( &getSystemMgmtInstance4Comm().getActiveLocalMember() );
   }
   else
   { // there exists no local ident which is in claimed state -> we are not allowed to send on ISOBUS
@@ -339,7 +338,7 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   if ( ( getSelectedDataSourceDevKeyConst().isSpecified() )
     && ( getIsoMonitorInstance4Comm().existIsoMemberDevKey( getSelectedDataSourceDevKeyConst(), true ) ) )
   { // we have a valid tractor data source, that can be asked directly
-    data().setIsoPs( getIsoMonitorInstance4Comm().isoMemberDevKey( getSelectedDataSourceDevKeyConst(), true ).nr() );
+    data().setDevKeyForDA( getSelectedDataSourceDevKeyConst() );
   }
   else
   { // there is no selected tractor registered --> ask to global
@@ -355,6 +354,26 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   // now ISOSystemPkg_c has right data -> send
   getCanInstance4Comm() << data();
   return true;
+}
+/** check if preconditions for request for pgn are fullfilled
+    @return  true -> the request for pgn can be send
+  */
+bool BaseCommon_c::check4ReqForPgn(uint32_t rui32_pgn, uint8_t /*rui8_sa*/, uint8_t rui8_da)
+{
+  if ( NULL == getDevKey() ) return false;
+  if ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) return false;
+
+  // now we can be sure, that we are in tractor mode, and the registered tractor device key
+  // belongs to an already claimed IsoItem_c --> we are allowed to send
+  if ( ( getIsoMonitorInstance4Comm().isoMemberDevKey( *getDevKey() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
+  { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
+    // DevKey_c (getDevKey())
+    return true;
+  }
+  else
+  { // we are not allowed to send the request
+    return false;
+  }
 }
 #endif
 

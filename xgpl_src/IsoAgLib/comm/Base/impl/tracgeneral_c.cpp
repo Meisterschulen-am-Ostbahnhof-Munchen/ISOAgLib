@@ -551,6 +551,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
             t_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
           }
           setSelectedDataSourceDevKey(c_tempDevKey);
+          //set update time
           setUpdateTime( Scheduler_c::getLastTimeEventTrigger() );
         }
         else
@@ -605,23 +606,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return b_result;
   }
 
-  bool TracGeneral_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t rui8_da)
+  bool TracGeneral_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da)
   {
-    if ( NULL == getDevKey() ) return false;
-    if ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) return false;
+    // check if we are allowed to send a request for pgn
+    if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rui8_sa, rui8_da) ) return false;
 
-    // now we can be sure, that we are in tractor mode, and the registered tractor device key
-    // belongs to an already claimed IsoItem_c --> we are allowed to send
-    if ( ( getIsoMonitorInstance4Comm().isoMemberDevKey( *getDevKey() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
-    { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
-      // DevKey_c (getDevKey())
-      // call TracGeneral_c function to send language of Tractor-ECU
-      // isoSendLanguage checks if this item (identified by DEV_KEY)
-      // is configured to send language
-      isoSendLanguage();
-      return true;
-    }
-    return false;
+    // call TracGeneral_c function to send language of Tractor-ECU
+    // isoSendLanguage checks if this item (identified by DEV_KEY)
+    // is configured to send language
+    isoSendLanguage();
+    return true;
   };
 
   /** send front hitch and rear hitch data msg
@@ -634,11 +628,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(*getDevKey(), true)) return;
 
     const int32_t ci32_now = Scheduler_c::getLastTimeEventTrigger();
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
+    data().setDevKeyForSA( *getDevKey() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
-    data().setIsoSa(b_sa);
 
     setSelectedDataSourceDevKey( *getDevKey() );
     CANIO_c& c_can = getCanInstance4Comm();
@@ -737,11 +729,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       return;
     } else
     {
-      // retreive the actual dynamic sender no of the member with the registered devKey
-      uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
+      data().setDevKeyForSA( *getDevKey() );
       data().setIdentType(Ident_c::ExtendedIdent);
       data().setIsoPri(6);
-      data().setIsoSa(b_sa);
 
       setSelectedDataSourceDevKey( *getDevKey() );
       CANIO_c& c_can = getCanInstance4Comm();
@@ -800,6 +790,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         val2 |= ( IsoAgLib::IsoNotAvailablePark      << 4);
         val2 |= ( implState.inWork                   << 2);
     }
+    data().setDevKeyForSA( *getDevKey() );
+    data().setIdentType(Ident_c::ExtendedIdent);
+    data().setIsoPri(6);
+
     data().setIsoPgn(MAINTAIN_POWER_REQUEST_PGN);
     data().setUint8Data(0, val1);
     data().setUint8Data(1, val2);

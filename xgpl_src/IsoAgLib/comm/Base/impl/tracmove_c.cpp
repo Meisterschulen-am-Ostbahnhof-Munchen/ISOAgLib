@@ -86,11 +86,13 @@
  ***************************************************************************/
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-#include <IsoAgLib/comm/Base/itracgeneral_c.h>
+#if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+  #include <IsoAgLib/comm/Base/impl/tracgeneral_c.h>
+#endif
 #include "tracmove_c.h"
 
 #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
-#include <IsoAgLib/comm/Base/itimeposgps_c.h>
+  #include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
 #endif
 
 
@@ -269,7 +271,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   bool TracMove_c::isoProcessMsg()
   {
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
-    IsoAgLib::iTracGeneral_c& c_tracgeneral = IsoAgLib::getITracGeneralInstance();
+    TracGeneral_c& c_tracgeneral = getTracGeneralInstance();
     #endif
     DevKey_c c_tempDevKey( DevKey_c::DevKeyUnspecified );
     // store the devKey of the sender of base data
@@ -416,7 +418,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc)
   {
     #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined NMEA_2000_FAST_PACKET)
-    IsoAgLib::iTimePosGPS_c& c_timeposgps = IsoAgLib::getITimePosGpsInstance();
+    TimePosGPS_c& c_timeposgps = getTimePosGpsInstance();
     #endif
     switch(t_speedSrc)
     {
@@ -500,14 +502,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     // function of base class BaseCommon_c
 
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
-    IsoAgLib::iTracGeneral_c& c_tracgeneral = IsoAgLib::getITracGeneralInstance();
+    TracGeneral_c& c_tracgeneral = getTracGeneralInstance();
     #endif
     CANIO_c& c_can = getCanInstance4Comm();
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
+
+    data().setDevKeyForSA( *getDevKey() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
-    data().setIsoSa(b_sa);
     data().setLen(8);
 
     #ifdef USE_RS232_FOR_DEBUG

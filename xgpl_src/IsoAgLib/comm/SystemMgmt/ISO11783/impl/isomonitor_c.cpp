@@ -904,7 +904,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   data().setIsoPs(255); // global request
   if ( getSystemMgmtInstance4Comm().existActiveLocalMember() )
   { // use the SA of the already active node
-    data().setIsoSa(getSystemMgmtInstance4Comm().getActiveLocalMember().nr());
+    data().setMonitorItemForSA( &getSystemMgmtInstance4Comm().getActiveLocalMember() );
     b_sendOwnSa = true;
   }
   else

@@ -209,6 +209,41 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
   ui8_busNumber = rui8_busNumber;
   ui8_filterBoxNr = rui8_FilterBoxNr;
 
+  #if ( ( defined( USE_DIN_9684 ) && defined( USE_ISO_11783 ) )  || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) )
+  // we have either compiled for DIN and ISO, OR there is at least one internal / proprietary CAN channel
+  #ifdef USE_ISO_11783
+  // when we are communicating on the standardized CAN channel, and ISO is used, the default shall be true
+  b_performIsobusResolve = true;
+  #else
+  // when only DIN is used, or only proprietary protocol is used, the default shall be false
+  b_performIsobusResolve = false;
+  #endif
+  #endif
+
+  #if CAN_INSTANCE_CNT > PRT_INSTANCE_CNT
+  // we have at least one internal/proprietary CAN channel --> check whether this FilterBox_c
+  // was created for this internal (i.e. non ISOBUS) communication
+  for ( unsigned int ind = PRT_INSTANCE_CNT; ind < CAN_INSTANCE_CNT; ind++ )
+  {
+    if ( getCanInstance( ind ).getBusNumber() == ui8_busNumber )
+    { // this FilterBox_c has been created for processing of internal/proprietary messages
+      b_performIsobusResolve = false;
+      break;
+    }
+  }
+  #endif // when amount of standardized prt instances is same as amount of CAN instances, no special check is needed
+
+  #if defined( USE_DIN_9684 ) && defined( USE_ISO_11783 )
+  if ( b_performIsobusResolve )
+  { // check whether the message is DIN and not ISO
+    if ( ( c_filter.identType() == Ident_c::StandardIdent                                                     )
+      || ( ( c_filter.identType() == Ident_c::BothIdent ) && ( DEFAULT_IDENT_TYPE == Ident_c::StandardIdent ) ) )
+    {
+      b_performIsobusResolve = false;
+    }
+  }
+  #endif
+
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   if (c_filter.identType() == Ident_c::BothIdent) c_filter.setIdentType(DEFAULT_IDENT_TYPE);
   if (c_filter.empty() || c_mask.empty() ) return false;
@@ -340,30 +375,65 @@ bool FilterBox_c::processMsg()
 {
   for (uint8_t i=0; i < vec_customer.size(); i++)
   {
-    CANPkgExt_c* pc_target = &(vec_customer[i]->dataBase());
-  #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
-    HAL::can_useMsgobjGet(ui8_busNumber, 0xFF, pc_target);
-  #else
-    HAL::can_useMsgobjGet(ui8_busNumber, ui8_filterBoxNr, pc_target);
-  #endif
-
-    if (vec_customer[i] != NULL)
-    { // pointer to CANCustomer_c was set
-      // call customer's processMsg function, to let it
-      // process the received CAN msg
-      pc_target->string2Flags();
-      if ( vec_customer[i]->processMsg() )
-      { // customer indicated, that it processed the content of the received message
-        // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-        return true;
-      }
-    }
-    else
+    if (vec_customer[i] == NULL)
     { // pointer to CANCustomer_c wasn't set
       // -> don't know who wants to process the msg
       getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::Can );
       return false;
     }
+    // ####################################################
+    // from here on the vec_customer[i] has a valid pointer
+    // ####################################################
+
+    CANPkgExt_c* pc_target = &(vec_customer[i]->dataBase());
+    #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
+      HAL::can_useMsgobjGet(ui8_busNumber, 0xFF, pc_target);
+    #else
+      HAL::can_useMsgobjGet(ui8_busNumber, ui8_filterBoxNr, pc_target);
+    #endif
+
+    // call customer's processMsg function, to let it
+    // process the received CAN msg
+    pc_target->string2Flags();
+
+    #if ( ( defined( USE_ISO_11783 ) ) && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) ) )
+    if ( b_performIsobusResolve )
+    #endif
+    #ifdef USE_ISO_11783
+    { // this block is only used for ISOBUS messages
+      const MessageState_t cb_wasValidMsg = pc_target->resolveReceivingInformation();
+      if ( cb_wasValidMsg == Invalid )
+      {
+        #ifdef PROCESS_INVALID_PACKETS
+        if (vec_customer[i]->processInvalidMsg() )
+        { // customer indicated, that it processed the content of the received message
+          // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
+          return true;
+        }
+        #endif
+      }
+      else if ( ( cb_wasValidMsg == Valid ) || ( vec_customer[i]->isNetworkMgmt() ) )
+      { // is either valid or OnlyNetworkMgmt with a CANCustomer which is of type NetworkMgmt
+        if ( vec_customer[i]->processMsg() )
+        { // customer indicated, that it processed the content of the received message
+          //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
+          return true;
+        }
+      }
+    }
+    #endif // USE_ISO_11783
+    #if ( ( defined( USE_ISO_11783 ) ) && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) ) )
+    else
+    #endif
+    #if ( defined( USE_DIN_9684 )  || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) )
+    {
+      if ( vec_customer[i]->processMsg() )
+      { // customer indicated, that it processed the content of the received message
+        //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
+        return true;
+      }
+    }
+    #endif
   }
   return false;
 }

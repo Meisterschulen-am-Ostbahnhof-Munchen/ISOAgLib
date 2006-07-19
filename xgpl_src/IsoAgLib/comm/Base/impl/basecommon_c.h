@@ -174,6 +174,10 @@ namespace __IsoAgLib
     #ifdef USE_ISO_11783
     /** send a PGN request */
     bool sendPgnRequest(uint32_t ui32_requestedPGN);
+    /** check if preconditions for request for pgn are fullfilled
+        @return  true -> the request for pgn can be send
+      */
+    virtual bool check4ReqForPgn(uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da);
     /** process a ISO11783 base information PGN */
     virtual bool isoProcessMsg();
     /** send a ISO11783 base information PGN.

@@ -125,7 +125,11 @@ ISOName_c::ISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devCl
 */
 ISOName_c::ISOName_c(const ISOName_c& rrefc_src)
 { // simply copy data string
-  CNAMESPACE::memmove(pb_data, rrefc_src.pb_data, 8);
+  #if (SIZEOF_INT >= 4)
+  *(uint64_t*)pb_data = *(uint64_t*)rrefc_src.pb_data;
+  #else
+  CNAMESPACE::memcpy(pb_data, rrefc_src.pb_data, 8);
+  #endif
 }
 /**
   assign constructor for ISOName
@@ -133,7 +137,11 @@ ISOName_c::ISOName_c(const ISOName_c& rrefc_src)
 */
 const ISOName_c& ISOName_c::operator=(const ISOName_c& rrefc_src)
 { // simply copy data string
-  CNAMESPACE::memmove(pb_data, rrefc_src.pb_data, 8);
+  #if (SIZEOF_INT >= 4)
+  *(uint64_t*)pb_data = *(uint64_t*)rrefc_src.pb_data;
+  #else
+  CNAMESPACE::memcpy(pb_data, rrefc_src.pb_data, 8);
+  #endif
   return rrefc_src;
 }
 /**
@@ -391,9 +399,6 @@ void ISOName_c::setSerNo(uint32_t rui32_serNo)
 */
 int8_t ISOName_c::higherPriThanPar(const uint8_t* rpb_compare) const
 {
-  int8_t i8_result = +1;
-  int8_t i8_cnt;
-
 #if defined(DEBUG) && !(SYSTEM_A1)
 if ( rpb_compare == NULL )
 { // calling function called this function with wrong parameter
@@ -433,25 +438,29 @@ if ( rpb_compare == NULL )
     return 0;
   }
 
-  for (i8_cnt = 7; i8_cnt >= 0; i8_cnt-- )
+  #if (SIZEOF_INT >= 4)
+  const uint64_t* rpui64_data    = (const uint64_t*)pb_data;
+  const uint64_t* rpui64_compare = (const uint64_t*)rpb_compare;
+  if      ( *rpui64_data > *rpui64_compare ) return -1;
+  else if ( *rpui64_data < *rpui64_compare ) return +1;
+  else return 0;
+  #else
+  const uint16_t* rpui16_data    = (const uint16_t*)pb_data;
+  const uint16_t* rpui16_compare = (const uint16_t*)rpb_compare;
+
+  for (int8_t i8_cnt = 3; i8_cnt >= 0; i8_cnt-- )
   { // compare starting with self_conf and indGroup flag
     // in parts of uint16_t (2-uint8_t)
-    if (pb_data[i8_cnt] > rpb_compare[i8_cnt])
+    if      (rpui16_data[i8_cnt] > rpui16_compare[i8_cnt])
     { // compared value has smaller or val -> %e.g. higher prio
-      i8_result = -1;
-      break;
+      return -1;
     }
-    if (pb_data[i8_cnt] < rpb_compare[i8_cnt])
+    else if (rpui16_data[i8_cnt] < rpui16_compare[i8_cnt])
     { // compared value has higher or val -> %e.g. higher prio
-      i8_result = +1;
-      break;
+      return +1;
     }
   }
-
-  if (i8_cnt < 0)
-  { // all values equal => same prio, return false
-    i8_result = 0;
-  }
-
-  return i8_result;
+  // if still here -> both are totally equal
+  return 0;
+  #endif
 }

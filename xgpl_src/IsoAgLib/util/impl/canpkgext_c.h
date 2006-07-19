@@ -93,11 +93,39 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
+class DevKey_c;
+class MonitorItem_c;
+
+/** values which indicates the state of an address */
+typedef enum { Valid = 0, OnlyNetworkMgmt = 1, Invalid = 3 } MessageState_t;
+/** structure which will be filled when an address is resolved */
+typedef struct
+{ // IMPORTANT:
+  // the DevKey_c instance should be handled as if it would be a fixed
+  // _part_ of the struct --> the constructor allocates an instance, the destructur frees it
+  //                          and all other operations just operate on the allocated instance.
+  DevKey_c*         p_devKey;
+  // IMPORTANT:
+  // in contrast to DevKey_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
+  // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
+  const MonitorItem_c*  pc_monitorItem;
+  //can be source or destination address
+  uint8_t address;
+} AddressResolveResults;
+
+typedef enum
+{
+  local  = 0,
+  remote = 1
+} Scope;
+
 /** extended version of CANPkg_c which overwrites the
     assign and getData functions
     with call for data flag converting functions
   *@author Dipl.-Inform. Achim Spangler
   */
+
 class CANPkgExt_c : public CANPkg_c  {
 protected:
 public:
@@ -123,7 +151,7 @@ public:
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
   */
-  uint8_t operator[](uint8_t rb_pos) const {return pb_data[rb_pos];};
+  uint8_t operator[](uint8_t rui8_pos) const {return pb_data[rui8_pos];};
   /**
     set an uint8_t value at specified position in string
     @param rui8_devClassInst position [0..7]
@@ -170,34 +198,34 @@ public:
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
   */
-  uint8_t getUint8Data(uint8_t rb_pos) const {return pb_data[rb_pos];};
+  uint8_t getUint8Data(uint8_t rui8_pos) const {return pb_data[rui8_pos];};
   /**
     simply deliver a uint16_t from a specific starting position with
     @param rb_pos position of dellivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint16_t getUint16Data(uint8_t rb_pos) const { return convertLittleEndianStringUi16(pb_data+rb_pos);};
+  uint16_t getUint16Data(uint8_t rui8_pos) const { return convertLittleEndianStringUi16(pb_data+rui8_pos);};
   //{return (uint16_t(pb_data[rb_pos]) | (uint16_t(pb_data[rb_pos+1])<<8));};
   /**
     simply deliver a int16_t from a specific starting position with
     @param rb_pos position of dellivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int16_t getInt16Data(uint8_t rb_pos) const { return convertLittleEndianStringI16(pb_data+rb_pos);};
+  int16_t getInt16Data(uint8_t rui8_pos) const { return convertLittleEndianStringI16(pb_data+rui8_pos);};
   // {return int16_t( uint16_t(pb_data[rb_pos]) | ( uint16_t(pb_data[rb_pos+1]) << 8 ) );};
   /**
     simply deliver a uint32_t from a specific starting position with
     @param rb_pos position of dellivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint32_t getUint32Data(uint8_t rb_pos) const { return convertLittleEndianStringUi32(pb_data+rb_pos);};
+  uint32_t getUint32Data(uint8_t rui8_pos) const { return convertLittleEndianStringUi32(pb_data+rui8_pos);};
   // {return (uint32_t(getUint16Data(rb_pos)) | (uint32_t(getUint16Data(rb_pos+2))<<16));};
   /**
     simply deliver a int32_t from a specific starting position with
     @param rb_pos position of dellivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int32_t getInt32Data(uint8_t rb_pos) const { return convertLittleEndianStringI32(pb_data+rb_pos);};
+  int32_t getInt32Data(uint8_t rui8_pos) const { return convertLittleEndianStringI32(pb_data+rui8_pos);};
   // {return int32_t( uint32_t(getUint16Data(rb_pos)) | ( uint32_t(getUint16Data(rb_pos+2)) << 16 ) );};
 
   /**
@@ -210,6 +238,7 @@ public:
   virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
 
+  virtual bool isNetworkMgmt() const { return false; } ;
   #ifdef USE_DIN_9684
     /**
     deliver sender nr
@@ -255,7 +284,7 @@ public:
     set the value of the ISO11783 ident field SA
     @return source adress
   */
-  void setIsoSa(uint8_t rb_val){setIdent(rb_val,0, Ident_c::ExtendedIdent);};
+  void setIsoSa(uint8_t rui8_val);
   /**
     set the value of the ISO11783 ident field PGN
     @return parameter group number
@@ -265,22 +294,22 @@ public:
     set the value of the ISO11783 ident field DP
     @return data page
   */
-  void setIsoDp(uint8_t rb_val){setIdent( ((ident(3)& 0x1E) | (rb_val & 1)), 3, Ident_c::ExtendedIdent);};
+  void setIsoDp(uint8_t rui8_val){setIdent( ((ident(3)& 0x1E) | (rui8_val & 1)), 3, Ident_c::ExtendedIdent);};
   /**
     set the value of the ISO11783 ident field PF
     @return PDU Format
   */
-  void setIsoPf(uint8_t rb_val){setIdent(rb_val, 2, Ident_c::ExtendedIdent);};
+  void setIsoPf(uint8_t rui8_val){setIdent(rui8_val, 2, Ident_c::ExtendedIdent); };
   /**
     set the value of the ISO11783 ident field PS
     @return PDU Specific
   */
-  void setIsoPs(uint8_t rb_val){setIdent(rb_val, 1, Ident_c::ExtendedIdent);};
+  void setIsoPs(uint8_t rui8_val);
   /**
     set the value of the ISO11783 ident field PRI
     @return priority
   */
-  void setIsoPri(uint8_t rb_val){setIdent( ((ident(3)&1) | (rb_val << 2)), 3, Ident_c::ExtendedIdent);};
+  void setIsoPri(uint8_t rui8_val){setIdent( ((ident(3)&1) | (rui8_val << 2)), 3, Ident_c::ExtendedIdent);}
 
   void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
     CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
@@ -325,6 +354,39 @@ public:
     setLen (8);
     b_runFlag2String = false;
   }
+  /** check if source and destination address are valid
+      @see     FilterBox_c::processMsg()
+      @pre     we want to process a message
+      @return  Valid -> both addresses are valid
+               Invalid -> one or both addresses are invalid
+               OnlyNetworkMgmt -> one or both addresses are only useable for network management
+    */
+  MessageState_t resolveReceivingInformation();
+
+  /** check if source and destination address are valid
+      @see     CANPkgExt_c::operator<<
+      @pre     we want to send a message
+      @return  Valid -> both addresses are valid
+               Invalid -> one or both addresses are invalid
+               OnlyNetworkMgmt -> one or both addresses are only useable for network management
+    */
+  bool resolveSendingInformation();
+  /** set the monitoritem for resolve SA
+      @param pc_monitorItem  needed monitoritem
+    */
+  void setMonitorItemForSA( const MonitorItem_c* pc_monitorItem );
+  /** set the devKey for resolve SA
+      @param p_devKey        needed devKey
+    */
+  void setDevKeyForSA( const DevKey_c& p_devKey );
+  /** set the monitoritem for resolve SA
+      @param pc_monitorItem  needed monitoritem
+    */
+  void setMonitorItemForDA( const MonitorItem_c* pc_monitorItem );
+  /** set the devKey for resolve SA
+      @param p_devKey        needed devKey
+    */
+  void setDevKeyForDA( const DevKey_c& p_devKey );
   // end of block with ISO 11783 specific functions
   #endif
 
@@ -339,6 +401,28 @@ public:
 
 private:
 // Private methods
+  #ifdef USE_ISO_11783
+  /** report if the combination of address and scope is valid in context of message processing
+      @return  true -> address, scope combination is valid
+    */
+  MessageState_t address2IdentRemoteSa();
+  /** report if the combination of address and scope is valid in context of message processing
+      @return  true -> address, scope combination is valid
+    */
+  MessageState_t address2IdentLocalDa();
+  /** set address in context of sending a message
+      @param  addressResolveResults  source or destination address
+      @param  scope                  local or remote
+      @return  true -> monitoritem_c, devKey_c is a valid combination
+    */
+  MessageState_t setAddress(AddressResolveResults& addressResolveResults, Scope scope);
+  /** resolve a given monitoritem and get address if possible
+      @param  addressResolveResults  address to resolve
+      @return true -> monitoritem could be resolved
+              false -> nothing more to be done
+    */
+  bool resolveMonitorItem( AddressResolveResults& addressResolveResults );
+  #endif
 
   /**
     abstract transform flag values to data string
@@ -356,6 +440,11 @@ private:
       Normally this is needed, but after each call of setExtCanPkg?? all bytes of the stream are already setup.
     */
   static bool b_runFlag2String;
+
+  /** variable which holds the results for a resolved source address */
+  AddressResolveResults addrResolveResSA;
+  /** variable which holds the results for a resolved destination address */
+  AddressResolveResults addrResolveResDA;
 };
 
 }

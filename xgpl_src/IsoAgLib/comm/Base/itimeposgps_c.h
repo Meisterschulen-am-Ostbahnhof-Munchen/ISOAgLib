@@ -143,6 +143,9 @@ public:
   /** return a sender which sends GPS commands as a tractor */
   const iDevKey_c& getSenderDevKeyGpsConst() const {return static_cast<const iDevKey_c&>(TimePosGPS_c::getSenderDevKeyGpsConst());};
 
+  /** force a request for pgn for time/date information */
+  bool sendRequestUpdateTimeDate() { return TimePosGPS_c::sendRequestUpdateTimeDate(); }
+
   /** @return TRUE => data source dev key is specified */
   bool checkDataSourceSpecified() { return TimePosGPS_c::getSelectedDataSourceDevKeyConst().isSpecified();};
   #endif

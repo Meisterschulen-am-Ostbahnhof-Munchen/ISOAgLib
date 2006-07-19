@@ -271,6 +271,8 @@ public:
     @see CANPkgExt_c::operator=
   */
   virtual void string2Flags();
+
+  virtual bool isNetworkMgmt() const { return true; } ;
 protected: // protected methods
 
   /**

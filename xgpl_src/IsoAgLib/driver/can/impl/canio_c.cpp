@@ -87,6 +87,7 @@
 #include <algorithm>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
+#include <IsoAgLib/util/impl/canpkgext_c.h>
 #include <IsoAgLib/hal/system.h>
 #ifdef USE_CAN_EEPROM_EDITOR
   #include <IsoAgLib/hal/eeprom.h>
@@ -982,6 +983,37 @@ int16_t CANIO_c::processMsg(){
   return ui8_processedMsgCnt;
 }
 
+#ifdef USE_ISO_11783
+/**
+  function for sending data out of CANPkgExt_c (uses BIOS function)
+  if send puffer is full a local loop waits till puffer has enough space
+  (every 100ms the watchdog is triggered, to avoid watchdog reset)
+
+  possible errors:
+      * Err_c::hwConfig on wrong configured CAN obj, not init BUS or no configured send obj
+      * Err_c::range on undef BUS or BIOS send obj nr
+      * Err_c::can_warn on physical CAN-BUS problems
+      * Err_c::can_off on physical CAN-BUS off state
+  @param rrefc_src CANPkgExt_c which holds the to be sent data
+  @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
+*/
+CANIO_c& CANIO_c::operator<<(CANPkgExt_c& refc_src)
+{
+  if ( ! isReady2Send() ) return *this;
+  //check if source and destination address are valid
+  #if ( ( defined( USE_ISO_11783 ) ) && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) ) )
+  // when both ISO and DIN are compiled, we must make sure, that the ISO specific
+  // resolving is only used for standard ident messages (i.e. DIN 9684 which uses 11bit ident)
+  if ( ( b_canChannelCouldSendIso ) && ( refc_src.identType() == Ident_c::ExtendedIdent ) )
+  #endif
+  {
+    if ( ! refc_src.resolveSendingInformation() ) return *this;
+  }
+  return CANIO_c::operator<<( static_cast<CANPkg_c&>(refc_src) );
+}
+#endif
+
+
 /**
   function for sending data out of CANPkg_c (uses BIOS function)
   if send puffer is full a local loop waits till puffer has enough space
@@ -1746,6 +1778,13 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
     if (en_identType != Ident_c::BothIdent)
       break;
   } // end for
+
+
+  #if defined( USE_ISO_11783 ) &&  ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT )
+    if ( getSingletonVecKey() >= PRT_INSTANCE_CNT ) b_canChannelCouldSendIso = false;
+    else b_canChannelCouldSendIso = true;
+  #endif
+
 
   // return true -> must be set according success
   return b_configSuccess;

@@ -413,6 +413,22 @@ bool init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
           needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
   */
   CANIO_c& operator<<(CANPkg_c& rrefc_src);
+  #ifdef USE_ISO_11783
+  /**
+    function for sending data out of CANPkgExt_c (uses BIOS function)
+    if send puffer is full a local loop waits till puffer has enough space
+    (every 100ms the watchdog is triggered, to avoid watchdog reset)
+
+    possible errors:
+        * Err_c::hwConfig on wrong configured CAN obj, not init BUS or no configured send obj
+        * Err_c::range on undef BUS or BIOS send obj nr
+        * Err_c::can_warn on physical CAN-BUS problems
+        * Err_c::can_off on physical CAN-BUS off state
+    @param rrefc_src CANPkgExt_c which holds the to be sent data
+    @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
+  */
+  CANIO_c& operator<<(CANPkgExt_c& refc_src);
+  #endif
   /**
     check for can send conflict error and stop send retry on error
     (thus avoid BUS OFF)
@@ -608,6 +624,10 @@ void doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr);
    *  timeEvent triggered CAN processing -> when this flag is TRUE, no further processing is performed
    */
   bool b_runningCanProcess;
+  #if ( ( defined( USE_ISO_11783 ) ) && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) ) )
+  /** we have either compiled for DIN and ISO, OR there is at least one internal / proprietary CAN channel */
+  bool b_canChannelCouldSendIso;
+  #endif
 };
 
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )

@@ -287,30 +287,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   #endif
 
   #ifdef USE_ISO_11783
-  bool TracPTO_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t /*rui8_sa**/, uint8_t rui8_da)
+  bool TracPTO_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da)
   {
-    if ( NULL == getDevKey() ) return false;
-    if ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) return false;
+    // check if we are allowed to send a request for pgn
+    if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rui8_sa, rui8_da) ) return false;
 
-    // now we can be sure, that we are in tractor mode, and the registered tractor device key
-    // belongs to an already claimed IsoItem_c --> we are allowed to send
-    if ( ( getIsoMonitorInstance4Comm().isoMemberDevKey( *getDevKey() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
-    { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
-      // DevKey_c (getDevKey())
-      // call TracPto_c function to send pto informtation
-      // isoSendMessage checks if this item (identified by DEV_KEY)
-      // is configured to send pto information
-      if ( rui32_pgn == FRONT_PTO_STATE_PGN  && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
-      {
-        isoSendMessage(sendFrontPto);
-      }
-      if ( rui32_pgn == REAR_PTO_STATE_PGN && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
-      {
-        isoSendMessage(sendRearPto);
-      }
-      return true;
+    // call TracPto_c function to send pto informtation
+    // isoSendMessage checks if this item (identified by DEV_KEY)
+    // is configured to send pto information
+    if ( rui32_pgn == FRONT_PTO_STATE_PGN  && t_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
+    {
+      isoSendMessage(sendFrontPto);
     }
-    return false;
+    if ( rui32_pgn == REAR_PTO_STATE_PGN && t_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
+    {
+      isoSendMessage(sendRearPto);
+    }
+    return true;
   }
 
   /**
@@ -357,6 +350,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         setSelectedDataSourceDevKey(c_tempDevKey);
         // update time
         pt_ptoData->i32_lastPto = Scheduler_c::getLastTimeEventTrigger();
+        // must be set because this is needed in basecommon_c
+        setUpdateTime( pt_ptoData->i32_lastPto );
       }
       else
       { // there is a sender conflict
@@ -424,11 +419,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     CANIO_c& c_can = getCanInstance4Comm();
 
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(*getDevKey(), true).nr();
+    data().setDevKeyForSA( *getDevKey() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
-    data().setIsoSa(b_sa);
     data().setLen(8);
 
     setSelectedDataSourceDevKey(*getDevKey());

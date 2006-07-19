@@ -173,6 +173,7 @@ public:
   */
   bool timeEvent( void );
 
+  virtual bool isNetworkMgmt() const { return true; } ;
   /** default destructor which has nothing to do */
   virtual ~ISOMonitor_c();
 

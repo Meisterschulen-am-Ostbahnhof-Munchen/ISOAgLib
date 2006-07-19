@@ -105,7 +105,6 @@ namespace IsoAgLib {
   bool config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
   { return TracPTO_c::config(rpc_devKey, rt_identMode ); }
 
-
 /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
     /*@{*/
@@ -271,6 +270,11 @@ namespace IsoAgLib {
         @return  present limit status
       */
     IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return TracPTO_c::rearPtoShaftSpeedLimitStatus();}
+
+    /** force a request for pgn for front pto state */
+    bool sendRequestUpdateFront() { return TracPTO_c::sendRequestUpdateFront(); }
+    /** force a request for pgn for rear pto state */
+    bool sendRequestUpdateRear() { return TracPTO_c::sendRequestUpdateRear(); }
     #endif
     /*@}*/
 

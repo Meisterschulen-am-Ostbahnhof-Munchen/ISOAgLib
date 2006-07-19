@@ -111,6 +111,16 @@ public:
   virtual bool processMsg();
 
   /**
+    process a message -> the specialized/derived version of this virtual
+    function can be called during processing of received CAN telegrams in CANIO_c::processMsg
+    @param rpc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
+    @see __IsoAgLib::CANIO_c::processMsg
+  */
+  virtual bool processInvalidMsg() { return false; }
+
+  virtual bool isNetworkMgmt() const { return false; } ;
+
+  /**
     virtual function which delivers a pointer to the CANCustomer
     specific CANPkgExt_c instance
   */

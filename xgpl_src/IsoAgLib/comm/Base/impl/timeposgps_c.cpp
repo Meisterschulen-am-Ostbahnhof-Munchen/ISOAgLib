@@ -692,23 +692,16 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   }
 
 
-  bool TimePosGPS_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, uint8_t /*rui8_sa*/, uint8_t rui8_da)
+  bool TimePosGPS_c::processMsgRequestPGN (uint32_t rui32_pgn, uint8_t rui8_sa, uint8_t rui8_da)
   {
-    if ( NULL == getDevKey() ) return false;
-    if ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) return false;
+    // check if we are allowed to send a request for pgn
+    if ( ! BaseCommon_c::check4ReqForPgn(rui32_pgn, rui8_sa, rui8_da) ) return false;
 
-    // now we can be sure, that we are in tractor mode, and the registered tractor device key
-    // belongs to an already claimed IsoItem_c --> we are allowed to send
-    if ( ( getIsoMonitorInstance4Comm().isoMemberDevKey( *getDevKey() ).nr() == rui8_da ) || ( rui8_da == 0xFF ) )
-    { // the REQUEST was directed to the SA that belongs to the tractor IdentItem_c that is matched by the registrated
-      // DevKey_c (getDevKey())
-      // call TimePosGPS_c function to send time/date
-      // isoSendCalendar checks if this item (identified by DEV_KEY)
-      // is configured to send time/date
-      isoSendCalendar(*getDevKey());
-      return true;
-    }
-    return false;
+    // call TimePosGPS_c function to send time/date
+    // isoSendCalendar checks if this item (identified by DEV_KEY)
+    // is configured to send time/date
+    isoSendCalendar(*getDevKey());
+    return true;
   };
 
 
@@ -1222,11 +1215,9 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   {
     if (!getIsoMonitorInstance4Comm().existIsoMemberDevKey(rc_devKey, true)) return;
 
-    // retreive the actual dynamic sender no of the member with the registered devKey
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberDevKey(rc_devKey, true).nr();
+    data().setDevKeyForSA( rc_devKey );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(6);
-    data().setIsoSa(b_sa);
 
     if ( ( getSelectedDataSourceDevKey() == rc_devKey ) )
     { // this item (identified by DEV_KEY is configured to send
