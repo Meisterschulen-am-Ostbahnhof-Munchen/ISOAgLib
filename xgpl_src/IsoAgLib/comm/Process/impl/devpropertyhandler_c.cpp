@@ -122,7 +122,6 @@ uint8_t getLabelOffset (const HUGE_MEM uint8_t* pc_Array)
                             + DEF_Workingset_MasterNAME
                             + DEF_Serialnumber_Length
                             + ui8_serialNumberLength
-                            + DEF_Structurelabel
                             );
   return ui8_offsetLabel;
 }
@@ -271,16 +270,19 @@ DevPropertyHandler_c::processMsg()
       if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForStructureLabelResponse)
       {
         //store structureLabel for later compare in StateUploadInit
-        for (i=1; i<8; i++) pch_structureLabel[i] = char(data().getUint8Data(i));
+        for (i=1; i<8; i++) pch_structureLabel[i-1] = char(data().getUint8Data(i));
         b_receivedStructureLabel = true;
+
         // send Request Localization Label message
         pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
                           procCmdPar_RequestLocalizationLabelMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
         getCanInstance4Comm() << *pc_data;
         ui32_uploadTimestamp = HAL::getTime();
         ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+        en_uploadStep = UploadWaitForLocalizationLabelResponse;
         #ifdef DEBUG
           EXTERNAL_DEBUG_DEVICE << "Received structure label response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          EXTERNAL_DEBUG_DEVICE << "Wait for localization label (in processMsg)..." << EXTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -288,8 +290,9 @@ DevPropertyHandler_c::processMsg()
       if (en_uploadState == StatePresettings && en_uploadStep == UploadWaitForLocalizationLabelResponse)
       {
         //store localizationLabel for later compare in StateUploadInit
-        for (i=1; i<8; i++) pch_localizationLabel[i] = char(data().getUint8Data(i));
+        for (i=1; i<8; i++) pch_localizationLabel[i-1] = char(data().getUint8Data(i));
         b_receivedLocalizationLabel = true;
+        en_uploadStep = UploadWaitForUploadInit;
         #ifdef DEBUG
           EXTERNAL_DEBUG_DEVICE << "Received localization response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -329,6 +332,7 @@ DevPropertyHandler_c::processMsg()
           ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           #ifdef DEBUG
             EXTERNAL_DEBUG_DEVICE << "Received positive response for OP transfer..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+            EXTERNAL_DEBUG_DEVICE << "OPActivateMsg..." << EXTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
         else
@@ -366,8 +370,8 @@ DevPropertyHandler_c::processMsg()
         }
       }
       break;
-    case procCmdPar_OPDeleteMsg:
-      if (en_uploadState == StateUploadPool && en_uploadStep == UploadWaitForDeleteResponse)
+    case procCmdPar_OPDeleteRespMsg:
+      if (en_uploadState == StateUploadInit && en_uploadStep == UploadWaitForDeleteResponse)
       {
         if (data().getUint8Data(1) == 0)
         {
@@ -390,6 +394,7 @@ DevPropertyHandler_c::processMsg()
         }
         #ifdef DEBUG
         EXTERNAL_DEBUG_DEVICE << "Received delete response..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        EXTERNAL_DEBUG_DEVICE << "Wait for version response (in processMsg)..." << EXTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -508,7 +513,7 @@ DevPropertyHandler_c::timeEvent( void )
         b_receivedLocalizationLabel = false;
         en_uploadStep = UploadWaitForUploadInit;
         #ifdef DEBUG
-        EXTERNAL_DEBUG_DEVICE << "Wait for upload init..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        EXTERNAL_DEBUG_DEVICE << "Wait for localization label timed out, go to wait for upload init..." << EXTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
@@ -531,6 +536,9 @@ DevPropertyHandler_c::timeEvent( void )
           #endif
           initUploading();
         }
+
+        // we received structure and localization label, checks were successful, so no pool uploading necessary
+        if (en_uploadState == StateIdle) break;
 
         if (b_receivedStructureLabel)
         {
@@ -586,6 +594,9 @@ DevPropertyHandler_c::timeEvent( void )
       break;
     case UploadRetryUpload:
       startUpload();
+        #ifdef DEBUG
+        EXTERNAL_DEBUG_DEVICE << "UploadRetryUpload..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
       break;
     case UploadUploading:
       switch (en_sendSuccess) {
@@ -639,6 +650,9 @@ DevPropertyHandler_c::timeEvent( void )
     case UploadFailed:
       if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp))
       {
+        #ifdef DEBUG
+        EXTERNAL_DEBUG_DEVICE << "Upload failed..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
         switch (ui8_commandParameter)
         {
           case procCmdPar_OPActivateRespMsg:
@@ -817,13 +831,20 @@ DevPropertyHandler_c::initUploading()
     {
       char ch_temp[2] = { 'e', 'n' };
       #ifdef USE_ISO_TERMINAL
-      ch_temp[0] = ((getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) >> 8) & 0xFF;
-      ch_temp[1] = (getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) & 0xFF;
+      //if there are no local settings in ISOTerminal take default language "en"
+      if (getIsoTerminalInstance4Comm().getLocalSettings()->lastReceived != 0) {
+        ch_temp[0] = ((getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) >> 8) & 0xFF;
+        ch_temp[1] = (getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) & 0xFF;
+      }
       #endif
       if (CNAMESPACE::strncmp(pch_localizationLabel, ch_temp, 2) == 0)
       {
         en_uploadState = StateIdle;
         en_poolState = OPSuccessfullyUploaded;
+        en_uploadStep = UploadNone;
+        #ifdef DEBUG
+        EXTERNAL_DEBUG_DEVICE << "Stop Uploading - Pool already here..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
       }
       else
         getPoolForUpload();
