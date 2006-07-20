@@ -853,7 +853,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     }
     else
     { // this is not of interest for us
-      return false;
+      return false; /** @todo check if we're NACKing it and if that's correct?? maybe we should just ignore it??? */
     }
   }
 
@@ -978,7 +978,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
         }
       }
       break;
-      case NMEA_GPS_DIRECTION_DATA_PGN: // 0x01FA06LU - 130577 with Heading and Speed
+      case NMEA_GPS_DIRECTION_DATA_PGN: // 0x01FE11LU - 130577 with Heading and Speed
         i32_lastIsoDirectionStream = data().time();
         IsoAgLib::convertIstream( refc_stream, ui8_dataModeAndHeadingReference );
         ui8_dataModeAndHeadingReference &= 0x3F;
@@ -1070,16 +1070,16 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     c_nmea2000Streamer.reset();
     std::vector<uint8_t>& writeRef = c_nmea2000Streamer.vec_data;
     // use helper function to transfer value to the byte vector
-    number2LittleEndianString( uint8_t (ui8_dataModeAndHeadingReference|0xC0), writeRef );
+    number2LittleEndianString( uint8_t (ui8_dataModeAndHeadingReference|0xC0), writeRef );     /// NOT there in the RAPID UPDATE one
     number2LittleEndianString( ui8_directionSequenceID, writeRef );
     number2LittleEndianString( ui16_courseOverGroundRad10Minus4, writeRef );
     number2LittleEndianString( ui16_speedOverGroundCmSec, writeRef );
 
-    number2LittleEndianString( ui16_headingRad10Minus4, writeRef );
-    number2LittleEndianString( ui16_speedCmSec, writeRef );
+    number2LittleEndianString( ui16_headingRad10Minus4, writeRef );           /// not init'ed  /// NOT there in the RAPID UPDATE one
+    number2LittleEndianString( ui16_speedCmSec, writeRef );                   /// not init'ed  /// NOT there in the RAPID UPDATE one
 
-    number2LittleEndianString( ui16_flowDirectionRad10Minus4, writeRef );
-    number2LittleEndianString( ui16_driftSpeedCmSec, writeRef );
+    number2LittleEndianString( ui16_flowDirectionRad10Minus4, writeRef );     /// not init'ed   /// NOT there in the RAPID UPDATE one
+    number2LittleEndianString( ui16_driftSpeedCmSec, writeRef );              /// not init'ed  /// NOT there in the RAPID UPDATE one
 
     //now trigger sending
     // retreive the actual dynamic sender no of the member with the registered devKey
