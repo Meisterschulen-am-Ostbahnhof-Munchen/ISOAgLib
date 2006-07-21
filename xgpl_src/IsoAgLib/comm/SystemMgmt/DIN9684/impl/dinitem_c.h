@@ -196,7 +196,7 @@ public:
     set name
     @param rpb_name pointer to 7 uint8_t string, which is used as name
   */
-  void setName(const uint8_t* rpb_name){CNAMESPACE::memmove(cpName,rpb_name,7);cpName[7] = '\0';};
+  void setName(const uint8_t* rpb_name){CNAMESPACE::memcpy(cpName,rpb_name,7);cpName[7] = '\0';};
 
   /**
     send the name of this monitor item

@@ -84,7 +84,7 @@ static uint32_t sui32_detectStart = 0x1234;
 */
 int16_t open_system()
 {
-  std::memmove((void*)0x0000,(void*)0x90000,0x200); 	// vector table moved to start from 0h on RAM
+  std::memcpy((void*)0x0000,(void*)0x90000,0x200); 	// vector table moved to start from 0h on RAM
   sui32_detectStart = 0x9876;
   //   globally enable interrupts
   IEN = 1;      // defined in reg167cs.h

@@ -105,10 +105,10 @@ CANPkg_c::~CANPkg_c(){
 }
 
 /**
-  ==> OBSOLETE, because now all pkg-data is STATIC! 
+  ==> OBSOLETE, because now all pkg-data is STATIC!
   ==> REACTIVATE if some NON-STATIC member vars will be added!
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+
   assign operator to insert informations from one CANPkg_c into another
   @see __IsoAgLib::FilterBox_c::operator>>
   @see CANPkgExt_c::operator=
@@ -119,7 +119,7 @@ const CANPkg_c& CANPkg_c::operator=(const CANPkg_c& rrefc_right)
 {
   c_ident = rrefc_right.c_ident;
   ui8_len = rrefc_right.ui8_len;
-  CNAMESPACE::memmove(pb_data, rrefc_right.pb_data, ui8_len);
+  CNAMESPACE::memcpy(pb_data, rrefc_right.pb_data, ui8_len);
   i32_time = rrefc_right.i32_time;
 
   return *this;
@@ -139,7 +139,7 @@ void CANPkg_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
   reft_ident = ident();
   refui8_identType = identType();
   refb_dlcTarget = ui8_len;
-  CNAMESPACE::memmove(pb_dataTarget, pb_data, ui8_len);
+  CNAMESPACE::memcpy(pb_dataTarget, pb_data, ui8_len);
 }
 
 /**
@@ -154,7 +154,7 @@ void CANPkg_c::set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len
 {
   c_ident.set(rt_ident, rt_type);
   ui8_len = (rui8_len<9)?rui8_len:8;
-  CNAMESPACE::memmove(pb_data, rpb_data, ui8_len);
+  CNAMESPACE::memcpy(pb_data, rpb_data, ui8_len);
   i32_time = ri32_time;
 }
 
@@ -167,14 +167,14 @@ void CANPkg_c::set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len
 void CANPkg_c::setDataString(const uint8_t* rpb_data, uint8_t rui8_len)
 {
   ui8_len = (rui8_len<9)?rui8_len:8;
-  CNAMESPACE::memmove(pb_data, rpb_data, ui8_len);
+  CNAMESPACE::memcpy(pb_data, rpb_data, ui8_len);
 }
 
 
 /**
   ==> OBSOLETE, because now all pkg-data is STATIC!
   ==> REACTIVATE if some NON-STATIC member vars will be added!
-  
+
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   compare for equality with other CANPkg
   @param rrefc_cmp reference to the to be compared CANPkg
@@ -194,14 +194,14 @@ bool CANPkg_c::operator==(const CANPkg_c& rrefc_cmp) const
   ==> OBSOLETE, because now all pkg-data is STATIC!
   ==> REACTIVATE if some NON-STATIC member vars will be added!
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
+
   compare for difference to other CANPkg
   @param rrefc_cmp reference to the to be compared CANPkg
   @return true -> both CANPkg_c have different data
 bool CANPkg_c::operator!=(const CANPkg_c& rrefc_cmp) const
 {
   ANYWAY I THINK THIS LOGIC IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   bool b_result = true;
 
   if (pb_data == rrefc_cmp.pb_data) b_result = false;

@@ -584,7 +584,7 @@ void ProcessPkg_c::string2Flags()
 #endif  // USE_ISO_11783
   }
 
-  CNAMESPACE::memmove(pb_procData, (CANPkg_c::pb_data+4), 4);
+  CNAMESPACE::memcpy(pb_procData, (CANPkg_c::pb_data+4), 4);
 };
 
 /**
@@ -677,7 +677,7 @@ void ProcessPkg_c::flags2String()
     CANPkg_c::pb_data[1] = zaehlnum();
     CANPkg_c::pb_data[3] = (wert() << 4) | (inst() & 0xF);
 
-    CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_procData, 4);
+    CNAMESPACE::memcpy((CANPkg_c::pb_data+4), pb_procData, 4);
 
     if ((pd() >> 1) == 1)
     { // request has only 4 bytes
@@ -719,7 +719,7 @@ void ProcessPkg_c::flags2String()
     CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;
     // for ISO the ident is directly read and written
 
-    CNAMESPACE::memmove((CANPkg_c::pb_data+4), pb_procData, 4);
+    CNAMESPACE::memcpy((CANPkg_c::pb_data+4), pb_procData, 4);
 
     setLen(8);
 #endif  // USE_ISO_11783

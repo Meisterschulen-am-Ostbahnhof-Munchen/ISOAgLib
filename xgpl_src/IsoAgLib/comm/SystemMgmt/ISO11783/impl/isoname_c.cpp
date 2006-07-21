@@ -96,7 +96,7 @@ using __IsoAgLib::ISOName_c;
 */
 ISOName_c::ISOName_c(const uint8_t* rpb_src)
 { // simply copy 8byte string
-  if (rpb_src != NULL) CNAMESPACE::memmove(pb_data, rpb_src, 8);
+  if (rpb_src != NULL) CNAMESPACE::memcpy(pb_data, rpb_src, 8);
 }
 /**
   constructor which format data string from series of input flags
@@ -304,7 +304,7 @@ uint32_t ISOName_c::serNo() const
 */
 void ISOName_c::inputString(const uint8_t* rpb_src)
 {
-  if (rpb_src != NULL) CNAMESPACE::memmove(pb_data, rpb_src, 8);
+  if (rpb_src != NULL) CNAMESPACE::memcpy(pb_data, rpb_src, 8);
 }
 
 /**

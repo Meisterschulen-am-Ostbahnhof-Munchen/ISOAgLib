@@ -266,7 +266,7 @@ int32_t getTime()
 /* serial number of esx */
 int16_t getSnr(uint8_t *snrDat)
 {
-  memmove(snrDat, "serienr",6);
+  memcpy(snrDat, "serienr",6);
   return HAL_NO_ERR;
 }
 

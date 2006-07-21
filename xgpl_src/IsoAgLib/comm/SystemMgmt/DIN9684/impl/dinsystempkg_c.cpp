@@ -166,7 +166,7 @@ void DINSystemPkg_c::flags2String()
         setLen(1);
         break;
       case 9: // has name
-        CNAMESPACE::memmove(pb_data+1, name(), 7);
+        CNAMESPACE::memcpy(pb_data+1, name(), 7);
         setLen(8);
         break;
 #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD

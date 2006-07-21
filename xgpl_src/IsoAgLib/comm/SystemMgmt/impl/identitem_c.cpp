@@ -632,7 +632,7 @@ void IdentItem_c::init(DevKey_c* rpc_devKey, const uint8_t*
   #ifdef USE_DIN_9684
   if (rpb_name != NULL)
   {
-    CNAMESPACE::memmove(cpName,rpb_name,7);
+    CNAMESPACE::memcpy(cpName,rpb_name,7);
     setItemState(IState_c::Din);
   }
   #endif

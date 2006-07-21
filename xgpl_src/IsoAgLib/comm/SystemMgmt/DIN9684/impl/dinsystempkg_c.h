@@ -259,7 +259,7 @@ public:
   */
   void setName(const uint8_t* rName)
   {
-    CNAMESPACE::memmove((pb_data+1),rName,7);
+    CNAMESPACE::memcpy((pb_data+1),rName,7);
     pb_data[8]='\0';
     setLen(8);
   };

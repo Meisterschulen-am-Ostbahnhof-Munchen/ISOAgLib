@@ -237,7 +237,7 @@ void DINItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t rui8_maxLen)
     }
     tempName[ui8_resInd] = '\0';
   }
-  CNAMESPACE::memmove(pc_asciiName, tempName, rui8_maxLen - 1);
+  CNAMESPACE::memcpy(pc_asciiName, tempName, rui8_maxLen - 1);
   pc_asciiName[rui8_maxLen-1] = '\0';
 }
 

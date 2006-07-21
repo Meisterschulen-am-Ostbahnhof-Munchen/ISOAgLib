@@ -729,7 +729,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
   if (ptSend->bXtd == 1) xlEvent.tagData.msg.id |= 0x80000000UL;
   xlEvent.tagData.msg.dlc     = ptSend->bDlc;
   xlEvent.tagData.msg.flags   = 0;
-  memmove(xlEvent.tagData.msg.data, ptSend->abData, ptSend->bDlc);
+  memmcpy(xlEvent.tagData.msg.data, ptSend->abData, ptSend->bDlc);
   if ( ((ptSend->dwId & 0x700) == 0x700)
      ||((ptSend->dwId & 0x7FF) == 0x520)
      ||((ptSend->dwId & 0x7FF) == 0x502)
