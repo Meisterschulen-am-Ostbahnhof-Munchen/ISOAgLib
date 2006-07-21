@@ -97,6 +97,8 @@ CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey )
 {
   addrResolveResSA.p_devKey =  new DevKey_c(DevKey_c::DevKeyUnspecified);
   addrResolveResDA.p_devKey =  new DevKey_c(DevKey_c::DevKeyUnspecified);
+  addrResolveResSA.address = 0xff;
+  addrResolveResDA.address = 0xff;
 }
 /** virtual default destructor, which has nothing to do */
 CANPkgExt_c::~CANPkgExt_c()
@@ -240,6 +242,10 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
   #ifdef DEBUG_CAN
   INTERNAL_DEBUG_DEVICE << "*-*-*-* PROCESS MESSAGE *-*-*-*\n";
   #endif
+
+  addrResolveResSA.address = ident() & 0xFF;
+  addrResolveResDA.address = (ident() >> 8) & 0xFF;
+
   // resolve source address
   // in context of receiving SA is remote
   MessageState_t messageStateSA = address2IdentRemoteSa();
@@ -255,9 +261,6 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
     #endif
     addrResolveResDA.p_devKey->setUnspecified();
     addrResolveResDA.pc_monitorItem = NULL;
-    /** @todo check whether it might be needed anytime to set this
-        addrResolveResDA.address = 0xFF;
-     */
   }
   else
   { // for receive, the remote item is the sender --> SA is interpreted
@@ -281,9 +284,8 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
 MessageState_t CANPkgExt_c::address2IdentLocalDa()
 {
   //we are shure that we have PDU1 format and therefore we have a destination address
-  addrResolveResDA.address = isoPs();
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(isoPs() ) << "\n";
+    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(addrResolveResDA.address ) << "\n";
   #endif
 
   // now try to resolve the address
@@ -312,9 +314,8 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
   */
 MessageState_t CANPkgExt_c::address2IdentRemoteSa()
 {
-  addrResolveResSA.address = isoSa();
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int(isoSa() ) << "\n";
+    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int( addrResolveResSA.address ) << "\n";
   #endif
 
   // now try to resolve the address
@@ -551,6 +552,7 @@ void CANPkgExt_c::setMonitorItemForSA( const MonitorItem_c* pc_monitorItem )
   addrResolveResSA.pc_monitorItem = pc_monitorItem;
   // p_devKey will not be needed -> set to unspecified
   addrResolveResSA.p_devKey->setUnspecified();
+  addrResolveResSA.address = 0xFF;
 }
 /** set the devKey for resolve SA
     @param p_devKey  needed devKey
@@ -560,6 +562,7 @@ void CANPkgExt_c::setDevKeyForSA( const DevKey_c& p_devKey )
   *addrResolveResSA.p_devKey = p_devKey;
   // pc_monitorItem will be set over p_devKey -> reset pc_monitorItem
   addrResolveResSA.pc_monitorItem = NULL;
+  addrResolveResSA.address = 0xFF;
 }
 /** set the structure for resolve results DA
     @param pc_monitorItem  needed monitoritem
@@ -569,6 +572,7 @@ void CANPkgExt_c::setMonitorItemForDA( const MonitorItem_c* pc_monitorItem )
   addrResolveResDA.pc_monitorItem = pc_monitorItem;
   // p_devKey will not be needed -> set to unspecified
   addrResolveResDA.p_devKey->setUnspecified();
+  addrResolveResDA.address = 0xFF;
 }
 /** set the devKey for resolve DA
     @param p_devKey  needed devKey
@@ -578,6 +582,59 @@ void CANPkgExt_c::setDevKeyForDA( const DevKey_c& p_devKey )
   *addrResolveResDA.p_devKey = p_devKey;
   // pc_monitorItem will be set over p_devKey -> reset pc_monitorItem
   addrResolveResDA.pc_monitorItem = NULL;
+  addrResolveResDA.address = 0xFF;
+}
+/** check if an adddress could be resolved with monitorItem and devKey
+    @param  addressResolveResults  address to resolve
+*/
+uint8_t checkMonitorItemDevKey( const AddressResolveResults& addressResolveResults )
+{
+  // check if monitoritem exist and if not resolve it with devKey
+  if ( addressResolveResults.pc_monitorItem == NULL )
+  { // get pc_monitorItem if exist in systemmgmt_c
+    if (  addressResolveResults.p_devKey->isUnspecified()
+        ||
+          #if defined USE_ISO_11783 && !defined USE_DIN_9684
+          ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *addressResolveResults.p_devKey, false )
+          #else
+          ! getSystemMgmtInstance4Comm().existMemberDevKey( *addressResolveResults.p_devKey, false )
+          #endif
+       )
+    { // there exist no iso member with given devKey
+      return addressResolveResults.address;
+    }
+    #if defined USE_ISO_11783 && !defined USE_DIN_9684
+    return getIsoMonitorInstance4Comm().isoMemberDevKey( *addressResolveResults.p_devKey, false ).nr();
+    #else
+    return getSystemMgmtInstance4Comm().memberDevKey( *addressResolveResults.p_devKey, false ).nr();
+    #endif
+  }
+  // know we can be shure that an monitorItem exists
+  return addressResolveResults.pc_monitorItem->nr();
+}
+/**
+  get the value of the ISO11783 ident field PS
+  @return PDU Specific
+*/
+uint8_t CANPkgExt_c::isoPs() const
+{
+  // destination address is already valid
+  if (addrResolveResDA.address != 0xFF ) return addrResolveResDA.address;
+
+  // check if destination address is willingly 0xFF or if it can be resolved
+  return checkMonitorItemDevKey( addrResolveResDA );
+}
+/**
+  get the value of the ISO11783 ident field SA
+  @return source adress
+*/
+uint8_t CANPkgExt_c::isoSa() const
+{
+  // source address is already valid
+  if (addrResolveResSA.address != 0xFF ) return addrResolveResSA.address;
+
+  // check if source address is willingly 0xFF or if it can be resolved
+  return checkMonitorItemDevKey( addrResolveResSA );
 }
 #endif
 

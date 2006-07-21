@@ -392,16 +392,17 @@ bool FilterBox_c::processMsg()
       HAL::can_useMsgobjGet(ui8_busNumber, ui8_filterBoxNr, pc_target);
     #endif
 
-    // call customer's processMsg function, to let it
-    // process the received CAN msg
-    pc_target->string2Flags();
-
     #if ( ( defined( USE_ISO_11783 ) ) && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) ) )
     if ( b_performIsobusResolve )
     #endif
     #ifdef USE_ISO_11783
     { // this block is only used for ISOBUS messages
       const MessageState_t cb_wasValidMsg = pc_target->resolveReceivingInformation();
+
+      // call customer's processMsg function, to let it
+      // process the received CAN msg
+      pc_target->string2Flags();
+
       if ( cb_wasValidMsg == Invalid )
       {
         #ifdef PROCESS_INVALID_PACKETS
@@ -427,6 +428,10 @@ bool FilterBox_c::processMsg()
     #endif
     #if ( defined( USE_DIN_9684 )  || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) )
     {
+      // call customer's processMsg function, to let it
+      // process the received CAN msg
+      pc_target->string2Flags();
+
       if ( vec_customer[i]->processMsg() )
       { // customer indicated, that it processed the content of the received message
         //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c

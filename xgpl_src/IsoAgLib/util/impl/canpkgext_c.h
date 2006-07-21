@@ -253,12 +253,12 @@ public:
     get the value of the ISO11783 ident field SA
     @return source adress
   */
-  uint8_t isoSa() const {return (ident(0));};
+  uint8_t isoSa() const;
   /**
     get the value of the ISO11783 ident field PGN
     @return parameter group number
   */
-  uint32_t isoPgn() const {return (((uint32_t)ident() >> 8) & 0x1FFFF);};
+  uint32_t isoPgn() const {return ( ( ( (uint32_t)ident() >> 8) & 0x1FF00 ) | isoPs() );};
   /**
     get the value of the ISO11783 ident field DP
     @return data page
@@ -273,7 +273,7 @@ public:
     get the value of the ISO11783 ident field PS
     @return PDU Specific
   */
-  uint8_t isoPs() const {return ident(1);};
+  uint8_t isoPs() const;
   /**
     get the value of the ISO11783 ident field PRI
     @return priority
