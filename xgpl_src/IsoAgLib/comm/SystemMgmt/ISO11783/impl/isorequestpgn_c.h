@@ -137,6 +137,11 @@ public:
       @see CANPkgExt */
   ISOSystemPkg_c& data() {return c_data;};
 
+  //  Operation: dataBase
+  //!  deliver reference to data pkg as reference to CANPkgExt_c
+  //!  to implement the base virtual function correct
+  virtual CANPkgExt_c& dataBase() {return c_data;}
+
   /** adds the PGN to the list
       @param ref_PGNHandler: reference to a ISORequestPGNHandler_c from ISOMonitor_c, ISOItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
       @param cui32_pgnToRegister: PGN for which the ref_PGNHandler's processMsgRequestPGN should be called
