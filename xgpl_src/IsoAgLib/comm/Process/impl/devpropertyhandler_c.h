@@ -142,7 +142,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c,  ClientBase
     bool registerDevicePool (const IsoAgLib::iIdentItem_c* rpc_wsMasterIdentItem, const HUGE_MEM uint8_t* rpc_devicePoolByteArray, const uint32_t rui32_bytestreamLength, bool b_setToDefault);
     bool sendCommandChangeDesignator(uint16_t rpui16_objectID, const char* rpc_newString, uint8_t stringLength);
 
-    ProcessPkg_c data(){return *pc_data;};
+    ProcessPkg_c& data(){return *pc_data;};
 
     /** place next data to send direct into send buffer of pointed
       stream send package - MultiSend_c will send this
