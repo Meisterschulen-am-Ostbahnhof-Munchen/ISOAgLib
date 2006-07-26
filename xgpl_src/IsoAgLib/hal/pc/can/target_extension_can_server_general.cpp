@@ -221,7 +221,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
     // now search for MsgObj queue on this b_bus, where new message from b_bus maps
     // start with 1 since MsgObj with id 0 is anyway planned for sending
-    for (int32_t i32_obj = 1; i32_obj < iter->arrMsgObj[b_bus].size(); i32_obj++) {
+    for (int32_t i32_obj = 1; i32_obj < int32_t(iter->arrMsgObj[b_bus].size()); i32_obj++) {
 
       if (!iter->arrMsgObj[b_bus][i32_obj].b_canObjConfigured)
         continue;

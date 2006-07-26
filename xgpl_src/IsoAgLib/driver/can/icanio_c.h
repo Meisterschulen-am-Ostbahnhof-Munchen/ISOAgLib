@@ -84,7 +84,7 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
   /**
     Initialize the CAN hardware, and instantiate one msg object for
      sending of messages. Do configuration for BUS number, sending bitrate,
-    CAN ident length, minx/max hardware/BIOS Msg Obj numbers by parameters;
+    CAN ident length, min/max hardware/BIOS Msg Obj numbers by parameters;
     called by specified constructor or external functions;
     wrong BUS and msg obj numbers are rejected and cause set of Err_c:range
 
@@ -99,8 +99,8 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
         * Err_c::range on undefined BUS,  msgOb_nr or sendPufferSize,
         * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
         * Err_c::busy on already used sending Msg-Obj
-    @param rui8_busNumber optional number of the CAN bus
-    @param rui16_bitrate optional bitrate (default by define in isoaglib_config.h)
+    @param rui8_busNumber number of the CAN bus
+    @param rui16_bitrate bitrate (default by define in isoaglib_config.h)
     @param t_identLength optional length of the ident
            (S (11bit), E (29bit))
            (default by define in isoaglib_config.h)
@@ -317,7 +317,7 @@ class iCANIO_c : private __IsoAgLib::CANIO_c {
   inline iCANIO_c& getIcanInstance( uint8_t rui8_instance = 0 )
   { return static_cast<iCANIO_c&>(__IsoAgLib::getCanInstance(rui8_instance));};
 #else
-  /** C-style function, to get access to the unique DINMonitor_c singleton instance */
+  /** C-style function, to get access to the unique iCANIO_c singleton instance */
   inline iCANIO_c& getIcanInstance( void )
   { return static_cast<iCANIO_c&>(__IsoAgLib::getCanInstance());};
 #endif
