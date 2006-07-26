@@ -37,6 +37,7 @@
  * along with IsoAgLib; if not, write to the Free Software Foundation,     *
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
+
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/AbstractDOMParser.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
@@ -944,6 +945,41 @@ void defaultAttributes (unsigned int r_objType)
   }
   */
 }
+
+
+void convertIdReferenceToNameReference(int ri_attrType)
+{
+  if (attrIsGiven [ri_attrType])
+  {
+    int len = strlen (attrString [ri_attrType]);
+    if (len == 0) return; // do nothing if string empty
+
+    char firstChar = attrString [ri_attrType][0];
+    if (firstChar >= '0' && firstChar <= '9')
+    { // ID is given, so lookup the name for it!
+      int uid = atoi (attrString [ri_attrType]);
+      // first check if ID has an associated name
+      for (unsigned int i=0; i<objCount; i++)
+      {
+        if (objIDTable [i] == uid)
+          strcpy (attrString [ri_attrType], &objNameTable [i*(stringLength+1)]);
+      }
+    }
+  }
+}
+
+void convertIdReferencesToNameReferences()
+{
+  convertIdReferenceToNameReference (attrActive_mask);
+  convertIdReferenceToNameReference (attrSoft_key_mask);
+  convertIdReferenceToNameReference (attrVariable_reference);
+  convertIdReferenceToNameReference (attrFont_attributes);
+  convertIdReferenceToNameReference (attrInput_attributes);
+  convertIdReferenceToNameReference (attrLine_attributes);
+  convertIdReferenceToNameReference (attrFill_attributes);
+  convertIdReferenceToNameReference (attrTarget_value_variable_reference);
+}
+
 
 int languageCodeToIndex (char* lc)
 {
@@ -3163,8 +3199,11 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
         sprintf (tempString, "&iVtObject%s", attrString [attrTarget_value_variable_reference]);
         sprintf (attrString [attrTarget_value_variable_reference], "%s", tempString);
       }
-  
-  
+ 
+
+      //! @todo To be enabled when handling cases where only IDs are used in XMLs. Not 100% supported now, even if the 
+      //! folloing "convertIdReferencesToNameReferences();" call wouldn't be commented out!
+      //convertIdReferencesToNameReferences();
       // ###########################################
       // ### Print out inidivual object stuff... ###
       // ###########################################
