@@ -127,6 +127,15 @@ public:
   virtual CANPkgExt_c& dataBase();
 	/** virtual destructor */
 	virtual ~CANCustomer_c();
+
+#ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
+  /** this virtual function can be used to detect CAnCustomer_c derived CAN message handlers, which
+      want to send/receive proprietary messages on a CANIO_c instance, which is used to transport
+      standardized protocol ISO 11783 or DIN 9684.
+      Any proprietary derived CAN message handler should overload this function to return true in this function.
+  */
+  virtual bool isProprietaryMessageOnStandardizedCan() const { return false;};
+#endif
 };
 
 } // end of namespace __IsoAgLib

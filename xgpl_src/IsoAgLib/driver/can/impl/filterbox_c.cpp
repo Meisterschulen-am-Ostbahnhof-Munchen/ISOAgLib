@@ -104,6 +104,10 @@ FilterBox_c::FilterBox_c()
     c_additionalMask(~0, Ident_c::StandardIdent), // additional Mask set to "all-1s", so it defaults to "no additional mask".
     ui8_filterBoxNr(IdleState),
     ui8_busNumber(IdleState)
+  #if ( ( defined( USE_ISO_11783 ) ) \
+      && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
+    , b_performIsobusResolve(true)
+  #endif
 { };
 
 /**
@@ -127,6 +131,10 @@ FilterBox_c::FilterBox_c(CANCustomer_c* rrpc_customer,
     vec_customer(1,rrpc_customer),
     ui8_filterBoxNr(rpc_filterBox->ui8_filterBoxNr),
     ui8_busNumber(rpc_filterBox->ui8_busNumber)
+  #if ( ( defined( USE_ISO_11783 ) ) \
+      && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
+    , b_performIsobusResolve(rpc_filterBox->b_performIsobusResolve)
+  #endif
 {
 //  vec_customer.push_back(rrpc_customer);
 }
@@ -144,6 +152,10 @@ FilterBox_c::FilterBox_c(const FilterBox_c& rrefc_src)
     vec_customer(rrefc_src.vec_customer),
     ui8_filterBoxNr(rrefc_src.ui8_filterBoxNr),
     ui8_busNumber(rrefc_src.ui8_busNumber)
+  #if ( ( defined( USE_ISO_11783 ) ) \
+      && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
+    , b_performIsobusResolve(rrefc_src.b_performIsobusResolve)
+  #endif
 {};
 
 /**
@@ -209,7 +221,8 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
   ui8_busNumber = rui8_busNumber;
   ui8_filterBoxNr = rui8_FilterBoxNr;
 
-  #if ( ( defined( USE_DIN_9684 ) && defined( USE_ISO_11783 ) )  || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) )
+  #if ( ( defined( USE_ISO_11783 ) ) \
+      && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
   // we have either compiled for DIN and ISO, OR there is at least one internal / proprietary CAN channel
   #ifdef USE_ISO_11783
   // when we are communicating on the standardized CAN channel, and ISO is used, the default shall be true
@@ -217,8 +230,7 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
   #else
   // when only DIN is used, or only proprietary protocol is used, the default shall be false
   b_performIsobusResolve = false;
-  #endif
-  #endif
+  #endif // end of #ifdef USE_ISO_11783 #else
 
   #if CAN_INSTANCE_CNT > PRT_INSTANCE_CNT
   // we have at least one internal/proprietary CAN channel --> check whether this FilterBox_c
@@ -233,6 +245,22 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
   }
   #endif // when amount of standardized prt instances is same as amount of CAN instances, no special check is needed
 
+  #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
+  for ( std::vector<CANCustomer_c*>::const_iterator iter = vec_customer.begin(); iter != vec_customer.end(); iter++ )
+  {
+    if ( (*iter)->isProprietaryMessageOnStandardizedCan() )
+    { // at least one CANCustomer_c uses a proprietary protocol at a normal ISOBUS CANIO_c instance
+      b_performIsobusResolve = false;
+    }
+    else
+    { // this FilterBox_c has at least one CANCustomer_c which performs real ISOBUS
+      // --> set b_performIsobusResolve to default TRUE
+      b_performIsobusResolve = true;
+      break;
+    }
+  }
+  #endif
+
   #if defined( USE_DIN_9684 ) && defined( USE_ISO_11783 )
   if ( b_performIsobusResolve )
   { // check whether the message is DIN and not ISO
@@ -243,6 +271,7 @@ bool FilterBox_c::configCan(uint8_t rui8_busNumber, uint8_t rui8_FilterBoxNr)
     }
   }
   #endif
+  #endif // end of #ifdef for usage of b_performIsobusResolve
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   if (c_filter.identType() == Ident_c::BothIdent) c_filter.setIdentType(DEFAULT_IDENT_TYPE);
@@ -392,9 +421,15 @@ bool FilterBox_c::processMsg()
       HAL::can_useMsgobjGet(ui8_busNumber, ui8_filterBoxNr, pc_target);
     #endif
 
-    #if ( ( defined( USE_ISO_11783 ) ) && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) ) )
+    #if ( ( defined( USE_ISO_11783 ) ) \
+       && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
+
+    #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
+    if ( ( b_performIsobusResolve ) && ( !vec_customer[i]->isProprietaryMessageOnStandardizedCan() ) )
+    #else
     if ( b_performIsobusResolve )
-    #endif
+    #endif // end ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
+    #endif // end combination check of whether the flag based decision on resolving has to be performed
     #ifdef USE_ISO_11783
     { // this block is only used for ISOBUS messages
       const MessageState_t cb_wasValidMsg = pc_target->resolveReceivingInformation();
@@ -423,10 +458,11 @@ bool FilterBox_c::processMsg()
       }
     }
     #endif // USE_ISO_11783
-    #if ( ( defined( USE_ISO_11783 ) ) && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) ) )
+    #if ( ( defined( USE_ISO_11783 ) ) \
+       && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
     else
     #endif
-    #if ( defined( USE_DIN_9684 )  || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) )
+    #if ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) )
     {
       // call customer's processMsg function, to let it
       // process the received CAN msg

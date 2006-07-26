@@ -292,7 +292,8 @@ private:
   uint8_t ui8_filterBoxNr; //use like ui8_msgObjNr from msgobj_c class
   /** BUS Number for systems with more than one BUS */
   uint8_t ui8_busNumber;
-  #if ( ( defined( USE_DIN_9684 ) && defined( USE_ISO_11783 ) )  || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) )
+  #if ( ( defined( USE_ISO_11783 ) ) \
+      && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
   /** we have either compiled for DIN and ISO, OR there is at least one internal / proprietary CAN channel */
   bool b_performIsobusResolve;
   #endif
