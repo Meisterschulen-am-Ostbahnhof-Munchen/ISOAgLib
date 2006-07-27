@@ -230,7 +230,7 @@ class XStr
 // ---------------------------------------------------------------------------
 //  unsigned int getID (char* objName, bool wishingID, unsigned int wishID=0)
 // ---------------------------------------------------------------------------
-unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, unsigned int objType)
+unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, unsigned int objType, bool b_skipParentCheck = FALSE)
 {
   bool isThere = false;
   unsigned int foundID = 0;
@@ -258,8 +258,8 @@ unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, un
           break;
         }
       }
-      //cmp with that of given object
-      if (ui_objCntFound == objType)
+
+      if (b_skipParentCheck || (ui_objCntFound == objType)) //cmp with that of given object
       {
         foundID = objIDTable [i];
         isThere = true;
@@ -367,7 +367,7 @@ void init (const char* xmlFile)
 #if defined(WIN32)
   fprintf (partFileB, "#include \"%s\"\n\n", FileName);
 #else
-  fprintf (partFileB, "#include \"%s\"\n\n", FileName+1);
+  fprintf (partFileB, "#include \"%s\"\n\n", FileName);
 #endif
 
   for (int j=0; j<maxAttributeNames; j++) vecstr_attrString[j].clear();
@@ -479,13 +479,13 @@ unsigned int objectIsType (char* lookup_name)
 };
 
 
-unsigned int idOrName_toi(const char* rpc_string, unsigned int parentObjType)
+unsigned int idOrName_toi(const char* rpc_string, unsigned int parentObjType, bool b_skipParentCheck = FALSE)
 {
   if (rpc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
   /** @todo check if all chars in the string are numbers, not only the first! */
   if ((rpc_string [0] >= '0') && (rpc_string [0] <= '9')) return atoi (rpc_string);
   // Starting with a letter, so look up id!
-  return getID (rpc_string, false, 0, parentObjType);
+  return getID (rpc_string, false, 0, parentObjType, b_skipParentCheck);
 };
 
 
@@ -1092,8 +1092,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* rc_work
         buf_length += 2;
 
         //parent_name
-        buffer << (idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType) & 0xFF) << ", "
-               << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType) >> 8) & 0xFF) << ", ";
+        buffer << (idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType, TRUE) & 0xFF) << ", "
+               << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType, TRUE) >> 8) & 0xFF) << ", ";
         buf_length += 2;
 
         //number_of_objects_to_follow
