@@ -97,6 +97,8 @@ CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey )
 {
   addrResolveResSA.p_devKey =  new DevKey_c(DevKey_c::DevKeyUnspecified);
   addrResolveResDA.p_devKey =  new DevKey_c(DevKey_c::DevKeyUnspecified);
+  addrResolveResSA.pc_monitorItem = NULL;
+  addrResolveResDA.pc_monitorItem = NULL;
   addrResolveResSA.address = 0xff;
   addrResolveResDA.address = 0xff;
 }
