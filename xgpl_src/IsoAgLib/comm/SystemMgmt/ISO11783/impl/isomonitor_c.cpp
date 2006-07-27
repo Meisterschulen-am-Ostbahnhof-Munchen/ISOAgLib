@@ -947,7 +947,8 @@ bool ISOMonitor_c::processMsg()
 {
   bool b_processed = false;
 
-  ISOItem_c *pc_itemSameSa = NULL,
+  ISOItem_c *pc_item = NULL,
+            *pc_itemSameSa = NULL,
             *pc_itemSameDevKey = NULL;
 
   // Handle DESTINATION PGNs
