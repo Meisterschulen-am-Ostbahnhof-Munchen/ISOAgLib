@@ -947,8 +947,7 @@ bool ISOMonitor_c::processMsg()
 {
   bool b_processed = false;
 
-  ISOItem_c *pc_item = NULL,
-            *pc_itemSameSa = NULL,
+  ISOItem_c *pc_itemSameSa = NULL,
             *pc_itemSameDevKey = NULL;
 
   // Handle DESTINATION PGNs
@@ -1005,7 +1004,7 @@ bool ISOMonitor_c::processMsg()
         // --> remove it when it has lower PRIO
         int8_t i8_higherPrio = pc_itemSameSa->devKey().getConstName().higherPriThanPar(data().name());
         if ( ( i8_higherPrio < 0                              )
-          || ( ! pc_itemSameSa->itemState(IState_c::ClaimedAddress) ) )
+          /*|| ( ! pc_itemSameSa->itemState(IState_c::ClaimedAddress) )*/ ) //! removed, because we don't care that we're in the 250ms delay-state. Conflict is conflict and higher-prior iso-name
         { // the LOCAL item has lower PRIO or has not yet fully claimed --> remove it
           // the function SystemMgmt_c::restartAddressClaim() triggers removal of ISOItem_c
           // and registers the next address claim try afterwards
