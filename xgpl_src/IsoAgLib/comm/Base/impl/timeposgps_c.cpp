@@ -359,7 +359,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
 
   t_tzOffset = - mktime(&t_testTime);
   if (1 == t_tzOffset)
-  { // mktime returned -1 => error  
+  { // mktime returned -1 => error
     t_tzOffset = 0;
   }
 }
@@ -439,7 +439,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
                                   IdentModeTractor. Is is not allowed that the devKey ist NULL in combination\
                                   with tractor mode." << "\n";
       #endif
-      #ifdef DEBUG && SYSTEM_PC
+      #if defined(DEBUG) && defined(SYSTEM_PC)
         abort();
       #endif
       getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsBase );
@@ -1222,7 +1222,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     if ( ( getSelectedDataSourceDevKey() == rc_devKey ) )
     { // this item (identified by DEV_KEY is configured to send
       data().setIsoPgn(TIME_DATE_PGN);
-      
+
       const struct CNAMESPACE::tm* p_tm = currentUtcTm();
       if (NULL != p_tm)
       {
@@ -1293,7 +1293,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
   {
     i32_lastCalendarSet = System_c::getTime();
     t_cachedLocalSeconds1970AtLastSet = 0;
-    
+
     bit_calendar.year   = ri16_year;
     bit_calendar.month  = rb_month;
     bit_calendar.day    = rb_day;
@@ -1326,7 +1326,7 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
     const time_t middle = mktime( &testTime );
     // compensate system time zone setting: call localtime() and not gmtime()
     const struct ::tm* normalizedTime = localtime( &middle );
-    
+
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
     bit_calendar.day    = normalizedTime->tm_mday;
@@ -1412,13 +1412,13 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       // set t_cachedLocalSeconds1970AtLastSet
       currentUtcTm();
     }
-     
+
     const time_t t_secondsSince1970Local = t_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000
                                            + (bit_calendar.timezoneHourOffsetMinus24 - 24) * 60 * 60  // negative offsets => increased local time
                                            + bit_calendar.timezoneMinuteOffset * 60;
-    
+
     // compensate system time zone setting: call localtime() and not gmtime()
-    return localtime( &t_secondsSince1970Local ); 
+    return localtime( &t_secondsSince1970Local );
   }
 
   /**
@@ -1513,9 +1513,9 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       t_cachedLocalSeconds1970AtLastSet = mktime( &testTime );
       if (-1 == t_cachedLocalSeconds1970AtLastSet) return NULL;
     }
-    
+
     const time_t t_secondsSince1970 = t_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000;
-    
+
     // compensate system time zone setting (part 2)
     return localtime( &t_secondsSince1970 );
   }

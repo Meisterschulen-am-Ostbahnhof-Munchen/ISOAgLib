@@ -179,7 +179,7 @@ bool BaseCommon_c::config(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_i
                                 IdentModeTractor. Is is not allowed that the devKey ist NULL in combination\
                                 with tractor mode." << "\n";
     #endif
-    #ifdef DEBUG && SYSTEM_PC
+    #if defined(DEBUG) && defined(SYSTEM_PC)
       abort();
     #endif
     getLbsErrInstance().registerError( LibErr_c::Precondition, LibErr_c::LbsBase );
