@@ -67,6 +67,13 @@
   #define FLOAT_WORD_ORDER WORD_LO_HI
 #endif
 
+#if (!defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN ) && !defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN ) )
+#  ifdef SYSTEM_A1
+   /* we know that this cpu is little endian */
+#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#  endif
+#endif
+
 /** define size of int */
 #define SIZEOF_INT 4
 
