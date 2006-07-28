@@ -111,7 +111,7 @@ typedef struct
   // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
   const MonitorItem_c*  pc_monitorItem;
   //can be source or destination address
-  uint8_t address;
+  uint8_t* pui8_address;
 } AddressResolveResults;
 
 typedef enum

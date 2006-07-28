@@ -99,8 +99,8 @@ CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey )
   addrResolveResDA.p_devKey =  new DevKey_c(DevKey_c::DevKeyUnspecified);
   addrResolveResSA.pc_monitorItem = NULL;
   addrResolveResDA.pc_monitorItem = NULL;
-  addrResolveResSA.address = 0xff;
-  addrResolveResDA.address = 0xff;
+  addrResolveResSA.pui8_address = &identRef(0);
+  addrResolveResDA.pui8_address = &identRef(1);
 }
 /** virtual default destructor, which has nothing to do */
 CANPkgExt_c::~CANPkgExt_c()
@@ -200,18 +200,18 @@ void CANPkgExt_c::setIsoPgn(uint32_t rui32_val)
   */
 bool resolveAddress( AddressResolveResults& addressResolveResults )
 {
-  if ( ( addressResolveResults.address <= 0xFD )
+  if ( ( *addressResolveResults.pui8_address <= 0xFD )
       #if defined USE_ISO_11783 && !defined USE_DIN_9684
-      && ( getIsoMonitorInstance4Comm().existIsoMemberNr( addressResolveResults.address ) )
+      && ( getIsoMonitorInstance4Comm().existIsoMemberNr( *addressResolveResults.pui8_address ) )
       #else
-      && ( getSystemMgmtInstance4Comm().existMemberNr( addressResolveResults.address ) )
+      && ( getSystemMgmtInstance4Comm().existMemberNr( *addressResolveResults.pui8_address ) )
       #endif
      )
   { // there exists an item with the given address
     #if defined USE_ISO_11783 && !defined USE_DIN_9684
-    addressResolveResults.pc_monitorItem = &(getIsoMonitorInstance4Comm().isoMemberNr( addressResolveResults.address ));
+    addressResolveResults.pc_monitorItem = &(getIsoMonitorInstance4Comm().isoMemberNr( *addressResolveResults.pui8_address ));
     #else
-    addressResolveResults.pc_monitorItem = &(getSystemMgmtInstance4Comm().memberNr( addressResolveResults.address ));
+    addressResolveResults.pc_monitorItem = &(getSystemMgmtInstance4Comm().memberNr( *addressResolveResults.pui8_address ));
     #endif
     if ( addressResolveResults.pc_monitorItem->itemState( IState_c::ClaimedAddress ) )
     { // the existing item has already claimed its address - is fully functional on the BUS
@@ -245,8 +245,8 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
   INTERNAL_DEBUG_DEVICE << "*-*-*-* PROCESS MESSAGE *-*-*-*\n";
   #endif
 
-  addrResolveResSA.address = ident() & 0xFF;
-  addrResolveResDA.address = (ident() >> 8) & 0xFF;
+//  *addrResolveResSA.pui8_address = ident() & 0xFF;
+//  *addrResolveResDA.pui8_address = (ident() >> 8) & 0xFF;
 
   // resolve source address
   // in context of receiving SA is remote
@@ -287,19 +287,19 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
 {
   //we are shure that we have PDU1 format and therefore we have a destination address
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(addrResolveResDA.address ) << "\n";
+    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(*addrResolveResDA.pui8_address ) << "\n";
   #endif
 
   // now try to resolve the address
   const bool cb_addressBelongsToKnownItem = resolveAddress( addrResolveResDA );
 
-  if ( ( cb_addressBelongsToKnownItem ) || ( addrResolveResDA.address == 0xFF ) )
+  if ( ( cb_addressBelongsToKnownItem ) || ( *addrResolveResDA.pui8_address == 0xFF ) )
   { // fine - the target adr is known
     // OR
     // we received a broadcasted message
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Either the target is known or address = 0xFF.\n";
-      INTERNAL_DEBUG_DEVICE << "address =  " << int( addrResolveResDA.address ) << "\n";
+      INTERNAL_DEBUG_DEVICE << "address =  " << int( *addrResolveResDA.pui8_address ) << "\n";
     #endif
     return Valid;
   }
@@ -317,7 +317,7 @@ MessageState_t CANPkgExt_c::address2IdentLocalDa()
 MessageState_t CANPkgExt_c::address2IdentRemoteSa()
 {
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int( addrResolveResSA.address ) << "\n";
+    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int( *addrResolveResSA.pui8_address ) << "\n";
   #endif
 
   // now try to resolve the address
@@ -343,14 +343,14 @@ MessageState_t CANPkgExt_c::address2IdentRemoteSa()
       return Valid;
     }
   }
-  else if ( addrResolveResSA.address == 0xFF )
+  else if ( *addrResolveResSA.pui8_address == 0xFF )
   { // a SA with 0xFF is never allowed
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state with address = 0xFF.\n";
     #endif
     return Invalid; // mark as invalid
   }
-  else if ( addrResolveResSA.address == 0xFE )
+  else if ( *addrResolveResSA.pui8_address == 0xFE )
   { // each RequestForXY message (not only ReqForAdrClaim) is allowed to be sent with SA == 0xFE
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached a VALID state with address = OxFE.\n";
@@ -421,12 +421,12 @@ bool CANPkgExt_c::resolveMonitorItem( AddressResolveResults& addressResolveResul
      )
   { // if claimed address, sending is allowed under all conditions
     // if address claim and isNetworkMgmt(), sending in AddressClaim state is allowed for network mgmt
-    addressResolveResults.address = addressResolveResults.pc_monitorItem->nr();
+    *addressResolveResults.pui8_address = addressResolveResults.pc_monitorItem->nr();
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "ClaimedAddress state: " << addressResolveResults.pc_monitorItem->itemState(IState_c::ClaimedAddress) << "\n";
       INTERNAL_DEBUG_DEVICE << "AddressClaim state:   " << addressResolveResults.pc_monitorItem->itemState(IState_c::AddressClaim) << "\n";
       INTERNAL_DEBUG_DEVICE << "isNetworkMgmt() =     " << isNetworkMgmt() << "\n";
-      INTERNAL_DEBUG_DEVICE << "address =             " << int( addressResolveResults.address ) << "\n";
+      INTERNAL_DEBUG_DEVICE << "address =             " << int( *addressResolveResults.pui8_address ) << "\n";
     #endif
     return true;
   }
@@ -474,13 +474,13 @@ bool CANPkgExt_c::resolveSendingInformation()
   }
   #ifdef DEBUG_CAN
     INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known local.\n";
-    INTERNAL_DEBUG_DEVICE << "SA = " << int( addrResolveResSA.address ) << "\n";
+    INTERNAL_DEBUG_DEVICE << "SA = " << int( *addrResolveResSA.pui8_address ) << "\n";
   #endif
   // set the SA in the IDENT
   // - when the SA has been directly set by call to setIsoSa(), the requested SA is already
   //   stored in addrResolveResSA.address
   // ==> we can set least significant byte of the CAN ident in all cases from addrResolveResSA.address
-  setIdent(addrResolveResSA.address,0, Ident_c::ExtendedIdent);
+//  setIdent(*addrResolveResSA.pui8_address,0, Ident_c::ExtendedIdent);
 
   // handle DA for PF -> PDU1
   if ( isoPf() < 0xF0 )
@@ -510,14 +510,14 @@ bool CANPkgExt_c::resolveSendingInformation()
     }
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known remote.\n";
-      INTERNAL_DEBUG_DEVICE << "DA = " << int( addrResolveResDA.address ) << "\n";
+      INTERNAL_DEBUG_DEVICE << "DA = " << int( *addrResolveResDA.pui8_address ) << "\n";
     #endif
   }
   // set the PS in the IDENT
   // - when the PS has been directly set by call to setIsoPs()/setIsoPgn(), the requested PS is already
   //   stored in addrResolveResDA.address
   // ==> we can set second least significant byte of the CAN ident in all cases from addrResolveResDA.address
-  setIdent(addrResolveResDA.address, 1, Ident_c::ExtendedIdent);
+//  setIdent(*addrResolveResDA.pui8_address, 1, Ident_c::ExtendedIdent);
   #ifdef DEBUG_CAN
   else
   {
@@ -531,7 +531,7 @@ bool CANPkgExt_c::resolveSendingInformation()
   */
 void CANPkgExt_c::setIsoPs(uint8_t rui8_val)
 {
-  addrResolveResDA.address = rui8_val;
+  *addrResolveResDA.pui8_address = rui8_val;
   addrResolveResDA.p_devKey->setUnspecified();
   addrResolveResDA.pc_monitorItem = NULL;
 }
@@ -541,7 +541,7 @@ void CANPkgExt_c::setIsoPs(uint8_t rui8_val)
   */
 void CANPkgExt_c::setIsoSa(uint8_t rui8_val)
 {
-  addrResolveResSA.address = rui8_val;
+  *addrResolveResSA.pui8_address = rui8_val;
   addrResolveResSA.p_devKey->setUnspecified();
   addrResolveResSA.pc_monitorItem = NULL;
 }
@@ -554,7 +554,7 @@ void CANPkgExt_c::setMonitorItemForSA( const MonitorItem_c* pc_monitorItem )
   addrResolveResSA.pc_monitorItem = pc_monitorItem;
   // p_devKey will not be needed -> set to unspecified
   addrResolveResSA.p_devKey->setUnspecified();
-  addrResolveResSA.address = 0xFF;
+  *addrResolveResSA.pui8_address = 0xFF;
 }
 /** set the devKey for resolve SA
     @param p_devKey  needed devKey
@@ -564,7 +564,7 @@ void CANPkgExt_c::setDevKeyForSA( const DevKey_c& p_devKey )
   *addrResolveResSA.p_devKey = p_devKey;
   // pc_monitorItem will be set over p_devKey -> reset pc_monitorItem
   addrResolveResSA.pc_monitorItem = NULL;
-  addrResolveResSA.address = 0xFF;
+  *addrResolveResSA.pui8_address = 0xFF;
 }
 /** set the structure for resolve results DA
     @param pc_monitorItem  needed monitoritem
@@ -574,7 +574,7 @@ void CANPkgExt_c::setMonitorItemForDA( const MonitorItem_c* pc_monitorItem )
   addrResolveResDA.pc_monitorItem = pc_monitorItem;
   // p_devKey will not be needed -> set to unspecified
   addrResolveResDA.p_devKey->setUnspecified();
-  addrResolveResDA.address = 0xFF;
+  *addrResolveResDA.pui8_address = 0xFF;
 }
 /** set the devKey for resolve DA
     @param p_devKey  needed devKey
@@ -584,7 +584,7 @@ void CANPkgExt_c::setDevKeyForDA( const DevKey_c& p_devKey )
   *addrResolveResDA.p_devKey = p_devKey;
   // pc_monitorItem will be set over p_devKey -> reset pc_monitorItem
   addrResolveResDA.pc_monitorItem = NULL;
-  addrResolveResDA.address = 0xFF;
+  *addrResolveResDA.pui8_address = 0xFF;
 }
 /** check if an adddress could be resolved with monitorItem and devKey
     @param  addressResolveResults  address to resolve
@@ -603,7 +603,7 @@ uint8_t checkMonitorItemDevKey( const AddressResolveResults& addressResolveResul
           #endif
        )
     { // there exist no iso member with given devKey
-      return addressResolveResults.address;
+      return *addressResolveResults.pui8_address;
     }
     #if defined USE_ISO_11783 && !defined USE_DIN_9684
     return getIsoMonitorInstance4Comm().isoMemberDevKey( *addressResolveResults.p_devKey, false ).nr();
@@ -621,7 +621,7 @@ uint8_t checkMonitorItemDevKey( const AddressResolveResults& addressResolveResul
 uint8_t CANPkgExt_c::isoPs() const
 {
   // destination address is already valid
-  if (addrResolveResDA.address != 0xFF ) return addrResolveResDA.address;
+  if (*addrResolveResDA.pui8_address != 0xFF ) return *addrResolveResDA.pui8_address;
 
   // check if destination address is willingly 0xFF or if it can be resolved
   return checkMonitorItemDevKey( addrResolveResDA );
@@ -633,7 +633,7 @@ uint8_t CANPkgExt_c::isoPs() const
 uint8_t CANPkgExt_c::isoSa() const
 {
   // source address is already valid
-  if (addrResolveResSA.address != 0xFF ) return addrResolveResSA.address;
+  if (*addrResolveResSA.pui8_address != 0xFF ) return *addrResolveResSA.pui8_address;
 
   // check if source address is willingly 0xFF or if it can be resolved
   return checkMonitorItemDevKey( addrResolveResSA );

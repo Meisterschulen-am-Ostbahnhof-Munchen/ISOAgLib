@@ -150,6 +150,14 @@ public:
     @return ident value
   */
   static MASK_TYPE ident(uint8_t rb_pos) {return c_ident.ident(rb_pos);};
+  /**
+    deliver the uint8_t value of ident at wanted position
+    (position 0 is least significant position -> nearest to DLC field of
+    CAN frame)
+    @param rb_pos
+    @return ident value
+  */
+  static uint8_t& identRef(uint8_t rb_pos) {return c_ident.identRef(rb_pos);};
 
   /**
     set data with size bytes from source array;
