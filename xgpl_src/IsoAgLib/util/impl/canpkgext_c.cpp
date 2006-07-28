@@ -90,23 +90,24 @@
 namespace __IsoAgLib {
 
 bool CANPkgExt_c::b_runFlag2String = true;
+AddressResolveResults CANPkgExt_c::addrResolveResSA = { NULL, NULL, 0xFF };
+AddressResolveResults CANPkgExt_c::addrResolveResDA = { NULL, NULL, 0xFF };
+
 
 /** default constructor, which has nothing to do */
 CANPkgExt_c::CANPkgExt_c( int ri_singletonVecKey )
   : CANPkg_c( ri_singletonVecKey )
 {
-  addrResolveResSA.p_devKey =  new DevKey_c(DevKey_c::DevKeyUnspecified);
-  addrResolveResDA.p_devKey =  new DevKey_c(DevKey_c::DevKeyUnspecified);
-  addrResolveResSA.pc_monitorItem = NULL;
-  addrResolveResDA.pc_monitorItem = NULL;
-  addrResolveResSA.address = 0xff;
-  addrResolveResDA.address = 0xff;
+  if (addrResolveResSA.p_devKey == NULL) addrResolveResSA.p_devKey = new DevKey_c(DevKey_c::DevKeyUnspecified);
+  if (addrResolveResDA.p_devKey == NULL) addrResolveResDA.p_devKey = new DevKey_c(DevKey_c::DevKeyUnspecified);
 }
+
 /** virtual default destructor, which has nothing to do */
 CANPkgExt_c::~CANPkgExt_c()
 {
-  delete addrResolveResSA.p_devKey;
-  delete addrResolveResDA.p_devKey;
+/** @todo Not deleted right now because it's a static member variable so we would interfere other instances! */
+/*  delete addrResolveResSA.p_devKey;
+  delete addrResolveResDA.p_devKey;*/
 }
 /**
   ==> OBSOLETE, because now all can-pkg-data is STATIC!
@@ -170,7 +171,9 @@ void CANPkgExt_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
     flags2String();
   }
   CANPkg_c::getData(reft_ident, refui8_identType, refb_dlcTarget, pb_dataTarget);
+  // NO NEED TO "reft_ident = ident();" because getData is called AFTER address-resolving and the ident is correct then!
 }
+
 #ifdef USE_ISO_11783
 /**
   set the value of the ISO11783 ident field PGN
@@ -185,14 +188,14 @@ void CANPkgExt_c::setIsoPgn(uint32_t rui32_val)
   if ( ui16_val >= 0xF000 )
   { // broadcasted message --> set Byte2 (index 1) from the PGN --> it is used as GroupExtension (GE)
     setIsoPs( (ui16_val & 0xFF) );
-    //setIdent( (ui16_val & 0xFF), 1, Ident_c::ExtendedIdent);
+    //CANPkg_c::setIdent( (ui16_val & 0xFF), 1, Ident_c::ExtendedIdent);
   }
   // ELSE: do NOT set Byte2 (index 1) here, as this might be already set with call to setIsoPs() !!!!
 
-  setIdent( (ui16_val >> 8), 2, Ident_c::ExtendedIdent);
+  CANPkg_c::setIdent( (ui16_val >> 8), 2, Ident_c::ExtendedIdent);
   ui16_val = (rui32_val >> 16) & 0x1;
-  ui16_val |= (ident(3) & 0x1E);
-  setIdent( uint8_t(ui16_val & 0xFF), 3, Ident_c::ExtendedIdent);
+  ui16_val |= (CANPkg_c::ident(3) & 0x1E);
+  CANPkg_c::setIdent( uint8_t(ui16_val & 0xFF), 3, Ident_c::ExtendedIdent);
 }
 /** resolve a given address and set devKey and monitoritem if possible
     @param  addressResolveResults  address to resolve
@@ -245,8 +248,8 @@ MessageState_t CANPkgExt_c::resolveReceivingInformation()
   INTERNAL_DEBUG_DEVICE << "*-*-*-* PROCESS MESSAGE *-*-*-*\n";
   #endif
 
-  addrResolveResSA.address = ident() & 0xFF;
-  addrResolveResDA.address = (ident() >> 8) & 0xFF;
+  addrResolveResSA.address = CANPkg_c::ident() & 0xFF;
+  addrResolveResDA.address = (CANPkg_c::ident() >> 8) & 0xFF;
 
   // resolve source address
   // in context of receiving SA is remote
@@ -480,7 +483,7 @@ bool CANPkgExt_c::resolveSendingInformation()
   // - when the SA has been directly set by call to setIsoSa(), the requested SA is already
   //   stored in addrResolveResSA.address
   // ==> we can set least significant byte of the CAN ident in all cases from addrResolveResSA.address
-  setIdent(addrResolveResSA.address,0, Ident_c::ExtendedIdent);
+  CANPkg_c::setIdent(addrResolveResSA.address,0, Ident_c::ExtendedIdent);
 
   // handle DA for PF -> PDU1
   if ( isoPf() < 0xF0 )
@@ -517,7 +520,7 @@ bool CANPkgExt_c::resolveSendingInformation()
   // - when the PS has been directly set by call to setIsoPs()/setIsoPgn(), the requested PS is already
   //   stored in addrResolveResDA.address
   // ==> we can set second least significant byte of the CAN ident in all cases from addrResolveResDA.address
-  setIdent(addrResolveResDA.address, 1, Ident_c::ExtendedIdent);
+  CANPkg_c::setIdent(addrResolveResDA.address, 1, Ident_c::ExtendedIdent);
   #ifdef DEBUG_CAN
   else
   {
@@ -618,7 +621,7 @@ uint8_t checkMonitorItemDevKey( const AddressResolveResults& addressResolveResul
   get the value of the ISO11783 ident field PS
   @return PDU Specific
 */
-uint8_t CANPkgExt_c::isoPs() const
+uint8_t CANPkgExt_c::isoPs()
 {
   // destination address is already valid
   if (addrResolveResDA.address != 0xFF ) return addrResolveResDA.address;
@@ -630,7 +633,7 @@ uint8_t CANPkgExt_c::isoPs() const
   get the value of the ISO11783 ident field SA
   @return source adress
 */
-uint8_t CANPkgExt_c::isoSa() const
+uint8_t CANPkgExt_c::isoSa()
 {
   // source address is already valid
   if (addrResolveResSA.address != 0xFF ) return addrResolveResSA.address;

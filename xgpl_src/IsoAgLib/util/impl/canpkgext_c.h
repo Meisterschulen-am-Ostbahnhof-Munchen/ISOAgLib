@@ -157,13 +157,13 @@ public:
     @param rui8_devClassInst position [0..7]
     @param rui8_val uint8_t value to set
   */
-  void setUint8Data( uint8_t rui8_devClassInst, uint8_t rui8_val) { pb_data[rui8_devClassInst] = rui8_val;};
+  static void setUint8Data( uint8_t rui8_devClassInst, uint8_t rui8_val) { pb_data[rui8_devClassInst] = rui8_val;};
   /**
     set an uint16_t value at specified position in string
     @param rui8_devClassInst position [0..6]
     @param rui16_val uint16_t value to set
   */
-  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
+  static void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
     {numberRef2LittleEndianString( rui16_val, (pb_data+rui8_pos) );};
     //{ pb_data[rui8_pos] = (rui16_val & 0xFF); pb_data[rui8_pos+1] = ( rui16_val >> 8 );};
   /**
@@ -171,7 +171,7 @@ public:
     @param rui8_devClassInst position [0..6]
     @param ri16_val int16_t value to set
   */
-  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
+  static void setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
     {numberRef2LittleEndianString( ri16_val, (pb_data+rui8_pos) );};
     //{ pb_data[rui8_pos] = (ri16_val & 0xFF); pb_data[rui8_pos+1] = ( ri16_val >> 8 );};
   /**
@@ -179,7 +179,7 @@ public:
     @param rui8_devClassInst position [0..4]
     @param rui32_val uint32_t value to set
   */
-  void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
+  static void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
     {numberRef2LittleEndianString( rui32_val, (pb_data+rui8_pos) );};
   //{ setUint16Data( rui8_pos,     uint16_t(rui32_val & 0xFFFF) );
   //    setUint16Data( (rui8_pos+2), uint16_t( rui32_val >> 16 ) );};
@@ -188,7 +188,7 @@ public:
     @param rui8_devClassInst position [0..4]
     @param ri32_val int32_t value to set
   */
-  void setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
+  static void setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
     {numberRef2LittleEndianString( ri32_val, (pb_data+rui8_pos) );};
   //{ setInt16Data( rui8_pos,     int16_t(ri32_val & 0xFFFF) );
   //  setInt16Data( (rui8_pos+2), int16_t( ri32_val >> 16 ) );};
@@ -198,34 +198,34 @@ public:
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
   */
-  uint8_t getUint8Data(uint8_t rui8_pos) const {return pb_data[rui8_pos];};
+  static uint8_t getUint8Data(uint8_t rui8_pos) {return pb_data[rui8_pos];};
   /**
     simply deliver a uint16_t from a specific starting position with
     @param rb_pos position of dellivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint16_t getUint16Data(uint8_t rui8_pos) const { return convertLittleEndianStringUi16(pb_data+rui8_pos);};
+  static uint16_t getUint16Data(uint8_t rui8_pos) { return convertLittleEndianStringUi16(pb_data+rui8_pos);};
   //{return (uint16_t(pb_data[rb_pos]) | (uint16_t(pb_data[rb_pos+1])<<8));};
   /**
     simply deliver a int16_t from a specific starting position with
     @param rb_pos position of dellivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int16_t getInt16Data(uint8_t rui8_pos) const { return convertLittleEndianStringI16(pb_data+rui8_pos);};
+  static int16_t getInt16Data(uint8_t rui8_pos) { return convertLittleEndianStringI16(pb_data+rui8_pos);};
   // {return int16_t( uint16_t(pb_data[rb_pos]) | ( uint16_t(pb_data[rb_pos+1]) << 8 ) );};
   /**
     simply deliver a uint32_t from a specific starting position with
     @param rb_pos position of dellivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint32_t getUint32Data(uint8_t rui8_pos) const { return convertLittleEndianStringUi32(pb_data+rui8_pos);};
+  static uint32_t getUint32Data(uint8_t rui8_pos) { return convertLittleEndianStringUi32(pb_data+rui8_pos);};
   // {return (uint32_t(getUint16Data(rb_pos)) | (uint32_t(getUint16Data(rb_pos+2))<<16));};
   /**
     simply deliver a int32_t from a specific starting position with
     @param rb_pos position of dellivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int32_t getInt32Data(uint8_t rui8_pos) const { return convertLittleEndianStringI32(pb_data+rui8_pos);};
+  static int32_t getInt32Data(uint8_t rui8_pos) { return convertLittleEndianStringI32(pb_data+rui8_pos);};
   // {return int32_t( uint32_t(getUint16Data(rb_pos)) | ( uint32_t(getUint16Data(rb_pos+2)) << 16 ) );};
 
   /**
@@ -244,74 +244,110 @@ public:
     deliver sender nr
     @return SEND code of base msg (bit 8-11 in identifier)
   */
-  uint8_t dinSa() const {return (ident(0) & 0xF);};
+  uint8_t dinSa() const {return (CANPkg_c::ident(0) & 0xF);};
   #endif
 
   #ifdef USE_ISO_11783
+  /**
+    OVERLOADed ident() function from CANPkg_c to assemble the Ident here now from the isoSa/isoPs/etc. fields!
+  */
+  static MASK_TYPE ident() { return (CANPkg_c::ident() & 0xFFFF0000) | (isoPs() << 8) | isoSa(); }
+  /**
+    OVERLOADed ident(rui8_pos) function from CANPkg_c to assemble the Ident here now from the isoSa/isoPs/etc. fields!
+  */
+  static MASK_TYPE ident(uint8_t rb_pos) { return ((ident() >> (8*rb_pos)) & 0xFF); }
+
+  /**
+    OVERLOADed setIdent() function from CANPkg_c to assemble the Ident here now from the isoSa/isoPf/etc. fields!
+  */
+  static void setIdent(MASK_TYPE rt_ident, __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE)
+    { CANPkg_c::setIdent(rt_ident, rt_type);
+      setIsoSa (rt_ident & 0xFF);
+      setIsoPs ((rt_ident >>8) & 0xFF); }
+  /**
+    OVERLOADed setIdent() function from CANPkg_c to assemble the Ident here now from the isoSa/isoPf/etc. fields!
+  */
+  static void setIdent(uint8_t rb_val, uint8_t rb_pos, __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE)
+    {
+      switch (rb_pos)
+      {
+        case 3: // break left out intentionally
+        case 2: CANPkg_c::setIdent (rb_val, rb_pos, rt_type); break;
+        case 1: setIdentType (rt_type); setIsoPs (rb_val); break;
+        case 0: setIdentType (rt_type); setIsoSa (rb_val); break;
+      }
+    }
+
+  static void set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len, int32_t ri32_time = 0,
+    __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE)
+    { CANPkg_c::set(rt_ident, rpb_data, rui8_len, ri32_time, rt_type);
+      setIdent (rt_ident, rt_type); }
+
+
   // begin of block with ISO 11783 CAN formating functions
   /**
     get the value of the ISO11783 ident field SA
     @return source adress
   */
-  uint8_t isoSa() const;
+  static uint8_t isoSa();
   /**
     get the value of the ISO11783 ident field PGN
     @return parameter group number
   */
-  uint32_t isoPgn() const {return ( ( ( (uint32_t)ident() >> 8) & 0x1FF00 ) | isoPs() );};
+  static uint32_t isoPgn() {return ( ( ( (uint32_t)CANPkg_c::ident() >> 8) & 0x1FF00 ) | isoPs() );};
   /**
     get the value of the ISO11783 ident field DP
     @return data page
   */
-  uint8_t isoDp() const {return (ident(3) & 0x1);};
+  static uint8_t isoDp() {return (CANPkg_c::ident(3) & 0x1);};
   /**
     get the value of the ISO11783 ident field PF
     @return PDU Format
   */
-  uint8_t isoPf() const {return ident(2);};
+  static uint8_t isoPf() {return CANPkg_c::ident(2);};
   /**
     get the value of the ISO11783 ident field PS
     @return PDU Specific
   */
-  uint8_t isoPs() const;
+  static uint8_t isoPs();
   /**
     get the value of the ISO11783 ident field PRI
     @return priority
   */
-  uint8_t isoPri() const {return (ident(3) >> 2);};
+  static uint8_t isoPri() {return (CANPkg_c::ident(3) >> 2);};
 
   /**
     set the value of the ISO11783 ident field SA
     @return source adress
   */
-  void setIsoSa(uint8_t rui8_val);
+  static void setIsoSa(uint8_t rui8_val);
   /**
     set the value of the ISO11783 ident field PGN
     @return parameter group number
   */
-  void setIsoPgn(uint32_t rui32_val);
+  static void setIsoPgn(uint32_t rui32_val);
   /**
     set the value of the ISO11783 ident field DP
     @return data page
   */
-  void setIsoDp(uint8_t rui8_val){setIdent( ((ident(3)& 0x1E) | (rui8_val & 1)), 3, Ident_c::ExtendedIdent);};
+  static void setIsoDp(uint8_t rui8_val){CANPkg_c::setIdent( ((CANPkg_c::ident(3)& 0x1E) | (rui8_val & 1)), 3, Ident_c::ExtendedIdent);};
   /**
     set the value of the ISO11783 ident field PF
     @return PDU Format
   */
-  void setIsoPf(uint8_t rui8_val){setIdent(rui8_val, 2, Ident_c::ExtendedIdent); };
+  static void setIsoPf(uint8_t rui8_val){CANPkg_c::setIdent(rui8_val, 2, Ident_c::ExtendedIdent); };
   /**
     set the value of the ISO11783 ident field PS
     @return PDU Specific
   */
-  void setIsoPs(uint8_t rui8_val);
+  static void setIsoPs(uint8_t rui8_val);
   /**
     set the value of the ISO11783 ident field PRI
     @return priority
   */
-  void setIsoPri(uint8_t rui8_val){setIdent( ((ident(3)&1) | (rui8_val << 2)), 3, Ident_c::ExtendedIdent);}
+  static void setIsoPri(uint8_t rui8_val){CANPkg_c::setIdent( ((CANPkg_c::ident(3)&1) | (rui8_val << 2)), 3, Ident_c::ExtendedIdent);}
 
-  void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
+  static void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
     CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
     setIsoDp(dp);
@@ -322,7 +358,7 @@ public:
     b_runFlag2String = false;
   }
 
-  void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2) {
+  static void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2) {
     CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
     setIsoDp(dp);
@@ -336,7 +372,7 @@ public:
     b_runFlag2String = false;
   }
 
-  void setExtCanPkg8(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7) {
+  static void setExtCanPkg8(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7) {
     CANPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
     setIsoDp(dp);
@@ -361,7 +397,7 @@ public:
                Invalid -> one or both addresses are invalid
                OnlyNetworkMgmt -> one or both addresses are only useable for network management
     */
-  MessageState_t resolveReceivingInformation();
+  static MessageState_t resolveReceivingInformation();
 
   /** check if source and destination address are valid
       @see     CANPkgExt_c::operator<<
@@ -374,19 +410,19 @@ public:
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForSA( const MonitorItem_c* pc_monitorItem );
+  static void setMonitorItemForSA( const MonitorItem_c* pc_monitorItem );
   /** set the devKey for resolve SA
       @param p_devKey        needed devKey
     */
-  void setDevKeyForSA( const DevKey_c& p_devKey );
+  static void setDevKeyForSA( const DevKey_c& p_devKey );
   /** set the monitoritem for resolve SA
       @param pc_monitorItem  needed monitoritem
     */
-  void setMonitorItemForDA( const MonitorItem_c* pc_monitorItem );
+  static void setMonitorItemForDA( const MonitorItem_c* pc_monitorItem );
   /** set the devKey for resolve SA
       @param p_devKey        needed devKey
     */
-  void setDevKeyForDA( const DevKey_c& p_devKey );
+  static void setDevKeyForDA( const DevKey_c& p_devKey );
 
 
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
@@ -415,17 +451,17 @@ private:
   /** report if the combination of address and scope is valid in context of message processing
       @return  true -> address, scope combination is valid
     */
-  MessageState_t address2IdentRemoteSa();
+  static MessageState_t address2IdentRemoteSa();
   /** report if the combination of address and scope is valid in context of message processing
       @return  true -> address, scope combination is valid
     */
-  MessageState_t address2IdentLocalDa();
+  static MessageState_t address2IdentLocalDa();
   /** set address in context of sending a message
       @param  addressResolveResults  source or destination address
       @param  scope                  local or remote
       @return  true -> monitoritem_c, devKey_c is a valid combination
     */
-  MessageState_t setAddress(AddressResolveResults& addressResolveResults, Scope scope);
+  static MessageState_t setAddress(AddressResolveResults& addressResolveResults, Scope scope);
   /** resolve a given monitoritem and get address if possible
       @param  addressResolveResults  address to resolve
       @return true -> monitoritem could be resolved
@@ -452,9 +488,9 @@ private:
   static bool b_runFlag2String;
 
   /** variable which holds the results for a resolved source address */
-  AddressResolveResults addrResolveResSA;
+  static AddressResolveResults addrResolveResSA;
   /** variable which holds the results for a resolved destination address */
-  AddressResolveResults addrResolveResDA;
+  static AddressResolveResults addrResolveResDA;
 };
 
 }
