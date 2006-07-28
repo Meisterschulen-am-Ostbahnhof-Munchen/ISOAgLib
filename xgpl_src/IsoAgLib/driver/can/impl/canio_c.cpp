@@ -1001,10 +1001,17 @@ CANIO_c& CANIO_c::operator<<(CANPkgExt_c& refc_src)
 {
   if ( ! isReady2Send() ) return *this;
   //check if source and destination address are valid
-  #if ( ( defined( USE_ISO_11783 ) ) && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) ) )
+  #if ( ( defined( USE_ISO_11783 ) ) \
+     && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
   // when both ISO and DIN are compiled, we must make sure, that the ISO specific
   // resolving is only used for standard ident messages (i.e. DIN 9684 which uses 11bit ident)
+  #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
+  if ( ( b_canChannelCouldSendIso                           )
+    && ( refc_src.identType() == Ident_c::ExtendedIdent     )
+    && ( ! refc_src.isProprietaryMessageOnStandardizedCan() ) )
+  #else
   if ( ( b_canChannelCouldSendIso ) && ( refc_src.identType() == Ident_c::ExtendedIdent ) )
+  #endif // end of ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
   #endif
   {
     if ( ! refc_src.resolveSendingInformation() ) return *this;
