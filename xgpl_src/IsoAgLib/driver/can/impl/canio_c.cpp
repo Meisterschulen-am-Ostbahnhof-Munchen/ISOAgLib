@@ -1787,7 +1787,8 @@ bool CANIO_c::baseCanInit(uint16_t rui16_bitrate)
   } // end for
 
 
-  #if defined( USE_ISO_11783 ) &&  ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT )
+  #if ( ( defined( USE_ISO_11783 ) ) \
+     && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
     if ( getSingletonVecKey() >= PRT_INSTANCE_CNT ) b_canChannelCouldSendIso = false;
     else b_canChannelCouldSendIso = true;
   #endif
