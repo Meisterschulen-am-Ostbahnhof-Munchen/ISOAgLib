@@ -625,7 +625,7 @@ void doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr);
    */
   bool b_runningCanProcess;
   #if ( ( defined( USE_ISO_11783 ) ) \
-     && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
+     && ( defined( USE_DIN_9684 ) || ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) ) )
   /** we have either compiled for DIN and ISO, OR there is at least one internal / proprietary CAN channel */
   bool b_canChannelCouldSendIso;
   #endif
