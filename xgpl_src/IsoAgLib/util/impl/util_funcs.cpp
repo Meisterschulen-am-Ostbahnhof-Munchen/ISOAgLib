@@ -617,7 +617,7 @@ void bigEndianHexNumberText2CanStringUint32( const char* rc_src, uint8_t* pui8_t
   #else
   pui8_target[0] =   ( temp         & 0xFF );
   pui8_target[1] = ( ( temp >> 8  ) & 0xFF );
-  pui8_target[1] = ( ( temp >> 16 ) & 0xFF );
+  pui8_target[2] = ( ( temp >> 16 ) & 0xFF );
   pui8_target[3] = ( ( temp >> 24 ) & 0xFF );
   #endif
 }
