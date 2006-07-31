@@ -65,6 +65,18 @@
 #include <cctype>
 namespace __HAL {
 
+
+// These are the default names for the pc's simulated eeprom
+// Add a #define in your config file if you wish to name it something else.
+#ifndef EEPROM_DAT_FILE
+#  ifdef WIN32
+#    define EEPROM_DAT_FILE		"..\\..\\..\\simulated_io\\eeprom.dat"
+#  else
+#    define EEPROM_DAT_FILE		"../../../simulated_io/eeprom.dat"
+#  endif
+#endif
+
+
 /* ***************************************** */
 /* ****** EEPROM I/O BIOS functions  ******* */
 /* ***************************************** */
@@ -100,18 +112,15 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
   int8_t c_temp;
   int32_t i32_temp;
   uint8_t* pByte;
-  printf("schreibe Daten von %i mit Daten :", wAddress);
-#ifdef WIN32
-  eepromDat = fopen("..\\..\\..\\simulated_io\\eeprom.dat", "r+b");
-#else
-  eepromDat = fopen("../../../simulated_io/eeprom.dat", "r+b");
-#endif
-  // BEGIN: Added by M.Wodok 6.12.04
-  if (eepromDat == NULL) {
-    // try again in current directory
-    eepromDat = fopen("eeprom.dat", "r+b");
-  }
-  // END: Added by M.Wodok 6.12.04
+//  printf("schreibe Daten von %i mit Daten :", wAddress);
+  eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
+
+//  // BEGIN: Added by M.Wodok 6.12.04
+//  if (eepromDat == NULL) {
+//    // try again in current directory
+//    eepromDat = fopen("eeprom.dat", "r+b");
+//  }
+//  // END: Added by M.Wodok 6.12.04
   fseek(eepromDat, wAddress, 0);
 
   switch (wNumber)
@@ -125,7 +134,7 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
         if ( isprint( c_temp ) ) putchar(c_temp);
         fputc(c_temp, eepromDat);
       }
-      printf(", als Zahl %i", i32_temp);
+//      printf(", als Zahl %i", i32_temp);
       break;
     case 2:
       sTemp = *(short*)pbData;
@@ -135,13 +144,13 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
        if ( isprint( pByte[i] ) ) putchar(pByte[i]);
        fputc(pByte[i], eepromDat);
       }
-      printf(", als Zahl %hi", sTemp);
+//      printf(", als Zahl %hi", sTemp);
       break;
     case 1:
       c_temp = *(int8_t*)pbData;
       if ( isprint( c_temp ) ) putchar(c_temp);
       fputc(c_temp, eepromDat);
-      printf(", als Zahl %hi oder als Text %c", c_temp, c_temp);
+//      printf(", als Zahl %hi oder als Text %c", c_temp, c_temp);
       break;
     default:
       for (i=0; i < wNumber; i++)
@@ -151,25 +160,21 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
       }
       break;
   }
-  printf("\n");
+//  printf("\n");
   fclose(eepromDat);
   return HAL_NO_ERR;
 }
 
 /* write one uint8_t into the eeprom */
 int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte){
-  printf("schreibe Daten von %i mit Daten %i\n", wAddress, uint16_t(bByte));
-#ifdef WIN32
-  eepromDat = fopen("..\\..\\..\\simulated_io\\eeprom.dat", "r+b");
-#else
-  eepromDat = fopen("../../../simulated_io/eeprom.dat", "r+b");
-#endif
-  // BEGIN: Added by M.Wodok 6.12.04
-  if (eepromDat == NULL) {
-    // try again in current directory
-    eepromDat = fopen("eeprom.dat", "r+b");
-  }
-  // END: Added by M.Wodok 6.12.04
+//  printf("schreibe Daten von %i mit Daten %i\n", wAddress, uint16_t(bByte));
+  eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
+//  // BEGIN: Added by M.Wodok 6.12.04
+//  if (eepromDat == NULL) {
+//    // try again in current directory
+//    eepromDat = fopen("eeprom.dat", "r+b");
+//  }
+//  // END: Added by M.Wodok 6.12.04
   fseek(eepromDat, wAddress, 0);
   fputc(bByte, eepromDat);
   fclose(eepromDat);
@@ -183,17 +188,13 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte){
   int8_t c_temp;
   int32_t i32_temp;
 //  printf("lese Daten von %i mit Daten als text:", wAddress);
-#ifdef WIN32
-  eepromDat = fopen("..\\..\\..\\simulated_io\\eeprom.dat", "a+b");
-#else
-  eepromDat = fopen("../../../simulated_io/eeprom.dat", "a+b");
-#endif
-  // BEGIN: Added by M.Wodok 6.12.04
-  if (eepromDat == NULL) {
-    // try again in current directory
-    eepromDat = fopen("eeprom.dat", "a+b");
-  }
-  // END: Added by M.Wodok 6.12.04
+  eepromDat = fopen(EEPROM_DAT_FILE, "a+b");
+//  // BEGIN: Added by M.Wodok 6.12.04
+//  if (eepromDat == NULL) {
+//    // try again in current directory
+//    eepromDat = fopen("eeprom.dat", "a+b");
+//  }
+//  // END: Added by M.Wodok 6.12.04
   fseek(eepromDat, wAddress, 0);
 
   switch (wNumber)
