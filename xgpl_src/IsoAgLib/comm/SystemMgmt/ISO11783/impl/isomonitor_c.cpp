@@ -1005,7 +1005,9 @@ bool ISOMonitor_c::processMsg()
         // --> remove it when it has lower PRIO
         int8_t i8_higherPrio = pc_itemSameSa->devKey().getConstName().higherPriThanPar(data().name());
         if ( ( i8_higherPrio < 0                              )
-          /*|| ( ! pc_itemSameSa->itemState(IState_c::ClaimedAddress) )*/ ) //! removed, because we don't care that we're in the 250ms delay-state. Conflict is conflict and higher-prior iso-name
+               // the local ISOItem_c should be overwritten by the received adr claim, when the local
+               // item is not yet sent any adr claim (e.g. Off state or PreAddressClaim)
+               || ( ! pc_itemSameSa->itemStatePartialMatch(IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::AddressClaim)) ) )
         { // the LOCAL item has lower PRIO or has not yet fully claimed --> remove it
           // the function SystemMgmt_c::restartAddressClaim() triggers removal of ISOItem_c
           // and registers the next address claim try afterwards

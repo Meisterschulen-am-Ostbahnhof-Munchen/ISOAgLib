@@ -170,6 +170,14 @@ public:
     {return ((en_itemState & ren_itemState) == ren_itemState)?true:false;};
 
   /**
+  check if specific state is partially set
+  @param ren_itemState combined state information to check
+  @return true -> one of the given combined states is set
+   */
+  bool itemStatePartialMatch(itemState_t ren_itemState) const
+  {return ((en_itemState & ren_itemState) != 0)?true:false;};
+
+  /**
     deliver the state information
     @return state information of type itemState_t (with state informations coded by OR in enum)
   */
