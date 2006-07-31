@@ -390,6 +390,8 @@ bool ISOItem_c::timeEvent( void )
       {
         // no conflict since sent of adress claim since 250ms
         setItemState(IState_c::ClaimedAddress);
+        // now try to save the retrieved SA in EEPROM
+        writeEepromSa();
         // now inform the ISO monitor list change clients on NEW client use
         getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
         #ifdef USE_WORKING_SET
@@ -533,6 +535,8 @@ void ISOItem_c::readEepromSa()
 #ifdef USE_EEPROM_IO
     getEepromInstance().setg(ui16_saEepromAdr);
     getEepromInstance() >> ui8_eepromNr;
+    // use fallback to free definition, when the EEPROM has only invalid SA
+    if ( ui8_eepromNr > 0xFE ) ui8_eepromNr = 0xFE;
 #endif
     setNr(ui8_eepromNr);
   }
