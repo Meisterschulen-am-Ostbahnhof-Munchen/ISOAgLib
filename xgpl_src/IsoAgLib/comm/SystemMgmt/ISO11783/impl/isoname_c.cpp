@@ -437,30 +437,24 @@ if ( rpb_compare == NULL )
     // if still here -> both should be regarded as equal for this compare level
     return 0;
   }
+  // we reach here only, when the full ISONAME has to be compared
+  const uint8_t* rpui8_data    = (const uint8_t*)pb_data;
+  const uint8_t* rpui8_compare = (const uint8_t*)rpb_compare;
 
-  #if (SIZEOF_INT >= 4)
-  const uint64_t* rpui64_data    = (const uint64_t*)pb_data;
-  const uint64_t* rpui64_compare = (const uint64_t*)rpb_compare;
-  if      ( *rpui64_data > *rpui64_compare ) return -1;
-  else if ( *rpui64_data < *rpui64_compare ) return +1;
-  else return 0;
-  #else
-  const uint16_t* rpui16_data    = (const uint16_t*)pb_data;
-  const uint16_t* rpui16_compare = (const uint16_t*)rpb_compare;
-
-  for (int8_t i8_cnt = 3; i8_cnt >= 0; i8_cnt-- )
+  // compare from Byte8 (last CAN data byte) to Byte1 as the 
+  // ISONAME with least numeric value has to win
+  for (int8_t i8_cnt = 7; i8_cnt >= 0; i8_cnt-- )
   { // compare starting with self_conf and indGroup flag
     // in parts of uint16_t (2-uint8_t)
-    if      (rpui16_data[i8_cnt] > rpui16_compare[i8_cnt])
+    if      (rpui8_data[i8_cnt] > rpui8_compare[i8_cnt])
     { // compared value has smaller or val -> %e.g. higher prio
       return -1;
     }
-    else if (rpui16_data[i8_cnt] < rpui16_compare[i8_cnt])
+    else if (rpui8_data[i8_cnt] < rpui8_compare[i8_cnt])
     { // compared value has higher or val -> %e.g. higher prio
       return +1;
     }
   }
   // if still here -> both are totally equal
   return 0;
-  #endif
 }
