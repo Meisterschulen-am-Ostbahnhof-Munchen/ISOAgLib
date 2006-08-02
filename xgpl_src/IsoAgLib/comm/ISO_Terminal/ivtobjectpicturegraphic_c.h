@@ -103,6 +103,15 @@ public:
     vtObjectPictureGraphic_c::setTransparencyColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
+  void setRawData0Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectPictureGraphic_c::setRawData0Buffer (newValue, b_updateObject, b_enableReplaceOfCmd);
+  }
+  void setRawData1Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectPictureGraphic_c::setRawData1Buffer (newValue, b_updateObject, b_enableReplaceOfCmd);
+  }
+  void setRawData2Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectPictureGraphic_c::setRawData2Buffer (newValue, b_updateObject, b_enableReplaceOfCmd);
+  }
 }; // ~X2C
 
 } // end of namespace IsoAgLib

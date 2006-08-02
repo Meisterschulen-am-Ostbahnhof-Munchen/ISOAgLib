@@ -136,6 +136,15 @@ public:
   void setTransparencyColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
   }
+  void setRawData0Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData0) : 0, sizeof(iVtObjectPictureGraphic_s), 4, (IsoAgLib::iVtObject_c*)newValue, b_enableReplaceOfCmd);
+  }
+  void setRawData1Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData0) : 0, sizeof(iVtObjectPictureGraphic_s), 4, (IsoAgLib::iVtObject_c*)newValue, b_enableReplaceOfCmd);
+  }
+  void setRawData2Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData0) : 0, sizeof(iVtObjectPictureGraphic_s), 4, (IsoAgLib::iVtObject_c*)newValue, b_enableReplaceOfCmd);
+  }
 
 }; // ~X2C
 
