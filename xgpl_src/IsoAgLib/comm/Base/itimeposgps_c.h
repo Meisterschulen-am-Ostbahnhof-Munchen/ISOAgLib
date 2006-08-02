@@ -184,6 +184,11 @@ public:
   /** get the calendar millisecond value */
   uint16_t millisecond() const { return TimePosGPS_c::millisecond();};
 
+  /** deliver UTC time in struct tm instead of separate calls to minuteUtc(), hourUtc(), ... to reduce load
+    @return struct tm
+  */
+  struct CNAMESPACE::tm* currentUtcTm() { return TimePosGPS_c::currentUtcTm();};
+
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLatitudeDegree10Minus7(void) const { return TimePosGPS_c::getGpsLatitudeDegree10Minus7();};
   /** deliver raw GPS Longitude [degree] with scaling 10.0e-7 */

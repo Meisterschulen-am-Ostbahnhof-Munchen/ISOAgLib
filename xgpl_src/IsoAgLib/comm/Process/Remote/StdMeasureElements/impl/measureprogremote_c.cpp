@@ -381,6 +381,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
       }
       
       GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand;
+      int32_t i32_stopVal = 0;
 
       switch (pc_subprog->type())
       {
@@ -392,16 +393,17 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
            break;
          case Proc_c::OnChange:
            en_command = GeneralCommand_c::measurementChangeThresholdValueStart;
+           i32_stopVal = Proc_c::ThresholdChangeStopVal;
            break;
          case Proc_c::MaximumThreshold:
            en_command = GeneralCommand_c::measurementMaximumThresholdValueStart;
+           i32_stopVal = Proc_c::ThresholdMaximumStopVal;
            break;
          case Proc_c::MinimumThreshold:
            en_command = GeneralCommand_c::measurementMinimumThresholdValueStart;
+           i32_stopVal = Proc_c::ThresholdMinimumStopVal;
            break;
          default: ;
-
-         // @todo: Proc_c::Counter Proc_c::OutsideThresholdInterval
       }
 
       if (en_command != GeneralCommand_c::noCommand)
@@ -423,7 +425,7 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
         // prepare general command in process pkg
         getProcessInstance4Comm().data().c_generalCommand.setValues(b_isSetpoint, false /* isRequest */,
                                                                     en_valueGroup, en_command);
-        b_result = processData().sendValDevKey(ui8_pri, devKey(), int32_t(0));
+        b_result = processData().sendValDevKey(ui8_pri, devKey(), i32_stopVal);
       }
 
       if (b_deleteSubProgs)

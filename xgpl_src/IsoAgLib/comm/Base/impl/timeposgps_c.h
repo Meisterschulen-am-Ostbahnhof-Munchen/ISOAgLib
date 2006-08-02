@@ -530,6 +530,8 @@ private:
     */
   int32_t calendarSetAge() const {return (System_c::getTime() - i32_lastCalendarSet);};
 
+  const struct CNAMESPACE::tm* Utc2LocalTime();
+
   #ifdef USE_DIN_9684
   /** send a DIN9684 base information PGN.
    * this is only called when sending ident is configured and it has already claimed an address
@@ -596,7 +598,6 @@ private:
     uint16_t timezoneMinuteOffset : 6;
     uint16_t timezoneHourOffsetMinus24 : 6;
   } bit_calendar;
-  const struct CNAMESPACE::tm* Utc2LocalTime();
 
   /** raw GPS latitude [degree] ; Lat_Min < 0 --> South */
   int32_t i32_latitudeDegree10Minus7;

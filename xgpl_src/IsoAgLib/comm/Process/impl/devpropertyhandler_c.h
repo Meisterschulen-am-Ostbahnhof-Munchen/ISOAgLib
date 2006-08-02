@@ -166,6 +166,9 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c,  ClientBase
 
     void reset() { ui16_currentSendPosition = ui16_storedSendPosition = 0; };
 
+    void updateTcStateReceived(uint8_t rui8_lastTcState) { ui8_lastTcState = rui8_lastTcState; i32_tcStateLastReceived = HAL::getTime();};
+    void setTcSourceAddress(uint8_t rtcSourceAddress) { tcSourceAddress = rtcSourceAddress;};
+    
   private:
     uint16_t ui16_currentSendPosition;
     uint16_t ui16_storedSendPosition;
@@ -212,7 +215,15 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c,  ClientBase
     friend class IsoAgLib::iProcess_c;
     /** check if there's already been at least one tc_statusMessage in the last 3 seconds
         @return true if at least one tc_statusMessage - false if there's not yet been one or the last one is more than 3 seconds old */
-    bool isTcActive ();
+    bool isTcAlive (int32_t i32_currentTime);
+
+    void sendWorkingSetTaskMsg(int32_t i32_currentTime);
+
+    /** local instances: call to check
+      - address claim completed at least 6sec in the past
+      - TC status message received
+     */
+    void checkInitState();
 
     uint8_t getTcSourceAddress () { return tcSourceAddress; };
 
@@ -226,9 +237,11 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c,  ClientBase
     void startUploadCommandChangeDesignator();
     void finishUploadCommandChangeDesignator();
 
-    uint32_t  tcState_lastReceived; /* Timestamp of last reception */
-    /* the following data is extracted from one "Task Controller Status Message" */
-    uint8_t  tcState_saOfActiveWorkingSetMaster;
+    int32_t i32_tcStateLastReceived;
+    uint8_t ui8_lastTcState;
+    int32_t i32_timeStartWaitAfterAddrClaim;
+    bool b_initDone;
+    int32_t i32_timeWsTaskMsgSent;
 
     bool b_setToDefault;
     bool tcAliveNew;
@@ -269,6 +282,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c,  ClientBase
     STL_NAMESPACE::list<SendUploadBase_c>  l_sendUpload;
 
     MultiSend_c::sendSuccess_t en_sendSuccess;
+
 };
 
 }

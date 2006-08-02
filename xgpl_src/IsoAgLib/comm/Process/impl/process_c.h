@@ -481,6 +481,14 @@ public:
     @return devKey, saved from TC status messages
   */
   const DevKey_c* getTcDevKey() { return pc_tcDevKey; };
+
+  /**
+    process working set task messages
+    @param ui8_tcStatus
+    @param refc_devKey         device key of working set
+    @return TRUE
+  */
+  bool processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const DevKey_c& /* refc_devKey */);
 #endif
 
 private: // Private methods
@@ -564,9 +572,9 @@ private: // Private methods
   bool createRemoteFilter(const DevKey_c& rc_ownerDevKey, uint8_t rui8_pri = 2);
 
 #ifdef USE_ISO_11783
+  /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
+  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup);
   /** checks if a DDI can be added to a group and if yes then add it! */
-  // @todo: code needed when iProcess_c::checkAndAddMatchingDDI2Group() returns iProcDataRemote_c*
-  // ProcDataRemoteBase_c* checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup);
   bool checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey);
   /** adds a proprietary DDI to a group */
   bool addProprietaryDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const DevKey_c &rc_devKey);

@@ -119,6 +119,8 @@ void MeasureProgLocal_c::init(
   {
     i32_medCnt = i32_medSum = 0;
   }
+
+  l_thresholdInfo.clear();
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -206,7 +208,8 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
   // call start function of base class
   MeasureProgBase_c::start(ren_progType, ren_type, ren_doSend);
   i32_lastMasterVal = ri32_masterVal;
-
+  bool b_sendVal = TRUE;
+  
   // start the given subprog items
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
@@ -248,11 +251,21 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
         pc_iter->start(integ());
         break;
       case Proc_c::MaximumThreshold:
+      {
         pc_iter->start();
+        b_sendVal = FALSE; // do not send value when a threshold is set
+        const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), TRUE};
+        l_thresholdInfo.push_front(s_thresholdInfo);
         break;
+      }
       case Proc_c::MinimumThreshold:
+      {
         pc_iter->start();
+        b_sendVal = FALSE;  // do not send value when a threshold is set
+        const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), FALSE};
+        l_thresholdInfo.push_front(s_thresholdInfo);
         break;
+      }
       case Proc_c::OnChange:
         pc_iter->start(val());
         break;
@@ -261,7 +274,8 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
   } // for
 
   // send first values: if now without success mark for later resend with true
-  b_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
+  if (b_sendVal)
+    b_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
 
   // return if successful sent starting values
   return b_triggeredIncrement;
@@ -380,7 +394,13 @@ bool MeasureProgLocal_c::start(Proc_c::progType_t ren_progType, Proc_c::type_t r
 */
 bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // send the registered values
-  bool b_sendResult = sendRegisteredVals();
+  bool b_sendResult = TRUE;
+  if ((Proc_c::MinimumThreshold != ren_type) && (Proc_c::MaximumThreshold != ren_type)
+      && (Proc_c::NullType != ren_type) ) // do not send values for threshold resets and NullType
+  {
+    b_sendResult = sendRegisteredVals();
+  }
+  
   if (Proc_c::NullType == ren_type)
     // DIN: call base function
     MeasureProgBase_c::stop();
@@ -389,9 +409,23 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
     for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end();)
     {
       if ((pc_iter->type() == ren_type) && (pc_iter->doSend() == ren_doSend))
+      {
         pc_iter = vec_measureSubprog.erase(pc_iter);
+      }
       else
         pc_iter++;
+    }
+  }
+
+  // cleanup corresponding threshold info         
+  if ((Proc_c::MaximumThreshold & ren_type) || (Proc_c::MinimumThreshold & ren_type))
+  { // search corresponding threshold info
+    for (List_ThresholdInfoIterator ps_iterThreshold = l_thresholdInfo.begin(); ps_iterThreshold != l_thresholdInfo.end();)
+    {
+      if ((ps_iterThreshold->en_type == ren_type) && (ps_iterThreshold->en_doSend == ren_doSend))
+        ps_iterThreshold = l_thresholdInfo.erase(ps_iterThreshold);
+      else
+        ps_iterThreshold++;
     }
   }
 
@@ -554,16 +588,12 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
 
   }
 
-  int32_t i32_minVal = 0;
-  int32_t i32_maxVal = 0;
-  bool b_checkMin = false;
-  bool b_checkMax = false;
-
   // now check if one subprog triggers
   bool b_singleTest;
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin();
        pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
+    b_triggeredIncrement = false;
     switch (pc_iter->type())
     {
       case Proc_c::TimeProp:
@@ -580,7 +610,6 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
         // update med/integ
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumDist))updatePropDepVals();
         break;
-
       case Proc_c::OnChange:
         b_singleTest = pc_iter->updateTrigger(val());
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
@@ -613,34 +642,23 @@ void MeasureProgLocal_c::setVal(int32_t ri32_val){
         b_singleTest = pc_iter->updateTrigger(integ());
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         break;
-      case Proc_c::MaximumThreshold:
-        b_checkMax = true;
-        i32_maxVal = pc_iter->increment();
-        break;
-      case Proc_c::MinimumThreshold:
-        b_checkMin = true;
-        i32_minVal = pc_iter->increment();
-        break;
       case Proc_c::NullType: break; // just to make compiler happy
       default: ;
     } // switch
+  
+    // if b_triggeredIncrement == true the registered values should be sent
+    if (b_triggeredIncrement)
+    { // send the registered values
+      if (!minMaxLimitsPassed(pc_iter->doSend()))
+      {
+        // omit this value send
+        b_triggeredIncrement = false;
+        continue;
+      }
+      // if at least one send try had success reset b_triggeredIncrement
+      if (sendRegisteredVals()) b_triggeredIncrement = false;
+    }
   } // for
-  // if b_triggeredIncrement == true the registered values should be sent
-  if (b_triggeredIncrement)
-  { // send the registered values
-
-     if ( (b_checkMin && i32_minVal > val() ) ||
-          (b_checkMax && i32_maxVal < val() )
-        )
-     {
-       // omit this value send
-       b_triggeredIncrement = false;
-       return;
-     }
-
-    // if at least one send try had success reset b_triggeredIncrement
-    if (sendRegisteredVals()) b_triggeredIncrement = false;
-  }
 }
 #ifdef USE_FLOAT_DATA_TYPE
 /**
@@ -676,18 +694,13 @@ void MeasureProgLocal_c::setVal(float rf_val){
     f_accel = ((f_delta - f_oldDelta) * 1000.0F) / (float)i32_timeDelta;
   }
 
-  float f_minVal = 0;
-  float f_maxVal = 0;
-  bool b_checkMin = false;
-  bool b_checkMax = false;
-
   // now check if one subprog triggers
   bool b_singleTest;
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin();
        pc_iter != vec_measureSubprog.end(); pc_iter++)
   {
+    b_triggeredIncrement = false;
     switch (pc_iter->type())
-
     {
       case Proc_c::TimeProp:
         b_singleTest = pc_iter->updateTrigger(i32_time);
@@ -736,33 +749,24 @@ void MeasureProgLocal_c::setVal(float rf_val){
         b_singleTest = pc_iter->updateTrigger(integFloat());
         b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         break;
-      case Proc_c::MaximumThreshold:
-        b_checkMax = true;
-        f_maxVal = pc_iter->increment();
-        break;
-      case Proc_c::MinimumThreshold:
-        b_checkMin = true;
-        f_minVal = pc_iter->increment();
-        break;
       case Proc_c::NullType: break; // just to make compiler happy
       default: ;
     } // switch
-  } // for
-  // if b_triggeredIncrement == true the registered values should be sent
-  if (b_triggeredIncrement)
-  { // send the registered values
-    if ( (b_checkMin && f_minVal > valFloat() ) ||
-         (b_checkMax && f_maxVal < valFloat() )
-       )
-    {
-      // omit this value send
-      b_triggeredIncrement = false;
-      return;
-    }
+  
+    // if b_triggeredIncrement == true the registered values should be sent
+    if (b_triggeredIncrement)
+    { // send the registered values
+      if (!minMaxLimitsPassed(pc_iter->doSend()))
+      {
+        // omit this value send
+        b_triggeredIncrement = false;
+        return;
+      }
 
-    // if at least one send try had success reset b_triggeredIncrement
-    if (sendRegisteredVals()) b_triggeredIncrement = false;
-  }
+      // if at least one send try had success reset b_triggeredIncrement
+      if (sendRegisteredVals()) b_triggeredIncrement = false;
+    }
+  } // for
 }
 #endif
 /**
@@ -1052,11 +1056,6 @@ bool MeasureProgLocal_c::timeEvent( void )
   if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_c::getLastTimeEventTrigger();
 
-  int32_t i32_minVal = 0;
-  int32_t i32_maxVal = 0;
-  bool b_checkMin = false;
-  bool b_checkMax = false;
-
   bool b_singleTest;
 
   for (Vec_MeasureSubprogIterator pc_iter = vec_measureSubprog.begin(); pc_iter != vec_measureSubprog.end(); pc_iter++)
@@ -1080,13 +1079,9 @@ bool MeasureProgLocal_c::timeEvent( void )
         // update med/integ
         if ((b_singleTest)&&(en_accumProp == Proc_c::AccumTime))updatePropDepVals();
         break;
-      case Proc_c::MaximumThreshold:
-        b_checkMax = true;
-        i32_maxVal = pc_iter->increment();
-        break;
-      case Proc_c::MinimumThreshold:
-        b_checkMin = true;
-        i32_minVal = pc_iter->increment();
+      case Proc_c::OnChange:
+        b_singleTest = pc_iter->updateTrigger(val());
+        b_triggeredIncrement = (b_singleTest)? true : b_triggeredIncrement;
         break;
       default:
         break;
@@ -1095,17 +1090,14 @@ bool MeasureProgLocal_c::timeEvent( void )
     // if b_triggeredIncrement == true the registered values should be sent
     // if needed an old unsuccessfull send try is redone (deactivated!)
     if (b_triggeredIncrement)
-    { // send the registered values
-
-      if ( (b_checkMin && i32_minVal > val() ) ||
-           (b_checkMax && i32_maxVal < val() )
-        )
+    { 
+      if (!minMaxLimitsPassed(pc_iter->doSend()))
       {
         // omit this value send
         b_triggeredIncrement = false;
         continue;
       }
-
+      // send the registered values
       // if at least one send try had success reset b_triggeredIncrement
       if (sendRegisteredVals(pc_iter->doSend())) b_triggeredIncrement = false;
     }
@@ -1113,6 +1105,37 @@ bool MeasureProgLocal_c::timeEvent( void )
   
   return true;
 }
+
+bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
+{
+  bool b_checkMin = FALSE;
+  bool b_checkMax = FALSE;
+  int32_t i32_maxVal = 0;
+  int32_t i32_minVal = 0;
+  
+  for (List_ThresholdInfoConstIterator ps_iterThreshold = l_thresholdInfo.begin(); ps_iterThreshold != l_thresholdInfo.end(); ps_iterThreshold++)
+  { 
+    if (ps_iterThreshold->en_doSend == ren_doSend)
+    {
+      switch (ps_iterThreshold->en_type)
+      {
+        case Proc_c::MaximumThreshold: b_checkMax = TRUE; i32_maxVal = ps_iterThreshold->i32_threshold; break;
+        case Proc_c::MinimumThreshold: b_checkMin = TRUE; i32_minVal = ps_iterThreshold->i32_threshold; break;
+        default: ;
+      }
+    }
+  }
+
+  if ( b_checkMin && b_checkMax && (i32_maxVal < i32_minVal) && ((i32_maxVal >= val()) || (i32_minVal <= val())) )
+    return TRUE;
+      
+  if ( (b_checkMin && i32_minVal > val() ) ||
+       (b_checkMax && i32_maxVal < val() ) )
+    return FALSE;
+
+  return TRUE;
+}
+
 
 /** update proportional dependent values */
 void MeasureProgLocal_c::updatePropDepVals(){

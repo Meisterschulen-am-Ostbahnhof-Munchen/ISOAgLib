@@ -93,8 +93,8 @@
 #include "../../StdSetpointElements/impl/setpointremote_c.h"
 #include "../../StdMeasureElements/impl/measureprogremote_c.h"
 
-// @todo: code needed when iProcess_c::checkAndAddMatchingDDI2Group() returns iProcDataRemote_c*
-//namespace IsoAgLib { class iProcDataRemote_c;}
+// needed for iProcess_c::addDDI2ExistingProcData()
+namespace IsoAgLib { class iProcDataRemote_c;}
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
@@ -338,10 +338,9 @@ private: // Private attributes
   /** object for managing jobs of remote measure programs */
   MeasureProgRemote_c c_measure;
 
-  // @todo: code needed when iProcess_c::checkAndAddMatchingDDI2Group() returns iProcDataRemote_c*
-  // iProcess_c::checkAndAddMatchingDDI2Group() does a static_cast __IsoAgLib::ProcDataRemote_c => iProcDataRemote_c
+  // iProcess_c::addDDI2ExistingProcData() does a static_cast __IsoAgLib::ProcDataRemote_c => iProcDataRemote_c
   // => access is needed
-  //friend class IsoAgLib::iProcDataRemote_c;
+  friend class IsoAgLib::iProcDataRemote_c;
 
 };
 

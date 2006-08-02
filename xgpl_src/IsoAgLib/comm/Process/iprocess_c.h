@@ -308,10 +308,12 @@ public:
 
 #ifdef USE_ISO_11783
 #if 0
-  // @todo: code needed when iProcess_c::checkAndAddMatchingDDI2Group() returns iProcDataRemote_c*
-  iProcDataRemote_c* checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup)
-  { return static_cast<iProcDataRemote_c*>(Process_c::checkAndAddMatchingDDI2Group(rui16_DDI, rui_deviceElement, rc_devKey, ren_valueGroup));};
+  /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
+  iProcDataRemote_c* addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup)
+  { return static_cast<iProcDataRemote_c*>(Process_c::addDDI2ExistingProcData(rui16_DDI, rui_deviceElement, rc_devKey, ren_valueGroup));};
 #endif
+
+  /** checks if a DDI can be added to a group and if yes then add it! */
   bool checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const iDevKey_c& rc_devKey)
   { return Process_c::checkAndAddMatchingDDI2Group(rui16_DDI, rui_deviceElement, rc_devKey);};
 

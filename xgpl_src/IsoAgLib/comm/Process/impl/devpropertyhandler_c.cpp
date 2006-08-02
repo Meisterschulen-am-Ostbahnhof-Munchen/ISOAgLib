@@ -206,18 +206,7 @@ DevPropertyHandler_c::processMsg()
 
   // set FALSE if "default" is selected in switch case
   bool b_rc = TRUE;
-
-  //handling of status message
-  if ((data().getUint8Data(0) & 0xF) == 0xE)
-  {
-    tcState_lastReceived = HAL::getTime();
-    //tcState_saOfActiveWorkingSetMaster = data().getUint8Data (1); //do we need it???
-    tcSourceAddress = data().isoSa();
-    #ifdef DEBUG
-      EXTERNAL_DEBUG_DEVICE << "Received status message..." << EXTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
-  }
-
+  
   //handling of nack
   //-> means that no device description is uploaded before
   //-> so extract all necessary information from the byte-stream (structure and localization label)
@@ -430,7 +419,9 @@ DevPropertyHandler_c::init(ProcessPkg_c *rpc_data)
 
   if (!b_basicInit)
   {
-    tcState_lastReceived = 0;
+    i32_tcStateLastReceived = i32_timeStartWaitAfterAddrClaim = i32_timeWsTaskMsgSent = -1;
+    ui8_lastTcState = 0;
+    b_initDone = FALSE;
     tcSourceAddress = 0x7F;
 
     en_poolState = OPNotRegistered;
@@ -448,8 +439,17 @@ DevPropertyHandler_c::init(ProcessPkg_c *rpc_data)
 bool
 DevPropertyHandler_c::timeEvent( void )
 {
+  if (!b_initDone)
+  {
+    checkInitState();
+    return TRUE;
+  }
+
+  const int32_t i32_currentTime = HAL::getTime();
+  sendWorkingSetTaskMsg(i32_currentTime);
+  
   bool tcAliveOld = tcAliveNew;
-  tcAliveNew = isTcActive();
+  tcAliveNew = isTcAlive(i32_currentTime);
 
   if (tcAliveOld != tcAliveNew) {
     // react on vt alive change "false->true"
@@ -462,8 +462,8 @@ DevPropertyHandler_c::timeEvent( void )
     }
   }
 
-  // ### Do nothing if there's no TC active ###
-  if (!isTcActive()) return true;
+  // ### Do nothing if there's no TC alive ###
+  if (!isTcAlive(i32_currentTime)) return true;
 
   if (! getSystemMgmtInstance4Comm().existActiveLocalIsoMember()) return true;
 
@@ -798,20 +798,46 @@ DevPropertyHandler_c::registerDevicePool(const IsoAgLib::iIdentItem_c* rpc_wsMas
   @return true -> >= 1 tc_statusMessages have arrived -> task controller is there.
 */
 bool
-DevPropertyHandler_c::isTcActive ()
+DevPropertyHandler_c::isTcAlive (int32_t i32_currentTime)
 {
-  uint32_t curTime = HAL::getTime();
-  if (tcState_lastReceived) {
-    if ((curTime-tcState_lastReceived) <= 6000) {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
+  if ((-1 != i32_tcStateLastReceived) && ( i32_currentTime - i32_tcStateLastReceived <= 6000))
+    return true;
+  else
     return false;
+}
+
+void
+DevPropertyHandler_c::sendWorkingSetTaskMsg(int32_t i32_currentTime)
+{
+  if (i32_currentTime - i32_timeWsTaskMsgSent >= 2000)
+  {
+    i32_timeWsTaskMsgSent = i32_currentTime;
+    pc_data->setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
+                            0x0F, 0x00, 0x00, 0x00, ui8_lastTcState, 0x00, 0x00, 0x00);
+
+    getCanInstance4Comm() << *pc_data;
   }
 }
 
+/**
+  local instances: call to check
+  - address claim completed at least 6sec in the past
+  - TC status message received
+*/
+void
+DevPropertyHandler_c::checkInitState()
+{
+  if ( (NULL != pc_wsMasterIdentItem) && pc_wsMasterIdentItem->isClaimedAddress()
+       && (-1 == i32_timeStartWaitAfterAddrClaim))
+  {
+    i32_timeStartWaitAfterAddrClaim = HAL::getTime();
+  }
+
+  if ( (HAL::getTime() - i32_timeStartWaitAfterAddrClaim >= 6000) && (-1 != i32_tcStateLastReceived))
+  { // init is finished when more then 6sec after addr claim and at least one TC status message was received
+    b_initDone = TRUE;
+  }
+}
 
 /** compare the received structure label from TC with that from the pool which should be uploaded
     if they are different, try a match via the local settings from the ISOTerminal

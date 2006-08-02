@@ -694,6 +694,7 @@ bool MeasureProgBase_c::processMsg(){
         en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
     {
       Proc_c::type_t en_type = Proc_c::NullType;
+      int32_t i32_dataLong = c_pkg.dataLong();
       switch (en_command) {
         case GeneralCommand_c::measurementTimeValueStart:
           en_type = Proc_c::TimeProp;
@@ -703,18 +704,24 @@ bool MeasureProgBase_c::processMsg(){
           break;
         case GeneralCommand_c::measurementChangeThresholdValueStart:
           en_type = Proc_c::OnChange;
+          if (Proc_c::ThresholdChangeStopVal == i32_dataLong)
+            i32_dataLong = 0; // stop command
           break;
         case GeneralCommand_c::measurementMaximumThresholdValueStart:
           en_type = Proc_c::MaximumThreshold;
+          if (Proc_c::ThresholdMaximumStopVal == i32_dataLong)
+            i32_dataLong = 0; // stop command
           break;
         case GeneralCommand_c::measurementMinimumThresholdValueStart:
           en_type = Proc_c::MinimumThreshold;
+          if (Proc_c::ThresholdMinimumStopVal == i32_dataLong)
+            i32_dataLong = 0; // stop command
           break;
         default: ;
       }
 
       // if dataLong() == 0 => stop
-      if (c_pkg.dataLong() != 0)
+      if (i32_dataLong != 0)
       {
         if (en_type != Proc_c::NullType)
           start(static_cast<Proc_c::progType_t>(c_pkg.pri()), en_type, en_doSend);

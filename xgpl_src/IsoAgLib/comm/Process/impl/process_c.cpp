@@ -376,11 +376,36 @@ bool Process_c::processMsg(){
 
 #if defined(USE_ISO_11783) && defined(USE_PROC_DATA_DESCRIPTION_POOL)
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
-if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF ) < 2 ) || ( c_data[0] >= 0xD ) ) )
+if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (
+     ( ( c_data[0] & 0xF ) < 2 ) || ( c_data[0] == 0xD ) || ( c_data[0] > 0xF ) ) )
 {
   if (c_devPropertyHandler.processMsg()) return true;
 }
 #endif
+
+#ifdef USE_ISO_11783
+  // process TC status message (for local instances)
+  if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (c_data[0] == 0xE))
+  {
+    // update devKey of TC
+    pc_tcDevKey = &(data().memberSend().devKey());
+    processTcStatusMsg(c_data.dataRawCmdLong(), data().memberSend().devKey());
+
+#ifdef USE_PROC_DATA_DESCRIPTION_POOL
+    c_devPropertyHandler.updateTcStateReceived(c_data[4]);
+    c_devPropertyHandler.setTcSourceAddress(data().isoSa());
+#endif
+    return TRUE;
+  }
+
+  // process working set taks messag (for remote instances (e.g. TC))
+  if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (c_data[0] == 0xF))
+  {
+    processWorkingSetTaskMsg(c_data.dataRawCmdLong(), data().memberSend().devKey());
+    return TRUE;
+  }
+#endif
+
 
 #if defined(USE_DIN_GPS)
   // check if this is a message from a service
@@ -529,18 +554,6 @@ if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && ( ( ( c_data[0] & 0xF )
                    ).processMsg();
     b_result = true;
   }
-
-
-#ifdef USE_ISO_11783
-  // process TC status message
-  if ( ( c_data.identType() == Ident_c::ExtendedIdent ) && (c_data[0] == 0xE))
-  {
-    // update devKey of TC
-    pc_tcDevKey = &(data().memberSend().devKey());
-    processTcStatusMsg(c_data.dataRawCmdLong(), data().memberSend().devKey());
-    b_result = true;
-  }
-#endif
 
   return b_result;
 }
@@ -1099,9 +1112,7 @@ bool Process_c::updateRemoteCache(
 }
 
 #ifdef USE_ISO_11783
-#if 0
-// @todo: code needed when iProcess_c::checkAndAddMatchingDDI2Group() returns iProcDataRemote_c*
-ProcDataRemoteBase_c* Process_c::checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup)
+ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup)
 {
   ProcDataRemoteBase_c* pc_remoteProcessData = check4DDIGroupMatch(rui16_DDI, rui_deviceElement, rc_devKey);
   if (pc_remoteProcessData)
@@ -1113,7 +1124,6 @@ ProcDataRemoteBase_c* Process_c::checkAndAddMatchingDDI2Group(uint16_t rui16_DDI
   }
   return NULL;
 };
-#endif
 
 bool Process_c::checkAndAddMatchingDDI2Group(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey)
 {
@@ -1431,6 +1441,12 @@ bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const DevKey_c& refc_de
   if (!rb_skipLastTcStatus)
     ui8_lastTcStatus = ui8_tcStatus;
 
+  return TRUE;
+}
+
+bool Process_c::processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const DevKey_c& /* refc_devKey */)
+{
+  // @todo react on received working set task msg
   return TRUE;
 }
 #endif

@@ -129,8 +129,7 @@ public:
 
 /** enum type definition as part of class */
   enum type_t {NullType = 0, DistProp = 1, TimeProp = 4, ValIncr = 8, 
-               WithinThresholdInterval = 0x10, OutsideThresholdInterval = 0x20,
-               MaximumThreshold = 0x40, MinimumThreshold = 0x80, OnChange = 0x100, Counter,
+               MaximumThreshold = 0x10, MinimumThreshold = 0x20, OnChange = 0x40, Counter,
                DeltaIncr, AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr};
 
   /** enum type for distinguish between Local or Remote data */
@@ -155,6 +154,11 @@ public:
 
   /** enum type for task status */
   enum taskStatus_t {NoTask = 0, Initial = 1, Running = 2, Suspended = 3, Finished = 4 };
+
+  enum thresholdValues_t {ThresholdMaximumStopVal = int32_t(0x80000001),
+                          ThresholdMinimumStopVal = int32_t(0x7fffffff),
+                          ThresholdChangeStopVal = 0,
+                          ThresholdEachChangeVal = 1 };
 
   /** default unused constructor */
   Proc_c(){};

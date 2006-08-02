@@ -138,10 +138,9 @@ class iProcDataRemote_c : private __IsoAgLib::ProcDataRemote_c {
 
 private:
   friend class EventSource_c;
-  // @todo: code needed when iProcess_c::checkAndAddMatchingDDI2Group() returns iProcDataRemote_c*
-  // iProcess_c::checkAndAddMatchingDDI2Group() does a static_cast __IsoAgLib::ProcDataRemote_c => iProcDataRemote_c
+  // iProcess_c::addDDI2ExistingProcData() does a static_cast __IsoAgLib::ProcDataRemote_c => iProcDataRemote_c
   // => access is needed
-  // friend class iProcess_c;
+  friend class iProcess_c;
 
 public:
 

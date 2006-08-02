@@ -105,6 +105,24 @@ class ProcDataLocalBase_c;
 */
 class MeasureProgLocal_c : public MeasureProgBase_c  {
 private:
+  
+  struct ThresholdInfo_s
+  {
+    Proc_c::type_t en_type;
+    Proc_c::doSend_t en_doSend;
+    int32_t i32_threshold;
+    bool b_isMax;
+  };
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  typedef STL_NAMESPACE::slist<ThresholdInfo_s,STL_NAMESPACE::__malloc_alloc_template<0> > List_ThresholdInfo;
+  typedef STL_NAMESPACE::slist<ThresholdInfo_s,STL_NAMESPACE::__malloc_alloc_template<0> >::iterator List_ThresholdInfoIterator;
+  typedef STL_NAMESPACE::slist<ThresholdInfo_s,STL_NAMESPACE::__malloc_alloc_template<0> >::const_iterator List_ThresholdInfoConstIterator;
+  #else
+  typedef STL_NAMESPACE::slist<ThresholdInfo_s> List_ThresholdInfo;
+  typedef STL_NAMESPACE::slist<ThresholdInfo_s>::iterator List_ThresholdInfoIterator;
+  typedef STL_NAMESPACE::slist<ThresholdInfo_s>::const_iterator List_ThresholdInfoConstIterator;
+  #endif
+
 public:
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
@@ -432,6 +450,12 @@ private: // Private methods
     return ((ProcDataLocalBase_c*)((void*)ProcessElementBase_c::pprocessData()));
   };
 
+  /**
+    helper function to check val() against limits
+    @return TRUE if value sending allowed
+  */
+  bool minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const;
+
 private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   union {
@@ -463,12 +487,16 @@ private: // Private attributes
 #endif
   /** count of used songle values to calculate medium val  */
   int32_t i32_medCnt;
+  
   /**
     stores if one subprog triggered,
     if sent wasn't possible within one call, this could be retried
     in later calls; a true val is only reseted to false, if sending was possible
   */
   bool b_triggeredIncrement;
+
+  /** gathered information about currently running threshold sub progs */
+  List_ThresholdInfo l_thresholdInfo;
 };
 
 }
