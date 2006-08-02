@@ -109,7 +109,7 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 3; // Object Type = Container
-      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
+      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [3] = (((uint32_t) vtObjectContainer_a->width*factorM)/factorD) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectContainer_a->width*factorM)/factorD) >> 8;
         destMemory [5] = (((uint32_t) vtObjectContainer_a->height*factorM)/factorD) & 0xFF;
@@ -157,7 +157,7 @@ vtObjectContainer_c::hideShow(uint8_t b_hideOrShow, bool b_updateObject, bool b_
 { // ~X2C
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s), (!b_hideOrShow)&0x01);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
                                                    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                    b_hideOrShow,
                                                    0xFF, 0xFF, 0xFF, 0xFF, 1000, b_enableReplaceOfCmd);
@@ -171,7 +171,7 @@ vtObjectContainer_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectContainer_a(), height), sizeof(iVtObjectContainer_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 
@@ -199,7 +199,7 @@ vtObjectContainer_c::setOriginSKM(bool b_SKM)
 { // ~X2C
   MACRO_localVars;
   if (b_SKM) {
-    flags |= FLAG_ORIGIN_SKM;
+    s_properties.flags |= FLAG_ORIGIN_SKM;
     for (int i=0; i<vtObjectContainer_a->numberOfObjectsToFollow; i++) {
       vtObjectContainer_a->objectsToFollow[i].vtObject->setOriginSKM (b_SKM);
     }

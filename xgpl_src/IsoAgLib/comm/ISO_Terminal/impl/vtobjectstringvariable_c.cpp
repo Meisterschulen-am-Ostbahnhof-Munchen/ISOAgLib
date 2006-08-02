@@ -163,8 +163,8 @@ vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject
 { // ~X2C
   if (b_updateObject) {
     // check if not already RAM string buffer?
-    if (!(flags & FLAG_STRING_IN_RAM)) {
-      flags |= FLAG_STRING_IN_RAM;
+    if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
+      s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
       char *newStringBuffer = new (char [get_vtObjectStringVariable_a()->length+1]);
       saveValueP (MACRO_getStructOffset(get_vtObjectStringVariable_a(), value), sizeof(iVtObjectStringVariable_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
@@ -177,7 +177,7 @@ vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 236 : setValue
@@ -189,9 +189,9 @@ vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject,
 { // ~X2C
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-    if (flags & FLAG_STRING_IN_RAM) {
+    if (s_properties.flags & FLAG_STRING_IN_RAM) {
       delete (get_vtObjectStringVariable_a()->value);
-      flags &= ~FLAG_STRING_IN_RAM;
+      s_properties.flags &= ~FLAG_STRING_IN_RAM;
     }
 
     saveValueP (MACRO_getStructOffset(get_vtObjectStringVariable_a(), value), sizeof(iVtObjectStringVariable_s), (IsoAgLib::iVtObject_c*) newValue);
@@ -201,7 +201,7 @@ vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject,
   uint16_t ui16_tempLen = 0;
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectStringVariable_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectStringVariable_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 

@@ -317,7 +317,11 @@ public:
                      IState_c::itemState_t ren_state = IState_c::Active, uint16_t rui16_saEepromAdr = 0xFFFF);
 
   /** register a SaClaimHandler_c */
-  bool registerSaClaimHandler( SaClaimHandler_c* rpc_client );
+  bool registerSaClaimHandler (SaClaimHandler_c* rpc_client);
+  /** deregister a SaClaimHandler */
+  bool deregisterSaClaimHandler (SaClaimHandler_c* rpc_client);
+
+
   /** this function is used to broadcast a ISO monitor list change to all registered clients */
   void broadcastSaAdd2Clients( const DevKey_c& rc_devKey, const ISOItem_c* rpc_isoItem ) const;
   /** this function is used to broadcast a ISO monitor list change to all registered clients */

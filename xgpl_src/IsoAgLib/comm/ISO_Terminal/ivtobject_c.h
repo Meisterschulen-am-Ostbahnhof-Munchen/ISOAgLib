@@ -456,7 +456,7 @@ public:
 public:
 
   // Constructor
-  iVtObject_c() : p_parentButtonObject(NULL), flags (0) {};
+  iVtObject_c() : p_parentButtonObject(NULL) {s_properties.flags = 0; s_properties.clientId = 0; };
   virtual ~iVtObject_c() {};
 
   //  Operation: getID
@@ -472,6 +472,9 @@ public:
   //! @param b_BTN:
   virtual void setOriginBTN(iVtObjectButton_c* p_btn);
 
+  void setClientID (uint8_t ui8_clientID) { s_properties.clientId = ui8_clientID; }
+
+
 protected:
 
   //  Attribute: vtObject_a
@@ -480,8 +483,11 @@ protected:
   //Attribute: p_vtObject
   iVtObjectButton_c* p_parentButtonObject;
 
-  //  Attribute: flags
-  uint8_t flags;
+  struct {
+     //  Attribute: flags
+    uint8_t flags:4;
+    uint8_t clientId:4;
+  } s_properties;
 }; // ~X2C
 
 } // end of namespace IsoAgLib

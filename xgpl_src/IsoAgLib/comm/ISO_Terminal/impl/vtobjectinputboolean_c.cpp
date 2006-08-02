@@ -107,7 +107,7 @@ vtObjectInputBoolean_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 7; // Object Type = Input Boolean
-      destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectInputBoolean_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectInputBoolean_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [4] = (((uint32_t) vtObjectInputBoolean_a->width*vtDimension)/opDimension) & 0xFF;
       destMemory [5] = (((uint32_t) vtObjectInputBoolean_a->width*vtDimension)/opDimension) >> 8;
       destMemory [6] = vtObjectInputBoolean_a->foregroundColour->getID() & 0xFF;
@@ -163,7 +163,7 @@ vtObjectInputBoolean_c::setValue(bool newValue, bool b_updateObject, bool b_enab
 { // ~X2C
   if (get_vtObjectInputBoolean_a()->variableReference == NULL) {
     if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectInputBoolean_a(), value),  sizeof(iVtObjectInputBoolean_s), newValue);
-    __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeNumericValue (this, newValue?1:0, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
+    __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue?1:0, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 } // -X2C
 

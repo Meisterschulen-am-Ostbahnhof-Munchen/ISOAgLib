@@ -111,7 +111,7 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 19; // Object Type = Arched Bar Graph
-      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
+      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [3] = (((uint32_t) vtObjectArchedBarGraph_a->width*factorM)/factorD) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectArchedBarGraph_a->width*factorM)/factorD) >> 8;
         destMemory [5] = (((uint32_t) vtObjectArchedBarGraph_a->height*factorM)/factorD) & 0xFF;
@@ -122,12 +122,12 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectArchedBarGraph_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectArchedBarGraph_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectArchedBarGraph_a->colour, this, IsoAgLib::Colour);
-      destMemory [8] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectArchedBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectArchedBarGraph_a->colour, this, IsoAgLib::Colour);
+      destMemory [8] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectArchedBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
       destMemory [9] = vtObjectArchedBarGraph_a->options;
       destMemory [10] = vtObjectArchedBarGraph_a->startAngle;
       destMemory [11] = vtObjectArchedBarGraph_a->endAngle;
-      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject)
+      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject)
       {
         destMemory [12] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*factorM)/factorD) & 0xFF;
         destMemory [13] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*factorM)/factorD) >> 8;
@@ -197,7 +197,7 @@ vtObjectArchedBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool 
   if (get_vtObjectArchedBarGraph_a()->variableReference == NULL) {
     if (b_updateObject) saveValue16 (MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), value), sizeof(iVtObjectArchedBarGraph_s), newValue);
 
-    __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+    __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 } // -X2C
 
@@ -210,7 +210,7 @@ vtObjectArchedBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_
     saveValue16 (MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height), sizeof(iVtObjectArchedBarGraph_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end namespace __IsoAgLib

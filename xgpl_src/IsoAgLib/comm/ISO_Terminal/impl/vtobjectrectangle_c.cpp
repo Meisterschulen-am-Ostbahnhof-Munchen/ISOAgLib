@@ -116,7 +116,7 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
       destMemory [2] = 14; // Object Type = Rectangle
       destMemory [3] = vtObjectRectangle_a->lineAttributes->getID() & 0xFF;
       destMemory [4] = vtObjectRectangle_a->lineAttributes->getID() >> 8;
-      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
+      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [5] = (((uint32_t) vtObjectRectangle_a->width*factorM)/factorD) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectRectangle_a->width*factorM)/factorD) >> 8;
         destMemory [7] = (((uint32_t) vtObjectRectangle_a->height*factorM)/factorD) & 0xFF;
@@ -170,7 +170,7 @@ vtObjectRectangle_c::setOriginSKM(bool b_SKM)
 { // ~X2C
   MACRO_localVars;
   if (b_SKM) {
-    flags |= FLAG_ORIGIN_SKM;
+    s_properties.flags |= FLAG_ORIGIN_SKM;
     vtObjectRectangle_a->lineAttributes->setOriginSKM (b_SKM);
   }
 } // -X2C
@@ -182,7 +182,7 @@ vtObjectRectangle_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectRectangle_a(), width),  sizeof(iVtObjectRectangle_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s), newHeight);
   }
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end namespace __IsoAgLib

@@ -109,7 +109,7 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
         destMemory [0] = vtObjectWorkingSet_a->ID & 0xFF;
         destMemory [1] = vtObjectWorkingSet_a->ID >> 8;
         destMemory [2] = 0; // Object Type = Working Set
-        destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectWorkingSet_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+        destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectWorkingSet_a->backgroundColour, this, IsoAgLib::BackgroundColour);
         destMemory [4] = vtObjectWorkingSet_a->selectable;
         if (vtObjectWorkingSet_a->activeMask != NULL) {
             destMemory [5] = vtObjectWorkingSet_a->activeMask->getID() & 0xFF;
@@ -157,7 +157,7 @@ vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* rpc_vtObjectMa
 { // ~X2C
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), rpc_vtObjectMask);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
                                                    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                    rpc_vtObjectMask->getID() & 0xFF, rpc_vtObjectMask->getID() >> 8,
                                                    0xFF, 0xFF, 0xFF, 2000, b_enableReplaceOfCmd);
@@ -168,7 +168,7 @@ vtObjectWorkingSet_c::changeBackgroundColour(uint8_t newValue, bool b_updateObje
 { // ~X2C
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), backgroundColour), sizeof(iVtObjectWorkingSet_s), newValue);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
 } // -X2C
 
 bool
@@ -188,13 +188,13 @@ vtObjectWorkingSet_c::setChildPosition(IsoAgLib::iVtObject_c* rpc_childObject, i
 bool
 vtObjectWorkingSet_c::controlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime)
 {
-  return __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandControlAudioDevice (rui8_repetitions, rui16_frequency, rui16_onTime, rui16_offTime);
+  return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandControlAudioDevice (rui8_repetitions, rui16_frequency, rui16_onTime, rui16_offTime);
 }
 
 bool
 vtObjectWorkingSet_c::setAudioVolume (uint8_t rui8_volume)
 {
-  return __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandSetAudioVolume (rui8_volume);
+  return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandSetAudioVolume (rui8_volume);
 }
 
 
@@ -205,7 +205,7 @@ void
 vtObjectWorkingSet_c::setOriginSKM(bool /*b_SKM*/)
 { // ~X2C
   MACRO_localVars;
-  flags |= FLAG_ORIGIN_SKM; // WS Descriptor has to fit inside a SoftKey!
+  s_properties.flags |= FLAG_ORIGIN_SKM; // WS Descriptor has to fit inside a SoftKey!
   for (int i=0; i<vtObjectWorkingSet_a->numberOfObjectsToFollow; i++) {
     vtObjectWorkingSet_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }

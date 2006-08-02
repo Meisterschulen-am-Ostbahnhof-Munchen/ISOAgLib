@@ -70,6 +70,10 @@
   #include "ISO11783/iisoname_c.h"
 #endif
 
+namespace __IsoAgLib {
+  class ISOTerminal_c;
+}
+
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 // predeclare iISOTerminal_c, as this class is allowed to access private ( hidden )
@@ -431,8 +435,9 @@ public:
     @return DEV_KEY code of this ident item instance
   */
   const iDevKey_c& devKey() const {return static_cast<const iDevKey_c&>(IdentItem_c::devKey());};
- private:
+private:
   friend class iISOTerminal_c;
+  friend class __IsoAgLib::ISOTerminal_c;
 
 };
 

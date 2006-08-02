@@ -112,7 +112,7 @@ vtObjectLine_c::stream(uint8_t* destMemory,
       destMemory [2] = 13; // Object Type = Line
       destMemory [3] = vtObjectLine_a->lineAttributes->getID() & 0xFF;
       destMemory [4] = vtObjectLine_a->lineAttributes->getID() >> 8;
-      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
+      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [5] = (((uint32_t) vtObjectLine_a->width*factorM)/factorD) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectLine_a->width*factorM)/factorD) >> 8;
         destMemory [7] = (((uint32_t) vtObjectLine_a->height*factorM)/factorD) & 0xFF;
@@ -155,7 +155,7 @@ vtObjectLine_c::setOriginSKM(bool b_SKM)
 { // ~X2C
   MACRO_localVars;
   if (b_SKM) {
-    flags |= FLAG_ORIGIN_SKM;
+    s_properties.flags |= FLAG_ORIGIN_SKM;
     vtObjectLine_a->lineAttributes->setOriginSKM (b_SKM);
   }
 } // -X2C
@@ -168,7 +168,7 @@ vtObjectLine_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObje
     saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 void
@@ -180,7 +180,7 @@ vtObjectLine_c::setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newL
     saveValue8  (MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s), newLineDirection);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeEndPoint (this, newWidth, newHeight, newLineDirection, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeEndPoint (this, newWidth, newHeight, newLineDirection, b_enableReplaceOfCmd);
 }
 
 

@@ -101,13 +101,13 @@ USE_TARGET_SYSTEM="pc_linux"
 # CAN architectures, wher the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
-# PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
 # select wanted type of CAN driver connection: "simulating"|"sys"|"rte"|"linux_server_client"|"vector_canlib"|"vector_xl_drv_lib"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_win32" can use the driver "vector_canlib"|"vector_xl_drv_lib"
 # only target "pc_linux" can us the driver "rte"|"linux_server_client"
-USE_CAN_DRIVER="simulating"
+USE_CAN_DRIVER="linux_server_client"
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
 # only target "pc_linux" can us the driver "rte"

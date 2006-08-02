@@ -108,8 +108,8 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 24; // Object Type = Line Attributes
-      destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectLineAttributes_a->lineColour, this, IsoAgLib::LineColour);
-      if (flags & FLAG_ORIGIN_SKM) { /** @todo not yet supporting different lineAttributes scaling for buttons!! */
+      destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectLineAttributes_a->lineColour, this, IsoAgLib::LineColour);
+      if (s_properties.flags & FLAG_ORIGIN_SKM) { /** @todo not yet supporting different lineAttributes scaling for buttons!! */
         destMemory [4] = (((uint32_t) vtObjectLineAttributes_a->lineWidth*factorM)/factorD) & 0xFF;
       } else {
         destMemory [4] = (((uint32_t) vtObjectLineAttributes_a->lineWidth*vtDimension)/opDimension) & 0xFF;
@@ -148,11 +148,11 @@ vtObjectLineAttributes_c::fitTerminal()
 void
 vtObjectLineAttributes_c::setLineAttributes(uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject, bool b_enableReplaceOfCmd) {
   if (b_updateObject) {
-    saveValue8 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s), __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newLineColour, this, IsoAgLib::LineColour));
+    saveValue8 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s), __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newLineColour, this, IsoAgLib::LineColour));
     saveValue8 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth), sizeof(iVtObjectLineAttributes_s), newLineWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s), newLineArt);
   }
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeLineAttributes (this, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newLineColour, this, IsoAgLib::LineColour), newLineWidth, newLineArt, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeLineAttributes (this, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newLineColour, this, IsoAgLib::LineColour), newLineWidth, newLineArt, b_enableReplaceOfCmd);
 }
 
 } // end of namespace __IsoAgLib

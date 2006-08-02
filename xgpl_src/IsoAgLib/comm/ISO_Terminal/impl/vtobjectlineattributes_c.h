@@ -87,6 +87,7 @@
 // +X2C includes
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
+#include "vtclientservercommunication_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
@@ -127,7 +128,7 @@ public:
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour) : 0, sizeof(iVtObjectLineAttributes_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour) : 0, sizeof(iVtObjectLineAttributes_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
   }
 
   void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {

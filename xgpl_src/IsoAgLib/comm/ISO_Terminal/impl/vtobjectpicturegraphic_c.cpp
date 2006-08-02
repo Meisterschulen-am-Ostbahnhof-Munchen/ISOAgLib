@@ -146,13 +146,13 @@ namespace __IsoAgLib {
           options = (vtObjectPictureGraphic_a->f & 0x03) + ((vtObjectPictureGraphic_a->f & optionander) ? 0x04 : 0x00); /* get the right RLE 1/4/8 bit to bit 2 when streaming! */
 
 #define MACRO_calculate_ui8_graphicType \
-          ui8_graphicType = ( min (__IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities()->hwGraphicType, vtObjectPictureGraphic_a->format) ); \
+          ui8_graphicType = ( min (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities()->hwGraphicType, vtObjectPictureGraphic_a->format) ); \
           /* If 16-color bitmap is not specified, take the 2-color version. -That's the only exception! */ \
           if ((ui8_graphicType == 1) && (vtObjectPictureGraphic_a->rawData1 == NULL)) ui8_graphicType = 0;
 
 #define MACRO_CheckFixedBitmapsLoop_start \
     /* See if we have colorDepth of VT */ \
-    uint8_t vtDepth = __IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities()->hwGraphicType; \
+    uint8_t vtDepth = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities()->hwGraphicType; \
     /* Check for 100%-matching fixedBitmaps first */ \
     bool b_foundFixedBitmap = false; \
     for (int fixNr=0; fixNr<vtObjectPictureGraphic_a->numberOfFixedBitmapsToFollow; fixNr++) { \
@@ -172,7 +172,7 @@ namespace __IsoAgLib {
 #else
   #define MACRO_calculateRequestedSize \
     uint16_t width; \
-    if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
+    if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
       width = (((uint32_t) vtObjectPictureGraphic_a->width * factorM)/factorD); \
     } else { \
       width = (((uint32_t) vtObjectPictureGraphic_a->width * vtDimension) /opDimension); \
@@ -238,7 +238,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
       destMemory [8] = actualHeight >> 8;
       destMemory [9] = ui8_graphicType;
       destMemory [10] = options;
-      destMemory [11] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
+      destMemory [11] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
       destMemory [12] = (numberOfBytesInRawData) & 0xFF;
       destMemory [13] = (numberOfBytesInRawData >> 8) & 0xFF;
       destMemory [14] = (numberOfBytesInRawData >> 16) & 0xFF;

@@ -105,7 +105,7 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 4; // Object Type = Soft Key Mask
-    destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectSoftKeyMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+    destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectSoftKeyMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
     destMemory [4] = vtObjectSoftKeyMask_a->numberOfObjectsToFollow;
     destMemory [5] = vtObjectSoftKeyMask_a->numberOfMacrosToFollow;
 

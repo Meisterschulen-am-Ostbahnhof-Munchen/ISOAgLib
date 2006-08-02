@@ -69,7 +69,7 @@ namespace IsoAgLib {
 void
 iVtObject_c::setOriginSKM(bool b_SKM)
 { // ~X2C
-  if (b_SKM) flags |= FLAG_ORIGIN_SKM;
+  if (b_SKM) s_properties.flags |= FLAG_ORIGIN_SKM;
 } // -X2C
 
 //! Parameter:

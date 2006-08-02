@@ -107,10 +107,10 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 23; // Object Type = Font Attributes
-    destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectFontAttributes_a->fontColour, this, IsoAgLib::FontColour);
+    destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectFontAttributes_a->fontColour, this, IsoAgLib::FontColour);
     destMemory [4] = ui8_fontSizeScaled; // size() must have been called before to prepare!!!!
     destMemory [5] = vtObjectFontAttributes_a->fontType;
-    destMemory [6] = vtObjectFontAttributes_a->fontStyle & __IsoAgLib::getIsoTerminalInstance4Comm().getVtCapabilities()->fontTypes;
+    destMemory [6] = vtObjectFontAttributes_a->fontStyle & __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities()->fontTypes;
     destMemory [7] = vtObjectFontAttributes_a->numberOfMacrosToFollow;
     sourceOffset += 8;
     curBytes += 8;
@@ -183,7 +183,7 @@ vtObjectFontAttributes_c::calcScaledFontDimension()
 
   ui8_fontSizeScaled = vtObjectFontAttributes_a->fontSize;
   uint32_t scale;
-  if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
+  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
     scale = (((uint32_t) factorM * 0x100000)/factorD); // (20 bit shifted fixed floating)
   } else {
     scale = (((uint32_t) vtDimension * 0x100000)/opDimension); // (20 bit shifted fixed floating)
@@ -259,7 +259,7 @@ vtObjectFontAttributes_c::calcScaledFontDimension()
   // else if (scale == 0x100000) ==> no need to scale!
 
   /// Always check if the font is available!
-  while (!(__IsoAgLib::getIsoTerminalInstance4Comm().getVtFontSizes() & (1 << ui8_fontSizeScaled))) {
+  while (!(__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtFontSizes() & (1 << ui8_fontSizeScaled))) {
     ui8_fontSizeScaled--; // try a smaller font, but "6x8" should be there in any way, 'cause we set it in processMsg!!
   }
 } // -X2C
@@ -267,12 +267,12 @@ vtObjectFontAttributes_c::calcScaledFontDimension()
 void
 vtObjectFontAttributes_c::setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject, bool b_enableReplaceOfCmd) {
   if (b_updateObject) {
-    saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s), __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (newFontColour, this, IsoAgLib::FontColour));
+    saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s), __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFontColour, this, IsoAgLib::FontColour));
     saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize),   sizeof(iVtObjectFontAttributes_s), newFontSize);
     saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType),   sizeof(iVtObjectFontAttributes_s), newFontType);
     saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle),  sizeof(iVtObjectFontAttributes_s), newFontStyle);
   }
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeFontAttributes (this, __IsoAgLib::getIsoTerminalInstance().getUserClippedColor (newFontColour, this, IsoAgLib::FontColour), newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeFontAttributes (this, __IsoAgLib::getIsoTerminalInstance().getClientByID (s_properties.clientId).getUserClippedColor (newFontColour, this, IsoAgLib::FontColour), newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd);
 }
 
 

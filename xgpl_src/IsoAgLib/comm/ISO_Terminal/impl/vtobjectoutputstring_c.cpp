@@ -111,7 +111,7 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 11; // Object Type = Output String
-      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
+      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [3] = (((uint32_t) vtObjectOutputString_a->width*factorM)/factorD) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectOutputString_a->width*factorM)/factorD) >> 8;
         destMemory [5] = (((uint32_t) vtObjectOutputString_a->height*factorM)/factorD) & 0xFF;
@@ -122,7 +122,7 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectOutputString_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectOutputString_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectOutputString_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectOutputString_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObjectOutputString_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectOutputString_a->fontAttributes->getID() >> 8;
       destMemory [10] = vtObjectOutputString_a->options;
@@ -181,7 +181,7 @@ vtObjectOutputString_c::setOriginSKM(bool b_SKM)
 { // ~X2C
   MACRO_localVars;
   if (b_SKM) {
-    flags |= FLAG_ORIGIN_SKM;
+    s_properties.flags |= FLAG_ORIGIN_SKM;
     vtObjectOutputString_a->fontAttributes->setOriginSKM (b_SKM);
   }
 } // -X2C
@@ -234,8 +234,8 @@ vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject, 
 
   if (b_updateObject) {
     // check if not already RAM string buffer?
-    if (!(flags & FLAG_STRING_IN_RAM)) {
-      flags |= FLAG_STRING_IN_RAM;
+    if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
+      s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
       char *newStringBuffer = new (char [get_vtObjectOutputString_a()->length+1]);
       saveValueP (MACRO_getStructOffset(get_vtObjectOutputString_a(), value), sizeof(iVtObjectOutputString_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
@@ -248,7 +248,7 @@ vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject, 
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 237 : setValueRef
@@ -266,9 +266,9 @@ vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject, b
 
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-    if (flags & FLAG_STRING_IN_RAM) {
+    if (s_properties.flags & FLAG_STRING_IN_RAM) {
       delete (get_vtObjectOutputString_a()->value);
-      flags &= ~FLAG_STRING_IN_RAM;
+      s_properties.flags &= ~FLAG_STRING_IN_RAM;
     }
 
     saveValueP (MACRO_getStructOffset(get_vtObjectOutputString_a(), value), sizeof(iVtObjectOutputString_s), (IsoAgLib::iVtObject_c*) newValue);
@@ -278,7 +278,7 @@ vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject, b
   uint16_t ui16_tempLen = 0;
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 757 : setVariableReference
@@ -296,7 +296,7 @@ vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c
 
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference),  sizeof(iVtObjectOutputString_s), newVariable);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeAttribute (this, 6 /* Variable Reference */, newVariable->getID() & 0xFF, newVariable->getID() >> 8, 0, 0, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeAttribute (this, 6 /* Variable Reference */, newVariable->getID() & 0xFF, newVariable->getID() >> 8, 0, 0, b_enableReplaceOfCmd);
 } // -X2C
 
 void
@@ -307,7 +307,7 @@ vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_up
     saveValue16 (MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 // //////////////////////////////// +X2C Operation 247 : getString

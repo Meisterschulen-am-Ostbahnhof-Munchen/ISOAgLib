@@ -7,8 +7,15 @@
 TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../..
 APP_INC = -I../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso 
+####### Include a version definition file into the Makefile context - when this file exists
+-include versions.mk
 
-PROJ_DEFINES = -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h -DSYSTEM_WITH_ENHANCED_CAN_HAL
+
+PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso.h
+
+
+####### Definition of compiler binary prefix corresponding to selected target
+COMPILER_BINARY_PRE = 
 
 
 first: all
@@ -19,21 +26,21 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
-		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp  \
+		../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../xgpl_src/IsoAgLib/util/liberr_c.cpp  \
 		../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp  \
-		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/streamchunk_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisend_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/multisendpkg_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/Multipacket/impl/stream_c.cpp  \
@@ -71,22 +78,29 @@ SOURCES = ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectstring_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectobjectpointer_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectoutputnumber_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectpolygon_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectkey_c.cpp  \
+		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.cpp  \
 		../../../xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobject_c.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp  \
+		../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
 		../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
+		../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp  \
 		../../../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp  
 
 
 #Special Sources for CAN Server
-SOURCES_SERVER = ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \
+SOURCES_SERVER = ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_general.cpp \
+		../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \
 		../../../xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp
 
@@ -107,9 +121,9 @@ include $(DEPS_SERVER)
 can_server: $(OBJECTS_SERVER)
 	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS)
 ####### Some Standard Rules
-CC       = gcc
-CXX      = g++
-STRIP	 = strip
+CC       = $(COMPILER_BINARY_PRE)gcc
+CXX      = $(COMPILER_BINARY_PRE)g++
+STRIP	 = $(COMPILER_BINARY_PRE)strip
 LEX      = flex
 YACC     = yacc
 CFLAGS   = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
@@ -117,7 +131,7 @@ CXXFLAGS = -pipe -Wall -W -g -fno-builtin -Wall -Woverloaded-virtual -Wpointer-a
 LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
-LINK     = g++
+LINK     = $(COMPILER_BINARY_PRE)g++
 LFLAGS   = -pthread
 LIBS     = $(SUBLIBS)  $(BIOS_LIB)
 AR       = ar cqs

@@ -112,7 +112,7 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 16; // Object Type = Polygon
-      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
+      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [3] = (((uint32_t) vtObjectPolygon_a->width*factorM)/factorD) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectPolygon_a->width*factorM)/factorD) >> 8;
         destMemory [5] = (((uint32_t) vtObjectPolygon_a->height*factorM)/factorD) & 0xFF;
@@ -168,7 +168,7 @@ vtObjectPolygon_c::setOriginSKM(bool b_SKM)
 { // ~X2C
   MACRO_localVars;
   if (b_SKM) {
-    flags |= FLAG_ORIGIN_SKM;
+    s_properties.flags |= FLAG_ORIGIN_SKM;
     vtObjectPolygon_a->lineAttributes->setOriginSKM (b_SKM);
   }
 } // -X2C
@@ -181,7 +181,7 @@ vtObjectPolygon_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
     saveValue16 (MACRO_getStructOffset(get_vtObjectPolygon_a(), height), sizeof(iVtObjectPolygon_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end namespace __IsoAgLib

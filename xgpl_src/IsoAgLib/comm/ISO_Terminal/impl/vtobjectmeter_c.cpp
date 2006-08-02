@@ -108,16 +108,16 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 17; // Object Type = Meter
-      if (flags & FLAG_ORIGIN_SKM) { // no need to check for p_parentButtonObject as this object can't be nested in a button!
+      if (s_properties.flags & FLAG_ORIGIN_SKM) { // no need to check for p_parentButtonObject as this object can't be nested in a button!
         destMemory [3] = (((uint32_t) vtObjectMeter_a->width*factorM)/factorD) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectMeter_a->width*factorM)/factorD) >> 8;
       } else {
         destMemory [3] = (((uint32_t) vtObjectMeter_a->width*vtDimension)/opDimension) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectMeter_a->width*vtDimension)/opDimension) >> 8;
       }
-      destMemory [5] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectMeter_a->needleColour, this, IsoAgLib::NeedleColour);
-      destMemory [6] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectMeter_a->borderColour, this, IsoAgLib::BorderColour);
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getUserClippedColor (vtObjectMeter_a->arcAndTickColour, this, IsoAgLib::ArcAndTickColour);
+      destMemory [5] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectMeter_a->needleColour, this, IsoAgLib::NeedleColour);
+      destMemory [6] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectMeter_a->borderColour, this, IsoAgLib::BorderColour);
+      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectMeter_a->arcAndTickColour, this, IsoAgLib::ArcAndTickColour);
       destMemory [8] = vtObjectMeter_a->options;
       destMemory [9] = vtObjectMeter_a->numberOfTicks;
       destMemory [10] = vtObjectMeter_a->startAngle;
@@ -168,7 +168,7 @@ vtObjectMeter_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableR
   if (get_vtObjectMeter_a()->variableReference == NULL) {
     if (b_updateObject) saveValue16 (MACRO_getStructOffset(get_vtObjectMeter_a(), value), sizeof(iVtObjectMeter_s), newValue);
 
-    __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+    __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 } // -X2C
 

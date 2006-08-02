@@ -87,6 +87,7 @@
 // +X2C includes
 #include "vtobject_c.h"
 #include "vttypes.h"
+#include "vtclientservercommunication_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib

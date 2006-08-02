@@ -609,6 +609,23 @@ bool ISOMonitor_c::registerSaClaimHandler( SaClaimHandler_c* rpc_client )
 }
 
 
+/** deregister a SaClaimHandler */
+bool
+ISOMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* rpc_client)
+{
+  const unsigned int oldSize = vec_saClaimHandler.size();
+  for ( SaClaimHandlerVectorIterator_t iter = vec_saClaimHandler.begin(); iter != vec_saClaimHandler.end(); iter++ )
+  { // check if it points to the same client
+    if ( *iter == rpc_client )
+    {
+      vec_saClaimHandler.erase (iter); // in multimap -> so delete it
+      break;
+    }
+  }
+  return (vec_saClaimHandler.size() > oldSize)?true:false;
+}
+
+
 /** this function is used to broadcast a ISO monitor list change to all registered clients */
 void ISOMonitor_c::broadcastSaAdd2Clients( const DevKey_c& rc_devKey, const ISOItem_c* rpc_isoItem ) const
 {

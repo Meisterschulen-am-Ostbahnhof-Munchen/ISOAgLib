@@ -296,7 +296,7 @@ PRJ_ISO_TERMINAL=1
 #   --> try to reuse SA os last working session on next system start.
 #       the application has only to specify to EEPROM address to handle the SA;
 #       IsoAgLib takes then care of storing and reloading the SA )
-# PRJ_EEPROM=0
+PRJ_EEPROM=1
 
 # select if the datastreams from HAL for file input and output shall be used
 # PRJ_DATASTREAMS=0

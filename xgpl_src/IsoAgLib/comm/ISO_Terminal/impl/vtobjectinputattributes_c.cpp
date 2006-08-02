@@ -161,8 +161,8 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
 { // ~X2C
   if (b_updateObject) {
     // check if not already RAM string buffer?
-    if (!(flags & FLAG_STRING_IN_RAM)) {
-      flags |= FLAG_STRING_IN_RAM;
+    if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
+      s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
       char *newStringBuffer = new (char [get_vtObjectInputAttributes_a()->length+1]);
       saveValueP (MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationString), sizeof(iVtObjectInputAttributes_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
@@ -175,7 +175,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 250 : setValidationStringRef
@@ -187,9 +187,9 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
 { // ~X2C
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-    if (flags & FLAG_STRING_IN_RAM) {
+    if (s_properties.flags & FLAG_STRING_IN_RAM) {
       delete (get_vtObjectInputAttributes_a()->validationString);
-      flags &= ~FLAG_STRING_IN_RAM;
+      s_properties.flags &= ~FLAG_STRING_IN_RAM;
     }
 
     saveValueP (MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationString), sizeof(iVtObjectInputAttributes_s), (IsoAgLib::iVtObject_c*) newValidationString);
@@ -198,7 +198,7 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
   setStringToStream( newValidationString ); // use MultiSendStreamer with pc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
   setStrLenToSend( ui16_tempLen );
- __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
 

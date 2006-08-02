@@ -86,6 +86,7 @@
 
 // +X2C includes
 #include "../ivtobjectinput_c.h"
+#include "vtclientservercommunication_c.h"
 
 // ~X2C
 

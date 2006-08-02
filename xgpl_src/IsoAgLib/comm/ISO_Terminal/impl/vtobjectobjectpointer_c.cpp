@@ -139,8 +139,8 @@ vtObjectObjectPointer_c::setValue(IsoAgLib::iVtObject_c* rpc_newObject, bool b_u
 { // ~X2C
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectObjectPointer_a(), value),  sizeof(iVtObjectObjectPointer_s), rpc_newObject);
 
-  if (rpc_newObject != NULL) __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeNumericValue (this, rpc_newObject->getID() & 0xFF, (rpc_newObject->getID() >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
-  else                       __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeNumericValue (this, 0xFF, 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+  if (rpc_newObject != NULL) __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, rpc_newObject->getID() & 0xFF, (rpc_newObject->getID() >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+  else                       __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, 0xFF, 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 230 : setOriginSKM

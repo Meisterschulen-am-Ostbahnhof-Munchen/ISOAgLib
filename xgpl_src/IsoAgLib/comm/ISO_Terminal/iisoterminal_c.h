@@ -66,16 +66,14 @@ class iScheduler_c;
   */
 class iISOTerminal_c : private __IsoAgLib::ISOTerminal_c {
 public:
-
-typedef __IsoAgLib::ISOTerminal_c::vtCapabilities_s ivtCapabilities_s;
   // Public methods
   /**
     initialise element which can't be done during construct
 
     possible errors:
   */
-  bool init (iIdentItem_c* rpc_wsMasterIdentItem, iIsoTerminalObjectPool_c* rpc_pool, char* rpc_versionLabel)
-  { return ISOTerminal_c::init (static_cast<__IsoAgLib::IdentItem_c*>(rpc_wsMasterIdentItem), rpc_pool, rpc_versionLabel); };
+  void init ()
+  { ISOTerminal_c::init(); }
 
   /**
     register given object pool for uploading when possible.
@@ -87,56 +85,38 @@ typedef __IsoAgLib::ISOTerminal_c::vtCapabilities_s ivtCapabilities_s;
     @param rpc_vtEventHandler pointer to an instance of IsoAgLib::iIsoTerminalEventHandler_c so the hook funtions for key activation, input values and successfull objectpool upload can be invoked
   */
   bool registerIsoObjectPool (iIdentItem_c* rpc_wsMasterIdentItem, iIsoTerminalObjectPool_c* rpc_pool, char* rpc_versionLabel)
-  { return ISOTerminal_c::registerIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c*>(rpc_wsMasterIdentItem), rpc_pool, rpc_versionLabel); };
+  { return ISOTerminal_c::registerIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(*rpc_wsMasterIdentItem), *rpc_pool, rpc_versionLabel); }
 
-  bool deregisterIsoObjectPool ()
-  { return ISOTerminal_c::deregisterIsoObjectPool (); };
-
-  /**
-    check if there's already been at least one vt_statusMessage in the last 3 seconds
-    @return true if at least one vt_statusMessage - false if there's not yet been one or the last one is more than 3 seconds old
-  */
-  bool isVtActive () { return ISOTerminal_c::isVtActive (); };
+  bool deregisterIsoObjectPool (iIdentItem_c* rpc_wsMasterIdentItem)
+  { return ISOTerminal_c::deregisterIsoObjectPool (*rpc_wsMasterIdentItem); }
 
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES
   void fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
-  { ISOTerminal_c::fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes); };
+{ ISOTerminal_c::fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes); }
 #endif
-
-  uint32_t getVtHardwareDimension () { return ISOTerminal_c::getVtHardwareDimension (); };
-  uint16_t getVtObjectPoolDimension () { return ISOTerminal_c::getVtObjectPoolDimension (); };
-  uint16_t getVtObjectPoolSoftKeyWidth () { return ISOTerminal_c::getVtObjectPoolSoftKeyWidth (); };
-  uint16_t getVtObjectPoolSoftKeyHeight () { return ISOTerminal_c::getVtObjectPoolSoftKeyHeight (); };
-
-  const vtState_s* getVtState () const { return ISOTerminal_c::getVtState (); };
-
-  uint32_t getUploadBufferSize () { return ISOTerminal_c::getUploadBufferSize (); };
-
-  void enableSameCommandCheck() { ISOTerminal_c::enableSameCommandCheck(); };
-  void disableSameCommandCheck() { ISOTerminal_c::disableSameCommandCheck(); };
 
  private:
   /** allow getIisoTerminalInstance() access to shielded base class.
       otherwise __IsoAgLib::getIsoTerminalInstance() wouldn't be accepted by compiler
     */
-  #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iISOTerminal_c& getIisoTerminalInstance( uint8_t rui8_instance );
+  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
+  friend iISOTerminal_c& getIisoTerminalInstance (uint8_t rui8_instance);
   #else
-  friend iISOTerminal_c& getIisoTerminalInstance( void );
+  friend iISOTerminal_c& getIisoTerminalInstance (void);
   #endif
 };
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
+#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique ISOTerminal_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iISOTerminal_c& getIisoTerminalInstance( uint8_t rui8_instance = 0 )
-  { return static_cast<iISOTerminal_c&>(__IsoAgLib::getIsoTerminalInstance(rui8_instance));};
+  inline iISOTerminal_c& getIisoTerminalInstance (uint8_t rui8_instance = 0)
+  { return static_cast<iISOTerminal_c&>(__IsoAgLib::getIsoTerminalInstance(rui8_instance)); }
 #else
   /** C-style function, to get access to the unique Process_c singleton instance */
-  inline iISOTerminal_c& getIisoTerminalInstance( void )
-  { return static_cast<iISOTerminal_c&>(__IsoAgLib::getIsoTerminalInstance());};
+  inline iISOTerminal_c& getIisoTerminalInstance (void)
+  { return static_cast<iISOTerminal_c&>(__IsoAgLib::getIsoTerminalInstance()); }
 #endif
 
 }

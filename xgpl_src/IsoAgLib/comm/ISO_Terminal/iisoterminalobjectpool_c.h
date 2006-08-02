@@ -61,8 +61,7 @@
 
 #include "ivttypes.h"
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
-#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
-
+//#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
 
 /* *************************************** */
 /* ********** command defines ************ */
@@ -77,6 +76,9 @@
 //#define KEY_HAS_BEEN_RELEASED 0
 //#define KEY_HAS_BEEN_PRESSED 1
 //#define KEY_IS_STILL_HELD 2
+
+// forward declaration
+struct localSettings_s;
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

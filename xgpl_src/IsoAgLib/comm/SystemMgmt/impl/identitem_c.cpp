@@ -896,18 +896,6 @@ bool IdentItem_c::timeEventActive( void ) {
           // register switch2Announc
           getSchedulerInstance4Comm().registerSwitch2AddressClaim();
           #endif
-          #ifdef USE_ISO_TERMINAL
-          {
-            uint32_t ui32_nr = pc_isoItem->nr();
-            // only ISO msgs with own SA in PS (destination)
-            uint32_t ui32_filter = ((static_cast<MASK_TYPE>(VT_TO_ECU_PGN) | static_cast<MASK_TYPE>(ui32_nr)) << 8);
-            if (!getCanInstance4Comm().existFilter( getIsoTerminalInstance4Comm(), (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-            { // create FilterBox
-              getCanInstance4Comm().insertFilter( getIsoTerminalInstance4Comm(), (0x1FFFF00UL), ui32_filter, false, Ident_c::ExtendedIdent);
-              b_configure = true;
-            }
-          }
-          #endif
         }
       }
       else {

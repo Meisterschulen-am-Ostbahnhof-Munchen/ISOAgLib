@@ -115,7 +115,7 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
       destMemory [2] = 15; // Object Type = Ellipse
       destMemory [3] = vtObjectEllipse_a->lineAttributes->getID() & 0xFF;
       destMemory [4] = vtObjectEllipse_a->lineAttributes->getID() >> 8;
-      if ((flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
+      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
         destMemory [5] = (((uint32_t) vtObjectEllipse_a->width*factorM)/factorD) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectEllipse_a->width*factorM)/factorD) >> 8;
         destMemory [7] = (((uint32_t) vtObjectEllipse_a->height*factorM)/factorD) & 0xFF;
@@ -171,7 +171,7 @@ vtObjectEllipse_c::setOriginSKM(bool b_SKM)
 { // ~X2C
   MACRO_localVars;
   if (b_SKM) {
-    flags |= FLAG_ORIGIN_SKM;
+    s_properties.flags |= FLAG_ORIGIN_SKM;
     vtObjectEllipse_a->lineAttributes->setOriginSKM (b_SKM);
   }
 } // -X2C
@@ -183,7 +183,7 @@ vtObjectEllipse_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
     saveValue16 (MACRO_getStructOffset(get_vtObjectEllipse_a(), width),  sizeof(iVtObjectEllipse_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectEllipse_a(), height), sizeof(iVtObjectEllipse_s), newHeight);
   }
-  __IsoAgLib::getIsoTerminalInstance4Comm().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 } // end namespace __IsoAgLib

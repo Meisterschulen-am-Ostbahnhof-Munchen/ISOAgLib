@@ -122,7 +122,7 @@ const DevKey_c DevKey_c::DevKeyInitialProcessData( 0x0, 0xF );
   @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
 */
 bool CANCustomer_c::processMsg()
-{ // dummy function - just to allow classes to (inderectly) derive from
+{ // dummy function - just to allow classes to (indirectly) derive from
   // CANCustomer_c without the need to implement this function
   return false;
 }
@@ -133,7 +133,7 @@ bool CANCustomer_c::processMsg()
     YOU SHOULD NEVER CALL THIS BASE FUNCTION!
 */
 CANPkgExt_c& CANCustomer_c::dataBase()
-{ // dummy function - just to allow classes to (inderectly) derive from
+{ // dummy function - just to allow classes to (indirectly) derive from
   // CANCustomer_c without the need to implement this function
   static CANPkgExt_c c_dummyPkg;
   return c_dummyPkg;
@@ -141,7 +141,7 @@ CANPkgExt_c& CANCustomer_c::dataBase()
 
 /** virtual destructor */
 CANCustomer_c::~CANCustomer_c()
-{ // dummy function - just to allow classes to (inderectly) derive from
+{ // dummy function - just to allow classes to (indirectly) derive from
   // CANCustomer_c without the need to implement this function
 }
 

@@ -2,8 +2,8 @@
                           isoterminal_c.cpp - central ISO terminal management
                              -------------------
     begin                : Wed Jul 09 2003
-    copyright            : (C) 2003 by Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de
+    copyright            : (C) 2003 by Dipl.-Inf. Martin Wodok
+    email                : m.wodok@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -80,1960 +80,430 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-// LOESCHE_POOL will send DeleteVersion INSTEAD of LoadVersion
-//#define LOESCHE_POOL
-//#define GET_VERSIONS
-//#define USE_SIMPLE_AUX_RESPONSE
-
-
 #include "isoterminal_c.h"
-
 
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/hal/system.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
-#include <supplementary_driver/driver/datastreams/volatilememory_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-
-#include "vttypes.h"
-#include "../ivtobjectpicturegraphic_c.h"
-#include "../ivtobjectstring_c.h"
-#include "../ivtobjectworkingset_c.h"
-
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #include <IsoAgLib/util/impl/util_funcs.h>
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-#endif
-
-#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
-
-#ifdef DEBUG_HEAP_USEAGE
-  static uint16_t sui16_lastPrintedBufferCapacity = 0;
-  static uint16_t sui16_lastPrintedSendUploadQueueSize = 0;
-  static uint16_t sui16_lastPrintedMaxSendUploadQueueSize = 0;
-  static uint16_t sui16_sendUploadQueueSize = 0;
-  static uint16_t sui16_maxSendUploadQueueSize = 0;
-#endif
-
-static const uint8_t scpui8_cmdCompareTable[(0xB4-0x92)+1] = {
-/// (1<<0) means DO NOT OVERRIDE THESE COMMANDS AT ALL
-/* 0x92 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND
-/* 0x93 */ 0 , //invalid command
-/* 0x94 */ 0 , //invalid command
-/* 0x95 */ 0 , //invalid command
-/* 0x96 */ 0 , //invalid command
-/* 0x97 */ 0 , //invalid command
-/* 0x98 */ 0 , //invalid command
-/* 0x99 */ 0 , //invalid command
-/* 0x9A */ 0 , //invalid command
-/* 0x9B */ 0 , //invalid command
-/* 0x9C */ 0 , //invalid command
-/* 0x9D */ 0 , //invalid command
-/* 0x9E */ 0 , //invalid command
-/* 0x9F */ 0 , //invalid command
-/* 0xA0 */ (1<<1) | (1<<2) ,
-/* 0xA1 */ (1<<1) | (1<<2) ,
-/* 0xA2 */ (1<<1) | (1<<2) ,
-/* 0xA3 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Control Audio Device)
-/* 0xA4 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Set Audio Volume)
-/* 0xA5 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Change Child Location), as it's relative!!!
-/* 0xA6 */ (1<<1) | (1<<2) ,
-/* 0xA7 */ (1<<1) | (1<<2) ,
-/* 0xA8 */ (1<<1) | (1<<2) , // Change Numeric Value (all has been done for THIS ONE originally ;-)
-/* 0xA9 */ (1<<1) | (1<<2) ,
-/* 0xAA */ (1<<1) | (1<<2) ,
-/* 0xAB */ (1<<1) | (1<<2) ,
-/* 0xAC */ (1<<1) | (1<<2) ,
-/* 0xAD */ (1<<1) | (1<<2) , /** @todo Maybe change to delete in between and push_back new?! */ // (Change Active Mask)
-/* 0xAE */ (1<<1) | (1<<2) | (1<<3) ,
-/* 0xAF */ (1<<1) | (1<<2) | (1<<3) ,
-/* 0xB0 */ (1<<1) | (1<<2) ,
-/* 0xB1 */ (1<<1) | (1<<2) | (1<<3) ,
-/* 0xB2 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Delete Object Pool)
-/* 0xB3 */ (1<<1) | (1<<2) ,
-/* 0xB4 */ (1<<1) | (1<<2) | (1<<3) | (1<<4)  // (Change Child Position)
-};
-
+#include <IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h>
+// #include "vttypes.h"
 
 namespace __IsoAgLib {
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
+#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique ISOTerminal_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  ISOTerminal_c& getIsoTerminalInstance( uint8_t rui8_instance )
+  ISOTerminal_c& getIsoTerminalInstance(uint8_t rui8_instance)
   { // if > 1 singleton instance is used, no static reference can be used
-    return ISOTerminal_c::instance( rui8_instance );
+    return ISOTerminal_c::instance(rui8_instance);
   };
 #else
   /** C-style function, to get access to the unique ISOTerminal_c singleton instance */
-  ISOTerminal_c& getIsoTerminalInstance( void )
+  ISOTerminal_c& getIsoTerminalInstance(void)
   {
     static ISOTerminal_c& c_isoTerminal = ISOTerminal_c::instance();
     return c_isoTerminal;
   };
 #endif
 
-#define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
-#define DEF_TimeOut_EndOfObjectPool 60000
-#define DEF_TimeOut_StoreVersion 60000
-#define DEF_TimeOut_LoadVersion 60000
-#define DEF_WaitFor_Reupload 5000
-#define DEF_Retries_NormalCommands 2
-#define DEF_Retries_TPCommands 2
-#define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
 
 
-
-SendUpload_c::SendUpload_c (vtObjectString_c* rpc_objectString)
-{
-  mssObjectString = rpc_objectString;
-
-  if (mssObjectString->getStreamer()->getStreamSize() < 9)
-    ui8_retryCount = DEF_Retries_NormalCommands;
-  else
-    ui8_retryCount = DEF_Retries_TPCommands;
-
-  ui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
-}
-
-
-  /*************************************/
- /**** Iso Terminal Implementation ****/
-/*************************************/
-
-void ISOTerminal_c::finishUploadCommand ()
-{
-  en_uploadType = UploadIdle;
-  //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << q_sendUpload.size() <<" -> ";
-  #endif
-
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.pop_front();
-  #else
-  q_sendUpload.pop();
-  #endif
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize--;
-  #endif
-
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << std::endl;
-  #endif
-}
-
-
-// only being called if there IS a q_sendUpload.front()
-bool ISOTerminal_c::startUploadCommand ()
-{
-  /** @todo Up to now, noone cares for the return code. implement error handling in case multisend couldn't be started? */
-
-  // Set new state
-  en_uploadType = UploadCommand;
-  // along with UploadCommand ALWAYS set "en_sendSuccess", not only for Multipacket!
-  en_uploadCommandState = UploadCommandWaitingForCommandResponse;
-
-  // Get first element from queue
-  SendUpload_c* actSend = &q_sendUpload.front();
-
-  // Set time-out values
-  ui32_uploadTimeout = actSend->ui32_uploadTimeout;
-  ui32_uploadTimestamp = HAL::getTime();
-
-
-   /// Use Multi or Single CAN-Pkgs?
-  //////////////////////////////////
-
-  if ((actSend->mssObjectString == NULL) && (actSend->vec_uploadBuffer.size() < 9))
-  { /// Fits into a single CAN-Pkg!
-    if (actSend->vec_uploadBuffer[0] == 0x11)
-    { /// Handle special case of language update
-      // There's NO response for command 0x11!
-      en_uploadCommandState = UploadCommandLanguagePoolUpdate;
-
-      // Special send object pool!
-      startObjectPoolUploading (true);
-      if (c_streamer.ui32_streamSizeLang > 0)
-      { // start LANGUAGE part upload!
-        return getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
-      }
-      else
-      { // shouldn't happen, but catch case anyway!
-        // nothing was sent out, so set to success so it gets removed simply...
-        en_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
-        return true;
-      }
-    }
-    else
-    { /// normal 8 byte package
-      // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
-      c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                            actSend->vec_uploadBuffer [0], actSend->vec_uploadBuffer [1],
-                            actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
-                            actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
-                            actSend->vec_uploadBuffer [6], actSend->vec_uploadBuffer [7]);
-      getCanInstance4Comm() << c_data;
-      // Save first byte for Response-Checking!
-      ui8_commandParameter = actSend->vec_uploadBuffer [0];
-
-      en_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
-      return true;
-    }
-  }
-  else if ((actSend->mssObjectString != NULL) && (actSend->mssObjectString->getStreamer()->getStreamSize() < 9))
-  { /// Fits into a single CAN-Pkg!
-    uint8_t ui8_len = actSend->mssObjectString->getStreamer()->getStreamSize();
-
-    c_data.setExtCanPkg (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
-    actSend->mssObjectString->getStreamer()->set5ByteCommandHeader (c_data.pb_data);
-    int i=5;
-    for (; i < ui8_len; i++) c_data.pb_data[i] = actSend->mssObjectString->getStreamer()->getStringToStream() [i-5];
-    for (; i < 8;       i++) c_data.pb_data[i] = 0xFF; // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
-    getCanInstance4Comm() << c_data;
-    // Save first byte for Response-Checking!
-    ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
-
-    en_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
-    return true;
-  }
-  else if (actSend->mssObjectString == NULL)
-  { /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-
-    // Save first byte for Response-Checking!
-    ui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
-
-    return getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
-           &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, en_sendSuccess);
-  }
-  else
-  {
-    // Save first byte for Response-Checking!
-    ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
-
-    return getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress,
-           (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(), ECU_TO_VT_PGN, en_sendSuccess);
-  }
-}
-
-
-/**
-  default constructor, which can optional set the pointer to the containing
-  Scheduler_c object instance
-*/
-ISOTerminal_c::ISOTerminal_c()
-{
-  /// all variable initialization moved to singletonInit!
-}
-
-
-/**
-  default destructor, which initiate sending address release for all own identities
-  @see DINMonitor_c::~DINMonitor_c
-*/
-ISOTerminal_c::~ISOTerminal_c(){
-  close();
-}
-
-
-
-void
-ISOTerminal_c::singletonInit()
-{
-  /// Constructor inits
-  en_uploadType = UploadIdle;
-  localSettings_a.lastReceived = 0; // set this here for safety reasons, as Process_c will read the language from us if "lastReceived != 0"
-
-  /// real init() code...
-  // clear state of b_alreadyClosed, so that close() is called one time
-  clearAlreadyClosed();
-  // register in Scheduler_c to get time-events
-  getSchedulerInstance4Comm().registerClient( this );
-
-  const uint32_t cui32_filterV = (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8);
-  if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), cui32_filterV, Ident_c::ExtendedIdent))
-      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), cui32_filterV, true, Ident_c::ExtendedIdent);
-
-  const uint32_t cui32_filterL = (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8);
-  if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), cui32_filterL, Ident_c::ExtendedIdent))
-      getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), cui32_filterL, true, Ident_c::ExtendedIdent);
-
-  localSettings_a.lastReceived = 0; // no language info received yet
-  vtState_a.lastReceived = 0; // no vt_statusMessage received yet
-  vtCapabilities_a.lastReceivedVersion = 0; // interesting for NACK handling, that's why it's reset here!
-  vtSourceAddress = 254; // shouldn't be read anyway before vt_statusMessage arrived....
-
-  pc_wsMasterIdentItem = NULL;
-  c_streamer.pc_pool = NULL;
-  pc_versionLabel = NULL;
-
-  en_objectPoolState = OPNoneRegistered;
-  en_uploadType = UploadIdle;
-  b_receiveFilterCreated = false;
-
-  b_vtAliveCurrent = false; // so we detect the rising edge when the VT gets connected!
-
-  b_checkSameCommand = true;
-
-  ui32_filterAckPGN = 0; // filter not yet inserted!
-
-  /// No need to set the following variables here at singletonInit()
-  //i32_nextWsMaintenanceMsg; needn't be set here, will be set in doStart!
-  //uint8_t ui8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"
-  //uint8_t ui8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
-
-}
-
-/**
-  Register the given object pool
-  It will automatically be uploaded as soon as ISO_Terminal_c is connected to the VT
-  and all initialization stuff has been done (Get VT Capabilities, Memory, etc.)
-*/
-bool ISOTerminal_c::registerIsoObjectPool (IdentItem_c* rpc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c* rpc_pool, char* rpc_versionLabel)
-{
-  // No support for double initialization or ObjectPool change (yet)!
-  if (en_objectPoolState != OPNoneRegistered) return false;
-
-  if (!((en_uploadType == UploadIdle) || ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolFailed)) )) {
-    // could not start bacause uploader is busy, so we can't set the variables, but this shouldn't really
-    // happen, as the pool should be registered right after initializing the terminal...
-
-    getLbsErrInstance().registerError( LibErr_c::LbsMultiSendBusy, LibErr_c::IsoTerminal );
-    return false;
-  }
-
-  pc_wsMasterIdentItem = rpc_wsMasterIdentItem;
-  c_streamer.pc_pool = rpc_pool;
-  // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
-  c_streamer.pc_pool->initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_VAR);
-
-  if (rpc_versionLabel != NULL) {
-    pc_versionLabel = new (char [7+1]);
-    uint32_t len = CNAMESPACE::strlen(rpc_versionLabel);
-    if (len > 7) len=7;
-    unsigned int i=0;
-    for (; i<len; i++) pc_versionLabel [i] = rpc_versionLabel [i];
-    for (; i<7; i++) pc_versionLabel [i] = 0x20; // ASCII: Space
-    pc_versionLabel[i] = 0x00; // terminate with a 0x00 although not needed...
-  }
-
-  en_objectPoolState = OPRegistered; // try to upload until state == UploadedSuccessfully || CannotBeUploaded
-  en_uploadType = UploadPool;          // Start Pool Uploading sequence!!
-  en_uploadPoolState = UploadPoolInit; // with "UploadInit
-  return true;
-}
-
-
-/**
-  De-Register the registered object pool and versionLabel string (if one was copied)
-*/
-bool ISOTerminal_c::deregisterIsoObjectPool ()
-{
-  // If none registered deregistering is not possible
-  if (en_objectPoolState == OPNoneRegistered) return false;
-
-  // Stop all activities!
-  /** @todo: has anything to be done here? can there still be activities running that would interfere when pc_poll == NULL then?
-   * I think all has been done now to prevent any problems, so it should do! ... */
-
-  // Deregister Pool and Name, IdentItem stays...
-  c_streamer.pc_pool = NULL;
-  en_objectPoolState = OPNoneRegistered;
-  /** @todo finish Upload-stuff: a) in case of Upload Pool and b) in case of Upload Command */
-  en_uploadType = UploadIdle;
-  if (pc_versionLabel != NULL) {
-    delete (pc_versionLabel);
-    pc_versionLabel = NULL;
-  }
-  return true;
-}
-
-
-/**
-  initialise element which can't be done during construct
-
-  possible errors:
-*/
-bool ISOTerminal_c::init(IdentItem_c* rpc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c* rpc_pool, char* rpc_versionLabel)
-{
-  return registerIsoObjectPool (rpc_wsMasterIdentItem, rpc_pool, rpc_versionLabel);
-}
-
-
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown
-  */
-void ISOTerminal_c::close( void )
-{
-  if ( ! checkAlreadyClosed() ) {
-    // avoid another call
-    setAlreadyClosed();
-    getSchedulerInstance4Comm().unregisterClient( this );
-
-    uint32_t ui32_filter = (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8);
-    if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-       getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
-
-    ui32_filter = (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8);
-    if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent))
-       getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filter, Ident_c::ExtendedIdent);
-
-    /** @todo will the IsoItem get lost or get its SA changed? */
-    if (ui32_filterAckPGN != 0)
-    { // do only if filter could be calculated (IsoItem was needed for that) and was actually inserted!
-      if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent))
-         getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent);
-    }
-    /*** MultiReceive De-Registration ***/
-    __IsoAgLib::getMultiReceiveInstance4Comm().deregisterClient(this);
-
-    deregisterIsoObjectPool();
-  }
-}
-
-
-void ISOTerminal_c::doStart ()
-{
-  /// First, trigger sending of WS-Announce
-  pc_wsMasterIdentItem->getIsoItem()->triggerWsAnnounce();
-  i32_nextWsMaintenanceMsg = 0; // send out ws maintenance message immediately after ws has been announced.
-
-  /// Second, init all variables to an initial upload state (Upload will not start before ws-announcing is due
-  vtCapabilities_a.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
-  vtCapabilities_a.lastRequestedSoftkeys = 0; // not yet requested vt's capabilities yet
-  vtCapabilities_a.lastReceivedHardware = 0; // not yet (queried and) got answer about vt's capabilities yet
-  vtCapabilities_a.lastRequestedHardware = 0; // not yet requested vt's capabilities yet
-  vtCapabilities_a.lastReceivedFont = 0; // not yet (queried and) got answer about vt's capabilities yet
-  vtCapabilities_a.lastRequestedFont = 0; // not yet requested vt's capabilities yet
-  vtCapabilities_a.lastReceivedVersion = 0;
-  localSettings_a.lastRequested = 0;
-  localSettings_a.lastReceived = 0;
-  if (en_objectPoolState == OPNoneRegistered)
-  { // no object pool registered, don't go into UploadPool state
-    en_uploadType = UploadIdle;
-  } else
-  { // "OP<was>Registered" || "OP<was>UploadedSuccessfully" || "OPCannotBeUploaded" (on the previous VT: try probably other VT now)
-    en_objectPoolState = OPRegistered; // try (re-)uploading, not caring if it was successfully or not on the last vt!
-
-    en_uploadType = UploadPool;          // Start Pool Uploading sequence!!
-    en_uploadPoolState = UploadPoolInit; // with "UploadInit
-  }
-}
-
-
-void ISOTerminal_c::doStop()
-{
-  vtSourceAddress = 254;
-  vtCapabilities_a.lastReceivedVersion = 0;
-  // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize -= q_sendUpload.size();
-  #endif
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  q_sendUpload.clear();
-  #else
-  while (!q_sendUpload.empty()) q_sendUpload.pop();
-  #endif
-  /** @todo Stop any pool sending (if any) (only interesting if getting NACKed while sending (E)TP) */
-  if (c_streamer.pc_pool != NULL)
-  { // notify application on lost connection so it can enter a defined safe state
-    c_streamer.pc_pool->eventEnterSafeState ();
-  }
-}
-
-
-void ISOTerminal_c::checkVtStateChange()
-{
-  bool b_vtAliveOld = b_vtAliveCurrent;
-  b_vtAliveCurrent = isVtActive();
-
-  // react on vt alive change "false->true"
-  if (!b_vtAliveOld && b_vtAliveCurrent)
-  { /// OFF --> ON  ***  VT has (re-)entered the system
-    #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "\n=========================================================================="
-                          << "\n=== VT has entered the system, trying to receive all Properties now... ==="
-                          << "\n=== time: " << HAL::getTime() << " ==="
-                          << "\n==========================================================================\n\n";
-
-    #endif
-    doStart();
-  }
-  else if (b_vtAliveOld && !b_vtAliveCurrent)
-  { /// ON -> OFF  ***  Connection to VT lost
-    #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "\n=============================================================================="
-                          << "\n=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
-                          << "\n=== time: " << HAL::getTime() << " ==="
-                          << "\n==============================================================================\n\n";
-    #endif
-    doStop();
-  }
-}
-
-
-
-void ISOTerminal_c::setObjectPoolUploadingLanguage()
-{
-  c_streamer.i8_objectPoolUploadingLanguage = i8_vtLanguage;
-  c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
-  if (c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 1) // supporting multilanguage.
-  { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
-    const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
-    const uint8_t* lang = c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[ci8_realUploadingLanguage].language;
-    c_streamer.ui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
-  }
-}
-
-
-
-/**
-  periodically event
-  @return true -> all planned activities performed in allowed time
-*/
-bool ISOTerminal_c::timeEvent( void )
-{
-  if ( Scheduler_c::getAvailableExecTime() == 0 ) return false;
-  #ifdef DEBUG_HEAP_USEAGE
-  if ( ( sui16_lastPrintedSendUploadQueueSize < sui16_sendUploadQueueSize )
-    || ( sui16_lastPrintedMaxSendUploadQueueSize < sui16_maxSendUploadQueueSize ) )
-  { // MAX amount of sui16_sendUploadQueueSize or sui16_maxSendUploadQueueSize
-    sui16_lastPrintedSendUploadQueueSize = sui16_sendUploadQueueSize;
-    sui16_lastPrintedMaxSendUploadQueueSize = sui16_maxSendUploadQueueSize;
-    getRs232Instance()
-      << "Max: " << sui16_sendUploadQueueSize << " Items in FIFO, "
-      << sui16_sendUploadQueueSize << " x SendUpload_c: Mal-Alloc: "
-      << sizeSlistTWithMalloc( sizeof(SendUpload_c), sui16_sendUploadQueueSize )
-      << "/" << sizeSlistTWithMalloc( sizeof(SendUpload_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(SendUpload_c), sui16_sendUploadQueueSize )
-      << "\r\n\r\n";
-  }
-  #endif
-
-  // do further activities only if registered ident is initialised as ISO and already successfully address-claimed...
-  if ( !pc_wsMasterIdentItem ) return true;
-  if ( !pc_wsMasterIdentItem->isClaimedAddress() )
-  { // remove any created receive filter, so that a new one can be created on SA change
-    if (ui32_filterAckPGN != 0)
-    { // do only if filter could be calculated (IsoItem was needed for that) and was actually inserted!
-      if (getCanInstance4Comm().existFilter(*this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent))
-        getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent);
-      ui32_filterAckPGN = 0;
-      b_receiveFilterCreated = false;
-    }
-    return true;
-  }
-
-/*** Filter/MultiReceive Registration Start ***/
-  if ( ! b_receiveFilterCreated )
-  { // register to get VTStatus Messages
-    b_receiveFilterCreated = true;
-
-    ui32_filterAckPGN = (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) | static_cast<MASK_TYPE>(pc_wsMasterIdentItem->getIsoItem()->nr())) << 8;
-    if (!getCanInstance4Comm().existFilter( *this, (0x1FFFF00UL), ui32_filterAckPGN, Ident_c::ExtendedIdent))
-        getCanInstance4Comm().insertFilter( *this, (0x1FFFF00UL), ui32_filterAckPGN, true, Ident_c::ExtendedIdent);
-
-    /*** MultiReceive Registration ***/
-    __IsoAgLib::getMultiReceiveInstance4Comm().registerClient(VT_TO_ECU_PGN, pc_wsMasterIdentItem->getIsoItem()->nr(), this);
-  }
-/*** Filter/MultiReceive Registration End ***/
-
- /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
-/*******************************************************************************************************/
-  System_c::triggerWd();
-
-  // #######################
-  // ### VT Alive checks ###
-  // #######################
-  checkVtStateChange();
-
-  // ### Do nothing if there's no VT active ###
-  if (!isVtActive()) return true;
-
-  // be kind and wait until WSMaster-/Slave-Announce have finished (AddressClaim is already checked above!!), do NOTHING else before.
-  if ( !pc_wsMasterIdentItem->getIsoItem()->isClaimedAndWsAnnounced() ) return true;
-
-  // Check if WS-Maintenance is needed
-  if ((i32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= i32_nextWsMaintenanceMsg))
-  { // Do periodically WS-Maintenance sending (every second)
-    c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                          0xFF, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-    getCanInstance4Comm() << c_data;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
-
-    i32_nextWsMaintenanceMsg = HAL::getTime() + 1000;
-  }
-
-
-  // If our IsoItem has claimed address, immediately try to get the LANGUAGE_PGN from VT/anyone ;-) (regardless of pool-upload!)
-  if ((!localSettings_a.lastReceived) && ((localSettings_a.lastRequested == 0) || ((HAL::getTime()-localSettings_a.lastRequested) > 2000)))
-  { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
-    /** @todo Give up somewhen?? Or retry really every 2 seconds? */
-    // Get Local Settings (may not be reached, when terminal is switched on after ECU, as VT sends LNAGUAGE Info on startup!
-    c_data.setExtCanPkg3 (6, 0, REQUEST_PGN_MSG_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                          (LANGUAGE_PGN & 0xFF), ((LANGUAGE_PGN >> 8)& 0xFF), ((LANGUAGE_PGN >> 16)& 0xFF));
-    getCanInstance4Comm() << c_data;      // Command: Request_PGN
-    localSettings_a.lastRequested = HAL::getTime();
-  }
-
-  if (!localSettings_a.lastReceived)
-    return true; // do not proceed if LANGUAGE not yet received!
-
-
-  // Do nothing if no pool is registered
-  if ( (en_objectPoolState == OPNoneRegistered)
-    || (en_objectPoolState == OPCannotBeUploaded) ) // if it couldn't be uploaded, only disconnecting/connecting VT helps!
-    return true; /** @todo is this correctly assumed? "if it couldn't be uploaded, only disconnecting/connecting VT helps!" */
-
-
-  /// Now from here on the Pool's state is: "OPRegistered" or "OPUploadedSuccessfully"
-  ////////////////////////////////
-  /// UPLOADING --> OBJECT-POOL<--
-  if (en_uploadType == UploadPool)
-  {
-    // Do TIME-OUT Checks ALWAYS!
-    if ((en_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)
-     || (en_uploadPoolState == UploadPoolWaitingForMemoryResponse)
-     || (en_uploadPoolState == UploadPoolWaitingForEOOResponse)) {
-      // timedout
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
-        en_uploadPoolState = UploadPoolFailed;
-        ui32_uploadTimestamp = HAL::getTime();
-        ui32_uploadTimeout = DEF_WaitFor_Reupload; // wait 5 secs for possible reuploading...
-      }
-    }
-    // Do TIME-OUT Checks ALWAYS!
-    if (en_uploadPoolState == UploadPoolWaitingForStoreVersionResponse) {
-      // timedout
-      if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
-        // we couldn't store for some reason, but don't care, finalize anyway...
-        #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << "StoreVersion TimedOut!\n";
-        #endif
-        finalizeUploading (false); // false == initial upload, was NOT language update
-      }
-    }
-    // Do TIME-OUT Checks ALWAYS! - Check if we expect an (OBJECTPOOL) UPLOAD to fail/finish?
-    if (en_uploadPoolState == UploadPoolUploading) {
-      switch (en_sendSuccess) {
-        case __IsoAgLib::MultiSend_c::Running: {
-          // do nothing, still wait.
-        } break;
-        case __IsoAgLib::MultiSend_c::SendAborted: {
-          // aborted sending
-          /// re-send the current stream!
-          getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
-        } break;
-        case __IsoAgLib::MultiSend_c::SendSuccess: {
-          // see what part we just finished
-          if (c_streamer.ui32_streamSize > 0)
-          { // we just finished streaming the GENERAL part, so let's see if we have a LANGUAGE part to stream?
-            c_streamer.ui32_streamSize = 0; // indicate completion of GENERAL upload!
-            if (c_streamer.ui32_streamSizeLang > 0)
-            { // start LANGUAGE part upload!
-              getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
-              break; // we're uploading, do not indicate pool completion ;)
-            }
-          } // else we just finished streaming the LANGUAGE part, so upload is finished now!
-          // successfully sent, so do we now have to send out the "End of Object Pool Message"?
-          indicateObjectPoolCompletion (); // Send "End of Object Pool" message
-        } break;
-      } // switch
-    }
-    // Handled down below are (as they're no TIME-OUTs but INITIATIONs:
-    // if (UploadPoolFailed)
-    // if (UploadPoolInit)
-
-    // ### Do we have to request (any) vt capabilities?
-    if (!(vtCapabilities_a.lastReceivedFont && vtCapabilities_a.lastReceivedHardware && vtCapabilities_a.lastReceivedSoftkeys)) {
-      /// Pool-Upload: PRE Phase (Get VT-Properties)
-      if (!vtCapabilities_a.lastReceivedSoftkeys && ((vtCapabilities_a.lastRequestedSoftkeys == 0) || ((HAL::getTime()-vtCapabilities_a.lastRequestedSoftkeys) > 1000))) {
-        // Get Number Of Soft Keys
-        c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                              194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-        getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
-        vtCapabilities_a.lastRequestedSoftkeys = HAL::getTime();
-        #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "Requested first property (C2)...\n";
-        #endif
-      }
-      if (vtCapabilities_a.lastReceivedSoftkeys && (!vtCapabilities_a.lastReceivedFont) && ((vtCapabilities_a.lastRequestedFont == 0) || ((HAL::getTime()-vtCapabilities_a.lastRequestedFont) > 1000))) {
-        // Get Text Font Data
-        c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                              195, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-        getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
-        vtCapabilities_a.lastRequestedFont = HAL::getTime();
-      }
-      if (vtCapabilities_a.lastReceivedSoftkeys && vtCapabilities_a.lastReceivedFont && (!vtCapabilities_a.lastReceivedHardware) && ((vtCapabilities_a.lastRequestedHardware == 0) || ((HAL::getTime()-vtCapabilities_a.lastRequestedHardware) > 1000))) {
-        // Get Hardware
-        c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                              199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-        getCanInstance4Comm() << c_data;      // Command: Get Technical Data --- Parameter: Get Hardware
-        vtCapabilities_a.lastRequestedHardware = HAL::getTime();
-      }
-    }
-    else // if (vtCapabilities_a.lastReceivedFont && vtCapabilities_a.lastReceivedHardware && vtCapabilities_a.lastReceivedSoftkeys && localSettings_a.lastReceived)
-    {
-      /// Handle other than Response states now here: INITIALIZING-States!
-      // - if (UploadPoolFailed)
-      // - if (UploadPoolInit)
-      /// Pool-Upload: MAIN Phase (Try2Load / Upload / Try2Save)
-      // ### Do MAIN-Phase a) at INIT and b) <timeout> seconds after FAIL
-      if ( ((en_uploadPoolState == UploadPoolFailed) && (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)))
-         || (en_uploadPoolState == UploadPoolInit) )
-      {
-        // Take the version that's been set up NOW and try to load/upload it.
-        setObjectPoolUploadingLanguage();
-        // Do we want to try to "Load Version" or go directly to uploading?
-// Added this preprocessor so loading of object pools can be prevented for development purposes
-#ifdef NO_LOAD_VERSION
-#else
-        if (pc_versionLabel != NULL)
-        {
-          #ifdef GET_VERSIONS
-            // this is for test purposes only!
-            static int b_getVersionsSendTime=0;
-            if (b_getVersionsSendTime == 0)
-            { // send out get versions first
-              c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                                    223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-              getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
-              b_getVersionsSendTime = HAL::getTime();
-            }
-            if ((b_getVersionsSendTime+500) > HAL::getTime())
-            { // wait for answer first
-              return true;
-            }
-          #endif
-
-          char lang1, lang2;
-          if (c_streamer.ui16_objectPoolUploadingLanguageCode != 0x0000) {
-            lang1 = c_streamer.ui16_objectPoolUploadingLanguageCode >> 8;
-            lang2 = c_streamer.ui16_objectPoolUploadingLanguageCode & 0xFF;
-          } else {
-            lang1 = pc_versionLabel [5];
-            lang2 = pc_versionLabel [6];
-          }
-
-          // Try to "Non Volatile Memory - Load Version" first!
-          c_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                               #ifdef LOESCHE_POOL
-                               210,
-                               #else
-                               209,
-                               #endif
-                               pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], lang1, lang2);
-          getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Load Version
-                                               //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
-        #ifdef LOESCHE_POOL
-          startObjectPoolUploading (false);
-        #else
-          // start uploading after reception of LoadVersion Response
-          en_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
-          ui32_uploadTimeout = DEF_TimeOut_LoadVersion;
-          ui32_uploadTimestamp = HAL::getTime();
-          #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<pc_versionLabel [0]<< pc_versionLabel [1]<< pc_versionLabel [2]<< pc_versionLabel [3]<< pc_versionLabel [4]<< lang1<< lang2<<"]...\n";
-          #endif
-        #endif
-        }
-        else
-#endif
-        // NO_LOAD_VERSION
-        { // Start uploading right now, no "LoadVersion" first
-          startObjectPoolUploading (false); // no language specific upload - normal upload!
-        }
-      }
-    }
-  }
-
-  /////////////////////////////
-  /// UPLOADING --> COMMAND <--
-  // Can only be done if the Object-Pool is successfully uploaded!
-  if (en_objectPoolState != OPUploadedSuccessfully)
-    return true;
-
-  /// FROM HERE ON THE OBJECT-POOL >>IS<< UPLOADED SUCCESSFULLY
-  /// HANDLE CASE A) AND B) FROM HERE NOW
-
-  /// A) NOW HERE THE LANGUAGE CHANGE IS HANDLED
-  if ( (c_streamer.i8_objectPoolUploadingLanguage == -2) // indicates no update running
-    && (i8_vtLanguage != c_streamer.i8_objectPoolUploadedLanguage)
-     )
-  { // update languages on the fly
-    setObjectPoolUploadingLanguage();
-    /// NOTIFY THE APPLICATION so it can enqueue some commands that are processed BEFORE the update is done
-    /// e.g. switch to a "Wait while changing language..." datamask.
-    if (c_streamer.pc_pool != NULL) {
-      c_streamer.pc_pool->eventPrepareForLanguageChange (c_streamer.i8_objectPoolUploadingLanguage, c_streamer.ui16_objectPoolUploadingLanguageCode);
-    }
-
-
-    sendCommandUpdateLanguagePool();
-    // we keep (c_streamer.i8_objectPoolUploadingLanguage != -2), so a change in between doesn't care and won't happen!!
-  }
-
-
-  /// B) NOW HERE THE RUNTIME COMMANDS ARE BEING HANDLED
-  if (en_uploadType == UploadCommand)
-  {
-    // NO Response/timeOut for (C.2.3 Object Pool Transfer Message) "UploadObjectPool" - Only for "UploadMultiPaketCommand"
-    switch (en_sendSuccess)
-    {
-      case __IsoAgLib::MultiSend_c::SendAborted:
-        // If aborted, retry regardless of "ui8_uploadRetry", as it was a multisend problem, not a problem of the command itself!
-        startUploadCommand();
-        break;
-
-      case __IsoAgLib::MultiSend_c::Running:
-        // increase sent time-stamp, so it matches best the time when the multisend has finished sending, so that the timeout counts from that time on!
-        ui32_uploadTimestamp = HAL::getTime();
-        break;
-
-      case __IsoAgLib::MultiSend_c::SendSuccess: // no break, handle along with default: wait for response!
-      default:
-      { // successfully sent...
-        if (en_uploadCommandState == UploadCommandLanguagePoolUpdate)
-        { // no response is awaited, so we finished sending
-          finishUploadCommand();
-          break; // and done!
-        }
-
-        if (en_uploadCommandState == UploadCommandWaitingForCommandResponse) // won't reach here when "Running", as timestamp is getting get to now above!
-        { // Waiting for an answer - Did it time out?
-          if (((uint32_t) HAL::getTime()) > (ui32_uploadTimeout + ui32_uploadTimestamp)) {
-            en_uploadCommandState = UploadCommandTimedOut;
-          }
-        } // don't break, as "UploadCommandTimedOut" is handled right below!
-
-        // Are we in "Upload Command"-State and the last Upload failed?
-        if ( (en_uploadCommandState == UploadCommandTimedOut) /* OBSOLETE: || (en_uploadCommandState == UploadCommandFailed) */) {
-          if (ui8_uploadRetry > 0) {
-            ui8_uploadRetry--;
-            startUploadCommand();
-          } else {
-            // No more retries, simply finish this job and go Idle!
-            finishUploadCommand(); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
-          }
-        }
-        break;
-      }
-    }
-  } // UploadCommand
-
-  // ### Is a) no Upload running and b) some Upload to do?
-  if ((en_uploadType == UploadIdle) && !q_sendUpload.empty()) {
-    // Set Retry & Start Uploading
-    ui8_uploadRetry = (*(q_sendUpload.begin())).ui8_retryCount;
-    startUploadCommand ();
-  }
-
-  return true;
-}
-
-
-// handle all string values between length of 9 and 259 bytes
-bool ISOTerminal_c::reactOnStreamStart(IsoAgLib::ReceiveStreamIdentifier_c rc_ident, uint32_t rui32_totalLen)
-{
-  // if SA is not the address from the vt -> don't react on stream
-  if (rc_ident.getSa()!=getVtSourceAddress ()) return false;
-  //handling string value >= 9 Bytes
-  if (rui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
-    return false;
-  return true;
-}
-
-void ISOTerminal_c::reactOnAbort(IsoAgLib::iStream_c* /*rpc_stream*/)
-{
-  if (c_streamer.pc_pool != NULL) {
-    c_streamer.pc_pool->eventStringValueAbort();
-  }
-}
-
-
-bool ISOTerminal_c::processPartStreamDataChunk(IsoAgLib::iStream_c* rpc_stream, bool rb_isFirstChunk, bool rb_isLastChunk)
-{
-  if (rpc_stream->getStreamInvalid()) return false;
-  if (rb_isFirstChunk)
-  {
-    if (rpc_stream->getFirstByte() != 0x8 ) return false; // check for command input string value H.18
-    ui16_inputStringId = rpc_stream->getNextNotParsed() | (rpc_stream->getNextNotParsed() << 8 );
-    ui8_inputStringLength = rpc_stream->getNextNotParsed();
-
-    const uint16_t ui16_totalstreamsize = rpc_stream->getByteTotalSize();
-    if ( ui16_totalstreamsize != (ui8_inputStringLength + 4) )
-    {
-      rpc_stream->setStreamInvalid();
-      return false;
-    }
-  }
-  if (c_streamer.pc_pool != NULL) {
-    c_streamer.pc_pool->eventStringValue(ui16_inputStringId, ui8_inputStringLength, *rpc_stream, rpc_stream->getNotParsedSize(), rb_isFirstChunk, rb_isLastChunk);
-  }
-  return false;
-}
-
-
-/**
-  call to check if at least one vt_statusMessage has arrived so we know if the terminal is there.
-  @return true -> >= 1 vt_statusMessages have arrived -> terminal is there.
-*/
-bool ISOTerminal_c::isVtActive ()
-{
-  if (vtState_a.lastReceived) {
-    if (((int32_t)HAL::getTime() - (int32_t)vtState_a.lastReceived) <= 3000)
-    { // comparing as int, so that in case "NOW-time > CAN-time" NO client-reload happens
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
-  }
-}
-
-
-/** save current send position in data source - neeed for resend on send problem
-    - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-  */
-void ISOTerminalStreamer_c::saveDataNextStreamPart ()
-{
-  pc_iterObjectsStored = pc_iterObjects;
-  ui32_objectStreamPositionStored = ui32_objectStreamPosition;
-  uploadBufferPositionStored = uploadBufferPosition;
-  uploadBufferFilledStored = uploadBufferFilled;
-  for (int i=0; i<ISO_VT_UPLOAD_BUFFER_SIZE; i++) {
-    uploadBufferStored [i] = uploadBuffer [i];
-  }
-}
-
-
-/** reactivate previously stored data source position - used for resend on problem
-    - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-  */
-void ISOTerminalStreamer_c::restoreDataNextStreamPart ()
-{
-  pc_iterObjects = pc_iterObjectsStored;
-  ui32_objectStreamPosition = ui32_objectStreamPositionStored;
-  uploadBufferPosition = uploadBufferPositionStored;
-  uploadBufferFilled = uploadBufferFilledStored;
-  for (int i=0; i<ISO_VT_UPLOAD_BUFFER_SIZE; i++) {
-    uploadBuffer [i] = uploadBufferStored [i];
-  }
-}
-
-
-/** set cache for data source to stream start
-    - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-  */
-void ISOTerminalStreamer_c::resetDataNextStreamPart ()
-{
-  uint8_t ui8_streamOffset;
-  if (ui32_streamSize > 0)
-  { // stream GENERAL PART
-    ui8_streamOffset = 0;
-  }
-  else
-  { // stream LANGUAGE PART
-    const int8_t ci8_realUploadingLanguage = (i8_objectPoolUploadingLanguage < 0) ? 0 : i8_objectPoolUploadingLanguage;
-    ui8_streamOffset = ci8_realUploadingLanguage + 1; // skip general pool
-  }
-  pc_iterObjects = pc_pool->getIVtObjects()[ui8_streamOffset];
-  ui32_objectStreamPosition = 0;
-  uploadBufferPosition = 0;
-  uploadBufferFilled = 1;
-  uploadBuffer [0] = 17;
-
-  // ! ui32_streamSize is constant and is initialized in "StartObjectPoolUploading"
-  // ! pc_pool         is constant and is initialized in "StartObjectPoolUploading"
-
-  // following should not be needed to be reset, as this set by "saveDataNextStreamPart"
-  // ? ui32_objectStreamPositionStored
-  // ? pc_iterObjectsStored;
-  // ? uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
-  // ? uploadBufferFilledStored;
-  // ? uploadBufferPositionStored;
-}
-
-
-/** place next data to send direct into send puffer of pointed
-    stream send package - MultiSendStreamer_c will send this
-    puffer afterwards
-    - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-  */
-void ISOTerminalStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes)
-{
-  while ((uploadBufferFilled-uploadBufferPosition) < bytes) {
-    // copy down the rest of the buffer (we have no ring buffer here!)
-    int j=uploadBufferFilled - uploadBufferPosition;
-    for (int i=0; i<j; i++) {
-      uploadBuffer [i] = uploadBuffer [i+uploadBufferPosition];
-    }
-    // adjust pointers
-    uploadBufferPosition = 0;
-    uploadBufferFilled = j;
-
-    // stream some more bytes into internal ISO_VT_UPLOAD_BUFFER_SIZE byte buffer...
-    uint16_t bytes2Buffer;
-    while ((bytes2Buffer = ((vtObject_c*)(*pc_iterObjects))->stream (uploadBuffer+uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-uploadBufferFilled, ui32_objectStreamPosition)) == 0) {
-      pc_iterObjects++;
-      ui32_objectStreamPosition = 0;
-    }
-    uploadBufferFilled += bytes2Buffer;
-    ui32_objectStreamPosition += bytes2Buffer;
-  }
-  mspData->setDataPart(uploadBuffer, uploadBufferPosition, bytes);
-  uploadBufferPosition += bytes;
-}
-
-
-
-void ISOTerminal_c::startObjectPoolUploading (bool rb_onlyLanguageStream)
-{
-  // calculate mask_stream size NOW (added 1 byte for "Object Pool Upload Start" Command Byte)
-  // because we can't do before we get the color-depth information (0xC7)
-
-  c_streamer.ui32_streamSize = 0;
-  c_streamer.ui32_streamSizeLang = 0;
-
-  // *CONDITIONALLY* Calculate GENERAL Part size (always init size to 0 above!)
-  if (!rb_onlyLanguageStream)
-  {
-    for (uint32_t curObject=0; curObject < c_streamer.pc_pool->getNumObjects(); curObject++) {
-      c_streamer.ui32_streamSize += ((vtObject_c*)c_streamer.pc_pool->getIVtObjects()[0][curObject])->fitTerminal ();
-    }
-  }
-
-  // *ALWAYS* Calculate LANGUAGE Part size (if objectpool has multilanguage!)
-  if (c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow > 0) // supporting multilanguage.
-  { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
-    const int8_t ci8_realUploadingLanguage = (c_streamer.i8_objectPoolUploadingLanguage < 0) ? 0 : c_streamer.i8_objectPoolUploadingLanguage;
-    for (uint32_t curObject=0; curObject < c_streamer.pc_pool->getNumObjectsLang(); curObject++) {
-      c_streamer.ui32_streamSizeLang += ((vtObject_c*)c_streamer.pc_pool->getIVtObjects()[ci8_realUploadingLanguage+1][curObject])->fitTerminal ();
-    }
-  } // else: no LANGUAGE SPECIFIC objectpool, so keep this at 0 to indicate this!
-
-  if (!rb_onlyLanguageStream)
-  {
-    c_data.setExtCanPkg8(7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                        192 /* 0xC0 */, 0xff, (c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) & 0xFF,
-                                              ((c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >>  8) & 0xFF,
-                                              ((c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >> 16) & 0xFF,
-                                              (c_streamer.ui32_streamSize+c_streamer.ui32_streamSizeLang) >> 24, 0xff, 0xff);
-    getCanInstance4Comm() << c_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
-
-    c_streamer.ui32_streamSize++;
-
-    // Now proceed to uploading
-    en_uploadPoolState = UploadPoolWaitingForMemoryResponse;
-    ui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-    ui32_uploadTimestamp = HAL::getTime();
-  }
-
-  if (c_streamer.ui32_streamSizeLang > 0) // only if there's at least one object being streamed up as LANGUAGE specific objectpool add the CMD byte for size calculation...
-    c_streamer.ui32_streamSizeLang++;
-}
-
-
-/// finalizeUploading() is getting called after LoadVersion or UploadPool...
-void ISOTerminal_c::finalizeUploading (bool rb_wasLanguageUpdate)
-{
-  c_streamer.i8_objectPoolUploadedLanguage = c_streamer.i8_objectPoolUploadingLanguage;
-  c_streamer.ui16_objectPoolUploadedLanguageCode = c_streamer.ui16_objectPoolUploadingLanguageCode;
-  c_streamer.i8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
-  c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "===> finalizeUploading (wasLanguageUpdate?"<<rb_wasLanguageUpdate<<") with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage<<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]\n";
-  #endif
-  if (rb_wasLanguageUpdate)
-  {
-    // no need to set "en_objectPoolState" and "en_uploadType", this is done in "finishUploadCommand()"
-  } else {
-    #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "Now en_objectPoolState = OPUploadedSuccessfully;\n";
-    #endif
-    en_objectPoolState = OPUploadedSuccessfully;
-    en_uploadType = UploadIdle;
-  }
-  if (c_streamer.pc_pool != NULL)
-  { // there should always a pc_pool, else "finalizeUploading" wouldn't be called!
-    c_streamer.pc_pool->eventObjectPoolUploadedSuccessfully (rb_wasLanguageUpdate, c_streamer.i8_objectPoolUploadedLanguage, c_streamer.ui16_objectPoolUploadedLanguageCode);
-  }
-}
-
-
-/** Send "End of Object Pool" message */
-void ISOTerminal_c::indicateObjectPoolCompletion ()
-{
-  // successfully sent, so now send out the "End of Object Pool Message" and wait for response!
-  c_data.setExtCanPkg8(7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                      18, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-  getCanInstance4Comm() << c_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
-  en_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
-  ui32_uploadTimeout = DEF_TimeOut_EndOfObjectPool; // wait 10 seconds for terminal to initialize pool!
-  ui32_uploadTimestamp = HAL::getTime();
-}
-
-
-void
-ISOTerminal_c::vtOutOfMemory()
-{  // can't (up)load the pool.
-  getLbsErrInstance().registerError( LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal );
-  en_uploadPoolState = UploadPoolFailed; // no timeout needed
-  en_objectPoolState = OPCannotBeUploaded;
-}
-
-
-/** process received can messages
-  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
-*/
-bool ISOTerminal_c::processMsg()
-{
-  // do not process any messages if we're not working as ISOTerminal_c
-  // NORMALLY better do not compile the ISOTerminal_c class then when you don't need it ;-)
-  /** @todo Decide where to place this check - what makes sense when NOT initialized with an IdentItem? */
-  if ( !pc_wsMasterIdentItem ) return true;
-
-//  #ifdef DEBUG
-//  INTERNAL_DEBUG_DEVICE << "Incoming Message: data().isoPgn=" << data().isoPgn() << " - HAL::getTime()=" << HAL::getTime()<<" - data[0]="<<(uint16_t)data().getUint8Data (0)<<"...   ";;
-//  #endif
-
-  /** @todo check for can-pkg-length==8???? */
-
-  uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
-  uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
-
-#define MACRO_setStateDependantOnError(errByte) \
-  ui8_errByte = errByte;
-
-  // VT_TO_GLOBAL is the only PGN we accept without VT being active, because it marks the VT active!!
-
-        //////////////////////////////////////////
-       // vt to global? -->VT_TO_GLOBAL_PGN<-- //
-      //////////////////////////////////////////
-  if ((data().isoPgn() & 0x1FFFF) == VT_TO_GLOBAL_PGN) {
-    switch (data().getUint8Data (0)) {
-      case 0xFE: // Command: "Status", Parameter: "VT Status Message"
-        vtState_a.lastReceived = data().time();
-//        #ifdef DEBUG
-//        INTERNAL_DEBUG_DEVICE << "\nLast VT Status Message encountered: data().time()=" << data().time() << " - now()=" << HAL::getTime()<<".\n";;
-//        #endif
-        vtState_a.saOfActiveWorkingSetMaster = data().getUint8Data (1);
-        vtState_a.dataAlarmMask = data().getUint8Data (2) | (data().getUint8Data (3) << 8);
-        vtState_a.softKeyMask = data().getUint8Data (4) | (data().getUint8Data (5) << 8);
-        vtState_a.busyCodes = data().getUint8Data (6);
-        vtState_a.functionBusy = data().getUint8Data (7);
-        // get source address of virtual terminal
-        vtSourceAddress = data().isoSa();
-        if (c_streamer.pc_pool != NULL) {
-          c_streamer.pc_pool->eventVtStatusMsg();
-        }
-        return true; // VT Status Message is NOT of interest for anyone else!
-    }
-    return false; // VT_TO_GLOBAL IS of interest for anyone else, because of AUX Assignment, etc...
-  }
-
-
-        //////////////////////////////////////////////
-       // NACK to this ECU? -->ACKNOWLEDGE_PGN<-- ///
-      //////////////////////////////////////////////
-#if !defined( IGNORE_VTSERVER_NACK )	// The NACK must be ignored for the Mueller VT Server
-  if ( pc_wsMasterIdentItem->getIsoItem() && ((data().isoPgn() & 0x1FFFF) == (uint32_t) (ACKNOWLEDGEMENT_PGN | (pc_wsMasterIdentItem->getIsoItem()->nr()))) )
-  { /// on NACK do:
-    // check if we have Agrocom/Müller with Version < 3, so we IGNORE this NACK BEFORE the pool is finally uploaded.
-
-    bool b_ignoreNack = false; // normally DO NOT ignore NACK
-    if (getIsoMonitorInstance().existIsoMemberNr (data().isoSa()))
-    { // sender exists in isomonitor, so query its Manufacturer Code
-      const uint16_t cui16_manufCode = getIsoMonitorInstance().isoMemberNr (data().isoSa()).devKey().getConstName().manufCode();
-      if ( ( (cui16_manufCode == 98) || // Müller Elektronik
-             (cui16_manufCode == 103)   // Agrocom
-           ) && ((vtCapabilities_a.lastReceivedVersion == 0) || (vtCapabilities_a.iso11783version < 3)) )
-      {
-        if (en_objectPoolState != OPUploadedSuccessfully)
-        { // mueller/agrocom hack - ignore upload while no objectpool is displayed
-          b_ignoreNack = true;
-        }
-      }
-    }
-
-    if (!b_ignoreNack)
-    {
-      // for now ignore source address which must be VT of course. (but in case a NACK comes in before the first VT Status Message
-      // Check if a VT-related message was NACKed. Check embedded PGN for that
-      const uint32_t cui32_pgn =  uint32_t (data().getUint8Data(5)) |
-                                (uint32_t (data().getUint8Data(6)) << 8) |
-                                (uint32_t (data().getUint8Data(7)) << 16);
-      switch (cui32_pgn)
-      {
-        case ECU_TO_VT_PGN:
-        case WORKING_SET_MEMBER_PGN:
-        case WORKING_SET_MASTER_PGN:
-          /// fake NOT-alive state of VT for now!
-          vtState_a.lastReceived = 0; // set VTalive to FALSE, so the queue will be emptied, etc. down below on the state change check.
-          #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
-                                << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
-          #endif
-          pc_wsMasterIdentItem->getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
-          checkVtStateChange(); // will also notify application by "eventEnterSafeState"
-          break;
-      } // switch
-    }
-    return true; // (N)ACK for our SA will NOT be of interest for anyone else...
-  }
-#endif
-
-
-    /// ////////////////////////////////////////////////////////
-   /// we're here now with either LANGUAGE_PGN or VT_TO_ECU_PGN
-  /// ////////////////////////////////////////////////////////
-
-        ////////////////////////
-       // -->LANGUAGE_PGN<-- //
-      ////////////////////////
-  if ((data().isoPgn() & 0x1FFFF) == LANGUAGE_PGN) {
-    localSettings_a.lastReceived =  data().time();
-    localSettings_a.languageCode = (data().getUint8Data (0) << 8) | data().getUint8Data (1);
-    localSettings_a.nDecimalPoint = data().getUint8Data (2) >> 6;
-    localSettings_a.nTimeFormat =  (data().getUint8Data (2) >> 4) & 0x03;
-    localSettings_a.dFormat =       data().getUint8Data (3);
-    localSettings_a.uDistance =     data().getUint8Data (4) >> 6;
-    localSettings_a.uArea =        (data().getUint8Data (4) >> 4) & 0x03;
-    localSettings_a.uVolume =      (data().getUint8Data (4) >> 2) & 0x03;
-    localSettings_a.uMass =         data().getUint8Data (4)       & 0x03;
-    localSettings_a.uTemperature =  data().getUint8Data (5) >> 6;
-    localSettings_a.uPressure =    (data().getUint8Data (5) >> 4) & 0x03;
-    localSettings_a.uForce =       (data().getUint8Data (5) >> 2) & 0x03;
-    localSettings_a.uUnitsSystem =  data().getUint8Data (5)       & 0x03;
-    // The other fields are reserved. (yet ;-)
-
-    i8_vtLanguage = -1; // indicate that VT's language is not supported by this WS, so the default language should be used
-
-    if (c_streamer.pc_pool != NULL)
-    {
-      const uint8_t cui8_languages = c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->numberOfLanguagesToFollow;
-      for (int i=0; i<cui8_languages; i++)
-      {
-        const uint8_t* lang = c_streamer.pc_pool->getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[i].language;
-        if (localSettings_a.languageCode == ((lang[0] << 8) | lang[1]))
-        {
-          i8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
-          break;
-        }
-      }
-
-      c_streamer.pc_pool->eventLanguagePgn(localSettings_a);
-    }
-    /** @todo return FALSE so others can react on it? Base_c ?? */
-    /** @todo Use Base_c for getting the VT's language????? */
-    return true;
-  }
-
-
-  // If VT is not active, don't react on PKGs addressed to us, as VT's not active ;)
-  if (!isVtActive()) return true;
-
-  // If no pool registered, do nothing!
-  if (en_objectPoolState == OPNoneRegistered) return true;
-
-
-
-        //////////////////////////////////////////
-       // VT to this ECU? -->VT_TO_ECU_PGN<-- ///
-      //////////////////////////////////////////
-  if ( pc_wsMasterIdentItem->getIsoItem() && ((data().isoPgn() & 0x1FFFF) == (uint32_t) (VT_TO_ECU_PGN + pc_wsMasterIdentItem->getIsoItem()->nr())) )
-  {
-
-
-    switch (data().getUint8Data (0)) {
-     /*************************************/
-    /*** ### VT Initiated Messages ### ***/
-      case 0x00: // Command: "Control Element Function", parameter "Soft Key"
-      case 0x01: // Command: "Control Element Function", parameter "Button"
-        if (c_streamer.pc_pool) {
-          c_streamer.pc_pool->eventKeyCode (data().getUint8Data (1) /* key activation code (pressed, released, held) */,
-                                 data().getUint8Data (2) | (data().getUint8Data (3) << 8) /* objID of key object */,
-                                 data().getUint8Data (4) | (data().getUint8Data (5) << 8) /* objID of visible mask */,
-                                 data().getUint8Data (6) /* key code */,
-                                 data().getUint8Data (0) /* 0 for sk, 1 for button -- matches wasButton? boolean */ );
-        }
-        break;
-      case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
-        if (c_streamer.pc_pool) {
-          c_streamer.pc_pool->eventPointingEvent(data().getUint8Data (1) | (data().getUint8Data (2) << 8) /* X position in pixels */,
-              data().getUint8Data (3) | (data().getUint8Data (4) << 8) /* Y position in pixels */);
-        }
-        break;
-      case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
-        if (c_streamer.pc_pool) {
-          c_streamer.pc_pool->eventNumericValue (uint16_t( data().getUint8Data (1) ) | (uint16_t( data().getUint8Data (2) ) << 8) /* objID */,
-                                      data().getUint8Data (4) /* 1 byte value */,
-                                      uint32_t( data().getUint8Data (4) ) | (uint32_t( data().getUint8Data (5) ) << 8) | (uint32_t( data().getUint8Data (6) ) << 16)| (uint32_t( data().getUint8Data (7) ) << 24) /* 4 byte value */ );
-        }
-        break;
-      case 0x08:  // Command: "Control Element Function", parameter "VT Input String Value"
-        if (c_streamer.pc_pool)
-        {
-          if (data().getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
-          {
-            VolatileMemory_c c_vmString (((uint8_t*)data().name())+4);
-            c_streamer.pc_pool->eventStringValue (uint16_t( data().getUint8Data (1) ) | (uint16_t( data().getUint8Data (2) ) << 8) /* objID */,
-                                                  data().getUint8Data (3) /* total number of bytes */, c_vmString,
-                                                  data().getUint8Data (3) /* total number of bytes */, true, true);
-          }
-        }
-        break;
-
-
-
-     /***************************************************/
-    /*** ### ECU Initiated Messages (=Responses) ### ***/
-      case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
-        if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForEOOResponse))
-        { /// *** INITIAL POOL UPLOAD ***
-          if (data().getUint8Data (1) == 0)
-          { /// NO Error with UPLOADING pool
-// Added this preprocessor so storing of object pools can be prevented for development purposes
-#ifndef NO_STORE_VERSION
-            if (pc_versionLabel != NULL) {
-              // Store Version and finalize after "Store Version Response"
-              char lang1, lang2;
-              if (c_streamer.ui16_objectPoolUploadingLanguageCode != 0x0000) {
-                lang1 = c_streamer.ui16_objectPoolUploadingLanguageCode >> 8;
-                lang2 = c_streamer.ui16_objectPoolUploadingLanguageCode & 0xFF;
-              } else {
-                lang1 = pc_versionLabel [5];
-                lang2 = pc_versionLabel [6];
-              }
-              c_data.setExtCanPkg8(7, 0, ECU_TO_VT_PGN>>8, vtSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
-                                   208 /* D0 */, pc_versionLabel [0], pc_versionLabel [1], pc_versionLabel [2], pc_versionLabel [3], pc_versionLabel [4], lang1, lang2);
-              getCanInstance4Comm() << c_data;     // Command: Non Volatile Memory --- Parameter: Store Version
-
-              // Now wait for response
-              en_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
-              ui32_uploadTimeout = DEF_TimeOut_StoreVersion;
-              ui32_uploadTimestamp = HAL::getTime();
-            }
-            else
-#endif // NO_STORE_VERSION
-            {
-              // Finalize now!
-              finalizeUploading (false); // false == initial upload, was NOT language update
-            }
-          } else {
-            en_uploadPoolState = UploadPoolFailed; // errorcode in ui8_uploadError;
-            en_objectPoolState = OPCannotBeUploaded;
-            ui8_uploadError = data().getUint8Data (2);
-          }
-        }
-        else if ((en_uploadType == UploadCommand) && (en_uploadCommandState == UploadCommandWaitingForCommandResponse))
-        { /// *** LANGUAGE POOL UPDATE ***
-          MACRO_setStateDependantOnError(2)
-          finalizeUploading (true); // indicate that the language specific objects have been updated. also the user will get notified.
-/** @todo Error Handling!
-          if (data().getUint8Data (2-1) == 0)
-          { /// NO Error with UPDATING pool
-            finalizeUploading (true); // indicate that the language specific objects have been updated. also the user will get notified.
-          }
-          else
-          { /// Error with UPDATING pool
-            /// @todo How to register an error here and how to proceed?
-          }
-*/
-        }
-        break;
-
-#ifdef USE_SIMPLE_AUX_RESPONSE
-     /***************************************/
-    /*** ### AUX Assignment Messages ### ***/
-      case 0x20: { // Command: "Auxiliary Control", parameter "Auxiliary Assignment"
-        data().setIsoPgn(ECU_TO_VT_PGN);
-        data().setIsoSa (pc_wsMasterIdentItem->getIsoItem()->nr());
-        data().setIsoPs (vtSourceAddress);
-        getCanInstance4Comm() << c_data;
-        /// For now simply respond without doing anything else with this information. simply ack the assignment!
-        } break;
-#endif
-
-     /***************************************************/
-    /*** ### ECU Initiated Messages (=Responses) ### ***/
-      // ### Error field is also on byte 2 (index 1)
-      case 0xA3: // Command: "Command", parameter "Control Audio Device Response"
-      case 0xA4: // Command: "Command", parameter "Set Audio Volume Response"
-      case 0xB2: // Command: "Command", parameter "Delete Object Pool Response"
-        MACRO_setStateDependantOnError(2)
-        break;
-
-      // ### Error field is also on byte 4 (index 3)
-      case 0xA6: // Command: "Command", parameter "Change Size Response"
-      case 0xA8: // Command: "Command", parameter "Change Numeric Value Response"
-      case 0xA9: // Command: "Command", parameter "Change End Point Response"
-      case 0xAA: // Command: "Command", parameter "Change Font Attributes Response"
-      case 0xAB: // Command: "Command", parameter "Change Line Attributes Response"
-      case 0xAC: // Command: "Command", parameter "Change Fill Attributes Response"
-      case 0xAD: // Command: "Command", parameter "Change Active Mask Response"
-      case 0x92: // Command: "Command", parameter "ESC Response"
-        MACRO_setStateDependantOnError(4)
-        break;
-
-      // ### Error field is also on byte nr. 5 (index 4)
-      case 0xA0: // Command: "Command", parameter "Hide/Show Object Response" (Container)
-      case 0xA1: // Command: "Command", parameter "Enable/Disable Object Response" (Input Object)
-      case 0xA2: // Command: "Command", parameter "Select Input Object Response"
-      case 0xA7: // Command: "Command", parameter "Change Background Colour Response"
-      case 0xAF: // Command: "Command", parameter "Change Attribute Response"
-      case 0xB0: // Command: "Command", parameter "Change Priority Response"
-        MACRO_setStateDependantOnError(5)
-        break;
-
-      // ### Error field is also on byte 6 (index 5)
-      case 0xA5: // Command: "Command", parameter "Change Child Location Response"
-      case 0xAE: // Command: "Command", parameter "Change Soft Key Mask Response"
-      case 0xB3: // Command: "Command", parameter "Change String Value Response"
-      case 0xB4: // Command: "Command", parameter "Change Child Position Response"
-        MACRO_setStateDependantOnError(6)
-        break;
-
-      // ### Error field is on byte 7 (index 6)
-      case 0xB1: // Command: "Command", parameter "Change List Item Response"
-        MACRO_setStateDependantOnError(7)
-        break;
-
-      case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
-        vtCapabilities_a.iso11783version = data().getUint8Data (1);
-        vtCapabilities_a.lastReceivedVersion = HAL::getTime();
-        if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForMemoryResponse)) {
-          if (data().getUint8Data (2) == 0) {
-            // start uploading, there MAY BE enough memory
-            en_uploadPoolState = UploadPoolUploading;
-            getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->getIsoItem()->nr(), vtSourceAddress, &c_streamer, ECU_TO_VT_PGN, en_sendSuccess);
-          } else {
-            vtOutOfMemory();
-          }
-        }
-        break;
-      case 0xC2: // Command: "Get Technical Data", parameter "Get Number Of Soft Keys Response"
-        vtCapabilities_a.skWidth = data().getUint8Data (4);
-        vtCapabilities_a.skHeight = data().getUint8Data (5);
-        vtCapabilities_a.skVirtual = data().getUint8Data (6);
-        vtCapabilities_a.skPhysical = data().getUint8Data (7);
-        vtCapabilities_a.lastReceivedSoftkeys = HAL::getTime();
-        break;
-      case 0xC3: // Command: "Get Technical Data", parameter "Get Text Font Data Response"
-        vtCapabilities_a.fontSizes = (data().getUint8Data (5) << 1) | 0x01; // 'cause "6x8" is always available!
-        vtCapabilities_a.fontSizes += data().getUint8Data (6) << 8; // so we leave out the "Not used" bit!!
-        vtCapabilities_a.fontTypes = data().getUint8Data (7);
-        vtCapabilities_a.lastReceivedFont = HAL::getTime();
-        break;
-      case 0xC7: // Command: "Get Technical Data", parameter "Get Hardware Response"
-        vtCapabilities_a.hwGraphicType = data().getUint8Data (2);
-        vtCapabilities_a.hwHardware = data().getUint8Data (3);
-        vtCapabilities_a.hwWidth = data().getUint8Data (4) + (data().getUint8Data (5) << 8);
-        vtCapabilities_a.hwHeight = data().getUint8Data (6) + (data().getUint8Data (7) << 8);
-        vtCapabilities_a.lastReceivedHardware = HAL::getTime();
-        break;
-      case 0xD0: // Command: "Non Volatile Memory", parameter "Store Version Response"
-        if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForStoreVersionResponse)) {
-          switch (data().getUint8Data (5) & 0x0F) {
-            case 0: // Successfully stored
-            case 1: // Not used
-            case 2: // Version label not known
-            case 8: // General error
-              finalizeUploading (false); // false == initial upload, was NOT language update
-              break;
-            case 4: // Insufficient memory available
-            default: // well....
-              getLbsErrInstance().registerError( LibErr_c::IsoTerminalOutOfMemory, LibErr_c::IsoTerminal );
-              finalizeUploading (false); // false == initial upload, was NOT language update
-              break;
-            }
-        }
-        break;
-      case 0xD1: // Command: "Non Volatile Memory", parameter "Load Version Response"
-        if ((en_uploadType == UploadPool) && (en_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)) {
-          if ((data().getUint8Data (5) & 0x0F) == 0)
-          { // Successfully loaded
-            finalizeUploading (false); // false == initial upload, was NOT language update
-            #ifdef DEBUG
-            INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) without error...\n";
-            #endif
-          }
-          else
-          {
-            if (data().getUint8Data (5) & (1<<2))
-            { // Bit 2: // Insufficient memory available
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem...\n";
-              #endif
-              vtOutOfMemory ();
-            }
-            else
-            { // Not used
-              // General error
-              // Version label not known
-              startObjectPoolUploading (false); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
-              #ifdef DEBUG
-              INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with VersionNotFound...\n";
-              #endif
-            }
-          }
-        }
-        break;
-    } // switch
-
-    // Was it some command that requires queue-deletion & error processing?
-    if (ui8_errByte != 0) {
-      if (en_uploadType == UploadCommand) { /* if Waiting or Timedout (or Failed <shouldn't happen>) */
-        if (en_sendSuccess == __IsoAgLib::MultiSend_c::SendSuccess)
-        { /// Our command was successfully sent & responded to, so remove it from the queue
-          if (ui8_commandParameter == data().getUint8Data(0)) {
-            /* okay, right response for our current command! */
-            ui8_uploadCommandError = data().getUint8Data(ui8_errByte-1);
-            /// Inform user on success/error of this command
-            if (c_streamer.pc_pool) c_streamer.pc_pool->eventCommandResponse (ui8_uploadCommandError, data().name()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "data().name()"
-            #ifdef DEBUG
-            if (ui8_uploadCommandError != 0)
-            { /* error */
-              INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) ui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!\n";
-            }
-            #endif
-  /* OBSOLETE: no more retries on failed commands! only on time outs!
-            } else {
-              en_uploadCommandState = UploadCommandFailed;
-            }
-  */        finishUploadCommand(); // finish command no matter if "okay" or "error"...
-          }
-        }
-        else
-        { /// Our command was Aborted or is still running, so do NOT remove from the queue,
-          // let timeEvent try again / wait for stream to finish sending
-          // DO NOT remove from queue if stream is still running!!
-        }
-      }
-    }
-    /** Acknowledgment of VT->ECU Initiated Messages (Soft Key, Button, VTChangeNumericValue etc.)
-       IS >>OPTIONAL<< IN THE FINAL ISO 11783, SO IT IS LEFT OUT HERE <<COMPLETELY>>
-     **/
-  } // VT to this ECU
-
-  return true; /** @todo maybe change this when doing multiple vt-clients in one ecu... */
-}
-
-
-/**
-  deliver reference to data pkg as reference to CANPkgExt_c
+/** deliver reference to data pkg as reference to CANPkgExt_c
   to implement the base virtual function correct
-*/
+ */
 CANPkgExt_c& ISOTerminal_c::dataBase()
 {
   return c_data;
 }
 
 
-/**
-  @returns true if there was place in the SendUpload-Buffer (should always be the case now)
+/** default constructor
+ */
+ISOTerminal_c::ISOTerminal_c()
+{
+  /// all variable initialization moved to singletonInit!
+}
+
+
+/** default destructor
 */
-bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd)
+ISOTerminal_c::~ISOTerminal_c()
 {
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << q_sendUpload.size() << " -> ";
-  #endif
-
-  SendUpload_c stringForUpload (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout);
-
-  return queueOrReplace(stringForUpload, b_enableReplaceOfCmd);
+  close();
 }
 
 
-/**
-  special 9 byte sendCommand function for Change Child Position Command (no one else uses 9 byte commands!)
-  @returns true if there was place in the SendUpload-Buffer (should always be the case now)
-*/
-bool ISOTerminal_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout, bool b_enableReplaceOfCmd)
+void
+ISOTerminal_c::singletonInit()
 {
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued 9-bytes: " << q_sendUpload.size() << " -> ";
-  #endif
+  // clear state of b_alreadyClosed, so that close() is called one time
+  setAlreadyClosed();
 
-  SendUpload_c stringForUpload (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout);
-
-  return queueOrReplace(stringForUpload, b_enableReplaceOfCmd);
+  // call real init() code...
+  init();
 }
 
 
-bool ISOTerminal_c::sendCommandForDEBUG (uint8_t* rpui8_buffer, uint32_t ui32_size)
+/** initialise element which can't be done during construct */
+void
+ISOTerminal_c::init()
 {
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued Debug-TP-bytes: " << q_sendUpload.size() << " -> ";
-  #endif
+  if (checkAlreadyClosed())
+  { // avoid another call
+    clearAlreadyClosed();
 
-  SendUpload_c stringForUpload (rpui8_buffer, ui32_size);
+    // register in Scheduler_c to get time-events
+    getSchedulerInstance4Comm().registerClient(this);
+    // register to get ISO monitor list changes
+    getIsoMonitorInstance4Comm().registerSaClaimHandler(this);
 
-  return queueOrReplace(stringForUpload, false);
-}
+    // register Filter in CANIO_c
+    bool b_atLeastOneFilterAdded=false;
+    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    false, Ident_c::ExtendedIdent) != NULL);
+    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        false, Ident_c::ExtendedIdent) != NULL);
+#if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
+    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertFilter (*this, (0x1FF0000UL), (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) << 8), false, Ident_c::ExtendedIdent) != NULL);
+#endif
+    if (b_atLeastOneFilterAdded) getCanInstance4Comm().reconfigureMsgObj();
 
-
-bool ISOTerminal_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (180 /* Command: Command --- Parameter: Change Child Position */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      rpc_childObject->getID() & 0xFF, rpc_childObject->getID() >> 8,
-                      x & 0xFF, x >> 8,
-                      y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-
-//! should only be called with valid values ranging -127..0..128 (according to ISO!!!)
-// THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE CHILD LOCATION COMMAND
-// //////////////////////////////// +X2C Operation BAC : sendCommandChangeChildLocation
-bool ISOTerminal_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* rpc_object, IsoAgLib::iVtObject_c* rpc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (165 /* Command: Command --- Parameter: Change Child Location */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      rpc_childObject->getID() & 0xFF, rpc_childObject->getID() >> 8,
-                      dx+127, dy+127, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-// THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE SIZE COMMAND
-// //////////////////////////////// +X2C Operation BAC :Operation: sendCommandChangeSize
-bool ISOTerminal_c::sendCommandChangeSize(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (166 /* Command: Command --- Parameter: Change Size */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      newWidth & 0xFF, newWidth >> 8,
-                      newHeight & 0xFF, newHeight >> 8,
-                      0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-// THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE BACKGROUND COLOUR COMMAND
-// //////////////////////////////// +X2C Operation BAC : sendCommandChangeBackgroundColour
-bool ISOTerminal_c::sendCommandChangeBackgroundColour(IsoAgLib::iVtObject_c* rpc_object, uint8_t newColour, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      newColour, 0xFF, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool ISOTerminal_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* rpc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      0xFF, byte1, byte2, byte3, byte4,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool ISOTerminal_c::sendCommandChangeEndPoint(IsoAgLib::iVtObject_c* rpc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (169 /* Command: Command --- Parameter: Change Size */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      newWidth & 0xFF, newWidth >> 8,
-                      newHeight & 0xFF, newHeight >> 8,
-                      newLineAttributes,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool ISOTerminal_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      newFontColour, newFontSize, newFontType, newFontStyle, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool ISOTerminal_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
-                     rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                     newLineColour, newLineWidth, newLineArt & 0xFF, newLineArt >> 8, 0xFF,
-                     DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-// THIS FUNCTION ADDED BY BRAD COX 17-SEP-2004 TO IMPLEMENT CHANGE FILL ATTRIBUTES COMMAND
-// //////////////////////////////// +X2C Operation BAC :Operation: sendCommandChangeSize
-bool ISOTerminal_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* rpc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (172 /* Command: Command --- Parameter: Change FillAttributes */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      newFillType, newFillColour,
-                      (newFillType == 3) ? newFillPatternObject->getID() & 0xFF : 0xFF,
-                      (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
-                      0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool ISOTerminal_c::sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* rpc_object, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (174 /* Command: Command --- Parameter: Change Soft Key Mask */,
-                      maskType,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      newSoftKeyMask & 0xFF, newSoftKeyMask >> 8,
-                      0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool ISOTerminal_c::sendCommandChangeAttribute (IsoAgLib::iVtObject_c* rpc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      attrId, byte1, byte2, byte3, byte4,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-// THIS FUNCTION ADDED BY BRAD COX 26-AUG-2004 TO IMPLEMENT CHANGE PRIORITY COMMAND
-// //////////////////////////////// +X2C Operation BAC :Operation: sendCommandChangePriority
-bool ISOTerminal_c::sendCommandChangePriority(IsoAgLib::iVtObject_c* rpc_object, int8_t newPriority, bool b_enableReplaceOfCmd)
-{
-  if(newPriority < 3) {
-    // only bother to send if priority is a legal value
-    return sendCommand (176 /* Command: Command --- Parameter: Change Priority */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      newPriority, 0xFF, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-  } else {
-    return false;
+    /** for now allow parallel uploads
+    sb_poolUploadInProgress = false;
+    spc_vtcscForUpload = NULL;
+     */
   }
 }
 
-bool ISOTerminal_c::sendCommandControlAudioDevice (uint8_t rui8_repetitions, uint16_t rui16_frequency, uint16_t rui16_onTime, uint16_t rui16_offTime)
+
+/** every subsystem of IsoAgLib has explicit function for controlled shutdown */
+void
+ISOTerminal_c::close()
 {
-  return sendCommand (163 /* Command: Command --- Parameter: Control Audio Device */,
-                      rui8_repetitions,
-                      rui16_frequency & 0xFF, rui16_frequency >> 8,
-                      rui16_onTime & 0xFF, rui16_onTime >> 8,
-                      rui16_offTime & 0xFF, rui16_offTime >> 8,
-                      DEF_TimeOut_NormalCommand, false); // don't care for enable-same command stuff
-}
+  if (!checkAlreadyClosed())
+  { // avoid another call
+    setAlreadyClosed();
 
-bool ISOTerminal_c::sendCommandSetAudioVolume (uint8_t rui8_volume)
-{
-  return sendCommand (164 /* Command: Command --- Parameter: Set Audio Volume */,
-                      rui8_volume, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, false); // don't care for enableReplaceOfCommand parameter actually
-}
+    // deregister in Scheduler_c
+    getSchedulerInstance4Comm().unregisterClient(this);
+    // deregister in ISOMonitor_c
+    getIsoMonitorInstance4Comm().deregisterSaClaimHandler(this);
 
-bool ISOTerminal_c::sendCommandDeleteObjectPool ()
-{
-  return sendCommand (178 /* Command: Command --- Parameter: Delete Object Pool */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, true); // don't care for enableReplaceOfCommand parameter actually
-}
+    getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter(*this, (0x1FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        Ident_c::ExtendedIdent);
+#if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
+    getCanInstance4Comm().deleteFilter(*this, (0x1FF0000UL), (static_cast<MASK_TYPE>(ACKNOWLEDGEMENT_PGN) << 8), Ident_c::ExtendedIdent);
+#endif
 
-bool ISOTerminal_c::sendCommandUpdateLanguagePool ()
-{
-  /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
-  return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, true) // don't care for enableReplaceOfCommand parameter actually - this case shouldn't happen!
-      && sendCommand (0x12 /* Command: Object Pool Transfer --- Parameter: Object Pool Ready */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, true); // don't care for enableReplaceOfCommand parameter actually - this case shouldn't happen!
-}
-
-bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* rpc_object, const char* rpc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
-{
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << q_sendUpload.size() << " -> ";
-  #endif
-
-  SendUpload_c stringForUpload (rpc_object->getID(), rpc_newValue, overrideSendLength);
-
-  return queueOrReplace (stringForUpload, b_enableReplaceOfCmd);
-}
-
-bool ISOTerminal_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* rpc_objectString, bool b_enableReplaceOfCmd)
-{
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued stringObject-mss: " << q_sendUpload.size() << " -> ";
-  #endif
-
-  SendUpload_c stringForUpload (rpc_objectString);
-
-  return queueOrReplace (stringForUpload, b_enableReplaceOfCmd);
-}
-
-
-bool ISOTerminal_c::queueOrReplace(SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)
-{
-  if (!isVtActive())
-  {
-    #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - VT IS NOT ACTIVE!--\n";
-    #endif
-  //  return false;
-  }
-  SendUpload_c* p_queue = NULL;
-  uint8_t i = 0;
-  #ifdef USE_LIST_FOR_FIFO
-  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  std::list<SendUpload_c,std::__malloc_alloc_template<0> >::iterator i_sendUpload;
-  #else
-  std::list<SendUpload_c>::iterator i_sendUpload;
-  #endif
-  #else
-  std::queue<SendUpload_c>::iterator i_sendUpload;
-  #endif
-  if (b_checkSameCommand && b_enableReplaceOfCmd) {
-    //get first equal command in queue
-    for (i_sendUpload = q_sendUpload.begin(); (p_queue == NULL) && (i_sendUpload != q_sendUpload.end()); i_sendUpload++)
+    for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
     {
-      //first check if multisendstreamer is used!
-      /* four cases:
-         1. both use buffer
-         2. both use mssObjectString
-         3. mss is queued and could be replaced by buffer
-         4. buffer is queued and could be replaced by mssObjectString
-       */
-      if ((i_sendUpload->mssObjectString == NULL) && (rref_sendUpload.mssObjectString == NULL))
+      if (vec_vtClientServerComm[ui8_index])
       {
-        if (i_sendUpload->vec_uploadBuffer[0] == rref_sendUpload.vec_uploadBuffer[0])
-        {
-          uint8_t ui8_offset = (rref_sendUpload.vec_uploadBuffer[0]);
-          if ( (ui8_offset<0x92) || (ui8_offset > 0xB4))
-          {
-            // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
-            if (ui8_offset == 0x12)
-              break;
-
-            // the rest is not possible by definition, but for being sure :-)
-            #ifdef DEBUG
-            INTERNAL_DEBUG_DEVICE << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--\n";
-            #endif
-            return false;
-          }
-          //get bitmask for the corresponding command
-          uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-0x92];
-          if (!(ui8_bitmask & (1<<0)))
-          { // go Check for overwrite...
-            for (i=1;i<=7;i++)
-            {
-              if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == rref_sendUpload.vec_uploadBuffer[i]))
-              {
-                break;
-              }
-            }
-            if (!(i<=7))
-            { // loop ran through, all to-compare-bytes matched!
-              p_queue = &*i_sendUpload; // so overwrite this SendUpload_c with the new value one
-            }
-          }
-        }
+        deregisterIsoObjectPoolInd (ui8_index);
       }
-      if ((i_sendUpload->mssObjectString != NULL) && (rref_sendUpload.mssObjectString != NULL))
-      {
-        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == rref_sendUpload.mssObjectString->getStreamer()->getFirstByte())
-        {
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == rref_sendUpload.mssObjectString->getStreamer()->getID())
-          {
-            p_queue = &*i_sendUpload;
-          }
-        }
-      }
-      if ((i_sendUpload->mssObjectString != NULL) && (rref_sendUpload.mssObjectString == NULL))
-      {
-        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == rref_sendUpload.vec_uploadBuffer[0])
-        {
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (rref_sendUpload.vec_uploadBuffer[1] | (rref_sendUpload.vec_uploadBuffer[2]<<8)))
-          {
-            p_queue = &*i_sendUpload;
-          }
-        }
-      }
-      if ((i_sendUpload->mssObjectString == NULL) && (rref_sendUpload.mssObjectString != NULL))
-      {
-        if ((*i_sendUpload).vec_uploadBuffer[0] == rref_sendUpload.mssObjectString->getStreamer()->getFirstByte())
-        {
-          if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == rref_sendUpload.mssObjectString->getStreamer()->getID())
-          {
-            p_queue = &*i_sendUpload;
-          }
-        }
-      }
-    } // for
+    }
   }
-  if (p_queue == NULL)
-  {
-    /* The SendUpload_c constructor only takes a reference, so don't change the string in the meantime!!! */
-    #ifdef USE_LIST_FOR_FIFO
-    // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-    q_sendUpload.push_back (rref_sendUpload);
-    #else
-    q_sendUpload.push (rref_sendUpload);
-    #endif
-  }
-  else
-  {
-    *p_queue = rref_sendUpload; // overloaded "operator="
-  }
-  #ifdef DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize++;
-  if ( sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize )
-    sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
-  #endif
-
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << q_sendUpload.size() << std::endl;
-  //dumpQueue(); /* to see all enqueued cmds after every enqueued cmd */
-  #endif
-  /** push(...) has no return value */
-  return true;
 }
 
-void ISOTerminal_c::dumpQueue()
-{
-  #ifdef USE_LIST_FOR_FIFO
-  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  std::list<SendUpload_c,std::__malloc_alloc_template<0> >::iterator i_sendUpload;
-  #else
-  std::list<SendUpload_c>::iterator i_sendUpload;
-  #endif
-  #else
-  std::queue<SendUpload_c>::iterator i_sendUpload;
-  #endif
 
-  for (i_sendUpload = q_sendUpload.begin(); i_sendUpload != q_sendUpload.end(); i_sendUpload++)
+/** Register the given object pool
+  It will automatically be uploaded as soon as ISO_Terminal_c is connected to the VT
+  and all initialization stuff has been done (Get VT Capabilities, Memory, etc.)
+ */
+bool
+ISOTerminal_c::registerIsoObjectPool (IdentItem_c& refc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& rpc_pool, char* rpc_versionLabel)
+{
+  uint8_t ui8_index = 0;
+  // add new instance of VtClientServerCommunication
+  for (; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
   {
-    if (i_sendUpload->mssObjectString == NULL)
-    {
-      for (uint8_t i=0; i<=7; i++)
-      {
-        #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(i_sendUpload->vec_uploadBuffer[i]);
-        #endif
-      }
+    if (vec_vtClientServerComm[ui8_index] == NULL)
+    { // found one emtpy entry
+      break;
     }
     else
     {
-      MultiSendPkg_c msp;
-      int i_strSize = i_sendUpload->mssObjectString->getStreamer()->getStreamSize();
-      for (int i=0; i < i_strSize; i+=7) {
-        i_sendUpload->mssObjectString->getStreamer()->setDataNextStreamPart(&msp, (unsigned char) ((i_strSize - i) > 7 ? 7 : (i_strSize-i)));
-        for (uint8_t i=1; i<=7; i++)
-        {
-          #ifdef DEBUG
-          INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(msp[i]);
-          #endif
-        }
+      if (vec_vtClientServerComm[ui8_index]->getIdentItem() == refc_identItem)
+      { // this IdentItem has already one pool registered - use multiple
+        // IdentItems if you want to use multiple pools!
+        return false;
       }
     }
   }
-  #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "\n";
-  #endif
+  // create new instance
+  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (refc_identItem, *this, rpc_pool, rpc_versionLabel, ui8_index);
+
+  // add new instance to vector
+  if (ui8_index < vec_vtClientServerComm.size())
+    vec_vtClientServerComm[ui8_index] = pc_vtCSC;
+  else
+    vec_vtClientServerComm.push_back(pc_vtCSC);
+
+  // if at least one VtServerInstance is online, notify the new VtClientServerCommunication
+  if (!l_vtServerInst.empty()) pc_vtCSC->notifyOnNewVtServerInstance (l_vtServerInst.front());
+  return true;
 }
 
 
-uint32_t ISOTerminal_c::getUploadBufferSize ()
+/** De-Register the registered object pool and versionLabel string (if one was copied) */
+bool
+ISOTerminal_c::deregisterIsoObjectPool (IdentItem_c& ref_identItem)
 {
-  return q_sendUpload.size();
+  /* what states the IdentItem could have we have to interrupt???
+  * - IState_c::ClaimedAddress -> that item is Active and Member on ISOBUS
+  * - !UploadType::UploadIdle -> interrupt any upload
+  */
+  uint8_t ui8_index = 0;
+  for (; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  {
+    if (vec_vtClientServerComm[ui8_index])
+    {
+      if (&ref_identItem == &vec_vtClientServerComm[ui8_index]->getIdentItem())
+      {
+        deregisterIsoObjectPoolInd (ui8_index);
+        break;
+      }
+    }
+  }
+
+  if (ui8_index == vec_vtClientServerComm.size())
+    return false; // appropriate IdentItem could not be found, so nothing was deleted
+  else
+    return true; // IdentItem was found and deleted
 }
+
+
+void
+ISOTerminal_c::deregisterIsoObjectPoolInd (uint8_t rui8_index)
+{
+  delete vec_vtClientServerComm[rui8_index];
+  vec_vtClientServerComm[rui8_index] = NULL;
+}
+
+
+
+
+/** periodically event
+  @return true -> all planned activities from all vtClientServerCommuniactions were performed in allowed time
+ */
+bool
+ISOTerminal_c::timeEvent(void)
+{
+  if (Scheduler_c::getAvailableExecTime() == 0) return false;
+
+  System_c::triggerWd(); /** @todo what to do with those calls? */
+
+  bool b_allActivitiesPerformed = false;
+
+  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  {
+    if (vec_vtClientServerComm[ui8_index])
+      b_allActivitiesPerformed |= vec_vtClientServerComm[ui8_index]->timeEvent();
+  }
+  /** @todo maybe store the one that was out of time if not all could perform their actions? */
+
+  return b_allActivitiesPerformed;
+}
+
+
+/** process received can messages
+  @return true -> message was processed; else the received CAN message will be served to other matching CANCustomer_c
+ */
+bool
+ISOTerminal_c::processMsg()
+{
+  // VT_TO_GLOBAL is the only PGN we accept without VT being active, because it marks the VT active!!
+  STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
+  uint8_t ui8_index;
+
+  /// -->VT_TO_GLOBAL_PGN<-- ///
+  if ((data().isoPgn() & 0x1FFFF) == VT_TO_GLOBAL_PGN)
+  { // iterate through all registered VtServerInstances and process msg if vtSourceAddress == isoSa
+    for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
+    {
+      if (lit_vtServerInst->getVtSourceAddress() == data().isoSa()) // getVtSourceAddress gets the SA from the IsoItem, so it's the current one...
+      {
+        if (data().getUint8Data (0) == 0xFE) // Command: "Status", Parameter: "VT Status Message"
+        {
+          lit_vtServerInst->setLatestVtStatusData();
+          return true; // VT Status Message is NOT of interest for anyone else!
+        }
+        else
+          break;
+      }
+    }
+    return false; // VT_TO_GLOBAL IS of interest for anyone else, because of AUX Assignment, etc...
+  }
+
+#if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
+  /// -->ACKNOWLEDGEMENT_PGN<-- ///
+  if ((data().isoPgn() & 0x1FF00) == ACKNOWLEDGEMENT_PGN)
+  { /// on NACK do:
+    // iterate through all registered VtClientServerCommunication and process msg if vtDesteAddress == isoPs
+    for (ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+    {
+      if (vec_vtClientServerComm[ui8_index])
+      {
+        if (vec_vtClientServerComm[ui8_index]->getIdentItem().getIsoItem() && (data().isoPs() == vec_vtClientServerComm[ui8_index]->getIdentItem().getIsoItem()->nr()))
+          return vec_vtClientServerComm[ui8_index]->processMsgAck();
+      }
+    }
+
+    // no processing before, so ignore that msg
+    return false; // (N)ACK for our SA will NOT be of interest for anyone else...
+  }
+#endif
+
+  /// -->LANGUAGE_PGN<-- ///
+  if ((data().isoPgn() & 0x1FFFF) == LANGUAGE_PGN)
+  {
+      // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
+    for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
+    {
+      if (lit_vtServerInst->getVtSourceAddress() == data().isoSa())
+        lit_vtServerInst->setLocalSettings();
+    }
+
+    for (ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+    {
+      if (vec_vtClientServerComm[ui8_index])
+        vec_vtClientServerComm[ui8_index]->notifyOnVtsLanguagePgn();
+    }
+    /** @todo return FALSE so others can react on it? -> Base_c ?? */
+    /** @todo Use Base_c for getting the VT's language????? */
+    /** @todo later on only distribute LANGUAGE to those clients that listen to this VT???!?!?!?? */
+    return false;
+  }
+
+  return false; /** shouldn't reach here as all filters are handled and returned above */
+}
+
+
+bool
+ISOTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& refc_wsMasterIdentItem, uint8_t* rpui8_buffer, uint32_t ui32_size)
+{
+  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  {
+    if (static_cast<__IsoAgLib::IdentItem_c&>(refc_wsMasterIdentItem) == vec_vtClientServerComm[ui8_index]->getIdentItem())
+      return vec_vtClientServerComm[ui8_index]->sendCommandForDEBUG(rpui8_buffer, ui32_size);
+  }
+  return false;
+}
+
+
+void
+ISOTerminal_c::reactOnMonitorListAdd (const DevKey_c& refc_devKey, const ISOItem_c* rpc_newItem)
+{
+  // we only care for the VTs
+  if (refc_devKey.getConstName().getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
+
+  STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
+
+  for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
+  { // check if newly added VtServerInstance is already in our list
+    if (lit_vtServerInst->getIsoItem())
+    {
+      if (refc_devKey == lit_vtServerInst->getIsoItem()->devKey())
+      { // the VtServerInstance is already known and in our list, so update the source address in case it has changed now
+        return;
+      }
+    }
+  }
+
+  // VtServerInstance not yet in list, so add it ...
+  l_vtServerInst.push_back (VtServerInstance_c (*rpc_newItem, refc_devKey, *this));
+  VtServerInstance_c& ref_vtServerInst = l_vtServerInst.back();
+
+  // ... and notify all vtClientServerComm instances
+  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  {
+    if (vec_vtClientServerComm[ui8_index])
+      vec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance (ref_vtServerInst);
+  }
+}
+
+
+void
+ISOTerminal_c::reactOnMonitorListRemove (const DevKey_c& refc_devKey, uint8_t /*rui8_oldSa*/)
+{
+  // we only care for the VTs
+  if (refc_devKey.getConstName().getEcuType() != ISOName_c::ecuTypeVirtualTerminal) return;
+
+  // check if it is mine???
+  /** @todo function to notify every client for vt gone offline */
+  STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
+
+  for (lit_vtServerInst = l_vtServerInst.begin(); lit_vtServerInst != l_vtServerInst.end(); lit_vtServerInst++)
+  { // check if lost VtServerInstance is in our list
+    if (lit_vtServerInst->getIsoItem())
+    {
+      if (refc_devKey == lit_vtServerInst->getIsoItem()->devKey())
+      { // the VtServerInstance is already known and in our list, so it could be deleted
+        // notify all clients on early loss of that VtServerInstance
+        for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+        {
+          if (vec_vtClientServerComm[ui8_index])
+          {
+            vec_vtClientServerComm[ui8_index]->notifyOnVtServerInstanceLoss(*lit_vtServerInst);
+            /** for now allow multiple upload
+            resetFlagForPoolUpload (vec_vtClientServerComm[ui8_index]); // reset flag for next upload
+            */
+          }
+        }
+
+        l_vtServerInst.erase (lit_vtServerInst);
+        break;
+      }
+    }
+  }
+}
+
+
+/** @todo do we really need these functions??? -> for now allow multiple upload
+
+bool ISOTerminal_c::sb_poolUploadInProgress;
+const VtClientServerCommunication_c* ISOTerminal_c::spc_vtcscForUpload;
+
+bool ISOTerminal_c::getFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC)
+{
+  if (sb_poolUploadInProgress) // someone else is uploading its pool -> wait
+    return false;
+  else
+  { // nobody is uploading, so we catch the flag for us
+    sb_poolUploadInProgress = true;
+    spc_vtcscForUpload = pc_vtCSC;
+    return true;
+  }
+}
+
+
+void ISOTerminal_c::resetFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC)
+{
+  if (sb_poolUploadInProgress && (pc_vtCSC == spc_vtcscForUpload))
+  { // only the VtClientServerCommunication_c which has set the uploadFlag could only reset the flag
+    sb_poolUploadInProgress = false;
+    spc_vtcscForUpload = NULL;
+  }
+}
+*/
+
+
+/// INTERFACE FUNTIONS ///
+// the following define should be globally defined in the project settings...
+/// FAKE_VT_PROPERTIES IS ONLY NEEDED FOR ***IOP_GENERATOR**
+#ifdef FAKE_VT_PROPERTIES
+void
+ISOTerminal_c::fakeVtProperties (uint16_t rui16_dimension, uint16_t rui16_skWidth, uint16_t rui16_skHeight, uint8_t rui16_colorDepth, uint16_t rui16_fontSizes)
+{
+  // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
+  l_vtServerInst.push_back (VtServerInstance_c (static_cast<const ISOItem_c&>(NULL), DevKey_c::DevKeyUnspecified, (*this)));
+  VtServerInstance_c& ref_vtServerInst = l_vtServerInst.back();
+  ref_vtServerInst.fakeVtProperties (rui16_dimension, rui16_skWidth, rui16_skHeight, rui16_colorDepth, rui16_fontSizes);
+
+  // ... and notify all vtClientServerComm instances
+  for (uint8_t ui8_index = 0; ui8_index < vec_vtClientServerComm.size(); ui8_index++)
+  {
+    if (vec_vtClientServerComm[ui8_index])
+      vec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance(ref_vtServerInst);
+  }
+}
+#endif
 
 } // end namespace __IsoAgLib
