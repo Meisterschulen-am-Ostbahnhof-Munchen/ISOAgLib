@@ -127,6 +127,9 @@ typedef enum
   */
 
 class CANPkgExt_c : public CANPkg_c  {
+private:
+  CANPkgExt_c( const CANPkgExt_c&);           //!< prevent copy constructor use: do not code this method
+  CANPkgExt_c& operator=(const CANPkgExt_c&); //!< prevent copy operator use: do not code this method
 protected:
 public:
   /** default constructor, which has nothing to do */
