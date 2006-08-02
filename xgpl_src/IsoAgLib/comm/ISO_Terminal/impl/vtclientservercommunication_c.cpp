@@ -1754,7 +1754,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool rb_wasLanguageUpdate)
     c_streamer.i8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
     c_streamer.ui16_objectPoolUploadingLanguageCode = 0x0000;
   #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading (wasLanguageUpdate?"<<rb_wasLanguageUpdate<<") with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage<<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]\n";
+    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)c_streamer.i8_objectPoolUploadedLanguage<<" ["<<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(c_streamer.ui16_objectPoolUploadedLanguageCode&0xFF)<<"]\n";
   #endif
     if (en_uploadPoolType == UploadPoolTypeLanguageUpdate)
     {
