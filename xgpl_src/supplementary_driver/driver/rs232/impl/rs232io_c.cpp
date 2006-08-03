@@ -370,7 +370,7 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
   */
   RS232IO_c& RS232IO_c::operator<<(const std::basic_string<char>& rrefc_data)
   {
-    send(((uint8_t*)(rrefc_data.c_str())), rrefc_data.size());
+    send(((uint8_t*)(rrefc_data.c_str())), (uint8_t)rrefc_data.size());
     return *this;
   }
 
@@ -384,7 +384,7 @@ bool RS232IO_c::setRecPufferSize(uint16_t rui16_pufferSize)
   */
   RS232IO_c& RS232IO_c::operator<<(const char *const rpc_data)
   {
-    send( (uint8_t*)(rpc_data), CNAMESPACE::strlen( rpc_data ) );
+    send( (uint8_t*)(rpc_data), (uint8_t)CNAMESPACE::strlen( rpc_data ) );
     return *this;
   }
 
@@ -517,7 +517,7 @@ RS232IO_c& RS232IO_c::operator<<(float rf_data)
   // sprintf print value as text to uint8_t string and terminate it with '\0'
   CNAMESPACE::sprintf(pc_data, "%f", rf_data);
   // change use float format to german
-  *(CNAMESPACE::strstr((const char*)pc_data, ".")) = ',';
+  *(CNAMESPACE::strstr((char*)pc_data, ".")) = ',';
 
   return operator<<(pc_data);
 }
