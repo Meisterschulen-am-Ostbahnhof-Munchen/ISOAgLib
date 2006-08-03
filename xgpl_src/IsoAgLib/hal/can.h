@@ -93,6 +93,8 @@ typedef enum
 	#include "pc/can/can.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/can/can.h"
+#elif defined(SYSTEM_A2)
+	#include "a2/can/can.h"
 #elif defined(SYSTEM_ESXu)
 	#include "esxu/can/can.h"
 #elif defined(SYSTEM_C2C)

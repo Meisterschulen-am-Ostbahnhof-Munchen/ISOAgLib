@@ -1192,6 +1192,18 @@ xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h -text
 xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h -text
 xgpl_src/IsoAgLib/driver/can/icanio_c.h -text
 xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp -text
+xgpl_src/IsoAgLib/hal/a2/can/can.h -text
+xgpl_src/IsoAgLib/hal/a2/can/can_target_extension_a2.cpp -text
+xgpl_src/IsoAgLib/hal/a2/can/can_target_extensions.h -text
+xgpl_src/IsoAgLib/hal/a2/can/can_typedef.h -text
+xgpl_src/IsoAgLib/hal/a2/can/hal_can_interface.cpp -text
+xgpl_src/IsoAgLib/hal/a2/can/hal_can_interface.h -text
+xgpl_src/IsoAgLib/hal/a2/config.h -text
+xgpl_src/IsoAgLib/hal/a2/errcodes.h -text
+xgpl_src/IsoAgLib/hal/a2/system/system.h -text
+xgpl_src/IsoAgLib/hal/a2/system/system_target_extensions.cpp -text
+xgpl_src/IsoAgLib/hal/a2/system/system_target_extensions.h -text
+xgpl_src/IsoAgLib/hal/a2/typedef.h -text
 xgpl_src/IsoAgLib/hal/c2c/can/can.h -text
 xgpl_src/IsoAgLib/hal/c2c/can/hal_can_interface.cpp -text
 xgpl_src/IsoAgLib/hal/c2c/can/hal_can_interface.h -text
@@ -1237,6 +1249,8 @@ xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp -text
 xgpl_src/IsoAgLib/util/impl/devkey_c.h -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
+xgpl_src/supplementary_driver/hal/a2/rs232/rs232.h -text
+xgpl_src/supplementary_driver/hal/a2/rs232/rs232_a2.c -text
 xgpl_src/supplementary_driver/hal/c2c/actor/actor.h -text
 xgpl_src/supplementary_driver/hal/c2c/actor/actor_target_extensions.cpp -text
 xgpl_src/supplementary_driver/hal/c2c/rs232/rs232.h -text

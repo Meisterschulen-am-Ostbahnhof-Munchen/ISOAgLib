@@ -83,6 +83,8 @@ typedef enum
 	#include "pc/datastreams/datastreams.h"
 #elif defined(SYSTEM_ESX)
 //	#include "esx/datastreams/datastreams.h"
+#elif defined(SYSTEM_A2)
+//	#include "esx/datastreams/datastreams.h"
 #elif defined(SYSTEM_ESXu)
 //	#include "esxu/datastreams/datastreams.h"
 #elif defined(SYSTEM_C2C)

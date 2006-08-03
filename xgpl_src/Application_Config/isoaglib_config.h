@@ -1038,6 +1038,8 @@
 #elif defined(SYSTEM_ESX)
   /// set subdirectory name to "esx" for ESX platform
   #define HAL_SUBDIR esx
+#elif defined(SYSTEM_A2)
+  #define HAL_SUBDIR a2
 #elif defined(SYSTEM_ESXu)
   /// set subdirectory name to "esxu" for ESX Micro platform
   #define HAL_SUBDIR esxu

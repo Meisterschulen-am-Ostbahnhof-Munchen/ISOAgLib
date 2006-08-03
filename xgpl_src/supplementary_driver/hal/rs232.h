@@ -76,6 +76,8 @@
 		#include "pc/rs232/rs232.h"
 	#elif defined(SYSTEM_ESX)
 		#include "esx/rs232/rs232.h"
+	#elif defined(SYSTEM_A2)
+		#include "a2/rs232/rs232.h"
 	#elif defined(SYSTEM_ESXu)
 		#include "esxu/rs232/rs232.h"
 	#elif defined(SYSTEM_C2C)

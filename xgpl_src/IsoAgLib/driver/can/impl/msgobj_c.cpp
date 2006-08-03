@@ -228,7 +228,7 @@ bool MsgObj_c::merge(MsgObj_c& right)
       << arrPfilterBox[i]->filter().ident()
       << ", Mask: 0x" << arrPfilterBox[i]->mask().ident()
       << ", IdentType: " << arrPfilterBox[i]->identType()
-      << std::endl;
+      << INTERNAL_DEBUG_DEVICE_ENDL;
     #ifdef SYSTEM_PC
     std::cout.setf( std::ios_base::dec, std::ios_base::basefield );
     #endif
