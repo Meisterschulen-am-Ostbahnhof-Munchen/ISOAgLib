@@ -93,6 +93,7 @@
 
 #ifdef USE_ISO_TERMINAL
   #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
+  #include <IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h>
 #endif
 
 //define length of every attribute in deviceObject
@@ -610,6 +611,9 @@ DevPropertyHandler_c::timeEvent( void )
           ui8_commandParameter = procCmdPar_OPTransferMsg;
           ui32_uploadTimestamp = HAL::getTime();
           ui32_uploadTimeout = DEF_WaitFor_Reupload;
+          #ifdef DEBUG
+          EXTERNAL_DEBUG_DEVICE << "Upload failed, send aborted..." << EXTERNAL_DEBUG_DEVICE_ENDL;
+          #endif
         } break;
         case __IsoAgLib::MultiSend_c::SendSuccess: {
           en_uploadStep = UploadWaitForOPTransferResponse;
@@ -858,9 +862,9 @@ DevPropertyHandler_c::initUploading()
       char ch_temp[2] = { 'e', 'n' };
       #ifdef USE_ISO_TERMINAL
       //if there are no local settings in ISOTerminal take default language "en"
-      if (getIsoTerminalInstance4Comm().getLocalSettings()->lastReceived != 0) {
-        ch_temp[0] = ((getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) >> 8) & 0xFF;
-        ch_temp[1] = (getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) & 0xFF;
+      if (__IsoAgLib::getIsoTerminalInstance().getClientPtrByID(0) && (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0)) {
+        ch_temp[0] = ((__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;
+        ch_temp[1] = (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
       }
       #endif
       if (CNAMESPACE::strncmp(pch_localizationLabel, ch_temp, 2) == 0)
@@ -887,11 +891,12 @@ DevPropertyHandler_c::getPoolForUpload()
 {
   #ifdef USE_ISO_TERMINAL
   //if there are no local settings in ISOTerminal just take the default pool from the map
-  if (getIsoTerminalInstance4Comm().getLocalSettings()->lastReceived != 0) {
+  // check first if ptr to client exists
+  if (__IsoAgLib::getIsoTerminalInstance().getClientPtrByID(0) && (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0)) {
     //get local language from ISOTerminal
     char pc_langCode [2];
-    pc_langCode[0] = ((getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) >> 8) & 0xFF;
-    pc_langCode[1] = (getIsoTerminalInstance4Comm().getLocalSettings()->languageCode) & 0xFF;
+    pc_langCode[0] = ((__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;
+    pc_langCode[1] = (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
     //compare with all stored pools -> take the first found pool
     std::map<LanguageLabel_c, DevicePool_c>::iterator it_maps;
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
@@ -907,22 +912,22 @@ DevPropertyHandler_c::getPoolForUpload()
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
     {
       //get all units from localization label
-      if (getIsoTerminalInstance4Comm().getLocalSettings()->uDistance == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 6) & 0x3))
+      if (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->uDistance == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 6) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
       }
-      if (getIsoTerminalInstance4Comm().getLocalSettings()->uArea == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 4) & 0x3))
+      if (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->uArea == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 4) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
       }
-      if (getIsoTerminalInstance4Comm().getLocalSettings()->uVolume == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
+      if (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->uVolume == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
       }
-      if (getIsoTerminalInstance4Comm().getLocalSettings()->uMass == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
+      if (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->uMass == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
@@ -931,7 +936,7 @@ DevPropertyHandler_c::getPoolForUpload()
     //compare date format
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
     {
-      if (getIsoTerminalInstance4Comm().getLocalSettings()->dFormat == (uint8_t)(it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+3] & 0xFF))
+      if (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->dFormat == (uint8_t)(it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+3] & 0xFF))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
@@ -940,7 +945,7 @@ DevPropertyHandler_c::getPoolForUpload()
     //compare time format
     for (it_maps = map_deviceDescription.begin();it_maps !=map_deviceDescription.end(); it_maps++)
     {
-      if (getIsoTerminalInstance4Comm().getLocalSettings()->nTimeFormat == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+2] >> 4) & 0x3))
+      if (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->nTimeFormat == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+2] >> 4) & 0x3))
       {
         pc_devPoolForUpload = &it_maps->second;
         return;
