@@ -149,6 +149,8 @@ public:
 
   VtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex) { return *vec_vtClientServerComm[ui8_clientIndex]; }
 
+  VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (vec_vtClientServerComm.size() > 0) ? vec_vtClientServerComm[ui8_clientIndex] : NULL; }
+
 
   /** for now allow multiple uploads
   bool getFlagForPoolUpload(const VtClientServerCommunication_c* pc_vtCSC);
