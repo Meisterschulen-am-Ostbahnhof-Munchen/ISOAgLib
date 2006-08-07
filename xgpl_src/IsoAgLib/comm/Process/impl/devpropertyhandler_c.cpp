@@ -862,7 +862,9 @@ DevPropertyHandler_c::initUploading()
       char ch_temp[2] = { 'e', 'n' };
       #ifdef USE_ISO_TERMINAL
       //if there are no local settings in ISOTerminal take default language "en"
-      if (__IsoAgLib::getIsoTerminalInstance().getClientPtrByID(0) && (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0)) {
+      if (__IsoAgLib::getIsoTerminalInstance().getClientPtrByID(0) && 
+          __IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInstPtr() &&
+          (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0)) {
         ch_temp[0] = ((__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;
         ch_temp[1] = (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
       }
@@ -892,7 +894,9 @@ DevPropertyHandler_c::getPoolForUpload()
   #ifdef USE_ISO_TERMINAL
   //if there are no local settings in ISOTerminal just take the default pool from the map
   // check first if ptr to client exists
-  if (__IsoAgLib::getIsoTerminalInstance().getClientPtrByID(0) && (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0)) {
+  if (__IsoAgLib::getIsoTerminalInstance().getClientPtrByID(0) &&
+      __IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInstPtr() &&
+      (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0)) {
     //get local language from ISOTerminal
     char pc_langCode [2];
     pc_langCode[0] = ((__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;

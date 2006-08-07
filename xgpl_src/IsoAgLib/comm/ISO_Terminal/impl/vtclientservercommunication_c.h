@@ -311,6 +311,7 @@ public:
 
   IdentItem_c& getIdentItem()           { return refc_wsMasterIdentItem; }
   VtServerInstance_c& getVtServerInst() { return *pc_vtServerInstance;}
+  VtServerInstance_c* getVtServerInstPtr() { return pc_vtServerInstance;}
 
   void notifyOnNewVtServerInstance  (VtServerInstance_c& ref_newVtServerInst);
   void notifyOnVtServerInstanceLoss (VtServerInstance_c& ref_oldVtServerInst);
