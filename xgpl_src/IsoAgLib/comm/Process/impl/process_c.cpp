@@ -1112,15 +1112,18 @@ bool Process_c::updateRemoteCache(
 }
 
 #ifdef USE_ISO_11783
-ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& ren_valueGroup)
+ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& refen_valueGroup, bool refb_isSetpoint)
 {
   ProcDataRemoteBase_c* pc_remoteProcessData = check4DDIGroupMatch(rui16_DDI, rui_deviceElement, rc_devKey);
   if (pc_remoteProcessData)
   {
     bool b_isSetpoint;
-    pc_remoteProcessData->getDDIType(rui16_DDI, ren_valueGroup, b_isSetpoint);
+    pc_remoteProcessData->getDDIType(rui16_DDI, refen_valueGroup, b_isSetpoint);
     if (pc_remoteProcessData->add2Group(rui16_DDI))
+    {
+      refb_isSetpoint = b_isSetpoint;
       return pc_remoteProcessData;
+    }
   }
   return NULL;
 };
