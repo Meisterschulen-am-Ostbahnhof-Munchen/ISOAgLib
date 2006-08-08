@@ -278,7 +278,7 @@ public:
     @param rb_sendRequest true -> send request for actual value
     @return setpoint value as long
   */
-  int32_t setpointMasterVal(bool rb_sendRequest = false)
+  int32_t setpointMasterVal(bool rb_sendRequest = false) const
     { return c_setpoint.setpointMasterVal( rb_sendRequest ); };
   /**
     send a setpoint cmd with given exact setpoint
