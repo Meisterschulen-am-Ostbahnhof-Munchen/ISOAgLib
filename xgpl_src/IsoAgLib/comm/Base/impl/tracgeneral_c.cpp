@@ -664,7 +664,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setUint8Data(2, ui8_frontLinkForce);
     data().setUint8Data(3, i16_frontDraft& 0xFF);
     data().setUint8Data(4, (i16_frontDraft >> 8) );
-    data().setUint32Data(5, 0);
+    data().setUint8Data(5, 0xFF );
+    data().setUint16Data(6, 0xFFFF );
     data().setLen(8);
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
@@ -701,7 +702,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setUint8Data(2, ui8_rearLinkForce);
     data().setUint8Data(3, (i16_rearDraft& 0xFF) );
     data().setUint8Data(4, i16_rearDraft >> 8);
-    data().setUint32Data(5, 0);
+    data().setUint8Data(5, 0xFF );
+    data().setUint16Data(6, 0xFFFF );
     data().setLen(8);
 
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
@@ -748,7 +750,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       data().setUint8Data(5, p8ui8_languageVt[5]);
       //Bytes 7,8: reserved
       data().setUint8Data(6, p8ui8_languageVt[6] | (p8ui8_languageVt[7] << 8));
-      data().setUint8Data(7, 0);
+      data().setUint8Data(7, 0xFF);
       data().setLen(8);
 
       c_can << data();
@@ -798,8 +800,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setUint8Data(0, val1);
     data().setUint8Data(1, val2);
     //reserved fields
-    data().setUint32Data(2, 0);
-    data().setUint16Data(6, 0);
+    data().setUint16Data(2, 0xFFFFU);
+    data().setUint32Data(4, 0xFFFFFFFFUL);
     data().setLen(8);
 
     // CANIO_c::operator<< retrieves the information with the help of CANPkg_c::getData

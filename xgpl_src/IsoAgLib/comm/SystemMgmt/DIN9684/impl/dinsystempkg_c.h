@@ -172,7 +172,7 @@ public:
     deliver member name string of message
     @return member name string of message
   */
-  const uint8_t* name() const { return (pb_data + 1); };
+  const uint8_t* name() const { return getUint8DataConstPointer( 1 ); };
 
   /** delivers value of SEND in identifier */
   /**
@@ -259,9 +259,7 @@ public:
   */
   void setName(const uint8_t* rName)
   {
-    CNAMESPACE::memcpy((pb_data+1),rName,7);
-    pb_data[8]='\0';
-    setLen(8);
+    setDataFromString( 1, rName, 7 );
   };
 
   /**

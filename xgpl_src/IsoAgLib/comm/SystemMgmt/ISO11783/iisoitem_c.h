@@ -90,11 +90,6 @@ public:
     @return number
   */
   uint8_t nr() const {return ISOItem_c::nr();};
-  /**
-    deliver the data NAME string as pointer to 8byte string
-    @return const pointer to 8 uint8_t string with NAME
-  */
-  const uint8_t* outputString() const {return ISOItem_c::outputString();};
 
   /**
     deliver name
@@ -173,12 +168,6 @@ public:
   */
   itemState_t setItemState(itemState_t ren_itemState)
     {return ISOItem_c::setItemState(ren_itemState, false);};
-
-  /**
-    set the NAME data from 8 uint8_t string
-    @param rpb_src pointer to 8byte source string
-  */
-  void inputString(const uint8_t* rpb_src) {ISOItem_c::inputString(rpb_src);};
 
   /**
     set self config mode

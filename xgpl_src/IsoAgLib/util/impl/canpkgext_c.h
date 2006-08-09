@@ -154,82 +154,72 @@ public:
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
   */
-  uint8_t operator[](uint8_t rui8_pos) const {return pb_data[rui8_pos];};
+  uint8_t operator[](uint8_t rui8_pos) const {return c_data[rui8_pos];};
   /**
     set an uint8_t value at specified position in string
-    @param rui8_devClassInst position [0..7]
+    @param rui8_pos position [0..7]
     @param rui8_val uint8_t value to set
   */
-  void setUint8Data( uint8_t rui8_devClassInst, uint8_t rui8_val) { pb_data[rui8_devClassInst] = rui8_val;};
+  void setUint8Data( uint8_t rui8_pos, uint8_t rui8_val)
+    { c_data.setUint8Data(rui8_pos, rui8_val);};
   /**
     set an uint16_t value at specified position in string
     @param rui8_devClassInst position [0..6]
     @param rui16_val uint16_t value to set
   */
   void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
-    {numberRef2LittleEndianString( rui16_val, (pb_data+rui8_pos) );};
-    //{ pb_data[rui8_pos] = (rui16_val & 0xFF); pb_data[rui8_pos+1] = ( rui16_val >> 8 );};
+    { c_data.setUint16Data(rui8_pos, rui16_val);};
   /**
     set an int16_t value at specified position in string
     @param rui8_devClassInst position [0..6]
     @param ri16_val int16_t value to set
   */
   void setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
-    {numberRef2LittleEndianString( ri16_val, (pb_data+rui8_pos) );};
-    //{ pb_data[rui8_pos] = (ri16_val & 0xFF); pb_data[rui8_pos+1] = ( ri16_val >> 8 );};
+    { c_data.setInt16Data(rui8_pos, ri16_val);};
   /**
     set an uint32_t value at specified position in string
     @param rui8_devClassInst position [0..4]
     @param rui32_val uint32_t value to set
   */
   void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
-    {numberRef2LittleEndianString( rui32_val, (pb_data+rui8_pos) );};
-  //{ setUint16Data( rui8_pos,     uint16_t(rui32_val & 0xFFFF) );
-  //    setUint16Data( (rui8_pos+2), uint16_t( rui32_val >> 16 ) );};
+    { c_data.setUint32Data(rui8_pos, rui32_val);};
   /**
     set an int32_t value at specified position in string
     @param rui8_devClassInst position [0..4]
     @param ri32_val int32_t value to set
   */
   void setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
-    {numberRef2LittleEndianString( ri32_val, (pb_data+rui8_pos) );};
-  //{ setInt16Data( rui8_pos,     int16_t(ri32_val & 0xFFFF) );
-  //  setInt16Data( (rui8_pos+2), int16_t( ri32_val >> 16 ) );};
-
+    { c_data.setInt32Data(rui8_pos, ri32_val);};
   /**
     simply deliver a uint8_t from a specific position with
     @param rb_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos rb_pos
   */
-  uint8_t getUint8Data(uint8_t rui8_pos) const {return pb_data[rui8_pos];};
+  uint8_t getUint8Data(uint8_t rui8_pos) const {return c_data.getUint8Data(rui8_pos);};
   /**
     simply deliver a uint16_t from a specific starting position with
     @param rb_pos position of dellivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint16_t getUint16Data(uint8_t rui8_pos) const { return convertLittleEndianStringUi16(pb_data+rui8_pos);};
-  //{return (uint16_t(pb_data[rb_pos]) | (uint16_t(pb_data[rb_pos+1])<<8));};
+  uint16_t getUint16Data(uint8_t rui8_pos) const {return c_data.getUint16Data(rui8_pos);};
   /**
     simply deliver a int16_t from a specific starting position with
     @param rb_pos position of dellivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int16_t getInt16Data(uint8_t rui8_pos) const { return convertLittleEndianStringI16(pb_data+rui8_pos);};
-  // {return int16_t( uint16_t(pb_data[rb_pos]) | ( uint16_t(pb_data[rb_pos+1]) << 8 ) );};
+  int16_t getInt16Data(uint8_t rui8_pos) const {return c_data.getInt16Data(rui8_pos);};
   /**
     simply deliver a uint32_t from a specific starting position with
     @param rb_pos position of dellivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  uint32_t getUint32Data(uint8_t rui8_pos) const { return convertLittleEndianStringUi32(pb_data+rui8_pos);};
-  // {return (uint32_t(getUint16Data(rb_pos)) | (uint32_t(getUint16Data(rb_pos+2))<<16));};
+  uint32_t getUint32Data(uint8_t rui8_pos) const {return c_data.getUint32Data(rui8_pos);};
   /**
     simply deliver a int32_t from a specific starting position with
     @param rb_pos position of dellivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rb_pos, rb_pos+1) read Low/High order
   */
-  int32_t getInt32Data(uint8_t rui8_pos) const { return convertLittleEndianStringI32(pb_data+rui8_pos);};
-  // {return int32_t( uint32_t(getUint16Data(rb_pos)) | ( uint32_t(getUint16Data(rb_pos+2)) << 16 ) );};
+  int32_t getInt32Data(uint8_t rui8_pos) const {return c_data.getInt32Data(rui8_pos);};
 
   /**
     put data into given reference to BIOS related data structure with data, len

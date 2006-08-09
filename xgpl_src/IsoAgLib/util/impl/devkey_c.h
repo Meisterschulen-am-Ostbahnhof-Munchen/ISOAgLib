@@ -141,7 +141,7 @@ class DevKey_c {
       */
     DevKey_c( const ISOName_c& rrefc_src )
     : c_isoName(rrefc_src) {};
-    DevKey_c( const uint8_t* rpui8_dataName ) : c_isoName( rpui8_dataName ) {};
+    DevKey_c( const Flexible8ByteString_c* rpc_flexibleDataName ) : c_isoName( rpc_flexibleDataName ) {};
     #endif
 
     /** default constructor
@@ -169,7 +169,9 @@ class DevKey_c {
     /** set device class & instance with two seperate parameters */
     void set( const ISOName_c& rrefc_isoName ) { c_isoName = rrefc_isoName;};
     /** set device class & instance with two seperate parameters */
-    void set( const uint8_t* rpui8_dataName ){ c_isoName.inputString(rpui8_dataName);};
+    void set( const Flexible8ByteString_c* rpc_flexibleDataName ){ c_isoName.inputUnion(rpc_flexibleDataName);};
+    /** set device class & instance with two seperate parameters */
+    void set( const uint8_t* rpui8_stringDataName ){ c_isoName.inputString(rpui8_stringDataName);};
     #endif
 
     /** set DEVCLASS (device type ) */
@@ -234,6 +236,7 @@ class DevKey_c {
     #else
       { return ui16_data != refc_right.ui16_data;};
     #endif
+
     /** compare two DevKey_c values with operator< */
     bool operator<( const DevKey_c& refc_right ) const
     #ifdef USE_ISO_11783

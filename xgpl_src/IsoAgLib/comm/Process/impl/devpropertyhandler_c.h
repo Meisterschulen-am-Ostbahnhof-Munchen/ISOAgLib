@@ -168,7 +168,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c,  ClientBase
 
     void updateTcStateReceived(uint8_t rui8_lastTcState) { ui8_lastTcState = rui8_lastTcState; i32_tcStateLastReceived = HAL::getTime();};
     void setTcSourceAddress(uint8_t rtcSourceAddress) { tcSourceAddress = rtcSourceAddress;};
-    
+
   private:
     uint16_t ui16_currentSendPosition;
     uint16_t ui16_storedSendPosition;

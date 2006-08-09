@@ -452,7 +452,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     ui8_val |= (pt_ptoData->t_ptoShaftSpeedLimitStatus << 1);
     data().setUint8Data(5, ui8_val);
     //reserved fields
-    data().setUint16Data(6, 0);
+    data().setUint16Data(6, 0xFFFF);
 
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data

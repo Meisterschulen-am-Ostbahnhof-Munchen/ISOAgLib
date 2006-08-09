@@ -145,12 +145,6 @@ public:
     @return SEND value of message
   */
   uint8_t send()const{return bitfield.b_send;};
-
-  /**
-    deliver data value as single uint8_t from position rui8_pos
-    @return uint8_t of wanted data position of message
-  */
-  uint8_t data(uint8_t rui8_pos)const{return pb_data[rui8_pos];};
   /**
     deliver the message number in received CTS CAN pkg for IsoAgLib+ transfer
     (Fieldstar uses MSB_LSB uint8_t order)
@@ -158,46 +152,6 @@ public:
     @return number of to be sent message
   */
   uint16_t getData_2ByteInteger(uint8_t rui8_pos) const;
-
-  /* *********************** */
-  /* ***setting of values*** */
-  /* *********************** */
-  /**
-    set an int8_t value at variable uint8_t position
-    @param rui8_pos uint8_t position in CAN data string
-    @param rc_val value to set
-  */
-  void setData(uint8_t rui8_pos, int8_t rc_val){*(int8_t*)(pb_data + rui8_pos) = rc_val;};
-  /**
-    set an uint16_t value at variable uint8_t position
-    @param rui8_pos uint8_t position in CAN data string
-    @param rb_val value to set
-  */
-  void setData(uint8_t rui8_pos, uint8_t rb_val){*(uint8_t*)(pb_data + rui8_pos) = rb_val;};
-  /**
-    set an integer value at variable uint8_t position
-    @param rui8_pos uint8_t position in CAN data string
-    @param ri16_val value to set
-  */
-  void setData(uint8_t rui8_pos, int16_t ri16_val);
-  /**
-    set an uint16_t value at variable uint8_t position
-    @param rui8_pos uint8_t position in CAN data string
-    @param rui16_val value to set
-  */
-  void setData(uint8_t rui8_pos, uint16_t rui16_val);
-  /**
-    set an int32_t value at variable uint8_t position
-    @param rui8_pos uint8_t position in CAN data string
-    @param ri32_val value to set
-  */
-  void setData(uint8_t rui8_pos, int32_t ri32_val);
-  /**
-    set an uint32_t value at variable uint8_t position
-    @param rui8_pos uint8_t position in CAN data string
-    @param rui32_val value to set
-  */
-  void setData(uint8_t rui8_pos, uint32_t rui32_val);
   /**
     set the uint8_t order for two uint8_t integer values, as %e.g. Fieldstar
     Terminals use the unusual order MSB_LSB

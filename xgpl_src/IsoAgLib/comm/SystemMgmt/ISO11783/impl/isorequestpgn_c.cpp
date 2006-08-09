@@ -282,7 +282,7 @@ ISORequestPGN_c::processMsg ()
           regPGN_it != registeredClientsWithPGN.end(); regPGN_it++)
     { // let all local regPGN_it process this request
       if (regPGN_it->ui32_pgn == ui32_reqPgn)
-        b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN(ui32_reqPgn, data().nr(), data().isoPs());
+        b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN(ui32_reqPgn, data().isoSa(), data().isoPs());
     }
 
     if ((data().isoPs() != 0xFF) && !b_processedByAnyClient) // no client could answer the Request PGN, so NACK it!
@@ -296,16 +296,14 @@ ISORequestPGN_c::processMsg ()
       data().setIsoPri(6);
       data().setIsoDp(0);
       data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
-      data().setIsoPs(data().nr());
+      data().setIsoPs(data().isoSa());
       data().setIsoSa(data().isoPs());
-      data().setUint8Data ((1-1), 1); // Control Byte = 1, Negative Acknowledgement: NACK
-      data().setUint8Data ((2-1), 0xFF); // Reserved
-      data().setUint8Data ((3-1), 0xFF); // Reserved
-      data().setUint8Data ((4-1), 0xFF); // Reserved
-      data().setUint8Data ((5-1), 0xFF); // Reserved
-      data().setUint8Data ((6-1), ui32_purePgn & 0xFF);
-      data().setUint8Data ((7-1), (ui32_purePgn >> 8) & 0xFF);
-      data().setUint8Data ((8-1), (ui32_purePgn >> 16) & 0xFF);
+      // set the first four bytes as uint32_t value, where lowest byte equals to ControlByte
+      data().setUint32Data ((1-1), 0xFFFFFF01UL); // Control Byte = 1, Negative Acknowledgement: NACK
+      // set at lowest byte of second uint32_t value the reserved 0xFF
+      // and place at the higher bytes of this second uint32_t
+      // the ui32_purePgn
+      data().setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) ); // Control Byte = 1, Negative Acknowledgement: NACK
       data().setLen (8);
 
       __IsoAgLib::getCanInstance4Comm() << c_data;

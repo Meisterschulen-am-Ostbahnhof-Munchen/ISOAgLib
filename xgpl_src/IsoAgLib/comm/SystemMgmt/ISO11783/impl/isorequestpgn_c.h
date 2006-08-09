@@ -95,7 +95,7 @@
 #include <IsoAgLib/util/impl/elementbase_c.h>
 //#include <IsoAgLib/util/impl/cancustomer_c.h>
 //#include <IsoAgLib/driver/system/impl/system_c.h>
-#include "isosystempkg_c.h"
+#include <IsoAgLib/util/impl/canpkgext_c.h>
 //#include "isoitem_c.h"
 
 #include <vector>
@@ -133,9 +133,9 @@ public:
   bool timeEvent (void) { return true; };
 
   /** deliver reference to data pkg
-      @return reference to the CAN communication member object c_data (ISOSystemPkg_c)
+      @return reference to the CAN communication member object c_data (CANPkgExt_c)
       @see CANPkgExt */
-  ISOSystemPkg_c& data() {return c_data;};
+  CANPkgExt_c& data() {return c_data;};
 
   //  Operation: dataBase
   //!  deliver reference to data pkg as reference to CANPkgExt_c
@@ -190,7 +190,7 @@ private: // Private attributes
   friend class SINGLETON_DERIVED (ISORequestPGN_c,ElementBase_c);
 
   /** temp data where received and to be sent data is put */
-  ISOSystemPkg_c c_data;
+  CANPkgExt_c c_data;
 
   /** constructor for ISORequestPGN_c */
   ISORequestPGN_c (void);

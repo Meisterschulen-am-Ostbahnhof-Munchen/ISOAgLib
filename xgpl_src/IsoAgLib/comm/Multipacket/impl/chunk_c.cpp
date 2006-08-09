@@ -1,5 +1,5 @@
 /***************************************************************************
-                          chunk_c.cpp - 
+                          chunk_c.cpp -
                              -------------------
     class                : ::Chunk_c
     project              : IsoAgLib
@@ -97,7 +97,7 @@ namespace __IsoAgLib {
 
 // //////////////////////////////// +X2C Operation : Chunk_c
 //! Static member variable
-uint16_t 
+uint16_t
 Chunk_c::sui16_chunkSize = Stream_c::sui8_pkgBurst * 7;
 
 
@@ -163,7 +163,7 @@ Chunk_c::insert(uint8_t rui8_data)
 //! @param rui8_data: Bytes to be inserted
 //! @return Number of inserted bytes
 uint8_t
-Chunk_c::insert7Bytes(uint8_t* pui8_data)
+Chunk_c::insert7Bytes(const uint8_t* pui8_data)
 { // ~X2C
   uint8_t  nbr=0;
 

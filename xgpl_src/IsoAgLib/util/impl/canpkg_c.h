@@ -87,9 +87,11 @@
 //#include <Application_Config/isoaglib_config.h>
 #include <IsoAgLib/hal/config.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
+#include "util_funcs.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
 
 /**
   Storing the informations of one CAN
@@ -158,6 +160,20 @@ public:
     @return ident value
   */
   static uint8_t& identRef(uint8_t rb_pos) {return c_ident.identRef(rb_pos);};
+  /** retrieve CAN data bytes represented by pointer to Union8ByteString_u */
+  static Flexible8ByteString_c* getDataUnion() { return &c_data;};
+  /** retrieve CAN data bytes represented by CONST pointer to Union8ByteString_u */
+  static const Flexible8ByteString_c* getDataUnionConst() { return &c_data;};
+  /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
+  static const uint8_t* getUint8DataConstPointer( uint8_t rui8_positionOffset )
+    { return c_data.getUint8DataConstPointer( rui8_positionOffset );};
+  /** retrieve a raw const pointer to uint8_t data string */
+  static const uint8_t* getUint8DataConstPointer() { return c_data.getUint8DataConstPointer();};
+  /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
+  static uint8_t* getUint8DataPointer( uint8_t rui8_positionOffset )
+    { return c_data.getUint8DataPointer( rui8_positionOffset );};
+  /** retrieve a raw const pointer to uint8_t data string */
+  static uint8_t* getUint8DataPointer() { return c_data.getUint8DataPointer();};
 
   /**
     set data with size bytes from source array;
@@ -165,7 +181,30 @@ public:
     @param rb_data pointer to source data uint8_t array
     @param rui8_len amount/len of the source data string
   */
-  virtual void setDataString(const uint8_t* rpb_data, uint8_t rui8_len);
+  static void setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len);
+  /**
+    set data with size bytes from source array;
+    if rui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered.
+    this variant of the setDataFromString allows to set the CAN data from specified offset position onwards.
+    @param rui8_targetPositionOffset
+    @param rb_data pointer to source data uint8_t array
+    @param rui8_len amount/len of the source data string
+  */
+  static void setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_t* rpb_data, uint8_t rui8_len);
+  /**
+    set a complete 8-Byte data string from source type Union8ByteString_u.
+    The length of this package is automatically set to length 8.
+    @param rpc_data pointer to source data Flexible8ByteString_c
+  */
+  static void setDataUnion(const Flexible8ByteString_c* rpc_data)
+    { ui8_len = 8; c_data = *rpc_data; };
+  /**
+    set a complete 8-Byte data string from source type Union8ByteString_u.
+    The length of this package is automatically set to length 8.
+    @param rpc_data pointer to source data Flexible8ByteString_c
+  */
+  static void setDataUnion(uint8_t rui8_ind, const Flexible4ByteString_c* rpc_data)
+    { c_data.setFlexible4DataValueInd( rui8_ind, *rpc_data ); };
 
   /** retrieve len of last received CAN message */
   static uint8_t getLen( void ) { return ui8_len;};
@@ -197,10 +236,21 @@ public:
     __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE);
 
   /**
+    set complete CAN msg with one function call
+    where exactly 8 data bytes are retrieved from pointer to Union8ByteString_u.
+    As the union represents exactly 8-Data Byte, the message length is set to 8.
+    @param rt_ident ident of the CAN telegram
+    @param rpc_data pointer to the source data Flexible8ByteString_c string
+    @param ri32_time optional timestamp of CAN telegram in [msec.] since system start
+  */
+  static void set(MASK_TYPE rt_ident, const Flexible8ByteString_c* rpc_data, int32_t ri32_time = 0,
+    __IsoAgLib::Ident_c::identType_t rt_type = DEFAULT_IDENT_TYPE);
+
+  /**
     ==> OBSOLETE, because now all pkg-data is STATIC!
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
     assign operator to insert informations from one CANPkg_c into another
     @see __IsoAgLib::FilterBox_c::operator>>
     @see CANPkgExt_c::operator=
@@ -220,22 +270,36 @@ public:
   */
   virtual void getData(uint32_t& reft_ident, uint8_t& refui8_identType,
                        uint8_t& refb_dlcTarget, uint8_t* pb_dataTarget);
+
+  /** copy the data bytes from the CANPkg_c to the given uint8_t* pointer.
+      the pointed array must be at least 8 byte in size.
+      This function copies as many byte as are defined by ui8_len.
+    */
+  static void getDataToString( uint8_t* pui8_targetData )
+    { c_data.getDataToString( pui8_targetData, ui8_len  ); };
+
+  /** copy the data bytes from the CANPkg_c to the given uint8_t* pointer.
+      the amount of copied data can be restricted by the last parameter.
+      The first parameter defines the index of the first copied data byte.
+    */
+  static void getDataToString( uint8_t rui8_positionOffset, uint8_t* pui8_targetData, uint8_t rui8_maxSize )
+    {c_data.getDataToString( rui8_positionOffset, pui8_targetData, rui8_maxSize );};
   /**
     ==> OBSOLETE, because now all pkg-data is STATIC!
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
     compare for equality with other CANPkg
     @param rrefc_cmp reference to the to be compared CANPkg
     @return true -> both CANPkg_c have the same data
   bool operator==(const CANPkg_c& rrefc_cmp) const;
   */
-  
+
   /**
     ==> OBSOLETE, because now all pkg-data is STATIC!
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
     compare for difference to other CANPkg
     @param rrefc_cmp reference to the to be compared CANPkg
     @return true -> both CANPkg_c have different data
@@ -244,14 +308,14 @@ public:
 
 //protected: // Protected attributes
 public:
-  /** size of data */
-  static uint8_t ui8_len;
-  /** max 8 data bytes */
-  static uint8_t pb_data[9];
-  /** identifier of CAN msg */
-  static __IsoAgLib::Ident_c c_ident;
+  /** max 8 data bytes defined as union */
+  static Flexible8ByteString_c c_data;
   /** receive time of CAN message */
   static int32_t i32_time;
+  /** identifier of CAN msg */
+  static __IsoAgLib::Ident_c c_ident;
+  /** size of data */
+  static uint8_t ui8_len;
 };
 
 }

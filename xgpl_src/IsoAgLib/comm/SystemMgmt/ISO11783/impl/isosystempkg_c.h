@@ -126,11 +126,6 @@ public:
   /* ***retreiving of values*** */
   /* ************************** */
   /**
-    deliver counter value of address claim message
-    @return counter value of address claim message
-  */
-  uint8_t nr() const { return isoSa(); };
-  /**
     deliver DEV_KEY of sender
     @return DEV_KEY of sender
   */
@@ -138,34 +133,9 @@ public:
   { // read on extended ident ISO msg the DEVKEY from NAME setting
     return c_isoDevKey;
   };
-  /**
-    deliver member name string of message
-    @return member name string of message
-  */
-  const uint8_t* name() const
-  { // deliver NAME from pb_data[0] on
-    return pb_data;
-  };
-
   /* *********************** */
   /* ***setting of values*** */
   /* *********************** */
-
-  /**
-    set counter of address claim message
-    @param rb_val value of NR flag
-  */
-  void setNr(uint8_t rb_val) { setIsoSa(rb_val); };
-  /**
-    set 7 uint8_t member name string
-    @param rpb_val pointer to max. 7 uint8_t name array
-  */
-  void setName(const uint8_t* rName)
-  { // deliver NAME from pb_data[0] on
-    CNAMESPACE::memcpy(pb_data,rName,8);
-    pb_data[8]='\0';
-    setLen(8);
-  };
 
   /**
     overloaded virtual function to translate the string data into flag values;

@@ -1235,12 +1235,11 @@ void TimePosGPS_c::init(const DevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_ide
       }
       else
       {
-        data().setUint8Data(0, 0);
-        data().setUint8Data(1, 0);
-        data().setUint8Data(2, 0);
-        data().setUint8Data(3, 1);
-        data().setUint8Data(4, 4);
-        data().setUint8Data(5, 0);
+        data().setUint16Data( 0, 0U );
+        data().setUint8Data(2, 0U);
+        data().setUint8Data(3, 1U);
+        data().setUint8Data(4, 4U);
+        data().setUint8Data(5, 0U);
       }
       data().setUint8Data(6, bit_calendar.timezoneMinuteOffset );
       data().setUint8Data(7, bit_calendar.timezoneHourOffsetMinus24 );

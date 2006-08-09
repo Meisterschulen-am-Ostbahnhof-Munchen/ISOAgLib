@@ -89,7 +89,7 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h>
+#include <IsoAgLib/util/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/SystemMgmt/impl/identitem_c.h>
@@ -139,7 +139,7 @@ public:
   /** deliver reference to data pkg
     @return reference to the member ISOTerminalPkg_c, which encapsulates the CAN send structure
   */
-  ISOTerminalPkg_c& data(){return c_data;};
+  CANPkgExt_c& data(){return c_data;};
 
   /** deliver reference to data pkg as reference to CANPkgExt_c
     to implement the base virtual function correct
@@ -203,7 +203,7 @@ protected:
 private: // attributes
 
   /** temp data where received data is put */
-  ISOTerminalPkg_c c_data;
+  CANPkgExt_c c_data;
 
   STL_NAMESPACE::list<VtServerInstance_c> l_vtServerInst;
 

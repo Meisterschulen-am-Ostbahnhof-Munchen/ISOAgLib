@@ -530,7 +530,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     b_val8 |= t_directionReal;
     data().setUint8Data(7, b_val8);
     //reserved fields
-    data().setUint8Data(6, 0);
+    data().setUint8Data(6, 0xFF);
 
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data
@@ -575,7 +575,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     ui8_temp |= (t_selectedDirection        << 0);
     data().setUint8Data(7, ui8_temp);
     //reserved fields
-    data().setUint8Data(6, 0);
+    data().setUint8Data(6, 0xFF);
 
     // CANIO_c::operator<< retreives the information with the help of CANPkg_c::getData
     // then it sends the data

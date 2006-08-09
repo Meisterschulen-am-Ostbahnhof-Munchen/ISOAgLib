@@ -72,11 +72,6 @@ class iISOName_c : public __IsoAgLib::ISOName_c {
 private:
 public:
   /**
-    constructor which can read in initial data from uint8_t string
-    @param rpb_src 64bit input data string
-  */
-  iISOName_c(const uint8_t* rpb_src = NULL) : ISOName_c( rpb_src ) {};
-  /**
     constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU
     @param rui8_indGroup industry group of device (2 for agriculture)
@@ -94,6 +89,11 @@ public:
   iISOName_c(bool rb_selfConf, uint8_t rui8_indGroup, uint8_t rui8_devClass, uint8_t rui8_devClassInst,
         uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0)
         : ISOName_c( rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst, rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst ) {};
+  /**
+    constructor which can read in initial data from uint8_t string
+    @param rpb_src 64bit input data string
+  */
+  iISOName_c(const uint8_t* rpb_src = NULL) : ISOName_c(rpb_src) {};
   /**
     copy constructor for ISOName
     @param rrefc_src source ISOName_c instance
@@ -234,14 +234,6 @@ public:
     @param rui32_serNo serial no of specific device (21bit)
   */
   void setSerNo(uint32_t rui32_serNo) { ISOName_c::setSerNo( rui32_serNo );};
-
-  /**
-    check if this NAME has higher prio
-    than the given NAME 8-uint8_t string
-    @param rpb_compare
-    @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
-  */
-  int8_t higherPriThanPar(const uint8_t* rpb_compare) { return ISOName_c::higherPriThanPar( rpb_compare );};
 };
 
 }

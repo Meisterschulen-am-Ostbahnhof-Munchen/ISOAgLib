@@ -89,6 +89,7 @@
 #define STREAM_C_H
 
 #include "../istream_c.h"
+#include <IsoAgLib/util/impl/canpkg_c.h>
 
 
 
@@ -177,13 +178,13 @@ public:
   // Sets the internal state to expect (DPO and afterwards) the calculated amount of DATA commands next
   uint8_t expectBurst(uint8_t wishingPkgs);
 
-  bool handleDataPacket (uint8_t* pui8_data);
+  bool handleDataPacket (const Flexible8ByteString_c* rpc_data);
 
 /// Begin Additional Abstract methods handled by StreamLinear_c/StreamChunk_c
   //  Operation: insert
-  virtual void insert7Bytes(uint8_t* pui8_data)=0;
+  virtual void insert7Bytes(const uint8_t* pui8_data)=0;
 #ifdef NMEA_2000_FAST_PACKET
-  virtual void insertFirst6Bytes(uint8_t* pui8_data)=0;
+  virtual void insertFirst6Bytes(const uint8_t* pui8_data)=0;
 #endif
 
   //  Operation: getNotParsedSize

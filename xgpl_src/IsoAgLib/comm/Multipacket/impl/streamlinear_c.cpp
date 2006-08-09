@@ -112,7 +112,7 @@ StreamLinear_c::~StreamLinear_c()
 //! Parameter:
 //! @param pui8_data: pointer to 6 bytes of data!
 void
-StreamLinear_c::insertFirst6Bytes(uint8_t* pui8_data)
+StreamLinear_c::insertFirst6Bytes(const uint8_t* pui8_data)
 {
   vui8_buffer.push_back (pui8_data[0]);
   vui8_buffer.push_back (pui8_data[1]);
@@ -127,7 +127,7 @@ StreamLinear_c::insertFirst6Bytes(uint8_t* pui8_data)
 //! Parameter:
 //! @param pui8_data: pointer to 7 bytes of data!
 void
-StreamLinear_c::insert7Bytes(uint8_t* pui8_data)
+StreamLinear_c::insert7Bytes(const uint8_t* pui8_data)
 { // ~X2C
   vui8_buffer.push_back (pui8_data[0]);
   vui8_buffer.push_back (pui8_data[1]);

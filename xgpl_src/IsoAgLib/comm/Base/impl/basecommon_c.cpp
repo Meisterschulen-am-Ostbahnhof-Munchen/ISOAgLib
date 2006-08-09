@@ -346,12 +346,9 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   }
 
   // built request data string
-  uint8_t pb_requestString[4];
-  pb_requestString[0] = (ui32_requestedPGN & 0xFF);
-  pb_requestString[1] = ((ui32_requestedPGN >> 8)& 0xFF);
-  pb_requestString[2] = ((ui32_requestedPGN >> 16)& 0xFF);
-  data().setDataString(pb_requestString, 3);
-  // now ISOSystemPkg_c has right data -> send
+  data().setUint32Data( 0 , ui32_requestedPGN );
+  data().setLen( 3 );
+  // now CANPkgExt_c has right data -> send
   getCanInstance4Comm() << data();
   return true;
 }

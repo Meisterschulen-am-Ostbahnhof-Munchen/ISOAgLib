@@ -84,20 +84,22 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-/** size of data */
-uint8_t CANPkg_c::ui8_len = 0;
-/** max 8 data bytes */
-uint8_t CANPkg_c::pb_data[9] = {0,0,0,0,0,0,0,0,0};
-/** identifier of CAN msg */
-__IsoAgLib::Ident_c CANPkg_c::c_ident;
+/** max 8 data bytes defined as union */
+Flexible8ByteString_c CANPkg_c::c_data;
 /** receive time of CAN message */
 int32_t CANPkg_c::i32_time = 0;
+/** identifier of CAN msg */
+__IsoAgLib::Ident_c CANPkg_c::c_ident;
+/** size of data */
+uint8_t CANPkg_c::ui8_len = 0;
 
 /**
   default constructor, which does nothing for the base class,
   but can do something in derived classes
 */
-CANPkg_c::CANPkg_c( int ri_singletonVecKey ) : ClientBase( ri_singletonVecKey ) {
+CANPkg_c::CANPkg_c( int ri_singletonVecKey )
+  : ClientBase( ri_singletonVecKey )
+ {
 }
 
 /** virtual destructor, which can be overloaded in derived classes */
@@ -119,7 +121,7 @@ const CANPkg_c& CANPkg_c::operator=(const CANPkg_c& rrefc_right)
 {
   c_ident = rrefc_right.c_ident;
   ui8_len = rrefc_right.ui8_len;
-  CNAMESPACE::memcpy(pb_data, rrefc_right.pb_data, ui8_len);
+  c_data = rrefc_right.c_data;
   i32_time = rrefc_right.i32_time;
 
   return *this;
@@ -139,7 +141,7 @@ void CANPkg_c::getData(uint32_t& reft_ident, uint8_t& refui8_identType,
   reft_ident = ident();
   refui8_identType = identType();
   refb_dlcTarget = ui8_len;
-  CNAMESPACE::memcpy(pb_dataTarget, pb_data, ui8_len);
+  c_data.getDataToString( pb_dataTarget, ui8_len );
 }
 
 /**
@@ -154,7 +156,7 @@ void CANPkg_c::set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len
 {
   c_ident.set(rt_ident, rt_type);
   ui8_len = (rui8_len<9)?rui8_len:8;
-  CNAMESPACE::memcpy(pb_data, rpb_data, ui8_len);
+  c_data.setDataFromString( rpb_data, ui8_len );
   i32_time = ri32_time;
 }
 
@@ -164,12 +166,25 @@ void CANPkg_c::set(MASK_TYPE rt_ident, const uint8_t* rpb_data, uint8_t rui8_len
   @param rb_data pointer to source data uint8_t array
   @param rui8_len amount/len of the source data string
 */
-void CANPkg_c::setDataString(const uint8_t* rpb_data, uint8_t rui8_len)
+void CANPkg_c::setDataFromString(const uint8_t* rpb_data, uint8_t rui8_len)
 {
   ui8_len = (rui8_len<9)?rui8_len:8;
-  CNAMESPACE::memcpy(pb_data, rpb_data, ui8_len);
+  c_data.setDataFromString( rpb_data, ui8_len);
 }
-
+/**
+  set data with size bytes from source array;
+  if rui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered.
+  this variant of the setDataFromString allows to set the CAN data from specified offset position onwards.
+  @param rui8_targetPositionOffset
+  @param rb_data pointer to source data uint8_t array
+  @param rui8_len amount/len of the source data string
+*/
+void CANPkg_c::setDataFromString(uint8_t rui8_targetPositionOffset, const uint8_t* rpb_data, uint8_t rui8_len)
+{
+  const unsigned int cui_copyByteCnt = (rui8_len+rui8_targetPositionOffset <= 8)?rui8_len:(8-rui8_targetPositionOffset);
+  ui8_len = rui8_targetPositionOffset + cui_copyByteCnt;
+  c_data.setDataFromString( rui8_targetPositionOffset, rpb_data, cui_copyByteCnt);
+}
 
 /**
   ==> OBSOLETE, because now all pkg-data is STATIC!
@@ -182,7 +197,7 @@ void CANPkg_c::setDataString(const uint8_t* rpb_data, uint8_t rui8_len)
 bool CANPkg_c::operator==(const CANPkg_c& rrefc_cmp) const
 {
   bool b_result = true;
-  if (pb_data != rrefc_cmp.pb_data) b_result = false;
+  if (c_data != rrefc_cmp.c_data) b_result = false;
   if (c_ident != rrefc_cmp.c_ident) b_result = false;
   if (ui8_len != rrefc_cmp.ui8_len) b_result = false;
   if (i32_time != rrefc_cmp.i32_time) b_result = false;
@@ -204,7 +219,7 @@ bool CANPkg_c::operator!=(const CANPkg_c& rrefc_cmp) const
 
   bool b_result = true;
 
-  if (pb_data == rrefc_cmp.pb_data) b_result = false;
+  if (c_data == rrefc_cmp.c_data) b_result = false;
   if (c_ident == rrefc_cmp.c_ident) b_result = false;
   if (ui8_len == rrefc_cmp.ui8_len) b_result = false;
   if (i32_time == rrefc_cmp.i32_time) b_result = false;

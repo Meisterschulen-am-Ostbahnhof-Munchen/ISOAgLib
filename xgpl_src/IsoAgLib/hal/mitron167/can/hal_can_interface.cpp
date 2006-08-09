@@ -1373,7 +1373,7 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   functions:
   * void setIdent(MASK_TYPE rt_ident, Ident_c::identType_t rt_type)
     -> set ident rrefc_ident of received msg in CANPkg_c
-  * uint8_t setDataString(uint8_t* rpb_data, uint8_t rb_dlc)
+  * uint8_t setDataFromString(uint8_t* rpb_data, uint8_t rb_dlc)
     -> set DLC in CANPkg_c from rb_dlc and insert data from uint8_t string rpb_data
   * void setTime(int32_t ri32_time) -> set receive time
   @param rui8_busNr number of the BUS to config
@@ -1406,7 +1406,7 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
     if ( pt_element == NULL ) return HAL_WARN_ERR;
     // now read data from pointed element of buffer
     __IsoAgLib::CANPkg_c::setIdent(uint32_t( pt_element->data.id ), __IsoAgLib::Ident_c::identType_t(ui8_canBufferXtd[rui8_busNr][rui8_msgobjNr]));
-    rpc_data->setDataString(pt_element->data.databytes, pt_element->data.bytes);
+    rpc_data->setDataFromString(pt_element->data.databytes, pt_element->data.bytes);
   rpc_data->setTime( pt_element->timestamp );
   #if 0
   char temp[50];

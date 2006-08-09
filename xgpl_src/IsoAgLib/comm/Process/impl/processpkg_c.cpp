@@ -144,20 +144,20 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
   bool b_result = false;
 
 
-  int32_t i32_test = *(static_cast<const int32_t*>(static_cast<const void*>(pb_procData)));
+  const int32_t ci32_test = c_flex4Data.getInt32Data();
   // DIN: pd = 0 && mod < 4
   if (c_generalCommand.getCommand() == GeneralCommand_c::setValue &&
       c_generalCommand.checkIsSetpoint())
   { // setpoint value -> special commands are possible for exact, min, max, default setpopints
       if ((ren_checkCmd & setpointReleaseCmd != 0)
-       &&(i32_test == static_cast<int32_t>(SETPOINT_RELEASE_COMMAND)))
+       &&(ci32_test == static_cast<int32_t>(SETPOINT_RELEASE_COMMAND)))
       {
         b_result = true;
       }
       else
       {
         if ((ren_checkCmd & setpointErrCmd != 0)
-         && (i32_test == static_cast<int32_t>(SETPOINT_ERROR_COMMAND))) b_result = true;
+         && (ci32_test == static_cast<int32_t>(SETPOINT_ERROR_COMMAND))) b_result = true;
       }
   }
 
@@ -167,14 +167,14 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
   { // measure value: conversion if: actual, min, max, integ, med
     // check for command values
     if ((ren_checkCmd & noVal_32s != 0)
-      &&(i32_test == static_cast<int32_t>(NO_VAL_32S)))
+      &&(ci32_test == static_cast<int32_t>(NO_VAL_32S)))
     {
       b_result = true;
     }
     else
     {
       if ((ren_checkCmd & errVal_32s != 0)
-      && (i32_test == static_cast<int32_t>(ERROR_VAL_32S))) b_result = true;
+      && (ci32_test == static_cast<int32_t>(ERROR_VAL_32S))) b_result = true;
     }
   }
   return b_result;
@@ -196,14 +196,14 @@ int32_t ProcessPkg_c::dataLong()const{
   {
     case i32_val:
     case cmdVal:
-      i32_result = *(static_cast<const int32_t*>(static_cast<const void*>(pb_procData)));
+      i32_result = c_flex4Data.getInt32Data();
       break;
     case ui32_val:
-      i32_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
+      i32_result = c_flex4Data.getUint32Data();
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      littleEndianStream2FloatVar(pb_procData, ((float*)(&i32_result)));
+      littleEndianStream2FloatVar(c_flex4Data.uint8, ((float*)(&i32_result)));
       break;
 #endif
   }
@@ -224,14 +224,14 @@ uint32_t ProcessPkg_c::dataUlong()const{
   {
     case i32_val:
     case cmdVal:
-      ulResult = *(static_cast<const int32_t*>(static_cast<const void*>(pb_procData)));
+      ulResult = c_flex4Data.getInt32Data();
       break;
     case ui32_val:
-      ulResult = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
+      ulResult = c_flex4Data.getUint32Data();
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      littleEndianStream2FloatVar(pb_procData, ((float*)(&ulResult)));
+      littleEndianStream2FloatVar(c_flex4Data.uint8, ((float*)(&ulResult)));
       break;
 #endif
   }
@@ -251,16 +251,16 @@ float ProcessPkg_c::dataFloat()const{
   switch (valType())
   {
     case i32_val:
-      f_result = *(static_cast<const int32_t*>(static_cast<const void*>(pb_procData)));
+      f_result = c_flex4Data.getInt32Data();
       break;
     case ui32_val:
-      f_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
+      f_result = c_flex4Data.getUint32Data();
       break;
     case float_val:
-      littleEndianStream2FloatVar(pb_procData, &f_result);
+      littleEndianStream2FloatVar(c_flex4Data.uint8, &f_result);
       break;
     case cmdVal:
-      f_result = *(static_cast<const uint32_t*>(static_cast<const void*>(pb_procData)));
+      f_result = c_flex4Data.getInt32Data();
       break;
   }
   return f_result;
@@ -277,7 +277,7 @@ float ProcessPkg_c::dataFloat()const{
 */
 void ProcessPkg_c::setDataRawCmd(int32_t ri32_val, proc_valType_t ren_procValType)
 {
-  *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
+  c_flex4Data.setInt32Data( ri32_val );
 
 #ifndef USE_ISO_11783  // no need to do this switch case if new ISO part 10 is used. -bac
   switch (ren_procValType)
@@ -319,18 +319,18 @@ void ProcessPkg_c::setData(int32_t ri32_val, proc_valType_t ren_procValType)
   switch (ren_procValType)
   {
     case i32_val:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
+      c_flex4Data.setInt32Data( ri32_val );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case ui32_val:
-      *(static_cast<uint32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
+      c_flex4Data.setUint32Data( ri32_val );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      floatVar2LittleEndianStream( ((float *const)(&ri32_val)), pb_procData);
+      floatVar2LittleEndianStream( ((float *const)(&ri32_val)), c_flex4Data.uint8);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;
@@ -346,24 +346,24 @@ void ProcessPkg_c::setData(int32_t ri32_val, proc_valType_t ren_procValType)
   (if parameter and send type are different,
    a conversion by assignment is performed; %e.g. int32_t val 3
    can be sent as float 3.0)
-  @param ri32_val new data value for message
+  @param rui32_val new data value for message
   @param ren_procValType data type for message string (default ui32_val)
 */
-void ProcessPkg_c::setData(uint32_t ri32_val, proc_valType_t ren_procValType)
+void ProcessPkg_c::setData(uint32_t rui32_val, proc_valType_t ren_procValType)
 {
   switch (ren_procValType)
   {
     case i32_val:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
+      c_flex4Data.setInt32Data( rui32_val );
       set_d(0);
       break;
     case ui32_val:
-      *(static_cast<uint32_t*>(static_cast<void*>(pb_procData))) = ri32_val;
+      c_flex4Data.setUint32Data( rui32_val );
       set_d(0);
       break;
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     case float_val:
-      floatVar2LittleEndianStream( ((float *const)(&ri32_val)), pb_procData);
+      floatVar2LittleEndianStream( ((float *const)(&rui32_val)), c_flex4Data.uint8);
       set_d(1);
       break;
 #endif
@@ -384,16 +384,16 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_pr
   switch (ren_procSpecCmd)
   {
     case setpointReleaseCmd:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = SETPOINT_RELEASE_COMMAND;
+      c_flex4Data.setInt32Data( SETPOINT_RELEASE_COMMAND );
       break;
     case setpointErrCmd:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = SETPOINT_ERROR_COMMAND;
+      c_flex4Data.setInt32Data( SETPOINT_ERROR_COMMAND );
       break;
     case noVal_32s:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = NO_VAL_32S;
+      c_flex4Data.setInt32Data( NO_VAL_32S );
       break;
     case errVal_32s:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = ERROR_VAL_32S;
+      c_flex4Data.setInt32Data( ERROR_VAL_32S );
       break;
   }
 #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
@@ -420,17 +420,17 @@ void ProcessPkg_c::setData(float rf_val, proc_valType_t ren_procValType)
   switch (ren_procValType)
   {
     case i32_val:
-      *(static_cast<int32_t*>(static_cast<void*>(pb_procData))) = static_cast<int32_t>(rf_val);
+      c_flex4Data.setInt32Data( int32_t(rf_val) );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case ui32_val:
-      *(static_cast<uint32_t*>(static_cast<void*>(pb_procData))) = static_cast<uint32_t>(rf_val);
+      c_flex4Data.setUint32Data( uint32_t(rf_val) );
       set_d(0);
       bit_data.b_valType = ren_procValType;
       break;
     case float_val:
-      floatVar2LittleEndianStream(&rf_val, pb_procData);
+      floatVar2LittleEndianStream(&rf_val, c_flex4Data.uint8);
       set_d(1);
       bit_data.b_valType = ren_procValType;
       break;
@@ -460,9 +460,9 @@ void ProcessPkg_c::string2Flags()
     setEmpf(((ident() >> 4) & 0xF));
     setSend(ident() & 0xF);
 
-    setLis(CANPkg_c::pb_data[0] >> 5);
+    setLis(CANPkg_c::c_data[0] >> 5);
 
-    set_d(CANPkg_c::pb_data[2] >> 7);
+    set_d(CANPkg_c::c_data[2] >> 7);
     #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     if (d()==0)
     #endif
@@ -470,8 +470,8 @@ void ProcessPkg_c::string2Flags()
     #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
     else bit_data.b_valType = float_val;
     #endif
-    setDevClass((CANPkg_c::pb_data[2] >> 3) & 0xF);
-    setDevClassInst(CANPkg_c::pb_data[2] & 0x7);
+    setDevClass((CANPkg_c::c_data[2] >> 3) & 0xF);
+    setDevClassInst(CANPkg_c::c_data[2] & 0x7);
 
     DINMonitor_c &c_din_monitor = getDinMonitorInstance4Comm();
     // now set pc_monitorSend and pc_monitorEmpf
@@ -492,13 +492,13 @@ void ProcessPkg_c::string2Flags()
       pc_monitorSend = NULL;
     }
 
-    setPd(((CANPkg_c::pb_data[0] >> 3) & 0x3));
-    setMod((CANPkg_c::pb_data[0] & 0x7));
+    setPd(((CANPkg_c::c_data[0] >> 3) & 0x3));
+    setMod((CANPkg_c::c_data[0] & 0x7));
 
-    setZaehlnum(CANPkg_c::pb_data[1]);
+    setZaehlnum(CANPkg_c::c_data[1]);
 
-    setWert(CANPkg_c::pb_data[3] >> 4);
-    setInst((CANPkg_c::pb_data[3] & 0xF));
+    setWert(CANPkg_c::c_data[3] >> 4);
+    setInst((CANPkg_c::c_data[3] & 0xF));
 
     // some DIN systems place wrong DEVCLASS in data string -> correct DEVCLASS, for all requests to DEVCLASS of receiver
     // and correct DEVCLASS for all messages from special registered terminal
@@ -533,7 +533,7 @@ void ProcessPkg_c::string2Flags()
 
     setLis(0); // ISO doesn't support LIS code -> set to default 0
 
-    // bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::pb_data[0] >> 5) & 0x3);
+    // bit_data.b_valType = static_cast<proc_valType_t>((CANPkg_c::c_data[0] >> 5) & 0x3);
 
     // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
     #if defined(USE_FLOAT_DATA_TYPE) || defined(USE_DIN_GPS)
@@ -544,7 +544,7 @@ void ProcessPkg_c::string2Flags()
 
     //Need to replace this call with the getpos from the monitor item. DevKey no longer encapsulated in the message data itself
     //See new line added below that uses c_isoMonitor. -bac
-    //setDevKey( DevKey_c(((CANPkg_c::pb_data[2] >> 4) & 0xF), (CANPkg_c::pb_data[2] & 0xF) ) );
+    //setDevKey( DevKey_c(((CANPkg_c::c_data[2] >> 4) & 0xF), (CANPkg_c::c_data[2] & 0xF) ) );
 
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
@@ -569,22 +569,22 @@ void ProcessPkg_c::string2Flags()
       pc_monitorSend = NULL;
     }
 
-    set_Cmd(CANPkg_c::pb_data[0] & 0xf);
+    set_Cmd(CANPkg_c::c_data[0] & 0xf);
     uint16_t element = 0;
-     element = uint16_t(CANPkg_c::pb_data[1]) << 4;
-    element |= ((CANPkg_c::pb_data[0] & 0xF0)>>4);
+     element = uint16_t(CANPkg_c::c_data[1]) << 4;
+    element |= ((CANPkg_c::c_data[0] & 0xF0)>>4);
     set_Element(element);
 
     uint16_t newDDI = 0;
-    newDDI |= CANPkg_c::pb_data[3];
+    newDDI |= CANPkg_c::c_data[3];
     newDDI = newDDI << 8;
-    newDDI |= CANPkg_c::pb_data[2];
+    newDDI |= CANPkg_c::c_data[2];
     set_DDI(newDDI);
 
 #endif  // USE_ISO_11783
   }
 
-  CNAMESPACE::memcpy(pb_procData, (CANPkg_c::pb_data+4), 4);
+  c_flex4Data.setFlexible4DataValueInd( 1, CANPkg_c::c_data );
 };
 
 /**
@@ -655,29 +655,29 @@ void ProcessPkg_c::flags2String()
     { // target process msg
       setIdent((((pri() & 0x7) << 8) |((empf() & 0xF) << 4) | (send() & 0xF)), Ident_c::StandardIdent);
     }
-    CANPkg_c::pb_data[0] = ((lis() & 0x7) << 5) |((pd() & 0x3) << 3) | (mod() & 0x7);
+    CANPkg_c::c_data.setUint8Data(0, (((lis() & 0x7) << 5) |((pd() & 0x3) << 3) | (mod() & 0x7)));
 
     // if c_specialTermDevKey != DevKey_c::DevKeyUnspecified dependent on devKey receiver of the DEV_KEY of this data should be changed
     // to remote devKey
-    CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 );
+    CANPkg_c::c_data.setUint8Data(2, ((d() & 0x1) << 7) | ( ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 )));
     #if 0
     if ( (c_specialTermDevKey.isSpecified())
       && (c_specialTermDevKey == getDinMonitorInstance4Comm().dinMemberNr(empf()).devKey())
       && ( ( (wert() == 0) && (inst() >= 0xC) ) || ( (wert() == 0xF) &&  ( (inst() == 3) || (inst() == 4) ) ) )
        )
     { // sender is special case terminal -> change DEV_KEY for data part to terminal DEV_KEY to local from empf
-      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 );
+      CANPkg_c::c_data.setUint8Data(2, (((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 )));
     }
     else
     { // standard case
-      CANPkg_c::pb_data[2] = ((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 );
+      CANPkg_c::c_data.setUint8Data(2, (((d() & 0x1) << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 )));
     }
     #endif
 
-    CANPkg_c::pb_data[1] = zaehlnum();
-    CANPkg_c::pb_data[3] = (wert() << 4) | (inst() & 0xF);
+    CANPkg_c::c_data.setUint8Data(1, zaehlnum());
+    CANPkg_c::c_data.setUint8Data(3, ((wert() << 4) | (inst() & 0xF)));
 
-    CNAMESPACE::memcpy((CANPkg_c::pb_data+4), pb_procData, 4);
+    CANPkg_c::c_data.setFlexible4DataValueInd( 1, c_flex4Data );
 
     if ((pd() >> 1) == 1)
     { // request has only 4 bytes
@@ -688,7 +688,6 @@ void ProcessPkg_c::flags2String()
       setLen(8);
     }
 #endif // USE_DIN_9684
-
   }
   else
   {  // code added by Brad Cox to format the message to conform to the latest part 10 Specification. -bac
@@ -713,13 +712,13 @@ void ProcessPkg_c::flags2String()
       default: ui8_cmd = 0xFF;
     }
 
-    CANPkg_c::pb_data[0] = (ui8_cmd & 0xf) | ( (element() & 0xf) << 4);
-    CANPkg_c::pb_data[1] = element() >> 4;
-    CANPkg_c::pb_data[2] = DDI() & 0x00FF ;
-    CANPkg_c::pb_data[3] = (DDI()& 0xFF00) >> 8 ;
+    CANPkg_c::c_data.setUint8Data(0, (ui8_cmd & 0xf) | ( (element() & 0xf) << 4) );
+    CANPkg_c::c_data.setUint8Data(1, element() >> 4 );
+    CANPkg_c::c_data.setUint8Data(2, DDI() & 0x00FF );
+    CANPkg_c::c_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
     // for ISO the ident is directly read and written
 
-    CNAMESPACE::memcpy((CANPkg_c::pb_data+4), pb_procData, 4);
+    CANPkg_c::c_data.setFlexible4DataValueInd( 1, c_flex4Data );
 
     setLen(8);
 #endif  // USE_ISO_11783

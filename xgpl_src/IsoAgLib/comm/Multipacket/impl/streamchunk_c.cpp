@@ -1,5 +1,5 @@
 /***************************************************************************
-                          streamchunk_c.cpp - 
+                          streamchunk_c.cpp -
                              -------------------
     class                : ::StreamChunk_c
     project              : IsoAgLib
@@ -97,7 +97,7 @@ namespace __IsoAgLib {
 
 
 //! Constructor: initializes the list and local variables
-//! create one <list> element including one Chunk, 
+//! create one <list> element including one Chunk,
 //! init pc_iterWriteChunk, pc_iterParsedChunk, ui32_writeCnt, ui32_parsedCnt
 StreamChunk_c::StreamChunk_c (StreamType_t rt_streamType,
                               const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi,
@@ -159,7 +159,7 @@ const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& rrefc_src )
 //! use this function only for the first 6 bytes. this exception is for fast-packet protocol's FirstFrame
 //! *** ATTENTION *** THIS FUNCTION ASSUMES TO BE CALLED ON A FRESH STREAM, SO NO OVERFLOW CHECKS ARE DONE!
 void
-StreamChunk_c::insertFirst6Bytes(uint8_t* pui8_data)
+StreamChunk_c::insertFirst6Bytes(const uint8_t* pui8_data)
 {
   // write bytes into current chunk, assuming it's the first one so NO checks for full chunk are performed!!!!
   int nbr = 0;
@@ -176,7 +176,7 @@ StreamChunk_c::insertFirst6Bytes(uint8_t* pui8_data)
 //! Parameter:
 //! @param pui8_data: pointer to 7 bytes of data!
 void
-StreamChunk_c::insert7Bytes(uint8_t* pui8_data)
+StreamChunk_c::insert7Bytes(const uint8_t* pui8_data)
 { // ~X2C
   uint16_t nbr;
   std::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterWriteChunk;
@@ -191,7 +191,7 @@ StreamChunk_c::insert7Bytes(uint8_t* pui8_data)
   if (pc_iterWriteChunk->full())
   {
     pc_iterTmpChunk++;
-    if (pc_iterTmpChunk == list_chunks.end()) 
+    if (pc_iterTmpChunk == list_chunks.end())
       pc_iterTmpChunk = list_chunks.begin();
 
     if (pc_iterTmpChunk->free())
@@ -226,7 +226,7 @@ StreamChunk_c::getNotParsedSize()
   // this occurs as we always insert 7 bytes, even if the last 7byte packet should NOT been taken completely
   if (ui32_byteTotalSize < ui32_writeCnt)
     return (ui32_byteTotalSize - ui32_parsedCnt);
-  else 
+  else
     return (ui32_writeCnt - ui32_parsedCnt);
 } // -X2C
 
@@ -243,13 +243,13 @@ StreamChunk_c::getNextNotParsed()
   uint16_t chunkLen = sui8_pkgBurst * 7;
   uint16_t chunkCnt = ui32_parsedCnt % chunkLen;
   uint8_t  chunkVal;
-  
+
   if (ui32_parsedCnt >= ui32_writeCnt) return 0xff;
 
   // 1) get Chunk-Value
   chunkVal = pc_iterParsedChunk->getData( chunkCnt++ );
   ui32_parsedCnt++;
-  
+
   // 2) if current parsed-Chunk has been completely parsed
   //    then set free the current Chunk and 'increment' the parsed-Chunk
   if (chunkCnt >= chunkLen)
@@ -272,14 +272,14 @@ StreamChunk_c::getNextNotParsed()
 //! Parameter:
 //! @param ui16_notParsedRelativeOffset: address-offset for the parsed-counter
 //! @return byte to be parsed or 0xff (if the address is out of range)
-uint8_t 
+uint8_t
 StreamChunk_c::getNotParsed (uint16_t ui16_notParsedRelativeOffset)
 {
   std::list<Chunk_c>::iterator pc_iterTmpChunk = pc_iterParsedChunk;
   uint16_t chunkLen = sui8_pkgBurst * 7;
   uint16_t chunkCnt = ui32_parsedCnt % chunkLen;
   uint16_t chunkCntReq = chunkCnt + ui16_notParsedRelativeOffset;
-  
+
   if ((ui32_parsedCnt + ui16_notParsedRelativeOffset) >= ui32_writeCnt) return 0xff;
 
   if (chunkCntReq >= chunkLen)
@@ -288,7 +288,7 @@ StreamChunk_c::getNotParsed (uint16_t ui16_notParsedRelativeOffset)
     {
       chunkCntReq -= chunkLen;
       pc_iterTmpChunk++;
-      if (pc_iterTmpChunk == list_chunks.end()) 
+      if (pc_iterTmpChunk == list_chunks.end())
         pc_iterTmpChunk = list_chunks.begin();
     } while (chunkCntReq >= chunkLen);
   }
@@ -322,7 +322,7 @@ StreamChunk_c::testDisplay()
 {
   uint16_t nbr, idx, iter=1;
   std::list<Chunk_c>::iterator pc_iterTmpChunk;
-  
+
   printf( "-------------\n" );
   printf( "Write-Cnt: %d \n", ui32_writeCnt );
   printf( "Parse-Cnt: %d \n", ui32_parsedCnt );

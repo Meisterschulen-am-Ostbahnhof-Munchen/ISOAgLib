@@ -356,7 +356,7 @@ bool ISOItem_c::timeEvent( void )
         c_pkg.setIsoPs(255); // global information
         c_pkg.setMonitorItemForSA( this ); // free SA or NACK flag
         // set NAME to CANPkg
-        c_pkg.setName(outputString());
+        c_pkg.setDataUnion( outputNameUnion() );
         // now ISOSystemPkg_c has right data -> send
         // if (!(c_pkg.identType() == Ident_c::ExtendedIdent))
         // CANPkg_c::identType() changed to static
@@ -426,7 +426,7 @@ bool ISOItem_c::timeEvent( void )
         c_pkg.setIsoPgn(WORKING_SET_MEMBER_PGN);
         c_pkg.setMonitorItemForSA( this ); // free SA or NACK flag
         // set NAME to CANPkg
-        c_pkg.setName(getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-i8_slavesToClaimAddress, this)->outputString());
+        c_pkg.setDataUnion(getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-i8_slavesToClaimAddress, this)->outputNameUnion());
         c_can << c_pkg;
 
         // claimed address for one...
@@ -470,14 +470,14 @@ bool ISOItem_c::processMsg(){
         c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
         c_pkg.setIsoPs(255); // global information
           // set NAME to CANPkg
-        c_pkg.setName(outputString());
+        c_pkg.setDataUnion(outputNameUnion());
           // now ISOSystemPkg_c has right data -> send
         getCanInstance4Comm() << c_pkg;
       }
       else
       { // remote item (( the case with change of devKey should NO MORE HAPPEN as ISOMonitor_c
         // simply removes ISOItem_c instances with same SA and different DevKey_c ))
-        const bool b_isChange = ( ( c_pkg.isoSa() != nr() ) || ( c_pkg.devKey() != devKey() ) );
+        const bool b_isChange = ( ( c_pkg.isoSa() != nr() ) || ( devKey().getConstName() != *(c_pkg.getDataUnionConst()) ) );
         const bool b_wasClaimed = itemState(IState_c::ClaimedAddress);
         if ( b_wasClaimed &&  b_isChange )
         { // the previously using item had already claimed an address
@@ -485,7 +485,7 @@ bool ISOItem_c::processMsg(){
         }
         setItemState(IState_c::ClaimedAddress);
         setNr(c_pkg.isoSa());
-        inputString(c_pkg.name());
+        inputNameUnion(c_pkg.getDataUnionConst());
         if ( (!b_wasClaimed) || b_isChange )
         { // now inform the ISO monitor list change clients on NEW client use
           getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( devKey(), this );
@@ -518,7 +518,7 @@ bool ISOItem_c::sendSaClaim()
   c_pkg.setIsoPs(255); // global information
   c_pkg.setMonitorItemForSA( this );
   // set NAME to CANPkg
-  c_pkg.setName(outputString());
+  c_pkg.setDataUnion(outputNameUnion());
   // now ISOSystemPkg_c has right data -> send
   getCanInstance4Comm() << c_pkg;
   return true;
@@ -561,17 +561,17 @@ void ISOItem_c::writeEepromSa()
 */
 uint8_t ISOItem_c::calc_randomWait()
 { // perform some calculation from NAME
-  uint16_t ui16_result = outputString()[0] * outputString()[1];
-  if ( ( (outputString()[2] +1) != 0 )
+  uint16_t ui16_result = outputNameUnion()->getUint8Data(0) * outputNameUnion()->getUint8Data(1);
+  if ( ( (outputNameUnion()->getUint8Data(2) +1) != 0 )
     && ( System_c::getTime() != 0 )
-    && ( (System_c::getTime() / (outputString()[2] +1)) != 0 ) )
-    ui16_result /= (System_c::getTime() / (outputString()[2] +1));
-  ui16_result += outputString()[3];
-  ui16_result %= (outputString()[4] + 1);
-  ui16_result -= outputString()[5];
-  ui16_result *= ((outputString()[6] + 1) / (outputString()[7] + 1));
+    && ( (System_c::getTime() / (outputNameUnion()->getUint8Data(2) +1)) != 0 ) )
+    ui16_result /= (System_c::getTime() / (outputNameUnion()->getUint8Data(2) +1));
+  ui16_result += outputNameUnion()->getUint8Data(3);
+  ui16_result %= (outputNameUnion()->getUint8Data(4) + 1);
+  ui16_result -= outputNameUnion()->getUint8Data(5);
+  ui16_result *= ((outputNameUnion()->getUint8Data(6) + 1) / (outputNameUnion()->getUint8Data(7) + 1));
   // divide by last uint8_t of name till offset in limit
-  for (;ui16_result > 153; ui16_result /= (outputString()[7] + 1));
+  for (;ui16_result > 153; ui16_result /= (outputNameUnion()->getUint8Data(7) + 1));
   return uint8_t(ui16_result & 0xFF );
 }
 

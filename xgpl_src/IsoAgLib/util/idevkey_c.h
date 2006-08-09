@@ -99,7 +99,6 @@ class iDevKey_c : public __IsoAgLib::DevKey_c {
       uint8_t rb_func, uint16_t rui16_manufCode, uint32_t rui32_serNo, uint8_t rb_funcInst = 0, uint8_t rb_ecuInst = 0)
   : DevKey_c(rb_selfConf, rui8_indGroup, rui8_devClass, rui8_devClassInst,
       rb_func, rui16_manufCode, rui32_serNo, rb_funcInst, rb_ecuInst) {};
-  iDevKey_c( const uint8_t* rpui8_dataName ) : DevKey_c( rpui8_dataName ) {};
   #endif
   /** set device class & instance with two seperate parameters */
   #ifdef USE_ISO_11783
@@ -110,8 +109,6 @@ class iDevKey_c : public __IsoAgLib::DevKey_c {
   #ifdef USE_ISO_11783
   /** set device class & instance with two seperate parameters */
   void set( const iISOName_c& rrefc_isoName ) { DevKey_c::set( rrefc_isoName );};
-  /** set device class & instance with two seperate parameters */
-  void set( const uint8_t* rpui8_dataName ) { DevKey_c::set( rpui8_dataName );};
   /** provide pointer to second level compare NAME */
   iISOName_c& getName() { return static_cast<IsoAgLib::iISOName_c&>(DevKey_c::getName());};
   /** provide pointer to second level compare NAME */

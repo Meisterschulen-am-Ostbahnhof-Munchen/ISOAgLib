@@ -89,6 +89,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
+#include <IsoAgLib/util/impl/canpkg_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -107,6 +108,12 @@ public:
     @param rpb_src 64bit input data string
   */
   ISOName_c(const uint8_t* rpb_src = NULL);
+  /**
+    constructor which can read in initial data from uint8_t string
+    @param rpb_src 64bit input data string
+  */
+  ISOName_c(const Flexible8ByteString_c* rpu_src);
+
   /**
     constructor which format data string from series of input flags
     @param rb_selfConf true -> indicate sefl configuring ECU
@@ -178,7 +185,13 @@ public:
     deliver the data NAME string as pointer to 8byte string
     @return const pointer to 8 uint8_t string with NAME
   */
-  const uint8_t* outputString() const{return pb_data;};
+  const uint8_t* outputString() const{return u_data.getUint8DataConstPointer();};
+  /**
+    deliver the data NAME string as pointer to 8byte string
+    @return const pointer to 8 uint8_t string with NAME
+  */
+  const Flexible8ByteString_c* outputUnion() const{return &u_data;};
+
 
   /**
     get self config mode
@@ -232,6 +245,12 @@ public:
     @param rpb_src pointer to 8byte source string
   */
   void inputString(const uint8_t* rpb_src);
+  /**
+    set the NAME data from 8 uint8_t string
+    @param rpb_src pointer to 8byte source string
+  */
+  void inputUnion(const Flexible8ByteString_c* rpu_src);
+
 
   /**
     set self config mode
@@ -289,16 +308,19 @@ public:
     @param rpb_compare
     @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
   */
-  int8_t higherPriThanPar(const uint8_t* rpb_compare) const;
+  int8_t higherPriThanPar(const Flexible8ByteString_c* rpu_compare) const;
   /** compare two ISOName_c values with operator== */
   bool operator==( const ISOName_c& refc_right ) const
-    { return (higherPriThanPar( refc_right.outputString() ) == 0)?true:false;};
+    { return (higherPriThanPar( refc_right.outputUnion() ) == 0)?true:false;};
   /** compare two ISOName_c values with operator!= */
   bool operator!=( const ISOName_c& refc_right ) const
-    { return (higherPriThanPar( refc_right.outputString() ) != 0)?true:false;};
+    { return (higherPriThanPar( refc_right.outputUnion() ) != 0)?true:false;};
+  /** compare ISOName_c value and Flexible8ByteString_c with operator!= */
+  bool operator!=( const Flexible8ByteString_c& rrefc_right ) const
+    { return (higherPriThanPar( &rrefc_right ) != 0)?true:false;};
   /** compare two ISOName_c values with operator< */
   bool operator<( const ISOName_c& refc_right ) const
-    { return (higherPriThanPar( refc_right.outputString() ) == -1)?true:false;};
+    { return (higherPriThanPar( refc_right.outputUnion() ) == -1)?true:false;};
 protected:
 // Protected Methods
 
@@ -307,7 +329,7 @@ private: // private methods
 
 private:
   /** ISO 8-uint8_t NAME field */
-  uint8_t pb_data[8];
+  Flexible8ByteString_c u_data;
 };
 
 }

@@ -208,7 +208,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
 //! Parameter:
 //! @param pui8_offsetOfData: the offset given in the 8 byte data can pkg!
 bool
-Stream_c::handleDataPacket (uint8_t* rui8_data)
+Stream_c::handleDataPacket (const Flexible8ByteString_c* rpu_data)
 { // ~X2C
   // expecting data at all?
   if (t_awaitStep != AwaitData) {
@@ -222,11 +222,11 @@ Stream_c::handleDataPacket (uint8_t* rui8_data)
   switch (t_streamType)
   {
     case StreamSpgnEcmdINVALID: // shouldn't occur, but catch that case anyway. (so break left out intentionally!)
-    case StreamEpgnEcmd:   if ((rui8_data[0] + ui32_dataPageOffset) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamEpgnEcmd:   if ((rpu_data->getUint8Data( 0 ) + ui32_dataPageOffset) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     case StreamSpgnScmd:
-    case StreamEpgnScmd:   if ((rui8_data[0] /* no DPO for TP!! */) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamEpgnScmd:   if ((rpu_data->getUint8Data( 0 ) /* no DPO for TP!! */) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     #ifdef NMEA_2000_FAST_PACKET
-    case StreamFastPacket: if ((rui8_data[0] & (0x1FU)) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
+    case StreamFastPacket: if ((rpu_data->getUint8Data( 0 ) & (0x1FU)) != ui32_pkgNextToWrite) b_pkgNumberWrong=true; break;
     #endif
   }
 
@@ -240,13 +240,13 @@ Stream_c::handleDataPacket (uint8_t* rui8_data)
   #ifdef NMEA_2000_FAST_PACKET
   if ((t_streamType == StreamFastPacket) && (ui32_pkgNextToWrite == 0))
   { // special FastPacket first-frame handling
-    insertFirst6Bytes (rui8_data+2);
+    insertFirst6Bytes (rpu_data->getUint8DataConstPointer(2));
     ui32_byteAlreadyReceived += 6;
   }
   else
   #endif
   {
-    insert7Bytes (rui8_data+1);
+    insert7Bytes (rpu_data->getUint8DataConstPointer(1));
     ui32_byteAlreadyReceived += 7;
   }
 

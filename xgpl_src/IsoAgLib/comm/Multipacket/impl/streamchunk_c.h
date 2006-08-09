@@ -1,5 +1,5 @@
 /***************************************************************************
-                          streamchunk_c.h - 
+                          streamchunk_c.h -
                              -------------------
     class                : ::StreamChunk_c
     project              : IsoAgLib
@@ -124,11 +124,11 @@ public:
 
   //  Operation: insert
   //! Parameter:
-  //! @param pui8_data: 
-  void insert7Bytes(uint8_t* pui8_data);
+  //! @param pui8_data:
+  void insert7Bytes(const uint8_t* pui8_data);
 
   #ifdef NMEA_2000_FAST_PACKET
-  void insertFirst6Bytes(uint8_t* pui8_data);
+  void insertFirst6Bytes(const uint8_t* pui8_data);
   #endif
 
   //  Operation: getNextNotParsed

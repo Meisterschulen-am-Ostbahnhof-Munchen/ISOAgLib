@@ -141,9 +141,9 @@ public:
 
   /**
     deliver the data NAME string as pointer to 8byte string
-    @return const pointer to 8 uint8_t string with NAME
+    @return const pointer to Flexible8ByteString_c union with NAME
   */
-  const uint8_t* outputString() const {return c_devKey.getConstName().outputString();};
+  const Flexible8ByteString_c* outputNameUnion() const {return c_devKey.getConstName().outputUnion();};
 
   /**
     get self config mode
@@ -195,7 +195,7 @@ public:
     set the NAME data from 8 uint8_t string
     @param rpb_src pointer to 8byte source string
   */
-  void inputString(const uint8_t* rpb_src) {c_devKey.set(rpb_src);};
+  void inputNameUnion(const Flexible8ByteString_c* rpu_src) {c_devKey.set(rpu_src);};
 
   /**
     set self config mode

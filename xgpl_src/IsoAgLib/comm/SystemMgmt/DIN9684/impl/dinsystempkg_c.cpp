@@ -105,36 +105,36 @@ void DINSystemPkg_c::string2Flags()
   set_a((ident() & 0x80) >> 7);
   if (a() == 1)
   { // address claim telegram
-    setNr(pb_data[0]);
+    setNr(getUint8Data(0));
   }
   else
   {
-    setVerw(pb_data[0] >> 4);
-    setSend(pb_data[0] & 0xF);
+    setVerw(getUint8Data(0) >> 4);
+    setSend(getUint8Data(0) & 0xF);
     switch (verw())
     {
       case 8:  // name request
         break;
       case 9: // has name
-        setName(pb_data + 1);
+        setName( getUint8DataConstPointer( 1 ) );
         break;
 #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
       case 10: case 11:   // system or member stop
-        setEmpf(pb_data[1] >> 4);
-        setXxxx(pb_data[1] & 0xF);
+        setEmpf(getUint8Data(1) >> 4);
+        setXxxx(getUint8Data(1) & 0xF);
         break;
       case 12: // member state
-        setEmpf(pb_data[1] >> 4);
-        set_m((pb_data[1] >> 3) & 0x1);
-        setSta(pb_data[1] & 0x7);
+        setEmpf(getUint8Data(1) >> 4);
+        set_m((getUint8Data(1) >> 3) & 0x1);
+        setSta(getUint8Data(1) & 0x7);
         break;
       case 15:
-        setTb(pb_data[3] >> 6);
-        setNae(pb_data[3] & 0x7);
+        setTb(getUint8Data(3) >> 6);
+        setNae(getUint8Data(3) & 0x7);
         break;
 #endif
       default: // has adrVect
-        c_adrVect.set(pb_data+1);
+        c_adrVect.set( getUint8DataConstPointer( 1 ) );
         break;
     }
   }
@@ -152,13 +152,13 @@ void DINSystemPkg_c::flags2String()
 {
   if (a() == 1)
   {  // address claim telegramm
-    pb_data[0] = nr();
+    setUint8Data(0, nr() );
     setLen(1);
     setIdent( MASK_TYPE( (a() << 7) | ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 ) ), Ident_c::StandardIdent); // PRI system is always 0
   }
   else
   {
-    pb_data[0] = ((verw() << 4)| (send()));
+    setUint8Data(0, ((verw() << 4)| (send())) );
     setIdent( MASK_TYPE( ( devKey().getDevClass() << 3 ) | ( devKey().getDevClassInst() & 0x7 ) ), Ident_c::StandardIdent); // PRI system is always 0
     switch (verw())
     {
@@ -166,30 +166,32 @@ void DINSystemPkg_c::flags2String()
         setLen(1);
         break;
       case 9: // has name
-        CNAMESPACE::memcpy(pb_data+1, name(), 7);
+        // c_data.setDataFromString( 1, name());
+        // the call to DINSystemPkg_c::name() accessed directly the raw data stream
         setLen(8);
         break;
 #ifndef EXCLUDE_RARE_DIN_SYSTEM_CMD
       case 10:
-        pb_data[1] = (0xF0 | xxxx());
+        setUint8Data( 1, (0xF0 | xxxx()) );
         setLen(2);
         break;
       case 11:   // system or member stop
-        pb_data[1] = ((empf() << 4) | xxxx());
+        setUint8Data( 1, ((empf() << 4) | xxxx()) );
         setLen(2);
         break;
       case 12: // member state
-        pb_data[1] = ((empf() << 4) | (m() << 3) | sta());
+        setUint8Data( 1, ((empf() << 4) | (m() << 3) | sta()) );
         setLen(2);
         break;
       case 15:
-        pb_data[1] = pb_data[2] = 0xFF;
-        pb_data[3] = ((tb() << 6)|(nae() ));
+        setUint8Data( 1, 0xFF );
+        setUint8Data( 2, 0xFF );
+        setUint8Data( 3, ((tb() << 6)|(nae() )) );
         setLen(4);
         break;
 #endif
       default: // in [0,7] --> has adrVect
-        c_adrVect.getCanString(pb_data+1);
+        c_adrVect.getCanString( getUint8DataPointer( 1 ) );
         setLen(3);
         break;
     }

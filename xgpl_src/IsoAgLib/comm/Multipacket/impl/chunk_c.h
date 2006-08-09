@@ -1,5 +1,5 @@
 /***************************************************************************
-                          chunk_c.h - 
+                          chunk_c.h -
                              -------------------
     class                : ::Chunk_c
 		project              : IsoAgLib
@@ -115,7 +115,7 @@ public:
 
   // Copy constructor
   Chunk_c( const Chunk_c& rrefc_src );
-  
+
   //  Operation: init
   bool init();
 
@@ -123,8 +123,8 @@ public:
   uint8_t insert(uint8_t rui8_data);
 
   //  Operation: insert7bytes
-  uint8_t insert7Bytes(uint8_t* pui8_data);
-  
+  uint8_t insert7Bytes(const uint8_t* pui8_data);
+
   //  Operation: getData
   uint16_t getData(uint32_t rui32_pos);
 

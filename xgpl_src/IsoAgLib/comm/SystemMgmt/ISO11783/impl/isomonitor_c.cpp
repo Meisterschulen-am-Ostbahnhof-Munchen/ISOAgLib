@@ -930,10 +930,8 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
   }
   // built request data string
   uint8_t pb_requestString[4];
-  pb_requestString[0] = (ADRESS_CLAIM_PGN & 0xFF);
-  pb_requestString[1] = ((ADRESS_CLAIM_PGN >> 8)& 0xFF);
-  pb_requestString[2] = ((ADRESS_CLAIM_PGN >> 16)& 0xFF);
-  data().setDataString(pb_requestString, 3);
+  data().setUint32Data( 0, ADRESS_CLAIM_PGN );
+  data().setLen(3);
   // now ISOSystemPkg_c has right data -> send
   getCanInstance4Comm() << data();
   // store adress claim request time
@@ -1020,7 +1018,7 @@ bool ISOMonitor_c::processMsg()
       if ( ( NULL != pc_itemSameSa ) && ( pc_itemSameSa->itemState(IState_c::Local)) )
       { // there exists a LOCAL item with same SA
         // --> remove it when it has lower PRIO
-        int8_t i8_higherPrio = pc_itemSameSa->devKey().getConstName().higherPriThanPar(data().name());
+        int8_t i8_higherPrio = pc_itemSameSa->devKey().getConstName().higherPriThanPar(data().getDataUnionConst());
         if ( ( i8_higherPrio < 0                              )
                // the local ISOItem_c should be overwritten by the received adr claim, when the local
                // item is not yet sent any adr claim (e.g. Off state or PreAddressClaim)

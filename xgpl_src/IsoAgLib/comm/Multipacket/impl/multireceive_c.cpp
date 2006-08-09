@@ -551,7 +551,7 @@ MultiReceive_c::processMsg()
             return false;
           }
           // From this point on the SA/DA pair matches, so that we can return true
-          if (!(pc_streamFound->handleDataPacket(data().pb_data))) {
+          if (!(pc_streamFound->handleDataPacket(data().getDataUnionConst()))) {
             // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
             if (data().isoPs() == 0xFF)
             {
@@ -596,9 +596,9 @@ MultiReceive_c::processMsg()
     if ((pc_iter->b_isFastPacket) && (pc_iter->ui32_pgn == data().isoPgn()))
     {
       uint8_t ui8_counterFrame = data().getUint8Data (0) & 0x1F;
+      #ifdef DEBUG
       uint8_t ui8_counterSequence = (data().getUint8Data (0) >> 5) & 0x7;
-
-      bool b_handleData=false;
+      #endif
 
       /** @todo determine if Fast-Packet is always addressed to GLOBAL 255, 0xFF */
       Stream_c* pc_streamFound = getStream(data().isoSa(), 0xFF, /* Fast-Packet: */ true);
@@ -621,7 +621,7 @@ MultiReceive_c::processMsg()
         }
       } // else stream there, so pass on data, just like for first frame
 
-      if (!(pc_streamFound->handleDataPacket(data().pb_data))) {
+      if (!(pc_streamFound->handleDataPacket(data().getDataUnionConst()))) {
         // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
         notifyError(c_tmpRSI, 119);
         /// Do NOT tell client on Abort of something it doesn't know about.

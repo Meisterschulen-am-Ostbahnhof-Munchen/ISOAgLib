@@ -932,7 +932,7 @@ VtClientServerCommunication_c::processMsg()
       {
         if (c_data.getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
         {
-          VolatileMemory_c c_vmString (((uint8_t*)c_data.name())+4);
+          VolatileMemory_c c_vmString (c_data.getUint8DataConstPointer(4));
           c_streamer.pc_pool->eventStringValue (uint16_t(c_data.getUint8Data (1)) | (uint16_t(c_data.getUint8Data (2)) << 8) /* objID */,
                                                 c_data.getUint8Data (3) /* total number of bytes */, c_vmString,
                                                 c_data.getUint8Data (3) /* total number of bytes */, true, true);
@@ -1134,7 +1134,7 @@ VtClientServerCommunication_c::processMsg()
         { /* okay, right response for our current command! */
           ui8_uploadCommandError = c_data.getUint8Data (ui8_errByte-1);
           /// Inform user on success/error of this command
-          if (c_streamer.pc_pool) c_streamer.pc_pool->eventCommandResponse (ui8_uploadCommandError, c_data.name()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "c_data.name()"
+          if (c_streamer.pc_pool) c_streamer.pc_pool->eventCommandResponse (ui8_uploadCommandError, c_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "c_data.name()"
 #ifdef DEBUG
           if (ui8_uploadCommandError != 0)
           { /* error */
@@ -1859,10 +1859,10 @@ VtClientServerCommunication_c::startUploadCommand()
     uint8_t ui8_len = actSend->mssObjectString->getStreamer()->getStreamSize();
 
     c_data.setExtCanPkg (7, 0, ECU_TO_VT_PGN>>8, pc_vtServerInstance->getVtSourceAddress(), refc_wsMasterIdentItem.getIsoItem()->nr(), 8); // ECU->VT PGN is ALWAYS 8 Bytes!
-    actSend->mssObjectString->getStreamer()->set5ByteCommandHeader (c_data.pb_data);
+    actSend->mssObjectString->getStreamer()->set5ByteCommandHeader (c_data.getUint8DataPointer());
     int i=5;
-    for (; i < ui8_len; i++) c_data.pb_data[i] = actSend->mssObjectString->getStreamer()->getStringToStream() [i-5];
-    for (; i < 8;       i++) c_data.pb_data[i] = 0xFF; // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
+    for (; i < ui8_len; i++) c_data.setUint8Data( i, actSend->mssObjectString->getStreamer()->getStringToStream() [i-5] );
+    for (; i < 8;       i++) c_data.setUint8Data( i, 0xFF); // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
     getCanInstance4Comm() << c_data;
     // Save first byte for Response-Checking!
     ui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();

@@ -657,8 +657,8 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
        // send Fast Packet First Frame
         if (b_fp)
         {
-          refc_multiSendPkg.setData(0, static_cast<uint8_t>((ui8_FpSequenceCounter << 5) & 0xE0));
-          refc_multiSendPkg.setData(1, static_cast<uint8_t>(getDataSize() & 0xFF));
+          refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>((ui8_FpSequenceCounter << 5) & 0xE0));
+          refc_multiSendPkg.setUint8Data(1, static_cast<uint8_t>(getDataSize() & 0xFF));
 
           uint8_t ui8_nettoCnt = 6;
           if ( ui8_nettoCnt > getDataSize() ) ui8_nettoCnt = getDataSize();
@@ -698,7 +698,7 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
         for (ui8_pkgInd = 0; ui8_pkgInd < rui8_pkgCnt; ui8_pkgInd++)
         {
             prepareSendMsg(ui8_nettoDataCnt);
-            refc_multiSendPkg.setData(0, static_cast<uint8_t>(((ui8_FpSequenceCounter << 5) |(ui8_FpFrameNr & 0x1F)) ) );
+            refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(((ui8_FpSequenceCounter << 5) |(ui8_FpFrameNr & 0x1F)) ) );
 
             if (hpb_data != NULL) {
               refc_multiSendPkg.setFastPacketDataPart(hpb_data, i32_DC, ui8_nettoDataCnt, 1);
@@ -726,14 +726,14 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
       if ( isDelayEnd(ri32_time) )
       { // send RTS command
         if (b_ext) {
-          refc_multiSendPkg.setData(0, static_cast<uint8_t>(eCM_RTS));
+          refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(eCM_RTS));
           refc_multiSendPkg.setData_2ByteInteger(1, getDataSize() & 0xFFFF);
           refc_multiSendPkg.setData_2ByteInteger(3, getDataSize() >> 16);
         } else {
-          refc_multiSendPkg.setData(0, static_cast<uint8_t>(CM_RTS));
+          refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(CM_RTS));
           refc_multiSendPkg.setData_2ByteInteger(1, getMsgSize());
-          refc_multiSendPkg.setData(3, static_cast<uint8_t>(getPkgPerMsg()));
-          refc_multiSendPkg.setData(4, static_cast<uint8_t>(0xFF));
+          refc_multiSendPkg.setUint8Data(3, static_cast<uint8_t>(getPkgPerMsg()));
+          refc_multiSendPkg.setUint8Data(4, static_cast<uint8_t>(0xFF));
         }
         en_sendState = AwaitCts;
         ui32_lastNextPacketNumberToSend = 0xFFFFFFFF; // so the first coming CTS is definitively NO repeated burst!
@@ -743,10 +743,10 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
         if (en_msgType == Din)
         {
           if (pc_multiSend->getMaxDelay() == 4)
-            refc_multiSendPkg.setData(4, static_cast<uint8_t>(0xFF));
+            refc_multiSendPkg.setUint8Data(4, static_cast<uint8_t>(0xFF));
           else
-            refc_multiSendPkg.setData(4, static_cast<uint8_t>((pc_multiSend->getMaxDelay() - 4)*2));
-          refc_multiSendPkg.setData(5, static_cast<uint8_t>(b_fileCmd));
+            refc_multiSendPkg.setUint8Data(4, static_cast<uint8_t>((pc_multiSend->getMaxDelay() - 4)*2));
+          refc_multiSendPkg.setUint8Data(5, static_cast<uint8_t>(b_fileCmd));
           refc_multiSendPkg.setData_2ByteInteger(6, getMsgNr());
         }
         else
@@ -756,11 +756,11 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
           iopSequence = 0;
           #endif
           if ( pc_mss != NULL ) pc_mss->resetDataNextStreamPart ();
-          refc_multiSendPkg.setData(5, static_cast<uint8_t>(i32_pgn & 0xFF));
-          refc_multiSendPkg.setData(6, static_cast<uint8_t>((i32_pgn >> 8) & 0xFF));
-          refc_multiSendPkg.setData(7, static_cast<uint8_t>(i32_pgn >> 16));
-          if (en_msgType != IsoTarget) refc_multiSendPkg.setData(0, static_cast<uint8_t>(CM_BAM)); // ISO_BAM cmd
-          // is already set from above!!: else data().setData(0, CM_RTS); // ISO_RTS cmd
+          refc_multiSendPkg.setUint8Data(5, static_cast<uint8_t>(i32_pgn & 0xFF));
+          refc_multiSendPkg.setUint8Data(6, static_cast<uint8_t>((i32_pgn >> 8) & 0xFF));
+          refc_multiSendPkg.setUint8Data(7, static_cast<uint8_t>(i32_pgn >> 16));
+          if (en_msgType != IsoTarget) refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(CM_BAM)); // ISO_BAM cmd
+          // is already set from above!!: else data().setUint8Data(0, CM_RTS); // ISO_RTS cmd
         }
         // now data fields are set -> send
         sendIntern();
@@ -858,20 +858,14 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
       for (ui8_pkgInd = 0; ui8_pkgInd < rui8_pkgCnt; ui8_pkgInd++)
       {
         prepareSendMsg(ui8_nettoDataCnt);
-        refc_multiSendPkg.setData(0, static_cast<uint8_t>(ui32_sequenceNr & 0xFF));
+        refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(ui32_sequenceNr & 0xFF));
         if (hpb_data != NULL) {
           refc_multiSendPkg.setDataPart(hpb_data, i32_DC, ui8_nettoDataCnt);
         } else {
           pc_mss->setDataNextStreamPart (&refc_multiSendPkg, ui8_nettoDataCnt);
           #if defined( IOP_OUTPUT ) && defined( SYSTEM_PC )
           char iopBuffer [7];
-          iopBuffer [0] = refc_multiSendPkg.data(1);
-          iopBuffer [1] = refc_multiSendPkg.data(2);
-          iopBuffer [2] = refc_multiSendPkg.data(3);
-          iopBuffer [3] = refc_multiSendPkg.data(4);
-          iopBuffer [4] = refc_multiSendPkg.data(5);
-          iopBuffer [5] = refc_multiSendPkg.data(6);
-          iopBuffer [6] = refc_multiSendPkg.data(7);
+          refc_multiSendPkg.getDataToString( 1, (uint8_t*)iopBuffer, 7 );
           if (iopSequence == 0) fwrite (iopBuffer+1, 1, ui8_nettoDataCnt-1, iopFile);
                            else fwrite (iopBuffer, 1, ui8_nettoDataCnt, iopFile);
           iopSequence++;
@@ -926,10 +920,10 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
     case SendFileEnd:
       if (en_msgType == Din)
       { // send fileEnd cmd
-        refc_multiSendPkg.setData(0, static_cast<uint8_t>(FileEnd));
-        refc_multiSendPkg.setData(1,static_cast<uint8_t>(0xFF));
-        refc_multiSendPkg.setData(2, static_cast<uint16_t>(0xFFFFU));
-        refc_multiSendPkg.setData(4, uint32_t(0xFFFFFFFFUL));
+        refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(FileEnd));
+        refc_multiSendPkg.setUint8Data(1,static_cast<uint8_t>(0xFF));
+        refc_multiSendPkg.setUint16Data(2, static_cast<uint16_t>(0xFFFFU));
+        refc_multiSendPkg.setUint32Data(4, uint32_t(0xFFFFFFFFUL));
         sendIntern();
         *pen_sendSuccessNotify = SendSuccess;
         return true; // FINISHED SendStream, remove it from list please!
@@ -1010,7 +1004,7 @@ MultiSend_c::SendStream_c::processMsg()
   /***/ MultiSendPkg_c&  refc_multiSendPkg = pc_multiSend->data();
   const MultiSendPkg_c& refcc_multiSendPkg = pc_multiSend->constData();
 
-  switch (refc_multiSendPkg.data(0))
+  switch (refc_multiSendPkg.getUint8Data( 0 ) )
   {
     case eCM_CTS:
     case CM_CTS:
@@ -1033,8 +1027,8 @@ MultiSend_c::SendStream_c::processMsg()
         i32_timestamp = System_c::getTime();
         if (en_msgType == Din)
         {
-          if (refc_multiSendPkg.data(4) != 0xFF) {
-            pc_multiSend->setDelay(4 + (refc_multiSendPkg.data(4) / 2));
+          if (refc_multiSendPkg.getUint8Data(4) != 0xFF) {
+            pc_multiSend->setDelay(4 + (refc_multiSendPkg.getUint8Data( 4) / 2));
           }
           // if last state was AwaitEndofmsgack then a CM_CTS means a 1sec. pause
           // change timestamp for wait to (1sec. - standardWait) ==> resulting 1sec. wait
@@ -1045,21 +1039,21 @@ MultiSend_c::SendStream_c::processMsg()
         }
         else
         { // only CTS reveived on IsoTarget (not IsoBroadcast)
-          ui16_msgSize = refc_multiSendPkg.data(1) * 7;
+          ui16_msgSize = uint16_t(refc_multiSendPkg.getUint8Data(1)) * 7;
           pc_multiSend->setDelay(scui8_isoCanPkgDelay);
         }
         // set counter of last acknowledged data byte
         if (en_sendState != SendData) i32_ack_DC = i32_DC - 1;
 
-        if ( refc_multiSendPkg.data(1) == 0)
+        if ( refc_multiSendPkg.getUint8Data(1) == 0)
         { // send pause commanded from receiver
           en_sendState = SendPauseTillCts;
         }
         else {
           // check if the same data as the last CTS is wanted?
-          uint32_t ui32_pkgCTSd = uint32_t(refcc_multiSendPkg.data(2));
+          uint32_t ui32_pkgCTSd = uint32_t(refcc_multiSendPkg.getUint8Data(2));
           if (b_ext) {
-             ui32_pkgCTSd += (uint32_t(refcc_multiSendPkg.data(3)) << 8) + (uint32_t(refcc_multiSendPkg.data(4)) << 16);
+             ui32_pkgCTSd += (uint32_t(refcc_multiSendPkg.getUint8Data(3)) << 8) + (uint32_t(refcc_multiSendPkg.getUint8Data( 4)) << 16);
           }
 
           if ( pc_mss != NULL )
@@ -1085,14 +1079,14 @@ MultiSend_c::SendStream_c::processMsg()
 
           // send out Extended Connection Mode Data Packet Offset
           if (b_ext) {
-            refc_multiSendPkg.setData(0, static_cast<uint8_t>(eCM_DPO));
-            refc_multiSendPkg.setData(1, static_cast<uint8_t>(b_pkgToSend));
-            refc_multiSendPkg.setData(2, static_cast<uint8_t>(ui32_offset & 0xFF));
-            refc_multiSendPkg.setData(3, static_cast<uint8_t>((ui32_offset >> 8) & 0xFF));
-            refc_multiSendPkg.setData(4, static_cast<uint8_t>(ui32_offset >> 16));
-            refc_multiSendPkg.setData(5, static_cast<uint8_t>(i32_pgn & 0xFF));
-            refc_multiSendPkg.setData(6, static_cast<uint8_t>((i32_pgn >> 8) & 0xFF));
-            refc_multiSendPkg.setData(7, static_cast<uint8_t>(i32_pgn >> 16));
+            refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(eCM_DPO));
+            refc_multiSendPkg.setUint8Data(1, static_cast<uint8_t>(b_pkgToSend));
+            refc_multiSendPkg.setUint16Data(2, static_cast<uint16_t>(ui32_offset & 0xFFFF));
+            refc_multiSendPkg.setUint8Data(4, static_cast<uint8_t>(ui32_offset >> 16));
+            // change order of setUint8Data(), setUint16Data() so that
+            // setUint16Data() with equal position, so that a faster assignment is enabled
+            refc_multiSendPkg.setUint8Data(5, static_cast<uint8_t>(i32_pgn & 0xFF));
+            refc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(i32_pgn >> 8));
             ui32_sequenceNr = 0;
             b_pkgSent = 0;
             sendIntern();
@@ -1114,7 +1108,7 @@ MultiSend_c::SendStream_c::processMsg()
         // CHECK HERE IF WE'RE AWAITING AN EOMACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (en_msgType == Din)
         {
-          if (refc_multiSendPkg.data(4) != 0)
+          if (refc_multiSendPkg.getUint8Data(4) != 0)
           { // ACK
             i32_ack_DC = readAck_DC();
             i32_DC = i32_ack_DC + 1;
@@ -1209,14 +1203,14 @@ MultiSend_c::SendStream_c::abortSend()
 {
   MultiSendPkg_c& refc_multiSendPkg = pc_multiSend->data();
 
-  refc_multiSendPkg.setData(0, static_cast<uint8_t>(ConnAbort));
-  refc_multiSendPkg.setData(1, uint32_t(0xFFFFFFFFUL));
-//refc_multiSendPkg.setData(1, uint32_t(0x53d0FFFFUL)); // debug-test
+  refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(ConnAbort));
+  refc_multiSendPkg.setUint32Data(1, uint32_t(0xFFFFFFFFUL));
+//refc_multiSendPkg.setUint32Data(1, uint32_t(0x53d0FFFFUL)); // debug-test
   bool b_performAbort = false;
   #ifdef USE_DIN_TERMINAL
   if (en_msgType == Din)
   { // send DIN abort msg
-    refc_multiSendPkg.setData(5, static_cast<uint8_t>(b_fileCmd));
+    refc_multiSendPkg.setUint8Data(5, static_cast<uint8_t>(b_fileCmd));
     refc_multiSendPkg.setData_2ByteInteger(6, getMsgNr());
     b_performAbort = true;
   }
@@ -1224,9 +1218,10 @@ MultiSend_c::SendStream_c::abortSend()
   #if defined(USE_ISO_11783)
   if ( en_msgType != Din )
   { // send ISO abort message
-    refc_multiSendPkg.setData(5, static_cast<uint8_t>(i32_pgn & 0xFF));
-    refc_multiSendPkg.setData(6, static_cast<uint8_t>((i32_pgn >> 8) & 0xFF));
-    refc_multiSendPkg.setData(7, static_cast<uint8_t>(i32_pgn >> 16));
+    // change order of setUint8Data(), setUint16Data() so that
+    // setUint16Data() with equal position, so that a faster assignment is enabled
+    refc_multiSendPkg.setUint8Data(5, static_cast<uint8_t>(i32_pgn & 0xFF));
+    refc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(i32_pgn >> 8));
     b_performAbort = true;
   }
   #endif
@@ -1471,7 +1466,7 @@ MultiSend_c::SendStream_c::getMsgNr() const
 uint16_t
 MultiSend_c::SendStream_c::readMsgSize() const
 {
-  uint16_t ui16_tempSize = ((pc_multiSend->constData().data(1) * 7) - ui16_msgSize);
+  uint16_t ui16_tempSize = ((uint16_t(pc_multiSend->constData().getUint8Data(1)) * 7) - ui16_msgSize);
   if ( (en_msgType == Din)
     && (ui16_tempSize >= ui16_msgSize)
     && (ui16_tempSize - ui16_msgSize < 7)
@@ -1499,11 +1494,11 @@ MultiSend_c::SendStream_c::read_DC()
   // take sequence nr with decrease of 1 because prepareSendMsg increment by 1
   // before first send
   if (b_ext) {
-    ui32_sequenceNr = (uint32_t(refcc_multiSendPkg.data(2))) + (uint32_t(refcc_multiSendPkg.data(3)) << 8) + (uint32_t(refcc_multiSendPkg.data(4)) << 16) - 1L;
+    ui32_sequenceNr = (uint32_t(refcc_multiSendPkg.getUint16Data(2))) + (uint32_t(refcc_multiSendPkg.getUint8Data(4)) << 16) - 1UL;
   } else {
-    ui32_sequenceNr = (refcc_multiSendPkg.data(2) - 1L);
+    ui32_sequenceNr = (refcc_multiSendPkg.getUint8Data(2) - 1UL);
   }
-  b_pkgToSend = refcc_multiSendPkg.data(1);
+  b_pkgToSend = refcc_multiSendPkg.getUint8Data(1);
   int32_t i32_temp_DC = ui32_sequenceNr * 7L;
   if (en_msgType == Din) i32_temp_DC += ( uint32_t(refcc_multiSendPkg.getData_2ByteInteger(6) - 1) * uint32_t( ui16_msgSize ) );
   if (i32_temp_DC > i32_dataSize)

@@ -72,6 +72,7 @@
 
 namespace __IsoAgLib {
   class ISOTerminal_c;
+  class DevPropertyHandler_c;
 }
 
 // Begin Namespace IsoAgLib
@@ -438,6 +439,7 @@ public:
 private:
   friend class iISOTerminal_c;
   friend class __IsoAgLib::ISOTerminal_c;
+  friend class __IsoAgLib::DevPropertyHandler_c;
 
 };
 

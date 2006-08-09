@@ -86,7 +86,7 @@
 
 #include <IsoAgLib/typedef.h>
 #ifdef USE_DATASTREAMS_IO
-#include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
+class StreamInput_c;
 #endif
 #include <vector>
 #ifdef USE_VT_UNICODE_SUPPORT
@@ -187,27 +187,18 @@ uint16_t sizeListTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_cnt = 1 );
 */
 uint16_t sizeVectorTWithChunk( uint16_t rui16_sizeT, uint16_t rui16_capacity );
 
-#ifdef USE_DATASTREAMS_IO
-/** convert receive multistream into an unsigned variable */
-uint16_t convertIstreamUi16( StreamInput_c& refc_stream );
-/** convert receive multistream into an unsigned variable */
-int16_t convertIstreamI16( StreamInput_c& refc_stream );
-/** convert receive multistream into an unsigned variable */
-uint32_t convertIstreamUi32( StreamInput_c& refc_stream );
-/** convert receive multistream into an unsigned variable */
-int32_t convertIstreamI32( StreamInput_c& refc_stream );
-#endif
+
 /** convert little endian byte string into an unsigned variable */
 template<class T> void convertLittleEndianString( const uint8_t* rpui8_src, T& ref_result )
 {
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   std::memcpy( &ref_result, rpui8_src, sizeof(T) );
   #else
-  ref_result = T(rpui8_src[0]);
-  for ( unsigned int ind = 1; ( ind < sizeof(T) ); ind++ )
+  for ( unsigned int ind = sizeof(T)-1; ind >= 0; ind-- )
   {
     ref_result |= (T(rpui8_src[ind]) << (8*ind));
   }
+
   #endif
 }
 
@@ -312,6 +303,596 @@ void bigEndianHexNumberText2CanStringUint64( const char* rc_src, uint8_t* pui8_t
 
 /** convert big endian textual unsigned int up to 16Bit number representation into little endian uint8_t string of specified size */
 void bigEndianDecNumberText2CanStringUint( const char* rc_src, uint8_t* pui8_target );
+
+
+class Flexible4ByteString_c;
+class Flexible8ByteString_c;
+
+/** helper class with some inline functions to enable flexible, efficient
+    and safe access to 4-Byte strings for the 4-Byte part of a process data package as:
+    + uint8_t  array of size 4 -> name uint8
+    + uint16_t array of size 2 -> name uint16
+    + uint32_t array of size 1 -> name uint32 (( only for CPU with 16Bit or more)
+  IMPORTANT: The internal order of bytes is LITTLE ENDIAN, so that the bytes are directly
+             used for sending of CAN messages.
+   ==>> for big endian CPU all assignment and retrieval functions have to use the helper
+        like numberRef2LittleEndianString for safe data conversion / adaptation
+  */
+class Flexible4ByteString_c {
+
+ public:
+  Flexible4ByteString_c( const Flexible4ByteString_c& rrefc_src )
+  {uint32[0] = rrefc_src.uint32[0];};
+
+  /**
+    simply set a Flexible4ByteString_c at a specific value index with.
+    Important: Flexible4ByteString_c and Flexible8ByteString_c have
+               the SAME byte order as a CAN message byte string.
+    ==>> for BIG ENDIAN systems, this value can NOT directly be used as intger value
+    @param rui8_ind position of set Flexible4ByteString_c [0..1]
+  */
+  void setFlexible4DataValueInd(uint8_t rui8_ind, const Flexible8ByteString_c& rc_value );
+
+  /** constructor for INIT directly from a flexible positioned Stream.
+      IMPORTANT: this works also when the string starts at ODD position!
+  */
+  Flexible4ByteString_c( const uint8_t* rpui8_srcStream = NULL );
+  /** set this object from a optionally odd addressed string */
+  void setDataFromString( const uint8_t* rpui8_srcStream, uint8_t rui8_len = 4 )
+  { if (rpui8_srcStream != NULL ) CNAMESPACE::memcpy(uint8, rpui8_srcStream, rui8_len );};
+  /** copy contents of this object to a optionally odd addressed string */
+  void getDataToString( uint8_t* pui8_targetStream, uint8_t rui8_len = 4 ) const
+  { if (pui8_targetStream != NULL ) CNAMESPACE::memcpy( pui8_targetStream, uint8, rui8_len );};
+
+  /** set this object from a optionally odd addressed string */
+  void setDataFromString( uint8_t rui8_offset, const uint8_t* rpui8_srcStream, uint8_t rui8_len = 4 );
+  /** copy contents of this object to a optionally odd addressed string */
+  void getDataToString( uint8_t rui8_offset, uint8_t* pui8_targetStream, uint8_t rui8_len = 4 ) const;
+
+
+  /** assignment */
+  const Flexible4ByteString_c& operator=( const Flexible4ByteString_c& rrefc_src )
+  { uint32[0] = rrefc_src.uint32[0]; return *this; };
+  /** compare for EQUAL */
+  bool operator==( const Flexible4ByteString_c& rrefc_cmp ) const
+  { // use inline implementation for this case
+    return ( uint32[0] == rrefc_cmp.uint32[0] )?true:false;
+  };
+  /** compare for DIFFERENT */
+  bool operator!=( const Flexible4ByteString_c& rrefc_cmp ) const
+  {
+    return ( uint32[0] != rrefc_cmp.uint32[0] )?true:false;
+  };
+
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
+  /** compare for LOWER */
+  bool operator<( const Flexible4ByteString_c& rrefc_cmp ) const
+  { // use inline implementation for this case
+    return ( uint32[0] < rrefc_cmp.uint32[0] )?true:false;
+  };
+  /** compare for LARGER */
+  bool operator>( const Flexible4ByteString_c& rrefc_cmp ) const
+  { // use inline implementation for this case
+    return ( uint32[0] > rrefc_cmp.uint32[0] )?true:false;
+  };
+  /** compare with:
+    @return 0 == equal;
+           +1 == this item has higher value than par;
+           -1 == this item has lower value than par */
+  int compare( const Flexible4ByteString_c& rrefc_cmp ) const
+  {
+    if      (uint32[0] < rrefc_cmp.uint32[0]) return -1;
+    else if (uint32[0] > rrefc_cmp.uint32[0]) return +1;
+    return 0;
+  };
+  #else
+  /** compare for LOWER */
+  bool operator<( const Flexible4ByteString_c& rrefc_cmp ) const;
+  /** compare for LARGER */
+  bool operator>( const Flexible4ByteString_c& rrefc_cmp ) const;
+  /** compare with:
+    @return 0 == equal;
+           +1 == this item has higher value than par;
+           -1 == this item has lower value than par */
+  int compare( const Flexible4ByteString_c& rrefc_cmp ) const;
+  #endif
+
+
+  /**
+    set an uint8_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos Byte position [0..7]
+    @param rui8_val uint8_t value to set
+  */
+  void setUint8Data( uint8_t rui8_pos, uint8_t rui8_val) { uint8[rui8_pos] = rui8_val;};
+  /**
+    simply deliver a uint8_t from a specific position with operator[].
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered uint8_t [0..7]
+    @return uint8_t balue in CAN data string at pos rui8_pos
+  */
+  uint8_t operator[](uint8_t rui8_pos) const {return uint8[rui8_pos];};
+  /**
+    simply deliver a uint8_t from a specific position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered uint8_t [0..7]
+    @return uint8_t balue in CAN data string at pos rui8_pos
+  */
+  uint8_t getUint8Data(uint8_t rui8_pos) const {return uint8[rui8_pos];};
+
+
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  /**
+    set an uint16_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+    @param rui8_pos Byte position [0..2]
+    @param rui16_val uint16_t value to set
+  */
+  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val);
+  /**
+    set an int16_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+    @param rui8_pos Byte position [0..2]
+    @param ri16_val int16_t value to set
+  */
+  void setInt16Data( int8_t rui8_pos, int16_t ri16_val);
+  /**
+    simply deliver a uint16_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+    @param rui8_pos position of delivered uint16_t [0..2]
+    @return uint16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  uint16_t getUint16Data(uint8_t rui8_pos) const;
+  /**
+    simply deliver a int16_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 2
+    @param rui8_pos position of delivered int16_t [0..2]
+    @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  int16_t getInt16Data(int8_t rui8_pos) const;
+  #else
+  /**
+    set an uint16_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos Byte position [0..2]
+    @param rui16_val uint16_t value to set
+  */
+  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
+    {numberRef2LittleEndianString( rui16_val, (uint8+rui8_pos) );};
+  /**
+    set an int16_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos Byte position [0..2]
+    @param ri16_val int16_t value to set
+  */
+  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
+    {numberRef2LittleEndianString( ri16_val, (uint8+rui8_pos) );};
+
+  /**
+    simply deliver a uint16_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered uint16_t [0..2]
+    @return uint16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  uint16_t getUint16Data(uint8_t rui8_pos) const { return convertLittleEndianStringUi16(uint8+rui8_pos);};
+  /**
+    simply deliver a int16_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered int16_t [0..2]
+    @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  int16_t getInt16Data(int8_t rui8_pos) const { return convertLittleEndianStringI16(uint8+rui8_pos);};
+  #endif
+
+
+  /**
+    set an uint32_t value
+    @param rui32_val uint32_t value to set
+  */
+  void setUint32Data( uint32_t rui32_val)
+    #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+    { uint32[0] = rui32_val;};
+    #else
+    {numberRef2LittleEndianString( rui32_val, uint8 );};
+    #endif
+  /**
+    set an int32_t value
+    @param ri32_val int32_t value to set
+  */
+  void setInt32Data( int32_t ri32_val)
+    #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+    { int32[0] = ri32_val;};
+    #else
+    {numberRef2LittleEndianString( ri32_val, uint8 );};
+    #endif
+
+  /**
+    simply deliver a uint32_t
+    @return uint32_t balue in CAN data string at pos rui32_pos
+  */
+  uint32_t getUint32Data() const
+    #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+    {return uint32[0];};
+    #else
+    { return convertLittleEndianStringUi32(uint8);};
+    #endif
+  /**
+    simply deliver a int32_t
+    @return int32_t balue in CAN data string at pos rui32_pos
+  */
+  int32_t getInt32Data() const
+    #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+    {return int32[0];};
+    #else
+    { return convertLittleEndianStringI32(int8);};
+    #endif
+
+
+  /** define the values as anonymous union */
+  union {
+    uint8_t  uint8 [4];
+    int8_t    int8 [4];
+    uint16_t uint16[2];
+    int16_t   int16[2];
+    uint32_t uint32[1];
+    int32_t   int32[1];
+  };
+};
+
+
+/** helper class with some inline functions to enable flexible, efficient
+    and safe access to 8-Byte strings for ISONAME and CANPkg_c as:
+    + uint8_t  array of size 8 -> name uint8
+    + uint16_t array of size 4 -> name uint16
+    + uint32_t array of size 2 -> name uint32 (( only for CPU with 16Bit or more)
+  ( + uint64_t array of size 1 -> name uint64 ONLY FOR CPU_WORD_SIZE >= 4 )
+  IMPORTANT: The internal order of bytes is LITTLE ENDIAN, so that the bytes are directly
+             used for sending of CAN messages.
+   ==>> for big endian CPU all assignment and retrieval functions have to use the helper
+        like numberRef2LittleEndianString for safe data conversion / adaptation
+  */
+class Flexible8ByteString_c {
+
+ public:
+  Flexible8ByteString_c( const Flexible8ByteString_c& rrefc_src );
+  /** constructor for INIT directly from a flexible positioned Stream.
+      IMPORTANT: this works also when the string starts at ODD position!
+  */
+  Flexible8ByteString_c( const uint8_t* rpui8_srcStream = NULL );
+  /** set this object from a optionally odd addressed string */
+  void setDataFromString( const uint8_t* rpui8_srcStream, uint8_t rui8_len = 8 )
+  { if (rpui8_srcStream != NULL ) CNAMESPACE::memcpy(uint8, rpui8_srcStream, rui8_len );};
+  /** copy contents of this object to a optionally odd addressed string */
+  void getDataToString( uint8_t* pui8_srcStream, uint8_t rui8_len = 8 ) const
+  { if (pui8_srcStream != NULL ) CNAMESPACE::memcpy( pui8_srcStream, uint8, rui8_len );};
+  /** set this object from a optionally odd addressed string */
+  void setDataFromString( uint8_t rui8_offset, const uint8_t* rpui8_srcStream, uint8_t rui8_len = 8 );
+  /** copy contents of this object to a optionally odd addressed string */
+  void getDataToString( uint8_t rui8_offset, uint8_t* pui8_srcStream, uint8_t rui8_len = 8 ) const;
+
+  /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
+  const uint8_t* getUint8DataConstPointer( uint8_t rui8_positionOffset ) const
+    { return uint8+rui8_positionOffset;};
+  /** retrieve a raw const pointer to uint8_t data string */
+  const uint8_t* getUint8DataConstPointer() const { return uint8;};
+  /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
+  uint8_t* getUint8DataPointer( uint8_t rui8_positionOffset )
+    { return uint8+rui8_positionOffset;};
+  /** retrieve a raw const pointer to uint8_t data string */
+  uint8_t* getUint8DataPointer() { return uint8;};
+
+
+  #if SIZEOF_INT >= 4
+  /** assignment */
+  const Flexible8ByteString_c& operator=( const Flexible8ByteString_c& rrefc_src )
+  { uint64[0] = rrefc_src.uint64[0]; return *this; };
+  /** compare for EQUAL */
+  bool operator==( const Flexible8ByteString_c& rrefc_cmp ) const
+  { // use inline implementation for this case
+    return ( uint64[0] == rrefc_cmp.uint64[0] )?true:false;
+  };
+  /** compare for DIFFERENT */
+  bool operator!=( const Flexible8ByteString_c& rrefc_cmp ) const
+  {
+    return ( uint64[0] != rrefc_cmp.uint64[0] )?true:false;
+  };
+  #else
+  /** assignment */
+  const Flexible8ByteString_c& operator=( const Flexible8ByteString_c& rrefc_src );
+  /** compare for EQUAL */
+  bool operator==( const Flexible8ByteString_c& rrefc_cmp ) const;
+  /** compare for DIFFERENT */
+  bool operator!=( const Flexible8ByteString_c& rrefc_cmp ) const;
+  #endif
+
+
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && SIZEOF_INT >= 4
+  /** compare for LOWER */
+  bool operator<( const Flexible8ByteString_c& rrefc_cmp ) const
+  { // use inline implementation for this case
+    return ( uint64[0] < rrefc_cmp.uint64[0] )?true:false;
+  };
+  /** compare for LARGER */
+  bool operator>( const Flexible8ByteString_c& rrefc_cmp ) const
+  { // use inline implementation for this case
+    return ( uint64[0] > rrefc_cmp.uint64[0] )?true:false;
+  };
+  /** compare with:
+    @return 0 == equal;
+           +1 == this item has higher value than par;
+           -1 == this item has lower value than par */
+  int compare( const Flexible8ByteString_c& rrefc_cmp ) const
+  {
+    if      (uint64[0] < rrefc_cmp.uint64[0]) return -1;
+    else if (uint64[0] > rrefc_cmp.uint64[0]) return +1;
+    return 0;
+  };
+  #else
+  /** compare for LOWER */
+  bool operator<( const Flexible8ByteString_c& rrefc_cmp ) const;
+  /** compare for LARGER */
+  bool operator>( const Flexible8ByteString_c& rrefc_cmp ) const;
+  /** compare with:
+    @return 0 == equal;
+           +1 == this item has higher value than par;
+           -1 == this item has lower value than par */
+  int compare( const Flexible8ByteString_c& rrefc_cmp ) const;
+  #endif
+
+  /**
+    set an uint8_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos Byte position [0..7]
+    @param rui8_val uint8_t value to set
+  */
+  void setUint8Data( uint8_t rui8_pos, uint8_t rui8_val) { uint8[rui8_pos] = rui8_val;};
+  /**
+    simply deliver a uint8_t from a specific position with operator[].
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered uint8_t [0..7]
+    @return uint8_t balue in CAN data string at pos rui8_pos
+  */
+  uint8_t operator[](uint8_t rui8_pos) const {return uint8[rui8_pos];};
+  /**
+    simply deliver a uint8_t from a specific position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered uint8_t [0..7]
+    @return uint8_t balue in CAN data string at pos rui8_pos
+  */
+  uint8_t getUint8Data(uint8_t rui8_pos) const {return uint8[rui8_pos];};
+
+  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  /**
+    set an uint16_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    @param rui8_pos Byte position [0..6]
+    @param rui16_val uint16_t value to set
+  */
+  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val);
+  /**
+    set an int16_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    @param rui8_pos Byte position [0..6]
+    @param ri16_val int16_t value to set
+  */
+  void setInt16Data( int8_t rui8_pos, int16_t ri16_val);
+  /**
+    simply deliver a uint16_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    @param rui8_pos position of delivered uint16_t [0..6]
+    @return uint16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  uint16_t getUint16Data(uint8_t rui8_pos) const;
+  /**
+    simply deliver a int16_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    @param rui8_pos position of delivered int16_t [0..6]
+    @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  int16_t getInt16Data(int8_t rui8_pos) const;
+  /**
+    set an uint32_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    @param rui8_pos Byte position [0..4]
+    @param rui32_val uint32_t value to set
+  */
+  void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val);
+  /**
+    set an int32_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    @param rui8_pos Byte position [0..4]
+    @param ri32_val int32_t value to set
+  */
+  void setInt32Data( int8_t rui8_pos, int32_t ri32_val);
+  /**
+    simply deliver a uint32_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    @param rui8_pos position of delivered uint32_t [0..4]
+    @return uint32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  uint32_t getUint32Data(uint8_t rui8_pos) const;
+  /**
+    simply deliver a int32_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    Possible Error: <LibErr_c::Range, LibErr_c::Can> when rui8_pos > 6
+    @param rui8_pos position of delivered int32_t [0..4]
+    @return int32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  int32_t getInt32Data(int8_t rui8_pos) const;
+  #else
+  /**
+    set an uint16_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos Byte position [0..6]
+    @param rui16_val uint16_t value to set
+  */
+  void setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
+    {numberRef2LittleEndianString( rui16_val, (uint8+rui8_pos) );};
+  /**
+    set an int16_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos Byte position [0..6]
+    @param ri16_val int16_t value to set
+  */
+  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
+    {numberRef2LittleEndianString( ri16_val, (uint8+rui8_pos) );};
+
+  /**
+    simply deliver a uint16_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered uint16_t [0..6]
+    @return uint16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  uint16_t getUint16Data(uint8_t rui8_pos) const { return convertLittleEndianStringUi16(uint8+rui8_pos);};
+  /**
+    simply deliver a int16_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered int16_t [0..6]
+    @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  int16_t getInt16Data(int8_t rui8_pos) const { return convertLittleEndianStringI16(uint8+rui8_pos);};
+  /**
+    set an uint32_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos Byte position [0..4]
+    @param rui32_val uint32_t value to set
+  */
+  void setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
+    {numberRef2LittleEndianString( rui32_val, (uint8+rui8_pos) );};
+  /**
+    set an int32_t value at specified position in string.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos Byte position [0..4]
+    @param ri32_val int32_t value to set
+  */
+  void setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
+    {numberRef2LittleEndianString( ri32_val, (uint8+rui8_pos) );};
+
+  /**
+    simply deliver a uint32_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered uint32_t [0..4]
+    @return uint32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  uint32_t getUint32Data(uint8_t rui8_pos) const { return convertLittleEndianStringUi32(uint8+rui8_pos);};
+  /**
+    simply deliver a int32_t from a specific starting position with.
+    IMPORTANT: position 0 matches to the least significant byte,
+               as the string is ordered in LittleEndian order,
+               identic to the order which is used for CAN messages
+    @param rui8_pos position of delivered int32_t [0..4]
+    @return int32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
+  */
+  int32_t getInt32Data(int8_t rui8_pos) const { return convertLittleEndianStringI32(uint8+rui8_pos);};
+  #endif
+  /**
+    simply deliver a Flexible4ByteString_c from a specific value index with.
+    Important: Flexible4ByteString_c has the SAME byte order as a CAN message byte string.
+    ==>> for BIG ENDIAN systems, this value can NOT directly be used as intger value
+    @param rui8_ind position of delivered uint16_t [0..1]
+    @return Flexible4ByteString_c balue in CAN data string at pos rui16_pos
+  */
+  void setFlexible4DataValueInd(uint8_t rui8_ind, const Flexible4ByteString_c& rc_value )
+    {uint32[rui8_ind] = rc_value.uint32[0];};
+
+
+
+  /** define the values as anonymous union */
+  union {
+    uint8_t  uint8 [8];
+    int8_t    int8 [8];
+    uint16_t uint16[4];
+    int16_t   int16[4];
+    uint32_t uint32[2];
+    int32_t   int32[2];
+    #if SIZEOF_INT >= 4
+    uint64_t uint64[1];
+    int64_t   int64[1];
+    #endif
+  };
+};
+
+
+#ifdef USE_DATASTREAMS_IO
+/** convert receive multistream into an unsigned variable */
+uint16_t convertIstreamUi16( StreamInput_c& refc_stream );
+/** convert receive multistream into an unsigned variable */
+int16_t convertIstreamI16( StreamInput_c& refc_stream );
+/** convert receive multistream into an unsigned variable */
+uint32_t convertIstreamUi32( StreamInput_c& refc_stream );
+/** convert receive multistream into an unsigned variable */
+int32_t convertIstreamI32( StreamInput_c& refc_stream );
+#endif
+
 
 
 

@@ -344,7 +344,7 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   functions:
   * setIdent(Ident_c& rrefc_ident)
     -> set ident rrefc_ident of received msg in CANPkg
-  * uint8_t setDataString(uint8_t* rpb_data, uint8_t rb_dlc)
+  * uint8_t setDataFromString(uint8_t* rpb_data, uint8_t rb_dlc)
     -> set DLC in CANPkg_c from rb_dlc and insert data from uint8_t string rpb_data
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config

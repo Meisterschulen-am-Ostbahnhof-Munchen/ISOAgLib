@@ -162,8 +162,12 @@ void MultiSendPkg_c::flags2String()
 uint16_t MultiSendPkg_c::getData_2ByteInteger(uint8_t rb_pos) const
 {
   return (en_byteOrder == LSB_MSB)
-    ?(data(rb_pos) + (data(rb_pos+1) << 8))
-    :(data(rb_pos+1) + (data(rb_pos) << 8));
+      // the getUint16Data() provides fast and safe access to LittleEndian
+      // ordered data value string
+    ?(getUint16Data(rb_pos))
+      // in this case, the value is _not_ stored in normal LittleEndian order
+      // in the CAN byte stream
+    :(getUint8Data(rb_pos+1) + (uint16_t(getUint8Data(rb_pos))   << 8));
 }
 /**
   set the message number for sent CAN pkg for IsoAgLib+ transfer
@@ -175,57 +179,16 @@ void MultiSendPkg_c::setData_2ByteInteger(uint8_t rb_pos, uint16_t rui16_val)
 {
   if (en_byteOrder == MSB_LSB)
   {
-    pb_data[rb_pos] = (rui16_val >> 8);
-    pb_data[rb_pos+1] = (rui16_val & 0xFF);
+    setUint8Data( rb_pos,   (rui16_val >> 8)   );
+    setUint8Data( rb_pos+1, (rui16_val & 0xFF) );
   }
   else
-  {
-    pb_data[rb_pos] = (rui16_val & 0xFF);
-    pb_data[rb_pos+1] = (rui16_val >> 8);
+  { // LSB_MSB is the standard byte order, which is provided by setUint16Data
+    setUint16Data( rb_pos,  rui16_val & 0xFFFFU );
   }
 }
 
-/**
-  set an integer value at variable uint8_t position
-  @param rui8_pos uint8_t position in CAN data string
-  @param ri16_val value to set
-  */
-void MultiSendPkg_c::setData(uint8_t rui8_pos, int16_t ri16_val)
-{
-  numberRef2LittleEndianString( ri16_val, (pb_data + rui8_pos) );
-}
-
-/**
-set an uint16_t value at variable uint8_t position
-@param rui8_pos uint8_t position in CAN data string
-@param rui16_val value to set
-  */
-void MultiSendPkg_c::setData(uint8_t rui8_pos, uint16_t rui16_val)
-{
-  numberRef2LittleEndianString( rui16_val, (pb_data + rui8_pos) );
-}
-
-/**
-set an int32_t value at variable uint8_t position
-@param rui8_pos uint8_t position in CAN data string
-@param ri32_val value to set
-  */
-void MultiSendPkg_c::setData(uint8_t rui8_pos, int32_t ri32_val)
-{
-  numberRef2LittleEndianString( ri32_val, (pb_data + rui8_pos) );
-}
-
-/**
-set an uint32_t value at variable uint8_t position
-@param rui8_pos uint8_t position in CAN data string
-@param rui32_val value to set
-  */
-void MultiSendPkg_c::setData(uint8_t rui8_pos, uint32_t rui32_val)
-{
-  numberRef2LittleEndianString( rui32_val, (pb_data + rui8_pos) );
-}
-
-
+static const uint8_t paddingDataArr[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 
 /**
   set the 7 uint8_t data part of transfer message
@@ -237,15 +200,19 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri3
 {
   #ifdef USE_HUGE_MEM
   const HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
-  // end condition comparison aganist ZERO is faster -> perform loop with decrementing
-  for (unsigned int ui_ind=rb_partSize; ui_ind != 0; --ui_ind)
-  { // e.g: copy of 4 elements results in 4:=3, 3:=2, 2:=1, 1:=0 -> run as long as LEFT side is not null
-    pb_data[ui_ind] = pb_source[ui_ind-1];
+  // fist assign is performed with index:=1, so that last assign should be performed with
+  // ind == rb_partSize (e.g. rb_partSize:=7 ==> last written index:=7 == Byt8 of CANPkg_c)
+  for ( uint8_t ind = 1; ind <= rb_partSize; ind++ )
+  { // the ind matches already to the appropriate CANPkg_c data string position,
+    // while the pb_source pointer is also set to the start of the source data
+    setUint8Data( ind, *pb_source );
+    // now increment the source pointer for next access
+    pb_source++;
   }
   #else
-  CNAMESPACE::memcpy(pb_data+1, rpb_source + ri32_pos, rb_partSize);
+  setDataFromString( 1, rpb_source + ri32_pos, rb_partSize );
   #endif
-  CNAMESPACE::memset(pb_data+1+rb_partSize,0xFF, (7-rb_partSize));
+  setDataFromString( 1+rb_partSize, paddingDataArr, (7-rb_partSize) );
 }
 /**
   set the 7 uint8_t data part of transfer message
@@ -255,15 +222,17 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* rpb_source, int32_t ri3
   */
 void MultiSendPkg_c::setDataPart(const std::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize)
 {
-  uint8_t* pui8_writer = pb_data+1-ri32_pos;
-  const uint32_t cui32_end = rb_partSize+ri32_pos;
-  for ( uint32_t ind = ri32_pos; ind < cui32_end; ind++ )
-  { // the pointer pui8_writer points ri32_pos bytes BEFORE the real write target
-    // -> starting with ind:=ri32_pos leads to writing at the real wanted target position
-    // ==> ONE index for quick access to src and targer without any loop index access calculations
-    pui8_writer[ind] = refc_vecSource[ind];
+  std::vector<uint8_t>::const_iterator iter = refc_vecSource.begin()+ri32_pos;
+  // fist assign is performed with index:=1, so that last assign should be performed with
+  // ind == rb_partSize (e.g. rb_partSize:=7 ==> last written index:=7 == Byt8 of CANPkg_c)
+  for ( uint8_t ind = 1; ind <= rb_partSize; ind++ )
+  { // the ind matches already to the appropriate CANPkg_c data string position,
+    // while the iter iterator is also set to the start of the source data
+    setUint8Data( ind, *iter );
+    // now increment the iterator for next access
+    iter++;
   }
-  CNAMESPACE::memset(pb_data+1+rb_partSize,0xFF, (7-rb_partSize));
+  setDataFromString( 1+rb_partSize, paddingDataArr, (7-rb_partSize) );
 }
 #if defined(NMEA_2000_FAST_PACKET)
 /**
@@ -276,15 +245,22 @@ void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, i
 {
 #ifdef USE_HUGE_MEM
   const HUGE_MEM uint8_t* pb_source = rpb_source + ri32_pos;
-  // end condition comparison aganist ZERO is faster -> perform loop with decrementing
-  for (unsigned int ui_ind=0; ui_ind < rb_partSize; ++ui_ind)
-  { // e.g: copy of 4 elements results in 4:=3, 3:=2, 2:=1, 1:=0 -> run as long as LEFT side is not null
-    pb_data[ui_ind+rui8_offset] = pb_source[ui_ind];
+  // examples:
+  // rb_partSize:=7, rui8_offset:=1 ==> cui8_endCondition:=8
+  // ==> first assign should match target byte index rui8_offset:=1
+  //     and last index should be <8 -> i.e. index:=7
+  const uint8_t cui8_endCondition = rb_partSize + rui8_offset;
+  for ( uint8_t ind = rui8_offset; ind < cui8_endCondition; ind++ )
+  { // the ind matches already to the appropriate CANPkg_c data string position,
+    // while the pb_source pointer is also set to the start of the source data
+    setUint8Data( ind, *pb_source );
+    // now increment the source pointer for next access
+    pb_source++;
   }
 #else
-  CNAMESPACE::memcpy(pb_data+rui8_offset, rpb_source + ri32_pos, rb_partSize);
+  setDataFromString( rui8_offset, rpb_source + ri32_pos, rb_partSize );
 #endif
-  CNAMESPACE::memset(pb_data+rui8_offset+rb_partSize,0xFF, (8-rui8_offset-rb_partSize));
+  setDataFromString( rui8_offset+rb_partSize, paddingDataArr, (8-rui8_offset-rb_partSize) );
 }
 /**
   set the 7 uint8_t data part of transfer message
@@ -294,16 +270,20 @@ void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* rpb_source, i
   */
 void MultiSendPkg_c::setFastPacketDataPart(const std::vector<uint8_t>& refc_vecSource, int32_t ri32_pos, uint8_t rb_partSize, uint8_t rui8_offset )
 {
-  uint8_t* pui8_writer = pb_data+rui8_offset-ri32_pos;
-  const uint32_t cui32_end = rb_partSize+ri32_pos;
-  for ( uint32_t ind = ri32_pos; ind < cui32_end; ind++ )
-  { // the pointer pui8_writer points ri32_pos bytes BEFORE the real write target
-    // -> starting with ind:=ri32_pos leads to writing at the real wanted target position
-    // ==> ONE index for quick access to src and targer without any loop index access calculations
-    pui8_writer[ind] = refc_vecSource[ind];
+  std::vector<uint8_t>::const_iterator iter = refc_vecSource.begin()+ri32_pos;
+  // examples:
+  // rb_partSize:=7, rui8_offset:=1 ==> cui8_endCondition:=8
+  // ==> first assign should match target byte index rui8_offset:=1
+  //     and last index should be <8 -> i.e. index:=7
+  const uint8_t cui8_endCondition = rb_partSize + rui8_offset;
+  for ( uint8_t ind = rui8_offset; ind < cui8_endCondition; ind++ )
+  { // the ind matches already to the appropriate CANPkg_c data string position,
+    // while the iter iterator is also set to the start of the source data
+    setUint8Data( ind, *iter );
+    // now increment the iterator for next access
+    iter++;
   }
-
-  CNAMESPACE::memset(pb_data+rui8_offset+rb_partSize,0xFF, (8-rui8_offset-rb_partSize));
+  setDataFromString( rui8_offset+rb_partSize, paddingDataArr, (8-rui8_offset-rb_partSize) );
 }
 #endif
 

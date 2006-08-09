@@ -180,8 +180,15 @@ CANIO_c::singletonInit()
   @see Ident_c::t_identType
 */
   bool CANIO_c::init(uint8_t rui8_busNumber, uint16_t rui16_bitrate,
-                   Ident_c::identType_t ren_identType,
-                   uint8_t rui8_minObjNr, uint8_t rui8_maxObjNr )
+                  Ident_c::identType_t ren_identType,
+                  uint8_t rui8_minObjNr,
+                  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+                  uint8_t rui8_maxObjNr
+                  #else
+                  // this parameter is NOT needed with SYSTEM_WITH_ENHANCED_CAN_HAL
+                  uint8_t /*rui8_maxObjNr*/
+                  #endif
+                  )
 { // first make shure that the base system is initialized
   getSystemInstance().init();
   b_runningCanProcess = false;
@@ -621,9 +628,15 @@ bool CANIO_c::existFilter(const __IsoAgLib::CANCustomer_c& rref_customer,
   @exception badAlloc
 */
 FilterBox_c* CANIO_c::insertFilter(__IsoAgLib::CANCustomer_c& rref_customer,
-                                   uint32_t rt_mask, uint32_t rt_filter,
-                                   bool rb_reconfigImmediate, const Ident_c::identType_t rt_identType,
-                                   FilterBox_c* rpc_connectedFilterBox)
+                                  uint32_t rt_mask, uint32_t rt_filter,
+                                  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+                                  bool rb_reconfigImmediate,
+                                  #else
+                                  // this parameter is NOT needed with SYSTEM_WITH_ENHANCED_CAN_HAL
+                                  bool /*rb_reconfigImmediate*/,
+                                  #endif
+                                  const Ident_c::identType_t rt_identType,
+                                  FilterBox_c* rpc_connectedFilterBox)
 {
   Ident_c c_newMask = Ident_c(rt_mask, rt_identType);
   Ident_c c_newFilter = Ident_c(rt_filter, rt_identType);

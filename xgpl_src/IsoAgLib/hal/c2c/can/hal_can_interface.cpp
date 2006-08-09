@@ -795,7 +795,7 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
   functions:
   * void setIdent(MASK_TYPE rt_ident, Ident_c::identType_t rt_type)
     -> set ident rrefc_ident of received msg in CANPkg_c
-  * uint8_t setDataString(uint8_t* rpb_data, uint8_t rb_dlc)
+  * uint8_t setDataFromString(uint8_t* rpb_data, uint8_t rb_dlc)
     -> set DLC in CANPkg_c from rb_dlc and insert data from uint8_t string rpb_data
   * void setTime(int32_t ri32_time) -> set receive time
   @param rui8_busNr number of the BUS to config
@@ -852,7 +852,7 @@ int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::
     // rpc_data->setIdent(pt_receive->dwId, idType);
     // CANPkg_c::setIdent changed to static member function
     __IsoAgLib::CANPkg_c::setIdent(pt_receive->dwId, idType);
-    rpc_data->setDataString(pt_receive->abData, pt_receive->bDlc);
+    rpc_data->setDataFromString(pt_receive->abData, pt_receive->bDlc);
   }
   return i16_retVal;
 }

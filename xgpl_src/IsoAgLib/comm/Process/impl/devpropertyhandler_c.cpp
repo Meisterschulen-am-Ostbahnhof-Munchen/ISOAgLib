@@ -207,7 +207,7 @@ DevPropertyHandler_c::processMsg()
 
   // set FALSE if "default" is selected in switch case
   bool b_rc = TRUE;
-  
+
   //handling of nack
   //-> means that no device description is uploaded before
   //-> so extract all necessary information from the byte-stream (structure and localization label)
@@ -448,7 +448,7 @@ DevPropertyHandler_c::timeEvent( void )
 
   const int32_t i32_currentTime = HAL::getTime();
   sendWorkingSetTaskMsg(i32_currentTime);
-  
+
   bool tcAliveOld = tcAliveNew;
   tcAliveNew = isTcAlive(i32_currentTime);
 
@@ -862,7 +862,7 @@ DevPropertyHandler_c::initUploading()
       char ch_temp[2] = { 'e', 'n' };
       #ifdef USE_ISO_TERMINAL
       //if there are no local settings in ISOTerminal take default language "en"
-      if (__IsoAgLib::getIsoTerminalInstance().getClientPtrByID(0) && 
+      if (__IsoAgLib::getIsoTerminalInstance().getClientPtrByID(0) &&
           __IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInstPtr() &&
           (__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0)) {
         ch_temp[0] = ((__IsoAgLib::getIsoTerminalInstance().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;
@@ -1087,11 +1087,9 @@ DevPropertyHandler_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t by
     for (int arr_index=((ui16_isoNameOffset/7)*7); arr_index < (((ui16_isoNameOffset/7)*7)+14); index++, arr_index++)
       p14ui8_overlayBuffer[index] = pc_devPoolForUpload->p_DevicePool[arr_index];
     // overwrite isoName
-    uint16_t ui16_tmpOffset = ui16_isoNameOffset%7;
-    const uint8_t *pui8_isoname = pc_wsMasterIdentItem->getIsoItem()->outputString();
-    index = 0;
-    for (int buf_index=ui16_tmpOffset; buf_index < (ui16_tmpOffset+8); buf_index++, index++)
-      p14ui8_overlayBuffer[buf_index] = pui8_isoname[index];
+    const uint16_t ui16_tmpOffset = ui16_isoNameOffset%7;
+    static_cast<const IdentItem_c*>(pc_wsMasterIdentItem)->getIsoItem()->outputNameUnion()->getDataToString(
+      p14ui8_overlayBuffer+ui16_tmpOffset );
     // send from overlayed buffer
     mspData->setDataPart (p14ui8_overlayBuffer, cb_left ? 0 : 7, bytes);
   }
