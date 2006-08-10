@@ -275,6 +275,7 @@ int16_t  configWd(tWDConfig *tConfigArray)
 {
   DEBUG_PRINT4("configWd aufgerufen mit MaxTime %hu, MinTime %hu, UDmax %hu, UDmin %hd\n",
     tConfigArray->bWDmaxTime, tConfigArray->bWDminTime, tConfigArray->bUDmax, tConfigArray->bUDmin);
+  tConfigArray = tConfigArray; // Just suppress warning.
   return 0;
 }
 void wdTriggern(void)
@@ -363,6 +364,7 @@ int16_t  getOn_offSwitch(void)
 void setRelais(boolean bitState)
 {
   DEBUG_PRINT1("setRelais(%d) aufgerufen", bitState);
+  bitState = bitState; // Just suppress warning
 }
 
 int16_t KeyGetByte(uint8_t *p)

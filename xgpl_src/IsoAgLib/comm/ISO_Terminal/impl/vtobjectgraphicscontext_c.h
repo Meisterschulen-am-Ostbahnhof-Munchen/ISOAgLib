@@ -1,9 +1,9 @@
 /***************************************************************************
-                          vtobjectoutputnumber_c.h
+                          vtobjectgraphicscontext_c.h
                              -------------------
     begin                : Mon Jun 30 14:41:54 2003
-    copyright            : (C) 2003 by Martin Wodok
-    email                : m.wodok@osb-ag:de
+    copyright            : (C) 2006 by Martina Winkler
+    email                : m.winkler@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -80,23 +80,21 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-#ifndef VTOBJECTOUTPUTNUMBER_C_H
-#define VTOBJECTOUTPUTNUMBER_C_H
+#ifndef VTOBJECTGRAPHICSCONTEXT_C_H
+#define VTOBJECTGRAPHICSCONTEXT_C_H
 
 
 // +X2C includes
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
-#include "vtclientservercommunication_c.h"
 // ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-//  +X2C Class 124 : vtObjectOutputNumber_c
+//  +X2C Class 149 : vtObjectGraphicsContext_c
 //!  Stereotype: Klasse
-class vtObjectOutputNumber_c : public vtObject_c
+class vtObjectGraphicsContext_c : public vtObject_c
 {
 
 public:
@@ -106,82 +104,91 @@ public:
   //! @param:destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
-  int16_t stream(uint8_t* destMemory,
-                 uint16_t maxBytes,
-                 objRange_t sourceOffset);
+  int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
 
   //  Operation: init
   //! Parameter:
-  //! @param vtObjectOutputNumberSROM:
+  //! @param vtObjectGraphicsContextSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectOutputNumberSROMs SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA);};
+  void init(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
+       vtObject_c::init ((iVtObject_s*) vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA); };
 
-  //  Operation: get_vtObjectOutputNumber_a
-  iVtObjectOutputNumber_s* get_vtObjectOutputNumber_a() { return (iVtObjectOutputNumber_s *)vtObject_a; }
+  //  Operation: get_vtObjectGraphicsContext_a
+  inline iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a( void ) {
+       return (iVtObjectGraphicsContext_s *)vtObject_a; }
 
-  //  Operation: vtObjectOutputNumber_c
-  vtObjectOutputNumber_c();
+  //  Operation: vtObjectGraphicsContext_c
+  vtObjectGraphicsContext_c( void );
 
-  //  Operation: size
-  uint32_t fitTerminal();
-
-  //  Operation: setValue
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
-  void setValue(uint32_t newValue,
-                bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
-
-  //  Operation: setOriginSKM
-  //! Parameter:
-  //! @param b_SKM:
-  void setOriginSKM(bool b_SKM);
-
-  //! Parameter:
-  //! @param p_btn:
-  void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
-
+  //  Operation: fitTerminal
+  uint32_t fitTerminal( void ){ return 30; }
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), width) : 0, sizeof(iVtObjectOutputNumber_s), 1, newValue, b_enableReplaceOfCmd);
-  }
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), height) : 0, sizeof(iVtObjectOutputNumber_s), 2, newValue, b_enableReplaceOfCmd);
-  }
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), backgroundColour) : 0, sizeof(iVtObjectOutputNumber_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
-  }
-  void setFontAttributes(vtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), fontAttributes) : 0, sizeof(iVtObjectOutputNumber_s), 4, newValue, b_enableReplaceOfCmd);
-  }
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), options) : 0, sizeof(iVtObjectOutputNumber_s), 5, newValue, newValue, b_enableReplaceOfCmd);
-  }
-  void setVariableReference(vtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), variableReference) : 0, sizeof(iVtObjectOutputNumber_s), 6, newValue, b_enableReplaceOfCmd);
-  }
-  void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), offset) : 0, sizeof(iVtObjectOutputNumber_s), 7, *((uint32_t*)&newValue), b_enableReplaceOfCmd);
-  }
-  void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValueFloatSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), scale) : 0, sizeof(iVtObjectOutputNumber_s), 8, newValue, b_enableReplaceOfCmd);
-  }
-  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), numberOfDecimals) : 0, sizeof(iVtObjectOutputNumber_s), 9, newValue, newValue, b_enableReplaceOfCmd);
-  }
-  void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), format) : 0, sizeof(iVtObjectOutputNumber_s), 10, (newValue) ? 1 : 0, (newValue) ? 1 : 0, b_enableReplaceOfCmd);
-  }
-  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputNumber_s), 11, newValue, newValue, b_enableReplaceOfCmd);
-  }
 
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setGraphicsCursor(const IsoAgLib::iVtPoint_c& rc_point,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-}; // ~X2C
+  void setForegroundColour(uint8_t newValue,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void setBackgroundColour(uint8_t newValue,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void setLineAttributes(const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void setFillAttributes(const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void setFontAttributes(const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void eraseRectangle(const IsoAgLib::iVtPoint_c& rc_point,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void drawPoint(
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void drawLine(const IsoAgLib::iVtPoint_c& rc_point,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void drawRectangle(const IsoAgLib::iVtPoint_c& rc_point,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void drawClosedEllipse(const IsoAgLib::iVtPoint_c& rc_point,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void drawPolygon(uint16_t cnt, const IsoAgLib::iVtPoint_c* const rps_data,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void drawText(uint8_t type, uint8_t cnt, const char* rpc_string,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void panViewport(const IsoAgLib::iVtPoint_c& rc_point,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void zoomViewport(int8_t newValue,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void panAndZoomViewport(const IsoAgLib::iVtPoint_c& rc_point, int8_t newValue,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void changeViewportSize(uint16_t newWidth, uint16_t newHeight,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void drawVtObject(const IsoAgLib::iVtObject_c* const p_VtObject,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void copyCanvas2PictureGraphic(const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  void copyViewport2PictureGraphic(const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic,
+       bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif // VTOBJECTGRAPHICSCONTEXT_C_H
+

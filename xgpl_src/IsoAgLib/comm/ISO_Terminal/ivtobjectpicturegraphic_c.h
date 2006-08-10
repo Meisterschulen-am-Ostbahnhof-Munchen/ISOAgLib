@@ -52,16 +52,12 @@
 #ifndef IVTOBJECTPICTUREGRAPHIC_C_H
 #define IVTOBJECTPICTUREGRAPHIC_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectpicturegraphic_c.h"
-// ~X2C
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
 
-//  +X2C Class 149 : iVtObjectPictureGraphic_c
 //!  Stereotype: Klasse
 class iVtObjectPictureGraphic_c : public __IsoAgLib::vtObjectPictureGraphic_c
 {
@@ -112,8 +108,9 @@ public:
   void setRawData2Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setRawData2Buffer (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
-}; // ~X2C
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif // IVTOBJECTPICTUREGRAPHIC_C_H
+

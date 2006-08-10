@@ -941,7 +941,7 @@ void print_trace (void)
 }
 
 
-void segfaulthand(int i)
+void segfaulthand(int /* i */ )
 {
     delete[] reserve_memory_heap;
 

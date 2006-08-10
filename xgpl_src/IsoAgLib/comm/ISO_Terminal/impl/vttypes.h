@@ -346,4 +346,17 @@ typedef uint16_t objRange_t;
 #define MACRO_getStructOffset(structPointer,structElement) \
   ((uint16_t) ((uint8_t*)(&structPointer->structElement) - ((uint8_t*)structPointer)))
 
-#endif
+
+//! Common convert helpers (e.g. type conversion with type check).
+namespace vtConvert_n
+{
+    //! Convert signed value to unsigned by 1:1 bitwise conversion.
+    inline uint8_t  unsignValue8(  int8_t  val ) { return *((uint8_t* )(&val)); }
+    //! Convert signed value to unsigned by 1:1 bitwise conversion.
+    inline uint16_t unsignValue16( int16_t val ) { return *((uint16_t*)(&val)); }
+    //! Convert signed value to unsigned by 1:1 bitwise conversion.
+    inline uint32_t unsignValue32( int32_t val ) { return *((uint32_t*)(&val)); }
+};
+
+#endif // VTTYPES_H
+

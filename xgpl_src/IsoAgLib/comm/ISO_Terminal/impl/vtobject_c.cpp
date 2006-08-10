@@ -144,16 +144,34 @@ vtObject_c::saveValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, ui
   * ((uint32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = ui32_newValue;
 }
 void
+vtObject_c::saveSignedValue8 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int8_t i8_newValue)
+{
+  createRamStructIfNotYet (ui16_structLen);
+  ((int8_t *)vtObject_a) [ui16_structOffset] = i8_newValue;
+}
+void
+vtObject_c::saveSignedValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int16_t i16_newValue)
+{
+  createRamStructIfNotYet (ui16_structLen);
+  * ((int16_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = i16_newValue;
+}
+void
+vtObject_c::saveSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int32_t i32_newValue)
+{
+  createRamStructIfNotYet (ui16_structLen);
+  * ((int32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = i32_newValue;
+}
+void
 vtObject_c::saveValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, float f_newValue)
 {
   createRamStructIfNotYet (ui16_structLen);
   * ((float*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = f_newValue;
 }
 void
-vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, IsoAgLib::iVtObject_c* p_newValue)
+vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iVtObject_c* const p_newValue)
 {
   createRamStructIfNotYet (ui16_structLen);
-  * ((IsoAgLib::iVtObject_c**) (((uint8_t *)vtObject_a)+ui16_structOffset)) = p_newValue;
+  * ((const IsoAgLib::iVtObject_c** const) (((uint8_t *)vtObject_a)+ui16_structOffset)) = p_newValue;
 }
 
 // //////////////////////////////// saveValue(8/16/32)SetAttribute

@@ -1166,8 +1166,11 @@ xgpl_src/IsoAgLib/comm/Base/itracmove_c.h -text
 xgpl_src/IsoAgLib/comm/Base/itracpto_c.h -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.cpp -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h -text
+xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.cpp -text
+xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtobjectgraphicscontext_c.h -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.cpp -text
 xgpl_src/IsoAgLib/comm/ISO_Terminal/impl/vtserverinstance_c.h -text
+xgpl_src/IsoAgLib/comm/ISO_Terminal/ivtobjectgraphicscontext_c.h -text
 xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.cpp -text
 xgpl_src/IsoAgLib/comm/Multipacket/impl/chunk_c.h -text
 xgpl_src/IsoAgLib/comm/Multipacket/impl/multireceive_c.cpp -text

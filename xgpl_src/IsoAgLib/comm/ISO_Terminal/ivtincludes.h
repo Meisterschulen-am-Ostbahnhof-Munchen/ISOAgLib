@@ -66,6 +66,7 @@
 #include "ivtobjectinputlist_c.h"
 #include "ivtobjectinputnumber_c.h"
 #include "ivtobjectinputstring_c.h"
+#include "ivtobjectgraphicscontext_c.h"
 #include "ivtobjectkey_c.h"
 #include "ivtobjectline_c.h"
 #include "ivtobjectlinearbargraph_c.h"

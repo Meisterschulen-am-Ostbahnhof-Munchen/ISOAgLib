@@ -137,10 +137,11 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
       destMemory [15] = (vtObjectOutputNumber_a->value >> 16) & 0xFF;
       destMemory [16] = (vtObjectOutputNumber_a->value >> 24) & 0xFF;
 
-      destMemory [17] = (vtObjectOutputNumber_a->offset) & 0xFF;
-      destMemory [18] = (vtObjectOutputNumber_a->offset >> 8) & 0xFF;
-      destMemory [19] = (vtObjectOutputNumber_a->offset >> 16) & 0xFF;
-      destMemory [20] = (vtObjectOutputNumber_a->offset >> 24) & 0xFF;
+      uint32_t offset = *((uint32_t*)&(vtObjectOutputNumber_a->offset));
+      destMemory [17] = (offset) & 0xFF;
+      destMemory [18] = (offset >> 8) & 0xFF;
+      destMemory [19] = (offset >> 16) & 0xFF;
+      destMemory [20] = (offset >> 24) & 0xFF;
 
       __IsoAgLib::floatVar2LittleEndianStream (&vtObjectOutputNumber_a->scale, &destMemory[21]);
 

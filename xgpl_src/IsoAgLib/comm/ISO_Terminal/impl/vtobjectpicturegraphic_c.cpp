@@ -209,7 +209,8 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
         numberOfBytesInRawData = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].numberOfBytesInRawData;
         actualWidth = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].actualWidth;
         actualHeight = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].actualHeight;
-        options = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].formatoptions & 0x7; /* format is bit 8+7, options is bit 2-0 (NO RLE1/4/8 stuff here!! */
+        /* format is bit 8+7, options is bit 2-0 (NO RLE1/4/8 stuff here!! */
+        options = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].formatoptions & 0x7;
         ui8_graphicType = vtDepth;
     MACRO_CheckFixedBitmapsLoop_end
 
@@ -238,7 +239,9 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
       destMemory [8] = actualHeight >> 8;
       destMemory [9] = ui8_graphicType;
       destMemory [10] = options;
-      destMemory [11] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
+      destMemory [11] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(
+                          s_properties.clientId).getUserClippedColor(
+			  vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
       destMemory [12] = (numberOfBytesInRawData) & 0xFF;
       destMemory [13] = (numberOfBytesInRawData >> 8) & 0xFF;
       destMemory [14] = (numberOfBytesInRawData >> 16) & 0xFF;
@@ -258,17 +261,15 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
     MACRO_streamEventMacro(17+numberOfBytesInRawData);
 
     return curBytes;
-} // -X2C
+}
 
-// //////////////////////////////// +X2C Operation 153 : vtObjectPictureGraphic_c
 vtObjectPictureGraphic_c::vtObjectPictureGraphic_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
-// //////////////////////////////// +X2C Operation 202 : size
 uint32_t
 vtObjectPictureGraphic_c::fitTerminal()
-{ // ~X2C
+{
   MACRO_localVars;
   MACRO_scaleLocalVars;
   MACRO_scaleSKLocalVars;
@@ -293,6 +294,7 @@ vtObjectPictureGraphic_c::fitTerminal()
   }
 
   return 17+numberOfBytesInRawData+vtObjectPictureGraphic_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 } // end of namespace __IsoAgLib
+

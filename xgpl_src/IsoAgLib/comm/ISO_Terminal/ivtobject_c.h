@@ -451,6 +451,28 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   } iVtObjectAuxiliaryFunction_s;
 
+  // Added by M. Winkler Jul 25 2006
+  typedef struct iVtObjectGraphicsContext_s {
+    uint16_t ID;
+    uint16_t viewportWidth;
+    uint16_t viewportHeight;
+    int16_t  viewportX;       //!< Upper left corner of the viewport
+    int16_t  viewportY;
+    uint16_t canvasWidth;
+    uint16_t canvasHeight;
+    int8_t   viewportZoom;    //!< Zoom value [-32 ... 32] 
+    int16_t  cursorX;
+    int16_t  cursorY;
+    uint8_t  foregroundColour;
+    uint8_t  backgroundColour;
+    iVtObjectFontAttributes_c* fontAttributes;
+    iVtObjectLineAttributes_c* lineAttributes;
+    iVtObjectFillAttributes_c* fillAttributes;
+    uint8_t  format;          //!< 0 => 1 bit/pixel, 1 => 4 bit/pixel, 2 => 8 bit/pixel
+    uint8_t  options;         //!< Bit 0 transparent flag; Bit 1 line, font, fill colour usage
+    uint8_t  transparencyColour;  //!< Colour to be shown transparent.
+  } iVtObjectGraphicsContext_s;
+
 // METHODS
 
 public:
@@ -460,7 +482,7 @@ public:
   virtual ~iVtObject_c() {};
 
   //  Operation: getID
-  uint16_t getID() { return vtObject_a->ID; };
+  uint16_t getID() const { return vtObject_a->ID; };
 
   //  Operation: setOriginSKM
   //! Parameter:
@@ -488,8 +510,9 @@ protected:
     uint8_t flags:4;
     uint8_t clientId:4;
   } s_properties;
-}; // ~X2C
+};
 
 } // end of namespace IsoAgLib
 
-#endif // -X2C
+#endif // IVTOBJECT_C_H
+

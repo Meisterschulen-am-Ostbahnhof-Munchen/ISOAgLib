@@ -355,7 +355,7 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 /** check if preconditions for request for pgn are fullfilled
     @return  true -> the request for pgn can be send
   */
-bool BaseCommon_c::check4ReqForPgn(uint32_t rui32_pgn, uint8_t /*rui8_sa*/, uint8_t rui8_da)
+bool BaseCommon_c::check4ReqForPgn(uint32_t /* rui32_pgn */, uint8_t /*rui8_sa*/, uint8_t rui8_da)
 {
   if ( NULL == getDevKey() ) return false;
   if ( ! getIsoMonitorInstance4Comm().existIsoMemberDevKey( *getDevKey(), true ) ) return false;
