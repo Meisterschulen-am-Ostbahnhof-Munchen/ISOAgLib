@@ -387,7 +387,7 @@ public:
   /// Getter functions
   /** check if a calendar information was received since init */
   bool isCalendarReceived() const;
-  
+
   /** get the calendar year value
       @return actual calendar year value
     */
@@ -396,7 +396,7 @@ public:
     @return actual calendar year value
     */
   int16_t yearUtc();
-  
+
   /** get the calendar month value
     @return actual calendar month value
     */

@@ -147,7 +147,7 @@ class ProcessDataChangeHandler_c {
    * @param rc_callerDevKey DevKey of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementUpdate( EventSource_c rc_src, int32_t ri32_val, const iDevKey_c& rc_callerDevKey, bool rb_change );
+ virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iDevKey_c& rc_callerDevKey, bool rb_change );
 
 #ifdef USE_FLOAT_DATA_TYPE
  /** react on new received measurement update for remote process data

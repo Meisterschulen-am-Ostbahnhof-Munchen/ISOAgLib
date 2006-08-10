@@ -105,7 +105,7 @@ public:
       @return true -> configuration was successfull
     */
   bool config(const iDevKey_c* rpc_devKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement)
-  { return TimePosGPS_c::config(rpc_devKey, rt_identMode );}
+  { return TimePosGPS_c::config(rpc_devKey, rt_identMode ); }
 
   #ifdef USE_ISO_11783
   /** config the Base_c object after init -> set pointer to devKey and
