@@ -756,9 +756,8 @@ MultiSend_c::SendStream_c::timeEvent( uint8_t rui8_pkgCnt, int32_t ri32_time )
           iopSequence = 0;
           #endif
           if ( pc_mss != NULL ) pc_mss->resetDataNextStreamPart ();
-          refc_multiSendPkg.setUint8Data(5, static_cast<uint8_t>(i32_pgn & 0xFF));
-          refc_multiSendPkg.setUint8Data(6, static_cast<uint8_t>((i32_pgn >> 8) & 0xFF));
-          refc_multiSendPkg.setUint8Data(7, static_cast<uint8_t>(i32_pgn >> 16));
+          refc_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(i32_pgn & 0xFF));
+          refc_multiSendPkg.setUint16Data(6, static_cast<uint16_t>((i32_pgn >> 8) & 0xFFFFU));
           if (en_msgType != IsoTarget) refc_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(CM_BAM)); // ISO_BAM cmd
           // is already set from above!!: else data().setUint8Data(0, CM_RTS); // ISO_RTS cmd
         }
@@ -1053,7 +1052,7 @@ MultiSend_c::SendStream_c::processMsg()
           // check if the same data as the last CTS is wanted?
           uint32_t ui32_pkgCTSd = uint32_t(refcc_multiSendPkg.getUint8Data(2));
           if (b_ext) {
-             ui32_pkgCTSd += (uint32_t(refcc_multiSendPkg.getUint8Data(3)) << 8) + (uint32_t(refcc_multiSendPkg.getUint8Data( 4)) << 16);
+             ui32_pkgCTSd += (uint32_t(refcc_multiSendPkg.getUint16Data(3)) << 8);
           }
 
           if ( pc_mss != NULL )
