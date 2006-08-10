@@ -38,16 +38,16 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
 #ifndef SYSTEM_PC_VC
-	#include <stdint.h>
+#include <stdint.h>
 #else
-	typedef unsigned char uint8_t;
-	typedef signed char int8_t;
-	typedef unsigned short uint16_t;
-	typedef short int16_t;
-	typedef unsigned int uint32_t;
-	typedef int int32_t;
-	typedef unsigned long long int uint64_t;
-	typedef long int long int64_t;
+  typedef unsigned char uint8_t;
+  typedef signed char int8_t;
+  typedef unsigned short uint16_t;
+  typedef short int16_t;
+  typedef unsigned int uint32_t;
+  typedef int int32_t;
+  typedef unsigned long long int uint64_t;
+  typedef long int long int64_t;
 #endif
 
 #define stringLength 1024
@@ -85,38 +85,61 @@
 #define otMacro             (28)
 #define otAuxiliaryfunction (29)
 #define otAuxiliaryinput    (30)
-#define maxObjectTypes      (31) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
+#define otGraphicsContext   (54) //!< @todo This is not defined by ISO. To be changed !!!
+#define maxObjectTypes      (55) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
 
-#define otObjectpool        (31) // for objTypeCompareTable (won't be inserted)
-#define otIncludeobject     (32) // for objTypeCompareTable (won't be inserted)
-#define otIncludemacro      (33) // for objTypeCompareTable (won't be inserted)
-#define otPoint             (34) // for Polygon Object
-#define otLanguage          (35) // for Working Set Object
-#define otFixedBitmap       (36) // for Picture Graphic Object "hack"
+#define otObjectpool        (55) // for objTypeCompareTable (won't be inserted)
+#define otIncludeobject     (56) // for objTypeCompareTable (won't be inserted)
+#define otIncludemacro      (57) // for objTypeCompareTable (won't be inserted)
+#define otPoint             (58) // for Polygon Object
+#define otLanguage          (59) // for Working Set Object
+#define otFixedBitmap       (60) // for Picture Graphic Object "hack"
 
 
 // Command Types (for Macros)
-#define ctHideShowObject         (0)
-#define ctEnableDisableObject    (1)
-#define ctSelectInputObject      (2)
-#define ctControlAudioDevice     (3)
-#define ctSetAudioVolume         (4)
-#define ctChangeChildLocation    (5)
-#define ctChangeChildPosition    (6)
-#define ctChangeSize             (7)
-#define ctChangeBackgroundColour (8)
-#define ctChangeNumericValue     (9)
-#define ctChangeStringValue      (10)
-#define ctChangeEndPoint         (11)
-#define ctChangeFontAttributes   (12)
-#define ctChangeLineAttributes   (13)
-#define ctChangeFillAttributes   (14)
-#define ctChangeActiveMask       (15)
-#define ctChangeSoftKeyMask      (16)
-#define ctChangeAttribute        (17)
-#define ctChangePriority         (18)
-#define ctChangeListItem         (19)
-#define maxCommands              (20) // +++ MAX +++
+#define ctHideShowObject              (0)
+#define ctEnableDisableObject         (1)
+#define ctSelectInputObject           (2)
+#define ctControlAudioDevice          (3)
+#define ctSetAudioVolume              (4)
+#define ctChangeChildLocation         (5)
+#define ctChangeChildPosition         (6)
+#define ctChangeSize                  (7)
+#define ctChangeBackgroundColour      (8)
+#define ctChangeNumericValue          (9)
+#define ctChangeStringValue           (10)
+#define ctChangeEndPoint              (11)
+#define ctChangeFontAttributes        (12)
+#define ctChangeLineAttributes        (13)
+#define ctChangeFillAttributes        (14)
+#define ctChangeActiveMask            (15)
+#define ctChangeSoftKeyMask           (16)
+#define ctChangeAttribute             (17)
+#define ctChangePriority              (18)
+#define ctChangeListItem              (19)
+// Graphics Context Sub-Commands:
+#define ctSetGraphicsCursor           (20)
+#define ctSetForegroundColour         (21)
+#define ctSetBackgroundColour         (22)
+#define ctSetLineAttributes           (23)
+#define ctSetFillAttributes           (24)
+#define ctSetFontAttributes           (25)
+#define ctEraseRectangle              (26)
+#define ctDrawPoint                   (27)
+#define ctDrawLine                    (28)
+#define ctDrawRectangle               (29)
+#define ctDrawClosedEllipse           (30)
+#define ctDrawPolygon                 (31)
+#define ctDrawText                    (32)
+#define ctPanViewport                 (33)
+#define ctZoomViewport                (34)
+#define ctPanAndZoomViewport          (35)
+#define ctChangeViewportSize          (36)
+#define ctDrawVtObject                (37)
+#define ctCopyCanvas2PictureGraphic   (38)
+#define ctCopyViewport2PictureGraphic (39)
+//! Maximum command type for macros.
+#define maxCommands                   (40)
 
 // Object May Be
 #define ombWorkingset        (uint64_t(1)<<0)
@@ -156,13 +179,14 @@
 #define ombMacro             (uint64_t(1)<<28)
 #define ombAuxiliaryfunction (uint64_t(1)<<29)
 #define ombAuxiliaryinput    (uint64_t(1)<<30)
+#define ombGraphicsContext   (uint64_t(1)<<54) //!< @todo This is not defined by ISO. To be changed !!!
 
-#define ombObjectpool        (uint64_t(1)<<31) // for objTypeCompareTable (won't be inserted)
-#define ombIncludeobject     (uint64_t(1)<<32) // for objTypeCompareTable (won't be inserted)
-#define ombIncludemacro      (uint64_t(1)<<33) // for objTypeCompareTable (won't be inserted)
-#define ombPoint             (uint64_t(1)<<34) // for Polygon Object
-#define ombLanguage          (uint64_t(1)<<35) // for Working Set Object
-#define ombFixedBitmap       (uint64_t(1)<<36) // for Picture Graphic Object "hack"
+#define ombObjectpool        (uint64_t(1)<<55) // for objTypeCompareTable (won't be inserted)
+#define ombIncludeobject     (uint64_t(1)<<56) // for objTypeCompareTable (won't be inserted)
+#define ombIncludemacro      (uint64_t(1)<<57) // for objTypeCompareTable (won't be inserted)
+#define ombPoint             (uint64_t(1)<<58) // for Polygon Object
+#define ombLanguage          (uint64_t(1)<<59) // for Working Set Object
+#define ombFixedBitmap       (uint64_t(1)<<60) // for Picture Graphic Object "hack"
 
 // Attributes
 #define attrBackground_colour (0)
@@ -275,58 +299,102 @@
 #define attrInKey (103)
 #define attrInButton (104)
 
-#define maxAttributeNames (105)
+// Attributes for graphics context
+#define attrViewportWidth (105)
+#define attrViewportHeight (106)
+#define attrViewportX (107)
+#define attrViewportY (108)
+#define attrCanvasWidth (109)
+#define attrCanvasHeight (110)
+#define attrViewportZoom (111)
+#define attrCursorX (112)
+#define attrCursorY (113)
+// Attributes allready defined and used by graphics context:
+//#define attrForeground_colour (12)
+//#define attrBackground_colour (0)
+//#define attrFont_attributes (15)
+//#define attrLine_attributes (26)
+//#define attrFill_attributes (28)
+//#define attrFormat (25)
+//#define attrOptions (17)
+//#define attrTransparency_colour (43)
+
+#define maxAttributeNames (114)
 
 
 #define maxObjectTypesToCompare (maxObjectTypes+6)
 char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
-    "workingset",
-    "datamask",
-    "alarmmask",
-    "container",
-    "softkeymask",
-    "key",
-    "button",
-    "inputboolean",
-    "inputstring",
-    "inputnumber",
-    "inputlist",
-    "outputstring",
-    "outputnumber",
-    "line",
-    "rectangle",
-    "ellipse",
-    "polygon",
-    "meter",
-    "linearbargraph",
-    "archedbargraph",
-    "picturegraphic",
-    "numbervariable",
-    "stringvariable",
-    "fontattributes",
-    "lineattributes",
-    "fillattributes",
-    "inputattributes",
-    "objectpointer",
-    "macro",
-    "auxiliaryfunction",
-    "auxiliaryinput",
-    "objectpool",
-    "include_object",
-    "include_macro",
-    "point",
-    "language",
-    "fixedbitmap"
+  "workingset",
+  "datamask",
+  "alarmmask",
+  "container",
+  "softkeymask",
+  "key",
+  "button",
+  "inputboolean",
+  "inputstring",
+  "inputnumber",
+  "inputlist",
+  "outputstring",
+  "outputnumber",
+  "line",
+  "rectangle",
+  "ellipse",
+  "polygon",
+  "meter",
+  "linearbargraph",
+  "archedbargraph",
+  "picturegraphic",
+  "numbervariable",
+  "stringvariable",
+  "fontattributes",
+  "lineattributes",
+  "fillattributes",
+  "inputattributes",
+  "objectpointer",
+  "macro",
+  "auxiliaryfunction",
+  "auxiliaryinput",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "graphicscontext",
+  "objectpool",
+  "include_object",
+  "include_macro",
+  "point",
+  "language",
+  "fixedbitmap"
 };
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
     /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic,
-    /* "datamask", */       ombMacro | ombOutputfield | ombInputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombButton | ombContainer | ombObjectpointer,
-    /* "alarmmask", */      ombMacro | ombOutputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer,
+    /* "datamask", */       ombMacro | ombOutputfield | ombInputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombButton | ombContainer | ombObjectpointer | ombGraphicsContext,
+    /* "alarmmask", */      ombMacro | ombOutputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
     /* "container", */      0, // same as the object that included the container
     /* "softkeymask", */    ombMacro | ombKey | ombObjectpointer,
-    /* "key", */            ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer,
-    /* "button", */         ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer,
+    /* "key", */            ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
+    /* "button", */         ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
     /* "inputboolean", */   ombMacro | 0,
     /* "inputstring", */    ombMacro | 0,
     /* "inputnumber", */    ombMacro | 0,
@@ -351,411 +419,467 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
     /* "macro", */          0, // really NONE
     /* "auxfunction", */    ombOutputfield | ombOutputshape | ombPicturegraphic, // really NONE
     /* "auxinput", */       ombOutputfield | ombOutputshape | ombPicturegraphic, // really NONE
-
-    /* "objectpool", */     ~0, // all
-    /* "include_object", */ 0, // really NONE
-    /* "include_macro", */  0, // really NONE
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+    /* "graphicscontext" */ 0,  //!< @todo Shouldn't this be ombMacro | 0 ???
+    /* "objectpool" */      ~0, // all
+    /* "include_object" */  0, // really NONE
+    /* "include_macro" */   0, // really NONE
     /* "point" */           0, // really NONE
-    /* "language" */        0  // really NONE
-
+    /* "language" */        0,  // really NONE
+    /* "fixedbitmap" */     0
 };
 
 char otClassnameTable [maxObjectTypes] [stringLength+1] = {
-    "WorkingSet",
-    "DataMask",
-    "AlarmMask",
-    "Container",
-    "SoftKeyMask",
-    "Key",
-    "Button",
-    "InputBoolean",
-    "InputString",
-    "InputNumber",
-    "InputList",
-    "OutputString",
-    "OutputNumber",
-    "Line",
-    "Rectangle",
-    "Ellipse",
-    "Polygon",
-    "Meter",
-    "LinearBarGraph",
-    "ArchedBarGraph",
-    "PictureGraphic",
-    "NumberVariable",
-    "StringVariable",
-    "FontAttributes",
-    "LineAttributes",
-    "FillAttributes",
-    "InputAttributes",
-    "ObjectPointer",
-    "Macro",
-    "AuxiliaryFunction",
-    "AuxiliaryInput"
+  "WorkingSet",
+  "DataMask",
+  "AlarmMask",
+  "Container",
+  "SoftKeyMask",
+  "Key",
+  "Button",
+  "InputBoolean",
+  "InputString",
+  "InputNumber",
+  "InputList",
+  "OutputString",
+  "OutputNumber",
+  "Line",
+  "Rectangle",
+  "Ellipse",
+  "Polygon",
+  "Meter",
+  "LinearBarGraph",
+  "ArchedBarGraph",
+  "PictureGraphic",
+  "NumberVariable",
+  "StringVariable",
+  "FontAttributes",
+  "LineAttributes",
+  "FillAttributes",
+  "InputAttributes",
+  "ObjectPointer",
+  "Macro",
+  "AuxiliaryFunction",
+  "AuxiliaryInput",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "GraphicsContext"
 };
 
 
 char attrNameTable [maxAttributeNames] [stringLength+1] = {
-    "background_colour",
-    "selectable",
-    "active_mask",
-    "soft_key_mask",
-    "priority",
-    "acoustic_signal",
-    "width",
-    "height",
-    "hidden",
-    "key_code",
-    "border_colour",
-    "latchable",
-    "foreground_colour",
-    "variable_reference",
-    "value",
-    "font_attributes",
-    "input_attributes",
-    "options",
-    "horizontal_justification",
-    "length",
-    "min_value",
-    "max_value",
-    "offset",
-    "scale",
-    "number_of_decimals",
-    "format",
-    "line_attributes",
-    "line_suppression",
-    "fill_attributes",
-    "ellipse_type",
-    "start_angle",
-    "end_angle",
-    "polygon_type",
-    "needle_colour",
-    "arc_and_tick_colour",
-    "number_of_ticks",
-    "colour",
-    "target_line_colour",
-    "target_value_variable_reference",
-    "target_value",
-    "bar_graph_width",
-    "actual_width",
-    "actual_height",
-    "transparency_colour",
-    "font_colour",
-    "font_size",
-    "font_type",
-    "font_style",
-    "line_colour",
-    "line_width",
-    "line_art",
-    "fill_type",
-    "fill_colour",
-    "fill_pattern",
-    "validation_type",
-    "validation_string",
-    "pos_x",
-    "pos_y",
-    "event",
-    "file",
-    "line_direction",
-    "enabled",
-    "file1",
-    "file4",
-    "file8",
-    "block_font",
-    "block_row",
-    "block_col",
+  "background_colour",
+  "selectable",
+  "active_mask",
+  "soft_key_mask",
+  "priority",
+  "acoustic_signal",
+  "width",
+  "height",
+  "hidden",
+  "key_code",
+  "border_colour",
+  "latchable",
+  "foreground_colour",
+  "variable_reference",
+  "value",
+  "font_attributes",
+  "input_attributes",
+  "options",
+  "horizontal_justification",
+  "length",
+  "min_value",
+  "max_value",
+  "offset",
+  "scale",
+  "number_of_decimals",
+  "format",
+  "line_attributes",
+  "line_suppression",
+  "fill_attributes",
+  "ellipse_type",
+  "start_angle",
+  "end_angle",
+  "polygon_type",
+  "needle_colour",
+  "arc_and_tick_colour",
+  "number_of_ticks",
+  "colour",
+  "target_line_colour",
+  "target_value_variable_reference",
+  "target_value",
+  "bar_graph_width",
+  "actual_width",
+  "actual_height",
+  "transparency_colour",
+  "font_colour",
+  "font_size",
+  "font_type",
+  "font_style",
+  "line_colour",
+  "line_width",
+  "line_art",
+  "fill_type",
+  "fill_colour",
+  "fill_pattern",
+  "validation_type",
+  "validation_string",
+  "pos_x",
+  "pos_y",
+  "event",
+  "file",
+  "line_direction",
+  "enabled",
+  "file1",
+  "file4",
+  "file8",
+  "block_font",
+  "block_row",
+  "block_col",
 // new attributes from the new objects (and macros?!)
-    "number_of_items",
-    "number_of_points",
-    "rle",
-    "number_of_bytes",
-    "function_type",
-    "input_id",
-    "object_id",
-    "hide_show",
-    "enable_disable",
-    "number_of_repetitions",
-    "frequency",
-    "on_time_duration",
-    "off_time_duration",
-    "percentage",
-    "parent_object_id",
-    "x_pos_change",
-    "y_pos_change",
-    "x_pos",
-    "y_pos",
-    "new_width",
-    "new_height",
-    "new_background_colour",
-    "new_value",
-    "working_set_object_id",
-    "new_active_mask_object_id",
-    "mask_type",
-    "mask_object_id",
-    "new_softkey_mask_object_id",
-    "attribute_id",
-    "new_priority",
-    "list_index",
-    "new_object_id",
-    "bytes_in_string",
-    "code",
-    "language",
-    "in_key",
-    "in_button"
+  "number_of_items",
+  "number_of_points",
+  "rle",
+  "number_of_bytes",
+  "function_type",
+  "input_id",
+  "object_id",
+  "hide_show",
+  "enable_disable",
+  "number_of_repetitions",
+  "frequency",
+  "on_time_duration",
+  "off_time_duration",
+  "percentage",
+  "parent_object_id",
+  "x_pos_change",
+  "y_pos_change",
+  "x_pos",
+  "y_pos",
+  "new_width",
+  "new_height",
+  "new_background_colour",
+  "new_value",
+  "working_set_object_id",
+  "new_active_mask_object_id",
+  "mask_type",
+  "mask_object_id",
+  "new_softkey_mask_object_id",
+  "attribute_id",
+  "new_priority",
+  "list_index",
+  "new_object_id",
+  "bytes_in_string",
+  "code",
+  "language",
+  "in_key",
+  "in_button",
+  "viewport_width",
+  "viewport_height",
+  "viewport_x",
+  "viewport_y",
+  "canvas_width",
+  "canvas_height",
+  "viewport_zoom",
+  "cursor_x",
+  "cursor_y"
 };
 
 // Table of possible Macro Commands
 #define maxCommandsToCompare (maxCommands)
 char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
-    "command_hide_show_object",
-    "command_enable_disable_object",
-    "command_select_input_object",
-    "command_control_audio_device",
-    "command_set_audio_volume",
-    "command_change_child_location",
-    "command_change_child_position",
-    "command_change_size",
-    "command_change_background_color",
-    "command_change_numeric_value",
-    "command_change_string_value",
-    "command_change_end_point",
-    "command_change_font_attributes",
-    "command_change_line_attributes",
-    "command_change_fill_attributes",
-    "command_change_active_mask",
-    "command_change_soft_key_mask",
-    "command_change_attribute",
-    "command_change_priority",
-    "command_change_list_item"
+  "command_hide_show_object",
+  "command_enable_disable_object",
+  "command_select_input_object",
+  "command_control_audio_device",
+  "command_set_audio_volume",
+  "command_change_child_location",
+  "command_change_child_position",
+  "command_change_size",
+  "command_change_background_color",
+  "command_change_numeric_value",
+  "command_change_string_value",
+  "command_change_end_point",
+  "command_change_font_attributes",
+  "command_change_line_attributes",
+  "command_change_fill_attributes",
+  "command_change_active_mask",
+  "command_change_soft_key_mask",
+  "command_change_attribute",
+  "command_change_priority",
+  "command_change_list_item"
 };
 
 
 char colorTable [16] [stringLength+1] = {
-    "black",
-    "white",
-    "green",
-    "teal",
-    "maroon",
-    "purple",
-    "olive",
-    "silver",
-    "grey",
-    "blue",
-    "lime",
-    "cyan",
-    "red",
-    "magenta",
-    "yellow",
-    "navy"
+  "black",
+  "white",
+  "green",
+  "teal",
+  "maroon",
+  "purple",
+  "olive",
+  "silver",
+  "grey",
+  "blue",
+  "lime",
+  "cyan",
+  "red",
+  "magenta",
+  "yellow",
+  "navy"
 };
 
 char colorDepthTable [3] = {'1', '4', '8'};
 
 #define maxFontsizeTable 15
 char fontsizeTable [maxFontsizeTable] [stringLength+1] = {
-    "6x8",
-    "8x8",
-    "8x12",
-    "12x16",
-    "16x16",
-    "16x24",
-    "24x32",
-    "32x32",
-    "32x48",
-    "48x64",
-    "64x64",
-    "64x96",
-    "96x128",
-    "128x128",
-    "128x192"
+  "6x8",
+  "8x8",
+  "8x12",
+  "12x16",
+  "16x16",
+  "16x24",
+  "24x32",
+  "32x32",
+  "32x48",
+  "48x64",
+  "64x64",
+  "64x96",
+  "96x128",
+  "128x128",
+  "128x192"
 };
 
 #define maxFontstyleTable 7
 char fontstyleTable [maxFontstyleTable] [stringLength+1] = {
-    "bold",
-    "crossed",
-    "underlined",
-    "italic",
-    "inverted",
-    "flashinginverted",
-    "flashinghidden"
+  "bold",
+  "crossed",
+  "underlined",
+  "italic",
+  "inverted",
+  "flashinginverted",
+  "flashinghidden"
 };
 
 #define maxFonttypeTable 9
 char fonttypeTable [maxFonttypeTable] [stringLength+1] = {
-    "latin1",
-    "latin9",
-    "latin2",
-    "reserved",
-    "latin4",
-    "latin5",
-    "reserved",
-    "latin7",
-    "proprietary"
+  "latin1",
+  "latin9",
+  "latin2",
+  "reserved",
+  "latin4",
+  "latin5",
+  "reserved",
+  "latin7",
+  "proprietary"
 };
 
 #define maxTruthTable 5
 char truthTable [maxTruthTable] [stringLength+1] = {
-    "yes",
-    "true",
-    "on",
-    "show",
-    "enable"
+  "yes",
+  "true",
+  "on",
+  "show",
+  "enable"
 };
 
 #define maxFalseTable 5
 char falseTable [maxFalseTable] [stringLength+1] = {
-    "no",
-    "false",
-    "off",
-    "hide",
-    "disable"
+  "no",
+  "false",
+  "off",
+  "hide",
+  "disable"
 };
 
 #define maxFormatTable 2
 char formatTable [maxFormatTable] [stringLength+1] = {
-    "fixed",
-    "exponential"
+  "fixed",
+  "exponential"
 };
 
 #define maxHorizontalJustificationTable 3
 char horizontalJustificationTable [maxHorizontalJustificationTable] [stringLength+1] = {
-    "left",
-    "middle",
-    "right"
+  "left",
+  "middle",
+  "right"
 };
 
 #define maxOptionsTable 2
 char optionsTable [maxOptionsTable] [stringLength+1] = {
-    "transparent",
-    "autowrap"
+  "transparent",
+  "autowrap"
 };
 
 #define maxOutputNumberOptionsTable 3
 char outputNumberOptionsTable [maxOutputNumberOptionsTable] [stringLength+1] = {
-    "transparent",
-    "leadingzeros",
-    "blankzero"
+  "transparent",
+  "leadingzeros",
+  "blankzero"
 };
 
 #define maxLineSuppressionTable 4
 char lineSuppressionTable [maxLineSuppressionTable] [stringLength+1] = {
-   "top",
-   "right",
-   "bottom",
-   "left"
+  "top",
+  "right",
+  "bottom",
+  "left"
 };
 
 #define maxEllipseTypeTable 4
 char ellipseTypeTable [maxEllipseTypeTable] [stringLength+1] = {
-   "closed",
-   "open",
-   "closedsegment",
-   "closedsection"
+  "closed",
+  "open",
+  "closedsegment",
+  "closedsection"
 };
 
 #define maxPolygonTypeTable 4
 char polygonTypeTable [maxPolygonTypeTable] [stringLength+1] = {
-   "convex",
-   "nonconvex",
-   "complex",
-   "open"
+  "convex",
+  "nonconvex",
+  "complex",
+  "open"
 };
 
 
 #define maxValidationTypeTable 2
 char validationTypeTable [maxValidationTypeTable] [stringLength+1] = {
-   "valid_characters",
-   "invalid_characters"
+  "valid_characters",
+  "invalid_characters"
 };
 
 
 #define maxFillTypeTable 4
 char fillTypeTable [maxFillTypeTable] [stringLength+1] = {
-   "no_fill",
-   "linecolour",
-   "fillcolour",
-   "pattern"
+  "no_fill",
+  "linecolour",
+  "fillcolour",
+  "pattern"
 };
 
 #define maxPictureGraphicOptionsTable 2
 char pictureGraphicOptionsTable [maxPictureGraphicOptionsTable] [stringLength+1] = {
-    "transparent",
-    "flashing",
+  "transparent",
+  "flashing",
 };
 
 #define maxPictureGraphicRleTable 4
 char pictureGraphicRleTable [maxPictureGraphicRleTable] [stringLength+1] = {
-    "1",
-    "4",
-    "8",
-    "auto"
+  "1",
+  "4",
+  "8",
+  "auto"
 };
 
 #define maxLinearBarGraphOptionsTable 6
 char linearBarGraphOptionsTable [maxLinearBarGraphOptionsTable] [stringLength+1] = {
-    "border",
-    "targetline",
-    "ticks",
-    "nofill",
-    "horizontal",
-    "growpositive"
+  "border",
+  "targetline",
+  "ticks",
+  "nofill",
+  "horizontal",
+  "growpositive"
 };
 
 #define maxMeterOptionsTable 4
 char meterOptionsTable[maxMeterOptionsTable] [stringLength+1] ={
-   "arc",
-   "border",
-   "ticks",
-   "clockwise"
+  "arc",
+  "border",
+  "ticks",
+  "clockwise"
 };
 
 #define maxArchedBarGraphOptionsTable 5
 char archedBarGraphOptionsTable [maxArchedBarGraphOptionsTable] [stringLength+1] = {
-    "border",
-    "targetline",
-    "not_used",
-    "nofill",
-    "clockwise",
+  "border",
+  "targetline",
+  "not_used",
+  "nofill",
+  "clockwise",
 };
 
 #define maxPriorityAcousticSignalTable 4
 char priorityAcousticSignalTable [maxPriorityAcousticSignalTable] [stringLength+1] = {
-    "high",
-    "medium",
-    "low",
-    "none"
+  "high",
+  "medium",
+  "low",
+  "none"
 };
 
 //event Table for Macros:
 #define maxEventTable 26
 char eventTable [maxEventTable] [stringLength+1] = {
-    "on_activate",
-    "on_deactivate",
-    "on_show",
-    "on_hide",
-    "on_enable",
-    "on_disable",
-    "on_change_active_mask",
-    "on_change_soft_key_mask",
-    "on_change_attribute",
-    "on_change_background_colour",
-    "on_change_font_attributes",
-    "on_change_line_attributes",
-    "on_change_fill_attributes",
-    "on_change_child_location",
-    "on_change_size",
-    "on_change_value",
-    "on_change_priority",
-    "on_change_end_point",
-    "on_input_field_selection",
-    "on_input_field_deselection",
-    "on_ESC",
-    "on_entry_of_value",
-    "on_entry_of_new_value",
-    "on_key_press",
-    "on_key_release",
-    "on_change_child_position"
+  "on_activate",
+  "on_deactivate",
+  "on_show",
+  "on_hide",
+  "on_enable",
+  "on_disable",
+  "on_change_active_mask",
+  "on_change_soft_key_mask",
+  "on_change_attribute",
+  "on_change_background_colour",
+  "on_change_font_attributes",
+  "on_change_line_attributes",
+  "on_change_fill_attributes",
+  "on_change_child_location",
+  "on_change_size",
+  "on_change_value",
+  "on_change_priority",
+  "on_change_end_point",
+  "on_input_field_selection",
+  "on_input_field_deselection",
+  "on_ESC",
+  "on_entry_of_value",
+  "on_entry_of_new_value",
+  "on_key_press",
+  "on_key_release",
+  "on_change_child_position"
 };
 
 #define maxAuxFunctionTypes 3
@@ -763,4 +887,13 @@ char auxFunctionTypeTable [maxAuxFunctionTypes] [stringLength+1] = {
   "latchingboolean",
   "analog",
   "nonlatchingboolean"
+};
+
+
+#define maxGCOptions 4
+char GCOptionsTable [maxGCOptions] [stringLength+1] = {
+  "opaque",
+  "transparent",
+  "usefgandbgcolourfordraw",
+  "uselinefontfillcolourfordraw"
 };

@@ -129,7 +129,7 @@ void Vt2IsoImageFreeImage_c::close( void )
 /** check and adapt scanline */
 void Vt2IsoImageFreeImage_c::checkUpdateScanline( unsigned int rui_y )
 {
- if ( i_curScanLineY != rui_y )
+ if ( i_curScanLineY != int(rui_y) )
  { // read scanline for given y
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings

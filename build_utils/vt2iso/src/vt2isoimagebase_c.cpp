@@ -71,7 +71,7 @@ void Vt2IsoImageBase_c::resetLengths( void )
 unsigned int Vt2IsoImageBase_c::get1BitPixel( unsigned int rui_x, unsigned int rui_y )
 {
 	if ( i_currentThreshold < 0 )  getOptimalBwThreshold();
-	return ( ( ( getR( rui_x, rui_y ) + getG( rui_x, rui_y ) + getB( rui_x, rui_y ) ) / 3 ) >= i_currentThreshold )?1:0;
+	return ( int( ( getR( rui_x, rui_y ) + getG( rui_x, rui_y ) + getB( rui_x, rui_y ) ) / 3 ) >= i_currentThreshold )?1U:0U;
 }
 
 /** get the ISO virtual table indexed bitmap value for 4Bit ( 16color ) target bitmap */
@@ -95,8 +95,7 @@ unsigned int Vt2IsoImageBase_c::write1BitBitmap( unsigned char* pui_bitmap, unsi
   objRawBitmapBytes [0] = 0;
 	if ( ( i_currentThreshold < 0 ) || ( i_currentThreshold == 128 ) ) getOptimalBwThreshold();
 
-	int roundedWidth = ( getWidth() + 7 );
-	roundedWidth &= ( 0xFFFFFFFF-7 );
+	unsigned int roundedWidth = ( ( getWidth() + 7U ) & ( 0xFFFFFFFFU - 7U ) );
 
 	for (unsigned int ui_y=0; ui_y< getHeight(); ui_y++) {
 		for (unsigned int ui_x=0; ui_x < roundedWidth; ui_x+=8) {
@@ -125,8 +124,7 @@ unsigned int Vt2IsoImageBase_c::write1BitBitmap( unsigned char* pui_bitmap, unsi
 unsigned int Vt2IsoImageBase_c::write4BitBitmap( unsigned char* pui_bitmap, unsigned int rui_maxSize )
 {
   objRawBitmapBytes [1] = 0;
-	int roundedWidth = ( getWidth() + 1 );
-	roundedWidth &= ( 0xFFFFFFFF-1 );
+	unsigned int roundedWidth = ( ( getWidth() + 1U ) & ( 0xFFFFFFFFU - 1U ) );
 
 	for ( unsigned int ui_y=0; ui_y< getHeight(); ui_y++) {
 		for (unsigned int ui_x=0; ui_x<roundedWidth; ui_x+=2) {
@@ -201,10 +199,10 @@ void Vt2IsoImageBase_c::getOptimalBwThreshold( void )
 	  thresholdOptimalAllBlack = ( ( getWidth() * getHeight() ) / 8 ),
 	  thresholdLoopAllWhite = 0,
 	  thresholdLoopAllBlack = 0,
-	  optimalThreshold;
-	int roundedWidth = ( ( getWidth() + 7 ) & ( 0xFFFFFFFF-7 ) );
+	  optimalThreshold = 0;
+	unsigned int roundedWidth = ( ( getWidth() + 7U ) & ( 0xFFFFFFFFU - 7U ) );
 
-  for ( int threshold = 32; threshold <= 224; threshold += 16 ) {
+  for (unsigned int threshold = 32; threshold <= 224; threshold += 16 ) {
 	thresholdLoopAllWhite = 0;
 	thresholdLoopAllBlack = 0;
 	for (unsigned int ui_y=0; ui_y<getHeight(); ui_y++) {

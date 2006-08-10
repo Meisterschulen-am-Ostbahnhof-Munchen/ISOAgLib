@@ -68,6 +68,7 @@ class Vt2IsoImageBase_c
  public:
  	/** constructor which can directly open the corresponding file */
 	Vt2IsoImageBase_c( void );
+  virtual ~Vt2IsoImageBase_c() {} // Prevent from warning
 	void reset( void );
 	void resetLengths( void );
 	virtual void close( void );
