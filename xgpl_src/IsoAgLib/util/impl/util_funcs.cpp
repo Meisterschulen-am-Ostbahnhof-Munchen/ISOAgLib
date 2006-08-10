@@ -1063,12 +1063,15 @@ void Flexible8ByteString_c::setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
     case 6: /* Byte6 -> 4th uint16_t*/ uint16[3] = rui16_val; break;
     default:
       if ( rui8_pos < 6 ) numberRef2LittleEndianString( rui16_val, (uint8+rui8_pos) );
-      else getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible8ByteString_c::setUint16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
-      abort();
-      #endif
+      else
+      {
+        getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        #if defined(SYSTEM_PC) && defined(DEBUG)
+        fprintf( stderr,
+          "ERROR!! Flexible8ByteString_c::setUint16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+        abort();
+        #endif
+      }
       break;
   };
 }
@@ -1092,12 +1095,15 @@ void Flexible8ByteString_c::setInt16Data( int8_t rui8_pos, int16_t ri16_val)
     case 6: /* Byte6 -> 4th int16_t*/ int16[3] = ri16_val; break;
     default:
       if ( rui8_pos < 6 ) numberRef2LittleEndianString( ri16_val, (uint8+rui8_pos) );
-      else getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible8ByteString_c::setInt16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
-      abort();
-      #endif
+      else
+      {
+        getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        #if defined(SYSTEM_PC) && defined(DEBUG)
+        fprintf( stderr,
+          "ERROR!! Flexible8ByteString_c::setInt16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+        abort();
+        #endif
+      }
       break;
   };
 }
@@ -1119,13 +1125,16 @@ uint16_t Flexible8ByteString_c::getUint16Data(uint8_t rui8_pos) const
     case 4: /* Byte4 -> 3rd uint16_t*/ return uint16[2];
     case 6: /* Byte6 -> 4th uint16_t*/ return uint16[3];
     default:
-      if ( rui8_pos < 6 ) convertLittleEndianStringUi16(uint8+rui8_pos);
-      else getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible8ByteString_c::getUint16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
-      abort();
-      #endif
+      if ( rui8_pos < 6 ) return convertLittleEndianStringUi16(uint8+rui8_pos);
+      else
+      {
+        getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        #if defined(SYSTEM_PC) && defined(DEBUG)
+        fprintf( stderr,
+          "ERROR!! Flexible8ByteString_c::getUint16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+        abort();
+        #endif
+      }
       break;
   };
   // only reach here on error
@@ -1150,13 +1159,16 @@ int16_t Flexible8ByteString_c::getInt16Data(int8_t rui8_pos) const
     case 4: /* Byte4 -> 3rd int16_t*/ return int16[2];
     case 6: /* Byte6 -> 4th int16_t*/ return int16[3];
     default:
-      if ( rui8_pos < 6 ) convertLittleEndianStringI16(uint8+rui8_pos);
-      else getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible8ByteString_c::getInt16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
-      abort();
-      #endif
+      if ( rui8_pos < 6 ) return convertLittleEndianStringI16(uint8+rui8_pos);
+      else
+      {
+        getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        #if defined(SYSTEM_PC) && defined(DEBUG)
+        fprintf( stderr,
+          "ERROR!! Flexible8ByteString_c::getInt16Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+        abort();
+        #endif
+      }
       break;
   };
   // only reach here on error
@@ -1180,12 +1192,15 @@ void Flexible8ByteString_c::setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
     case 4: /* Byte4 -> 2nd uint32_t*/ uint32[1] = rui32_val; break;
     default:
       if ( rui8_pos < 4 ) numberRef2LittleEndianString( rui32_val, (uint8+rui8_pos) );
-      else getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible8ByteString_c::setUint32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
-      abort();
-      #endif
+      else
+      {
+        getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        #if defined(SYSTEM_PC) && defined(DEBUG)
+        fprintf( stderr,
+          "ERROR!! Flexible8ByteString_c::setUint32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+        abort();
+        #endif
+      }
       break;
   };
 }
@@ -1207,12 +1222,15 @@ void Flexible8ByteString_c::setInt32Data( int8_t rui8_pos, int32_t ri32_val)
     case 4: /* Byte4 -> 2nd int32_t*/ int32[1] = ri32_val; break;
     default:
       if ( rui8_pos < 4 ) numberRef2LittleEndianString( ri32_val, (uint8+rui8_pos) );
-      else getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible8ByteString_c::setInt32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
-      abort();
-      #endif
+      else
+      {
+        getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        #if defined(SYSTEM_PC) && defined(DEBUG)
+        fprintf( stderr,
+          "ERROR!! Flexible8ByteString_c::setInt32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+        abort();
+        #endif
+      }
       break;
   };
 }
@@ -1232,13 +1250,16 @@ uint32_t Flexible8ByteString_c::getUint32Data(uint8_t rui8_pos) const
     case 0: /* Byte0 -> 1st uint32_t*/ return uint32[0];
     case 4: /* Byte4 -> 2nd uint32_t*/ return uint32[1];
     default:
-      if ( rui8_pos < 4 ) convertLittleEndianStringUi32(uint8+rui8_pos);
-      else getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible8ByteString_c::getUint32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
-      abort();
-      #endif
+      if ( rui8_pos < 4 ) return convertLittleEndianStringUi32(uint8+rui8_pos);
+      else
+      {
+        getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        #if defined(SYSTEM_PC) && defined(DEBUG)
+        fprintf( stderr,
+          "ERROR!! Flexible8ByteString_c::getUint32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+        abort();
+        #endif
+      }
       break;
   };
   // only reach here on error
@@ -1261,13 +1282,16 @@ int32_t Flexible8ByteString_c::getInt32Data(int8_t rui8_pos) const
     case 0: /* Byte0 -> 1st int32_t*/ return int32[0];
     case 4: /* Byte4 -> 2nd int32_t*/ return int32[1];
     default:
-      if ( rui8_pos < 4 ) convertLittleEndianStringI32(uint8+rui8_pos);
-      else getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible8ByteString_c::getInt32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
-      abort();
-      #endif
+      if ( rui8_pos < 4 ) return convertLittleEndianStringI32(uint8+rui8_pos);
+      else
+      {
+        getLbsErrInstance().registerError(LibErr_c::Range, LibErr_c::Can);
+        #if defined(SYSTEM_PC) && defined(DEBUG)
+        fprintf( stderr,
+          "ERROR!! Flexible8ByteString_c::getInt32Data has been called with write position %d which is larger than the allowed 6\n", rui8_pos );
+        abort();
+        #endif
+      }
       break;
   };
   // only reach here on error

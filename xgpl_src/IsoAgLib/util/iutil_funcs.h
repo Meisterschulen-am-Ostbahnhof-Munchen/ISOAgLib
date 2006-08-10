@@ -52,6 +52,9 @@
 #define IUTIL_FUNCS_H
 
 #include "impl/util_funcs.h"
+#ifdef USE_DATASTREAMS_IO
+#include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
+#endif
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

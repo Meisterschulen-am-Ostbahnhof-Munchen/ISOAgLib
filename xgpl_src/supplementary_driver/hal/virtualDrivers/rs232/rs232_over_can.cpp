@@ -113,11 +113,11 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t rui8_cha
 	#endif
 			IsoAgLib::iCANPkg_c c_sendData;
 			c_sendData.setIdent( RS232_over_can_CANID+rui8_channel, __IsoAgLib::Ident_c::StandardIdent );
-			c_sendData.ui8_len = (numLeft < 8 ? numLeft : 8);
-			CNAMESPACE::memcpy( &c_sendData.pb_data[0], &bpWrite[wNumber-numLeft], c_sendData.ui8_len );
-			numLeft -= c_sendData.ui8_len;
+      const uint8_t cui8_len = (numLeft < 8 ? numLeft : 8);
+      c_sendData.setDataString( &bpWrite[wNumber-numLeft], cui8_len );
+			numLeft -= cui8_len;
 
-		    c_can << c_sendData;
+		  c_can << c_sendData;
 			}
 
    return IsoAgLib::getLbsErrInstance().good( IsoAgLib::LibErr_c::Can );
