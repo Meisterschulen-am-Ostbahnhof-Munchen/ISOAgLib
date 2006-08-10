@@ -432,7 +432,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   int16_t i16_rc;
   fd_set rfds;
   struct timeval s_timeout;
-  uint8_t ui8_buf[16];
+  static uint8_t ui8_buf[16];
 
   FD_ZERO(&rfds);
   FD_SET(msqDataClient.i32_pipeHandle, &rfds);
@@ -446,8 +446,10 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   const bool cb_result = ( i16_rc > 0 )?true:false;
 
   if(i16_rc > 0 && FD_ISSET(msqDataClient.i32_pipeHandle, &rfds) > 0)
-    // clear pipe (is done also in can server before next write)
-    i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16);
+  {  // clear pipe (is done also in can server before next write)
+    for (i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16); i16_rc == 16 ;
+         i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16) );
+  }
 
   return cb_result;
   /*
