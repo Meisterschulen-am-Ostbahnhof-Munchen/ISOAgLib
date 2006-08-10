@@ -1296,14 +1296,24 @@ function create_makefile()
 		mkdir -p objects_server
 		echo -e "\n#Special Sources for CAN Server" >> $MakefileName
 		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_general.cpp \\" >> $MakefileName
-    case $PRJ_DEFINES in
-			*SYSTEM_MCC*)
-		    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_pcan.cpp \\" >> $MakefileName
-				;;
-			*)
-		    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_A1.cpp \\" >> $MakefileName
-		    ;;
-    esac
+
+		# make sure, that PRJ_CAN_DRIVER_SUFFIX is automatically set, when not yet defined
+		if [ "A$PRJ_CAN_DRIVER_SUFFIX" = "A" ] ; then
+			case $PRJ_DEFINES in
+				*SYSTEM_A1*)
+					PRJ_CAN_DRIVER_SUFFIX="A1"
+					;;
+				*SYSTEM_MCC*)
+					PRJ_CAN_DRIVER_SUFFIX="pcan"
+					;;
+				*)
+					PRJ_CAN_DRIVER_SUFFIX="A1"
+					;;
+			esac
+		fi
+		# now derive the source name of the specific CAN HAL module
+		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_"$PRJ_CAN_DRIVER_SUFFIX".cpp \\" >> $MakefileName
+
     echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileName
 		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp" >> $MakefileName
 		echo -e "\n#Special Rules for CAN Server" >> $MakefileName
