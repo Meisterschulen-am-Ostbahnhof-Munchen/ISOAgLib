@@ -86,40 +86,33 @@
  ***************************************************************************/
 
 
-
-
 #ifndef STREAMINPUT_C_H
 #define STREAMINPUT_C_H
 
-
 #include <IsoAgLib/typedef.h>
 
-// +X2C includes
-// ~X2C
-
-//  +X2C Class 915 : StreamInput_c
+/** Abstract base class for a streaming input source.
+  * Realized by FileStreamInput_c for file readout,
+  * and VolatileMemory_c for memory buffer readout.
+  * iStream_c is defining a superset of StreamInput_c.
+  */
 class StreamInput_c
 {
-
 public:
 
-  //  Operation: operator>>
-  //! Parameter:
-  //! @param ui8_data:
+  //! Stream input operation.
+  //! @param ui8_data Referenze to store read byte to.
   virtual StreamInput_c& operator>>(uint8_t& ui8_data)=0;
 
+  //! Read one byte
   uint8_t get() { uint8_t byte; *this >> byte; return byte; };
 
-  //  Operation: eof
+  //! End of file
   virtual bool eof() const=0;
 
-	virtual ~StreamInput_c() {};
+  //! Virtual destructor to prevent from warning.
+  virtual ~StreamInput_c() {};
 
-protected:
+};
 
-private:
-
-}; // ~X2C
-
-
-#endif // -X2C
+#endif // STREAMINPUT_C_H

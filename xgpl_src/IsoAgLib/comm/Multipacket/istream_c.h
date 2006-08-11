@@ -146,8 +146,6 @@ private:
 
 
 
-
-//  +X2C Class 754 : Stream_c
 class iStream_c : public StreamInput_c
 {
 
@@ -179,8 +177,9 @@ protected:
 
   // Has this stream been marked invalid while parsing?
   bool b_streamInvalid;
+};
 
-}; // ~X2C
+} // end namespace IsoAgLib
 
-} // end namespace __IsoAgLib
-#endif // -X2C
+#endif // ISTREAM_C_H
+

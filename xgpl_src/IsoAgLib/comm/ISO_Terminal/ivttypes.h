@@ -190,17 +190,22 @@ typedef struct vtState_s {
 /** Pair of coordinates representing a point location at the VT. */
 class iVtPoint_c {
   public:
+    iVtPoint_c( void ) : x(0), y(0) {}
     iVtPoint_c( int16_t x, int16_t y ) : x(x), y(y) {}
     int16_t getX( void ) const { return x; }
     int16_t getY( void ) const { return y; }
     void setX( int16_t i_x ) { x = i_x; }
     void setY( int16_t i_y ) { y = i_y; }
+    iVtPoint_c& operator+=( iVtPoint_c a ) { x += a.x; y += a.y; return *this; }
+    iVtPoint_c& operator-=( iVtPoint_c a ) { x -= a.x; y -= a.y; return *this; }
   protected:
     int16_t x;
     int16_t y;
 };
 
-} // end namespace IsoAgLib
+inline iVtPoint_c operator+( iVtPoint_c a, iVtPoint_c b ) { iVtPoint_c r(a); return r += b; }
+inline iVtPoint_c operator-( iVtPoint_c a, iVtPoint_c b ) { iVtPoint_c r(a); return r -= b; }
 
+} // end namespace IsoAgLib
 
 #endif
