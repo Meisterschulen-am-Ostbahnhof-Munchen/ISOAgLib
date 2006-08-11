@@ -1220,82 +1220,83 @@ function create_makefile()
   MakefileFilelist="$1/$PROJECT/$FILELIST_PURE"
 
 	MakefileName="Makefile"
+	MakefileNameLong="Makefile"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER"
 
 	# create Makefile Header
-	echo "#############################################################################" > $MakefileName
-	echo "# Makefile for building: $PROJECT" >> $MakefileName
-	echo "# Project:               $PROJECT" >> $MakefileName
-	echo "#############################################################################" >> $MakefileName
-	echo ""  >> $MakefileName
-	echo "####### Project specific variables" >> $MakefileName
-	echo "TARGET = $PROJECT" >> $MakefileName
-	echo "ISOAGLIB_PATH = ../$ISO_AG_LIB_PATH" >> $MakefileName
-	echo -n "APP_INC = " >> $MakefileName
+	echo "#############################################################################" > $MakefileNameLong
+	echo "# Makefile for building: $PROJECT" >> $MakefileNameLong
+	echo "# Project:               $PROJECT" >> $MakefileNameLong
+	echo "#############################################################################" >> $MakefileNameLong
+	echo ""  >> $MakefileNameLong
+	echo "####### Project specific variables" >> $MakefileNameLong
+	echo "TARGET = $PROJECT" >> $MakefileNameLong
+	echo "ISOAGLIB_PATH = ../$ISO_AG_LIB_PATH" >> $MakefileNameLong
+	echo -n "APP_INC = " >> $MakefileNameLong
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-		echo -n "-I../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH " >> $MakefileName
+		echo -n "-I../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH " >> $MakefileNameLong
   done
 
-	echo -e "\n####### Include a version definition file into the Makefile context - when this file exists"  >> $MakefileName
-	echo    "-include versions.mk" >> $MakefileName
+	echo -e "\n####### Include a version definition file into the Makefile context - when this file exists"  >> $MakefileNameLong
+	echo    "-include versions.mk" >> $MakefileNameLong
 
 
-	echo "" >> $MakefileName
+	echo "" >> $MakefileNameLong
 	if [ $USE_CAN_DRIVER = "rte" -o $USE_RS232_DRIVER = "rte" ] ; then
-		echo "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >> $MakefileName
+		echo "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >> $MakefileNameLong
 		# the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
-		echo -n "BIOS_INC =" >> $MakefileName
+		echo -n "BIOS_INC =" >> $MakefileNameLong
 	fi
 
-	echo -n -e "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileName
+	echo -n -e "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileNameLong
 	for SinglePrjDefine in $PRJ_DEFINES ; do
-		echo -n " -D$SinglePrjDefine" >> $MakefileName
+		echo -n " -D$SinglePrjDefine" >> $MakefileNameLong
 	done
-	echo "" >> $MakefileName
+	echo "" >> $MakefileNameLong
 
-	echo -e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileName
+	echo -e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileNameLong
 	if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
-		echo "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >> $MakefileName
+		echo "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >> $MakefileNameLong
 
 	else
 		case $PRJ_DEFINES in
 			*SYSTEM_A1*)
-				echo "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >> $MakefileName
+				echo "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >> $MakefileNameLong
 				echo "SYSTEM_A1"
 				;;
 			*SYSTEM_MCC*)
-				echo "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >> $MakefileName
+				echo "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >> $MakefileNameLong
 				echo "SYSTEM_MCC"
 				;;
 			*)
-				echo "COMPILER_BINARY_PRE = " >> $MakefileName
+				echo "COMPILER_BINARY_PRE = " >> $MakefileNameLong
 				;;
 		esac
 	fi
 
 
 
-	echo -e "\n\nfirst: all\n" >> $MakefileName
-	echo "####### Files" >> $MakefileName
-	echo -n "SOURCES = " >> $MakefileName
+	echo -e "\n\nfirst: all\n" >> $MakefileNameLong
+	echo "####### Files" >> $MakefileNameLong
+	echo -n "SOURCES = " >> $MakefileNameLong
 
 
 	FIRST_LOOP="YES"
 	for CcFile in `grep -E "\.cc|\.cpp|\.c" $MakefileFilelist` ; do
 		if [ $FIRST_LOOP != "YES" ] ; then
-			echo -e -n '\\' >> $MakefileName
-			echo -e -n "\n\t\t" >> $MakefileName
+			echo -e -n '\\' >> $MakefileNameLong
+			echo -e -n "\n\t\t" >> $MakefileNameLong
 		else
 			FIRST_LOOP="NO"
 		fi
-		echo -e -n "$CcFile  " >> $MakefileName
+		echo -e -n "$CcFile  " >> $MakefileNameLong
 	done
-	echo -e "\n" >> $MakefileName
+	echo -e "\n" >> $MakefileNameLong
 
 	# build special target for CAN server
 	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
 		mkdir -p objects_server
-		echo -e "\n#Special Sources for CAN Server" >> $MakefileName
-		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_general.cpp \\" >> $MakefileName
+		echo -e "\n#Special Sources for CAN Server" >> $MakefileNameLong
+		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_general.cpp \\" >> $MakefileNameLong
 
 		# make sure, that PRJ_CAN_DRIVER_SUFFIX is automatically set, when not yet defined
 		if [ "A$PRJ_CAN_DRIVER_SUFFIX" = "A" ] ; then
@@ -1312,23 +1313,26 @@ function create_makefile()
 			esac
 		fi
 		# now derive the source name of the specific CAN HAL module
-		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_"$PRJ_CAN_DRIVER_SUFFIX".cpp \\" >> $MakefileName
+		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_server_"$PRJ_CAN_DRIVER_SUFFIX".cpp \\" >> $MakefileNameLong
 
-    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileName
-		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp" >> $MakefileName
-		echo -e "\n#Special Rules for CAN Server" >> $MakefileName
+    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileNameLong
+		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_helper.cpp" >> $MakefileNameLong
+		echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
 
-		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileName
+		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
 	fi
 
-	cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt >> $MakefileName
+	cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt >> $MakefileNameLong
 
 	# add can_server creation to target "all"
 	if [ $USE_CAN_DRIVER = "linux_server_client" ] ; then
-		sed -e 's#all:#all: can_server#g'  $MakefileName > $MakefileName.1
-		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileName.1 > $MakefileName
+		sed -e 's#all:#all: can_server#g'  $MakefileNameLong > $MakefileNameLong.1
+		sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
 	fi
-	rm -f $MakefileName.1
+	rm -f $MakefileNameLong.1
+	# create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
+	rm -f "Makefile"
+	ln -s $MakefileNameLong "Makefile"
 
 	# now create a Kdevelop3 project file
 	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/kdevelop3Generic.kdevelop $PROJECT.kdevelop

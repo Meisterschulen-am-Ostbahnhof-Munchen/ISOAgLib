@@ -6,7 +6,7 @@ DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
 #TARGET_LIST="pc_linux"
-CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim"
+CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim:rte:linux_server_client"
 RS232_LIST="simulating:sys:rte"
 #CAN_LIST="sys"
 #RS232_LIST="simulating"
@@ -46,6 +46,16 @@ for conf_example in $EXAMPLE_LIST ; do
         fi
         if [ $can_drv = "sontheim" ] ; then
 	        if    [ $target != "pc_win32" ] ; then
+      		  continue
+          fi
+        fi
+        if [ $can_drv = "rte" ] ; then
+	        if    [ $target != "pc_linux" ] ; then
+      		  continue
+          fi
+        fi
+        if [ $can_drv = "linux_server_client" ] ; then
+	        if    [ $target != "pc_linux" ] ; then
       		  continue
           fi
         fi
