@@ -410,6 +410,15 @@ compiler_projects/Dev-C++/3_1_LBSTerminalDin/3_1_LBSTerminalDin__vector_canlib__
 compiler_projects/Dev-C++/3_1_LBSTerminalDin/3_1_LBSTerminalDin__vector_canlib__sys.dev -text
 compiler_projects/Dev-C++/3_1_LBSTerminalDin/3_1_LBSTerminalDin__vector_xl_drv_lib__simulating.dev -text
 compiler_projects/Dev-C++/3_1_LBSTerminalDin/3_1_LBSTerminalDin__vector_xl_drv_lib__sys.dev -text
+compiler_projects/Dev-C++/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso__simulating__simulating.dev -text
+compiler_projects/Dev-C++/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso__simulating__sys.dev -text
+compiler_projects/Dev-C++/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso__sontheim__simulating.dev -text
+compiler_projects/Dev-C++/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso__sontheim__sys.dev -text
+compiler_projects/Dev-C++/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso__vector_canlib__simulating.dev -text
+compiler_projects/Dev-C++/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso__vector_canlib__sys.dev -text
+compiler_projects/Dev-C++/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso__vector_xl_drv_lib__simulating.dev -text
+compiler_projects/Dev-C++/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso__vector_xl_drv_lib__sys.dev -text
+compiler_projects/Dev-C++/3_2_VirtualTerminalMultiIso/filelist__3_2_VirtualTerminalMultiIso.txt -text
 compiler_projects/Dev-C++/4_0_Eeprom/4_0_Eeprom__simulating__simulating.dev -text
 compiler_projects/Dev-C++/4_0_Eeprom/4_0_Eeprom__simulating__sys.dev -text
 compiler_projects/Dev-C++/4_0_Eeprom/4_0_Eeprom__sontheim__simulating.dev -text
