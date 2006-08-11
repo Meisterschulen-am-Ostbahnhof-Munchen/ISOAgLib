@@ -558,7 +558,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit52]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
+FileName=../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
 CompileCpp=1
 Folder=0_1_AddressClaimDin
 Compile=1
@@ -568,7 +568,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit53]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
+FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 CompileCpp=1
 Folder=0_1_AddressClaimDin
 Compile=1
@@ -578,7 +578,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit54]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
+FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
 CompileCpp=1
 Folder=0_1_AddressClaimDin
 Compile=1

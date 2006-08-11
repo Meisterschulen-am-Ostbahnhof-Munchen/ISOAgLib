@@ -1,7 +1,7 @@
 [Project]
 FileName=AutoDataCollector__vector_xl_drv_lib__sys.dev
 Name=AutoDataCollector
-UnitCount=206
+UnitCount=181
 Type=1
 Ver=1
 ObjFiles=
@@ -218,7 +218,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit18]
-FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -228,7 +228,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -238,7 +238,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit20]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -248,7 +248,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -258,7 +258,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit22]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -268,7 +268,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit23]
-FileName=../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -278,7 +278,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -288,7 +288,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -298,7 +298,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit26]
-FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -308,7 +308,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit27]
-FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -318,7 +318,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit28]
-FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
 Compile=1
@@ -458,96 +458,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit42]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit43]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.cpp
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit44]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit45]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit46]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit47]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traclight_c.cpp
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit48]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit49]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracmovesetpoint_c.cpp
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit50]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracaux_c.cpp
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit51]
 FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -557,7 +467,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit52]
+[Unit43]
 FileName=../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -567,7 +477,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit53]
+[Unit44]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -577,7 +487,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit54]
+[Unit45]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -587,7 +497,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit55]
+[Unit46]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -597,7 +507,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit56]
+[Unit47]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -607,7 +517,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit57]
+[Unit48]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -617,7 +527,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit58]
+[Unit49]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -627,7 +537,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit59]
+[Unit50]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -637,7 +547,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit60]
+[Unit51]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -647,7 +557,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit61]
+[Unit52]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -657,7 +567,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit62]
+[Unit53]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -667,7 +577,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit63]
+[Unit54]
 FileName=../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -677,7 +587,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit64]
+[Unit55]
 FileName=../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -687,7 +597,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit65]
+[Unit56]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/defaultrecordconfig_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -697,7 +607,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit66]
+[Unit57]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/getyflexmanager_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -707,7 +617,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit67]
+[Unit58]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/gpsmanager_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -717,7 +627,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit68]
+[Unit59]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/procdatamanager_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -727,7 +637,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit69]
+[Unit60]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/specificrecordconfig_c.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -737,7 +647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit70]
+[Unit61]
 FileName=../../../IsoAgLib_Examples/autodatacollector.cpp
 CompileCpp=1
 Folder=AutoDataCollector
@@ -747,7 +657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit71]
+[Unit62]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -757,7 +667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit72]
+[Unit63]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -767,7 +677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit73]
+[Unit64]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -777,7 +687,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit74]
+[Unit65]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -787,7 +697,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit75]
+[Unit66]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -797,7 +707,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit76]
+[Unit67]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvect_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -807,7 +717,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit77]
+[Unit68]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinitem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -817,7 +727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit78]
+[Unit69]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinservicemonitor_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -827,7 +737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit79]
+[Unit70]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/adrvecttrusted_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -837,7 +747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit80]
+[Unit71]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinserviceitem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -847,7 +757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit81]
+[Unit72]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinstopmanager_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -857,7 +767,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit82]
+[Unit73]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinsystempkg_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -867,7 +777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit83]
+[Unit74]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinmonitor_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -877,7 +787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit84]
+[Unit75]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/idinserviceitem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -887,7 +797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit85]
+[Unit76]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/idinmonitor_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -897,7 +807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit86]
+[Unit77]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/idinitem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -907,7 +817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit87]
+[Unit78]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/idinservicemonitor_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -917,7 +827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit88]
+[Unit79]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -927,7 +837,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit89]
+[Unit80]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -937,7 +847,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit90]
+[Unit81]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -947,7 +857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit91]
+[Unit82]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -957,7 +867,27 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit92]
+[Unit83]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
+CompileCpp=1
+Folder=AutoDataCollector
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit84]
+FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
+CompileCpp=1
+Folder=AutoDataCollector
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit85]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -967,7 +897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit93]
+[Unit86]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -977,7 +907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit94]
+[Unit87]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -987,7 +917,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit95]
+[Unit88]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -997,7 +927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit96]
+[Unit89]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1007,7 +937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit97]
+[Unit90]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/imonitoritem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1017,7 +947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit98]
+[Unit91]
 FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1027,7 +957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit99]
+[Unit92]
 FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1037,7 +967,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit100]
+[Unit93]
 FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1047,27 +977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit101]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit102]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit103]
+[Unit94]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1077,7 +987,27 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit104]
+[Unit95]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
+CompileCpp=1
+Folder=AutoDataCollector
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit96]
+FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
+CompileCpp=1
+Folder=AutoDataCollector
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit97]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1087,7 +1017,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit105]
+[Unit98]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1097,7 +1027,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit106]
+[Unit99]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1107,7 +1037,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit107]
+[Unit100]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1117,7 +1047,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit108]
+[Unit101]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1127,7 +1057,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit109]
+[Unit102]
 FileName=../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1137,7 +1067,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit110]
+[Unit103]
 FileName=../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1147,7 +1077,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit111]
+[Unit104]
 FileName=../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1157,7 +1087,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit112]
+[Unit105]
 FileName=../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1167,7 +1097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit113]
+[Unit106]
 FileName=../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1177,7 +1107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit114]
+[Unit107]
 FileName=../../../xgpl_src/IsoAgLib/util/liberr_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1187,7 +1117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit115]
+[Unit108]
 FileName=../../../xgpl_src/IsoAgLib/util/idevkey_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1197,7 +1127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit116]
+[Unit109]
 FileName=../../../xgpl_src/IsoAgLib/util/config.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1207,7 +1137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit117]
+[Unit110]
 FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1217,7 +1147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit118]
+[Unit111]
 FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1227,7 +1157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit119]
+[Unit112]
 FileName=../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1237,7 +1167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit120]
+[Unit113]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/procident_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1247,7 +1177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit121]
+[Unit114]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/procdatabase_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1257,7 +1187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit122]
+[Unit115]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/gps_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1267,7 +1197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit123]
+[Unit116]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/proc_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1277,7 +1207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit124]
+[Unit117]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/generalcommand_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1287,7 +1217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit125]
+[Unit118]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/process_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1297,7 +1227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit126]
+[Unit119]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/processpkg_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1307,17 +1237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit127]
-FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/devpropertyhandler_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit128]
+[Unit120]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/impl/processelementbase_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1327,7 +1247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit129]
+[Unit121]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measuresubprog_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1337,7 +1257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit130]
+[Unit122]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/StdMeasureElements/impl/measureprogbase_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1347,7 +1267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit131]
+[Unit123]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Remote/impl/procdataremotebase_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1357,7 +1277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit132]
+[Unit124]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Remote/StdMeasureElements/impl/measureprogremote_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1367,7 +1287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit133]
+[Unit125]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Remote/StdMeasureElements/imeasureprogremote_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1377,7 +1297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit134]
+[Unit126]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/impl/procdataremote_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1387,7 +1307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit135]
+[Unit127]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Remote/Std/iprocdataremote_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1397,7 +1317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit136]
+[Unit128]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Remote/StdSetpointElements/impl/setpointremote_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1407,7 +1327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit137]
+[Unit129]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/Remote/StdSetpointElements/isetpointremote_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1417,7 +1337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit138]
+[Unit130]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointregister_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1427,7 +1347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit139]
+[Unit131]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/impl/setpointbase_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1437,7 +1357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit140]
+[Unit132]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/StdSetpointElements/isetpointregister_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1447,7 +1367,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit141]
+[Unit133]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/iprocess_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1457,7 +1377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit142]
+[Unit134]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/igps_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1467,7 +1387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit143]
+[Unit135]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/processdatachangehandler_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1477,7 +1397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit144]
+[Unit136]
 FileName=../../../xgpl_src/IsoAgLib/comm/Process/proc_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1487,7 +1407,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit145]
+[Unit137]
 FileName=../../../xgpl_src/Application_Config/isoaglib_config.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1497,7 +1417,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit146]
+[Unit138]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1507,7 +1427,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit147]
+[Unit139]
 FileName=../../../xgpl_src/IsoAgLib/hal/config.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1517,187 +1437,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit148]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit149]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit150]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/basepkg_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit151]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit152]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit153]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracaux_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit154]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traclight_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit155]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit156]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracmovesetpoint_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit157]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit158]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/itraclight_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit159]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/itracmovesetpoint_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit160]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ext/itracaux_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit161]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit162]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit163]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit164]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit165]
-FileName=../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
-CompileCpp=1
-Folder=AutoDataCollector
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit166]
+[Unit140]
 FileName=../../../xgpl_src/IsoAgLib/typedef.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1707,7 +1447,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit167]
+[Unit141]
 FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1717,7 +1457,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit168]
+[Unit142]
 FileName=../../../xgpl_src/supplementary_driver/hal/rs232.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1727,7 +1467,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit169]
+[Unit143]
 FileName=../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1737,7 +1477,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit170]
+[Unit144]
 FileName=../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1747,7 +1487,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit171]
+[Unit145]
 FileName=../../../xgpl_src/Application_Config/eeprom_adr.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1757,7 +1497,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit172]
+[Unit146]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1767,7 +1507,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit173]
+[Unit147]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1777,7 +1517,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit174]
+[Unit148]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1787,7 +1527,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit175]
+[Unit149]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1797,7 +1537,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit176]
+[Unit150]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1807,7 +1547,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit177]
+[Unit151]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1817,7 +1557,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit178]
+[Unit152]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1827,7 +1567,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit179]
+[Unit153]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1837,7 +1577,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit180]
+[Unit154]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1847,7 +1587,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit181]
+[Unit155]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1857,7 +1597,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit182]
+[Unit156]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1867,7 +1607,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit183]
+[Unit157]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1877,7 +1617,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit184]
+[Unit158]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/config.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1887,7 +1627,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit185]
+[Unit159]
 FileName=../../../xgpl_src/IsoAgLib/hal/pc/errcodes.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1897,7 +1637,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit186]
+[Unit160]
 FileName=../../../xgpl_src/IsoAgLib/hal/can.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1907,7 +1647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit187]
+[Unit161]
 FileName=../../../xgpl_src/IsoAgLib/hal/system.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1917,7 +1657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit188]
+[Unit162]
 FileName=../../../xgpl_src/IsoAgLib/hal/eeprom.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1927,7 +1667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit189]
+[Unit163]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1937,7 +1677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit190]
+[Unit164]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1947,7 +1687,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit191]
+[Unit165]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1957,7 +1697,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit192]
+[Unit166]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1967,7 +1707,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit193]
+[Unit167]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1977,7 +1717,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit194]
+[Unit168]
 FileName=../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1987,7 +1727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit195]
+[Unit169]
 FileName=../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -1997,7 +1737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit196]
+[Unit170]
 FileName=../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2007,7 +1747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit197]
+[Unit171]
 FileName=../../../xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2017,7 +1757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit198]
+[Unit172]
 FileName=../../../xgpl_src/IsoAgLib/driver/eeprom/ieepromio_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2027,7 +1767,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit199]
+[Unit173]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/defaultrecordconfig_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2037,7 +1777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit200]
+[Unit174]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/procdatamanager_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2047,7 +1787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit201]
+[Unit175]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/specificrecordconfig_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2057,7 +1797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit202]
+[Unit176]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/getyflexmanager_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2067,7 +1807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit203]
+[Unit177]
 FileName=../../../IsoAgLib_Examples/AutoDataCollector_Classes/gpsmanager_c.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2077,7 +1817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit204]
+[Unit178]
 FileName=../../../IsoAgLib_Examples/config_AutoDataCollector.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2087,7 +1827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit205]
+[Unit179]
 FileName=../../../IsoAgLib_Examples/config_imi_iso.h
 CompileCpp=1
 Folder=AutoDataCollector
@@ -2097,7 +1837,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit206]
+[Unit180]
+FileName=../../../IsoAgLib_Examples/version.h
+CompileCpp=1
+Folder=AutoDataCollector
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit181]
 FileName=../../../IsoAgLib_Examples/config_tractor.h
 CompileCpp=1
 Folder=AutoDataCollector
