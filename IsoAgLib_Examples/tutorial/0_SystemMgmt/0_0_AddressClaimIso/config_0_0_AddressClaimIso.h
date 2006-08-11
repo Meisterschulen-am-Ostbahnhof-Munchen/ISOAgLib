@@ -6,6 +6,10 @@
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
 //                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_0_0_AddressClaimIso" call,
 //                      if the corresponding value in isoaglib_config.h changed
+
+
+// include an external file for definition of pool and firmware versions
+#include "version.h"
 #define CAN_BUS_CNT 1 
 
 #define CAN_BUS_USED 0 
@@ -21,6 +25,10 @@
 // Please check the manual of your targret cpu. This setting is used to activate some quick number conversion algorithms,
 // which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO and DIN ) - and other way.
 #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+
+// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
+
+// #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
 #define USE_RS232_OVER_CAN
 
