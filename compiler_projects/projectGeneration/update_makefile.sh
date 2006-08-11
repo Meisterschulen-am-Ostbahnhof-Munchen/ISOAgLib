@@ -1745,8 +1745,10 @@ function create_VCPrj()
 
 	echo "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
 
-	cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME | gawk '{ sub("\r", ""); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-	cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+	cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME | gawk '{ sub("\r", ""); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+	cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 | gawk '{ sub("$", "\r"); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.2
+	mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.2 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+	rm $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
   cd $DEV_PRJ_DIR
   # org test
 }
@@ -1812,7 +1814,7 @@ function perform_everything()
 	  # check if a win32 project file whould be created
   elif [ $USE_TARGET_SYSTEM == "pc_win32" ] ; then
   	create_DevCCPrj $GENERATE_FILES_ROOT_DIR $2
-		create_VCPrj $GENERATE_FILES_ROOT_DIR $2
+    create_VCPrj $GENERATE_FILES_ROOT_DIR $2
   else
   	create_EdePrj $GENERATE_FILES_ROOT_DIR $2
   fi
