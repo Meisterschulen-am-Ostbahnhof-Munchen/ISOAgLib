@@ -15,7 +15,7 @@
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
-../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
+../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/sensori_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/sensorbase_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/digitali_c.cpp
@@ -24,8 +24,8 @@
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/sensor_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/analogi_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -40,10 +40,10 @@
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
@@ -53,9 +53,9 @@
 ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
+../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
-../../../xgpl_src/IsoAgLib/util/impl/devkey_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container.h
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.h
