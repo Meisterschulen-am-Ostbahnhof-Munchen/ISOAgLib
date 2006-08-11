@@ -306,15 +306,15 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\comm\Scheduler\ischeduler_c.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\devkey_c.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
 # End Source File
 
 # Begin Source File
 SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.h
-# End Source File
-
-# Begin Source File
-SOURCE=..\..\..\xgpl_src\IsoAgLib\util\impl\devkey_c.h
 # End Source File
 
 # Begin Source File
