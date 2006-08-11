@@ -26,8 +26,9 @@
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracaux_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracguidance_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/traccert_c.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
+../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
-../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
