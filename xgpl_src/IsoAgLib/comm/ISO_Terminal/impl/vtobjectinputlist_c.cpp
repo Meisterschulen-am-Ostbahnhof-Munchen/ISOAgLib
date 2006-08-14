@@ -150,17 +150,17 @@ vtObjectInputList_c::getListItem(uint8_t xth)
 // //////////////////////////////// +X2C Operation 186 : getNumberOfListItems
 uint8_t
 vtObjectInputList_c::getNumberOfListItems()
-{ // ~X2C
+{
     return ((iVtObjectInputList_s *) vtObject_a)->numberOfObjectsToFollow;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 197 : size
 uint32_t
-vtObjectInputList_c::fitTerminal()
-{ // ~X2C
+vtObjectInputList_c::fitTerminal() const
+{
   MACRO_localVars;
   return 13+vtObjectInputList_a->numberOfObjectsToFollow*2+vtObjectInputList_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 221 : updateEnable
 //! Parameter:

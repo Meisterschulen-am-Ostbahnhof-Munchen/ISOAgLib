@@ -136,16 +136,16 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 65 : vtObjectContainer_c
 vtObjectContainer_c::vtObjectContainer_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 191 : size
 uint32_t
-vtObjectContainer_c::fitTerminal()
-{ // ~X2C
+vtObjectContainer_c::fitTerminal() const
+{
   MACRO_localVars;
   return 10+vtObjectContainer_a->numberOfObjectsToFollow*6+vtObjectContainer_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 
 // //////////////////////////////// +X2C Operation 212 : hideShow

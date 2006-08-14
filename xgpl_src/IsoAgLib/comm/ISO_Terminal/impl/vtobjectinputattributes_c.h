@@ -123,7 +123,7 @@ public:
   vtObjectInputAttributes_c();
 
   //  Operation: size
-  uint32_t fitTerminal();
+  uint32_t fitTerminal() const;
 
   //  Operation: getString
   const char* getString();

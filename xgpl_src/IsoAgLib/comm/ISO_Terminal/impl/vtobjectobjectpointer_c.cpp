@@ -120,15 +120,15 @@ vtObjectObjectPointer_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 183 : vtObjectObjectPointer_c
 vtObjectObjectPointer_c::vtObjectObjectPointer_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 207 : size
 uint32_t
-vtObjectObjectPointer_c::fitTerminal()
-{ // ~X2C
+vtObjectObjectPointer_c::fitTerminal() const
+{
   return 5;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 226 : setValue
 //! Parameter:

@@ -1433,8 +1433,8 @@ VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_
 bool
 VtClientServerCommunication_c::sendCommandSetGraphicsCursor (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=vtConvert_n::unsignValue16( rc_point.getX() );
-  uint16_t y=vtConvert_n::unsignValue16( rc_point.getY() );
+  uint16_t x=vtConvert_n::castUI( rc_point.getX() );
+  uint16_t y=vtConvert_n::castUI( rc_point.getY() );
   return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       0 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
@@ -1489,8 +1489,8 @@ VtClientServerCommunication_c::sendCommandSetGCFontAttributes (IsoAgLib::iVtObje
 bool
 VtClientServerCommunication_c::sendCommandEraseRectangle (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=vtConvert_n::unsignValue16( rc_point.getX() );
-  uint16_t y=vtConvert_n::unsignValue16( rc_point.getY() );
+  uint16_t x=vtConvert_n::castUI( rc_point.getX() );
+  uint16_t y=vtConvert_n::castUI( rc_point.getY() );
   return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       6 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
@@ -1509,8 +1509,8 @@ VtClientServerCommunication_c::sendCommandDrawPoint (IsoAgLib::iVtObject_c* rpc_
 bool
 VtClientServerCommunication_c::sendCommandDrawLine (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=vtConvert_n::unsignValue16( rc_point.getX() );
-  uint16_t y=vtConvert_n::unsignValue16( rc_point.getY() );
+  uint16_t x=vtConvert_n::castUI( rc_point.getX() );
+  uint16_t y=vtConvert_n::castUI( rc_point.getY() );
   return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       8 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
@@ -1520,8 +1520,8 @@ VtClientServerCommunication_c::sendCommandDrawLine (IsoAgLib::iVtObject_c* rpc_o
 bool
 VtClientServerCommunication_c::sendCommandDrawRectangle (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=vtConvert_n::unsignValue16( rc_point.getX() );
-  uint16_t y=vtConvert_n::unsignValue16( rc_point.getY() );
+  uint16_t x=vtConvert_n::castUI( rc_point.getX() );
+  uint16_t y=vtConvert_n::castUI( rc_point.getY() );
   return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       9 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
@@ -1531,8 +1531,8 @@ VtClientServerCommunication_c::sendCommandDrawRectangle (IsoAgLib::iVtObject_c* 
 bool
 VtClientServerCommunication_c::sendCommandDrawClosedEllipse (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=vtConvert_n::unsignValue16( rc_point.getX() );
-  uint16_t y=vtConvert_n::unsignValue16( rc_point.getY() );
+  uint16_t x=vtConvert_n::castUI( rc_point.getX() );
+  uint16_t y=vtConvert_n::castUI( rc_point.getY() );
   return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       10 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
@@ -1551,8 +1551,8 @@ VtClientServerCommunication_c::sendCommandDrawPolygon (IsoAgLib::iVtObject_c* rp
 
   // Trivial case (like draw line)
   if (ui16_numOfPoints == 1) {
-    uint16_t x = vtConvert_n::unsignValue16( rpc_data->getX() );
-    uint16_t y = vtConvert_n::unsignValue16( rpc_data->getY() );
+    uint16_t x = vtConvert_n::castUI( rpc_data->getX() );
+    uint16_t y = vtConvert_n::castUI( rpc_data->getY() );
     return sendCommand( 119 /* Command: Command --- Parameter: Graphics Context Command */,
                         rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                         11 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
@@ -1573,10 +1573,10 @@ VtClientServerCommunication_c::sendCommandDrawPolygon (IsoAgLib::iVtObject_c* rp
           ui16_currentPoint < ui16_numOfPoints; 
           ui16_currentPoint++ )
     {
-      uint16_t x = vtConvert_n::unsignValue16( rpc_data[ui16_currentPoint].getX() );
+      uint16_t x = vtConvert_n::castUI( rpc_data[ui16_currentPoint].getX() );
       pui8_buffer[ui16_index]   = x & 0xFF;
       pui8_buffer[ui16_index+1] = x >> 8;
-      uint16_t y = vtConvert_n::unsignValue16( rpc_data[ui16_currentPoint].getY() );
+      uint16_t y = vtConvert_n::castUI( rpc_data[ui16_currentPoint].getY() );
       pui8_buffer[ui16_index+2] = y & 0xFF;
       pui8_buffer[ui16_index+3] = y >> 8;
       ui16_index+=4;
@@ -1612,8 +1612,8 @@ VtClientServerCommunication_c::sendCommandDrawText (IsoAgLib::iVtObject_c* rpc_o
 bool
 VtClientServerCommunication_c::sendCommandPanViewPort (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
 {
-  uint16_t x = vtConvert_n::unsignValue16( rc_point.getX() );
-  uint16_t y = vtConvert_n::unsignValue16( rc_point.getY() );
+  uint16_t x = vtConvert_n::castUI( rc_point.getX() );
+  uint16_t y = vtConvert_n::castUI( rc_point.getY() );
   return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       13 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
@@ -1623,7 +1623,7 @@ VtClientServerCommunication_c::sendCommandPanViewPort (IsoAgLib::iVtObject_c* rp
 bool
 VtClientServerCommunication_c::sendCommandZoomViewPort (IsoAgLib::iVtObject_c* rpc_object, int8_t newValue, bool b_enableReplaceOfCmd)
 {
-  uint8_t zoom = vtConvert_n::unsignValue8( newValue );
+  uint8_t zoom = vtConvert_n::castUI( newValue );
   return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
                       14 /* Sub-Cmd ID */, zoom, 0xFF, 0xFF, 0xFF,
@@ -1633,9 +1633,9 @@ VtClientServerCommunication_c::sendCommandZoomViewPort (IsoAgLib::iVtObject_c* r
 bool
 VtClientServerCommunication_c::sendCommandPanAndZoomViewPort (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, int8_t newValue, bool b_enableReplaceOfCmd)
 {
-  uint16_t x = vtConvert_n::unsignValue16( rc_point.getX() );
-  uint16_t y = vtConvert_n::unsignValue16( rc_point.getY() );
-  uint8_t zoom = vtConvert_n::unsignValue8( newValue );
+  uint16_t x = vtConvert_n::castUI( rc_point.getX() );
+  uint16_t y = vtConvert_n::castUI( rc_point.getY() );
+  uint8_t zoom = vtConvert_n::castUI( newValue );
   uint8_t pui8_buffer[9];
   pui8_buffer[0] = 119; /* Command: Command --- Parameter: Graphics Context Command */
   pui8_buffer[1] = rpc_object->getID() & 0xFF;

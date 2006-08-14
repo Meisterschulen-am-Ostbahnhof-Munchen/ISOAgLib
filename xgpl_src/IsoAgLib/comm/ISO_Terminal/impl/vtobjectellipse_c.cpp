@@ -156,7 +156,7 @@ vtObjectEllipse_c::vtObjectEllipse_c()
 
 // //////////////////////////////// +X2C Operation 201 : size
 uint32_t
-vtObjectEllipse_c::fitTerminal()
+vtObjectEllipse_c::fitTerminal() const
 { // ~X2C
   MACRO_localVars;
   return 15+vtObjectEllipse_a->numberOfMacrosToFollow*2;

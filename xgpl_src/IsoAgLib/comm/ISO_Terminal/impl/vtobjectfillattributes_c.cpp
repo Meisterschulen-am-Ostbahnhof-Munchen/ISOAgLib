@@ -134,17 +134,16 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 171 : vtObjectFillAttributes_c
 vtObjectFillAttributes_c::vtObjectFillAttributes_c()
-{ // ~X2C
-
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 205 : size
 uint32_t
-vtObjectFillAttributes_c::fitTerminal()
-{ // ~X2C
+vtObjectFillAttributes_c::fitTerminal() const
+{
   MACRO_localVars;
   return 8+vtObjectFillAttributes_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 
 void vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject, bool b_enableReplaceOfCmd)

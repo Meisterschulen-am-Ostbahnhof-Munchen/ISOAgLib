@@ -148,16 +148,16 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 123 : vtObjectPolygon_c
 vtObjectPolygon_c::vtObjectPolygon_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 201 : size
 uint32_t
-vtObjectPolygon_c::fitTerminal()
-{ // ~X2C
+vtObjectPolygon_c::fitTerminal() const
+{
   MACRO_localVars;
   return 14+vtObjectPolygon_a->numberOfPoints*4+vtObjectPolygon_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 
 // //////////////////////////////// +X2C Operation 231 : setOriginSKM

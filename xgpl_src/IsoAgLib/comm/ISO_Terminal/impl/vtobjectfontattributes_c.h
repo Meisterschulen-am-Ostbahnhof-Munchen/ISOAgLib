@@ -53,11 +53,9 @@
 #define VTOBJECTFONTATTRIBUTES_C_H
 
 
-// +X2C includes
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
-// ~X2C
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -92,7 +90,7 @@ public:
   vtObjectFontAttributes_c();
   virtual ~vtObjectFontAttributes_c(){};
   //  Operation: size
-  uint32_t fitTerminal();
+  uint32_t fitTerminal() const;
 
   //  Operation: getScaledWidthHeight
   uint16_t getScaledWidthHeight();
@@ -120,14 +118,15 @@ public:
 
 private:
 
-  //  Operation: calcScaledFontDimension
-  void calcScaledFontDimension();
+  //! Calculate font size and cache in ui8_fontSizeScaled
+  void calcScaledFontDimension() const;
 
-  //  Attribute: ui8_fontSizeScaled
-  uint8_t ui8_fontSizeScaled;
+  //! Chached font size calculated by calcScaledFontDimension()
+  mutable uint8_t ui8_fontSizeScaled;
 
-}; // ~X2C
+};
 
 } // end of namespace __IsoAgLib
 
-#endif // -X2C
+#endif // VTOBJECTFONTATTRIBUTES_C_H
+

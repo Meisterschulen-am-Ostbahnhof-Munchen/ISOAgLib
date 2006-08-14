@@ -128,20 +128,21 @@ vtObjectFontAttributes_c::vtObjectFontAttributes_c()
 
 // //////////////////////////////// +X2C Operation 205 : size
 uint32_t
-vtObjectFontAttributes_c::fitTerminal()
-{ // ~X2C
+vtObjectFontAttributes_c::fitTerminal() const
+{
   MACRO_localVars;
 
   ui8_fontSizeScaled = 0xFF;
-  calcScaledFontDimension(); // with 0xFF it will re-calc the font size!
+  // Recalc ui8_fontSizeScaled (with 0xFF it will re-calc the font size)
+  calcScaledFontDimension();
 
   return 8+vtObjectFontAttributes_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 281 : getScaledWidthHeight
 uint16_t
 vtObjectFontAttributes_c::getScaledWidthHeight()
-{ // ~X2C
+{
   static uint16_t font2PixelDimensionTable [15] = {
     (  6<<8) | (  8),
     (  8<<8) | (  8),
@@ -166,12 +167,12 @@ vtObjectFontAttributes_c::getScaledWidthHeight()
     return ((0<<6) | (0));
   else
     return (font2PixelDimensionTable [ui8_fontSizeScaled]);
-} // -X2C
+}
 
 
 // //////////////////////////////// +X2C Operation 282 : calcScaledFontDimension
 void
-vtObjectFontAttributes_c::calcScaledFontDimension()
+vtObjectFontAttributes_c::calcScaledFontDimension() const
 { // ~X2C
   MACRO_localVars;
   MACRO_scaleLocalVars;

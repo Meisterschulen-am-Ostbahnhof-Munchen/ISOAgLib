@@ -123,7 +123,7 @@ public:
   vtObjectLineAttributes_c();
 
   //  Operation: size
-  uint32_t fitTerminal();
+  uint32_t fitTerminal() const;
 
   // //////////////////////////////////
   // All special Attribute-Set methods

@@ -133,16 +133,16 @@ vtObjectInputBoolean_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 107 : vtObjectInputBoolean_c
 vtObjectInputBoolean_c::vtObjectInputBoolean_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 195 : size
 uint32_t
-vtObjectInputBoolean_c::fitTerminal()
-{ // ~X2C
+vtObjectInputBoolean_c::fitTerminal() const
+{
   MACRO_localVars;
   return 13+vtObjectInputBoolean_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 219 : updateEnable
 //! Parameter:

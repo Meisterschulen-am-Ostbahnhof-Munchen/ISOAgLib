@@ -133,16 +133,16 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 176 : vtObjectLineAttributes_c
 vtObjectLineAttributes_c::vtObjectLineAttributes_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 206 : size
 uint32_t
-vtObjectLineAttributes_c::fitTerminal()
-{ // ~X2C
+vtObjectLineAttributes_c::fitTerminal() const
+{
   MACRO_localVars;
   return 8+vtObjectLineAttributes_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 
 void

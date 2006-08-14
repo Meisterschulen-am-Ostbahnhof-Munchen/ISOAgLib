@@ -157,16 +157,16 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 123 : vtObjectLinearBarGraph_c
 vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 201 : size
 uint32_t
-vtObjectLinearBarGraph_c::fitTerminal()
-{ // ~X2C
+vtObjectLinearBarGraph_c::fitTerminal() const
+{
   MACRO_localVars;
   return 24+vtObjectLinearBarGraph_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 250 : setValue
 //! Parameter:

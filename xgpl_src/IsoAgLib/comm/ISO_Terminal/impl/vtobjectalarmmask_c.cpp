@@ -141,7 +141,7 @@ vtObjectAlarmMask_c::vtObjectAlarmMask_c()
 
 // //////////////////////////////// +X2C Operation 190 : size
 uint32_t
-vtObjectAlarmMask_c::fitTerminal()
+vtObjectAlarmMask_c::fitTerminal() const
 { // ~X2C
   MACRO_localVars;
   return 10+vtObjectAlarmMask_a->numberOfObjectsToFollow*6+vtObjectAlarmMask_a->numberOfMacrosToFollow*2;

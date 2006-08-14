@@ -224,8 +224,10 @@ public:
   uint32_t getByteTotalSize ()              const { return ui32_byteTotalSize; };
   uint32_t getByteAlreadyReceived()         const { return ui32_byteAlreadyReceived; };
   uint32_t getBurstNumber()                 const { return ui32_burstCurrent; };
-  uint8_t  getFirstByte()                   const { return ui8_streamFirstByte; }; // will be the command that it's containing. set at the first call to processDataChunk...
-  void     setFirstByte(uint8_t rui8_firstByte) { ui8_streamFirstByte = rui8_firstByte; }; // will be the command that it's containing. set at the first call to processDataChunk...
+  //! Provide first byte set by first call of processDataChunk... First byte containes command.
+  uint8_t  getFirstByte()                   const { return ui8_streamFirstByte; };
+  //! Store first byte of stream. First byte containes command.
+  void     setFirstByte(uint8_t rui8_firstByte) { ui8_streamFirstByte = rui8_firstByte; };
 
   void setStreamFinishedJustKept() { awaitNextStep (AwaitNothing, sci32_timeNever); // no timeOut on own Send-Awaits
                                      t_streamState = StreamFinishedJustKept; }; // from now on NOTHING more should be done with this stream!

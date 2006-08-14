@@ -109,8 +109,8 @@ public:
                          uint16_t maxBytes,
                          objRange_t sourceOffset) = 0;
 
-  //  Operation: fitTerminal
-  virtual uint32_t fitTerminal() = 0;
+  //! Give size of VT object including header and attributes.
+  virtual uint32_t fitTerminal() const = 0;
 
   //  Operation: select
   bool select();

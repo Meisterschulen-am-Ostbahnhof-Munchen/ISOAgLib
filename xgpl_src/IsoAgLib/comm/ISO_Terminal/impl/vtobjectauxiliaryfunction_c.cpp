@@ -125,11 +125,11 @@ vtObjectAuxiliaryFunction_c::vtObjectAuxiliaryFunction_c()
 
 // //////////////////////////////// +X2C Operation 193 : size
 uint32_t
-vtObjectAuxiliaryFunction_c::fitTerminal()
-{ // ~X2C
+vtObjectAuxiliaryFunction_c::fitTerminal() const
+{
   MACRO_localVars;
   return 6+vtObjectAuxiliaryFunction_a->numberOfObjectsToFollow*6;
-} // -X2C
+}
 
 bool
 vtObjectAuxiliaryFunction_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)

@@ -132,15 +132,15 @@ vtObjectMacro_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 183 : vtObjectMacro_c
 vtObjectMacro_c::vtObjectMacro_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 207 : size
 uint32_t
-vtObjectMacro_c::fitTerminal()
-{ // ~X2C
+vtObjectMacro_c::fitTerminal() const
+{
   MACRO_localVars;
   return 5+vtObjectMacro_a->numBytesToFollow;
-} // -X2C
+}
 
 } // end namespace __IsoAgLib

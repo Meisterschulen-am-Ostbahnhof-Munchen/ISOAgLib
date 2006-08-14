@@ -123,7 +123,7 @@ public:
   vtObjectPictureGraphic_c();
 
   //  Operation: fitTerminal
-  uint32_t fitTerminal();
+  uint32_t fitTerminal() const;
 
   // //////////////////////////////////
   // All special Attribute-Set methods

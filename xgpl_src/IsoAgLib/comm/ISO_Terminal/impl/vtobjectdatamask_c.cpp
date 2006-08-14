@@ -134,16 +134,16 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 75 : vtObjectDataMask_c
 vtObjectDataMask_c::vtObjectDataMask_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 189 : size
 uint32_t
-vtObjectDataMask_c::fitTerminal()
-{ // ~X2C
+vtObjectDataMask_c::fitTerminal() const
+{
   MACRO_localVars;
   return 8+vtObjectDataMask_a->numberOfObjectsToFollow*6+vtObjectDataMask_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 
 void

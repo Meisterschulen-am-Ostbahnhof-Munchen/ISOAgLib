@@ -125,16 +125,16 @@ vtObjectKey_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 90 : vtObjectKey_c
 vtObjectKey_c::vtObjectKey_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 193 : size
 uint32_t
-vtObjectKey_c::fitTerminal()
-{ // ~X2C
+vtObjectKey_c::fitTerminal() const
+{
   MACRO_localVars;
   return 7+vtObjectKey_a->numberOfObjectsToFollow*6+vtObjectKey_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 bool
 vtObjectKey_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)

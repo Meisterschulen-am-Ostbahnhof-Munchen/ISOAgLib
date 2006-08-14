@@ -123,7 +123,7 @@ public:
   vtObjectOutputString_c();
 
   //  Operation: fitTerminal
-  uint32_t fitTerminal();
+  uint32_t fitTerminal() const;
 
   //  Operation: setOriginSKM
   //! Parameter:

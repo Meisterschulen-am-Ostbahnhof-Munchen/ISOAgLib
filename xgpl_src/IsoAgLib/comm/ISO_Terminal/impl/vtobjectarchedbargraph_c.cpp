@@ -176,16 +176,16 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 123 : vtObjectArchedBarGraph_c
 vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 201 : size
 uint32_t
-vtObjectArchedBarGraph_c::fitTerminal()
-{ // ~X2C
+vtObjectArchedBarGraph_c::fitTerminal() const
+{
   MACRO_localVars;
   return 27+vtObjectArchedBarGraph_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 250 : setValue
 //! Parameter:

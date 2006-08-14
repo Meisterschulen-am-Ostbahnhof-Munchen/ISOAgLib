@@ -124,16 +124,16 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 165 : vtObjectStringVariable_c
 vtObjectStringVariable_c::vtObjectStringVariable_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 204 : size
 uint32_t
-vtObjectStringVariable_c::fitTerminal()
-{ // ~X2C
+vtObjectStringVariable_c::fitTerminal() const
+{
   MACRO_localVars;
   return 5+vtObjectStringVariable_a->length;
-} // -X2C
+}
 
 
 #ifdef USE_VT_UNICODE_SUPPORT

@@ -126,7 +126,7 @@ public:
   ~vtObjectArchedBarGraph_c(){};
 
   //  Operation: size
-  uint32_t fitTerminal();
+  uint32_t fitTerminal() const;
 
   void setValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
 

@@ -123,8 +123,7 @@ public:
   vtObjectButton_c();
 
   //  Operation: size
-  uint32_t fitTerminal();
-
+  uint32_t fitTerminal() const;
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 

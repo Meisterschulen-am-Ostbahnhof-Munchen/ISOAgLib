@@ -350,12 +350,27 @@ typedef uint16_t objRange_t;
 //! Common convert helpers (e.g. type conversion with type check).
 namespace vtConvert_n
 {
-    //! Convert signed value to unsigned by 1:1 bitwise conversion.
-    inline uint8_t  unsignValue8(  int8_t  val ) { return *((uint8_t* )(&val)); }
-    //! Convert signed value to unsigned by 1:1 bitwise conversion.
-    inline uint16_t unsignValue16( int16_t val ) { return *((uint16_t*)(&val)); }
-    //! Convert signed value to unsigned by 1:1 bitwise conversion.
-    inline uint32_t unsignValue32( int32_t val ) { return *((uint32_t*)(&val)); }
+// Casting signed/unsigned by pointer not by value:
+
+  //! Convert any integer to unsigned by cast (not by value) even if allready.
+  inline uint8_t  castUI( int8_t  value ) { return *((uint8_t* )(&value)); }
+  inline uint16_t castUI( int16_t value ) { return *((uint16_t*)(&value)); }
+  inline uint32_t castUI( int32_t value ) { return *((uint32_t*)(&value)); }
+  inline uint8_t  castUI(uint8_t  value ) { return value; }
+  inline uint16_t castUI(uint16_t value ) { return value; }
+  inline uint32_t castUI(uint32_t value ) { return value; }
+  //! Convert any integer to signed by cast (not by value) even if allready.
+  inline  int8_t  castI( uint8_t  value ) { return *(( int8_t* )(&value)); }
+  inline  int16_t castI( uint16_t value ) { return *(( int16_t*)(&value)); }
+  inline  int32_t castI( uint32_t value ) { return *(( int32_t*)(&value)); }
+  inline  int8_t  castI(  int8_t  value ) { return value; }
+  inline  int16_t castI(  int16_t value ) { return value; }
+  inline  int32_t castI(  int32_t value ) { return value; }
+
+  //! Template to get n-th significant byte of integer (no matter if signed or not).
+  template<class T> uint8_t getByte(   T value, int n ) { return (castUI(value) >> (8*n)) & 0xFFU; }
+  //! Template to get n-th significant nibble of integer (no matter if signed or not).
+  template<class T> uint8_t getNibble( T value, int n ) { return (castUI(value) >> (4*n)) & 0xFU; }
 };
 
 #endif // VTTYPES_H

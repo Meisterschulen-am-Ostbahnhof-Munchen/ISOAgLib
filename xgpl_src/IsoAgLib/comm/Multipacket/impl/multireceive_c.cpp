@@ -109,7 +109,9 @@
 
 
 // helper macros
-#define MACRO_pgnFormatOfPGN(mpPgn)     ((mpPgn>>8) & 0xFF)
+#ifndef MACRO_pgnFormatOfPGN
+#define MACRO_pgnFormatOfPGN(mpPgn)   ((mpPgn>>8) & 0xFF)
+#endif
 #define MACRO_BYTEORDER_toLoMidHi(a)    ((a) & 0xFF), (((a) >> 8) & 0xFF), (((a) >> 16) & 0xFF)
 #define MACRO_BYTEORDER_toLoMidMidHi(a) ((a) & 0xFF), (((a) >> 8) & 0xFF), (((a) >> 16) & 0xFF), (((a) >> 24) & 0xFF)
 #define MACRO_BYTEORDER_toLoHi(a)       ((a) & 0xFF), (((a) >> 8) & 0xFF)

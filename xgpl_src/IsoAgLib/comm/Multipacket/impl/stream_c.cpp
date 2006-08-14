@@ -101,7 +101,9 @@
 
 
 // helper macros
-#define MACRO_minimum(a,b) (a < b) ? a : b
+#ifndef MACRO_minimum
+#define MACRO_minimum(a,b) std::min(a,b)   // (a < b) ? a : b
+#endif
 
 
 // Begin Namespace __IsoAgLib
@@ -193,7 +195,8 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
     if (t_streamType & StreamEcmdMASK) awaitNextStep (AwaitDpo,  sci32_timeOutT2);
     else /* ----------------------- */ awaitNextStep (AwaitData, (getIdent().getDa() == 0xFF) ? sci32_timeOutT1 /* BAM */
                                                                                               : sci32_timeOutT2 /* dest-adr. */);
-    ui8_pkgRemainingInBurst = MACRO_minimum((ui32_pkgTotalSize - (ui32_pkgNextToWrite - 1)), wishingPkgs); // how many pkgs are missing at all? is it more than wished?
+    // how many pkgs are missing at all? is it more than wished?
+    ui8_pkgRemainingInBurst = MACRO_minimum( (ui32_pkgTotalSize - (ui32_pkgNextToWrite - 1)), unsigned(wishingPkgs) );
   }
 
   // increase ui32_burstCurrent, the expected Burst is a next new one (of course)...

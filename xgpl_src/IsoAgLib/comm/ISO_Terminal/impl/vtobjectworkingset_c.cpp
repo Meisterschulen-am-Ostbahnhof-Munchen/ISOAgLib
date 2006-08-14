@@ -142,7 +142,7 @@ vtObjectWorkingSet_c::vtObjectWorkingSet_c()
 
 // //////////////////////////////// +X2C Operation 188 : size
 uint32_t
-vtObjectWorkingSet_c::fitTerminal()
+vtObjectWorkingSet_c::fitTerminal() const
 { // ~X2C
   MACRO_localVars;
   return 10+vtObjectWorkingSet_a->numberOfObjectsToFollow*6+vtObjectWorkingSet_a->numberOfMacrosToFollow*2+vtObjectWorkingSet_a->numberOfLanguagesToFollow*2;

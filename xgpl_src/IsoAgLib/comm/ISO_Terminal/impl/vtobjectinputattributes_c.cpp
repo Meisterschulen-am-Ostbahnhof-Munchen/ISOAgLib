@@ -141,16 +141,16 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 171 : vtObjectInputAttributes_c
 vtObjectInputAttributes_c::vtObjectInputAttributes_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 205 : size
 uint32_t
-vtObjectInputAttributes_c::fitTerminal()
-{ // ~X2C
+vtObjectInputAttributes_c::fitTerminal() const
+{
   MACRO_localVars;
   return 6+vtObjectInputAttributes_a->length+vtObjectInputAttributes_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 250 : setValidationStringCopy
 //! Parameter:

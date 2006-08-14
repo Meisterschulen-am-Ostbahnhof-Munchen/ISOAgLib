@@ -135,7 +135,7 @@ vtObjectButton_c::vtObjectButton_c()
 
 // //////////////////////////////// +X2C Operation 194 : size
 uint32_t
-vtObjectButton_c::fitTerminal()
+vtObjectButton_c::fitTerminal() const
 { // ~X2C
   MACRO_localVars;
   return 13+vtObjectButton_a->numberOfObjectsToFollow*6+vtObjectButton_a->numberOfMacrosToFollow*2;

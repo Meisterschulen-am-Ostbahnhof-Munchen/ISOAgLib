@@ -117,15 +117,16 @@ vtObjectNumberVariable_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 160 : vtObjectNumberVariable_c
 vtObjectNumberVariable_c::vtObjectNumberVariable_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 203 : size
 uint32_t
-vtObjectNumberVariable_c::fitTerminal()
-{ // ~X2C
-  return 7;
-} // -X2C
+vtObjectNumberVariable_c::fitTerminal() const
+{
+  // 3 byte header and 4 byte attributes.
+  return (3+4);
+}
 
 // //////////////////////////////// +X2C Operation 209 : setValue
 //! Parameter:

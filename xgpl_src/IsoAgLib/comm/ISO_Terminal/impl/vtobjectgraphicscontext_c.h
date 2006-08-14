@@ -84,26 +84,21 @@
 #define VTOBJECTGRAPHICSCONTEXT_C_H
 
 
-// +X2C includes
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
-// ~X2C
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-//  +X2C Class 149 : vtObjectGraphicsContext_c
-//!  Stereotype: Klasse
+//! VT client object for graphics context.
 class vtObjectGraphicsContext_c : public vtObject_c
 {
-
 public:
+  //!< @todo Not defined in ISO. Need to adjust.
+  static const uint8_t u_objectType = 54;
 
-  //  Operation: stream
-  //! Parameter:
-  //! @param:destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
+  //! @param destMemory
+  //! @param maxBytes Maximum bytes that can be streamed out without upload-buffer overrun.
+  //! @param sourceOffset
   int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
 
   //  Operation: init
@@ -120,8 +115,8 @@ public:
   //  Operation: vtObjectGraphicsContext_c
   vtObjectGraphicsContext_c( void );
 
-  //  Operation: fitTerminal
-  uint32_t fitTerminal( void ){ return 30; }
+  //! Give total size of object including header and attributes.
+  uint32_t fitTerminal( void ) const { return i_totalSize; }
 
   // //////////////////////////////////
   // All special Attribute-Set methods
@@ -186,9 +181,31 @@ public:
   void copyViewport2PictureGraphic(const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
+private:
+  //! Total size of Graphics Context attributes.
+  static const unsigned i_attributesSize = (
+    sizeof(uint16_t) +
+    sizeof(uint16_t) +
+    sizeof(int16_t)*2 +
+    sizeof(uint16_t) +
+    sizeof(uint16_t) +
+    sizeof(int8_t) +
+    sizeof(int16_t)*2 +
+    sizeof(uint8_t) +
+    sizeof(uint8_t) +
+    sizeof(uint16_t) +
+    sizeof(uint16_t) +
+    sizeof(uint16_t) +
+    sizeof(uint8_t) +
+    sizeof(uint8_t) +
+    sizeof(uint8_t) );
+
+  //! Total size of Graphics Context object including header
+  static const unsigned i_totalSize = 3+i_attributesSize;
+
 };
 
-} // end of namespace __IsoAgLib
+} // namespace __IsoAgLib
 
 #endif // VTOBJECTGRAPHICSCONTEXT_C_H
 

@@ -147,16 +147,16 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 123 : vtObjectMeter_c
 vtObjectMeter_c::vtObjectMeter_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 201 : size
 uint32_t
-vtObjectMeter_c::fitTerminal()
-{ // ~X2C
+vtObjectMeter_c::fitTerminal() const
+{
   MACRO_localVars;
   return 21+vtObjectMeter_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 250 : setValue
 //! Parameter:

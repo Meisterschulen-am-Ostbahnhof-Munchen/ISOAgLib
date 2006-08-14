@@ -126,7 +126,7 @@ vtObjectSoftKeyMask_c::vtObjectSoftKeyMask_c()
 
 // //////////////////////////////// +X2C Operation 192 : size
 uint32_t
-vtObjectSoftKeyMask_c::fitTerminal()
+vtObjectSoftKeyMask_c::fitTerminal() const
 { // ~X2C
   MACRO_localVars;
   return 6+vtObjectSoftKeyMask_a->numberOfObjectsToFollow*2+vtObjectSoftKeyMask_a->numberOfMacrosToFollow*2;

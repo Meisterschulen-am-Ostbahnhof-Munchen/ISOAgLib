@@ -122,16 +122,16 @@ vtObjectAuxiliaryInput_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
 // //////////////////////////////// +X2C Operation 90 : vtObjectAuxiliaryInput_c
 
 vtObjectAuxiliaryInput_c::vtObjectAuxiliaryInput_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 193 : size
 uint32_t
-vtObjectAuxiliaryInput_c::fitTerminal()
-{ // ~X2C
+vtObjectAuxiliaryInput_c::fitTerminal() const
+{
   MACRO_localVars;
   return 7+vtObjectAuxiliaryInput_a->numberOfObjectsToFollow*6;
-} // -X2C
+}
 
 bool
 vtObjectAuxiliaryInput_c::moveChildLocation(IsoAgLib::iVtObject_c* rpc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)

@@ -929,7 +929,7 @@ bool ISOMonitor_c::sendRequestForClaimedAddress( bool rb_force )
     data().setIsoSa(254); // special flag for "no SA yet"
   }
   // built request data string
-  uint8_t pb_requestString[4];
+//  uint8_t pb_requestString[4];
   data().setUint32Data( 0, ADRESS_CLAIM_PGN );
   data().setLen(3);
   // now ISOSystemPkg_c has right data -> send

@@ -162,16 +162,16 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 113 : vtObjectOutputString_c
 vtObjectOutputString_c::vtObjectOutputString_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 198 : size
 uint32_t
-vtObjectOutputString_c::fitTerminal()
-{ // ~X2C
+vtObjectOutputString_c::fitTerminal() const
+{
   MACRO_localVars;
   return 17+vtObjectOutputString_a->length+vtObjectOutputString_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 233 : setOriginSKM
 //! Parameter:

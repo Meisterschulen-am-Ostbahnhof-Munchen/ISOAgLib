@@ -123,7 +123,7 @@ public:
   vtObjectPolygon_c();
 
   //  Operation: size
-  uint32_t fitTerminal();
+  uint32_t fitTerminal() const;
 
   //  Operation: setWidth
   //! Parameter:

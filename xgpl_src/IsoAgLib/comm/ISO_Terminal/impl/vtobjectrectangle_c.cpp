@@ -150,16 +150,16 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 123 : vtObjectRectangle_c
 vtObjectRectangle_c::vtObjectRectangle_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 201 : size
 uint32_t
-vtObjectRectangle_c::fitTerminal()
-{ // ~X2C
+vtObjectRectangle_c::fitTerminal() const
+{
   MACRO_localVars;
   return 13+vtObjectRectangle_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 
 // //////////////////////////////// +X2C Operation 231 : setOriginSKM

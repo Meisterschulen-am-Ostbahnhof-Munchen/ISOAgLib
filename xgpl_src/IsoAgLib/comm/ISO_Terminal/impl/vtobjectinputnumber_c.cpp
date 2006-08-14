@@ -167,7 +167,7 @@ vtObjectInputNumber_c::vtObjectInputNumber_c()
 
 // //////////////////////////////// +X2C Operation 196 : size
 uint32_t
-vtObjectInputNumber_c::fitTerminal()
+vtObjectInputNumber_c::fitTerminal() const
 { // ~X2C
   MACRO_localVars;
   return 38+vtObjectInputNumber_a->numberOfMacrosToFollow*2;

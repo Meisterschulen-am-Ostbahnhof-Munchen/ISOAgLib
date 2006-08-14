@@ -125,7 +125,7 @@ public:
   vtObjectInputString_c();
 
   //  Operation: fitTerminal
-  uint32_t fitTerminal();
+  uint32_t fitTerminal() const;
 
   //  Operation: getString
   const char* getString();

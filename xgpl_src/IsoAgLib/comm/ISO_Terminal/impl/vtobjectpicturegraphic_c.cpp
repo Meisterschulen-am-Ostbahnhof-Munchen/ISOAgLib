@@ -268,7 +268,7 @@ vtObjectPictureGraphic_c::vtObjectPictureGraphic_c()
 }
 
 uint32_t
-vtObjectPictureGraphic_c::fitTerminal()
+vtObjectPictureGraphic_c::fitTerminal() const
 {
   MACRO_localVars;
   MACRO_scaleLocalVars;

@@ -131,9 +131,7 @@ public:
   uint8_t getNumberOfListItems();
 
   //  Operation: size
-  uint32_t fitTerminal();
-
-
+  uint32_t fitTerminal() const;
 
   //  Operation: setValue
   //! Parameter:

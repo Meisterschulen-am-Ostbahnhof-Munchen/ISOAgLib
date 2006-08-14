@@ -160,16 +160,16 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 128 : vtObjectOutputNumber_c
 vtObjectOutputNumber_c::vtObjectOutputNumber_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 199 : size
 uint32_t
-vtObjectOutputNumber_c::fitTerminal()
-{ // ~X2C
+vtObjectOutputNumber_c::fitTerminal() const
+{
   MACRO_localVars;
   return 29+vtObjectOutputNumber_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 
 

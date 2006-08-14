@@ -136,16 +136,16 @@ vtObjectLine_c::stream(uint8_t* destMemory,
 
 // //////////////////////////////// +X2C Operation 146 : vtObjectLine_c
 vtObjectLine_c::vtObjectLine_c()
-{ // ~X2C
-} // -X2C
+{
+}
 
 // //////////////////////////////// +X2C Operation 200 : size
 uint32_t
-vtObjectLine_c::fitTerminal()
-{ // ~X2C
+vtObjectLine_c::fitTerminal() const
+{
   MACRO_localVars;
   return 11+vtObjectLine_a->numberOfMacrosToFollow*2;
-} // -X2C
+}
 
 // //////////////////////////////// +X2C Operation 231 : setOriginSKM
 //! Parameter:

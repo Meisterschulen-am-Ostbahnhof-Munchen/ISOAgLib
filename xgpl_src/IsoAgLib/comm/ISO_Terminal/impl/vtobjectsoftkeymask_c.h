@@ -124,7 +124,7 @@ public:
   virtual ~vtObjectSoftKeyMask_c(){};
 
   //  Operation: size
-  uint32_t fitTerminal();
+  uint32_t fitTerminal() const;
 
   //  Operation: setOriginSKM
   //! Parameter:
