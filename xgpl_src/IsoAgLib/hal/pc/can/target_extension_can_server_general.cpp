@@ -341,15 +341,18 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
             }
           }
 
+#ifndef CAN_SERVER_SKIP_CLIENT_WAKEUP_VIA_PIPE
           if (iter->i32_pipeHandle) {
-            uint8_t ui8_buf[16];
+            static uint8_t ui8_buf;
 
+#ifndef CAN_SERVER_SKIP_PIPE_CLEARING
             // clear pipe (is done also in client)
-            int16_t rc=read(iter->i32_pipeHandle, &ui8_buf, 16);
-
+            read(iter->i32_pipeHandle, &ui8_buf, 1); // just read one byte into static variable
+#endif
             // trigger wakeup
-            rc=write(iter->i32_pipeHandle, &ui8_buf, 1);
+            write(iter->i32_pipeHandle, &ui8_buf, 1);
           }
+#endif
 
           // don't check following objects if message is already enqueued for this client
           break;
