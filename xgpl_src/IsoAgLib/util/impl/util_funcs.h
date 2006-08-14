@@ -447,7 +447,7 @@ class Flexible4ByteString_c {
     @param rui8_pos Byte position [0..2]
     @param ri16_val int16_t value to set
   */
-  void setInt16Data( int8_t rui8_pos, int16_t ri16_val);
+  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val);
   /**
     simply deliver a uint16_t from a specific starting position with.
     IMPORTANT: position 0 matches to the least significant byte,
@@ -467,7 +467,7 @@ class Flexible4ByteString_c {
     @param rui8_pos position of delivered int16_t [0..2]
     @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
-  int16_t getInt16Data(int8_t rui8_pos) const;
+  int16_t getInt16Data(uint8_t rui8_pos) const;
   #else
   /**
     set an uint16_t value at specified position in string.
@@ -507,7 +507,7 @@ class Flexible4ByteString_c {
     @param rui8_pos position of delivered int16_t [0..2]
     @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
-  int16_t getInt16Data(int8_t rui8_pos) const { return convertLittleEndianStringI16(uint8+rui8_pos);};
+  int16_t getInt16Data(uint8_t rui8_pos) const { return convertLittleEndianStringI16(uint8+rui8_pos);};
   #endif
 
 
@@ -713,7 +713,7 @@ class Flexible8ByteString_c {
     @param rui8_pos Byte position [0..6]
     @param ri16_val int16_t value to set
   */
-  void setInt16Data( int8_t rui8_pos, int16_t ri16_val);
+  void setInt16Data( uint8_t rui8_pos, int16_t ri16_val);
   /**
     simply deliver a uint16_t from a specific starting position with.
     IMPORTANT: position 0 matches to the least significant byte,
@@ -733,7 +733,7 @@ class Flexible8ByteString_c {
     @param rui8_pos position of delivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
-  int16_t getInt16Data(int8_t rui8_pos) const;
+  int16_t getInt16Data(uint8_t rui8_pos) const;
   /**
     set an uint32_t value at specified position in string.
     IMPORTANT: position 0 matches to the least significant byte,
@@ -753,7 +753,7 @@ class Flexible8ByteString_c {
     @param rui8_pos Byte position [0..4]
     @param ri32_val int32_t value to set
   */
-  void setInt32Data( int8_t rui8_pos, int32_t ri32_val);
+  void setInt32Data( uint8_t rui8_pos, int32_t ri32_val);
   /**
     simply deliver a uint32_t from a specific starting position with.
     IMPORTANT: position 0 matches to the least significant byte,
@@ -773,7 +773,7 @@ class Flexible8ByteString_c {
     @param rui8_pos position of delivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
-  int32_t getInt32Data(int8_t rui8_pos) const;
+  int32_t getInt32Data(uint8_t rui8_pos) const;
   #else
   /**
     set an uint16_t value at specified position in string.
@@ -813,7 +813,7 @@ class Flexible8ByteString_c {
     @param rui8_pos position of delivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
-  int16_t getInt16Data(int8_t rui8_pos) const { return convertLittleEndianStringI16(uint8+rui8_pos);};
+  int16_t getInt16Data(uint8_t rui8_pos) const { return convertLittleEndianStringI16(uint8+rui8_pos);};
   /**
     set an uint32_t value at specified position in string.
     IMPORTANT: position 0 matches to the least significant byte,
@@ -852,7 +852,7 @@ class Flexible8ByteString_c {
     @param rui8_pos position of delivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
   */
-  int32_t getInt32Data(int8_t rui8_pos) const { return convertLittleEndianStringI32(uint8+rui8_pos);};
+  int32_t getInt32Data(uint8_t rui8_pos) const { return convertLittleEndianStringI32(uint8+rui8_pos);};
   #endif
   /**
     simply deliver a Flexible4ByteString_c from a specific value index with.

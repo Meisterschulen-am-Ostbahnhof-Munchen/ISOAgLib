@@ -966,7 +966,7 @@ void Flexible4ByteString_c::setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
   @param rui8_pos Byte position [0..2]
   @param ri16_val int16_t value to set
 */
-void Flexible4ByteString_c::setInt16Data( int8_t rui8_pos, int16_t ri16_val)
+void Flexible4ByteString_c::setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
 {
   switch ( rui8_pos )
   {
@@ -1022,7 +1022,7 @@ uint16_t Flexible4ByteString_c::getUint16Data(uint8_t rui8_pos) const
   @param rui8_pos position of delivered int16_t [0..6]
   @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
 */
-int16_t Flexible4ByteString_c::getInt16Data(int8_t rui8_pos) const
+int16_t Flexible4ByteString_c::getInt16Data(uint8_t rui8_pos) const
 {
   switch ( rui8_pos )
   {
@@ -1150,7 +1150,7 @@ uint16_t Flexible8ByteString_c::getUint16Data(uint8_t rui8_pos) const
   @param rui8_pos position of delivered int16_t [0..6]
   @return int16_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
 */
-int16_t Flexible8ByteString_c::getInt16Data(int8_t rui8_pos) const
+int16_t Flexible8ByteString_c::getInt16Data(uint8_t rui8_pos) const
 {
   switch ( rui8_pos )
   {
@@ -1214,7 +1214,7 @@ void Flexible8ByteString_c::setUint32Data( uint8_t rui8_pos, uint32_t rui32_val)
   @param rui8_pos Byte position [0..4]
   @param ri32_val int32_t value to set
 */
-void Flexible8ByteString_c::setInt32Data( int8_t rui8_pos, int32_t ri32_val)
+void Flexible8ByteString_c::setInt32Data( uint8_t rui8_pos, int32_t ri32_val)
 {
   switch ( rui8_pos )
   {
@@ -1275,7 +1275,7 @@ uint32_t Flexible8ByteString_c::getUint32Data(uint8_t rui8_pos) const
   @param rui8_pos position of delivered int32_t [0..4]
   @return int32_t balue in CAN data string at pos (rui8_pos, rui8_pos+1) read Low/High order
 */
-int32_t Flexible8ByteString_c::getInt32Data(int8_t rui8_pos) const
+int32_t Flexible8ByteString_c::getInt32Data(uint8_t rui8_pos) const
 {
   switch ( rui8_pos )
   {
