@@ -1085,7 +1085,7 @@ void Flexible8ByteString_c::setUint16Data( uint8_t rui8_pos, uint16_t rui16_val)
   @param rui8_pos Byte position [0..6]
   @param ri16_val int16_t value to set
 */
-void Flexible8ByteString_c::setInt16Data( int8_t rui8_pos, int16_t ri16_val)
+void Flexible8ByteString_c::setInt16Data( uint8_t rui8_pos, int16_t ri16_val)
 {
   switch ( rui8_pos )
   {
