@@ -388,7 +388,7 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
 };
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
-    /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic,
+    /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext,
     /* "datamask", */       ombMacro | ombOutputfield | ombInputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombButton | ombContainer | ombObjectpointer | ombGraphicsContext,
     /* "alarmmask", */      ombMacro | ombOutputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
     /* "container", */      0, // same as the object that included the container
@@ -398,7 +398,7 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
     /* "inputboolean", */   ombMacro | 0,
     /* "inputstring", */    ombMacro | 0,
     /* "inputnumber", */    ombMacro | 0,
-    /* "inputlist", */      ombMacro | ombOutputfield | ombPicturegraphic,
+    /* "inputlist", */      ombMacro | ombOutputfield | ombPicturegraphic | ombGraphicsContext,
     /* "outputstring", */   ombMacro | 0,
     /* "outputnumber", */   ombMacro | 0,
     /* "line", */           ombMacro | 0,
@@ -417,8 +417,8 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
     /* "inputattributes",*/ ombMacro | 0,
     /* "objectpointer", */  0, // really NONE
     /* "macro", */          0, // really NONE
-    /* "auxfunction", */    ombOutputfield | ombOutputshape | ombPicturegraphic, // really NONE
-    /* "auxinput", */       ombOutputfield | ombOutputshape | ombPicturegraphic, // really NONE
+    /* "auxfunction", */    ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext, // really NONE
+    /* "auxinput", */       ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext, // really NONE
                             0,
                             0,
                             0,
