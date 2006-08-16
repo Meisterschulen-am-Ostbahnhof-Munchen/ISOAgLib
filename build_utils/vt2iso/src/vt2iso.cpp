@@ -1034,6 +1034,17 @@ unsigned int colortoi (char* text_color)
   return atoi (text_color);
 }
 
+unsigned int masktypetoi (char* masktype)
+{
+  int l;
+  for (l=0; l<3; l++) {
+    if (strncmp (masktype, masktypeTable [l], stringLength) == 0) {
+      return l;
+    }
+  }
+  return atoi (masktype);
+}
+
 unsigned int colordepthtoi (char* text_colordepth)
 {
   int l;
@@ -2894,7 +2905,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
                     setAttributeValue(attrNew_softkey_mask);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xAE, %d, %d, %d, %d, %d, 0xFF, 0xFF", atoi(attrString [attrMask_type]), MACRO_16bitToLE(idOrName_toi(attrString [attrMaskID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false)));
+                  sprintf(commandMessage, "0xAE, %d, %d, %d, %d, %d, 0xFF, 0xFF", masktypetoi(attrString [attrMask_type]), MACRO_16bitToLE(idOrName_toi(attrString [attrMaskID], /*macro?*/false)), MACRO_16bitToLE(idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false)));
 
                   objChildCommands++;
                 }

@@ -299,6 +299,8 @@ extern char ctCommandTable [maxCommandsToCompare] [stringLength+1];
 
 extern char colorTable [16] [stringLength+1];
 
+extern char masktypeTable [3] [stringLength+1];
+
 extern char colorDepthTable [3];
 
 #define maxFontsizeTable 15

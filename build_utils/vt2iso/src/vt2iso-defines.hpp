@@ -673,6 +673,12 @@ char colorTable [16] [stringLength+1] = {
   "navy"
 };
 
+char masktypeTable [3] [stringLength+1] = {
+  "undefined",
+  "data",
+  "alarm"
+};
+
 char colorDepthTable [3] = {'1', '4', '8'};
 
 #define maxFontsizeTable 15
