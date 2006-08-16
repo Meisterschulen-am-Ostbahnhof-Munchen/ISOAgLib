@@ -1109,6 +1109,23 @@ function create_autogen_project_config()
 
 	if [ $PRJ_PROCESS -gt 0 ] ; then
 		echo -e "#ifndef USE_PROCESS $ENDLINE  #define USE_PROCESS $ENDLINE#endif" >> $CONFIG_NAME
+		if [ $PROC_REMOTE -gt 0 ] ; then
+			if [ $PROC_REMOTE_STD -gt 0 ] ; then
+				echo -e "#ifndef USE_PROC_REMOTE_STD $ENDLINE  #define USE_PROC_REMOTE_STD $ENDLINE#endif" >> $CONFIG_NAME
+			fi
+			if [ $PROC_REMOTE_SIMPLE_MEASURE -gt 0 ] ; then
+				echo -e "#ifndef USE_PROC_REMOTE_SIMPLE_MEASURE $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_MEASURE $ENDLINE#endif" >> $CONFIG_NAME
+			fi
+			if [ $PROC_REMOTE_SIMPLE_SETPOINT -gt 0 ] ; then
+				echo -e "#ifndef USE_PROC_REMOTE_SIMPLE_SETPOINT $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_SETPOINT $ENDLINE#endif" >> $CONFIG_NAME
+			fi
+			if [ $PROC_REMOTE_SIMPLE_MEASURE_SETPOINT -gt 0 ] ; then
+				echo -e "#ifndef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT $ENDLINE#endif" >> $CONFIG_NAME
+			fi
+			if [ $PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED -gt 0 ] ; then
+				echo -e "#ifndef USE_PROC_SIMPLE_REMOTE_MEASURE_SETPOINT_COMBINED $ENDLINE  #define USE_PROC_SIMPLE_REMOTE_MEASURE_SETPOINT_COMBINED $ENDLINE#endif" >> $CONFIG_NAME
+			fi
+		fi
   else
   	# the default in isoaglib_config.h is to activate
     # PROCESS as long as USE_PROCESS_YN unset
