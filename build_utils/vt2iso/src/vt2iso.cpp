@@ -1146,7 +1146,7 @@ unsigned int optionstoi (char *text_options)
   return retval;
 }
 
-unsigned int outputnumberoptionstoi (char *text_options)
+unsigned int numberoptionstoi (char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxOutputNumberOptionsTable; l++) {
@@ -3337,7 +3337,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
           fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL, %sUL, %sUL", attrString [attrWidth], attrString [attrHeight],
-            colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], optionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
+            colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], numberoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
             attrString [attrValue], attrString [attrMin_value], attrString [attrMax_value]);
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
           { // contains already a number type specifier
@@ -3394,7 +3394,7 @@ static void processElement (DOMNode *n, uint64_t ombType, const char* rc_workDir
           if (!attrIsGiven [attrValue])
           sprintf (attrString [attrValue], "0");
           fprintf (partFileB, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL", attrString [attrWidth], attrString [attrHeight],
-              colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], outputnumberoptionstoi (attrString [attrOptions]),
+              colortoi (attrString [attrBackground_colour]), attrString [attrFont_attributes], numberoptionstoi (attrString [attrOptions]),
               attrString [attrVariable_reference], attrString [attrValue] );
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
           { // offset has already type indication -> don't add additional "L"
