@@ -296,7 +296,8 @@ vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c
 
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference),  sizeof(iVtObjectOutputString_s), newVariable);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeAttribute (this, 6 /* Variable Reference */, newVariable->getID() & 0xFF, newVariable->getID() >> 8, 0, 0, b_enableReplaceOfCmd);
+  uint16_t newVariableID = newVariable ? (newVariable->getID()) : 0xFFFF;
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeAttribute (this, 6 /* Variable Reference */, (newVariableID & 0xFF), (newVariableID >> 8), 0, 0, b_enableReplaceOfCmd);
 } // -X2C
 
 void
