@@ -348,80 +348,80 @@ public:
   /** set the poitner to the handler class
     * @param rpc_processDataChangeHandler pointer to handler class of application
     */
-  void setProcessDataChangeHandler( ProcessDataChangeHandler_c *rpc_processDataChangeHandler )
-   { ProcDataRemote_c::setProcessDataChangeHandler( rpc_processDataChangeHandler ); } ;
+  void setProcessDataChangeHandler(ProcessDataChangeHandler_c *rpc_processDataChangeHandler)
+   { ProcDataRemote_c::setProcessDataChangeHandler (rpc_processDataChangeHandler); }
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
     */
-  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const
-   { return ProcDataRemote_c::getProcessDataChangeHandler(); } ;
+  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler (void) const
+   { return ProcDataRemote_c::getProcessDataChangeHandler(); }
 
   /**
     deliver value PRI of messages with this
     process data instance
     @return PRI
   */
-  uint8_t pri() const{return ProcDataRemote_c::pri();};
+  uint8_t pri() const{return ProcDataRemote_c::pri();}
   /**
     set value PRI of messages with this
     process data instance (default value is 2 == target message)
     @param rb_val new PRI value
   */
-  void setPri(uint8_t rb_val){ProcDataRemote_c::setPri(rb_val);};
+  void setPri (uint8_t rb_val){ProcDataRemote_c::setPri(rb_val);}
   /**
     deliver value LIS (list number)
     @return LIS
   */
-  uint8_t lis() const{return ProcDataRemote_c::lis();};
+  uint8_t lis() const{return ProcDataRemote_c::lis();}
   /**
     deliver value DEVCLASS (machine type specific table of process data types)
     @return DEVCLASS
   */
-  uint8_t devClass() const{return ProcDataRemote_c::devClass();};
+  uint8_t devClass() const{return ProcDataRemote_c::devClass();}
   /**
     deliver value WERT (row of process data table)
     @return WERT
   */
-  uint8_t wert() const{return ProcDataRemote_c::wert();};
+  uint8_t wert() const{return ProcDataRemote_c::wert();}
   /**
     deliver value INST (column of process data table)
     @return INST
   */
-  uint8_t inst() const{return ProcDataRemote_c::inst();};
+  uint8_t inst() const{return ProcDataRemote_c::inst();}
   /**
     deliver value ZAEHLNUM (0xFF == whole working width; else parts of width)
     @return ZAEHLNUM
   */
-  uint8_t zaehlnum() const{return ProcDataRemote_c::zaehlnum();};
+  uint8_t zaehlnum() const{return ProcDataRemote_c::zaehlnum();}
   /**
     deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
     @return POS
   */
-  uint8_t devClassInst() const{return ProcDataRemote_c::devClassInst();};
+  uint8_t devClassInst() const{return ProcDataRemote_c::devClassInst();}
 
 #ifdef USE_ISO_11783
   /** check if this ProcIdent_c has the given DDI as element */
-  bool hasDDI( uint16_t rui16_checkDDI ) const { return ProcIdent_c::hasDDI( rui16_checkDDI );};
+  bool hasDDI (uint16_t rui16_checkDDI) const { return ProcIdent_c::hasDDI( rui16_checkDDI );}
   /**
     deliver elementDDI list
     @return std::list<ElementDDI_s>
   */
-  const std::list<ElementDDI_s>& elementDDI()const {return ProcDataRemote_c::elementDDI();};
+  const std::list<ElementDDI_s>& elementDDI() const {return ProcDataRemote_c::elementDDI();}
   /**
     deliver value DDI (only possible if only one elementDDI in list)
     @return DDI
   */
-  uint16_t DDI() const{return ProcDataRemote_c::DDI();};
+  uint16_t DDI() const{return ProcDataRemote_c::DDI();}
   /**
     deliver value element (only possible if only one elementDDI in list)
     @return element
   */
-  uint16_t element() const{return ProcDataRemote_c::element();};
+  uint16_t element() const{return ProcDataRemote_c::element();}
   /**
     deliver DDI from last received can pkg
     @return DDI
   */
-  uint16_t getDDIfromCANPkg() const { return ProcDataBase_c::getDDIfromCANPkg();};
+  uint16_t getDDIfromCANPkg() const { return ProcDataBase_c::getDDIfromCANPkg();}
 
 #endif
 
@@ -430,7 +430,7 @@ public:
     @return reference to member object with setpoint informations
   */
   iSetpointRemote_c& setpoint()
-    {return static_cast<iSetpointRemote_c&>(ProcDataRemote_c::setpoint());};
+    {return static_cast<iSetpointRemote_c&>(ProcDataRemote_c::setpoint());}
   /* ******************************************** *
    * some convenience functions for master        *
    * setpoint access with NOT simple setpoint      *
@@ -440,81 +440,79 @@ public:
     @param rb_sendRequest true -> send request for actual value
     @return setpoint value as long
   */
-  int32_t setpointMasterVal(bool rb_sendRequest = false) const
-    {return ProcDataRemote_c::setpointMasterVal(rb_sendRequest);};
+  int32_t setpointMasterVal (bool rb_sendRequest = false) const
+    {return ProcDataRemote_c::setpointMasterVal(rb_sendRequest);}
   /**
     send a setpoint cmd with given exact setpoint
     @param ri32_val commanded setpoint value as long
   */
-  void setSetpointMasterVal(int32_t ri32_val)
-    {ProcDataRemote_c::setSetpointMasterVal(ri32_val);};
+  void setSetpointMasterVal (int32_t ri32_val)
+    {ProcDataRemote_c::setSetpointMasterVal(ri32_val);}
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the actual master setpoint
     @param rb_sendRequest true -> send request for actual value
     @return setpoint value as float
   */
-  float setpointMasterValFloat(bool rb_sendRequest = false)
-    {return ProcDataRemote_c::setpointMasterValFloat(rb_sendRequest);};
+  float setpointMasterValFloat (bool rb_sendRequest = false)
+    {return ProcDataRemote_c::setpointMasterValFloat(rb_sendRequest);}
   /**
     send a setpoint cmd with given exact setpoint
     @param rf_val commanded setpoint value as float
   */
-  void setSetpointMasterVal(float rf_val)
-    {ProcDataRemote_c::setSetpointMasterVal(rf_val);};
+  void setSetpointMasterVal (float rf_val)
+    {ProcDataRemote_c::setSetpointMasterVal(rf_val);}
   #endif
   /**
     deliver a reference to the measure prog object
     @return reference to member object with measure prog informations
   */
   iMeasureProgRemote_c& prog()
-    {return static_cast<iMeasureProgRemote_c&>(ProcDataRemote_c::prog());};
+    {return static_cast<iMeasureProgRemote_c&>(ProcDataRemote_c::prog());}
   /**
     deliver actual measurement value as long
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
-  int32_t masterMeasurementVal(bool rb_sendRequest = false)
-    {return ProcDataRemote_c::masterMeasurementVal(rb_sendRequest);};
+  int32_t masterMeasurementVal (bool rb_sendRequest = false)
+    {return ProcDataRemote_c::masterMeasurementVal(rb_sendRequest);}
   /**
     send reset cmd for the measurement value
   */
-  void resetMasterVal(){ProcDataRemote_c::resetMasterVal();};
+  void resetMasterVal() {ProcDataRemote_c::resetMasterVal();}
   #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver actual measurement value as float
     @param rb_sendRequest true -> request for new value is sent (optional, default false)
   */
-  float masterValFloat(bool rb_sendRequest = false)
-    {return ProcDataRemote_c::masterValFloat(rb_sendRequest);};
+  float masterValFloat (bool rb_sendRequest = false)
+    {return ProcDataRemote_c::masterValFloat(rb_sendRequest);}
   #endif
 
   /**
     deliver the commanderDevKey (DEV_KEY of local member)
     @return DEV_KEY used for sending commands to remote owner member
   */
-  const iDevKey_c& commanderDevKey()const{return static_cast<const iDevKey_c&>(ProcDataRemote_c::commanderDevKey());};
+  const iDevKey_c& commanderDevKey() const {return static_cast<const iDevKey_c&>(ProcDataRemote_c::commanderDevKey());}
   /**
     set the pointer to the commander ident devKey
     @param rpbdevKey pointer to DEV_KEY var of local member used for
                 sending commands to remote owner member
   */
-  void setCommanderDevKey(const __IsoAgLib::DevKey_c* rpc_devKey){ProcDataRemote_c::setCommanderDevKey(rpc_devKey);};
+  void setCommanderDevKey (const __IsoAgLib::DevKey_c* rpc_devKey) {ProcDataRemote_c::setCommanderDevKey(rpc_devKey);}
 
 
   /**
     deliver the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
-  proc_valType_t valType()const
-    {return ProcDataRemote_c::valType();};
+  proc_valType_t valType() const
+    {return ProcDataRemote_c::valType();}
   /**
     set the central data type of this process data
     @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
   */
-  void setValType(proc_valType_t ren_procValType)
-    {ProcDataRemote_c::setValType(ren_procValType);};
-
+  void setValType (proc_valType_t ren_procValType)
+    {ProcDataRemote_c::setValType(ren_procValType);}
 };
-
 }
 #endif

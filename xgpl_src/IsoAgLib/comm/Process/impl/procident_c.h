@@ -457,6 +457,8 @@ public:
   bool addProprietary2Group(uint16_t rui16_DDI, bool b_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType);
 
   static void getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t &ref_ddiType, bool &refb_isSetpoint);
+
+  static bool hasDDIType (uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t t_ddiType);
 #endif
 
 private: // Private attributes

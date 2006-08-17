@@ -593,6 +593,17 @@ void ProcIdent_c::getDDIType(uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t 
 }
 
 
+bool ProcIdent_c::hasDDIType (uint16_t rui16_DDI, GeneralCommand_c::ValueGroup_t t_ddiType)
+{
+  bool b_isSetPoint;
+  GeneralCommand_c::ValueGroup_t t_retDDIType;
+
+  getDDIType (rui16_DDI, t_retDDIType, b_isSetPoint);
+
+  return (t_retDDIType == t_ddiType);
+}
+
+
 void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDDI_s* ps_elementDDI)
 {
   data.l_elementDDI.clear();
