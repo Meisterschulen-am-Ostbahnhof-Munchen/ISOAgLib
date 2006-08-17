@@ -281,6 +281,7 @@ vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject, b
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 } // -X2C
 
+/** obsolete, now no more checking for length != 0, set VaRef anyway!
 // //////////////////////////////// +X2C Operation 757 : setVariableReference
 //! Parameter:
 //! @param newVariable:
@@ -297,8 +298,9 @@ vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference),  sizeof(iVtObjectOutputString_s), newVariable);
 
   uint16_t newVariableID = newVariable ? (newVariable->getID()) : 0xFFFF;
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeAttribute (this, 6 /* Variable Reference */, (newVariableID & 0xFF), (newVariableID >> 8), 0, 0, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeAttribute (this, 6, (newVariableID & 0xFF), (newVariableID >> 8), 0, 0, b_enableReplaceOfCmd);
 } // -X2C
+*/
 
 void
 vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)

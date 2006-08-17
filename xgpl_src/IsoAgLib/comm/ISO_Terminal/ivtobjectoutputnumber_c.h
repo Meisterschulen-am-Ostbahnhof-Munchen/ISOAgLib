@@ -132,7 +132,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setVariableReference(__IsoAgLib::vtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 

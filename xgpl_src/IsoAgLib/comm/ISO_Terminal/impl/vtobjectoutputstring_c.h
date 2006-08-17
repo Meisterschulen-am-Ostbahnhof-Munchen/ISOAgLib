@@ -171,9 +171,9 @@ public:
   void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), options) : 0, sizeof(iVtObjectOutputString_s), 5, newValue, newValue, b_enableReplaceOfCmd);
   }
-
-  void setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newVariable, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-
+  void setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference) : 0, sizeof(iVtObjectOutputString_s), 6, (iVtObject_c*)newValue, b_enableReplaceOfCmd);
+  }
   void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputString_s), 7, newValue, newValue, b_enableReplaceOfCmd);
   }
