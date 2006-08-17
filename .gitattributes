@@ -1570,6 +1570,7 @@ xgpl_src/IsoAgLib/comm/SystemMgmt/DIN9684/impl/dinsystempkg_c.h -text
 xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp -text
 xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h -text
 xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h -text
+xgpl_src/IsoAgLib/convert.h -text
 xgpl_src/IsoAgLib/driver/can/icanio_c.h -text
 xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp -text
 xgpl_src/IsoAgLib/hal/a2/can/can.h -text

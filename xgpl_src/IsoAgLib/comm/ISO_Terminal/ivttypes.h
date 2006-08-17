@@ -198,6 +198,11 @@ class iVtPoint_c {
     void setY( int16_t i_y ) { y = i_y; }
     iVtPoint_c& operator+=( iVtPoint_c a ) { x += a.x; y += a.y; return *this; }
     iVtPoint_c& operator-=( iVtPoint_c a ) { x -= a.x; y -= a.y; return *this; }
+
+    //! Don't use: This is just a workaround for problems using the VT server MACRO_processChangeAttributeAID
+    int16_t& setX( void ) { return x; }
+    //! Don't use: This is just a workaround for problems using the VT server MACRO_processChangeAttributeAID
+    int16_t& setY( void ) { return y; }
   protected:
     int16_t x;
     int16_t y;
@@ -206,6 +211,7 @@ class iVtPoint_c {
 inline iVtPoint_c operator+( iVtPoint_c a, iVtPoint_c b ) { iVtPoint_c r(a); return r += b; }
 inline iVtPoint_c operator-( iVtPoint_c a, iVtPoint_c b ) { iVtPoint_c r(a); return r -= b; }
 
-} // end namespace IsoAgLib
+} // namespace IsoAgLib
 
-#endif
+#endif // IVTTYPES_H
+

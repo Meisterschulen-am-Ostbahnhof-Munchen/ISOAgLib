@@ -89,7 +89,8 @@
 #ifndef STREAMINPUT_C_H
 #define STREAMINPUT_C_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/comm/ISO_Terminal/ivttypes.h>
+#include <IsoAgLib/convert.h>
 
 /** Abstract base class for a streaming input source.
   * Realized by FileStreamInput_c for file readout,
@@ -99,19 +100,45 @@
 class StreamInput_c
 {
 public:
+  // Abstract interface definition
 
   //! Stream input operation.
   //! @param ui8_data Referenze to store read byte to.
   virtual StreamInput_c& operator>>(uint8_t& ui8_data)=0;
-
-  //! Read one byte
-  uint8_t get() { uint8_t byte; *this >> byte; return byte; };
 
   //! End of file
   virtual bool eof() const=0;
 
   //! Virtual destructor to prevent from warning.
   virtual ~StreamInput_c() {};
+
+  // For convenience some transparent interface extensions.
+
+  //! Read one byte
+  uint8_t get() { uint8_t byte; *this >> byte; return byte; };
+
+  //! Stream input of int8_t
+  StreamInput_c& operator>>(int8_t& i8_data) {
+    i8_data = convert_n::castI( get() ); return *this;
+  }
+
+  //! Stream input of uint16_t
+  StreamInput_c& operator>>(uint16_t& ui16_data) {
+    uint8_t ui8[2]; *this >> ui8[0] >> ui8[1];
+    ui16_data = uint16_t(ui8[0]) | (uint16_t(ui8[1])<<8); return *this;
+  }
+
+  //! Stream input of int16_t
+  StreamInput_c& operator>>(int16_t& i16_data) {
+    uint16_t ui16; *this >> ui16;
+    i16_data = convert_n::castI( ui16 ); return *this;
+  }
+
+  //! Stream input of point coordinates
+  StreamInput_c& operator>>( IsoAgLib::iVtPoint_c& c_point ) {
+    int16_t x,y; *this >> x >> y;
+    c_point = IsoAgLib::iVtPoint_c(x,y); return *this;
+  }
 
 };
 

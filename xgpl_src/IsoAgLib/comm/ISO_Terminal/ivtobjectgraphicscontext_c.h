@@ -300,7 +300,8 @@ public:
   };
 
   //! This command copies the current canvas of the Graphics Context Object into the 
-  //! Picture Graphic Object.  If the Picture Graphic is smaller than the canvas, 
+  //! Picture Graphic Object (Sub-Command ID 17).
+  //! If the Picture Graphic is smaller than the canvas, 
   //! then it shall be clipped to fit within the Picture Graphic.
   //! If the Picture Graphic is larger than the canvas, then the extra pixels in the
   //! Picture Graphic are not changed.
@@ -320,7 +321,7 @@ public:
   };
 
   //! This command copies the current Viewport (zoomed or panned) of the Graphics 
-  //! Context Object into the Picture Graphic Object.
+  //! Context Object into the Picture Graphic Object (Sub-Command ID 18).
   //! If the Picture Graphic is smaller than the Viewport, then it shall be clipped
   //! to fit within the Picture Graphic.
   //! If the Picture Graphic is larger than the Viewport, then the extra pixels in
@@ -340,9 +341,8 @@ public:
     vtObjectGraphicsContext_c::copyViewport2PictureGraphic (iVtObjectPictureGraphic, b_updateObject, b_enableReplaceOfCmd);
   };
 
-};
+}; // class iVtObjectGraphicsContext_c
 
-} // end of namespace IsoAgLib
+} // namespace IsoAgLib
 
-#endif
-
+#endif // IVTOBJECTGRAPHICSCONTEXT_C_H
