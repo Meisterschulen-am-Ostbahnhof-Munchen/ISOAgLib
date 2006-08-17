@@ -1114,7 +1114,19 @@ bool Process_c::updateRemoteCache(
 #ifdef USE_ISO_11783
 ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t rui16_DDI, uint16_t rui_deviceElement, const DevKey_c& rc_devKey, GeneralCommand_c::ValueGroup_t& refen_valueGroup, bool refb_isSetpoint)
 {
-  ProcDataRemoteBase_c* pc_remoteProcessData = check4DDIGroupMatch(rui16_DDI, rui_deviceElement, rc_devKey);
+  ProcDataRemoteBase_c* pc_remoteProcessData = NULL;
+
+  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
+        ( pc_iter != c_arrClientC2.end() );
+        pc_iter++ )
+  {
+    if ((*pc_iter)->check4GroupMatchExisting(rui16_DDI, rui_deviceElement, rc_devKey))
+      // DDI/elementNr already contained in ProcDataRemoteBase_c
+      return *pc_iter;
+  }
+
+  // try to find a matching group
+  pc_remoteProcessData = check4DDIGroupMatch(rui16_DDI, rui_deviceElement, rc_devKey);
   if (pc_remoteProcessData)
   {
     bool b_isSetpoint;

@@ -448,6 +448,8 @@ public:
 #ifdef USE_ISO_11783
   bool check4GroupMatch(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey);
 
+  bool check4GroupMatchExisting(uint16_t rui16_DDI, uint16_t rui16_element, const DevKey_c& rc_devKey);
+
   bool checkProprietary4GroupMatch(uint16_t rui_deviceElement, const DevKey_c& rc_devKey);
 
   static bool isPair(uint16_t rui16_ElementDDI, uint16_t rui16_DDI);
