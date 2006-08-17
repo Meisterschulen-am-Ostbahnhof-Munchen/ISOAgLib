@@ -550,7 +550,7 @@ class Flexible4ByteString_c {
     #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
     {return int32[0];};
     #else
-    { return convertLittleEndianStringI32(int8);};
+    { return convertLittleEndianStringI32(uint8);};
     #endif
 
 
