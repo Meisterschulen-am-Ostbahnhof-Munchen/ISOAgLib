@@ -99,14 +99,14 @@ public:
     vtObjectPictureGraphic_c::setTransparencyColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
-  void setRawData0Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectPictureGraphic_c::setRawData0Buffer (newValue, b_updateObject, b_enableReplaceOfCmd);
+  void setRawData0 (HUGE_MEM uint8_t* newValue, uint32_t rui32_size, bool rb_rle, uint16_t rui16_actWidth=0xFFFF, uint16_t rui16_actHeight=0xFFFF, uint16_t rui16_width=0xFFFF) {
+    vtObjectPictureGraphic_c::setRawData0 (newValue, rui32_size, rb_rle, rui16_actWidth, rui16_actHeight, rui16_width);
   }
-  void setRawData1Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectPictureGraphic_c::setRawData1Buffer (newValue, b_updateObject, b_enableReplaceOfCmd);
+  void setRawData1 (HUGE_MEM uint8_t* newValue, uint32_t rui32_size, bool rb_rle, uint16_t rui16_actWidth=0xFFFF, uint16_t rui16_actHeight=0xFFFF, uint16_t rui16_width=0xFFFF) {
+    vtObjectPictureGraphic_c::setRawData1 (newValue, rui32_size, rb_rle, rui16_actWidth, rui16_actHeight, rui16_width);
   }
-  void setRawData2Buffer (const HUGE_MEM uint8_t* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectPictureGraphic_c::setRawData2Buffer (newValue, b_updateObject, b_enableReplaceOfCmd);
+  void setRawData2 (HUGE_MEM uint8_t* newValue, uint32_t rui32_size, bool rb_rle, uint16_t rui16_actWidth=0xFFFF, uint16_t rui16_actHeight=0xFFFF, uint16_t rui16_width=0xFFFF) {
+    vtObjectPictureGraphic_c::setRawData2 (newValue, rui32_size, rb_rle, rui16_actWidth, rui16_actHeight, rui16_width);
   }
 };
 

@@ -239,9 +239,8 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
       destMemory [8] = actualHeight >> 8;
       destMemory [9] = ui8_graphicType;
       destMemory [10] = options;
-      destMemory [11] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(
-                          s_properties.clientId).getUserClippedColor(
-			  vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
+      destMemory [11] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
+                          vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
       destMemory [12] = (numberOfBytesInRawData) & 0xFF;
       destMemory [13] = (numberOfBytesInRawData >> 8) & 0xFF;
       destMemory [14] = (numberOfBytesInRawData >> 16) & 0xFF;
