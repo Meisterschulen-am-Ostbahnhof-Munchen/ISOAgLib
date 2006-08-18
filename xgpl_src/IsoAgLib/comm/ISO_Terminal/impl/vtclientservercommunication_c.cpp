@@ -97,6 +97,7 @@
 // #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
 // #include "vttypes.h"
 #include "../ivtobjectpicturegraphic_c.h"
+#include "../ivtobjectgraphicscontext_c.h"
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectfontattributes_c.h"
@@ -1462,118 +1463,144 @@ VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_
                       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false); // replaces COULD happen if user-triggered sequences are there.
 }
 
-bool
-VtClientServerCommunication_c::sendCommandSetGraphicsCursor (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      0 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
 
-bool
-VtClientServerCommunication_c::sendCommandSetForegroundColour (IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      1 /* Sub-Cmd ID */, newValue, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandSetBackgroundColour (IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      2 /* Sub-Cmd ID */, newValue, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandSetGCLineAttributes (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      3 /* Sub-Cmd ID */, newLineAttributes->getID() & 0xFF, newLineAttributes->getID() >> 8, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandSetGCFillAttributes (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      4 /* Sub-Cmd ID */, newFillAttributes->getID() & 0xFF, newFillAttributes->getID() >> 8, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandSetGCFontAttributes (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      5 /* Sub-Cmd ID */, newFontAttributes->getID() & 0xFF, newFontAttributes->getID() >> 8, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandEraseRectangle (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      6 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandDrawPoint (IsoAgLib::iVtObject_c* rpc_object, bool  b_enableReplaceOfCmd)
-{
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      7 /* Sub-Cmd ID */, 0xFF, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandDrawLine (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      8 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandDrawRectangle (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      9 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
-
-bool
-VtClientServerCommunication_c::sendCommandDrawClosedEllipse (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( rc_point.getX() );
-  uint16_t y=convert_n::castUI( rc_point.getY() );
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
-                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      10 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
-}
+// ########## Gaphics Context ##########
 
 //! @return Flag if successful
 bool
-VtClientServerCommunication_c::sendCommandDrawPolygon (IsoAgLib::iVtObject_c* rpc_object, uint16_t ui16_numOfPoints, const IsoAgLib::iVtPoint_c* const rpc_data, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandSetGraphicsCursor(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+{
+  uint16_t x=convert_n::castUI( rc_point.getX() );
+  uint16_t y=convert_n::castUI( rc_point.getY() );
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_setGraphicsCursorCmdID,
+                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
+}
+
+bool
+VtClientServerCommunication_c::sendCommandSetForegroundColour(
+  IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_setForegroundColourCmdID,
+                      newValue, 0xFF, 0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandSetBackgroundColour(
+  IsoAgLib::iVtObject_c* rpc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_setBackgroundColourCmdID,
+                      newValue, 0xFF, 0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandSetGCLineAttributes(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_setLineAttributeCmdID,
+                      newLineAttributes->getID() & 0xFF, newLineAttributes->getID() >> 8, 0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandSetGCFillAttributes(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_setFillAttributeCmdID, 
+                      newFillAttributes->getID() & 0xFF, newFillAttributes->getID() >> 8, 0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandSetGCFontAttributes(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes, bool b_enableReplaceOfCmd)
+{
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_setFontAttributeCmdID,
+                      newFontAttributes->getID() & 0xFF, newFontAttributes->getID() >> 8, 0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandEraseRectangle(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+{
+  uint16_t x=convert_n::castUI( rc_point.getX() );
+  uint16_t y=convert_n::castUI( rc_point.getY() );
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_eraseRectangleCmdID,
+                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandDrawPoint(
+  IsoAgLib::iVtObject_c* rpc_object, bool  b_enableReplaceOfCmd)
+{
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_drawPointCmdID,
+                      0xFF, 0xFF, 0xFF, 0xFF,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandDrawLine(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+{
+  uint16_t x=convert_n::castUI( rc_point.getX() );
+  uint16_t y=convert_n::castUI( rc_point.getY() );
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_drawLineCmdID,
+                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandDrawRectangle(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+{
+  uint16_t x=convert_n::castUI( rc_point.getX() );
+  uint16_t y=convert_n::castUI( rc_point.getY() );
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_drawRectangleCmdID,
+                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandDrawClosedEllipse(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+{
+  uint16_t x=convert_n::castUI( rc_point.getX() );
+  uint16_t y=convert_n::castUI( rc_point.getY() );
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
+                      rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
+                      vtObjectGraphicsContext_c::e_drawClosedEllipseCmdID,
+                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
+                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandDrawPolygon(
+  IsoAgLib::iVtObject_c* rpc_object, uint16_t ui16_numOfPoints, const IsoAgLib::iVtPoint_c* const rpc_data, bool b_enableReplaceOfCmd)
 {
   // Prevent from derefernzing NULL pointer.
   if (0 == rpc_data) { ui16_numOfPoints = 0; }
@@ -1585,19 +1612,20 @@ VtClientServerCommunication_c::sendCommandDrawPolygon (IsoAgLib::iVtObject_c* rp
   if (ui16_numOfPoints == 1) {
     uint16_t x = convert_n::castUI( rpc_data->getX() );
     uint16_t y = convert_n::castUI( rpc_data->getY() );
-    return sendCommand( 119 /* Command: Command --- Parameter: Graphics Context Command */,
+    return sendCommand( vtObjectGraphicsContext_c::e_commandID,
                         rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                        11 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
+                        vtObjectGraphicsContext_c::e_drawPolygonCmdID,
+                        x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                         DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
   }
   else {
     // send a polygon with more than one point
     uint16_t ui16_bufferSize = 4+(ui16_numOfPoints*4);
     uint8_t *pui8_buffer = new uint8_t[ ui16_bufferSize ];
-    pui8_buffer[0] = 119;
+    pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
     pui8_buffer[1] = rpc_object->getID() & 0xFF;
     pui8_buffer[2] = rpc_object->getID() >> 8;
-    pui8_buffer[3] = 11 /* Sub-Cmd ID */;
+    pui8_buffer[3] = vtObjectGraphicsContext_c::e_drawPolygonCmdID;
 
     // add all points from the list to the buffer
     uint16_t ui16_index = 4;		/* first 4 bytes are set */
@@ -1622,13 +1650,14 @@ VtClientServerCommunication_c::sendCommandDrawPolygon (IsoAgLib::iVtObject_c* rp
 }
 
 bool
-VtClientServerCommunication_c::sendCommandDrawText (IsoAgLib::iVtObject_c* rpc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *rpc_newValue, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandDrawText(
+  IsoAgLib::iVtObject_c* rpc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *rpc_newValue, bool b_enableReplaceOfCmd)
 {
   uint8_t *pui8_buffer = new uint8_t[6+ui8_numOfCharacters];
-  pui8_buffer[0] = 119;
+  pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
   pui8_buffer[1] = rpc_object->getID() & 0xFF;
   pui8_buffer[2] = rpc_object->getID() >> 8;
-  pui8_buffer[3] = 12 /* Sub-Cmd ID */;
+  pui8_buffer[3] = vtObjectGraphicsContext_c::e_drawTextCmdID;
   pui8_buffer[4] = ui8_textType;
   pui8_buffer[5] = ui8_numOfCharacters;
 
@@ -1642,37 +1671,42 @@ VtClientServerCommunication_c::sendCommandDrawText (IsoAgLib::iVtObject_c* rpc_o
 }
 
 bool
-VtClientServerCommunication_c::sendCommandPanViewPort (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandPanViewport(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, bool b_enableReplaceOfCmd)
 {
   uint16_t x = convert_n::castUI( rc_point.getX() );
   uint16_t y = convert_n::castUI( rc_point.getY() );
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      13 /* Sub-Cmd ID */, x & 0xFF, x >> 8, y & 0xFF, y >> 8,
+                      vtObjectGraphicsContext_c::e_panViewportCmdID,
+                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandZoomViewPort (IsoAgLib::iVtObject_c* rpc_object, int8_t newValue, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandZoomViewport(
+  IsoAgLib::iVtObject_c* rpc_object, int8_t newValue, bool b_enableReplaceOfCmd)
 {
   uint8_t zoom = convert_n::castUI( newValue );
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      14 /* Sub-Cmd ID */, zoom, 0xFF, 0xFF, 0xFF,
+                      vtObjectGraphicsContext_c::e_zoomViewportCmdID,
+                      zoom, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandPanAndZoomViewPort (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, int8_t newValue, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandPanAndZoomViewport(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtPoint_c& rc_point, int8_t newValue, bool b_enableReplaceOfCmd)
 {
   uint16_t x = convert_n::castUI( rc_point.getX() );
   uint16_t y = convert_n::castUI( rc_point.getY() );
   uint8_t zoom = convert_n::castUI( newValue );
   uint8_t pui8_buffer[9];
-  pui8_buffer[0] = 119; /* Command: Command --- Parameter: Graphics Context Command */
+  pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
   pui8_buffer[1] = rpc_object->getID() & 0xFF;
   pui8_buffer[2] = rpc_object->getID() >> 8;
-  pui8_buffer[3] = 15 /* Sub-Cmd ID */;
+  pui8_buffer[3] = vtObjectGraphicsContext_c::e_panAndZoomViewportCmdID;
   pui8_buffer[4] = x & 0xFF;
   pui8_buffer[5] = x >> 8;
   pui8_buffer[6] = y & 0xFF;
@@ -1684,42 +1718,52 @@ VtClientServerCommunication_c::sendCommandPanAndZoomViewPort (IsoAgLib::iVtObjec
   return queueOrReplace (sc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
-//! @todo ChangeViewPortSize and PanAndZoomViewPort both use 15.
 bool
-VtClientServerCommunication_c::sendCommandChangeViewPortSize (IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandChangeViewportSize(
+IsoAgLib::iVtObject_c* rpc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 {
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      15 /* Sub-Cmd ID */, newWidth & 0xFF, newWidth >> 8, newHeight & 0xFF, newHeight >> 8,
+                      vtObjectGraphicsContext_c::e_changeViewportSizeCmdID,
+                      newWidth & 0xFF, newWidth >> 8, newHeight & 0xFF, newHeight >> 8,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandDrawVtObject (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandDrawVtObject(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd)
 {
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      16 /* Sub-Cmd ID */, pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
+                      vtObjectGraphicsContext_c::e_drawVTObjectCmdID,
+                      pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandCopyCanvas2PictureGraphic (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandCopyCanvas2PictureGraphic(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
 {
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      17 /* Sub-Cmd ID */, pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
+                      vtObjectGraphicsContext_c::e_copyCanvasToPictureGraphicCmdID,
+                      pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic (IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic(
+  IsoAgLib::iVtObject_c* rpc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
 {
-  return sendCommand (119 /* Command: Command --- Parameter: Graphics Context Command */,
+  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       rpc_object->getID() & 0xFF, rpc_object->getID() >> 8,
-                      18 /* Sub-Cmd ID */, pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
+                      vtObjectGraphicsContext_c::e_copyViewportToPictureGraphicCmdID,
+                      pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
+
+// ########## END Graphics Context ##########
+
 
 bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& rref_sendUpload, bool b_enableReplaceOfCmd)

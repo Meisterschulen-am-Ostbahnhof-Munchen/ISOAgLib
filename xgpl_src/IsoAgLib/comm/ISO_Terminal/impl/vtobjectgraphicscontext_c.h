@@ -93,8 +93,36 @@ namespace __IsoAgLib {
 class vtObjectGraphicsContext_c : public vtObject_c
 {
 public:
-  //!< @todo Not defined in ISO. Need to adjust.
-  static const uint8_t u_objectType = 54;
+
+  //! ISO related IDs
+  enum ID_t {
+     //! Object type ID as defined by ISO App.B
+     e_objectType               = 36
+     //! Command ID as defined by ISO App.F
+    ,e_commandID                = 0xB9  // dec. 185
+     //! Graphics context sub command ID as in ISO App.F
+    ,e_setGraphicsCursorCmdID   = 0
+    ,e_setForegroundColourCmdID = 1
+    ,e_setBackgroundColourCmdID = 2
+    ,e_setLineAttributeCmdID    = 3
+    ,e_setFillAttributeCmdID    = 4
+    ,e_setFontAttributeCmdID    = 5
+    ,e_eraseRectangleCmdID      = 6
+    ,e_drawPointCmdID           = 7
+    ,e_drawLineCmdID            = 8
+    ,e_drawRectangleCmdID       = 9
+    ,e_drawClosedEllipseCmdID   = 10
+    ,e_drawPolygonCmdID         = 11
+    ,e_drawTextCmdID            = 12
+    ,e_panViewportCmdID         = 13
+    ,e_zoomViewportCmdID        = 14
+    ,e_panAndZoomViewportCmdID  = 15
+    //! @todo Not conform to the current proposal ID094 20060718 (using 15 twice)
+    ,e_changeViewportSizeCmdID  = 16
+    ,e_drawVTObjectCmdID        = 17
+    ,e_copyCanvasToPictureGraphicCmdID   = 18
+    ,e_copyViewportToPictureGraphicCmdID = 19
+  };
 
   //! @param destMemory
   //! @param maxBytes Maximum bytes that can be streamed out without upload-buffer overrun.

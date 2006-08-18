@@ -104,15 +104,18 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
   iVtObjectGraphicsContext_s* pc_vtOGC_a = get_vtObjectGraphicsContext_a();
 
   if (sourceOffset == 0) { // dump out constant sized stuff
-    // Check precondition
+    // Check precondition 
+    // (Not allways because we have no exception handling for 16-bit systems implemented).
 #if defined(DEBUG) && defined(SYSTEM_PC)
     if (maxBytes < i_totalSize) { abort(); }
+#else
+    maxBytes = maxBytes;  // Prevent from warning.
 #endif
 
     uint8_t* p = destMemory;
     *(p++) = convert_n::getByte( vtObject_a->ID,             0 );
     *(p++) = convert_n::getByte( vtObject_a->ID,             1 );
-    *(p++) = u_objectType;
+    *(p++) = e_objectType;
     *(p++) = convert_n::getByte( pc_vtOGC_a->viewportWidth,  0 );
     *(p++) = convert_n::getByte( pc_vtOGC_a->viewportWidth,  1 );
     *(p++) = convert_n::getByte( pc_vtOGC_a->viewportHeight, 0 );
@@ -146,6 +149,7 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
                                     pc_vtOGC_a->transparencyColour, this, IsoAgLib::TransparencyColour );
 
     // Check postcondition
+    // (Not allways because we have no exception handling for 16-bit systems implemented).
 #if defined(DEBUG) && defined(SYSTEM_PC)
     if ((destMemory+i_totalSize) != p) { abort(); }
 #endif
@@ -347,7 +351,7 @@ vtObjectGraphicsContext_c::panViewport( const IsoAgLib::iVtPoint_c& rc_point,
       sizeof(iVtObjectGraphicsContext_s), rc_point.getY() );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanViewPort(
+  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanViewport(
               this, rc_point, b_enableReplaceOfCmd);
 }
 
@@ -363,7 +367,7 @@ vtObjectGraphicsContext_c::zoomViewport( int8_t newValue,
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandZoomViewPort(
+  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandZoomViewport(
               this, newValue, b_enableReplaceOfCmd);
 }
 
@@ -383,7 +387,7 @@ vtObjectGraphicsContext_c::panAndZoomViewport( const IsoAgLib::iVtPoint_c& rc_po
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanViewPort(
+  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanViewport(
               this, rc_point, b_enableReplaceOfCmd);
 }
 
@@ -398,7 +402,7 @@ vtObjectGraphicsContext_c::changeViewportSize( uint16_t newWidth, uint16_t newHe
       sizeof(iVtObjectGraphicsContext_s), newHeight);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandChangeViewPortSize(
+  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandChangeViewportSize(
               this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
