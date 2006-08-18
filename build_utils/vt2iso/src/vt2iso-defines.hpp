@@ -85,8 +85,8 @@
 #define otMacro             (28)
 #define otAuxiliaryfunction (29)
 #define otAuxiliaryinput    (30)
-#define otGraphicsContext   (54) //!< @todo This is not defined by ISO. To be changed !!!
-#define maxObjectTypes      (55) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
+#define otGraphicsContext   (36)
+#define maxObjectTypes      (37) //! +++ MAX +++ object will not be inserted if (objType >= maxObjectTypes)
 
 #define otObjectpool        (55) // for objTypeCompareTable (won't be inserted)
 #define otIncludeobject     (56) // for objTypeCompareTable (won't be inserted)
@@ -179,7 +179,7 @@
 #define ombMacro             (uint64_t(1)<<28)
 #define ombAuxiliaryfunction (uint64_t(1)<<29)
 #define ombAuxiliaryinput    (uint64_t(1)<<30)
-#define ombGraphicsContext   (uint64_t(1)<<54) //!< @todo This is not defined by ISO. To be changed !!!
+#define ombGraphicsContext   (uint64_t(1)<<36)
 
 #define ombObjectpool        (uint64_t(1)<<55) // for objTypeCompareTable (won't be inserted)
 #define ombIncludeobject     (uint64_t(1)<<56) // for objTypeCompareTable (won't be inserted)
@@ -321,8 +321,8 @@
 
 #define maxAttributeNames (114)
 
-
-#define maxObjectTypesToCompare (maxObjectTypes+6)
+//! Number of regular object plus gap plus number of internal objects.
+#define maxObjectTypesToCompare (maxObjectTypes+18+6)
 char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
   "workingset",
   "datamask",
@@ -354,7 +354,13 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
   "objectpointer",
   "macro",
   "auxiliaryfunction",
-  "auxiliaryinput",
+  "auxiliaryinput",     // Object ID 30
+  "",
+  "",
+  "",
+  "",
+  "",
+  "graphicscontext",    // Object ID 36
   "",
   "",
   "",
@@ -373,13 +379,7 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
   "",
   "",
   "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "graphicscontext",
-  "objectpool",
+  "objectpool",          // Object ID 55
   "include_object",
   "include_macro",
   "point",
@@ -419,6 +419,12 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
     /* "macro", */          0, // really NONE
     /* "auxfunction", */    ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext, // really NONE
     /* "auxinput", */       ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext, // really NONE
+                            0, //31
+                            0,
+                            0,
+                            0,
+                            0,
+    /* "graphicscontext" */ 0,
                             0,
                             0,
                             0,
@@ -437,17 +443,11 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
                             0,
                             0,
                             0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-    /* "graphicscontext" */ 0,  //!< @todo Shouldn't this be ombMacro | 0 ???
-    /* "objectpool" */      ~0, // all
+    /* "objectpool" */     ~0, // all
     /* "include_object" */  0, // really NONE
     /* "include_macro" */   0, // really NONE
     /* "point" */           0, // really NONE
-    /* "language" */        0,  // really NONE
+    /* "language" */        0, // really NONE
     /* "fixedbitmap" */     0
 };
 
@@ -488,25 +488,7 @@ char otClassnameTable [maxObjectTypes] [stringLength+1] = {
   "",
   "",
   "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "GraphicsContext"
+  "GraphicsContext",
 };
 
 
