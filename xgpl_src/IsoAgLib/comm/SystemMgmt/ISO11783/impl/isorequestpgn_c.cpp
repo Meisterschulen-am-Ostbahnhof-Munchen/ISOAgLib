@@ -296,14 +296,16 @@ ISORequestPGN_c::processMsg ()
       data().setIsoPri(6);
       data().setIsoDp(0);
       data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
-      data().setIsoPs(data().isoSa());
-      data().setIsoSa(data().isoPs());
+      const uint8_t cui8_ps = data().isoPs();
+      const uint8_t cui8_sa = data().isoSa();
+      data().setIsoPs(cui8_sa);
+      data().setIsoSa(cui8_ps);
       // set the first four bytes as uint32_t value, where lowest byte equals to ControlByte
       data().setUint32Data ((1-1), 0xFFFFFF01UL); // Control Byte = 1, Negative Acknowledgement: NACK
       // set at lowest byte of second uint32_t value the reserved 0xFF
       // and place at the higher bytes of this second uint32_t
       // the ui32_purePgn
-      data().setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) ); // Control Byte = 1, Negative Acknowledgement: NACK
+      data().setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) );
       data().setLen (8);
 
       __IsoAgLib::getCanInstance4Comm() << c_data;
