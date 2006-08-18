@@ -105,7 +105,7 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 
   if (sourceOffset == 0) { // dump out constant sized stuff
     // Check precondition
-#ifdef SYSTEM_PC && DEBUG
+#if defined(DEBUG) && defined(SYSTEM_PC)
     if (maxBytes < i_totalSize) { abort(); }
 #endif
 
@@ -146,7 +146,7 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
                                     pc_vtOGC_a->transparencyColour, this, IsoAgLib::TransparencyColour );
 
     // Check postcondition
-#ifdef SYSTEM_PC && DEBUG
+#if defined(DEBUG) && defined(SYSTEM_PC)
     if ((destMemory+i_totalSize) != p) { abort(); }
 #endif
 
