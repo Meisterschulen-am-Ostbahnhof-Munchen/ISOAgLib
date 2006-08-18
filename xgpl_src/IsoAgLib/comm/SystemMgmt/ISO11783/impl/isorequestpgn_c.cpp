@@ -277,6 +277,7 @@ ISORequestPGN_c::processMsg ()
 
   if (b_distributeToClients)
   {
+    /// 1. Distribute to all clients
     bool b_processedByAnyClient = false;
     for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = registeredClientsWithPGN.begin();
           regPGN_it != registeredClientsWithPGN.end(); regPGN_it++)
@@ -285,6 +286,7 @@ ISORequestPGN_c::processMsg ()
         b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN(ui32_reqPgn, data().isoSa(), data().isoPs());
     }
 
+    /// 2. Check if we have to send a NACK as nobody could answer it
     if ((data().isoPs() != 0xFF) && !b_processedByAnyClient) // no client could answer the Request PGN, so NACK it!
     {
       uint32_t ui32_purePgn = ui32_reqPgn;
